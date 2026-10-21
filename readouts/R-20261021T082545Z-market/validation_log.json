@@ -1,0 +1,432 @@
+[
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:31:15.497529Z",
+  "detail": "AMAT: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/amat/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-042d285bbd5df9",
+  "ref_id": "TH-77926B9936",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:27:00.615519Z",
+  "detail": "NVDA: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/nvda/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-0a41e61e5aefbc",
+  "ref_id": "TH-05208D689A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:31:15.497049Z",
+  "detail": "INTC: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/intc/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-0afbcd1e0d62a0",
+  "ref_id": "TH-77926B9936",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.424651Z",
+  "detail": "CRWV: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/crwv/prices?startDate=2021-10-01&endDate=2025-06-30&format=js",
+  "issue_id": "VI-197e42c729585c",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:30:15.476699Z",
+  "detail": "META: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/meta/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-1cd0a9b6999074",
+  "ref_id": "TH-3C22A83E75",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.422475Z",
+  "detail": "AMZN: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/amzn/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-1e39c915dd3794",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:32:30.486306Z",
+  "detail": "KEYS: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/keys/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-24afd3af1b4700",
+  "ref_id": "TH-921772E86C",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.423689Z",
+  "detail": "MSFT: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/msft/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-2782c455e7368e",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:29:45.577786Z",
+  "detail": "MSFT: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/msft/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-292bec36abe8e4",
+  "ref_id": "TH-3557AAE138",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:27:00.616627Z",
+  "detail": "MU: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/mu/prices?startDate=2021-10-01&endDate=2024-12-31&format=json",
+  "issue_id": "VI-2b089cb6d47f0c",
+  "ref_id": "TH-05208D689A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:31:15.498368Z",
+  "detail": "LRCX: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/lrcx/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-2b5a9fbe8ec72c",
+  "ref_id": "TH-77926B9936",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:33:45.499139Z",
+  "detail": "GOOGL: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/googl/prices?startDate=2021-10-01&endDate=2024-12-31&format=j",
+  "issue_id": "VI-32c1dafd2ca36f",
+  "ref_id": "TH-C1889ABBA5",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:30:15.477183Z",
+  "detail": "KOPN: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/kopn/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-37b2674cb788cb",
+  "ref_id": "TH-3C22A83E75",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:27:00.617610Z",
+  "detail": "DELL: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/dell/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-486af7189306a5",
+  "ref_id": "TH-05208D689A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:33:15.415846Z",
+  "detail": "VZ: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/vz/prices?startDate=2021-10-01&endDate=2024-12-31&format=json",
+  "issue_id": "VI-5ad34881c19cf1",
+  "ref_id": "TH-B1F096684F",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:29:45.576506Z",
+  "detail": "VRT: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/vrt/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-6306e4fdda150b",
+  "ref_id": "TH-3557AAE138",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.425624Z",
+  "detail": "AMD: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/amd/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-67e64bb1b6e1d7",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:30:15.477603Z",
+  "detail": "GLW: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/glw/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-69b025ed036d00",
+  "ref_id": "TH-3C22A83E75",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.424209Z",
+  "detail": "ORCL: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/orcl/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-6de8c7db809d12",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:29:45.579019Z",
+  "detail": "FIX: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/fix/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-71a6022720d67f",
+  "ref_id": "TH-3557AAE138",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:33:45.499538Z",
+  "detail": "AMZN: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/amzn/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-7281b79dbf9815",
+  "ref_id": "TH-C1889ABBA5",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:27:00.616066Z",
+  "detail": "AMD: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/amd/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-7c6a333a085751",
+  "ref_id": "TH-05208D689A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:32:30.487108Z",
+  "detail": "FORM: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/form/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-809f281e92be61",
+  "ref_id": "TH-921772E86C",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:33:15.416217Z",
+  "detail": "COHR: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/cohr/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-8a4c66feaa05c3",
+  "ref_id": "TH-B1F096684F",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:29:45.576968Z",
+  "detail": "STRL: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/strl/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-8f2aa15bc422cf",
+  "ref_id": "TH-3557AAE138",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:30:16.456422Z",
+  "detail": "META: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/meta/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-970dd8370657a0",
+  "ref_id": "TH-722932E64F",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:31:15.497944Z",
+  "detail": "ONTO: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/onto/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-a6423d58bd38d9",
+  "ref_id": "TH-77926B9936",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:32:30.485487Z",
+  "detail": "TER: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/ter/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-a7cf3f291743cf",
+  "ref_id": "TH-921772E86C",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:29:45.578621Z",
+  "detail": "NVT: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/nvt/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-aa4f66b76559d0",
+  "ref_id": "TH-3557AAE138",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.426005Z",
+  "detail": "SMCI: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/smci/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-c0fdc8a863dcd6",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:32:30.485899Z",
+  "detail": "VIAV: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/viav/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-c53b9ad22a0863",
+  "ref_id": "TH-921772E86C",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:32:30.486690Z",
+  "detail": "COHU: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/cohu/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-c7dd662e352d05",
+  "ref_id": "TH-921772E86C",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:29:45.578212Z",
+  "detail": "ETN: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/etn/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-caac6f79b600a1",
+  "ref_id": "TH-3557AAE138",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.423214Z",
+  "detail": "META: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/meta/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-cacaa54d54d311",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:27:00.617106Z",
+  "detail": "SMCI: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/smci/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-cb2ee7a92b66b9",
+  "ref_id": "TH-05208D689A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.426396Z",
+  "detail": "DELL: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/dell/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-cb4dd1e8b065f2",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.427155Z",
+  "detail": "VRT: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/vrt/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-d662b4e627c008",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.426760Z",
+  "detail": "HPE: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/hpe/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-de80c486b864aa",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:33:15.416597Z",
+  "detail": "LITE: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/lite/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-e0a798dabf308f",
+  "ref_id": "TH-B1F096684F",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:28:45.425193Z",
+  "detail": "NVDA: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/nvda/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-e4acf3bfde4f98",
+  "ref_id": "TH-0D381F307A",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:33:45.499964Z",
+  "detail": "PLTR: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/pltr/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-ed8e751d737cba",
+  "ref_id": "TH-C1889ABBA5",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:33:15.415458Z",
+  "detail": "GLW: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/glw/prices?startDate=2021-10-01&endDate=2024-12-31&format=jso",
+  "issue_id": "VI-f17ee5b85e4aa9",
+  "ref_id": "TH-B1F096684F",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-21T08:29:45.577384Z",
+  "detail": "ORCL: Tiingo history failed \u2014 HttpError: Non-retryable 403 from https://api.tiingo.com/tiingo/daily/orcl/prices?startDate=2021-10-01&endDate=2024-12-31&format=js",
+  "issue_id": "VI-f280b07bd9f35a",
+  "ref_id": "TH-3557AAE138",
+  "run_id": "R-20261021T082545Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ }
+]

@@ -1,0 +1,2798 @@
+{
+ "archive": [
+  {
+   "action": "RESEARCH NOW",
+   "card": "cards/TH-0D381F307A.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-14",
+   "mechanism": "capex_spending_cycle",
+   "node": "ai_infrastructure.hyperscaler_capex",
+   "region": "Global",
+   "sector": "Hyperscaler / cloud AI capital expenditure and the companies spending it",
+   "status": "ACTIVE",
+   "thesis_id": "TH-0D381F307A",
+   "title": "Surging CSP CapEx drives AI server shipments and spenders' infrastructure buildout",
+   "versions": 1
+  },
+  {
+   "action": "RESEARCH NOW",
+   "card": "cards/TH-3C22A83E75.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-15",
+   "mechanism": "demand_volume_shift",
+   "node": "consumer_electronics",
+   "region": "Global",
+   "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-3C22A83E75",
+   "title": "AR glasses shipments double in 2026 driven by Meta and Chinese brands",
+   "versions": 1
+  },
+  {
+   "action": "RESEARCH NOW",
+   "card": "cards/TH-B1F096684F.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-19",
+   "mechanism": "supply_constraint",
+   "node": "ai_infrastructure.datacenter_physical",
+   "region": "Global",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-B1F096684F",
+   "title": "AI data center demand drives optical fiber shortage lifting fiber supplier pricing",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-05208D689A.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-14",
+   "mechanism": "pricing_cycle",
+   "node": "ai_infrastructure",
+   "region": "Global",
+   "sector": "AI infrastructure build-out (spans spenders, chips, power, materials)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-05208D689A",
+   "title": "Component shortages, especially memory, lift AI server rack ASPs and revenue",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-3557AAE138.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-19",
+   "mechanism": "capex_spending_cycle",
+   "node": "ai_infrastructure.datacenter_physical",
+   "region": "Global",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-3557AAE138",
+   "title": "AI datacenter buildout accelerates +50GW in 2027, lifting physical datacenter suppliers",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-393DF5CD2B.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-16",
+   "mechanism": "other",
+   "node": "macro_market",
+   "region": "US",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "REVIEW_NEEDED",
+   "thesis_id": "TH-393DF5CD2B",
+   "title": "Equities can absorb above-target inflation and higher yields while earnings hold",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-722932E64F.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-15",
+   "mechanism": "demand_volume_shift",
+   "node": "electronic_components",
+   "region": "Global",
+   "sector": "Passive and electronic components (MLCC, VCSEL, connectors)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-722932E64F",
+   "title": "Near-eye microdisplay makers benefit as OLEDoS, LEDoS and LCoS scale with AR glasses",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-77926B9936.html",
+   "direction": "negative",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-15",
+   "mechanism": "competitive_share_shift",
+   "node": "ai_infrastructure.semicap_foundry",
+   "region": "Global",
+   "sector": "Semiconductor equipment and foundry capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-77926B9936",
+   "title": "ASML's hybrid bonding tool threatens Besi's logic and HBM equipment franchise",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-921772E86C.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-13",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_infrastructure.optical_networking",
+   "region": "Global",
+   "sector": "Optical interconnects, transceivers and datacenter networking",
+   "status": "ACTIVE",
+   "thesis_id": "TH-921772E86C",
+   "title": "CPO mass production shifts value to integrated optical-electrical test platform suppliers",
+   "versions": 1
+  },
+  {
+   "action": "WATCH",
+   "card": "cards/TH-C1889ABBA5.html",
+   "direction": "positive",
+   "evidence_direction": "NEW",
+   "last_material_update": "2026-10-19",
+   "mechanism": "demand_volume_shift",
+   "node": "ai_models_platforms",
+   "region": "Global",
+   "sector": "AI model developers and AI platforms / applications",
+   "status": "ACTIVE",
+   "thesis_id": "TH-C1889ABBA5",
+   "title": "Compute supply surge in 2027 accelerates revenue for AI labs and token vendors",
+   "versions": 1
+  }
+ ],
+ "archived_total": 0,
+ "articles_blocked": 0,
+ "articles_partial": 2,
+ "articles_read": 7,
+ "attributions_only": 0,
+ "banner": null,
+ "categories": {
+  "ARCHIVED": [],
+  "CHALLENGED": [],
+  "DOWNGRADED": [],
+  "NEW": [
+   {
+    "action": "RESEARCH NOW",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-19",
+    "card": "cards/TH-B1F096684F.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 10); source-named exposure(s): Corning (GLW), Verizon (VZ/VZ); verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "changed_plain": [
+     "Global optical fiber supply shortfall expected to reach 180 million fiber-kilometers in 2026",
+     "Spot prices for finished optical fiber products projected to reach 2.8-5x their 2025 levels or higher",
+     "Global optical fiber capacity utilization climbed to 92% in 2026",
+     "Average price of bend-insensitive fiber (BIF) expected to average more than 5x its 2025 level in 2026",
+     "AI data center demand has tightened global optical fiber supply since late 2025, with shortages expected to persist until at least 2028",
+     "Optical fiber inventory levels fell from four months in 2024 to just one month",
+     "showing 6 of 14 pieces of evidence from A-87c41612b31b \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:08 UTC",
+    "flags": [],
+    "groups": [],
+    "impact_chain": [
+     "Volumes",
+     "Pricing",
+     "Listed-company earnings"
+    ],
+    "impact_line": "Pricing: Supply-demand imbalance pushes finished fiber spot prices to 2.8-5x their 2025 levels, with BIF over 5x",
+    "implications": [
+     "Industry shift: AI data center, interconnect and backbone network deployments drive rising incremental demand for optical fiber",
+     "Volumes: Demand reaches 577 million fiber-km in 2026 against constrained supply, producing a 180 million fiber-km shortfall with 92% utilization",
+     "Pricing: Supply-demand imbalance pushes finished fiber spot prices to 2.8-5x their 2025 levels, with BIF over 5x",
+     "Listed-company earnings: Higher fiber volumes and prices would benefit suppliers' revenue, but the article does not quantify any listed supplier's earnings impact"
+    ],
+    "intake": [
+     "automatic (A-87c41612b31b)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-19",
+    "mechanism": "AI data center, interconnect and backbone network deployments drive rising incremental demand for optical fiber",
+    "named_companies": [
+     "Corning (GLW)",
+     "Verizon (VZ/VZ)"
+    ],
+    "named_instruments": [],
+    "next_action": "Check Corning's fiber segment revenue, pricing exposure and order backlog, and identify other listed optical fiber/preform producers to assess who benefits most from the shortage and whether valuations already price it in.",
+    "other_named": [],
+    "partial_source": false,
+    "previous_action": null,
+    "private_named": [],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [
+     [
+      "L-s06-0",
+      "why now",
+      "Says 2026 prices are 'already rising 2.8-5x', stating as actual/current what the cited span C-64ac45bd160480 presents as a projection ('is projected to push'). Overstates a forecast as realized."
+     ]
+    ],
+    "rule_trace": [
+     "NOW all conditions met \u2014 near-term window(s) C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 10); source-named exposure(s): Corning (GLW), Verizon (VZ/VZ); verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "sector_exposures": [],
+    "sectors": [
+     "optical fiber suppliers",
+     "telecommunications equipment"
+    ],
+    "source_line": "TrendForce \u00b7 published 2026-10-19",
+    "sources": [
+     "TrendForce \u2014 TrendForce \u2014 \u201cOptical Fiber Spot Prices Surge Severalfold in 2026, with Data Center-Driven Supply Shortages Expected to Persist Through 2028, Says TrendForce\u201d (article date 2026-10-19) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-B1F096684F",
+    "title": "AI data center demand drives optical fiber shortage lifting fiber supplier pricing",
+    "version": 1,
+    "watch": "",
+    "what_changed": [
+     "Global optical fiber supply shortfall expected to reach 180 million fiber-kilometers in 2026",
+     "Spot prices for finished optical fiber products projected to reach 2.8-5x their 2025 levels or higher",
+     "Global optical fiber capacity utilization climbed to 92% in 2026",
+     "Average price of bend-insensitive fiber (BIF) expected to average more than 5x its 2025 level in 2026",
+     "AI data center demand has tightened global optical fiber supply since late 2025, with shortages expected to persist until at least 2028",
+     "Optical fiber inventory levels fell from four months in 2024 to just one month",
+     "showing 6 of 14 pieces of evidence from A-87c41612b31b \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Global optical fiber supply shortfall expected to reach 180 million fiber-kilometers in 2026 \u27e8cited figures: forecast\u27e9 [C-270a13f50f4acf]",
+     "[novelty_unverified] Spot prices for finished optical fiber products projected to reach 2.8-5x their 2025 levels or higher \u27e8cited figures: forecast\u27e9 [C-64ac45bd160480]",
+     "[novelty_unverified] Global optical fiber capacity utilization climbed to 92% in 2026 [C-ff9aac38fad269]",
+     "[novelty_unverified] Average price of bend-insensitive fiber (BIF) expected to average more than 5x its 2025 level in 2026 \u27e8cited figures: forecast\u27e9 [C-93a09f25f8ba7a]",
+     "[novelty_unverified] AI data center demand has tightened global optical fiber supply since late 2025, with shortages expected to persist until at least 2028 [C-077ca4e0a8c4ef]",
+     "[novelty_unverified] Optical fiber inventory levels fell from four months in 2024 to just one month [C-686ac1ba435753]",
+     "[novelty_unverified] showing 6 of 14 pieces of evidence from A-87c41612b31b \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why": [
+     "Research Now \u2014 a mispricing measured in the last quarter or a dated catalyst, timing inside the next 2-4 quarters, an exposure the source names, a premise the source states, and the full text read. An investigation, not a trade."
+    ],
+    "why_action": "Research Now \u2014 a mispricing measured in the last quarter or a dated catalyst, timing inside the next 2-4 quarters, an exposure the source names, a premise the source states, and the full text read. An investigation, not a trade."
+   },
+   {
+    "action": "RESEARCH NOW",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-15",
+    "card": "cards/TH-3C22A83E75.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026); C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "changed_plain": [
+     "Global AR glasses shipments forecast at 1.31 million units in 2026",
+     "2026 AR glasses shipments forecast represents 111.1% YoY growth",
+     "Global AR glasses shipments were 620,000 units in 2025",
+     "Meta expected to hold about 20% of global AR glasses shipments in 2026",
+     "The four major brands XREAL, Even Realities, Rokid and RayNeo projected to hold a combined 53.2% of shipments in 2026",
+     "Global AR glasses shipments projected to grow nearly 80% in 2027",
+     "showing 6 of 8 pieces of evidence from A-1c3e6ee1d553 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:16 UTC",
+    "flags": [],
+    "groups": [],
+    "impact_chain": [
+     "Industry shift",
+     "Listed-company earnings"
+    ],
+    "impact_line": "No earnings step stated by the source.",
+    "implications": [
+     "Industry shift: AR glasses transition from proof-of-concept to consumer market, drawing consumer attention after Meta's Ray-Ban Display momentum.",
+     "Volumes: Global shipments forecast to rise from 620,000 units (2025) to 1.31 million (2026), +111.1% YoY, and grow nearly 80% in 2027.",
+     "Listed-company earnings: Higher volumes would flow to brand and supply-chain revenue, but the article gives no revenue, margin or earnings figures for any listed company."
+    ],
+    "intake": [
+     "automatic (A-1c3e6ee1d553)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-15",
+    "mechanism": "Global shipments forecast to rise from 620,000 units (2025) to 1.31 million (2026), +111.1% YoY, and grow nearly 80% in 2027.",
+    "named_companies": [
+     "Meta (META)",
+     "XREAL (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Identify listed suppliers of OLEDoS, LEDoS and LCoS near-eye displays and assess their AR-glasses revenue exposure and the share each brand's volumes represent.",
+    "other_named": [],
+    "partial_source": false,
+    "previous_action": null,
+    "private_named": [
+     "Even Realities [private company]",
+     "Rokid [private company]",
+     "RayNeo [private company]"
+    ],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [
+     [
+      "L-s01-1",
+      "bottom line",
+      "The cited opinion spans mention Meta's Ray-Ban Display momentum drawing consumer attention and primary drivers, but 'transitioning from proof-of-concept to consumer market' and 'accelerating product development and channels to capture early demand' are not stated in the cited spans."
+     ],
+     [
+      "L-s03-0",
+      "economics",
+      "The cited span supports the Ray-Ban Display momentum drawing consumer attention, but 'transition from proof-of-concept to consumer market' is not in the cited span."
+     ],
+     [
+      "L-s06-1",
+      "why now",
+      "The nearly 80% 2027 growth figure is supported, but 'AR glasses moving into the consumer market' is not supported by the single cited forecast span."
+     ]
+    ],
+    "rule_trace": [
+     "NOW all conditions met \u2014 near-term window(s) C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026); C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "sector_exposures": [
+     "AR glasses (positive)",
+     "near-eye display (positive)"
+    ],
+    "sectors": [
+     "AR glasses",
+     "consumer electronics",
+     "near-eye display"
+    ],
+    "source_line": "TrendForce \u00b7 published 2026-10-15",
+    "sources": [
+     "TrendForce \u2014 TrendForce \u2014 \u201cMeta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce\u201d (article date 2026-10-15) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-3C22A83E75",
+    "title": "AR glasses shipments double in 2026 driven by Meta and Chinese brands",
+    "version": 1,
+    "watch": "",
+    "what_changed": [
+     "Global AR glasses shipments forecast at 1.31 million units in 2026",
+     "2026 AR glasses shipments forecast represents 111.1% YoY growth",
+     "Global AR glasses shipments were 620,000 units in 2025",
+     "Meta expected to hold about 20% of global AR glasses shipments in 2026",
+     "The four major brands XREAL, Even Realities, Rokid and RayNeo projected to hold a combined 53.2% of shipments in 2026",
+     "Global AR glasses shipments projected to grow nearly 80% in 2027",
+     "showing 6 of 8 pieces of evidence from A-1c3e6ee1d553 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Global AR glasses shipments forecast at 1.31 million units in 2026 \u27e8cited figures: forecast\u27e9 [C-8fc6400bb05f07]",
+     "[novelty_unverified] 2026 AR glasses shipments forecast represents 111.1% YoY growth \u27e8cited figures: forecast\u27e9 [C-d241416a394058]",
+     "[novelty_unverified] Global AR glasses shipments were 620,000 units in 2025 [C-43edca7ee80c70]",
+     "[novelty_unverified] Meta expected to hold about 20% of global AR glasses shipments in 2026 \u27e8cited figures: forecast; approximate\u27e9 [C-721296f9609ab7]",
+     "[novelty_unverified] The four major brands XREAL, Even Realities, Rokid and RayNeo projected to hold a combined 53.2% of shipments in 2026 \u27e8cited figures: forecast\u27e9 [C-9bdb9c5f8edeee]",
+     "[novelty_unverified] Global AR glasses shipments projected to grow nearly 80% in 2027 \u27e8cited figures: forecast; approximate\u27e9 [C-66860c5f782f79]",
+     "[novelty_unverified] showing 6 of 8 pieces of evidence from A-1c3e6ee1d553 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why": [
+     "Research Now \u2014 no recent mispricing or dated catalyst, but a credible near-term change in a fundamental: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026? An investigation, not a trade."
+    ],
+    "why_action": "Research Now \u2014 no recent mispricing or dated catalyst, but a credible near-term change in a fundamental: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026? An investigation, not a trade."
+   },
+   {
+    "action": "RESEARCH NOW",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-14",
+    "card": "cards/TH-0D381F307A.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-e73fc2c2e2ea33: forecast window 2026-01-01..2026-12-31 (2026); C-ff586ffdb4a789: forecast window 2026-01-01..2026-12-31 (2026); C-cc84fc2b0998dc: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): Amazon (AMZN), Meta (META), Microsoft (MSFT), Oracle (ORCL), CoreWeave (CRWV), NVIDIA (NVDA), AMD (AMD), sector: AI servers; a near-term fundamental inflection \u2014 C-e73fc2c2e2ea33: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Amazon, Meta, Microsoft, Oracle, CoreWeave, NVIDIA, AMD, AI servers already reflect CSP combined CapEx growth of 106% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "changed_plain": [
+     "Combined CSP CapEx is expected to surpass $1.5 trillion in 2027, a further 60% YoY increase",
+     "AI server shipments are forecast to grow 32.2% YoY in 2026",
+     "AI server shipments are projected to grow nearly 36% YoY in 2027",
+     "Combined CapEx of the nine leading CSPs is projected to rise 106% YoY to US$957 billion in 2026",
+     "Combined CSP CapEx is projected to reach US$957 billion in 2026",
+     "2027 CSP CapEx represents a 60% YoY increase",
+     "showing 6 of 8 pieces of evidence from A-373089a2ba59 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:20 UTC",
+    "flags": [],
+    "groups": [
+     "suppliers"
+    ],
+    "impact_chain": [
+     "Industry shift",
+     "Listed-company earnings"
+    ],
+    "impact_line": "No earnings step stated by the source.",
+    "implications": [
+     "Industry shift: Hyperscale CSPs and Tier-2 operators ramp investment in AI infrastructure.",
+     "Volumes: AI server shipments grow 32.2% in 2026 and nearly 36% in 2027.",
+     "Listed-company earnings: Higher procurement would flow to AI server and component suppliers' revenue, though the article does not quantify supplier earnings."
+    ],
+    "intake": [
+     "automatic (A-373089a2ba59)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-14",
+    "mechanism": "AI server shipments grow 32.2% in 2026 and nearly 36% in 2027.",
+    "named_companies": [
+     "Google (UNRESOLVED)",
+     "Amazon (AMZN)",
+     "Meta (META)",
+     "Microsoft (MSFT)",
+     "Oracle (ORCL)",
+     "Tencent (UNRESOLVED)",
+     "Alibaba (UNRESOLVED)",
+     "Baidu (UNRESOLVED)",
+     "Tesla (UNRESOLVED)",
+     "CoreWeave (CRWV)",
+     "NVIDIA (NVDA)",
+     "AMD (AMD)"
+    ],
+    "named_instruments": [],
+    "next_action": "Check whether listed AI server OEMs, NVIDIA and AMD consensus revenue estimates reflect TrendForce's 2027 shipment and CapEx growth, and how much of CapEx growth is price versus volume.",
+    "other_named": [],
+    "partial_source": false,
+    "previous_action": null,
+    "private_named": [
+     "ByteDance [private company]"
+    ],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [
+     [
+      "L-s03-0",
+      "economics",
+      "The cited forecast spans (CapEx surge, Tier-2 operators purchasing) support the idea of ramping investment, but 'Hyperscale CSPs and Tier-2 operators ramp investment' is a broader characterization; the Tier-2 span mentions continued purchasing of AI servers, not necessarily ramped investment. Still broadly consistent with cited spans."
+     ]
+    ],
+    "rule_trace": [
+     "NOW all conditions met \u2014 near-term window(s) C-e73fc2c2e2ea33: forecast window 2026-01-01..2026-12-31 (2026); C-ff586ffdb4a789: forecast window 2026-01-01..2026-12-31 (2026); C-cc84fc2b0998dc: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): Amazon (AMZN), Meta (META), Microsoft (MSFT), Oracle (ORCL), CoreWeave (CRWV), NVIDIA (NVDA), AMD (AMD), sector: AI servers; a near-term fundamental inflection \u2014 C-e73fc2c2e2ea33: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Amazon, Meta, Microsoft, Oracle, CoreWeave, NVIDIA, AMD, AI servers already reflect CSP combined CapEx growth of 106% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "sector_exposures": [
+     "AI servers (positive)"
+    ],
+    "sectors": [
+     "AI servers",
+     "Cloud service providers"
+    ],
+    "source_line": "TrendForce \u00b7 published 2026-10-14",
+    "sources": [
+     "TrendForce \u2014 TrendForce \u2014 \u201cCSP CapEx Projected to Exceed US$1.5 Trillion in 2027, with AI Server Revenue Growing Over 90% YoY on Higher Shipments and Prices, Says TrendForce\u201d (article date 2026-10-14) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-0D381F307A",
+    "title": "Surging CSP CapEx drives AI server shipments and spenders' infrastructure buildout",
+    "version": 1,
+    "watch": "",
+    "what_changed": [
+     "Combined CSP CapEx is expected to surpass $1.5 trillion in 2027, a further 60% YoY increase",
+     "AI server shipments are forecast to grow 32.2% YoY in 2026",
+     "AI server shipments are projected to grow nearly 36% YoY in 2027",
+     "Combined CapEx of the nine leading CSPs is projected to rise 106% YoY to US$957 billion in 2026",
+     "Combined CSP CapEx is projected to reach US$957 billion in 2026",
+     "2027 CSP CapEx represents a 60% YoY increase",
+     "showing 6 of 8 pieces of evidence from A-373089a2ba59 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Combined CSP CapEx is expected to surpass $1.5 trillion in 2027, a further 60% YoY increase \u27e8cited figures: forecast\u27e9 [C-d9303a2aa97087]",
+     "[novelty_unverified] AI server shipments are forecast to grow 32.2% YoY in 2026 \u27e8cited figures: forecast\u27e9 [C-cc84fc2b0998dc]",
+     "[novelty_unverified] AI server shipments are projected to grow nearly 36% YoY in 2027 \u27e8cited figures: forecast; approximate\u27e9 [C-c935d5c9c651cc]",
+     "[novelty_unverified] Combined CapEx of the nine leading CSPs is projected to rise 106% YoY to US$957 billion in 2026 \u27e8cited figures: forecast\u27e9 [C-e73fc2c2e2ea33]",
+     "[novelty_unverified] Combined CSP CapEx is projected to reach US$957 billion in 2026 \u27e8cited figures: forecast\u27e9 [C-ff586ffdb4a789]",
+     "[novelty_unverified] 2027 CSP CapEx represents a 60% YoY increase \u27e8cited figures: forecast\u27e9 [C-5ddde48e0564c3]",
+     "[novelty_unverified] showing 6 of 8 pieces of evidence from A-373089a2ba59 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why": [
+     "Research Now \u2014 no recent mispricing or dated catalyst, but a credible near-term change in a fundamental: do current earnings estimates and market expectations for Amazon, Meta, Microsoft, Oracle, CoreWeave, NVIDIA, AMD, AI servers already reflect CSP combined CapEx growth of 106% YoY in 2026? An investigation, not a trade."
+    ],
+    "why_action": "Research Now \u2014 no recent mispricing or dated catalyst, but a credible near-term change in a fundamental: do current earnings estimates and market expectations for Amazon, Meta, Microsoft, Oracle, CoreWeave, NVIDIA, AMD, AI servers already reflect CSP combined CapEx growth of 106% YoY in 2026? An investigation, not a trade."
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-19",
+    "card": "cards/TH-3557AAE138.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)",
+    "changed_plain": [
+     "More than 24GW of datacenters are in advanced stage of construction, most to be delivered in 2027",
+     "Year-to-date, slightly under USD 1 trillion of binding/non-cancellable datacenter leases have been signed",
+     "The >24GW figure covers 40 campuses, a small share of several hundred sites in advanced construction",
+     "+50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024",
+     "Datacenter developers typically spend only 5-10% of project capital before securing a customer",
+     "A typical datacenter pre-lease is a 15-20 year contract with total contract value of $30-50B per GW",
+     "showing 6 of 14 pieces of evidence from A-3211e327f4ef \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:10 UTC",
+    "flags": [],
+    "groups": [
+     "suppliers",
+     "vendors",
+     "US hyperscalers",
+     "hyperscalers"
+    ],
+    "impact_chain": [
+     "Industry shift",
+     "Listed-company earnings"
+    ],
+    "impact_line": "No earnings step stated by the source.",
+    "implications": [
+     "Industry shift: Over $1T of binding datacenter leases signed YTD 2026 and record hyperscaler construction starts drive a +50GW buildout in 2027.",
+     "Volumes: Buildout acceleration drives surging orders for electrical and datacenter equipment suppliers.",
+     "Listed-company earnings: Order growth would flow to supplier revenue and earnings, though the article does not quantify it."
+    ],
+    "intake": [
+     "automatic (A-3211e327f4ef)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-19",
+    "mechanism": "Buildout acceleration drives surging orders for electrical and datacenter equipment suppliers.",
+    "named_companies": [
+     "Vertiv (VRT)",
+     "ABB (UNRESOLVED)",
+     "Sterling Infrastructure (STRL)",
+     "Oracle (ORCL)",
+     "Microsoft (MSFT)"
+    ],
+    "named_instruments": [],
+    "next_action": "Check whether consensus order and revenue estimates for Vertiv, ABB and Sterling Infrastructure already embed a +50GW 2027 buildout, and track SemiAnalysis construction-start and lease indicators for inflection.",
+    "other_named": [],
+    "partial_source": true,
+    "previous_action": null,
+    "private_named": [
+     "DayOne [private company]"
+    ],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [
+     [
+      "L-s01-0",
+      "bottom line",
+      "States 'over $1T of binding leases' but cited span says 'slightly under USD 1T' \u2014 overstates. Pool C-05ec9740de39d2 ('over a trillion USD of lease value signed and closed') supports 'over $1T'."
+     ],
+     [
+      "L-s03-0",
+      "economics",
+      "States 'Over $1T' but cited span says 'slightly under USD 1T' \u2014 overstates. Pool C-05ec9740de39d2 supports 'over a trillion USD'."
+     ],
+     [
+      "L-s07-3",
+      "what could go wrong",
+      "withheld \u2014 failed source verification"
+     ],
+     [
+      "L-s07-6",
+      "what could go wrong",
+      "withheld \u2014 failed source verification"
+     ]
+    ],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)"
+    ],
+    "sector_exposures": [
+     "industrial suppliers (positive)"
+    ],
+    "sectors": [
+     "datacenter construction",
+     "industrials / electrical equipment"
+    ],
+    "source_line": "SemiAnalysis \u00b7 published 2026-10-19",
+    "sources": [
+     "SemiAnalysis \u2014 Jeremie Eliahou Ontiveros; Reyk Knuhtsen; Dylan Patel \u2014 \u201cDatacenters 2027: The Year of Acceleration, +50GW in a Single Year\u201d (article date 2026-10-19) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-3557AAE138",
+    "title": "AI datacenter buildout accelerates +50GW in 2027, lifting physical datacenter suppliers",
+    "version": 1,
+    "watch": "on hold",
+    "what_changed": [
+     "More than 24GW of datacenters are in advanced stage of construction, most to be delivered in 2027",
+     "Year-to-date, slightly under USD 1 trillion of binding/non-cancellable datacenter leases have been signed",
+     "The >24GW figure covers 40 campuses, a small share of several hundred sites in advanced construction",
+     "+50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024",
+     "Datacenter developers typically spend only 5-10% of project capital before securing a customer",
+     "A typical datacenter pre-lease is a 15-20 year contract with total contract value of $30-50B per GW",
+     "showing 6 of 14 pieces of evidence from A-3211e327f4ef \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] More than 24GW of datacenters are in advanced stage of construction, most to be delivered in 2027 [C-55d7eb6ef01aa0]",
+     "[novelty_unverified] Year-to-date, slightly under USD 1 trillion of binding/non-cancellable datacenter leases have been signed \u27e8cited figures: approximate\u27e9 [C-43a0db0d294cdb]",
+     "[novelty_unverified] The >24GW figure covers 40 campuses, a small share of several hundred sites in advanced construction [C-d142d0b248a87c, C-55d7eb6ef01aa0]",
+     "[novelty_unverified] +50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024 \u27e8cited figures: forecast; approximate\u27e9 [C-aebbfdbb7a3ce1]",
+     "[novelty_unverified] Datacenter developers typically spend only 5-10% of project capital before securing a customer [C-eb009c1580a8b8]",
+     "[novelty_unverified] A typical datacenter pre-lease is a 15-20 year contract with total contract value of $30-50B per GW [C-9f255c1088acce]",
+     "[novelty_unverified] showing 6 of 14 pieces of evidence from A-3211e327f4ef \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why": [
+     "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+     "Source \u2014 only part of the text was read."
+    ],
+    "why_action": "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental. Source \u2014 only part of the text was read."
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-19",
+    "card": "cards/TH-C1889ABBA5.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-aebbfdbb7a3ce1: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; C-a845c8f97fbe2e: opinion naming a window 2027-01-01..2027-12-31 (2027) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst; counter-evidence outweighs support; retrieval PARTIAL)",
+    "changed_plain": [
+     "+50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024",
+     "The acceleration in compute supply will likely drive material revenue acceleration for leading AI labs and token vendors"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:11 UTC",
+    "flags": [],
+    "groups": [
+     "vendors"
+    ],
+    "impact_chain": [
+     "Industry shift",
+     "Pricing"
+    ],
+    "impact_line": "No earnings step stated by the source.",
+    "implications": [
+     "Industry shift: The +50GW buildout produces significantly more compute supply.",
+     "Pricing: More supply makes AI cheaper and smarter, accelerating adoption.",
+     "Listed-company earnings: Likely material revenue acceleration for leading AI labs and token vendors, unquantified."
+    ],
+    "intake": [
+     "automatic (A-3211e327f4ef)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-19",
+    "mechanism": "Likely material revenue acceleration for leading AI labs and token vendors, unquantified.",
+    "named_companies": [],
+    "named_instruments": [],
+    "next_action": "Identify which listed companies (vs private labs) are token vendors exposed to cheaper compute, and whether more supply has historically expanded or compressed their margins.",
+    "other_named": [],
+    "partial_source": true,
+    "previous_action": null,
+    "private_named": [
+     "OpenAI [private company]",
+     "Anthropic [private company]"
+    ],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [
+     [
+      "L-s01-0",
+      "bottom line",
+      "Cited span only supports 'likely material revenue acceleration for leading AI labs and other token vendors'. The claims of 'cheaper and smarter AI' and 'faster model progress' are in a different span (C-e09585dce879fc) not cited here."
+     ],
+     [
+      "L-s03-0",
+      "economics",
+      "The +50GW span says it equals the global cumulative datacenter market built in one year; the revenue-acceleration span doesn't state 'significantly more compute supply'. The specific claim 'produces significantly more compute supply' is an interpretation not directly in either cited span, though close to the framing."
+     ],
+     [
+      "L-s03-1",
+      "economics",
+      "Cited span is about revenue acceleration; 'cheaper and smarter AI' is in C-e09585dce879fc, which is not cited here."
+     ],
+     [
+      "L-s06-0",
+      "why now",
+      "withheld \u2014 failed source verification"
+     ],
+     [
+      "L-s07-1",
+      "what could go wrong",
+      "Cited span supports memory/logic becoming the binding constraint, but does not mention 'datacenter oversupply' nor 'limiting usable compute'. Those extensions are not in the cited span."
+     ],
+     [
+      "L-s07-2",
+      "what could go wrong",
+      "withheld \u2014 failed source verification"
+     ]
+    ],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-aebbfdbb7a3ce1: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; C-a845c8f97fbe2e: opinion naming a window 2027-01-01..2027-12-31 (2027) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst; counter-evidence outweighs support; retrieval PARTIAL)"
+    ],
+    "sector_exposures": [
+     "leading AI labs and other token vendors (positive)"
+    ],
+    "sectors": [
+     "AI labs / model developers"
+    ],
+    "source_line": "SemiAnalysis \u00b7 published 2026-10-19",
+    "sources": [
+     "SemiAnalysis \u2014 Jeremie Eliahou Ontiveros; Reyk Knuhtsen; Dylan Patel \u2014 \u201cDatacenters 2027: The Year of Acceleration, +50GW in a Single Year\u201d (article date 2026-10-19) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-C1889ABBA5",
+    "title": "Compute supply surge in 2027 accelerates revenue for AI labs and token vendors",
+    "version": 1,
+    "watch": "on hold",
+    "what_changed": [
+     "+50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024",
+     "The acceleration in compute supply will likely drive material revenue acceleration for leading AI labs and token vendors"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] +50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024 \u27e8cited figures: forecast; approximate\u27e9 [C-aebbfdbb7a3ce1]",
+     "[novelty_unverified] The acceleration in compute supply will likely drive material revenue acceleration for leading AI labs and token vendors [C-a845c8f97fbe2e]"
+    ],
+    "why": [
+     "Timing \u2014 its dated figures run past the next four quarters; a full-year or multi-quarter figure is not a 2-4-quarter window.",
+     "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+     "Counter-evidence \u2014 its own sources' counter-observations outweigh its support.",
+     "Source \u2014 only part of the text was read."
+    ],
+    "why_action": "Timing \u2014 its dated figures run past the next four quarters; a full-year or multi-quarter figure is not a 2-4-quarter window. Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental. Counter-evidence \u2014 its own sources' counter-observations outweigh its support. Source \u2014 only part of the text was read."
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-16",
+    "card": "cards/TH-393DF5CD2B.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); premise is conditional in the source)",
+    "changed_plain": [
+     "Consensus calls for S&P 500 earnings to grow roughly 30% year-on-year, a third consecutive quarter above 25%",
+     "The current rate-rise episode shows S&P 500 up 1.1% versus a historical average of 0.4%",
+     "Historical average S&P 500 return across comparable rate-rise episodes was 0.4%",
+     "Equities sit less than 2% below all-time highs even after the recent sell-off",
+     "9 of 11 sectors expect double-digit earnings growth this year",
+     "Technology sector earnings are expected to grow 64% this year",
+     "showing 6 of 15 pieces of evidence from A-cfd53f3cc80a \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:14 UTC",
+    "flags": [
+     "REVIEW_NEEDED"
+    ],
+    "groups": [],
+    "impact_chain": [
+     "Listed-company earnings"
+    ],
+    "impact_line": "Listed-company earnings: Inflation and yields matter most for stocks when they weaken demand, compress margins, raise financing costs or force estimate cuts; until then equities absorb the volatility and consensus still projects ~30% EPS growth.",
+    "implications": [
+     "Industry shift: Successive upside inflation surprises (CPI +3.7% y/y, PPI +6.3% y/y) and two-decade-high long-end Treasury yields raise macro pressure on equities.",
+     "Listed-company earnings: Inflation and yields matter most for stocks when they weaken demand, compress margins, raise financing costs or force estimate cuts; until then equities absorb the volatility and consensus still projects ~30% EPS growth."
+    ],
+    "intake": [
+     "automatic (A-cfd53f3cc80a)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-16",
+    "mechanism": "Successive upside inflation surprises (CPI +3.7% y/y, PPI +6.3% y/y) and two-decade-high long-end Treasury yields raise macro pressure on equities.",
+    "named_companies": [],
+    "named_instruments": [],
+    "next_action": "Track incoming earnings-season guidance and revisions alongside high-yield credit spreads and core/services inflation to test whether any of the three stated warning signals is emerging.",
+    "other_named": [
+     "S&P 500 [broad market index \u2014 not counted]",
+     "equities [not a sector \u2014 not counted]"
+    ],
+    "partial_source": false,
+    "previous_action": null,
+    "private_named": [],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [
+     [
+      "L-s03-2",
+      "economics",
+      "Line is labelled MEASURED OBSERVATION but 'market treats current pressure as manageable' is the source's interpretation/opinion, not a measurement. The regime figures and <2% are measured, but the interpretive clause is stronger than its measured content."
+     ]
+    ],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); premise is conditional in the source)"
+    ],
+    "sector_exposures": [],
+    "sectors": [
+     "S&P 500",
+     "equities"
+    ],
+    "source_line": "J.P. Morgan Private Bank \u00b7 published 2026-10-16",
+    "sources": [
+     "J.P. Morgan Private Bank \u2014 Dana Harlap \u2014 \u201cInflation, yields and equities: When does the pressure actually matter?\u201d (article date 2026-10-16) \u2014 first record of this thesis"
+    ],
+    "status": "REVIEW_NEEDED",
+    "thesis_id": "TH-393DF5CD2B",
+    "title": "Equities can absorb above-target inflation and higher yields while earnings hold",
+    "version": 1,
+    "watch": "on hold",
+    "what_changed": [
+     "Consensus calls for S&P 500 earnings to grow roughly 30% year-on-year, a third consecutive quarter above 25%",
+     "The current rate-rise episode shows S&P 500 up 1.1% versus a historical average of 0.4%",
+     "Historical average S&P 500 return across comparable rate-rise episodes was 0.4%",
+     "Equities sit less than 2% below all-time highs even after the recent sell-off",
+     "9 of 11 sectors expect double-digit earnings growth this year",
+     "Technology sector earnings are expected to grow 64% this year",
+     "showing 6 of 15 pieces of evidence from A-cfd53f3cc80a \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger",
+     "Review needed: taxonomy node or mechanism is `other` \u2014 a human must classify it; it will never merge by similarity"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Consensus calls for S&P 500 earnings to grow roughly 30% year-on-year, a third consecutive quarter above 25% \u27e8cited figures: forecast; approximate\u27e9 [C-8e1b1a28683e02]",
+     "[novelty_unverified] The current rate-rise episode shows S&P 500 up 1.1% versus a historical average of 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9 [C-549dc81266d157]",
+     "[novelty_unverified] Historical average S&P 500 return across comparable rate-rise episodes was 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9 [C-0694ac75c57440]",
+     "[novelty_unverified] Equities sit less than 2% below all-time highs even after the recent sell-off [C-eb7415654980c8]",
+     "[novelty_unverified] 9 of 11 sectors expect double-digit earnings growth this year \u27e8cited figures: forecast\u27e9 [C-7854412a606444]",
+     "[novelty_unverified] Technology sector earnings are expected to grow 64% this year \u27e8cited figures: forecast\u27e9 [C-d6b280972f9a0a]",
+     "[novelty_unverified] showing 6 of 15 pieces of evidence from A-cfd53f3cc80a \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why": [
+     "Exposure \u2014 only a broad market index (S&P 500) and a name read as a sector that is not one (equities \u2014 the whole market, not a sector) \u2014 none is counted as an exposure.",
+     "Premise \u2014 conditional in the source."
+    ],
+    "why_action": "Exposure \u2014 only a broad market index (S&P 500) and a name read as a sector that is not one (equities \u2014 the whole market, not a sector) \u2014 none is counted as an exposure. Premise \u2014 conditional in the source."
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-15",
+    "card": "cards/TH-722932E64F.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "changed_plain": [
+     "OLEDoS and LEDoS combined expected to account for about 80% of the AR glasses display market"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:16 UTC",
+    "flags": [],
+    "groups": [],
+    "impact_chain": [
+     "Industry shift",
+     "Volumes",
+     "Listed-company earnings"
+    ],
+    "impact_line": "No earnings step stated by the source.",
+    "implications": [
+     "Industry shift: AR glasses adoption drives OLEDoS, LEDoS and LCoS display technology development, including monochrome green and dual-color red-green solutions.",
+     "Volumes: OLEDoS and LEDoS combined expected to hold ~80% of the display market as shipments reach new highs.",
+     "Listed-company earnings: Higher display volumes would flow to microdisplay suppliers' revenue, but the article names no suppliers and quantifies no earnings effect."
+    ],
+    "intake": [
+     "automatic (A-1c3e6ee1d553)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-15",
+    "mechanism": "Category: Unit demand / volume growth or decline",
+    "named_companies": [
+     "Meta (META)"
+    ],
+    "named_instruments": [],
+    "next_action": "Map listed microdisplay suppliers (OLEDoS, LEDoS, LCoS) and their AR-glasses design wins, capacity plans and the pricing implications of OLEDoS capacity coming online.",
+    "other_named": [],
+    "partial_source": false,
+    "previous_action": null,
+    "private_named": [],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [
+     [
+      "L-s01-0",
+      "bottom line",
+      "The cited span only supports the ~80% combined OLEDoS+LEDoS figure. The claims about OLEDoS keeping a slight lead, LCoS adoption growing through Meta's products, and display tech improving specs/expanding applications are not in the cited span."
+     ],
+     [
+      "L-s03-0",
+      "economics",
+      "The cited span supports only the ~80% combined share. It says nothing about AR glasses adoption driving display tech development, nor about monochrome green or dual-color red-green solutions."
+     ],
+     [
+      "L-s03-1",
+      "economics",
+      "The ~80% combined share is supported, but 'as shipments reach new highs' is not in the cited span (though shipment growth figures exist in the pool, they do not cover the specific 'new highs' claim and are not cited here)."
+     ],
+     [
+      "L-s06-1",
+      "why now",
+      "The cited span only supports the ~80% figure, not that LEDoS/OLEDoS improve specs, LCoS grows through Meta, or that brands get wider options and cost flexibility. None of the pool spans support these specific claims."
+     ]
+    ],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [
+     "OLEDoS (positive)",
+     "LEDoS (positive)",
+     "LCoS (positive)"
+    ],
+    "sectors": [
+     "near-eye display",
+     "microdisplay",
+     "OLEDoS",
+     "LEDoS",
+     "LCoS"
+    ],
+    "source_line": "TrendForce \u00b7 published 2026-10-15",
+    "sources": [
+     "TrendForce \u2014 TrendForce \u2014 \u201cMeta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce\u201d (article date 2026-10-15) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-722932E64F",
+    "title": "Near-eye microdisplay makers benefit as OLEDoS, LEDoS and LCoS scale with AR glasses",
+    "version": 1,
+    "watch": "on hold",
+    "what_changed": [
+     "OLEDoS and LEDoS combined expected to account for about 80% of the AR glasses display market"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] OLEDoS and LEDoS combined expected to account for about 80% of the AR glasses display market \u27e8cited figures: forecast; approximate\u27e9 [C-0e6b6ca9a0c35c]"
+    ],
+    "why": [
+     "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+    ],
+    "why_action": "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-15",
+    "card": "cards/TH-77926B9936.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: retrieval PARTIAL)",
+    "changed_plain": [
+     "ASML filed 27 bonding patent families between December 2022 and November 2024, most of them die-to-wafer.",
+     "The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.",
+     "ASML's NXT:2100i holds 0.9nm overlay on a single machine.",
+     "ASML metrology plus scanner correction brings post-bond overlay from 40-60nm down to below 4nm.",
+     "ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV",
+     "ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm",
+     "showing 6 of 13 pieces of evidence from A-7b20abdd06d4 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:18 UTC",
+    "flags": [],
+    "groups": [
+     "DRAM makers"
+    ],
+    "impact_chain": [
+     "Industry shift",
+     "Volumes",
+     "Pricing",
+     "Listed-company earnings"
+    ],
+    "impact_line": "No earnings step stated by the source.",
+    "implications": [
+     "Industry shift: ASML extends vertical integration into back-end hybrid bonding, building a track-based D2W bonder leveraging its litho alignment and cleanliness expertise.",
+     "Volumes: ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi's unit volumes in its core logic segment; article does not quantify.",
+     "Pricing: ASML expected to price tools at a premium to peers given expensive advanced-logic dies.",
+     "Listed-company earnings: Share shift from Besi to ASML would erode Besi's HB revenue while adding to ASML's back-end sales; article quantifies neither."
+    ],
+    "intake": [
+     "automatic (A-7b20abdd06d4)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-15",
+    "mechanism": "Category: Market-share shift between competitors",
+    "named_companies": [
+     "ASML (UNRESOLVED)",
+     "Besi (UNRESOLVED)",
+     "TSMC (UNRESOLVED)",
+     "Intel (INTC)",
+     "Intel Foundry (UNRESOLVED)",
+     "Samsung (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Track ASML's hybrid bonder patent filings and any management announcement, and estimate Besi's HB revenue concentration in logic (TSMC/Intel) and HBM to size the competitive threat.",
+    "other_named": [],
+    "partial_source": true,
+    "previous_action": null,
+    "private_named": [
+     "Prodrive Technologies [private company]",
+     "VDL ETG [private company]"
+    ],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [
+     [
+      "L-s03-0",
+      "economics",
+      "Labelled MEASURED OBSERVATION but 'extends vertical integration' and 'building a track-based D2W bonder leveraging its litho alignment' is interpretation; the cited spans (27 patent families, 0.9nm overlay, post-bond overlay) do not establish that ASML is building a track-based bonder. The architecture-design report (C-88e096720cc437) is not cited here."
+     ],
+     [
+      "L-s03-2",
+      "economics",
+      "Cited span supports premium pricing expectation but says nothing about 'given expensive advanced-logic dies'; that rationale is unsupported."
+     ],
+     [
+      "L-s06-0",
+      "why now",
+      "Cited spans support SoIC pitch tightening to 4.5um by/around 2029, but 'A bonder has not been announced by management' and 'adoption would unfold over years' are not in the cited spans."
+     ],
+     [
+      "L-s07-0",
+      "what could go wrong",
+      "Cited span supports Besi leading D2W and being the only volume supplier, but 'ASML has not announced a tool and still must solve feed-forward metrology, D2W contact and cleanliness challenges' is not in the cited span."
+     ]
+    ],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+    ],
+    "sector_exposures": [],
+    "sectors": [
+     "semiconductor equipment",
+     "advanced packaging"
+    ],
+    "source_line": "SemiAnalysis \u00b7 published 2026-10-15",
+    "sources": [
+     "SemiAnalysis \u2014 Sherry Zhang; Gerald Wong; Steven Lee; Dylan Patel \u2014 \u201cASML Is Building a Hybrid Bonding Tool, Sending More Chills to Besi\u201d (article date 2026-10-15) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-77926B9936",
+    "title": "ASML's hybrid bonding tool threatens Besi's logic and HBM equipment franchise",
+    "version": 1,
+    "watch": "needs data",
+    "what_changed": [
+     "ASML filed 27 bonding patent families between December 2022 and November 2024, most of them die-to-wafer.",
+     "The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.",
+     "ASML's NXT:2100i holds 0.9nm overlay on a single machine.",
+     "ASML metrology plus scanner correction brings post-bond overlay from 40-60nm down to below 4nm.",
+     "ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV",
+     "ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm",
+     "showing 6 of 13 pieces of evidence from A-7b20abdd06d4 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] ASML filed 27 bonding patent families between December 2022 and November 2024, most of them die-to-wafer. [C-728446ee4035c2]",
+     "[novelty_unverified] The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG. [C-88e096720cc437]",
+     "[novelty_unverified] ASML's NXT:2100i holds 0.9nm overlay on a single machine. [C-8078cb66a0f31e]",
+     "[novelty_unverified] ASML metrology plus scanner correction brings post-bond overlay from 40-60nm down to below 4nm. [C-fbdaa878bf7d2a]",
+     "[novelty_unverified] ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV [C-c778dba9b52a3b]",
+     "[novelty_unverified] ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm [C-b2bb023eb6ca55]",
+     "[novelty_unverified] showing 6 of 13 pieces of evidence from A-7b20abdd06d4 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why": [
+     "Source \u2014 only part of the text was read."
+    ],
+    "why_action": "Source \u2014 only part of the text was read."
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-14",
+    "card": "cards/TH-05208D689A.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "changed_plain": [
+     "AI server revenue is projected to grow more than 90% YoY to nearly $920 billion in 2027",
+     "AI servers' share of total server market revenue is expected to rise to approximately 81% in 2027",
+     "AI server shipments are projected to grow nearly 36% YoY in 2027",
+     "AI servers are expected to generate approximately $479 billion in revenue in 2026",
+     "AI servers would account for nearly 75% of 2026 total server market revenue",
+     "Total server market revenue is projected at $639.2 billion in 2026",
+     "showing 6 of 9 pieces of evidence from A-373089a2ba59 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:21 UTC",
+    "flags": [],
+    "groups": [
+     "suppliers"
+    ],
+    "impact_chain": [
+     "Pricing",
+     "Listed-company earnings"
+    ],
+    "impact_line": "Listed-company earnings: AI server revenue surges over 90% to nearly $920bn in 2027 on higher shipments and prices.",
+    "implications": [
+     "Industry shift: Shortages of key AI server components, particularly memory, emerge amid strong demand.",
+     "Pricing: Component shortages drive up ASPs of next-generation AI server racks.",
+     "Listed-company earnings: AI server revenue surges over 90% to nearly $920bn in 2027 on higher shipments and prices."
+    ],
+    "intake": [
+     "automatic (A-373089a2ba59)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-14",
+    "mechanism": "Shortages of key AI server components, particularly memory, emerge amid strong demand.",
+    "named_companies": [
+     "NVIDIA (NVDA)",
+     "AMD (AMD)"
+    ],
+    "named_instruments": [],
+    "next_action": "Identify which listed memory and server-component suppliers benefit most from AI server ASP inflation and whether their margins expand, not just revenue.",
+    "other_named": [],
+    "partial_source": false,
+    "previous_action": null,
+    "private_named": [],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [
+     "AI servers (positive)",
+     "memory (positive)"
+    ],
+    "sectors": [
+     "AI servers",
+     "Memory",
+     "Server components"
+    ],
+    "source_line": "TrendForce \u00b7 published 2026-10-14",
+    "sources": [
+     "TrendForce \u2014 TrendForce \u2014 \u201cCSP CapEx Projected to Exceed US$1.5 Trillion in 2027, with AI Server Revenue Growing Over 90% YoY on Higher Shipments and Prices, Says TrendForce\u201d (article date 2026-10-14) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-05208D689A",
+    "title": "Component shortages, especially memory, lift AI server rack ASPs and revenue",
+    "version": 1,
+    "watch": "on hold",
+    "what_changed": [
+     "AI server revenue is projected to grow more than 90% YoY to nearly $920 billion in 2027",
+     "AI servers' share of total server market revenue is expected to rise to approximately 81% in 2027",
+     "AI server shipments are projected to grow nearly 36% YoY in 2027",
+     "AI servers are expected to generate approximately $479 billion in revenue in 2026",
+     "AI servers would account for nearly 75% of 2026 total server market revenue",
+     "Total server market revenue is projected at $639.2 billion in 2026",
+     "showing 6 of 9 pieces of evidence from A-373089a2ba59 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] AI server revenue is projected to grow more than 90% YoY to nearly $920 billion in 2027 \u27e8cited figures: forecast\u27e9 [C-94066f8039b78f]",
+     "[novelty_unverified] AI servers' share of total server market revenue is expected to rise to approximately 81% in 2027 \u27e8cited figures: forecast; approximate\u27e9 [C-fd7bbcfef92b58]",
+     "[novelty_unverified] AI server shipments are projected to grow nearly 36% YoY in 2027 \u27e8cited figures: forecast; approximate\u27e9 [C-c935d5c9c651cc]",
+     "[novelty_unverified] AI servers are expected to generate approximately $479 billion in revenue in 2026 \u27e8cited figures: forecast; approximate\u27e9 [C-7a7bfa99568dd8]",
+     "[novelty_unverified] AI servers would account for nearly 75% of 2026 total server market revenue \u27e8cited figures: forecast; approximate\u27e9 [C-9eda2759aac841]",
+     "[novelty_unverified] Total server market revenue is projected at $639.2 billion in 2026 \u27e8cited figures: forecast\u27e9 [C-9858ddc8032be7]",
+     "[novelty_unverified] showing 6 of 9 pieces of evidence from A-373089a2ba59 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why": [
+     "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+    ],
+    "why_action": "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+   },
+   {
+    "action": "WATCH",
+    "analysis_as_of": "2026-10-21",
+    "article_date": "2026-10-13",
+    "card": "cards/TH-921772E86C.html",
+    "category": "NEW",
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "changed_plain": [
+     "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities.",
+     "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces.",
+     "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+     "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures.",
+     "A complete test of a single PIC can still take over 100 seconds.",
+     "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production.",
+     "showing 6 of 14 pieces of evidence from A-0b9c4a3220b7 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "events": [
+     "New"
+    ],
+    "evidence_direction": "NEW",
+    "first_ingested": "2026-10-21 08:22 UTC",
+    "flags": [],
+    "groups": [
+     "ATE suppliers",
+     "suppliers"
+    ],
+    "impact_chain": [
+     "Volumes",
+     "Listed-company earnings (not quantified)"
+    ],
+    "impact_line": "The source does not quantify an effect on listed-company earnings.",
+    "implications": [
+     "Industry shift: AI data center high-speed transmission demand accelerates CPO toward mass production, requiring coordinated electrical and optical testing.",
+     "Volumes: Demand for integrated test equipment and software rises; platform-integration suppliers would see higher equipment volumes, though the article does not quantify revenue or earnings.",
+     "Listed-company earnings: UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+    ],
+    "intake": [
+     "automatic (A-0b9c4a3220b7)"
+    ],
+    "kind": "investment_thesis",
+    "last_material_update": "2026-10-13",
+    "mechanism": "AI data center high-speed transmission demand accelerates CPO toward mass production, requiring coordinated electrical and optical testing.",
+    "named_companies": [
+     "Teradyne (TER)",
+     "Advantest (UNRESOLVED)",
+     "VIAVI (VIAV)",
+     "SENKO (UNRESOLVED)",
+     "GMT Global (UNRESOLVED)",
+     "MPI (UNRESOLVED)",
+     "WinWay (UNRESOLVED)",
+     "Chroma (UNRESOLVED)",
+     "MSS (UNRESOLVED)",
+     "MA-tek (UNRESOLVED)",
+     "iST (UNRESOLVED)",
+     "ASE (UNRESOLVED)",
+     "Semight Instruments (UNRESOLVED)"
+    ],
+    "named_instruments": [],
+    "next_action": "Identify which listed ATE, test interface and OSAT names have disclosed CPO testing revenue or order pipelines and compare to current valuations.",
+    "other_named": [],
+    "partial_source": false,
+    "previous_action": null,
+    "private_named": [],
+    "resolved_lines": [],
+    "retired": false,
+    "review_lines": [],
+    "rule_trace": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "sector_exposures": [
+     "ATE (positive)",
+     "core optical coupling and alignment modules (positive)"
+    ],
+    "sectors": [
+     "Semiconductors",
+     "Semiconductor test equipment",
+     "CPO testing supply chain"
+    ],
+    "source_line": "TrendForce \u00b7 published 2026-10-13",
+    "sources": [
+     "TrendForce \u2014 TrendForce \u2014 \u201cIntegrated Optical-Electrical Testing Platforms Become Key to CPO Mass Production, Reshaping the Test Equipment Supply Chain, Says TrendForce\u201d (article date 2026-10-13) \u2014 first record of this thesis"
+    ],
+    "status": "ACTIVE",
+    "thesis_id": "TH-921772E86C",
+    "title": "CPO mass production shifts value to integrated optical-electrical test platform suppliers",
+    "version": 1,
+    "watch": "on hold",
+    "what_changed": [
+     "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities.",
+     "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces.",
+     "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+     "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures.",
+     "A complete test of a single PIC can still take over 100 seconds.",
+     "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production.",
+     "showing 6 of 14 pieces of evidence from A-0b9c4a3220b7 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "what_changed_audit": [
+     "[novelty_unverified] Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities. [C-f469d4818f8bc4]",
+     "[novelty_unverified] In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces. [C-efdfd32558ded0]",
+     "[novelty_unverified] The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026. [C-0183ab791418b5]",
+     "[novelty_unverified] TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures. \u27e8cited figures: forecast\u27e9 [C-b59b95affce9ba]",
+     "[novelty_unverified] A complete test of a single PIC can still take over 100 seconds. [C-2305ad3d030b6c]",
+     "[novelty_unverified] TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production. \u27e8cited figures: forecast\u27e9 [C-3f01a7042c78ab]",
+     "[novelty_unverified] showing 6 of 14 pieces of evidence from A-0b9c4a3220b7 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    ],
+    "why": [
+     "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+    ],
+    "why_action": "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+   }
+  ],
+  "UNCHANGED BUT MATERIAL": [],
+  "UPGRADED": []
+ },
+ "caveats": [
+  "NUMBER_NOT_IN_SPAN C-05ec9740de39d2: c10: number check failed: value=1.0 value_text='over a trillion USD' vs quote \u2014 quote 'we\u2019ve identified over a trillion USD of lease value that was signed and closed'",
+  "FIGURE_UNCAPTURED A-373089a2ba59: b007: '36%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Strong financial resources fuel AI server procurement, with shipment growth expected to approach 36% in 2027'",
+  "PARTIAL_RETRIEVAL A-7b20abdd06d4: only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "PARTIAL_RETRIEVAL A-3211e327f4ef: only part of the article was retrieved \u2014 no claim of full-text verification is made"
+ ],
+ "figures_in_articles": 124,
+ "figures_uncaptured": 1,
+ "generated": "Generated 2026-10-21 08:25 UTC from the registry (ti-engine-5; run R-20261021T080508Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "intake": {
+  "automatic": {
+   "items": [
+    "TrendForce \u2014 \u201cIntegrated Optical-Electrical Testing Platforms Become Key to CPO Mass Production, Reshaping the Test Equipment Supply Chain, Says TrendForce\u201d \u2014 published 2026-10-13; FULL; analysed as of 2026-10-21 (scan run) [A-0b9c4a3220b7]",
+    "TrendForce \u2014 \u201cMeta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce\u201d \u2014 published 2026-10-15; FULL; analysed as of 2026-10-21 (scan run) [A-1c3e6ee1d553]",
+    "SemiAnalysis \u2014 \u201cDatacenters 2027: The Year of Acceleration, +50GW in a Single Year\u201d \u2014 published 2026-10-19; PARTIAL; analysed as of 2026-10-21 (scan run) [A-3211e327f4ef]",
+    "TrendForce \u2014 \u201cCSP CapEx Projected to Exceed US$1.5 Trillion in 2027, with AI Server Revenue Growing Over 90% YoY on Higher Shipments and Prices, Says TrendForce\u201d \u2014 published 2026-10-14; FULL; analysed as of 2026-10-21 (scan run) [A-373089a2ba59]",
+    "SemiAnalysis \u2014 \u201cASML Is Building a Hybrid Bonding Tool, Sending More Chills to Besi\u201d \u2014 published 2026-10-15; PARTIAL; analysed as of 2026-10-21 (scan run) [A-7b20abdd06d4]",
+    "TrendForce \u2014 \u201cOptical Fiber Spot Prices Surge Severalfold in 2026, with Data Center-Driven Supply Shortages Expected to Persist Through 2028, Says TrendForce\u201d \u2014 published 2026-10-19; FULL; analysed as of 2026-10-21 (scan run) [A-87c41612b31b]",
+    "J.P. Morgan Private Bank \u2014 \u201cInflation, yields and equities: When does the pressure actually matter?\u201d \u2014 published 2026-10-16; FULL; analysed as of 2026-10-21 (scan run) [A-cfd53f3cc80a]"
+   ],
+   "total": 7
+  },
+  "awaiting_documents": {
+   "items": [],
+   "total": 0
+  },
+  "coverage": {
+   "items": [
+    "Citi [automatic; access HEALTHY] \u2014 0 article(s) analysed automatically, 0 supplied \u2014 automated coverage",
+    "J.P. Morgan Private Bank [automatic; access HEALTHY] \u2014 1 article(s) analysed automatically, 0 supplied \u2014 automated coverage",
+    "Morgan Stanley [manual-first; access BLOCKED] \u2014 0 article(s) analysed automatically, 0 supplied \u2014 MANUAL-FIRST \u2014 nothing supplied this week: its research this week is MISSING, not absent",
+    "TrendForce [automatic; access HEALTHY] \u2014 4 article(s) analysed automatically, 0 supplied \u2014 automated coverage",
+    "SemiAnalysis [automatic; access DEGRADED] \u2014 2 article(s) analysed automatically, 0 supplied \u2014 PARTIAL automated coverage \u2014 see source health",
+    "Goldman Sachs [manual-first; access BLOCKED] \u2014 0 article(s) analysed automatically, 0 supplied \u2014 MANUAL-FIRST \u2014 nothing supplied this week: its research this week is MISSING, not absent"
+   ],
+   "total": 6
+  },
+  "coverage_gaps": {
+   "items": [
+    "Morgan Stanley: coverage UNKNOWN (BLOCKED) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing",
+    "Goldman Sachs: coverage UNKNOWN (BLOCKED) \u2014 what it published cannot be seen by this system; no new article from it is NOT evidence it published nothing",
+    "citi_must_c: partial discovery \u2014 the Must C page embeds its 20 linked series items; older items are not listed there"
+   ],
+   "total": 3
+  },
+  "coverage_plain": {
+   "items": [
+    "Citi \u2014 read automatically: 0 read this week",
+    "J.P. Morgan Private Bank \u2014 read automatically: 1 read this week",
+    "Morgan Stanley \u2014 by upload (the site refuses automated reading): nothing supplied this week \u2014 its research this week is missing, not absent",
+    "TrendForce \u2014 read automatically: 4 read this week",
+    "SemiAnalysis \u2014 read automatically, in part: 2 read this week",
+    "Goldman Sachs \u2014 by upload (the site refuses automated reading): nothing supplied this week \u2014 its research this week is missing, not absent"
+   ],
+   "total": 6
+  },
+  "line": "7 analysed automatically \u00b7 0 imported manually \u00b7 0 partial awaiting a complete document \u00b7 3 publisher(s) blocked or degraded \u00b7 2 needing an upload \u00b7 0 needing a metadata, licence or visual check \u00b7 3 coverage gap(s)",
+  "manual": {
+   "items": [],
+   "total": 0
+  },
+  "needs_metadata": {
+   "items": [],
+   "total": 0
+  },
+  "needs_upload": {
+   "items": [
+    "Morgan Stanley (channel BLOCKED) \u2014 automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>] \u2014 known: unknown \u2014 the channel cannot be read",
+    "Goldman Sachs (channel BLOCKED) \u2014 automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>] \u2014 known: unknown \u2014 the channel cannot be read"
+   ],
+   "total": 2
+  },
+  "publishers": {
+   "items": [
+    "Morgan Stanley: BLOCKED \u2014 robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+    "SemiAnalysis: DEGRADED \u2014 partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable",
+    "Goldman Sachs: BLOCKED \u2014 https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)"
+   ],
+   "total": 3
+  },
+  "runs": [
+   "R-20261020T180551Z-market (market, as of 2026-10-20, SUCCEEDED)",
+   "R-20261021T080508Z-scan (scan, as of 2026-10-21, SUCCEEDED)"
+  ]
+ },
+ "kpi": {
+  "accessible_sources": "4 of 4",
+  "archived": 0,
+  "articles_blocked": 0,
+  "articles_full": 5,
+  "articles_partial": 2,
+  "blocked_sources": "none",
+  "challenged": 0,
+  "downgraded": 0,
+  "figures_in_articles": 124,
+  "figures_uncaptured": 1,
+  "manual_first_sources": "Morgan Stanley [automated access BLOCKED], Goldman Sachs [automated access BLOCKED]",
+  "manually_imported": 0,
+  "new": 10,
+  "queued": 0,
+  "research_now": 3,
+  "retired": 0,
+  "skip": 0,
+  "theses_this_run": 10,
+  "upgraded": 0,
+  "upload_only_sources": "Morgan Stanley, Goldman Sachs",
+  "watch": 7
+ },
+ "no_evidence": [],
+ "no_material_change": [],
+ "notes": [],
+ "report_runs": [
+  "R-20261020T180551Z-market",
+  "R-20261021T080508Z-scan"
+ ],
+ "run": {
+  "as_of": "2026-10-21",
+  "checkpoint": {
+   "https://newsletter.semianalysis.com/p/asml-is-building-a-hybrid-bonding": "PARTIAL_PROCESSED",
+   "https://newsletter.semianalysis.com/p/datacenters-2027-the-year-of-acceleration": "PARTIAL_PROCESSED",
+   "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/inflation-yields-and-equities-when-does-the-pressure-actually-matter": "PROCESSED",
+   "https://www.trendforce.com/presscenter/news/20261013-13267.html": "PROCESSED",
+   "https://www.trendforce.com/presscenter/news/20261014-13269.html": "PROCESSED",
+   "https://www.trendforce.com/presscenter/news/20261015-13273.html": "PROCESSED",
+   "https://www.trendforce.com/presscenter/news/20261019-13275.html": "PROCESSED"
+  },
+  "complete_prompt_version": "ti-complete-1",
+  "cost_usd": 4.445,
+  "counts": {
+   "articles_partial": 2,
+   "articles_processed": 7,
+   "articles_queued": 0,
+   "attributions_only": 0,
+   "claims_added_by_completeness": 25,
+   "claims_extracted": 150,
+   "claims_verified": 150,
+   "figures_in_articles": 124,
+   "figures_uncaptured": 1,
+   "http_cache_hits": 12,
+   "http_requests": 23,
+   "llm_calls": 38,
+   "llm_calls_cached": 0,
+   "mentions": 87,
+   "theses_added_by_completeness": 1,
+   "theses_created": 10,
+   "theses_enriched": 9,
+   "theses_updated": 0
+  },
+  "db_schema_version": 7,
+  "engine_version": "ti-engine-5",
+  "extract_prompt_version": "ti-extract-6",
+  "fetch_seconds": 121.0,
+  "finished_at": "2026-10-21T08:25:42.284857Z",
+  "ledger_only": "",
+  "llm_model": "claude-opus-4-8",
+  "llm_provider": "anthropic",
+  "llm_seconds": 1046.8,
+  "mode": "scan",
+  "output_dir": "data/theme_intelligence/runs/R-20261021T080508Z-scan",
+  "parser_version": "ti-parse-8",
+  "replay_of": [],
+  "review_prompt_version": "ti-review-4",
+  "run_id": "R-20261021T080508Z-scan",
+  "sources": [
+   {
+    "already_known": 0,
+    "channel": "Citi Must C (Citi Research public insights)",
+    "checked_at": "2026-10-21T08:07:09.914123Z",
+    "discovered": 20,
+    "entry_points": [
+     "https://www.citigroup.com/global/insights/must-c"
+    ],
+    "errors": [],
+    "in_window": 0,
+    "inaccessible": 0,
+    "method": "Must C page embedded CMS data (__NEXT_DATA__ contentMap: series items with CMS publishDate)",
+    "new": 0,
+    "processed": 0,
+    "publisher": "Citi",
+    "queued": 0,
+    "skipped_out_of_window": 20,
+    "source_id": "citi_must_c",
+    "status": "OK",
+    "truncation": "the Must C page embeds its 20 linked series items; older items are not listed there",
+    "undated": 0,
+    "warnings": []
+   },
+   {
+    "already_known": 0,
+    "channel": "J.P. Morgan Top Market Takeaways",
+    "checked_at": "2026-10-21T08:07:09.944057Z",
+    "discovered": 52,
+    "entry_points": [
+     "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt"
+    ],
+    "errors": [],
+    "in_window": 1,
+    "inaccessible": 0,
+    "method": "Top Market Takeaways listing cards (card date); sitemap lastmod as fallback",
+    "new": 1,
+    "processed": 1,
+    "publisher": "J.P. Morgan Private Bank",
+    "queued": 0,
+    "skipped_out_of_window": 51,
+    "source_id": "jpm_tmt",
+    "status": "OK",
+    "truncation": null,
+    "undated": 0,
+    "warnings": []
+   },
+   {
+    "already_known": 0,
+    "channel": "Morgan Stanley Research",
+    "checked_at": "2026-10-20T18:03:52.571739Z",
+    "discovered": 0,
+    "entry_points": [],
+    "errors": [],
+    "in_window": 0,
+    "inaccessible": 0,
+    "method": "manual-first: lightweight health check only \u2014 research arrives as authorised uploads (ingest-file)",
+    "new": 0,
+    "processed": 0,
+    "publisher": "Morgan Stanley",
+    "queued": 0,
+    "skipped_out_of_window": 0,
+    "source_id": "ms_research",
+    "status": "MANUAL_FIRST",
+    "truncation": null,
+    "undated": 0,
+    "warnings": [
+     "automated access: BLOCKED \u2014 robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservative"
+    ]
+   },
+   {
+    "already_known": 0,
+    "channel": "TrendForce press center news",
+    "checked_at": "2026-10-21T08:07:10.428742Z",
+    "discovered": 5,
+    "entry_points": [
+     "https://www.trendforce.com/presscenter/news"
+    ],
+    "errors": [],
+    "in_window": 4,
+    "inaccessible": 0,
+    "method": "press-center listing pages ?page=N (date in the article URL)",
+    "new": 4,
+    "processed": 4,
+    "publisher": "TrendForce",
+    "queued": 0,
+    "skipped_out_of_window": 1,
+    "source_id": "trendforce",
+    "status": "OK",
+    "truncation": null,
+    "undated": 0,
+    "warnings": []
+   },
+   {
+    "already_known": 0,
+    "channel": "SemiAnalysis (site + its newsletter feed)",
+    "checked_at": "2026-10-21T08:07:10.465142Z",
+    "discovered": 20,
+    "entry_points": [
+     "https://newsletter.semianalysis.com/feed"
+    ],
+    "errors": [],
+    "in_window": 2,
+    "inaccessible": 0,
+    "method": "newsletter RSS feed (item pubDate)",
+    "new": 2,
+    "processed": 2,
+    "publisher": "SemiAnalysis",
+    "queued": 0,
+    "skipped_out_of_window": 18,
+    "source_id": "semianalysis",
+    "status": "OK",
+    "truncation": null,
+    "undated": 0,
+    "warnings": []
+   },
+   {
+    "already_known": 0,
+    "channel": "Goldman Sachs Research insights",
+    "checked_at": "2026-10-20T18:05:38.047091Z",
+    "discovered": 0,
+    "entry_points": [],
+    "errors": [],
+    "in_window": 0,
+    "inaccessible": 0,
+    "method": "manual-first: lightweight health check only \u2014 research arrives as authorised uploads (ingest-file)",
+    "new": 0,
+    "processed": 0,
+    "publisher": "Goldman Sachs",
+    "queued": 0,
+    "skipped_out_of_window": 0,
+    "source_id": "gs_research",
+    "status": "MANUAL_FIRST",
+    "truncation": null,
+    "undated": 0,
+    "warnings": [
+     "automated access: BLOCKED \u2014 https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)"
+    ]
+   }
+  ],
+  "spend": {
+   "actual_total_usd": 4.445,
+   "bound_total_usd": 22.486,
+   "calls": [
+    {
+     "actual_usd": 0.2238,
+     "bound_usd": 0.6122,
+     "document": "A-87c41612b31b",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.0955,
+     "bound_usd": 0.6377,
+     "document": "A-87c41612b31b",
+     "kind": "completeness"
+    },
+    {
+     "actual_usd": 0.0673,
+     "bound_usd": 0.5852,
+     "document": "A-87c41612b31b",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.3756,
+     "bound_usd": 0.6282,
+     "document": "A-3211e327f4ef",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.1452,
+     "bound_usd": 0.6581,
+     "document": "A-3211e327f4ef",
+     "kind": "completeness"
+    },
+    {
+     "actual_usd": 0.073,
+     "bound_usd": 0.5779,
+     "document": "A-3211e327f4ef",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.0748,
+     "bound_usd": 0.5792,
+     "document": "A-3211e327f4ef",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.0552,
+     "bound_usd": 0.5643,
+     "document": "A-3211e327f4ef",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.0597,
+     "bound_usd": 0.5655,
+     "document": "A-3211e327f4ef",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.3004,
+     "bound_usd": 0.6387,
+     "document": "A-cfd53f3cc80a",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.3017,
+     "bound_usd": 0.6812,
+     "document": "A-cfd53f3cc80a",
+     "kind": "completeness"
+    },
+    {
+     "actual_usd": 0.0899,
+     "bound_usd": 0.6064,
+     "document": "A-cfd53f3cc80a",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.095,
+     "bound_usd": 0.6069,
+     "document": "A-cfd53f3cc80a",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.2464,
+     "bound_usd": 0.6142,
+     "document": "A-1c3e6ee1d553",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.0969,
+     "bound_usd": 0.6325,
+     "document": "A-1c3e6ee1d553",
+     "kind": "completeness"
+    },
+    {
+     "actual_usd": 0.0529,
+     "bound_usd": 0.5637,
+     "document": "A-1c3e6ee1d553",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.0381,
+     "bound_usd": 0.5522,
+     "document": "A-1c3e6ee1d553",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.3154,
+     "bound_usd": 0.6403,
+     "document": "A-7b20abdd06d4",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.2003,
+     "bound_usd": 0.666,
+     "document": "A-7b20abdd06d4",
+     "kind": "completeness"
+    },
+    {
+     "actual_usd": 0.0747,
+     "bound_usd": 0.5746,
+     "document": "A-7b20abdd06d4",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.0699,
+     "bound_usd": 0.5757,
+     "document": "A-7b20abdd06d4",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.3354,
+     "bound_usd": 0.6134,
+     "document": "A-373089a2ba59",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.1015,
+     "bound_usd": 0.6388,
+     "document": "A-373089a2ba59",
+     "kind": "completeness"
+    },
+    {
+     "actual_usd": 0.0663,
+     "bound_usd": 0.5772,
+     "document": "A-373089a2ba59",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.0674,
+     "bound_usd": 0.5775,
+     "document": "A-373089a2ba59",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.274,
+     "bound_usd": 0.6233,
+     "document": "A-0b9c4a3220b7",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.126,
+     "bound_usd": 0.6404,
+     "document": "A-0b9c4a3220b7",
+     "kind": "completeness"
+    },
+    {
+     "actual_usd": 0.0632,
+     "bound_usd": 0.5691,
+     "document": "A-0b9c4a3220b7",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.0576,
+     "bound_usd": 0.5723,
+     "document": "A-0b9c4a3220b7",
+     "kind": "review"
+    },
+    {
+     "actual_usd": 0.0307,
+     "bound_usd": 0.5455,
+     "document": "enrich TH-05208D689A",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.0347,
+     "bound_usd": 0.5454,
+     "document": "enrich TH-0D381F307A",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.0443,
+     "bound_usd": 0.546,
+     "document": "enrich TH-3557AAE138",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.0294,
+     "bound_usd": 0.5461,
+     "document": "enrich TH-3C22A83E75",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.0297,
+     "bound_usd": 0.5459,
+     "document": "enrich TH-722932E64F",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.035,
+     "bound_usd": 0.5468,
+     "document": "enrich TH-77926B9936",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.0324,
+     "bound_usd": 0.5462,
+     "document": "enrich TH-921772E86C",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.0353,
+     "bound_usd": 0.546,
+     "document": "enrich TH-B1F096684F",
+     "kind": "extraction"
+    },
+    {
+     "actual_usd": 0.0304,
+     "bound_usd": 0.5454,
+     "document": "enrich TH-C1889ABBA5",
+     "kind": "extraction"
+    }
+   ],
+   "calls_over_their_bound": 0,
+   "paid_calls": 38,
+   "refusals": [],
+   "run_limit_usd": 40.0,
+   "spent_usd": 4.445
+  },
+  "started_at": "2026-10-21T08:05:08.063238Z",
+  "status": "SUCCEEDED",
+  "tokens": {
+   "cache_creation_input_tokens": 0,
+   "cache_read_input_tokens": 0,
+   "input_tokens": 355606,
+   "output_tokens": 106679
+  },
+  "warnings": [],
+  "window_from": "2026-10-12",
+  "window_to": "2026-10-21"
+ },
+ "source_health": {
+  "attention": [
+   {
+    "alert": "KNOWN_RESTRICTION",
+    "changes": [
+     "first check of this channel"
+    ],
+    "checked_at": "2026-10-20T18:03:52.571739+00:00",
+    "consecutive_failed_checks": 1,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Morgan Stanley",
+    "reason": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+    "source_id": "ms_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-10-21T08:06:29.810666+00:00",
+    "consecutive_failed_checks": 2,
+    "discovered": 20,
+    "expect_blocked": false,
+    "freshness": "FRESH",
+    "in_window": 2,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": "R-20261020T180250Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-10-21T08:06:29.810666+00:00",
+    "last_successful_extraction": null,
+    "last_verified_publication_date": "2026-10-19",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-10-19",
+    "next_action": "none to supply \u2014 paid posts are read as their free preview by the operator's decision (paywalled_posts = \"preview_only\")",
+    "plain": "articles are read only in part; some articles are previews or summaries of a fuller report",
+    "publisher": "SemiAnalysis",
+    "reason": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable",
+    "source_id": "semianalysis",
+    "status": "DEGRADED",
+    "tests": [
+     {
+      "detail": "https://newsletter.semianalysis.com/feed answered HTTP 200 (3081 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 0 full text",
+      "name": "extraction",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 3 of 3 carry a byline; latest scan R-20261020T180250Z-scan: 0 of 20 undated",
+      "name": "dates_authors",
+      "result": "PASS"
+     },
+     {
+      "detail": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable",
+      "name": "completeness",
+      "result": "WARN"
+     },
+     {
+      "detail": "newest dated article 2026-10-19; 0 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 1575\u20134988 words; 3 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   },
+   {
+    "alert": "KNOWN_RESTRICTION",
+    "changes": [
+     "first check of this channel"
+    ],
+    "checked_at": "2026-10-20T18:05:38.047091+00:00",
+    "consecutive_failed_checks": 1,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Goldman Sachs",
+    "reason": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+    "source_id": "gs_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   }
+  ],
+  "checked_at": "2026-10-21T08:06:29.810666+00:00",
+  "counts": {
+   "BLOCKED": 2,
+   "DEGRADED": 1,
+   "ERROR": 0,
+   "HEALTHY": 3,
+   "UNKNOWN": 0
+  },
+  "line": "Sources healthy: 3/6 | Degraded: 1 | Blocked: 2 | Errors: 0",
+  "new_alerts": [],
+  "rows": [
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-10-21T08:05:08.064868+00:00",
+    "consecutive_failed_checks": 0,
+    "discovered": 20,
+    "expect_blocked": false,
+    "freshness": "QUIET",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": "R-20261020T180250Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-10-21T08:05:08.064868+00:00",
+    "last_successful_extraction": null,
+    "last_verified_publication_date": "2026-09-14",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-09-14",
+    "next_action": "none \u2014 automatic retrieval works",
+    "plain": "full text, dates and bylines read",
+    "publisher": "Citi",
+    "reason": "discovery, a full-text article, its date and byline all read",
+    "source_id": "citi_must_c",
+    "status": "HEALTHY",
+    "tests": [
+     {
+      "detail": "https://www.citigroup.com/global/insights/must-c answered HTTP 200 (1765 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 0 full text",
+      "name": "extraction",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 0 of 3 carry a byline; latest scan R-20261020T180250Z-scan: 0 of 20 undated",
+      "name": "dates_authors",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) full text; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable; 3 sampled page(s) summarise a report they link to \u2014 the scan READS it (linked_reports = \"fetch\")",
+      "name": "completeness",
+      "result": "PASS"
+     },
+     {
+      "detail": "newest dated article 2026-09-14 \u2014 nothing dated since 2026-10-12: QUIET, not unhealthy; 0 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 96\u2013570 words; 3 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-10-21T08:05:28.761740+00:00",
+    "consecutive_failed_checks": 0,
+    "discovered": 52,
+    "expect_blocked": false,
+    "freshness": "FRESH",
+    "in_window": 1,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": "R-20261020T180250Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-10-21T08:05:28.761740+00:00",
+    "last_successful_extraction": "2026-10-21T08:05:28.761740+00:00",
+    "last_verified_publication_date": "2026-10-16",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-10-16",
+    "next_action": "none \u2014 automatic retrieval works",
+    "plain": "full text, dates and bylines read",
+    "publisher": "J.P. Morgan Private Bank",
+    "reason": "discovery, a full-text article, its date and byline all read",
+    "source_id": "jpm_tmt",
+    "status": "HEALTHY",
+    "tests": [
+     {
+      "detail": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt answered HTTP 200 (488 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "52 article URL(s); 52 with a title, 52 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 3 full text",
+      "name": "extraction",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 52 of 52; 3 of 3 carry a byline; latest scan R-20261020T180250Z-scan: 0 of 52 undated",
+      "name": "dates_authors",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) full text; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable",
+      "name": "completeness",
+      "result": "PASS"
+     },
+     {
+      "detail": "newest dated article 2026-10-16; 0 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 1271\u20132045 words; 3 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   },
+   {
+    "alert": "KNOWN_RESTRICTION",
+    "changes": [
+     "first check of this channel"
+    ],
+    "checked_at": "2026-10-20T18:03:52.571739+00:00",
+    "consecutive_failed_checks": 1,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Morgan Stanley",
+    "reason": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+    "source_id": "ms_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-10-21T08:06:09.545925+00:00",
+    "consecutive_failed_checks": 0,
+    "discovered": 5,
+    "expect_blocked": false,
+    "freshness": "FRESH",
+    "in_window": 4,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": "R-20261020T180250Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-10-21T08:06:09.545925+00:00",
+    "last_successful_extraction": "2026-10-21T08:06:09.545925+00:00",
+    "last_verified_publication_date": "2026-10-19",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-10-19",
+    "next_action": "none \u2014 automatic retrieval works",
+    "plain": "full text, dates and bylines read",
+    "publisher": "TrendForce",
+    "reason": "discovery, a full-text article, its date and byline all read",
+    "source_id": "trendforce",
+    "status": "HEALTHY",
+    "tests": [
+     {
+      "detail": "https://www.trendforce.com/presscenter/news answered HTTP 200 (133 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "5 article URL(s); 5 with a title, 5 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 3 full text",
+      "name": "extraction",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 5 of 5; 3 of 3 carry a byline; latest scan R-20261020T180250Z-scan: 0 of 5 undated",
+      "name": "dates_authors",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) full text; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable",
+      "name": "completeness",
+      "result": "PASS"
+     },
+     {
+      "detail": "newest dated article 2026-10-19; 0 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 433\u2013684 words; 3 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-10-21T08:06:29.810666+00:00",
+    "consecutive_failed_checks": 2,
+    "discovered": 20,
+    "expect_blocked": false,
+    "freshness": "FRESH",
+    "in_window": 2,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": "R-20261020T180250Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-10-21T08:06:29.810666+00:00",
+    "last_successful_extraction": null,
+    "last_verified_publication_date": "2026-10-19",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-10-19",
+    "next_action": "none to supply \u2014 paid posts are read as their free preview by the operator's decision (paywalled_posts = \"preview_only\")",
+    "plain": "articles are read only in part; some articles are previews or summaries of a fuller report",
+    "publisher": "SemiAnalysis",
+    "reason": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable",
+    "source_id": "semianalysis",
+    "status": "DEGRADED",
+    "tests": [
+     {
+      "detail": "https://newsletter.semianalysis.com/feed answered HTTP 200 (3081 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 0 full text",
+      "name": "extraction",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 3 of 3 carry a byline; latest scan R-20261020T180250Z-scan: 0 of 20 undated",
+      "name": "dates_authors",
+      "result": "PASS"
+     },
+     {
+      "detail": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable",
+      "name": "completeness",
+      "result": "WARN"
+     },
+     {
+      "detail": "newest dated article 2026-10-19; 0 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 1575\u20134988 words; 3 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   },
+   {
+    "alert": "KNOWN_RESTRICTION",
+    "changes": [
+     "first check of this channel"
+    ],
+    "checked_at": "2026-10-20T18:05:38.047091+00:00",
+    "consecutive_failed_checks": 1,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Goldman Sachs",
+    "reason": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+    "source_id": "gs_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   }
+  ],
+  "total": 6
+ },
+ "sources": [
+  {
+   "already_known": 0,
+   "channel": "Citi Must C (Citi Research public insights)",
+   "checked_at": "2026-10-21T08:07:09.914123Z",
+   "discovered": 20,
+   "entry_points": [
+    "https://www.citigroup.com/global/insights/must-c"
+   ],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "Must C page embedded CMS data (__NEXT_DATA__ contentMap: series items with CMS publishDate)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Citi",
+   "queued": 0,
+   "skipped_out_of_window": 20,
+   "source_id": "citi_must_c",
+   "status": "OK",
+   "truncation": "the Must C page embeds its 20 linked series items; older items are not listed there",
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "J.P. Morgan Top Market Takeaways",
+   "checked_at": "2026-10-21T08:07:09.944057Z",
+   "discovered": 52,
+   "entry_points": [
+    "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt"
+   ],
+   "errors": [],
+   "in_window": 1,
+   "inaccessible": 0,
+   "method": "Top Market Takeaways listing cards (card date); sitemap lastmod as fallback",
+   "new": 1,
+   "processed": 1,
+   "publisher": "J.P. Morgan Private Bank",
+   "queued": 0,
+   "skipped_out_of_window": 51,
+   "source_id": "jpm_tmt",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "Morgan Stanley Research",
+   "checked_at": "2026-10-20T18:03:52.571739Z",
+   "discovered": 0,
+   "entry_points": [],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "manual-first: lightweight health check only \u2014 research arrives as authorised uploads (ingest-file)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Morgan Stanley",
+   "queued": 0,
+   "skipped_out_of_window": 0,
+   "source_id": "ms_research",
+   "status": "MANUAL_FIRST",
+   "truncation": null,
+   "undated": 0,
+   "warnings": [
+    "automated access: BLOCKED \u2014 robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservative"
+   ]
+  },
+  {
+   "already_known": 0,
+   "channel": "TrendForce press center news",
+   "checked_at": "2026-10-21T08:07:10.428742Z",
+   "discovered": 5,
+   "entry_points": [
+    "https://www.trendforce.com/presscenter/news"
+   ],
+   "errors": [],
+   "in_window": 4,
+   "inaccessible": 0,
+   "method": "press-center listing pages ?page=N (date in the article URL)",
+   "new": 4,
+   "processed": 4,
+   "publisher": "TrendForce",
+   "queued": 0,
+   "skipped_out_of_window": 1,
+   "source_id": "trendforce",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "SemiAnalysis (site + its newsletter feed)",
+   "checked_at": "2026-10-21T08:07:10.465142Z",
+   "discovered": 20,
+   "entry_points": [
+    "https://newsletter.semianalysis.com/feed"
+   ],
+   "errors": [],
+   "in_window": 2,
+   "inaccessible": 0,
+   "method": "newsletter RSS feed (item pubDate)",
+   "new": 2,
+   "processed": 2,
+   "publisher": "SemiAnalysis",
+   "queued": 0,
+   "skipped_out_of_window": 18,
+   "source_id": "semianalysis",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "Goldman Sachs Research insights",
+   "checked_at": "2026-10-20T18:05:38.047091Z",
+   "discovered": 0,
+   "entry_points": [],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "manual-first: lightweight health check only \u2014 research arrives as authorised uploads (ingest-file)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Goldman Sachs",
+   "queued": 0,
+   "skipped_out_of_window": 0,
+   "source_id": "gs_research",
+   "status": "MANUAL_FIRST",
+   "truncation": null,
+   "undated": 0,
+   "warnings": [
+    "automated access: BLOCKED \u2014 https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)"
+   ]
+  }
+ ],
+ "sources_checked": 6,
+ "sources_failed": [],
+ "span": [
+  "2026-10-12",
+  "2026-10-21"
+ ],
+ "themes_created": 10,
+ "themes_updated": 0,
+ "totals_active": {
+  "RESEARCH NOW": 3,
+  "SKIP": 0,
+  "WATCH": 7
+ },
+ "validation": {
+  "BLOCK": 5,
+  "HOLD": 0,
+  "INFO": 23,
+  "WARN": 39
+ },
+ "verification": {
+  "articles": 7,
+  "articles_preview_only": 2,
+  "articles_unreadable": 0,
+  "coverage": [
+   {
+    "article_id": "A-87c41612b31b",
+    "article_version_id": "AV-1862084c9db5c714",
+    "propositions": [
+     "CARD h1 \u201cAI data center demand drives optical fiber shortage lifting fiber supplier pricing\u201d \u2192 TH-B1F096684F"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-373089a2ba59",
+    "article_version_id": "AV-3f4ab5655e436ff8",
+    "propositions": [
+     "CARD h1 \u201cSurging CSP CapEx drives AI server shipments and spenders' infrastructure buildout\u201d \u2192 TH-0D381F307A",
+     "CARD h2 \u201cComponent shortages, especially memory, lift AI server rack ASPs and revenue\u201d \u2192 TH-05208D689A"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cPart of the upward CapEx revision reflects higher prices, higher component quotations amid shortages, and advance payments to secure supply \u201d \u2014 on 2 card(s): TH-05208D689A, TH-0D381F307A"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 1 fact(s): C-d62057902ffa97  \u2014 \"end-customer orders are expected to center on rack-scale solutions such as NVIDIA's GB300 and VR200, as well as AMD's Helios series\""
+    ],
+    "unrecorded_names": [
+     "VR200 (a list of examples, b011)"
+    ]
+   },
+   {
+    "article_id": "A-3211e327f4ef",
+    "article_version_id": "AV-5f051bd70c56d1cd",
+    "propositions": [
+     "CARD h1 \u201cAI datacenter buildout accelerates +50GW in 2027, lifting physical datacenter suppliers\u201d \u2192 TH-3557AAE138",
+     "CARD h2 \u201cCompute supply surge in 2027 accelerates revenue for AI labs and token vendors\u201d \u2192 TH-C1889ABBA5"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cThe article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real question' for the buildout.\u201d \u2014 on 2 card(s): TH-3557AAE138, TH-C1889ABBA5",
+     "\u201cMemory and logic (semiconductors) may become the new #1 constraint on the buildout in 2027-28, beyond datacenters and power.\u201d \u2014 on 2 card(s): TH-3557AAE138, TH-C1889ABBA5",
+     "\u201cThe author argues rates will have to rise reflexively to fund the capital demand of the buildout, implying a higher-rate backdrop.\u201d \u2014 on 1 card(s): TH-3557AAE138",
+     "\u201cPersistent constraints on power, labor, supply chains, capital and permitting could delay delivery and cause developer timelines to slip.\u201d \u2014 on 1 card(s): TH-3557AAE138"
+    ],
+    "source_risks": [
+     "b009: \u201cThe \u201creal\u201d question: are we going to face a datacenter oversupply?\u201d \u2192 carried by: \"proposed risk: The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real question' for the buildout.\""
+    ],
+    "uncarried": [
+     "UNEXPLAINED \u2014 6 fact(s): C-d213473ed8de51 +43GW \u2014 'SemiAnalysis\u2019 forecast of +43GW in 2027 is too aggressive' \u00b7 C-05ec9740de39d2 over a trillion USD \u2014 'we\u2019ve identified over a trillion USD of lease value that was signed and closed' \u00b7 C-effde3f778fb72 under 10 months \u2014 'Construction timelines are now under 10 months' \u00b7 C-5d1fe647dca859 up to 63% \u2014 'allows for MEP labor (7-11 months of work) to drop up to 63%' \u00b7 C-fedb42653a8eb9  \u2014 'the ex-US buildout is sharply accelerating in 2027, and we expect it to gain a lot of market share in 2028' \u00b7 C-971371fec45d1f  \u2014 'the grid headroom dips negative at the end of 2027'"
+    ],
+    "unrecorded_names": [
+     "Sterling Infrastructure. Check (a list of examples, b018)"
+    ]
+   },
+   {
+    "article_id": "A-7b20abdd06d4",
+    "article_version_id": "AV-795b73c94b399800",
+    "propositions": [
+     "CARD h1 \u201cASML's hybrid bonding tool threatens Besi's logic and HBM equipment franchise\u201d \u2192 TH-77926B9936"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 6 fact(s): C-e67d7b99415058 2029 \u2014 'we believe HBM will not adopt D2W HB before 2029 , if at all' \u00b7 C-94fb7df22e3b95 one \u2014 'our check indicates upper bound in current applications is only one wafer per hour' \u00b7 C-031e214a70b02b about 6um \u2014 'AMD has shipped hybrid-bonded V-Cache since 2022, and TSMC\u2019s SoIC bonds at about 6um pitch today and targets 4.5um around 2029' \u00b7 C-635b5190823bd4 about 10um \u2014 'SuperTrak\u2019s spec sheet puts the shuttles\u2019 repeatability at about 10um, nowhere near the 50nm placement accuracy the bond needs' \u00b7 C-c6efdba961e0a7 around 10mm \u2014 'a single 1um particle between two full-thickness wafers can unbond an area around 10mm across' \u00b7 C-d392cc4bdcc4f8 1.2-second \u2014 'a three-second cleaning step gets three stations, and a 1.2-second bond step gets one, so every station stays busy'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-cfd53f3cc80a",
+    "article_version_id": "AV-a4d414878ae8fc15",
+    "propositions": [
+     "CARD hx1 \u201cEquities can absorb above-target inflation and higher yields while earnings hold\u201d \u2192 TH-393DF5CD2B",
+     "DROPPED h1 \u201cEquities can keep grinding higher despite hot inflation as long as earnings hold\u201d \u2192 \u2014 \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (the text is not valid JSON even after deletion-only repair) \u2014 its evidence was kept; REVIEW REQUIRED"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cMarket concentration / narrow leadership is insulating the index but is not healthy over the long run: only 48% of S&P 500 constituents trad\u201d \u2014 on 1 card(s): TH-393DF5CD2B",
+     "\u201cAI-linked debt and equity concerns have driven the recent sell-off; a correlated repricing of AI-linked companies and their debt could trans\u201d \u2014 on 1 card(s): TH-393DF5CD2B"
+    ],
+    "source_risks": [
+     "b028: \u201cThat dispersion is the point: A bond sell-off can be a headwind, but the rates move alone does not determine the equity outcome.\u201d \u2192 ON NO CARD",
+     "b036: \u201cInflation and bond volatility are testing the equity market and will likely remain headwinds in the near term.\u201d \u2192 carried by: 'proposed risk drawn from this paragraph: Market concentration / narrow leadership is insulating the index but is not healthy over the long run: only 48% of S&P 500 constituents trade above their 200-day moving average, down from 73% two months ago, so a few profitable large weights are masking weakness and the index is vulnerable if that leadership breaks.'",
+     "b036: \u201cEquities have absorbed the pressure so far, partly because of market concentration, and could continue to grind higher as long as these risks remain familiar and earnings bolster confidence.\u201d \u2192 carried by: 'evidence on its card: Equities have absorbed the pressure so far, partly because of market concentration, and could continue to grind higher as long as these risks remain familiar and earnings bolster confidence.'"
+    ],
+    "uncarried": [
+     "UNEXPLAINED \u2014 12 fact(s): C-196b430b474d4e 0.6% \u2014 'Headline prices rose 0.6% on the month and 3.7% from a year earlier, with the annual measure one-tenth above consensus.' \u00b7 C-af5e8f1bbec2cd 9.1% \u2014 'Gasoline rose 9.1% and accounted for more than half of the monthly headline increase.' \u00b7 C-72a38a05f64a4d 1.3% \u2014 'Producer prices rose 1.3% in September and 6.3% from a year earlier, with both significantly hotter than expected.' \u00b7 C-324e5d27da2883 mid-40% range \u2014 'Futures roughly doubled the implied probability of an October quarter-point Federal Reserve rate hike to the mid-40% range.' \u00b7 C-0c5693dd6a0670 below 30% \u2014 'By Wednesday\u2019s close, the Treasury sell-off had reversed and October hike odds had moved back below 30%.' \u00b7 C-8ef9c045c84d2c 10.06% \u2014 'headline inflation peaking at 10.06% in June 2022' \u00b7 C-66855f60b8246b 4.67% \u2014 'reaching 4.67% in September versus 2.08% for the excluded-items measure' \u00b7 C-94d7482c8695c0 2.08% \u2014 'reaching 4.67% in September versus 2.08% for the excluded-items measure' \u00b7 C-51d7a091df14f6 more than 100 basis points \u2014 'CCC spreads are up more than 100 basis points this year' \u00b7 C-833a56697d9dbe 5.5% \u2014 'Roughly 5.5% of the high-yield index is distressed, up from 4.4% but still well below the 11% seen in 2022.' \u00b7 C-f2ad84d51b406f  \u2014 'The first read from the large banks was broadly resilient: Lending income and market-sensitive businesses provided support, while consumer credit did not show b\u2026 [+19 chars \u2014 full text in the JSON export]' \u00b7 C-e2e3f0eeb02b72 7.84% \u2014 'the excluded-items measure peaked at 7.84% in October 2021'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-0b9c4a3220b7",
+    "article_version_id": "AV-d33a335319a544b8",
+    "propositions": [
+     "CARD h1 \u201cCPO mass production shifts value to integrated optical-electrical test platform suppliers\u201d \u2192 TH-921772E86C"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cChina relies heavily on imports for high-end measurement instruments, and it is uncertain whether optical module testing experience extends \u201d \u2014 on 1 card(s): TH-921772E86C"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 1 fact(s): C-d389c04b43f8f2 65 GHz \u2014 'Semight Instruments has introduced a 65 GHz sampling oscilloscope and begun volume shipments'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-1c3e6ee1d553",
+    "article_version_id": "AV-d9291d742639a3c9",
+    "propositions": [
+     "CARD h1 \u201cAR glasses shipments double in 2026 driven by Meta and Chinese brands\u201d \u2192 TH-3C22A83E75",
+     "CARD h2 \u201cNear-eye microdisplay makers benefit as OLEDoS, LEDoS and LCoS scale with AR glasses\u201d \u2192 TH-722932E64F"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   }
+  ],
+  "coverage_alerts": [
+   "A-3211e327f4ef: 6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: +43GW; over a trillion USD; under 10 months; up to 63%; The ex-US datacenter buildout is sharply accelerating in 2027 and expected to gain market share in 2028; Grid headroom is expected to dip negative at the end of 2027, driving behind-the-meter generation \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-7b20abdd06d4: 6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 2029; one; about 6um; about 10um; around 10mm; 1.2-second \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-cfd53f3cc80a: proposition dropped: \u201cEquities can keep grinding higher despite hot inflation as long as earnings hold\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (the text is not valid JSON even after deletion-only repair) \u2014 its evidence was kept; REVIEW REQUIRED",
+   "A-cfd53f3cc80a: a risk the source states that no model pass listed \u2014 \u201cThat dispersion is the point: A bond sell-off can be a headwind, but the rates move alone does not determine the equity outcome.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "A-cfd53f3cc80a: 12 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 0.6%; 9.1%; 1.3%; mid-40% range; below 30%; 10.06%; 4.67%; 2.08%; more than 100 basis points; 5.5%; First bank earnings reads were broadly resilient with support from lending and markets and no broad consumer credit deterioration; 7.84% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "coverage_alerts_plain": [
+   "\u201cDatacenters 2027: The Year of Acceleration, +50GW in a Single Year\u201d: 6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: +43GW; over a trillion USD; under 10 months; up to 63%; The ex-US datacenter buildout is sharply accelerating in 2027 and expected to gain market share in 2028; Grid headroom is expected to dip negative at the end of 2027, driving behind-the-meter generation \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cASML Is Building a Hybrid Bonding Tool, Sending More Chills to Besi\u201d: 6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 2029; one; about 6um; about 10um; around 10mm; 1.2-second \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cInflation, yields and equities: When does the pressure actually matter?\u201d: proposition dropped: \u201cEquities can keep grinding higher despite hot inflation as long as earnings hold\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (the text is not valid JSON even after deletion-only repair) \u2014 its evidence was kept; REVIEW REQUIRED",
+   "\u201cInflation, yields and equities: When does the pressure actually matter?\u201d: a risk the source states that no model pass listed \u2014 \u201cThat dispersion is the point: A bond sell-off can be a headwind, but the rates move alone does not determine the equity outcome.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "\u201cInflation, yields and equities: When does the pressure actually matter?\u201d: 12 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 0.6%; 9.1%; 1.3%; mid-40% range; below 30%; 10.06%; 4.67%; 2.08%; more than 100 basis points; 5.5%; First bank earnings reads were broadly resilient with support from lending and markets and no broad consumer credit deterioration; 7.84% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "figures": 124,
+  "figures_open": 1,
+  "figures_superseded": 0,
+  "open_causes": {
+   "capture_not_verified": 1
+  },
+  "open_items": [
+   "AV-3f4ab5655e436ff8 b007 figure '36%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified"
+  ],
+  "open_items_plain": [
+   "\u201cCSP CapEx Projected to Exceed US$1.5 Trillion in 2027, with AI Server Revenue Growing Over 90% YoY on Higher Shipments and Prices, Says TrendForce\u201d \u2014 figure '36%' not captured: the claim meant to capture it could not be verified"
+  ],
+  "paragraphs": 119,
+  "paragraphs_open": 0,
+  "passes_not_run": 0,
+  "status": "INCOMPLETE",
+  "summary": "NOT fully verified \u2014 over the 7 article(s) this report's 2 runs analysed: 1 of 124 stated figure(s) and 0 of 119 argument paragraph(s) open; causes: capture_not_verified 1; 2 article(s) read only in part (a preview, or pages that could not be read); mechanism coverage: 5 alert(s) for review \u2014 a proposition dropped or merged on distinct evidence, or verified facts no thesis carries. Open material is never used as evidence, so it can hold a thesis back but never raise its research action",
+  "superseded_items_plain": []
+ },
+ "window": "2026-10-12 \u2192 2026-10-21 (as of 2026-10-21, mode scan)"
+}

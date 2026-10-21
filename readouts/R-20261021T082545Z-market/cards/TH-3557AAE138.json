@@ -1,0 +1,2581 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-21",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.datacenter_physical"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:10:55.019338Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-19",
+   "latest_article_date": "2026-10-19",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-3557AAE138",
+   "title": "AI datacenter buildout accelerates +50GW in 2027, lifting physical datacenter suppliers"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-55d7eb6ef01aa0",
+     "C-aebbfdbb7a3ce1",
+     "C-43a0db0d294cdb",
+     "C-3594f927d4ee57",
+     "C-6afff12a701bbb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SemiAnalysis forecasts +50GW of datacenter capacity in 2027, supported by >24GW already in advanced construction and over $1T of binding leases signed year-to-date in 2026, driving a surge in orders for industrial suppliers like Vertiv, ABB and Sterling Infrastructure. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-3fb395f16c702e",
+     "C-3594f927d4ee57"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues the acceleration is real and underappreciated, pointing investors to industrial suppliers forecast to see an order surge."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If the buildout lands near the forecast, named electrical and datacenter equipment suppliers would see order and revenue growth, but the article does not quantify the earnings or margin impact for any supplier."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-3211e327f4ef",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-55d7eb6ef01aa0"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2027",
+     "provenance": "SOURCE OPINION",
+     "text": "More than 24GW of datacenters are in advanced stage of construction, most to be delivered in 2027"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-43a0db0d294cdb"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2026 year-to-date",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Year-to-date, slightly under USD 1 trillion of binding/non-cancellable datacenter leases have been signed \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d142d0b248a87c",
+      "C-55d7eb6ef01aa0"
+     ],
+     "original_date": "2026-10-19",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The >24GW figure covers 40 campuses, a small share of several hundred sites in advanced construction"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-aebbfdbb7a3ce1"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "+50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-eb009c1580a8b8"
+     ],
+     "original_date": "2026-10-19",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Datacenter developers typically spend only 5-10% of project capital before securing a customer"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9f255c1088acce"
+     ],
+     "original_date": "2026-10-19",
+     "period": "15-20 year contract",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "A typical datacenter pre-lease is a 15-20 year contract with total contract value of $30-50B per GW"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 14 pieces of evidence from A-3211e327f4ef \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:10 UTC, analysed as of 2026-10-21, from a source published 2026-10-19; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-aebbfdbb7a3ce1",
+     "C-43a0db0d294cdb",
+     "C-6afff12a701bbb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Over $1T of binding datacenter leases signed YTD 2026 and record hyperscaler construction starts drive a +50GW buildout in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-3594f927d4ee57"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Buildout acceleration drives surging orders for electrical and datacenter equipment suppliers."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Order growth would flow to supplier revenue and earnings, though the article does not quantify it."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-15381e85ec76f2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "build timeline",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "traditional developers >18 months"
+    ],
+    "quote": "While traditional developers have >18 months build timelines, DayOne cut this to ~9 months",
+    "role": "supports",
+    "unit": "months",
+    "value": 9.0,
+    "value_text": "~9 months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-27ce83235acac3",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "datacenter IT capacity leased",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "August to October 2025",
+    "qualifiers": [
+     "across three sites"
+    ],
+    "quote": "Oracle kicked off the era of gigantic leases, after closing on ~4.5GW of datacenter IT capacity across three sites between August and October 2025",
+    "role": "supports",
+    "unit": "GW",
+    "value": 4.5,
+    "value_text": "~4.5GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-43a0db0d294cdb",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "datacenter lease value signed",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026 year-to-date",
+    "qualifiers": [
+     "binding / non-cancellable",
+     "supports 2027-28 forecast"
+    ],
+    "quote": "slightly under USD 1T of binding / non-cancellable datacenter leases have been signed",
+    "role": "supports",
+    "unit": "USD trillion",
+    "value": 1.0,
+    "value_text": "slightly under USD 1T"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-832257d8bd0f9b",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "capacity leased",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since early 2023",
+    "qualifiers": [],
+    "quote": "With a total of ~3GW leased since their first deal in early 2023",
+    "role": "supports",
+    "unit": "GW",
+    "value": 3.0,
+    "value_text": "~3GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9f255c1088acce",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "lease total contract value per GW",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "15-20 year contract",
+    "qualifiers": [],
+    "quote": "a 15-20 year contract, with a TCV of $30-50B per GW",
+    "role": "supports",
+    "unit": "USD billion per GW",
+    "value": null,
+    "value_text": "$30-50B per GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d142d0b248a87c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "number of datacenter campuses",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Datacenter Industry Model",
+    "period": null,
+    "qualifiers": [
+     "tiny share of multiple hundred sites"
+    ],
+    "quote": "That\u2019s just 40 campuses, a tiny share of the multiple hundred sites in advanced stage of construction",
+    "role": "supports",
+    "unit": "campuses",
+    "value": 40.0,
+    "value_text": "40 campuses"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d198ce79289cf2",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "grid interconnection timeline",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "bypassing 5-10year grid interconnection timelines",
+    "role": "supports",
+    "unit": "years",
+    "value": null,
+    "value_text": "5-10year"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-eb009c1580a8b8",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "share of project capital spent pre-lease",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "developers typically only spend 5-10% of project capital without a customer",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "5-10%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ed20830bd7e44a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "self-build construction starts",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "driven in particular by"
+    ],
+    "quote": "driven in particular by two hyperscalers",
+    "role": "supports",
+    "unit": "hyperscalers",
+    "value": 2.0,
+    "value_text": "two"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-55d7eb6ef01aa0",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "datacenter capacity in advanced construction",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Datacenter Industry Model",
+    "period": "2027",
+    "qualifiers": [
+     "advanced stage of construction",
+     "most to be delivered in 2027"
+    ],
+    "quote": ">24GW of datacenters in advanced stage of construction, most of it to be delivered in 2027",
+    "role": "catalyst",
+    "unit": "GW",
+    "value": 24.0,
+    "value_text": ">24GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-aebbfdbb7a3ce1",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "datacenter capacity additions",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "equal to cumulative global market through 2024"
+    ],
+    "quote": "+50GW is essentially the global cumulative datacenter market up through 2024 being built in one year",
+    "role": "catalyst",
+    "unit": "GW",
+    "value": 50.0,
+    "value_text": "+50GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3594f927d4ee57",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Leading indicators point to a surge in orders for industrial datacenter suppliers like Vertiv, ABB, Sterling Infrastructure",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the upcoming surge in orders for many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6afff12a701bbb",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "quarterly self-build construction starts",
+    "measured_as_of": null,
+    "origin": "SemiAnalysis Datacenter Industry Model",
+    "period": null,
+    "qualifiers": [
+     "going parabolic",
+     "driven by two hyperscalers"
+    ],
+    "quote": "US hyperscalers have never launched more construction of datacenters",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fa0eb8b08533d8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "datacenter leasing",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "H2 2023 to H1 2025",
+    "qualifiers": [
+     "relatively stable"
+    ],
+    "quote": "quarterly datacenter leasing remained relatively stable between H2 2023 and H1 2025",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0ff605d51eaa97",
+     "name_as_written": "Altimeter",
+     "other_securities": [],
+     "quote": "Brad Gerstner from Altimeter",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "Investor whose principal publicly questioned the forecast as too aggressive"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4499bad8436ccb",
+     "name_as_written": "Crusoe",
+     "other_securities": [],
+     "quote": "just go look at what Crusoe built in Abilene",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Datacenter builder cited as example of large sites getting built"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e2641ad85a43d6",
+     "name_as_written": "AWS",
+     "other_securities": [],
+     "quote": "what AWS built in Indiana",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler building large datacenter sites and signing GW-scale leases"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5f7a10d9d1665c",
+     "name_as_written": "QTS",
+     "other_securities": [],
+     "quote": "QTS/Microsoft\u2019s giant site in Georgia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Datacenter developer with giant Georgia site"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001326801",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-750232e61b834a",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "with Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI all being in the market for GW-scale leases",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "In market for GW-scale leases; also uses tent datacenter design"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-dc150d37e15c22",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "In market for GW-scale leases; modularized electrical architecture"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001045810",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-8abbc6b16467bc",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "In market for GW-scale leases; provides ecosystem financial support; signed deal with DayOne"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0000002488",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-7b87a094ce9977",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "In market for GW-scale leases"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-462b6fa2da6ada",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "AI lab in market for GW-scale leases"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-62e9772a09c5bc",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "AI lab in market for GW-scale leases; signed deal with DayOne"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1c67089f452415",
+     "name_as_written": "Firmus",
+     "other_securities": [],
+     "quote": "signing huge deals with Firmus, OpenAI and Nvidia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "Signed huge deal with DayOne"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001996810",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-22 (accession 0001996810-26-000148) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, par value $0.01 per share",
+       "ticker": "GEV"
+      }
+     ],
+     "mention_id": "M-6860cbea2fe9ff",
+     "name_as_written": "GEV",
+     "other_securities": [],
+     "quote": "turbine incumbents like GEV quickly faced production bottlenecks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "Turbine incumbent that faced production bottlenecks"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6387910c85605f",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "at SemiAnalysis, we care about the truth",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author/publisher of the report and its proprietary models"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001674101",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-29 (accession 0001628280-26-050609) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A common stock, $0.0001 par value per share",
+       "ticker": "VRT"
+      }
+     ],
+     "mention_id": "M-fa36f9852f1cce",
+     "name_as_written": "Vertiv",
+     "other_securities": [],
+     "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Industrial supplier expected to see surge in orders"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001091587",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-0e41db3eccc8dc",
+     "name_as_written": "ABB",
+     "other_securities": [],
+     "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Industrial supplier expected to see surge in orders"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0000874238",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000874238-26-000103) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "STRL"
+      }
+     ],
+     "mention_id": "M-2787c343a0fb11",
+     "name_as_written": "Sterling Infrastructure",
+     "other_securities": [],
+     "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Industrial supplier expected to see surge in orders"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001341439",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.01 per share",
+       "ticker": "ORCL"
+      }
+     ],
+     "mention_id": "M-0103fa9a1ccd6e",
+     "name_as_written": "Oracle",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+       "ticker": "ORCL PRD"
+      }
+     ],
+     "quote": "Oracle kicked off the era of gigantic leases",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Closed ~4.5GW of datacenter IT capacity across three sites; kicked off era of gigantic leases"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0000789019",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $ 0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-0eb025c91ed955",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "QTS/Microsoft\u2019s giant site in Georgia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler building sites and in market for GW-scale leases; drove leasing in 2023-24 then paused (Datacenter Freeze)"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "disruptor",
+     "listings": [],
+     "mention_id": "M-c895ec991d179e",
+     "name_as_written": "DayOne",
+     "other_securities": [],
+     "quote": "DayOne is likely the best example",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Singaporean prefab datacenter developer with ~3GW leased and ~9 month build timelines"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-3211e327f4ef",
+     "claim_ids": [
+      "C-3594f927d4ee57"
+     ],
+     "direction": "positive",
+     "name": "industrial suppliers",
+     "provenance": "SOURCE OPINION",
+     "quote": "the upcoming surge in orders for many industrial suppliers like Vertiv, ABB, Sterling Infrastructure"
+    }
+   ],
+   "sectors": [
+    "datacenter construction",
+    "industrials / electrical equipment"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 (buildout delivery year) [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-43a0db0d294cdb",
+      "C-6afff12a701bbb",
+      "C-55d7eb6ef01aa0"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Leading indicators (construction starts, leases, debt raises) already visible in 2026 point to the 2027 acceleration. \u27e8cited figures: approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-aebbfdbb7a3ce1"
+     ],
+     "provenance": "FORECAST",
+     "text": "The +50GW single-year addition equals the entire cumulative global datacenter market built through 2024. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-fb3c1fe17a8718"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Investor Brad Gerstner argued only ~25GW would be built in 2027, roughly half SemiAnalysis's number, citing a hunch."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-B1F096684F: same value-chain node, not the same claim \u2014 a different mechanism (supply_constraint vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-fb3c1fe17a8718"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Brad Gerstner thought only about 25GW of datacenters would get built in 2027 \u27e8cited figures: approximate\u27e9"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Quarterly construction starts flattening or declining"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Lease signings or debt raises slowing"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Major developer timeline slips and force majeure delays"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-1624196e37b788"
+     ],
+     "provenance": "FORECAST",
+     "text": "The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real question' for the buildout. (scope: AI datacenter capacity globally in 2027-28; posed as an open question, not resolved in the retrieved text.)"
+    },
+    {
+     "claim_ids": [
+      "C-1624196e37b788"
+     ],
+     "provenance": "FORECAST",
+     "text": "Memory and logic (semiconductors) may become the new #1 constraint on the buildout in 2027-28, beyond datacenters and power. (scope: Supply constraint on usable compute, 2027-28; framed as a possibility per SemiAnalysis's Silicon Shortage view.)"
+    },
+    {
+     "claim_ids": [
+      "C-3fb395f16c702e"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The author argues rates will have to rise reflexively to fund the capital demand of the buildout, implying a higher-rate backdrop. (scope: Macro interest-rate impact from datacenter capital demand; author opinion, not quantified.)"
+    },
+    {
+     "claim_ids": [
+      "C-aebbfdbb7a3ce1"
+     ],
+     "provenance": "FORECAST",
+     "text": "Persistent constraints on power, labor, supply chains, capital and permitting could delay delivery and cause developer timelines to slip. (scope: Execution risk on the global datacenter buildout; the article acknowledges these while arguing the model adjusts for them.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the named suppliers' earnings and valuations already reflect the forecast order surge"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether labor, supply-chain and power constraints will delay delivery enough to miss +50GW"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The article does not quantify revenue or margin impact per supplier"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Buildout tracks closer to Gerstner's ~25GW view"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Memory/logic shortage caps deployable capacity"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check whether consensus order and revenue estimates for Vertiv, ABB and Sterling Infrastructure already embed a +50GW 2027 buildout, and track SemiAnalysis construction-start and lease indicators for inflection."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Further acceleration in quarterly construction starts and lease signings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Supplier order backlogs surprise to the upside"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-3211e327f4ef",
+    "authors": [
+     "Jeremie Eliahou Ontiveros",
+     "Reyk Knuhtsen",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-55d7eb6ef01aa0",
+     "C-aebbfdbb7a3ce1",
+     "C-d142d0b248a87c",
+     "C-43a0db0d294cdb",
+     "C-eb009c1580a8b8",
+     "C-9f255c1088acce",
+     "C-27ce83235acac3",
+     "C-832257d8bd0f9b",
+     "C-15381e85ec76f2",
+     "C-3594f927d4ee57",
+     "C-6afff12a701bbb",
+     "C-d198ce79289cf2",
+     "C-fa0eb8b08533d8",
+     "C-ed20830bd7e44a",
+     "C-fb3c1fe17a8718",
+     "C-1624196e37b788",
+     "C-3fb395f16c702e"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-19T05:39:38Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Datacenters 2027: The Year of Acceleration, +50GW in a Single Year",
+    "upstream_origins": [
+     "Brad Gerstner",
+     "SemiAnalysis Datacenter Industry Model",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/datacenters-2027-the-year-of-acceleration",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-21",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001551182-26-000007)",
+    "business": "electrical power management equipment and systems",
+    "direction": "positive",
+    "enrichment_id": "EC-f294ecb90ca889",
+    "evidence": "s03.1: Buildout acceleration drives surging orders for electrical and datacenter equipment suppliers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-31 (accession 0001551182-26-000030) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary shares ($0.01 par value)",
+      "ticker": "ETN"
+     }
+    ],
+    "name": "Eaton Corporation",
+    "rationale": "Datacenter buildout surges orders for its electrical distribution, switchgear, UPS and power management equipment, a fast-growing segment of electrical sales.",
+    "registrant": "Eaton Corp plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3590); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "electrical power distribution and datacenter equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-3557AAE138",
+    "ticker_hint": "ETN"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "electrical distribution and datacenter power/cooling systems",
+    "direction": "positive",
+    "enrichment_id": "EC-a483abc559e414",
+    "evidence": "s03.1: Buildout acceleration drives surging orders for electrical and datacenter equipment suppliers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Schneider Electric",
+    "rationale": "Datacenter capacity growth lifts orders for power distribution, UPS and cooling systems, a large and growing datacenter-exposed business.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "datacenter power and cooling equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-3557AAE138",
+    "ticker_hint": "SBGSY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-17 (0001628280-26-008608)",
+    "business": "electrical enclosures, connections and liquid cooling",
+    "direction": "positive",
+    "enrichment_id": "EC-7985d3fcee3b15",
+    "evidence": "s03.1: Buildout acceleration drives surging orders for electrical and datacenter equipment suppliers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-31 (accession 0001628280-26-051428) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary Shares, nominal value $0.01 per share",
+      "ticker": "NVT"
+     }
+    ],
+    "name": "nVent Electric",
+    "rationale": "Buildout drives orders for enclosures, busbars and liquid cooling solutions directly serving datacenter racks and power infrastructure.",
+    "registrant": "nVent Electric plc",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3550); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "electrical enclosures and datacenter liquid cooling",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-3557AAE138",
+    "ticker_hint": "NVT"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-19 (0001104659-26-017530)",
+    "business": "mechanical and electrical construction services",
+    "direction": "positive",
+    "enrichment_id": "EC-53e7c5b4080baf",
+    "evidence": "s03.1: Buildout acceleration drives surging orders for electrical and datacenter equipment suppliers.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-23 (accession 0001104659-26-086258) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.01 par value",
+      "ticker": "FIX"
+     }
+    ],
+    "name": "Comfort Systems USA",
+    "rationale": "Datacenter construction surge lifts demand for its HVAC, mechanical and electrical installation work, a growing share of its backlog.",
+    "registrant": "COMFORT SYSTEMS USA INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 1731); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacenter mechanical and electrical construction",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-3557AAE138",
+    "ticker_hint": "FIX"
+   }
+  ],
+  "created_at": "2026-10-21T08:24:10.980057Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Quanta Services: more than 4 on one side \u2014 set aside",
+   "Johnson Controls International: more than 4 on one side \u2014 set aside",
+   "Vistra Corp: more than 4 on one side \u2014 set aside",
+   "Modine Manufacturing: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261021T080508Z-scan",
+  "set_id": "ES-3a7f5ca4da84df",
+  "thesis_id": "TH-3557AAE138",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-21 08:33 UTC from the registry (ti-engine-5; run R-20261021T082545Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-3211e327f4ef",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.datacenter_physical"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:10:55.019338Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-19",
+     "latest_article_date": "2026-10-19",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Datacenter construction, cooling, racks and physical inputs",
+     "status": "ACTIVE",
+     "thesis_id": "TH-3557AAE138",
+     "title": "AI datacenter buildout accelerates +50GW in 2027, lifting physical datacenter suppliers"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-55d7eb6ef01aa0",
+       "C-aebbfdbb7a3ce1",
+       "C-43a0db0d294cdb",
+       "C-3594f927d4ee57",
+       "C-6afff12a701bbb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SemiAnalysis forecasts +50GW of datacenter capacity in 2027, supported by >24GW already in advanced construction and over $1T of binding leases signed year-to-date in 2026, driving a surge in orders for industrial suppliers like Vertiv, ABB and Sterling Infrastructure. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-3fb395f16c702e",
+       "C-3594f927d4ee57"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues the acceleration is real and underappreciated, pointing investors to industrial suppliers forecast to see an order surge."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If the buildout lands near the forecast, named electrical and datacenter equipment suppliers would see order and revenue growth, but the article does not quantify the earnings or margin impact for any supplier."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-3211e327f4ef",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-55d7eb6ef01aa0"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2027",
+       "provenance": "SOURCE OPINION",
+       "text": "More than 24GW of datacenters are in advanced stage of construction, most to be delivered in 2027"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-43a0db0d294cdb"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026 year-to-date",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Year-to-date, slightly under USD 1 trillion of binding/non-cancellable datacenter leases have been signed \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d142d0b248a87c",
+        "C-55d7eb6ef01aa0"
+       ],
+       "original_date": "2026-10-19",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The >24GW figure covers 40 campuses, a small share of several hundred sites in advanced construction"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-aebbfdbb7a3ce1"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "+50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-eb009c1580a8b8"
+       ],
+       "original_date": "2026-10-19",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Datacenter developers typically spend only 5-10% of project capital before securing a customer"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9f255c1088acce"
+       ],
+       "original_date": "2026-10-19",
+       "period": "15-20 year contract",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "A typical datacenter pre-lease is a 15-20 year contract with total contract value of $30-50B per GW"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 14 pieces of evidence from A-3211e327f4ef \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:10 UTC, analysed as of 2026-10-21, from a source published 2026-10-19; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-aebbfdbb7a3ce1",
+       "C-43a0db0d294cdb",
+       "C-6afff12a701bbb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Over $1T of binding datacenter leases signed YTD 2026 and record hyperscaler construction starts drive a +50GW buildout in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-3594f927d4ee57"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Buildout acceleration drives surging orders for electrical and datacenter equipment suppliers."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Order growth would flow to supplier revenue and earnings, though the article does not quantify it."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-15381e85ec76f2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "build timeline",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "traditional developers >18 months"
+      ],
+      "quote": "While traditional developers have >18 months build timelines, DayOne cut this to ~9 months",
+      "role": "supports",
+      "unit": "months",
+      "value": 9.0,
+      "value_text": "~9 months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-27ce83235acac3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "datacenter IT capacity leased",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "August to October 2025",
+      "qualifiers": [
+       "across three sites"
+      ],
+      "quote": "Oracle kicked off the era of gigantic leases, after closing on ~4.5GW of datacenter IT capacity across three sites between August and October 2025",
+      "role": "supports",
+      "unit": "GW",
+      "value": 4.5,
+      "value_text": "~4.5GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-43a0db0d294cdb",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "datacenter lease value signed",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026 year-to-date",
+      "qualifiers": [
+       "binding / non-cancellable",
+       "supports 2027-28 forecast"
+      ],
+      "quote": "slightly under USD 1T of binding / non-cancellable datacenter leases have been signed",
+      "role": "supports",
+      "unit": "USD trillion",
+      "value": 1.0,
+      "value_text": "slightly under USD 1T"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-832257d8bd0f9b",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "capacity leased",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since early 2023",
+      "qualifiers": [],
+      "quote": "With a total of ~3GW leased since their first deal in early 2023",
+      "role": "supports",
+      "unit": "GW",
+      "value": 3.0,
+      "value_text": "~3GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9f255c1088acce",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "lease total contract value per GW",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "15-20 year contract",
+      "qualifiers": [],
+      "quote": "a 15-20 year contract, with a TCV of $30-50B per GW",
+      "role": "supports",
+      "unit": "USD billion per GW",
+      "value": null,
+      "value_text": "$30-50B per GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d142d0b248a87c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "number of datacenter campuses",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Datacenter Industry Model",
+      "period": null,
+      "qualifiers": [
+       "tiny share of multiple hundred sites"
+      ],
+      "quote": "That\u2019s just 40 campuses, a tiny share of the multiple hundred sites in advanced stage of construction",
+      "role": "supports",
+      "unit": "campuses",
+      "value": 40.0,
+      "value_text": "40 campuses"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d198ce79289cf2",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "grid interconnection timeline",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "bypassing 5-10year grid interconnection timelines",
+      "role": "supports",
+      "unit": "years",
+      "value": null,
+      "value_text": "5-10year"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-eb009c1580a8b8",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share of project capital spent pre-lease",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "developers typically only spend 5-10% of project capital without a customer",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "5-10%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ed20830bd7e44a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "self-build construction starts",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "driven in particular by"
+      ],
+      "quote": "driven in particular by two hyperscalers",
+      "role": "supports",
+      "unit": "hyperscalers",
+      "value": 2.0,
+      "value_text": "two"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-55d7eb6ef01aa0",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "datacenter capacity in advanced construction",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Datacenter Industry Model",
+      "period": "2027",
+      "qualifiers": [
+       "advanced stage of construction",
+       "most to be delivered in 2027"
+      ],
+      "quote": ">24GW of datacenters in advanced stage of construction, most of it to be delivered in 2027",
+      "role": "catalyst",
+      "unit": "GW",
+      "value": 24.0,
+      "value_text": ">24GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-aebbfdbb7a3ce1",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "datacenter capacity additions",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "equal to cumulative global market through 2024"
+      ],
+      "quote": "+50GW is essentially the global cumulative datacenter market up through 2024 being built in one year",
+      "role": "catalyst",
+      "unit": "GW",
+      "value": 50.0,
+      "value_text": "+50GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3594f927d4ee57",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Leading indicators point to a surge in orders for industrial datacenter suppliers like Vertiv, ABB, Sterling Infrastructure",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the upcoming surge in orders for many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6afff12a701bbb",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "quarterly self-build construction starts",
+      "measured_as_of": null,
+      "origin": "SemiAnalysis Datacenter Industry Model",
+      "period": null,
+      "qualifiers": [
+       "going parabolic",
+       "driven by two hyperscalers"
+      ],
+      "quote": "US hyperscalers have never launched more construction of datacenters",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fa0eb8b08533d8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "datacenter leasing",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "H2 2023 to H1 2025",
+      "qualifiers": [
+       "relatively stable"
+      ],
+      "quote": "quarterly datacenter leasing remained relatively stable between H2 2023 and H1 2025",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0ff605d51eaa97",
+       "name_as_written": "Altimeter",
+       "other_securities": [],
+       "quote": "Brad Gerstner from Altimeter",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "Investor whose principal publicly questioned the forecast as too aggressive"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4499bad8436ccb",
+       "name_as_written": "Crusoe",
+       "other_securities": [],
+       "quote": "just go look at what Crusoe built in Abilene",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Datacenter builder cited as example of large sites getting built"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e2641ad85a43d6",
+       "name_as_written": "AWS",
+       "other_securities": [],
+       "quote": "what AWS built in Indiana",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler building large datacenter sites and signing GW-scale leases"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5f7a10d9d1665c",
+       "name_as_written": "QTS",
+       "other_securities": [],
+       "quote": "QTS/Microsoft\u2019s giant site in Georgia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Datacenter developer with giant Georgia site"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001326801",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-750232e61b834a",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "with Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI all being in the market for GW-scale leases",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "In market for GW-scale leases; also uses tent datacenter design"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dc150d37e15c22",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "In market for GW-scale leases; modularized electrical architecture"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001045810",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-8abbc6b16467bc",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "In market for GW-scale leases; provides ecosystem financial support; signed deal with DayOne"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0000002488",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-7b87a094ce9977",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "In market for GW-scale leases"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-462b6fa2da6ada",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "AI lab in market for GW-scale leases"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-62e9772a09c5bc",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "AI lab in market for GW-scale leases; signed deal with DayOne"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1c67089f452415",
+       "name_as_written": "Firmus",
+       "other_securities": [],
+       "quote": "signing huge deals with Firmus, OpenAI and Nvidia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "Signed huge deal with DayOne"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001996810",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-22 (accession 0001996810-26-000148) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, par value $0.01 per share",
+         "ticker": "GEV"
+        }
+       ],
+       "mention_id": "M-6860cbea2fe9ff",
+       "name_as_written": "GEV",
+       "other_securities": [],
+       "quote": "turbine incumbents like GEV quickly faced production bottlenecks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "Turbine incumbent that faced production bottlenecks"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6387910c85605f",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "at SemiAnalysis, we care about the truth",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author/publisher of the report and its proprietary models"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001674101",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-29 (accession 0001628280-26-050609) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A common stock, $0.0001 par value per share",
+         "ticker": "VRT"
+        }
+       ],
+       "mention_id": "M-fa36f9852f1cce",
+       "name_as_written": "Vertiv",
+       "other_securities": [],
+       "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Industrial supplier expected to see surge in orders"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001091587",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-0e41db3eccc8dc",
+       "name_as_written": "ABB",
+       "other_securities": [],
+       "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Industrial supplier expected to see surge in orders"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0000874238",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000874238-26-000103) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "STRL"
+        }
+       ],
+       "mention_id": "M-2787c343a0fb11",
+       "name_as_written": "Sterling Infrastructure",
+       "other_securities": [],
+       "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Industrial supplier expected to see surge in orders"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001341439",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.01 per share",
+         "ticker": "ORCL"
+        }
+       ],
+       "mention_id": "M-0103fa9a1ccd6e",
+       "name_as_written": "Oracle",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+         "ticker": "ORCL PRD"
+        }
+       ],
+       "quote": "Oracle kicked off the era of gigantic leases",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Closed ~4.5GW of datacenter IT capacity across three sites; kicked off era of gigantic leases"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0000789019",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $ 0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-0eb025c91ed955",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "QTS/Microsoft\u2019s giant site in Georgia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler building sites and in market for GW-scale leases; drove leasing in 2023-24 then paused (Datacenter Freeze)"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "disruptor",
+       "listings": [],
+       "mention_id": "M-c895ec991d179e",
+       "name_as_written": "DayOne",
+       "other_securities": [],
+       "quote": "DayOne is likely the best example",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Singaporean prefab datacenter developer with ~3GW leased and ~9 month build timelines"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-3211e327f4ef",
+       "claim_ids": [
+        "C-3594f927d4ee57"
+       ],
+       "direction": "positive",
+       "name": "industrial suppliers",
+       "provenance": "SOURCE OPINION",
+       "quote": "the upcoming surge in orders for many industrial suppliers like Vertiv, ABB, Sterling Infrastructure"
+      }
+     ],
+     "sectors": [
+      "datacenter construction",
+      "industrials / electrical equipment"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 (buildout delivery year) [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-43a0db0d294cdb",
+        "C-6afff12a701bbb",
+        "C-55d7eb6ef01aa0"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Leading indicators (construction starts, leases, debt raises) already visible in 2026 point to the 2027 acceleration. \u27e8cited figures: approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-aebbfdbb7a3ce1"
+       ],
+       "provenance": "FORECAST",
+       "text": "The +50GW single-year addition equals the entire cumulative global datacenter market built through 2024. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-fb3c1fe17a8718"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Investor Brad Gerstner argued only ~25GW would be built in 2027, roughly half SemiAnalysis's number, citing a hunch."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-B1F096684F: same value-chain node, not the same claim \u2014 a different mechanism (supply_constraint vs capex_spending_cycle) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-fb3c1fe17a8718"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Brad Gerstner thought only about 25GW of datacenters would get built in 2027 \u27e8cited figures: approximate\u27e9"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Quarterly construction starts flattening or declining"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Lease signings or debt raises slowing"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Major developer timeline slips and force majeure delays"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-1624196e37b788"
+       ],
+       "provenance": "FORECAST",
+       "text": "The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real question' for the buildout. (scope: AI datacenter capacity globally in 2027-28; posed as an open question, not resolved in the retrieved text.)"
+      },
+      {
+       "claim_ids": [
+        "C-1624196e37b788"
+       ],
+       "provenance": "FORECAST",
+       "text": "Memory and logic (semiconductors) may become the new #1 constraint on the buildout in 2027-28, beyond datacenters and power. (scope: Supply constraint on usable compute, 2027-28; framed as a possibility per SemiAnalysis's Silicon Shortage view.)"
+      },
+      {
+       "claim_ids": [
+        "C-3fb395f16c702e"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The author argues rates will have to rise reflexively to fund the capital demand of the buildout, implying a higher-rate backdrop. (scope: Macro interest-rate impact from datacenter capital demand; author opinion, not quantified.)"
+      },
+      {
+       "claim_ids": [
+        "C-aebbfdbb7a3ce1"
+       ],
+       "provenance": "FORECAST",
+       "text": "Persistent constraints on power, labor, supply chains, capital and permitting could delay delivery and cause developer timelines to slip. (scope: Execution risk on the global datacenter buildout; the article acknowledges these while arguing the model adjusts for them.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the named suppliers' earnings and valuations already reflect the forecast order surge"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether labor, supply-chain and power constraints will delay delivery enough to miss +50GW"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The article does not quantify revenue or margin impact per supplier"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Buildout tracks closer to Gerstner's ~25GW view"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Memory/logic shortage caps deployable capacity"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether consensus order and revenue estimates for Vertiv, ABB and Sterling Infrastructure already embed a +50GW 2027 buildout, and track SemiAnalysis construction-start and lease indicators for inflection."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Further acceleration in quarterly construction starts and lease signings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Supplier order backlogs surprise to the upside"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-3211e327f4ef",
+      "authors": [
+       "Jeremie Eliahou Ontiveros",
+       "Reyk Knuhtsen",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-55d7eb6ef01aa0",
+       "C-aebbfdbb7a3ce1",
+       "C-d142d0b248a87c",
+       "C-43a0db0d294cdb",
+       "C-eb009c1580a8b8",
+       "C-9f255c1088acce",
+       "C-27ce83235acac3",
+       "C-832257d8bd0f9b",
+       "C-15381e85ec76f2",
+       "C-3594f927d4ee57",
+       "C-6afff12a701bbb",
+       "C-d198ce79289cf2",
+       "C-fa0eb8b08533d8",
+       "C-ed20830bd7e44a",
+       "C-fb3c1fe17a8718",
+       "C-1624196e37b788",
+       "C-3fb395f16c702e"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-19T05:39:38Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Datacenters 2027: The Year of Acceleration, +50GW in a Single Year",
+      "upstream_origins": [
+       "Brad Gerstner",
+       "SemiAnalysis Datacenter Industry Model",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/datacenters-2027-the-year-of-acceleration",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "83f35c154b9072c41f0d89a4d40b6986b627f11b3ba8952c59b89039108aa62c",
+   "created_at": "2026-10-21T08:11:21.938070Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-d142d0b248a87c",
+       "C-43a0db0d294cdb",
+       "C-eb009c1580a8b8",
+       "C-9f255c1088acce",
+       "C-27ce83235acac3",
+       "C-832257d8bd0f9b",
+       "C-15381e85ec76f2",
+       "C-6afff12a701bbb",
+       "C-55d7eb6ef01aa0",
+       "C-aebbfdbb7a3ce1"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "10"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-9054521ac923",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-d142d0b248a87c",
+       "C-43a0db0d294cdb",
+       "C-eb009c1580a8b8",
+       "C-9f255c1088acce",
+       "C-832257d8bd0f9b",
+       "C-15381e85ec76f2"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "6 claim(s) inside the next 2-4 quarters (C-d142d0b248a87c: measured 2026-10-19 (2 days before the as-of); C-43a0db0d294cdb: measured 2026-10-19 (2 days before the as-of); C-eb009c1580a8b8: measured 2026-10-19 (2 days before the as-of); C-9f255c1088acce: measured 2026-10-19 (2 days before the as-of); showing 4 of 6); 2 claim(s) whose window runs past them; 0 long-range claim(s); 1 long-dated statement(s) of the source beside the cited evidence, not on the card: C-1624196e37b788; model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Vertiv (VRT), Sterling Infrastructure (STRL), Oracle (ORCL), Microsoft (MSFT), sector: industrial suppliers",
+      "value": "4 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 2 offered but NOT counted (opinion, forecast figure or stale reading): C-55d7eb6ef01aa0, C-aebbfdbb7a3ce1",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-fb3c1fe17a8718"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 10 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-3557AAE138",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-3211e327f4ef",
+   "block_ids": [
+    "b018"
+   ],
+   "claim_ids": [
+    "C-3594f927d4ee57"
+   ],
+   "excerpt": "\u2026upcoming surge in orders for many industrial suppliers like Vertiv, ABB, Sterling Infrastructure.\u2026",
+   "name": "suppliers"
+  },
+  {
+   "article_id": "A-3211e327f4ef",
+   "block_ids": [
+    "b010",
+    "b005"
+   ],
+   "claim_ids": [],
+   "excerpt": "\u2026acceleration for leading AI labs and other token vendors. That also means unthinkable capex\u2026",
+   "name": "vendors"
+  },
+  {
+   "article_id": "A-3211e327f4ef",
+   "block_ids": [
+    "b012"
+   ],
+   "claim_ids": [
+    "C-6afff12a701bbb"
+   ],
+   "excerpt": "\u2026self-build construction starts. To accurately forecast US hyperscalers, we track the exact construction evolution\u2026",
+   "name": "US hyperscalers"
+  },
+  {
+   "article_id": "A-3211e327f4ef",
+   "block_ids": [
+    "b012",
+    "b023"
+   ],
+   "claim_ids": [
+    "C-6afff12a701bbb",
+    "C-ed20830bd7e44a"
+   ],
+   "excerpt": "\u2026going parabolic, driven in particular by two hyperscalers. If you want to know who or track the\u2026",
+   "name": "hyperscalers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-3fb395f16c702e",
+  "C-fb3c1fe17a8718",
+  "C-1624196e37b788"
+ ],
+ "review_carried": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "States 'over $1T of binding leases' but cited span says 'slightly under USD 1T' \u2014 overstates. Pool C-05ec9740de39d2 ('over a trillion USD of lease value signed and closed') supports 'over $1T'.",
+  "s03.0": "States 'Over $1T' but cited span says 'slightly under USD 1T' \u2014 overstates. Pool C-05ec9740de39d2 supports 'over a trillion USD'."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {
+  "s07.3": "REVIEW_UNSUPPORTED \u2014 s07.3: UNSUPPORTED \u2014 Claims article raises datacenter oversupply as 'the real question', but cited span is about memory/logic becoming the #1 constraint in 2027-28 \u2014 does not mention oversupply or 'the real question'. No pool span supports an oversupply framing. | \"The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real q\"",
+  "s07.6": "REVIEW_UNSUPPORTED \u2014 s07.6: UNSUPPORTED \u2014 Claims persistent constraints on power, labor, supply chains, capital and permitting could delay delivery; cited span only states +50GW equals cumulative market through 2024 \u2014 does not mention these constraints or delivery slippage. | 'Persistent constraints on power, labor, supply chains, capital and permitting could delay delivery a'"
+ }
+}

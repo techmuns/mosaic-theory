@@ -1,0 +1,2085 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-21",
+   "ancestry": [
+    "ai_infrastructure"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:21:08.985955Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-14",
+   "latest_article_date": "2026-10-14",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "AI infrastructure build-out (spans spenders, chips, power, materials)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-05208D689A",
+   "title": "Component shortages, especially memory, lift AI server rack ASPs and revenue"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-62cf0bb7518ba8",
+     "C-94066f8039b78f",
+     "C-c519e3ca0179c4",
+     "C-b802dead52987e",
+     "C-fd7bbcfef92b58"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Shortages and rising prices of key components, particularly memory, are driving up AI server rack ASPs, helping AI server revenue surge over 90% to nearly $920bn in 2027 (about 81% of a server market exceeding $1 trillion). \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-62cf0bb7518ba8",
+     "C-c935d5c9c651cc"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article attributes rising AI server revenue and ASPs to component shortages and rising prices, particularly memory. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Rising ASPs driven by component shortages mean AI server revenue growth outpaces unit shipment growth, benefiting component suppliers with pricing power, though the article names no specific memory supplier."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-373089a2ba59",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-94066f8039b78f"
+     ],
+     "original_date": "2026-10-14",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "AI server revenue is projected to grow more than 90% YoY to nearly $920 billion in 2027 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-fd7bbcfef92b58"
+     ],
+     "original_date": "2026-10-14",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "AI servers' share of total server market revenue is expected to rise to approximately 81% in 2027 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c935d5c9c651cc"
+     ],
+     "original_date": "2026-10-14",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "AI server shipments are projected to grow nearly 36% YoY in 2027 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7a7bfa99568dd8"
+     ],
+     "original_date": "2026-10-14",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "AI servers are expected to generate approximately $479 billion in revenue in 2026 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9eda2759aac841"
+     ],
+     "original_date": "2026-10-14",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "AI servers would account for nearly 75% of 2026 total server market revenue \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9858ddc8032be7"
+     ],
+     "original_date": "2026-10-14",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Total server market revenue is projected at $639.2 billion in 2026 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 9 pieces of evidence from A-373089a2ba59 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:21 UTC, analysed as of 2026-10-21, from a source published 2026-10-14; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-62cf0bb7518ba8",
+     "C-fff493f369709b"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Shortages of key AI server components, particularly memory, emerge amid strong demand."
+   },
+   {
+    "claim_ids": [
+     "C-62cf0bb7518ba8"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "Component shortages drive up ASPs of next-generation AI server racks."
+   },
+   {
+    "claim_ids": [
+     "C-94066f8039b78f",
+     "C-c519e3ca0179c4"
+    ],
+    "provenance": "FORECAST",
+    "step": "listed_earnings",
+    "text": "AI server revenue surges over 90% to nearly $920bn in 2027 on higher shipments and prices. \u27e8cited figures: forecast; approximate\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-373089a2ba59",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7a7bfa99568dd8",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AI server revenue",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "AI servers are expected to generate approximately $479 billion in revenue in 2026",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 479.0,
+    "value_text": "approximately $479 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-373089a2ba59",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9858ddc8032be7",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "total server market revenue",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "the projected $639.2 billion in total server market revenue, which includes both general-purpose and AI servers",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 639.2,
+    "value_text": "$639.2 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-373089a2ba59",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9eda2759aac841",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AI server share of server revenue",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "nearly"
+    ],
+    "quote": "This would account for nearly 75% of the projected $639.2 billion in total server market revenue",
+    "role": "supports",
+    "unit": "%",
+    "value": 75.0,
+    "value_text": "nearly 75%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-373089a2ba59",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c519e3ca0179c4",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AI server revenue",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "nearly"
+    ],
+    "quote": "AI server revenue is projected to surge by more than 90% YoY to nearly $920 billion",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 920.0,
+    "value_text": "nearly $920 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-373089a2ba59",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c935d5c9c651cc",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AI server shipment growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "nearly"
+    ],
+    "quote": "AI server shipments are projected to increase by nearly 36% YoY.",
+    "role": "supports",
+    "unit": "% YoY",
+    "value": 36.0,
+    "value_text": "nearly 36%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-373089a2ba59",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fd7bbcfef92b58",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AI server share of server revenue",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "AI servers' share of total server market revenue is expected to rise to approximately 81%",
+    "role": "supports",
+    "unit": "%",
+    "value": 81.0,
+    "value_text": "approximately 81%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-373089a2ba59",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-94066f8039b78f",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AI server revenue growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "more than"
+    ],
+    "quote": "AI server revenue is projected to surge by more than 90% YoY to nearly $920 billion",
+    "role": "catalyst",
+    "unit": "% YoY",
+    "value": 90.0,
+    "value_text": "more than 90%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-373089a2ba59",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b802dead52987e",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "total server market revenue",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "surpass",
+     "first time"
+    ],
+    "quote": "TrendForce therefore expects total server market revenue to surpass $1 trillion for the first time in 2027",
+    "role": "catalyst",
+    "unit": "$tn",
+    "value": 1.0,
+    "value_text": "$1 trillion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-373089a2ba59",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-62cf0bb7518ba8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Shortages and rising prices of components, particularly memory, are driving up AI server rack ASPs",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "particularly memory"
+    ],
+    "quote": "Shortages and rising prices of key components, particularly memory, are driving up the ASPs of next-generation AI server racks.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-58cc37b92a49f8",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm producing the AI server industry forecasts"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6b3e1b00796068",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Google",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": "0001018724",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-31 (accession 0001018724-26-000026) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $.01 per share",
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-ab714e26b44c72",
+     "name_as_written": "Amazon",
+     "other_securities": [],
+     "quote": "Amazon",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": "0001326801",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-b46bd4b8f828c9",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "Meta",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": "0000789019",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $ 0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-f2657544dc46db",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "Microsoft",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": "0001341439",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.01 per share",
+       "ticker": "ORCL"
+      }
+     ],
+     "mention_id": "M-0fc0356e38d985",
+     "name_as_written": "Oracle",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+       "ticker": "ORCL PRD"
+      }
+     ],
+     "quote": "Oracle",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c3d46eb179aa49",
+     "name_as_written": "ByteDance",
+     "other_securities": [],
+     "quote": "ByteDance",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7d10b270c02e0e",
+     "name_as_written": "Tencent",
+     "other_securities": [],
+     "quote": "Tencent",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": "0001577552",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9982d4159329fe",
+     "name_as_written": "Alibaba",
+     "other_securities": [],
+     "quote": "Alibaba",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": "0001329099",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-43587e8674666a",
+     "name_as_written": "Baidu",
+     "other_securities": [],
+     "quote": "Baidu",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1f7ee9a8ffa92e",
+     "name_as_written": "Tesla",
+     "other_securities": [],
+     "quote": "Tesla",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Tier-2 data center operator continuing to purchase AI servers"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": "0001769628",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-12 (accession 0001769628-26-000366) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A common stock, $0.000005 par value per share",
+       "ticker": "CRWV"
+      }
+     ],
+     "mention_id": "M-1ef74abcc6973c",
+     "name_as_written": "CoreWeave",
+     "other_securities": [],
+     "quote": "CoreWeave",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Tier-2 data center operator continuing to purchase AI servers"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": "0001045810",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-b595ac9e57089d",
+     "name_as_written": "NVIDIA",
+     "other_securities": [],
+     "quote": "NVIDIA's GB300 and VR200",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier of rack-scale solutions (GB300, VR200) that 2027 orders center on"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "cik": "0000002488",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-270dc0c138f514",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "AMD's Helios series",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier of Helios rack-scale series that 2027 orders center on"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-373089a2ba59",
+     "claim_ids": [
+      "C-62cf0bb7518ba8",
+      "C-94066f8039b78f"
+     ],
+     "direction": "positive",
+     "name": "AI servers",
+     "provenance": "SOURCE OPINION",
+     "quote": "ASPs of next-generation AI server racks"
+    },
+    {
+     "article_id": "A-373089a2ba59",
+     "claim_ids": [
+      "C-62cf0bb7518ba8"
+     ],
+     "direction": "positive",
+     "name": "memory",
+     "provenance": "SOURCE OPINION",
+     "quote": "key components, particularly memory"
+    }
+   ],
+   "sectors": [
+    "AI servers",
+    "Memory",
+    "Server components"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-7a7bfa99568dd8",
+      "C-9eda2759aac841",
+      "C-9858ddc8032be7"
+     ],
+     "provenance": "FORECAST",
+     "text": "AI servers are expected to generate about $479bn in revenue in 2026, nearly 75% of a $639.2bn server market. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-94066f8039b78f",
+      "C-c519e3ca0179c4",
+      "C-b802dead52987e",
+      "C-fd7bbcfef92b58"
+     ],
+     "provenance": "FORECAST",
+     "text": "AI server revenue is projected to grow over 90% to nearly $920bn in 2027, about 81% of a server market exceeding $1 trillion for the first time. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-62cf0bb7518ba8"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "Higher revenue partly reflects price inflation from shortages rather than underlying demand, which could normalize as supply catches up."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 4 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Easing memory/component shortages"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Falling AI server component spot prices"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Downward AI server revenue revisions"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-fff493f369709b",
+      "C-62cf0bb7518ba8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Part of the upward CapEx revision reflects higher prices, higher component quotations amid shortages, and advance payments to secure supply rather than purely higher volumes, so headline spending growth may overstate underlying demand. (scope: Applies to the nine leading CSPs' 2027 combined CapEx forecast; concerns price/timing versus volume composition of spending, not a specific equity.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed memory/component suppliers capture the ASP uplift"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether margins, not just revenue, expand for suppliers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether shortages persist or ease, reversing pricing"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether consensus already reflects these revenue forecasts"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Component shortages ease"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Memory prices roll over"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify which listed memory and server-component suppliers benefit most from AI server ASP inflation and whether their margins expand, not just revenue."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Memory contract prices rise further"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI server ASP forecasts revised upward"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-373089a2ba59",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-94066f8039b78f",
+     "C-b802dead52987e",
+     "C-c935d5c9c651cc",
+     "C-7a7bfa99568dd8",
+     "C-9eda2759aac841",
+     "C-9858ddc8032be7",
+     "C-62cf0bb7518ba8",
+     "C-c519e3ca0179c4",
+     "C-fd7bbcfef92b58",
+     "C-fff493f369709b"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-14T15:00:56+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "CSP CapEx Projected to Exceed US$1.5 Trillion in 2027, with AI Server Revenue Growing Over 90% YoY on Higher Shipments and Prices, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261014-13269.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-21",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-10-09 (0000723125-26-000023)",
+    "business": "memory chip maker (DRAM, NAND, HBM)",
+    "direction": "positive",
+    "enrichment_id": "EC-559da7f028946e",
+    "evidence": "s03.0: Shortages of key AI server components, particularly memory, emerge amid strong demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-10-09 (accession 0000723125-26-000023) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.10 per share",
+      "ticker": "MU"
+     }
+    ],
+    "name": "Micron Technology",
+    "rationale": "Memory shortages and rising prices lift Micron's DRAM, HBM and NAND contract prices, expanding margins as AI server demand strengthens.",
+    "registrant": "MICRON TECHNOLOGY INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "DRAM, HBM and NAND memory chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-05208D689A",
+    "ticker_hint": "MU"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "memory chip maker (DRAM, HBM, NAND)",
+    "direction": "positive",
+    "enrichment_id": "EC-345a299be4a47a",
+    "evidence": "s03.0: Shortages of key AI server components, particularly memory, emerge amid strong demand.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "SK Hynix",
+    "rationale": "Leading HBM supplier; memory shortages and rising prices lift contract ASPs and margins on AI server memory demand.",
+    "registrant": "SK hynix Inc.",
+    "resolution_note": "listing NOT point-in-time verified as of 2026-10-21: no periodic filing on or before 2026-10-21 in the SEC submissions index; foreign-issuer check unavailable",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "DRAM, HBM and NAND memory chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-05208D689A",
+    "ticker_hint": "HXSCL"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-31 (0001375365-26-000022)",
+    "business": "AI server and rack systems builder",
+    "direction": "positive",
+    "enrichment_id": "EC-ed6dc6e4b386bb",
+    "evidence": "s03.1: Component shortages drive up ASPs of next-generation AI server racks.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-08-31 (accession 0001375365-26-000022) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "SMCI"
+     }
+    ],
+    "name": "Super Micro Computer",
+    "rationale": "Higher AI server rack ASPs from component pricing can lift revenue per unit, though memory cost pass-through may pressure margins.",
+    "registrant": "Super Micro Computer, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3571); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AI server racks and systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-05208D689A",
+    "ticker_hint": "SMCI"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-16 (0001571996-26-000008)",
+    "business": "server, storage and PC systems maker",
+    "direction": "positive",
+    "enrichment_id": "EC-6439e1d664597c",
+    "evidence": "s03.1: Component shortages drive up ASPs of next-generation AI server racks.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-08 (accession 0001571996-26-000046) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class C Common Stock, par value of $0.01 per share",
+      "ticker": "DELL"
+     }
+    ],
+    "name": "Dell Technologies",
+    "rationale": "Rising AI server rack ASPs lift Dell's ISG server revenue as it ships high-value memory-rich AI racks.",
+    "registrant": "Dell Technologies Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3571); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AI server racks (ISG)",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-05208D689A",
+    "ticker_hint": "DELL"
+   }
+  ],
+  "created_at": "2026-10-21T08:23:32.617877Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Hewlett Packard Enterprise: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261021T080508Z-scan",
+  "set_id": "ES-6b8c831a91b8c9",
+  "thesis_id": "TH-05208D689A",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-21 08:25 UTC from the registry (ti-engine-5; run R-20261021T080508Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-373089a2ba59",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "ai_infrastructure"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:21:08.985955Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-14",
+     "latest_article_date": "2026-10-14",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "AI infrastructure build-out (spans spenders, chips, power, materials)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-05208D689A",
+     "title": "Component shortages, especially memory, lift AI server rack ASPs and revenue"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-62cf0bb7518ba8",
+       "C-94066f8039b78f",
+       "C-c519e3ca0179c4",
+       "C-b802dead52987e",
+       "C-fd7bbcfef92b58"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Shortages and rising prices of key components, particularly memory, are driving up AI server rack ASPs, helping AI server revenue surge over 90% to nearly $920bn in 2027 (about 81% of a server market exceeding $1 trillion). \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-62cf0bb7518ba8",
+       "C-c935d5c9c651cc"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article attributes rising AI server revenue and ASPs to component shortages and rising prices, particularly memory. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Rising ASPs driven by component shortages mean AI server revenue growth outpaces unit shipment growth, benefiting component suppliers with pricing power, though the article names no specific memory supplier."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-373089a2ba59",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-94066f8039b78f"
+       ],
+       "original_date": "2026-10-14",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "AI server revenue is projected to grow more than 90% YoY to nearly $920 billion in 2027 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-fd7bbcfef92b58"
+       ],
+       "original_date": "2026-10-14",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "AI servers' share of total server market revenue is expected to rise to approximately 81% in 2027 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c935d5c9c651cc"
+       ],
+       "original_date": "2026-10-14",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "AI server shipments are projected to grow nearly 36% YoY in 2027 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7a7bfa99568dd8"
+       ],
+       "original_date": "2026-10-14",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "AI servers are expected to generate approximately $479 billion in revenue in 2026 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9eda2759aac841"
+       ],
+       "original_date": "2026-10-14",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "AI servers would account for nearly 75% of 2026 total server market revenue \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9858ddc8032be7"
+       ],
+       "original_date": "2026-10-14",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Total server market revenue is projected at $639.2 billion in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 9 pieces of evidence from A-373089a2ba59 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:21 UTC, analysed as of 2026-10-21, from a source published 2026-10-14; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-62cf0bb7518ba8",
+       "C-fff493f369709b"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Shortages of key AI server components, particularly memory, emerge amid strong demand."
+     },
+     {
+      "claim_ids": [
+       "C-62cf0bb7518ba8"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "Component shortages drive up ASPs of next-generation AI server racks."
+     },
+     {
+      "claim_ids": [
+       "C-94066f8039b78f",
+       "C-c519e3ca0179c4"
+      ],
+      "provenance": "FORECAST",
+      "step": "listed_earnings",
+      "text": "AI server revenue surges over 90% to nearly $920bn in 2027 on higher shipments and prices. \u27e8cited figures: forecast; approximate\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-373089a2ba59",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7a7bfa99568dd8",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AI server revenue",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "AI servers are expected to generate approximately $479 billion in revenue in 2026",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 479.0,
+      "value_text": "approximately $479 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-373089a2ba59",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9858ddc8032be7",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "total server market revenue",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "the projected $639.2 billion in total server market revenue, which includes both general-purpose and AI servers",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 639.2,
+      "value_text": "$639.2 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-373089a2ba59",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9eda2759aac841",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AI server share of server revenue",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "This would account for nearly 75% of the projected $639.2 billion in total server market revenue",
+      "role": "supports",
+      "unit": "%",
+      "value": 75.0,
+      "value_text": "nearly 75%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-373089a2ba59",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c519e3ca0179c4",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AI server revenue",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "AI server revenue is projected to surge by more than 90% YoY to nearly $920 billion",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 920.0,
+      "value_text": "nearly $920 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-373089a2ba59",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c935d5c9c651cc",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AI server shipment growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "AI server shipments are projected to increase by nearly 36% YoY.",
+      "role": "supports",
+      "unit": "% YoY",
+      "value": 36.0,
+      "value_text": "nearly 36%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-373089a2ba59",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fd7bbcfef92b58",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AI server share of server revenue",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "AI servers' share of total server market revenue is expected to rise to approximately 81%",
+      "role": "supports",
+      "unit": "%",
+      "value": 81.0,
+      "value_text": "approximately 81%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-373089a2ba59",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-94066f8039b78f",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AI server revenue growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "more than"
+      ],
+      "quote": "AI server revenue is projected to surge by more than 90% YoY to nearly $920 billion",
+      "role": "catalyst",
+      "unit": "% YoY",
+      "value": 90.0,
+      "value_text": "more than 90%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-373089a2ba59",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b802dead52987e",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "total server market revenue",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "surpass",
+       "first time"
+      ],
+      "quote": "TrendForce therefore expects total server market revenue to surpass $1 trillion for the first time in 2027",
+      "role": "catalyst",
+      "unit": "$tn",
+      "value": 1.0,
+      "value_text": "$1 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-373089a2ba59",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-62cf0bb7518ba8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Shortages and rising prices of components, particularly memory, are driving up AI server rack ASPs",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "particularly memory"
+      ],
+      "quote": "Shortages and rising prices of key components, particularly memory, are driving up the ASPs of next-generation AI server racks.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-58cc37b92a49f8",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm producing the AI server industry forecasts"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6b3e1b00796068",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": "0001018724",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0001018724-26-000026) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-ab714e26b44c72",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "Amazon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": "0001326801",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-b46bd4b8f828c9",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": "0000789019",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $ 0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-f2657544dc46db",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "Microsoft",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": "0001341439",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.01 per share",
+         "ticker": "ORCL"
+        }
+       ],
+       "mention_id": "M-0fc0356e38d985",
+       "name_as_written": "Oracle",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+         "ticker": "ORCL PRD"
+        }
+       ],
+       "quote": "Oracle",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c3d46eb179aa49",
+       "name_as_written": "ByteDance",
+       "other_securities": [],
+       "quote": "ByteDance",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d10b270c02e0e",
+       "name_as_written": "Tencent",
+       "other_securities": [],
+       "quote": "Tencent",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": "0001577552",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9982d4159329fe",
+       "name_as_written": "Alibaba",
+       "other_securities": [],
+       "quote": "Alibaba",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": "0001329099",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-43587e8674666a",
+       "name_as_written": "Baidu",
+       "other_securities": [],
+       "quote": "Baidu",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "One of the nine leading CSPs ramping AI CapEx"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1f7ee9a8ffa92e",
+       "name_as_written": "Tesla",
+       "other_securities": [],
+       "quote": "Tesla",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Tier-2 data center operator continuing to purchase AI servers"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": "0001769628",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-12 (accession 0001769628-26-000366) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A common stock, $0.000005 par value per share",
+         "ticker": "CRWV"
+        }
+       ],
+       "mention_id": "M-1ef74abcc6973c",
+       "name_as_written": "CoreWeave",
+       "other_securities": [],
+       "quote": "CoreWeave",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Tier-2 data center operator continuing to purchase AI servers"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": "0001045810",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-b595ac9e57089d",
+       "name_as_written": "NVIDIA",
+       "other_securities": [],
+       "quote": "NVIDIA's GB300 and VR200",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier of rack-scale solutions (GB300, VR200) that 2027 orders center on"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "cik": "0000002488",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-270dc0c138f514",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "AMD's Helios series",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier of Helios rack-scale series that 2027 orders center on"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-373089a2ba59",
+       "claim_ids": [
+        "C-62cf0bb7518ba8",
+        "C-94066f8039b78f"
+       ],
+       "direction": "positive",
+       "name": "AI servers",
+       "provenance": "SOURCE OPINION",
+       "quote": "ASPs of next-generation AI server racks"
+      },
+      {
+       "article_id": "A-373089a2ba59",
+       "claim_ids": [
+        "C-62cf0bb7518ba8"
+       ],
+       "direction": "positive",
+       "name": "memory",
+       "provenance": "SOURCE OPINION",
+       "quote": "key components, particularly memory"
+      }
+     ],
+     "sectors": [
+      "AI servers",
+      "Memory",
+      "Server components"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-7a7bfa99568dd8",
+        "C-9eda2759aac841",
+        "C-9858ddc8032be7"
+       ],
+       "provenance": "FORECAST",
+       "text": "AI servers are expected to generate about $479bn in revenue in 2026, nearly 75% of a $639.2bn server market. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-94066f8039b78f",
+        "C-c519e3ca0179c4",
+        "C-b802dead52987e",
+        "C-fd7bbcfef92b58"
+       ],
+       "provenance": "FORECAST",
+       "text": "AI server revenue is projected to grow over 90% to nearly $920bn in 2027, about 81% of a server market exceeding $1 trillion for the first time. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-62cf0bb7518ba8"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "Higher revenue partly reflects price inflation from shortages rather than underlying demand, which could normalize as supply catches up."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 4 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Easing memory/component shortages"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Falling AI server component spot prices"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Downward AI server revenue revisions"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-fff493f369709b",
+        "C-62cf0bb7518ba8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Part of the upward CapEx revision reflects higher prices, higher component quotations amid shortages, and advance payments to secure supply rather than purely higher volumes, so headline spending growth may overstate underlying demand. (scope: Applies to the nine leading CSPs' 2027 combined CapEx forecast; concerns price/timing versus volume composition of spending, not a specific equity.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed memory/component suppliers capture the ASP uplift"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether margins, not just revenue, expand for suppliers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether shortages persist or ease, reversing pricing"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether consensus already reflects these revenue forecasts"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Component shortages ease"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Memory prices roll over"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify which listed memory and server-component suppliers benefit most from AI server ASP inflation and whether their margins expand, not just revenue."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Memory contract prices rise further"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI server ASP forecasts revised upward"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-373089a2ba59",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-94066f8039b78f",
+       "C-b802dead52987e",
+       "C-c935d5c9c651cc",
+       "C-7a7bfa99568dd8",
+       "C-9eda2759aac841",
+       "C-9858ddc8032be7",
+       "C-62cf0bb7518ba8",
+       "C-c519e3ca0179c4",
+       "C-fd7bbcfef92b58",
+       "C-fff493f369709b"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-14T15:00:56+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "CSP CapEx Projected to Exceed US$1.5 Trillion in 2027, with AI Server Revenue Growing Over 90% YoY on Higher Shipments and Prices, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261014-13269.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "f019e601dbcc7c234b0ce66109583ea3dbe80a0603b591c4d8809fb517451db4",
+   "created_at": "2026-10-21T08:21:20.110842Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-c935d5c9c651cc",
+       "C-7a7bfa99568dd8",
+       "C-9eda2759aac841",
+       "C-9858ddc8032be7",
+       "C-c519e3ca0179c4",
+       "C-fd7bbcfef92b58",
+       "C-94066f8039b78f",
+       "C-b802dead52987e"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "8"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-7a7bfa99568dd8",
+       "C-9eda2759aac841",
+       "C-9858ddc8032be7"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-7a7bfa99568dd8: forecast window 2026-01-01..2026-12-31 (2026); C-9eda2759aac841: forecast window 2026-01-01..2026-12-31 (2026); C-9858ddc8032be7: forecast window 2026-01-01..2026-12-31 (2026)); 6 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: NVIDIA (NVDA), AMD (AMD), sector: AI servers, sector: memory",
+      "value": "2 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 2 offered but NOT counted (opinion, forecast figure or stale reading): C-94066f8039b78f, C-b802dead52987e",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 8 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-05208D689A",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-373089a2ba59",
+   "block_ids": [
+    "b006"
+   ],
+   "claim_ids": [
+    "C-fff493f369709b"
+   ],
+   "excerpt": "\u2026and advance payments required by some component suppliers to secure supply, prompting CSPs to\u2026",
+   "name": "suppliers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-fff493f369709b"
+ ],
+ "review_carried": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {},
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}

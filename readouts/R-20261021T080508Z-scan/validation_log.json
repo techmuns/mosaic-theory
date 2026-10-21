@@ -1,0 +1,672 @@
+[
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:16:21.884439Z",
+  "detail": "s01.1: The cited opinion spans mention Meta's Ray-Ban Display momentum drawing consumer attention and primary drivers, but 'transitioning from proof-of-concept to consumer market' and 'accelerating product development and channels to capture early demand' are not stated in the cited spans. | 'AR glasses are transitioning from proof-of-concept to consumer market, and brands are accelerating p'",
+  "issue_id": "VI-063acf6b626bf1",
+  "ref_id": "TH-3C22A83E75:s01.1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-10-21T08:10:28.764008Z",
+  "detail": "model classifies industry_data_report (A subscription research publisher (SemiAnalysis) presenting its proprietary Datacenter Industry Model forecasts and leading indicators for t); the record keeps independent_research (channel default for semianalysis)",
+  "issue_id": "VI-0df169730c0ca7",
+  "ref_id": "A-3211e327f4ef",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:14:51.773432Z",
+  "detail": "s06.3: first check NUMBER_NOT_IN_CITED_CLAIMS (s06.3 prints '2', which none of its cited claims carry: \"A level of inflation above the Fed's target says remarkably little about long-run equity returns on \") \u2014 re-anchored to C-f768c2cd0e6f8f; after re-anchoring: supported",
+  "issue_id": "VI-12284ff009fee4",
+  "ref_id": "TH-393DF5CD2B:s06.3",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:11:45.910486Z",
+  "detail": "s07.1: Cited span supports memory/logic becoming the binding constraint, but does not mention 'datacenter oversupply' nor 'limiting usable compute'. Those extensions are not in the cited span. | 'The article itself raises the risk of a datacenter oversupply and that memory/logic may become the b'",
+  "issue_id": "VI-17bd1bae4714af",
+  "ref_id": "TH-C1889ABBA5:s07.1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-21T08:18:38.812973Z",
+  "detail": "h1 ASML's hybrid bonding tool threatens Besi's logic  cites ['C-1382cb9d497c06'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-20352b20e196ff",
+  "ref_id": "h1 ASML's hybrid bonding tool threatens Besi's logic ",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:21:08.983490Z",
+  "detail": "s03.0: The cited forecast spans (CapEx surge, Tier-2 operators purchasing) support the idea of ramping investment, but 'Hyperscale CSPs and Tier-2 operators ramp investment' is a broader characterization; the Tier-2 span mentions continued purchasing of AI servers, not necessarily ramped investment. Still broadly consistent with cited spans. | 'Hyperscale CSPs and Tier-2 operators ramp investment in AI infrastructure. \u27e8cited figures: forecast\u27e9'",
+  "issue_id": "VI-206124a126007a",
+  "ref_id": "TH-0D381F307A:s03.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:11:21.936548Z",
+  "detail": "s03.0: States 'Over $1T' but cited span says 'slightly under USD 1T' \u2014 overstates. Pool C-05ec9740de39d2 supports 'over a trillion USD'. | 'Over $1T of binding datacenter leases signed YTD 2026 and record hyperscaler construction starts dri'",
+  "issue_id": "VI-209dd21587a421",
+  "ref_id": "TH-3557AAE138:s03.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-10-21T08:10:49.078161Z",
+  "detail": "c10: number check failed: value=1.0 value_text='over a trillion USD' vs quote \u2014 quote 'we\u2019ve identified over a trillion USD of lease value that was signed and closed'",
+  "issue_id": "VI-23d22194ad0578",
+  "ref_id": "C-05ec9740de39d2",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:11:45.910432Z",
+  "detail": "s01.0: Cited span only supports 'likely material revenue acceleration for leading AI labs and other token vendors'. The claims of 'cheaper and smarter AI' and 'faster model progress' are in a different span (C-e09585dce879fc) not cited here. | 'The article argues the datacenter acceleration means significantly more compute supply, cheaper and '",
+  "issue_id": "VI-2879b4056f9db2",
+  "ref_id": "TH-C1889ABBA5:s01.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:23:18.025878Z",
+  "detail": "s03.0: first check REVIEW_PARTIAL (s03.0: The 'requiring coordinated electrical and optical testing' clause is not in cited span C-e5cc0fdc7c2143, which only covers AI demand accelerating CPO tow) \u2014 re-anchored to C-72e0056978231a; after re-anchoring: supported",
+  "issue_id": "VI-2f230ffb54be76",
+  "ref_id": "TH-921772E86C:s03.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:11:45.911026Z",
+  "detail": "s06.1: first check REVIEW_UNSUPPORTED (s06.1: UNSUPPORTED \u2014 The cited span about revenue acceleration does not mention cheaper, smarter AI or faster model progress. | 'Cheaper, smarter AI and faster ) \u2014 re-anchored to C-e09585dce879fc; after re-anchoring: supported",
+  "issue_id": "VI-3566a8a22726dd",
+  "ref_id": "TH-C1889ABBA5:s06.1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:11:21.937132Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: Cites debt raises as a leading indicator but neither cited span supports debt raises; leases and construction starts are supported. | 'Leading indicators) \u2014 re-anchored to C-55d7eb6ef01aa0; after re-anchoring: supported",
+  "issue_id": "VI-370608f193a7d0",
+  "ref_id": "TH-3557AAE138:s06.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-21T08:20:57.331859Z",
+  "detail": "h1 Surging CSP CapEx drives AI server shipments and s cites ['C-fff493f369709b'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-3d7ae45bd8a14b",
+  "ref_id": "h1 Surging CSP CapEx drives AI server shipments and s",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:16:21.884478Z",
+  "detail": "s06.1: The nearly 80% 2027 growth figure is supported, but 'AR glasses moving into the consumer market' is not supported by the single cited forecast span. | 'AR glasses moving into the consumer market with sustained growth of nearly 80% forecast for 2027. \u27e8c'",
+  "issue_id": "VI-3e5022bb496c6d",
+  "ref_id": "TH-3C22A83E75:s06.1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:08:32.235069Z",
+  "detail": "s06.0: Says 2026 prices are 'already rising 2.8-5x', stating as actual/current what the cited span C-64ac45bd160480 presents as a projection ('is projected to push'). Overstates a forecast as realized. | 'Capacity is near full with inventories at one month and suppliers booked into Q1 2027, and 2026 pric'",
+  "issue_id": "VI-4596f679b59423",
+  "ref_id": "TH-B1F096684F:s06.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-21T08:14:28.535744Z",
+  "detail": "k5: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-45ce49dbfcacf9",
+  "ref_id": "C-52df385b6c3f4d",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:23:18.025845Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: The '2027-2028 story' conclusion about mass production readiness is not in the two cited MEASURED OBSERVATION spans, which only cover the September 2026 ) \u2014 re-anchored to C-3f01a7042c78ab, C-b59b95affce9ba; after re-anchoring: supported",
+  "issue_id": "VI-46c67b1c2108c4",
+  "ref_id": "TH-921772E86C:s06.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SECTOR_LABEL_ONLY",
+  "created_at": "2026-10-21T08:08:20.468700Z",
+  "detail": "h1 AI data center demand drives optical fiber shortag: sector exposure 'Semiconductors / Telecommunications' rests only on a page label (b003, a paragraph that reads 'Semiconductors / Telecommunications') \u2014 a category or tag names a sector, it does not say the sector is exposed; dropped",
+  "issue_id": "VI-471c2c1449e37f",
+  "ref_id": "h1 AI data center demand drives optical fiber shortag",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "ANSWER_SALVAGED",
+  "created_at": "2026-10-21T08:20:48.613632Z",
+  "detail": "extraction: the answer failed its schema at the top level (hypotheses: Input should be a valid list) \u2014 salvaged field by field",
+  "issue_id": "VI-475aa8ef76324d",
+  "ref_id": "A-373089a2ba59",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:19:08.789725Z",
+  "detail": "s06.0: Cited spans support SoIC pitch tightening to 4.5um by/around 2029, but 'A bonder has not been announced by management' and 'adoption would unfold over years' are not in the cited spans. | 'A bonder has not been announced by management; adoption would unfold over years as SoIC pitch tighte'",
+  "issue_id": "VI-4832af59620a23",
+  "ref_id": "TH-77926B9936:s06.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:16:30.452903Z",
+  "detail": "s03.0: The cited span supports only the ~80% combined share. It says nothing about AR glasses adoption driving display tech development, nor about monochrome green or dual-color red-green solutions. | 'AR glasses adoption drives OLEDoS, LEDoS and LCoS display technology development, including monochro'",
+  "issue_id": "VI-4bc037a5111925",
+  "ref_id": "TH-722932E64F:s03.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-10-21T08:14:51.777805Z",
+  "detail": "a risk the source states that no model pass listed \u2014 \u201cThat dispersion is the point: A bond sell-off can be a headwind, but the rates move alone does not determine the equity outcome.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+  "issue_id": "VI-4c90270bbeab42",
+  "ref_id": "A-cfd53f3cc80a",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-21T08:14:28.534969Z",
+  "detail": "k2: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-4edd1544222031",
+  "ref_id": "C-f768c2cd0e6f8f",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:19:08.789715Z",
+  "detail": "s03.2: Cited span supports premium pricing expectation but says nothing about 'given expensive advanced-logic dies'; that rationale is unsupported. | 'ASML expected to price tools at a premium to peers given expensive advanced-logic dies.'",
+  "issue_id": "VI-52228df2c4b1d0",
+  "ref_id": "TH-77926B9936:s03.2",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:11:45.910461Z",
+  "detail": "s03.0: The +50GW span says it equals the global cumulative datacenter market built in one year; the revenue-acceleration span doesn't state 'significantly more compute supply'. The specific claim 'produces significantly more compute supply' is an interpretation not directly in either cited span, though close to the framing. | 'The +50GW buildout produces significantly more compute supply. \u27e8cited figures: forecast; approximate'",
+  "issue_id": "VI-59dd66633511d4",
+  "ref_id": "TH-C1889ABBA5:s03.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:11:21.936524Z",
+  "detail": "s01.0: States 'over $1T of binding leases' but cited span says 'slightly under USD 1T' \u2014 overstates. Pool C-05ec9740de39d2 ('over a trillion USD of lease value signed and closed') supports 'over $1T'. | 'SemiAnalysis forecasts +50GW of datacenter capacity in 2027, supported by >24GW already in advanced '",
+  "issue_id": "VI-5c76792cc5c830",
+  "ref_id": "TH-3557AAE138:s01.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-21T08:21:20.114243Z",
+  "detail": "b007: '36%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Strong financial resources fuel AI server procurement, with shipment growth expected to approach 36% in 2027'",
+  "issue_id": "VI-647c36ae4fde49",
+  "ref_id": "A-373089a2ba59",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:23:18.025868Z",
+  "detail": "s07.1: first check REVIEW_UNSUPPORTED (s07.1: UNSUPPORTED \u2014 Cited span C-ff1e5eb7255780 is only about China's import reliance; it says nothing about whether optical module testing experience extends ) \u2014 re-anchored to C-204e3b6371f409; after re-anchoring: supported",
+  "issue_id": "VI-65e9c674dd67d0",
+  "ref_id": "TH-921772E86C:s07.1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SECTOR_LABEL_ONLY",
+  "created_at": "2026-10-21T08:22:54.148472Z",
+  "detail": "h1 CPO mass production shifts value to integrated opt: sector exposure 'Semiconductors' rests only on a page label (b003, a paragraph that reads 'Semiconductors') \u2014 a category or tag names a sector, it does not say the sector is exposed; dropped",
+  "issue_id": "VI-679aadac59c5b8",
+  "ref_id": "h1 CPO mass production shifts value to integrated opt",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-21T08:14:28.535231Z",
+  "detail": "k3: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-67a948e0178e61",
+  "ref_id": "C-0a0845c8947bb9",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-21T08:14:28.530815Z",
+  "detail": "c4: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-698a92019c9356",
+  "ref_id": "C-72a38a05f64a4d",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:19:08.790407Z",
+  "detail": "s06.1: first check REVIEW_PARTIAL (s06.1: Cited spans support overlay specs and Besi logic concentration at TSMC/Intel, but 'decades of alignment expertise' and 'deep TSMC/Intel relationships' ar) \u2014 re-anchored to C-3b4c4ffc6d1605; after re-anchoring: supported",
+  "issue_id": "VI-6e6367ff304b8c",
+  "ref_id": "TH-77926B9936:s06.1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-10-21T08:14:51.778330Z",
+  "detail": "12 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 0.6%; 9.1%; 1.3%; mid-40% range; below 30%; 10.06%; 4.67%; 2.08%; more than 100 basis points; 5.5%; First bank earnings reads were broadly resilient with support from lending and markets and no broad consumer credit deterioration; 7.84% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-6f00b4d38f4354",
+  "ref_id": "A-cfd53f3cc80a",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-10-21T08:19:08.793879Z",
+  "detail": "6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 2029; one; about 6um; about 10um; around 10mm; 1.2-second \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-79ab30f38cab80",
+  "ref_id": "A-7b20abdd06d4",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-21T08:14:28.535485Z",
+  "detail": "k4: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-7c6b0fbf0ae2ea",
+  "ref_id": "C-d27f939f199c16",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-21T08:14:28.531037Z",
+  "detail": "c5: relabelled forecast: the figure is forward-looking (NTM / estimate)",
+  "issue_id": "VI-83ddf726ee3951",
+  "ref_id": "C-1160b4711aed16",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:19:08.789732Z",
+  "detail": "s07.0: Cited span supports Besi leading D2W and being the only volume supplier, but 'ASML has not announced a tool and still must solve feed-forward metrology, D2W contact and cleanliness challenges' is not in the cited span. | 'Besi currently leads D2W and is the only supplier in volume production; ASML has not announced a too'",
+  "issue_id": "VI-8730f697238280",
+  "ref_id": "TH-77926B9936:s07.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:19:08.789691Z",
+  "detail": "s03.0: Labelled MEASURED OBSERVATION but 'extends vertical integration' and 'building a track-based D2W bonder leveraging its litho alignment' is interpretation; the cited spans (27 patent families, 0.9nm overlay, post-bond overlay) do not establish that ASML is building a track-based bonder. The architecture-design report (C-88e096720cc437) is not cited here. | 'ASML extends vertical integration into back-end hybrid bonding, building a track-based D2W bonder le'",
+  "issue_id": "VI-8977fea6d4a791",
+  "ref_id": "TH-77926B9936:s03.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-21T08:18:38.813022Z",
+  "detail": "text-credited author 'Sherry Zhang' is not a verbatim span naming them ('ASML has not announced anything yet') \u2014 not added",
+  "issue_id": "VI-8d393835546cf6",
+  "ref_id": "A-7b20abdd06d4",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:19:08.790390Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: Cited span refers to HB pitch moving from 6um to 4.5um by 2029, but does not label it 'SoIC' pitch, nor does it support 'a bonder has not been announced ) \u2014 re-anchored to C-2ffe726cbc9c6a; after re-anchoring: supported",
+  "issue_id": "VI-8d5c7d51a68e92",
+  "ref_id": "TH-77926B9936:s06.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-10-21T08:18:38.815512Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-8e6a8e4ccbe1a3",
+  "ref_id": "A-7b20abdd06d4",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-21T08:08:20.467597Z",
+  "detail": "c14: as-of 2026-09-30 not found in the cited source note \u2014 dropped",
+  "issue_id": "VI-8f59d03e1127ea",
+  "ref_id": "C-6bccbc277d58c2",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-10-21T08:21:20.113266Z",
+  "detail": "VR200 (a list of examples, b011) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-91ce3715554ab5",
+  "ref_id": "A-373089a2ba59",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-10-21T08:11:45.914504Z",
+  "detail": "6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: +43GW; over a trillion USD; under 10 months; up to 63%; The ex-US datacenter buildout is sharply accelerating in 2027 and expected to gain market share in 2028; Grid headroom is expected to dip negative at the end of 2027, driving behind-the-meter generation \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-9d3ac72e34dafb",
+  "ref_id": "A-3211e327f4ef",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-10-21T08:10:49.083366Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-a759c8c68736b1",
+  "ref_id": "A-3211e327f4ef",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "RECORD_KIND_CORRECTED",
+  "created_at": "2026-10-21T08:14:29.349714Z",
+  "detail": "\u201cEquities can absorb above-target inflation and higher yields while earnings hold\u201d: extracted as a market-regime record on macro_market, but none of its 17 evidence claim(s) measures equity-market structure (correlation, dispersion, breadth, volatility) \u2014 a sector mechanism is an investment thesis: its earnings transmission is tested like any other",
+  "issue_id": "VI-a88ebdd65b48c6",
+  "ref_id": "AV-a4d414878ae8fc15:hx1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "hypothesis",
+  "severity": "INFO"
+ },
+ {
+  "code": "ANSWER_SALVAGED",
+  "created_at": "2026-10-21T08:13:08.435445Z",
+  "detail": "extraction: hypotheses: the whole field discarded \u2014 2,595 characters of text where a list belongs, not valid JSON (Expecting property name enclosed in double quotes: line 1 column 898, character 897); it named 1 item(s): h1",
+  "issue_id": "VI-a9e31f39d3f389",
+  "ref_id": "A-cfd53f3cc80a",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-21T08:11:45.910493Z",
+  "detail": "s07.2: UNSUPPORTED \u2014 Cited span is about memory/logic constraint in 2027-28; it says nothing about 'datacenter oversupply' flagged as 'the real question'. No cited or pool span supports an oversupply framing as 'the real question'. | \"The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real q\"",
+  "issue_id": "VI-ac7da16581e44d",
+  "ref_id": "TH-C1889ABBA5:s07.2",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-21T08:10:49.081946Z",
+  "detail": "h1 AI datacenter buildout accelerates +50GW in 2027,  cites c10, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-af7f45979f59b4",
+  "ref_id": "h1 AI datacenter buildout accelerates +50GW in 2027, ",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:14:51.772738Z",
+  "detail": "s03.2: Line is labelled MEASURED OBSERVATION but 'market treats current pressure as manageable' is the source's interpretation/opinion, not a measurement. The regime figures and <2% are measured, but the interpretive clause is stronger than its measured content. | 'Equities remain less than 2% below all-time highs and have historically compounded through long abov'",
+  "issue_id": "VI-b1115089ed2847",
+  "ref_id": "TH-393DF5CD2B:s03.2",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:16:21.884464Z",
+  "detail": "s03.0: The cited span supports the Ray-Ban Display momentum drawing consumer attention, but 'transition from proof-of-concept to consumer market' is not in the cited span. | 'AR glasses transition from proof-of-concept to consumer market, drawing consumer attention after Met'",
+  "issue_id": "VI-b48358386c4b39",
+  "ref_id": "TH-3C22A83E75:s03.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:11:21.937148Z",
+  "detail": "s03.0: first check REVIEW_PARTIAL (s03.0: Says 'Over $1T of binding leases' but cited span says 'slightly under USD 1T' \u2014 overstates. | 'Over $1T of binding datacenter leases signed YTD 2026 and ) \u2014 re-anchored to ; after re-anchoring: supported",
+  "issue_id": "VI-b9dcac96926f36",
+  "ref_id": "TH-3557AAE138:s03.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "ANSWER_SALVAGED",
+  "created_at": "2026-10-21T08:13:08.435010Z",
+  "detail": "extraction: the answer failed its schema at the top level (hypotheses: Input should be a valid list) \u2014 salvaged field by field",
+  "issue_id": "VI-be91b595d1db6a",
+  "ref_id": "A-cfd53f3cc80a",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-21T08:11:21.936560Z",
+  "detail": "s07.3: UNSUPPORTED \u2014 Claims article raises datacenter oversupply as 'the real question', but cited span is about memory/logic becoming the #1 constraint in 2027-28 \u2014 does not mention oversupply or 'the real question'. No pool span supports an oversupply framing. | \"The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real q\"",
+  "issue_id": "VI-bf04004268a92f",
+  "ref_id": "TH-3557AAE138:s07.3",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SECTOR_LABEL_ONLY",
+  "created_at": "2026-10-21T08:20:57.331826Z",
+  "detail": "h1 Surging CSP CapEx drives AI server shipments and s: sector exposure 'Semiconductors' rests only on a page label (b003, a paragraph that reads 'Semiconductors') \u2014 a category or tag names a sector, it does not say the sector is exposed; dropped",
+  "issue_id": "VI-c0deccbdd1a3ed",
+  "ref_id": "h1 Surging CSP CapEx drives AI server shipments and s",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_INFERENCE_UNSUPPORTED",
+  "created_at": "2026-10-21T08:16:30.452922Z",
+  "detail": "s06.1 (MODEL INFERENCE): The cited span only supports the ~80% figure, not that LEDoS/OLEDoS improve specs, LCoS grows through Meta, or that brands get wider options and cost flexibility. None of the pool spans support these specific claims. | 'LEDoS and OLEDoS improve specs while LCoS grows through Meta, giving brands wider technology options'",
+  "issue_id": "VI-c3ab0d088d92ed",
+  "ref_id": "TH-722932E64F:s06.1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-10-21T08:14:51.777266Z",
+  "detail": "proposition dropped: \u201cEquities can keep grinding higher despite hot inflation as long as earnings hold\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (the text is not valid JSON even after deletion-only repair) \u2014 its evidence was kept; REVIEW REQUIRED",
+  "issue_id": "VI-ca71aa912b8c18",
+  "ref_id": "A-cfd53f3cc80a",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-21T08:11:21.936569Z",
+  "detail": "s07.6: UNSUPPORTED \u2014 Claims persistent constraints on power, labor, supply chains, capital and permitting could delay delivery; cited span only states +50GW equals cumulative market through 2024 \u2014 does not mention these constraints or delivery slippage. | 'Persistent constraints on power, labor, supply chains, capital and permitting could delay delivery a'",
+  "issue_id": "VI-d1223d8e94befe",
+  "ref_id": "TH-3557AAE138:s07.6",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "ANSWER_SALVAGED",
+  "created_at": "2026-10-21T08:20:48.614122Z",
+  "detail": "extraction: hypotheses: 8,948 characters of text where a list belongs, not valid JSON (Expecting property name enclosed in double quotes, character 732) \u2014 RECOVERED by deletion only: deleted an unkeyed object at characters 732\u2013932 (200 characters; it began '{\"text\": \"The scale of hyperscaler AI CapEx underpins a multi-year demand cycle for AI ser'); its 2 item(s) validated one by one",
+  "issue_id": "VI-d4dffa2e4a03f2",
+  "ref_id": "A-373089a2ba59",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-21T08:18:38.812922Z",
+  "detail": "h1 ASML's hybrid bonding tool threatens Besi's logic : sector exposure 'Hybrid Bonding' is not a verbatim span naming it ('Logic accounts for most of Besi\u2019s HB business today') \u2014 dropped",
+  "issue_id": "VI-daf7f91e3b6d13",
+  "ref_id": "h1 ASML's hybrid bonding tool threatens Besi's logic ",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-21T08:11:45.910478Z",
+  "detail": "s06.0: UNSUPPORTED \u2014 Cited span is about revenue acceleration and says nothing about a 2027 delivery year. The 2027 tie is not in this span. | 'The compute supply increase is tied to the 2027 delivery year.'",
+  "issue_id": "VI-dbbc48dfc0d172",
+  "ref_id": "TH-C1889ABBA5:s06.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:11:21.937141Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: Says 'over $1T of binding leases' but cited span says 'slightly under USD 1T' \u2014 overstates and drops the 'slightly under' qualifier. | 'SemiAnalysis fore) \u2014 re-anchored to ; after re-anchoring: supported",
+  "issue_id": "VI-dd0357401914d9",
+  "ref_id": "TH-3557AAE138:s01.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-21T08:11:21.937114Z",
+  "detail": "s02.2: first check NUMBER_NOT_IN_CITED_CLAIMS (s02.2 prints '24', which none of its cited claims carry: 'The >24GW figure covers 40 campuses, a small share of several hundred sites in advanced construction') \u2014 re-anchored to C-55d7eb6ef01aa0; after re-anchoring: supported",
+  "issue_id": "VI-e272e126db5943",
+  "ref_id": "TH-3557AAE138:s02.2",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:16:30.452832Z",
+  "detail": "s01.0: The cited span only supports the ~80% combined OLEDoS+LEDoS figure. The claims about OLEDoS keeping a slight lead, LCoS adoption growing through Meta's products, and display tech improving specs/expanding applications are not in the cited span. | 'TrendForce expects OLEDoS and LEDoS combined to account for ~80% of the AR glasses display market, w'",
+  "issue_id": "VI-e391fa76a8b10d",
+  "ref_id": "TH-722932E64F:s01.0",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:16:30.452914Z",
+  "detail": "s03.1: The ~80% combined share is supported, but 'as shipments reach new highs' is not in the cited span (though shipment growth figures exist in the pool, they do not cover the specific 'new highs' claim and are not cited here). | 'OLEDoS and LEDoS combined expected to hold ~80% of the display market as shipments reach new highs. '",
+  "issue_id": "VI-f00fc7190b76d0",
+  "ref_id": "TH-722932E64F:s03.1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-21T08:11:45.910470Z",
+  "detail": "s03.1: Cited span is about revenue acceleration; 'cheaper and smarter AI' is in C-e09585dce879fc, which is not cited here. | 'More supply makes AI cheaper and smarter, accelerating adoption.'",
+  "issue_id": "VI-f252b0b2f0d257",
+  "ref_id": "TH-C1889ABBA5:s03.1",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-10-21T08:11:45.914934Z",
+  "detail": "Sterling Infrastructure. Check (a list of examples, b018) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-f64530ab3fa628",
+  "ref_id": "A-3211e327f4ef",
+  "run_id": "R-20261021T080508Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ }
+]

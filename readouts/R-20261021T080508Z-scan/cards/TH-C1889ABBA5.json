@@ -1,0 +1,1775 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-21",
+   "ancestry": [
+    "ai_models_platforms"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:11:21.939729Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-19",
+   "latest_article_date": "2026-10-19",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "AI model developers and AI platforms / applications",
+   "status": "ACTIVE",
+   "thesis_id": "TH-C1889ABBA5",
+   "title": "Compute supply surge in 2027 accelerates revenue for AI labs and token vendors"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-a845c8f97fbe2e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues the datacenter acceleration means significantly more compute supply, cheaper and smarter AI, faster model progress and likely material revenue acceleration for leading AI labs and token vendors."
+   },
+   {
+    "claim_ids": [
+     "C-a845c8f97fbe2e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article frames the buildout as positive for leading AI labs and token vendors via more and cheaper compute."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "More compute could lift AI-lab revenue, but the article offers no figures and most named AI labs (OpenAI, Anthropic) are private, limiting direct listed-equity exposure."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-3211e327f4ef",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-aebbfdbb7a3ce1"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "+50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a845c8f97fbe2e"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2027",
+     "provenance": "SOURCE OPINION",
+     "text": "The acceleration in compute supply will likely drive material revenue acceleration for leading AI labs and token vendors"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:11 UTC, analysed as of 2026-10-21, from a source published 2026-10-19; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-aebbfdbb7a3ce1",
+     "C-a845c8f97fbe2e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "The +50GW buildout produces significantly more compute supply. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-a845c8f97fbe2e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "More supply makes AI cheaper and smarter, accelerating adoption."
+   },
+   {
+    "claim_ids": [
+     "C-a845c8f97fbe2e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "listed_earnings",
+    "text": "Likely material revenue acceleration for leading AI labs and token vendors, unquantified."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-aebbfdbb7a3ce1",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "datacenter capacity additions",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "equal to cumulative global market through 2024"
+    ],
+    "quote": "+50GW is essentially the global cumulative datacenter market up through 2024 being built in one year",
+    "role": "supports",
+    "unit": "GW",
+    "value": 50.0,
+    "value_text": "+50GW"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-3211e327f4ef",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a845c8f97fbe2e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The acceleration in compute supply will likely drive material revenue acceleration for leading AI labs and token vendors",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "cheaper and smarter AI, faster model progress"
+    ],
+    "quote": "likely material revenue acceleration for leading AI labs and other token vendors",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0ff605d51eaa97",
+     "name_as_written": "Altimeter",
+     "other_securities": [],
+     "quote": "Brad Gerstner from Altimeter",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "comparator",
+     "role_detail": "Investor whose principal publicly questioned the forecast as too aggressive"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4499bad8436ccb",
+     "name_as_written": "Crusoe",
+     "other_securities": [],
+     "quote": "just go look at what Crusoe built in Abilene",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Datacenter builder cited as example of large sites getting built"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e2641ad85a43d6",
+     "name_as_written": "AWS",
+     "other_securities": [],
+     "quote": "what AWS built in Indiana",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler building large datacenter sites and signing GW-scale leases"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5f7a10d9d1665c",
+     "name_as_written": "QTS",
+     "other_securities": [],
+     "quote": "QTS/Microsoft\u2019s giant site in Georgia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Datacenter developer with giant Georgia site"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0000789019",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $ 0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-0eb025c91ed955",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "QTS/Microsoft\u2019s giant site in Georgia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Hyperscaler building sites and in market for GW-scale leases; drove leasing in 2023-24 then paused (Datacenter Freeze)"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001341439",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.01 per share",
+       "ticker": "ORCL"
+      }
+     ],
+     "mention_id": "M-0103fa9a1ccd6e",
+     "name_as_written": "Oracle",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+       "ticker": "ORCL PRD"
+      }
+     ],
+     "quote": "Oracle kicked off the era of gigantic leases",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Closed ~4.5GW of datacenter IT capacity across three sites; kicked off era of gigantic leases"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001326801",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-750232e61b834a",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "with Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI all being in the market for GW-scale leases",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "In market for GW-scale leases; also uses tent datacenter design"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-dc150d37e15c22",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "In market for GW-scale leases; modularized electrical architecture"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001045810",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-8abbc6b16467bc",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "In market for GW-scale leases; provides ecosystem financial support; signed deal with DayOne"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0000002488",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-7b87a094ce9977",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "In market for GW-scale leases"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001674101",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-29 (accession 0001628280-26-050609) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A common stock, $0.0001 par value per share",
+       "ticker": "VRT"
+      }
+     ],
+     "mention_id": "M-fa36f9852f1cce",
+     "name_as_written": "Vertiv",
+     "other_securities": [],
+     "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Industrial supplier expected to see surge in orders"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001091587",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0e41db3eccc8dc",
+     "name_as_written": "ABB",
+     "other_securities": [],
+     "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Industrial supplier expected to see surge in orders"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0000874238",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000874238-26-000103) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "STRL"
+      }
+     ],
+     "mention_id": "M-2787c343a0fb11",
+     "name_as_written": "Sterling Infrastructure",
+     "other_securities": [],
+     "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Industrial supplier expected to see surge in orders"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c895ec991d179e",
+     "name_as_written": "DayOne",
+     "other_securities": [],
+     "quote": "DayOne is likely the best example",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "sector_example",
+     "role_detail": "Singaporean prefab datacenter developer with ~3GW leased and ~9 month build timelines"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1c67089f452415",
+     "name_as_written": "Firmus",
+     "other_securities": [],
+     "quote": "signing huge deals with Firmus, OpenAI and Nvidia",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "Signed huge deal with DayOne"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": "0001996810",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-22 (accession 0001996810-26-000148) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, par value $0.01 per share",
+       "ticker": "GEV"
+      }
+     ],
+     "mention_id": "M-6860cbea2fe9ff",
+     "name_as_written": "GEV",
+     "other_securities": [],
+     "quote": "turbine incumbents like GEV quickly faced production bottlenecks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "Turbine incumbent that faced production bottlenecks"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6387910c85605f",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "at SemiAnalysis, we care about the truth",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author/publisher of the report and its proprietary models"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-62e9772a09c5bc",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "AI lab in market for GW-scale leases; signed deal with DayOne"
+    },
+    {
+     "article_id": "A-3211e327f4ef",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-462b6fa2da6ada",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "AI lab in market for GW-scale leases"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-3211e327f4ef",
+     "claim_ids": [
+      "C-a845c8f97fbe2e"
+     ],
+     "direction": "positive",
+     "name": "leading AI labs and other token vendors",
+     "provenance": "SOURCE OPINION",
+     "quote": "likely material revenue acceleration for leading AI labs and other token vendors"
+    }
+   ],
+   "sectors": [
+    "AI labs / model developers"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-a845c8f97fbe2e"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The compute supply increase is tied to the 2027 delivery year."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-a845c8f97fbe2e",
+      "C-e09585dce879fc"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Cheaper, smarter AI and faster model progress follow from the compute supply surge."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-1624196e37b788"
+     ],
+     "provenance": "FORECAST",
+     "text": "The article itself raises the risk of a datacenter oversupply and that memory/logic may become the binding constraint, limiting usable compute."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-1624196e37b788"
+     ],
+     "provenance": "FORECAST",
+     "text": "Memory and logic may become the new #1 constraint on the buildout in 2027-28"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Compute demand failing to absorb new supply (oversupply)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Memory/logic shortage constraining deployable compute"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-1624196e37b788"
+     ],
+     "provenance": "FORECAST",
+     "text": "The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real question' for the buildout. (scope: AI datacenter capacity globally in 2027-28; posed as an open question, not resolved in the retrieved text.)"
+    },
+    {
+     "claim_ids": [
+      "C-1624196e37b788"
+     ],
+     "provenance": "FORECAST",
+     "text": "Memory and logic (semiconductors) may become the new #1 constraint on the buildout in 2027-28, beyond datacenters and power. (scope: Supply constraint on usable compute, 2027-28; framed as a possibility per SemiAnalysis's Silicon Shortage view.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether increased compute supply actually earns a return for AI labs"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Most named AI labs are private, limiting listed exposure"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No revenue figures provided"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Signs of compute oversupply or memory/logic bottleneck capping deployments"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify which listed companies (vs private labs) are token vendors exposed to cheaper compute, and whether more supply has historically expanded or compressed their margins."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of accelerating AI-lab revenue as compute supply rises"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-aebbfdbb7a3ce1: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; C-a845c8f97fbe2e: opinion naming a window 2027-01-01..2027-12-31 (2027) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst; counter-evidence outweighs support; retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-3211e327f4ef",
+    "authors": [
+     "Jeremie Eliahou Ontiveros",
+     "Reyk Knuhtsen",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-a845c8f97fbe2e",
+     "C-aebbfdbb7a3ce1",
+     "C-1624196e37b788"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-19T05:39:38Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Datacenters 2027: The Year of Acceleration, +50GW in a Single Year",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/datacenters-2027-the-year-of-acceleration",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-21",
+  "candidates": [
+   {
+    "basis_check": "FILING_NAMES_OTHER",
+    "basis_note": "its revenue-source sentences name advertising \u2014 not usage-based",
+    "basis_quote": [
+     "We generate a significant portion of our revenues from advertising.",
+     "We generate revenues by delivering relevant, cost-effective online advertising;"
+    ],
+    "basis_source": "10-K filed 2026-02-05 (0001652044-26-000018)",
+    "business": "search, cloud and AI model developer (Gemini)",
+    "direction": "positive",
+    "enrichment_id": "EC-555cd21fd3fff5",
+    "evidence": "s03.2: Likely material revenue acceleration for leading AI labs and token vendors, unquantified.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-10-21",
+      "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, $0.001 par value",
+      "ticker": "GOOGL"
+     },
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-10-21",
+      "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class C Capital Stock, $0.001 par value",
+      "ticker": "GOOG"
+     }
+    ],
+    "name": "Alphabet",
+    "rationale": "Cheaper, smarter compute accelerates Gemini token sales via Vertex AI and Google Cloud, lifting AI platform revenue.",
+    "registrant": "Alphabet Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7370); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Google Cloud AI/Gemini token sales",
+    "revenue_model": "usage_based",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-C1889ABBA5",
+    "ticker_hint": "GOOGL"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-06 (0001018724-26-000004)",
+    "business": "e-commerce and AWS cloud; Bedrock AI models",
+    "direction": "positive",
+    "enrichment_id": "EC-306b52952776f1",
+    "evidence": "s03.2: Likely material revenue acceleration for leading AI labs and token vendors, unquantified.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-31 (accession 0001018724-26-000026) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $.01 per share",
+      "ticker": "AMZN"
+     }
+    ],
+    "name": "Amazon.com",
+    "rationale": "Cheaper compute accelerates AWS Bedrock token usage and foundation-model adoption, lifting AI platform revenue.",
+    "registrant": "AMAZON COM INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 5961); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AWS Bedrock token and model services",
+    "revenue_model": "usage_based",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-C1889ABBA5",
+    "ticker_hint": "AMZN"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names subscription \u2014 and also licences and maintenance, services (showing 2 of 3)",
+    "basis_quote": [
+     "We generate revenue from the sale of subscriptions to access our software platforms via Palantir Cloud and On-Premises Software, with ongoing O&M services and professional services.",
+     "the Company generates revenue from the sale of subscriptions to access its software platforms in the Company\u2019s hosted environment, along with ongoing operations and maintenance (\u201cO&M\u201d) services (\u201cPalantir Cloud\u201d);"
+    ],
+    "basis_source": "10-K filed 2026-02-17 (0001321655-26-000011)",
+    "business": "AI operating platform for enterprise and government",
+    "direction": "positive",
+    "enrichment_id": "EC-fccebfcd6da26c",
+    "evidence": "s03.1: More supply makes AI cheaper and smarter, accelerating adoption.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-04 (accession 0001321655-26-000041) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, par value $0.001 per share",
+      "ticker": "PLTR"
+     }
+    ],
+    "name": "Palantir Technologies",
+    "rationale": "Cheaper, smarter AI accelerates adoption of its AIP platform, lifting software deployment revenue.",
+    "registrant": "Palantir Technologies Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AIP AI application platform",
+    "revenue_model": "subscription",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-C1889ABBA5",
+    "ticker_hint": "PLTR"
+   }
+  ],
+  "created_at": "2026-10-21T08:25:42.282732Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Microsoft: the source already names it \u2014 set aside"
+  ],
+  "run_id": "R-20261021T080508Z-scan",
+  "set_id": "ES-9d3c938118a9e1",
+  "thesis_id": "TH-C1889ABBA5",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-21 08:25 UTC from the registry (ti-engine-5; run R-20261021T080508Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-3211e327f4ef",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "ai_models_platforms"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:11:21.939729Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-19",
+     "latest_article_date": "2026-10-19",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "AI model developers and AI platforms / applications",
+     "status": "ACTIVE",
+     "thesis_id": "TH-C1889ABBA5",
+     "title": "Compute supply surge in 2027 accelerates revenue for AI labs and token vendors"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-a845c8f97fbe2e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues the datacenter acceleration means significantly more compute supply, cheaper and smarter AI, faster model progress and likely material revenue acceleration for leading AI labs and token vendors."
+     },
+     {
+      "claim_ids": [
+       "C-a845c8f97fbe2e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames the buildout as positive for leading AI labs and token vendors via more and cheaper compute."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "More compute could lift AI-lab revenue, but the article offers no figures and most named AI labs (OpenAI, Anthropic) are private, limiting direct listed-equity exposure."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-3211e327f4ef",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-aebbfdbb7a3ce1"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "+50GW in a single year is roughly equal to the entire global cumulative datacenter market built through 2024 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a845c8f97fbe2e"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2027",
+       "provenance": "SOURCE OPINION",
+       "text": "The acceleration in compute supply will likely drive material revenue acceleration for leading AI labs and token vendors"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:11 UTC, analysed as of 2026-10-21, from a source published 2026-10-19; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-aebbfdbb7a3ce1",
+       "C-a845c8f97fbe2e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "The +50GW buildout produces significantly more compute supply. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-a845c8f97fbe2e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "More supply makes AI cheaper and smarter, accelerating adoption."
+     },
+     {
+      "claim_ids": [
+       "C-a845c8f97fbe2e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "listed_earnings",
+      "text": "Likely material revenue acceleration for leading AI labs and token vendors, unquantified."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-aebbfdbb7a3ce1",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "datacenter capacity additions",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "equal to cumulative global market through 2024"
+      ],
+      "quote": "+50GW is essentially the global cumulative datacenter market up through 2024 being built in one year",
+      "role": "supports",
+      "unit": "GW",
+      "value": 50.0,
+      "value_text": "+50GW"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-3211e327f4ef",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a845c8f97fbe2e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The acceleration in compute supply will likely drive material revenue acceleration for leading AI labs and token vendors",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "cheaper and smarter AI, faster model progress"
+      ],
+      "quote": "likely material revenue acceleration for leading AI labs and other token vendors",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0ff605d51eaa97",
+       "name_as_written": "Altimeter",
+       "other_securities": [],
+       "quote": "Brad Gerstner from Altimeter",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "Investor whose principal publicly questioned the forecast as too aggressive"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4499bad8436ccb",
+       "name_as_written": "Crusoe",
+       "other_securities": [],
+       "quote": "just go look at what Crusoe built in Abilene",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Datacenter builder cited as example of large sites getting built"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e2641ad85a43d6",
+       "name_as_written": "AWS",
+       "other_securities": [],
+       "quote": "what AWS built in Indiana",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler building large datacenter sites and signing GW-scale leases"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5f7a10d9d1665c",
+       "name_as_written": "QTS",
+       "other_securities": [],
+       "quote": "QTS/Microsoft\u2019s giant site in Georgia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Datacenter developer with giant Georgia site"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0000789019",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $ 0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-0eb025c91ed955",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "QTS/Microsoft\u2019s giant site in Georgia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Hyperscaler building sites and in market for GW-scale leases; drove leasing in 2023-24 then paused (Datacenter Freeze)"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001341439",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.01 per share",
+         "ticker": "ORCL"
+        }
+       ],
+       "mention_id": "M-0103fa9a1ccd6e",
+       "name_as_written": "Oracle",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-09-11 (accession 0001193125-26-389274) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a 1/2,000th interest in a share of 6.50% Series D Mandatory Convertible Preferred Stock, par value $0.01 per",
+         "ticker": "ORCL PRD"
+        }
+       ],
+       "quote": "Oracle kicked off the era of gigantic leases",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Closed ~4.5GW of datacenter IT capacity across three sites; kicked off era of gigantic leases"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001326801",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-750232e61b834a",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "with Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI all being in the market for GW-scale leases",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "In market for GW-scale leases; also uses tent datacenter design"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dc150d37e15c22",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "In market for GW-scale leases; modularized electrical architecture"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001045810",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-8abbc6b16467bc",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "In market for GW-scale leases; provides ecosystem financial support; signed deal with DayOne"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0000002488",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-7b87a094ce9977",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "In market for GW-scale leases"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001674101",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-29 (accession 0001628280-26-050609) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A common stock, $0.0001 par value per share",
+         "ticker": "VRT"
+        }
+       ],
+       "mention_id": "M-fa36f9852f1cce",
+       "name_as_written": "Vertiv",
+       "other_securities": [],
+       "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Industrial supplier expected to see surge in orders"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001091587",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0e41db3eccc8dc",
+       "name_as_written": "ABB",
+       "other_securities": [],
+       "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Industrial supplier expected to see surge in orders"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0000874238",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000874238-26-000103) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "STRL"
+        }
+       ],
+       "mention_id": "M-2787c343a0fb11",
+       "name_as_written": "Sterling Infrastructure",
+       "other_securities": [],
+       "quote": "many industrial suppliers like Vertiv, ABB, Sterling Infrastructure",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Industrial supplier expected to see surge in orders"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c895ec991d179e",
+       "name_as_written": "DayOne",
+       "other_securities": [],
+       "quote": "DayOne is likely the best example",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "sector_example",
+       "role_detail": "Singaporean prefab datacenter developer with ~3GW leased and ~9 month build timelines"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1c67089f452415",
+       "name_as_written": "Firmus",
+       "other_securities": [],
+       "quote": "signing huge deals with Firmus, OpenAI and Nvidia",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "Signed huge deal with DayOne"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": "0001996810",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-22 (accession 0001996810-26-000148) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, par value $0.01 per share",
+         "ticker": "GEV"
+        }
+       ],
+       "mention_id": "M-6860cbea2fe9ff",
+       "name_as_written": "GEV",
+       "other_securities": [],
+       "quote": "turbine incumbents like GEV quickly faced production bottlenecks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "Turbine incumbent that faced production bottlenecks"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6387910c85605f",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "at SemiAnalysis, we care about the truth",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author/publisher of the report and its proprietary models"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-62e9772a09c5bc",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "AI lab in market for GW-scale leases; signed deal with DayOne"
+      },
+      {
+       "article_id": "A-3211e327f4ef",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-462b6fa2da6ada",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "Meta, AWS, Microsoft, Google, Nvidia, AMD, Anthropic and OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "AI lab in market for GW-scale leases"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-3211e327f4ef",
+       "claim_ids": [
+        "C-a845c8f97fbe2e"
+       ],
+       "direction": "positive",
+       "name": "leading AI labs and other token vendors",
+       "provenance": "SOURCE OPINION",
+       "quote": "likely material revenue acceleration for leading AI labs and other token vendors"
+      }
+     ],
+     "sectors": [
+      "AI labs / model developers"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-a845c8f97fbe2e"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The compute supply increase is tied to the 2027 delivery year."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-a845c8f97fbe2e",
+        "C-e09585dce879fc"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Cheaper, smarter AI and faster model progress follow from the compute supply surge."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-1624196e37b788"
+       ],
+       "provenance": "FORECAST",
+       "text": "The article itself raises the risk of a datacenter oversupply and that memory/logic may become the binding constraint, limiting usable compute."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-1624196e37b788"
+       ],
+       "provenance": "FORECAST",
+       "text": "Memory and logic may become the new #1 constraint on the buildout in 2027-28"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Compute demand failing to absorb new supply (oversupply)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Memory/logic shortage constraining deployable compute"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-1624196e37b788"
+       ],
+       "provenance": "FORECAST",
+       "text": "The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real question' for the buildout. (scope: AI datacenter capacity globally in 2027-28; posed as an open question, not resolved in the retrieved text.)"
+      },
+      {
+       "claim_ids": [
+        "C-1624196e37b788"
+       ],
+       "provenance": "FORECAST",
+       "text": "Memory and logic (semiconductors) may become the new #1 constraint on the buildout in 2027-28, beyond datacenters and power. (scope: Supply constraint on usable compute, 2027-28; framed as a possibility per SemiAnalysis's Silicon Shortage view.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether increased compute supply actually earns a return for AI labs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Most named AI labs are private, limiting listed exposure"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No revenue figures provided"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Signs of compute oversupply or memory/logic bottleneck capping deployments"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify which listed companies (vs private labs) are token vendors exposed to cheaper compute, and whether more supply has historically expanded or compressed their margins."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of accelerating AI-lab revenue as compute supply rises"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-aebbfdbb7a3ce1: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; C-a845c8f97fbe2e: opinion naming a window 2027-01-01..2027-12-31 (2027) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst; counter-evidence outweighs support; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-3211e327f4ef",
+      "authors": [
+       "Jeremie Eliahou Ontiveros",
+       "Reyk Knuhtsen",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-a845c8f97fbe2e",
+       "C-aebbfdbb7a3ce1",
+       "C-1624196e37b788"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-19T05:39:38Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Datacenters 2027: The Year of Acceleration, +50GW in a Single Year",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/datacenters-2027-the-year-of-acceleration",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "3a6dceddfbed8f01a39dc7d62b6f265a12983adc8a7ca7bb306a3c75d051fa8f",
+   "created_at": "2026-10-21T08:11:45.911853Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-aebbfdbb7a3ce1: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; C-a845c8f97fbe2e: opinion naming a window 2027-01-01..2027-12-31 (2027) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst; counter-evidence outweighs support; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-aebbfdbb7a3ce1"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-aebbfdbb7a3ce1",
+       "C-a845c8f97fbe2e"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 2 claim(s) whose window runs past them; 0 long-range claim(s); 1 long-dated statement(s) of the source beside the cited evidence, not on the card: C-1624196e37b788; model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "runs_past"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: leading AI labs and other token vendors",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-a845c8f97fbe2e",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-1624196e37b788"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "1 material counter-claims (1 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 1 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "outweighs support"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-aebbfdbb7a3ce1: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; C-a845c8f97fbe2e: opinion naming a window 2027-01-01..2027-12-31 (2027) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst; counter-evidence outweighs support; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "window_runs_past",
+      "kind": "held",
+      "text": "near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-aebbfdbb7a3ce1: forecast window 2027-01-01..2027-12-31 (2027) runs past the next 4 quarters (most of it inside them) \u2014 not a 2-4-quarter window; C-a845c8f97fbe2e: opinion naming a window 2027-01-01..2027-12-31 (2027) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence)"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "outweighed",
+      "kind": "held",
+      "text": "counter-evidence outweighs support"
+     },
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-C1889ABBA5",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-3211e327f4ef",
+   "block_ids": [
+    "b010",
+    "b005"
+   ],
+   "claim_ids": [
+    "C-a845c8f97fbe2e",
+    "C-e09585dce879fc"
+   ],
+   "excerpt": "\u2026acceleration for leading AI labs and other token vendors. That also means unthinkable capex\u2026",
+   "name": "vendors"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-e09585dce879fc",
+  "C-1624196e37b788"
+ ],
+ "review_carried": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "Cited span only supports 'likely material revenue acceleration for leading AI labs and other token vendors'. The claims of 'cheaper and smarter AI' and 'faster model progress' are in a different span (C-e09585dce879fc) not cited here.",
+  "s03.0": "The +50GW span says it equals the global cumulative datacenter market built in one year; the revenue-acceleration span doesn't state 'significantly more compute supply'. The specific claim 'produces significantly more compute supply' is an interpretation not directly in either cited span, though close to the framing.",
+  "s03.1": "Cited span is about revenue acceleration; 'cheaper and smarter AI' is in C-e09585dce879fc, which is not cited here.",
+  "s07.1": "Cited span supports memory/logic becoming the binding constraint, but does not mention 'datacenter oversupply' nor 'limiting usable compute'. Those extensions are not in the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Timing \u2014 its dated figures run past the next four quarters; a full-year or multi-quarter figure is not a 2-4-quarter window.",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Counter-evidence \u2014 its own sources' counter-observations outweigh its support.",
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {
+  "s06.0": "REVIEW_UNSUPPORTED \u2014 s06.0: UNSUPPORTED \u2014 Cited span is about revenue acceleration and says nothing about a 2027 delivery year. The 2027 tie is not in this span. | 'The compute supply increase is tied to the 2027 delivery year.'",
+  "s07.2": "REVIEW_UNSUPPORTED \u2014 s07.2: UNSUPPORTED \u2014 Cited span is about memory/logic constraint in 2027-28; it says nothing about 'datacenter oversupply' flagged as 'the real question'. No cited or pool span supports an oversupply framing as 'the real question'. | \"The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real q\""
+ }
+}

@@ -1,0 +1,895 @@
+{
+ "as_of": "2026-10-21",
+ "cost_note": "list price; cached calls cost 0",
+ "cost_usd": 4.445,
+ "counts": {
+  "articles_partial": 2,
+  "articles_processed": 7,
+  "articles_queued": 0,
+  "attributions_only": 0,
+  "claims_added_by_completeness": 25,
+  "claims_extracted": 150,
+  "claims_verified": 150,
+  "figures_in_articles": 124,
+  "figures_uncaptured": 1,
+  "http_cache_hits": 12,
+  "http_requests": 23,
+  "llm_calls": 38,
+  "llm_calls_cached": 0,
+  "mentions": 87,
+  "theses_added_by_completeness": 1,
+  "theses_created": 10,
+  "theses_enriched": 9,
+  "theses_updated": 0
+ },
+ "db_schema_version": 7,
+ "engine_version": "ti-engine-5",
+ "fetch_seconds": 121.0,
+ "finished_at": "2026-10-21T08:25:42.284857+00:00",
+ "generated_at": "2026-10-21T08:25:42.705489+00:00",
+ "llm": {
+  "extract_prompt_version": "ti-extract-6",
+  "model": "claude-opus-4-8",
+  "provider": "anthropic",
+  "review_prompt_version": "ti-review-4"
+ },
+ "llm_seconds": 1046.8,
+ "mode": "scan",
+ "output_dir": "data/theme_intelligence/runs/R-20261021T080508Z-scan",
+ "outputs": [
+  "articles-2026-10-20.html",
+  "articles.html",
+  "cards/TH-05208D689A.html",
+  "cards/TH-05208D689A.json",
+  "cards/TH-05208D689A.md",
+  "cards/TH-05208D689A.print.html",
+  "cards/TH-0D381F307A.html",
+  "cards/TH-0D381F307A.json",
+  "cards/TH-0D381F307A.md",
+  "cards/TH-0D381F307A.print.html",
+  "cards/TH-3557AAE138.html",
+  "cards/TH-3557AAE138.json",
+  "cards/TH-3557AAE138.md",
+  "cards/TH-3557AAE138.print.html",
+  "cards/TH-393DF5CD2B.html",
+  "cards/TH-393DF5CD2B.json",
+  "cards/TH-393DF5CD2B.md",
+  "cards/TH-393DF5CD2B.print.html",
+  "cards/TH-3C22A83E75.html",
+  "cards/TH-3C22A83E75.json",
+  "cards/TH-3C22A83E75.md",
+  "cards/TH-3C22A83E75.print.html",
+  "cards/TH-722932E64F.html",
+  "cards/TH-722932E64F.json",
+  "cards/TH-722932E64F.md",
+  "cards/TH-722932E64F.print.html",
+  "cards/TH-77926B9936.html",
+  "cards/TH-77926B9936.json",
+  "cards/TH-77926B9936.md",
+  "cards/TH-77926B9936.print.html",
+  "cards/TH-921772E86C.html",
+  "cards/TH-921772E86C.json",
+  "cards/TH-921772E86C.md",
+  "cards/TH-921772E86C.print.html",
+  "cards/TH-B1F096684F.html",
+  "cards/TH-B1F096684F.json",
+  "cards/TH-B1F096684F.md",
+  "cards/TH-B1F096684F.print.html",
+  "cards/TH-C1889ABBA5.html",
+  "cards/TH-C1889ABBA5.json",
+  "cards/TH-C1889ABBA5.md",
+  "cards/TH-C1889ABBA5.print.html",
+  "dashboard.csv",
+  "dashboard.html",
+  "dashboard.json",
+  "dashboard.md",
+  "index.html",
+  "report_print.html",
+  "review.html",
+  "sources.html",
+  "themes.html",
+  "theses/TH-05208D689A.html",
+  "theses/TH-0D381F307A.html",
+  "theses/TH-3557AAE138.html",
+  "theses/TH-393DF5CD2B.html",
+  "theses/TH-3C22A83E75.html",
+  "theses/TH-722932E64F.html",
+  "theses/TH-77926B9936.html",
+  "theses/TH-921772E86C.html",
+  "theses/TH-B1F096684F.html",
+  "theses/TH-C1889ABBA5.html",
+  "uploads.html",
+  "validation_log.json"
+ ],
+ "parser_version": "ti-parse-8",
+ "research_verification": {
+  "articles": 7,
+  "articles_preview_only": 2,
+  "articles_unreadable": 0,
+  "coverage": [
+   {
+    "article_id": "A-87c41612b31b",
+    "article_version_id": "AV-1862084c9db5c714",
+    "propositions": [
+     "CARD h1 \u201cAI data center demand drives optical fiber shortage lifting fiber supplier pricing\u201d \u2192 TH-B1F096684F"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-373089a2ba59",
+    "article_version_id": "AV-3f4ab5655e436ff8",
+    "propositions": [
+     "CARD h1 \u201cSurging CSP CapEx drives AI server shipments and spenders' infrastructure buildout\u201d \u2192 TH-0D381F307A",
+     "CARD h2 \u201cComponent shortages, especially memory, lift AI server rack ASPs and revenue\u201d \u2192 TH-05208D689A"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cPart of the upward CapEx revision reflects higher prices, higher component quotations amid shortages, and advance payments to secure supply \u201d \u2014 on 2 card(s): TH-05208D689A, TH-0D381F307A"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 1 fact(s): C-d62057902ffa97  \u2014 \"end-customer orders are expected to center on rack-scale solutions such as NVIDIA's GB300 and VR200, as well as AMD's Helios series\""
+    ],
+    "unrecorded_names": [
+     "VR200 (a list of examples, b011)"
+    ]
+   },
+   {
+    "article_id": "A-3211e327f4ef",
+    "article_version_id": "AV-5f051bd70c56d1cd",
+    "propositions": [
+     "CARD h1 \u201cAI datacenter buildout accelerates +50GW in 2027, lifting physical datacenter suppliers\u201d \u2192 TH-3557AAE138",
+     "CARD h2 \u201cCompute supply surge in 2027 accelerates revenue for AI labs and token vendors\u201d \u2192 TH-C1889ABBA5"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cThe article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real question' for the buildout.\u201d \u2014 on 2 card(s): TH-3557AAE138, TH-C1889ABBA5",
+     "\u201cMemory and logic (semiconductors) may become the new #1 constraint on the buildout in 2027-28, beyond datacenters and power.\u201d \u2014 on 2 card(s): TH-3557AAE138, TH-C1889ABBA5",
+     "\u201cThe author argues rates will have to rise reflexively to fund the capital demand of the buildout, implying a higher-rate backdrop.\u201d \u2014 on 1 card(s): TH-3557AAE138",
+     "\u201cPersistent constraints on power, labor, supply chains, capital and permitting could delay delivery and cause developer timelines to slip.\u201d \u2014 on 1 card(s): TH-3557AAE138"
+    ],
+    "source_risks": [
+     "b009: \u201cThe \u201creal\u201d question: are we going to face a datacenter oversupply?\u201d \u2192 carried by: \"proposed risk: The article raises the possibility of a datacenter oversupply in 2027, which it flags as 'the real question' for the buildout.\""
+    ],
+    "uncarried": [
+     "UNEXPLAINED \u2014 6 fact(s): C-d213473ed8de51 +43GW \u2014 'SemiAnalysis\u2019 forecast of +43GW in 2027 is too aggressive' \u00b7 C-05ec9740de39d2 over a trillion USD \u2014 'we\u2019ve identified over a trillion USD of lease value that was signed and closed' \u00b7 C-effde3f778fb72 under 10 months \u2014 'Construction timelines are now under 10 months' \u00b7 C-5d1fe647dca859 up to 63% \u2014 'allows for MEP labor (7-11 months of work) to drop up to 63%' \u00b7 C-fedb42653a8eb9  \u2014 'the ex-US buildout is sharply accelerating in 2027, and we expect it to gain a lot of market share in 2028' \u00b7 C-971371fec45d1f  \u2014 'the grid headroom dips negative at the end of 2027'"
+    ],
+    "unrecorded_names": [
+     "Sterling Infrastructure. Check (a list of examples, b018)"
+    ]
+   },
+   {
+    "article_id": "A-7b20abdd06d4",
+    "article_version_id": "AV-795b73c94b399800",
+    "propositions": [
+     "CARD h1 \u201cASML's hybrid bonding tool threatens Besi's logic and HBM equipment franchise\u201d \u2192 TH-77926B9936"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 6 fact(s): C-e67d7b99415058 2029 \u2014 'we believe HBM will not adopt D2W HB before 2029 , if at all' \u00b7 C-94fb7df22e3b95 one \u2014 'our check indicates upper bound in current applications is only one wafer per hour' \u00b7 C-031e214a70b02b about 6um \u2014 'AMD has shipped hybrid-bonded V-Cache since 2022, and TSMC\u2019s SoIC bonds at about 6um pitch today and targets 4.5um around 2029' \u00b7 C-635b5190823bd4 about 10um \u2014 'SuperTrak\u2019s spec sheet puts the shuttles\u2019 repeatability at about 10um, nowhere near the 50nm placement accuracy the bond needs' \u00b7 C-c6efdba961e0a7 around 10mm \u2014 'a single 1um particle between two full-thickness wafers can unbond an area around 10mm across' \u00b7 C-d392cc4bdcc4f8 1.2-second \u2014 'a three-second cleaning step gets three stations, and a 1.2-second bond step gets one, so every station stays busy'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-cfd53f3cc80a",
+    "article_version_id": "AV-a4d414878ae8fc15",
+    "propositions": [
+     "CARD hx1 \u201cEquities can absorb above-target inflation and higher yields while earnings hold\u201d \u2192 TH-393DF5CD2B",
+     "DROPPED h1 \u201cEquities can keep grinding higher despite hot inflation as long as earnings hold\u201d \u2192 \u2014 \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (the text is not valid JSON even after deletion-only repair) \u2014 its evidence was kept; REVIEW REQUIRED"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cMarket concentration / narrow leadership is insulating the index but is not healthy over the long run: only 48% of S&P 500 constituents trad\u201d \u2014 on 1 card(s): TH-393DF5CD2B",
+     "\u201cAI-linked debt and equity concerns have driven the recent sell-off; a correlated repricing of AI-linked companies and their debt could trans\u201d \u2014 on 1 card(s): TH-393DF5CD2B"
+    ],
+    "source_risks": [
+     "b028: \u201cThat dispersion is the point: A bond sell-off can be a headwind, but the rates move alone does not determine the equity outcome.\u201d \u2192 ON NO CARD",
+     "b036: \u201cInflation and bond volatility are testing the equity market and will likely remain headwinds in the near term.\u201d \u2192 carried by: 'proposed risk drawn from this paragraph: Market concentration / narrow leadership is insulating the index but is not healthy over the long run: only 48% of S&P 500 constituents trade above their 200-day moving average, down from 73% two months ago, so a few profitable large weights are masking weakness and the index is vulnerable if that leadership breaks.'",
+     "b036: \u201cEquities have absorbed the pressure so far, partly because of market concentration, and could continue to grind higher as long as these risks remain familiar and earnings bolster confidence.\u201d \u2192 carried by: 'evidence on its card: Equities have absorbed the pressure so far, partly because of market concentration, and could continue to grind higher as long as these risks remain familiar and earnings bolster confidence.'"
+    ],
+    "uncarried": [
+     "UNEXPLAINED \u2014 12 fact(s): C-196b430b474d4e 0.6% \u2014 'Headline prices rose 0.6% on the month and 3.7% from a year earlier, with the annual measure one-tenth above consensus.' \u00b7 C-af5e8f1bbec2cd 9.1% \u2014 'Gasoline rose 9.1% and accounted for more than half of the monthly headline increase.' \u00b7 C-72a38a05f64a4d 1.3% \u2014 'Producer prices rose 1.3% in September and 6.3% from a year earlier, with both significantly hotter than expected.' \u00b7 C-324e5d27da2883 mid-40% range \u2014 'Futures roughly doubled the implied probability of an October quarter-point Federal Reserve rate hike to the mid-40% range.' \u00b7 C-0c5693dd6a0670 below 30% \u2014 'By Wednesday\u2019s close, the Treasury sell-off had reversed and October hike odds had moved back below 30%.' \u00b7 C-8ef9c045c84d2c 10.06% \u2014 'headline inflation peaking at 10.06% in June 2022' \u00b7 C-66855f60b8246b 4.67% \u2014 'reaching 4.67% in September versus 2.08% for the excluded-items measure' \u00b7 C-94d7482c8695c0 2.08% \u2014 'reaching 4.67% in September versus 2.08% for the excluded-items measure' \u00b7 C-51d7a091df14f6 more than 100 basis points \u2014 'CCC spreads are up more than 100 basis points this year' \u00b7 C-833a56697d9dbe 5.5% \u2014 'Roughly 5.5% of the high-yield index is distressed, up from 4.4% but still well below the 11% seen in 2022.' \u00b7 C-f2ad84d51b406f  \u2014 'The first read from the large banks was broadly resilient: Lending income and market-sensitive businesses provided support, while consumer credit did not show b\u2026 [+19 chars \u2014 full text in the JSON export]' \u00b7 C-e2e3f0eeb02b72 7.84% \u2014 'the excluded-items measure peaked at 7.84% in October 2021'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-0b9c4a3220b7",
+    "article_version_id": "AV-d33a335319a544b8",
+    "propositions": [
+     "CARD h1 \u201cCPO mass production shifts value to integrated optical-electrical test platform suppliers\u201d \u2192 TH-921772E86C"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cChina relies heavily on imports for high-end measurement instruments, and it is uncertain whether optical module testing experience extends \u201d \u2014 on 1 card(s): TH-921772E86C"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 1 fact(s): C-d389c04b43f8f2 65 GHz \u2014 'Semight Instruments has introduced a 65 GHz sampling oscilloscope and begun volume shipments'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-1c3e6ee1d553",
+    "article_version_id": "AV-d9291d742639a3c9",
+    "propositions": [
+     "CARD h1 \u201cAR glasses shipments double in 2026 driven by Meta and Chinese brands\u201d \u2192 TH-3C22A83E75",
+     "CARD h2 \u201cNear-eye microdisplay makers benefit as OLEDoS, LEDoS and LCoS scale with AR glasses\u201d \u2192 TH-722932E64F"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   }
+  ],
+  "coverage_alerts": [
+   "A-3211e327f4ef: 6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: +43GW; over a trillion USD; under 10 months; up to 63%; The ex-US datacenter buildout is sharply accelerating in 2027 and expected to gain market share in 2028; Grid headroom is expected to dip negative at the end of 2027, driving behind-the-meter generation \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-7b20abdd06d4: 6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 2029; one; about 6um; about 10um; around 10mm; 1.2-second \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-cfd53f3cc80a: proposition dropped: \u201cEquities can keep grinding higher despite hot inflation as long as earnings hold\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (the text is not valid JSON even after deletion-only repair) \u2014 its evidence was kept; REVIEW REQUIRED",
+   "A-cfd53f3cc80a: a risk the source states that no model pass listed \u2014 \u201cThat dispersion is the point: A bond sell-off can be a headwind, but the rates move alone does not determine the equity outcome.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "A-cfd53f3cc80a: 12 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 0.6%; 9.1%; 1.3%; mid-40% range; below 30%; 10.06%; 4.67%; 2.08%; more than 100 basis points; 5.5%; First bank earnings reads were broadly resilient with support from lending and markets and no broad consumer credit deterioration; 7.84% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "coverage_alerts_plain": [
+   "\u201cDatacenters 2027: The Year of Acceleration, +50GW in a Single Year\u201d: 6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: +43GW; over a trillion USD; under 10 months; up to 63%; The ex-US datacenter buildout is sharply accelerating in 2027 and expected to gain market share in 2028; Grid headroom is expected to dip negative at the end of 2027, driving behind-the-meter generation \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cASML Is Building a Hybrid Bonding Tool, Sending More Chills to Besi\u201d: 6 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 2029; one; about 6um; about 10um; around 10mm; 1.2-second \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cInflation, yields and equities: When does the pressure actually matter?\u201d: proposition dropped: \u201cEquities can keep grinding higher despite hot inflation as long as earnings hold\u201d \u2014 pass 1: named in the answer's malformed hypotheses and not recoverable without guessing (the text is not valid JSON even after deletion-only repair) \u2014 its evidence was kept; REVIEW REQUIRED",
+   "\u201cInflation, yields and equities: When does the pressure actually matter?\u201d: a risk the source states that no model pass listed \u2014 \u201cThat dispersion is the point: A bond sell-off can be a headwind, but the rates move alone does not determine the equity outcome.\u201d (on NO card \u2014 no thesis's evidence is in its paragraph)",
+   "\u201cInflation, yields and equities: When does the pressure actually matter?\u201d: 12 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 0.6%; 9.1%; 1.3%; mid-40% range; below 30%; 10.06%; 4.67%; 2.08%; more than 100 basis points; 5.5%; First bank earnings reads were broadly resilient with support from lending and markets and no broad consumer credit deterioration; 7.84% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "figures": 124,
+  "figures_open": 1,
+  "figures_superseded": 0,
+  "open_causes": {
+   "capture_not_verified": 1
+  },
+  "open_items": [
+   "AV-3f4ab5655e436ff8 b007 figure '36%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified"
+  ],
+  "open_items_plain": [
+   "\u201cCSP CapEx Projected to Exceed US$1.5 Trillion in 2027, with AI Server Revenue Growing Over 90% YoY on Higher Shipments and Prices, Says TrendForce\u201d \u2014 figure '36%' not captured: the claim meant to capture it could not be verified"
+  ],
+  "paragraphs": 119,
+  "paragraphs_open": 0,
+  "passes_not_run": 0,
+  "status": "INCOMPLETE",
+  "summary": "NOT fully verified \u2014 over the 7 article(s) this report's 2 runs analysed: 1 of 124 stated figure(s) and 0 of 119 argument paragraph(s) open; causes: capture_not_verified 1; 2 article(s) read only in part (a preview, or pages that could not be read); mechanism coverage: 5 alert(s) for review \u2014 a proposition dropped or merged on distinct evidence, or verified facts no thesis carries. Open material is never used as evidence, so it can hold a thesis back but never raise its research action",
+  "superseded_items_plain": []
+ },
+ "run_id": "R-20261021T080508Z-scan",
+ "runtime_seconds": 1234.2,
+ "source_health": {
+  "attention": [
+   {
+    "alert": "KNOWN_RESTRICTION",
+    "changes": [
+     "first check of this channel"
+    ],
+    "checked_at": "2026-10-20T18:03:52.571739+00:00",
+    "consecutive_failed_checks": 1,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Morgan Stanley",
+    "reason": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+    "source_id": "ms_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-10-21T08:06:29.810666+00:00",
+    "consecutive_failed_checks": 2,
+    "discovered": 20,
+    "expect_blocked": false,
+    "freshness": "FRESH",
+    "in_window": 2,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": "R-20261020T180250Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-10-21T08:06:29.810666+00:00",
+    "last_successful_extraction": null,
+    "last_verified_publication_date": "2026-10-19",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-10-19",
+    "next_action": "none to supply \u2014 paid posts are read as their free preview by the operator's decision (paywalled_posts = \"preview_only\")",
+    "plain": "articles are read only in part; some articles are previews or summaries of a fuller report",
+    "publisher": "SemiAnalysis",
+    "reason": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable",
+    "source_id": "semianalysis",
+    "status": "DEGRADED",
+    "tests": [
+     {
+      "detail": "https://newsletter.semianalysis.com/feed answered HTTP 200 (3081 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 0 full text",
+      "name": "extraction",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 3 of 3 carry a byline; latest scan R-20261020T180250Z-scan: 0 of 20 undated",
+      "name": "dates_authors",
+      "result": "PASS"
+     },
+     {
+      "detail": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261020T180250Z-scan: 0 full, 0 preview / partial, 0 unreadable",
+      "name": "completeness",
+      "result": "WARN"
+     },
+     {
+      "detail": "newest dated article 2026-10-19; 0 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 1575\u20134988 words; 3 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   },
+   {
+    "alert": "KNOWN_RESTRICTION",
+    "changes": [
+     "first check of this channel"
+    ],
+    "checked_at": "2026-10-20T18:05:38.047091+00:00",
+    "consecutive_failed_checks": 1,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Goldman Sachs",
+    "reason": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+    "source_id": "gs_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   }
+  ],
+  "checked_at": "2026-10-21T08:06:29.810666+00:00",
+  "counts": {
+   "BLOCKED": 2,
+   "DEGRADED": 1,
+   "ERROR": 0,
+   "HEALTHY": 3,
+   "UNKNOWN": 0
+  },
+  "line": "Sources healthy: 3/6 | Degraded: 1 | Blocked: 2 | Errors: 0",
+  "new_alerts": []
+ },
+ "sources": [
+  {
+   "already_known": 0,
+   "channel": "Citi Must C (Citi Research public insights)",
+   "checked_at": "2026-10-21T08:07:09.914123Z",
+   "discovered": 20,
+   "entry_points": [
+    "https://www.citigroup.com/global/insights/must-c"
+   ],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "Must C page embedded CMS data (__NEXT_DATA__ contentMap: series items with CMS publishDate)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Citi",
+   "queued": 0,
+   "skipped_out_of_window": 20,
+   "source_id": "citi_must_c",
+   "status": "OK",
+   "truncation": "the Must C page embeds its 20 linked series items; older items are not listed there",
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "J.P. Morgan Top Market Takeaways",
+   "checked_at": "2026-10-21T08:07:09.944057Z",
+   "discovered": 52,
+   "entry_points": [
+    "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt"
+   ],
+   "errors": [],
+   "in_window": 1,
+   "inaccessible": 0,
+   "method": "Top Market Takeaways listing cards (card date); sitemap lastmod as fallback",
+   "new": 1,
+   "processed": 1,
+   "publisher": "J.P. Morgan Private Bank",
+   "queued": 0,
+   "skipped_out_of_window": 51,
+   "source_id": "jpm_tmt",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "Morgan Stanley Research",
+   "checked_at": "2026-10-20T18:03:52.571739Z",
+   "discovered": 0,
+   "entry_points": [],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "manual-first: lightweight health check only \u2014 research arrives as authorised uploads (ingest-file)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Morgan Stanley",
+   "queued": 0,
+   "skipped_out_of_window": 0,
+   "source_id": "ms_research",
+   "status": "MANUAL_FIRST",
+   "truncation": null,
+   "undated": 0,
+   "warnings": [
+    "automated access: BLOCKED \u2014 robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservative"
+   ]
+  },
+  {
+   "already_known": 0,
+   "channel": "TrendForce press center news",
+   "checked_at": "2026-10-21T08:07:10.428742Z",
+   "discovered": 5,
+   "entry_points": [
+    "https://www.trendforce.com/presscenter/news"
+   ],
+   "errors": [],
+   "in_window": 4,
+   "inaccessible": 0,
+   "method": "press-center listing pages ?page=N (date in the article URL)",
+   "new": 4,
+   "processed": 4,
+   "publisher": "TrendForce",
+   "queued": 0,
+   "skipped_out_of_window": 1,
+   "source_id": "trendforce",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "SemiAnalysis (site + its newsletter feed)",
+   "checked_at": "2026-10-21T08:07:10.465142Z",
+   "discovered": 20,
+   "entry_points": [
+    "https://newsletter.semianalysis.com/feed"
+   ],
+   "errors": [],
+   "in_window": 2,
+   "inaccessible": 0,
+   "method": "newsletter RSS feed (item pubDate)",
+   "new": 2,
+   "processed": 2,
+   "publisher": "SemiAnalysis",
+   "queued": 0,
+   "skipped_out_of_window": 18,
+   "source_id": "semianalysis",
+   "status": "OK",
+   "truncation": null,
+   "undated": 0,
+   "warnings": []
+  },
+  {
+   "already_known": 0,
+   "channel": "Goldman Sachs Research insights",
+   "checked_at": "2026-10-20T18:05:38.047091Z",
+   "discovered": 0,
+   "entry_points": [],
+   "errors": [],
+   "in_window": 0,
+   "inaccessible": 0,
+   "method": "manual-first: lightweight health check only \u2014 research arrives as authorised uploads (ingest-file)",
+   "new": 0,
+   "processed": 0,
+   "publisher": "Goldman Sachs",
+   "queued": 0,
+   "skipped_out_of_window": 0,
+   "source_id": "gs_research",
+   "status": "MANUAL_FIRST",
+   "truncation": null,
+   "undated": 0,
+   "warnings": [
+    "automated access: BLOCKED \u2014 https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)"
+   ]
+  }
+ ],
+ "spend_guard": {
+  "actual_total_usd": 4.445,
+  "bound_total_usd": 22.486,
+  "calls": [
+   {
+    "actual_usd": 0.2238,
+    "bound_usd": 0.6122,
+    "document": "A-87c41612b31b",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0955,
+    "bound_usd": 0.6377,
+    "document": "A-87c41612b31b",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0673,
+    "bound_usd": 0.5852,
+    "document": "A-87c41612b31b",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.3756,
+    "bound_usd": 0.6282,
+    "document": "A-3211e327f4ef",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.1452,
+    "bound_usd": 0.6581,
+    "document": "A-3211e327f4ef",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.073,
+    "bound_usd": 0.5779,
+    "document": "A-3211e327f4ef",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0748,
+    "bound_usd": 0.5792,
+    "document": "A-3211e327f4ef",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0552,
+    "bound_usd": 0.5643,
+    "document": "A-3211e327f4ef",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0597,
+    "bound_usd": 0.5655,
+    "document": "A-3211e327f4ef",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.3004,
+    "bound_usd": 0.6387,
+    "document": "A-cfd53f3cc80a",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.3017,
+    "bound_usd": 0.6812,
+    "document": "A-cfd53f3cc80a",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0899,
+    "bound_usd": 0.6064,
+    "document": "A-cfd53f3cc80a",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.095,
+    "bound_usd": 0.6069,
+    "document": "A-cfd53f3cc80a",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.2464,
+    "bound_usd": 0.6142,
+    "document": "A-1c3e6ee1d553",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0969,
+    "bound_usd": 0.6325,
+    "document": "A-1c3e6ee1d553",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0529,
+    "bound_usd": 0.5637,
+    "document": "A-1c3e6ee1d553",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0381,
+    "bound_usd": 0.5522,
+    "document": "A-1c3e6ee1d553",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.3154,
+    "bound_usd": 0.6403,
+    "document": "A-7b20abdd06d4",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.2003,
+    "bound_usd": 0.666,
+    "document": "A-7b20abdd06d4",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0747,
+    "bound_usd": 0.5746,
+    "document": "A-7b20abdd06d4",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0699,
+    "bound_usd": 0.5757,
+    "document": "A-7b20abdd06d4",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.3354,
+    "bound_usd": 0.6134,
+    "document": "A-373089a2ba59",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.1015,
+    "bound_usd": 0.6388,
+    "document": "A-373089a2ba59",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0663,
+    "bound_usd": 0.5772,
+    "document": "A-373089a2ba59",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0674,
+    "bound_usd": 0.5775,
+    "document": "A-373089a2ba59",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.274,
+    "bound_usd": 0.6233,
+    "document": "A-0b9c4a3220b7",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.126,
+    "bound_usd": 0.6404,
+    "document": "A-0b9c4a3220b7",
+    "kind": "completeness"
+   },
+   {
+    "actual_usd": 0.0632,
+    "bound_usd": 0.5691,
+    "document": "A-0b9c4a3220b7",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0576,
+    "bound_usd": 0.5723,
+    "document": "A-0b9c4a3220b7",
+    "kind": "review"
+   },
+   {
+    "actual_usd": 0.0307,
+    "bound_usd": 0.5455,
+    "document": "enrich TH-05208D689A",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0347,
+    "bound_usd": 0.5454,
+    "document": "enrich TH-0D381F307A",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0443,
+    "bound_usd": 0.546,
+    "document": "enrich TH-3557AAE138",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0294,
+    "bound_usd": 0.5461,
+    "document": "enrich TH-3C22A83E75",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0297,
+    "bound_usd": 0.5459,
+    "document": "enrich TH-722932E64F",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.035,
+    "bound_usd": 0.5468,
+    "document": "enrich TH-77926B9936",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0324,
+    "bound_usd": 0.5462,
+    "document": "enrich TH-921772E86C",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0353,
+    "bound_usd": 0.546,
+    "document": "enrich TH-B1F096684F",
+    "kind": "extraction"
+   },
+   {
+    "actual_usd": 0.0304,
+    "bound_usd": 0.5454,
+    "document": "enrich TH-C1889ABBA5",
+    "kind": "extraction"
+   }
+  ],
+  "calls_over_their_bound": 0,
+  "paid_calls": 38,
+  "refusals": [],
+  "run_limit_usd": 40.0,
+  "spent_usd": 4.445
+ },
+ "started_at": "2026-10-21T08:05:08.063238+00:00",
+ "status": "SUCCEEDED",
+ "theses_in_registry": 10,
+ "tokens": {
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "input_tokens": 355606,
+  "output_tokens": 106679
+ },
+ "verification": {
+  "BLOCK": 5,
+  "HOLD": 0,
+  "INFO": 23,
+  "WARN": 39
+ },
+ "warnings": [],
+ "window_from": "2026-10-12",
+ "window_to": "2026-10-21"
+}
