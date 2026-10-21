@@ -36,6 +36,7 @@ from pathlib import Path
 from vinci.theme_intelligence.cards import capped_label
 from vinci.theme_intelligence.config import load_sources
 from vinci.theme_intelligence.display import first_of
+from vinci.theme_intelligence.resolve import check_run
 from vinci.theme_intelligence.schemas import (
     SECTION_IDS,
     SOURCE_LABELS,
@@ -45,6 +46,7 @@ from vinci.theme_intelligence.schemas import (
     PitStatus,
     Provenance,
     ResearchAction,
+    RunStatus,
     utc_day,
 )
 from vinci.theme_intelligence.store import APPEND_ONLY_TABLES, Store
@@ -357,6 +359,16 @@ def run_qa(store: Store, run_id: str) -> QaResult:
     add(QaCheck("append-only triggers present", not missing,
                 f"{len(APPEND_ONLY_TABLES)} history tables" + (f"; missing {missing}"
                                                                 if missing else "")))
+
+    # a reviewer's resolutions (resolve.py): each names a finding of the version it records, with
+    # its words and the line's, and a dismissal one that may be dismissed ----------------------
+    if run.mode == "review":
+        written = store.review_resolutions(run_id=run_id)
+        rbad = check_run(store, run_id)
+        add(QaCheck("every resolution names a finding it may resolve",
+                    not rbad and (bool(written) or run.status is not RunStatus.SUCCEEDED),
+                    _fail_list(rbad) or (f"{len(written)} resolution(s)" if written else
+                                         "no resolution written")))
 
     # coverage (scan runs) ------------------------------------------------------------------------
     if run.mode == "scan":

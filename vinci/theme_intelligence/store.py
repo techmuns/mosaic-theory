@@ -44,6 +44,7 @@ from vinci.theme_intelligence.schemas import (
     MarketContext,
     Mention,
     RetrievalState,
+    ReviewResolution,
     SecurityResolution,
     Snapshot,
     SourceHealthCheck,
@@ -65,7 +66,7 @@ _V1_APPEND_ONLY = (
 )
 #: Every append-only history table at the current schema.
 APPEND_ONLY_TABLES = (*_V1_APPEND_ONLY, "completeness", "source_health", "enrichments",
-                      "market_contexts")
+                      "market_contexts", "review_resolutions")
 #: the verification-issue code that corrects a version's retrieval state FULL -> PARTIAL
 RETRIEVAL_CORRECTED = "RETRIEVAL_CORRECTED"
 
@@ -188,6 +189,18 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "BEGIN SELECT RAISE(ABORT, 'market_contexts is append-only'); END",
         "CREATE TRIGGER market_contexts_no_delete BEFORE DELETE ON market_contexts "
         "BEGIN SELECT RAISE(ABORT, 'market_contexts is append-only'); END",
+    ]),
+    # v8 (2026-10-21): REVIEW RESOLUTIONS — a reviewer's dismissal (or reopening) of one
+    # card-review finding, with who, when and why. Append-only: the latest row for a finding is
+    # its state, every earlier one stays as history. No research-action rule reads it.
+    (8, [
+        "CREATE TABLE review_resolutions (resolution_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL,"
+        " finding_key TEXT NOT NULL, run_id TEXT NOT NULL, payload TEXT NOT NULL)",
+        "CREATE INDEX ix_resolutions_thesis ON review_resolutions(thesis_id)",
+        "CREATE TRIGGER review_resolutions_no_update BEFORE UPDATE ON review_resolutions "
+        "BEGIN SELECT RAISE(ABORT, 'review_resolutions is append-only'); END",
+        "CREATE TRIGGER review_resolutions_no_delete BEFORE DELETE ON review_resolutions "
+        "BEGIN SELECT RAISE(ABORT, 'review_resolutions is append-only'); END",
     ]),
 ]
 
@@ -710,6 +723,25 @@ class Store:
                if until is None or x.created_at <= until]
         return max(got, key=lambda x: (x.created_at, x.context_id)) if got else None
 
+    def add_review_resolution(self, r: ReviewResolution) -> bool:
+        return self._append("review_resolutions", {"resolution_id": r.resolution_id,
+                                                   "thesis_id": r.thesis_id,
+                                                   "finding_key": r.finding_key,
+                                                   "run_id": r.run_id}, r)
+
+    def review_resolutions(self, thesis_id: str | None = None, *,
+                           run_id: str | None = None) -> list[ReviewResolution]:
+        """Review resolutions — of one thesis, written by one run, or all — oldest first."""
+        if run_id:
+            rows = self._rows("SELECT payload FROM review_resolutions WHERE run_id=?", [run_id],
+                              ReviewResolution)
+        elif thesis_id:
+            rows = self._rows("SELECT payload FROM review_resolutions WHERE thesis_id=?",
+                              [thesis_id], ReviewResolution)
+        else:
+            rows = self._rows("SELECT payload FROM review_resolutions", [], ReviewResolution)
+        return sorted(rows, key=lambda x: (x.created_at, x.resolution_id))
+
     def add_llm_call(self, call_id: str, run_id: str, purpose: str,
                      record: dict[str, Any]) -> None:
         self.conn.execute("INSERT OR IGNORE INTO llm_calls (call_id, run_id, purpose, payload) "
@@ -765,7 +797,8 @@ class Store:
               "mentions", "security_resolutions", "theses", "thesis_versions",
               "thesis_claim_links", "contributions", "relations", "change_events", "runs",
               "snapshots", "verification_issues", "llm_calls", "candidates", "completeness",
-              "source_health", "documents", "enrichments", "market_contexts")
+              "source_health", "documents", "enrichments", "market_contexts",
+              "review_resolutions")
 
     def export_jsonl(self, out_dir: Path, *, include_article_text: bool = False) -> dict[str, int]:
         """Deterministic text dump, one file per table, rows sorted by primary key. Article BODY

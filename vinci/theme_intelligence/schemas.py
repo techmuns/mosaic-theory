@@ -21,7 +21,7 @@ from typing import Annotated, Any, Literal
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field
 
-DB_SCHEMA_VERSION = 7
+DB_SCHEMA_VERSION = 8
 
 
 def _aware(d: datetime | None) -> datetime | None:
@@ -657,6 +657,37 @@ class MarketContext(Frozen):
     label: Literal["MARKET CONTEXT — evidence for your judgement; never read by the research "
                    "action"] = ("MARKET CONTEXT — evidence for your judgement; never read by the "
                                 "research action")
+
+
+class ReviewResolution(Frozen):
+    """A REVIEWER's disposition of ONE card-review finding (resolve.py): "dismissed" — read and
+    accepted as not changing the line's use — or "reopened". Append-only; the LATEST row for a
+    finding is its state, and every earlier row stays as history. It binds to the finding as it
+    stands (`finding_key`: the version whose review made it, its words, and the line's words and
+    cited evidence now), so a changed line or a new review's finding is OPEN again.
+    A dismissal closes the finding as an open item and NOTHING else: the line keeps the label the
+    finding capped (at most SOURCE OPINION), a withheld line is never dismissible, and no
+    research-action rule reads this record."""
+
+    resolution_id: str
+    run_id: str
+    thesis_id: str
+    #: the version whose card carried the finding when it was resolved
+    version: int
+    sentence_id: str
+    finding_key: str
+    finding_code: str
+    #: the version whose card review made the finding
+    finding_version: int
+    #: the stored finding's own words, whole
+    finding_detail: str
+    #: the line, and the evidence it cites, as they read when it was resolved
+    line_text: str
+    claim_ids: tuple[str, ...]
+    action: Literal["dismissed", "reopened"]
+    reviewer: Annotated[str, Field(min_length=1)]
+    reason: Annotated[str, Field(min_length=1)]
+    created_at: datetime
 
 
 # --- the nine-section card -------------------------------------------------------------------
