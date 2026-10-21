@@ -23,6 +23,7 @@ from tests.test_theme_intelligence_batch_b import (
     _preview_only_unreadable,
 )
 from tests.theme_intelligence_support import CALM_DIR, load_document
+from tests.validate_keys_support import VALIDATE_WORKFLOW, VALIDATOR, validator
 from vinci.theme_intelligence import desk as dk
 from vinci.theme_intelligence.completeness import scan_article
 from vinci.theme_intelligence.priority import F8_CONTESTED, counter_verdict
@@ -274,27 +275,12 @@ def test_a_padded_secret_is_refused_by_name_before_any_request(monkeypatch: Any)
     assert require_env("VINCI_TEST_SECRET") == "sk-test-value"
 
 
-VALIDATOR = ROOT / ".github" / "scripts" / "validate_keys.py"
-VALIDATE_WORKFLOW = ROOT / ".github" / "workflows" / "validate-keys.yml"
-
-
-def _validator() -> Any:
-    """The `validate-keys` script, loaded as a module (it is not a package)."""
-    import importlib.util
-
-    spec = importlib.util.spec_from_file_location("validate_keys", VALIDATOR)
-    assert spec is not None and spec.loader is not None
-    vk = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(vk)
-    return vk
-
-
 def test_the_key_validator_fails_a_padded_key_instead_of_calling_it_connectivity(
         monkeypatch: Any, capsys: Any) -> None:
     """`validate-keys` read the padded key's connection error as "runner connectivity, NOT a key
     problem" and passed green from 2026-06-26 until the 2026-10-20 run. It now FAILS the key
     before any request (no network here: the check precedes the call)."""
-    vk = _validator()
+    vk = validator()
     def no_request(url: str, **kw: Any) -> Any:
         raise AssertionError("a padded key sends no request")
 
@@ -329,7 +315,7 @@ def test_the_key_validator_fails_a_refused_tiingo_key_with_tiingos_reason(
     read the same URL, and `validate-keys` never asked Tiingo. It now does, with the request the
     weekly run makes, and FAILS a refused key with Tiingo's own reason — the body Tiingo returned
     for an invalid token that day — never the key."""
-    vk = _validator()
+    vk = validator()
     seen: dict[str, Any] = {}
 
     def get(url: str, **kw: Any) -> _Response:
@@ -357,7 +343,7 @@ def test_a_working_tiingo_key_passes_and_an_unset_one_only_warns(
         monkeypatch: Any, capsys: Any) -> None:
     """NEGATIVE: a key Tiingo answers 200 passes; no key at all is not a failure (the weekly run
     reads two years of P/E without one) and sends no request."""
-    vk = _validator()
+    vk = validator()
     monkeypatch.setattr(vk.httpx, "get", lambda url, **kw: _Response(200, [{"close": 1.0}]))
     monkeypatch.setenv("TIINGO_API_KEY", "tiingo-test-key")
     assert vk.check_tiingo() is True
@@ -375,7 +361,7 @@ def test_a_working_tiingo_key_passes_and_an_unset_one_only_warns(
 def test_a_refused_tiingo_key_turns_the_validator_red(monkeypatch: Any) -> None:
     """The check is wired into the run's verdict: a refused Tiingo key fails `validate-keys`.
     NEGATIVE: every check passing exits 0."""
-    vk = _validator()
+    vk = validator()
     for name in ("check_anthropic", "check_polygon", "check_sec"):
         monkeypatch.setattr(vk, name, lambda: True)
     monkeypatch.setattr(vk, "check_tiingo", lambda: False)

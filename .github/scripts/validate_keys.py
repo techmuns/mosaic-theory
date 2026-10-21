@@ -21,9 +21,10 @@ PIPELINE_MODEL = "claude-opus-4-8"
 
 
 def check_anthropic() -> bool:
-    # Returns False ONLY on a real key problem (auth, permission, or no access to the pipelines'
-    # model). A connectivity error from the runner to api.anthropic.com is a WARN (environment,
-    # not the key) — it does NOT fail the run.
+    # Returns False on a real key or account problem: auth, permission, no access to the
+    # pipelines' model, or any other 4xx answer (a 400 "credit balance too low" is the account,
+    # and the weekly run would hit it). A WARN that does NOT fail the run is kept for what is
+    # transient or the runner's environment: no connection, a timeout, 408, 429 and 5xx.
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
         print("ANTHROPIC_API_KEY: FAIL — secret not set / empty")
@@ -44,6 +45,16 @@ def check_anthropic() -> bool:
     except anthropic.NotFoundError as e:
         print(f"ANTHROPIC_API_KEY: FAIL — {type(e).__name__}: this key cannot use "
               f"{PIPELINE_MODEL}, the model the pipelines call")
+        return False
+    except anthropic.APIStatusError as e:
+        error = e.body.get("error", {}) if isinstance(e.body, dict) else {}
+        why = f"{error.get('type', type(e).__name__)}: {error.get('message', '')}"
+        why = why.replace(key, "<key>")[:160]
+        if e.status_code in (408, 429) or e.status_code >= 500:
+            print(f"ANTHROPIC_API_KEY: WARN — HTTP {e.status_code} {why} (transient: a rate "
+                  "limit or the service, NOT a key problem)")
+            return True
+        print(f"ANTHROPIC_API_KEY: FAIL — HTTP {e.status_code} {why}")
         return False
     except Exception as e:
         print(

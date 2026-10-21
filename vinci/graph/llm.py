@@ -1,11 +1,11 @@
 """Swappable LLM client for the graph track (who-names-whom extraction).
 
-The model is a **config parameter** (``graph_llm_model``, default Claude Opus 5 — operator ruling
-2026-08-29) behind this interface — accuracy here gates the moat hypothesis, so we do not use the
-cheapest model. Extraction is forced through a tool-use schema so the model returns validated
-structured output, not prose. Opus 4.8 held the default after a groundedness benchmark (see
-``config.graph_llm_model`` — the benchmark has not yet been re-run on Opus 5, accepted with its
-falsifier there); the model is still a swap-the-config knob, not a runtime router.
+The model is a **config parameter** (``graph_llm_model``, default ``claude-opus-4-8``) behind this
+interface — accuracy here gates the moat hypothesis, so we do not use the cheapest model.
+Extraction is forced through a tool-use schema so the model returns validated structured output,
+not prose. The operator's 2026-08-29 move to Opus 5 was REVERTED on 2026-09-01 after a synthesis
+regression (``config.graph_llm_model``; ``docs/records/2026-09-01-opus5-synthesis-regression.md``);
+the model is still a swap-the-config knob, not a runtime router.
 """
 
 from __future__ import annotations
