@@ -2,7 +2,7 @@
 id: 2026-10-21-theme-intelligence-rulings
 status: recorded
 date: 2026-10-21
-prs: []
+prs: [765]
 supersedes:
 superseded-by:
 ---
