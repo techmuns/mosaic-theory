@@ -29,7 +29,7 @@ The market prices this as a broken business in a shrinking category. It is share
 - Gross margin below ~31% on a full-year basis, or a further decline beyond the ~4 points already absorbed — a margin regime break past what the 14% normal assumes. (The prior instance of this trigger fired on the nine-month decline and was discharged 2026-07-26 by the re-verification that re-set the normal; this is a fresh forward threshold.)
 - OWYN net sales turn negative year-over-year in any quarter — added 2026-08-19.
 
-> ⚠ **Verify before the verdict:** EDGAR P/E 11.1x does not rest on LTM GAAP earnings; Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** EDGAR P/E 11.1x does not rest on LTM GAAP earnings; Net debt/EBITDA (1.5x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
 
 The Simply Good Foods Company, a consumer-packaged food and beverage company, engages in the development, marketing, and sale of snacks and meal replacements, and other products in North America and internationally.
 - **Segments:** Branded Nutritional Foods and Snacking Products — single segment [1]
@@ -84,7 +84,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 15.4% | 8y history · firm |
 | Median multiple, own history | 17.9x | 35 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $44.10 | spot-independent · EV/EBIT 19.7x |
+| Screen value / share | $44.83 | spot-independent · EV/EBIT 19.7x · on 88,460,545 shares outstanding |
+| Dilution test / share | $44.83 | + 0 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
 ## The case
@@ -117,6 +118,9 @@ _Bear case — the decline is real:_
 _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
+
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $216M against $-213M rebuilt from the filings (+$429M); the quarter to 2025-08-30: CIQ $64M against $-6M (+$70M); the quarter to 2025-11-29: CIQ $50M against $44M (+$6M); the quarter to 2026-02-28: CIQ $51M against $-207M (+$258M); the quarter to 2026-05-30: CIQ $52M against $-44M (+$96M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+
 
 **Capital allocation — created or destroyed**
 
@@ -175,6 +179,8 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 5.6x as-of 2026-08-11 — trailing range 6.1–28.9x (median 17.9x) over 35 closes → 0%ile → near-floor; P/LTM EPS NM (no meaningful trailing P/E at this close) [28]
 - **vs peers:** EV/EBITDA 5.6x vs peer median 8.8x (-36%); P/E NM vs peer median 16.35 [29]
 - **Multiple basis — read before the level:** rent is 5.0% of EBITDA (FY ending 2025-08-30). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 16.6% EBITDA margin against 15.6% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 17.9x over 35 quarters (current 6.6x at the 2026-07-09 filing; 3% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [30]
+- **What CIQ's EV/EBITDA divides:** CIQ's 5.6x divides TEV $1,285M (comps, 2026-08-11) by $230M: reported LTM EBITDA $217M + rent $13M (FY ending 2025-08-30) = $231M (0.5% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($217M, 5.2% below the denominator).
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $10.84 close (2026-08-17): ($10.84 × 88,460,545 shares outstanding + net debt $273M excluding operating leases) ÷ LTM EBITDA $216M (four quarters to 2026-05-30) = 5.7x
 - **Comparability:** market caps span $49M–$29.2B (599x); the name is $961M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [31]
 - **The street, for contrast (target · ratings):** Target price: mean $14.88, median $14.00, high/low 20.00/12.00, N 8/8; Ratings: Buy 4, Outperform 0, Hold 7, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-07-21 · export date unverified] [32]
 
@@ -482,8 +488,8 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [65]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [66]
-  - net debt / EBITDA (CIQ, GAAP basis): 1.5x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 1.9x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 1.5x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 1.9x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: no structured source for this decision vintage
 
@@ -492,7 +498,7 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 _2 to verify._
 
 - EDGAR P/E 11.1x does not rest on LTM GAAP earnings — LTM GAAP diluted EPS is NEGATIVE (-2.08), so a positive multiple must use some other denominator (an EPS from a non-current period, or a normalized/adjusted figure — the displayed basis does not say which). Do not read it as a GAAP trailing multiple.
-- Net debt/EBITDA (1.5x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage.
+- Net debt/EBITDA (1.5x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage.
 
 # Appendix — data & audit
 
@@ -669,6 +675,8 @@ _Source §: 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm · amended by 0001
   - 2026-10-20 · mechanical.valuation, qa_flags, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · anchor, qa_flags, valuation_basis — anchor-backfill at 2026-10-09.3
   - 2026-10-20 · ev_bridge — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 7d old — 2026-08-11 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 28d old (2026-07-21, valuation.implied_expectations.multiples_as_of) — within the ceiling

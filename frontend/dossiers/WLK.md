@@ -5,7 +5,7 @@ _September 28, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09
 # Brief — first cut
 
 ## At a glance
-> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
 
 Westlake Corporation manufactures and markets performance and essential materials, and housing and infrastructure products in the United States, Canada, Germany, China, Mexico, Brazil, France, Italy, and internationally.
 **Mixed** — a real Q2 earnings step-change and self-help lever offset by a conflict-dependent pricing tailwind, a loss-making core segment and elevated leverage.
@@ -39,7 +39,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 9.8% | 10y history · weak |
 | Median multiple, own history | 7.9x | 34 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $115.51 | spot-independent · EV/EBIT 16.3x |
+| Screen value / share | $116.15 | spot-independent · EV/EBIT 16.3x · on 127,796,548 shares outstanding |
+| Dilution test / share | $115.73 | + 460,671 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | weak |  |
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 1.1% (CIQ EBIT) sits 8.7 points BELOW the 10-year median of 9.8% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value assumes a recovery to what the business was. If the decline is STRUCTURAL, that history overstates it; if it is a cyclical TROUGH, expecting recovery is right. On FY2025 the two sources differ by 12.5 points (GAAP a 14.1% loss vs CIQ a 1.6% loss): GAAP carries charges CIQ's EBIT excludes, and R1's median sits on the GAAP side — which pulls the median down toward the twelve months, so the difference narrows this gap rather than creating it: no reason to discount it, and if anything it understates it.
@@ -82,6 +83,9 @@ _Bear case — already priced, or spent before the exit:_
 _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
+
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $1,058M against $-75M rebuilt from the filings (+$1,133M); the quarter to 2025-09-30: CIQ $281M against $-463M (+$744M); the quarter to 2025-12-31: CIQ $-6M against $-374M (+$368M); the quarter to 2026-03-31: CIQ $130M against $112M (+$18M) — its release states a matching amount: “Identified Items $ 36 $ 45 $ 80 EBITDA margin (2) 2% 3% 4% i ______________________________ (1) For the three months ended March 31, 2026, Identified Items include a $67 million charge to settle certain litigation involving direct purchasers of PVC pipe and fittings and $18 million of charges related to previously announced facility shutdowns.” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+
 
 **Capital allocation — created or destroyed**
 
@@ -138,6 +142,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 10.7x as-of 2026-09-16 — trailing range 3.1–19.4x (median 7.7x) over 38 closes → 82%ile → near-ceiling; P/LTM EPS NM (no meaningful trailing P/E at this close) [26]
 - **vs peers:** EV/EBITDA 10.7x vs peer median 8.4x (+27%); P/E NM vs peer median 18.15 [27]
 - **Multiple basis — read before the level:** rent is 15.3% of EBITDA (FY ending 2025-12-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 11.2% EBITDA margin against 10.0% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 7.9x over 34 quarters (current 13.0x at the 2026-08-05 filing; 94% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [28]
+- **What CIQ's EV/EBITDA divides:** CIQ's 10.7x divides TEV $13,054M (comps, 2026-09-16) by $1,220M: reported LTM EBITDA $1,125M + rent $128M (FY ending 2025-12-31) = $1,253M (2.6% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($1,125M, 7.8% below the denominator).
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $68.80 close (2026-09-22): ($68.80 × 127,796,548 shares outstanding + net debt $3,215M excluding operating leases) ÷ LTM EBITDA $1,058M (four quarters to 2026-06-30) = 11.3x
 - **Comparability:** market caps span $1.6B–$21.7B (13x); the name is $9.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [29]
 - **The street, for contrast (target · ratings):** Target price: mean $92.81, median $91.00, high/low 114.00/80.00, N 16/16; Ratings: Buy 4, Outperform 2, Hold 10, Underperform 0, Sell 0, No Opinion 0, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-09-14 · export date unverified] [30]
 
@@ -462,8 +468,8 @@ _11 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [60]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [61]
-  - net debt / EBITDA (CIQ, GAAP basis): 3.6x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 4.7x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 3.6x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 4.7x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -472,7 +478,7 @@ _11 undated / later aggregate line item(s) in the appendix panel_
 _3 to verify._
 
 - ALSO A CURRENT SCREEN CANDIDATE at rank 141 — judged under the 'ultra_short_term' book, not 'overshoot', by operator ruling: operator decision 2026-09-17 — judged as a short-dated trade rather than an overshoot. Follow reason: Westlake Corp (Performance and Essential Materials; Housing and Infrastructure Products), followed under the ULTRA-SHORT-TERM TRADE book by operator decision 2026-09-17 — judged as a short-dated trade, not as a de-rating to underwrite.
-- Net debt/EBITDA (3.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.6x as the covenant-basis leverage.
+- Net debt/EBITDA (3.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.6x as the covenant-basis leverage.
 - former registrant name: this CIK filed as "WESTLAKE CHEMICAL CORP" (2003-09-22 → 2022-02-01) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0001262823)
 
 # Appendix — data & audit
@@ -677,6 +683,8 @@ _Source §: 8-K 0001193125-07-267027 · dex101.htm_
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · mechanical.valuation, qa_flags, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · anchor, qa_flags, valuation_basis — anchor-backfill at 2026-10-09.3
+  - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 12d old — 2026-09-16 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
 - **Consensus age:** consensus 14d old (2026-09-14, valuation.implied_expectations.multiples_as_of) — within the ceiling

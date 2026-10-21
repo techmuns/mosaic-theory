@@ -421,8 +421,8 @@ _12 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [10]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [64]
-  - net debt / EBITDA (CIQ, GAAP basis): 0.6x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 1.9x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 0.6x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 1.9x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -605,6 +605,8 @@ _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-20 · anchor — anchor-backfill at 2026-10-09.3
   - 2026-10-20 · ev_bridge, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-uber → mosaic-theory-ta` · reaching 2026-10-09
 - **Panel age:** oldest panel 2d old — 2026-10-09 (valuation.implied_expectations.tev_as_of), against a 2026-10-11 build
 - **Consensus age:** consensus 3d old (2026-10-08, valuation.implied_expectations.multiples_as_of) — within the ceiling

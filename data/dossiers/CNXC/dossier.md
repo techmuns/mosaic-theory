@@ -5,7 +5,7 @@ _August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
 # Brief — first cut
 
 ## At a glance
-> ⚠ **Verify before the verdict:** Net debt/EBITDA (4.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** Net debt/EBITDA (4.1x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
 
 Concentrix Corporation designs, builds, and runs integrated customer experience (CX) solutions worldwide.
 **Mixed** — flat-to-rising absolute EBITDA and AI-mix bookings versus a real impairment, heavy leverage and sharply cut forward estimates.
@@ -38,7 +38,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 6.5% | 7y history · firm |
 | Median multiple, own history | 7.5x | 22 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $93.27 | spot-independent · EV/EBIT 15.0x |
+| Screen value / share | $93.11 | spot-independent · EV/EBIT 15.0x · on 61,018,350 shares outstanding |
+| Dilution test / share | $93.11 | + 0 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
 _leveraged residual - net debt is 139% of anchor equity; a one-turn move in EV/EBITDA shifts value per share by about 89% of spot ($21.47 at a $24.24 spot), so no R1 grid is robust to a single turn of multiple error. Re-engage when reported net-debt/EBITDA falls below about 3.5x, or when absolute EBITDA has stabilised for two consecutive quarters. Declined for instrument mismatch, not asserted worthless: LTM free cash flow is +$517M against $1.48B of market equity, and deleveraging transfers value to equity at constant enterprise value._
@@ -128,6 +129,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 3.9x as-of 2026-07-17 — trailing range 4.4–12.8x (median 6.9x) over 23 closes → 0%ile → near-floor; P/LTM EPS NM (no meaningful trailing P/E at this close) [27]
 - **vs peers:** EV/EBITDA 3.9x vs peer median 5.5x (-28%); P/E NM vs peer median 10.6 [28]
 - **Multiple basis — read before the level:** rent is 35.1% of EBITDA (FY ending 2025-11-30). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 17.4% EBITDA margin against 12.7% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 7.5x over 22 quarters (current 4.6x at the 2026-07-02 filing; 0% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [29]
+- **What CIQ's EV/EBITDA divides:** CIQ's 3.9x divides TEV $6,799M (comps, 2026-07-28) by $1,743M: reported LTM EBITDA $1,275M + rent $444M (FY ending 2025-11-30) = $1,719M (1.4% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($1,275M, 26.9% below the denominator).
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $23.33 close (2026-08-17): ($23.33 × 61,018,350 shares outstanding + net debt $4,131M excluding operating leases) ÷ LTM EBITDA $1,255M (four quarters to 2026-05-31) = 4.4x
 - **Comparability:** market caps span $119M–$28.9B (243x); the name is $1.6B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [30]
 - **The street, for contrast (target · ratings):** Target price: mean $35.25, median $35.00, high/low 45.00/26.00, N 4/4; Ratings: Buy 2, Outperform 1, Hold 1, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-07-06 · export date unverified] [31]
 
@@ -424,8 +427,8 @@ _8 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [58]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [59]
-  - net debt / EBITDA (CIQ, GAAP basis): 4.1x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 3.2x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 4.1x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 3.2x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -433,7 +436,7 @@ _8 undated / later aggregate line item(s) in the appendix panel_
 
 _1 to verify._
 
-- Net debt/EBITDA (4.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.1x as the covenant-basis leverage.
+- Net debt/EBITDA (4.1x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 4.1x as the covenant-basis leverage.
 
 # Appendix — data & audit
 
@@ -608,6 +611,8 @@ _Source §: 8-K 0001803599-21-000215 · exhibit101122721.htm_
   - 2026-10-20 · mechanical.valuation, qa_flags, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · anchor, qa_flags, valuation_basis — anchor-backfill at 2026-10-09.3
   - 2026-10-20 · ev_bridge — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 21d old — 2026-07-28 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 43d old (2026-07-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

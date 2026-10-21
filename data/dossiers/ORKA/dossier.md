@@ -360,8 +360,8 @@ _+11 more broker-days in JSON_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [47]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [48]
-  - net debt / EBITDA (CIQ, GAAP basis): UNKNOWN
-  - total debt / EBITDA (CIQ comps, GAAP basis): UNKNOWN
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): UNKNOWN
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): UNKNOWN
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -464,6 +464,8 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-28; (R) = Reclas
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-10 · anchor, date_semantics, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, mechanical.primary_source — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 28d old — 2026-08-31 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
 - **Consensus age:** consensus 31d old (2026-08-28, valuation.implied_expectations.multiples_as_of) — within the ceiling

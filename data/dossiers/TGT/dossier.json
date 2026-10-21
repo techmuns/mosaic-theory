@@ -1210,6 +1210,33 @@
           }
         ],
         "source_ref": "CIQ Financials (Quarterly)→Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)→Income Statement 'Net Rental Exp.' / 'EBITDA'"
+      },
+      "ev_ebitda_basis": {
+        "multiple": 9.2,
+        "tev": 85314.0,
+        "tev_as_of": "2026-09-28",
+        "implied_denominator": 9273.261,
+        "reported_ltm_ebitda": 8593.0,
+        "rent": 667.0,
+        "rent_fiscal_year": "2026-01-31",
+        "ratio_to_reported": 1.079165,
+        "ratio_to_reported_plus_rent": 1.001432,
+        "reading": "ebitda_plus_rent",
+        "tolerance": 0.05,
+        "line": "CIQ's 9.2x divides TEV $85,314M (comps, 2026-09-28) by $9,273M: reported LTM EBITDA $8,593M + rent $667M (FY ending 2026-01-31) = $9,260M (0.1% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($8,593M, 7.3% below the denominator)."
+      },
+      "ev_ebitda_ex_lease_at_price": {
+        "value": 9.566787,
+        "price": 159.02,
+        "price_as_of": "2026-09-22",
+        "shares": 454296736.0,
+        "shares_basis": "shares outstanding",
+        "net_debt": 9946.0,
+        "net_debt_source": "EDGAR: total debt incl. finance leases 15,357 − cash 5,411 ($M); operating leases 3,704 EXCLUDED — the multiple is struck on TEV less operating leases",
+        "ev": 82188.267,
+        "ltm_ebitda": 8591.0,
+        "ltm_through": "2026-08-01",
+        "line": "at the page's $159.02 close (2026-09-22): ($159.02 × 454,296,736 shares outstanding + net debt $9,946M excluding operating leases) ÷ LTM EBITDA $8,591M (four quarters to 2026-08-01) = 9.6x"
       }
     },
     "quality": {
@@ -6953,6 +6980,76 @@
         "ratio": 1.2053993186979561,
         "divergent": false,
         "note": "implied D&A is 2,642 in the actuals and 3,185 in the estimates (1.21x) — below the 2.0x flag, so NO DIVERGENCE WAS DETECTED. That is not a finding that the rows share a basis: this check tests implied D&A against one threshold, and nothing here proves agreement."
+      },
+      "ebitda_reconciliation": {
+        "quarters": [
+          {
+            "period_end": "2025-11-01",
+            "ciq_ebitda": 1942.0,
+            "filing_ebitda": 1721.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "DepreciationDepletionAndAmortization"
+            ],
+            "gap": 221.0,
+            "different": true,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": null
+          },
+          {
+            "period_end": "2026-01-31",
+            "ciq_ebitda": 2298.0,
+            "filing_ebitda": 2183.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "DepreciationDepletionAndAmortization"
+            ],
+            "gap": 115.0,
+            "different": true,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": null
+          },
+          {
+            "period_end": "2026-05-02",
+            "ciq_ebitda": 1963.0,
+            "filing_ebitda": 1948.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "DepreciationDepletionAndAmortization"
+            ],
+            "gap": 15.0,
+            "different": false,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": null
+          },
+          {
+            "period_end": "2026-08-01",
+            "ciq_ebitda": 2388.0,
+            "filing_ebitda": 3344.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "DepreciationDepletionAndAmortization"
+            ],
+            "gap": -956.0,
+            "different": true,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": null
+          }
+        ],
+        "ciq_ltm": 8591.0,
+        "filing_ltm": 9196.0,
+        "ltm_gap": -605.0,
+        "any_different": true,
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $8,591M against $9,196M rebuilt from the filings (−$605M); the quarter to 2025-11-01: CIQ $1,942M against $1,721M (+$221M); the quarter to 2026-01-31: CIQ $2,298M against $2,183M (+$115M); the quarter to 2026-08-01: CIQ $2,388M against $3,344M (−$956M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       }
     },
     "primary_source": {
@@ -7052,7 +7149,7 @@
         "note": null
       },
       "basis_triangulation": {
-        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ, GAAP basis): 1.6x\n  total debt / EBITDA (CIQ comps, GAAP basis): 2.1x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: UNKNOWN (not disclosed)",
+        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 1.6x\n  total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 2.1x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: UNKNOWN (not disclosed)",
         "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
         "status": "present",
         "note": null
@@ -10209,7 +10306,7 @@
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Target, the US general-merchandise retailer, followed under the QUALITY book by operator decision 2026-09-28. At $159.02 on 2026-09-22 it is 6.4% below its 52-week closing high of $169.89 (2026-08-24) and 90.0% above the low of $83.68 (2025-11-20), ahead of IWM by 66.2 points over the window — the strongest of the three, and NOT a de-rated name whatever the earlier framing assumed. It is booked as quality because the question is durability of the recovery, not whether a fall overshot. EV/EBITDA 9.2x against an 8.4x own-history median (38 closes, 9.5 years), and R1 anchors at $138 on a 10-year median operating margin of 5.6% — the only one of the three whose margin leg reads FIRM. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
     "stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling",
     "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+5.7s fetch)",
-    "Net debt/EBITDA (1.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage."
+    "Net debt/EBITDA (1.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
@@ -14919,7 +15016,22 @@
     "status_reason": "R1-family (R1_midcycle_margin_evebitda): priced from the anchor's R1 inputs",
     "earnings_basis": "EBITDA at exit (revenue × operating margin + D&A)",
     "multiple_basis": "EV/EBITDA",
-    "current_multiple": null,
+    "current_multiple": {
+      "metric": "EV/EBITDA ex-lease (TEV less operating leases / LTM EBITDA)",
+      "period": "LTM",
+      "value": 10.045064,
+      "as_of": "2026-08-28",
+      "source": "mechanical.valuation.lease_basis.ex_lease_band.current — the history's latest quarterly close",
+      "snapshot_as_of": null,
+      "snapshot_market_cap": null,
+      "snapshot_tev": null,
+      "snapshot_reconciles": null,
+      "page_price": 159.02,
+      "page_price_as_of": "2026-09-22",
+      "days_price_after_snapshot": null,
+      "value_at_page_price": 9.566787,
+      "value_at_page_price_basis": "(page price × point-in-time shares + net debt excluding operating leases) ÷ the history's latest LTM EBITDA — mechanical.valuation.ev_ebitda_ex_lease_at_price"
+    },
     "history_series": "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV less operating leases / LTM EBITDA)",
     "ev_bridge_basis": "EDGAR net debt excluding operating leases (the anchor's)",
     "scenario_formula": "((exit_revenue * exit_operating_margin) + d_and_a) * exit_ev_ebitda - net_debt",
@@ -15082,13 +15194,34 @@
       "layers": [
         "ev_bridge"
       ]
+    },
+    {
+      "date": "2026-10-21",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor",
+        "caveats",
+        "mechanical.financial_summary",
+        "mechanical.primary_source",
+        "mechanical.valuation",
+        "valuation_basis"
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-20T13:23:15.810953Z",
+    "computed_at": "2026-10-21T11:18:48.554672Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [
@@ -15128,6 +15261,18 @@
       "basis": "diluted weighted-average (latest 10-Q)",
       "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
     },
+    "shares_outstanding": {
+      "value": 454296736.0,
+      "unit": "shares",
+      "basis": "point-in-time shares outstanding — the per-share denominator (item 24)",
+      "source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding); 0.0% below the filer's basic weighted average 454,400,000 (2026-05-03..2026-08-01)"
+    },
+    "dilutive_increment": {
+      "value": 2200000.0,
+      "unit": "shares",
+      "basis": "diluted less basic weighted average over the latest 10-Q quarter — the dilution test",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding 456,600,000 − WeightedAverageNumberOfSharesOutstandingBasic 454,400,000 (2026-05-03..2026-08-01)"
+    },
     "ltm_revenue": {
       "value": 107705.0,
       "unit": "$M",
@@ -15140,7 +15285,8 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": 158.4705,
+    "anchor_base_value_per_share": 159.274,
+    "anchor_base_value_per_share_diluted": 158.5064,
     "anchor_ev_ebit": 13.5691,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
@@ -15153,9 +15299,12 @@
         "d_and_a",
         "net_debt",
         "diluted_shares",
+        "shares_outstanding",
+        "dilutive_increment",
         "ltm_revenue",
         "ltm_fcf",
         "anchor_base_value_per_share",
+        "anchor_base_value_per_share_diluted",
         "midcycle_gap",
         "anchor_ev_ebit"
       ],

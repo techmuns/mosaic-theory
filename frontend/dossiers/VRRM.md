@@ -37,7 +37,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 20.9% | 8y history · weak |
 | Median multiple, own history | 13.6x | 19 closes · weak · EV/EBITDA |
-| Screen value / share | $21.79 | spot-independent · EV/EBIT 21.2x |
+| Screen value / share | $21.78 | spot-independent · EV/EBIT 21.2x · on 151,982,804 shares outstanding |
+| Dilution test / share | $21.78 | + 0 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | weak |  |
 
 **data_quality: revenue_tag_conflict**
@@ -77,6 +78,9 @@ _Bear case — the decline is real:_
 _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
+
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $358M against $349M rebuilt from the filings (+$9M); the quarter to 2025-12-31: CIQ $81M against $72M (+$9M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+
 
 **Capital allocation — created or destroyed**
 
@@ -128,6 +132,7 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 8.5x as-of 2026-03-31 — trailing range 10.4–23.2x (median 13.6x) over 19 closes → 0%ile → near-floor; P/LTM EPS 16.8x [28]
 - **vs peers:** EV/EBITDA 4.6x vs peer median 11.6x (-60%); P/E 5.1x vs peer median 18.1x (-72%) [29]
+- **What CIQ's EV/EBITDA divides:** CIQ's 8.5x divides TEV $1,681M (comps, 2026-07-28) by $198M, which reproduces neither pairing: reported LTM EBITDA $358M (-44.7%) and reported LTM EBITDA $358M + rent $10M (FY ending 2025-12-31) = $368M (-46.3%). Read CIQ's own denominator before comparing it with a multiple of reported EBITDA.
 - **Comparability:** market caps span $568M–$18.8B (33x); the name is $635M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [30]
 - **The street, for contrast (target · ratings):** Target price: mean $9.86, median $6.00, high/low 28.00/4.00, N 7/7; Ratings: Buy 0, Outperform 1, Hold 7, Underperform 0, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-07-13 · export date unverified] [31]
 
@@ -409,8 +414,8 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [3]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [68]
-  - net debt / EBITDA (CIQ, GAAP basis): 2.9x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 3.0x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 2.9x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 3.0x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 - **Customer concentration (latest 10-Q):** [3]
@@ -558,6 +563,8 @@ _Source §: 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm_
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 21d old — 2026-07-28 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 36d old (2026-07-13, valuation.implied_expectations.multiples_as_of) — within the ceiling

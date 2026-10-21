@@ -25,7 +25,7 @@ WATCH at $46. The underwrite fails our 2:1 bar — the base case values the busi
 - spot pulls to ~28-30 (where base offers 2:1)
 - a reported quarter proving normalized operating margin genuinely >7.5% (e.g. disclosed Dedicated segment economics, or a clean beat)
 
-> ⚠ **Verify before the verdict:** Net debt/EBITDA (2.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** Net debt/EBITDA (2.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
 
 Werner Enterprises, Inc., together with its subsidiaries, engages in transporting truckload shipments of general commodities in interstate and intrastate commerce in the United States, Mexico, Canada, and…
 - **Segments:** Truckload Transportation Services 69%; Werner Logistics 29%; Other 3%; Elimination of Inter-Segment Revenues -0% [1]
@@ -79,7 +79,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 3.9% | 4y history · weak |
 | Median multiple, own history | 6.7x | 33 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $32.53 | spot-independent · EV/EBIT 21.8x |
+| Screen value / share | $32.67 | spot-independent · EV/EBIT 21.8x · on 59,977,156 shares outstanding |
+| Dilution test / share | $32.53 | + 275,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | weak |  |
 
 ## The case
@@ -168,6 +169,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 8.3x as-of 2026-08-18 — trailing range 4.8–9.1x (median 6.7x) over 38 closes → 95%ile → near-ceiling; P/LTM EPS NM (no meaningful trailing P/E at this close) [28]
 - **vs peers:** EV/EBITDA 8.3x vs peer median 13.5x (-39%); P/E NM vs peer median 48.3 [29]
 - **Multiple basis — read before the level:** rent is 8.1% of EBITDA (FY ending 2025-12-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 12.0% EBITDA margin against 10.5% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 6.7x over 33 quarters (current 9.0x at the 2026-08-07 filing; 100% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [30]
+- **What CIQ's EV/EBITDA divides:** CIQ's 8.3x divides TEV $3,194M (comps, 2026-08-18) by $385M: reported LTM EBITDA $342M + rent $28M (FY ending 2025-12-31) = $370M (4.1% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($342M, 11.1% below the denominator).
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $35.84 close (2026-09-16): ($35.84 × 59,977,156 shares outstanding + net debt $784M excluding operating leases) ÷ LTM EBITDA $341M (four quarters to 2026-06-30) = 8.6x
 - **Comparability:** market caps span $3.1B–$43.1B (14x); the name is $2.3B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [31]
 - **The street, for contrast (target · ratings):** Target price: mean $42.67, median $41.00, high/low 55.00/30.00, N 15/15; Ratings: Buy 4, Outperform 1, Hold 9, Underperform 2, Sell 0, No Opinion 0, Buy 1, Outperform 0, Hold 2, Underperform 0, Sell 0  [data ≥ 2026-08-13 · export date unverified] [32]
 
@@ -476,8 +479,8 @@ _1 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [12]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [61]
-  - net debt / EBITDA (CIQ, GAAP basis): 2.6x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 2.4x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 2.6x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 2.4x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: no structured source for this decision vintage
 
@@ -486,7 +489,7 @@ _1 undated / later aggregate line item(s) in the appendix panel_
 _2 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries a committed dossier. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-08-24-01: FAIL (g1_drawdown FAIL).
-- Net debt/EBITDA (2.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 2.6x as the covenant-basis leverage.
+- Net debt/EBITDA (2.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 2.6x as the covenant-basis leverage.
 
 # Appendix — data & audit
 
@@ -683,6 +686,8 @@ _Source §: 8-K 0000793074-25-000019 · wern-2025327ex101.htm_
   - 2026-10-20 · mechanical.valuation, qa_flags, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · anchor, qa_flags, valuation_basis — anchor-backfill at 2026-10-09.3
   - 2026-10-20 · ev_bridge — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 30d old — 2026-08-18 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus 35d old (2026-08-13, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -1,11 +1,11 @@
 # Dossier — Burlington Stores, Inc. (NYSE: BURL)
 
-_October 21, 2026 · extraction 2026-10-09.3_
+_October 21, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-10-09.3_
 
 # Brief — first cut
 
 ## At a glance
-> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.8x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.8x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
 
 Burlington Stores, Inc. operates as a retailer of branded merchandise in the United States and Puerto Rico.
 **Mixed** — rising absolute EBITDA and a raised guide offset by decelerating comps, downward revisions, and a forward multiple that is not actually cheap.
@@ -38,7 +38,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 7.5% | 11y history · weak |
 | Median multiple, own history | 16.4x | 38 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $322.06 | spot-independent · EV/EBIT 23.9x |
+| Screen value / share | $327.60 | spot-independent · EV/EBIT 23.9x · on 62,815,195 shares outstanding |
+| Dilution test / share | $322.32 | + 1,029,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | weak |  |
 
 ## The case
@@ -130,6 +131,8 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 - **vs peers:** EV/EBITDA 9x vs peer median 7.1x (+27%); P/E 22.9x vs peer median 16.3x (+40%) [26]
 - **Forward multiples:** P/FY27E (normalized) 21.9x (EPS $11.80); P/FY27E (GAAP) 22.5x (EPS $11.48); P/FY28E (normalized) 18.9x (EPS $13.68); P/FY28E (GAAP) 19.3x (EPS $13.40) — at $258.86 as-of 2026-10-20 [27]
 - **Multiple basis — read before the level:** rent is 77.4% of EBITDA (FY ending 2026-01-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 19.3% EBITDA margin against 11.1% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 16.4x over 38 quarters (current 14.3x at the 2026-08-27 filing; 16% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [28]
+- **What CIQ's EV/EBITDA divides:** CIQ's 9.0x divides TEV $21,201M (comps, 2026-09-25) by $2,356M: reported LTM EBITDA $1,361M + rent $961M (FY ending 2026-01-31) = $2,322M (1.5% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($1,361M, 42.2% below the denominator).
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $258.86 close (2026-10-20): ($258.86 × 62,815,195 shares outstanding + net debt $1,210M excluding operating leases) ÷ LTM EBITDA $1,361M (four quarters to 2026-08-01) = 12.8x
 - **Comparability:** market caps span $2.8B–$143.1B (51x); the name is $16.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [29]
 - **The street, for contrast (target · ratings):** Target price: mean $364.75, median $367.50, high/low 440.00/290.00, N 16/16; Ratings: Buy 10, Outperform 3, Hold 6, Underperform 0, Sell 0, No Opinion 0, Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-09-22 · export date unverified] [30]
 
@@ -419,8 +422,8 @@ _4 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [57]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [58]
-  - net debt / EBITDA (CIQ, GAAP basis): 3.8x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 2.5x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 3.8x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 2.5x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -429,7 +432,7 @@ _4 undated / later aggregate line item(s) in the appendix panel_
 _3 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Burlington Stores, the off-price apparel and home retailer, followed as an OVERSHOOT candidate by operator decision 2026-09-28. At $256.85 on 2026-09-22 it is 31.0% below its 52-week closing high of $372.19 (2026-07-30) and 13.0% above the low of $227.28 (2026-09-15), trailing IWM by 18.2 points over the window — the only one of the three retail follows that is genuinely de-rated. Its EV/EBITDA of 9.0x sits BELOW a 12.8x own-history median (38 closes, 9.5 years), so the multiple says overshoot. The question the underwrite has to answer is whether the margin does: on an 11-year reported median operating margin of 7.5% the R1 anchor is $183, which is BELOW spot — cheap on multiple is not the same as cheap on mid-cycle earnings, and the two disagree here. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.
-- Net debt/EBITDA (3.8x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.8x as the covenant-basis leverage.
+- Net debt/EBITDA (3.8x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.8x as the covenant-basis leverage.
 - synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bullish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)
 
 # Appendix — data & audit
@@ -579,6 +582,9 @@ _Source §: 8-K 0001564590-18-016500 · burl-ex101_6.htm · amended by 000119312
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-10-21 08:30 UTC
 - **Extraction:** 2026-10-09.3 — the active recipe's basis beside the page (`valuation_basis`: bases, today's multiple and the snapshot it is struck at, bridge, exit claims, the basic share count, non-operating policy, conflicts — the template's share guard among them) and its dates named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the forward history's latest close is `latest_observed_close`, never `current`; every writer saves through one write
+- **Refreshed since assembly** (oldest first):
+  - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-ra → mosaic-theory-ta` · reaching 2026-10-20
 - **Panel age:** oldest panel 26d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-21 build
 - **Consensus age:** consensus 29d old (2026-09-22, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -26,7 +26,7 @@ WATCH at $17.93. The underwrite fails our 2:1 bar decisively: the base case valu
 - subscription revenue growth at or above 12% year over year for two consecutive quarters - the deferred-consumption thesis is converting; re-underwrite with a faster ramp [status at record date: the first quarter of fiscal 2027, reported in May 2026, printed +12.2% - quarter one of two is on the board; the trigger arms at the second-quarter print, expected late August 2026. The prior quarter printed +6.7%, so there is no earlier streak.]
 - reported operating margin expanding by 4 points a year or more across two consecutive halves - raise the terminal path and re-underwrite [amended 2026-07-22: the first quarter of fiscal 2027 printed a 13.25% reported operating margin ($21.119M on $159.414M) against a central terminal path of 12.6% at four years - with only $0.7M of transaction items and no restructuring charge, the fiscal-2026 cost reset having lapped. One quarter; the second-quarter print decides. Final settlement of the accelerated share repurchase also lands that quarter, so the share count is not final.]
 
-> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.1x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
 
 nCino, Inc., a software-as-a-service company, provides software solutions to financial institutions in the United States, the United Kingdom, and internationally.
 - **Segments:** Software & Programming — single segment [1]
@@ -114,6 +114,9 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 > **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 7 of D&A against 22 in the actuals (0.33x) — the consensus EBITDA row adds back LESS than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $80M against $68M rebuilt from the filings (+$12M); the quarter to 2025-07-31: CIQ $13M against $1M (+$11M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+
+
 **Capital allocation — created or destroyed**
 
 - **Impairment headroom — goodwill + intangibles remaining:** $1,202.3M [16]
@@ -167,6 +170,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 27.8x as-of 2026-07-17 — trailing range 25.8–221.1x (median 82.9x) over 10 closes → 10%ile → near-floor; P/LTM EPS 154.3x [27]
 - **vs peers:** EV/EBITDA 27.8x vs peer median 98.1x (-72%); P/E 154.3x vs peer median 39.1x (+294%) [28]
 - **Multiple basis — read before the level:** rent is 13.1% of EBITDA (FY ending 2026-01-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 12.9% EBITDA margin against 11.7% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 117.9x over 9 quarters (current 23.7x at the 2026-05-27 filing; 0% of the history at or below it). The level and percentile above are CIQ's own series. [29]
+- **What CIQ's EV/EBITDA divides:** CIQ's 27.8x divides TEV $2,179M (comps, 2026-07-17) by $78M: reported LTM EBITDA $72M + rent $8M (FY ending 2026-01-31) = $79M (1.1% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($72M, 8.7% below the denominator).
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $20.23 close (2026-08-17): ($20.23 × 105,361,192 diluted weighted-average shares (the point-in-time count is refused against the filer's basic weighted average) + net debt $243M excluding operating leases) ÷ LTM EBITDA $80M (four quarters to 2026-04-30) = 29.8x
 - **Comparability:** market caps span $674M–$4.3B (6x); the name is $2.0B → moderately dispersed: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [30]
 - **The street, for contrast (target · ratings):** Target price: mean $23.36, median $23.00, high/low 28.00/17.00, N 11/11; Ratings: Buy 4, Outperform 6, Hold 4, Underperform 0, Sell 0, No Opinion 0, Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-07-22 · export date unverified] [31]
 
@@ -435,8 +440,8 @@ _+8 more broker-days in JSON_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [59]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [60]
-  - net debt / EBITDA (CIQ, GAAP basis): 3.1x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 4.1x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 3.1x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 4.1x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: no structured source for this decision vintage
 
@@ -447,7 +452,7 @@ _5 to verify._
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries a committed dossier. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-08-14-01: FAIL (g1_drawdown PASS · g2_idiosyncratic FAIL).
 - P/E may be distorted by non-recurring EPS — latest annual EPS 0.05 vs recent median -0.35; verify against normalized/forward EPS (CIQ)
 - EDGAR P/E (416.2x) conflicts ~3x with CIQ P/LTM EPS (154.3x) — EDGAR trailing EPS is one-time-inflated; the synthesis must not anchor on 416.2x as 'cheap'.
-- Net debt/EBITDA (3.1x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.1x as the covenant-basis leverage.
+- Net debt/EBITDA (3.1x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.1x as the covenant-basis leverage.
 - **Distorted-P/E anchor** — Consensus FY27E EBITDA of $175.1M nearly triples the LTM $72M and FY28E reaches $206.6M, so the 154x trailing P/E rests on a depressed trailing base rather than a permanent earnings ceiling.
   - _where:_ a bull point
   - _why it matters:_ the P/E is distorted (rests on a non-current/non-recurring EPS)
@@ -655,6 +660,8 @@ _Source §: latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm_
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-20 · anchor — anchor-backfill at 2026-10-09.3
+  - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 32d old — 2026-07-17 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 27d old (2026-07-22, valuation.implied_expectations.multiples_as_of) — within the ceiling
