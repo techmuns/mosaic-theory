@@ -176,3 +176,85 @@ def test_a_failed_refresh_rendered_on_its_own_is_listed_as_failed(tmp_path: Path
     (week,) = dk.desk_weeks(pipe.store, broke)
     assert broke.run_id not in week.run_ids
     assert [r.run_id for r in week.failed] == [broke.run_id]
+
+
+# --- the review of #760 (2026-10-21): research RE-READ after a scan is that scan's week ----------
+
+def _replay(pipe: Pipeline, as_of: dt.date, *, analyse: bool = True) -> WeeklyRun:
+    """A replay run, started as `state pull` starts one: an `ingest` run naming the runs it
+    re-reads (`replay_of`), dated at their original as-of."""
+    run = pipe.start_run("ingest", as_of=as_of)
+    run.replay_of = ("R-20261013T155116Z-ingest",)
+    if analyse:
+        ingest_calm(pipe)
+    return pipe.finish_run(RunStatus.SUCCEEDED)
+
+
+def test_research_re_read_after_the_scan_joins_its_week_end_to_end(tmp_path: Path) -> None:
+    """The one-registry merge replayed the pilot's documents after the 21 Oct scan, dated 13–14
+    Oct: the desk opened on "13–14 Oct — manual runs since the last weekly scan", a 'latest' week
+    dated BEFORE the scan it followed, the scan's Research Now one step back. A replay dated in
+    the scan's window is that week's research, re-read later — and the published desk says so."""
+    pipe = make_pipeline(tmp_path)
+    scan = _scan(pipe)
+    replay = _replay(pipe, JPM_AS_OF - dt.timedelta(days=3))
+    market = _run(pipe, "market")
+    (week,) = dk.desk_weeks(pipe.store, market)
+    assert week.scanned and {scan.run_id, replay.run_id, market.run_id} <= week.run_ids
+    assert week.label.startswith("Week of ")
+    assert "· with research re-read after the scan" in week.label
+    out = tmp_path / "published"
+    manifest = publish(pipe.store, market.run_id, out)
+    assert manifest["week"] == week.label
+    home = (out / "site" / "index.html").read_text()
+    assert f"<h1>{week.label}</h1>" in home and "2 articles read" in home
+
+
+def test_a_replay_is_never_the_next_scans_research(tmp_path: Path) -> None:
+    """Overlapping windows: a replay dated inside the first scan's window AND the second's is the
+    first's alone — `report_runs` of the second never takes it, so no run is counted twice."""
+    pipe = make_pipeline(tmp_path)
+    _scan(pipe)
+    replay = _replay(pipe, JPM_AS_OF - dt.timedelta(days=1))
+    pipe.start_run("scan", as_of=JPM_AS_OF + dt.timedelta(days=7),
+                   window_from=JPM_AS_OF - dt.timedelta(days=2),
+                   window_to=JPM_AS_OF + dt.timedelta(days=7))
+    second = pipe.finish_run(RunStatus.SUCCEEDED)
+    assert replay.run_id not in {r.run_id for r in report_runs(pipe.store, second)}
+    weeks = dk.desk_weeks(pipe.store, second)
+    assert replay.run_id in weeks[0].run_ids and replay.run_id not in weeks[1].run_ids
+
+
+def test_a_replay_dated_before_the_window_is_no_weeks_research(tmp_path: Path) -> None:
+    """NEGATIVE: a replay as of a month earlier is not the scan's week (as `report_runs` has always
+    held — "a replay as of July is not this week's research") and opens no week of its own."""
+    pipe = make_pipeline(tmp_path)
+    _scan(pipe)
+    old = _replay(pipe, JPM_AS_OF - dt.timedelta(days=30), analyse=False)
+    weeks = dk.desk_weeks(pipe.store, old)
+    assert [w.scanned for w in weeks] == [True]
+    assert old.run_id not in weeks[0].run_ids and "re-read" not in weeks[0].label
+
+
+def test_a_replay_dated_after_the_scan_is_the_week_in_progress(tmp_path: Path) -> None:
+    """NEGATIVE: a replay dated after the scan's window is new research for the next week — the
+    week in progress, as any manual run after a scan."""
+    pipe = make_pipeline(tmp_path)
+    _scan(pipe)
+    later = _replay(pipe, JPM_AS_OF + dt.timedelta(days=4), analyse=False)
+    weeks = dk.desk_weeks(pipe.store, later)
+    assert [w.scanned for w in weeks] == [True, False]
+    assert weeks[-1].run_ids == {later.run_id}
+    assert weeks[-1].label.endswith("— manual runs since the last weekly scan")
+
+
+def test_a_replay_dated_on_the_scans_day_is_the_next_weeks(tmp_path: Path) -> None:
+    """NEGATIVE: a replay dated the scan's own day is research that arrived after the scan ran (a
+    laptop's upload, replayed by `state pull`) — the week in progress, then the next scan's
+    report (`test_the_weekly_report_counts_the_replay_once_never_the_carried_runs`)."""
+    pipe = make_pipeline(tmp_path)
+    _scan(pipe)
+    same_day = _replay(pipe, JPM_AS_OF, analyse=False)
+    weeks = dk.desk_weeks(pipe.store, same_day)
+    assert [w.scanned for w in weeks] == [True, False]
+    assert weeks[-1].run_ids == {same_day.run_id} and "re-read" not in weeks[0].label
