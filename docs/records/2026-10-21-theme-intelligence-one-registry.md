@@ -2,7 +2,7 @@
 id: 2026-10-21-theme-intelligence-one-registry
 status: recorded
 date: 2026-10-21
-prs: []
+prs: [759]
 supersedes:
 superseded-by:
 ---
