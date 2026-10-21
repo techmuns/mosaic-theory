@@ -2,7 +2,7 @@
 id: 2026-10-21-theme-intelligence-enrich-is-a-refresh
 status: recorded
 date: 2026-10-21
-prs: []
+prs: [763]
 supersedes:
 superseded-by:
 ---
