@@ -18,6 +18,9 @@
         [--branch theme-intelligence-state]
     python -m vinci.theme_intelligence upload --remote <git remote> --path report.pdf \
         --source ms_research --budget USD [--llm-permitted] [--dry-run]
+    python -m vinci.theme_intelligence review list [--thesis TH-…] [--history]
+    python -m vinci.theme_intelligence review dismiss|reopen --finding F-… --reviewer NAME \
+        --reason "…"
     python -m vinci.theme_intelligence init | backup | export-state --out D | import-state --src D
 
 Exit status: 0 = the run succeeded; 2 = PARTIAL (some source or article could not be processed —
@@ -683,6 +686,82 @@ def cmd_upload(a: argparse.Namespace) -> int:
     return 2 if res.status is not None and res.status not in DONE else 0
 
 
+def cmd_review(a: argparse.Namespace) -> int:
+    """A REVIEWER's resolution of card-review findings (resolve.py): list the open findings with
+    their keys, dismiss a warning with a name and a reason, or reopen a dismissal. $0, no model
+    call; each dismissal or reopening is a run of its own."""
+    from vinci.theme_intelligence.pipeline import Pipeline
+    from vinci.theme_intelligence.report import write_run_outputs
+    from vinci.theme_intelligence.resolve import (
+        ResolutionError,
+        current_findings,
+        finding_state,
+        not_dismissible,
+        resolve,
+    )
+
+    if a.action == "list":
+        st = Store(Paths(Path(a.data_dir)).db)
+        found = current_findings(st, tuple(a.thesis or ()))
+        shown: set[str] = set()
+        for x in found:
+            tid = x.thesis.thesis_id
+            if tid not in shown:
+                shown.add(tid)
+                print(f"{tid} v{x.version.version} — {clip(x.thesis.title, 90)}")
+            lf, f = x.finding, x.finding.finding
+            print(f"  {lf.key}  {finding_state(x):<15} [{f.code}] line {lf.sentence_id} — raised "
+                  f"by the review of version {f.origin_version} ({f.origin_as_of.isoformat()})")
+            print(f"      line: “{clip(lf.text, 200)}”")
+            print(f"      said: {clip(f.said, 240)}")
+            if x.conflict:
+                print("      CONFLICT: dismissed and reopened apart (" + ", ".join(
+                    f"{h.action} by {h.reviewer} {h.created_at.date().isoformat()}"
+                    for h in x.heads) + ") — read OPEN until a new resolution supersedes both")
+            if x.dismissed and x.state is not None:
+                print(f"      dismissed by {x.state.reviewer} on "
+                      f"{x.state.created_at.date().isoformat()}: {x.state.reason}")
+            elif lf.dismissible:
+                print(f"      to dismiss: review dismiss --finding {lf.key} --reviewer NAME "
+                      f'--reason "…"')
+            else:
+                print(f"      not dismissible: {not_dismissible(lf)}")
+        if a.history:  # every row ever recorded — a finding gone from the card included
+            rows = ([r for tid in a.thesis for r in st.review_resolutions(tid)] if a.thesis
+                    else st.review_resolutions())
+            gone = {s for r in rows for s in r.supersedes}
+            for r in rows:
+                print(f"  history {r.thesis_id}: {r.created_at.isoformat(timespec='seconds')} "
+                      f"{r.action} {r.finding_key} by {r.reviewer} — {r.reason} "
+                      f"(version {r.version}, line {r.sentence_id}, run {r.run_id}; "
+                      f"{'superseded' if r.resolution_id in gone else 'current'})")
+            print(f"{len(rows)} resolution(s) recorded"
+                  + (f" for {', '.join(a.thesis)}" if a.thesis else ""))
+        n_open = sum(1 for x in found if not x.dismissed)
+        print(f"{len(found)} card-review finding(s) on the current versions of {len(shown)} "
+              f"thesis(es){'' if a.thesis else ' not archived'}: {n_open} open "
+              f"({sum(1 for x in found if x.finding.dismissible and not x.dismissed)} "
+              f"dismissible), {len(found) - n_open} dismissed")
+        return 0
+    if not a.finding or not a.reviewer or not a.reason:
+        raise SystemExit(f"review {a.action} needs --finding, --reviewer and --reason")
+    pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
+                    client=None, review=False)  # the record only: no model client at all
+    try:
+        run, r = resolve(pipe, a.finding, "dismissed" if a.action == "dismiss" else "reopened",
+                         reviewer=a.reviewer, reason=a.reason,
+                         as_of=_iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date())
+    except ResolutionError as exc:
+        print(f"review {a.action} refused: {exc}")
+        return 1
+    print(f"run {run.run_id}: {r.finding_key} {r.action} by {r.reviewer} — {r.reason} "
+          f"({r.thesis_id} v{r.version}, line {r.sentence_id}); cost $0.00")
+    out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
+    print(f"outputs: {out['dir']} · push the registry (`state push`) for the weekly run and "
+          f"the desk to carry it")
+    return _EXIT[run.status]
+
+
 def cmd_documents(a: argparse.Namespace) -> int:
     st = Store(Paths(Path(a.data_dir)).db)
     for d in st.documents(a.status):
@@ -842,6 +921,21 @@ def main(argv: list[str] | None = None) -> int:
     up.add_argument("--dry-run", action="store_true",
                     help="stop after the preflight: nothing imported, nothing pushed")
     up.set_defaults(fn=cmd_upload)
+    rv = sub.add_parser("review", help="a reviewer's resolution of card-review findings: list "
+                                       "them with their keys, dismiss a warning (never a "
+                                       "withheld line) with a name and a reason, or reopen one "
+                                       "— a dismissal verifies nothing; $0")
+    rv.add_argument("action", choices=("list", "dismiss", "reopen"))
+    rv.add_argument("--thesis", action="append", help="list: a thesis id (repeatable; default: "
+                                                      "every thesis not archived)")
+    rv.add_argument("--history", action="store_true",
+                    help="list: every resolution recorded, in force or not")
+    rv.add_argument("--finding", help="dismiss/reopen: the finding's key (F-…, from `list`)")
+    rv.add_argument("--reviewer", help="dismiss/reopen: who decides (recorded)")
+    rv.add_argument("--reason", help="dismiss/reopen: why, in words (recorded)")
+    rv.add_argument("--as-of", help="YYYY-MM-DD the run is dated (default: today, UTC)")
+    rv.add_argument("--out", help="dismiss/reopen: where the run's outputs are written")
+    rv.set_defaults(fn=cmd_review)
 
     dc = sub.add_parser("documents", help="list the manually supplied documents")
     dc.add_argument("--status")

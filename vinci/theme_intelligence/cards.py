@@ -72,6 +72,7 @@ from vinci.theme_intelligence.schemas import (
     Provenance,
     ResearchPriority,
     ResolutionStatus,
+    ReviewResolution,
     SectorExposure,
     SourceRef,
     Thesis,
@@ -793,7 +794,8 @@ border-radius:6px}.flagged{border-left:3px solid var(--warn);padding-left:10px}
 .corr{color:var(--accent);font-size:12.5px;margin-top:3px}
 .rv{color:var(--muted);font-size:12.5px;margin-top:3px}.rv details{display:inline}
 .rv summary{display:inline;cursor:pointer;margin-left:6px;text-transform:none;
-letter-spacing:0;font-weight:400;color:var(--accent)}
+letter-spacing:0;font-weight:400;color:var(--accent)}.dismissed{border-left:3px solid var(--line);
+padding-left:10px}
 details.more{margin-top:10px;max-width:100%;min-width:0;overflow-x:auto}
 details.more>summary{cursor:pointer;color:var(--accent);font-size:13px;text-transform:none;
 letter-spacing:0}
@@ -971,6 +973,11 @@ class RenderContext:
     #: version resolved (report.line_findings decides) — kept on the line as history, never
     #: counted as an open finding
     resolved: dict[str, tuple[str, str]] = field(default_factory=dict)
+    #: sentence id -> a REVIEWER's dismissal of the finding on that line
+    #: (report.dismissed_findings): the finding is closed as an open item, said on the line with
+    #: who, when and why — and the line stays in `flagged`, so its label stays capped (a
+    #: dismissal verifies nothing)
+    dismissed: dict[str, ReviewResolution] = field(default_factory=dict)
     #: every claim the card cites, by id, so every evidence link has a target — section 04 lists
     #: the ones outside the key-evidence rows; a cited id with no record is never a link
     claims: dict[str, Claim] = field(default_factory=dict)
@@ -1080,6 +1087,11 @@ def carried_note(f: CarriedFinding) -> str:
             + "; not re-reviewed since")
 
 
+def dismissal_words(r: ReviewResolution) -> str:
+    """A reviewer's dismissal in words: who, when, why."""
+    return (f"Dismissed by {r.reviewer} on {r.created_at.date().isoformat()} — {r.reason}")
+
+
 def _warn_label(sid: str, rc: RenderContext) -> str:
     f = rc.carry.carried.get(sid)
     return "NOT RE-REVIEWED" if f is not None and f.changed else "UNRESOLVED REVIEW"
@@ -1088,6 +1100,11 @@ def _warn_label(sid: str, rc: RenderContext) -> str:
 def _warn_html(sid: str, rc: RenderContext) -> str:
     if sid not in rc.flagged:
         return ""
+    if sid in rc.dismissed:  # closed by a reviewer: said as history, the finding kept beside it
+        return (f'<div class="rv">{e(dismissal_words(rc.dismissed[sid]))}. A dismissal verifies '
+                f'nothing: the line is never labelled a verified fact.<details><summary '
+                f'class="note">the review\'s finding</summary>{ids_to_audit(e(rc.flagged[sid]))}'
+                f'</details></div>')
     f = rc.carry.carried.get(sid)
     return (f'<div class="rw">⚠ {_warn_label(sid, rc)} — {ids_to_audit(e(rc.flagged[sid]))}'
             + (f'<div class="note">{e(carried_note(f))}</div>' if f is not None else "")
@@ -1097,6 +1114,9 @@ def _warn_html(sid: str, rc: RenderContext) -> str:
 def _warn_md(sid: str, rc: RenderContext) -> str:
     if sid not in rc.flagged:
         return ""
+    if sid in rc.dismissed:
+        return (f" _{dismissal_words(rc.dismissed[sid])} (the review's finding: "
+                f"{rc.flagged[sid]}; a dismissal verifies nothing)_")
     f = rc.carry.carried.get(sid)
     return (f" ⚠ **{_warn_label(sid, rc)} — {rc.flagged[sid]}**"
             + (f" _({carried_note(f)})_" if f is not None else ""))
@@ -1183,7 +1203,7 @@ def _sent(s: CardSentence, sid: str, rc: RenderContext, *, anchor: bool = True,
                 f'<details><summary class="note">audit text</summary><span class="q">'
                 f'{e(_clean_display(s.text))}</span></details></div>')
     p = shown_label(s.provenance, sid, rc)
-    cls = " flagged" if sid in rc.flagged else ""
+    cls = (" dismissed" if sid in rc.dismissed else " flagged") if sid in rc.flagged else ""
     return (f'<div class="s{cls}"{aid}>{stp}<span class="lab {_BADGE[p]}">{e(p.value)}</span> '
             f'{quiet_labels(ids_to_audit(e(_clean_display(s.text))))}{_refs(s.claim_ids, rc)}'
             f'{_warn_html(sid, rc)}{_resolved_html(sid, rc)}{_corr_html(sid, rc)}</div>')
@@ -2093,10 +2113,14 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
     pill = _PILL.get(h.research_action.value, "skip")
     kind = (f'<span class="pill kind">{e(KIND_LABEL[h.kind])}</span>'
             if h.kind is ThesisKind.MARKET_REGIME else "")
-    findings = [sid for sid in card_sentences(card) if sid in rc.blocked or sid in rc.flagged]
+    findings = [sid for sid in card_sentences(card) if sid in rc.blocked
+                or sid in rc.flagged and sid not in rc.dismissed]
     done = [sid for sid in card_sentences(card) if sid in rc.resolved]
-    earlier = (f' <span class="note">· <a href="#{_anchor(done[0])}">{len(done)} earlier review '
-               f'finding(s) resolved</a></span>' if done else "")
+    gone = [sid for sid in card_sentences(card) if sid in rc.dismissed]
+    earlier = ((f' <span class="note">· <a href="#{_anchor(done[0])}">{len(done)} earlier review '
+                f'finding(s) resolved</a></span>' if done else "")
+               + (f' <span class="note">· <a href="#{_anchor(gone[0])}">{len(gone)} review '
+                  f'finding(s) dismissed by a reviewer</a></span>' if gone else ""))
     review = (f'<a class="flag" href="#{_anchor(findings[0])}">Review required · '
               f'{len(findings)} line(s)</a> <span class="note">'
               + " · ".join(f'<a href="#{_anchor(s)}">{e(n)}</a>'
@@ -2141,7 +2165,8 @@ def render_html(card: CardContent, rc: RenderContext, *, print_mode: bool = Fals
                 if sid in rc.blocked else quiet_labels(ids_to_audit(e(_clean_display(
                     more_line(card, it) or it.text)))))
         p = shown_label(it.provenance, sid, rc)
-        flagged = " flagged" if sid in rc.blocked or sid in rc.flagged else ""
+        flagged = (" flagged" if sid in rc.blocked or sid in rc.flagged and sid not in
+                   rc.dismissed else " dismissed" if sid in rc.dismissed else "")
         return (f'<div class="s{flagged}" id="{_anchor(sid)}">'
                 + (f'<span class="step">{e(tag)}</span>' if tag else "")
                 + f'<span class="lab {_BADGE[p]}">{e(p.value)}</span> ' + body
@@ -2593,6 +2618,7 @@ def render_json(card: CardContent, rc: RenderContext) -> dict[str, Any]:
         "why_action": why_reasons(card, rc.priority, [g.name for g in rc.groups],
                               groups_unchecked=rc.groups_unread > 0),
         "review_resolved": {k: why for k, (why, _said) in rc.resolved.items()},
+        "review_dismissed": {k: json.loads(r.model_dump_json()) for k, r in rc.dismissed.items()},
         "review_not_run": rc.carry.not_run,
         "review_carried": {k: {"code": f.code, "origin_version": f.origin_version,
                                "origin_as_of": f.origin_as_of.isoformat(),

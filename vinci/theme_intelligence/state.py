@@ -11,7 +11,10 @@ carries the registry between the two:
                 content-addressed LLM cache, so a replay costs nothing new). Every run the
                 branch lacks is CARRIED into the rebuilt registry for its RECORD — run id,
                 times, cost and every paid-call row, unchanged — marked `ledger_only` (its
-                evidence is the replay's, which names it in `replay_of`). The paid-call ledger
+                evidence is the replay's, which names it in `replay_of`). A reviewer's
+                resolution run (mode "review", resolve.py) is carried WHOLE — the run and its
+                rows unchanged, never `ledger_only`: its record is all it holds. The paid-call
+                ledger
                 is checked: each record of the local registry and of the branch kept exactly
                 once, or the pull fails loud (observed 2026-10-11 on the GitHub state test: a
                 replay had replaced two paid import runs — $0.31 and $0.47 — whose records then
@@ -53,7 +56,12 @@ from typing import TYPE_CHECKING, Any
 
 from vinci.theme_intelligence.config import Paths
 from vinci.theme_intelligence.display import first_of
-from vinci.theme_intelligence.schemas import DocumentRecord, RunStatus, WeeklyRun
+from vinci.theme_intelligence.schemas import (
+    DocumentRecord,
+    ReviewResolution,
+    RunStatus,
+    WeeklyRun,
+)
 from vinci.theme_intelligence.store import Store
 
 if TYPE_CHECKING:
@@ -215,7 +223,10 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
         remote_runs = _remote_runs(reg)
         remote_docs = _remote_ids(reg, "documents", "sha256")
         local_only = [r for r in old_runs.values() if _run_key(r) not in remote_runs]
-        stranded = [r for r in local_only if r.mode != "ingest" and not r.ledger_only]
+        # a reviewer's resolutions (mode "review", resolve.py) are records, not evidence: carried
+        # whole below, never stranded and never replayed
+        stranded = [r for r in local_only if r.mode not in ("ingest", "review")
+                    and not r.ledger_only]
         # one id, two runs (a run id is a second-resolution stamp): carrying the local one would
         # overwrite the branch's record of the other
         clash = {r.run_id for r in local_only if r.run_id in {rid for rid, _s in remote_runs}}
@@ -234,8 +245,10 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
                 f"branch — carrying one would overwrite the other's record; nothing was "
                 f"changed (--force pulls without carrying them: their records stay in the "
                 f"backup, and the pull says what they cost)")
+        reviews = [(r, old.review_resolutions(run_id=r.run_id)) for r in local_only
+                   if r.mode == "review" and r.run_id not in clash] if old is not None else []
         carried, local_ledger, dates = _what_a_pull_keeps(
-            old, [r for r in local_only if r.run_id not in clash])
+            old, [r for r in local_only if r.run_id not in clash and r.mode != "review"])
         uncarried = {c: v for c, v in local_ledger.items() if v[0] in clash}
         local_ledger = {c: v for c, v in local_ledger.items() if v[0] not in clash}
         backup: Path | None = None
@@ -249,6 +262,7 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
             new = Store.import_jsonl(reg, paths.db)
             branch_ledger = new.paid_ledger()
             res.lines += _carry(new, carried, forced={r.run_id for r in stranded})
+            res.lines += _carry_reviews(new, reviews)
             res.lines.append(_check_ledger(new, local_ledger, branch_ledger, backup_hint=str(
                 paths.backups), not_carried=len(uncarried)))
         except Exception as exc:
@@ -377,6 +391,22 @@ def _carry(new: Store, carried: list[tuple[WeeklyRun, list[_CallRow]]],
                        + (f" + {unpriced} UNPRICED (cost UNKNOWN)" if unpriced else ""))
     return [f"carried {len(carried)} run(s) the branch lacks — run id, times, cost and every "
             f"call record unchanged:", *out]
+
+
+def _carry_reviews(new: Store, reviews: list[tuple[WeeklyRun, list[ReviewResolution]]]
+                   ) -> list[str]:
+    """A reviewer's resolutions the branch lacks (resolve.py), into the rebuilt registry — each
+    run and every row unchanged, the run NOT `ledger_only` (its record is all it holds, and it is
+    here). A row whose finding the branch's theses no longer carry binds nothing: history only."""
+    if not reviews:
+        return []
+    with new.tx():
+        for r, rows in reviews:
+            new.upsert_run(r)
+            for x in rows:
+                new.add_review_resolution(x)
+    return [f"carried {len(reviews)} review run(s) the branch lacks, with their "
+            f"{sum(len(rows) for _r, rows in reviews)} resolution(s) — unchanged"]
 
 
 def _check_ledger(new: Store, local: dict[str, tuple[str, float | None]],
