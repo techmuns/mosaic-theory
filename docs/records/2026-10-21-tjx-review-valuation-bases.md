@@ -207,7 +207,7 @@ pass ran on real pages, and each was fixed and pinned before anything was commit
     carries one entry per writer.
   - The same run made the count check's gap print unsigned with its direction in words ("5.5%
     above"). The screening block may carry no signed percentage (`test_parity_pins`).
-- **Suite:** full offline suite (`-m "not network"`) with the shared price store UNLINKED, as in CI: **6,576 passed, 54 skipped, 2 failed** — V (`test_share_basis`) and MCK (`test_capital_panel_selection`), the CIQ data issues that fail identically on main (STATE row 32 (12)). After merging main (#758, #759): **6,592 passed, 54 skipped**, the same two failed.
+- **Suite:** full offline suite (`-m "not network"`) with the shared price store UNLINKED, as in CI: **6,576 passed, 54 skipped, 2 failed** — V (`test_share_basis`) and MCK (`test_capital_panel_selection`), the CIQ data issues that fail identically on main (STATE row 32 (12)). After merging main (#758, #759): **6,592 passed, 54 skipped**, the same two failed; after #761: **6,603 passed, 54 skipped**, the same two.
 
 **BOUNDARY.**
 - **Pages:** the 27 committed dossiers at main `4b514dca`, refreshed 2026-10-21.
