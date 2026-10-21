@@ -274,22 +274,142 @@ def test_a_padded_secret_is_refused_by_name_before_any_request(monkeypatch: Any)
     assert require_env("VINCI_TEST_SECRET") == "sk-test-value"
 
 
+VALIDATOR = ROOT / ".github" / "scripts" / "validate_keys.py"
+VALIDATE_WORKFLOW = ROOT / ".github" / "workflows" / "validate-keys.yml"
+
+
+def _validator() -> Any:
+    """The `validate-keys` script, loaded as a module (it is not a package)."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("validate_keys", VALIDATOR)
+    assert spec is not None and spec.loader is not None
+    vk = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(vk)
+    return vk
+
+
 def test_the_key_validator_fails_a_padded_key_instead_of_calling_it_connectivity(
         monkeypatch: Any, capsys: Any) -> None:
     """`validate-keys` read the padded key's connection error as "runner connectivity, NOT a key
     problem" and passed green from 2026-06-26 until the 2026-10-20 run. It now FAILS the key
     before any request (no network here: the check precedes the call)."""
-    import importlib.util
+    vk = _validator()
+    def no_request(url: str, **kw: Any) -> Any:
+        raise AssertionError("a padded key sends no request")
 
-    spec = importlib.util.spec_from_file_location(
-        "validate_keys", ROOT / ".github" / "scripts" / "validate_keys.py")
-    assert spec is not None and spec.loader is not None
-    vk = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(vk)
+    monkeypatch.setattr(vk.httpx, "get", no_request)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test\n")
     monkeypatch.setenv("POLYGON_API_KEY", " pk-test")
+    monkeypatch.setenv("TIINGO_API_KEY", "tiingo-test ")
     assert vk.check_anthropic() is False and vk.check_polygon() is False
+    assert vk.check_tiingo() is False
     out = capsys.readouterr().out
     assert "ANTHROPIC_API_KEY: FAIL — the secret has leading or trailing whitespace" in out
     assert "POLYGON_API_KEY: FAIL — the secret has leading or trailing whitespace" in out
-    assert "sk-ant-test" not in out and "pk-test" not in out
+    assert "TIINGO_API_KEY: FAIL — the secret has leading or trailing whitespace" in out
+    assert "sk-ant-test" not in out and "pk-test" not in out and "tiingo-test" not in out
+
+
+# --- the second Actions run: Tiingo refused the Actions key, and nothing checked it -------------
+
+class _Response:
+    """The two things `check_tiingo` reads from an httpx response."""
+
+    def __init__(self, status_code: int, body: Any) -> None:
+        self.status_code, self._body = status_code, body
+
+    def json(self) -> Any:
+        return self._body
+
+
+def test_the_key_validator_fails_a_refused_tiingo_key_with_tiingos_reason(
+        monkeypatch: Any, capsys: Any) -> None:
+    """2026-10-21: Tiingo refused all 43 of run 39565710165's requests (403) while the local key
+    read the same URL, and `validate-keys` never asked Tiingo. It now does, with the request the
+    weekly run makes, and FAILS a refused key with Tiingo's own reason — the body Tiingo returned
+    for an invalid token that day — never the key."""
+    vk = _validator()
+    seen: dict[str, Any] = {}
+
+    def get(url: str, **kw: Any) -> _Response:
+        seen.update(url=url, **kw)
+        return _Response(403, {"detail": "Invalid token."})
+
+    monkeypatch.setattr(vk.httpx, "get", get)
+    monkeypatch.setenv("TIINGO_API_KEY", "tiingo-test-key")
+    assert vk.check_tiingo() is False
+    out = capsys.readouterr().out
+    assert "TIINGO_API_KEY: FAIL — HTTP 403: Invalid token." in out
+    assert "tiingo-test-key" not in out
+    assert seen["url"] == "https://api.tiingo.com/tiingo/daily/aapl/prices"
+    assert seen["headers"] == {"Authorization": "Token tiingo-test-key"}
+    # HYPOTHETICAL shape (Tiingo has not been seen to echo a key): a reason quoting the key is
+    # printed with the key masked — the value is never printed, whatever the service returns
+    monkeypatch.setattr(vk.httpx, "get", lambda url, **kw: _Response(
+        403, {"detail": "Token tiingo-test-key is not valid."}))
+    assert vk.check_tiingo() is False
+    out = capsys.readouterr().out
+    assert "HTTP 403: Token <key> is not valid." in out and "tiingo-test-key" not in out
+
+
+def test_a_working_tiingo_key_passes_and_an_unset_one_only_warns(
+        monkeypatch: Any, capsys: Any) -> None:
+    """NEGATIVE: a key Tiingo answers 200 passes; no key at all is not a failure (the weekly run
+    reads two years of P/E without one) and sends no request."""
+    vk = _validator()
+    monkeypatch.setattr(vk.httpx, "get", lambda url, **kw: _Response(200, [{"close": 1.0}]))
+    monkeypatch.setenv("TIINGO_API_KEY", "tiingo-test-key")
+    assert vk.check_tiingo() is True
+    assert "TIINGO_API_KEY: PASS" in capsys.readouterr().out
+
+    def no_request(url: str, **kw: Any) -> _Response:
+        raise AssertionError("an unset key sends no request")
+
+    monkeypatch.setattr(vk.httpx, "get", no_request)
+    monkeypatch.delenv("TIINGO_API_KEY")
+    assert vk.check_tiingo() is True
+    assert "TIINGO_API_KEY: WARN — secret not set" in capsys.readouterr().out
+
+
+def test_a_refused_tiingo_key_turns_the_validator_red(monkeypatch: Any) -> None:
+    """The check is wired into the run's verdict: a refused Tiingo key fails `validate-keys`.
+    NEGATIVE: every check passing exits 0."""
+    vk = _validator()
+    for name in ("check_anthropic", "check_polygon", "check_sec"):
+        monkeypatch.setattr(vk, name, lambda: True)
+    monkeypatch.setattr(vk, "check_tiingo", lambda: False)
+    assert vk.main() == 1
+    monkeypatch.setattr(vk, "check_tiingo", lambda: True)
+    assert vk.main() == 0
+
+
+def unvalidated_secrets(workflows: list[str], validate_workflow: str, script: str) -> set[str]:
+    """The secrets a workflow reads that `validate-keys` does not check — a secret is checked when
+    the validate workflow passes it AND the script reads it."""
+    def read(text: str) -> set[str]:
+        return set(re.findall(r"secrets\.([A-Z0-9_]+)", text))
+
+    checked = {n for n in read(validate_workflow) if f'os.environ.get("{n}")' in script}
+    return set().union(*(read(w) for w in workflows)) - checked
+
+
+def test_every_secret_a_workflow_reads_is_checked_by_validate_keys() -> None:
+    """Run on the repo's own workflows: before this change the sweep found exactly one —
+    TIINGO_API_KEY, read by the weekly theme-intelligence run, checked by nothing."""
+    workflows = [p.read_text() for p in sorted((ROOT / ".github" / "workflows").glob("*.yml"))]
+    assert unvalidated_secrets(workflows, VALIDATE_WORKFLOW.read_text(),
+                               VALIDATOR.read_text()) == set()
+
+
+def test_a_secret_the_validator_skips_is_found() -> None:
+    """NEGATIVE, both halves: the validate workflow without the Tiingo secret (as main carried
+    it), and the script without the Tiingo read."""
+    workflows = [WORKFLOW.read_text()]
+    wf, script = VALIDATE_WORKFLOW.read_text(), VALIDATOR.read_text()
+    line = "          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}\n"
+    assert wf.count(line) == 1
+    assert unvalidated_secrets(workflows, wf.replace(line, ""), script) == {"TIINGO_API_KEY"}
+    read = 'os.environ.get("TIINGO_API_KEY")'
+    assert script.count(read) == 1
+    assert unvalidated_secrets(workflows, wf, script.replace(read, "")) == {"TIINGO_API_KEY"}

@@ -2,8 +2,9 @@
 """On-demand validator that the API-key SECRETS are set + valid in this environment.
 
 Pings each external service with a tiny request. Prints PASS/FAIL per key — NEVER the key
-value. Exits non-zero if a REQUIRED key (Polygon, Anthropic) is missing or rejected, so the
-`validate-keys` workflow goes red. Run via workflow_dispatch. Cheap: ~1 trivial call each.
+value. Exits non-zero if a REQUIRED key (Polygon, Anthropic) is missing or rejected, or an
+OPTIONAL key that is set (Tiingo) is rejected, so the `validate-keys` workflow goes red. Run via
+workflow_dispatch. Cheap: ~1 trivial call each.
 """
 from __future__ import annotations
 
@@ -78,6 +79,41 @@ def check_polygon() -> bool:
     return False
 
 
+def check_tiingo() -> bool:
+    """TIINGO_API_KEY is OPTIONAL (the weekly theme-intelligence run reads P/E against the two
+    years Polygon serves without it), but a key that is SET and refused fails the run: the weekly
+    run's market step then degrades on every row. Unchecked here until 2026-10-21, when Tiingo
+    refused all 43 of run 39565710165's requests (403) and nothing had said so. The request is the
+    one that run makes — daily prices, five years back — and Tiingo's own reason is printed."""
+    key = os.environ.get("TIINGO_API_KEY")
+    if not key:
+        print("TIINGO_API_KEY: WARN — secret not set (optional: P/E history reads two years)")
+        return True
+    if padded("TIINGO_API_KEY", key):
+        return False
+    try:
+        r = httpx.get(
+            "https://api.tiingo.com/tiingo/daily/aapl/prices",
+            params={"startDate": "2021-10-01", "endDate": "2021-10-08", "format": "json"},
+            headers={"Authorization": f"Token {key}"},
+            timeout=30,
+        )
+    except Exception as e:
+        print(f"TIINGO_API_KEY: FAIL — {type(e).__name__}: {str(e)[:160]}")
+        return False
+    if r.status_code == 200:
+        print("TIINGO_API_KEY: PASS — 200 from tiingo/daily/aapl/prices")
+        return True
+    try:
+        body = r.json()
+        why = str(body.get("detail", "")) if isinstance(body, dict) else ""
+    except ValueError:
+        why = ""
+    why = why.replace(key, "<key>")[:160] or "no reason given"
+    print(f"TIINGO_API_KEY: FAIL — HTTP {r.status_code}: {why}")
+    return False
+
+
 def check_sec() -> bool:
     # SEC_USER_AGENT is OPTIONAL (EDGAR works with a default UA), so this never fails the run;
     # it just reports whether the secret is set and EDGAR is reachable.
@@ -102,10 +138,11 @@ def main() -> int:
     print("=== validate-keys: pinging each service (key values never printed) ===")
     anthropic_ok = check_anthropic()
     polygon_ok = check_polygon()
+    tiingo_ok = check_tiingo()  # optional — fails the run only when set and refused
     check_sec()  # optional — informational, never fails the run
-    required_ok = anthropic_ok and polygon_ok
-    print(f"\n=== {'ALL REQUIRED KEYS VALID' if required_ok else 'A REQUIRED KEY FAILED'} ===")
-    return 0 if required_ok else 1
+    ok = anthropic_ok and polygon_ok and tiingo_ok
+    print(f"\n=== {'ALL KEYS VALID' if ok else 'A KEY FAILED'} ===")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":
