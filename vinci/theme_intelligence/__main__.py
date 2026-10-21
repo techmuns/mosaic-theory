@@ -16,6 +16,8 @@
         [--retire TH-…] --reason "…" --as-of YYYY-MM-DD [--budget USD]
     python -m vinci.theme_intelligence state pull|push|status --remote <git remote> \
         [--branch theme-intelligence-state]
+    python -m vinci.theme_intelligence upload --remote <git remote> --path report.pdf \
+        --source ms_research --budget USD [--llm-permitted] [--dry-run]
     python -m vinci.theme_intelligence init | backup | export-state --out D | import-state --src D
 
 Exit status: 0 = the run succeeded; 2 = PARTIAL (some source or article could not be processed —
@@ -638,6 +640,49 @@ def cmd_state(a: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_upload(a: argparse.Namespace) -> int:
+    """ONE STEP for a weekly upload (upload.py): a cache-only pull, a read-only preflight
+    (identity, licence, cost against the stated --budget), the import within that budget, QA,
+    the paid-call ledger reconciled, a fast-forward push. Nothing is paid that --budget does not
+    state; a refusal at any step pushes nothing."""
+    from vinci.theme_intelligence import state
+    from vinci.theme_intelligence.documents import Declared
+    from vinci.theme_intelligence.pipeline import Pipeline
+    from vinci.theme_intelligence.upload import DONE, UploadError, upload
+
+    data = Path(a.data_dir)
+    remote = a.remote or state.sync_state(Paths(data)).get("remote")
+    if not remote or "***" in remote:
+        raise SystemExit("--remote is required (a git remote path or URL; credentials stay in "
+                         "git's own credential helper)")
+    declared = Declared(source_id=a.source, url=a.url, title=a.title,
+                        authors=tuple(a.author or ()),
+                        published=_iso(a.published) if a.published else None,
+                        llm_permitted=True if a.llm_permitted else False
+                        if a.llm_not_permitted else None)
+
+    def pipeline(client: Any) -> Pipeline:
+        return Pipeline(data, sources=load_sources(), taxonomy=load_taxonomy(), client=client,
+                        review=True)
+
+    try:
+        res = upload(data, remote, Path(a.path), declared, budget=a.budget,
+                     as_of=_iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date(),
+                     branch=a.branch, same_as=a.same_as, duplicate_of=a.duplicate_of,
+                     as_new=a.as_new, dry_run=a.dry_run,
+                     make_pipeline=lambda: pipeline(_client(required=False)),
+                     make_replay_pipeline=lambda: pipeline(None))  # the replay: cache only
+    except UploadError as exc:
+        print(f"upload refused at {exc}")
+        return 1
+    for line in res.lines:
+        print(line)
+    print(f"upload: {res.outcome}" + (f" — {res.status}, cost ${res.cost_usd or 0:.4f} of a "
+                                      f"${a.budget:,.2f} budget" if res.run_id else ""))
+    # 2: pushed, but the document did not end analysed (HELD for budget, REVIEW): said
+    return 2 if res.status is not None and res.status not in DONE else 0
+
+
 def cmd_documents(a: argparse.Namespace) -> int:
     st = Store(Paths(Path(a.data_dir)).db)
     for d in st.documents(a.status):
@@ -768,6 +813,35 @@ def main(argv: list[str] | None = None) -> int:
     ss.add_argument("--cache-only", action="store_true", help="replay: never call the LLM")
     ss.add_argument("--no-review", action="store_true")
     ss.set_defaults(fn=cmd_state)
+
+    up = sub.add_parser("upload", help="ONE STEP for a weekly upload: a cache-only pull, a "
+                                       "read-only preflight (identity, licence, cost), the "
+                                       "import within --budget, QA, the paid-call ledger "
+                                       "reconciled, a fast-forward push — nothing paid that "
+                                       "--budget does not state")
+    up.add_argument("--remote", help="git remote path or URL (default: the last one used)")
+    up.add_argument("--branch", default="theme-intelligence-state")
+    up.add_argument("--path", required=True)
+    up.add_argument("--source", required=True, help="the publisher channel id (sources.toml)")
+    up.add_argument("--budget", type=float, required=True,
+                    help="USD the import may spend — it must cover the estimate's HIGH end")
+    up.add_argument("--url", help="the article's original URL, when it has one")
+    up.add_argument("--title")
+    up.add_argument("--author", action="append", help="repeatable")
+    up.add_argument("--published", help="YYYY-MM-DD — used only when the document states none")
+    ulic = up.add_mutually_exclusive_group()
+    ulic.add_argument("--llm-permitted", action="store_true",
+                      help="its licence allows third-party LLM processing (else refused)")
+    ulic.add_argument("--llm-not-permitted", action="store_true")
+    usame = up.add_mutually_exclusive_group()
+    usame.add_argument("--same-as", help="the article id this document is a version of")
+    usame.add_argument("--duplicate-of", help="the article id this document merely repeats")
+    usame.add_argument("--as-new", action="store_true",
+                       help="a new article, whatever it resembles")
+    up.add_argument("--as-of", help="analysis as-of (default: today, UTC)")
+    up.add_argument("--dry-run", action="store_true",
+                    help="stop after the preflight: nothing imported, nothing pushed")
+    up.set_defaults(fn=cmd_upload)
 
     dc = sub.add_parser("documents", help="list the manually supplied documents")
     dc.add_argument("--status")
