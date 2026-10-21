@@ -826,7 +826,11 @@ _FOLDED = {"s03_transmission", "s04_key_evidence", "s05_affected", "s07_what_cou
 #: says once that a new thesis is new TO THE REGISTRY, not necessarily new to the market. Evidence
 #: reaching a thesis's own history is DIRECT (the same identity — node, mechanism, segment,
 #: geography); adjacent support and related opposite reads stay in the registry links, never here.
-_CHANGE_TAG = {ChangeClass.NEW: "Direct confirmation — new evidence",
+#: NEW never confirms a figure already held — a later reading of a series, or new evidence from
+#: an origin already counted or new to the thesis (`engine.classify_claim`); only
+#: INDEPENDENT_CONFIRMATION is a confirmation. "Direct confirmation — new evidence" said otherwise
+#: on every NEW line (the pilot's 4, none independent; operator ruling (f), 2026-10-21).
+_CHANGE_TAG = {ChangeClass.NEW: "New supporting evidence — not a confirmation",
                ChangeClass.INDEPENDENT_CONFIRMATION: "Direct confirmation — independent source",
                ChangeClass.REPEATED: "Repeated source — attribution only",
                ChangeClass.CONTRADICTORY: "Contradiction — evidence against this thesis",
