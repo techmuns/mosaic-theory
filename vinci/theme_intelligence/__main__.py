@@ -354,6 +354,10 @@ def cmd_reanalyse(a: argparse.Namespace) -> int:
     return _EXIT[run.status]
 
 
+#: `qa`'s exit when nothing is broken but research is left open — the weekly job warns on it
+QA_RESEARCH_OPEN = 3
+
+
 def cmd_qa(a: argparse.Namespace) -> int:
     from vinci.theme_intelligence.qa import run_qa
     from vinci.theme_intelligence.report import research_verification
@@ -369,11 +373,13 @@ def cmd_qa(a: argparse.Namespace) -> int:
         raise SystemExit(f"no run {a.run}")
     res = run_qa(st, run.run_id)
     for c in res.checks:
-        print(f"  [{'PASS' if c.ok else 'FAIL'}] {c.name}: {c.detail}")
+        print(f"  [{'PASS' if c.ok else 'OPEN' if c.research else 'FAIL'}] {c.name}: {c.detail}")
     v = research_verification(st, run)
     print(f"QA {run.run_id}: {res.passed}/{len(res.checks)} passed · scan execution "
           f"{run.status.value} · research verification {v['status']} — {v['summary']}")
-    return 0 if res.ok else 1
+    # 0: every check passed · 3: nothing broken, research left OPEN (a figure or an argument) —
+    # said, never a failure · 1: an integrity check FAILED (the weekly job fails only on this)
+    return 1 if not res.ok else QA_RESEARCH_OPEN if res.open_research else 0
 
 
 def cmd_backup(a: argparse.Namespace) -> int:

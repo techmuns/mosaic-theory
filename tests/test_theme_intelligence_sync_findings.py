@@ -155,7 +155,11 @@ def test_a_replay_is_answered_by_the_analysis_the_document_was_last_given(
                      make_pipeline=lambda: _with_model(tmp_path / "laptop", replay))
     assert any(up.doc_id in x and "replayed — INGESTED" in x for x in res.lines), res.lines
     assert replay.calls == []  # neither pass 1 nor pass 1b asked again
-    assert any("every model answer from the cache, $0" in x for x in res.lines), res.lines
+    # $0 from the cache — and, since this replay runs with reviews off, it says the card review
+    # did NOT run (lead (m), 2026-10-21: "every model answer from the cache" hid skipped steps)
+    [line] = [x for x in res.lines if x.startswith("replay run")]
+    assert "the answers it used came from the cache, $0" in line, line
+    assert "NOT run: " in line and "card review(s)" in line and "completeness pass" not in line
     extract_cache = list((local_root / "llm_cache" / "extract").glob("*.json"))
     assert len(extract_cache) == 2  # the upload's answer and the re-analysis's — no third
     again = Store(local_root / "registry.db")

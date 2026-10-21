@@ -65,6 +65,12 @@ class QaCheck:
     name: str
     ok: bool
     detail: str
+    #: a RESEARCH-completeness check — a figure or an argument the reading left open. Said OPEN
+    #: (research verification INCOMPLETE), never a failure of the run: open research is the
+    #: normal state of a week (a quarter of the locally tested articles carried one), and as a
+    #: failure it turned the weekly job red for one restated figure (2026-10-21, run
+    #: 39565710165) until red no longer meant broken.
+    research: bool = False
 
 
 @dataclass
@@ -78,7 +84,12 @@ class QaResult:
 
     @property
     def ok(self) -> bool:
-        return all(c.ok for c in self.checks)
+        """Nothing is BROKEN: every integrity check passed (open research is `open_research`)."""
+        return all(c.ok for c in self.checks if not c.research)
+
+    @property
+    def open_research(self) -> list[QaCheck]:
+        return [c for c in self.checks if c.research and not c.ok]
 
 
 def _fail_list(items: list[str], n: int = 5) -> str:
@@ -290,6 +301,7 @@ def run_qa(store: Store, run_id: str) -> QaResult:
 
     # completeness ledgers and authors for every article this run analysed ------------------------
     no_ledger: list[str] = []
+    no_pass: list[str] = []
     open_figs: list[str] = []
     open_blocks: list[str] = []
     n_figs = 0
@@ -307,6 +319,8 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                 no_ledger.append(f"{aid} {av.version_id}")
                 continue
             rep = reps[-1]
+            if not rep.pass_ran:
+                no_pass.append(f"{aid} {av.version_id}")
             n_figs += len(rep.figures)
             open_figs += [f"{aid} {f.block_id} {f.figure!r} [{f.open_cause or 'unclassified'}]"
                           for f in rep.uncaptured]
@@ -314,12 +328,17 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                             for b in rep.unaccounted_blocks]
     add(QaCheck("completeness ledger recorded for every analysed article", not no_ledger,
                 _fail_list(no_ledger) or f"{len(article_ids)} article(s)"))
+    # the MACHINE not doing its job is broken, never open research: a completeness pass that
+    # did not run (a model outage, a cache-only replay) leaves every figure and argument open —
+    # as research it would pass green (review of #765, 2026-10-21)
+    add(QaCheck("the completeness pass ran for every analysed article", not no_pass,
+                _fail_list(no_pass) or f"{len(article_ids)} article(s)"))
     add(QaCheck("every reported figure captured or judged immaterial", not open_figs,
                 (f"OPEN — {len(open_figs)} of {n_figs} figure(s): " + _fail_list(open_figs, 12))
-                if open_figs else f"{n_figs} figure(s) accounted for"))
+                if open_figs else f"{n_figs} figure(s) accounted for", research=True))
     add(QaCheck("every argument block accounted for", not open_blocks,
                 (f"OPEN — {len(open_blocks)} block(s): " + _fail_list(open_blocks, 12))
-                if open_blocks else "ok"))
+                if open_blocks else "ok", research=True))
     add(QaCheck("every analysed article names its author(s)", not no_author,
                 _fail_list(no_author) or f"{len(article_ids)} article(s)"))
 

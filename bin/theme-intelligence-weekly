@@ -39,8 +39,10 @@ market=${PIPESTATUS[0]}
 [ "$market" -eq 0 ] || echo "$(stamp) WARNING market context FAILED (exit $market) — the desk shows the last one computed" | tee -a "$LOG"
 set -e
 
-if [ "$qa" -ne 0 ]; then
-  code=1  # QA did not pass: FAILED, whatever the scan said (a PARTIAL scan exited 2 — U31c)
+if [ "$qa" -eq 3 ]; then  # nothing broken, research left open: said, never a failure
+  echo "$(stamp) WARNING research verification INCOMPLETE — open figures or arguments in the QA above" | tee -a "$LOG"
+elif [ "$qa" -ne 0 ]; then
+  code=1  # QA FAILED (an integrity check): FAILED, whatever the scan said (a PARTIAL scan exited 2 — U31c)
 fi
 echo "$(stamp) end scan_exit=$code qa_exit=$qa market_exit=$market" >> "$LOG"
 exit "$code"

@@ -451,12 +451,29 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
                          + (f" (was {d.status})" if out.status != d.status else ""))
         # ended as the uploads it replays were: a SKIP thesis it re-creates leaves the active list
         run = pipe.finish_ingest(RunStatus.PARTIAL if failed else RunStatus.SUCCEEDED)
+        skipped = not_run(pipe.store, run.run_id)
+        # "every" only when it is true: a replay that skipped steps used the cache for the rest
         paid = ("; its cost is UNKNOWN — a paid call carries no price" if run.cost_usd is None
                 else f"; it paid ${run.cost_usd:.4f} anew (answers not in this machine's cache)"
-                if run.cost_usd else "; every model answer from the cache, $0")
+                if run.cost_usd else "; the answers it used came from the cache, $0" if skipped
+                else "; every model answer from the cache, $0")
         lines += [f"replay run {run.run_id} (as of {as_of}) of "
-                  f"{', '.join(run.replay_of) or 'no recorded run'}{paid}:", *group]
+                  f"{', '.join(run.replay_of) or 'no recorded run'}{paid}{skipped}:", *group]
     return lines, not_replayed
+
+
+def not_run(store: Store, run_id: str) -> str:
+    """What a replay SKIPPED for want of a saved answer (or of a model, or with reviews off) —
+    the steps a paid replay would run, and bill. A `--cache-only` replay printed "every model
+    answer from the cache, $0" while it skipped the completeness pass and the card reviews: the
+    one-registry rehearsal (2026-10-21) read $0 where the paid merge then spent $4.81 on them.
+    "" when nothing was skipped."""
+    passes = sum(1 for r in store.completeness_for_run(run_id) if not r.pass_ran)
+    reviews = len({i.ref_id for i in store.issues(run_id=run_id) if i.code == "REVIEW_NOT_RUN"})
+    parts = [x for x in (f"the completeness pass for {passes} document(s)" if passes else "",
+                         f"{reviews} card review(s)" if reviews else "") if x]
+    return (f" — NOT run: {' and '.join(parts)}; a paid replay would run (and bill) them"
+            if parts else "")
 
 
 def _check_tree(tree: Path) -> None:

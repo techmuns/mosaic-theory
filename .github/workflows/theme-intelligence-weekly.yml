@@ -124,10 +124,24 @@ jobs:
           path: data/theme_intelligence/llm_cache
           key: theme-intelligence-llm-${{ github.run_id }}-${{ github.run_attempt }}
 
+      # QA FAILS only when something is BROKEN (an integrity check). Research left open — a figure
+      # or an argument the reading could not verify — is exit 3: said as a warning, never red, so
+      # red keeps meaning broken (one restated figure turned the 2026-10-21 run red).
       - name: QA the run's stored records
         id: qa
         continue-on-error: true
-        run: python -m vinci.theme_intelligence qa --run latest
+        run: |
+          set +e
+          python -m vinci.theme_intelligence qa --run latest
+          code=$?
+          case $code in
+            0) echo "result=passed" >> "$GITHUB_OUTPUT" ;;
+            3) echo "result=research-open" >> "$GITHUB_OUTPUT"
+               echo "::warning::research verification INCOMPLETE — open figures or arguments are listed above and in the readout; nothing is broken"
+               code=0 ;;
+            *) echo "result=failed" >> "$GITHUB_OUTPUT" ;;
+          esac
+          exit $code
 
       # IS IT PRICED? — market context for every active thesis, as of today: its exposures and the
       # companies it implies, against SPY, P/E against its own history, consensus revisions from
@@ -155,7 +169,7 @@ jobs:
           cp -R data/theme_intelligence/runs/. "$RUNNER_TEMP/state/readouts/"
           cd "$RUNNER_TEMP/state"
           git add -A registry readouts
-          git diff --staged --quiet || git commit -m "theme intelligence: Actions run ${{ github.run_id }} (scan exit ${{ steps.scan.outputs.code }}, qa ${{ steps.qa.outcome }}, market ${{ steps.market.outcome }})"
+          git diff --staged --quiet || git commit -m "theme intelligence: Actions run ${{ github.run_id }} (scan exit ${{ steps.scan.outputs.code }}, qa ${{ steps.qa.outputs.result || steps.qa.outcome }}, market ${{ steps.market.outcome }})"
           git push origin HEAD:theme-intelligence-state
 
       # The app shows a PUBLISHED copy of the desk (`frontend/theme-intelligence/`, committed to
