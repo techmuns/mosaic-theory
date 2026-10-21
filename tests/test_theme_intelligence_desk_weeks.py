@@ -258,3 +258,31 @@ def test_a_replay_dated_on_the_scans_day_is_the_next_weeks(tmp_path: Path) -> No
     weeks = dk.desk_weeks(pipe.store, same_day)
     assert [w.scanned for w in weeks] == [True, False]
     assert weeks[-1].run_ids == {same_day.run_id} and "re-read" not in weeks[0].label
+
+
+def test_a_company_proposal_refresh_never_opens_an_empty_week(tmp_path: Path) -> None:
+    """`enrich` analyses no article — it proposes the companies a thesis's steps imply, display
+    only. Run by hand after the scan (2026-10-21, the 12 theses the one-registry merge left
+    without proposals), it opened "21 Oct — manual runs since the last weekly scan", 0 articles,
+    and the desk and its publication opened on it. A refresh joins the scan's week, END TO END."""
+    pipe = make_pipeline(tmp_path)
+    scan = _scan(pipe)
+    enrich = _run(pipe, "enrich")
+    market = _run(pipe, "market")
+    (week,) = dk.desk_weeks(pipe.store, market)
+    assert week.scanned and {scan.run_id, enrich.run_id, market.run_id} <= week.run_ids
+    assert week.label.startswith("Week of ") and "re-read" not in week.label
+    manifest = publish(pipe.store, market.run_id, tmp_path / "published")
+    assert manifest["week"] == week.label
+    assert enrich.run_id not in {r.run_id for r in report_runs(pipe.store, scan)}
+    # a proposal refresh dated later is not a price: the label never claims newer prices for it
+    later = _run(pipe, "enrich", as_of=JPM_AS_OF + dt.timedelta(days=7))
+    (week,) = dk.desk_weeks(pipe.store, later)
+    assert later.run_id in week.run_ids and "prices as of" not in week.label
+
+
+def test_a_proposal_refresh_before_any_scan_is_still_a_manual_week(tmp_path: Path) -> None:
+    """NEGATIVE: with no scan to join, a refresh is a manual run like the rest."""
+    pipe = make_pipeline(tmp_path)
+    only = _run(pipe, "enrich")
+    assert [(w.scanned, w.after_scan) for w in dk.desk_weeks(pipe.store, only)] == [(False, False)]

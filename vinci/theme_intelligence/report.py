@@ -132,18 +132,24 @@ MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse", "market"
 #: step opened an EMPTY week ("no weekly scan yet", 0 articles) that the desk opened on, and the
 #: next scan's report counted a refresh of the previous week's theses as its own.
 PRICE_ONLY_MODES = ("market",)
+#: runs that change only what the stored theses SHOW, analysing no article: their prices
+#: (`PRICE_ONLY_MODES`) or the companies their steps imply ("enrich" — display only, never read by
+#: a priority rule). Every one follows the rule above — a manual `enrich` after the scan opened an
+#: EMPTY week the desk opened on (2026-10-21, the one-registry desk: "21 Oct — manual runs since
+#: the last weekly scan", 0 articles, 0 rows), as the market step had.
+REFRESH_MODES = (*PRICE_ONLY_MODES, "enrich")
 
 
 def follows(r: WeeklyRun, scan: WeeklyRun | None) -> bool:
     """`r`, started after `scan`, belongs to THAT scan's week — never a week of its own, never the
-    next scan's: a price refresh (`PRICE_ONLY_MODES`), or a REPLAY (`replay_of`: research
-    re-read, as a `state pull` does) dated BEFORE the scan's day — older research read again
-    late. A replay keeps its original as-of, so as a week of its own it opened a "latest" week
-    dated before the scan it followed (the one-registry merge, 2026-10-21: "13–14 Oct" after
-    "12–21 Oct"). A replay dated ON the scan's day or later is research that arrived after the
-    scan (a laptop's upload, replayed by a pull): the next week's, as every manual run after a
-    scan. One rule, read by `report_runs` and `desk.desk_weeks`."""
-    return scan is not None and (r.mode in PRICE_ONLY_MODES or (
+    next scan's: a refresh (`REFRESH_MODES`: prices, company proposals), or a REPLAY
+    (`replay_of`: research re-read, as a `state pull` does) dated BEFORE the scan's day — older
+    research read again late. A replay keeps its original as-of, so as a week of its own it
+    opened a "latest" week dated before the scan it followed (the one-registry merge, 2026-10-21:
+    "13–14 Oct" after "12–21 Oct"). A replay dated ON the scan's day or later is research that
+    arrived after the scan (a laptop's upload, replayed by a pull): the next week's, as every
+    manual run after a scan. One rule, read by `report_runs` and `desk.desk_weeks`."""
+    return scan is not None and (r.mode in REFRESH_MODES or (
         bool(r.replay_of) and r.as_of < (scan.window_to or scan.as_of)))
 
 
