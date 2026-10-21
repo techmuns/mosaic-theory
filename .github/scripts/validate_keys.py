@@ -13,10 +13,17 @@ import sys
 
 import httpx
 
+#: the model the pipelines call — `vinci.config.Config.graph_llm_model` and
+#: `vinci.theme_intelligence.config.LLM_MODEL` (this script cannot import `vinci`: the workflow
+#: installs only anthropic and httpx). A test fails when they differ. Pinged until 2026-10-21 was
+#: Haiku, so a key that could use Haiku but not the pipelines' model passed.
+PIPELINE_MODEL = "claude-opus-4-8"
+
 
 def check_anthropic() -> bool:
-    # Returns False ONLY on a real key problem (auth/permission). A connectivity error from the
-    # runner to api.anthropic.com is a WARN (environment, not the key) — it does NOT fail the run.
+    # Returns False ONLY on a real key problem (auth, permission, or no access to the pipelines'
+    # model). A connectivity error from the runner to api.anthropic.com is a WARN (environment,
+    # not the key) — it does NOT fail the run.
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
         print("ANTHROPIC_API_KEY: FAIL — secret not set / empty")
@@ -27,12 +34,16 @@ def check_anthropic() -> bool:
 
     try:
         anthropic.Anthropic(api_key=key).messages.create(
-            model="claude-haiku-4-5-20251001",
+            model=PIPELINE_MODEL,
             max_tokens=1,
             messages=[{"role": "user", "content": "ping"}],
         )
     except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as e:
         print(f"ANTHROPIC_API_KEY: FAIL — {type(e).__name__} (bad key or no model access)")
+        return False
+    except anthropic.NotFoundError as e:
+        print(f"ANTHROPIC_API_KEY: FAIL — {type(e).__name__}: this key cannot use "
+              f"{PIPELINE_MODEL}, the model the pipelines call")
         return False
     except Exception as e:
         print(
@@ -40,7 +51,7 @@ def check_anthropic() -> bool:
             "(runner→api.anthropic.com connectivity, NOT a key problem)"
         )
         return True
-    print("ANTHROPIC_API_KEY: PASS — authenticated")
+    print(f"ANTHROPIC_API_KEY: PASS — authenticated; {PIPELINE_MODEL} answered")
     return True
 
 
