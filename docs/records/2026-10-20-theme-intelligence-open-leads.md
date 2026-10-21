@@ -179,6 +179,35 @@ one open figure, and Tiingo refuses the Actions key.** The operator re-saved `AN
 - **Committed to `theme-intelligence-state`:** `bfdc5266` ("scan exit 0, qa failure, market
   success"), the registry plus both readouts.
 
+**TIINGO, CLOSED THE SAME DAY — the key was re-saved and `validate-keys` now checks it.**
+- **Operator:** re-saved `TIINGO_API_KEY` at 2026-10-21 08:42 UTC and asked for it to be
+  validated.
+- **`validate-keys` checks Tiingo** (`check_tiingo`), with the request the weekly run makes:
+  daily prices, five years back.
+  - An unset key is a WARN; the key is optional.
+  - A padded key, or one Tiingo refuses, FAILS the run, and Tiingo's own reason is printed with
+    the key masked. A truncated exception string had hidden that reason in the market step.
+- **The invariant:** every secret any workflow reads must be passed to `validate-keys` AND read by
+  its script.
+  - On origin/main's own files, 5 workflows, the sweep finds exactly one: `TIINGO_API_KEY`.
+  - On this branch it finds none.
+- **Real runs:**
+  - On this machine: the local key PASSes; a 40-character invalid key FAILs with "HTTP 403:
+    Invalid token."; unset WARNs.
+  - On Actions, run 39572152249 at 5efd19e6: Anthropic, Polygon, Tiingo and SEC all PASS, with
+    "TIINGO_API_KEY: PASS — 200 from tiingo/daily/aapl/prices".
+  - So the 2026-10-21 403s were the OLD key. Tiingo does not refuse the runner's address.
+- **Pins:** 5 new tests, and the padded-key test now covers Tiingo.
+  - A refused key with Tiingo's real 403 body, plus a hypothetical body echoing the key, which
+    must be masked.
+  - A working key, and an unset key that sends no request.
+  - The validator's exit code.
+  - The secrets guard on the repo's own files, with both of its halves as negatives.
+- **Mutation:** 9 mutants, all killed.
+- **Suite:** 6,026 passed / 526 skipped.
+- **Not changed:** the market step still cuts a failed request's text at 120 characters. The
+  five-year P/E on Actions shows at the next weekly run's market step, which is $0.
+
 **(d) The stale test branch is deleted.** `theme-intelligence-state-test-20261011` held only
 SYNTHETIC commits from 2026-10-11, with no PR. Tip `8d9d00a73fa025fc05974f91f870637f85503d7c`;
 restore with `git push origin 8d9d00a73fa025fc05974f91f870637f85503d7c:refs/heads/theme-intelligence-state-test-20261011`.
@@ -201,9 +230,7 @@ restore with `git push origin 8d9d00a73fa025fc05974f91f870637f85503d7c:refs/head
   - (e) a second Gridlock draw (~$12);
   - (f) page 37's card;
   - (g) a paid re-enrichment;
-  - (k) demand-driver names as exposures;
-  - re-save the `TIINGO_API_KEY` Actions secret with the key that works locally (the second run).
+  - (k) demand-driver names as exposures.
 - **Still open, the agent's, awaiting a go:**
   - (l) a restated figure whose two sentences share no word beside it stays open and turns the
-    week's QA red (the second run's one open figure);
-  - `validate-keys` covering Tiingo and printing Tiingo's own refusal detail.
+    week's QA red (the second run's one open figure).
