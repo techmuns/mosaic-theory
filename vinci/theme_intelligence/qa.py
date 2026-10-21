@@ -65,6 +65,12 @@ class QaCheck:
     name: str
     ok: bool
     detail: str
+    #: a RESEARCH-completeness check — a figure or an argument the reading left open. Said OPEN
+    #: (research verification INCOMPLETE), never a failure of the run: open research is the
+    #: normal state of a week (a quarter of the locally tested articles carried one), and as a
+    #: failure it turned the weekly job red for one restated figure (2026-10-21, run
+    #: 39565710165) until red no longer meant broken.
+    research: bool = False
 
 
 @dataclass
@@ -78,7 +84,12 @@ class QaResult:
 
     @property
     def ok(self) -> bool:
-        return all(c.ok for c in self.checks)
+        """Nothing is BROKEN: every integrity check passed (open research is `open_research`)."""
+        return all(c.ok for c in self.checks if not c.research)
+
+    @property
+    def open_research(self) -> list[QaCheck]:
+        return [c for c in self.checks if c.research and not c.ok]
 
 
 def _fail_list(items: list[str], n: int = 5) -> str:
@@ -316,10 +327,10 @@ def run_qa(store: Store, run_id: str) -> QaResult:
                 _fail_list(no_ledger) or f"{len(article_ids)} article(s)"))
     add(QaCheck("every reported figure captured or judged immaterial", not open_figs,
                 (f"OPEN — {len(open_figs)} of {n_figs} figure(s): " + _fail_list(open_figs, 12))
-                if open_figs else f"{n_figs} figure(s) accounted for"))
+                if open_figs else f"{n_figs} figure(s) accounted for", research=True))
     add(QaCheck("every argument block accounted for", not open_blocks,
                 (f"OPEN — {len(open_blocks)} block(s): " + _fail_list(open_blocks, 12))
-                if open_blocks else "ok"))
+                if open_blocks else "ok", research=True))
     add(QaCheck("every analysed article names its author(s)", not no_author,
                 _fail_list(no_author) or f"{len(article_ids)} article(s)"))
 
