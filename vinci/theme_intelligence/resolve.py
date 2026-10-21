@@ -19,8 +19,10 @@ WHAT IT IS NOT: a verification. Accepting a warning never makes unsupported evid
 
 Each finding has a KEY (`report.finding_key`) bound to the review that made it and to the line as
 it reads now: the same finding read onto a later unreviewed version keeps its dismissal; a changed
-line, or a NEW review's finding on a later version, is open again. The latest row for a key is its
-state; every earlier row stays.
+line, or a NEW review's finding on a later version, is open again. Every row stays; a finding's
+state is the row no later row SUPERSEDES (each names the state its reviewer saw), never the latest
+of two machines' clocks — and a dismissal and a reopening made apart read OPEN until a new
+resolution supersedes both (`report.resolution_state`).
 
 Every write is a run of mode "review" — $0, no fetch, no model call — so `state pull` sees it and
 carries it (state.py), and `qa` re-checks it.
@@ -34,7 +36,12 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING, Literal
 
-from vinci.theme_intelligence.report import LineFinding, review_findings
+from vinci.theme_intelligence.report import (
+    LineFinding,
+    resolution_heads,
+    resolution_state,
+    review_findings,
+)
 from vinci.theme_intelligence.schemas import (
     ReviewResolution,
     RunStatus,
@@ -57,12 +64,19 @@ class ResolutionError(ValueError):
 
 @dataclass(frozen=True)
 class Located:
-    """One open card-review finding on a thesis's CURRENT version, with its latest resolution."""
+    """One open card-review finding on a thesis's CURRENT version, with its resolutions."""
     thesis: Thesis
     version: ThesisVersion
     finding: LineFinding
-    #: the latest resolution of its key (None: never resolved)
+    #: its state (`report.resolution_state`; None: never resolved, or a conflict)
     state: ReviewResolution | None
+    #: the resolutions no other supersedes — a new one supersedes them all
+    heads: tuple[ReviewResolution, ...] = ()
+
+    @property
+    def conflict(self) -> bool:
+        """A dismissal and a reopening made apart, neither superseding the other."""
+        return len({h.action for h in self.heads}) > 1
 
     @property
     def dismissed(self) -> bool:
@@ -83,8 +97,11 @@ def current_findings(store: Store, thesis_ids: tuple[str, ...] = (), *,
         v = store.thesis_version(t.thesis_id, t.current_version)
         if v is None:
             continue
-        latest = {r.finding_key: r for r in store.review_resolutions(t.thesis_id)}  # oldest first
-        out += [Located(t, v, lf, latest.get(lf.key))
+        by_key: dict[str, list[ReviewResolution]] = {}
+        for r in store.review_resolutions(t.thesis_id):
+            by_key.setdefault(r.finding_key, []).append(r)
+        out += [Located(t, v, lf, resolution_state(rows := by_key.get(lf.key, [])),
+                        tuple(resolution_heads(rows)))
                 for lf in review_findings(store, t.thesis_id, v)]
     return out
 
@@ -144,7 +161,8 @@ def resolve(pipe: Pipeline, key: str, action: Action, *, reviewer: str, reason: 
             sentence_id=lf.sentence_id, finding_key=key, finding_code=lf.finding.code,
             finding_version=lf.finding.origin_version, finding_detail=lf.finding.detail,
             line_text=lf.text, claim_ids=lf.claim_ids, action=action, reviewer=reviewer,
-            reason=reason, created_at=now)
+            reason=reason, created_at=now,
+            supersedes=tuple(sorted(h.resolution_id for h in x.heads)))
         with pipe.store.tx():
             pipe.store.add_review_resolution(r)
         pipe._count(f"findings_{action}")  # noqa: SLF001 — the run's own counter
@@ -161,6 +179,11 @@ def check_run(store: Store, run_id: str) -> list[str]:
     dismissal one that may be dismissed. [] when every one holds."""
     bad: list[str] = []
     for r in store.review_resolutions(run_id=run_id):
+        known = {x.resolution_id for x in store.review_resolutions(r.thesis_id)
+                 if x.finding_key == r.finding_key and x.resolution_id != r.resolution_id}
+        if set(r.supersedes) - known:
+            bad.append(f"{r.resolution_id}: supersedes {sorted(set(r.supersedes) - known)}, "
+                       f"no resolution of {r.finding_key}")
         v = store.thesis_version(r.thesis_id, r.version)
         lf = next((x for x in review_findings(store, r.thesis_id, v) if x.key == r.finding_key),
                   None) if v is not None else None

@@ -669,6 +669,10 @@ def cmd_review(a: argparse.Namespace) -> int:
                   f"by the review of version {f.origin_version} ({f.origin_as_of.isoformat()})")
             print(f"      line: “{clip(lf.text, 200)}”")
             print(f"      said: {clip(f.said, 240)}")
+            if x.conflict:
+                print("      CONFLICT: dismissed and reopened apart (" + ", ".join(
+                    f"{h.action} by {h.reviewer} {h.created_at.date().isoformat()}"
+                    for h in x.heads) + ") — read OPEN until a new resolution supersedes both")
             if x.dismissed and x.state is not None:
                 print(f"      dismissed by {x.state.reviewer} on "
                       f"{x.state.created_at.date().isoformat()}: {x.state.reason}")
@@ -677,12 +681,17 @@ def cmd_review(a: argparse.Namespace) -> int:
                       f'--reason "…"')
             else:
                 print(f"      not dismissible: {not_dismissible(lf)}")
-        if a.history:
-            for tid in (a.thesis or sorted(shown)):
-                for r in st.review_resolutions(tid):
-                    print(f"  history {tid}: {r.created_at.isoformat(timespec='seconds')} "
-                          f"{r.action} {r.finding_key} by {r.reviewer} — {r.reason} "
-                          f"(version {r.version}, line {r.sentence_id}, run {r.run_id})")
+        if a.history:  # every row ever recorded — a finding gone from the card included
+            rows = ([r for tid in a.thesis for r in st.review_resolutions(tid)] if a.thesis
+                    else st.review_resolutions())
+            gone = {s for r in rows for s in r.supersedes}
+            for r in rows:
+                print(f"  history {r.thesis_id}: {r.created_at.isoformat(timespec='seconds')} "
+                      f"{r.action} {r.finding_key} by {r.reviewer} — {r.reason} "
+                      f"(version {r.version}, line {r.sentence_id}, run {r.run_id}; "
+                      f"{'superseded' if r.resolution_id in gone else 'current'})")
+            print(f"{len(rows)} resolution(s) recorded"
+                  + (f" for {', '.join(a.thesis)}" if a.thesis else ""))
         n_open = sum(1 for x in found if not x.dismissed)
         print(f"{len(found)} card-review finding(s) on the current versions of {len(shown)} "
               f"thesis(es){'' if a.thesis else ' not archived'}: {n_open} open "

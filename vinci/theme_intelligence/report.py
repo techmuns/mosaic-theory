@@ -885,20 +885,44 @@ def review_findings(store: Store, thesis_id: str, v: ThesisVersion) -> list[Line
     return out
 
 
+def resolution_heads(rows: Sequence[ReviewResolution]) -> list[ReviewResolution]:
+    """The resolutions of ONE finding that no other of them supersedes — what a reviewer
+    deciding now must supersede. One head, unless two were made apart, each unseen by the
+    other (on two machines between pulls)."""
+    gone = {s for r in rows for s in r.supersedes}
+    return [r for r in rows if r.resolution_id not in gone]
+
+
+def resolution_state(rows: Sequence[ReviewResolution]) -> ReviewResolution | None:
+    """The state of ONE finding: its head. Heads that agree read as the latest of them; heads
+    that DISAGREE (a dismissal and a reopening made apart) are a conflict and read None — the
+    finding is OPEN (fail-safe) until a resolution supersedes them all. The order is what each
+    reviewer SAW, never two machines' clocks (review of #768: a reopening stamped by a slow
+    clock sorted before the dismissal it answered, and the dismissal won)."""
+    heads = resolution_heads(rows)
+    if not heads or len({h.action for h in heads}) > 1:
+        return None
+    return max(heads, key=lambda r: (r.created_at, r.resolution_id))
+
+
 def dismissed_findings(store: Store, thesis_id: str, v: ThesisVersion, *,
                        until: datetime | None = None) -> dict[str, ReviewResolution]:
-    """Sentence id -> the reviewer's dismissal in force on that line of `v`: the LATEST
-    resolution of a dismissible finding's key is "dismissed" (with `until`, as the registry held
-    it then). The line stays in `flagged` — its label stays capped, a dismissal never makes the
-    evidence valid — and a surface that counts OPEN findings leaves it out."""
-    rows = [r for r in store.review_resolutions(thesis_id)
-            if until is None or r.created_at <= until]
-    if not rows:
+    """Sentence id -> the reviewer's dismissal in force on that line of `v`: the state
+    (`resolution_state`) of a dismissible finding's key is "dismissed" (with `until`, as the
+    registry held it then). The line stays in `flagged` — its label stays capped, a dismissal
+    never makes the evidence valid — and a surface that counts OPEN findings leaves it out."""
+    by_key: dict[str, list[ReviewResolution]] = {}
+    for r in store.review_resolutions(thesis_id):
+        if until is None or r.created_at <= until:
+            by_key.setdefault(r.finding_key, []).append(r)
+    if not by_key:
         return {}
-    latest = {r.finding_key: r for r in rows}  # oldest first: the last row is the state
-    return {lf.sentence_id: r for lf in review_findings(store, thesis_id, v)
-            if lf.dismissible and (r := latest.get(lf.key)) is not None
-            and r.action == "dismissed"}
+    out: dict[str, ReviewResolution] = {}
+    for lf in review_findings(store, thesis_id, v):
+        st = resolution_state(by_key.get(lf.key, ()))
+        if lf.dismissible and st is not None and st.action == "dismissed":
+            out[lf.sentence_id] = st
+    return out
 
 
 @dataclass

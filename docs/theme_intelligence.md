@@ -782,8 +782,11 @@ card-review WARNING with a name and a reason, $0:
   - a withheld line — it closes by an analyst correction that passes the card checks
     (`reassess --corrections`) or by a re-review;
   - a line changed since its review (NOT RE-REVIEWED).
-- Every dismissal and reopening is a run of mode `review` in an append-only table, and the latest
-  row for a key is its state.
+- Every dismissal and reopening is a run of mode `review` in an append-only table. Each row
+  names the resolution(s) its reviewer saw (`supersedes`), and a finding's state is the row no
+  later row supersedes — never the later of two machines' clocks. A dismissal and a reopening
+  made apart (between pulls) are a conflict: the finding reads OPEN until a new resolution
+  supersedes both.
 - `qa` re-checks each row against the finding it names. `state pull` carries a local review run
   whole. A page rendered as of an earlier run never shows a later dismissal.
 - Push the registry (`state push`) for the weekly run and the published desk to carry it.

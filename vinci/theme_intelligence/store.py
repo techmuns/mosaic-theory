@@ -191,8 +191,8 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "BEGIN SELECT RAISE(ABORT, 'market_contexts is append-only'); END",
     ]),
     # v8 (2026-10-21): REVIEW RESOLUTIONS — a reviewer's dismissal (or reopening) of one
-    # card-review finding, with who, when and why. Append-only: the latest row for a finding is
-    # its state, every earlier one stays as history. No research-action rule reads it.
+    # card-review finding, with who, when and why. Append-only: a finding's state is the row no
+    # later row supersedes, every earlier one stays as history. No research-action rule reads it.
     (8, [
         "CREATE TABLE review_resolutions (resolution_id TEXT PRIMARY KEY, thesis_id TEXT NOT NULL,"
         " finding_key TEXT NOT NULL, run_id TEXT NOT NULL, payload TEXT NOT NULL)",

@@ -26,7 +26,10 @@ the operator's direction ("yes, start B and A", 2026-10-21).
     schema **v8**, migration 8, UPDATE/DELETE triggers).
   - Each row records the version, line, finding key, code, the finding's words, the line's words
     and cited evidence, the action, reviewer, reason and time.
-  - The latest row for a key is its state. Every earlier row stays.
+  - Every row stays. Each names the resolution(s) its reviewer saw (`supersedes`), and a
+    finding's state is the row no later row supersedes, never the later of two machines' clocks.
+  - A dismissal and a reopening made apart are a CONFLICT: the finding reads OPEN (fail-safe)
+    until a new resolution supersedes both. This answers the code review of #768.
 - **The key (`report.finding_key`)** is built from the thesis, the version whose review made the
   finding, its stored words, and the line's words and cited evidence now:
   - carried onto a later UNREVIEWED version with the same words, the finding keeps its dismissal;
@@ -94,7 +97,7 @@ the operator's direction ("yes, start B and A", 2026-10-21).
     - after in print (`card-line-print-after.png`, every `<details>` open, as the PDF);
     - the Review screen before and after (`review-*.png`, with the dismissed entry in the history
       fold).
-- **Pins:** 13 tests in `tests/test_theme_intelligence_review_resolution.py`, end to end through
+- **Pins:** 17 tests in `tests/test_theme_intelligence_review_resolution.py`, end to end through
   the rendered card, desk, weekly report, CLI, `state pull`, export/import and `qa`.
   - **Negative pins:**
     - a withheld line (by the review, or by a card check next to a warning) is refused;
@@ -102,13 +105,23 @@ the operator's direction ("yes, start B and A", 2026-10-21).
     - a blank reviewer or reason is refused;
     - an unknown key, a second dismissal, and a reopening of nothing are refused;
     - UPDATE and DELETE on the table abort;
-    - a forged row for a withheld finding never applies, and `qa` fails it.
+    - a forged row for a withheld finding never applies, and `qa` fails it;
+    - a row superseding a resolution of no such finding fails `qa`.
   - **Positive pins:**
     - the dismissal holds on an unreviewed version;
     - a new review reopens it;
     - an earlier run's pages never show it;
-    - a fact-labelled line stays capped.
-- **Mutation:** 23 mutants, 23 killed. Two first survived and got pins:
+    - a fact-labelled line stays capped;
+    - the state follows what each reviewer saw: a reopening, and a re-dismissal, stamped by a
+      slow clock still hold; a dismissal and a reopening made apart read OPEN until a new
+      resolution supersedes both;
+    - `review list --history` shows a resolution whose finding a later review dropped.
+- **Code review of #768 (2026-10-21), two findings fixed:**
+  - the state was the latest wall-clock row, so two machines' clocks could reorder a dismissal
+    and the reopening that answered it;
+  - `--history` listed only theses with a current finding.
+- **Mutation:** 28 mutants, all killed — 22 from the first build (re-anchored for the state rule)
+  and 6 for the review's fixes. Two first survived and got pins:
   - the report rendering as of now;
   - a dismissal lifting the label cap — the synthetic lines were all forecasts, so the first
     assertion was vacuous.

@@ -252,6 +252,7 @@ def test_reopen_and_every_refusal_and_the_history_kept(tmp_path: Path) -> None:
     assert dismissed_findings(pipe.store, v.thesis_id, v) == {}
     rows = pipe.store.review_resolutions(v.thesis_id)
     assert [x.action for x in rows] == ["dismissed", "reopened"]  # both kept, in order
+    assert rows[0].supersedes == () and rows[1].supersedes == (rows[0].resolution_id,)
     for sql in ("DELETE FROM review_resolutions", "UPDATE review_resolutions SET payload='{}'"):
         with pytest.raises(sqlite3.DatabaseError, match="append-only"):
             pipe.store.conn.execute(sql)
@@ -401,3 +402,78 @@ def test_no_research_action_rule_reads_a_resolution() -> None:
         assert not words.search((PKG / name).read_text()), name
     assert words.search((PKG / "report.py").read_text())
     assert words.search((PKG / "desk.py").read_text())
+
+
+def test_the_state_is_what_the_reviewer_saw_never_the_later_clock(tmp_path: Path) -> None:
+    """Review of #768: the state was the row with the latest wall-clock stamp, so a reopening
+    made on a machine whose clock ran slow sorted before the dismissal it answered, and the
+    dismissal won. Each row now names what it supersedes."""
+    pipe, v = _reviewed(tmp_path)
+    d = _dismiss(pipe, _key(pipe, v, "s01.0"))
+    slow = ReviewResolution(**{**d.model_dump(), "resolution_id": "RR-slow-clock",
+                               "action": "reopened", "reviewer": "second-reader",
+                               "created_at": d.created_at - timedelta(hours=1),
+                               "supersedes": (d.resolution_id,)})
+    pipe.store.add_review_resolution(slow)
+    assert slow.created_at < d.created_at
+    assert dismissed_findings(pipe.store, v.thesis_id, v) == {}  # the reopening holds
+    # … and a re-dismissal stamped earlier still, answering the reopening, holds in its turn
+    back = ReviewResolution(**{**d.model_dump(), "resolution_id": "RR-slower-still",
+                               "created_at": d.created_at - timedelta(hours=2),
+                               "supersedes": (slow.resolution_id,)})
+    pipe.store.add_review_resolution(back)
+    assert dismissed_findings(pipe.store, v.thesis_id, v)["s01.0"] == back
+
+
+def test_a_dismissal_and_a_reopening_made_apart_read_open_until_resolved(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    pipe, v = _reviewed(tmp_path)
+    key = _key(pipe, v, "s01.0")
+    d = _dismiss(pipe, key)
+    apart = ReviewResolution(**{**d.model_dump(), "resolution_id": "RR-other-machine",
+                                "action": "reopened", "reviewer": "second-reader",
+                                "created_at": d.created_at + timedelta(minutes=5),
+                                "supersedes": ()})  # never saw the dismissal
+    pipe.store.add_review_resolution(apart)
+    assert dismissed_findings(pipe.store, v.thesis_id, v) == {}  # fail-safe: OPEN
+    [x] = [x for x in current_findings(pipe.store) if x.finding.key == key]
+    assert x.conflict and x.state is None and finding_state(x) == "OPEN"
+    data = str(pipe.paths.root)
+    pipe.store.close()
+    assert main(["--data-dir", data, "review", "list"]) == 0
+    assert "CONFLICT: dismissed and reopened apart" in capsys.readouterr().out
+    again = make_pipeline(tmp_path)
+    _run_, r = resolve(again, key, "dismissed", reviewer=WHO, reason=WHY, as_of=END)
+    assert set(r.supersedes) == {d.resolution_id, "RR-other-machine"}  # it settles both
+    assert set(dismissed_findings(again.store, v.thesis_id, v)) == {"s01.0"}
+
+
+def test_the_history_keeps_a_finding_gone_from_the_card(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Review of #768: `--history` listed only theses with a current finding, so a dismissal
+    whose finding a later review no longer raised was in the table but never shown."""
+    pipe = make_pipeline(tmp_path)
+    rng = random.Random(3)
+    _run(pipe, rng, "res-1", END - timedelta(days=14), "ok", FakeReviewer(SAID))
+    v1 = _current(pipe)
+    r = _dismiss(pipe, _key(pipe, v1, "s01.0"))
+    _run(pipe, rng, "res-2", END, "ok", FakeReviewer({}))  # a clean review: no finding left
+    assert current_findings(pipe.store) == []
+    data = str(pipe.paths.root)
+    pipe.store.close()
+    assert main(["--data-dir", data, "review", "list", "--history"]) == 0
+    out = capsys.readouterr().out
+    assert f"dismissed {r.finding_key} by {WHO}" in out and "; current)" in out
+    assert "1 resolution(s) recorded" in out
+
+
+def test_qa_refuses_a_resolution_superseding_nothing_it_knows(tmp_path: Path) -> None:
+    pipe, v = _reviewed(tmp_path)
+    run, r = resolve(pipe, _key(pipe, v, "s01.0"), "dismissed", reviewer=WHO, reason=WHY,
+                     as_of=END)
+    pipe.store.add_review_resolution(ReviewResolution(**{
+        **r.model_dump(), "resolution_id": "RR-dangling", "action": "reopened",
+        "supersedes": ("RR-nowhere",)}))
+    bad = next(c for c in run_qa(pipe.store, run.run_id).checks
+               if c.name == "every resolution names a finding it may resolve")
+    assert not bad.ok and "RR-dangling: supersedes ['RR-nowhere']" in bad.detail
