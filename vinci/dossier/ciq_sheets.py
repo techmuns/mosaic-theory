@@ -2927,7 +2927,15 @@ _FORECAST_ERROR_ELIGIBILITY = (
     "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures "
     "last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has "
     "been. It is NOT a distribution of how far consensus moves over a holding period; that needs "
-    "point-in-time consensus snapshots, which no Estimates Report carries.")
+    "point-in-time consensus snapshots, which no Estimates Report carries. Each 'actual' is the "
+    "figure CIQ's Estimates set against its own consensus, which is often NOT the line the "
+    "financial statements report; `accounting_basis` names the filer's accounting STANDARD "
+    "(US GAAP, IFRS), never the basis of that actual.")
+# ^ THE LAST SENTENCE (2026-10-21). The series printed "FY2026 (US GAAP): actual 6957" for TJX's
+# EBIT while the reported EBIT is 7,178 — CIQ's actual leaves out the litigation settlement — and
+# an IC memo read the label as the figure's basis. Not a TJX quirk: on main 07665419, 308 of the
+# 601 year-observations (Revenue, EBIT, EBITDA, net income) that match an actual column of the
+# page's own financial summary differ from it by >0.5%, on 23 of the 25 pages carrying both.
 _FORECAST_ERROR_USAGE = (
     "EBIT- or EBITDA-level shock today: error_per_forecast_revenue × today's revenue consensus. "
     "Revenue × margin scenario: the SAME year's Revenue pct_error and ratio_error, kept together. "

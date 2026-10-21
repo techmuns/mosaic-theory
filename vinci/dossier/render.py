@@ -1794,6 +1794,14 @@ def _ebitda_basis_lines(fs: FinancialSummary) -> list[str]:
     return ["", f"> **EBITDA basis — the actual and estimate rows differ.** {b.note}", ""]
 
 
+#: (D5b) The levered-FCF row's display label and basis note — ONE wording, read by the appendix
+#: AND the brief's snapshot. The brief printed the bare "FCF ($M)" until 2026-10-21, beside an
+#: appendix that said what it was; an IC memo read the brief's figure as CFO − capex.
+_FCF_ROW = "FCF ($M)"
+_FCF_LEVERED_LABEL = "FCF (levered, CIQ)"
+_FCF_LEVERED_NOTE = "FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex"
+
+
 def _annual_with_fcf_label(s: Sourced[Any]) -> Sourced[Any]:
     """(D5b) Display-only: relabel the levered-FCF row + footnote it — the appendix FCF is CIQ's
     'Levered Free Cash Flow', NOT a CFO − capex derivation. No extractor change; the FinTable is
@@ -1802,12 +1810,12 @@ def _annual_with_fcf_label(s: Sourced[Any]) -> Sourced[Any]:
         return s
     ft = s.value
     rows = [
-        r.model_copy(update={"label": "FCF (levered, CIQ)"}) if r.label == "FCF ($M)" else r
+        r.model_copy(update={"label": _FCF_LEVERED_LABEL}) if r.label == _FCF_ROW else r
         for r in ft.rows
     ]
     if rows == list(ft.rows):  # no FCF row to relabel → unchanged
         return s
-    fcf_note = "FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex"
+    fcf_note = _FCF_LEVERED_NOTE
     note = f"{ft.note} · {fcf_note}" if ft.note else fcf_note
     return s.model_copy(update={"value": ft.model_copy(update={"rows": rows, "note": note})})
 
@@ -2741,8 +2749,11 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     # brief-only reader still never met a 43%-of-market-cap charge. Not every $2M restructuring
     # line — only rows over the floor, flagged ONCE at assembly (`FinRow.material`); this renderer
     # reads the flag and never recomputes the threshold. Twin: financialSnapshot() in dossier.js.
-    rows = [[r.label, *[r.cells[i] for i in idx if i < len(r.cells)]]
-            for r in tbl.rows if r.label in want or getattr(r, "material", False)]
+    # The row is SELECTED on its stored label (the parity pin reads `want`) and DISPLAYED under the
+    # appendix's levered-FCF label, with its basis note — the brief is where the decision is read.
+    shown = [r for r in tbl.rows if r.label in want or getattr(r, "material", False)]
+    rows = [[_FCF_LEVERED_LABEL if r.label == _FCF_ROW else r.label,
+             *[r.cells[i] for i in idx if i < len(r.cells)]] for r in shown]
     if not rows or not cols:
         return []
     hidden = len(tbl.columns) - len(idx)
@@ -2751,6 +2762,8 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     # index len (the first period rendered left-aligned).
     out = _table("Financial snapshot", fs.annual.source_ref, cols, rows,
                  num_cols=frozenset(range(len(cols))))
+    if any(r.label == _FCF_ROW for r in shown):
+        out += [f"_{_FCF_LEVERED_NOTE}_", ""]   # its own paragraph, not run into the next line
     if hidden > 0:
         out.append(f"_table shows the last {_BRIEF_FY} fiscal years · {hidden} earlier "
                    f"{'year is' if hidden == 1 else 'years are'} in the Appendix_")

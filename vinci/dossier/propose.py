@@ -984,9 +984,13 @@ def r4_evidence(doc: dict[str, Any]) -> dict[str, list[str]]:
             f"({hfe.get('estimate_type')}). {hfe.get('eligibility_note')} {hfe.get('usage_note')}")
         for o in obs:
             epr = o.get("error_per_forecast_revenue")
+            # "(US GAAP): actual 6957" read as the figure's basis; it is the filer's STANDARD, and
+            # the actual is CIQ's own (TJX FY2026: 6,957 here, 7,178 reported)
+            std = o.get("accounting_basis") or "not stated"
             ev["ebit"].append(
-                f"  FY{o.get('fiscal_year')} ({o.get('accounting_basis')}): actual "
-                f"{o.get('actual')} vs final consensus {o.get('final_estimate')} → "
+                f"  FY{o.get('fiscal_year')}: CIQ's consensus-basis actual "
+                f"{o.get('actual')} (filer's accounting standard: {std}) vs final consensus "
+                f"{o.get('final_estimate')} → "
                 f"{o.get('dollar_error')} $M"
                 + (f", {epr:+.2%} of forecast revenue" if isinstance(epr, (int, float)) else ""))
     guidance = _guidance_lines(doc)

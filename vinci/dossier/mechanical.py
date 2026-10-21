@@ -622,6 +622,18 @@ def guidance_refusal_flags(releases: Sequence[ReleaseExtract]) -> list[str]:
             if f.startswith(GUIDANCE_REFUSAL_PREFIX)]
 
 
+def _guide_bounds(low: float, high: float, unit: str) -> tuple[str, str]:
+    """A guide's two bounds as text, at the unit's precision (per-share in cents) and widened until
+    they differ — ONE rule for every surface that prints a guide (see `_fmt_guide_range`)."""
+    def pair(dp: int) -> tuple[str, str]:
+        return f"{low:,.{dp}f}", f"{high:,.{dp}f}"
+
+    dp = {"$M": 1, "$/sh": 2, "%": 1}.get(unit, 1)
+    while dp < 4 and low != high and pair(dp)[0] == pair(dp)[1]:
+        dp += 1
+    return pair(dp)
+
+
 def _fmt_guide_range(low: float | None, high: float | None, unit: str) -> str:
     """A guidance range, formatted from its OWN unit and at a precision that keeps the range a
     range. TWO defects, one root, and fixing either alone still prints a wrong number.
@@ -637,15 +649,7 @@ def _fmt_guide_range(low: float | None, high: float | None, unit: str) -> str:
     """
     if low is None or high is None:
         return "stated, no number given"
-
-    def pair(dp: int) -> tuple[str, str]:
-        return f"{low:,.{dp}f}", f"{high:,.{dp}f}"
-
-    base = {"$M": 1, "$/sh": 2, "%": 1}.get(unit, 1)
-    dp = base
-    while dp < 4 and low != high and pair(dp)[0] == pair(dp)[1]:
-        dp += 1
-    lo, hi = pair(dp)
+    lo, hi = _guide_bounds(low, high, unit)
     if unit == "%":
         return f"{lo}–{hi}% growth"
     if unit == "$/sh":
@@ -1647,7 +1651,13 @@ def _adjusted_facts(
     src = revised_guidance.source_ref or "EDGAR 8-K Ex-99.1"
     text = revised_guidance.value or ""
     eb, eps = _ADJ_EBITDA.search(text), _ADJ_EPS.search(text)
-    unk: Sourced[str] = Sourced.unknown(note="adjusted figure not in the 99.1 revised guidance")
+    # SAY WHICH ABSENCE (2026-10-21). 26 of 27 pages read "adjusted figure not in the 99.1 revised
+    # guidance", and on most of them no revised guidance had been read at all — the note claimed a
+    # read that never happened (TJX and Burlington among them, while their releases state one).
+    unk: Sourced[str] = Sourced.unknown(
+        note="adjusted figure not in the 99.1 revised guidance"
+        if revised_guidance.status is SourceStatus.PRESENT
+        else "no revised guidance at the drawdown to read an adjusted figure from")
     price = record.prices.last.value if record.prices.last.is_known else None
 
     adj_eps = unk
@@ -1703,6 +1713,54 @@ def _adjusted_facts(
                     source_ref=f"{src} (adj-EBITDA) + EDGAR net debt + EOD price × shares",
                 )
     return adj_eps, ev_adj, nd_adj
+
+
+def _release_adjusted_eps(
+    releases: list[ReleaseExtract], record: DataRecord, absent: Sourced[str],
+) -> Sourced[str]:
+    """The adjusted-EPS guide from the NEWEST results release, when the drawdown's revised guidance
+    carried none (2026-10-21). TJX ($5.15–$5.20 for Fiscal 2027) and Burlington ($11.77–$11.97)
+    state one in their latest 99.1, and the page said "adjusted figure not in the 99.1 revised
+    guidance" — the drawdown filing is the only place `_adjusted_facts` looked, and neither name
+    has a drawdown 8-K.
+
+    THE NEWEST RELEASE OR NOTHING, never the newest one that happens to parse. Target's March
+    guide ($7.50–$8.50) parses and August's raise to $9.90–$10.90 does not; reaching back past the
+    unreadable release would print the superseded guide as the earnings power. An ANNUAL guide
+    only — a quarter's EPS over today's price is not a P/E. ``absent`` is returned, with what was
+    read added to its note, when the newest release states no annual adjusted-EPS level guide."""
+    dated = [r for r in releases if r.filed is not None]
+    if not dated:
+        return absent
+    filed = max(r.filed for r in dated if r.filed is not None)
+    # THE NEWEST FILING, every exhibit of it (review, #756): one 8-K can furnish two EX-99.1s, and
+    # `max` over releases picked whichever came first — the guide-less sibling made it UNKNOWN.
+    newest = [r for r in dated if r.filed == filed]
+    # `$/sh` too, not only `level`: a level adjusted-EPS range stated in % (unit "%") is not a
+    # per-share figure, and printed as "$8.00–$10.00" it would strike a P/E on a growth rate.
+    found = next(((r, g) for r in newest for g in r.guidance
+                  if g.metric == "adjusted eps" and not g.qualitative
+                  and getattr(g, "basis", "level") == "level" and g.unit == "$/sh"
+                  and g.low is not None and g.high is not None
+                  and primary_source.period_scope(g.period) == "annual"), None)
+    src, guide = found if found is not None else (newest[0], None)
+    where = f"{src.source_ref} (filed {filed.isoformat()})"
+    if guide is None or guide.low is None or guide.high is None:
+        return Sourced.unknown(
+            # "EX-99.1 release", not "results release": the list holds every 2.02/8.01 exhibit,
+            # and PARR's newest (2026-08-25) is an asset-sale announcement — nothing stored tells
+            # the two apart (review, #756; the item codes are not on `ReleaseExtract`)
+            note=f"{absent.note}; the newest EX-99.1 release, {where}, states no annual "
+                 "adjusted-EPS guide the parser reads")
+    lo, hi = _guide_bounds(guide.low, guide.high, "$/sh")
+    last = record.prices.last
+    tail = ""
+    if last.is_known and last.value:
+        mid = (guide.low + guide.high) / 2
+        on = f" ({last.as_of.isoformat()} close)" if last.as_of is not None else ""
+        tail = f"; adj P/E ~{last.value / mid:.1f}x at ${last.value:.2f}{on}" if mid > 0 else ""
+    return Sourced.present(f"{guide.period} adjusted EPS guide ${lo}–${hi}{tail}",
+                           source_ref=where)
 
 
 # --- CIQ-sourced fields (workbook-addressed; the extractors fail loud MISSING/UNKNOWN) ---------
@@ -4038,15 +4096,34 @@ def _current_guide(releases: list[ReleaseExtract]) -> Sourced[str]:
             parts.append(f"{g.metric} {g.period}: {said}" if said
                          else f"{g.metric} {g.period}: qualitative guide, no figure given")
             continue
+        # THE UNIT'S PRECISION, through the one rule `_fmt_guide_range` uses (2026-10-21). A flat
+        # `.1f` printed Burlington's $11.77–$11.97 as "11.8–12.0" and would have printed TJX's
+        # $5.15–$5.20 as "5.2–5.2" — a zero-width range the company never gave.
         if g.low is not None and g.high is not None:
-            rng = f"{g.low:,.1f}–{g.high:,.1f}"
+            rng = "–".join(_guide_bounds(g.low, g.high, g.unit))
         elif g.low is not None:
-            rng = f"≥ {g.low:,.1f}"          # a floor is not a point estimate; say which it is
+            # a floor is not a point estimate; say which it is
+            rng = f"≥ {_guide_bounds(g.low, g.low, g.unit)[0]}"
         else:
-            rng = f"≤ {g.high:,.1f}"         # was silently dropped — the bound is the whole guide
+            # was silently dropped — the bound is the whole guide
+            assert g.high is not None
+            rng = f"≤ {_guide_bounds(g.high, g.high, g.unit)[0]}"
         parts.append(f"{g.metric} {g.period}: {rng} {g.unit}".strip())
+    # A NEWER RELEASE WITH NO PARSED GUIDE IS NOT EVIDENCE THE GUIDE STANDS (2026-10-21). The
+    # selection takes the latest release that carries a guide, so when a later release states its
+    # guide in words the parser does not read, the older one is printed as "current". Live on
+    # FUBO, LLY, MVST and NFLX on 2026-10-21, and Target's would have joined them: its March guide
+    # ($7.50–$8.50) became readable while August's raise to $9.90–$10.90 is not.
+    # one per FILING: two exhibits of one 8-K are one newer release, not "2 … (filed d, d)"
+    newer = sorted({r.filed for r in releases if r.filed is not None and r.filed > filed})
+    tail = ""
+    if newer:
+        dates = ", ".join(d.isoformat() for d in newer)
+        tail = (f" — {len(newer)} newer release{'s' if len(newer) > 1 else ''} (filed {dates}) "
+                f"carr{'y' if len(newer) > 1 else 'ies'} no parsed guide: verify this one still "
+                "governs")
     return Sourced.present(
-        "; ".join(parts),
+        "; ".join(parts) + tail,
         source_ref=f"{latest.source_ref} (filed {filed.isoformat()})")
 
 
@@ -4575,6 +4652,13 @@ def assemble_mechanical(
     mech = mech.model_copy(update={
         "primary_source": primary, "operating_drivers": op_drivers})  # (PR-B) mechanism tier
     mech = _enrich_drawdown_drivers(mech, primary)  # (B1) gap-downs → parsed EX-99.1 drivers
+    # the adjusted-EPS guide from the newest release, where the drawdown's revised guidance held
+    # none. ONLY the field: `eps_resolved` below stays keyed on the drawdown guide, because the
+    # P/E reconciliation that a resolved flag defers to reads that guide and no other — resolving
+    # on this one would silence the EDGAR-vs-CIQ P/E conflict with nothing printed in its place.
+    if adj_eps.status is not SourceStatus.PRESENT:
+        mech = mech.model_copy(update={"valuation": mech.valuation.model_copy(update={
+            "adjusted_eps": _release_adjusted_eps(primary.releases, record, adj_eps)})})
     # (catalyst calendar) dated events + what each tests — needs drawdown_cause (the guide) and
     # capital_structure (maturities), both on mech by now; its misses ride the QA channel.
     calendar = _catalyst_calendar(edgar, record.identity.cik, reference_date, mech)

@@ -27,6 +27,7 @@ from vinci.dossier.schemas import (
     ReconciliationValue,
     ReleaseExtract,
 )
+from vinci.edgar.primary_source import period_scope
 from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver.index import pad_cik
 
@@ -794,9 +795,17 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
 #: default, which `period_scope` reads as ANNUAL. A quarterly guide wearing an annual label is a
 #: ~4x error in a decision figure, and more rows are not worth it. The gap is recorded, with its
 #: 22 witnesses, in docs/records/2026-09-18-release-parse-fleet-audit.md.
+#:
+#: `adjusted DILUTED earnings per share` (2026-10-21) is the SAME adjusted-EPS metric, not the
+#: prefix-free form held back above: TJX writes "the Company is increasing its full year outlook
+#: for adjusted diluted earnings per share to be in the range of $5.15 to $5.20", and the page said
+#: it carried no numeric outlook. Its two ranges (the third quarter's and the year's) are the only
+#: adjusted-diluted guides in the 118 releases the pages cite, and both resolve a period through
+#: `_opener_period`, so neither lands on the `next-fy` default.
 _GUIDE_METRICS = (
     r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
-    r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margin"
+    r"adjusted\s+earnings\s+per\s+share|adjusted\s+diluted\s+(?:earnings\s+per\s+share|eps)|"
+    r"free\s+cash\s+flow|gross\s+margin"
 )
 
 
@@ -856,10 +865,15 @@ _GUIDE_RANGE = re.compile(
     # side by 1000 and produced low=500,000 against high=1,200 — a range whose floor sits 400x above
     # its ceiling. Each side now scales by ITS OWN stated unit; a bare side inherits the trailing
     # one (unchanged for "$2.465 to $2.49 billion", where only the trailing unit is stated).
-    r"\$?\s*(?P<low>[\d,.]+)\s*(?P<pct>%)?\s*"
+    #
+    # A NUMBER ENDS IN A DIGIT (2026-10-21). `[\d,.]+` took the full stop of a range that closes
+    # its sentence — TJX's "…in the range of $5.15 to $5.20." and Target's "GAAP and Adjusted EPS
+    # of $7.50 to $8.50." read their high side as '5.20.' — and `_money` refused it, so the guide
+    # was dropped with no refusal note: the absent-and-silent shape `_guidance` exists to prevent.
+    r"\$?\s*(?P<low>[\d,.]*\d)\s*(?P<pct>%)?\s*"
     r"(?:(?P<lowunit>million|billion|bn|mm|[MB])(?![A-Za-z])\s*)?"
     r"(?:to|and|[-–—])\s*"
-    r"\$?\s*(?P<high>[\d,.]+)\s*"
+    r"\$?\s*(?P<high>[\d,.]*\d)\s*"
     r"(?:(?P<unitword>million|billion|bn|mm|[MB]|%)(?![A-Za-z]))?",
     re.I,
 )
@@ -901,7 +915,9 @@ _GUIDE_PCT = re.compile(
 # THE DIRECTION WORD CARRIES THE SIGN, and it must: "decline 375 bps" stored as +375 is the same
 # 100x-class error as storing it as a level. `_DECLINE` words negate; `_RISE` words do not.
 _METRIC_ALT = (r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
-               r"adjusted\s+earnings\s+per\s+share|free\s+cash\s+flow|gross\s+margins?")
+               r"adjusted\s+earnings\s+per\s+share|"
+               r"adjusted\s+diluted\s+(?:earnings\s+per\s+share|eps)|"
+               r"free\s+cash\s+flow|gross\s+margins?")
 _DIRECTION = r"(?P<dir>decline|decrease|contract|improve|increase|expand|grow|rise)"
 _DECLINE = {"decline", "decrease", "contract"}
 # a CHANGE range: "…decline between 300 and 350 basis points" / "…increase 4% to 5%"
@@ -983,6 +999,95 @@ _Q_NUM = {"first": 1, "second": 2, "third": 3, "fourth": 4}
 _FORWARD_VERB = re.compile(
     r"\b(?:expects?|expecting|anticipates?|anticipating|forecasts?|projects?|targets?|"
     r"sees|continues?\s+to\s+(?:expect|see))\b", re.I)
+
+# --- THE PERIOD A RUN OF OUTLOOK SENTENCES OPENS WITH (2026-10-21) --------------------------------
+# A release can state the period ONCE, at the head of a run of sentences, and every guide in the
+# run inherits it:
+#     "For the third quarter of Fiscal 2027, the Company is planning … The Company expects … the
+#      Company expects adjusted diluted earnings per share to be in the range of $1.30 to $1.32.
+#      For the full year Fiscal 2027, the Company continues to expect … the Company is increasing
+#      its full year outlook for adjusted diluted earnings per share to be in the range of $5.15
+#      to $5.20."                                                                    (TJX, Q2 FY27)
+# Neither range names its period, and the opener sits four sentences above — out of reach of the
+# clause and the 60-character lead-in, so the third-quarter range fell to `next-fy`: the ~4x
+# quarterly-as-annual error `_period_for` exists to prevent. Burlington's bullet lists open the
+# same way ("For the third quarter of Fiscal 2026 (the 13-weeks ending October 31, 2026), the
+# Company expects: • …").
+#
+# The opener must be CAPITALISED — a sentence start, not "…revenue for the third quarter of 2026,"
+# mid-clause — and it must itself look forward ("In the second quarter, the Company repurchased…"
+# opens a run of results, not of guides). A WORD start too: "LinkedIn 2026," is not an opener.
+_OPENER = re.compile(
+    r"\b(?-i:For|In)\s+(?:the\s+)?"
+    r"(?:(?P<qn>first|second|third|fourth)\s+(?:fiscal\s+)?quarter(?:\s+of)?"
+    r"(?:\s+(?:the\s+)?(?:fiscal\s+)?(?:year\s+)?(?P<qy>20\d\d))?"
+    r"|(?:full[- ](?:fiscal[- ])?year|fiscal\s+year|fiscal)"
+    r"(?:\s+(?:of\s+)?(?:fiscal\s+)?(?:year\s+)?(?P<fy>20\d\d))?"
+    r"|(?P<by>20\d\d))"
+    r"\s*(?:\([^()]{0,80}\)\s*)?,",
+    re.I)
+#: How far above a guide its opener may sit. TJX's third-quarter opener is ~560 characters above
+#: the range it governs and Burlington's ~800; further than one outlook section is a guess about
+#: which section the range belongs to.
+_OPENER_REACH = 1500
+#: A sentence that continues an outlook run. `_FORWARD` plus "planning", which is how TJX opens one.
+_RUN_FORWARD = re.compile(rf"{_FORWARD.pattern}|\bplan(?:s|ning)\b", re.I)
+#: Words that name a FULL YEAR without a year number — "its full year outlook for…". A run whose
+#: opener is a quarter but which says this, or the reverse, is two periods, and neither may be
+#: chosen for the guide.
+#:
+#: REVIEW FIX (#756). "full year" alone let a quarter opener label a year's guide: "For the third
+#: quarter of 2026, the Company expects revenue growth. For the remainder of the year, the Company
+#: expects adjusted EPS in the range of $4.05 to $4.15." read **Q3 2026**, an annual figure filed as
+#: a quarter. "the year" (never "the year-ago" quarter), a HALF and TWELVE MONTHS are the other
+#: scope too.
+_ANNUAL_WORD = re.compile(
+    r"\bfull[- ]year\b|\bfiscal\s+year\b|\bannual\b|"
+    r"\bthe\s+(?:full\s+|fiscal\s+)?year\b(?![\s-]+ago)|"
+    r"\b(?:first|second|back|front)\s+half\b|\b(?:twelve|12)[- ]months?\b", re.I)
+#: A QUARTER in a full-year run, in the forms `_QUARTER` does not read: "fourth-quarter", "Q4".
+#: Refusing here costs nothing — the range keeps the annual `next-fy` default, the same scope.
+_RUN_QUARTER = re.compile(r"\b(?:first|second|third|fourth)[\s-]+quarter\b|\bQ[1-4]\b", re.I)
+#: The OPENER'S OWN sentence must make a forward statement with a VERB. `_RUN_FORWARD` reads the
+#: nouns of a RESULTS sentence as forward — "For the second quarter of Fiscal 2027, net sales were
+#: $15.0 billion, above the high end of the Company's guidance." passed on "guidance", and the next
+#: sentence's guide was labelled **Q2 2027**: a closed quarter on a forward guide (review, #756).
+#: The ACT of guiding counts only as a PRESENT act on the guide itself — measured over the 118 cited
+#: releases, the real openers say "is raising its consolidated comparable sales outlook" (TJX),
+#: "increases expected GAAP diluted EPS" (EPAM) and "has updated its previously issued guidance"
+#: (BellRing); a past-tense result ("net sales increased", "exceeded its outlook") does not.
+_OPENER_VERB = re.compile(
+    rf"{_FORWARD_VERB.pattern}|\bplan(?:s|ning)\b|"
+    r"\b(?:(?:rais|increas|updat)(?:es|ing)|(?:narrow|lower|reaffirm|maintain)(?:s|ing)|"
+    r"(?:has|have)\s+(?:updated|narrowed|raised|increased|lowered|reaffirmed))\s+"
+    r"(?:\w+[\s-]+){0,4}?(?:outlook|guidance|expect\w*)\b", re.I)
+
+
+def _opener_period(text: str, start: int, end: int) -> str | None:
+    """The period the nearest preceding opener states, when the guide at [start, end) sits in the
+    run of forward sentences it opens. None — never a guess — when there is no opener within
+    `_OPENER_REACH`, when any sentence between them is not forward-looking (the outlook run ended),
+    or when the run names a period of the other scope."""
+    opener = None
+    for m in _OPENER.finditer(text, max(0, start - _OPENER_REACH), start):
+        opener = m
+    if opener is None:
+        return None
+    if not _OPENER_VERB.search(re.split(r"\.\s", text[opener.start():start], maxsplit=1)[0]):
+        return None
+    for sentence in re.split(r"\.\s", text[opener.start():start]):
+        if sentence.strip(" •●○◦■▪·;:") and not _RUN_FORWARD.search(sentence):
+            return None
+    run = text[opener.end():end]
+    if opener["qn"]:
+        if _ANNUAL_WORD.search(run):
+            return None
+        return f"Q{_Q_NUM[opener['qn'].lower()]}" + (f" {opener['qy']}" if opener["qy"] else "")
+    if _RUN_QUARTER.search(run):
+        return None
+    if opener["by"]:
+        return opener["by"]
+    return f"Fiscal {opener['fy']}" if opener["fy"] else "FY"
 
 
 def _guide_unit(metric: str, pct_marker: str | None) -> str:
@@ -1067,7 +1172,9 @@ def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
         return f"Q{_Q_NUM[tq.group(1).lower()]}" + (f" {yr.group(0)}" if yr else "")
     if ty is not None:
         return re.sub(r"\s+", " ", ty.group(1)).strip()
-    return "next-fy"
+    # LAST, so it can only replace the default: the opener of the run of outlook sentences the
+    # guide sits in ("For the third quarter of Fiscal 2027, …" four sentences up — TJX).
+    return _opener_period(text, start, end) or "next-fy"
 
 
 def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[GuidanceItem]:
@@ -1081,13 +1188,25 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
     number had been seen and declined, which is the absent-and-silent shape the rule prohibits."""
     out: list[GuidanceItem] = []
     seen: set[str] = set()
+    scoped: set[tuple[str, str | None]] = set()
     notes = notes if notes is not None else []
     for m in _GUIDE_RANGE.finditer(text):
         metric = _guide_metric(m["metric"])
         low, high = _money(m["low"]), _money(m["high"])
-        if low is None or high is None or metric in seen:
+        if low is None or high is None:
             continue
         vb = _verbatim(text, m.start(), m.end())
+        period = _period_for(text, m.start(), m.end(), vb)
+        # ONE RANGE PER METRIC PER SCOPE, not per release (2026-10-21). TJX guides adjusted EPS for
+        # the third quarter ($1.30–$1.32) and THEN the year ($5.15–$5.20), and first-wins kept the
+        # quarter and dropped the year — the figure a valuation reads. A LATER range for a metric
+        # already read is kept only when its period was READ (never the `next-fy` default, which
+        # is what a restated or comparison range lands on) and names a scope not yet held, so
+        # every range the old rule kept is still kept, first, unchanged.
+        scope = period_scope(period)
+        if metric in seen and (period == "next-fy" or scope is None
+                               or (metric, scope) in scoped):
+            continue
         # AMBIGUOUS SENTENCE ⇒ REFUSE, never guess. BellRing writes "Fiscal year 2026 net sales and
         # Adjusted EBITDA* expected to range between $2.41-$2.49 billion": TWO metrics, ONE range.
         # The regex binds it to whichever sits nearer the introducer, which produced an "adjusted
@@ -1134,8 +1253,9 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
                 f"with confidence; verify against the filing: \"{vb[:150]}\" ({src})")
             continue
         seen.add(metric)
+        scoped.add((metric, scope))
         out.append(GuidanceItem(
-            metric=metric, period=_period_for(text, m.start(), m.end(), vb),
+            metric=metric, period=period,
             low=low, high=high, unit=unit, qualitative=False,
             verbatim=vb, source_ref=src,
         ))

@@ -67,7 +67,9 @@ _Bear case — the price already pays for it:_
 | EBIT ($M) | -95 | -122 | -155 | -194 | -239 |
 | Net income ($M) | -91 | -105 | -133 | -166 | -210 |
 | EPS (GAAP, dil.) | -4.23 | -1.85 | -2.02 | -2.40 | -2.83 |
-| FCF ($M) | — | -56 | -65 | — | — |
+| FCF (levered, CIQ) | — | -56 | -65 | — | — |
+
+_FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 
 > **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply -2 of D&A against 0 in the actuals (-19.88x) — the consensus EBITDA row adds back LESS than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
