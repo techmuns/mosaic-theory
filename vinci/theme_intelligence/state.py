@@ -160,6 +160,9 @@ class SyncResult:
     base_commit: str | None
     new_commit: str | None = None
     lines: list[str] = field(default_factory=list)
+    #: pull: the runs the rebuilt registry holds that the branch does not (carried, replayed) —
+    #: what a push would add; a push with none adds nothing but re-minted migration stamps
+    local_only: list[str] = field(default_factory=list)
 
 
 def status(data_dir: Path, remote: str, branch: str = BRANCH) -> SyncResult:
@@ -288,15 +291,25 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
         _save_state(paths, remote=mask(remote), branch=branch, base_commit=head,
                     pulled_at=datetime.now(tz=UTC).isoformat())
     todo = [d for d in old_docs if d.sha256 not in remote_docs]
+
+    def not_on_branch() -> list[str]:
+        st = Store(paths.db)
+        try:
+            return [r.run_id for r in st.runs() if _run_key(r) not in remote_runs]
+        finally:
+            st.close()
+
     if not todo:
         _save_state(paths, **{**sync_state(paths), "pending": []})
         res.lines.append("no local document to replay — the branch holds every one")
+        res.local_only = not_on_branch()
         return res
     if not replay or make_pipeline is None:
         _save_state(paths, **{**sync_state(paths), "pending": _dumped(todo),
                                "pending_answers": _answers_of(todo, answers)})
         res.lines.append(f"{len(todo)} local document(s) NOT on the branch and not replayed "
                          f"(kept for the next pull): " + ", ".join(d.doc_id for d in todo))
+        res.local_only = not_on_branch()
         return res
     lines, not_replayed = _replay(paths, todo, old_runs, make_pipeline, fixtures or {}, dates,
                                   answers)
@@ -306,6 +319,7 @@ def pull(data_dir: Path, remote: str, branch: str = BRANCH, *, replay: bool = Tr
     if not_replayed:
         res.lines.append(f"{len(not_replayed)} local document(s) not replayed are kept for the "
                          f"next pull: " + ", ".join(d.doc_id for d in not_replayed))
+    res.local_only = not_on_branch()
     return res
 
 
@@ -492,14 +506,21 @@ def _replay(paths: Paths, todo: list[DocumentRecord], old_runs: dict[str, Any],
     return lines, not_replayed
 
 
+def skipped(store: Store, run_id: str) -> tuple[int, int]:
+    """(completeness passes, card reviews) a run did NOT run — for want of a saved answer, of a
+    model, or with reviews off: the steps a paid replay would run. The counts behind `not_run`."""
+    passes = sum(1 for r in store.completeness_for_run(run_id) if not r.pass_ran)
+    reviews = len({i.ref_id for i in store.issues(run_id=run_id) if i.code == "REVIEW_NOT_RUN"})
+    return passes, reviews
+
+
 def not_run(store: Store, run_id: str) -> str:
     """What a replay SKIPPED for want of a saved answer (or of a model, or with reviews off) —
     the steps a paid replay would run, and bill. A `--cache-only` replay printed "every model
     answer from the cache, $0" while it skipped the completeness pass and the card reviews: the
     one-registry rehearsal (2026-10-21) read $0 where the paid merge then spent $4.81 on them.
     "" when nothing was skipped."""
-    passes = sum(1 for r in store.completeness_for_run(run_id) if not r.pass_ran)
-    reviews = len({i.ref_id for i in store.issues(run_id=run_id) if i.code == "REVIEW_NOT_RUN"})
+    passes, reviews = skipped(store, run_id)
     parts = [x for x in (f"the completeness pass for {passes} document(s)" if passes else "",
                          f"{reviews} card review(s)" if reviews else "") if x]
     return (f" — NOT run: {' and '.join(parts)}; a paid replay would run (and bill) them"

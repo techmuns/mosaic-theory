@@ -760,10 +760,8 @@ deliberate step. **Operator decision 2026-10-13:** publish the current snapshot 
 keep weekly publishing MANUAL for now (one `publish` + an artifact commit each week), and revisit
 automatic publishing after the first few weekly runs look right.
 
-**Follow-up requirements (documented, not built).**
-- **A. A safe one-step weekly upload command:** a cache-only state pull, identity and licence
-  checks, a cost preflight, an explicitly budgeted import, QA, ledger reconciliation, and a
-  fast-forward-only push. No implicit paid replay.
+**Follow-up A — the one-step weekly upload — is built (2026-10-21):** `upload`, described under
+the state branch below.
 
 **Review resolution (follow-up B, built 2026-10-21 — `resolve.py`).** A reviewer can close a
 card-review WARNING with a name and a reason, $0:
@@ -816,6 +814,36 @@ runs.
 **Manual documents and the Actions run — ONE registry (`state.py`).** Actions cannot reach the
 operator's machine, and the operator's documents must never be committed. So the state branch stays
 the only registry of record, and the operator carries it:
+
+```bash
+python -m vinci.theme_intelligence upload --remote git@github.com:techmuns/mosaic-theory.git \
+    --path report.pdf --source ms_research --author "…" --llm-permitted --budget 7 [--dry-run]
+```
+
+**`upload` is the one step (follow-up A, built 2026-10-21 — `upload.py`).** It runs the three
+commands below in order, with checks between them. Any refusal stops it, says why, and pushes
+nothing.
+
+1. **Pull, cache-only.** A local document the branch lacks is replayed from this machine's cache
+   only. A replay that would need a paid call stops the upload: a skipped completeness pass, a
+   skipped card review, or a document it could not replay. A paid replay is a deliberate
+   `state pull`.
+2. **Preflight** — no model call, nothing written:
+   - the channel is active and the file is readable;
+   - **identity:** the same file or text already held means nothing to import; an uncertain match
+     means decide with `--same-as` / `--duplicate-of` / `--as-new`;
+   - **author:** the document names its author(s), `--author` states them, or it is a new version
+     of an article whose authors are held. QA requires them, so they are asked for before paying;
+   - **licence:** `--llm-permitted` is stated, or the channel's policy permits;
+   - **cost:** the estimate's HIGH end must fit the required `--budget`.
+3. **Import.** `--budget` is both the run's limit and the document's.
+4. **QA** of every run the push carries. An integrity failure stops the push.
+5. **The paid-call ledger reconciles.** Earlier calls are unchanged, and the new ones are the
+   import's: priced, summing to the run's cost, within budget.
+6. **Push**, fast-forward only. A pull alone pushes nothing: it would commit only re-minted
+   migration stamps.
+
+`--dry-run` stops after the preflight. The underlying commands remain:
 
 ```bash
 python -m vinci.theme_intelligence state pull --remote git@github.com:techmuns/mosaic-theory.git
