@@ -91,6 +91,30 @@ git add frontend/theme-intelligence &amp;&amp; git commit -m "theme intelligence
     </div>` });
 }
 
+// a page the published desk does not hold. A thesis a publication dropped is named — publish.py
+// keeps every one in index.json's "retired" (title, day, last run), so a saved link to a retired
+// thesis says what became of it (the one-registry merge, 2026-10-21, dropped 14)
+async function notInDesk(frame, item, t, why) {
+  let gone = null;
+  if (t.thesis) {
+    try {
+      const r = await fetch(BASE + "index.json", { cache: "no-cache" });
+      if (r.ok) gone = ((await r.json()).retired || {})[t.thesis] || null;
+    } catch (e) {
+      gone = null;
+    }
+  }
+  const body = gone
+    ? `<b>This thesis was retired from the research desk on ${escapeHtml(gone.retired_on)}.</b>
+       ${escapeHtml(gone.title || t.thesis)} <span class="muted">(${escapeHtml(t.thesis)} — its
+       last published page is in the repository's history, from the publication of run
+       ${escapeHtml(gone.last_run)})</span>`
+    : `<b>This page is not in the published research desk.</b> <span class="muted">(${
+       escapeHtml(why)} — it may belong to an earlier publication)</span>`;
+  return frame(item, { bodyHtml: `<div class="notice">${body}<br>
+    <a href="#/intel">Open This week</a></div>` });
+}
+
 export async function render(root, params, { item, frame }) {
   const t = target(params);
   let html;
@@ -99,7 +123,9 @@ export async function render(root, params, { item, frame }) {
     if (!r.ok) throw new Error(`${t.file}: HTTP ${r.status}`);
     html = await r.text();
   } catch (e) {
-    root.innerHTML = notPublished(frame, item, e.message);
+    // only the desk's home missing means nothing is published; any other page is just not in it
+    root.innerHTML = t.file === SCREENS[""]
+      ? notPublished(frame, item, e.message) : await notInDesk(frame, item, t, e.message);
     return;
   }
   const doc = new DOMParser().parseFromString(html, "text/html");
@@ -109,9 +135,7 @@ export async function render(root, params, { item, frame }) {
     // (lib/snapshots.js): the page is not in the published desk
     root.innerHTML = t.file === SCREENS[""]
       ? notPublished(frame, item, `${t.file} is not in the published folder`)
-      : frame(item, { bodyHtml: `<div class="notice"><b>This page is not in the published research
-          desk.</b> <span class="muted">(${escapeHtml(t.file)} — it may belong to an earlier
-          publication)</span><br><a href="#/intel">Open This week</a></div>` });
+      : await notInDesk(frame, item, t, t.file);
     return;
   }
   const banner = doc.querySelector(".testdata");

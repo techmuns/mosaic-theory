@@ -233,9 +233,13 @@ def cmd_report(a: argparse.Namespace) -> int:
 def cmd_publish(a: argparse.Namespace) -> int:
     """Publish one run's research desk into the main app (`frontend/theme-intelligence/`) — see
     publish.py. Commit the folder as an artifact-only commit; Cloudflare Pages deploys it."""
-    from vinci.theme_intelligence.publish import PublishError, publish
+    from vinci.theme_intelligence.publish import PublishError, publication_lag, publish
 
     st = Store(Paths(Path(a.data_dir)).db)
+    if a.check:  # nothing written: is the app's desk behind the registry? (exit 2 when it is)
+        lag = publication_lag(st, Path(a.out))
+        print(lag or f"the app's research desk shows the registry's latest run ({a.out})")
+        return 2 if lag else 0
     runs = st.runs()
     if not runs:
         raise SystemExit("no runs recorded yet")
@@ -777,6 +781,9 @@ def main(argv: list[str] | None = None) -> int:
     pb.add_argument("--out", default="frontend/theme-intelligence")
     pb.add_argument("--allow-test-data", action="store_true",
                     help="publish a registry holding test-domain articles (a local preview only)")
+    pb.add_argument("--check", action="store_true",
+                    help="write nothing: say whether the published desk is behind the registry's "
+                         "latest run (exit 2 when it is)")
     pb.set_defaults(fn=cmd_publish)
 
     ra = sub.add_parser("reassess", help="re-grade stored theses under the current rules — "
