@@ -154,6 +154,57 @@ def _current_multiple(d: dict[str, Any], metric: str) -> dict[str, Any] | None:
     return None
 
 
+def _r1_current(d: dict[str, Any], ex_lease: bool) -> dict[str, Any] | None:
+    """R1'S CURRENT MULTIPLE, on the basis R1 prices (2026-10-21) — it was left empty, so a reader
+    asked for "today's" R1 multiple reached for CIQ's headline, a different pairing on a
+    lease-material name (TJX: 13.3x lease-inclusive against R1's 17.8x ex-lease at the page's
+    price). Ex-lease: the history's latest quarterly close, and the same basis at the page's price
+    (`valuation.ev_ebitda_ex_lease_at_price`). CIQ's own history: its TEV/LTM multiple, scaled to
+    the page's price the way R4's is (point-in-time shares + CIQ claims over the snapshot TEV)."""
+    v = _get(d, "mechanical", "valuation") or {}
+    si = _get(d, "mechanical", "stock_info") or {}
+    price, shares = _num(_get(si, "price", "value")), _num(_get(si, "shares_out", "value"))
+    if ex_lease:
+        band = _get(v, "lease_basis", "ex_lease_band") or {}
+        cur = _num(band.get("current"))
+        if cur is None:
+            return None
+        out: dict[str, Any] = {
+            "metric": band.get("metric") or "EV/EBITDA ex-lease", "period": "LTM", "value": cur,
+            "as_of": band.get("as_of"),
+            "source": ("mechanical.valuation.lease_basis.ex_lease_band.current — the history's "
+                       "latest quarterly close")}
+        at = v.get("ev_ebitda_ex_lease_at_price") or {}
+        if _num(at.get("value")) is not None:
+            out.update(page_price=at.get("price"), page_price_as_of=at.get("price_as_of"),
+                       value_at_page_price=round(float(at["value"]), 6),
+                       value_at_page_price_basis=(
+                           "(page price × point-in-time shares + net debt excluding operating "
+                           "leases) ÷ the history's latest LTM EBITDA — "
+                           "mechanical.valuation.ev_ebitda_ex_lease_at_price"))
+        return out
+    ev = v.get("ev_ebitda") or {}
+    val = _num(ev.get("value")) if ev.get("status") == "present" else None
+    if val is None:
+        return None
+    tev = _num(_get(v, "implied_expectations", "tev", "value"))
+    mc = _num(_get(si, "market_cap", "value"))
+    reading = _get(v, "ev_ebitda_basis", "reading")
+    out = {"metric": "EV/EBITDA (TEV/LTM)", "period": "LTM", "value": val,
+           "as_of": _get(v, "implied_expectations", "tev_as_of"),
+           "source": ("mechanical.valuation.ev_ebitda (CIQ Financials→Multiples)"
+                      + (f"; its pairing, measured: {reading}" if reading else "")),
+           "snapshot_as_of": si.get("market_cap_as_of"), "snapshot_market_cap": mc,
+           "snapshot_tev": tev, "page_price": price, "page_price_as_of": si.get("as_of")}
+    if tev and mc and price and shares:
+        ev_at = price * shares / 1e6 + (tev - mc)
+        out.update(value_at_page_price=round(val * ev_at / tev, 6),
+                   value_at_page_price_basis=(
+                       "(page price × point-in-time shares outstanding + CIQ claims) ÷ (snapshot "
+                       "TEV ÷ the multiple)"))
+    return out
+
+
 def _share_count(d: dict[str, Any]) -> dict[str, Any]:
     """The per-share denominator policy: the point-in-time count, held; the EPS count apart."""
     so = _get(d, "mechanical", "stock_info", "shares_out") or {}
@@ -311,7 +362,7 @@ def _r1(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
     out: dict[str, Any] = {
         "earnings_basis": "EBITDA at exit (revenue × operating margin + D&A)",
         "multiple_basis": a.get("multiple_basis"),
-        "current_multiple": None,
+        "current_multiple": _r1_current(d, mult_ex),
         "history_series": (
             "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV "
             "less operating leases / LTM EBITDA)" if mult_ex

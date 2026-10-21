@@ -37,7 +37,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | R4_forward_ev_ebit | R1 screen: applicable |
 | Mid-cycle margin | 5.3% | 10y history · firm |
 | Median multiple, own history | 26.1x | 34 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $276.71 | spot-independent · EV/EBIT 73.8x |
+| Screen value / share | $279.70 | spot-independent · EV/EBIT 73.8x · on 10,786,313,572 shares outstanding |
+| Dilution test / share | $276.27 | + 134,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 12.1% (CIQ EBIT) sits 6.8 points ABOVE the 10-year median of 5.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
@@ -75,6 +76,9 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
 > **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 119,837 of D&A against 38,177 in the actuals (3.14x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
+
+
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM matches the filings ($168,912M against $168,912M), but not every quarter does; the quarter to 2025-09-30: CIQ $36,718M against $34,218M (+$2,500M); the quarter to 2025-12-31: CIQ $41,948M against $44,448M (−$2,500M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -134,6 +138,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **vs peers:** EV/EBITDA 15.5x vs peer median 16.2x (-5%); P/E 20.6x vs peer median 22.1x (-7%) [27]
 - **Forward multiples:** P/FY26E (normalized) 30.6x (EPS $8.31); P/FY26E (GAAP) 19.7x (EPS $12.89); P/FY27E (normalized) 24.3x (EPS $10.47); P/FY27E (GAAP) 24.1x (EPS $10.53) — at $254.06 as-of 2026-10-08 [28]
 - **Multiple basis — read before the level:** rent is 11.5% of EBITDA (FY ending 2025-12-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 24.0% EBITDA margin against 21.8% reported. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 26.1x over 34 quarters (current 17.5x at the 2026-07-31 filing; 12% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [29]
+- **What CIQ's EV/EBITDA divides:** CIQ's 14.9x divides TEV $2,893,071M (comps, 2026-10-06) by $194,166M: reported LTM EBITDA $168,912M + rent $16,700M (FY ending 2025-12-31) = $185,612M (4.6% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($168,912M, 13.0% below the denominator).
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $254.06 close (2026-10-08): ($254.06 × 10,786,313,572 shares outstanding + net debt $23,783M excluding operating leases) ÷ LTM EBITDA $168,912M (four quarters to 2026-06-30) = 16.4x
 - **Comparability:** market caps span $1.4B–$4235.0B (2984x); the name is $2764.4B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [30]
 - **The street, for contrast (target · ratings):** Target price: mean $331.53, median $330.00, high/low 405.00/230.00, N 58/58; Ratings: Buy 42, Outperform 15, Hold 2, Underperform 0, Sell 0, No Opinion 4, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0, Buy 7, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-10-06 · export date unverified] [31]
 
@@ -455,8 +461,8 @@ _14 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [63]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [64]
-  - net debt / EBITDA (CIQ, GAAP basis): 0.8x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 1.3x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 0.8x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 1.3x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -662,6 +668,8 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-20 · anchor, valuation_basis — anchor-backfill at 2026-10-09.3
   - 2026-10-20 · ev_bridge, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-amzn3 → mosaic-theory-ta` · reaching 2026-10-08
 - **Panel age:** oldest panel 3d old — 2026-10-06 (valuation.implied_expectations.tev_as_of), against a 2026-10-09 build
 - **Consensus age:** consensus 3d old (2026-10-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

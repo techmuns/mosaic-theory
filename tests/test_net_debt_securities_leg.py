@@ -175,7 +175,8 @@ def test_amzns_anchor_carries_the_leg_and_its_base_value_moves_by_exactly_it(
 ) -> None:
     """Pinned on `compute_anchor`'s output, not the helper: `anchor.net_debt` is what the page
     prints and the scenario template copies, and the R1 base value is equity ÷ shares — so the
-    leg must raise the base by exactly its own size per diluted share."""
+    leg must raise the base by exactly its own size per share of the count the base divides
+    (`per_share_shares`: the point-in-time count since 2026-10-21)."""
     page = ROOT / "data" / "dossiers" / "AMZN" / "dossier.json"
     mech = json.loads(page.read_text())["mechanical"]
     now = dt.datetime(2026, 10, 8, tzinfo=dt.UTC)
@@ -188,7 +189,7 @@ def test_amzns_anchor_carries_the_leg_and_its_base_value_moves_by_exactly_it(
     without = anc.compute_anchor(mech, facts=_facts("AMZN"), computed_at=now, ciq=None)
     assert without.net_debt is not None and without.net_debt.value is not None
     assert without.net_debt.value - with_leg.net_debt.value == pytest.approx(44_775.0, abs=0.001)
-    shares = with_leg.diluted_shares.value if with_leg.diluted_shares else None
+    shares = anc.per_share_shares(with_leg.model_dump(mode="json"))
     assert shares and with_leg.anchor_base_value_per_share and without.anchor_base_value_per_share
     assert (with_leg.anchor_base_value_per_share - without.anchor_base_value_per_share
             == pytest.approx(44_775e6 / shares, abs=1e-3))

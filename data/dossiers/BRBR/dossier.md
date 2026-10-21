@@ -28,7 +28,7 @@ Analysed and not buying at any price near today's. The operating case is alive �
 - Material reduction in net debt.
 - Margin recovery that survives the fiscal 2027 price increase.
 
-> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.4x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.4x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
 
 BellRing Brands, Inc., together with its subsidiaries, provides various nutrition products in the United States.
 - **Segments:** Protein-Based Consumer Goods — single segment [1]
@@ -81,7 +81,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 16.0% | 8y history · firm |
 | Median multiple, own history | 19.8x | 27 closes · firm · EV/EBITDA |
-| Screen value / share | $57.61 | spot-independent · EV/EBIT 20.7x |
+| Screen value / share | $57.77 | spot-independent · EV/EBIT 20.7x · on 116,278,194 shares outstanding |
+| Dilution test / share | $57.67 | + 200,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
 ## The case
@@ -113,6 +114,9 @@ _Bear case — the decline is real:_
 _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
+
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $401M against $332M rebuilt from the filings (+$69M); the quarter to 2025-09-30: CIQ $176M against $107M (+$69M) — its release states a matching amount: “SG&A expenses in the twelve months ended September 30, 2025 included a $69.0 million provision for legal matters related to a settlement in principle regarding previously disclosed litigation (which was treated as an adjustment for non-GAAP measures), higher marketing and consumer a” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+
 
 **Capital allocation — created or destroyed**
 
@@ -456,8 +460,8 @@ _CIQ states every guide as a LEVEL in the metric's own units. Where management g
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [59]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [60]
-  - net debt / EBITDA (CIQ, GAAP basis): 3.4x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 3.5x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 3.4x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 3.5x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: no structured source for this decision vintage
 
@@ -470,7 +474,7 @@ _7 to verify._
 - Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: "Narrowed fiscal year 2026 net sales outlook of $2.41-$2.46 billion and Adjusted EBITDA* outlook of $425-$440 million" (8-K 0001628280-26-004789 EX-99.1)
 - Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: "Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between $2.41-$2.49 billion" (8-K 0001628280-25-052773 EX-99.1)
 - Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: "Adjusted EBITDA as a percentage of net sales of 18% to 20%" (8-K 0001628280-25-052773 EX-99.1)
-- Net debt/EBITDA (3.4x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.4x as the covenant-basis leverage.
+- Net debt/EBITDA (3.4x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.4x as the covenant-basis leverage.
 - synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 4, 'strongly-bearish': 1}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)
 
 # Appendix — data & audit
@@ -646,6 +650,8 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 7d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
 - **Consensus age:** consensus 33d old (2026-08-26, valuation.implied_expectations.multiples_as_of) — within the ceiling

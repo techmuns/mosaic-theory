@@ -38,6 +38,7 @@ from vinci.dossier.anchor import (
     NET_DEBT_EX_LEASE,
     anchor_prices_ex_lease,
     ciq_ebitda_band,
+    per_share_shares,
     r1_multiple_band,
 )
 
@@ -252,7 +253,7 @@ def check_bear(a: NameAudit, record: dict[str, Any] | None, b: dict[str, Any] | 
 def check_leverage(a: NameAudit, dossier: dict[str, Any], spot: float | None) -> None:
     anc = dossier.get("anchor") or {}
     nd = (anc.get("net_debt") or {}).get("value")
-    sh = (anc.get("diluted_shares") or {}).get("value")
+    sh = per_share_shares(anc)  # the count the base was divided by, never re-chosen
     vps = anc.get("anchor_base_value_per_share")
     if not anc.get("applicable"):
         a.rows["leverage"] = "anchor not applicable — no base value published (guard behaviour)"

@@ -34,6 +34,7 @@ from vinci.dossier.anchor import (
     NET_DEBT_EX_LEASE,
     _lease_inclusive_net_debt,
     compute_anchor,
+    per_share_shares,
     r1_multiple_band,
     replace_valuation_fields,
 )
@@ -313,10 +314,12 @@ def test_a_lease_material_anchor_prices_the_ex_lease_median_against_ex_lease_net
     assert a.net_debt.value == pytest.approx(ex[0] / 1e6, abs=1e-3)
     assert a.margin is not None and a.d_and_a is not None and a.ltm_revenue is not None
     assert a.margin.value is not None and a.d_and_a.value is not None
-    assert a.ltm_revenue.value is not None and a.diluted_shares and a.diluted_shares.value
+    # the count the base divides (`per_share_shares`: point-in-time since 2026-10-21)
+    shares = per_share_shares(a.model_dump(mode="json"))
+    assert a.ltm_revenue.value is not None and shares
     ev = (a.ltm_revenue.value * a.margin.value + a.d_and_a.value) * a.multiple.value
     assert a.anchor_base_value_per_share == pytest.approx(
-        (ev - a.net_debt.value) * 1e6 / a.diluted_shares.value, rel=1e-4)
+        (ev - a.net_debt.value) * 1e6 / shares, rel=1e-4)
 
 
 def test_without_a_lease_basis_the_anchor_is_unchanged() -> None:

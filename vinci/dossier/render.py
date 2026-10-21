@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci.config import get_config
-from vinci.dossier.anchor import DQ_LEASE_BASIS, Anchor
+from vinci.dossier.anchor import DQ_LEASE_BASIS, SHARES_REFUSED, Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.extraction_version import (
     refresh_line,
@@ -254,6 +254,27 @@ def _multiple_basis_md(m: MechanicalLayer, anchor: Anchor | None = None) -> str:
             f"denominator is NOT the reported EBITDA{tail}. The level and percentile above are "
             f"internally consistent on the series' own basis; they are not comparable to a "
             f"multiple struck on reported EBITDA.")
+
+
+#: The pairings whose headline needs its basis stated beside it: CIQ's lease-inclusive pairing (a
+#: reader divides its TEV by reported EBITDA and calls 13.3x wrong) and the one that reproduces
+#: neither. A multiple of reported EBITDA, or one where rent is too small to matter, reads as it is.
+_BASIS_WORTH_STATING = frozenset({"ebitda_plus_rent", "not_reproduced"})
+
+
+def _valuation_bases_md(m: MechanicalLayer) -> list[str]:
+    """(2026-10-21) Two main-body lines, each the block's own sentence printed verbatim — what CIQ's
+    headline EV/EBITDA divides, and R1's ex-lease basis at the page's price. Twin:
+    valuationBasesHtml() in dossier.js."""
+    v = m.valuation
+    out: list[str] = []
+    eb = v.ev_ebitda_basis
+    if eb is not None and eb.reading in _BASIS_WORTH_STATING:
+        out.append(f"- **What CIQ's EV/EBITDA divides:** {eb.line}")
+    at = v.ev_ebitda_ex_lease_at_price
+    if at is not None:
+        out.append(f"- **R1's basis (ex-lease EV/EBITDA) at the page's price:** {at.line}")
+    return out
 
 
 def _lease_basis_md(lb: LeaseBasis, ciq: OwnHistoryBand | None, reported: float | None,
@@ -2771,6 +2792,11 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     # and on 7 of 11 committed names those two are not the same basis. A reader who meets the row
     # without the label reads a definitional step as growth — which is the decision, not provenance.
     out += _ebitda_basis_lines(fs)
+    # (2026-10-21) and the actual column itself is CIQ's, not the filing's, where they differ —
+    # every EV/EBITDA on the page divides it. Twin: ebitdaReconNote() in dossier.js.
+    rec = fs.ebitda_reconciliation
+    if rec is not None and rec.any_different:
+        out += ["", f"> **CIQ's EBITDA against the filings.** {rec.line}", ""]
     return out
 
 
@@ -3425,8 +3451,22 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     base = anchor.anchor_base_value_per_share
     if base is not None:
         ev = anchor.anchor_ev_ebit
+        so = anchor.shares_outstanding
+        on = (f" · on {so.value:,.0f} shares outstanding" if so is not None and so.value
+              else " · on the diluted weighted average")
         rows.append(f"| Screen value / share | ${base:,.2f} | spot-independent · "
-                    f"EV/EBIT {'—' if ev is None else f'{ev:.1f}'}x |")
+                    f"EV/EBIT {'—' if ev is None else f'{ev:.1f}'}x{on} |")
+        # a REFUSED point-in-time count is stated, never left to look like an oversight (LLY's
+        # trust shares, 2026-10-21). Twin: anchorInner() in dossier.js.
+        if so is not None and so.value is None and so.source.startswith(SHARES_REFUSED):
+            rows.append(f"| Point-in-time count | refused | "
+                        f"{_md_cell(so.source[len(SHARES_REFUSED):])} |")
+        # (2026-10-21) dilution TESTED beside it, never folded in: the filer's own increment.
+        # Twin: anchorInner() in dossier.js.
+        dil, inc = anchor.anchor_base_value_per_share_diluted, anchor.dilutive_increment
+        if dil is not None and inc is not None and inc.value is not None:
+            rows.append(f"| Dilution test / share | ${dil:,.2f} | + {inc.value:,.0f} dilutive "
+                        f"shares (diluted less basic weighted average, latest 10-Q) |")
     rows.append(f"| Overall confidence | {anchor.overall_confidence or '—'} |  |")
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
            f"_{_SCREEN_SUBTITLE}_", "",
@@ -3596,7 +3636,8 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
         # BLANK LINE in the rendered page, which makes the committed .md stale against its own
         # JSON on names that gained nothing. Caught by the three e2e mirror pins, not by a unit.
         out += [line for line in (_forward_multiples_md(m.valuation.forward_multiples),
-                                  _multiple_basis_md(m, d.anchor)) if line]
+                                  _multiple_basis_md(m, d.anchor),
+                                  *_valuation_bases_md(m)) if line]
     if m.peer_comps is not None:
         out.append(_fact("Comparability", m.peer_comps.comparability))
     if m.catalyst_path is not None:

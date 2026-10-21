@@ -26,7 +26,7 @@ WATCH at $0.92. The underwrite fails our 2:1 bar: the base case is worth roughly
 - two consecutive quarters of positive revenue growth AND positive operating cash flow - the rollover was a squeeze, not a break; re-underwrite the central and optimistic cases
 - going-concern language removed in a periodic filing - re-underwrite in full
 
-> ⚠ **Verify before the verdict:** wall coherence: divergence with an instrument maturing within ±7d of the +12m boundary (Short-term Loan Agreements an…; Net debt/EBITDA (1.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** wall coherence: divergence with an instrument maturing within ±7d of the +12m boundary (Short-term Loan Agreements an…; Net debt/EBITDA (1.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
 
 Microvast Holdings, Inc. engages in the design, development, and manufacturing of battery components and systems primarily for electric commercial vehicles and energy storage systems.
 - **Segments:** Batteries / Battery Systems — single segment [1]
@@ -164,6 +164,7 @@ _table shows the last 4 fiscal years · 4 earlier years are in the Appendix_
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 9.4x as-of 2026-08-12 — trailing range 10.0–66.9x (median 19.3x) over 6 closes → LOW-CONFIDENCE (6 closes < 8q ≈2y) — floor read unreliable; P/LTM EPS NM (no meaningful trailing P/E at this close) [22]
 - **vs peers:** EV/EBITDA 9.4x vs peer median 12.6x (-25%); P/E NM vs peer median 33.85 [23]
 - **Multiple basis — read before the level:** rent is 5.4% of EBITDA (FY ending 2025-12-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis; its latest close implies a 12.2% EBITDA margin against 11.1% reported. The ex-lease history could not be built (only 6 ex-lease quarter(s) of history (≥8 needed)), so R1 does not price this name on either series. [24]
+- **What CIQ's EV/EBITDA divides:** CIQ's 9.4x divides TEV $419M (comps, 2026-08-12) by $45M: reported LTM EBITDA $41M + rent $4M (FY ending 2025-12-31) = $45M (0.4% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($41M, 8.5% below the denominator).
 - **Comparability:** market caps span $32M–$274.1B (8591x); the name is $354M → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [25]
 - **The street, for contrast (target · ratings):** Target price: mean $5.50, median $5.50, high/low 6.00/5.00, N 2/2; Ratings: Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0, No Opinion 0  [data ≥ 2026-05-15 · export date unverified] [26]
 
@@ -462,8 +463,8 @@ _2 undated / later aggregate line item(s) in the appendix panel_
 - **⚠ Going concern — SUBSTANTIAL DOUBT:** These conditions and events raise substantial doubt about the Company's ability to continue as a going concern within one year after the date that these consolidated financial statements are issued. [3]
   - management's plans: — none stated
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [58]
-  - net debt / EBITDA (CIQ, GAAP basis): 1.6x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 4.3x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 1.6x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 4.3x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: no structured source for this decision vintage
   - margin: GAAP 28.6% · impairment-excluded 36.2% (CIQ; cross-check 28.6 + 32.5/427.5 = 36.2%)
@@ -479,7 +480,7 @@ _8 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries a committed dossier. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: last evaluated 2026-08-14-01: FAIL (g1_drawdown FAIL).
 - wall coherence: divergence with an instrument maturing within ±7d of the +12m boundary (Short-term Loan Agreements and Bank Facilities With Chinese Banks) — possible window-convention artifact, not a true divergence
-- Net debt/EBITDA (1.6x) is on REPORTED EBITDA (CIQ / consolidated GAAP), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage.
+- Net debt/EBITDA (1.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage.
 - Estimates data up to 101d stale (beyond the 45d tolerance) — freshness UNVERIFIABLE: the CIQ Estimates export has no as-of stamp, and its data is on/after 2026-05-15 (its latest embedded revision event — a worst-case floor on the true export date). Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).
 - Panel-freshness caveat — 1 CIQ valuation panel(s) predate the latest earnings print (2026-08-11, EDGAR 8-K item 2.02), the oldest by 88d: valuation multiples as-of 2026-05-15. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it.
 - former registrant name: this CIK filed as "Tuscan Holdings Corp." (2018-12-07 → 2021-07-21) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0001760689)
@@ -731,6 +732,8 @@ _Source §: latest 10-K 0001628280-26-018264 · mvst20251231-ex1013.htm_
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 36d old — 2026-08-12 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus is 125d old (2026-05-15, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.

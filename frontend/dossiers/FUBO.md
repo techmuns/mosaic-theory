@@ -396,8 +396,8 @@ _3 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [54]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [55]
-  - net debt / EBITDA (CIQ, GAAP basis): UNKNOWN
-  - total debt / EBITDA (CIQ comps, GAAP basis): UNKNOWN
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): UNKNOWN
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): UNKNOWN
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -537,6 +537,8 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.2
   - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
   - 2026-10-10 · anchor, date_semantics, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, mechanical.primary_source — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 7d old — 2026-08-11 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 7d old (2026-08-11, valuation.implied_expectations.multiples_as_of) — within the ceiling

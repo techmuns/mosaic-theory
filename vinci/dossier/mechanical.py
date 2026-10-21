@@ -16,7 +16,7 @@ import statistics
 import time
 import unicodedata
 import xml.etree.ElementTree as ET
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from datetime import date, timedelta
 from typing import Any, NamedTuple, TypeVar
 
@@ -1549,8 +1549,14 @@ def _leverage_basis_flag(net_lev: Sourced[float]) -> str | None:
         return None
     if net_lev.value < 1.5:
         return None
+    # WHICH EBITDA, named from the ratio's own source (2026-10-21): CIQ's is vendor-normalised —
+    # it leaves out items CIQ treats as unusual, so it is not the reported GAAP figure — and only
+    # the EDGAR fallback is GAAP. The old wording called both "CIQ / consolidated GAAP".
+    # no em dash inside the parenthesis: the brief's short form cuts a caveat at its first " — "
+    on = ("CIQ's EBITDA (vendor-normalised, not the reported GAAP figure)"
+          if (net_lev.source_ref or "").startswith("CIQ") else "EDGAR's reported GAAP EBITDA")
     return (
-        f"Net debt/EBITDA ({net_lev.value:.1f}x) is on REPORTED EBITDA (CIQ / consolidated GAAP), "
+        f"Net debt/EBITDA ({net_lev.value:.1f}x) is on {on}, "
         f"not the covenant basis; management and credit covenants typically define leverage on "
         f"adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings "
         f"release/transcript (currently UNAVAILABLE) — do not read {net_lev.value:.1f}x as the "
@@ -3926,6 +3932,47 @@ def _implied_expectations(
 _PS_TTL = 24 * 3600  # primary-source fetch cache TTL (seconds)
 
 
+def release_text_fn(http: CachedHttp, cik: str | None,
+                    ) -> Callable[[ReleaseExtract], str | None]:
+    """A release → its EX-99.1 text, read through the cache the primary-source layer filled (the
+    same exhibit-locator and normaliser), or None when it cannot be fetched — never an exception
+    into a deterministic block."""
+    def text_for(r: ReleaseExtract) -> str | None:
+        acc = _acc_of(r.source_ref)
+        if not acc or not cik:
+            return None
+        try:
+            urls = release_parse.exhibit_991_urls(http, cik, acc)
+            parts = [normalize_text(html_to_text(http.get_text(u, ttl_seconds=_PS_TTL)))
+                     for u in urls]
+        except HttpError:
+            return None
+        return " ".join(parts) or None
+    return text_for
+
+
+def with_valuation_bases(mech: MechanicalLayer, facts: dict[str, Any] | None,
+                         bundle: CiqBundle | None,
+                         text_for: Callable[[ReleaseExtract], str | None],
+                         ) -> MechanicalLayer:
+    """`mech` with the three basis blocks of 2026-10-21 attached — the ONE builder the assembler
+    and `valuation_bases_transform` share, so a refreshed page and an assembled one cannot state
+    different bases. Each block is absent (never null) where its inputs are."""
+    from vinci.dossier import ebitda_recon, ev_ebitda_basis
+
+    val = mech.valuation.model_copy(update={
+        "ev_ebitda_basis": ev_ebitda_basis.headline_basis(mech),
+        "ev_ebitda_ex_lease_at_price": ev_ebitda_basis.ex_lease_at_price(mech, facts)})
+    out = mech.model_copy(update={"valuation": val})
+    fs = mech.financial_summary
+    if fs is not None and bundle is not None:
+        releases = mech.primary_source.releases if mech.primary_source is not None else []
+        rec = ebitda_recon.reconcile(bundle, facts, releases, text_for)
+        out = out.model_copy(update={
+            "financial_summary": fs.model_copy(update={"ebitda_reconciliation": rec})})
+    return out
+
+
 def _ltm_adj_ebitda(releases: list[ReleaseExtract]) -> float | None:
     """LTM adjusted EBITDA = FY + latest-Q − prior-year-Q, from the release recon values (the parser
     captures the prior-year comparison distinctly, period-labeled). None unless all three periods
@@ -4659,6 +4706,13 @@ def assemble_mechanical(
     if adj_eps.status is not SourceStatus.PRESENT:
         mech = mech.model_copy(update={"valuation": mech.valuation.model_copy(update={
             "adjusted_eps": _release_adjusted_eps(primary.releases, record, adj_eps)})})
+    # (2026-10-21) what CIQ's headline multiple divides, R1's ex-lease multiple at the page's
+    # price, and CIQ's EBITDA against the filings — deterministic, from the page's own fields, the
+    # EDGAR facts and the releases parsed above, and BEFORE the synthesis reads `mech`, so the
+    # prose argues from the stated bases rather than a bare 13.3x
+    mech = with_valuation_bases(
+        mech, _companyfacts_or_none(edgar, record.identity.cik), bundle,
+        text_for=release_text_fn(http, record.identity.cik))
     # (catalyst calendar) dated events + what each tests — needs drawdown_cause (the guide) and
     # capital_structure (maturities), both on mech by now; its misses ride the QA channel.
     calendar = _catalyst_calendar(edgar, record.identity.cik, reference_date, mech)

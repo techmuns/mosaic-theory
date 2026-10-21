@@ -36,7 +36,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 29.8% | 10y history · weak |
 | Median multiple, own history | 26.1x | 38 closes · firm · EV/EBITDA |
-| Screen value / share | $699.65 | spot-independent · EV/EBIT 28.3x |
+| Screen value / share | $699.65 | spot-independent · EV/EBIT 28.3x · on the diluted weighted average |
+| Point-in-time count | refused | the point-in-time count 941,357,065 sits 5.5% above the filer's basic weighted average 892,400,000 (2026-04-01..2026-06-30) — issuance or shares the filer does not count as outstanding for EPS (an employee benefit trust, unvested restricted stock), which the counts cannot tell apart. mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding) |
 | Overall confidence | weak |  |
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 49.7% (CIQ EBIT) sits 19.9 points ABOVE the 10-year median of 29.8% (CIQ EBIT) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. Both legs are CIQ EBIT — EDGAR carries no operating-income tag for this filer, so R1's median already came from the committed panel — and there is no source difference to discount.
@@ -434,8 +435,8 @@ _49 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [56]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [57]
-  - net debt / EBITDA (CIQ, GAAP basis): 1.1x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 1.3x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 1.1x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 1.3x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -618,6 +619,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, qa_flags, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-18 · mechanical.idiosyncratic_vs_shared, mechanical.stock_performance — refresh at 2026-10-09.3
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-burl → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 9d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-30 build
 - **Consensus age:** consensus 13d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling

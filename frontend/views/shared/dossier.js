@@ -1321,7 +1321,21 @@ function anchorInner(a) {
                String(mu.source || "").startsWith("valuation.lease_basis")
                  ? " ex-lease (TEV less operating leases; net debt likewise)" : ""}`) : "",
     base != null ? row("Screen value / share", `$${base.toFixed(2)}`,
-                       `spot-independent · EV/EBIT ${a.anchor_ev_ebit != null ? a.anchor_ev_ebit.toFixed(1) : "—"}x`) : "",
+                       `spot-independent · EV/EBIT ${a.anchor_ev_ebit != null ? a.anchor_ev_ebit.toFixed(1) : "—"}x${
+                         a.shares_outstanding && a.shares_outstanding.value
+                           ? ` · on ${Math.round(a.shares_outstanding.value).toLocaleString("en-US")} shares outstanding`
+                           : " · on the diluted weighted average"}`) : "",
+    // a REFUSED point-in-time count is stated (LLY's trust shares, 2026-10-21). Twin of
+    // _screening_context_lines() in render.py.
+    base != null && a.shares_outstanding && a.shares_outstanding.value == null
+      && String(a.shares_outstanding.source || "").startsWith("REFUSED — ")
+      ? row("Point-in-time count", "refused",
+            escapeHtml(String(a.shares_outstanding.source).slice("REFUSED — ".length)), { prose: true }) : "",
+    // (2026-10-21) dilution TESTED beside it, never folded in: the filer's own increment.
+    // Twin of _screening_context_lines() in render.py.
+    a.anchor_base_value_per_share_diluted != null && a.dilutive_increment && a.dilutive_increment.value != null
+      ? row("Dilution test / share", `$${a.anchor_base_value_per_share_diluted.toFixed(2)}`,
+            `+ ${Math.round(a.dilutive_increment.value).toLocaleString("en-US")} dilutive shares (diluted less basic weighted average, latest 10-Q)`) : "",
     row("Overall confidence", conf(a.overall_confidence), ""),
   ].join("");
   const dq = a.data_quality
@@ -1945,6 +1959,27 @@ function ebitdaBasisNote(m) {
     + `${escapeHtml(String(b.note))}</div>`;
 }
 
+// (2026-10-21) CIQ's actual EBITDA column against the filings', where any quarter differs — every
+// EV/EBITDA on the page divides it. The block's own sentence, verbatim. Twin: render._brief_financials.
+function ebitdaReconNote(m) {
+  const r = (m.financial_summary || {}).ebitda_reconciliation;
+  if (!r || r.any_different !== true || !r.line) return "";
+  return `<div class="fact-caveat">⚠ <b>CIQ's EBITDA against the filings</b> — ${escapeHtml(String(r.line))}</div>`;
+}
+
+// (2026-10-21) what CIQ's headline EV/EBITDA divides, and R1's ex-lease basis at the page's price —
+// each the block's own sentence. Twin: render._valuation_bases_md (same pairings stated).
+const _BASIS_WORTH_STATING = new Set(["ebitda_plus_rent", "not_reproduced"]);
+function valuationBasesHtml(m) {
+  const v = m.valuation || {};
+  const eb = v.ev_ebitda_basis, at = v.ev_ebitda_ex_lease_at_price;
+  const a = eb && _BASIS_WORTH_STATING.has(eb.reading)
+    ? `<div class="fact-caveat">⚠ <b>What CIQ's EV/EBITDA divides</b> — ${escapeHtml(String(eb.line))}</div>` : "";
+  const b = at && at.line
+    ? `<div class="fact-caveat"><b>R1's basis (ex-lease EV/EBITDA) at the page's price</b> — ${escapeHtml(String(at.line))}</div>` : "";
+  return a + b;
+}
+
 function financialSnapshot(m) {
   const fsa = (m.financial_summary || {}).annual;
   if (!fsa || fsa.status !== "present" || !fsa.value) return "";
@@ -1981,7 +2016,7 @@ function financialSnapshot(m) {
   return `<div class="card ds-section"><div class="ds-title">Financial snapshot<span class="ds-route">full statements in Appendix</span></div>
     ${revEbitdaExhibit(fsa)}
     <table class="data">${`<thead>${head}</thead><tbody>${body}</tbody>`}</table>
-    ${fcfNote}${ebitdaBasisNote(m)}
+    ${fcfNote}${ebitdaBasisNote(m)}${ebitdaReconNote(m)}
     ${citeMark(fsa.source_ref)}${more}${capitalAllocation(m)}${ratios}</div>`;
 }
 
@@ -2087,7 +2122,7 @@ function valuationCard(m) {
   const cons = (cs && cs.status === "present")
     ? fact("The street, for contrast (target · ratings)", cs) : "";
   if (!cross && !comp && !rng && !cons) return "";
-  return `<div class="card ds-section"><div class="ds-title">Valuation — first cut<span class="ds-route">full multiples, implied levels &amp; the forward ladder in Analysis</span></div>${rng}${ownHistoryExhibit(m)}${cross}${comp}${cons}</div>`;
+  return `<div class="card ds-section"><div class="ds-title">Valuation — first cut<span class="ds-route">full multiples, implied levels &amp; the forward ladder in Analysis</span></div>${rng}${ownHistoryExhibit(m)}${cross}${valuationBasesHtml(m)}${comp}${cons}</div>`;
 }
 
 // --- (declutter P3) display transforms — JS twins of render.py's _fmt_* helpers. Display-ONLY:

@@ -26,6 +26,7 @@ from vinci.dossier.anchor import (
     RECIPE_R1_NOT_ROBUST,
     RECIPE_R2,
     RECIPE_UNRESOLVED,
+    per_share_shares,
     r1_multiple_band,
 )
 from vinci.dossier.band_guards import BAND_INCOHERENT, BAND_UNRECONCILED
@@ -94,7 +95,7 @@ def _leverage(anchor: dict[str, Any]) -> tuple[float | None, str]:
     missing — never a leverage read off half a balance sheet."""
     nd = (anchor.get("net_debt") or {}).get("value")
     base = anchor.get("anchor_base_value_per_share")
-    shares = (anchor.get("diluted_shares") or {}).get("value")
+    shares = per_share_shares(anchor)  # the count the base was divided by, never re-chosen
     if nd is None or base is None or not shares:
         return None, "leverage not assessable (net debt or anchor equity absent)"
     equity = base * shares / 1e6                      # $/sh × count -> $, to $M

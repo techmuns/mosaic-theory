@@ -520,6 +520,20 @@
         "pre_adoption_dates": 0,
         "observations": [],
         "source_ref": "CIQ Financials (Quarterly)→Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)→Income Statement 'Net Rental Exp.' / 'EBITDA'"
+      },
+      "ev_ebitda_basis": {
+        "multiple": 23.6,
+        "tev": 4196939.4,
+        "tev_as_of": "2026-09-21",
+        "implied_denominator": 177836.415,
+        "reported_ltm_ebitda": 173164.0,
+        "rent": 5084.0,
+        "rent_fiscal_year": "2025-12-31",
+        "ratio_to_reported": 1.026983,
+        "ratio_to_reported_plus_rent": 0.997691,
+        "reading": "indistinguishable",
+        "tolerance": 0.05,
+        "line": "CIQ's 23.6x divides TEV $4,196,939M (comps, 2026-09-21) by $177,836M, which reproduces reported LTM EBITDA ($173,164M) and EBITDA plus rent alike — rent is 2.9% of EBITDA, too small for the pairing to change the reading."
       }
     },
     "quality": {
@@ -5990,6 +6004,64 @@
         "ratio": 5.570450021635656,
         "divergent": true,
         "note": "the estimate columns imply 70,803 of D&A against 12,710 in the actuals (5.57x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row."
+      },
+      "ebitda_reconciliation": {
+        "quarters": [
+          {
+            "period_end": "2025-09-30",
+            "ciq_ebitda": 36839.0,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
+            "different": false,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": "no quarterly D&A tag for this quarter"
+          },
+          {
+            "period_end": "2025-12-31",
+            "ciq_ebitda": 41974.0,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
+            "different": false,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": "no quarterly D&A tag for this quarter"
+          },
+          {
+            "period_end": "2026-03-31",
+            "ciq_ebitda": 46356.0,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
+            "different": false,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": "no quarterly D&A tag for this quarter"
+          },
+          {
+            "period_end": "2026-06-30",
+            "ciq_ebitda": 48241.0,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
+            "different": false,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": "no quarterly D&A tag for this quarter"
+          }
+        ],
+        "ciq_ltm": 173410.0,
+        "filing_ltm": null,
+        "ltm_gap": null,
+        "any_different": false,
+        "line": "CIQ's quarterly EBITDA could not be set against the filings — no quarterly D&A tag for this quarter.",
+        "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       }
     },
     "primary_source": {
@@ -6061,7 +6133,7 @@
         "note": null
       },
       "basis_triangulation": {
-        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ, GAAP basis): -0.7x\n  total debt / EBITDA (CIQ comps, GAAP basis): 0.7x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: no structured source for this decision vintage",
+        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ's EBITDA, vendor-normalised): -0.7x\n  total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 0.7x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: no structured source for this decision vintage",
         "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
         "status": "present",
         "note": null
@@ -14723,13 +14795,32 @@
       "layers": [
         "mechanical.valuation"
       ]
+    },
+    {
+      "date": "2026-10-21",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor",
+        "mechanical.financial_summary",
+        "mechanical.primary_source",
+        "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R3_forward_pe",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-08T11:20:44.579945Z",
+    "computed_at": "2026-10-21T11:18:47.724783Z",
     "reason": "OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
     "data_quality": "vendor_bridge",
     "data_quality_detail": [
@@ -14768,6 +14859,18 @@
       "basis": "diluted weighted-average (latest 10-Q)",
       "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
     },
+    "shares_outstanding": {
+      "value": 12230000000.0,
+      "unit": "shares",
+      "basis": "point-in-time shares outstanding — the per-share denominator (item 24)",
+      "source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding); 0.7% above the filer's basic weighted average 12,151,000,000 (2026-04-01..2026-06-30)"
+    },
+    "dilutive_increment": {
+      "value": 158000000.0,
+      "unit": "shares",
+      "basis": "diluted less basic weighted average over the latest 10-Q quarter — the dilution test",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding 12,309,000,000 − WeightedAverageNumberOfSharesOutstandingBasic 12,151,000,000 (2026-04-01..2026-06-30)"
+    },
     "ltm_revenue": {
       "value": 445866.0,
       "unit": "$M",
@@ -14780,7 +14883,8 @@
       "basis": "latest FY2025 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2025, same period)"
     },
-    "anchor_base_value_per_share": 212.1684,
+    "anchor_base_value_per_share": 213.539,
+    "anchor_base_value_per_share_diluted": 210.8154,
     "midcycle_gap": {
       "ltm_margin": 0.331104,
       "median_margin": 0.262717,
@@ -14807,9 +14911,12 @@
         "d_and_a",
         "net_debt",
         "diluted_shares",
+        "shares_outstanding",
+        "dilutive_increment",
         "ltm_revenue",
         "ltm_fcf",
         "anchor_base_value_per_share",
+        "anchor_base_value_per_share_diluted",
         "midcycle_gap",
         "anchor_ev_ebit"
       ],

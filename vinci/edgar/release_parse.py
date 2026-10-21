@@ -802,10 +802,21 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
 #: it carried no numeric outlook. Its two ranges (the third quarter's and the year's) are the only
 #: adjusted-diluted guides in the 118 releases the pages cite, and both resolve a period through
 #: `_opener_period`, so neither lands on the `next-fy` default.
+#:
+#: GAAP DILUTED EPS (2026-10-21) — the first prefix-free per-share form admitted, and only this one.
+#: TJX guides three FY27 earnings figures that are not interchangeable: GAAP diluted EPS
+#: $5.31–$5.36, adjusted $5.15–$5.20 (ex the tariff-refund benefit) and the Street's normalized
+#: $5.25; the page carried the second alone. It is its OWN metric (`gaap diluted eps`), never folded
+#: into adjusted EPS, and it can never fire inside "adjusted diluted …" or "non-GAAP diluted …"
+#: (the lookbehinds). Why this form and not the rest of row 30's: with `_opener_period` in place
+#: every GAAP diluted range in the 118 cited releases reads a period (EPAM's, TJX's); operating
+#: income and non-GAAP EPS still fall to `next-fy` on bullet headers, so they stay held.
+_GAAP_DILUTED_EPS = (r"(?<!non-)(?<!adjusted\s)(?<!non-gaap\s)(?:gaap\s+)?"
+                     r"diluted\s+(?:earnings\s+per\s+share|eps)")
 _GUIDE_METRICS = (
     r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
     r"adjusted\s+earnings\s+per\s+share|adjusted\s+diluted\s+(?:earnings\s+per\s+share|eps)|"
-    r"free\s+cash\s+flow|gross\s+margin"
+    rf"{_GAAP_DILUTED_EPS}|free\s+cash\s+flow|gross\s+margin"
 )
 
 
@@ -842,7 +853,9 @@ _GUIDE_RANGE = re.compile(
     # adjusted-EBITDA range one clause later, and the same trap is one character away.
     r"(?:(?:(?:is|are|was|were)\s+(?:now\s+)?)?"
     r"(?:expected|anticipated|projected|forecast(?:ed)?)\s+|will\s+be\s+)?"
-    r"(?:to\s+be\s+)?"
+    # "…its full-year diluted earnings per share OUTLOOK to be in the range of $5.31 to $5.36"
+    # (TJX): the noun the guide is stated as, between the metric and `to be` — spelled out, a slot
+    r"(?:outlook\s+)?(?:to\s+be\s+)?"
     # "…expected to range FROM $52 million to $56 million" (Simply Good) is the same range, stated
     # with the other preposition.
     r"(?:outlook\s+of|expected\s+to\s+range\s+(?:between|from)|to\s+range\s+(?:between|from)|"
@@ -917,7 +930,7 @@ _GUIDE_PCT = re.compile(
 _METRIC_ALT = (r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
                r"adjusted\s+earnings\s+per\s+share|"
                r"adjusted\s+diluted\s+(?:earnings\s+per\s+share|eps)|"
-               r"free\s+cash\s+flow|gross\s+margins?")
+               rf"{_GAAP_DILUTED_EPS}|free\s+cash\s+flow|gross\s+margins?")
 _DIRECTION = r"(?P<dir>decline|decrease|contract|improve|increase|expand|grow|rise)"
 _DECLINE = {"decline", "decrease", "contract"}
 # a CHANGE range: "…decline between 300 and 350 basis points" / "…increase 4% to 5%"
@@ -975,7 +988,9 @@ def _guide_metric(raw: str) -> str:
     if "ebitda" in r:
         return "adjusted ebitda"
     if "eps" in r or "per share" in r:
-        return "adjusted eps"
+        # the vocabulary admits a per-share metric only with an `adjusted` prefix or as GAAP
+        # diluted EPS (`_GAAP_DILUTED_EPS`); the two are different bases and never share a name
+        return "adjusted eps" if r.startswith("adjusted") else "gaap diluted eps"
     if "cash flow" in r:
         return "free cash flow"
     if "margin" in r:
@@ -1031,7 +1046,11 @@ _OPENER = re.compile(
 #: which section the range belongs to.
 _OPENER_REACH = 1500
 #: A sentence that continues an outlook run. `_FORWARD` plus "planning", which is how TJX opens one.
-_RUN_FORWARD = re.compile(rf"{_FORWARD.pattern}|\bplan(?:s|ning)\b", re.I)
+#: The PLAN verbs, and only as verbs: "is planning", "plans to", "continues to plan" (TJX's fourth
+#: quarter of Fiscal 2026). Never a bare "plan" — TJX's results sentences say "above the Company's
+#: plan", and a noun read as a verb is what let a results opener label a guide (review, #756).
+_PLAN_VERB = r"\bplans?\s+to\b|\bplanning\b|\bcontinues?\s+to\s+plan\b"
+_RUN_FORWARD = re.compile(rf"{_FORWARD.pattern}|{_PLAN_VERB}", re.I)
 #: Words that name a FULL YEAR without a year number — "its full year outlook for…". A run whose
 #: opener is a quarter but which says this, or the reverse, is two periods, and neither may be
 #: chosen for the guide.
@@ -1057,7 +1076,7 @@ _RUN_QUARTER = re.compile(r"\b(?:first|second|third|fourth)[\s-]+quarter\b|\bQ[1
 #: "increases expected GAAP diluted EPS" (EPAM) and "has updated its previously issued guidance"
 #: (BellRing); a past-tense result ("net sales increased", "exceeded its outlook") does not.
 _OPENER_VERB = re.compile(
-    rf"{_FORWARD_VERB.pattern}|\bplan(?:s|ning)\b|"
+    rf"{_FORWARD_VERB.pattern}|{_PLAN_VERB}|"
     r"\b(?:(?:rais|increas|updat)(?:es|ing)|(?:narrow|lower|reaffirm|maintain)(?:s|ing)|"
     r"(?:has|have)\s+(?:updated|narrowed|raised|increased|lowered|reaffirmed))\s+"
     r"(?:\w+[\s-]+){0,4}?(?:outlook|guidance|expect\w*)\b", re.I)
@@ -1075,7 +1094,12 @@ def _opener_period(text: str, start: int, end: int) -> str | None:
         return None
     if not _OPENER_VERB.search(re.split(r"\.\s", text[opener.start():start], maxsplit=1)[0]):
         return None
-    for sentence in re.split(r"\.\s", text[opener.start():start]):
+    # THROUGH THE GUIDE'S OWN CLAUSE, not to its first character: "The Company is increasing its
+    # full-year diluted earnings per share outlook to be in the range of $5.31 to $5.36" says
+    # `outlook` only AFTER the metric, so a check that stopped at the metric read TJX's GAAP year
+    # as a sentence that broke the run (2026-10-21). The guide's own clause states a range — it is
+    # forward by construction; only the sentences BETWEEN the opener and it can end the run.
+    for sentence in re.split(r"\.\s", text[opener.start():end]):
         if sentence.strip(" •●○◦■▪·;:") and not _RUN_FORWARD.search(sentence):
             return None
     run = text[opener.end():end]
@@ -1099,7 +1123,7 @@ def _guide_unit(metric: str, pct_marker: str | None) -> str:
     millions. See ``GUIDANCE_UNITS``."""
     if pct_marker:
         return "%"
-    if metric == "adjusted eps":
+    if metric in ("adjusted eps", "gaap diluted eps"):
         return "$/sh"
     if metric == "gross margin":
         return "%"

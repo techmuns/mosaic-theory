@@ -146,8 +146,11 @@ def basis_triangulation(
     ltm_lbl = f"${ltm_adjusted_ebitda}M" if ltm_adjusted_ebitda is not None else "LTM unavailable"
     rows = [
         "EBITDA-basis triangulation (each leverage basis-labeled):",
-        f"  net debt / EBITDA (CIQ, GAAP basis): {net_debt_ebitda_ciq or 'UNKNOWN'}",
-        f"  total debt / EBITDA (CIQ comps, GAAP basis): {total_debt_ebitda_comps or 'UNKNOWN'}",
+        # NOT "GAAP basis" (2026-10-21): CIQ's EBITDA leaves out items CIQ treats as unusual —
+        # TJX's Q2 FY27 sits $331M below the 10-Q's — so it is labelled as the vendor's figure
+        # (`financial_summary.ebitda_reconciliation` measures how far it sits from the filings)
+        f"  {CIQ_NET_DEBT_LABEL}: {net_debt_ebitda_ciq or 'UNKNOWN'}",
+        f"  {CIQ_COMPS_LABEL}: {total_debt_ebitda_comps or 'UNKNOWN'}",
         f"  net debt / company-adjusted LTM EBITDA ({ltm_lbl}): {adj}",
         f"  covenant basis: {covenant_basis or COVENANT_BASIS_UNKNOWN}",
     ]
@@ -177,6 +180,14 @@ _QUARTER_PERIOD = re.compile(r"\b(?:FQ\s*[1-4]|Q[1-4])\b", re.I)
 _HALF_PERIOD = re.compile(
     r"\b(?:H[12]|[12]H)\b|\b(?:first|second)\s+half\b|\bsix\s+months\s+ended\b", re.I)
 _ANNUAL_PERIOD = re.compile(r"\bFY\b|\bfiscal\b|\bnext-fy\b|^\s*(?:19|20)\d{2}\s*$", re.I)
+
+
+#: The triangulation's two CIQ rows, named for the EBITDA they divide. Shared with the refresh that
+#: relabels pages written under the old "(CIQ, GAAP basis)" wording, so both say one thing.
+CIQ_NET_DEBT_LABEL = "net debt / EBITDA (CIQ's EBITDA, vendor-normalised)"
+CIQ_COMPS_LABEL = "total debt / EBITDA (CIQ comps EBITDA, vendor-normalised)"
+OLD_TRIANGULATION_LABELS = (("net debt / EBITDA (CIQ, GAAP basis)", CIQ_NET_DEBT_LABEL),
+                            ("total debt / EBITDA (CIQ comps, GAAP basis)", CIQ_COMPS_LABEL))
 
 
 def period_scope(label: str | None) -> str | None:

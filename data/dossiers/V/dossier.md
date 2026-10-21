@@ -70,6 +70,9 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's; the quarter to 2025-09-30: CIQ $7,367M against $6,464M (+$903M); the quarter to 2025-12-31: CIQ $7,771M against $7,063M (+$708M) — its release states a matching amount: “Current year's results included special items of $707 million for a litigation provision associated with the interchange multidistrict litigation ("MDL") case and $333 million for a deferred tax benefit recognized due to a change in the U.S.”; the quarter to 2026-03-31: CIQ $7,896M against $7,567M (+$329M) (rebuilt as operating income + D&A) (1 of the four quarters could not be rebuilt). Every EV/EBITDA on this page divides CIQ's figure.
+
+
 **Capital allocation — created or destroyed**
 
 - **Impairment headroom — goodwill + intangibles remaining:** $48,641.0M [15]
@@ -426,8 +429,8 @@ _16 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [57]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [58]
-  - net debt / EBITDA (CIQ, GAAP basis): 0.3x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 0.8x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 0.3x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 0.8x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -586,6 +589,8 @@ _Source §: 8-K 0001403161-16-000027 · exh22aroptionagreement.htm · amended by
   - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 11d old — 2026-08-07 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 9d old (2026-08-09, valuation.implied_expectations.multiples_as_of) — within the ceiling

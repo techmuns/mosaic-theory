@@ -36,7 +36,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | mid-cycle margin × the median multiple of its own history | applicable |
 | Mid-cycle margin | 12.2% | 10y history · weak |
 | Median multiple, own history | 23.5x | 36 closes · firm · EV/EBITDA ex-lease (TEV less operating leases; net debt likewise) |
-| Screen value / share | $101.02 | spot-independent · EV/EBIT 26.7x |
+| Screen value / share | $101.07 | spot-independent · EV/EBIT 26.7x · on 1,483,500,000 shares outstanding |
+| Dilution test / share | $101.03 | + 600,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | weak |  |
 
 ## The case
@@ -68,6 +69,9 @@ _Bear case — the decline is real:_
 _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
+
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $4,855M against $4,597M rebuilt from the filings (+$258M); the quarter to 2025-08-31: CIQ $1,117M against $1,094M (+$23M); the quarter to 2026-02-28: CIQ $968M against $820M (+$148M); the quarter to 2026-05-31: CIQ $1,585M against $1,514M (+$71M) (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.
+
 
 **Capital allocation — created or destroyed**
 
@@ -125,6 +129,7 @@ _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 - **vs peers:** EV/EBITDA 9.1x vs peer median 6.5x (+40%); P/E 17.2x vs peer median 14.2x (+21%) [25]
 - **Forward multiples:** P/FY27E (normalized) 21.2x (EPS $1.70); P/FY27E (GAAP) 21.4x (EPS $1.69); P/FY28E (normalized) 15.8x (EPS $2.28); P/FY28E (GAAP) 16.6x (EPS $2.18) — at $36.10 as-of 2026-09-22 [26]
 - **Multiple basis — read before the level:** rent is 23.3% of EBITDA (FY ending 2026-05-31). Since ASC 842 CIQ's TEV carries the operating leases and before it did not, so CIQ's EV/EBITDA (TEV/LTM) history is not on one basis. R1's earnings are reported EBITDA, after rent; on that basis — TEV less operating leases over reported EBITDA — the median is 23.5x over 36 quarters (current 12.8x at the 2026-07-15 filing; 0% of the history at or below it). R1 prices that median with net debt excluding operating leases. The level and percentile above are CIQ's own series. [27]
+- **R1's basis (ex-lease EV/EBITDA) at the page's price:** at the page's $36.10 close (2026-09-22): ($36.10 × 1,483,500,000 shares outstanding + net debt $990M excluding operating leases) ÷ LTM EBITDA $4,855M (four quarters to 2026-05-31) = 11.2x
 - **Comparability:** market caps span $2.0B–$28.6B (14x); the name is $53.6B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [28]
 - **The street, for contrast (target · ratings):** Target price: mean $48.07, median $44.90, high/low 94.00/23.00, N 36/36; Ratings: Buy 9, Outperform 1, Hold 26, Underperform 2, Sell 3, No Opinion 1, Buy 2, Outperform 0, Hold 1, Underperform 0, Sell 1  [data ≥ 2026-09-20 · export date unverified] [29]
 
@@ -428,8 +433,8 @@ _9 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [58]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [59]
-  - net debt / EBITDA (CIQ, GAAP basis): 0.4x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 1.8x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 0.4x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 1.8x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: UNKNOWN (not disclosed)
 
@@ -598,6 +603,8 @@ _Source §: 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm · amende
   - 2026-10-20 · mechanical.valuation, qa_flags, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-20 · anchor, qa_flags, valuation_basis — anchor-backfill at 2026-10-09.3
   - 2026-10-20 · ev_bridge — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-burl → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 9d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-30 build
 - **Consensus age:** consensus 10d old (2026-09-20, valuation.implied_expectations.multiples_as_of) — within the ceiling

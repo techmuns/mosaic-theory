@@ -9,7 +9,7 @@ from __future__ import annotations
 import inspect
 import pathlib
 
-from vinci.dossier.anchor import DQ_VENDOR_BRIDGE, _with_bridge
+from vinci.dossier.anchor import _BRIDGE_FIELDS, DQ_VENDOR_BRIDGE, _with_bridge
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 
@@ -28,8 +28,10 @@ class _A:
 
 
 def _bridge(vendor_filled: list[str]) -> dict[str, object]:
-    return {"d_and_a": 1.0, "net_debt": 2.0, "diluted_shares": 3.0, "ltm_revenue": 4.0,
-            "ltm_fcf": 5.0, "vendor_filled": vendor_filled}
+    # every field `_with_bridge` attaches, read off the anchor's own list — a hand-copied five went
+    # stale when the share-count fields joined it (2026-10-21)
+    return {**{k: float(i) for i, k in enumerate(_BRIDGE_FIELDS, 1)},
+            "vendor_filled": vendor_filled}
 
 
 def test_a_vendor_fill_is_flagged_even_when_the_recipe_did_not_resolve() -> None:

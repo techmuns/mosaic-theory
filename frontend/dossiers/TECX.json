@@ -4467,7 +4467,7 @@
         "note": null
       },
       "basis_triangulation": {
-        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ, GAAP basis): UNKNOWN\n  total debt / EBITDA (CIQ comps, GAAP basis): UNKNOWN\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: UNKNOWN (not disclosed)",
+        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ's EBITDA, vendor-normalised): UNKNOWN\n  total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): UNKNOWN\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: UNKNOWN (not disclosed)",
         "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
         "status": "present",
         "note": null
@@ -8099,13 +8099,30 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-10-21",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor",
+        "mechanical.primary_source"
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "unknown",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-20T13:23:15.715428Z",
+    "computed_at": "2026-10-21T11:18:48.458807Z",
     "reason": "own-history multiple missing (valuation.own_history.median absent)",
     "data_quality": "vendor_bridge",
     "data_quality_detail": [
@@ -8130,6 +8147,18 @@
       "unit": "shares",
       "basis": "diluted weighted-average (latest 10-Q)",
       "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+    },
+    "shares_outstanding": {
+      "value": null,
+      "unit": "shares",
+      "basis": "point-in-time shares outstanding — the per-share denominator (item 24)",
+      "source": "REFUSED — the point-in-time count 19,549,366 sits 3.1% above the filer's basic weighted average 18,964,008 (2026-04-01..2026-06-30) — issuance or shares the filer does not count as outstanding for EPS (an employee benefit trust, unvested restricted stock), which the counts cannot tell apart. mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding)"
+    },
+    "dilutive_increment": {
+      "value": null,
+      "unit": "shares",
+      "basis": "diluted less basic weighted average over the latest 10-Q quarter — the dilution test",
+      "source": "not tested — the base divides the diluted weighted average, which already counts it"
     },
     "ltm_revenue": {
       "value": null,
@@ -8156,9 +8185,12 @@
         "d_and_a",
         "net_debt",
         "diluted_shares",
+        "shares_outstanding",
+        "dilutive_increment",
         "ltm_revenue",
         "ltm_fcf",
         "anchor_base_value_per_share",
+        "anchor_base_value_per_share_diluted",
         "midcycle_gap",
         "anchor_ev_ebit"
       ],

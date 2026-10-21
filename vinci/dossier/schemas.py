@@ -303,6 +303,53 @@ class ForwardMultiple(BaseModel):
     model_config = {"frozen": True}
 
 
+class EvEbitdaBasis(BaseModel, frozen=True):
+    """WHAT CIQ's headline TEV/LTM EBITDA IS STRUCK ON — measured on this page, never assumed.
+
+    The multiple's own denominator is TEV ÷ the multiple; it is set against REPORTED LTM EBITDA
+    (the financial summary's LTM column) and against reported EBITDA plus rent (CIQ's annual 'Net
+    Rental Exp.'). Since ASC 842 CIQ's TEV carries the operating leases and, on most closes, its
+    EBITDA adds rent back — the consistent lease-INCLUSIVE pair — but not on every close, so each
+    page states its own reading (`vinci.dossier.ev_ebitda_basis`). `line` is the ONE sentence both
+    renderers print beside the multiple."""
+
+    multiple: float
+    tev: float                                # $M — the comps snapshot TEV the multiple divides
+    tev_as_of: str | None = None
+    implied_denominator: float                # $M — tev ÷ multiple
+    reported_ltm_ebitda: float                # $M
+    rent: float | None = None                 # $M, annual; None when unmeasured
+    rent_fiscal_year: str | None = None
+    ratio_to_reported: float                  # implied ÷ reported
+    ratio_to_reported_plus_rent: float | None = None
+    # "ebitda_plus_rent" | "reported" | "indistinguishable" | "not_reproduced"
+    reading: str
+    tolerance: float
+    line: str
+
+
+class EvEbitdaAtPrice(BaseModel, frozen=True):
+    """The EX-LEASE EV/EBITDA at the PAGE'S price — R1's basis, today (2026-10-21).
+
+    The ex-lease history's own `current` is the latest QUARTERLY close in CIQ's Historical
+    Capitalization (TJX: 16.3x at 2026-08-28), weeks behind the page. This strikes the same basis
+    at the stored close: (price × the anchor's share count + net debt excluding operating leases,
+    the anchor's builder) ÷ the history's latest LTM EBITDA. The count is `anchor.share_denominator`
+    — the one the base value per share divides, named in `shares_basis`."""
+
+    value: float
+    price: float
+    price_as_of: str | None = None
+    shares: float
+    shares_basis: str
+    net_debt: float                           # $M, excluding operating leases
+    net_debt_source: str
+    ev: float                                 # $M
+    ltm_ebitda: float                         # $M, CIQ, the four quarters ending `ltm_through`
+    ltm_through: str
+    line: str
+
+
 class Valuation(BaseModel):
     """Multiples: the CROSS-SECTIONAL read (vs peers) LEADS; own-history range/percentile is
     secondary — near-tautological post-drawdown, so it barely discriminates. CIQ multiples + G3."""
@@ -335,6 +382,10 @@ class Valuation(BaseModel):
     #: (2026-10-19) whether rent is material, and the ex-lease EV/EBITDA history R1 uses when it
     #: is. Optional → pre-field JSON round-trips unchanged (dropped when unbuilt, as below).
     lease_basis: LeaseBasis | None = None
+    #: (2026-10-21) what CIQ's headline multiple is struck on, measured; and the ex-lease multiple
+    #: at the page's price where R1 prices that basis. Both absent until built (below).
+    ev_ebitda_basis: EvEbitdaBasis | None = None
+    ev_ebitda_ex_lease_at_price: EvEbitdaAtPrice | None = None
 
     model_config = {"frozen": True}
 
@@ -351,8 +402,9 @@ class Valuation(BaseModel):
         d = nxt(self)
         if self.forward_multiples is None:
             d.pop("forward_multiples", None)
-        if self.lease_basis is None:
-            d.pop("lease_basis", None)
+        for key in ("lease_basis", "ev_ebitda_basis", "ev_ebitda_ex_lease_at_price"):
+            if getattr(self, key) is None:
+                d.pop(key, None)
         return d
 
 
@@ -821,7 +873,11 @@ class CurrentMultipleRef(BaseModel, frozen=True):
     multiple IS struck at this snapshot — every FY TEV/EBIT row × that year's EBIT consensus equals
     market cap + CIQ claims within 0.1% (20 of 23 pages did, to 0.005%; VRRM, NCNO and CNXC did not,
     their Estimates and comps exports being different pulls). `value_at_page_price` is the multiple
-    a record at the page's price would carry, on the record's own share basis."""
+    a record at the page's price would carry, on the record's own share basis.
+
+    R1 (2026-10-21) carries its TRAILING multiple here, on the basis it prices — the ex-lease
+    history's latest quarterly close, or CIQ's TEV/LTM — with the same value at the page's price
+    (`valuation_basis._r1_current`); it was left empty before."""
 
     metric: str                      # CIQ's row label: 'TEV/EBIT'
     period: str                      # 'NTM'
@@ -1539,6 +1595,41 @@ class EbitdaBasis(BaseModel):
     model_config = {"frozen": True}
 
 
+class EbitdaReconQuarter(BaseModel, frozen=True):
+    """One quarter of CIQ's EBITDA set against the same quarter rebuilt from the filer's XBRL."""
+
+    period_end: str
+    ciq_ebitda: float                         # $M, CIQ Financials quarterly Income Statement
+    filing_ebitda: float | None = None        # $M; None when the quarter cannot be rebuilt
+    # "operating income + D&A" | "pre-tax income − net interest income + D&A" — named, per quarter
+    construction: str | None = None
+    tags: list[str] = Field(default_factory=list)
+    gap: float | None = None                  # $M, ciq − filing
+    different: bool = False                   # |gap| beyond `DIFFERENT_SHARE` of the filing figure
+    # the quarter's own release, when it STATES an amount matching |gap|: the sentence, verbatim
+    matching_amount: str | None = None
+    matching_source: str | None = None
+    note: str | None = None                   # why no filing figure
+
+
+class EbitdaReconciliation(BaseModel, frozen=True):
+    """CIQ's EBITDA IS CIQ's — measured against the filings, quarter by quarter (2026-10-21).
+
+    CIQ's quarterly EBITDA leaves out items it treats as unusual (impairments, gains, refunds), so
+    it is a VENDOR-NORMALISED figure, not the reported one, and every EV/EBITDA on the page is
+    struck on it. TJX's Q2 FY27: CIQ $1,996M against $2,327M rebuilt from the 10-Q (pre-tax $2,018M
+    − net interest income $31M + D&A $340M) — $331M apart, the gross tariff refund the release
+    states to the million. `line` is the ONE sentence both renderers print."""
+
+    quarters: list[EbitdaReconQuarter]        # the four quarters of CIQ's LTM, oldest first
+    ciq_ltm: float
+    filing_ltm: float | None = None           # only when all four quarters rebuild
+    ltm_gap: float | None = None
+    any_different: bool
+    line: str
+    source_ref: str
+
+
 class FinancialSummary(BaseModel):
     """The FINANCIAL-SUMMARY appendix (C1–C4): the fusion of CIQ Financials ACTUALS with Estimates
     CONSENSUS, rendered after the twins. ``annual`` = last-4-FY + LTM + FY26E/FY27E (E cols marked
@@ -1556,6 +1647,9 @@ class FinancialSummary(BaseModel):
     #: because the sheet does not carry one. See `vinci.dossier.ebitda_basis`. Optional and
     #: defaulting to None so every already-committed dossier round-trips unchanged.
     ebitda_basis: EbitdaBasis | None = None
+    #: (2026-10-21) CIQ's quarterly EBITDA against the filings' (`vinci.dossier.ebitda_recon`).
+    #: Absent until built (`DROP_WHEN_NONE`).
+    ebitda_reconciliation: EbitdaReconciliation | None = None
 
     model_config = {"frozen": True}
 
@@ -2554,6 +2648,7 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("concentration", "segment_profit"),
     ("consensus_context", "consensus_levels"),
     ("financial_summary", "ebitda_basis"),
+    ("financial_summary", "ebitda_reconciliation"),
     ("", "capital_allocation"),
     ("", "peer_capital_intensity"),
     ("", "dilution_pipeline"),
@@ -2614,8 +2709,10 @@ def dossier_json(doc: Dossier) -> str:
     excl: dict[str, Any] = {"mechanical": root} if root else {}
     # the anchor's mid-cycle gap is set only when it fires; an anchor that does not fire writes no
     # key, so every committed page it does not apply to stays byte-identical
-    if doc.anchor is not None and doc.anchor.midcycle_gap is None:
-        excl["anchor"] = {"midcycle_gap"}
+    if doc.anchor is not None:
+        from vinci.dossier.anchor import anchor_absent_fields  # cycle: anchor is a schema module
+        if absent := anchor_absent_fields(doc.anchor):
+            excl["anchor"] = absent
     # ABSENT, never null, until built: `null` would claim the layer was built and came back empty
     if doc.forward_consensus is None:
         excl["forward_consensus"] = True

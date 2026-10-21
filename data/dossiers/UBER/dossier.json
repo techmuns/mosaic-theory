@@ -720,6 +720,20 @@
           }
         ],
         "source_ref": "CIQ Financials (Quarterly)→Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)→Income Statement 'Net Rental Exp.' / 'EBITDA'"
+      },
+      "ev_ebitda_basis": {
+        "multiple": 19.5,
+        "tev": 150807.5,
+        "tev_as_of": "2026-10-09",
+        "implied_denominator": 7733.718,
+        "reported_ltm_ebitda": 7474.0,
+        "rent": 390.0,
+        "rent_fiscal_year": "2025-12-31",
+        "ratio_to_reported": 1.03475,
+        "ratio_to_reported_plus_rent": 0.983433,
+        "reading": "indistinguishable",
+        "tolerance": 0.05,
+        "line": "CIQ's 19.5x divides TEV $150,808M (comps, 2026-10-09) by $7,734M, which reproduces reported LTM EBITDA ($7,474M) and EBITDA plus rent alike — rent is 5.2% of EBITDA, too small for the pairing to change the reading."
       }
     },
     "quality": {
@@ -6775,6 +6789,76 @@
         "ratio": 4.084864314789688,
         "divergent": true,
         "note": "the estimate columns imply 3,011 of D&A against 737 in the actuals (4.08x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row."
+      },
+      "ebitda_reconciliation": {
+        "quarters": [
+          {
+            "period_end": "2025-09-30",
+            "ciq_ebitda": 1308.0,
+            "filing_ebitda": 1301.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "DepreciationDepletionAndAmortization"
+            ],
+            "gap": 7.0,
+            "different": false,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": null
+          },
+          {
+            "period_end": "2025-12-31",
+            "ciq_ebitda": 1967.0,
+            "filing_ebitda": 1959.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "DepreciationDepletionAndAmortization"
+            ],
+            "gap": 8.0,
+            "different": false,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": null
+          },
+          {
+            "period_end": "2026-03-31",
+            "ciq_ebitda": 2114.0,
+            "filing_ebitda": 2107.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "DepreciationDepletionAndAmortization"
+            ],
+            "gap": 7.0,
+            "different": false,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": null
+          },
+          {
+            "period_end": "2026-06-30",
+            "ciq_ebitda": 2085.0,
+            "filing_ebitda": 2078.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "DepreciationDepletionAndAmortization"
+            ],
+            "gap": 7.0,
+            "different": false,
+            "matching_amount": null,
+            "matching_source": null,
+            "note": null
+          }
+        ],
+        "ciq_ltm": 7474.0,
+        "filing_ltm": 7445.0,
+        "ltm_gap": 29.0,
+        "any_different": false,
+        "line": "CIQ's EBITDA matches the filings in each quarter set against them (rebuilt as operating income + D&A) — the LTM the multiples divide is the reported figure.",
+        "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       }
     },
     "primary_source": {
@@ -6916,7 +7000,7 @@
         "note": null
       },
       "basis_triangulation": {
-        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ, GAAP basis): 0.6x\n  total debt / EBITDA (CIQ comps, GAAP basis): 1.9x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: UNKNOWN (not disclosed)",
+        "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 0.6x\n  total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 1.9x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: UNKNOWN (not disclosed)",
         "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
         "status": "present",
         "note": null
@@ -14416,13 +14500,32 @@
         "ev_bridge",
         "valuation_basis"
       ]
+    },
+    {
+      "date": "2026-10-21",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor",
+        "mechanical.financial_summary",
+        "mechanical.primary_source",
+        "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-10-21",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-backfill",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
     "recipe_hint": "R4_forward_ev_ebit",
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-20T13:23:15.991491Z",
+    "computed_at": "2026-10-21T11:18:48.738126Z",
     "reason": "EV/NTM EBIT (R4) — all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 15.6x · R1 cannot anchor: R1's anchor declines (applicable=False); EBITDA basis divergent: consensus-implied D&A 4.08× the actuals · R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 3 of the trailing 4 quarters carry material non-operating income (≥2 ruled). R1's own arithmetic is left in this block.",
     "data_quality": null,
     "data_quality_detail": [],
@@ -14445,6 +14548,18 @@
       "unit": "shares",
       "basis": "diluted weighted-average (latest 10-Q)",
       "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding"
+    },
+    "shares_outstanding": {
+      "value": 2042560121.0,
+      "unit": "shares",
+      "basis": "point-in-time shares outstanding — the per-share denominator (item 24)",
+      "source": "mechanical.stock_info.shares_out (EDGAR XBRL shares outstanding); 0.3% above the filer's basic weighted average 2,036,458,000 (2026-04-01..2026-06-30)"
+    },
+    "dilutive_increment": {
+      "value": 13767000.0,
+      "unit": "shares",
+      "basis": "diluted less basic weighted average over the latest 10-Q quarter — the dilution test",
+      "source": "EDGAR WeightedAverageNumberOfDilutedSharesOutstanding 2,050,225,000 − WeightedAverageNumberOfSharesOutstandingBasic 2,036,458,000 (2026-04-01..2026-06-30)"
     },
     "ltm_revenue": {
       "value": 55227.0,
@@ -14471,9 +14586,12 @@
         "d_and_a",
         "net_debt",
         "diluted_shares",
+        "shares_outstanding",
+        "dilutive_increment",
         "ltm_revenue",
         "ltm_fcf",
         "anchor_base_value_per_share",
+        "anchor_base_value_per_share_diluted",
         "midcycle_gap",
         "anchor_ev_ebit"
       ],

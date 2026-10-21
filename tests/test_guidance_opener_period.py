@@ -181,12 +181,14 @@ def test_the_new_vocabulary_reads_no_result_and_no_restatement(sentence: str) ->
 
 
 def test_parse_release_carries_both_and_no_longer_says_nothing_matched() -> None:
-    """At the layer the page reads: the release extract carries the two TJX guides and no
+    """At the layer the page reads: the release extract carries TJX's guides and no
     'no anchored pattern matched — guidance' flag, which is what put NO NUMERIC OUTLOOK on the
-    page."""
+    page. FOUR since 2026-10-21 — each basis's quarter and year, GAAP and adjusted under their own
+    names (`test_guidance_gaap_eps`), so the two bases can never be read as one."""
     rel = parse_release(_TJX, source_ref="8-K 0000109198-26-000045 EX-99.1")
-    assert [(g.metric, g.period) for g in rel.guidance] == [
-        ("adjusted eps", "Q3 2027"), ("adjusted eps", "Fiscal 2027")]
+    assert sorted((g.metric, g.period) for g in rel.guidance) == sorted([
+        ("adjusted eps", "Q3 2027"), ("adjusted eps", "Fiscal 2027"),
+        ("gaap diluted eps", "Q3 2027"), ("gaap diluted eps", "Fiscal 2027")])
     assert not any("guidance/outlook" in f for f in rel.qa_flags), rel.qa_flags
 
 

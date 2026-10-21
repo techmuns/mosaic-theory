@@ -66,7 +66,8 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | R3_forward_pe | R1 screen: applicable |
 | Mid-cycle margin | 26.3% | 9y history · firm |
 | Median multiple, own history | 17.5x | 38 closes · firm · EV/EBITDA |
-| Screen value / share | $212.17 | spot-independent · EV/EBIT 21.3x |
+| Screen value / share | $213.54 | spot-independent · EV/EBIT 21.3x · on 12,230,000,000 shares outstanding |
+| Dilution test / share | $210.82 | + 158,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 33.1% (CIQ EBIT) sits 6.8 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source.
@@ -461,8 +462,8 @@ _17 undated / later aggregate line item(s) in the appendix panel_
 
 - **Going-concern language:** none in latest 10-Q — checked, absent [53]
 - **EBITDA-basis triangulation (each leverage basis-labeled):** [54]
-  - net debt / EBITDA (CIQ, GAAP basis): -0.7x
-  - total debt / EBITDA (CIQ comps, GAAP basis): 0.7x
+  - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): -0.7x
+  - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 0.7x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
   - covenant basis: no structured source for this decision vintage
 
@@ -621,6 +622,8 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-18 · mechanical.idiosyncratic_vs_shared, mechanical.stock_performance — refresh at 2026-10-09.3
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
 - **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 7d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
 - **Consensus age:** consensus 11d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling
