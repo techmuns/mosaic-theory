@@ -153,3 +153,36 @@ The opener lifts part of row 30's blocker, not all of it. The vocabulary stays h
 - **The `next-fy` label stays on Burlington's newest year guide.** "This excludes any potential
   costs…" ends its opener's run, so the year guide keeps the annual default. It does not get
   "Fiscal 2026".
+
+**REVIEW FIXES (same PR, 2026-10-21).** A review of #756 found four ways the new code could print a
+wrong label. Each is pinned by a test that fails on the first cut and passes now:
+- **A results opener labelled a guide.** The opener's sentence passed the "looks forward" check on
+  nouns: "…above the high end of the Company's guidance", "better than expected", "exceeded its
+  outlook". The next sentence's guide was labelled **Q2 2027**, a closed quarter. Fix: the opener's
+  own sentence now needs a forward VERB. That covers the act of guiding in the present tense
+  ("is raising its … outlook", "has updated its … guidance"), but not a past-tense result.
+- **A quarter opener labelled a year or a half.** The scope words read only "full year", "fiscal
+  year" and "annual". So "For the remainder of the year, … $4.05 to $4.15" under a Q3 opener read
+  **Q3 2026**. Fix: "the year" (but not "the year-ago" quarter), a half, and twelve months now
+  count as the other scope. A year run now also refuses "fourth-quarter" and "Q4".
+- **The opener must start a word.** Before, "LinkedIn 2026," read as "In 2026,".
+- **`adjusted_eps`.** Three changes:
+  - It reads every exhibit of the newest filing. Before, a guide-less sibling made the field
+    UNKNOWN.
+  - A level range stated in % is not a per-share figure, so no P/E is struck on it.
+  - The note says "newest EX-99.1 release", not "newest results release". The list holds every
+    2.02/8.01 exhibit, and PARR's newest (filed 2026-08-25) is an asset-sale announcement.
+- **`current_guide`'s newer-release mark** now counts filings, not exhibits.
+
+Corpus, same boundary as above (118 cited EX-99.1s, cached texts): the fixed parser gives 100
+items, identical to the first cut (0 added, 0 removed). Row 30's probe is unchanged at 34 new / 19
+default / 15 read. Of the 118 openers the corpus holds, 49 pass the run's forward check, and all
+49 also pass the new verb check. So these fixes are PROTECTIVE: no live item moves, and the pins
+are synthetic.
+
+**STILL OPEN, NOT FIXED HERE.**
+- `adjusted_eps` and `current_guide` cannot tell a results release from an 8.01 announcement, since
+  `ReleaseExtract` carries no item codes. A non-results 8-K filed after results will make
+  `adjusted_eps` UNKNOWN until the next results release. Its note names the release it read.
+- The stored forecast-error `eligibility_note` carries the new sentence on 0 of 25 committed
+  pages. It lands on the next `historical_forecast_error_transform` or re-assembly, as stated above.

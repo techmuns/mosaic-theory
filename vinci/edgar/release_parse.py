@@ -1016,9 +1016,9 @@ _FORWARD_VERB = re.compile(
 #
 # The opener must be CAPITALISED — a sentence start, not "…revenue for the third quarter of 2026,"
 # mid-clause — and it must itself look forward ("In the second quarter, the Company repurchased…"
-# opens a run of results, not of guides).
+# opens a run of results, not of guides). A WORD start too: "LinkedIn 2026," is not an opener.
 _OPENER = re.compile(
-    r"(?-i:For|In)\s+(?:the\s+)?"
+    r"\b(?-i:For|In)\s+(?:the\s+)?"
     r"(?:(?P<qn>first|second|third|fourth)\s+(?:fiscal\s+)?quarter(?:\s+of)?"
     r"(?:\s+(?:the\s+)?(?:fiscal\s+)?(?:year\s+)?(?P<qy>20\d\d))?"
     r"|(?:full[- ](?:fiscal[- ])?year|fiscal\s+year|fiscal)"
@@ -1035,7 +1035,32 @@ _RUN_FORWARD = re.compile(rf"{_FORWARD.pattern}|\bplan(?:s|ning)\b", re.I)
 #: Words that name a FULL YEAR without a year number — "its full year outlook for…". A run whose
 #: opener is a quarter but which says this, or the reverse, is two periods, and neither may be
 #: chosen for the guide.
-_ANNUAL_WORD = re.compile(r"\bfull[- ]year\b|\bfiscal\s+year\b|\bannual\b", re.I)
+#:
+#: REVIEW FIX (#756). "full year" alone let a quarter opener label a year's guide: "For the third
+#: quarter of 2026, the Company expects revenue growth. For the remainder of the year, the Company
+#: expects adjusted EPS in the range of $4.05 to $4.15." read **Q3 2026**, an annual figure filed as
+#: a quarter. "the year" (never "the year-ago" quarter), a HALF and TWELVE MONTHS are the other
+#: scope too.
+_ANNUAL_WORD = re.compile(
+    r"\bfull[- ]year\b|\bfiscal\s+year\b|\bannual\b|"
+    r"\bthe\s+(?:full\s+|fiscal\s+)?year\b(?![\s-]+ago)|"
+    r"\b(?:first|second|back|front)\s+half\b|\b(?:twelve|12)[- ]months?\b", re.I)
+#: A QUARTER in a full-year run, in the forms `_QUARTER` does not read: "fourth-quarter", "Q4".
+#: Refusing here costs nothing — the range keeps the annual `next-fy` default, the same scope.
+_RUN_QUARTER = re.compile(r"\b(?:first|second|third|fourth)[\s-]+quarter\b|\bQ[1-4]\b", re.I)
+#: The OPENER'S OWN sentence must make a forward statement with a VERB. `_RUN_FORWARD` reads the
+#: nouns of a RESULTS sentence as forward — "For the second quarter of Fiscal 2027, net sales were
+#: $15.0 billion, above the high end of the Company's guidance." passed on "guidance", and the next
+#: sentence's guide was labelled **Q2 2027**: a closed quarter on a forward guide (review, #756).
+#: The ACT of guiding counts only as a PRESENT act on the guide itself — measured over the 118 cited
+#: releases, the real openers say "is raising its consolidated comparable sales outlook" (TJX),
+#: "increases expected GAAP diluted EPS" (EPAM) and "has updated its previously issued guidance"
+#: (BellRing); a past-tense result ("net sales increased", "exceeded its outlook") does not.
+_OPENER_VERB = re.compile(
+    rf"{_FORWARD_VERB.pattern}|\bplan(?:s|ning)\b|"
+    r"\b(?:(?:rais|increas|updat)(?:es|ing)|(?:narrow|lower|reaffirm|maintain)(?:s|ing)|"
+    r"(?:has|have)\s+(?:updated|narrowed|raised|increased|lowered|reaffirmed))\s+"
+    r"(?:\w+[\s-]+){0,4}?(?:outlook|guidance|expect\w*)\b", re.I)
 
 
 def _opener_period(text: str, start: int, end: int) -> str | None:
@@ -1048,6 +1073,8 @@ def _opener_period(text: str, start: int, end: int) -> str | None:
         opener = m
     if opener is None:
         return None
+    if not _OPENER_VERB.search(re.split(r"\.\s", text[opener.start():start], maxsplit=1)[0]):
+        return None
     for sentence in re.split(r"\.\s", text[opener.start():start]):
         if sentence.strip(" •●○◦■▪·;:") and not _RUN_FORWARD.search(sentence):
             return None
@@ -1056,7 +1083,7 @@ def _opener_period(text: str, start: int, end: int) -> str | None:
         if _ANNUAL_WORD.search(run):
             return None
         return f"Q{_Q_NUM[opener['qn'].lower()]}" + (f" {opener['qy']}" if opener["qy"] else "")
-    if _QUARTER.search(run):
+    if _RUN_QUARTER.search(run):
         return None
     if opener["by"]:
         return opener["by"]

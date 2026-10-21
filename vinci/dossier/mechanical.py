@@ -1732,18 +1732,25 @@ def _release_adjusted_eps(
     dated = [r for r in releases if r.filed is not None]
     if not dated:
         return absent
-    newest = max(dated, key=lambda r: r.filed or date.min)
-    filed = newest.filed
-    assert filed is not None                            # `dated` filtered on it
-    guide = next((g for g in newest.guidance
+    filed = max(r.filed for r in dated if r.filed is not None)
+    # THE NEWEST FILING, every exhibit of it (review, #756): one 8-K can furnish two EX-99.1s, and
+    # `max` over releases picked whichever came first — the guide-less sibling made it UNKNOWN.
+    newest = [r for r in dated if r.filed == filed]
+    # `$/sh` too, not only `level`: a level adjusted-EPS range stated in % (unit "%") is not a
+    # per-share figure, and printed as "$8.00–$10.00" it would strike a P/E on a growth rate.
+    found = next(((r, g) for r in newest for g in r.guidance
                   if g.metric == "adjusted eps" and not g.qualitative
-                  and getattr(g, "basis", "level") == "level"
+                  and getattr(g, "basis", "level") == "level" and g.unit == "$/sh"
                   and g.low is not None and g.high is not None
                   and primary_source.period_scope(g.period) == "annual"), None)
-    where = f"{newest.source_ref} (filed {filed.isoformat()})"
+    src, guide = found if found is not None else (newest[0], None)
+    where = f"{src.source_ref} (filed {filed.isoformat()})"
     if guide is None or guide.low is None or guide.high is None:
         return Sourced.unknown(
-            note=f"{absent.note}; the newest results release, {where}, states no annual "
+            # "EX-99.1 release", not "results release": the list holds every 2.02/8.01 exhibit,
+            # and PARR's newest (2026-08-25) is an asset-sale announcement — nothing stored tells
+            # the two apart (review, #756; the item codes are not on `ReleaseExtract`)
+            note=f"{absent.note}; the newest EX-99.1 release, {where}, states no annual "
                  "adjusted-EPS guide the parser reads")
     lo, hi = _guide_bounds(guide.low, guide.high, "$/sh")
     last = record.prices.last
@@ -4107,7 +4114,8 @@ def _current_guide(releases: list[ReleaseExtract]) -> Sourced[str]:
     # guide in words the parser does not read, the older one is printed as "current". Live on
     # FUBO, LLY, MVST and NFLX on 2026-10-21, and Target's would have joined them: its March guide
     # ($7.50–$8.50) became readable while August's raise to $9.90–$10.90 is not.
-    newer = sorted(r.filed for r in releases if r.filed is not None and r.filed > filed)
+    # one per FILING: two exhibits of one 8-K are one newer release, not "2 … (filed d, d)"
+    newer = sorted({r.filed for r in releases if r.filed is not None and r.filed > filed})
     tail = ""
     if newer:
         dates = ", ".join(d.isoformat() for d in newer)

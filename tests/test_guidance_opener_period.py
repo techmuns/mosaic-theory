@@ -188,3 +188,59 @@ def test_parse_release_carries_both_and_no_longer_says_nothing_matched() -> None
     assert [(g.metric, g.period) for g in rel.guidance] == [
         ("adjusted eps", "Q3 2027"), ("adjusted eps", "Fiscal 2027")]
     assert not any("guidance/outlook" in f for f in rel.qa_flags), rel.qa_flags
+
+
+# --- REVIEW FIXES (#756): openers the first cut let through ---------------------------------------
+
+@pytest.mark.parametrize("opener", [
+    # a RESULTS sentence whose only "forward" word is a noun about the prior guide
+    "For the second quarter of Fiscal 2027, net sales were $15.0 billion, above the high end of "
+    "the Company's guidance.",
+    "For the second quarter of Fiscal 2027, earnings per share were better than expected.",
+    "In the second quarter, the Company exceeded its outlook, with comparable sales up 4%.",
+])
+def test_a_results_opener_never_labels_the_guide_below_it(opener: str) -> None:
+    """NEGATIVE: each read **Q2 2027** / **Q2** before the fix — a closed quarter stamped on a
+    forward guide. The opener's sentence must carry a forward VERB, not a noun like "guidance"."""
+    text = opener + " The Company expects adjusted EPS in the range of $4.05 to $4.15."
+    assert _eps(_guidance(text, "x")) == [("next-fy", 4.05, 4.15, "$/sh")]
+
+
+@pytest.mark.parametrize("bridge", [
+    "For the remainder of the year, the Company expects",
+    "For the year, the Company expects",
+    "Over the second half, the Company expects",
+    "The Company expects twelve-month",
+])
+def test_a_quarter_opener_never_labels_a_year_or_a_half(bridge: str) -> None:
+    """NEGATIVE: "the year", a half and twelve months are the OTHER scope, as "full year" is; each
+    read **Q3 2026** before the fix — an annual range filed as a quarter."""
+    text = ("For the third quarter of 2026, the Company expects revenue growth. "
+            f"{bridge} adjusted EPS in the range of $4.05 to $4.15.")
+    assert _eps(_guidance(text, "x")) == [("next-fy", 4.05, 4.15, "$/sh")]
+
+
+def test_a_year_ago_comparison_keeps_the_quarter_opener() -> None:
+    """POSITIVE beside it: "the year-ago quarter" is a comparison, not the other scope."""
+    text = ("For the third quarter of 2026, the Company expects revenue growth versus the year-ago "
+            "quarter. The Company expects adjusted EPS in the range of $1.30 to $1.32.")
+    assert _eps(_guidance(text, "x")) == [("Q3 2026", 1.30, 1.32, "$/sh")]
+
+
+@pytest.mark.parametrize("quarter", ["fourth-quarter", "Q4"])
+def test_a_year_opener_never_names_a_hyphenated_or_short_quarter(quarter: str) -> None:
+    """NEGATIVE: `_QUARTER` reads neither "fourth-quarter" nor "Q4", so the year's label was stamped
+    on a quarter's range ("fiscal 2026"). It keeps the default instead."""
+    text = (f"For fiscal 2026, the Company expects {quarter} adjusted EPS in the range of $1.00 "
+            "to $1.10.")
+    assert _eps(_guidance(text, "x"))[0][0] != "Fiscal 2026"
+    text2 = (f"For fiscal 2026, the Company expects revenue growth. The Company expects {quarter} "
+             "adjusted EPS in the range of $1.00 to $1.10.")
+    assert _eps(_guidance(text2, "x")) == [("next-fy", 1.00, 1.10, "$/sh")]
+
+
+def test_an_opener_starts_a_word() -> None:
+    """NEGATIVE: "LinkedIn 2026," read as the opener "In 2026," and labelled the guide 2026."""
+    text = ("LinkedIn 2026, the Company expects growth. The Company expects adjusted EPS in the "
+            "range of $4.05 to $4.15.")
+    assert _eps(_guidance(text, "x")) == [("next-fy", 4.05, 4.15, "$/sh")]

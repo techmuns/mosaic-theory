@@ -151,3 +151,35 @@ def test_a_newer_release_with_no_parsed_guide_is_named_beside_the_old_one() -> N
         _rel("aug", "2026-08-19", [_g("next-fy", 9.90, 10.90)]),
         _rel("mar", "2026-03-03", [_g("next-fy", 7.50, 8.50)])])
     assert "newer release" not in (fresh.value or "") and "9.90–10.90" in (fresh.value or "")
+
+
+# --- REVIEW FIXES (#756) --------------------------------------------------------------------------
+
+def test_the_newest_filing_is_read_across_every_exhibit_it_furnishes() -> None:
+    """One 8-K can furnish two EX-99.1s. POSITIVE: the guide in the SECOND exhibit of the newest
+    filing is read (before the fix `max` picked the guide-less first one → UNKNOWN). NEGATIVE: an
+    older filing's guide is still never reached past."""
+    same_day = [_rel("0000000000-26-000001", "2026-08-19", []),
+                _rel("0000000000-26-000001", "2026-08-19", [_g("Fiscal 2027", 5.15, 5.20)])]
+    out = dm._release_adjusted_eps(same_day, _min_record(pe=30.0, price=150.0), _ABSENT)
+    assert out.status is SourceStatus.PRESENT and "$5.15–$5.20" in (out.value or ""), out
+    older = [_rel("b", "2026-08-19", []), _rel("a", "2026-05-20", [_g("Fiscal 2027", 5.0, 5.1)])]
+    assert dm._release_adjusted_eps(
+        older, _min_record(pe=30.0, price=150.0), _ABSENT).status is SourceStatus.UNKNOWN
+
+
+def test_a_percent_level_eps_guide_is_never_a_per_share_figure() -> None:
+    """NEGATIVE: a LEVEL range in % carries no dollars; it must not print as "$8.00–$10.00" with a
+    P/E struck on it."""
+    pct = [_rel("a", "2026-08-19", [_g("Fiscal 2027", 8.0, 10.0, unit="%")])]
+    out = dm._release_adjusted_eps(pct, _min_record(pe=30.0, price=150.0), _ABSENT)
+    assert out.status is SourceStatus.UNKNOWN
+    # the list holds every 2.02/8.01 exhibit, so the note never calls it a RESULTS release
+    assert "results release" not in (out.note or "") and "EX-99.1 release" in (out.note or "")
+
+
+def test_two_exhibits_of_one_newer_filing_are_one_newer_release() -> None:
+    out = dm._current_guide([
+        _rel("aug", "2026-08-19", []), _rel("aug", "2026-08-19", []),
+        _rel("mar", "2026-03-03", [_g("next-fy", 7.50, 8.50)])])
+    assert "1 newer release (filed 2026-08-19) carries no parsed guide" in (out.value or ""), out
