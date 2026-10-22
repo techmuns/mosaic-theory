@@ -1242,7 +1242,11 @@ class Dashboard:
     no_evidence: list[DashRow] = field(default_factory=list)
 
 
-def _sources_line(store: Store, tid: str, rids: set[str]) -> list[str]:
+def _sources_line(store: Store, tid: str, rids: set[str],
+                  until: datetime | None = None) -> list[str]:
+    """The week's source lines. With `until`, an author the operator stated LATER
+    (`Author.stated_in`, attribution.py) is not shown: a report rendered again keeps what the
+    registry held when its run finished (review of #771)."""
     out: list[str] = []
     for c in store.contributions(thesis_id=tid):
         if c.run_id not in rids:
@@ -1250,7 +1254,9 @@ def _sources_line(store: Store, tid: str, rids: set[str]) -> list[str]:
         a = store.article(c.article_id)
         if a is None:
             continue
-        authors = "; ".join(x.name for x in a.authors) if a.authors else "author UNKNOWN"
+        held = [x for x in a.authors if x.stated_in is None or until is None
+                or (r := store.run(x.stated_in)) is None or r.started_at <= until]
+        authors = "; ".join(x.name for x in held) if held else "author UNKNOWN"
         pub = a.published_at.date().isoformat() if a.published_at else "date UNKNOWN"
         what = _CHANGE_TAG.get(c.contribution) or "first record of this thesis"
         out.append(f"{a.publisher} — {authors} — "
@@ -1424,7 +1430,8 @@ def build_dashboard(store: Store, run_id: str, *, cards: dict[str, dict[str, str
             previous_action=prev_action.value if prev_action else None,
             change_reason=cur.priority.change_reason,
             evidence_direction=cur.evidence_direction.value, what_changed=changed,
-            sources=_sources_line(store, tid, rids), intake=_intake_labels(store, tid, rids),
+            sources=_sources_line(store, tid, rids, until=run.finished_at),
+            intake=_intake_labels(store, tid, rids),
             named_companies=[c.name_as_written + (" (" + "/".join(x.ticker for x in c.listings)
                                                   + ")" if c.listings else
                                                   f" ({c.resolution_status.value})")
