@@ -46,6 +46,7 @@ from vinci.theme_intelligence.parse import (
     unreadable_glyphs,
 )
 from vinci.theme_intelligence.schemas import (
+    OPERATOR_STATED,
     Author,
     Block,
     FieldStatus,
@@ -209,7 +210,7 @@ def _finish(read: DocumentRead, *, blocks: list[Block], title: str | None, title
         title = clean_title(title, _publisher(declared.source_id)) or title
     if declared.authors:
         names = {a.name.lower() for a in authors}
-        authors += [Author(name=n, source_field="operator-stated") for n in declared.authors
+        authors += [Author(name=n, source_field=OPERATOR_STATED) for n in declared.authors
                     if n.lower() not in names]
     pub_src = date_src
     if doc_date is not None and declared.published and declared.published != doc_date:
@@ -816,7 +817,7 @@ def read_document(path: Path, declared: Declared) -> DocumentRead:
             read.doc = _replace(read.doc, title=declared.title, title_source="operator-stated")
         if declared.authors and not doc.authors:
             read.doc = _replace(read.doc, authors=tuple(
-                Author(name=a, source_field="operator-stated") for a in declared.authors),
+                Author(name=a, source_field=OPERATOR_STATED) for a in declared.authors),
                 authors_status=FieldStatus.KNOWN)
         return read
     if fmt == "markdown":

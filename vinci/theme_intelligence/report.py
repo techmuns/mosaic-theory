@@ -127,7 +127,8 @@ VERIFICATION_STATUSES = ("FULLY_VERIFIED", "VERIFIED_WITHIN_PREVIEW", "INCOMPLET
 
 #: run modes whose evidence a weekly SCAN's report takes in — a manual upload or a single
 #: article analysed between two scans appears in the next scan's ONE ranked list
-MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse", "market", "review")
+MANUAL_MODES = ("ingest", "article", "reassess", "enrich", "reanalyse", "market", "review",
+                "author")
 #: runs that analyse no article — the "Is it priced?" refresh, which the weekly job runs right
 #: after its scan. ONE rule, read by `report_runs` and `desk.desk_weeks`: a refresh belongs to the
 #: week of the scan it FOLLOWS (before any scan, it is a manual run like the rest). It never opens
@@ -140,8 +141,9 @@ PRICE_ONLY_MODES = ("market",)
 #: a priority rule). Every one follows the rule above — a manual `enrich` after the scan opened an
 #: EMPTY week the desk opened on (2026-10-21, the one-registry desk: "21 Oct — manual runs since
 #: the last weekly scan", 0 articles, 0 rows), as the market step had. A REVIEWER's resolution of
-#: a card-review finding ("review", resolve.py) changes only what a card shows too.
-REFRESH_MODES = (*PRICE_ONLY_MODES, "enrich", "review")
+#: a card-review finding ("review", resolve.py) changes only what a card shows too, as does an
+#: author the operator states for an analysed article ("author", attribution.py).
+REFRESH_MODES = (*PRICE_ONLY_MODES, "enrich", "review", "author")
 
 
 def follows(r: WeeklyRun, scan: WeeklyRun | None) -> bool:
@@ -166,6 +168,8 @@ def _no_discovery(mode: str) -> str:
             "display only, no model call)" if mode == "market" else
             "none read — a reviewer's resolution of card-review findings (no fetch, no model "
             "call)" if mode == "review" else
+            "none read — the operator states an analysed article's author(s) (no fetch, no "
+            "model call)" if mode == "author" else
             "none discovered — articles already held, analysed again under the current taxonomy "
             "(re-analysis; their earlier theses retired)" if mode == "reanalyse" else
             "single article (manual URL) — no source discovery")
