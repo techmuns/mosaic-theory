@@ -2,7 +2,7 @@
 id: 2026-10-22-theme-intelligence-finding-keeps-origin
 status: recorded
 date: 2026-10-22
-prs: []
+prs: [777]
 supersedes:
 superseded-by:
 ---
