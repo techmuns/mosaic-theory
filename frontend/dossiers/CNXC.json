@@ -4561,11 +4561,26 @@
               "change": null,
               "verbatim": "Revenue of $2,462.5 million",
               "source_ref": "8-K 0001803599-26-000133 EX-99.1"
+            },
+            {
+              "metric": "revenue",
+              "period": "Q2 2025",
+              "value": 2417.4,
+              "change": null,
+              "verbatim": "Revenue of $2,462.5 million, an increase of 1.9% year-on-year on an as reported basis compared to revenue of $2,417.4 million",
+              "source_ref": "8-K 0001803599-26-000133 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Operating income of $121 million to $131 million and non-GAAP operating income of $295 million to $305” (8-K 0001803599-26-000133 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP diluted EPS of $2.65 to $2.77” (8-K 0001803599-26-000133 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Operating income of $509 million to $539 million and non-GAAP operating income of $1,200 million to $1,230” (8-K 0001803599-26-000133 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP diluted EPS of $10.83 to $11.18” (8-K 0001803599-26-000133 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Third quarter reported revenue of $2.465 billion to $2.490” (8-K 0001803599-26-000133 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Full year reported revenue of $9.925 billion to $10.025” (8-K 0001803599-26-000133 EX-99.1)"
+          ]
         },
         {
           "filed": "2026-03-24",
@@ -4615,11 +4630,26 @@
               "change": null,
               "verbatim": "Revenue of $2,500.4 million",
               "source_ref": "8-K 0001803599-26-000084 EX-99.1"
+            },
+            {
+              "metric": "revenue",
+              "period": "Q1 2025",
+              "value": 2372.2,
+              "change": null,
+              "verbatim": "Revenue of $2,500.4 million, an increase of 5.4% year-on-year on an as reported basis compared to revenue of $2,372.2 million",
+              "source_ref": "8-K 0001803599-26-000084 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Operating income of $128 million to $138 million and non-GAAP operating income of $290 million to $300” (8-K 0001803599-26-000084 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP diluted EPS of $2.57 to $2.69” (8-K 0001803599-26-000084 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Operating income of $636 million to $686 million and non-GAAP operating income of $1,240 million to $1,290” (8-K 0001803599-26-000084 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP diluted EPS of $11.48 to $12.07” (8-K 0001803599-26-000084 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Second quarter reported revenue of $2.460 billion to $2.485” (8-K 0001803599-26-000084 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Full year reported revenue of $10.035 billion to $10.180” (8-K 0001803599-26-000084 EX-99.1)"
+          ]
         },
         {
           "filed": "2026-02-13",
@@ -4652,7 +4682,7 @@
           "reconciliation": [
             {
               "metric": "adjusted operating income",
-              "period": "2025",
+              "period": "Q4 2025",
               "value": 323.2,
               "change": null,
               "verbatim": "Non-GAAP operating income of $323.2 million",
@@ -4660,7 +4690,7 @@
             },
             {
               "metric": "adjusted ebitda",
-              "period": "2025",
+              "period": "Q4 2025",
               "value": 378.6,
               "change": null,
               "verbatim": "Adjusted EBITDA of $378.6 million",
@@ -4668,24 +4698,71 @@
             },
             {
               "metric": "adjusted eps",
-              "period": "2025",
+              "period": "Q4 2025",
               "value": 2.95,
               "change": null,
               "verbatim": "Non-GAAP diluted EPS was $2.95",
               "source_ref": "8-K 0001803599-26-000003 EX-99.1"
             },
             {
-              "metric": "revenue",
+              "metric": "adjusted operating income",
               "period": "2025",
+              "value": 1253.5,
+              "change": null,
+              "verbatim": "Non-GAAP operating income of $1,253.5 million",
+              "source_ref": "8-K 0001803599-26-000003 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "2025",
+              "value": 1469.3,
+              "change": null,
+              "verbatim": "Adjusted EBITDA of $1,469.3 million",
+              "source_ref": "8-K 0001803599-26-000003 EX-99.1"
+            },
+            {
+              "metric": "adjusted eps",
+              "period": "2025",
+              "value": 11.22,
+              "change": null,
+              "verbatim": "Non-GAAP diluted EPS was $11.22",
+              "source_ref": "8-K 0001803599-26-000003 EX-99.1"
+            },
+            {
+              "metric": "revenue",
+              "period": "Q4 2025",
               "value": 2552.9,
               "change": null,
               "verbatim": "Revenue of $2,552.9 million",
+              "source_ref": "8-K 0001803599-26-000003 EX-99.1"
+            },
+            {
+              "metric": "revenue",
+              "period": "Q4 2024",
+              "value": 2448.0,
+              "change": null,
+              "verbatim": "Revenue of $2,552.9 million, an increase of 4.3% year-on-year on an as reported basis compared to revenue of $2,448.0 million",
+              "source_ref": "8-K 0001803599-26-000003 EX-99.1"
+            },
+            {
+              "metric": "revenue",
+              "period": "2025",
+              "value": 9825.8,
+              "change": null,
+              "verbatim": "Revenue of $9,825.8 million",
               "source_ref": "8-K 0001803599-26-000003 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Operating income of $140 million to $150 million and non-GAAP operating income of $290 million to $300” (8-K 0001803599-26-000003 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP diluted EPS of $2.57 to $2.69” (8-K 0001803599-26-000003 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Operating income of $688 million to $738 million and non-GAAP operating income of $1,240 million to $1,290” (8-K 0001803599-26-000003 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP diluted EPS of $11.48 to $12.07” (8-K 0001803599-26-000003 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “First quarter reported revenue of $2.475 billion to $2.500” (8-K 0001803599-26-000003 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Full year reported revenue of $10.035 billion to $10.180” (8-K 0001803599-26-000003 EX-99.1)"
+          ]
         },
         {
           "filed": "2025-09-25",
@@ -4735,11 +4812,26 @@
               "change": null,
               "verbatim": "Revenue of $2,483.3 million",
               "source_ref": "8-K 0001803599-25-000143 EX-99.1"
+            },
+            {
+              "metric": "revenue",
+              "period": "Q3 2024",
+              "value": 2387.4,
+              "change": null,
+              "verbatim": "Revenue of $2,483.3 million, an increase of 4.0% year-on-year on an as reported basis compared to revenue of $2,387.4 million",
+              "source_ref": "8-K 0001803599-25-000143 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Operating income of $163 million to $173 million and non-GAAP operating income of $320 million to $330” (8-K 0001803599-25-000143 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP EPS of $2.85 to $2.96” (8-K 0001803599-25-000143 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Operating income of $627 million to $637 million and non-GAAP operating income of $1,250 million to $1,260” (8-K 0001803599-25-000143 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP EPS of $11.11 to $11.23” (8-K 0001803599-25-000143 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Fourth quarter reported revenue of $2.525 billion to $2.550” (8-K 0001803599-25-000143 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Full year reported revenue of $9.798 billion to $9.823” (8-K 0001803599-25-000143 EX-99.1)"
+          ]
         }
       ],
       "filing": {
@@ -9325,6 +9417,14 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source"
       ]
     }
   ],

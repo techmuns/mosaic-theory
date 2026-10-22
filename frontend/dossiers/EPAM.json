@@ -6786,7 +6786,7 @@
               "period": "Q2 2026",
               "value": 3.38,
               "change": "+$0.61,",
-              "verbatim": "Second quarter GAAP diluted EPS of $1.97, an increase of $0.41, or 26.3%, and non-GAAP diluted EPS of $3.38,",
+              "verbatim": "Second quarter GAAP diluted EPS of $1.97, an increase of $0.41, or 26.3%, and non-GAAP diluted EPS of $3.38",
               "source_ref": "8-K 0001352010-26-000043 EX-99.1"
             },
             {
@@ -6824,7 +6824,7 @@
               "period": "Q1 2026",
               "value": 2.86,
               "change": "+$0.45,",
-              "verbatim": "First quarter GAAP diluted EPS of $1.52, an increase of $0.24, or 18.8%, and non-GAAP diluted EPS of $2.86,",
+              "verbatim": "First quarter GAAP diluted EPS of $1.52, an increase of $0.24, or 18.8%, and non-GAAP diluted EPS of $2.86",
               "source_ref": "8-K 0001352010-26-000026 EX-99.1"
             },
             {
@@ -6870,7 +6870,7 @@
               "period": "Q4 2025",
               "value": 3.26,
               "change": "+$0.42,",
-              "verbatim": "Non-GAAP diluted EPS was $3.26,",
+              "verbatim": "Non-GAAP diluted EPS was $3.26",
               "source_ref": "8-K 0001352010-26-000010 EX-99.1"
             },
             {
@@ -6886,7 +6886,7 @@
               "period": "2025",
               "value": 11.5,
               "change": "+$0.64,",
-              "verbatim": "Non-GAAP diluted EPS was $11.50,",
+              "verbatim": "Non-GAAP diluted EPS was $11.50",
               "source_ref": "8-K 0001352010-26-000010 EX-99.1"
             }
           ],
@@ -6924,7 +6924,7 @@
               "period": "Q3 2025",
               "value": 3.08,
               "change": "-$0.04,",
-              "verbatim": "Non-GAAP diluted EPS was $3.08,",
+              "verbatim": "Non-GAAP diluted EPS was $3.08",
               "source_ref": "8-K 0001352010-25-000053 EX-99.1"
             }
           ],
@@ -13473,6 +13473,14 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source"
       ]
     }
   ],

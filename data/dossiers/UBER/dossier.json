@@ -6883,7 +6883,7 @@
             {
               "metric": "adjusted operating income",
               "period": "Q2 2026",
-              "value": 2.1,
+              "value": 2100.0,
               "change": "+40%",
               "verbatim": "Non-GAAP Operating Income of $2.1 billion",
               "source_ref": "8-K 0001543151-26-000027 EX-99.1"
@@ -6893,13 +6893,16 @@
               "period": "Q2 2026",
               "value": 0.81,
               "change": "+35%",
-              "verbatim": "Non-GAAP EPS of $0.81,",
+              "verbatim": "Non-GAAP EPS of $0.81",
               "source_ref": "8-K 0001543151-26-000027 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP EPS of $0.84 to $0.88” (8-K 0001543151-26-000027 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “◦ Our outlook translates to Adjusted EBITDA of $2.86 billion to $2.96” (8-K 0001543151-26-000027 EX-99.1)"
+          ]
         },
         {
           "filed": "2026-05-06",
@@ -6921,7 +6924,7 @@
             {
               "metric": "adjusted operating income",
               "period": "Q1 2026",
-              "value": 1.9,
+              "value": 1900.0,
               "change": "+42%",
               "verbatim": "Non-GAAP Operating Income of $1.9 billion",
               "source_ref": "8-K 0001543151-26-000019 EX-99.1"
@@ -6931,13 +6934,16 @@
               "period": "Q1 2026",
               "value": 0.72,
               "change": "+44%",
-              "verbatim": "Non-GAAP EPS of $0.72,",
+              "verbatim": "Non-GAAP EPS of $0.72",
               "source_ref": "8-K 0001543151-26-000019 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP EPS of $0.78 to $0.82” (8-K 0001543151-26-000019 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “◦ Our outlook translates to Adjusted EBITDA of $2.70 billion to $2.80” (8-K 0001543151-26-000019 EX-99.1)"
+          ]
         },
         {
           "filed": "2026-02-04",
@@ -6959,7 +6965,7 @@
             {
               "metric": "adjusted ebitda",
               "period": "Q4 2025",
-              "value": 2.5,
+              "value": 2500.0,
               "change": "+35%",
               "verbatim": "Adjusted EBITDA of $2.5 billion",
               "source_ref": "8-K 0001543151-26-000011 EX-99.1"
@@ -6967,7 +6973,10 @@
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Non-GAAP EPS of $0.65 to $0.72” (8-K 0001543151-26-000011 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “◦ Our outlook translates to Adjusted EBITDA of $2.37 billion to $2.47” (8-K 0001543151-26-000011 EX-99.1)"
+          ]
         }
       ],
       "filing": {
@@ -14518,6 +14527,14 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source"
       ]
     }
   ],
