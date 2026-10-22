@@ -2,7 +2,7 @@
 id: 2026-10-22-repo-made-public
 status: recorded
 date: 2026-10-22
-prs: []
+prs: [781]
 supersedes:
 superseded-by:
 ---
@@ -39,7 +39,7 @@ CIQ nor the Polygon agreement requires the exposure to be reported. Three conseq
    addresses. CLAUDE.md's rule "if the repo ever becomes public, the graph + dossiers revert to
    git-ignored" is OVERRIDDEN by the ruling: un-tracking now would not un-publish history.
 
-**WHY.** CLAUDE.md and `docs/DEPLOY.md` still said "this repo is private" and instructed an agent
+**WHY.** CLAUDE.md, `docs/DEPLOY.md` and a `.gitignore` note still said "this repo is private" and instructed an agent
 to un-track the dossiers if it ever went public. A rule that contradicts the operator's ruling is a
 rule some session will follow; this record and the two edits make the ruling the rule.
 
