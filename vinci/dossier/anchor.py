@@ -12,9 +12,11 @@ NAIVE reported-median margin — cycle / one-off / mix adjustments are the analy
 """
 from __future__ import annotations
 
+import json
 import re
 import statistics as st
 from datetime import datetime
+from pathlib import Path
 from typing import Any, NamedTuple
 
 from pydantic import BaseModel, ValidationError, computed_field
@@ -1331,7 +1333,7 @@ def replace_valuation_fields(text: str, updates: dict[str, Any], *,
 
 #: Hints the machine writes when it could NOT compute a recipe: an input absent (`unknown`) or
 #: unresolved (`ANCHOR_UNRESOLVED`). A placeholder records a data gap, never a judgment.
-_PLACEHOLDER_HINTS = frozenset({RECIPE_UNKNOWN, RECIPE_UNRESOLVED})
+PLACEHOLDER_HINTS = frozenset({RECIPE_UNKNOWN, RECIPE_UNRESOLVED})
 
 
 def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list[str]]:
@@ -1351,7 +1353,7 @@ def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list
     for the same reason. Two things on the block are not recipes, and the rule does not keep them
     (review of #670, both reproduced on the committed corpus):
 
-    * A PLACEHOLDER hint (``_PLACEHOLDER_HINTS``) is the machine saying it could not compute one.
+    * A PLACEHOLDER hint (``PLACEHOLDER_HINTS``) is the machine saying it could not compute one.
       Kept, it would outlive the data gap that wrote it — FUBO, ORKA and TECX sit committed as
       `unknown`, and keeping it over a later R1 would print "own-history multiple missing" above
       an anchor marked applicable. A real recipe IS still kept over a placeholder: NCNO went
@@ -1376,20 +1378,20 @@ def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list
         # the machine's own recipe and reason are kept beside it, refreshed like every computed
         # value — so agreement no longer erases the operator's reason, and disagreement is shown.
         d = old.operator_decision
-        # a `new` that already carries a decision was read off a committed page, not computed —
-        # its recipe is the decision's, and the machine's read is the one recorded beside it
+        # IDEMPOTENT: a `new` read off a committed page (it carries a decision) keeps the machine
+        # read recorded beside it, so preserve(page, page) == page — never the decision's recipe
+        # mistaken for the machine's (the corpus negative, rewriting every page over itself)
         machine = new.machine_recipe_hint if new.operator_decision is not None else new.recipe_hint
         updates = {"operator_decision": d, "recipe_hint": d.recipe, "machine_recipe_hint": machine}
-        if machine != d.recipe:
+        if machine in PLACEHOLDER_HINTS:
+            # a data gap, as on an undecided page — never shown as the machine disagreeing
+            notes.append(f"NO MACHINE READ: this run's hint is {machine!r}, a data gap; the "
+                         f"operator's {d.recipe!r} (decided {d.decided_on}) stands")
+        elif machine != d.recipe:
             notes.append(f"DIVERGES: the machine reads {machine!r}; the operator's "
                          f"{d.recipe!r} (decided {d.decided_on}) stands — never auto-resolved")
-        fresh_detail = new.data_quality_detail or []
-        dropped = [x for x in (old.data_quality_detail or []) if x not in fresh_detail]
-        if dropped:
-            notes.append(f"REVIEW: {len(dropped)} committed data_quality_detail line(s) are NOT "
-                         f"reproduced by this run and will be replaced — first: {dropped[0][:80]}…")
-        return new.model_copy(update=updates), notes
-    if (old.recipe_hint and old.recipe_hint not in _PLACEHOLDER_HINTS
+        return new.model_copy(update=updates), [*notes, *_dropped_detail(old, new)]
+    if (old.recipe_hint and old.recipe_hint not in PLACEHOLDER_HINTS
             and old.recipe_hint != new.recipe_hint):
         updates["recipe_hint"] = old.recipe_hint
         updates["reason"] = old.reason
@@ -1401,17 +1403,43 @@ def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list
     elif old.reason and old.reason != new.reason:
         notes.append(f"REFRESHED reason under {new.recipe_hint!r} — was {old.reason!r} "
                      f"(applicable={old.applicable} → {new.applicable})")
-    fresh_detail = new.data_quality_detail or []
-    dropped = [d for d in (old.data_quality_detail or []) if d not in fresh_detail]
-    if dropped:
-        notes.append(f"REVIEW: {len(dropped)} committed data_quality_detail line(s) are NOT "
-                     f"reproduced by this run and will be replaced — first: {dropped[0][:80]}…")
-    return (new.model_copy(update=updates) if updates else new), notes
+    kept = new.model_copy(update=updates) if updates else new
+    return kept, [*notes, *_dropped_detail(old, new)]
+
+
+def _dropped_detail(old: Anchor, new: Anchor) -> list[str]:
+    """The REVIEW note for committed `data_quality_detail` lines this run does not reproduce — the
+    same note whether or not a decision governs the page."""
+    fresh = new.data_quality_detail or []
+    dropped = [x for x in (old.data_quality_detail or []) if x not in fresh]
+    if not dropped:
+        return []
+    return [f"REVIEW: {len(dropped)} committed data_quality_detail line(s) are NOT reproduced by "
+            f"this run and will be replaced — first: {dropped[0][:80]}…"]
 
 
 class DecisionWriteError(ValueError):
     """A write would drop or alter an operator's recorded decision, or would put a hand re-tag back
     into the machine's `reason`."""
+
+
+def committed_anchor_block(path: Path) -> dict[str, Any] | None:
+    """The anchor block stored at `path`, for the decision guard — None only when there is no file
+    or the page carries no anchor. A file that EXISTS but cannot be read as a JSON object (a rebase
+    left conflict markers in it, a write was cut short) is REFUSED: a write over it could not show
+    that it keeps a decision it cannot see, which is how one would be lost (review of #780)."""
+    if not path.exists():
+        return None
+    try:
+        stored = json.loads(path.read_text())
+    except (OSError, ValueError) as exc:
+        raise DecisionWriteError(
+            f"{path}: the committed page cannot be read ({type(exc).__name__}) — a write over it "
+            "cannot show it keeps an operator's decision; repair the file first") from exc
+    if not isinstance(stored, dict):
+        raise DecisionWriteError(f"{path}: the committed page is not a JSON object — repair it")
+    block = stored.get("anchor")
+    return block if isinstance(block, dict) else None
 
 
 def check_decision_write(committed: dict[str, Any] | None, new: Anchor | None, *,

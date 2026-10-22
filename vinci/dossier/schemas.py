@@ -15,7 +15,6 @@ source so the human verifies the datum, not the summary. A field that could not 
 from __future__ import annotations
 
 import enum
-import json
 from collections.abc import Callable
 from datetime import date, datetime
 from pathlib import Path
@@ -31,7 +30,7 @@ from pydantic import (
     model_validator,
 )
 
-from vinci.dossier.anchor import Anchor, check_decision_write
+from vinci.dossier.anchor import Anchor, check_decision_write, committed_anchor_block
 from vinci.dossier.midcycle import MidCycle
 from vinci.sleeves import DEFAULT_SLEEVE, UnknownSleeveError, require_sleeve
 
@@ -2753,15 +2752,9 @@ def write_dossier(path: Path, doc: Dossier, *, decision_change: bool = False) ->
 
     AND THE OPERATOR'S DECISION RIDES THROUGH IT (2026-10-22): a write that drops or alters the
     committed `anchor.operator_decision` is refused (`check_decision_write`) — `decision_change`
-    is passed only by `vinci anchor-retag`."""
-    committed = None
-    if path.exists():
-        try:
-            stored = json.loads(path.read_text())
-            committed = stored.get("anchor") if isinstance(stored, dict) else None
-        except (OSError, ValueError):
-            committed = None
-    check_decision_write(committed, doc.anchor, decision_change=decision_change)
+    is passed only by `vinci anchor-retag`. The guard reads the bytes ON DISK at write time, never a
+    caller's copy, and a committed file it cannot read is refused rather than written over."""
+    check_decision_write(committed_anchor_block(path), doc.anchor, decision_change=decision_change)
     text = dossier_json(doc)
     path.write_text(text)
     return text

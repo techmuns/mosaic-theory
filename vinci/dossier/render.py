@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci.config import get_config
-from vinci.dossier.anchor import DQ_LEASE_BASIS, SHARES_REFUSED, Anchor
+from vinci.dossier.anchor import DQ_LEASE_BASIS, PLACEHOLDER_HINTS, SHARES_REFUSED, Anchor
 from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
 from vinci.dossier.extraction_version import (
     refresh_line,
@@ -3478,8 +3478,12 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     if dec is not None:
         out += [f"**The operator's decision: {_md_cell(dec.recipe)}** — {dec.decided_on}, "
                 f"{dec.decided_by}", ""]
-        if anchor.machine_recipe_hint and anchor.machine_recipe_hint != dec.recipe:
-            out += [f"⚠ **The machine reads {anchor.machine_recipe_hint}.** The operator's "
+        machine = anchor.machine_recipe_hint
+        if machine in PLACEHOLDER_HINTS:   # a data gap, never shown as the machine disagreeing
+            out += [f"_The machine could not read a recipe on this build ({machine}) — a data gap, "
+                    "not a disagreement; the operator's decision stands._", ""]
+        elif machine and machine != dec.recipe:
+            out += [f"⚠ **The machine reads {machine}.** The operator's "
                     "decision stands; it changes only by hand.", ""]
         out += [*(f"> {ln}".rstrip() for ln in dec.reason.splitlines()), "",
                 f"_Where this decision is recorded: {dec.source_ref}_", ""]

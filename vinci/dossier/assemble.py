@@ -695,7 +695,7 @@ def _keep_committed_recipe(dossier: Dossier, folder: Path) -> Dossier:
         # here, a second way AMZN's and UBER's reasons were lost (#700, #705). The merged anchor is
         # always kept. No caveat: the block carries both recipes, so the page renders the
         # divergence from it on EVERY render, not only after a rebuild — never resolved here.
-        return dossier if kept == fresh else dossier.model_copy(update={"anchor": kept})
+        return dossier.model_copy(update={"anchor": kept})
     if kept.recipe_hint == fresh.recipe_hint:
         return dossier  # the rule keeps only a RECIPE, and none was kept over this build's own
     caveat = (f"Recipe kept from the committed dossier: {kept.recipe_hint}. This build's own "

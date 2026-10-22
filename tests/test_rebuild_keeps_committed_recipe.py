@@ -154,7 +154,8 @@ def test_rewriting_a_committed_dossier_over_itself_changes_no_recipe(ticker: str
     cannot catch a rule that keeps the wrong thing. The NCNO and NFLX pins above cover that."""
     folder = ROOT / "data" / "dossiers" / ticker
     d = Dossier.model_validate_json((folder / "dossier.json").read_text())
-    assert asm._keep_committed_recipe(d, folder) is d, (
+    # EQUAL, not identical: a decided page comes back as a copy carrying the same block (#780)
+    assert asm._keep_committed_recipe(d, folder) == d, (
         f"{ticker}: the guard altered a dossier whose build agrees with its committed anchor")
 
 

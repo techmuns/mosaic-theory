@@ -862,10 +862,15 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     return recipe_proposal.propose(json.loads(original), anchor)
 
 
-#: The recipes an operator may decide. A placeholder (`unknown`, `ANCHOR_UNRESOLVED`) is a data gap,
-#: never a decision.
-_DECIDABLE_RECIPES = ("R1_midcycle_margin_evebitda", "R1_NOT_ROBUST", "R2_NEEDED",
-                      "R3_forward_pe", "R4_forward_ev_ebit")
+def _decidable_recipes() -> tuple[str, ...]:
+    """The recipes an operator may decide, read off the constants that define them — never a copy
+    of their strings (review of #780). A placeholder (`unknown`, `ANCHOR_UNRESOLVED`) is a data gap,
+    never a decision."""
+    from vinci.dossier.anchor import RECIPE_R1, RECIPE_R1_NOT_ROBUST, RECIPE_R2
+    from vinci.dossier.recipe_proposal import RECIPE_R4
+    from vinci.dossier.valuation_basis import RECIPE_R3
+
+    return (RECIPE_R1, RECIPE_R1_NOT_ROBUST, RECIPE_R2, RECIPE_R3, RECIPE_R4)
 
 
 def _cmd_anchor_retag(args: argparse.Namespace) -> int:
@@ -876,9 +881,11 @@ def _cmd_anchor_retag(args: argparse.Namespace) -> int:
     (`_machine_anchor`, the backfill's computation) is recorded beside it as `reason` and
     `machine_recipe_hint`, and every computed VALUE on the anchor stays as committed — a re-tag is
     a judgment about which recipe fits, not a recompute. `--retire` removes a decision and returns
-    the recipe to the machine's. One page per call; the page is re-rendered from its record."""
+    the recipe to the machine's. `--values-held` records a decision on a page whose values are
+    HELD (VITL, STATE row 32 (11)): the values stay, and no machine reason is written beside
+    numbers it does not describe. One page per call; the page is re-rendered from its record."""
     from vinci.dossier import layer_refresh
-    from vinci.dossier.anchor import OperatorDecision
+    from vinci.dossier.anchor import PLACEHOLDER_HINTS, OperatorDecision
     from vinci.dossier.refresh import _rerender_only
     from vinci.dossier.schemas import Dossier
     from vinci.edgar.client import EdgarClient
@@ -896,66 +903,103 @@ def _cmd_anchor_retag(args: argparse.Namespace) -> int:
     if committed is None:
         print(f"{t}: the page carries no anchor block to decide on", file=sys.stderr)
         return 1
+    decidable = _decidable_recipes()
+    # every operator-supplied field is STRIPPED before it is checked — a blank is a missing field
+    recipe, reason_file, decided_by, source_ref, at_given = (
+        (getattr(args, n) or "").strip()
+        for n in ("recipe", "reason_file", "decided_by", "source_ref", "machine_at_decision"))
+    decided_on: date | None = None
+    reason = ""
+    if not args.retire:
+        missing = [flag for flag, v in (("recipe", recipe), ("reason-file", reason_file),
+                                        ("decided-by", decided_by), ("source-ref", source_ref))
+                   if not v]
+        if missing:
+            print(f"{t}: a decision needs --{', --'.join(missing)}", file=sys.stderr)
+            return 1
+        if recipe not in decidable:
+            print(f"{t}: {recipe!r} is not a decidable recipe ({', '.join(decidable)})",
+                  file=sys.stderr)
+            return 1
+        if at_given and at_given not in (*decidable, *sorted(PLACEHOLDER_HINTS)):
+            print(f"{t}: --machine-at-decision {at_given!r} is not a recipe the machine writes",
+                  file=sys.stderr)
+            return 1
+        reason = Path(reason_file).read_text().strip()
+        if not reason:
+            print(f"{t}: the reason file is empty — a decision states its reason", file=sys.stderr)
+            return 1
+        # the OPERATOR'S calendar (local), never UTC's — a decision dated "today" just after local
+        # midnight must not read as backdated (review of #780); an ISO date or a refusal
+        today = date.today()
+        try:
+            decided_on = date.fromisoformat(args.decided_on.strip()) if args.decided_on else today
+        except ValueError:
+            print(f"{t}: --decided-on {args.decided_on!r} is not an ISO date (YYYY-MM-DD)",
+                  file=sys.stderr)
+            return 1
+        if decided_on > today:
+            print(f"{t}: --decided-on {decided_on} is after today ({today}) — a decision is "
+                  "recorded once it is made", file=sys.stderr)
+            return 1
+    elif committed.operator_decision is None:
+        print(f"{t}: no operator decision to retire", file=sys.stderr)
+        return 1
     fresh = _machine_anchor(t, d, original, cfg, EntityResolver.from_config(cfg),
                             EdgarClient.from_config(cfg))
     if fresh is None:
         return 1
-    if args.retire:
-        if committed.operator_decision is None:
-            print(f"{t}: no operator decision to retire", file=sys.stderr)
-            return 1
-        new = committed.model_copy(update={
-            "operator_decision": None, "machine_recipe_hint": None,
-            "recipe_hint": fresh.recipe_hint, "reason": fresh.reason})
-    else:
-        missing = [n for n in ("recipe", "reason_file", "decided_by", "source_ref")
-                   if not getattr(args, n)]
-        if missing:
-            print(f"{t}: a decision needs --{', --'.join(m.replace('_', '-') for m in missing)}",
-                  file=sys.stderr)
-            return 1
-        if args.recipe not in _DECIDABLE_RECIPES:
-            print(f"{t}: {args.recipe!r} is not a decidable recipe "
-                  f"({', '.join(_DECIDABLE_RECIPES)})", file=sys.stderr)
-            return 1
-        reason = Path(args.reason_file).read_text().strip()
-        if not reason:
-            print(f"{t}: the reason file is empty — a decision states its reason", file=sys.stderr)
-            return 1
-        today = datetime.now(UTC).date().isoformat()
-        decided_on = args.decided_on or today
-        # the machine's read NOW stands for its read AT DECISION only when the decision is made
-        # now — a backdated decision records what was read then, or nothing (never today's read)
-        at_decision = args.machine_at_decision or (fresh.recipe_hint if decided_on == today
-                                                   else None)
-        decision = OperatorDecision(
-            recipe=args.recipe, reason=reason, decided_by=args.decided_by.strip(),
-            decided_on=decided_on, source_ref=args.source_ref.strip(),
-            machine_recipe_at_decision=at_decision)
-        new = committed.model_copy(update={
-            "recipe_hint": args.recipe, "operator_decision": decision,
-            "machine_recipe_hint": fresh.recipe_hint, "reason": fresh.reason})
     # the machine's reason describes ITS OWN values; beside different committed values it would
     # cite numbers the page does not show — refuse, never print a reason off another computation
     _own = {"recipe_hint", "reason", "operator_decision", "machine_recipe_hint", "computed_at",
             "scenario_eligibility"}  # eligibility is computed FROM the recipe the decision sets
-    moved = sorted(k for k, v in fresh.model_dump(mode="json").items()
-                   if k not in _own and committed.model_dump(mode="json").get(k) != v)
-    if moved:
+    was, now = committed.model_dump(mode="json"), fresh.model_dump(mode="json")
+    moved = sorted(k for k, v in now.items() if k not in _own and was.get(k) != v)
+    held = bool(moved) and args.values_held and not args.retire
+    if moved and not held:
         print(f"{t}: the machine's read today moves {len(moved)} committed value(s) "
               f"({', '.join(moved)}) — its reason would describe numbers the page does not show; "
-              "refresh the values first, then record the decision", file=sys.stderr)
+              "refresh the values first, then record the decision (or, on a page whose values "
+              "are HELD, pass --values-held)", file=sys.stderr)
         return 1
+    if args.retire:
+        new = committed.model_copy(update={
+            "operator_decision": None, "machine_recipe_hint": None,
+            "recipe_hint": fresh.recipe_hint, "reason": fresh.reason})
+    else:
+        assert decided_on is not None
+        # the machine's read NOW stands for its read AT DECISION only when the decision is made
+        # now — a backdated decision records what was read then, or nothing (never today's read)
+        at_decision = at_given or (fresh.recipe_hint if decided_on == date.today() else None)
+        decision = OperatorDecision(
+            recipe=recipe, reason=reason, decided_by=decided_by,
+            decided_on=decided_on.isoformat(), source_ref=source_ref,
+            machine_recipe_at_decision=at_decision)
+        new = committed.model_copy(update={
+            "recipe_hint": recipe, "operator_decision": decision,
+            "machine_recipe_hint": fresh.recipe_hint,
+            # HELD values carry no machine reason: the machine's describes values not on the page
+            "reason": None if held else fresh.reason})
     nd = new.operator_decision
     print(f"  {t}: recipe {committed.recipe_hint} → {new.recipe_hint}; machine reads "
           f"{fresh.recipe_hint}; decision "
           f"{f'recorded ({nd.decided_on})' if nd is not None else 'retired'}")
+    if held:
+        print(f"  {t}: VALUES HELD — the machine's read today would move {', '.join(moved)}; "
+              "they stay as committed, and no machine reason is written beside them")
     if args.dry_run:
         print(f"  {t}: DRY-RUN — nothing written")
         return 0
     layer_refresh.write_recorded(path, original, d.model_copy(update={"anchor": new}),
                                  "anchor-retag", decision_change=True)
-    _rerender_only(path)
+    # GUARDED, as the backfill guards it (review of #536): the JSON is written, so a page that will
+    # not re-render is reported loud and the command fails — never a silent stale page
+    try:
+        _rerender_only(path)
+    except Exception as exc:  # noqa: BLE001 — reported and failed, never swallowed
+        print(f"  {t}: WARNING — dossier.json written but dossier.md could NOT be re-rendered "
+              f"({exc}); the page is stale until it is", file=sys.stderr)
+        return 1
     print(f"  {t}: written; dossier.md re-rendered")
     return 0
 
@@ -4224,7 +4268,8 @@ def build_parser() -> argparse.ArgumentParser:
                          help="a text file holding the decision's reason, verbatim")
     p_retag.add_argument("--decided-by", dest="decided_by",
                          help="who made the call, as the record says (e.g. 'operator')")
-    p_retag.add_argument("--decided-on", dest="decided_on", help="ISO date (default: today)")
+    p_retag.add_argument("--decided-on", dest="decided_on",
+                         help="ISO date, YYYY-MM-DD (default: today, local)")
     p_retag.add_argument("--source-ref", dest="source_ref",
                          help="the record (and commit) the decision is taken from")
     p_retag.add_argument("--machine-at-decision", dest="machine_at_decision",
@@ -4232,6 +4277,9 @@ def build_parser() -> argparse.ArgumentParser:
                          "read now, for a decision made today; unrecorded for a backdated one)")
     p_retag.add_argument("--retire", action="store_true",
                          help="remove the decision; the recipe returns to the machine's")
+    p_retag.add_argument("--values-held", action="store_true", dest="values_held",
+                         help="the page's values are HELD: record the decision, keep every "
+                         "committed value, write no machine reason beside them")
     p_retag.add_argument("--dry-run", action="store_true", dest="dry_run")
     p_retag.set_defaults(func=_cmd_anchor_retag)
 
