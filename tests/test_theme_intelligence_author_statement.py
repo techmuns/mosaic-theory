@@ -337,6 +337,27 @@ def test_a_name_holding_the_separator_is_refused_everywhere(
     assert exit_.value.code == 2 and "may not contain ';'" in capsys.readouterr().err
 
 
+def test_a_template_placeholder_is_never_an_author(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Review of #775: the Uploads rows taught `--author "<as printed>"` — quoted, the shell
+    passes a forgotten placeholder through, and the upload credited it. Refused at the CLI's
+    `--author` / `--name` / `--retract` (exit 2); a real name with angle brackets inside passes."""
+    pipe, aid, _run = _authorless(tmp_path)
+    data = str(pipe.paths.root)
+    pipe.store.close()
+    for argv in (["author", "--article", aid, "--name", "<as printed>", "--by", WHO,
+                  "--reason", WHY],
+                 ["author", "--article", aid, "--retract", " <name> ", "--by", WHO,
+                  "--reason", WHY],
+                 ["upload", "--path", "x.pdf", "--source", "ms_research", "--budget", "1",
+                  "--author", "<as printed>"]):
+        with pytest.raises(SystemExit) as exit_:
+            main(["--data-dir", data, *argv])
+        assert exit_.value.code == 2 and "is a placeholder" in capsys.readouterr().err
+    assert main(["--data-dir", data, "author", "--article", aid, "--name", "Morgan <MS> Stanley",
+                 "--by", WHO, "--reason", WHY]) == 0  # NEGATIVE: not a whole-name placeholder
+
+
 def test_an_author_without_a_run_link_serializes_as_before() -> None:
     """Every stored author predating `stated_in` — page, text and upload credits — keeps its
     payload byte for byte; the field is written only when set."""

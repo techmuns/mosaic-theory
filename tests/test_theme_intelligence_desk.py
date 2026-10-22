@@ -18,6 +18,7 @@ from __future__ import annotations
 import dataclasses
 import json
 import re
+import subprocess
 from collections import Counter
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -811,6 +812,49 @@ def test_this_week_and_uploads_give_the_content_the_full_width(
     assert len(howto.select("ol.steps4 > li")) == 4
     first = up.select_one("main.wrap details.howto ~ details.ubk")
     assert first is not None  # the list follows the fold, at full width
+
+
+def test_uploads_teach_the_one_step_upload(w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """2026-10-22: the screen where documents are supplied taught the four-command route (pull,
+    `ingest-file`, release, push) a month after `upload` (#769) made it one checked command. Each
+    row now gives the `upload` command with its budget, author and licence; the weekly how-to
+    prices a document first (`--dry-run`), then runs it. NEGATIVE: no row teaches
+    `ingest-file --path` any more (a release of a held document still does — `upload` releases
+    nothing)."""
+    _pipe, out, _ = w12
+    up = _soup(out / "uploads.html")
+    howto = up.select_one("details.howto")
+    assert howto is not None
+    steps = [li.get_text(" ", strip=True) for li in howto.select("ol.steps4 > li")]
+    assert len(steps) == 4 and steps[0].startswith("1. Price it") and "--dry-run" in steps[0]
+    assert steps[1].startswith("2. Run it") and "upload" in steps[1]
+    assert "state pull" in steps[2] and "state push" in steps[2]  # a release starts from a pull
+    rules = howto.select_one("details.fold").get_text(" ", strip=True)
+    assert "--author" in rules and "--budget" in rules and "--remote" in rules
+    rows = [c.get_text(" ", strip=True) for c in up.select("li.ui .uiact")]
+    imports = [r for r in rows if " upload " in f" {r} " or "ingest-file --path" in r]
+    assert imports, "the fixture's desk asks for at least one document"
+    assert all("upload --path <your copy> --source" in r and "--budget <USD>" in r
+               and "--llm-permitted" in r for r in imports)
+    assert not any("ingest-file --path" in r for r in rows)
+    # review of #775: no row states an author — a quoted "<…>" passed the shell and was credited,
+    # and a name beside a signed report's byline becomes a second author
+    assert not any("--author" in r for r in imports)
+
+
+def test_an_upload_rows_url_is_shell_quoted() -> None:
+    """Review of #775: the row's URL went into the command bare, so a `#` commented out the
+    flags after it (`--budget` among them) and an `&` split the command in two. The command a
+    shell reads back must carry the URL whole and every flag after it."""
+    url = "https://example.com/insights/report?id=7&lang=en#section-2"
+    cmd = (desk._upload_cmd("ms_research", url).replace("<your copy>", "x.pdf")
+           .replace("<USD>", "5").replace(desk.CLI, "printf '%s\\n'", 1))  # what a shell reads
+    argv = subprocess.run(["/bin/sh", "-c", cmd], capture_output=True, text=True,
+                          check=False).stdout.splitlines()
+    assert argv[argv.index("--url") + 1] == url
+    assert argv[-3:] == ["--llm-permitted", "--budget", "5"]
+    plain = desk._upload_cmd("ms_research", "https://example.com/a")
+    assert "--url https://example.com/a " in plain  # a plain URL reads as before
 
 
 # --- the reading page's tabs, and the folds of the other screens (audit 2026-10-14) -------------

@@ -60,7 +60,14 @@ from vinci.theme_intelligence.ingest import (
 )
 from vinci.theme_intelligence.qa import run_qa
 from vinci.theme_intelligence.report import write_run_outputs
-from vinci.theme_intelligence.schemas import Article, FieldStatus, RetrievalState, RunStatus
+from vinci.theme_intelligence.schemas import (
+    OPERATOR_STATED,
+    Article,
+    Author,
+    FieldStatus,
+    RetrievalState,
+    RunStatus,
+)
 from vinci.theme_intelligence.store import Store
 
 if TYPE_CHECKING:
@@ -160,6 +167,16 @@ def preflight(pipe: Pipeline, path: Path, declared: Declared, *, budget: float,
                                        f"QA, so the upload would pay and then refuse to push. "
                                        f"State the author(s) from the document: --author NAME "
                                        f"(repeatable)")
+    # who the import will credit, and from where — a dry run shows a stated name, and one stated
+    # beside the page's own byline, before anything is paid (review of #775)
+    kept = held.authors if held and held.authors else ()
+
+    def whence(a: Author) -> str:
+        return (f"kept from {held.article_id}" if held and kept else "stated by you"
+                if a.source_field.startswith(OPERATOR_STATED) else "from the document")
+
+    lines.append("author: " + ("; ".join(f"{a.name} ({whence(a)})"
+                                         for a in kept or read.doc.authors) or "none named"))
     ok, why = llm_authorised(pipe, declared)
     if not ok:  # said in the upload's own words: nothing is HELD here — nothing is written
         src = pipe.sources.get(declared.source_id)

@@ -112,6 +112,9 @@ def _author_name(s: str) -> str:
     "; "-joined, so a name holding ';' would come back as two (review of #771)."""
     if ";" in s:
         raise argparse.ArgumentTypeError(f"an author's name may not contain ';': {s!r}")
+    if s.strip().startswith("<") and s.strip().endswith(">"):  # review of #775: quoted, a
+        # template's placeholder passes the shell and would be credited as the author
+        raise argparse.ArgumentTypeError(f"{s!r} is a placeholder — state the author's name")
     return s
 
 
