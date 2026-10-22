@@ -36,11 +36,15 @@ from vinci.theme_intelligence.cards import render_html, render_markdown, replace
 from vinci.theme_intelligence.engine import CorrectionError, SentenceCorrection
 from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.report import (
+    LineFinding,
     build_dashboard,
     card_context,
+    dismissed_findings,
     render_dashboard_html,
+    review_findings,
     write_run_outputs,
 )
+from vinci.theme_intelligence.resolve import check_run, current_findings, resolve
 from vinci.theme_intelligence.schemas import (
     CardSentence,
     IssueSeverity,
@@ -245,6 +249,172 @@ def test_an_analyst_correction_replaces_one_line_and_records_why(tmp_path: Path)
     d = build_dashboard(pipe.store, run.run_id, cards={}, generated="t")
     (row,) = [r for rs in d.categories.values() for r in rs]
     assert "Analyst correction" in row.events
+
+
+def _finding(pipe: Pipeline, sid: str) -> LineFinding:
+    v = _one(pipe)
+    return next(lf for lf in review_findings(pipe.store, v.thesis_id, v) if lf.sentence_id == sid)
+
+
+AGAIN = ("S&P 500 earnings are projected to grow 11% in Q3, an eighth straight quarter of "
+         "double-digit growth")
+
+
+def test_a_dismissal_survives_a_correction_of_another_line_and_a_second_re_grade(
+        tmp_path: Path) -> None:
+    """2026-10-22, on the registry of record: one analyst correction of a line WITHOUT a finding
+    reopened every dismissed finding of its thesis — the re-grade re-records the card review's
+    findings, and each copy read as raised by the review of the RE-GRADED version, so its key
+    changed (TH-8DDD7B2868: 4 dismissed → 4 open, "raised by the review of version 2"). A copy
+    is no new review: it keeps the origin of the finding it copies, and the dismissal holds."""
+    pipe = _reviewed(tmp_path)
+    v1 = _one(pipe)
+    before = _finding(pipe, "s01.1")
+    review_run, _r = resolve(pipe, before.key, "dismissed", reviewer="test", reason="test",
+                             as_of=AS_OF)
+    c1 = _cid(pipe, GROWTH)
+    for week, text in ((1, FIXED), (2, AGAIN)):  # a correction of s01.0, then a second re-grade
+        corr = SentenceCorrection(thesis_id=v1.thesis_id, sentence_id="s01.0", text=text,
+                                  claim_ids=(c1,), reason="the source projects growth (test)")
+        run, outs = pipe.run_reassess(as_of=AS_OF + timedelta(days=7 * week), corrections=[corr])
+        assert len(outs) == 1
+        now = _finding(pipe, "s01.1")
+        assert (now.key, now.finding.origin_version, now.finding.origin_as_of) == (
+            before.key, v1.version, v1.as_of)  # the review that made it — never the re-grade
+        assert set(dismissed_findings(pipe.store, v1.thesis_id, _one(pipe))) == {"s01.1"}
+        (copy,) = [i for i in pipe.store.issues(run_id=run.run_id)
+                   if i.code == "REVIEW_PARTIAL" and i.ref_id.endswith(":s01.1")]
+        assert copy.copied_from is not None  # the structured link the origin is read through
+    assert _one(pipe).version == v1.version + 2
+    assert [x.finding.key for x in current_findings(pipe.store) if not x.dismissed] == []
+    assert check_run(pipe.store, review_run.run_id) == []  # the dismissal's record still holds
+    out = write_run_outputs(pipe.store, run.run_id, tmp_path / "out")  # the rendered card
+    js = json.loads(next(Path(out["dir"]).glob("cards/TH-*.json")).read_text())
+    assert set(js["review_dismissed"]) == {"s01.1"}
+
+
+def _earnings_line(card: Any) -> str:
+    """The id of the counter-evidence line citing the earnings claim (SLOWING)."""
+    (sid,) = [k for k, (t, _p, _c) in card_sentences(card).items()
+              if t.startswith("Magnificent 7 earnings")]
+    return sid
+
+
+def test_a_dismissal_survives_a_re_grade_that_moves_its_line_to_a_new_id(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Review of #777: the copy kept its origin but its OWN words, which name the line's id —
+    so a re-grade that renumbered the line (a price line refiled LAST under section 07, the
+    earnings line after it moving up) still changed the key and reopened the dismissal. The
+    copy keeps the review's words too, as a finding carried onto an unreviewed version does."""
+    from vinci.theme_intelligence import cards
+
+    monkeypatch.setattr(cards, "refile_price_moves", lambda card, claims: card)  # the old rule
+    pipe = make_pipeline(tmp_path)
+    run = pipe.start_run("ingest", as_of=AS_OF)
+
+    def review(card, claims):  # type: ignore[no-untyped-def]
+        sid = _earnings_line(card)
+        text = card_sentences(card)[sid][0]
+        return [VerificationIssue(
+            issue_id="VI-test-slowing", run_id=run.run_id, scope="card_sentence",
+            ref_id=f"{card.header.thesis_id}:{sid}", severity=IssueSeverity.WARN,
+            code="REVIEW_PARTIAL", detail=f"{sid}: overstates the source (test) | {text[:100]!r}",
+            created_at=datetime.now(tz=UTC))]
+
+    pipe.engine.reviewer = review
+    art, x = _broadening()
+    ingest(pipe, art.doc(), x, as_of=AS_OF, publisher=art.publisher)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    pipe.engine.reviewer = None
+    monkeypatch.undo()
+    v1 = _one(pipe)
+    old_sid = _earnings_line(v1.content)
+    before = _finding(pipe, old_sid)
+    resolve(pipe, before.key, "dismissed", reviewer="test", reason="test", as_of=AS_OF)
+    pipe.run_reassess(as_of=AS_OF + timedelta(days=7))  # the price line is refiled
+    v2 = _one(pipe)
+    new_sid = _earnings_line(v2.content)
+    assert new_sid != old_sid  # the case: the line moved
+    now = _finding(pipe, new_sid)
+    assert (now.key, now.finding.origin_version) == (before.key, v1.version)
+    assert set(dismissed_findings(pipe.store, v1.thesis_id, v2)) == {new_sid}
+
+
+def test_a_withheld_lines_copy_keeps_the_origin_of_the_review_that_withheld_it(
+        tmp_path: Path) -> None:
+    """A WITHHELD line (the review's REVIEW_UNSUPPORTED) is never dismissible, but its age is
+    read from its origin — "open 4+ weeks" on the desk — so its copy keeps it too."""
+    pipe = make_pipeline(tmp_path)
+    run = pipe.start_run("ingest", as_of=AS_OF)
+
+    def review(card, claims):  # type: ignore[no-untyped-def]
+        text = card_sentences(card)["s01.1"][0]
+        return [VerificationIssue(
+            issue_id="VI-test-withheld", run_id=run.run_id, scope="card_sentence",
+            ref_id=f"{card.header.thesis_id}:s01.1", severity=IssueSeverity.BLOCK,
+            code="REVIEW_UNSUPPORTED", detail=f"s01.1: not in the source (test) | {text[:100]!r}",
+            created_at=datetime.now(tz=UTC))]
+
+    pipe.engine.reviewer = review
+    art, x = _broadening()
+    ingest(pipe, art.doc(), x, as_of=AS_OF, publisher=art.publisher)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    pipe.engine.reviewer = None
+    v1 = _one(pipe)
+    held = _finding(pipe, "s01.1")
+    assert held.withheld and held.finding.origin_version == v1.version
+    pipe.run_reassess(as_of=AS_OF + timedelta(days=28), corrections=[SentenceCorrection(
+        thesis_id=v1.thesis_id, sentence_id="s01.0", text=FIXED,
+        claim_ids=(_cid(pipe, GROWTH),), reason="test")])
+    now = _finding(pipe, "s01.1")
+    assert now.withheld and (now.key, now.finding.origin_version, now.finding.origin_as_of) == (
+        held.key, v1.version, AS_OF)
+
+
+def test_copies_made_before_the_link_keep_the_key_their_dismissals_bind_to(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The registry of record holds 14 versions re-graded BEFORE `copied_from` existed, and 22
+    dismissals bound to those copies' keys (each read as the re-graded version's own). NEGATIVE:
+    such a copy reads as before — its key unchanged, so no bound dismissal reopens — and a later
+    re-grade keeps THAT key (the copy of a copy inherits what the copy read as). And the
+    fail-safe: a copy whose source is not on the version before keeps the version's own origin,
+    a new key, OPEN — never a dismissal it was not given."""
+    pipe = _reviewed(tmp_path)
+    v1 = _one(pipe)
+    c1 = _cid(pipe, GROWTH)
+    add = pipe.store.add_issue
+
+    def corr(text: str) -> list[SentenceCorrection]:
+        return [SentenceCorrection(thesis_id=v1.thesis_id, sentence_id="s01.0", text=text,
+                                   claim_ids=(c1,), reason="test")]
+
+    with monkeypatch.context() as m:  # a re-grade as written before the link existed
+        m.setattr(pipe.store, "add_issue",
+                  lambda i: add(i.model_copy(update={"copied_from": None})))
+        pipe.run_reassess(as_of=AS_OF, corrections=corr(FIXED))
+    legacy = _finding(pipe, "s01.1")
+    assert legacy.finding.origin_version == v1.version + 1  # read as before: its version's own
+    resolve(pipe, legacy.key, "dismissed", reviewer="test", reason="test", as_of=AS_OF)
+    pipe.run_reassess(as_of=AS_OF, corrections=corr(AGAIN))
+    assert _finding(pipe, "s01.1").key == legacy.key
+    assert set(dismissed_findings(pipe.store, v1.thesis_id, _one(pipe))) == {"s01.1"}
+    with monkeypatch.context() as m:  # a copy whose source is nowhere on the version before
+        m.setattr(pipe.store, "add_issue", lambda i: add(
+            i.model_copy(update={"copied_from": "VI-nowhere"}) if i.copied_from else i))
+        pipe.run_reassess(as_of=AS_OF, corrections=corr(FIXED))
+    lost = _finding(pipe, "s01.1")
+    assert lost.key != legacy.key and lost.finding.origin_version == _one(pipe).version
+    assert dismissed_findings(pipe.store, v1.thesis_id, _one(pipe)) == {}  # OPEN, said so
+
+
+def test_an_issue_raised_by_a_check_or_a_review_serializes_as_before() -> None:
+    """`copied_from` is written only on a re-grade's copy: every other stored issue keeps its
+    payload byte for byte."""
+    i = VerificationIssue(issue_id="VI-x", run_id="R-x", scope="card_sentence", ref_id="TH-x:s01.0",
+                          severity=IssueSeverity.WARN, code="REVIEW_PARTIAL", detail="d",
+                          created_at=datetime(2026, 10, 22, tzinfo=UTC))
+    assert "copied_from" not in i.model_dump_json()
+    assert '"copied_from":"VI-y"' in i.model_copy(update={"copied_from": "VI-y"}).model_dump_json()
 
 
 @pytest.mark.parametrize("bad", ["unlinked", "no_claims", "unknown_line", "unstated_number",

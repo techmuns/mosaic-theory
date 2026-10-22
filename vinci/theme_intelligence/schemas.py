@@ -28,7 +28,7 @@ from pydantic import (
     model_serializer,
 )
 
-DB_SCHEMA_VERSION = 8
+DB_SCHEMA_VERSION = 9
 
 
 def _aware(d: datetime | None) -> datetime | None:
@@ -1290,9 +1290,22 @@ class VerificationIssue(Frozen):
     code: str
     detail: str
     created_at: datetime
+    #: the issue this one RE-RECORDS — a re-grade (`Engine.reassess`) carries the card review's
+    #: findings to its new version as copies: a copy is no new review, so its finding keeps the
+    #: origin of the one it copies (`report._findings`) and a reviewer's dismissal still binds.
+    #: None for every issue a check or a review raised. Serialized only when set, so every other
+    #: stored issue is byte-identical (and the copies made before it existed read as before).
+    copied_from: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _drop_uncopied(self, handler: SerializerFunctionWrapHandler) -> Any:
+        out = handler(self)
+        if isinstance(out, dict) and out.get("copied_from") is None:
+            out.pop("copied_from", None)
+        return out
 
 
-# --- source health (Priority 1A) ----------------------------------------------------------------
+# --- source health (Priority 1A)----------------------------------------------------------------
 
 class HealthStatus(StrEnum):
     """A publisher channel's OPERATIONAL health — exactly one per check. Never inferred from an

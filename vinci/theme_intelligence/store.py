@@ -202,6 +202,11 @@ MIGRATIONS: list[tuple[int, list[str]]] = [
         "CREATE TRIGGER review_resolutions_no_delete BEFORE DELETE ON review_resolutions "
         "BEGIN SELECT RAISE(ABORT, 'review_resolutions is append-only'); END",
     ]),
+    # no table changes: a stored issue's payload may carry `copied_from` (a re-grade's copy keeps
+    # its finding's origin, 2026-10-22). Payloads are validated with extra="forbid", so code
+    # before it fails on such a row mid-command; the step makes that code refuse the registry
+    # up front instead (`migrate`, `import_jsonl`)
+    (9, []),
 ]
 
 
@@ -823,11 +828,23 @@ class Store:
         return counts
 
     @classmethod
-    def import_jsonl(cls, src_dir: Path, db_path: Path) -> Store:
-        """Rebuild a registry from an export into a NEW database (refuses an existing file)."""
+    def import_jsonl(cls, src_dir: Path, db_path: Path,
+                     migrations: Sequence[tuple[int, list[str]]] = MIGRATIONS) -> Store:
+        """Rebuild a registry from an export into a NEW database (refuses an existing file).
+        Refuses an export made at a NEWER schema than this code (its `meta` schema_version), as
+        `migrate` refuses a newer database: its rows would insert and then fail validation
+        mid-command (review of the v9 step, 2026-10-22)."""
         if db_path.exists():
             raise StoreIntegrityError(f"{db_path} exists — import only into a fresh database")
-        store = cls(db_path)
+        meta = src_dir / "meta.jsonl"
+        rows = [json.loads(x) for x in meta.read_text().splitlines()] if meta.exists() else []
+        theirs = next((int(r["value"]) for r in rows if r.get("key") == "schema_version"), 0)
+        latest = max(v for v, _ in migrations)
+        if theirs > latest:
+            raise StoreIntegrityError(
+                f"{src_dir} was exported at schema v{theirs}, newer than this code (v{latest}) — "
+                f"refusing to import a newer registry with old code: update this checkout")
+        store = cls(db_path, migrations=migrations)
         with store.tx():
             for table in cls.TABLES:
                 f = src_dir / f"{table}.jsonl"
