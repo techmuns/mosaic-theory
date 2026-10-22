@@ -2,7 +2,7 @@
 id: 2026-10-22-theme-intelligence-regrade-keeps-carried
 status: recorded
 date: 2026-10-22
-prs: []
+prs: [779]
 supersedes:
 superseded-by:
 ---
