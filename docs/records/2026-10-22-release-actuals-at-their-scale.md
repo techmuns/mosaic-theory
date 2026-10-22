@@ -99,7 +99,7 @@ states scale as a power of ten the figure carries.
 - **Mutation battery: 32 of 32 killed** — 22 for the rules, scales, guards, the transform's two
   refusals, the renderer branch and a correctly shaped high-unit mutant, plus 10 for the review's
   fixes below.
-- **Suite:** full offline suite (`-m "not network"`), price store unlinked as in CI: **6,722 passed, 55 skipped, 2 failed** — V (`test_share_basis`) and MCK (`test_capital_panel_selection`), the CIQ data issues that fail identically on main (STATE row 32 (12)).
+- **Suite:** full offline suite (`-m "not network"`), price store unlinked as in CI, on the reviewed head `8919f465` (rebased onto main `dd85adf5`, #777): **6,745 passed, 55 skipped, 2 failed** — V (`test_share_basis`) and MCK (`test_capital_panel_selection`), the CIQ data issues that fail identically on main (STATE row 32 (12)). That run is also what caught the covenant-resolver wiring pin review fix 10 had left one hop short; it was fixed and mutation-checked before this run.
 
 **REVIEW OF #778 (`/code-review high`, 2026-10-22) — ten findings, all fixed in this PR.** Each
 fix is pinned on the review's own failure scenario, and none moved a row on the 118 releases or
