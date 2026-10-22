@@ -2,10 +2,12 @@
 
 WHY (2026-10-22). Every rule in CLAUDE.md was advisory: an agent had to remember "no red commit",
 "read §5.0 first" and "STOP and flag a change to the decision line". `.claude/settings.json` now
-wires three hooks that make them mechanical — a Stop hook that runs the fast half of the gate on
-uncommitted changes, a SessionStart hook that prints the §5.0 index, and a PreToolUse guard that
-forces a permission prompt before a decision-line file is edited. A hook nothing tests is a note
-again, so each one ships here with what it must catch AND what it must leave alone.
+wires hooks that make them mechanical — a Stop hook that runs the fast half of the gate on
+uncommitted changes, a SessionStart hook that prints the §5.0 index, a PreToolUse guard that
+forces a permission prompt before a decision-line file is edited, and a review gate that refuses
+`gh pr create` on a code change until `/code-review` has run at effort high or above. A hook
+nothing tests is a note again, so each one ships here with what it must catch AND what it must
+leave alone.
 
 The hooks run under the system `python3` (3.9 on the operator's Mac), not the venv; the scripts are
 run here with the test interpreter, and a parse at `feature_version=(3, 9)` pins the syntax.
@@ -66,7 +68,7 @@ def test_settings_wire_each_hook_to_a_script_that_exists() -> None:
 def test_hook_scripts_parse_as_python_3_9() -> None:
     """The system `python3` that runs them is 3.9: newer syntax would break every session."""
     scripts = sorted(HOOKS.glob("*.py"))
-    assert len(scripts) == 3
+    assert len(scripts) == 4
     for script in scripts:
         ast.parse(script.read_text(), filename=str(script), feature_version=(3, 9))
 
@@ -192,3 +194,94 @@ def test_fast_gate_gives_up_blocking_after_its_cap(tmp_path: pathlib.Path) -> No
     assert "STILL FAILING" in json.loads(last.stdout)["systemMessage"]
     # a fresh stop (not a continuation) starts the count again
     assert _stop(repo, session, continuing=False).returncode == 2
+
+
+# ── PreToolUse on Bash: the review gate ──────────────────────────────────────────────────────────
+# Transcript lines are built in the shape a real session transcript carries them — an "assistant"
+# entry whose message content holds the tool_use (checked against a live transcript, 2026-10-22).
+
+def _tool(tool_id: str, name: str, inp: dict[str, str]) -> str:
+    return json.dumps({"type": "assistant", "message": {"content": [
+        {"type": "tool_use", "id": tool_id, "name": name, "input": inp}]}})
+
+
+def _review(tool_id: str, args: str = "high --fix") -> str:
+    return _tool(tool_id, "Skill", {"skill": "code-review", "args": args})
+
+
+def _pr(tool_id: str) -> str:
+    return _tool(tool_id, "Bash", {"command": "gh pr create --title t --body b"})
+
+
+def _branch_checkout(tmp_path: pathlib.Path, changed: str) -> pathlib.Path:
+    """A checkout on a branch that commits one file (`changed`) on top of `main`."""
+    repo = tmp_path / "checkout"
+    (repo / "vinci").mkdir(parents=True)
+    (repo / "vinci" / "__init__.py").write_text("")
+    git = ["git", "-C", str(repo), "-c", "user.email=t@t", "-c", "user.name=t"]
+    subprocess.run([*git, "init", "-q", "-b", "main"], check=True)
+    subprocess.run([*git, "add", "-A"], check=True)
+    subprocess.run([*git, "commit", "-qm", "base"], check=True)
+    subprocess.run([*git, "switch", "-qc", "feature"], check=True)
+    (repo / changed).parent.mkdir(parents=True, exist_ok=True)
+    (repo / changed).write_text("x = 1\n")
+    subprocess.run([*git, "add", "-A"], check=True)
+    subprocess.run([*git, "commit", "-qm", "change"], check=True)
+    return repo
+
+
+def _create(repo: pathlib.Path, transcript: list[str], command: str = "gh pr create --fill",
+            tool_id: str = "toolu_now") -> subprocess.CompletedProcess[str]:
+    path = repo.parent / "transcript.jsonl"
+    path.write_text("\n".join([*transcript, _tool(tool_id, "Bash", {"command": command})]) + "\n")
+    return _run("review_gate.py", {"tool_name": "Bash", "tool_use_id": tool_id,
+                                   "tool_input": {"command": command}, "cwd": str(repo),
+                                   "transcript_path": str(path)}, cwd=repo)
+
+
+def test_review_gate_refuses_a_code_pr_that_was_never_reviewed(tmp_path: pathlib.Path) -> None:
+    out = _create(_branch_checkout(tmp_path, "vinci/probe.py"), [])
+    assert out.returncode == 2
+    assert "vinci/probe.py" in out.stderr and 'args=\"high --fix\"' in out.stderr
+
+
+def test_review_gate_lets_a_reviewed_code_pr_through(tmp_path: pathlib.Path) -> None:
+    out = _create(_branch_checkout(tmp_path, "vinci/probe.py"), [_review("toolu_r")])
+    assert out.returncode == 0 and out.stderr == ""
+
+
+def test_review_gate_needs_a_fresh_review_for_each_pr(tmp_path: pathlib.Path) -> None:
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    assert _create(repo, [_review("toolu_r"), _pr("toolu_pr1")]).returncode == 2
+    reviewed_again = [_review("toolu_r"), _pr("toolu_pr1"), _review("toolu_r2")]
+    assert _create(repo, reviewed_again).returncode == 0
+    # the call being decided is in the transcript already; it must not count as the "last PR"
+    assert _create(repo, [_review("toolu_r")], tool_id="toolu_pr1").returncode == 0
+
+
+def test_review_gate_does_not_accept_a_low_effort_review(tmp_path: pathlib.Path) -> None:
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    assert _create(repo, [_review("toolu_r", "low --fix")]).returncode == 2
+    assert _create(repo, [_review("toolu_r", "--fix")]).returncode == 2
+
+
+def test_review_gate_does_not_gate_a_docs_or_data_branch(tmp_path: pathlib.Path) -> None:
+    for changed in ("docs/records/x.md", "data/snapshots/x.jsonl", "STATE.md"):
+        repo = _branch_checkout(tmp_path / changed.replace("/", "_"), changed)
+        assert _create(repo, []).returncode == 0, changed
+
+
+def test_review_gate_ignores_every_other_command(tmp_path: pathlib.Path) -> None:
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    for command in ("gh pr view 782", "gh pr list", "git push -u origin feature"):
+        assert _create(repo, [], command=command).returncode == 0, command
+
+
+def test_review_gate_fails_open_visibly_without_a_transcript(tmp_path: pathlib.Path) -> None:
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    out = _run("review_gate.py", {"tool_name": "Bash", "tool_use_id": "t",
+                                  "tool_input": {"command": "gh pr create --fill"},
+                                  "cwd": str(repo), "transcript_path": str(tmp_path / "none")},
+               cwd=repo)
+    assert out.returncode == 0
+    assert "WITHOUT a verified code review" in json.loads(out.stdout)["systemMessage"]
