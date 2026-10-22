@@ -25,6 +25,8 @@ import sys
 import uuid
 from types import ModuleType
 
+import pytest
+
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 HOOKS = ROOT / ".claude" / "hooks"
 SETTINGS = ROOT / ".claude" / "settings.json"
@@ -285,3 +287,67 @@ def test_review_gate_fails_open_visibly_without_a_transcript(tmp_path: pathlib.P
                cwd=repo)
     assert out.returncode == 0
     assert "WITHOUT a verified code review" in json.loads(out.stdout)["systemMessage"]
+
+
+# ── regressions from the gate's own code review (high, 2026-10-22) ───────────────────────────────
+
+def test_review_gate_ignores_a_commit_message_that_mentions_pr_creation(
+        tmp_path: pathlib.Path) -> None:
+    """`gh pr create` quoted inside a message is not a PR — this branch's own commit says it."""
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    quoted = 'bin/commit -m "gh pr create waits for /code-review high --fix"'
+    assert _create(repo, [], command=quoted).returncode == 0
+    for real in ("cd x && gh pr create --fill", "GH_TOKEN=t gh pr create --fill"):
+        assert _create(repo, [], command=real).returncode == 2, real
+
+
+def test_review_gate_accepts_an_operator_typed_review(tmp_path: pathlib.Path) -> None:
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+
+    def typed(args: str) -> str:
+        return json.dumps({"type": "user", "message": {"content": (
+            f"<command-name>/code-review</command-name>\n<command-args>{args}</command-args>")}})
+
+    assert _create(repo, [typed("high --fix")]).returncode == 0
+    assert _create(repo, [typed("low")]).returncode == 2
+
+
+def _committed_checkout(tmp_path: pathlib.Path, files: dict[str, str]) -> pathlib.Path:
+    repo = tmp_path / "checkout"
+    for rel, body in {"vinci/__init__.py": "", **files}.items():
+        (repo / rel).parent.mkdir(parents=True, exist_ok=True)
+        (repo / rel).write_text(body)
+    (repo / "pyproject.toml").write_text('[tool.ruff.lint]\nselect = ["F"]\n')
+    git = ["git", "-C", str(repo), "-c", "user.email=t@t", "-c", "user.name=t"]
+    subprocess.run([*git, "init", "-q"], check=True)
+    subprocess.run([*git, "add", "-A"], check=True)
+    subprocess.run([*git, "commit", "-qm", "base"], check=True)
+    return repo
+
+
+def test_fast_gate_sees_a_deleted_module_its_importers_still_need(tmp_path: pathlib.Path) -> None:
+    repo = _committed_checkout(tmp_path, {"vinci/a.py": "X: int = 1\n",
+                                          "vinci/b.py": "from vinci.a import X\n\nY: int = X\n"})
+    (repo / "vinci" / "a.py").unlink()
+    out = _stop(repo, _session(), continuing=False)
+    assert out.returncode == 2
+    assert "mypy --strict vinci" in out.stderr and "vinci.a" in out.stderr
+
+
+def test_fast_gate_failure_report_drops_pytest_progress_lines(tmp_path: pathlib.Path) -> None:
+    body = ("import pytest\n\n\n@pytest.mark.parametrize('i', range(300))\n"
+            "def test_ok(i: int) -> None:\n    assert i >= 0\n\n\n"
+            "def test_bad() -> None:\n    assert 1 == 2\n")
+    repo = _committed_checkout(tmp_path, {})
+    (repo / "tests").mkdir()
+    (repo / "tests" / "test_probe.py").write_text(body)
+    out = _stop(repo, _session(), continuing=False)
+    assert out.returncode == 2
+    assert "FAILED tests/test_probe.py::test_bad" in out.stderr
+    assert not re.search(r"^[.F]+\s*\[\s*\d+%\]$", out.stderr, re.M)
+
+
+def test_fast_gate_git_degrades_when_git_cannot_run(monkeypatch: pytest.MonkeyPatch) -> None:
+    gate = _load("fast_gate.py")
+    monkeypatch.setenv("PATH", "")
+    assert gate.git(ROOT, "status") == ""

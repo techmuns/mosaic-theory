@@ -29,7 +29,12 @@ import subprocess
 import sys
 from pathlib import Path
 
-PR_CREATE = re.compile(r"\bgh\s+pr\s+create\b")
+#: `gh pr create` at a COMMAND position (start, or after ; & | ( or a newline, optionally behind
+#: VAR=value prefixes) — never inside a quoted commit message that merely mentions it.
+PR_CREATE = re.compile(r"(?:^|[;&|(\n])\s*(?:[A-Za-z_]\w*=\S*\s+)*gh\s+pr\s+create\b")
+#: An operator-typed `/code-review <args>` is recorded as a user command message.
+TYPED_REVIEW = re.compile(r"<command-name>/?(?:[\w-]+:)?code-review</command-name>")
+TYPED_ARGS = re.compile(r"<command-args>([^<]*)</command-args>")
 EFFORTS = {"high", "xhigh", "max", "ultra"}
 #: What counts as CODE for the gate — anything that executes or configures execution.
 CODE = re.compile(r"\.(py|js|mjs|ts|sh|toml|ya?ml)$|^bin/|^functions/|^\.claude/settings\.json$")
@@ -93,6 +98,11 @@ def reviewed_since_last_pr(transcript: str, current_id: str) -> bool | None:
         try:
             entry = json.loads(line)
         except ValueError:
+            continue
+        if isinstance(entry, dict) and entry.get("type") == "user" and TYPED_REVIEW.search(line):
+            typed = TYPED_ARGS.search(line)
+            if typed and any(a in EFFORTS for a in typed.group(1).lower().split()):
+                last_review = i
             continue
         if not isinstance(entry, dict) or entry.get("type") != "assistant":
             continue

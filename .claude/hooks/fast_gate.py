@@ -43,16 +43,16 @@ STATE_DIR = Path(tempfile.gettempdir()) / "mosaic-theory-hooks"
 
 
 def git(root: Path, *args: str) -> str:
-    out = subprocess.run(["git", "-C", str(root), *args],
-                         capture_output=True, text=True, timeout=30)
+    try:
+        out = subprocess.run(["git", "-C", str(root), *args],
+                             capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return ""
     return out.stdout if out.returncode == 0 else ""
 
 
 def repo_root(start: str) -> Path | None:
-    try:
-        top = git(Path(start), "rev-parse", "--show-toplevel").strip()
-    except (OSError, subprocess.SubprocessError):
-        return None
+    top = git(Path(start), "rev-parse", "--show-toplevel").strip()
     root = Path(top) if top else None
     return root if root and (root / "vinci" / "__init__.py").exists() else None
 
@@ -62,6 +62,13 @@ def changed_python_files(root: Path) -> list[str]:
     untracked = git(root, "ls-files", "--others", "--exclude-standard").splitlines()
     return sorted({p for p in tracked + untracked
                    if p.endswith(".py") and p.startswith(SCOPE) and (root / p).exists()})
+
+
+def deleted_python_files(root: Path) -> list[str]:
+    """Deleted `.py` files in scope: nothing to lint, but their importers must still type-check
+    and pass — deleting a module others import is a change the gate has to see."""
+    gone = git(root, "diff", "--name-only", "--diff-filter=D", "HEAD").splitlines()
+    return sorted({p for p in gone if p.endswith(".py") and p.startswith(SCOPE)})
 
 
 def find_python(root: Path) -> str | None:
@@ -118,7 +125,12 @@ def run(py: str, root: Path, args: list[str]) -> tuple[int, list[str]]:
     return out.returncode, (out.stdout + out.stderr).splitlines()
 
 
-def check(py: str, root: Path, changed: list[str]) -> tuple[list[str], list[str]]:
+#: pytest's progress lines ("....F..  [ 42%]") carry no failure detail and would fill the window.
+PROGRESS = re.compile(r"^[.sxXfFE]+\s*\[\s*\d+%\]$")
+
+
+def check(py: str, root: Path, changed: list[str],
+          deleted: list[str] | None = None) -> tuple[list[str], list[str]]:
     """(failure report lines, warnings). A check that TIMES OUT is a warning, never a block:
     a slow machine is not a failing change."""
     failures: list[str] = []
@@ -131,12 +143,14 @@ def check(py: str, root: Path, changed: list[str]) -> tuple[list[str], list[str]
             failures.append(f"── {name} ──")
             failures.extend(lines)
 
-    code, lines = run(py, root, ["ruff", "check", "--output-format", "concise", *changed])
-    record("ruff", code, [x for x in lines if x.strip()])
-    if any(p.startswith("vinci/") for p in changed):
+    if changed:
+        code, lines = run(py, root, ["ruff", "check", "--output-format", "concise", *changed])
+        record("ruff", code, [x for x in lines if x.strip()])
+    touched = [*changed, *(deleted or [])]
+    if any(p.startswith("vinci/") for p in touched):
         code, lines = run(py, root, ["mypy", "--strict", "vinci"])
         record("mypy --strict vinci", code, [x for x in lines if "error:" in x] or lines[-5:])
-    tests = select_tests(root, changed)
+    tests = [t for t in select_tests(root, touched) if (root / t).exists()]
     ran = tests[:MAX_TEST_FILES]
     if ran:
         code, lines = run(py, root, ["pytest", "-m", "not network", "-p", "no:warnings",
@@ -144,7 +158,7 @@ def check(py: str, root: Path, changed: list[str]) -> tuple[list[str], list[str]
         cut = f" (ran {len(ran)} of {len(tests)} selected)" if len(tests) > len(ran) else ""
         # 5 = no tests collected (a changed test file that holds only helpers) — not a failure.
         record(f"pytest -x on {len(ran)} test file(s){cut}", 0 if code == 5 else code,
-               [x for x in lines if x.strip()])
+               [x for x in lines if x.strip() and not PROGRESS.match(x.strip())])
     return failures, warnings
 
 
@@ -177,8 +191,9 @@ def main() -> int:
     if root is None:
         return 0
     changed = changed_python_files(root)
+    deleted = deleted_python_files(root)
     session = str(payload.get("session_id") or "unknown")
-    if not changed:
+    if not changed and not deleted:
         save_blocks(session, 0)
         return 0
     py = find_python(root)
@@ -186,7 +201,7 @@ def main() -> int:
         print(json.dumps({"systemMessage": "fast gate SKIPPED: no project venv found ($VENV, "
                           "<checkout>/.venv, or the primary checkout's .venv)."}))
         return 0
-    failures, warnings = check(py, root, changed)
+    failures, warnings = check(py, root, changed, deleted)
     if not failures:
         save_blocks(session, 0)
         if warnings:
@@ -201,8 +216,9 @@ def main() -> int:
                           "bin/commit before any commit."}))
         return 0
     shown = failures[:SHOW_LINES]
-    print(f"FAST GATE FAILED on {len(changed)} uncommitted Python file(s) — attempt {n} of "
-          f"{MAX_BLOCKS}. Fix the cause, then finish. This is the fast subset; bin/commit and CI "
+    files = len(changed) + len(deleted)
+    print(f"FAST GATE FAILED on {files} uncommitted Python file(s) — attempt {n} of {MAX_BLOCKS}."
+          f" Fix the cause, then finish. This is the fast subset; bin/commit and CI "
           f"run the full gate. Showing {len(shown)} of {len(failures)} lines:", file=sys.stderr)
     print("\n".join(shown), file=sys.stderr)
     return 2
