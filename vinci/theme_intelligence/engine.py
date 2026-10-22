@@ -1481,7 +1481,10 @@ class Engine:
                 "issue_id": "VI-" + _sha(run_id, i.issue_id)[:14], "run_id": run_id,
                 "created_at": datetime.now(tz=UTC), "ref_id": f"{thesis_id}:{sid}",
                 "detail": i.detail if sid == old_sid
-                else i.detail.replace(f"{old_sid}:", f"{sid}:", 1)}))
+                else i.detail.replace(f"{old_sid}:", f"{sid}:", 1),
+                # a copy, not a new review: its finding keeps the origin of the one it copies
+                # (report._findings), so a reviewer's dismissal survives the re-grade
+                "copied_from": i.issue_id}))
         carried += deterministic_card_checks(new_card, all_claims, run_id)
         carried += [VerificationIssue(
             issue_id="VI-" + _sha(run_id, thesis_id, c.sentence_id, "correction")[:14],

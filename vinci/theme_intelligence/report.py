@@ -30,7 +30,7 @@ import io
 import json
 import re
 from collections.abc import Iterable, Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
@@ -940,6 +940,32 @@ class _VersionFindings:
     open: dict[str, CarriedFinding]
 
 
+def _keep_origins(store: Store, thesis_id: str, v: ThesisVersion,
+                  own: dict[str, CarriedFinding], copy_of: dict[str, str | None],
+                  memo: dict[int, _VersionFindings]) -> None:
+    """A re-grade's COPY of a card-review finding (`VerificationIssue.copied_from`, written by
+    `Engine.reassess`) is no new review: its finding takes the origin — version, date, the line
+    as the review read it — of the finding it copies, as read on the version before, so its key
+    (`finding_key`) and a reviewer's dismissal survive the re-grade. Until 2026-10-22 every copy
+    read as raised by the review of the re-graded version itself: one corrected line reopened
+    every dismissed finding of its thesis. A copy whose source is not found, or no longer reads
+    as the same finding, keeps the version's own origin — a new key, OPEN (fail-safe: never a
+    dismissal it was not given). Copies made before `copied_from` existed carry none and read
+    as before, so the dismissals already bound to them hold."""
+    prev = max((x for x in store.thesis_versions(thesis_id) if x.version < v.version),
+               key=lambda x: x.version, default=None)
+    if prev is None:
+        return
+    before = _findings(store, thesis_id, prev, memo)
+    src = {i.issue_id: i for i in store.issues(run_id=prev.run_id)}
+    for sid, cid in copy_of.items():
+        s = src.get(cid) if cid else None
+        pf = before.open.get(s.ref_id.partition(":")[2]) if s is not None else None
+        if s is not None and pf is not None and (pf.code, pf.detail) == (s.code, s.detail):
+            own[sid] = replace(own[sid], origin_version=pf.origin_version,
+                               origin_as_of=pf.origin_as_of, origin_text=pf.origin_text)
+
+
 def _findings(store: Store, thesis_id: str, v: ThesisVersion,
               memo: dict[int, _VersionFindings]) -> _VersionFindings:
     """One version's findings. A REVIEWED version shows its own review's findings — a finding a
@@ -963,6 +989,7 @@ def _findings(store: Store, thesis_id: str, v: ThesisVersion,
     corrected: dict[str, str] = {}
     codes: dict[str, str] = {}
     own: dict[str, CarriedFinding] = {}
+    copy_of: dict[str, str | None] = {}  # sid -> the issue a re-grade's copy re-records
     for i in store.issues(run_id=v.run_id):
         if i.scope != "card_sentence" or (i.severity is not IssueSeverity.BLOCK
                                           and i.code not in REVIEW_WARNINGS
@@ -980,6 +1007,7 @@ def _findings(store: Store, thesis_id: str, v: ThesisVersion,
             if i.code.startswith("REVIEW_"):  # the card review withheld it (not a re-run check)
                 own[sid] = CarriedFinding(i.code, i.detail, said, True, v.version, v.as_of,
                                           sents[sid][0], False)
+                copy_of[sid] = i.copied_from
         elif i.code == "ANALYST_CORRECTION":
             corrected[sid] = said
         else:
@@ -987,6 +1015,9 @@ def _findings(store: Store, thesis_id: str, v: ThesisVersion,
             codes[sid] = i.code
             own[sid] = CarriedFinding(i.code, i.detail, said, False, v.version, v.as_of,
                                       sents[sid][0], False)
+            copy_of[sid] = i.copied_from
+    if any(copy_of.values()):
+        _keep_origins(store, thesis_id, v, own, copy_of, memo)
     reason = review_not_run(store, thesis_id, v)
     carried: dict[str, CarriedFinding] = {}
     removed: list[CarriedFinding] = []
