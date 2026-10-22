@@ -233,6 +233,128 @@ def test_a_one_off_in_billions_is_in_millions() -> None:
     assert [o.amount for o in rp._one_offs(text, "t")] == [1200.0]
 
 
+# --- review of #778: each finding's failure scenario, pinned ------------------------------------
+
+@pytest.mark.parametrize("sentence", [
+    "Adjusted EBITDA of $380 million to approximately $385 million for the fourth quarter of 2025.",
+    "Revenue of $985 million to approximately $995 million for the fourth quarter of 2025.",
+    "Adjusted EPS of $1.32 to about $1.38 for the fourth quarter of 2025.",
+])
+def test_a_qualified_range_is_still_a_range(sentence: str) -> None:
+    """(1) A qualifier between the separator and the high side kept the low side as an actual."""
+    assert _rows(rp, f"Acme Reports Fourth Quarter 2025 Results • {sentence}") == set(), sentence
+
+
+def test_a_per_share_impact_is_read_and_an_unscaled_total_impact_is_said() -> None:
+    """(2) A per-share impact states no scale and was dropped with no note; it is read as stated.
+    NEGATIVE: a total impact with no scale is refused LOUDLY, never silently."""
+    eps = ("The divestiture is expected to reduce 2026 adjusted EPS by approximately $0.10 to "
+           "$0.15 per share.")
+    assert [(i.metric, i.low, i.high) for i in rp._event_impacts(eps, "t")] == [("eps", 0.1, 0.15)]
+    notes: list[str] = []
+    bare = "The exit is expected to reduce 2026 revenue by approximately $135 to $145."
+    assert rp._event_impacts(bare, "t", notes) == []
+    assert notes and notes[0].startswith(rp.IMPACT_REFUSAL_PREFIX)
+
+
+@pytest.mark.parametrize("sentence", [
+    "Other net revenue of $1.5 billion for the fourth quarter of 2025",
+    "International total revenue of $2.1 billion for the fourth quarter of 2025",
+    "Digital net revenue of $2.0 billion for the fourth quarter of 2025",
+    "U.S. revenue of $5.0 billion for the fourth quarter of 2025.",
+])
+def test_a_qualifier_before_a_total_word_or_an_abbreviation_is_a_sub_line(sentence: str) -> None:
+    """(3) A total word skipped the qualifier check; (4) an abbreviation's full stop read as a
+    clause start. Both are sub-lines, refused."""
+    text = f"Acme Reports Fourth Quarter 2025 Results. {sentence}"
+    assert not any(m == "revenue" for m, _p, _v in _rows(rp, text)), sentence
+    assert any("a sub-line" in f for f in _refusals(text)), sentence
+
+
+def test_a_company_total_still_reads() -> None:
+    """NEGATIVE for (3)/(4): a total word at a clause start, or after a sentence's full stop."""
+    for sentence in ("Total net revenue of $11.6 billion for the fourth quarter of 2025",
+                     "Revenue of $5.0 billion for the fourth quarter of 2025"):
+        text = f"Acme Reports Fourth Quarter 2025 Results. {sentence}"
+        assert any(m == "revenue" and v in (11600.0, 5000.0) for m, _p, v in _rows(rp, text))
+
+
+def test_a_forward_verb_is_not_called_a_sub_line() -> None:
+    """(5) "expects revenue of" was refused as a SUB-LINE qualified by 'expects' — a wrong reason;
+    the figure is forward-looking and simply not an actual."""
+    text = ("Acme Reports Fourth Quarter 2025 Results. The company expects revenue of $3.0 billion "
+            "for the first quarter of 2026.")
+    assert not any(m == "revenue" for m, _p, _v in _rows(rp, text))
+    assert not any("sub-line" in f for f in _refusals(text))
+
+
+def test_a_moved_impairment_rebuilds_the_lines(monkeypatch: pytest.MonkeyPatch) -> None:
+    """(6) The triangulation reads the FY impairment from the one-offs this transform re-reads. On a
+    page whose ONLY moved input is a billion-scale impairment (1.2 → 1,200) — no reconciliation row,
+    so nothing else the lines read moves — the proven rebuild must still run."""
+    mech = json.loads(Path("data/dossiers/VRRM/dossier.json").read_text())["mechanical"]
+    acc = "0001193125-26-209031"
+    src = f"8-K {acc} EX-99.1"
+    mech["primary_source"]["releases"] = [{
+        "source_ref": src, "reconciliation": [], "event_impacts": [], "qa_flags": [],
+        "one_offs": [{"amount": 1.2, "description": "goodwill impairment charge",
+                      "verbatim": "v", "source_ref": src}]}]
+    _offline(monkeypatch,
+             {acc: ["The quarter included a $1.2 billion goodwill impairment charge."]})
+    calls: list[str] = []
+    monkeypatch.setattr(rf, "_rebuild_release_lines", lambda t, *a, **k: calls.append(t))
+    out = rf.release_figures_transform("VRRM", "x")(mech)
+    assert out["primary_source"]["releases"][0]["one_offs"][0]["amount"] == 1200.0
+    assert calls == ["VRRM"]
+
+
+def test_a_per_share_impact_cited_in_prose_refuses() -> None:
+    """(7) A per-share impact was labelled $M, so "$0.10 per share" in the prose was never seen."""
+    before = {"primary_source": {"releases": [{"source_ref": "8-K x EX-99.1", "event_impacts": [
+        {"metric": "eps", "effect": "reduce", "low": 0.10, "high": 0.15, "period": "2026",
+         "verbatim": "v", "source_ref": "8-K x EX-99.1"}]}]}}
+    after = {"primary_source": {"releases": [{"source_ref": "8-K x EX-99.1"}]}}
+    hits = rf.moved_cited_release_figures(before, after, _doc("cuts EPS by $0.10 per share"))
+    assert hits and "$/sh" in hits[0]
+
+
+def test_releases_without_a_cik_refuse() -> None:
+    """(8) The transform returned the page unchanged without a CIK and the refresh reported
+    success — the old rows stood. It refuses, naming why."""
+    mech, _acc = _vrrm_with_the_old_row()
+    with pytest.raises(rf.RefreshRefusedError, match="no CIK"):
+        rf.release_figures_transform("VRRM", None)(mech)
+
+
+def test_the_refresh_rebuilds_through_the_assemblers_builder(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """(10) ONE composition: the refresh's proof and rebuild call `mechanical._release_lines`, the
+    builder `_primary_source` calls — not a hand copy that could drift from it."""
+    from types import SimpleNamespace
+
+    import vinci.dossier.ciq as ciq_mod
+    import vinci.dossier.manual_store as ms
+    from vinci.dossier.schemas import ReleaseExtract
+
+    seen: list[int] = []
+
+    def fake(rels: list[Any], **_k: Any) -> tuple[str, str]:
+        seen.append(len(rels))
+        return (f"tri {len(seen)}", f"guide {len(seen)}")
+
+    monkeypatch.setattr(dm, "_release_lines", fake)
+    monkeypatch.setattr(ms.LocalFolderStore, "from_config", staticmethod(
+        lambda _c: SimpleNamespace(files=lambda _t: [])))
+    monkeypatch.setattr(ciq_mod.CiqBundle, "from_files", staticmethod(lambda _t, _f: object()))
+    mech = json.loads(Path("data/dossiers/CNXC/dossier.json").read_text())["mechanical"]
+    mech["primary_source"]["basis_triangulation"]["value"] = "tri 1"
+    mech["primary_source"]["guide_verification"]["value"] = "guide 1"
+    rels = [ReleaseExtract.model_validate(r) for r in mech["primary_source"]["releases"]]
+    rf._rebuild_release_lines("CNXC", mech, rels, rels, None)
+    assert mech["primary_source"]["basis_triangulation"]["value"] == "tri 2"
+    assert seen == [len(rels), len(rels)]
+
+
 # --- the visible card ----------------------------------------------------------------------------
 
 def test_a_basis_point_guide_prints_in_basis_points() -> None:
@@ -401,32 +523,36 @@ def test_no_committed_actual_is_an_unscaled_billion_e2e() -> None:
     assert not bad, bad
 
 
-def test_quarterly_figures_carry_their_quarter_on_nike_and_target_e2e() -> None:
-    """On the committed pages: Nike's fiscal-2026 quarterly gross margins carry their quarters, and
-    Target's Q4 adjusted EPS is Q4 2025 — no bare year on either (main filed 40.6%/40.2%/49.2% as
-    2024/2025/2025, and Target's $2.44 / $2.41 as FY2025 / FY2024)."""
-    def rows(t: str) -> set[tuple[str, str, float]]:
-        d = json.loads(Path(f"data/dossiers/{t}/dossier.json").read_text())
-        return {(rv["metric"], rv["period"], rv["value"])
-                for r in d["mechanical"]["primary_source"]["releases"]
-                for rv in r["reconciliation"]}
-    nke = rows("NKE")
-    assert {("gross margin", "Q2 2026", 40.6), ("gross margin", "Q3 2026", 40.2)} <= nke
-    assert not any(m == "gross margin" and p.isdigit() for m, p, _v in nke)
-    tgt = rows("TGT")
-    assert ("adjusted eps", "Q4 2025", 2.44) in tgt
-    assert not {("adjusted eps", "2025", 2.44), ("adjusted eps", "2024", 2.41)} & tgt
+def _bps_segments() -> dict[str, list[str]]:
+    """Per committed page: the card segment of every guide whose STORED unit is `bps`."""
+    out: dict[str, list[str]] = {}
+    for p in _PAGES:
+        d = json.loads(p.read_text())
+        rel_by_acc = {dm._acc_of(r["source_ref"]): r
+                      for r in d["mechanical"]["primary_source"].get("releases") or []}
+        for f in (d["mechanical"].get("drawdown_cause") or {}).get("filings") or []:
+            rel, drv = rel_by_acc.get(f.get("accession")), (f.get("drivers") or {}).get("value")
+            if not rel or not drv:
+                continue
+            for g in rel.get("guidance") or []:
+                if g.get("unit") == "bps" and not g.get("qualitative"):
+                    head = f"{g['period']} {g['metric']} outlook: "
+                    out.setdefault(p.parent.name, []).extend(
+                        seg for seg in drv.split("; ") if seg.startswith(head))
+    return out
 
 
-def test_vrrm_and_smpl_cards_print_what_the_releases_say_md_and_web_e2e() -> None:
-    """The visible card, both renderers: VRRM never prints the range-made "$38.0M" / "$1.10" /
-    "$1.30", and SMPL prints its gross-margin guide in basis points, never as dollars."""
-    vrrm, smpl = (Path(f"data/dossiers/{t}/dossier.md").read_text() for t in ("VRRM", "SMPL"))
-    for bad in ("adj EBITDA 2026 $38.0M", "adj EPS 2026 $1.10", "adj EPS 2025 $1.30",
-                "adj EPS Q1 2026 $1.30"):
-        assert bad not in vrrm, bad
-    assert "gross margin outlook: −350 to −300 bps" in smpl
-    assert "$-350.0" not in smpl
+def test_a_bps_guide_prints_in_bps_on_every_card_md_and_web_e2e() -> None:
+    """INVARIANT, every committed page (TEST-LAYER RULE: a living artifact gets a structural pin,
+    never a value): each card segment for a guide whose stored unit is `bps` prints in basis
+    points — never "$…M", the shape SMPL's card carried — and both renderers print that segment."""
+    segs = _bps_segments()
+    assert segs, "no committed card carries a bps guide — this pin checked nothing"
+    for t, items in segs.items():
+        md = Path(f"data/dossiers/{t}/dossier.md").read_text()
+        for seg in items:
+            assert seg.endswith(" bps") and "$" not in seg, (t, seg)
+            assert seg in md, (t, seg)
     if not shutil.which("node"):
         pytest.skip("node unavailable")
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
@@ -436,17 +562,42 @@ const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
 import {{ readFileSync, existsSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
+const want = {json.dumps(segs)};
 const out = {{}};
-for (const t of ["VRRM", "SMPL"]) {{
+for (const [t, items] of Object.entries(want)) {{
   const d = JSON.parse(readFileSync(`frontend/dossiers/${{t}}.json`));
   const cp = `frontend/scenarios/${{t}}.json`;
   const h = renderDossier(d, null, existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
-  out[t] = {{ fake: h.includes("adj EBITDA 2026 $38.0M"), bps: h.includes("−350 to −300 bps"),
-             dollars: h.includes("$-350.0") }};
+  out[t] = items.filter((s) => !h.includes(s));
 }}
 console.log(JSON.stringify(out));
 """
     res = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
                                     capture_output=True, text=True, check=True).stdout)
-    assert res["VRRM"]["fake"] is False, res
-    assert res["SMPL"] == {"fake": False, "bps": True, "dollars": False}, res
+    assert all(not missing for missing in res.values()), res
+
+
+def test_vrrms_card_never_shows_the_range_made_figures_md_and_web_e2e() -> None:
+    """VRRM's card, both renderers: the strings the range-made actuals printed never return. An
+    ABSENCE of the observed defect — a correct re-read can never produce it, so this cannot rot."""
+    md = Path("data/dossiers/VRRM/dossier.md").read_text()
+    bad = ("adj EBITDA 2026 $38.0M", "adj EPS 2026 $1.10", "adj EPS 2025 $1.30",
+           "adj EPS Q1 2026 $1.30")
+    assert not [b for b in bad if b in md]
+    if not shutil.which("node"):
+        pytest.skip("node unavailable")
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+import {{ readFileSync, existsSync }} from "node:fs";
+const {{ renderDossier }} = await import("{dj}");
+const d = JSON.parse(readFileSync("frontend/dossiers/VRRM.json"));
+const cp = "frontend/scenarios/VRRM.json";
+const h = renderDossier(d, null, existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
+console.log(JSON.stringify({json.dumps(list(bad))}.filter((b) => h.includes(b))));
+"""
+    res = json.loads(subprocess.run(["node", "--input-type=module", "-e", driver],
+                                    capture_output=True, text=True, check=True).stdout)
+    assert res == [], res

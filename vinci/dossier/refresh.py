@@ -144,10 +144,11 @@ def _release_figures(mech: dict[str, Any]) -> dict[tuple[Any, ...], tuple[str, f
         for o in r.get("one_offs") or []:
             out[(i, "one-off", o.get("description"), None)] = ("$M", float(o["amount"]))
         for e in r.get("event_impacts") or []:
+            unit = "$/sh" if e.get("metric") == "eps" else "$M"   # review of #778
             for side in ("low", "high"):
                 if e.get(side) is not None:
                     out[(i, f"impact {side}", e.get("metric"), e.get("period"))] = (
-                        "$M", float(e[side]))
+                        unit, float(e[side]))
     return out
 
 
@@ -889,8 +890,13 @@ def release_figures_transform(ticker: str, cik: str | None,
         out: dict[str, Any] = json.loads(json.dumps(mech))
         ps = out.get("primary_source") or {}
         releases = ps.get("releases") or []
-        if not releases or not cik:
+        if not releases:
             return out
+        if not cik:
+            # review of #778: this returned the page unchanged and the refresh reported success,
+            # leaving the old rows standing — the absent-and-silent shape
+            raise RefreshRefusedError(
+                f"{ticker}: {len(releases)} stored release(s) but no CIK to re-read them from")
         before = [ReleaseExtract.model_validate(r) for r in releases]
         http = build_sec_http(get_config())
         by_acc: dict[str, list[int]] = {}
@@ -912,7 +918,8 @@ def release_figures_transform(ticker: str, cik: str | None,
                 r = releases[i]
                 for key in ("reconciliation", "one_offs", "event_impacts"):
                     r[key] = [json.loads(x.model_dump_json()) for x in getattr(fresh, key)]
-                own = (release_parse.RECON_REFUSAL_PREFIX, *_ACTUALS_FLAG_PREFIXES)
+                own = (release_parse.RECON_REFUSAL_PREFIX, release_parse.IMPACT_REFUSAL_PREFIX,
+               *_ACTUALS_FLAG_PREFIXES)
                 r["qa_flags"] = ([f for f in r.get("qa_flags") or [] if not f.startswith(own)]
                                  + [f for f in fresh.qa_flags if f.startswith(own)])
         after = [ReleaseExtract.model_validate(r) for r in releases]
@@ -923,6 +930,9 @@ def release_figures_transform(ticker: str, cik: str | None,
         line_inputs = [(k, fy0.get(k), fy1.get(k)) for k in ("gross margin", "revenue")]
         line_inputs.append(("LTM adjusted EBITDA", dm._ltm_adj_ebitda(before),
                             dm._ltm_adj_ebitda(after)))
+        # the FY impairment feeds the triangulation's margin row, and its scale moved in this
+        # change ("$1.2 billion impairment" was 1.2) — review of #778
+        line_inputs.append(("impairment", dm._fy_impairment(before), dm._fy_impairment(after)))
         if [k for k, a, b in line_inputs if a != b]:
             _rebuild_release_lines(ticker, out, before, after, reference_date)
         m = MechanicalLayer.model_validate(out)
@@ -937,49 +947,35 @@ def release_figures_transform(ticker: str, cik: str | None,
 def _rebuild_release_lines(ticker: str, out: dict[str, Any], before: list[Any], after: list[Any],
                            reference_date: date | None) -> None:
     """Rebuild `basis_triangulation` and `guide_verification` on `out` from the NEW release rows,
-    after proving each reproduces from the OLD ones (see `release_figures_transform`)."""
+    after proving each reproduces from the OLD ones (see `release_figures_transform`) — both
+    through `mechanical._release_lines`, the builder assembly uses, never a second composition."""
     from vinci.config import get_config
-    from vinci.dossier import ciq_sheets
     from vinci.dossier import mechanical as dm
     from vinci.dossier.assemble import _read_scenario_card
     from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.manual_store import LocalFolderStore
-    from vinci.dossier.schemas import Sourced, SourceStatus
-    from vinci.edgar import primary_source
+    from vinci.dossier.schemas import Sourced
 
     ps = out["primary_source"]
     bundle = CiqBundle.from_files(ticker, LocalFolderStore.from_config(get_config()).files(ticker))
     nde_raw = (out.get("leverage_survival") or {}).get("net_debt_to_ebitda")
     nde = Sourced[float].model_validate(nde_raw) if nde_raw else None
-    tde, nd = ciq_sheets.comps_total_debt_ebitda_value(bundle), ciq_sheets.net_debt(bundle)
-    cov = dm._covenant_basis(_read_scenario_card(ticker))
-    ciq_lo, ciq_hi, ciq_period = ciq_sheets.revenue_guide_lohi(
-        bundle, reference_date=reference_date)
-    rel_lo, rel_hi, rel_qual, rel_basis, rel_period = dm._release_revenue_guide(before)
+    card = _read_scenario_card(ticker)
 
-    def tri(rels: list[Any]) -> str:
-        fy = dm._fy_reconciliation(rels)
-        return primary_source.basis_triangulation(
-            f"{nde.value}x" if nde is not None and nde.status is SourceStatus.PRESENT else None,
-            f"{tde.value}x" if tde.status is SourceStatus.PRESENT else None,
-            nd.value if nd.status is SourceStatus.PRESENT else None, dm._ltm_adj_ebitda(rels),
-            gaap_gross_margin=fy.get("gross margin"), impairment=dm._fy_impairment(rels),
-            revenue=fy.get("revenue"), covenant_basis=cov)
+    def lines(rels: list[Any]) -> dict[str, str]:
+        tri, guide = dm._release_lines(rels, bundle=bundle, nde=nde, card=card,
+                                       reference_date=reference_date)
+        return {"basis_triangulation": tri, "guide_verification": guide}
 
-    def guide(rels: list[Any]) -> str:
-        return primary_source.guide_verification(
-            "revenue", ciq_lo, ciq_hi, prior_fy_actual=dm._fy_reconciliation(rels).get("revenue"),
-            release_qualitative=rel_qual, release_low=rel_lo, release_high=rel_hi,
-            release_basis=rel_basis, ciq_period=ciq_period, release_period=rel_period)
-
-    for key, build in (("basis_triangulation", tri), ("guide_verification", guide)):
+    old, new = lines(before), lines(after)
+    for key in ("basis_triangulation", "guide_verification"):
         node = ps.get(key) or {}
-        if build(before) != node.get("value"):
+        if old[key] != node.get("value"):
             raise RefreshRefusedError(
                 f"{ticker}: {key} does not reproduce from the page's own release rows with the "
                 "CIQ export and record read now — they are not the ones it was built from; "
                 "re-assemble")
-        ps[key] = {**node, "value": build(after)}
+        ps[key] = {**node, "value": new[key]}
 
 
 def credit_health_transform(ticker: str) -> Transform:

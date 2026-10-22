@@ -148,7 +148,13 @@ _NUM = r"(?>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)"
 #: The magnitude words and suffixes, single letters guarded so "$2.4 to $2.5 based on" never reads
 #: `b`("based") as billions (the guidance pattern's 2026-08-12 lesson).
 _SCALE = r"billion|bn|million|mm|thousand|[BMK](?![A-Za-z])"
-_RANGE_TAIL = rf"\s*(?:to|through|[-–—])\s*\$?\s*{_NUM}"
+#: A RANGE TAIL — the separator, an optional QUALIFIER, then the high side. Review of #778: without
+#: the qualifier slot "$380 million to approximately $385 million" stored $380M as an actual, and
+#: "Revenue of $985 million to approximately $995 million" — refused by main's `(?!\s+to\b)` —
+#: became a revenue actual again.
+_RANGE_TAIL = (r"\s*(?:to|through|[-–—])\s*"
+               r"(?:(?:approximately|about|around|roughly|nearly|an\s+estimated)\s+)?"
+               rf"\$?\s*{_NUM}")
 #: Every fail-loud note `_reconciliation` writes starts with this.
 RECON_REFUSAL_PREFIX = "Reconciliation figure refused"
 
@@ -749,7 +755,12 @@ _REVENUE_LEAD_OK = frozenset({
     "", "total", "net", "consolidated", "reported", "gaap", "record", "quarterly", "yearly",
     "quarter", "year", "full-year", "fiscal", "ytd", "q", "first", "second", "third", "fourth",
     "the", "its", "our", "and", "with", "of", "to", "in", "for", "while", "achieved", "generated",
-    "delivered", "posted", "results", "highlights", "presented", "expect", "forecast", "project",
+    "delivered", "posted", "results", "highlights", "presented",
+    # the forward verbs, as filers inflect them (review of #778: "The company expects revenue of
+    # $3.0 billion" was refused as a SUB-LINE "qualified by 'expects'" — a wrong reason; the figure
+    # is a forward statement, which `_figure_period` declines on its own)
+    "expect", "expects", "expected", "forecast", "forecasts", "forecasted", "project", "projects",
+    "projected", "anticipate", "anticipates", "anticipated", "sees", "guides", "estimated",
 })
 
 
@@ -770,10 +781,18 @@ def _net_product_total(text: str, at: int) -> bool:
 
 
 def _revenue_lead(text: str, at: int) -> str:
-    """The word right before a "revenue" match, lower-cased ('' at a clause start)."""
-    w = re.findall(r"[A-Za-z][A-Za-z'’-]*", text[max(0, at - 30):at])
-    edge = re.search(r"[.;:•●○◦■▪·|]\s*$", text[max(0, at - 30):at])
-    return "" if edge or not w else w[-1].lower()
+    """The word right before position ``at`` — a "revenue" match, or the total word leading it —
+    lower-cased, '' at a clause start. A DOTTED ABBREVIATION IS A WORD (review of #778): "U.S.
+    revenue of $5.0 billion" read the abbreviation's full stop as a sentence end and passed a
+    geographic sub-line as the company's total."""
+    window = text[max(0, at - 30):at].rstrip()
+    if not window or window[-1] in ";:•●○◦■▪·|":
+        return ""
+    if window[-1] == ".":
+        abbr = re.search(r"(?:\b[A-Za-z]\.)+$", window)   # "U.S." / "U.K." / a lone initial
+        return abbr.group(0).lower() if abbr else ""        # else a sentence's full stop
+    w = re.findall(r"[A-Za-z][A-Za-z'’-]*", window)
+    return w[-1].lower() if w else ""
 
 
 #: A filer that writes BOTH "EBITDA" and "adjusted EBITDA" means two different measures by them.
@@ -917,10 +936,14 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         if m["range"]:
             _refuse("a revenue range where an actual was read", m.start(), m.end())
             continue
-        if (not m["lead"] and _revenue_lead(text, m.start()) not in _REVENUE_LEAD_OK
-                and not _net_product_total(text, m.start())):
-            _refuse(f"revenue qualified by '{_revenue_lead(text, m.start())}' — a sub-line, not "
-                    "the company's total", m.start(), m.end())
+        # THE WORD BEFORE THE PHRASE, always — before "total"/"net" too (review of #778: "Other
+        # net revenue", "International total revenue" skipped it because a total word had matched)
+        lead_at = m.start("lead") if m["lead"] else m.start()
+        before = _revenue_lead(text, lead_at)
+        if before not in _REVENUE_LEAD_OK and not (
+                not m["lead"] and _net_product_total(text, m.start())):
+            _refuse(f"revenue qualified by '{before}' — a sub-line, not the company's total",
+                    m.start(), m.end())
             continue
         val = _scaled(m.group(2), m["scale"])
         if val is None:
@@ -1682,7 +1705,11 @@ def _impact_metric(phrase: str) -> str:
     return r.strip()
 
 
-def _event_impacts(text: str, src: str) -> list[EventImpact]:
+#: Every fail-loud note `_event_impacts` writes starts with this.
+IMPACT_REFUSAL_PREFIX = "Event impact refused"
+
+
+def _event_impacts(text: str, src: str, notes: list[str] | None = None) -> list[EventImpact]:
     out: list[EventImpact] = []
     for m in _IMPACT.finditer(text):
         hu = _IMPACT_HIGH_UNIT.match(text, m.end())
@@ -1690,8 +1717,19 @@ def _event_impacts(text: str, src: str) -> list[EventImpact]:
         # a bare side takes the other's scale ("$135 to $145 million"); with neither, unread
         lo_scale, hi_scale = m.group(3) or hi_unit, hi_unit or m.group(3)
         phrase = m.group(1)
-        low, high = _scaled(m.group(2), lo_scale), _scaled(m.group(4), hi_scale)
+        if _impact_metric(phrase) == "eps":
+            # A PER-SHARE impact states no scale (review of #778): "reduce 2026 adjusted EPS by
+            # approximately $0.10 to $0.15 per share" was dropped with no note once every side had
+            # to carry one. Read as stated — and one that DOES carry a scale is not per-share.
+            low = _money(m.group(2)) if not lo_scale else None
+            high = _money(m.group(4)) if not lo_scale else None
+        else:
+            low, high = _scaled(m.group(2), lo_scale), _scaled(m.group(4), hi_scale)
         if low is None or high is None:
+            if notes is not None:
+                notes.append(f"{IMPACT_REFUSAL_PREFIX} — its magnitude is not stated in a form "
+                             f"this reader can scale: “{_verbatim(text, m.start(), m.end())}” "
+                             f"({src})")
             continue
         # direction: the nearest reduce/increase verb in the ~90 chars before the phrase. A bare
         # 'X by approximately $A to $B' with no directional verb is not an event impact — skipped.
@@ -1806,7 +1844,7 @@ def parse_release(text: str, *, source_ref: str) -> ReleaseExtract:
     recon_notes: list[str] = []
     reconciliation = _reconciliation(text, source_ref, _release_frame(text), recon_notes)
     one_offs = _one_offs(text, source_ref)
-    event_impacts = _event_impacts(text, source_ref)
+    event_impacts = _event_impacts(text, source_ref, recon_notes)
     flags: list[str] = list(guidance_notes) + recon_notes
     if not guidance and not guidance_notes:
         # ONLY when nothing was found at all. A release whose guidance was FOUND and refused states
