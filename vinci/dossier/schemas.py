@@ -15,6 +15,7 @@ source so the human verifies the datum, not the summary. A field that could not 
 from __future__ import annotations
 
 import enum
+import json
 from collections.abc import Callable
 from datetime import date, datetime
 from pathlib import Path
@@ -30,7 +31,7 @@ from pydantic import (
     model_validator,
 )
 
-from vinci.dossier.anchor import Anchor
+from vinci.dossier.anchor import Anchor, check_decision_write
 from vinci.dossier.midcycle import MidCycle
 from vinci.sleeves import DEFAULT_SLEEVE, UnknownSleeveError, require_sleeve
 
@@ -2497,7 +2498,8 @@ class PriceStoreStamp(BaseModel):
 
 #: The writers that change a committed page WITHOUT re-assembling it. Each one records itself in
 #: `Dossier.layer_refreshes`; a full assembly writes a fresh page and carries none forward.
-LAYER_REFRESH_WRITERS = ("refresh", "anchor-backfill", "own-history-refresh", "financials-backfill")
+LAYER_REFRESH_WRITERS = ("refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
+                         "anchor-retag")
 
 
 class LayerRefresh(BaseModel):
@@ -2519,7 +2521,8 @@ class LayerRefresh(BaseModel):
 
     date: str                       # ISO date (UTC) the writer ran
     extraction_version: str         # the declared extraction version current when it ran
-    writer: Literal["refresh", "anchor-backfill", "own-history-refresh", "financials-backfill"]
+    writer: Literal["refresh", "anchor-backfill", "own-history-refresh", "financials-backfill",
+                    "anchor-retag"]
     layers: list[str]
 
     model_config = {"frozen": True}
@@ -2735,7 +2738,7 @@ def dossier_json(doc: Dossier) -> str:
     return doc.model_dump_json(indent=2, exclude=excl or None)
 
 
-def write_dossier(path: Path, doc: Dossier) -> str:
+def write_dossier(path: Path, doc: Dossier, *, decision_change: bool = False) -> str:
     """THE ONE WRITE of a committed `dossier.json` — through :func:`dossier_json`, so every page
     any writer saves carries derived blocks that describe it (2026-10-09). Returns the text written.
 
@@ -2746,7 +2749,19 @@ def write_dossier(path: Path, doc: Dossier) -> str:
     rewrote 25 of 26 pages with `null` where the schema says ABSENT. A splice also left
     `valuation_basis` stale whenever it moved one of its inputs (an anchor flipped to applicable
     kept a block saying its R1 fields were ineligible). `tests/test_valuation_basis.py` pins every
-    writer to this function."""
+    writer to this function.
+
+    AND THE OPERATOR'S DECISION RIDES THROUGH IT (2026-10-22): a write that drops or alters the
+    committed `anchor.operator_decision` is refused (`check_decision_write`) — `decision_change`
+    is passed only by `vinci anchor-retag`."""
+    committed = None
+    if path.exists():
+        try:
+            stored = json.loads(path.read_text())
+            committed = stored.get("anchor") if isinstance(stored, dict) else None
+        except (OSError, ValueError):
+            committed = None
+    check_decision_write(committed, doc.anchor, decision_change=decision_change)
     text = dossier_json(doc)
     path.write_text(text)
     return text

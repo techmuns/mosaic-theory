@@ -3471,6 +3471,18 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
     out = ["### Screening context — how this name surfaced — _not a verdict_", "",
            f"_{_SCREEN_SUBTITLE}_", "",
            "| input | value | basis |", "| --- | ---: | --- |", *rows, ""]
+    # THE OPERATOR'S DECISION FIRST (2026-10-22), the machine's own read beneath it — never one
+    # inside the other. A divergence is stated, never resolved. Twin: anchorInner() in dossier.js.
+    # The recipe and any divergence lead; the reason follows as the operator's words, quoted.
+    dec = anchor.operator_decision
+    if dec is not None:
+        out += [f"**The operator's decision: {_md_cell(dec.recipe)}** — {dec.decided_on}, "
+                f"{dec.decided_by}", ""]
+        if anchor.machine_recipe_hint and anchor.machine_recipe_hint != dec.recipe:
+            out += [f"⚠ **The machine reads {anchor.machine_recipe_hint}.** The operator's "
+                    "decision stands; it changes only by hand.", ""]
+        out += [*(f"> {ln}".rstrip() for ln in dec.reason.splitlines()), "",
+                f"_Where this decision is recorded: {dec.source_ref}_", ""]
     # the sentence is written ONCE, in vinci/dossier/anchor.py — both renderers print it verbatim
     if anchor.midcycle_gap is not None:
         out += [f"**Mid-cycle assumption under strain.** {anchor.midcycle_gap.read}", ""]
@@ -3479,7 +3491,7 @@ def _screening_context_lines(anchor: Anchor | None) -> list[str]:
         out += [f"- {x}" for x in anchor.data_quality_detail]
         out.append("")
     if anchor.reason:
-        out += [f"_{anchor.reason}_", ""]
+        out += [f"_{'The machine’s read: ' if dec is not None else ''}{anchor.reason}_", ""]
     return out
 
 

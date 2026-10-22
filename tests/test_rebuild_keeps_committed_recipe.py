@@ -22,12 +22,16 @@ from pathlib import Path
 import pytest
 
 from vinci.dossier import assemble as asm
-from vinci.dossier.anchor import Anchor, preserve_operator_tag
+from vinci.dossier.anchor import OPERATOR_RETAG_MARK, Anchor, preserve_operator_tag
 from vinci.dossier.schemas import Dossier
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = json.loads((ROOT / "tests" / "fixtures" / "anchor_retag_erasures.json").read_text())
-INCIDENTS = sorted(k for k in FIXTURE if not k.startswith("_"))
+# GOOGL's incident block carries its re-tag in `reason` (the OPERATOR_RETAG_MARK shape), which no
+# write carries since 2026-10-22 — its replay is the refusal pin in tests/test_operator_decision.py.
+# The three unmarked re-tags still replay the legacy rule: an undecided page (VITL today) runs it.
+INCIDENTS = sorted(k for k in FIXTURE if not k.startswith("_")
+                   and not FIXTURE[k]["committed"]["reason"].startswith(OPERATOR_RETAG_MARK))
 RULES = json.loads((ROOT / "tests" / "fixtures" / "anchor_rule_transitions.json").read_text())
 COMMITTED = sorted(p.parent.name for p in (ROOT / "data" / "dossiers").glob("*/dossier.json"))
 

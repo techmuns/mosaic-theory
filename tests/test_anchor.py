@@ -57,6 +57,9 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
         # (2026-10-21) the per-share denominator — the point-in-time count where the filer's basic
         # weighted average corroborates it — and the dilution test struck beside the base.
         "shares_outstanding", "dilutive_increment", "anchor_base_value_per_share_diluted",
+        # (2026-10-22) the operator's recipe decision in its own block, and the machine's own
+        # recipe beside it — absent on a page no operator has decided.
+        "operator_decision", "machine_recipe_hint",
     }
     assert set(AnchorMargin.model_fields) == {"value", "unit", "basis", "source", "anchor_years",
                                               "confidence"}

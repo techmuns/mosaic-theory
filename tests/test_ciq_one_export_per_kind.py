@@ -181,9 +181,11 @@ def test_anchor_backfill_lets_the_ambiguity_through() -> None:
     then"). An ambiguous folder is not "no workbook", so it is re-raised before that handler."""
     import vinci.cli as cli
 
-    src = inspect.getsource(cli._cmd_anchor_backfill)
+    # the backfill's machine read lives in ONE helper since 2026-10-22, shared with `anchor-retag`
+    src = inspect.getsource(cli._machine_anchor)
     broad = src.index("no workbook is normal; EDGAR-only then")
     assert src.index("except CiqAmbiguousError:") < broad
+    assert "_machine_anchor(" in inspect.getsource(cli._cmd_anchor_backfill)
 
 
 # --- review fixes (2026-10-11): what is NOT a second export, and what still is ------------------

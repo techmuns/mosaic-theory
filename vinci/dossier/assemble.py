@@ -654,8 +654,9 @@ def _keep_committed_recipe(dossier: Dossier, folder: Path) -> Dossier:
     own confirmed record could no longer be superseded.
 
     ONE RULE FOR BOTH WRITE PATHS — `preserve_operator_tag`, the backfill's, not a second variant
-    here to drift from it. Its limit comes with it: provenance is not recorded on the block, so ANY
-    divergence from a committed RECIPE keeps it, the machine's included — but a placeholder
+    here to drift from it. Its limit comes with it: on a page with no recorded `operator_decision`
+    provenance is not on the block, so ANY divergence from a committed RECIPE keeps it, the
+    machine's included — but a placeholder
     (`unknown`, `ANCHOR_UNRESOLVED`) is a data gap and never kept, and under an unchanged recipe
     the reason is always this build's (review of #670). Keeping a recipe is the tagger's own
     contract (it proposes, it never writes), and it is why the divergence is written as a CAVEAT
@@ -688,6 +689,13 @@ def _keep_committed_recipe(dossier: Dossier, folder: Path) -> Dossier:
     # Decided on the STRUCTURED result, never on the notes' wording: the notes are console text
     # written for the backfill, and one of them reports data-quality churn that is not a recipe.
     kept, _notes = preserve_operator_tag(committed, fresh)
+    if kept.operator_decision is not None:
+        # THE OPERATOR'S DECISION RIDES THROUGH EVERY BUILD (2026-10-22). This returned the FRESH
+        # dossier whenever the recipes matched — so a decision the machine agreed with was dropped
+        # here, a second way AMZN's and UBER's reasons were lost (#700, #705). The merged anchor is
+        # always kept. No caveat: the block carries both recipes, so the page renders the
+        # divergence from it on EVERY render, not only after a rebuild — never resolved here.
+        return dossier if kept == fresh else dossier.model_copy(update={"anchor": kept})
     if kept.recipe_hint == fresh.recipe_hint:
         return dossier  # the rule keeps only a RECIPE, and none was kept over this build's own
     caveat = (f"Recipe kept from the committed dossier: {kept.recipe_hint}. This build's own "
