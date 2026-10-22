@@ -39,12 +39,18 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Median multiple, own history | 4.2x | 24 closes · weak · EV/EBITDA |
 | Overall confidence | weak |  |
 
+**The operator's decision: R2_NEEDED** — 2026-10-07, operator
+
+⚠ **The machine reads R1_midcycle_margin_evebitda.** The operator's decision stands; it changes only by hand.
+
+> trailing ramp (0 to 11.6% EBIT margin over four years) with a guided forward reset (FY26E adjusted EBITDA $0-10M, gross margin 28% from 39%, founder exit, cash burn) - no trailing median describes this business in either direction; it is a forward-margin question. The EBITDA band also carries a vendor data defect (implied D&A about $329M against $15M recorded, systematic across every period); the TEV/LTM EBIT row reconciles exactly, so an EBIT-basis band is available if ever wanted.
+
+_Where this decision is recorded: docs/records/2026-10-07-four-recipe-re-tags-restored.md (#671) — the re-tag was written 2026-07-21 in 9b9228bc, pending the analyst; the operator's instruction of 2026-10-07 restored it; whether to revise it is the operator's open ruling (STATE row 32 (11))_
+
 **data_quality: band_incoherent+band_unreconciled**
 - own_history multiple: band_incoherent (periodicity quarterly)
 - Multiples sheet implies D&A of 328.8 against 9.3 recorded (35.5x) — outside the 8x band; the EV/EBITDA denominator does not match this company's own cost structure
 - market-implied EBITDA 453.6 vs 73.5 recorded (6.17x) — outside the 2.5x band. TEV 673.2 (market cap 586.2 + net debt 87.0) ÷ current multiple 1.484x
-
-_trailing ramp (0 to 11.6% EBIT margin over four years) with a guided forward reset (FY26E adjusted EBITDA $0-10M, gross margin 28% from 39%, founder exit, cash burn) - no trailing median describes this business in either direction; it is a forward-margin question. The EBITDA band also carries a vendor data defect (implied D&A about $329M against $15M recorded, systematic across every period); the TEV/LTM EBIT row reconciles exactly, so an EBIT-basis band is available if ever wanted._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -558,6 +564,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
   - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-22 · mechanical.drawdown_cause, mechanical.primary_source — refresh at 2026-10-09.3
+  - 2026-10-22 · anchor — anchor-retag at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 20d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 28d old (2026-07-21, valuation.implied_expectations.multiples_as_of) — within the ceiling
