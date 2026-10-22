@@ -940,6 +940,24 @@ class _VersionFindings:
     open: dict[str, CarriedFinding]
 
 
+def _regrade_not_run(store: Store, thesis_id: str, v: ThesisVersion) -> str | None:
+    """Why a RE-GRADE (`v`) is unreviewed, or None when the version it re-grades was reviewed. A
+    re-grade runs no review: it copies the findings stored in the run of the version before it
+    (Engine.reassess). After an unreviewed version — which stores none, it CARRIES them — the
+    copy is empty, and until 2026-10-22 the re-grade read CLEAN (an offline fixture: 2 open
+    findings → 0). So a re-grade of an unreviewed version is read as one: every finding open on
+    the version before carried on, the card's "not reviewed" note, the lines removed listed
+    (review of #779: without the note, a removed-line finding the desk listed open left the card
+    reading "No unresolved review findings"). The reason names the run whose review did not run,
+    walking back through re-grades — never nested."""
+    p = _previous(store, thesis_id, v)
+    while p is not None and review_not_run(store, thesis_id, p) is None and _is_regrade(store, p):
+        p = _previous(store, thesis_id, p)
+    root = review_not_run(store, thesis_id, p) if p is not None else None
+    return (None if root is None or p is None else
+            f"a re-grade — no card review since version {p.version}, written without it: {root}")
+
+
 def _is_regrade(store: Store, v: ThesisVersion) -> bool:
     """`v` was written by a re-grade (`reassess`: stored evidence, no review, no model call)."""
     run = store.run(v.run_id)
@@ -1033,27 +1051,26 @@ def _findings(store: Store, thesis_id: str, v: ThesisVersion,
     if any(copy_of.values()):
         _keep_origins(store, thesis_id, v, own, copy_of, memo)
     reason = review_not_run(store, thesis_id, v)
-    # a RE-GRADE runs no review either: it copies the findings stored in the run of the version
-    # before it (Engine.reassess), so what that version only CARRIED — it was written without the
-    # review — is read on here as it was read there (2026-10-22: the re-grade read clean)
     regrade = reason is None and _is_regrade(store, v)
+    if regrade:  # a re-grade of an unreviewed version is unreviewed too (see `_regrade_not_run`)
+        reason = _regrade_not_run(store, thesis_id, v)
     carried: dict[str, CarriedFinding] = {}
     removed: list[CarriedFinding] = []
-    if reason is not None or regrade:
+    if reason is not None:
         prev = _previous(store, thesis_id, v)
         if prev is not None:
             before = _findings(store, thesis_id, prev, memo)
             then = card_sentences(prev.content)
             at = {txt: sid for sid, (txt, _p, _c) in reversed(list(sents.items()))}
-            for sid_p, f in (before.carry.carried if regrade else before.open).items():
+            for sid_p, f in before.open.items():
                 text_p, _prov, cids_p = then[sid_p]
                 here = at.get(text_p) or (sid_p if sid_p in sents else None)
-                if regrade and here in corrected:
-                    continue  # an analyst correction closes the line's earlier findings
                 if here is None or here in carried or here in own:
                     removed.append(f)  # the line is gone (or its place is taken): never resolved
                     continue
                 same = sents[here][0] == text_p and tuple(sents[here][2]) == tuple(cids_p)
+                if regrade and here in corrected and not same:
+                    continue  # this re-grade's analyst correction rewrote the line: closed
                 carried[here] = CarriedFinding(f.code, f.detail, f.said, f.blocked,
                                                f.origin_version, f.origin_as_of, f.origin_text,
                                                f.changed or not same)

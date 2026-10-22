@@ -19,16 +19,40 @@ superseded-by:
   - It breaks the rule in `_findings`: "A version written WITHOUT the card review … is never read
     as clean".
   - On the offline fixture, the unreviewed version's 2 open findings fell to 0 after a re-grade.
-- **The fix is on the reading side.** A version written by a re-grade also reads on what the
-  version before it only CARRIED, through the same rule an unreviewed version uses:
+- **The fix is on the reading side.** A re-grade of an unreviewed version is read as
+  unreviewed itself (`report._regrade_not_run`). The reason walks back through re-grades to the
+  run whose review did not run, so it never nests. Everything open on the version before is
+  carried on by the rule an unreviewed version already uses:
   - the same line by its words (or its id);
   - the origin kept, so the key and any dismissal stay;
   - a changed line reads NOT RE-REVIEWED;
-  - a removed line is listed as removed.
-  - An analyst correction closes the corrected line's earlier findings, as it does for copied
-    ones.
-  - A re-grade shows no "not reviewed" banner: its findings say which review made them.
-  - `Engine.reassess` is unchanged: what it copies, it copies as before.
+  - a removed line is listed, on the card's "not reviewed" note and on the desk.
+  - A line THIS re-grade's analyst correction rewrote has its earlier findings closed, as copied
+    ones are.
+  - A re-grade of a REVIEWED version is unchanged: its findings are the copies it stored.
+  - `Engine.reassess` is unchanged.
+- **The code review of this PR** (`/code-review high`, 6 findings; operator: "/code-review high
+  779 and apply fixes"):
+  - **The card could read clean.** The first version of the fix carried the findings on but left
+    the re-grade "reviewed". The card lists findings on removed lines only inside the "not
+    reviewed" note, so a removed-line finding the desk listed open left the card reading "No
+    unresolved review findings". The re-grade now carries the not-run status, which also gives
+    the card's note and the desk's "Version N was not reviewed" item.
+  - **A correction closes a line only when it rewrote it** (`here in corrected and not same`).
+    A copied correction note of an earlier run no longer closes an unchanged line's finding.
+    This case is unreachable under the current writers.
+  - **The test restates a line with its claim's own words**, a structured value, no longer by
+    splitting the rendered figure label out of the line.
+  - **Two findings not changed.** The altitude finding: the fix keys on the run mode, while
+    `Engine.reassess` writing copies of carried findings would hold for every writer. The read
+    side follows the rule unreviewed versions already use, and no other mode writes a version
+    without a review. The efficiency finding: one run lookup per version read, memoised per
+    render.
+  - **An existing pin changes on purpose.**
+    `test_a_thesis_new_and_downgraded_in_one_week_is_one_row_showing_both` builds its pipeline
+    with the card review OFF, so version 1 is unreviewed — and so is the re-grade of it. Its
+    desk row now shows "1 finding", the "not reviewed" item. The old expectation recorded the
+    clean reading this PR removes.
 - **No existing data can change.** Across all versions of the registry of record's 30 theses, 0
   were written without the review, and none of its 14 re-grades follows such a version.
 
@@ -54,15 +78,26 @@ of this repo on this machine (read-only):
     another line.
   - Both findings stay on, with their keys and origin (version 1). The dismissal holds through
     both re-grades.
-  - The rendered card's JSON lists both warnings and the dismissal.
+  - The rendered card's JSON lists both warnings and the dismissal, and the re-grade's not-run
+    reason names version 2.
   - Before the fix, the same sequence read 0 findings.
 - **Pins** in `tests/test_theme_intelligence_review_carry.py`:
   - the case above (×3);
   - a correction of a carried line closes it, neither open nor listed as removed;
+  - a re-grade lists a carried finding whose line it removed, on the card's note, with no "No
+    unresolved review findings";
+  - a changed line reads NOT RE-REVIEWED;
+  - the removed list the version before handed on is kept;
   - NEGATIVE: a re-grade after a REVIEWED version carries nothing and removes nothing, and its
     findings are its copies with that review's origin.
-- **Mutation:** 5 mutants, all killed (among them the pre-fix reading, and every version read as
-  a re-grade).
+- **Mutation, after the review:** 7 mutants; 6 killed, among them the pre-fix reading, every
+  version read as a re-grade, and a re-grade after a reviewed version read as unreviewed.
+  - The survivor, "any correction note closes a line", is equivalent under the current writers:
+    a copied correction note reaches a re-grade only when the version before it was also a
+    re-grade, and a re-grade after a reviewed version carries nothing.
+  - **A correction to this PR's first run:** it reported "5 mutants, all killed". At that point
+    an existing test was failing on the fix itself, and the runner stops at the first failure,
+    so a kill could have come from that failure. All kills here are on a green baseline.
 - **The registry of record reads unchanged** (a fresh import of `theme-intelligence-state`
   cd0f4a08, this branch):
   - `review list` reads 1 open / 22 dismissed;
@@ -82,5 +117,5 @@ of this repo on this machine (read-only):
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - $0, with no model call, no write change and no migration.
-- **A re-grade's card lists removed findings only on the desk.** The card's own list sits under
-  the "not reviewed" banner, which a re-grade does not show.
+- **A re-grade of an unreviewed version adds the desk's "Version N was not reviewed" item**, as
+  the unreviewed version before it did.
