@@ -27,13 +27,21 @@ from tests.test_theme_intelligence_state_sync import _upload as fixture_upload
 from tests.theme_intelligence_support import Hypo, claim, extraction, hyp, ingest, make_pipeline
 from vinci.theme_intelligence import state
 from vinci.theme_intelligence.__main__ import main
-from vinci.theme_intelligence.attribution import AttributionError, state_authors
+from vinci.theme_intelligence.attribution import (
+    LINKLESS_RUNS,
+    AttributionError,
+    retract_author,
+    state_authors,
+)
+from vinci.theme_intelligence.attribution import check_run as check_authors
 from vinci.theme_intelligence.desk import desk_weeks
-from vinci.theme_intelligence.documents import Declared
+from vinci.theme_intelligence.documents import Declared, DocumentError
 from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.qa import run_qa
+from vinci.theme_intelligence.report import _sources_line, build_dashboard
 from vinci.theme_intelligence.schemas import (
     OPERATOR_STATED,
+    Author,
     FieldStatus,
     IssueSeverity,
     RunStatus,
@@ -75,13 +83,14 @@ def test_a_stated_author_clears_qa_and_records_who_and_why(tmp_path: Path) -> No
     assert run.mode == "author" and run.status.value == "SUCCEEDED"
     [stated] = [a for a in new.authors if a.name == "Morgan Stanley"]
     assert stated.title == INSTITUTION
-    assert stated.source_field == f"{OPERATOR_STATED} by {WHO} in run {run.run_id}: {WHY}"
+    assert stated.source_field == f"{OPERATOR_STATED} by {WHO}: {WHY}"
+    assert stated.stated_in == run.run_id  # the run, as a structured link
     assert new.authors_status is FieldStatus.KNOWN and pipe.store.article(aid) == new
     assert _author_check(pipe, upload_run)[0]  # the upload's run passes now
     # the document states it too — a replay reads it back — and its history says when and who
     [doc] = [d for d in pipe.store.documents() if d.article_id == aid]
     assert Declared.recorded(doc.source_id, doc.declared).authors == ("Morgan Stanley",)
-    assert f"AUTHORS STATED by {WHO} (run {run.run_id}): Morgan Stanley — {WHY}" in \
+    assert f"AUTHORS STATED by {WHO}: Morgan Stanley — {WHY} (run {run.run_id})" in \
         doc.history[-1]
     [issue] = [i for i in pipe.store.issues(run_id=run.run_id) if i.code == "AUTHORS_STATED"]
     assert issue.ref_id == aid and issue.severity is IssueSeverity.INFO and WHO in issue.detail
@@ -201,3 +210,139 @@ def test_an_unpushed_author_run_makes_a_pull_refuse(tmp_path: Path) -> None:
     state.pull(back, remote, replay=False)
     art = Store(back / "registry.db").article(aid)
     assert art is not None and [a.name for a in art.authors] == ["Morgan Stanley"]
+
+
+# --- review of #771 ----------------------------------------------------------------------------
+
+def test_a_failed_record_leaves_the_article_untouched(tmp_path: Path,
+                                                       monkeypatch: pytest.MonkeyPatch) -> None:
+    """The name, the document and the AUTHORS_STATED record are ONE transaction: a failure
+    writing the record leaves no name on the article without it."""
+    pipe, aid, _run = _authorless(tmp_path)
+    before = pipe.store.article(aid)
+
+    def broken(*_a: object, **_k: object) -> None:
+        raise RuntimeError("the issue could not be written")
+
+    monkeypatch.setattr(pipe, "_issue", broken)
+    with pytest.raises(RuntimeError, match="could not be written"):
+        state_authors(pipe, aid, ["Morgan Stanley"], by=WHO, reason=WHY, as_of=AS_OF)
+    assert pipe.store.article(aid) == before
+    [doc] = [d for d in pipe.store.documents() if d.article_id == aid]
+    assert "authors" not in doc.declared and not any("STATED" in h for h in doc.history)
+    failed = max(pipe.store.runs(), key=lambda r: r.started_at)
+    assert failed.mode == "author" and failed.status is RunStatus.FAILED
+
+
+def test_a_wrong_name_is_retracted_never_left_beside_the_right_one(tmp_path: Path) -> None:
+    pipe, aid, upload_run = _authorless(tmp_path)
+    state_authors(pipe, aid, ["Morgan Stanly"], by=WHO, reason=WHY, as_of=AS_OF)  # a typo
+    run, art = retract_author(pipe, aid, "morgan stanly", by=WHO, reason="test: a typo",
+                              as_of=AS_OF)
+    assert art.authors == () and art.authors_status is FieldStatus.UNKNOWN  # QA says so again
+    assert not _author_check(pipe, upload_run)[0]
+    [doc] = [d for d in pipe.store.documents() if d.article_id == aid]
+    assert "authors" not in doc.declared  # a replay will not state it again
+    assert f"AUTHOR RETRACTED by {WHO}: morgan stanly — test: a typo (run {run.run_id})" in \
+        doc.history[-1]
+    [issue] = [i for i in pipe.store.issues(run_id=run.run_id) if i.code == "AUTHORS_RETRACTED"]
+    assert issue.ref_id == aid
+    check = next(c for c in run_qa(pipe.store, run.run_id).checks
+                 if c.name == "every stated author is on its article")
+    assert check.ok
+    state_authors(pipe, aid, ["Morgan Stanley"], by=WHO, reason=WHY, as_of=AS_OF)
+    assert _author_check(pipe, upload_run)[0]
+
+
+@pytest.mark.parametrize(("name", "why"), [
+    ("Nobody Here", "does not credit Nobody Here — nothing retracted"),
+    ("Test Author", "from the page"),  # the scan's article credits it from its metadata
+])
+def test_a_retraction_is_refused_unless_the_operator_stated_the_name(
+        tmp_path: Path, name: str, why: str) -> None:
+    pipe, _aid, _run = _authorless(tmp_path)
+    scan_article = next(a for a in pipe.store.articles() if a.authors)
+    runs = len(pipe.store.runs())
+    with pytest.raises(AttributionError, match=why):
+        retract_author(pipe, scan_article.article_id, name, by=WHO, reason=WHY, as_of=AS_OF)
+    assert len(pipe.store.runs()) == runs and pipe.store.article(
+        scan_article.article_id) == scan_article
+
+
+def test_an_author_stated_at_upload_can_be_retracted(tmp_path: Path) -> None:
+    """`--author` at upload is an operator statement too (no run link): retractable."""
+    pipe = make_pipeline(tmp_path)
+    pipe.start_run("ingest", as_of=AS_OF)
+    from vinci.theme_intelligence.ingest import ingest_file
+
+    res = ingest_file(pipe, MS_PDF, Declared(source_id="ms_research", llm_permitted=True,
+                                             authors=("Erin Wrigth",)),
+                      as_of=AS_OF, fixture=_ms_ext())
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    assert res.article_id is not None
+    art = pipe.store.article(res.article_id)
+    assert art is not None and [(a.name, a.stated_in) for a in art.authors] == [
+        ("Erin Wrigth", None)]
+    _run2, after = retract_author(pipe, res.article_id, "Erin Wrigth", by=WHO,
+                                  reason="test: a typo at upload", as_of=AS_OF)
+    assert after.authors == ()
+    [doc] = [d for d in pipe.store.documents() if d.article_id == res.article_id]
+    assert Declared.recorded(doc.source_id, doc.declared).authors == ()
+
+
+def test_qa_reads_the_run_link_and_names_the_three_linkless_runs(tmp_path: Path) -> None:
+    """QA links a statement to its run structurally (`Author.stated_in`). An operator-stated
+    author with no link passes only for the three runs made before the link existed."""
+    pipe, aid, _run = _authorless(tmp_path)
+    art = pipe.store.article(aid)
+    assert art is not None
+    legacy = art.model_copy(update={"authors": (Author(
+        name="Morgan Stanley", source_field=f"{OPERATOR_STATED} by {WHO} in run X: {WHY}"),),
+        "authors_status": FieldStatus.KNOWN})
+    pipe.store.upsert_article(legacy)
+    for rid, ok in (("R-20261022T035402Z-author", True), ("R-20990101T000000Z-author", False)):
+        assert rid in LINKLESS_RUNS or not ok
+        pipe.store.add_issue(_issue(rid, "article", aid, IssueSeverity.INFO, "AUTHORS_STATED",
+                                    f"Morgan Stanley — stated by {WHO}: {WHY}"))
+        assert (check_authors(pipe.store, rid) == []) is ok, rid
+
+
+def test_a_report_rendered_again_never_shows_an_author_stated_later(tmp_path: Path) -> None:
+    pipe, aid, upload_run = _authorless(tmp_path)
+    up = pipe.store.run(upload_run)
+    assert up is not None
+    tid = next(c.thesis_id for c in pipe.store.contributions() if c.article_id == aid)
+    state_authors(pipe, aid, ["Morgan Stanley"], by=WHO, reason=WHY, as_of=AS_OF)
+    then = _sources_line(pipe.store, tid, {upload_run}, until=up.finished_at)
+    now = _sources_line(pipe.store, tid, {upload_run})
+    assert then and "author UNKNOWN" in then[0] and "Morgan Stanley — Morgan Stanley" in now[0]
+    d = build_dashboard(pipe.store, upload_run, cards={}, generated="t")
+    lines = [x for rows in d.categories.values() for r in rows if r.thesis_id == tid
+             for x in r.sources]
+    assert lines and all("author UNKNOWN" in x for x in lines)  # the upload's own week, as then
+
+
+def test_a_name_holding_the_separator_is_refused_everywhere(
+        tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    pipe, aid, _run = _authorless(tmp_path)
+    with pytest.raises(AttributionError, match="may not contain ';'"):
+        state_authors(pipe, aid, ["Research; Morgan Stanley"], by=WHO, reason=WHY, as_of=AS_OF)
+    with pytest.raises(DocumentError, match="may not contain ';'"):
+        Declared(source_id="ms_research", authors=("Research; Morgan Stanley",))
+    data = str(pipe.paths.root)
+    pipe.store.close()
+    with pytest.raises(SystemExit) as exit_:
+        main(["--data-dir", data, "author", "--article", aid, "--name", "A; B", "--by", WHO,
+              "--reason", WHY])
+    assert exit_.value.code == 2 and "may not contain ';'" in capsys.readouterr().err
+
+
+def test_an_author_without_a_run_link_serializes_as_before() -> None:
+    """Every stored author predating `stated_in` — page, text and upload credits — keeps its
+    payload byte for byte; the field is written only when set."""
+    page = Author(name="Erin Wright", source_field="article text b001: 'Author Erin Wright'")
+    assert page.model_dump_json() == ('{"name":"Erin Wright","title":null,"source_field":'
+                                      '"article text b001: \'Author Erin Wright\'"}')
+    linked = Author(name="Morgan Stanley", source_field=OPERATOR_STATED, stated_in="R-1")
+    assert '"stated_in":"R-1"' in linked.model_dump_json()
+    assert Author.model_validate_json(linked.model_dump_json()) == linked

@@ -19,7 +19,14 @@ from datetime import UTC, date, datetime
 from enum import StrEnum
 from typing import Annotated, Any, Literal
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    model_serializer,
+)
 
 DB_SCHEMA_VERSION = 8
 
@@ -380,6 +387,17 @@ class Author(Frozen):
     name: str
     title: str | None = None
     source_field: str  # where on the page it was read (e.g. "json-ld author", "byline block b041")
+    #: the run in which the OPERATOR stated it after the analysis (attribution.py) — a structured
+    #: link for QA and for as-of renders; None for an author read from the page or stated at
+    #: upload. Serialized only when set, so every other stored author is byte-identical.
+    stated_in: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _drop_unstated(self, handler: SerializerFunctionWrapHandler) -> Any:
+        out = handler(self)
+        if isinstance(out, dict) and out.get("stated_in") is None:
+            out.pop("stated_in", None)
+        return out
 
 
 class Block(Frozen):

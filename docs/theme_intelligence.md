@@ -363,8 +363,12 @@ python -m vinci.theme_intelligence documents --status HELD
   `python -m vinci.theme_intelligence author --article A-… --name NAME [--title T] --by WHO
   --reason "…"`. The statement is recorded on the article (`operator-stated by WHO in run R-…:
   WHY`), among the document's declared statements (a replay states it again), and as an
-  AUTHORS_STATED issue. It never touches a thesis version: a card's sealed source row keeps what
-  its version recorded. A re-read keeps it. Push the registry right after (`state push`): a pull
+  AUTHORS_STATED issue — in one transaction, with the stating run as a structured link
+  (`Author.stated_in`), so a report rendered as of an earlier run never shows it. It never touches
+  a thesis version: a card's sealed source row keeps what its version recorded. A re-read keeps
+  it. A wrong name is RETRACTED, never left beside the right one: `author --article A-… --retract
+  NAME --by WHO --reason "…"` removes an operator-stated author (at upload or later), never one the
+  page names. A name may not contain `;`. Push the registry right after (`state push`): a pull
   refuses to discard a local run it cannot replay.
 - **What is kept.** Text in reading order with a PAGE reference on every block; each table as ONE
   block with its cells and values as printed (`$48.3bn`, `4Q26E`); footnotes; headings (a wrapped

@@ -98,6 +98,14 @@ class Declared:
     #: how it arrived when not by hand: "linked report fetched automatically from <url> …"
     via: str | None = None
 
+    def __post_init__(self) -> None:
+        # the document record keeps the names "; "-joined and a replay splits them back
+        # (`recorded`): a name holding the separator would come back as two (review of #771)
+        bad = [a for a in self.authors if ";" in a]
+        if bad:
+            raise DocumentError(f"an author's name may not contain ';' (the separator the "
+                                f"document record keeps names with): {bad}")
+
     @classmethod
     def recorded(cls, source_id: str, statements: Mapping[str, str]) -> Declared:
         """The statements as a document record holds them (`DocumentRecord.declared`, every value

@@ -363,7 +363,8 @@ def run_qa(store: Store, run_id: str) -> QaResult:
 
     # an author the operator stated (attribution.py): on its article, named by this run --------
     if run.mode == "author":
-        stated = [i for i in store.issues(run_id=run_id) if i.code == "AUTHORS_STATED"]
+        stated = [i for i in store.issues(run_id=run_id)
+                  if i.code in ("AUTHORS_STATED", "AUTHORS_RETRACTED")]
         abad = check_authors(store, run_id)
         add(QaCheck("every stated author is on its article",
                     not abad and (bool(stated) or run.status is not RunStatus.SUCCEEDED),
