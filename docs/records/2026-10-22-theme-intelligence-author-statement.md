@@ -2,7 +2,7 @@
 id: 2026-10-22-theme-intelligence-author-statement
 status: recorded
 date: 2026-10-22
-prs: []
+prs: [771]
 supersedes:
 superseded-by:
 ---
