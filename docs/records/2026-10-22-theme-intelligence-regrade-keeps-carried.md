@@ -42,6 +42,9 @@ of this repo on this machine (read-only):
   theme-intelligence command there, update it (`git pull`): code before dd85adf5 has no import
   guard and fails at the first copied issue it reads.
 - The weekly Actions job runs main, so it reads v9.
+- **Done the same day:** the operator ran `git pull` there, and the primary checkout went from
+  06c9a5ed to dd85adf5 (schema v9, with the import guard), keeping that session's
+  uncommitted changes.
 
 **HOW VERIFIED.**
 - **The previously-broken case, end to end** on the real pipeline with the offline fixture
