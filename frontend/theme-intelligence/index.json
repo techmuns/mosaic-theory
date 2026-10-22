@@ -103,7 +103,7 @@
   "site/uploads.html"
  ],
  "kind": "theme-intelligence-publish",
- "published_at": "2026-10-21T19:18:50+00:00",
+ "published_at": "2026-10-22T06:41:35+00:00",
  "retired": {
   "TH-1516B6186B": {
    "last_run": "R-20261016T163302Z-market",
@@ -176,9 +176,9 @@
    "title": "Broadening S&P 500 earnings super-cycle extends beyond the mega-caps"
   }
  },
- "run_as_of": "2026-10-21",
- "run_id": "R-20261021T123639Z-market",
- "run_mode": "market",
+ "run_as_of": "2026-10-22",
+ "run_id": "R-20261022T035404Z-author",
+ "run_mode": "author",
  "test_data": false,
  "theses": 30,
  "week": "Week of 12\u201321 Oct 2026 \u00b7 with research re-read after the scan"
