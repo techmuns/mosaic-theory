@@ -2,7 +2,7 @@
 id: 2026-10-22-theme-intelligence-author-review-fixes
 status: recorded
 date: 2026-10-22
-prs: []
+prs: [773]
 supersedes:
 superseded-by:
 ---
