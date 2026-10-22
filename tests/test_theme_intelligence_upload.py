@@ -227,6 +227,8 @@ def test_a_dry_run_stops_after_the_preflight(tmp_path: Path) -> None:
     res = _upload(tmp_path, remote, model, dry_run=True)
     assert res.outcome == "dry run" and res.lines[-1].startswith("dry run — nothing imported")
     assert any(x.strip().startswith("cost: estimated $") for x in res.lines)
+    # review of #775: the dry run names who the import will credit, and from where
+    assert "author: Synthetic Analyst (stated by you)" in [x.strip() for x in res.lines]
     assert model.calls == [] and _head(remote) == head and _laptop(tmp_path).documents() == []
 
 
@@ -408,6 +410,8 @@ def test_a_new_version_of_an_article_whose_authors_are_held_needs_none_stated(
                   same_as=art.article_id, dry_run=True)
     assert res.outcome == "dry run"
     assert any(f"a version of {art.article_id}" in x for x in res.lines)
+    assert [x.strip() for x in res.lines if x.strip().startswith("author:")] == [
+        "author: " + "; ".join(f"{a.name} (kept from {art.article_id})" for a in art.authors)]
     with pytest.raises(UploadError, match="names no author"):  # a NEW article still needs one
         _upload(tmp_path, remote, None, path=fuller, declared=unauthored, as_new=True,
                 dry_run=True)

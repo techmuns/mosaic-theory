@@ -26,6 +26,7 @@ one click away — never silently cut.
 from __future__ import annotations
 
 import re
+import shlex
 from collections import Counter, defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass, field, replace
@@ -1107,13 +1108,16 @@ class UploadItem:
     where: list[str] = field(default_factory=list)
 
 
-def _ingest_cmd(sid: str, url: str = "") -> str:
+def _upload_cmd(sid: str, url: str = "") -> str:
     """A row's import: the ONE-STEP upload (upload.py, #769) — pull, the checks before anything is
     paid (identity, licence, author, cost against the budget), import, QA, the spend reconciled,
-    push. Until 2026-10-22 the rows taught `ingest-file`, which pays and pushes nothing."""
+    push. Until 2026-10-22 the rows taught `ingest-file`, which pays and pushes nothing.
+    No `--author` (review of #775): a signed report needs none, and a name stated beside its
+    byline is credited as a second author — the dry run asks for one when the page names none.
+    The URL is shell-quoted: a `#` or `&` in it would cut the command short."""
     return (f"{CLI} upload --path <your copy> --source {sid}"
-            + (f" --url {url}" if url else "")
-            + ' --author "<as printed>" --llm-permitted --budget <USD>')
+            + (f" --url {shlex.quote(url)}" if url else "")
+            + " --llm-permitted --budget <USD>")
 
 
 def upload_items(reg: _Registry, health: dict[str, Any],
@@ -1155,7 +1159,7 @@ def upload_items(reg: _Registry, health: dict[str, Any],
             kind="full_report", title=clean_title(a.title, a.publisher) or "title not recorded",
             publisher=a.publisher, source_id=a.source_id, published=_todate(a.published_at),
             first_seen=_todate(a.first_seen_at), why=why,
-            command=_ingest_cmd(a.source_id, a.canonical_url), url=a.canonical_url,
+            command=_upload_cmd(a.source_id, a.canonical_url), url=a.canonical_url,
             audit=a.article_id + (f" · {clip(upload_issue[a.article_id], 200, 'Review')}"
                                   if a.article_id in upload_issue else "")))
     done_urls = {a.canonical_url for a in store.articles()
@@ -1180,7 +1184,7 @@ def upload_items(reg: _Registry, health: dict[str, Any],
             publisher=art.publisher if art else reg.publisher(sid),
             source_id=sid, published=_todate(art.published_at) if art else None,
             first_seen=seen, why=_CHECKPOINT_WHY[_CHECKPOINT[status]],
-            command=_ingest_cmd(sid or "<source>", url), url=url,
+            command=_upload_cmd(sid or "<source>", url), url=url,
             audit=f"scan outcome {status}" + (f" · {cid}" if cid else "")))
     from vinci.theme_intelligence.health import asks_only_for_previews, split_affected
 
@@ -1221,7 +1225,7 @@ def upload_items(reg: _Registry, health: dict[str, Any],
                  "report you hold" if manual_first else
                  f"automated access is {str(row.get('status', 'UNKNOWN')).lower()} — upload "
                  f"the reports you hold, starting with the articles listed"),
-            command=_ingest_cmd(sid), detail=rest, links=links,
+            command=_upload_cmd(sid), detail=rest, links=links,
             where=[src.entry_url, *src.research_pages] if not links else [],
             audit=f"health {row.get('status', 'UNKNOWN')}"
             + (f" · {clip(row.get('reason', ''), 160, 'Sources')}" if row else "")))
@@ -2236,27 +2240,32 @@ class Desk:
                 f'<span class="muted">one command per document: price it, then run it</span>'
                 f'</summary><ol class="steps4">'
                 f'<li><b>1. Price it</b> with the command on its row plus <code>--dry-run</code>: '
-                f'it pulls the registry and checks the document — identity, licence, author and '
-                f'the cost against your budget — and imports and pushes nothing (the first time, '
-                f'add <code>--remote &lt;git remote&gt;</code>)'
+                f'it pulls the registry and checks the document — identity, licence, the author '
+                f'it will credit and the cost against your budget — and imports and pushes '
+                f'nothing'
                 f'<code class="cmd">{cli} upload … --budget &lt;USD&gt; --dry-run</code></li>'
                 f'<li><b>2. Run it</b> without <code>--dry-run</code>: it imports within the '
                 f'budget, checks QA and the spend, and pushes — a refusal pushes nothing and '
                 f'says why<code class="cmd">{cli} upload … --budget &lt;USD&gt;</code></li>'
-                f'<li><b>3. Clear</b> what is held with the release command on its row, then '
-                f'push — everything pushed before you start the weekly run (Actions → '
-                f'theme-intelligence-weekly → Run workflow); <code>upload</code> pushes by '
-                f'itself<code class="cmd">{cli} state push</code></li>'
+                f'<li><b>3. Clear</b> what is held: pull, run the release command on its row, '
+                f'then push — everything pushed before you start the weekly run (Actions → '
+                f'theme-intelligence-weekly → Run workflow); <code>upload</code> pulls and '
+                f'pushes by itself<code class="cmd">{cli} state pull · release · {cli} state '
+                f'push</code></li>'
                 f'<li><b>4. Several files at once:</b> pull, put them in '
                 f'<code>data/theme_intelligence/inbox/</code>, import, push'
                 f'<code class="cmd">{cli} state pull · {cli} ingest-inbox · {cli} state push'
                 f'</code></li></ol><details class="fold"><summary>Rules</summary>'
-                f'<ul class="small"><li>Add <code>--llm-permitted</code> only when the '
+                f'<ul class="small"><li>The first command on a machine — <code>upload</code> or '
+                f'<code>state pull</code> — needs <code>--remote &lt;git remote&gt;</code>; '
+                f'later ones reuse it.</li><li>Add <code>--llm-permitted</code> only when the '
                 f'document\'s licence allows third-party model processing; without it the '
-                f'upload refuses (and an import holds it).</li><li>State '
-                f'<code>--author</code> as the document prints it when its page names none: '
-                f'QA requires an author, so the upload asks before anything is paid (a wrong '
-                f'name is removed with <code>{cli} author --retract</code>).</li>'
+                f'upload refuses (and an import holds it), unless <code>sources.toml</code> '
+                f'already permits the channel\'s documents.</li><li>Add <code>--author '
+                f'NAME</code> only when the dry run says the document names no author — QA '
+                f'requires one; a name beside the page\'s own byline is credited as a second '
+                f'author (a wrong name is removed with <code>{cli} author --retract</code>).'
+                f'</li>'
                 f'<li><code>--budget</code> must cover the estimate\'s high end — the dry run '
                 f'prints it — or nothing is sent to the model.</li><li>A document needs at least '
                 f'40 words of readable text.</li><li>A fuller copy of a preview is the same '
