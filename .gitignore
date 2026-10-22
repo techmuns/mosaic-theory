@@ -12,6 +12,9 @@ __pycache__/
 .env.*
 !.env.example
 
+# Claude Code: `.claude/settings.json` (the shared hooks) is committed; personal permissions are not.
+.claude/settings.local.json
+
 # Local working store — durable state is the committed JSON/CSV snapshots, NOT the binary DB.
 *.db
 *.db-journal

@@ -88,6 +88,9 @@ verdict placement.
   data, show the output, and demonstrate the **non-trivial / previously-broken** case specifically —
   not the easy case that was never in doubt. (The lookahead fix is the template.)
 - **Suite stays green** — ruff + `mypy --strict` clean; `pytest -m "not network"` passes. No red commit.
+- **Three of these rules are HOOKS, not memory** (`.claude/settings.json`): a session starts with the
+  §5.0 index; a turn cannot end while uncommitted Python fails the fast gate (up to 3 tries); an
+  edit to a decision-line file asks the operator first. Fix what they report — never edit around them.
 - **Regression-test every bug fix** — a fix without a test that would have caught it isn't done.
 - **Work on a local branch, never directly on main. The agent opens a PR and STOPS — it never merges
   to main itself.** Green (ruff + `mypy --strict` + `pytest`) is *necessary but not sufficient*: a

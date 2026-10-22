@@ -713,6 +713,7 @@ Each line: *what it does* — *verified how*.
 - **A lease basis's dates travel with its values** (`vinci/dossier/freshness.py` `_NOT_A_PANEL`). The ex-lease band's `as_of` was read as an export arrival and would have rendered ten pages 47–103 days stale; #750's classification test was vacuous until a page carried the block. Incident→invariant (shipped Y, #751): `test_a_lease_basis_date_is_not_a_panel_arrival` (real TJX lease basis injected). `docs/records/2026-10-19-lease-basis-dates-are-value-borne.md`
 
 - **TJX joins the followed names in the OVERSHOOT book, and its first page lands** (artifacts only, #747, on #748). Operator-chosen book and approved reason (2026-10-18); every price input at the 2026-10-16 close; draws 4 strongly-bullish / 1 mixed, so the machine proposal is withheld. `docs/records/2026-10-18-tjx-followed-and-assembled.md`
+- **Three CLAUDE.md rules are hooks** (`.claude/settings.json`, `.claude/hooks/`): the §5.0 index at session start, a Stop-time fast gate on uncommitted Python (ruff, `mypy --strict vinci`, the tests that import a changed module; blocks ≤3 times), and a prompt before a decision-line file is edited. Pinned positive and negative in `tests/test_claude_hooks.py`. `docs/records/2026-10-22-agent-hooks-checked-in.md`
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 
