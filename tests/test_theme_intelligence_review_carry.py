@@ -21,6 +21,7 @@ articles are SYNTHETIC (tests/theme_intelligence_stress.py) on the reserved `.te
 
 from __future__ import annotations
 
+import json
 import random
 import re
 from datetime import timedelta
@@ -33,9 +34,17 @@ from bs4 import BeautifulSoup
 from tests.theme_intelligence_stress import END, _article, _doc
 from tests.theme_intelligence_support import fetched, make_pipeline, table_counts
 from vinci.theme_intelligence.budget import GuardedClient
-from vinci.theme_intelligence.cards import _anchor
+from vinci.theme_intelligence.cards import LABEL_OPEN, _anchor
+from vinci.theme_intelligence.engine import SentenceCorrection
 from vinci.theme_intelligence.pipeline import Pipeline
-from vinci.theme_intelligence.report import line_findings, review_carry, write_run_outputs
+from vinci.theme_intelligence.report import (
+    dismissed_findings,
+    line_findings,
+    review_carry,
+    review_findings,
+    write_run_outputs,
+)
+from vinci.theme_intelligence.resolve import resolve
 from vinci.theme_intelligence.schemas import RunStatus, ThesisVersion
 from vinci.theme_intelligence.verify import REVIEW_TOOL, card_sentences
 
@@ -256,3 +265,71 @@ def test_the_same_words_on_other_evidence_are_not_re_reviewed(tmp_path: Path) ->
     carry = review_carry(pipe.store, v2.thesis_id, moved)
     assert card_sentences(moved.content)["s01.0"][0] == card_sentences(c)["s01.0"][0]
     assert carry.carried["s01.0"].changed is True
+
+
+# --- a re-grade after an unreviewed version (2026-10-22) ----------------------------------------
+
+def _regrade(pipe: Pipeline, as_of: Any, sid: str | None = None) -> tuple[ThesisVersion, str]:
+    """A re-grade (`reassess`, $0) of the one thesis — with an analyst correction of `sid` (its
+    own words and evidence, restated) so it always writes a new version."""
+    v = _current(pipe)
+    corr = []
+    if sid is not None:
+        text, _p, cids = card_sentences(v.content)[sid]
+        corr = [SentenceCorrection(thesis_id=v.thesis_id, sentence_id=sid,
+                                   text=f"{text.split(LABEL_OPEN)[0].strip()} (restated)",
+                                   claim_ids=tuple(cids), reason="test")]
+    run, outs = pipe.run_reassess(as_of=as_of, corrections=corr)
+    assert len(outs) == 1, "the re-grade wrote no new version: nothing would be tested"
+    return _current(pipe), run.run_id
+
+
+def _other_line(v: ThesisVersion) -> str:
+    """A line with evidence and no finding — what a correction may restate harmlessly."""
+    return next(k for k, (_t, _p, c) in card_sentences(v.content).items()
+                if c and k not in SAID and k.startswith(("s02", "s03")))
+
+
+@pytest.mark.parametrize("review", ["no_review", "budget", "no_client"])
+def test_a_re_grade_keeps_what_an_unreviewed_version_carried(
+        tmp_path: Path, review: str) -> None:
+    """A re-grade copies the findings stored in the run of the version before it; a version
+    written WITHOUT the review stores none — it carries them — so the re-grade read CLEAN: its two
+    open findings were gone (offline fixture, 2026-10-22: 2 → 0). They are read on as they were
+    read there: same origin, same key, a dismissal kept — through a second re-grade too."""
+    pipe, v1, v2, _fake = _reviewed_then(tmp_path, review)
+    keys = {lf.sentence_id: lf.key for lf in review_findings(pipe.store, v2.thesis_id, v2)}
+    assert set(keys) == set(SAID)
+    resolve(pipe, keys["s01.0"], "dismissed", reviewer="test", reason="test", as_of=END)
+    for week in (1, 2):
+        v, run_id = _regrade(pipe, END + timedelta(days=7 * week), _other_line(_current(pipe)))
+        now = {lf.sentence_id: lf for lf in review_findings(pipe.store, v.thesis_id, v)}
+        assert {s: lf.key for s, lf in now.items()} == keys
+        assert {lf.finding.origin_version for lf in now.values()} == {v1.version}
+        assert set(dismissed_findings(pipe.store, v.thesis_id, v)) == {"s01.0"}
+        assert review_carry(pipe.store, v.thesis_id, v).not_run is None  # no banner: a re-grade
+    out = write_run_outputs(pipe.store, run_id, tmp_path / "out")  # the rendered card
+    js = json.loads((Path(out["dir"]) / "cards" / f"{v1.thesis_id}.json").read_text())
+    assert set(js["review_warnings"]) == set(SAID) and set(js["review_dismissed"]) == {"s01.0"}
+
+
+def test_a_re_grade_correcting_a_carried_line_closes_its_finding(tmp_path: Path) -> None:
+    """An analyst correction closes the corrected line's earlier findings — carried ones as copied
+    ones: the corrected line is neither open nor listed as removed."""
+    pipe, _v1, _v2, _fake = _reviewed_then(tmp_path, "no_review")
+    v, _run_id = _regrade(pipe, END + timedelta(days=7), "s02.0")
+    assert {lf.sentence_id for lf in review_findings(pipe.store, v.thesis_id, v)} == {"s01.0"}
+    assert review_carry(pipe.store, v.thesis_id, v).removed == ()
+
+
+def test_a_re_grade_after_a_reviewed_version_reads_only_its_copies(tmp_path: Path) -> None:
+    """NEGATIVE: after a REVIEWED version nothing is carried — its findings are the copies the
+    re-grade stored (every re-grade on the registry of record is of this kind: its reading is
+    unchanged)."""
+    pipe, _v1, v2, _fake = _reviewed_then(tmp_path, "ok")
+    v, _run_id = _regrade(pipe, END + timedelta(days=7), _other_line(v2))
+    carry = review_carry(pipe.store, v.thesis_id, v)
+    assert carry.carried == {} and carry.removed == ()
+    now = review_findings(pipe.store, v.thesis_id, v)
+    assert {lf.sentence_id for lf in now} == set(SAID)
+    assert {lf.finding.origin_version for lf in now} == {v2.version}  # its own review's

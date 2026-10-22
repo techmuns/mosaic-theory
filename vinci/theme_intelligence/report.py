@@ -940,6 +940,12 @@ class _VersionFindings:
     open: dict[str, CarriedFinding]
 
 
+def _is_regrade(store: Store, v: ThesisVersion) -> bool:
+    """`v` was written by a re-grade (`reassess`: stored evidence, no review, no model call)."""
+    run = store.run(v.run_id)
+    return run is not None and run.mode == "reassess"
+
+
 def _previous(store: Store, thesis_id: str, v: ThesisVersion) -> ThesisVersion | None:
     """The version before `v` — what a version written without a review (or a re-grade) reads
     its earlier findings from."""
@@ -1027,17 +1033,23 @@ def _findings(store: Store, thesis_id: str, v: ThesisVersion,
     if any(copy_of.values()):
         _keep_origins(store, thesis_id, v, own, copy_of, memo)
     reason = review_not_run(store, thesis_id, v)
+    # a RE-GRADE runs no review either: it copies the findings stored in the run of the version
+    # before it (Engine.reassess), so what that version only CARRIED — it was written without the
+    # review — is read on here as it was read there (2026-10-22: the re-grade read clean)
+    regrade = reason is None and _is_regrade(store, v)
     carried: dict[str, CarriedFinding] = {}
     removed: list[CarriedFinding] = []
-    if reason is not None:
+    if reason is not None or regrade:
         prev = _previous(store, thesis_id, v)
         if prev is not None:
             before = _findings(store, thesis_id, prev, memo)
             then = card_sentences(prev.content)
             at = {txt: sid for sid, (txt, _p, _c) in reversed(list(sents.items()))}
-            for sid_p, f in before.open.items():
+            for sid_p, f in (before.carry.carried if regrade else before.open).items():
                 text_p, _prov, cids_p = then[sid_p]
                 here = at.get(text_p) or (sid_p if sid_p in sents else None)
+                if regrade and here in corrected:
+                    continue  # an analyst correction closes the line's earlier findings
                 if here is None or here in carried or here in own:
                     removed.append(f)  # the line is gone (or its place is taken): never resolved
                     continue
