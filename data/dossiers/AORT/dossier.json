@@ -1558,7 +1558,7 @@
             "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On May 7, 2026, Artivion issued a press release announcing its financial results for the first quarter ended March 31, 2026 and the exercise of the Option. Artivion hereby incorporates by reference herein the information set forth in its press release dated May 7, 2026, a copy of which is attached hereto as Exhibit 99.1. Except as otherwise provided i"
           ],
           "drivers": {
-            "value": "adj net income Q1 2026 $4.2M; 2026 revenue outlook: $480.0–$496.0M; 2026 adjusted ebitda outlook: $100.0–$107.0M",
+            "value": "adj net income Q1 2026 $4.2M (vs $2.5M Q1 2025); 2026 revenue outlook: $480.0–$496.0M; 2026 adjusted ebitda outlook: $100.0–$107.0M",
             "source_ref": "8-K 0001628280-26-032097 EX-99.1",
             "status": "present",
             "note": null
@@ -7218,6 +7218,14 @@
               "source_ref": "8-K 0001628280-26-054294 EX-99.1"
             },
             {
+              "metric": "adjusted net income",
+              "period": "Q2 2025",
+              "value": 10.7,
+              "change": null,
+              "verbatim": "Non-GAAP net income for the second quarter of 2026 was $6.3 million, or $0.13 per fully diluted common share, compared to non-GAAP net income of $10.7 million",
+              "source_ref": "8-K 0001628280-26-054294 EX-99.1"
+            },
+            {
               "metric": "revenue",
               "period": "Q2 2026",
               "value": 125.8,
@@ -7279,6 +7287,14 @@
               "source_ref": "8-K 0001628280-26-032097 EX-99.1"
             },
             {
+              "metric": "adjusted net income",
+              "period": "Q1 2025",
+              "value": 2.5,
+              "change": null,
+              "verbatim": "Non-GAAP net income for the first quarter of 2026 was $4.2 million, or $0.08 per fully diluted common share, compared to non-GAAP net income of $2.5 million",
+              "source_ref": "8-K 0001628280-26-032097 EX-99.1"
+            },
+            {
               "metric": "revenue",
               "period": "Q1 2026",
               "value": 116.3,
@@ -7321,10 +7337,34 @@
           "reconciliation": [
             {
               "metric": "adjusted net income",
-              "period": "2025",
+              "period": "Q4 2025",
               "value": 8.6,
               "change": null,
               "verbatim": "Non-GAAP net income was $8.6 million",
+              "source_ref": "8-K 0001628280-26-007674 EX-99.1"
+            },
+            {
+              "metric": "adjusted net income",
+              "period": "2025",
+              "value": 29.7,
+              "change": null,
+              "verbatim": "For the full year, non-GAAP net income was $29.7 million",
+              "source_ref": "8-K 0001628280-26-007674 EX-99.1"
+            },
+            {
+              "metric": "adjusted net income",
+              "period": "Q4 2024",
+              "value": 0.2,
+              "change": null,
+              "verbatim": "Non-GAAP net income for the fourth quarter of 2025 was $8.6 million, or $0.17 per fully diluted common share, compared to non-GAAP net income of $0.2 million",
+              "source_ref": "8-K 0001628280-26-007674 EX-99.1"
+            },
+            {
+              "metric": "adjusted net income",
+              "period": "2024",
+              "value": 10.8,
+              "change": null,
+              "verbatim": "Non-GAAP net income for the full year of 2025 was $29.7 million, or $0.63 per fully diluted common share, compared to non-GAAP net income of $10.8 million",
               "source_ref": "8-K 0001628280-26-007674 EX-99.1"
             }
           ],
@@ -7366,6 +7406,14 @@
               "value": 7.9,
               "change": null,
               "verbatim": "Net income was $6.5 million, or $0.13 per fully diluted share, and non-GAAP net income was $7.9 million",
+              "source_ref": "8-K 0001628280-25-050164 EX-99.1"
+            },
+            {
+              "metric": "adjusted net income",
+              "period": "Q3 2024",
+              "value": 5.0,
+              "change": null,
+              "verbatim": "Non-GAAP net income for the third quarter of 2025 was $7.9 million, or $0.16 per fully diluted common share, compared to non-GAAP net income of $5.0 million",
               "source_ref": "8-K 0001628280-25-050164 EX-99.1"
             },
             {
@@ -7415,6 +7463,14 @@
               "value": 10.7,
               "change": null,
               "verbatim": "Net income was $1.3 million, or $0.03 per fully diluted share and non-GAAP net income was $10.7 million",
+              "source_ref": "8-K 0001628280-25-038873 EX-99.1"
+            },
+            {
+              "metric": "adjusted net income",
+              "period": "Q2 2024",
+              "value": 2.9,
+              "change": null,
+              "verbatim": "Non-GAAP net income for the second quarter of 2025 was $10.7 million, or $0.24 per fully diluted common share, compared to non-GAAP net income of $2.9 million",
               "source_ref": "8-K 0001628280-25-038873 EX-99.1"
             },
             {
@@ -13780,6 +13836,15 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.drawdown_cause",
+        "mechanical.primary_source"
       ]
     }
   ],

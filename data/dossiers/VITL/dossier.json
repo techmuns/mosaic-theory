@@ -816,7 +816,7 @@
             "8.01 Other Events: Other Events. On February 26, 2026, the Company announced that the Board has authorized and approved a plan to repurchase up to $100.0 million of shares (the “Stock Repurchase Program”) of the Company’s outstanding common stock, par value $0.0001 per share (“Common Stock”). Under the Stock Repurchase Program, the Company intends to repurchase shares of Common Stock from time to time, including, wi"
           ],
           "drivers": {
-            "value": "adj EBITDA 2025 $29.2M; 2025 revenue outlook: $900.0–$920.0M; next-fy adjusted ebitda outlook: $105.0–$115.0M",
+            "value": "adj EBITDA Q4 2025 $29.2M; 2025 revenue outlook: $900.0–$920.0M; next-fy adjusted ebitda outlook: $105.0–$115.0M",
             "source_ref": "8-K 0001193125-26-073373 EX-99.1",
             "status": "present",
             "note": null
@@ -5753,7 +5753,7 @@
             },
             {
               "metric": "adjusted ebitda",
-              "period": "2025",
+              "period": "Q2 2025",
               "value": 29.9,
               "change": null,
               "verbatim": "Adjusted EBITDA was a loss of $26.6 million in the second quarter of 2026, compared to Adjusted EBITDA of $29.9 million",
@@ -5761,7 +5761,7 @@
             },
             {
               "metric": "adjusted net income",
-              "period": "2026",
+              "period": "Q2 2025",
               "value": 16.6,
               "change": null,
               "verbatim": "Adjusted net loss was $20.0 million for the second quarter of 2026, compared to adjusted net income of $16.6 million",
@@ -5786,7 +5786,10 @@
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EBITDA of $0 to $10” (8-K 0001193125-26-336692 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Net revenue of $775 million to $800” (8-K 0001193125-26-336692 EX-99.1)"
+          ]
         },
         {
           "filed": "2026-05-07",
@@ -5835,7 +5838,10 @@
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EBITDA of $0 to $10” (8-K 0001193125-26-210294 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Net revenue of $775 million to $800” (8-K 0001193125-26-210294 EX-99.1)"
+          ]
         },
         {
           "filed": "2026-02-26",
@@ -5867,10 +5873,18 @@
           "reconciliation": [
             {
               "metric": "adjusted ebitda",
-              "period": "2025",
+              "period": "Q4 2025",
               "value": 29.2,
               "change": null,
               "verbatim": "Adjusted EBITDA was $29.2 million",
+              "source_ref": "8-K 0001193125-26-073373 EX-99.1"
+            },
+            {
+              "metric": "adjusted ebitda",
+              "period": "2025",
+              "value": 114.0,
+              "change": null,
+              "verbatim": "Adjusted EBITDA was $114.0 million",
               "source_ref": "8-K 0001193125-26-073373 EX-99.1"
             },
             {
@@ -5880,19 +5894,14 @@
               "change": null,
               "verbatim": "Net Revenue of $759.4 million",
               "source_ref": "8-K 0001193125-26-073373 EX-99.1"
-            },
-            {
-              "metric": "gross margin",
-              "period": "2025",
-              "value": 35.8,
-              "change": null,
-              "verbatim": "Gross Margin of 35.8%",
-              "source_ref": "8-K 0001193125-26-073373 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EBITDA of $105 million to $115” (8-K 0001193125-26-073373 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Net revenue of $900 million to $920” (8-K 0001193125-26-073373 EX-99.1)"
+          ]
         },
         {
           "filed": "2025-11-04",
@@ -5904,7 +5913,7 @@
               "period": "Q3 2025",
               "value": 27.4,
               "change": null,
-              "verbatim": "Adjusted EBITDA was $27.4 million",
+              "verbatim": "Adjusted EBITDA of $27.4 million",
               "source_ref": "8-K 0001193125-25-263585 EX-99.1"
             },
             {
@@ -5944,7 +5953,7 @@
               "period": "Q2 2025",
               "value": 29.9,
               "change": null,
-              "verbatim": "Adjusted EBITDA was $29.9 million",
+              "verbatim": "Adjusted EBITDA of $29.9 million",
               "source_ref": "8-K 0000950170-25-104561 EX-99.1"
             },
             {
@@ -11377,6 +11386,15 @@
         "mechanical.financial_summary",
         "mechanical.primary_source",
         "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.drawdown_cause",
+        "mechanical.primary_source"
       ]
     }
   ],

@@ -6316,24 +6316,25 @@
             {
               "metric": "adjusted net income",
               "period": "Q3 2026",
-              "value": 6.3,
+              "value": 6300.0,
               "change": null,
-              "verbatim": "GAAP net income of $5.6B or $2.97 per share and non-GAAP net income of $6.3",
+              "verbatim": "GAAP net income of $5.6B or $2.97 per share and non-GAAP net income of $6.3B",
               "source_ref": "8-K 0001403161-26-000103 EX-99.1"
             },
             {
               "metric": "revenue",
               "period": "Q3 2026",
-              "value": 1.5,
+              "value": 11600.0,
               "change": null,
-              "verbatim": "Other revenue of $1.5 billion",
+              "verbatim": "Net revenue of $11.6B",
               "source_ref": "8-K 0001403161-26-000103 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
           "qa_flags": [
-            "no anchored pattern matched — guidance/outlook: 8-K 0001403161-26-000103 EX-99.1"
+            "no anchored pattern matched — guidance/outlook: 8-K 0001403161-26-000103 EX-99.1",
+            "Reconciliation figure refused — revenue qualified by 'other' — a sub-line, not the company's total: “Other revenue of $1.5 billion” (8-K 0001403161-26-000103 EX-99.1)"
           ]
         },
         {
@@ -6344,24 +6345,25 @@
             {
               "metric": "adjusted net income",
               "period": "Q2 2026",
-              "value": 6.3,
+              "value": 6300.0,
               "change": null,
-              "verbatim": "GAAP net income of $6.0B or $3.14 per share and non-GAAP net income of $6.3",
+              "verbatim": "GAAP net income of $6.0B or $3.14 per share and non-GAAP net income of $6.3B",
               "source_ref": "8-K 0001403161-26-000077 EX-99.1"
             },
             {
               "metric": "revenue",
               "period": "Q2 2026",
-              "value": 1.3,
+              "value": 11200.0,
               "change": null,
-              "verbatim": "Other revenue of $1.3 billion",
+              "verbatim": "Net revenue of $11.2B",
               "source_ref": "8-K 0001403161-26-000077 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
           "qa_flags": [
-            "no anchored pattern matched — guidance/outlook: 8-K 0001403161-26-000077 EX-99.1"
+            "no anchored pattern matched — guidance/outlook: 8-K 0001403161-26-000077 EX-99.1",
+            "Reconciliation figure refused — revenue qualified by 'other' — a sub-line, not the company's total: “Other revenue of $1.3 billion” (8-K 0001403161-26-000077 EX-99.1)"
           ]
         },
         {
@@ -6372,24 +6374,25 @@
             {
               "metric": "adjusted net income",
               "period": "Q1 2026",
-              "value": 6.1,
+              "value": 6100.0,
               "change": null,
-              "verbatim": "GAAP net income of $5.9B or $3.03 per share and non-GAAP net income of $6.1",
+              "verbatim": "GAAP net income of $5.9B or $3.03 per share and non-GAAP net income of $6.1B",
               "source_ref": "8-K 0001403161-26-000044 EX-99.1"
             },
             {
               "metric": "revenue",
               "period": "Q1 2026",
-              "value": 1.2,
+              "value": 10900.0,
               "change": null,
-              "verbatim": "Other revenue of $1.2 billion",
+              "verbatim": "Net revenue of $10.9B",
               "source_ref": "8-K 0001403161-26-000044 EX-99.1"
             }
           ],
           "one_offs": [],
           "event_impacts": [],
           "qa_flags": [
-            "no anchored pattern matched — guidance/outlook: 8-K 0001403161-26-000044 EX-99.1"
+            "no anchored pattern matched — guidance/outlook: 8-K 0001403161-26-000044 EX-99.1",
+            "Reconciliation figure refused — revenue qualified by 'other' — a sub-line, not the company's total: “Other revenue of $1.2 billion” (8-K 0001403161-26-000044 EX-99.1)"
           ]
         }
       ],
@@ -14152,6 +14155,14 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source"
       ]
     }
   ],

@@ -152,10 +152,10 @@ _no supplier/customer cohort mapped for this name — the comparison is vs the m
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap-down 2026-02-25 → filed 2026-02-24 [`0001193125-26-067015`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526067015/vrrm-20260224.htm)
     - items: 2.02 Results of Operations and Financial Condition
-    - **what the results showed:** adj EBITDA 2025 $101.8M; adj EPS 2025 $1.30; next-fy revenue outlook: $1,020.0–$1,030.0M; next-fy adjusted EBITDA outlook: $405.0–$415.0M; next-fy adjusted EPS outlook: $1.32–$1.38/sh; 2026 free cash flow outlook: $150.0–$160.0M [32]
+    - **what the results showed:** adj EBITDA Q4 2025 $101.8M; next-fy revenue outlook: $1,020.0–$1,030.0M; next-fy adjusted EBITDA outlook: $405.0–$415.0M; next-fy adjusted EPS outlook: $1.32–$1.38/sh; 2026 free cash flow outlook: $150.0–$160.0M [32]
   - gap-down 2026-05-27 → filed 2026-05-26 [`0001193125-26-239351`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526239351/d123116d8k.htm)
     - items: 8.01 Other Events
-    - **what the results showed:** adj EBITDA 2026 $38.0M; adj EPS 2026 $1.10; 2026 revenue outlook: $985.0–$995.0M; next-fy adjusted EBITDA outlook: $380.0–$385.0M; next-fy adjusted EPS outlook: $1.19–$1.25/sh; 2026 free cash flow outlook: $140.0–$150.0M [14]
+    - **what the results showed:** 2026 revenue outlook: $985.0–$995.0M; next-fy adjusted EBITDA outlook: $380.0–$385.0M; next-fy adjusted EPS outlook: $1.19–$1.25/sh; 2026 free cash flow outlook: $140.0–$150.0M [14]
     - 8.01 Other Events: On May 26, 2026, the Company announced that it received a termination notice from Avis Budget regarding Avis Budget’s contract with the Company. Avis Budget is one of the Company’s significant Commercial Services customers and represented over 10% of the Company’s total revenue for the three months ended March 31, 2026 and year ended December 31, 2025
   - gap-down 2026-06-02 → filed 2026-06-01 [`0001193125-26-251522`](https://www.sec.gov/Archives/edgar/data/1682745/000119312526251522/d39754d8k.htm)
     - items: 5.02 Departure/Election of Directors or Certain Officers
@@ -565,6 +565,7 @@ _Source §: 8-K 0001104659-18-041476 · a18-15692_1ex10d1.htm_
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
+  - 2026-10-22 · mechanical.drawdown_cause, mechanical.primary_source — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 21d old — 2026-07-28 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 36d old (2026-07-13, valuation.implied_expectations.multiples_as_of) — within the ceiling

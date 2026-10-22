@@ -6312,7 +6312,7 @@
               "period": "Q2 2026",
               "value": 4.37,
               "change": null,
-              "verbatim": "Adjusted EPS: $4.37,",
+              "verbatim": "Adjusted EPS: $4.37",
               "source_ref": "8-K 0000749251-26-000243 EX-99.1"
             }
           ],
@@ -6332,7 +6332,7 @@
               "period": "Q1 2026",
               "value": 3.32,
               "change": null,
-              "verbatim": "Adjusted EPS: $3.32,",
+              "verbatim": "Adjusted EPS: $3.32",
               "source_ref": "8-K 0000749251-26-000165 EX-99.1"
             }
           ],
@@ -6360,7 +6360,7 @@
               "period": "Q4 2025",
               "value": 3.94,
               "change": null,
-              "verbatim": "Diluted EPS: $3.36, -34%; adjusted EPS: $3.94,",
+              "verbatim": "Diluted EPS: $3.36, -34%; adjusted EPS: $3.94",
               "source_ref": "8-K 0000749251-26-000028 EX-99.1"
             }
           ],
@@ -6395,7 +6395,7 @@
               "period": "Q3 2025",
               "value": 2.76,
               "change": null,
-              "verbatim": "Diluted EPS: $0.47, -91.2%; adjusted EPS: $2.76,",
+              "verbatim": "Diluted EPS: $0.47, -91.2%; adjusted EPS: $2.76",
               "source_ref": "8-K 0000749251-25-000080 EX-99.1"
             }
           ],
@@ -6423,7 +6423,7 @@
               "period": "Q2 2025",
               "value": 3.53,
               "change": null,
-              "verbatim": "Diluted EPS: $3.11, +6.1%; adjusted EPS: $3.53,",
+              "verbatim": "Diluted EPS: $3.11, +6.1%; adjusted EPS: $3.53",
               "source_ref": "8-K 0000749251-25-000044 EX-99.1"
             }
           ],
@@ -13457,6 +13457,14 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source"
       ]
     }
   ],

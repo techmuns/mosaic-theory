@@ -7041,20 +7041,12 @@
           "filed": "2026-06-30",
           "source_ref": "8-K 0000320187-26-000076 EX-99.1",
           "guidance": [],
-          "reconciliation": [
-            {
-              "metric": "gross margin",
-              "period": "2025",
-              "value": 49.2,
-              "change": null,
-              "verbatim": "Gross margin 49.2 %",
-              "source_ref": "8-K 0000320187-26-000076 EX-99.1"
-            }
-          ],
+          "reconciliation": [],
           "one_offs": [],
           "event_impacts": [],
           "qa_flags": [
-            "no anchored pattern matched — guidance/outlook: 8-K 0000320187-26-000076 EX-99.1"
+            "no anchored pattern matched — guidance/outlook: 8-K 0000320187-26-000076 EX-99.1",
+            "no anchored pattern matched — non-GAAP reconciliation: 8-K 0000320187-26-000076 EX-99.1"
           ]
         },
         {
@@ -7076,7 +7068,7 @@
           "reconciliation": [
             {
               "metric": "gross margin",
-              "period": "2025",
+              "period": "Q3 2026",
               "value": 40.2,
               "change": null,
               "verbatim": "Gross margin 40.2 %",
@@ -7096,7 +7088,7 @@
           "reconciliation": [
             {
               "metric": "gross margin",
-              "period": "2024",
+              "period": "Q2 2026",
               "value": 40.6,
               "change": null,
               "verbatim": "Gross margin 40.6 %",
@@ -14143,6 +14135,14 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source"
       ]
     }
   ],
