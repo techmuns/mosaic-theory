@@ -2,7 +2,7 @@
 id: 2026-10-22-theme-intelligence-uploads-one-step
 status: recorded
 date: 2026-10-22
-prs: []
+prs: [775]
 supersedes:
 superseded-by:
 ---
