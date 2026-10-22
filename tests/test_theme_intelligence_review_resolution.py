@@ -65,7 +65,7 @@ from vinci.theme_intelligence.schemas import (
     RunStatus,
     ThesisVersion,
 )
-from vinci.theme_intelligence.store import MIGRATIONS, Store
+from vinci.theme_intelligence.store import MIGRATIONS, Store, StoreIntegrityError
 from vinci.theme_intelligence.verify import _issue, card_sentences
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -384,13 +384,34 @@ def test_a_v7_registry_migrates_and_an_export_carries_the_resolutions(tmp_path: 
     db = tmp_path / "r.db"
     Store(db, migrations=[m for m in MIGRATIONS if m[0] <= 7]).close()
     st = Store(db)
-    assert st.schema_version() == 8 and st.review_resolutions() == []
+    assert st.schema_version() == max(v for v, _ in MIGRATIONS) and st.review_resolutions() == []
     st.close()
     pipe, v = _reviewed(tmp_path / "p")
     r = _dismiss(pipe, _key(pipe, v, "s01.0"))
     pipe.store.export_jsonl(tmp_path / "x")
     there = Store.import_jsonl(tmp_path / "x", tmp_path / "b.db")
     assert there.review_resolutions() == [r]
+
+
+def test_old_code_refuses_an_export_from_a_newer_schema_and_reads_its_own(
+        tmp_path: Path) -> None:
+    """Review of #777: v9 lets a stored issue carry `copied_from`; payloads are validated with
+    extra="forbid", so code before it would import such an export and fail mid-command. An
+    import now refuses an export made at a newer schema, as `migrate` refuses a newer database.
+    NEGATIVE: an export at this code's own schema imports."""
+    pipe, _v = _reviewed(tmp_path / "p")
+    pipe.store.export_jsonl(tmp_path / "x")
+    older = [m for m in MIGRATIONS if m[0] < max(v for v, _ in MIGRATIONS)]
+    with pytest.raises(StoreIntegrityError, match="newer than this code"):
+        Store.import_jsonl(tmp_path / "x", tmp_path / "old.db", migrations=older)
+    assert not (tmp_path / "old.db").exists()  # refused before anything was written
+    there = Store.import_jsonl(tmp_path / "x", tmp_path / "same.db")
+    assert there.schema_version() == max(v for v, _ in MIGRATIONS)
+    with pytest.raises(StoreIntegrityError, match="newer than this code"):
+        Store(tmp_path / "same.db", migrations=older)  # the database itself, as before
+    Store(tmp_path / "v-old.db", migrations=older).export_jsonl(tmp_path / "x-old")
+    back = Store.import_jsonl(tmp_path / "x-old", tmp_path / "old-again.db", migrations=older)
+    assert back.schema_version() == max(v for v, _ in older)  # old code reads its own export
 
 
 def test_no_research_action_rule_reads_a_resolution() -> None:

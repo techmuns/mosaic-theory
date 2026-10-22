@@ -940,20 +940,28 @@ class _VersionFindings:
     open: dict[str, CarriedFinding]
 
 
+def _previous(store: Store, thesis_id: str, v: ThesisVersion) -> ThesisVersion | None:
+    """The version before `v` — what a version written without a review (or a re-grade) reads
+    its earlier findings from."""
+    return max((x for x in store.thesis_versions(thesis_id) if x.version < v.version),
+               key=lambda x: x.version, default=None)
+
+
 def _keep_origins(store: Store, thesis_id: str, v: ThesisVersion,
                   own: dict[str, CarriedFinding], copy_of: dict[str, str | None],
                   memo: dict[int, _VersionFindings]) -> None:
     """A re-grade's COPY of a card-review finding (`VerificationIssue.copied_from`, written by
     `Engine.reassess`) is no new review: its finding takes the origin — version, date, the line
-    as the review read it — of the finding it copies, as read on the version before, so its key
-    (`finding_key`) and a reviewer's dismissal survive the re-grade. Until 2026-10-22 every copy
-    read as raised by the review of the re-graded version itself: one corrected line reopened
-    every dismissed finding of its thesis. A copy whose source is not found, or no longer reads
-    as the same finding, keeps the version's own origin — a new key, OPEN (fail-safe: never a
-    dismissal it was not given). Copies made before `copied_from` existed carry none and read
-    as before, so the dismissals already bound to them hold."""
-    prev = max((x for x in store.thesis_versions(thesis_id) if x.version < v.version),
-               key=lambda x: x.version, default=None)
+    as the review read it — and the stored words of the finding it copies, as read on the version
+    before, so its key (`finding_key`) and a reviewer's dismissal survive the re-grade, also when
+    the line moved to a new id (the copy's own words name the new id; the review's, the one it
+    read — as a finding carried onto an unreviewed version keeps them). Until 2026-10-22 every
+    copy read as raised by the review of the re-graded version itself: one corrected line
+    reopened every dismissed finding of its thesis. A copy whose source is not found, or no
+    longer reads as the same finding, keeps the version's own origin — a new key, OPEN
+    (fail-safe: never a dismissal it was not given). Copies made before `copied_from` existed
+    carry none and read as before, so the dismissals already bound to them hold."""
+    prev = _previous(store, thesis_id, v)
     if prev is None:
         return
     before = _findings(store, thesis_id, prev, memo)
@@ -962,7 +970,7 @@ def _keep_origins(store: Store, thesis_id: str, v: ThesisVersion,
         s = src.get(cid) if cid else None
         pf = before.open.get(s.ref_id.partition(":")[2]) if s is not None else None
         if s is not None and pf is not None and (pf.code, pf.detail) == (s.code, s.detail):
-            own[sid] = replace(own[sid], origin_version=pf.origin_version,
+            own[sid] = replace(own[sid], detail=pf.detail, origin_version=pf.origin_version,
                                origin_as_of=pf.origin_as_of, origin_text=pf.origin_text)
 
 
@@ -1022,8 +1030,7 @@ def _findings(store: Store, thesis_id: str, v: ThesisVersion,
     carried: dict[str, CarriedFinding] = {}
     removed: list[CarriedFinding] = []
     if reason is not None:
-        prev = max((x for x in store.thesis_versions(thesis_id) if x.version < v.version),
-                   key=lambda x: x.version, default=None)
+        prev = _previous(store, thesis_id, v)
         if prev is not None:
             before = _findings(store, thesis_id, prev, memo)
             then = card_sentences(prev.content)

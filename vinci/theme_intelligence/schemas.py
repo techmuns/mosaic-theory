@@ -28,7 +28,7 @@ from pydantic import (
     model_serializer,
 )
 
-DB_SCHEMA_VERSION = 8
+DB_SCHEMA_VERSION = 9
 
 
 def _aware(d: datetime | None) -> datetime | None:

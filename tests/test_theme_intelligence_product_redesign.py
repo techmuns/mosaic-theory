@@ -36,6 +36,7 @@ from vinci.theme_intelligence.cards import render_html, render_markdown, replace
 from vinci.theme_intelligence.engine import CorrectionError, SentenceCorrection
 from vinci.theme_intelligence.pipeline import Pipeline
 from vinci.theme_intelligence.report import (
+    LineFinding,
     build_dashboard,
     card_context,
     dismissed_findings,
@@ -250,7 +251,7 @@ def test_an_analyst_correction_replaces_one_line_and_records_why(tmp_path: Path)
     assert "Analyst correction" in row.events
 
 
-def _finding(pipe: Pipeline, sid: str) -> Any:
+def _finding(pipe: Pipeline, sid: str) -> LineFinding:
     v = _one(pipe)
     return next(lf for lf in review_findings(pipe.store, v.thesis_id, v) if lf.sentence_id == sid)
 
@@ -290,6 +291,53 @@ def test_a_dismissal_survives_a_correction_of_another_line_and_a_second_re_grade
     out = write_run_outputs(pipe.store, run.run_id, tmp_path / "out")  # the rendered card
     js = json.loads(next(Path(out["dir"]).glob("cards/TH-*.json")).read_text())
     assert set(js["review_dismissed"]) == {"s01.1"}
+
+
+def _earnings_line(card: Any) -> str:
+    """The id of the counter-evidence line citing the earnings claim (SLOWING)."""
+    (sid,) = [k for k, (t, _p, _c) in card_sentences(card).items()
+              if t.startswith("Magnificent 7 earnings")]
+    return sid
+
+
+def test_a_dismissal_survives_a_re_grade_that_moves_its_line_to_a_new_id(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Review of #777: the copy kept its origin but its OWN words, which name the line's id —
+    so a re-grade that renumbered the line (a price line refiled LAST under section 07, the
+    earnings line after it moving up) still changed the key and reopened the dismissal. The
+    copy keeps the review's words too, as a finding carried onto an unreviewed version does."""
+    from vinci.theme_intelligence import cards
+
+    monkeypatch.setattr(cards, "refile_price_moves", lambda card, claims: card)  # the old rule
+    pipe = make_pipeline(tmp_path)
+    run = pipe.start_run("ingest", as_of=AS_OF)
+
+    def review(card, claims):  # type: ignore[no-untyped-def]
+        sid = _earnings_line(card)
+        text = card_sentences(card)[sid][0]
+        return [VerificationIssue(
+            issue_id="VI-test-slowing", run_id=run.run_id, scope="card_sentence",
+            ref_id=f"{card.header.thesis_id}:{sid}", severity=IssueSeverity.WARN,
+            code="REVIEW_PARTIAL", detail=f"{sid}: overstates the source (test) | {text[:100]!r}",
+            created_at=datetime.now(tz=UTC))]
+
+    pipe.engine.reviewer = review
+    art, x = _broadening()
+    ingest(pipe, art.doc(), x, as_of=AS_OF, publisher=art.publisher)
+    pipe.finish_run(RunStatus.SUCCEEDED)
+    pipe.engine.reviewer = None
+    monkeypatch.undo()
+    v1 = _one(pipe)
+    old_sid = _earnings_line(v1.content)
+    before = _finding(pipe, old_sid)
+    resolve(pipe, before.key, "dismissed", reviewer="test", reason="test", as_of=AS_OF)
+    pipe.run_reassess(as_of=AS_OF + timedelta(days=7))  # the price line is refiled
+    v2 = _one(pipe)
+    new_sid = _earnings_line(v2.content)
+    assert new_sid != old_sid  # the case: the line moved
+    now = _finding(pipe, new_sid)
+    assert (now.key, now.finding.origin_version) == (before.key, v1.version)
+    assert set(dismissed_findings(pipe.store, v1.thesis_id, v2)) == {new_sid}
 
 
 def test_a_withheld_lines_copy_keeps_the_origin_of_the_review_that_withheld_it(

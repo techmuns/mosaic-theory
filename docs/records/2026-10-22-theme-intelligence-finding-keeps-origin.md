@@ -40,6 +40,22 @@ start item 2".
   later re-grade keeps those keys, since a copy of such a copy inherits what that copy reads as.
   Their true origin is not restored: doing so would reopen the 22.
 
+- **The code review of this PR** (`/code-review high`, 5 findings; operator: "apply fixes and
+  then merge"):
+  - **A moved line kept its dismissal only in part.** The copy inherited the origin but kept its
+    own stored words, which name the line's id. A re-grade that renumbers the line (a price line
+    refiled last under section 07, so the earnings line after it moves up) still changed the key.
+    The copy now keeps the review's words too, as a finding carried onto an unreviewed version
+    already does.
+  - **Registry schema v9**, a step with no table change: a stored issue's payload may now carry
+    `copied_from`, which code before it rejects (payloads are validated with `extra="forbid"`).
+    Older code refuses a v9 DATABASE up front (`migrate`), and `Store.import_jsonl` now refuses an
+    EXPORT made at a newer schema. Before, it inserted the rows and failed mid-command. The guard
+    protects from now on: a checkout made before this merge has no guard, and fails at the first
+    copied issue it reads — **update a checkout before `state pull`.**
+  - One previous-version helper (`report._previous`) is shared by the review carry and the origin
+    inheritance, and the test helper is typed.
+
 **HOW VERIFIED.**
 - **The previously-broken case, on real data:** the same correction on the same scratch copy,
   run with this branch. TH-8DDD7B2868 reads "0 open (0 dismissible), 4 dismissed" before and
@@ -48,6 +64,12 @@ start item 2".
   21/21.
 - **The chain, on real data:** TH-C1889ABBA5, re-graded today, is corrected again (s03.2).
   "2 dismissed" before and after, with the same keys (F-e52d9cf1470d, F-99c9ca771d97).
+- **A plain re-grade of every thesis, with no correction** (a scratch copy of cd0f4a08,
+  `reassess --as-of 2026-10-29` over the 21 not archived; 4 change):
+  - with main df07ff4f, the queue goes from 1 open / 22 dismissed to **6 open / 17 dismissed**;
+    5 dismissals reopen, each "raised by the review of" its re-graded version;
+  - with this branch it stays **1 open / 22 dismissed**;
+  - the v8 export imports into v9 cleanly.
 - **The registry of record reads unchanged under the fix** (a fresh import of cd0f4a08, this
   branch):
   - `review list`: 23 findings on 12 theses not archived — 1 open, 22 dismissed, as before;
@@ -62,8 +84,13 @@ start item 2".
   - NEGATIVE: copies written without the link read as before, and a later re-grade keeps their
     key;
   - the fail-safe: a copy whose source is nowhere reads OPEN under a new key;
-  - an issue without the link serializes as before.
+  - an issue without the link serializes as before;
+  - a dismissal survives a re-grade that moves its line to a new id;
+  - in `tests/test_theme_intelligence_review_resolution.py`: old code refuses an export from a
+    newer schema and its database, and reads its own export (NEGATIVE).
 - **Mutation:** 8 mutants after one replacement; 7 killed and 1 survivor (equivalent, below).
+  After the review: 11 mutants (the moved line, the import guard both ways, the migrations an
+  import is given), all killed.
   - One mutant replaced the fail-safe with "fall back to the first issue in the run". It was
     killed only sometimes: issue ids derive from timestamped run ids, so their order varies
     between runs. It was replaced by the plausible form of the bug, "fall back to the line's
@@ -86,6 +113,7 @@ Code: this branch on main df07ff4f. Queue counts are `review list` over theses n
 Page counts are over a publication's `site/**`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- $0, with no model call and no registry migration (the field is optional).
+- $0, with no model call.
+- **Schema v9** adds no table: a registry migrates on first open, and older code refuses it.
 - **The 14 versions re-graded on 2026-10-22 keep their re-graded version as each finding's
   origin.** Restoring the true origin would change the keys the 22 dismissals are bound to.
