@@ -1,8 +1,8 @@
 ---
 id: 2026-10-22-pr-review-gate
-status: open
+status: shipped
 date: 2026-10-22
-prs: []
+prs: [783]
 supersedes:
 superseded-by:
 ---
