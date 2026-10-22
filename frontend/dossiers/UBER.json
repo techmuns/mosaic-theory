@@ -14536,6 +14536,14 @@
       "layers": [
         "mechanical.primary_source"
       ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-retag",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -14594,6 +14602,15 @@
     "anchor_ev_ebit": null,
     "overall_confidence": null,
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+    "operator_decision": {
+      "recipe": "R4_forward_ev_ebit",
+      "reason": "OPERATOR RE-TAG 2026-10-09. R2_NEEDED -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 15.4x); R1 cannot anchor - its anchor declines (no positive operating margin over available history) and the EBITDA basis is divergent (consensus-implied D&A 4.01x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. R2 (pre-profit, survival-gated) does not fit a name at 15.4x forward EBIT. The bridge is CIQ's TEV claims less market cap (ev_bridge), including $1,083M of minority interest. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
+      "decided_by": "operator",
+      "decided_on": "2026-10-09",
+      "source_ref": "docs/records/2026-10-09-amzn-uber-re-tagged-r4.md (#698)",
+      "machine_recipe_at_decision": "R4_forward_ev_ebit"
+    },
+    "machine_recipe_hint": "R4_forward_ev_ebit",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

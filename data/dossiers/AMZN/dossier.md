@@ -41,9 +41,15 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Dilution test / share | $276.27 | + 134,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
+**The operator's decision: R4_forward_ev_ebit** — 2026-10-09, operator
+
+> OPERATOR RE-TAG 2026-10-09. R3 -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 23.3x); R1 cannot anchor - the EBITDA basis is divergent (consensus-implied D&A 3.14x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. EBIT is the one earnings line with no GAAP/normalized fork. The bridge is CIQ's TEV claims less market cap (ev_bridge). The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.
+
+_Where this decision is recorded: docs/records/2026-10-09-amzn-uber-re-tagged-r4.md (#698)_
+
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 12.1% (CIQ EBIT) sits 6.8 points ABOVE the 10-year median of 5.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2025, so the gap is the business, not the source.
 
-_OPERATOR RE-TAG 2026-10-09. R3 -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 23.3x); R1 cannot anchor - the EBITDA basis is divergent (consensus-implied D&A 3.14x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. EBIT is the one earnings line with no GAAP/normalized fork. The bridge is CIQ's TEV claims less market cap (ev_bridge). The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers._
+_The machine’s read: EV/NTM EBIT (R4) — all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 23.3x · R1 cannot anchor: EBITDA basis divergent: consensus-implied D&A 3.14× the actuals · R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 3 of the trailing 4 quarters carry material non-operating income (≥2 ruled). R1's own arithmetic is left in this block._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -670,6 +676,7 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
   - 2026-10-20 · ev_bridge, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
+  - 2026-10-22 · anchor — anchor-retag at 2026-10-09.3
 - **Price store:** `wt-amzn3 → mosaic-theory-ta` · reaching 2026-10-08
 - **Panel age:** oldest panel 3d old — 2026-10-06 (valuation.implied_expectations.tev_as_of), against a 2026-10-09 build
 - **Consensus age:** consensus 3d old (2026-10-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

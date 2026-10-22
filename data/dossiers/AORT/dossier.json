@@ -13846,6 +13846,14 @@
         "mechanical.drawdown_cause",
         "mechanical.primary_source"
       ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-retag",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -13853,7 +13861,7 @@
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-10-21T11:18:47.318575Z",
-    "reason": "margin history low-single-digit (corrected 5yr median 2.72%); bull case is a forward ramp to a regime that has never existed (consensus 20%+ FY26E) — mean-reversion premise does not fit; route to forward-margin recipe.",
+    "reason": null,
     "data_quality": null,
     "data_quality_detail": [
       "lease basis: rent 14.0% of EBITDA (FY ending 2025-12-31: $8M of $54M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $8M",
@@ -13921,6 +13929,14 @@
     "anchor_ev_ebit": 86.0091,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+    "operator_decision": {
+      "recipe": "R2_NEEDED",
+      "reason": "margin history low-single-digit (corrected 5yr median 2.72%); bull case is a forward ramp to a regime that has never existed (consensus 20%+ FY26E) — mean-reversion premise does not fit; route to forward-margin recipe.",
+      "decided_by": "operator",
+      "decided_on": "2026-10-07",
+      "source_ref": "docs/records/2026-10-07-four-recipe-re-tags-restored.md (#671) — the re-tag was written 2026-07-21 in feca6b93, pending the analyst; the operator's instruction of 2026-10-07 restored it"
+    },
+    "machine_recipe_hint": "R1_midcycle_margin_evebitda",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

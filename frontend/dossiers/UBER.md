@@ -36,7 +36,13 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Method | R4_forward_ev_ebit | R1 screen: NOT applicable |
 | Overall confidence | — |  |
 
-_EV/NTM EBIT (R4) — all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 15.6x · R1 cannot anchor: R1's anchor declines (applicable=False); EBITDA basis divergent: consensus-implied D&A 4.08× the actuals · R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 3 of the trailing 4 quarters carry material non-operating income (≥2 ruled). R1's own arithmetic is left in this block._
+**The operator's decision: R4_forward_ev_ebit** — 2026-10-09, operator
+
+> OPERATOR RE-TAG 2026-10-09. R2_NEEDED -> R4: EV/NTM EBIT, an ENTERPRISE basis. The machine proposes R4 (#697) and all three ratified conditions hold: forward operating profit is positive (CIQ NTM TEV/EBIT 15.4x); R1 cannot anchor - its anchor declines (no positive operating margin over available history) and the EBITDA basis is divergent (consensus-implied D&A 4.01x the actuals); R3 cannot price it cleanly - CIQ strikes the forward P/E on GAAP EPS and 3 of the trailing 4 quarters carry material non-operating income. R2 (pre-profit, survival-gated) does not fit a name at 15.4x forward EBIT. The bridge is CIQ's TEV claims less market cap (ev_bridge), including $1,083M of minority interest. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.
+
+_Where this decision is recorded: docs/records/2026-10-09-amzn-uber-re-tagged-r4.md (#698)_
+
+_The machine’s read: EV/NTM EBIT (R4) — all three ratified conditions hold: NTM EBIT > 0: CIQ NTM TEV/EBIT 15.6x · R1 cannot anchor: R1's anchor declines (applicable=False); EBITDA basis divergent: consensus-implied D&A 4.08× the actuals · R3 cannot price it cleanly: CIQ's FY P/E struck on gaap EPS; 3 of the trailing 4 quarters carry material non-operating income (≥2 ruled). R1's own arithmetic is left in this block._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -608,6 +614,7 @@ _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
   - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
   - 2026-10-22 · mechanical.primary_source — refresh at 2026-10-09.3
+  - 2026-10-22 · anchor — anchor-retag at 2026-10-09.3
 - **Price store:** `wt-uber → mosaic-theory-ta` · reaching 2026-10-09
 - **Panel age:** oldest panel 2d old — 2026-10-09 (valuation.implied_expectations.tev_as_of), against a 2026-10-11 build
 - **Consensus age:** consensus 3d old (2026-10-08, valuation.implied_expectations.multiples_as_of) — within the ceiling
