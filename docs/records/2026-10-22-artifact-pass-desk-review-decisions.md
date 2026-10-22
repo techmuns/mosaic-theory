@@ -2,7 +2,7 @@
 id: 2026-10-22-artifact-pass-desk-review-decisions
 status: recorded
 date: 2026-10-22
-prs: []
+prs: [776]
 supersedes:
 superseded-by:
 ---
