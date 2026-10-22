@@ -813,6 +813,30 @@ def test_this_week_and_uploads_give_the_content_the_full_width(
     assert first is not None  # the list follows the fold, at full width
 
 
+def test_uploads_teach_the_one_step_upload(w12: tuple[Pipeline, Path, dict[str, int]]) -> None:
+    """2026-10-22: the screen where documents are supplied taught the four-command route (pull,
+    `ingest-file`, release, push) a month after `upload` (#769) made it one checked command. Each
+    row now gives the `upload` command with its budget, author and licence; the weekly how-to
+    prices a document first (`--dry-run`), then runs it. NEGATIVE: no row teaches
+    `ingest-file --path` any more (a release of a held document still does — `upload` releases
+    nothing)."""
+    _pipe, out, _ = w12
+    up = _soup(out / "uploads.html")
+    howto = up.select_one("details.howto")
+    assert howto is not None
+    steps = [li.get_text(" ", strip=True) for li in howto.select("ol.steps4 > li")]
+    assert len(steps) == 4 and steps[0].startswith("1. Price it") and "--dry-run" in steps[0]
+    assert steps[1].startswith("2. Run it") and "upload" in steps[1]
+    rules = howto.select_one("details.fold").get_text(" ", strip=True)
+    assert "--author" in rules and "--budget" in rules
+    rows = [c.get_text(" ", strip=True) for c in up.select("li.ui .uiact")]
+    imports = [r for r in rows if " upload " in f" {r} " or "ingest-file --path" in r]
+    assert imports, "the fixture's desk asks for at least one document"
+    assert all("upload --path <your copy> --source" in r and "--budget <USD>" in r
+               and '--author "<as printed>"' in r and "--llm-permitted" in r for r in imports)
+    assert not any("ingest-file --path" in r for r in rows)
+
+
 # --- the reading page's tabs, and the folds of the other screens (audit 2026-10-14) -------------
 
 def test_the_reading_pages_tabs_read_as_lists_against_first_and_name_each_thesis_once(
