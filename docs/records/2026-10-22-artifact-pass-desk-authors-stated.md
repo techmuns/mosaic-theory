@@ -2,7 +2,7 @@
 id: 2026-10-22-artifact-pass-desk-authors-stated
 status: recorded
 date: 2026-10-22
-prs: []
+prs: [774]
 supersedes:
 superseded-by:
 ---
