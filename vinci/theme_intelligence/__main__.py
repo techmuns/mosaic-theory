@@ -107,6 +107,14 @@ def _iso(s: str) -> date:
     return date.fromisoformat(s)
 
 
+def _author_name(s: str) -> str:
+    """An author's name as the operator states it: the document record keeps names
+    "; "-joined, so a name holding ';' would come back as two (review of #771)."""
+    if ";" in s:
+        raise argparse.ArgumentTypeError(f"an author's name may not contain ';': {s!r}")
+    return s
+
+
 def _week_bounds(week: str) -> tuple[date, date]:
     y, w = week.upper().split("-W")
     start = date.fromisocalendar(int(y), int(w), 1)
@@ -693,21 +701,29 @@ def cmd_upload(a: argparse.Namespace) -> int:
 def cmd_author(a: argparse.Namespace) -> int:
     """The operator states an analysed article's author(s) (attribution.py) — $0, no model call,
     a run of its own; never names anyone the operator did not state."""
-    from vinci.theme_intelligence.attribution import AttributionError, state_authors
+    from vinci.theme_intelligence.attribution import (
+        AttributionError,
+        retract_author,
+        state_authors,
+    )
     from vinci.theme_intelligence.pipeline import Pipeline
     from vinci.theme_intelligence.report import write_run_outputs
 
     pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
                     client=None, review=False)  # the record only: no model client at all
+    as_of = _iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date()
     try:
-        run, art = state_authors(pipe, a.article, a.name or [], by=a.by or "",
-                                 reason=a.reason or "", title=a.title,
-                                 as_of=_iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date())
+        if a.retract:
+            run, art = retract_author(pipe, a.article, a.retract, by=a.by or "",
+                                      reason=a.reason or "", as_of=as_of)
+        else:
+            run, art = state_authors(pipe, a.article, a.name or [], by=a.by or "",
+                                     reason=a.reason or "", title=a.title, as_of=as_of)
     except AttributionError as exc:
         print(f"author refused: {exc}")
         return 1
     print(f"run {run.run_id}: {art.article_id} ({clip(art.title or '', 80)}) now credits "
-          f"{'; '.join(x.name for x in art.authors)}; cost $0.00")
+          f"{'; '.join(x.name for x in art.authors) or 'no author (UNKNOWN)'}; cost $0.00")
     out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
     print(f"outputs: {out['dir']} · push the registry (`state push`) for the weekly run and the "
           f"desk to carry it")
@@ -862,7 +878,7 @@ def main(argv: list[str] | None = None) -> int:
     ig.add_argument("--source", help="the publisher channel id (sources.toml)")
     ig.add_argument("--url", help="the article's original URL, when it has one")
     ig.add_argument("--title")
-    ig.add_argument("--author", action="append", help="repeatable")
+    ig.add_argument("--author", action="append", type=_author_name, help="repeatable")
     ig.add_argument("--published", help="YYYY-MM-DD — used only when the document states none")
     lic = ig.add_mutually_exclusive_group()
     lic.add_argument("--llm-permitted", action="store_true",
@@ -934,7 +950,7 @@ def main(argv: list[str] | None = None) -> int:
                     help="USD the import may spend — it must cover the estimate's HIGH end")
     up.add_argument("--url", help="the article's original URL, when it has one")
     up.add_argument("--title")
-    up.add_argument("--author", action="append", help="repeatable")
+    up.add_argument("--author", action="append", type=_author_name, help="repeatable")
     up.add_argument("--published", help="YYYY-MM-DD — used only when the document states none")
     ulic = up.add_mutually_exclusive_group()
     ulic.add_argument("--llm-permitted", action="store_true",
@@ -953,7 +969,11 @@ def main(argv: list[str] | None = None) -> int:
                                        "names none (QA requires one): recorded with who states "
                                        "it and why; $0, never touches a thesis")
     au.add_argument("--article", required=True, help="the article id (A-…)")
-    au.add_argument("--name", action="append", help="an author's name (repeatable)")
+    who = au.add_mutually_exclusive_group(required=True)
+    who.add_argument("--name", action="append", type=_author_name,
+                     help="an author's name to state (repeatable)")
+    who.add_argument("--retract", type=_author_name,
+                     help="an author the OPERATOR stated, to remove (never one the page names)")
     au.add_argument("--title", help="the role or kind, e.g. 'institution — the page names no "
                                     "individual author'")
     au.add_argument("--by", help="who states it (recorded)")
