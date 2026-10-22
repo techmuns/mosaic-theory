@@ -96,9 +96,37 @@ states scale as a power of ten the figure carries.
   - Five existing pins froze the defect as the expectation (UBER 2.5; FUBO 1.482 / 1.484 / 1.549;
     CF's $2.89bn "a unit mismatch, not an LTM", which is $2,890M and IS its LTM). They now assert the
     correct values.
-- **Mutation battery: 22 of 22 killed.** Every rule, every scale, each guard, the transform's two
-  refusals, the renderer branch, and a correctly shaped high-unit mutant.
+- **Mutation battery: 32 of 32 killed** — 22 for the rules, scales, guards, the transform's two
+  refusals, the renderer branch and a correctly shaped high-unit mutant, plus 10 for the review's
+  fixes below.
 - **Suite:** full offline suite (`-m "not network"`), price store unlinked as in CI: **6,722 passed, 55 skipped, 2 failed** — V (`test_share_basis`) and MCK (`test_capital_panel_selection`), the CIQ data issues that fail identically on main (STATE row 32 (12)).
+
+**REVIEW OF #778 (`/code-review high`, 2026-10-22) — ten findings, all fixed in this PR.** Each
+fix is pinned on the review's own failure scenario, and none moved a row on the 118 releases or
+on any of the 27 pages: re-run over the committed pages after the fixes, all 27 came back
+unchanged.
+
+1. **A range with a qualifier was read as an actual.** "$380 million to approximately $385
+   million" stored $380M, and revenue regressed against main's `(?!\s+to\b)`. The range tail now
+   takes approximately / about / around / roughly / nearly / an estimated.
+2. **A per-share event impact was silently dropped** ("…EPS by approximately $0.10 to $0.15 per
+   share"). It is read unscaled, as main read it. A total impact with no scale is refused loudly
+   (`IMPACT_REFUSAL_PREFIX`).
+3. **A qualifier before a total word skipped the allowlist** ("Other net revenue", "International
+   total revenue", "Digital net revenue"). The word before the phrase is always checked.
+4. **"U.S." read as a clause start.** A dotted abbreviation is a word.
+5. **"expects revenue of" was refused as a sub-line** — a wrong reason. The inflected forward verbs
+   are allowlisted; the figure is declined as forward-looking instead.
+6. **A re-read impairment did not rebuild the triangulation.** The FY impairment (whose scale this
+   change moved) is a watched line input.
+7. **A per-share impact was labelled $M** for the citation guard; it is now `$/sh`.
+8. **No CIK passed silently.** A page with releases but no CIK refuses.
+9. **The e2e tests pinned values on living pages,** against the TEST-LAYER rule. The NKE/TGT value
+   pin is removed (those values are pinned on the frozen verbatim excerpts). SMPL's is replaced by
+   an invariant across all 27 pages: every card segment of a `bps` guide prints in basis points, in
+   both renderers. VRRM keeps only the ABSENCE of the observed defect strings.
+10. **The refresh hand-copied the assembler's composition of the two lines.** One builder,
+    `mechanical._release_lines`, now serves `_primary_source` and the refresh's proof alike.
 
 **BOUNDARY.**
 - The 27 committed pages at main f49c380a, refreshed 2026-10-22.
