@@ -649,6 +649,14 @@ def _fmt_guide_range(low: float | None, high: float | None, unit: str) -> str:
     """
     if low is None or high is None:
         return "stated, no number given"
+    if unit == "bps":
+        # A BASIS-POINT CHANGE (2026-10-22). Simply Good guides gross margin as "expected to decline
+        # between 300 and 350 basis points"; the parser has stored that as `bps` since 2026-08-05,
+        # but this formatter knew only "%" and "$/sh", so the visible card printed
+        # "$-350.0–$-300.0M" — a margin change read as dollars. Signed, in the unit it was stated.
+        def _bp(v: float) -> str:
+            return (f"{v:+,.0f}" if float(v).is_integer() else f"{v:+,.1f}").replace("-", "−")
+        return f"{_bp(low)} bps" if low == high else f"{_bp(low)} to {_bp(high)} bps"
     lo, hi = _guide_bounds(low, high, unit)
     if unit == "%":
         return f"{lo}–{hi}% growth"
@@ -4032,6 +4040,39 @@ def _latest_balance_date(facts: dict[str, Any] | None) -> date | None:
     return max(instants) if instants else None
 
 
+def _release_lines(releases: list[ReleaseExtract], *, bundle: CiqBundle,
+                   nde: Sourced[float] | None, card: Any | None,
+                   reference_date: date | None) -> tuple[str, str]:
+    """(`basis_triangulation`, `guide_verification`) — the two primary-source lines built FROM THE
+    RELEASE ROWS, composed in ONE place. Assembly calls it; so does the refresh that re-reads the
+    releases, which needs the same composition twice (from the page's old rows, to prove the CIQ
+    export and record are the page's own; then from the new). A hand copy there was the twin-drift
+    class — the call had already gained `covenant_basis` once (review of #778).
+
+    Triangulation: each leverage row basis-labelled; the FY margins, the impairment and the LTM
+    adjusted EBITDA from the releases. Guide: CIQ's revenue guide (point OR range) against the
+    release guide and the prior-FY actual."""
+    tde = ciq_sheets.comps_total_debt_ebitda_value(bundle)
+    net_debt = ciq_sheets.net_debt(bundle)
+    fy = _fy_reconciliation(releases)
+    tri = primary_source.basis_triangulation(
+        f"{nde.value}x" if nde is not None and nde.status is SourceStatus.PRESENT else None,
+        f"{tde.value}x" if tde.status is SourceStatus.PRESENT else None,
+        net_debt.value if net_debt.status is SourceStatus.PRESENT else None,
+        _ltm_adj_ebitda(releases),
+        gaap_gross_margin=fy.get("gross margin"), impairment=_fy_impairment(releases),
+        revenue=fy.get("revenue"), covenant_basis=_covenant_basis(card))
+    ciq_lo, ciq_hi, ciq_period = ciq_sheets.revenue_guide_lohi(
+        bundle, reference_date=reference_date)
+    rel_lo, rel_hi, rel_qual, rel_basis, rel_period = _release_revenue_guide(releases)
+    guide = primary_source.guide_verification(
+        "revenue", ciq_lo, ciq_hi,
+        prior_fy_actual=fy.get("revenue"), release_qualitative=rel_qual,
+        release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis,
+        ciq_period=ciq_period, release_period=rel_period)
+    return tri, guide
+
+
 def _fy_reconciliation(releases: list[ReleaseExtract]) -> dict[str, float]:
     """The FULL-YEAR (bare 20YY period) recon values keyed by metric — the margin/revenue inputs."""
     out: dict[str, float] = {}
@@ -4320,18 +4361,11 @@ def _primary_source(
     else:
         wall_line = "wall coherence: UNKNOWN — no EDGAR balance-sheet date"
     qa += wall_qa
-    # basis triangulation — each leverage row basis-labeled; FY margins from the release
+    # basis triangulation + guide verification — ONE builder, shared with the refresh that re-reads
+    # the releases (`refresh.release_figures_transform`)
     nde = mech.leverage_survival.net_debt_to_ebitda if mech.leverage_survival is not None else None
-    tde = ciq_sheets.comps_total_debt_ebitda_value(bundle)
-    net_debt = ciq_sheets.net_debt(bundle)
-    fy = _fy_reconciliation(releases)
-    tri = primary_source.basis_triangulation(
-        f"{nde.value}x" if nde is not None and nde.status is SourceStatus.PRESENT else None,
-        f"{tde.value}x" if tde.status is SourceStatus.PRESENT else None,
-        net_debt.value if net_debt.status is SourceStatus.PRESENT else None,
-        _ltm_adj_ebitda(releases),
-        gaap_gross_margin=fy.get("gross margin"), impairment=_fy_impairment(releases),
-        revenue=fy.get("revenue"), covenant_basis=_covenant_basis(card))
+    tri, guide = _release_lines(releases, bundle=bundle, nde=nde, card=card,
+                                reference_date=reference_date)
     # ITEM 18's RED, as a coherence assertion rather than a hope. It can only fire if this wiring
     # breaks — a typed fact present while the rendered line still claims ignorance of it. That is
     # the false UNKNOWN, and a build that would print one must fail rather than ship the page.
@@ -4343,15 +4377,6 @@ def _primary_source(
             f"{COVENANT_LEVERAGE_FACT} fact and the dossier would still render "
             f"'covenant basis: {primary_source.COVENANT_BASIS_UNKNOWN}' — a FALSE UNKNOWN "
             "(item 18). Refusing the build: a gap invites a look, an UNKNOWN closes the question.")
-    # guide verification — CIQ revenue guide (point OR range) vs the release guide + prior-FY actual
-    ciq_lo, ciq_hi, ciq_period = ciq_sheets.revenue_guide_lohi(
-        bundle, reference_date=reference_date)
-    rel_lo, rel_hi, rel_qual, rel_basis, rel_period = _release_revenue_guide(releases)
-    guide = primary_source.guide_verification(
-        "revenue", ciq_lo, ciq_hi,
-        prior_fy_actual=fy.get("revenue"), release_qualitative=rel_qual,
-        release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis,
-        ciq_period=ciq_period, release_period=rel_period)
     ps = PrimarySource(
         releases=releases, filing=filing,
         self_funding=Sourced.present(

@@ -1425,7 +1425,7 @@
             "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On April 9, 2026, The Simply Good Foods Company, a Delaware corporation (the “Company”), reported its results for the fiscal second quarter ended February 28, 2026. The results are discussed in detail in the press release attached hereto as Exhibit 99.1. In addition, the Company has posted an investor presentation at www.thesimplygoodfoodscompany.com."
           ],
           "drivers": {
-            "value": "adj EBITDA Q2 2026 $55.5M (-18.4%); adj EPS Q2 2026 $0.45; $3.9M one-time OWYN integration expenses; $4.5M restructuring costs; 2026 net sales outlook: $1,310.0–$1,350.0M; next-fy adjusted ebitda outlook: $217.0–$225.0M; next-fy gross margin outlook: $-350.0–$-300.0M",
+            "value": "adj EBITDA Q2 2026 $55.5M (-18.4%); adj EPS Q2 2026 $0.45; $3.9M one-time OWYN integration expenses; $4.5M restructuring costs; 2026 net sales outlook: $1,310.0–$1,350.0M; next-fy adjusted ebitda outlook: $217.0–$225.0M; next-fy gross margin outlook: −350 to −300 bps",
             "source_ref": "8-K 0001702744-26-000010 EX-99.1",
             "status": "present",
             "note": null
@@ -1450,7 +1450,7 @@
             "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition. On April 9, 2026, The Simply Good Foods Company, a Delaware corporation (the “Company”), reported its results for the fiscal second quarter ended February 28, 2026. The results are discussed in detail in the press release attached hereto as Exhibit 99.1. In addition, the Company has posted an investor presentation at www.thesimplygoodfoodscompany.com."
           ],
           "drivers": {
-            "value": "adj EBITDA Q2 2026 $55.5M (-18.4%); adj EPS Q2 2026 $0.45; $3.9M one-time OWYN integration expenses; $4.5M restructuring costs; 2026 net sales outlook: $1,310.0–$1,350.0M; next-fy adjusted ebitda outlook: $217.0–$225.0M; next-fy gross margin outlook: $-350.0–$-300.0M",
+            "value": "adj EBITDA Q2 2026 $55.5M (-18.4%); adj EPS Q2 2026 $0.45; $3.9M one-time OWYN integration expenses; $4.5M restructuring costs; 2026 net sales outlook: $1,310.0–$1,350.0M; next-fy adjusted ebitda outlook: $217.0–$225.0M; next-fy gross margin outlook: −350 to −300 bps",
             "source_ref": "8-K 0001702744-26-000010 EX-99.1",
             "status": "present",
             "note": null
@@ -6918,7 +6918,7 @@
           "reconciliation": [
             {
               "metric": "adjusted ebitda",
-              "period": "2025",
+              "period": "Q4 2025",
               "value": 66.2,
               "change": "-14.5%",
               "verbatim": "Adjusted EBITDA of $66.2 million",
@@ -6926,15 +6926,31 @@
             },
             {
               "metric": "adjusted eps",
-              "period": "2025",
+              "period": "Q4 2025",
               "value": 0.46,
               "change": null,
               "verbatim": "Adjusted Diluted EPS was $0.46",
               "source_ref": "8-K 0001702744-25-000043 EX-99.1"
             },
             {
-              "metric": "gross margin",
+              "metric": "adjusted ebitda",
               "period": "2025",
+              "value": 278.2,
+              "change": "+3.4%",
+              "verbatim": "2 Adjusted EBITDA of $278.2 million",
+              "source_ref": "8-K 0001702744-25-000043 EX-99.1"
+            },
+            {
+              "metric": "adjusted eps",
+              "period": "2025",
+              "value": 1.92,
+              "change": null,
+              "verbatim": "Adjusted Diluted EPS was $1.92",
+              "source_ref": "8-K 0001702744-25-000043 EX-99.1"
+            },
+            {
+              "metric": "gross margin",
+              "period": "Q4 2025",
               "value": 34.3,
               "change": null,
               "verbatim": "As a result, gross margin was 34.3%",
@@ -13547,6 +13563,15 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.drawdown_cause",
+        "mechanical.primary_source"
       ]
     }
   ],

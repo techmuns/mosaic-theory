@@ -3744,7 +3744,7 @@
               "period": "Q2 2026",
               "value": -0.01,
               "change": null,
-              "verbatim": "Non-GAAP adjusted net loss per share* was $0.01,",
+              "verbatim": "Non-GAAP adjusted net loss per share* was $0.01",
               "source_ref": "8-K 0001628280-26-055471 EX-99.1"
             },
             {
@@ -3816,7 +3816,7 @@
               "period": "Q1 2026",
               "value": -0.04,
               "change": null,
-              "verbatim": "Non-GAAP adjusted net loss per share was $0.04,",
+              "verbatim": "Non-GAAP adjusted net loss per share was $0.04",
               "source_ref": "8-K 0001628280-26-033601 EX-99.1"
             },
             {
@@ -3934,7 +3934,7 @@
               "period": "Q4 2025",
               "value": -0.11,
               "change": null,
-              "verbatim": "Net profit per share of $0.05, compared to net loss per share of $0.26 in Q4 2024; Non-GAAP adjusted net loss per share of $0.11,",
+              "verbatim": "Net profit per share of $0.05, compared to net loss per share of $0.26 in Q4 2024; Non-GAAP adjusted net loss per share of $0.11",
               "source_ref": "8-K 0001628280-26-018235 EX-99.1"
             },
             {
@@ -8570,6 +8570,14 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source"
       ]
     }
   ],

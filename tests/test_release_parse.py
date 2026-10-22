@@ -491,12 +491,21 @@ def test_committed_dossiers_carry_no_ratio_as_a_currency_amount() -> None:
                     continue
                 seen += 1
                 # match the magnitude AS THE FILER WROTE IT: a stored 59.0 comes from "$59
-                # million", so an integral value must not be searched for as "59.0".
+                # million", so an integral value must not be searched for as "59.0" — and since
+                # 2026-10-22 a $M value is stored SCALED, so "$1,253.5 million" (thousands grouped)
+                # and "$2.5 billion" / "$6.3B" (2,500 / 6,300) are its forms too.
                 a = abs(v["value"])
                 vb = str(v.get("verbatim") or "")
-                mag = _re.escape(str(int(a)) if a == int(a) else str(a))
-                has_currency = _re.search(rf"\$\s*{mag}", vb) or _re.search(
-                    rf"{mag}\s*(?:million|billion)", vb, _re.I)
+
+                def _plain(x: float) -> str:
+                    return str(int(x)) if x == int(x) else f"{x:.6f}".rstrip("0").rstrip(".")
+                forms = {_plain(a), f"{a:,.6f}".rstrip("0").rstrip(".")}   # plain, grouped
+                if a >= 1000:
+                    forms.add(_plain(round(a / 1000.0, 6)))
+                has_currency = any(
+                    _re.search(rf"\$\s*{_re.escape(f)}", vb) or _re.search(
+                        rf"{_re.escape(f)}\s*(?:million|billion|bn\b|B\b)", vb, _re.I)
+                    for f in forms)
                 assert has_currency, (
                     f"{p.parent.name}: {v['metric']}={v['value']} has no currency evidence "
                     f"in its source — …{vb[-70:]!r}")

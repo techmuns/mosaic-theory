@@ -6723,7 +6723,7 @@
               "period": "Q2 2026",
               "value": 0.22,
               "change": "+178.0%",
-              "verbatim": "Diluted earnings per share of $0.11 , down 85%; non-GAAP adjusted diluted earnings per share of $0.22,",
+              "verbatim": "Diluted earnings per share of $0.11 , down 85%; non-GAAP adjusted diluted earnings per share of $0.22",
               "source_ref": "8-K 0000793074-26-000129 EX-99.1"
             }
           ],
@@ -6787,7 +6787,7 @@
               "period": "Q4 2025",
               "value": 0.05,
               "change": "-29%",
-              "verbatim": "Diluted loss per share was $0.46 compared to diluted earnings per share of $0.19 in the prior year; non-GAAP adjusted diluted earnings per share was $0.05,",
+              "verbatim": "Diluted loss per share was $0.46 compared to diluted earnings per share of $0.19 in the prior year; non-GAAP adjusted diluted earnings per share was $0.05",
               "source_ref": "8-K 0000793074-26-000009 EX-99.1"
             },
             {
@@ -13471,6 +13471,14 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source"
       ]
     }
   ],

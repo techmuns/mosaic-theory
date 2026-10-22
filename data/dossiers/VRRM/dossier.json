@@ -750,7 +750,7 @@
             "7.01 Regulation FD Disclosure: Regulation FD Disclosure. The Company will host a conference call and live webcast to discuss its fourth quarter and full year 2025 financial results on February 24, 2026, at 5:00 p.m. Eastern time. Live and archived webcasts of the presentation will also be available on the Company’s investor relations website at ir.verramobility.com, although the Company reserves the right to discontinue that av"
           ],
           "drivers": {
-            "value": "adj EBITDA 2025 $101.8M; adj EPS 2025 $1.30; next-fy revenue outlook: $1,020.0–$1,030.0M; next-fy adjusted ebitda outlook: $405.0–$415.0M; next-fy adjusted eps outlook: $1.32–$1.38/sh; 2026 free cash flow outlook: $150.0–$160.0M",
+            "value": "adj EBITDA Q4 2025 $101.8M; next-fy revenue outlook: $1,020.0–$1,030.0M; next-fy adjusted ebitda outlook: $405.0–$415.0M; next-fy adjusted eps outlook: $1.32–$1.38/sh; 2026 free cash flow outlook: $150.0–$160.0M",
             "source_ref": "8-K 0001193125-26-067015 EX-99.1",
             "status": "present",
             "note": null
@@ -778,7 +778,7 @@
             "8.01 Other Events: Other Events. On May 26, 2026, the Company announced that it received a termination notice from Avis Budget regarding Avis Budget’s contract with the Company. Avis Budget is one of the Company’s significant Commercial Services customers and represented over 10% of the Company’s total revenue for the three months ended March 31, 2026 and year ended December 31, 2025"
           ],
           "drivers": {
-            "value": "adj EBITDA 2026 $38.0M; adj EPS 2026 $1.10; 2026 revenue outlook: $985.0–$995.0M; next-fy adjusted ebitda outlook: $380.0–$385.0M; next-fy adjusted eps outlook: $1.19–$1.25/sh; 2026 free cash flow outlook: $140.0–$150.0M",
+            "value": "2026 revenue outlook: $985.0–$995.0M; next-fy adjusted ebitda outlook: $380.0–$385.0M; next-fy adjusted eps outlook: $1.19–$1.25/sh; 2026 free cash flow outlook: $140.0–$150.0M",
             "source_ref": "8-K 0001193125-26-239351 EX-99.1",
             "status": "present",
             "note": null
@@ -5513,14 +5513,6 @@
               "source_ref": "8-K 0001193125-26-335111 EX-99.1"
             },
             {
-              "metric": "adjusted eps",
-              "period": "Q2 2026",
-              "value": 1.1,
-              "change": null,
-              "verbatim": "Adjusted EPS of $1.1",
-              "source_ref": "8-K 0001193125-26-335111 EX-99.1"
-            },
-            {
               "metric": "revenue",
               "period": "Q2 2026",
               "value": 263.6,
@@ -5550,7 +5542,11 @@
             }
           ],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EBITDA of $360 million to $370” (8-K 0001193125-26-335111 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EPS of $1.11 to $1.17” (8-K 0001193125-26-335111 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Total Revenue of $945 million to $965” (8-K 0001193125-26-335111 EX-99.1)"
+          ]
         },
         {
           "filed": "2026-05-26",
@@ -5601,24 +5597,7 @@
               "source_ref": "8-K 0001193125-26-239351 EX-99.1"
             }
           ],
-          "reconciliation": [
-            {
-              "metric": "adjusted ebitda",
-              "period": "2026",
-              "value": 38.0,
-              "change": null,
-              "verbatim": "Adjusted EBITDA of $38",
-              "source_ref": "8-K 0001193125-26-239351 EX-99.1"
-            },
-            {
-              "metric": "adjusted eps",
-              "period": "2026",
-              "value": 1.1,
-              "change": null,
-              "verbatim": "Adjusted EPS of $1.1",
-              "source_ref": "8-K 0001193125-26-239351 EX-99.1"
-            }
-          ],
+          "reconciliation": [],
           "one_offs": [],
           "event_impacts": [
             {
@@ -5640,7 +5619,12 @@
               "source_ref": "8-K 0001193125-26-239351 EX-99.1"
             }
           ],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EBITDA of $380 million to $385” (8-K 0001193125-26-239351 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EPS of $1.19 to $1.25” (8-K 0001193125-26-239351 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Total Revenue of $985 million to $995” (8-K 0001193125-26-239351 EX-99.1)",
+            "no anchored pattern matched — non-GAAP reconciliation: 8-K 0001193125-26-239351 EX-99.1"
+          ]
         },
         {
           "filed": "2026-05-06",
@@ -5701,14 +5685,6 @@
               "source_ref": "8-K 0001193125-26-209031 EX-99.1"
             },
             {
-              "metric": "adjusted eps",
-              "period": "Q1 2026",
-              "value": 1.3,
-              "change": null,
-              "verbatim": "Adjusted EPS of $1.3",
-              "source_ref": "8-K 0001193125-26-209031 EX-99.1"
-            },
-            {
               "metric": "revenue",
               "period": "Q1 2026",
               "value": 223.6,
@@ -5719,7 +5695,11 @@
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EBITDA of $405 million to $415” (8-K 0001193125-26-209031 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EPS of $1.32 to $1.38” (8-K 0001193125-26-209031 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Total Revenue of $1,020 million to $1,030” (8-K 0001193125-26-209031 EX-99.1)"
+          ]
         },
         {
           "filed": "2026-02-24",
@@ -5773,18 +5753,18 @@
           "reconciliation": [
             {
               "metric": "adjusted ebitda",
-              "period": "2025",
+              "period": "Q4 2025",
               "value": 101.8,
               "change": null,
               "verbatim": "Adjusted EBITDA* : Adjusted EBITDA was $101.8 million",
               "source_ref": "8-K 0001193125-26-067015 EX-99.1"
             },
             {
-              "metric": "adjusted eps",
+              "metric": "adjusted ebitda",
               "period": "2025",
-              "value": 1.3,
+              "value": 415.9,
               "change": null,
-              "verbatim": "Adjusted EPS of $1.3",
+              "verbatim": "Adjusted EBITDA* : Adjusted EBITDA was $415.9 million",
               "source_ref": "8-K 0001193125-26-067015 EX-99.1"
             },
             {
@@ -5798,7 +5778,11 @@
           ],
           "one_offs": [],
           "event_impacts": [],
-          "qa_flags": []
+          "qa_flags": [
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EBITDA of $405 million to $415” (8-K 0001193125-26-067015 EX-99.1)",
+            "Reconciliation figure refused — a range where an actual was read: “Adjusted EPS of $1.32 to $1.38” (8-K 0001193125-26-067015 EX-99.1)",
+            "Reconciliation figure refused — a revenue range where an actual was read: “Total Revenue of $1,020 million to $1,030” (8-K 0001193125-26-067015 EX-99.1)"
+          ]
         }
       ],
       "filing": {
@@ -11558,6 +11542,15 @@
       "writer": "anchor-backfill",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.drawdown_cause",
+        "mechanical.primary_source"
       ]
     }
   ],

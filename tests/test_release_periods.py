@@ -343,8 +343,10 @@ def test_concentrix_section_headings_and_prior_year_quarter_comparison() -> None
 
 
 def test_uber_quarterly_figure_and_its_outlook_is_not_an_actual() -> None:
-    """"Non-GAAP EPS of $0.65 to $0.72" under "For Q1 2026, we anticipate:" was stored as $0.60."""
-    assert ("adjusted ebitda", "Q4 2025", 2.5) in _rows(_UBER_FY25)
+    """"Non-GAAP EPS of $0.65 to $0.72" under "For Q1 2026, we anticipate:" was stored as $0.60.
+    (2026-10-22) And "Adjusted EBITDA of $2.5 billion" is $2,500M — this pin held 2.5, the
+    unscaled-billions defect frozen as an expectation."""
+    assert ("adjusted ebitda", "Q4 2025", 2500.0) in _rows(_UBER_FY25)
     assert not any(m == "adjusted eps" for m, _ in _values(_UBER_FY25))
 
 
@@ -419,11 +421,14 @@ def test_a_comparison_marker_far_before_its_metric_still_makes_a_comparison() ->
     """FuboTV: "○ Compared to Q3 fiscal 2025 Pro Forma Revenue of $1.484 billion" puts 36 characters
     between the marker and the metric; a 26-character look-back missed it, and under the section
     heading "Q3 Fiscal 2026 Highlights" the prior-year value was filed as the current quarter. The
-    same heading, read with letters-only words, had been "Fiscal 2026" — a full-year section."""
+    same heading, read with letters-only words, had been "Fiscal 2026" — a full-year section.
+    (2026-10-22) The comparison is PRO FORMA revenue — the combined company's, not fuboTV's — and
+    is now refused as a sub-line rather than stored as Q3 2025 revenue; either way it never takes
+    the current quarter's slot. The figures are $M (they were stored unscaled, 1.482)."""
     rows = _rows(_FUBO_Q3_26)
-    assert ("revenue", "Q3 2026", 1.482) in rows
-    assert ("revenue", "Q3 2025", 1.484) in rows  # the pro forma prior-year comparison
-    assert ("revenue", "2026", 1.484) not in rows
+    assert ("revenue", "Q3 2026", 1482.0) in rows
+    assert not any(v == 1484.0 for _m, _p, v in rows)  # the pro forma figure, under no period
+    assert ("revenue", "2026", 1484.0) not in rows
 
 
 def test_quarter_and_fiscal_year_prose_each_keep_their_own_period() -> None:
@@ -441,7 +446,7 @@ def test_a_section_heading_that_names_its_quarter_with_a_digit_is_that_quarter()
     period of its own. Reading heading words as letters only broke the run at "Q1" and left "Fiscal
     2026 Highlights" — a full-year section — so both Q1 figures were filed as fiscal 2026."""
     rows = _rows(_FUBO_Q1_26)
-    assert ("revenue", "Q1 2026", 1.549) in rows
+    assert ("revenue", "Q1 2026", 1549.0) in rows  # "$1.549 billion", in $M since 2026-10-22
     assert ("adjusted ebitda", "Q1 2026", 77.9) in rows
 
 
@@ -608,15 +613,18 @@ def test_a_middle_dot_bullet_ends_the_clause_before_it() -> None:
 
 def test_ltm_ending_a_fourth_quarter_is_that_full_year() -> None:
     """The LTM ending Q4 of Y IS FY(Y): refusing every Q4 left a name 'LTM unavailable' through its
-    whole fourth-quarter window (Verra Mobility: FY2025 $415.9M beside its Q4 $101.8M). A full year
-    below its own Q4 still refuses — CF Industries' $2.89 is billions beside an $821 million Q4, a
-    unit mismatch, not an LTM — and a Q4 with no full-year figure returns nothing (Gartner)."""
+    whole fourth-quarter window (Verra Mobility: FY2025 $415.9M beside its Q4 $101.8M). A Q4 with no
+    full-year figure returns nothing (Gartner).
+
+    CF INDUSTRIES (2026-10-22). This pin held "$2.89 billion" as 2.89 beside an $821 million Q4 and
+    called the pair "a unit mismatch, not an LTM" — the unscaled-billions defect, frozen as the
+    expectation. Scaled, FY2025 is $2,890M and IS the LTM ending its Q4."""
     def ltm(text: str) -> float | None:
         return mech._ltm_adj_ebitda([rp.parse_release(text, source_ref="t")])
 
     assert ltm(_VRRM_FY25) == 415.9
     cf = _rows(_CF_FY25)
-    assert {("adjusted ebitda", "2025", 2.89), ("adjusted ebitda", "Q4 2025", 821.0)} <= cf
-    assert ltm(_CF_FY25) is None
+    assert {("adjusted ebitda", "2025", 2890.0), ("adjusted ebitda", "Q4 2025", 821.0)} <= cf
+    assert ltm(_CF_FY25) == 2890.0
     assert ("adjusted ebitda", "Q4 2025", 436.0) in _rows(_IT_Q4_25)
     assert ltm(_IT_Q4_25) is None
