@@ -1,8 +1,8 @@
 ---
 id: 2026-10-22-agent-hooks-checked-in
-status: open
+status: shipped
 date: 2026-10-22
-prs: []
+prs: [782]
 supersedes:
 superseded-by:
 ---
