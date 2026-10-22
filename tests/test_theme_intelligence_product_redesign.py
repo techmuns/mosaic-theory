@@ -551,7 +551,9 @@ def test_a_thesis_new_and_downgraded_in_one_week_is_one_row_showing_both(
     week = BeautifulSoup((out / "index.html").read_text(), "html.parser")
     groups = {g.select_one("h3").contents[0].strip(): [x.get_text() for x in g.select(".ev")]
               for g in week.select("div.area")}
-    assert groups == {"Moved this week": ["New", "↓ Research Now → Watch"]}
+    # "1 finding": this pipeline runs no card review, so version 1 is unreviewed — and so is the
+    # re-grade of it (#779: it read clean before, the "not reviewed" item dropped)
+    assert groups == {"Moved this week": ["New", "↓ Research Now → Watch", "1 finding"]}
 
 
 def test_review_required_links_to_the_exact_line_and_the_default_view_carries_no_codes(
