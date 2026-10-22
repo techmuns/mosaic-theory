@@ -649,6 +649,14 @@ def _fmt_guide_range(low: float | None, high: float | None, unit: str) -> str:
     """
     if low is None or high is None:
         return "stated, no number given"
+    if unit == "bps":
+        # A BASIS-POINT CHANGE (2026-10-22). Simply Good guides gross margin as "expected to decline
+        # between 300 and 350 basis points"; the parser has stored that as `bps` since 2026-08-05,
+        # but this formatter knew only "%" and "$/sh", so the visible card printed
+        # "$-350.0–$-300.0M" — a margin change read as dollars. Signed, in the unit it was stated.
+        def _bp(v: float) -> str:
+            return (f"{v:+,.0f}" if float(v).is_integer() else f"{v:+,.1f}").replace("-", "−")
+        return f"{_bp(low)} bps" if low == high else f"{_bp(low)} to {_bp(high)} bps"
     lo, hi = _guide_bounds(low, high, unit)
     if unit == "%":
         return f"{lo}–{hi}% growth"

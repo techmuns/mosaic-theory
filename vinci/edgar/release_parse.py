@@ -127,6 +127,41 @@ def _money(s: str) -> float | None:
         return None
 
 
+# --- ONE AMOUNT TOKEN for every ACTUAL this module reads (2026-10-22) ----------------------------
+# Two defects, one root: each pattern spelt its own `[\d,.]+` and left the scale word OPTIONAL and
+# NON-CAPTURING, so the scale was read nowhere and dropped whenever the engine needed it gone.
+#
+#   RANGE INTO ACTUAL. `\$\s*([\d,.]+)\s*(?:million|billion)?(?!\s*(?:million\s+)?to\b)` meant to
+#   refuse "$380 million to $385 million"; when the lookahead failed the engine dropped the optional
+#   unit and gave back digits until it passed — "$38|0 million to" — and Verra Mobility's card
+#   printed "adj EBITDA 2026 $38.0M" beside the "$380.0–$385.0M" outlook it came from, and
+#   "adj EPS $1.30" out of "$1.32 to $1.38". A dash range ("$80-100 million") was never refused.
+#   UNSCALED BILLIONS. "Adjusted EBITDA of $2.5 billion" (Uber) and "non-GAAP net income of $6.3B"
+#   (Visa) were stored as 2.5 and 6.3 in fields that hold $M — the guidance pattern has scaled
+#   since 2026-08-12; the actuals never did.
+#
+# The number is ATOMIC (it cannot be shortened to satisfy anything after it) and ends in a digit;
+# the scale is CAPTURED and possessive; a range tail is CAPTURED rather than looked-ahead, so the
+# caller sees it and refuses — a range is never an actual (Reg S-K 10(e)(1)(i)(B): a forward-looking
+# measure need not even be reconciled, which is why outlook ranges sit beside actuals at all).
+_NUM = r"(?>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)"
+#: The magnitude words and suffixes, single letters guarded so "$2.4 to $2.5 based on" never reads
+#: `b`("based") as billions (the guidance pattern's 2026-08-12 lesson).
+_SCALE = r"billion|bn|million|mm|thousand|[BMK](?![A-Za-z])"
+_RANGE_TAIL = rf"\s*(?:to|through|[-–—])\s*\$?\s*{_NUM}"
+#: Every fail-loud note `_reconciliation` writes starts with this.
+RECON_REFUSAL_PREFIX = "Reconciliation figure refused"
+
+
+def _scaled(num: str, scale: str | None) -> float | None:
+    """A TOTAL in $M from its digits and its OWN stated scale; None when it states none — a total
+    whose magnitude is unstated is not given one ($M is never assumed)."""
+    v = _money(num)
+    if v is None or not scale:
+        return None
+    return v * _unit_scale(scale)
+
+
 def _verbatim(text: str, start: int, end: int, *, cap: int = 200) -> str:
     """A ≤cap-char verbatim window, snapped back to the enclosing bullet/sentence, single-spaced."""
     lo0 = max(0, start - 170)
@@ -218,15 +253,24 @@ _QN = {"first": 1, "1st": 1, "second": 2, "2nd": 2, "third": 3, "3rd": 3, "fourt
 #: Fiscal Year 2025" / "FOURTH QUARTER AND 2025" / "Fourth Quarter and Annual 2025". Fourth quarter
 #: only: no other quarter is ever reported beside its full year.
 _HDR_COMBINED = re.compile(
-    r"(?:fiscal\s+)?(?:fourth|4th)\s+quarter\s+(?:(?:of\s+)?(?:fiscal\s+)?(?:year\s+)?20\d\d\s+)?"
-    r"and\s+(?:the\s+)?(?:(?:full|fiscal|annual|entire)\s+){0,2}(?:fiscal\s+)?(?:year\s+)?(20\d\d)",
+    # HYPHENS AND THE YEAR-FIRST ORDER (2026-10-22). Target heads "Fourth Quarter and FULL-YEAR 2025
+    # Earnings" and Nike "FISCAL 2026 FOURTH QUARTER AND FULL YEAR RESULTS"; neither was read, so
+    # each release fell to an unknown frame and its Q4 figures took bare years (Target's Q4
+    # adjusted EPS of $2.44 was its FY2025, $2.41 its FY2024).
+    r"(?:fiscal\s+)?(?:fourth|4th)[\s-]+quarter\s+(?:(?:of\s+)?(?:fiscal\s+)?(?:year\s+)?20\d\d\s+)?"
+    r"and\s+(?:the\s+)?(?:(?:full|fiscal|annual|entire)[\s-]+){0,2}(?:fiscal\s+)?(?:year\s+)?"
+    r"(?P<y>20\d\d)"
+    r"|fiscal\s+(?P<y2>20\d\d)\s+(?:fourth|4th)[\s-]+quarter\s+and\s+(?:the\s+)?"
+    r"(?:full|fiscal|annual)[\s-]+(?:fiscal\s+)?year",
     re.I)
 # "Second Quarter of Fiscal Year 2026" / "of 2026" / "of fiscal 2026" — the FY phrasing between
 # 'quarter' and the year must not push this to the bare-year fallback (BellRing mislabelled its
 # quarterly figures with the year).
 _HDR_QUARTER = re.compile(
-    r"(first|second|third|fourth)\s+quarter\s+"
-    r"(?:of\s+)?(?:the\s+)?(?:fiscal\s+year\s+|fiscal\s+|fy\s*)?(20\d\d)",
+    r"(?P<qn>first|second|third|fourth)[\s-]+quarter\s+"
+    r"(?:of\s+)?(?:the\s+)?(?:fiscal\s+year\s+|fiscal\s+|fy\s*)?(?P<y>20\d\d)"
+    # Nike: "REPORTS FISCAL 2026 THIRD QUARTER RESULTS" — the year before the quarter
+    r"|fiscal\s+(?P<y2>20\d\d)\s+(?P<qn2>first|second|third|fourth)[\s-]+quarter",
     re.I)
 #: "Reports 2025 Financial Results" / "Reports Full Year 2025 Financial Results" — one year, no
 #: quarter named anywhere in the header.
@@ -245,10 +289,11 @@ def _release_frame(text: str) -> _ReleaseFrame:
     "Fourth Quarter 2025 Highlights" subheading happened to fall inside the header window."""
     head = text[:600]
     if c := _HDR_COMBINED.search(head):
-        return _ReleaseFrame("combined", 4, c.group(1), _fy_offset(text, c.group(1)))
+        cy = c["y"] or c["y2"]
+        return _ReleaseFrame("combined", 4, cy, _fy_offset(text, cy))
     if q := _HDR_QUARTER.search(head):
-        return _ReleaseFrame("quarter", _QN[q.group(1).lower()], q.group(2),
-                             _fy_offset(text, q.group(2)))
+        qy, qn = q["y"] or q["y2"], (q["qn"] or q["qn2"]).lower()
+        return _ReleaseFrame("quarter", _QN[qn], qy, _fy_offset(text, qy))
     if a := _HDR_ANNUAL.search(head):
         return _ReleaseFrame("annual", None, a.group(1) or a.group(2))
     y = _HDR_ANY_YEAR.search(head) or re.search(r"(20\d\d)", head)
@@ -289,7 +334,7 @@ _PHRASE = re.compile(
     r"|(?P<relq>(?:the\s+)?"
     r"(?:prior[- ](?:fiscal[- ])?year|previous[- ]year|year[- ]ago|comparable|same)"
     r"\s+(?:(?P<relqn>first|second|third|fourth)\s+)?(?:fiscal\s+)?quarter)"
-    r"|(?P<q>(?:fiscal\s+)?(?P<qn>first|second|third|fourth|1st|2nd|3rd|4th)\s+(?:fiscal\s+)?quarter"
+    r"|(?P<q>(?:fiscal\s+)?(?P<qn>first|second|third|fourth|1st|2nd|3rd|4th)[\s-]+(?:fiscal\s+)?quarter"
     r"(?:\s+of)?(?:\s+(?:the\s+)?(?:fiscal\s+)?(?:year\s+)?(?P<qy>20\d\d))?)"
     r"|(?P<qs>\bq(?P<qsn>[1-4])\s*(?:fiscal\s*|fy\s*)?'?(?P<qsy>20\d\d))"
     r"|(?P<quarterly>\bquarterly\b)"
@@ -299,7 +344,10 @@ _PHRASE = re.compile(
     r"(?:the\s+)?(?:comparable\s+)?year[- ]ago\s+period|"
     r"(?:the\s+)?same\s+period(?:\s+(?:in|of)\s+(?P<relpy>20\d\d))?)"
     rf"|(?P<date>{_MONTH}\s+\d{{1,2}},?\s+20\d\d)"
-    r"|(?P<bare>\b(?P<bareyear>20\d\d)\b)",
+    # A YEAR INSIDE A NUMERIC DATE IS A TABLE'S COLUMN HEADER, not a figure's period (2026-10-22):
+    # Nike's income statement heads its columns "5/31/2026 5/31/2025", and its Q4 gross margin of
+    # 49.2% (the first column) took "2025" from the second.
+    r"|(?P<bare>(?<!/)\b(?P<bareyear>20\d\d)\b)",
     re.I)
 #: A comparison clause: the prior-period value is introduced by one of these.
 _CMP = re.compile(
@@ -329,7 +377,7 @@ _FORWARD = re.compile(
 _AMOUNT = re.compile(r"\$\s*\(?\d|\d[\d,.]*\s*(?:million|billion)\b", re.I)
 #: One stated amount in a clause lead, with its scale word when there is one ("$27.6 million",
 #: "$0.05") — how a comparison finds the current value it is the prior of.
-_LEAD_AMOUNT = re.compile(r"\$\s*\(?([\d,]*\.?\d+)\)?\s*(million|billion)?", re.I)
+_LEAD_AMOUNT = re.compile(rf"\$\s*\(?({_NUM})\)?(?:\s*({_SCALE}))?+", re.I)
 #: A CHANGE amount's lead-in — the delta beside a figure is not the figure its comparison is about.
 _CHANGE_LEAD = re.compile(
     r"\b(?:(?:an?\s+)?(?:increase|decrease|improvement|decline|growth|reduction|change)\s+of|"
@@ -518,6 +566,27 @@ def _comparison_at(text: str, lo: int, start: int) -> re.Match[str] | None:
     return last
 
 
+#: "…compared with prior-year GAAP EPS of $2.27 AND Adjusted EPS of $1.30." (Target, Q1 2026): the
+#: second figure is joined by a bare "and" to an amount the comparison governs.
+_COORDINATED = re.compile(r"\s+and\s+[^,.;:$•●○◦■▪]{0,60}$", re.I)
+
+
+def _coordinated_with_comparison(text: str, lo: int, start: int) -> bool:
+    """A figure joined by a bare "and" to an amount inside its clause's comparison. The release does
+    not say which period it is: read as the PRIOR it is right on Target's line, read as CURRENT it
+    is right on "compared to $1.30 last year and adjusted EBITDA of $500 million" — so it is
+    neither, and is refused (2026-10-22). `_comparison_at` declines exactly these, because an
+    amount sits between the marker and the figure; before this, Target's "$1.30." was dropped only
+    because the sentence's full stop made the number unreadable."""
+    last = None
+    for c in _CMP.finditer(text, lo, start):
+        last = c
+    if last is None:
+        return False
+    amts = list(_LEAD_AMOUNT.finditer(text, last.end(), start))
+    return bool(amts) and _COORDINATED.fullmatch(text, amts[-1].end(), start) is not None
+
+
 def _introduced(text: str, p: re.Match[str]) -> bool:
     return bool(_INTRO.search(text[max(0, p.start() - 24):p.start()]))
 
@@ -646,9 +715,12 @@ _RECON = re.compile(
     # ~$230M on $1.4B revenue. A fabricated magnitude in a decision figure is the exact failure
     # this codebase refuses; a metric stated only as a percentage is simply not this extractor's.
     r"(positive\s+|negative\s+)?"
-    r"(?:\$\s*([\d,.]+)\s*(?:million|billion)?|([\d,.]+)\s*(?:million|billion))"
-    r"(?!\s*%)"
-    r"(?!\s*(?:million\s+|billion\s+)?to\b)",
+    # THE SHARED AMOUNT TOKEN (see `_NUM`): "$" + digits, or digits a scale word follows; the scale
+    # and any range tail are CAPTURED, so the caller scales the one and refuses the other.
+    rf"(?:\$\s*({_NUM})|({_NUM})(?=\s*(?:{_SCALE})))"
+    rf"(?:\s*(?P<scale>{_SCALE}))?+"
+    rf"(?P<range>{_RANGE_TAIL})?"
+    r"(?!\s*%)",
     re.I,
 )
 _GROSS_MARGIN = re.compile(
@@ -659,10 +731,49 @@ _GROSS_MARGIN = re.compile(
 # verification (a CIQ FY guide that merely echoes this prior-FY actual is a vendor artifact). The
 # (?! … to) tail rejects a guidance range ('revenue of $985 million to $995 million').
 _REVENUE = re.compile(
-    r"(?:full[- ]year|total|quarterly|net)?\s*revenue\s+of\s+(?:a\s+record\s+)?"
-    r"\$?\s*([\d,.]+)\s*(?:million|billion)(?!\s+to\b)",  # unit mandatory — else a greedy
-    re.I,  # number backtracks to a truncated match ('98' ⊂ '985 million to')
+    r"(?P<lead>full[- ]year|total|quarterly|net)?\s*revenue\s+of\s+(?:a\s+record\s+)?"
+    # the shared token, scale MANDATORY (a bare "$" amount after "revenue of" is not read)
+    rf"\$?\s*({_NUM})\s*(?P<scale>{_SCALE})"
+    rf"(?P<range>{_RANGE_TAIL})?",
+    re.I,
 )
+#: THE WORDS THAT MAY STAND RIGHT BEFORE "revenue" ON A COMPANY TOTAL — an ALLOWLIST, measured on
+#: the 113 "revenue(s) of $" statements in the 118 releases the committed pages cite (2026-10-22).
+#: A sub-line reads exactly like a total: Visa's "Other revenue of $1.5 billion" was stored as its
+#: revenue, and fuboTV's "North America revenue of $1.57 billion", "Pro Forma Revenue of $6.2
+#: billion", nCino's "Subscription revenues", Alphabet's "constant currency revenues" and Werner's
+#: segment lines sit in the same releases. Those qualifiers are open-ended, so the rule names what a
+#: TOTAL may follow and refuses the rest loudly: an unseen qualifier is a gap the page states, never
+#: a sub-line wearing the company's name.
+_REVENUE_LEAD_OK = frozenset({
+    "", "total", "net", "consolidated", "reported", "gaap", "record", "quarterly", "yearly",
+    "quarter", "year", "full-year", "fiscal", "ytd", "q", "first", "second", "third", "fourth",
+    "the", "its", "our", "and", "with", "of", "to", "in", "for", "while", "achieved", "generated",
+    "delivered", "posted", "results", "highlights", "presented", "expect", "forecast", "project",
+})
+
+
+#: A revenue COMPONENT a release names when its revenue has more than one line.
+_REVENUE_COMPONENT = re.compile(
+    r"\b(?:collaboration|licens\w*|royalt\w*|services?|subscription|grant|contract|other)\s+"
+    r"revenues?\b", re.I)
+
+
+def _net_product_total(text: str, at: int) -> bool:
+    """"Net product revenue" IS the total when the release names no other revenue line —
+    Organogenesis heads its results "Posts Record Revenue" and states only "Net product revenue of
+    $150.5 million". Beside a collaboration or service line the same words are one component, so
+    the exception holds only where no component is named anywhere in the release."""
+    words = re.findall(r"[A-Za-z][A-Za-z'’-]*", text[max(0, at - 30):at])
+    return ([w.lower() for w in words[-2:]] == ["net", "product"]
+            and _REVENUE_COMPONENT.search(text) is None)
+
+
+def _revenue_lead(text: str, at: int) -> str:
+    """The word right before a "revenue" match, lower-cased ('' at a clause start)."""
+    w = re.findall(r"[A-Za-z][A-Za-z'’-]*", text[max(0, at - 30):at])
+    edge = re.search(r"[.;:•●○◦■▪·|]\s*$", text[max(0, at - 30):at])
+    return "" if edge or not w else w[-1].lower()
 
 
 #: A filer that writes BOTH "EBITDA" and "adjusted EBITDA" means two different measures by them.
@@ -670,7 +781,8 @@ _ADJ_EBITDA = re.compile(r"(?:non-gaap|adjusted)\s+ebitda", re.I)
 _RECON_PREFIXED = re.compile(r"(?:non-gaap|adjusted)\s", re.I)
 
 
-def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[ReconciliationValue]:
+def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
+                    notes: list[str] | None = None) -> list[ReconciliationValue]:
     """Non-GAAP actuals, headline revenue and GAAP gross margin — each labelled with the period
     ITS OWN text names (_figure_period), never the header's period by default.
 
@@ -682,6 +794,10 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
     out: list[ReconciliationValue] = []
     seen: set[tuple[str, str]] = set()  # (metric, period) — current actual AND prior-year comp
     current = frame.label
+    refusals: list[str] = notes if notes is not None else []
+
+    def _refuse(why: str, start: int, end: int) -> None:
+        refusals.append(f"{RECON_REFUSAL_PREFIX} — {why}: “{_verbatim(text, start, end)}” ({src})")
     # A BARE "EBITDA" IS THE FILER'S NON-GAAP MEASURE ONLY WHERE THE FILER DRAWS NO DISTINCTION
     # (2026-09-18). Westlake writes "EBITDA of $679 million" and nothing else, so reading it is the
     # only way its page carries a non-GAAP figure at all. CF Industries writes BOTH in one sentence
@@ -708,7 +824,8 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
     # metric pattern cannot parse ("net profit per share of $0.05") still anchors its comparison.
     stated: dict[tuple[str, str], float] = {}
 
-    def _sub_unit(lo: int, marker_start: int, metric: str) -> bool:
+    def _lead(lo: int, marker_start: int, metric: str) -> tuple[float, str | None] | None:
+        """(value, period) of the clause's CURRENT figure — the one its comparison is of."""
         eps = metric == "adjusted eps"
         amt = None
         for a in _LEAD_AMOUNT.finditer(text, lo, marker_start):
@@ -718,21 +835,54 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
                 continue  # "…$100.0 million, an increase of $10.0 million, compared to" — a delta
             amt = a
         if amt is None or (cv := _money(amt.group(1))) is None:
+            return None
+        if not eps:
+            cv *= _unit_scale(amt.group(2))  # the rows are $M; compare like with like
+        return cv, _figure_period(text, amt.start(), amt.end(), frame, comparison=False)
+
+    def _sub_unit(lo: int, marker_start: int, metric: str) -> bool:
+        lead = _lead(lo, marker_start, metric)
+        if lead is None:
             return False
-        cp = _figure_period(text, amt.start(), amt.end(), frame, comparison=False)
+        cv, cp = lead
         prior = stated.get((metric, cp)) if cp else None
         # MAGNITUDES, not signs: a release writes a loss as "negative $5.5 million", "a loss of",
         # "$(5.5)" or "net loss", and reading the sign from the words got MVST's own restated
         # figure wrong. A sub-unit differs in SIZE (WERN: 0.9 against the company's 27.6).
         return prior is not None and abs(abs(prior) - cv) > max(0.005 * abs(prior), 1e-9)
 
+    def _quarter_against_a_year(lo: int, marker_start: int, metric: str, p: str | None) -> bool:
+        """A comparison labelled with a BARE YEAR while the figure it compares is a QUARTER.
+        Target: "Adjusted EPS of $2.44 [Q4 2025], compared with … $2.41 in 2024" — $2.41 is the
+        prior-year fourth quarter, and reading "2024" as that quarter is an inference the release
+        does not make; filed as FY2024 it was a quarter wearing a year (2026-10-22)."""
+        if p is None or not re.fullmatch(r"20\d\d", p):
+            return False
+        lead = _lead(lo, marker_start, metric)
+        return lead is not None and (lead[1] or "").startswith("Q")
+
     for m in _RECON.finditer(text):  # both captured, period-labeled, NEVER conflated
         # the amount comes from EITHER currency branch: "$53.8 million" (group 3) or
         # "53.8 million" (group 4). A bare number with neither marker no longer matches at all.
         metric_raw, sign = m.group(1), (m.group(2) or "").lower()
         num = m.group(3) or m.group(4)
-        val, metric = _money(num), _norm_metric(m.group(1))
-        if val is None or _segment(m.start()):
+        metric = _norm_metric(m.group(1))
+        if _segment(m.start()):
+            continue
+        if m["range"]:
+            _refuse("a range where an actual was read", m.start(), m.end())
+            continue
+        # A PER-SHARE figure states no scale and a TOTAL must state one. "$1.30 per share" with a
+        # scale word, or "adjusted EBITDA of $436" with none, is refused rather than given one.
+        if metric == "adjusted eps":
+            val = _money(num) if not m["scale"] else None
+            if m["scale"]:
+                _refuse("a per-share figure stated with a scale word", m.start(), m.end())
+        else:
+            val = _scaled(num, m["scale"])
+            if val is None and _money(num) is not None:
+                _refuse("a total stated without its scale", m.start(), m.end())
+        if val is None:
             continue
         if (metric == "adjusted ebitda" and not bare_ebitda_is_the_measure
                 and _RECON_PREFIXED.match(m.group(0)) is None):
@@ -741,9 +891,17 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
             val = -abs(val)
         lo, _ = _clause(text, m.start(), m.end())
         marker = _comparison_at(text, lo, m.start())
+        if marker is None and _coordinated_with_comparison(text, lo, m.start()):
+            _refuse("joined by 'and' to a compared amount — its period is not stated",
+                    m.start(), m.end())
+            continue
         if marker is not None and _sub_unit(lo, marker.start(), metric):
             continue
         p = _figure_period(text, m.start(), m.end(), frame, comparison=marker is not None)
+        if marker is not None and _quarter_against_a_year(lo, marker.start(), metric, p):
+            _refuse("a quarter compared with a bare year — the release does not say which period "
+                    "the comparison is", m.start(), m.end())
+            continue
         # a comparison can never share the release's own period (never conflate prior with current)
         if p is None or (marker is not None and p == current) or (metric, p) in seen:
             continue
@@ -754,14 +912,32 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame) -> list[Reconcili
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
         ))
     for m in _REVENUE.finditer(text):  # headline revenue actual (same current/prior discipline)
-        val = _money(m.group(1))
-        if val is None or _segment(m.start()):
+        if _segment(m.start()):
+            continue
+        if m["range"]:
+            _refuse("a revenue range where an actual was read", m.start(), m.end())
+            continue
+        if (not m["lead"] and _revenue_lead(text, m.start()) not in _REVENUE_LEAD_OK
+                and not _net_product_total(text, m.start())):
+            _refuse(f"revenue qualified by '{_revenue_lead(text, m.start())}' — a sub-line, not "
+                    "the company's total", m.start(), m.end())
+            continue
+        val = _scaled(m.group(2), m["scale"])
+        if val is None:
             continue
         lo, _ = _clause(text, m.start(), m.end())
         marker = _comparison_at(text, lo, m.start())
+        if marker is None and _coordinated_with_comparison(text, lo, m.start()):
+            _refuse("revenue joined by 'and' to a compared amount — its period is not stated",
+                    m.start(), m.end())
+            continue
         if marker is not None and _sub_unit(lo, marker.start(), "revenue"):
             continue
         p = _figure_period(text, m.start(), m.end(), frame, comparison=marker is not None)
+        if marker is not None and _quarter_against_a_year(lo, marker.start(), "revenue", p):
+            _refuse("a quarterly revenue compared with a bare year — the release does not say "
+                    "which period the comparison is", m.start(), m.end())
+            continue
         if p is None or (marker is not None and p == current) or ("revenue", p) in seen:
             continue
         seen.add(("revenue", p))
@@ -897,7 +1073,13 @@ _GUIDE_RANGE = re.compile(
 #: unit leaves the number as filed rather than inventing a multiplier for it.
 def _unit_scale(word: str | None) -> float:
     w = (word or "").strip().lower()
-    return 1000.0 if (w.startswith("billion") or w in {"bn", "b"}) else 1.0
+    if w.startswith("billion") or w in {"bn", "b"}:
+        return 1000.0
+    # (2026-10-22) "$500 thousand" was read as $500M by the actuals — a 1000x overstatement. The
+    # guidance pattern captures no thousand word, so this branch is the actuals' only.
+    if w.startswith("thousand") or w == "k":
+        return 0.001
+    return 1.0
 # A GROWTH-RATE guide is a real number, not a qualitative outlook: EPAM guides
 # "the year-over-year revenue growth rate to be in the range of 4.5% to 7.5%". The dollar-range
 # pattern cannot see it, so it fell through to the QUALITATIVE marker — which asserts the company
@@ -1384,7 +1566,9 @@ _ONEOFF = re.compile(
     # expenses, not only impairment-family words. Each generic noun REQUIRES a qualifier before it
     # (restructuring, integration, one-time, inventory-related …) so routine operating costs
     # ("cost of goods sold", "interest expense") are never mistaken for a discrete item.
-    r"\$\s*([\d,.]+)\s*(?:million|billion)\s+(?:of\s+|in\s+)?"
+    # the shared number token, its scale CAPTURED: "$1.2 billion impairment charge" was stored as
+    # 1.2 in a $M field, the actuals' unscaled-billions defect in its third reader (2026-10-22)
+    rf"\$\s*({_NUM})\s*(million|billion)\s+(?:of\s+|in\s+)?"
     r"((?:[\w'’-]+\s+){0,6}?"
     r"(?:impairment|write[- ]?off|write[- ]?down|"
     r"(?:restructuring|integration|one[- ]?time|transaction|acquisition[- ]related|"
@@ -1400,10 +1584,10 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
     # key → normalized FULL raw desc, for the identical-item (same-scope-two-figures) collapse
     raw_by_key: dict[str, str] = {}
     for m in _ONEOFF.finditer(text):
-        amt = _money(m.group(1))
+        amt = _scaled(m.group(1), m.group(2))
         if amt is None:
             continue
-        raw_desc = " ".join(m.group(2).split())
+        raw_desc = " ".join(m.group(3).split())
         # trim at the next clause boundary AND at the first comma — a one-off's name rarely spans a
         # comma, so the comma introduces a SECOND, different item ("restructuring costs, integration
         # expenses of" → "restructuring costs", not a fragment dangling at "of").
@@ -1473,10 +1657,15 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
 #  and 2026 annualized segment profit by approximately $120 million to $125 million' — the 'reduce'
 # governs both legs; the second inherits the direction (no 'reduce' of its own).
 _IMPACT = re.compile(
-    r"([\w'’\s]{0,60}?)\s+by\s+approximately\s+\$?\s*([\d,.]+)\s*(?:million|billion)?\s+to\s+"
-    r"\$?\s*([\d,.]+)",
+    # the low side's scale CAPTURED (the shared token); the high side's is read just AFTER the match
+    # (`_IMPACT_HIGH_UNIT`), never consumed by it — VRRM's second impact ("and 2026 annualized
+    # segment profit by approximately $120 million to $125 million") inherits the first's "reduce",
+    # and a match that ran three characters further moved its look-back past that verb.
+    r"([\w'’\s]{0,60}?)\s+by\s+approximately\s+\$?\s*"
+    rf"({_NUM})\s*(million|billion)?\s+to\s+\$?\s*({_NUM})",
     re.I,
 )
+_IMPACT_HIGH_UNIT = re.compile(r"\s*(million|billion)\b", re.I)
 _DIR_BACK = re.compile(r"(reduc\w*|lower\w*|decreas\w*|increas\w*|rais\w*|improv\w*)", re.I)
 
 
@@ -1496,7 +1685,12 @@ def _impact_metric(phrase: str) -> str:
 def _event_impacts(text: str, src: str) -> list[EventImpact]:
     out: list[EventImpact] = []
     for m in _IMPACT.finditer(text):
-        phrase, low, high = m.group(1), _money(m.group(2)), _money(m.group(3))
+        hu = _IMPACT_HIGH_UNIT.match(text, m.end())
+        hi_unit = hu.group(1) if hu else None
+        # a bare side takes the other's scale ("$135 to $145 million"); with neither, unread
+        lo_scale, hi_scale = m.group(3) or hi_unit, hi_unit or m.group(3)
+        phrase = m.group(1)
+        low, high = _scaled(m.group(2), lo_scale), _scaled(m.group(4), hi_scale)
         if low is None or high is None:
             continue
         # direction: the nearest reduce/increase verb in the ~90 chars before the phrase. A bare
@@ -1609,10 +1803,11 @@ def parse_release(text: str, *, source_ref: str) -> ReleaseExtract:
     section fails loud with a qa_flag — a miss is UNKNOWN, never a fabricated value."""
     guidance_notes: list[str] = []
     guidance = _guidance(text, source_ref, guidance_notes)
-    reconciliation = _reconciliation(text, source_ref, _release_frame(text))
+    recon_notes: list[str] = []
+    reconciliation = _reconciliation(text, source_ref, _release_frame(text), recon_notes)
     one_offs = _one_offs(text, source_ref)
     event_impacts = _event_impacts(text, source_ref)
-    flags: list[str] = list(guidance_notes)
+    flags: list[str] = list(guidance_notes) + recon_notes
     if not guidance and not guidance_notes:
         # ONLY when nothing was found at all. A release whose guidance was FOUND and refused states
         # guidance — saying "no anchored pattern matched" there would be the false-UNKNOWN shape.

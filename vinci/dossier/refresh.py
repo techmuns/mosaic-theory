@@ -131,6 +131,80 @@ def moved_cited_claims(before: dict[str, Any], after: dict[str, Any],
     return hits
 
 
+def _release_figures(mech: dict[str, Any]) -> dict[tuple[Any, ...], tuple[str, float]]:
+    """Every release ACTUAL the page stores, keyed by where it sits — (release position, kind,
+    metric, period) — with its unit kind ('$M' or '$/sh') and value."""
+    out: dict[tuple[Any, ...], tuple[str, float]] = {}
+    releases = ((mech.get("primary_source") or {}).get("releases")) or []
+    for i, r in enumerate(releases):
+        for rv in r.get("reconciliation") or []:
+            metric = str(rv.get("metric"))
+            unit = "$/sh" if "eps" in metric else "%" if "margin" in metric else "$M"
+            out[(i, "recon", rv.get("metric"), rv.get("period"))] = (unit, float(rv["value"]))
+        for o in r.get("one_offs") or []:
+            out[(i, "one-off", o.get("description"), None)] = ("$M", float(o["amount"]))
+        for e in r.get("event_impacts") or []:
+            for side in ("low", "high"):
+                if e.get(side) is not None:
+                    out[(i, f"impact {side}", e.get("metric"), e.get("period"))] = (
+                        "$M", float(e[side]))
+    return out
+
+
+def _total_cited(prose: str, value: float) -> bool:
+    """A $M release figure as a page or a reader writes it — DOLLAR-ANCHORED only ("$38.0M", "$2.5
+    million", "$1.5bn"). `_figure_cited` also accepts an un-anchored "1M", which is noise at this
+    scale: fuboTV's prose carries "1m/2m/3m" (months, in a source_ref), and the guard read it as
+    citing an old revenue of 1.482 (2026-10-22)."""
+    a = abs(value)
+    forms = {f"{a:.1f}", f"{a:.0f}", f"{a:,.1f}", f"{a:,.0f}"}
+    if any(re.search(rf"\$\s?{re.escape(f)}\s?(?:M\b|mm\b|million)", prose, re.I) for f in forms):
+        return True
+    b = a / 1000.0
+    return a >= 1000.0 and any(
+        re.search(rf"\$\s?{re.escape(f)}\s?(?:bn\b|B\b|billion)", prose, re.I)
+        for f in {f"{b:.1f}", f"{b:.2f}", f"{b:.3f}"})
+
+
+def _pct_cited(prose: str, value: float) -> bool:
+    """A margin as a page prints it ('34.3%')."""
+    return re.search(rf"(?<![\d.]){re.escape(f'{abs(value):.1f}')}\s?%", prose) is not None
+
+
+def _per_share_cited(prose: str, value: float) -> bool:
+    """A per-share figure as a page prints it ('$1.30', '-$0.04') — `_figure_cited` reads only $M
+    forms, so an EPS row needs its own."""
+    a = abs(value)
+    return any(re.search(rf"\$\s?{re.escape(f)}(?![\d])", prose)
+               for f in {f"{a:.2f}", f"{a:.1f}"})
+
+
+def moved_cited_release_figures(before: dict[str, Any], after: dict[str, Any],
+                                doc: dict[str, Any]) -> list[str]:
+    """Release ACTUALS that MOVED and that the stored prose CITES at their OLD value (2026-10-22).
+
+    `material_figures` reads the financial tables only, so a refresh that re-reads the releases —
+    Verra Mobility's "$38.0M" becoming a refusal, Uber's 2.5 becoming 2,500 — was invisible to every
+    other check here. A prose citing the CORRECT figure ("$2.5 billion") is not a citation of the
+    old $2.5M and does not refuse: the fix must not be blocked by the truth it restores."""
+    old, new = _release_figures(before), _release_figures(after)
+    # A RELABEL IS NOT A MOVE: a value the page still carries, under a corrected period (Simply
+    # Good's 34.3% Q4 margin, once filed as the year), is a number the page still shows
+    still = {(u, round(v, 6)) for u, v in new.values()}
+    prose = _prose(doc)
+    hits: list[str] = []
+    for key, (unit, val) in old.items():
+        if (key in new and new[key][1] == val) or (unit, round(val, 6)) in still:
+            continue
+        cited = (_per_share_cited(prose, val) if unit == "$/sh" else
+                 _pct_cited(prose, val) if unit == "%" else _total_cited(prose, val))
+        if cited:
+            now = new.get(key)
+            hits.append(f"release {key[1]} {key[2]} {key[3] or ''} = {val:,.2f} {unit} → "
+                        f"{'absent' if now is None else format(now[1], ',.2f')}")
+    return hits
+
+
 #: A revision count as the catalyst-path strings print it: '41↑/4↓'.
 _COUNT_TOKEN = re.compile(r"\d+↑/\d+↓")
 
@@ -410,9 +484,10 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
     before = doc.get("mechanical") or {}
     staged = transform(json.loads(json.dumps(before))) if transform else before
     after = recompute_derived(staged)
-    if doc.get("synthesis") is not None and (bad := [*moved_cited_claims(before, after, doc),
-                                                     *moved_cited_counts(before, after, doc),
-                                                     *moved_cited_returns(before, after, doc)]):
+    if doc.get("synthesis") is not None and (bad := [
+            *moved_cited_claims(before, after, doc), *moved_cited_counts(before, after, doc),
+            *moved_cited_returns(before, after, doc),
+            *moved_cited_release_figures(before, after, doc)]):
         raise RefreshRefusedError(
             f"{doc.get('ticker')}: this refresh moves figures the stored synthesis CITES — "
             f"{'; '.join(bad)}. Preserving the prose would leave the page citing numbers its own "
@@ -774,6 +849,137 @@ def basis_triangulation_transform(ticker: str) -> Transform:
         return out
 
     return _apply
+
+
+#: The release `qa_flags` the ACTUALS readers own — replaced on a re-read, never accumulated.
+_ACTUALS_FLAG_PREFIXES = ("no anchored pattern matched — non-GAAP reconciliation",)
+
+
+def release_figures_transform(ticker: str, cik: str | None,
+                              reference_date: date | None = None) -> Transform:
+    """Re-read every cited release's ACTUALS — reconciliation rows, one-offs, event impacts —
+    through the current parser, and recompose the gap-driver lines the visible card prints from
+    them (2026-10-22). Deterministic, read from the release cache; no model call, no CIQ.
+
+    WHY. The release parser read guidance ranges into actuals (Verra Mobility's card: "adj EBITDA
+    2026 $38.0M" out of "$380 million to $385 million", since 2026-07-10) and stored billions as
+    millions (Uber's adjusted EBITDA 2.5, Visa's net income 6.3 and its "Other revenue" as revenue,
+    fuboTV's revenue 1.549). Fixed in `release_parse` the same day; re-assembly would re-roll each
+    synthesis and is refused for eleven names by the CIQ freshness ceiling, so this is the narrow
+    path. It is the actuals only: GUIDANCE is not re-read (its own changes land with a re-assembly).
+
+    THE TWO LINES BUILT FROM THESE ROWS — `basis_triangulation` and `guide_verification` — are
+    rebuilt only when their release inputs move (the full-year gross margin and revenue, the LTM
+    adjusted EBITDA), and only after a PROOF: each line is first recomputed from the page's OLD rows
+    with the CIQ and record inputs read now, and must equal the stored line byte for byte — which is
+    what shows the CIQ export and the record are the ones the page was built from. Then the new
+    rows' line is written. A line that does not reproduce refuses the page.
+
+    EXHIBIT BY EXHIBIT, as assembly parsed them: one stored release per EX-99.1 exhibit, two
+    exhibits of one 8-K sharing a `source_ref`. A filing whose exhibit count no longer matches its
+    stored rows cannot be mapped back, and the page is refused rather than re-read in part."""
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        from vinci.config import get_config
+        from vinci.dossier import mechanical as dm
+        from vinci.dossier.schemas import MechanicalLayer, ReleaseExtract
+        from vinci.edgar import release_parse
+        from vinci.graph.filings import html_to_text, normalize_text
+        from vinci.sec import build_sec_http
+
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        ps = out.get("primary_source") or {}
+        releases = ps.get("releases") or []
+        if not releases or not cik:
+            return out
+        before = [ReleaseExtract.model_validate(r) for r in releases]
+        http = build_sec_http(get_config())
+        by_acc: dict[str, list[int]] = {}
+        for i, r in enumerate(releases):
+            acc = dm._acc_of(r.get("source_ref") or "")
+            if acc is None:
+                raise RefreshRefusedError(
+                    f"{ticker}: release {i} names no accession ({r.get('source_ref')!r})")
+            by_acc.setdefault(acc, []).append(i)
+        for acc, idxs in by_acc.items():
+            urls = release_parse.exhibit_991_urls(http, cik, acc)
+            if len(urls) != len(idxs):
+                raise RefreshRefusedError(
+                    f"{ticker}: 8-K {acc} now lists {len(urls)} EX-99.1 exhibit(s) against "
+                    f"{len(idxs)} stored release(s) — cannot map them back; re-assemble")
+            for i, url in zip(idxs, urls, strict=True):
+                text = normalize_text(html_to_text(http.get_text(url, ttl_seconds=dm._PS_TTL)))
+                fresh = release_parse.parse_release(text, source_ref=releases[i]["source_ref"])
+                r = releases[i]
+                for key in ("reconciliation", "one_offs", "event_impacts"):
+                    r[key] = [json.loads(x.model_dump_json()) for x in getattr(fresh, key)]
+                own = (release_parse.RECON_REFUSAL_PREFIX, *_ACTUALS_FLAG_PREFIXES)
+                r["qa_flags"] = ([f for f in r.get("qa_flags") or [] if not f.startswith(own)]
+                                 + [f for f in fresh.qa_flags if f.startswith(own)])
+        after = [ReleaseExtract.model_validate(r) for r in releases]
+        # THE LINES BUILT FROM THESE ROWS AT ASSEMBLY must not be left describing the old ones:
+        # the triangulation reads the full-year gross margin and revenue and the LTM adjusted
+        # EBITDA, the guide check the full-year revenue (`_primary_source`) — nothing else
+        fy0, fy1 = dm._fy_reconciliation(before), dm._fy_reconciliation(after)
+        line_inputs = [(k, fy0.get(k), fy1.get(k)) for k in ("gross margin", "revenue")]
+        line_inputs.append(("LTM adjusted EBITDA", dm._ltm_adj_ebitda(before),
+                            dm._ltm_adj_ebitda(after)))
+        if [k for k, a, b in line_inputs if a != b]:
+            _rebuild_release_lines(ticker, out, before, after, reference_date)
+        m = MechanicalLayer.model_validate(out)
+        assert m.primary_source is not None
+        enriched = dm._enrich_drawdown_drivers(m, m.primary_source)
+        out["drawdown_cause"] = json.loads(enriched.drawdown_cause.model_dump_json())
+        return out
+
+    return _apply
+
+
+def _rebuild_release_lines(ticker: str, out: dict[str, Any], before: list[Any], after: list[Any],
+                           reference_date: date | None) -> None:
+    """Rebuild `basis_triangulation` and `guide_verification` on `out` from the NEW release rows,
+    after proving each reproduces from the OLD ones (see `release_figures_transform`)."""
+    from vinci.config import get_config
+    from vinci.dossier import ciq_sheets
+    from vinci.dossier import mechanical as dm
+    from vinci.dossier.assemble import _read_scenario_card
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.dossier.schemas import Sourced, SourceStatus
+    from vinci.edgar import primary_source
+
+    ps = out["primary_source"]
+    bundle = CiqBundle.from_files(ticker, LocalFolderStore.from_config(get_config()).files(ticker))
+    nde_raw = (out.get("leverage_survival") or {}).get("net_debt_to_ebitda")
+    nde = Sourced[float].model_validate(nde_raw) if nde_raw else None
+    tde, nd = ciq_sheets.comps_total_debt_ebitda_value(bundle), ciq_sheets.net_debt(bundle)
+    cov = dm._covenant_basis(_read_scenario_card(ticker))
+    ciq_lo, ciq_hi, ciq_period = ciq_sheets.revenue_guide_lohi(
+        bundle, reference_date=reference_date)
+    rel_lo, rel_hi, rel_qual, rel_basis, rel_period = dm._release_revenue_guide(before)
+
+    def tri(rels: list[Any]) -> str:
+        fy = dm._fy_reconciliation(rels)
+        return primary_source.basis_triangulation(
+            f"{nde.value}x" if nde is not None and nde.status is SourceStatus.PRESENT else None,
+            f"{tde.value}x" if tde.status is SourceStatus.PRESENT else None,
+            nd.value if nd.status is SourceStatus.PRESENT else None, dm._ltm_adj_ebitda(rels),
+            gaap_gross_margin=fy.get("gross margin"), impairment=dm._fy_impairment(rels),
+            revenue=fy.get("revenue"), covenant_basis=cov)
+
+    def guide(rels: list[Any]) -> str:
+        return primary_source.guide_verification(
+            "revenue", ciq_lo, ciq_hi, prior_fy_actual=dm._fy_reconciliation(rels).get("revenue"),
+            release_qualitative=rel_qual, release_low=rel_lo, release_high=rel_hi,
+            release_basis=rel_basis, ciq_period=ciq_period, release_period=rel_period)
+
+    for key, build in (("basis_triangulation", tri), ("guide_verification", guide)):
+        node = ps.get(key) or {}
+        if build(before) != node.get("value"):
+            raise RefreshRefusedError(
+                f"{ticker}: {key} does not reproduce from the page's own release rows with the "
+                "CIQ export and record read now — they are not the ones it was built from; "
+                "re-assemble")
+        ps[key] = {**node, "value": build(after)}
 
 
 def credit_health_transform(ticker: str) -> Transform:
