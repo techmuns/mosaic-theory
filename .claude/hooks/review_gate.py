@@ -32,6 +32,11 @@ from pathlib import Path
 #: `gh pr create` at a COMMAND position (start, or after ; & | ( or a newline, optionally behind
 #: VAR=value prefixes) — never inside a quoted commit message that merely mentions it.
 PR_CREATE = re.compile(r"(?:^|[;&|(\n])\s*(?:[A-Za-z_]\w*=\S*\s+)*gh\s+pr\s+create\b")
+#: Heredoc bodies and quoted strings are DATA, not commands: a test file written with
+#: `cat <<'EOF'` that contains `cd x && gh pr create` opened no PR (found on this gate's own live
+#: transcript, 2026-10-22). They are removed before the command-position match.
+HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1[^\n]*\n.*?^\s*\2\s*$", re.S | re.M)
+QUOTED = re.compile(r"'[^']*'|\"(?:\\.|[^\"\\])*\"")
 #: An operator-typed `/code-review <args>` is recorded as a user command message.
 TYPED_REVIEW = re.compile(r"<command-name>/?(?:[\w-]+:)?code-review</command-name>")
 TYPED_ARGS = re.compile(r"<command-args>([^<]*)</command-args>")
@@ -68,6 +73,11 @@ def code_files_changed(root: Path) -> list[str]:
     return sorted({p for p in (committed + working).splitlines() if CODE.search(p)})
 
 
+def opens_a_pr(command: str) -> bool:
+    """True when the shell text RUNS `gh pr create`, not when it merely contains the words."""
+    return bool(PR_CREATE.search(QUOTED.sub("''", HEREDOC.sub("", command))))
+
+
 def _skill_review(item: dict[str, object]) -> bool:
     if item.get("type") != "tool_use" or item.get("name") != "Skill":
         return False
@@ -83,7 +93,7 @@ def _pr_create(item: dict[str, object]) -> bool:
     if item.get("type") != "tool_use" or item.get("name") != "Bash":
         return False
     inp = item.get("input")
-    return isinstance(inp, dict) and bool(PR_CREATE.search(str(inp.get("command", ""))))
+    return isinstance(inp, dict) and opens_a_pr(str(inp.get("command", "")))
 
 
 def reviewed_since_last_pr(transcript: str, current_id: str) -> bool | None:
@@ -127,7 +137,7 @@ def main() -> int:
     except (ValueError, OSError):
         return 0
     command = str((payload.get("tool_input") or {}).get("command", ""))
-    if payload.get("tool_name") != "Bash" or not PR_CREATE.search(command):
+    if payload.get("tool_name") != "Bash" or not opens_a_pr(command):
         return 0
     root = repo_root(payload.get("cwd") or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd())
     if root is None:

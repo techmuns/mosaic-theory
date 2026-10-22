@@ -351,3 +351,15 @@ def test_fast_gate_git_degrades_when_git_cannot_run(monkeypatch: pytest.MonkeyPa
     gate = _load("fast_gate.py")
     monkeypatch.setenv("PATH", "")
     assert gate.git(ROOT, "status") == ""
+
+
+def test_review_gate_reads_a_heredoc_as_data_not_a_pr(tmp_path: pathlib.Path) -> None:
+    """Found on the gate's own live transcript: a heredoc that WROTE test code containing
+    `cd x && gh pr create` was counted as a PR opened after the review, so the review stopped
+    counting. A heredoc body is data, in the transcript and in the command being decided."""
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    heredoc = "cat >> t.py <<'EOF'\nfor c in ('cd x && gh pr create --fill',):\n    pass\nEOF"
+    wrote_tests = _tool("toolu_h", "Bash", {"command": heredoc})
+    assert _create(repo, [_review("toolu_r"), wrote_tests]).returncode == 0
+    assert _create(repo, [], command=heredoc).returncode == 0
+    assert _create(repo, [], command="cd x\ngh pr create --fill").returncode == 2

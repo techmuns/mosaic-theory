@@ -80,8 +80,30 @@ Three mutants were run, and each turned red the pin that names it:
   and `test_review_gate_needs_a_fresh_review_for_each_pr`;
 - gating every branch → `test_review_gate_does_not_gate_a_docs_or_data_branch`.
 
-Restored: 19 passed. The gate's own PR was reviewed the way the gate demands; the outcome is in the
-PR body.
+Restored: 19 passed.
+
+**The gate's own PR went through the gate's process**, and that turned up two kinds of bug.
+
+**The review itself.** `/code-review high --fix` on the branch reported 7 findings. 5 were fixed,
+each with a test that fails on the pre-fix hooks (5 failed, 19 passed) and passes after:
+
+- a `gh pr create` quoted in a commit message was gated;
+- an operator-typed `/code-review` was not counted;
+- a deleted `vinci` module escaped the fast gate;
+- pytest progress lines crowded out the FAILED lines;
+- `git()` raised instead of degrading.
+
+2 were skipped:
+
+- a review of another branch in the same session counts;
+- the hook starts `python3` on every Bash call.
+
+**The live transcript.** Run against this session's real transcript, the gate STILL refused, even
+though the review had run. A heredoc that wrote the new tests contained `cd x && gh pr create`, and
+it was read as a PR opened after the review. Heredoc bodies and quoted strings are now stripped
+before matching, and `test_review_gate_reads_a_heredoc_as_data_not_a_pr` pins it. On the same
+transcript, the previous gate exits 2 and the fixed gate exits 0. The synthetic pins had all
+passed; only the real transcript showed this.
 
 **BOUNDARY.**
 
