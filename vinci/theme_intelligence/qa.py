@@ -33,6 +33,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from pathlib import Path
 
+from vinci.theme_intelligence.attribution import check_run as check_authors
 from vinci.theme_intelligence.cards import capped_label
 from vinci.theme_intelligence.config import load_sources
 from vinci.theme_intelligence.display import first_of
@@ -359,6 +360,15 @@ def run_qa(store: Store, run_id: str) -> QaResult:
     add(QaCheck("append-only triggers present", not missing,
                 f"{len(APPEND_ONLY_TABLES)} history tables" + (f"; missing {missing}"
                                                                 if missing else "")))
+
+    # an author the operator stated (attribution.py): on its article, named by this run --------
+    if run.mode == "author":
+        stated = [i for i in store.issues(run_id=run_id) if i.code == "AUTHORS_STATED"]
+        abad = check_authors(store, run_id)
+        add(QaCheck("every stated author is on its article",
+                    not abad and (bool(stated) or run.status is not RunStatus.SUCCEEDED),
+                    _fail_list(abad) or (f"{len(stated)} article(s)" if stated else
+                                         "no author stated")))
 
     # a reviewer's resolutions (resolve.py): each names a finding of the version it records, with
     # its words and the line's, and a dismissal one that may be dismissed ----------------------

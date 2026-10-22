@@ -371,6 +371,11 @@ class WeeklyCategory(StrEnum):
 
 # --- source records ----------------------------------------------------------------------------
 
+#: an author's `source_field` when the OPERATOR states it — at upload (`--author`) or later
+#: (`author`, attribution.py) — never read from the page
+OPERATOR_STATED = "operator-stated"
+
+
 class Author(Frozen):
     name: str
     title: str | None = None

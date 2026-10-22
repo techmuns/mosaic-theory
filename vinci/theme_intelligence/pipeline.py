@@ -79,6 +79,7 @@ from vinci.theme_intelligence.health import HealthRun, check_sources
 from vinci.theme_intelligence.parse import ParsedDocument, parse_document
 from vinci.theme_intelligence.schemas import (
     DB_SCHEMA_VERSION,
+    OPERATOR_STATED,
     AffectedCompany,
     Article,
     ArticleClass,
@@ -921,11 +922,12 @@ class Pipeline:
             cls, basis = doc.article_class_hint, doc.article_class_basis or "page statement"
         # what an earlier run VERIFIED survives a fetch that cannot restate it (U25: re-running
         # `article --url` without --published wiped the operator-verified date, and an
-        # ALREADY_INGESTED version never re-credits the authors its text names)
+        # ALREADY_INGESTED version never re-credits the authors its text names) — and so does
+        # an author the OPERATOR stated (attribution.py: a re-read never un-states one)
         dated = doc if doc.published_at is not None or prior is None else prior
         named = {norm_name(x.name) for x in doc.authors}
         credited = tuple(x for x in (prior.authors if prior else ())
-                         if x.source_field.startswith(TEXT_CREDIT)
+                         if x.source_field.startswith((TEXT_CREDIT, OPERATOR_STATED))
                          and norm_name(x.name) not in named)
         return Article(
             article_id=aid, canonical_url=doc.canonical_url, source_id=source_id,

@@ -358,6 +358,14 @@ python -m vinci.theme_intelligence documents --status HELD
 
 - **Formats.** PDF (pdfplumber, a project dependency), HTML, Markdown, plain text. DOCX is refused
   with a plain message (no compatible library is installed — save it as PDF).
+- **An author the page does not name** (attribution.py, 2026-10-22). QA requires every analysed
+  article to name its author(s). State them at upload with `--author`, or afterwards, $0:
+  `python -m vinci.theme_intelligence author --article A-… --name NAME [--title T] --by WHO
+  --reason "…"`. The statement is recorded on the article (`operator-stated by WHO in run R-…:
+  WHY`), among the document's declared statements (a replay states it again), and as an
+  AUTHORS_STATED issue. It never touches a thesis version: a card's sealed source row keeps what
+  its version recorded. A re-read keeps it. Push the registry right after (`state push`): a pull
+  refuses to discard a local run it cannot replay.
 - **What is kept.** Text in reading order with a PAGE reference on every block; each table as ONE
   block with its cells and values as printed (`$48.3bn`, `4Q26E`); footnotes; headings (a wrapped
   heading is one heading); title, authors (metadata, front matter or a "By …" byline) and the

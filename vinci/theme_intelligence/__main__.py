@@ -18,6 +18,8 @@
         [--branch theme-intelligence-state]
     python -m vinci.theme_intelligence upload --remote <git remote> --path report.pdf \
         --source ms_research --budget USD [--llm-permitted] [--dry-run]
+    python -m vinci.theme_intelligence author --article A-… --name NAME [--title T] --by NAME \
+        --reason "…"
     python -m vinci.theme_intelligence review list [--thesis TH-…] [--history]
     python -m vinci.theme_intelligence review dismiss|reopen --finding F-… --reviewer NAME \
         --reason "…"
@@ -688,6 +690,30 @@ def cmd_upload(a: argparse.Namespace) -> int:
     return 2 if res.status is not None and res.status not in DONE else 0
 
 
+def cmd_author(a: argparse.Namespace) -> int:
+    """The operator states an analysed article's author(s) (attribution.py) — $0, no model call,
+    a run of its own; never names anyone the operator did not state."""
+    from vinci.theme_intelligence.attribution import AttributionError, state_authors
+    from vinci.theme_intelligence.pipeline import Pipeline
+    from vinci.theme_intelligence.report import write_run_outputs
+
+    pipe = Pipeline(Path(a.data_dir), sources=load_sources(), taxonomy=load_taxonomy(),
+                    client=None, review=False)  # the record only: no model client at all
+    try:
+        run, art = state_authors(pipe, a.article, a.name or [], by=a.by or "",
+                                 reason=a.reason or "", title=a.title,
+                                 as_of=_iso(a.as_of) if a.as_of else datetime.now(tz=UTC).date())
+    except AttributionError as exc:
+        print(f"author refused: {exc}")
+        return 1
+    print(f"run {run.run_id}: {art.article_id} ({clip(art.title or '', 80)}) now credits "
+          f"{'; '.join(x.name for x in art.authors)}; cost $0.00")
+    out = write_run_outputs(pipe.store, run.run_id, Path(a.out) if a.out else None)
+    print(f"outputs: {out['dir']} · push the registry (`state push`) for the weekly run and the "
+          f"desk to carry it")
+    return _EXIT[run.status]
+
+
 def cmd_review(a: argparse.Namespace) -> int:
     """A REVIEWER's resolution of card-review findings (resolve.py): list the open findings with
     their keys, dismiss a warning with a name and a reason, or reopen a dismissal. $0, no model
@@ -923,6 +949,19 @@ def main(argv: list[str] | None = None) -> int:
     up.add_argument("--dry-run", action="store_true",
                     help="stop after the preflight: nothing imported, nothing pushed")
     up.set_defaults(fn=cmd_upload)
+    au = sub.add_parser("author", help="state an analysed article's author(s) — when its page "
+                                       "names none (QA requires one): recorded with who states "
+                                       "it and why; $0, never touches a thesis")
+    au.add_argument("--article", required=True, help="the article id (A-…)")
+    au.add_argument("--name", action="append", help="an author's name (repeatable)")
+    au.add_argument("--title", help="the role or kind, e.g. 'institution — the page names no "
+                                    "individual author'")
+    au.add_argument("--by", help="who states it (recorded)")
+    au.add_argument("--reason", help="why, in words (recorded)")
+    au.add_argument("--as-of", help="YYYY-MM-DD the run is dated (default: today, UTC)")
+    au.add_argument("--out", help="where the run's outputs are written")
+    au.set_defaults(fn=cmd_author)
+
     rv = sub.add_parser("review", help="a reviewer's resolution of card-review findings: list "
                                        "them with their keys, dismiss a warning (never a "
                                        "withheld line) with a name and a reason, or reopen one "
