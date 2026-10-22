@@ -2,7 +2,7 @@
 id: 2026-10-22-theme-intelligence-authors-stated
 status: recorded
 date: 2026-10-22
-prs: []
+prs: [772]
 supersedes:
 superseded-by:
 ---
