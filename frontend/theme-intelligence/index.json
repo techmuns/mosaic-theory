@@ -3,6 +3,7 @@
   "desk.js",
   "intel.css",
   "site/articles-2026-10-20.html",
+  "site/articles-2026-10-21.html",
   "site/articles.html",
   "site/cards/TH-05208D689A.html",
   "site/cards/TH-05208D689A.print.html",
@@ -103,7 +104,7 @@
   "site/uploads.html"
  ],
  "kind": "theme-intelligence-publish",
- "published_at": "2026-10-22T06:41:35+00:00",
+ "published_at": "2026-10-22T07:56:44+00:00",
  "retired": {
   "TH-1516B6186B": {
    "last_run": "R-20261016T163302Z-market",
@@ -177,9 +178,9 @@
   }
  },
  "run_as_of": "2026-10-22",
- "run_id": "R-20261022T035404Z-author",
- "run_mode": "author",
+ "run_id": "R-20261022T074313Z-review",
+ "run_mode": "review",
  "test_data": false,
  "theses": 30,
- "week": "Week of 12\u201321 Oct 2026 \u00b7 with research re-read after the scan"
+ "week": "22 Oct 2026 \u2014 manual runs since the last weekly scan"
 }
