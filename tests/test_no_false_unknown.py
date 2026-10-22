@@ -127,9 +127,16 @@ def test_the_table_renders_each_state_verbatim() -> None:
 def test_the_resolver_is_wired_into_the_assembled_line() -> None:
     """A guard nobody calls is not a guard — the freshness gate shipped measuring the wrong date and
     a wiring pin is what would have caught it. Matches the EXACT call, not the bare name: a comment
-    mentioning ``_covenant_basis`` would satisfy a name search while the call sat nowhere."""
+    mentioning ``_covenant_basis`` would satisfy a name search while the call sat nowhere.
+
+    TWO HOPS since 2026-10-22 (review of #778): the line is composed in ONE builder,
+    ``_release_lines``, which the assembler and the refresh that re-reads releases both call — so
+    the pin follows the chain: the assembler hands the builder the card, and the builder makes the
+    exact call. Either hop missing is the unconditional line again."""
     src = inspect.getsource(dm._primary_source)
-    assert "covenant_basis=_covenant_basis(card)" in src, (
+    assert "_release_lines(" in src and "card=card" in src, (
+        "the assembler no longer hands the card to the one line builder")
+    assert "covenant_basis=_covenant_basis(card)" in inspect.getsource(dm._release_lines), (
         "the resolver is not wired into basis_triangulation — the line is unconditional again")
 
 
