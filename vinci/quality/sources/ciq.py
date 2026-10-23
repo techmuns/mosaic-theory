@@ -39,8 +39,6 @@ from vinci.dossier.lease_basis import (
     RECONCILE_TOL,
     rent_disagrees,
 )
-from vinci.dossier.mechanical import _ie_bridge_net_debt
-from vinci.dossier.schemas import ImpliedValuation
 from vinci.dossier.valuation_basis import SNAPSHOT_TOL
 from vinci.quality.core import (
     CONFIRMED,
@@ -183,10 +181,10 @@ def _net_debt_vs_implied_bridge(page: dict[str, Any]) -> ItemResult:
         return ItemResult(not_run="no implied_expectations block on the page")
     iv = _get(page, "mechanical", "implied_valuation")
     # THE STORED FLAG READS TRUE WHEN THE BRIDGE IS ABSENT (`nd_ok = bridge_nd is None or …`), so
-    # it is never taken alone: the bridge is re-read through the producer's own function first
-    bridge = (_ie_bridge_net_debt(ImpliedValuation.model_validate(iv))
-              if isinstance(iv, dict) else None)
-    if bridge is None:
+    # it is never taken alone. And the bridge counts only as its two STRUCTURED floats: the
+    # producer's `_ie_bridge_net_debt` falls back to parsing the display string, which is no
+    # structured second figure (Codex, #792 round 1)
+    if _num(_get(iv, "bridge_cash")) is None or _num(_get(iv, "bridge_debt")) is None:
         return one(UNCHECKED)
     return one(CONFIRMED if ie.get("net_debt_reconciled") else DIFFERS_UNEXPLAINED)
 
@@ -276,8 +274,9 @@ CHECKS: tuple[Check, ...] = (
     Check("net_debt_vs_implied_bridge", "CIQ comps net debt vs the comps cash/debt bridge",
           "CIQ Comparable Analysis Financial Data net debt (the TEV build)",
           "CIQ Comparable Analysis Implied Valuation: total debt − cash", INTERNAL, "page",
-          "the page's net_debt_reconciled flag — counted only where the bridge exists, because "
-          "the flag also reads True when it does not",
+          "the page's net_debt_reconciled flag — counted only where the bridge's structured "
+          "bridge_cash and bridge_debt both exist, because the flag also reads True when it "
+          "does not",
           "pages carrying mechanical.valuation.implied_expectations", None, None,
           ("wrong_cell", "wrong_unit"),
           _net_debt_vs_implied_bridge),

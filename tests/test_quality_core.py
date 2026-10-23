@@ -12,6 +12,7 @@ import inspect
 import json
 import sys
 from dataclasses import replace
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -153,11 +154,12 @@ def test_the_command_scores_whatever_is_registered(
     (tmp_path / "toy.json").write_text(json.dumps(ITEMS))
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(core, "discover", lambda package="": {"toy": TOY})
-    assert main(["audit", "quality", "--as-of", "2026-10-23", "--write"]) == 0
+    today = date.today().isoformat()
+    assert main(["audit", "quality", "--write"]) == 0
     out = capsys.readouterr().out
-    assert "snapshot written: data/snapshots/data_quality/toy/2026-10-23.json" in out
-    saved = json.loads((tmp_path / "data/snapshots/data_quality/toy/2026-10-23.json").read_text())
+    assert f"snapshot written: data/snapshots/data_quality/toy/{today}.json" in out
+    saved = json.loads((tmp_path / f"data/snapshots/data_quality/toy/{today}.json").read_text())
     assert saved["source"] == {"id": "toy", "title": "TOY"} and saved["boundary"]["items"] == 4
     assert main(["audit", "quality", "--source", "nope"]) == 1
     (tmp_path / "toy.json").unlink()
-    assert main(["audit", "quality", "--as-of", "2026-10-24"]) == 1      # nothing to read
+    assert main(["audit", "quality"]) == 1      # nothing to read

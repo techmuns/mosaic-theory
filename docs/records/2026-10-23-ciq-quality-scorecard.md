@@ -199,6 +199,10 @@ one. A snapshot per date turns it into a series.
 - **Coverage-map completeness.** Every workbook kind in `ciq._WORKBOOK_KEYWORDS` has a family.
   Every scored check is mapped. Every 'Workbook→Sheet' cited in the committed pages' source_refs
   (arrow form) is declared. The reader is shown to find an undeclared sheet.
+- **Codex, round 1 (two P2s, both FIXed behind a test that failed on the PR head).** A bridge
+  known only from its display string no longer counts as checked: the net-debt check needs both
+  structured floats. A written snapshot is dated the day it is measured, so `--as-of` with
+  `--write` is refused for any other date.
 - **Snapshot reproducibility.** The committed snapshot equals a fresh run byte for byte whenever
   the page set's sha256 matches the one it names.
 - **Suite.** `pytest -m "not network"` with `-rs`: 6,437 passed, 530 skipped, 0 failed (before

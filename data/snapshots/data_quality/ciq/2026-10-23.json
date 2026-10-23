@@ -6,7 +6,7 @@
  },
  "boundary": {
   "measured_on": "2026-10-23",
-  "git_head": "42639b3b",
+  "git_head": "d1703777",
   "inputs_match_head": true,
   "reads": "data/dossiers/*/dossier.json",
   "item_noun": "page",
@@ -1212,7 +1212,7 @@
    "second_source": "CIQ Comparable Analysis Implied Valuation: total debt − cash",
    "independence": "internal",
    "unit": "page",
-   "tolerance": "the page's net_debt_reconciled flag — counted only where the bridge exists, because the flag also reads True when it does not",
+   "tolerance": "the page's net_debt_reconciled flag — counted only where the bridge's structured bridge_cash and bridge_debt both exist, because the flag also reads True when it does not",
    "population": "pages carrying mechanical.valuation.implied_expectations",
    "stated_reason": null,
    "excluded_rule": null,

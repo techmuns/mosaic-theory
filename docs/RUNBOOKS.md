@@ -690,8 +690,10 @@ confirmed / differs with a stated reason / differs unexplained / unchecked, plus
 applicable, each named), then the coverage map: each field family's class (independent, internal,
 single-source, unchecked) and, per failure class (wrong file, cell, unit, period or vintage,
 different definition), whether an independent check guards it, an internal one, or nothing.
-`--write` writes `data/snapshots/data_quality/<source>/<as-of>.json` — counts and statuses only,
-never a source's figures (the repo is public).
+`--write` writes `data/snapshots/data_quality/<source>/<today>.json` — counts and statuses only,
+never a source's figures (the repo is public). A snapshot is dated the day it is measured:
+`--as-of` only labels a printed report, and `--write` refuses any other date (the pages read are
+today's, so a backdated point would carry later data).
 - **When:** after every artifact pass that moves `data/dossiers/*`, and at the monthly sweep. Commit
   the snapshot as an ARTIFACT commit, never bundled with code. `tests/test_quality_ciq.py` re-derives
   the latest CIQ snapshot byte-for-byte whenever the page set's sha256 matches the one it names.

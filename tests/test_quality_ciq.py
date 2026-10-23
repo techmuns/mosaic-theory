@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import re
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -274,6 +275,19 @@ def test_net_debt_flag_is_not_counted_where_the_bridge_is_absent() -> None:
     assert _row(card, "net_debt_vs_implied_bridge", "AAA") == _counts(confirmed=1)
     assert _row(card, "net_debt_vs_implied_bridge", "BBB") == _counts(unexplained=1)
     assert _row(card, "net_debt_vs_implied_bridge", "CCC") == _counts(unchecked=1)
+
+
+def test_net_debt_never_scores_a_display_parsed_bridge() -> None:
+    """Codex, #792 round 1: the producer's `_ie_bridge_net_debt` falls back to PARSING the bridge's
+    display string when its structured floats are absent. A bridge known only from display text is
+    no structured second figure, so the page's flag is not counted as confirmed on it."""
+    iv = _implied_valuation(None, None)
+    iv["bridge"] = Sourced.present("+ cash $10.0M − total debt $20.0M",
+                                   source_ref="synthetic").model_dump(mode="json")
+    page = _page("DSP", iv=iv, nd_reconciled=True)
+    assert _row(_card({"DSP": page}), "net_debt_vs_implied_bridge", "DSP") == _counts(unchecked=1)
+    half = _page("HLF", iv=_implied_valuation(10.0, None), nd_reconciled=True)
+    assert _row(_card({"HLF": half}), "net_debt_vs_implied_bridge", "HLF") == _counts(unchecked=1)
 
 
 def test_multiples_sheet_coherence_reads_the_bands_own_flag() -> None:
@@ -539,15 +553,33 @@ def test_command_prints_every_name_and_writes_a_dated_snapshot(
 ) -> None:
     _seed(tmp_path, _fixture())
     monkeypatch.chdir(tmp_path)
-    assert main(["audit", "quality", "--source", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    today = date.today().isoformat()
+    assert main(["audit", "quality", "--source", "ciq", "--write"]) == 0
     out = capsys.readouterr().out
     for t in ("AAA", "BBB", "CCC"):
         assert t in out
-    assert "snapshot written: data/snapshots/data_quality/ciq/2026-10-23.json" in out
-    saved = json.loads((tmp_path / "data/snapshots/data_quality/ciq/2026-10-23.json").read_text())
-    assert saved["boundary"]["items"] == 3 and saved["boundary"]["measured_on"] == "2026-10-23"
-    assert main(["audit", "quality", "--source", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    assert f"snapshot written: data/snapshots/data_quality/ciq/{today}.json" in out
+    saved = json.loads((tmp_path / f"data/snapshots/data_quality/ciq/{today}.json").read_text())
+    assert saved["boundary"]["items"] == 3 and saved["boundary"]["measured_on"] == today
+    assert main(["audit", "quality", "--source", "ciq", "--write"]) == 0
     assert "snapshot unchanged" in capsys.readouterr().out
+
+
+def test_a_snapshot_is_dated_the_day_it_is_measured(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Codex, #792 round 1: `--as-of` stamped a WRITTEN series point with any date while the pages
+    read were today's, so a backdated snapshot would carry later data. It may still label a
+    printed report; it can never date a written one."""
+    _seed(tmp_path, _fixture())
+    monkeypatch.chdir(tmp_path)
+    past = (date.today() - timedelta(days=30)).isoformat()
+    assert main(["audit", "quality", "--source", "ciq", "--as-of", past, "--write"]) == 1
+    assert "dated the day it is measured" in capsys.readouterr().err
+    assert not (tmp_path / "data" / "snapshots").exists()
+    assert main(["audit", "quality", "--source", "ciq", "--as-of", past]) == 0      # print only
+    assert main(["audit", "quality", "--source", "ciq", "--as-of", date.today().isoformat(),
+                 "--write"]) == 0
 
 
 def test_command_with_no_pages_fails_loud(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -572,10 +604,10 @@ def test_a_changed_same_date_snapshot_says_it_replaced_one(
 ) -> None:
     _seed(tmp_path, {"AAA": _fixture()["AAA"]})
     monkeypatch.chdir(tmp_path)
-    assert main(["audit", "quality", "--source", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    assert main(["audit", "quality", "--source", "ciq", "--write"]) == 0
     _seed(tmp_path, {"BBB": _fixture()["BBB"]})
     capsys.readouterr()
-    assert main(["audit", "quality", "--source", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    assert main(["audit", "quality", "--source", "ciq", "--write"]) == 0
     assert "snapshot REPLACED" in capsys.readouterr().out
 
 

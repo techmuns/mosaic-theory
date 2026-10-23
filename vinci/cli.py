@@ -2671,11 +2671,18 @@ def _cmd_audit_quality(args: argparse.Namespace) -> int:
 
     from vinci.quality import core
 
-    as_of = args.as_of or _date.today().isoformat()
+    today = _date.today().isoformat()
+    as_of = args.as_of or today
     try:  # the as-of names the snapshot file, so it is a date and nothing else
         as_of = _date.fromisoformat(as_of).isoformat()
     except ValueError:
         print(f"--as-of {as_of!r} is not a YYYY-MM-DD date", file=sys.stderr)
+        return 1
+    if args.write and as_of != today:
+        # the pages read are TODAY's, so a series point dated otherwise would carry later data
+        # under an earlier date (Codex, #792 round 1). A label on a printed report is harmless.
+        print(f"--as-of {as_of} with --write: a snapshot is dated the day it is measured "
+              f"({today}); --as-of only labels a printed report", file=sys.stderr)
         return 1
     sources = core.discover()
     wanted = list(dict.fromkeys(args.source or sorted(sources)))   # each source once
@@ -4531,7 +4538,8 @@ def build_parser() -> argparse.ArgumentParser:
     p_dq.add_argument("--source", action="append",
                       help="score only this source (repeatable; default: every registered one)")
     p_dq.add_argument("--as-of", dest="as_of",
-                      help="date stamp for the scorecard (default: today)")
+                      help="date label for a PRINTED scorecard (default: today); --write always "
+                           "dates the snapshot today")
     p_dq.add_argument("--write", action="store_true",
                       help="also write data/snapshots/data_quality/<source>/<as-of>.json")
     p_dq.set_defaults(func=_cmd_audit_quality)
