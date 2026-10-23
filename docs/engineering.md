@@ -119,6 +119,11 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Operator decision / re-tag** — the operator's own call on which valuation recipe fits a name.
+  Plain words: *a hand re-tag, kept in its own block with its reason, who, when and where it is
+  recorded — the machine's own recipe and reason sit beside it, never inside it.* Home:
+  `vinci/dossier/anchor.py` (`OperatorDecision`, `check_decision_write`); set or retired only by
+  `vinci anchor-retag`.
 - **One builder / LEVERAGE basis / EV basis** — how EDGAR net debt is read. Plain words: *net debt
   read once, from every balance-sheet line at the same date, then stated two ways.* The **LEVERAGE
   basis** is debt + finance leases − cash − short-term investments, operating leases left out

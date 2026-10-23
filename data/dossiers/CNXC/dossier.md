@@ -42,7 +42,13 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Dilution test / share | $93.11 | + 0 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
-_leveraged residual - net debt is 139% of anchor equity; a one-turn move in EV/EBITDA shifts value per share by about 89% of spot ($21.47 at a $24.24 spot), so no R1 grid is robust to a single turn of multiple error. Re-engage when reported net-debt/EBITDA falls below about 3.5x, or when absolute EBITDA has stabilised for two consecutive quarters. Declined for instrument mismatch, not asserted worthless: LTM free cash flow is +$517M against $1.48B of market equity, and deleveraging transfers value to equity at constant enterprise value._
+**The operator's decision: R1_NOT_ROBUST** — 2026-10-07, operator
+
+⚠ **The machine reads R1_midcycle_margin_evebitda.** The operator's decision stands; it changes only by hand.
+
+> leveraged residual - net debt is 139% of anchor equity; a one-turn move in EV/EBITDA shifts value per share by about 89% of spot ($21.47 at a $24.24 spot), so no R1 grid is robust to a single turn of multiple error. Re-engage when reported net-debt/EBITDA falls below about 3.5x, or when absolute EBITDA has stabilised for two consecutive quarters. Declined for instrument mismatch, not asserted worthless: LTM free cash flow is +$517M against $1.48B of market equity, and deleveraging transfers value to equity at constant enterprise value.
+
+_Where this decision is recorded: docs/records/2026-10-07-four-recipe-re-tags-restored.md (#671) — the re-tag was written 2026-07-21 in 9b9228bc, pending the analyst; the operator's instruction of 2026-10-07 restored it_
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -614,6 +620,7 @@ _Source §: 8-K 0001803599-21-000215 · exhibit101122721.htm_
   - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
   - 2026-10-22 · mechanical.primary_source — refresh at 2026-10-09.3
+  - 2026-10-22 · anchor — anchor-retag at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 21d old — 2026-07-28 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 43d old (2026-07-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -102,7 +102,8 @@ def upsert_text(text: str, rec: LayerRefresh) -> str:
     return f"{head},\n{field}\n}}{text[len(end):]}"
 
 
-def write_recorded(path: Path, original: str, model: Dossier, writer: str) -> str:
+def write_recorded(path: Path, original: str, model: Dossier, writer: str, *,
+                   decision_change: bool = False) -> str:
     """Write `model` through the one serializer (`schemas.write_dossier`), recording the layers that
     moved against `original` — the page as the writer read it. The derived blocks
     (`valuation_basis`, `date_semantics`) are named when they move with their inputs, so the record
@@ -112,4 +113,4 @@ def write_recorded(path: Path, original: str, model: Dossier, writer: str) -> st
     staged = dossier_json(model)
     if staged != original and (moved := moved_layers(json.loads(original), json.loads(staged))):
         model = append(model, entry(writer, moved))
-    return write_dossier(path, model)
+    return write_dossier(path, model, decision_change=decision_change)

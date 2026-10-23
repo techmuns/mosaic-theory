@@ -820,6 +820,190 @@ def _cmd_peerset_backfill(args: argparse.Namespace) -> int:
     return rc
 
 
+def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
+                    edgar: Any) -> Any:
+    """THE MACHINE'S OWN READ of one committed page's anchor — the computation `anchor-backfill`
+    writes and `anchor-retag` records beside an operator's decision, in ONE place (2026-10-22), so
+    the two cannot read different machines. None when EDGAR will not fetch (skipped, never
+    guessed)."""
+    from vinci.dossier.anchor import compute_anchor
+    from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
+
+    try:
+        facts = edgar.companyfacts(resolver.resolve_ticker(t).cik)
+    except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, never guessed
+        print(f"  {t}: EDGAR fetch failed ({type(exc).__name__}) — skip, not written")
+        return None
+    # DEPTH-STAGE FALLBACK: the CIQ workbook fills a hole EDGAR left, never overrides it.
+    # Extraction is cross-checked before it is offered; a sheet that failed a coherence check
+    # is not handed on at all (ciq_balance refuses rather than degrades).
+    ciq = None
+    try:
+        from vinci.dossier.ciq_balance import extract as _ciq_extract
+        from vinci.dossier.manual_store import LocalFolderStore as _Store
+        bundle = CiqBundle.from_files(t, _Store.from_config(cfg).files(t))
+        ciq = _ciq_extract(bundle, t)
+        if not ciq.ok:
+            print(f"  {t}: CIQ extraction REFUSED — {'; '.join(ciq.failures)}")
+            ciq = None
+        elif ciq.facts:
+            print(f"  {t}: CIQ bridge available ({len(ciq.facts)} facts, "
+                  f"{len(ciq.checks)} checks passed)")
+    except CiqAmbiguousError:
+        raise   # two exports of one kind is not "no workbook" — the operator clears it first
+    except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
+        print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
+    anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
+                            computed_at=datetime.now(UTC), ciq=ciq)
+    # (2026-10-09) the machine's R4 proposal, on the page as committed — the same rule the
+    # assembler applies, and like it only ever a PROPOSAL: the committed recipe is kept by the
+    # caller's `preserve_operator_tag`
+    from vinci.dossier import recipe_proposal
+    return recipe_proposal.propose(json.loads(original), anchor)
+
+
+def _decidable_recipes() -> tuple[str, ...]:
+    """The recipes an operator may decide, read off the constants that define them — never a copy
+    of their strings (review of #780). A placeholder (`unknown`, `ANCHOR_UNRESOLVED`) is a data gap,
+    never a decision."""
+    from vinci.dossier.anchor import RECIPE_R1, RECIPE_R1_NOT_ROBUST, RECIPE_R2
+    from vinci.dossier.recipe_proposal import RECIPE_R4
+    from vinci.dossier.valuation_basis import RECIPE_R3
+
+    return (RECIPE_R1, RECIPE_R1_NOT_ROBUST, RECIPE_R2, RECIPE_R3, RECIPE_R4)
+
+
+def _cmd_anchor_retag(args: argparse.Namespace) -> int:
+    """THE ONE WRITER OF AN OPERATOR'S RECIPE DECISION (2026-10-22) — re-tags stop being hand edits.
+
+    Operator-only by construction: it writes the recipe and the reason the OPERATOR supplies, never
+    a machine proposal. The decision goes into `anchor.operator_decision`, the machine's own read
+    (`_machine_anchor`, the backfill's computation) is recorded beside it as `reason` and
+    `machine_recipe_hint`, and every computed VALUE on the anchor stays as committed — a re-tag is
+    a judgment about which recipe fits, not a recompute. `--retire` removes a decision and returns
+    the recipe to the machine's. `--values-held` records a decision on a page whose values are
+    HELD (VITL, STATE row 32 (11)): the values stay, and no machine reason is written beside
+    numbers it does not describe. One page per call; the page is re-rendered from its record."""
+    from vinci.dossier import layer_refresh
+    from vinci.dossier.anchor import PLACEHOLDER_HINTS, OperatorDecision
+    from vinci.dossier.refresh import _rerender_only
+    from vinci.dossier.schemas import Dossier
+    from vinci.edgar.client import EdgarClient
+    from vinci.resolver import EntityResolver
+
+    cfg = get_config()
+    t = args.ticker.strip().upper()
+    path = cfg.data_dir / "dossiers" / t / "dossier.json"
+    if not path.exists():
+        print(f"{t}: no committed dossier", file=sys.stderr)
+        return 1
+    original = path.read_text()
+    d = Dossier.model_validate_json(original)
+    committed = d.anchor
+    if committed is None:
+        print(f"{t}: the page carries no anchor block to decide on", file=sys.stderr)
+        return 1
+    decidable = _decidable_recipes()
+    # every operator-supplied field is STRIPPED before it is checked — a blank is a missing field
+    recipe, reason_file, decided_by, source_ref, at_given = (
+        (getattr(args, n) or "").strip()
+        for n in ("recipe", "reason_file", "decided_by", "source_ref", "machine_at_decision"))
+    decided_on: date | None = None
+    reason = ""
+    if not args.retire:
+        missing = [flag for flag, v in (("recipe", recipe), ("reason-file", reason_file),
+                                        ("decided-by", decided_by), ("source-ref", source_ref))
+                   if not v]
+        if missing:
+            print(f"{t}: a decision needs --{', --'.join(missing)}", file=sys.stderr)
+            return 1
+        if recipe not in decidable:
+            print(f"{t}: {recipe!r} is not a decidable recipe ({', '.join(decidable)})",
+                  file=sys.stderr)
+            return 1
+        if at_given and at_given not in (*decidable, *sorted(PLACEHOLDER_HINTS)):
+            print(f"{t}: --machine-at-decision {at_given!r} is not a recipe the machine writes",
+                  file=sys.stderr)
+            return 1
+        reason = Path(reason_file).read_text().strip()
+        if not reason:
+            print(f"{t}: the reason file is empty — a decision states its reason", file=sys.stderr)
+            return 1
+        # the OPERATOR'S calendar (local), never UTC's — a decision dated "today" just after local
+        # midnight must not read as backdated (review of #780); an ISO date or a refusal
+        today = date.today()
+        try:
+            decided_on = date.fromisoformat(args.decided_on.strip()) if args.decided_on else today
+        except ValueError:
+            print(f"{t}: --decided-on {args.decided_on!r} is not an ISO date (YYYY-MM-DD)",
+                  file=sys.stderr)
+            return 1
+        if decided_on > today:
+            print(f"{t}: --decided-on {decided_on} is after today ({today}) — a decision is "
+                  "recorded once it is made", file=sys.stderr)
+            return 1
+    elif committed.operator_decision is None:
+        print(f"{t}: no operator decision to retire", file=sys.stderr)
+        return 1
+    fresh = _machine_anchor(t, d, original, cfg, EntityResolver.from_config(cfg),
+                            EdgarClient.from_config(cfg))
+    if fresh is None:
+        return 1
+    # the machine's reason describes ITS OWN values; beside different committed values it would
+    # cite numbers the page does not show — refuse, never print a reason off another computation
+    _own = {"recipe_hint", "reason", "operator_decision", "machine_recipe_hint", "computed_at",
+            "scenario_eligibility"}  # eligibility is computed FROM the recipe the decision sets
+    was, now = committed.model_dump(mode="json"), fresh.model_dump(mode="json")
+    moved = sorted(k for k, v in now.items() if k not in _own and was.get(k) != v)
+    held = bool(moved) and args.values_held and not args.retire
+    if moved and not held:
+        print(f"{t}: the machine's read today moves {len(moved)} committed value(s) "
+              f"({', '.join(moved)}) — its reason would describe numbers the page does not show; "
+              "refresh the values first, then record the decision (or, on a page whose values "
+              "are HELD, pass --values-held)", file=sys.stderr)
+        return 1
+    if args.retire:
+        new = committed.model_copy(update={
+            "operator_decision": None, "machine_recipe_hint": None,
+            "recipe_hint": fresh.recipe_hint, "reason": fresh.reason})
+    else:
+        assert decided_on is not None
+        # the machine's read NOW stands for its read AT DECISION only when the decision is made
+        # now — a backdated decision records what was read then, or nothing (never today's read)
+        at_decision = at_given or (fresh.recipe_hint if decided_on == date.today() else None)
+        decision = OperatorDecision(
+            recipe=recipe, reason=reason, decided_by=decided_by,
+            decided_on=decided_on.isoformat(), source_ref=source_ref,
+            machine_recipe_at_decision=at_decision)
+        new = committed.model_copy(update={
+            "recipe_hint": recipe, "operator_decision": decision,
+            "machine_recipe_hint": fresh.recipe_hint,
+            # HELD values carry no machine reason: the machine's describes values not on the page
+            "reason": None if held else fresh.reason})
+    nd = new.operator_decision
+    print(f"  {t}: recipe {committed.recipe_hint} → {new.recipe_hint}; machine reads "
+          f"{fresh.recipe_hint}; decision "
+          f"{f'recorded ({nd.decided_on})' if nd is not None else 'retired'}")
+    if held:
+        print(f"  {t}: VALUES HELD — the machine's read today would move {', '.join(moved)}; "
+              "they stay as committed, and no machine reason is written beside them")
+    if args.dry_run:
+        print(f"  {t}: DRY-RUN — nothing written")
+        return 0
+    layer_refresh.write_recorded(path, original, d.model_copy(update={"anchor": new}),
+                                 "anchor-retag", decision_change=True)
+    # GUARDED, as the backfill guards it (review of #536): the JSON is written, so a page that will
+    # not re-render is reported loud and the command fails — never a silent stale page
+    try:
+        _rerender_only(path)
+    except Exception as exc:  # noqa: BLE001 — reported and failed, never swallowed
+        print(f"  {t}: WARNING — dossier.json written but dossier.md could NOT be re-rendered "
+              f"({exc}); the page is stale until it is", file=sys.stderr)
+        return 1
+    print(f"  {t}: written; dossier.md re-rendered")
+    return 0
+
+
 def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
     """Backfill the committed R1 anchor block into existing dossiers — the anchor-ONLY writer.
 
@@ -832,10 +1016,8 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
     from vinci.dossier.anchor import (
         Anchor,
         anchor_changed,
-        compute_anchor,
         preserve_operator_tag,
     )
-    from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
     from vinci.dossier.refresh import _rerender_only
     from vinci.dossier.schemas import Dossier
     from vinci.edgar.client import EdgarClient
@@ -852,36 +1034,10 @@ def _cmd_anchor_backfill(args: argparse.Namespace) -> int:
             continue
         original = path.read_text()
         d = Dossier.model_validate_json(original)
-        try:
-            facts = edgar.companyfacts(resolver.resolve_ticker(t).cik)
-        except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, never guessed
-            print(f"  {t}: EDGAR fetch failed ({type(exc).__name__}) — skip, not written")
+        fresh = _machine_anchor(t, d, original, cfg, resolver, edgar)
+        if fresh is None:
             continue
-        # DEPTH-STAGE FALLBACK: the CIQ workbook fills a hole EDGAR left, never overrides it.
-        # Extraction is cross-checked before it is offered; a sheet that failed a coherence check
-        # is not handed on at all (ciq_balance refuses rather than degrades).
-        ciq = None
-        try:
-            from vinci.dossier.ciq_balance import extract as _ciq_extract
-            from vinci.dossier.manual_store import LocalFolderStore as _Store
-            bundle = CiqBundle.from_files(t, _Store.from_config(cfg).files(t))
-            ciq = _ciq_extract(bundle, t)
-            if not ciq.ok:
-                print(f"  {t}: CIQ extraction REFUSED — {'; '.join(ciq.failures)}")
-                ciq = None
-            elif ciq.facts:
-                print(f"  {t}: CIQ bridge available ({len(ciq.facts)} facts, "
-                      f"{len(ciq.checks)} checks passed)")
-        except CiqAmbiguousError:
-            raise   # two exports of one kind is not "no workbook" — the operator clears it first
-        except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
-            print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
-        anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
-                                computed_at=datetime.now(UTC), ciq=ciq)
-        # (2026-10-09) the machine's R4 proposal, on the page as committed — the same rule the
-        # assembler applies, and like it only ever a PROPOSAL: the committed recipe is kept below
-        from vinci.dossier import recipe_proposal
-        anchor = recipe_proposal.propose(json.loads(original), anchor)
+        anchor = fresh
         # An operator's hand re-tag outranks the machine's fresh proposal — the recipe is preserved
         # and the divergence reported, never silently overwritten (the queued 2026-07-21 defect).
         anchor, notes = preserve_operator_tag(d.anchor, anchor)
@@ -4101,6 +4257,31 @@ def build_parser() -> argparse.ArgumentParser:
                           help="DIAGNOSTIC: recompute and report old-vs-new without writing "
                                "anything (the re-validation pass)")
     p_anchor.set_defaults(func=_cmd_anchor_backfill)
+
+    p_retag = sub.add_parser(
+        "anchor-retag",
+        help="record (or --retire) the OPERATOR's recipe decision on one page — the decision goes "
+        "into anchor.operator_decision, the machine's own read beside it; values untouched")
+    p_retag.add_argument("--ticker", required=True)
+    p_retag.add_argument("--recipe", help="the decided recipe, e.g. R4_forward_ev_ebit")
+    p_retag.add_argument("--reason-file", dest="reason_file",
+                         help="a text file holding the decision's reason, verbatim")
+    p_retag.add_argument("--decided-by", dest="decided_by",
+                         help="who made the call, as the record says (e.g. 'operator')")
+    p_retag.add_argument("--decided-on", dest="decided_on",
+                         help="ISO date, YYYY-MM-DD (default: today, local)")
+    p_retag.add_argument("--source-ref", dest="source_ref",
+                         help="the record (and commit) the decision is taken from")
+    p_retag.add_argument("--machine-at-decision", dest="machine_at_decision",
+                         help="what the machine read when the decision was made (default: its "
+                         "read now, for a decision made today; unrecorded for a backdated one)")
+    p_retag.add_argument("--retire", action="store_true",
+                         help="remove the decision; the recipe returns to the machine's")
+    p_retag.add_argument("--values-held", action="store_true", dest="values_held",
+                         help="the page's values are HELD: record the decision, keep every "
+                         "committed value, write no machine reason beside them")
+    p_retag.add_argument("--dry-run", action="store_true", dest="dry_run")
+    p_retag.set_defaults(func=_cmd_anchor_retag)
 
     p_fin = sub.add_parser(
         "financials-backfill",

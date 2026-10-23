@@ -14814,6 +14814,14 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-retag",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -14821,7 +14829,7 @@
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-10-21T11:18:47.724783Z",
-    "reason": "OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
+    "reason": null,
     "data_quality": "vendor_bridge",
     "data_quality_detail": [
       "vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag"
@@ -14902,6 +14910,15 @@
     "anchor_ev_ebit": 21.2564,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+    "operator_decision": {
+      "recipe": "R3_forward_pe",
+      "reason": "OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.",
+      "decided_by": "operator",
+      "decided_on": "2026-09-01",
+      "source_ref": "docs/records/2026-09-01-r3-reaches-the-create-path.md (#557)",
+      "machine_recipe_at_decision": "R1_midcycle_margin_evebitda"
+    },
+    "machine_recipe_hint": "R1_midcycle_margin_evebitda",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

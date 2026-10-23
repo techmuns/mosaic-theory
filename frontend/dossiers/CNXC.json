@@ -9426,6 +9426,14 @@
       "layers": [
         "mechanical.primary_source"
       ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-retag",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -9433,7 +9441,7 @@
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-10-21T11:18:47.562093Z",
-    "reason": "leveraged residual - net debt is 139% of anchor equity; a one-turn move in EV/EBITDA shifts value per share by about 89% of spot ($21.47 at a $24.24 spot), so no R1 grid is robust to a single turn of multiple error. Re-engage when reported net-debt/EBITDA falls below about 3.5x, or when absolute EBITDA has stabilised for two consecutive quarters. Declined for instrument mismatch, not asserted worthless: LTM free cash flow is +$517M against $1.48B of market equity, and deleveraging transfers value to equity at constant enterprise value.",
+    "reason": null,
     "data_quality": null,
     "data_quality_detail": [
       "lease basis: rent 35.1% of EBITDA (FY ending 2025-11-30: $444M of $1,266M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $444M",
@@ -9501,6 +9509,14 @@
     "anchor_ev_ebit": 14.9993,
     "overall_confidence": "firm",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+    "operator_decision": {
+      "recipe": "R1_NOT_ROBUST",
+      "reason": "leveraged residual - net debt is 139% of anchor equity; a one-turn move in EV/EBITDA shifts value per share by about 89% of spot ($21.47 at a $24.24 spot), so no R1 grid is robust to a single turn of multiple error. Re-engage when reported net-debt/EBITDA falls below about 3.5x, or when absolute EBITDA has stabilised for two consecutive quarters. Declined for instrument mismatch, not asserted worthless: LTM free cash flow is +$517M against $1.48B of market equity, and deleveraging transfers value to equity at constant enterprise value.",
+      "decided_by": "operator",
+      "decided_on": "2026-10-07",
+      "source_ref": "docs/records/2026-10-07-four-recipe-re-tags-restored.md (#671) — the re-tag was written 2026-07-21 in 9b9228bc, pending the analyst; the operator's instruction of 2026-10-07 restored it"
+    },
+    "machine_recipe_hint": "R1_midcycle_margin_evebitda",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

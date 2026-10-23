@@ -1345,10 +1345,30 @@ function anchorInner(a) {
   // the sentence is written ONCE, in vinci/dossier/anchor.py — both renderers print it verbatim
   const mid = a.midcycle_gap
     ? `<div class="notice" style="margin-top:8px;"><b>Mid-cycle assumption under strain.</b> ${escapeHtml(a.midcycle_gap.read)}</div>` : "";
-  const why = a.reason ? `<div class="muted" style="margin-top:6px;">${escapeHtml(a.reason)}</div>` : "";
+  // THE OPERATOR'S DECISION FIRST (2026-10-22), the machine's own read beneath it — never one inside
+  // the other; a divergence is stated, never resolved. Twin of _screening_context_lines() in render.py.
+  // The recipe and any divergence lead; the reason follows as the operator's words, quoted. A
+  // placeholder machine hint is a data gap, never a disagreement (anchor.PLACEHOLDER_HINTS — the
+  // two lists are pinned equal by tests/test_operator_decision.py).
+  // Inside the function, not at module scope: tests/test_parity_pins.py evaluates this body alone.
+  const PLACEHOLDER_HINTS = ["unknown", "ANCHOR_UNRESOLVED"];   // twin of anchor.PLACEHOLDER_HINTS
+  const od = a.operator_decision;
+  const mh = a.machine_recipe_hint;
+  const dec = od
+    ? `<div style="margin-top:10px; padding:10px 13px; border:1px solid var(--line-2); border-left:3px solid var(--ink-2); border-radius:var(--r); background:var(--surface);">
+      <div><b>The operator's decision: ${escapeHtml(od.recipe)}</b> <span class="muted" style="font-size:11.5px;">· ${escapeHtml(od.decided_on)} · ${escapeHtml(od.decided_by)}</span></div>${
+        PLACEHOLDER_HINTS.includes(mh)
+          ? `<div class="muted" style="margin-top:8px; font-size:12px;">The machine could not read a recipe on this build (${escapeHtml(mh)}) — a data gap, not a disagreement; the operator's decision stands.</div>`
+          : mh && mh !== od.recipe
+          ? `<div class="flag open" style="margin:8px 0 0;"><span class="fi">⚠</span><span><b>The machine reads ${escapeHtml(mh)}.</b> The operator's decision stands; it changes only by hand.</span></div>` : ""}
+      <div style="margin-top:8px; padding-left:11px; border-left:2px solid var(--line-2); font-size:12.5px; line-height:1.55; white-space:pre-line;">${escapeHtml(od.reason)}</div>
+      <details style="margin-top:6px;"><summary class="muted" style="font-size:11.5px;">Where this decision is recorded</summary><div class="mono" style="font-size:11px; margin-top:2px;">${escapeHtml(od.source_ref)}</div></details>
+    </div>`
+    : "";
+  const why = a.reason ? `<div class="muted" style="margin-top:6px;">${od ? "The machine’s read: " : ""}${escapeHtml(a.reason)}</div>` : "";
   return `<div class="uw-screen"><div class="ds-title" style="font-size:12px; margin-top:14px;">Screening context — how this name surfaced<span class="ds-route">not a verdict</span></div>
     <div class="subtitle muted" style="margin:2px 0 8px;">A mechanical re-rate to the median multiple of this name's own trading history, on its naive reported median margin. An attention filter only — it applies no structural adjustment, so a cheap-looking screen still has to survive the full bear/base/bull underwrite.</div>
-    <table class="data"><tbody>${rows}</tbody></table>${mid}${dq}${why}</div>`;
+    <table class="data"><tbody>${rows}</tbody></table>${dec}${mid}${dq}${why}</div>`;
 }
 
 // (tier redesign) scenarioPanel is GONE — the Brief composes uwCardParts() directly: the masthead
