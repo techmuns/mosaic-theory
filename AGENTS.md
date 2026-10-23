@@ -31,3 +31,22 @@ contradicted their own caption. Rules restated in two places drift; a pointer ca
 
 Everything else — the fund's guardrails, the brief and completion contracts, the security rules —
 is in `CLAUDE.md`, and it is short enough to read in full.
+
+## Code Review Rules
+
+For Codex review of a PR: flag only what breaks one of the checks below, as a concrete failure.
+Skip style and speculative hardening; never push a fix (`.claude/skills/pr-feedback/SKILL.md`).
+
+### The decision line
+- An LLM output that becomes a verdict, or a field that lets `Synthesis` carry one.
+- A threshold, weight or mapping set from forward returns, or code that reads them to set a parameter.
+- Any path toward placing an order or talking to a broker.
+
+### Data integrity
+- A missing value replaced by a guess, default or imputation instead of `UNKNOWN` or an exception.
+- A value read from a date later than the run's as-of date (look-ahead).
+- A number re-parsed from a display string instead of the structured value.
+- A count printed beside a truncated list without saying it is truncated.
+
+### Public repo
+- A secret, token, raw CIQ export or `*.db` in the diff — this repository is public.
