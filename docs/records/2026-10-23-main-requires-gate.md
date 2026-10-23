@@ -47,8 +47,9 @@ nothing was required until this change.
   - #695 and #611, both into `main`, now list `gate` under `gh pr checks --required`;
   - #511, also into `main`, has no `gate` run on its head, so its required check is simply waiting;
   - #616 targets `artifact/monitor-run` and is correctly unaffected.
-- **Not yet seen:** a PR into `main` reading BLOCKED while `gate` runs. The next PR into `main`
-  will show it.
+- **Seen live on this record's own PR, #790**, the first into `main` under the rule: at about
+  12:51Z, with its `gate` run pending, GitHub reported `mergeStateStatus: BLOCKED`, and
+  `gh pr checks 790 --required` listed `gate  pending`.
 
 **THE WORKFLOW CONFLICT — OPEN (STATE.md §5.0 row 32, item 14).** `monthly-score.yml` and
 `weekly-screen.yml` both run only on `workflow_dispatch`. Both commit, then `git push` to `main`
