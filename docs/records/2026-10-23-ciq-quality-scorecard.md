@@ -1,8 +1,8 @@
 ---
 id: 2026-10-23-ciq-quality-scorecard
-status: open
+status: shipped
 date: 2026-10-23
-prs: []
+prs: [792]
 supersedes:
 superseded-by:
 ---
