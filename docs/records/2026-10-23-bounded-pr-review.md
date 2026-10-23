@@ -115,3 +115,22 @@ only HIGH or CRITICAL comments, and the session should be woken by the app, not 
 - **Falsifier.** Over the first 20 PRs, track each reviewer's FIX/total. If a reviewer stays far
   below Uber's reported ~75% useful-comment rate, or PRs still exceed 2 rounds, raise its
   threshold or remove it.
+## Amendments
+
+**2026-10-23 — Codex is live; Gemini is NOT installed (operator decision, $19/month).**
+
+- **Codex Code Review** was set up the same day. Asked with `@codex review` (once on #784 and
+  #785, twice on #786, see the next bullet), it reported "Didn't find any major issues" on each of
+  #784, #785 and #786, at their head commits
+  (`e20a22e`, `93a16a2`, `5f62cdf`).
+- **Its first attempt on #786 failed** at environment setup ("Setup repeatedly failed"). The retry,
+  made after the other two reviews finished, succeeded. The likely cause is three environment
+  setups starting at once.
+- **Gemini Code Assist never responded:** nothing within 15 minutes of `/gemini review` on any of
+  the three PRs. The operator then declined it at $19/month, because Codex already supplies the
+  second model family.
+- **`.gemini/config.yaml` and `.gemini/styleguide.md` stay committed and inert.** With no app
+  installed they have no effect. Their pins in `tests/test_review_process.py` still hold, so
+  installing Gemini later needs no repo change.
+- **What now names Codex as the second reviewer:** CLAUDE.md's flow line, the `pr-feedback` skill
+  and STATE.md. Each tells a session never to wait for, or request, a Gemini review.
