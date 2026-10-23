@@ -700,6 +700,12 @@ today's, so a backdated point would carry later data).
 - **Reading it:** "internal" means the source against its own other output — CIQ against another CIQ
   export: the sheets were read coherently and the pulls match, not that CIQ is right. A family marked
   UNSCORED has a check that runs, but no structured verdict; the scorecard parses no display text.
+- **Stored outcomes (`CrossCheck`).** Five checks are scored from an outcome the page stores beside
+  its line or flag. A page without one reads NOT RUN, never a pass: it predates the field, or
+  `refresh.cross_check_transform` refused it because the stored line did not reproduce from the
+  page's own inputs. Re-run that transform through `refresh_fleet` after a pass that adds pages
+  assembled before 2026-10-23. It needs EDGAR, not the workbooks. A refused outcome lands at the
+  name's next re-assembly.
 - **Adding a source** is one module under `vinci/quality/sources/` exposing `SOURCE` (its loader,
   checks with the failure classes each can surface, and families). The core and the command name no
   source (`tests/test_quality_core.py` holds them to it). Next, by priority: Polygon prices, then the
