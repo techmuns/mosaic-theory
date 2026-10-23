@@ -23,7 +23,7 @@ import pytest
 from tests.sec_offline_support import COMPANYFACTS, no_network
 from vinci.dossier import mechanical as dm
 from vinci.dossier.ciq_sheets import _fig, revenue_guide_from_rows
-from vinci.dossier.refresh import cross_check_transform
+from vinci.dossier.refresh import RefreshRefusedError, cross_check_transform
 from vinci.dossier.schemas import (
     CHECK_AGREE,
     CHECK_DIFFER,
@@ -77,6 +77,7 @@ def test_wall_read_outcome_and_the_boundary_reason() -> None:
     edge = [*panel, _inst("Bank Facility", 40.0, date(2027, 7, 3))]
     near = ps.wall_coherence_read(150.0, edge, balance=_BAL)
     assert (near.check, near.near_boundary) == (CHECK_DIFFER, True) and len(near.qa) == 1
+    assert near.qa[0].startswith(ps.WALL_FLAG)        # the prefix the back-fill selects by
     none = ps.wall_coherence_read(None, panel, balance=_BAL)
     assert (none.check, none.near_boundary) == (CHECK_NOT_RUN, None)
     # the line-only API is the read's own line, never a second composition
@@ -386,3 +387,30 @@ def test_the_ocf_sign_is_read_as_it_stood_when_the_page_was_assembled() -> None:
     assert late["primary_source"]["self_funding_check"] == out["primary_source"][
         "self_funding_check"]
     assert not any("self_funding" in r for r in refused)
+
+
+@pytest.mark.skipif(not PAGES, reason="no committed dossiers")
+def test_a_page_with_no_assembly_date_is_refused_whole_never_a_crash() -> None:
+    """Review of this PR: `date.fromisoformat('None')` raised a bare ValueError that
+    `refresh_fleet` does not catch, so one such page would stop the pass for every name."""
+    raw = _without_outcomes(json.loads(PAGES[0].read_text()))
+    del raw["assembled_at"]
+    with pytest.raises(RefreshRefusedError, match="no assembled_at"):
+        cross_check_transform(raw, edgar=_FixtureEdgar(), refused=[])
+
+
+@pytest.mark.skipif(not PAGES, reason="no committed dossiers")
+def test_an_implied_block_without_its_inputs_is_named_not_skipped() -> None:
+    """Review of this PR: with the comps name row's net debt gone, both implied-expectations
+    outcomes were skipped and nothing was named — a clean-looking pass."""
+    raw, _out = _one_page_backfilled(
+        lambda r, o: "net_debt_check" in ((o.get("valuation") or {}).get("implied_expectations")
+                                          or {}))
+    for row in raw["mechanical"]["peer_comps"]["peer_grid"]["value"]:
+        if row.get("is_name"):
+            row["net_debt"] = None
+    out, refused = _backfill(raw)
+    ie = out["valuation"]["implied_expectations"]
+    assert "net_debt_check" not in ie and "vintage_check" not in ie
+    assert any(r.startswith(f"{raw['ticker']}: implied_expectations carries no comps name row")
+               for r in refused)

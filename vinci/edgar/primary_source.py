@@ -24,6 +24,9 @@ GUIDE_MATCH = 0.01
 #: A wall divergence beside an instrument maturing within this many days of the window's +12m
 #: boundary is flagged a possible window-convention artifact.
 BOUNDARY_DAYS = 7
+#: Every QA flag the wall check writes opens with this — the refresh that rebuilds the check
+#: selects the page's stored wall flags by it (`refresh.cross_check_transform`).
+WALL_FLAG = "wall coherence:"
 
 
 # --- (surface 1) self-funding — two inputs, both must be positive -------------------------------
@@ -135,7 +138,7 @@ def wall_coherence_read(
     boundary = [i for i in panel if i.maturity is not None
                 and abs((i.maturity - end).days) <= BOUNDARY_DAYS]
     if not agrees and boundary:
-        qa.append(f"wall coherence: divergence with an instrument maturing within "
+        qa.append(f"{WALL_FLAG} divergence with an instrument maturing within "
                   f"±{BOUNDARY_DAYS}d of the +12m boundary ({', '.join(i.name for i in boundary)}) "
                   "— possible window-convention artifact, not a true divergence")
     verb = "AGREES" if agrees else "DIVERGES"

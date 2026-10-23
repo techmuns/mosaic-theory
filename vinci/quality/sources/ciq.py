@@ -14,9 +14,10 @@ WHERE A PAGE STORES A VERDICT, IT IS READ; WHERE IT STORES ONLY THE INPUTS, THE 
 CONSTANT IS APPLIED (`EV_BRIDGE_CIQ_TOL`, `reconcile_cap`, `rent_disagrees`). Nothing is re-decided.
 
 STRUCTURED VALUES ONLY. A verdict that exists only as display text is listed in the coverage map
-as UNSCORED, with its path — never parsed here. Five that were (guide verification, wall
-coherence, self-funding, the vintage probe, the net-debt flag) store their outcome beside the line
-since 2026-10-23 (`schemas.CrossCheck`), and are scored from that.
+as UNSCORED, with its path — never parsed here. Three that were (guide verification, wall
+coherence, self-funding), and two bools that read True when nothing ran (the vintage probe, the
+net-debt flag), store their outcome beside the reading since 2026-10-23 (`schemas.CrossCheck`), and
+are scored from that.
 
 COUNTS AND STATUSES ONLY. The repo is public (2026-10-22): no CIQ figure, gap or quote reaches the
 snapshot. The tolerances are this repo's constants, not CIQ data.
@@ -192,26 +193,25 @@ def _market_cap_share_basis(page: dict[str, Any]) -> ItemResult:
     return one(DIFFERS_STATED if rc.corporate_action else CONFIRMED)
 
 
-def _guide_vs_release(page: dict[str, Any]) -> ItemResult:
+def _primary_source_check(page: dict[str, Any], key: str) -> ItemResult:
     ps = _get(page, "mechanical", "primary_source")
     if not isinstance(ps, dict):
         return ItemResult(not_run="no primary_source block on the page")
-    return _cross_check(page, ps, "guide_verification_check")
+    # the wall's boundary instrument is the one reason a page states for a divergence here
+    return _cross_check(page, ps, key, stated=key == "wall_coherence_check"
+                        and ps.get("wall_coherence_near_boundary") is True)
+
+
+def _guide_vs_release(page: dict[str, Any]) -> ItemResult:
+    return _primary_source_check(page, "guide_verification_check")
 
 
 def _wall_vs_10q(page: dict[str, Any]) -> ItemResult:
-    ps = _get(page, "mechanical", "primary_source")
-    if not isinstance(ps, dict):
-        return ItemResult(not_run="no primary_source block on the page")
-    return _cross_check(page, ps, "wall_coherence_check",
-                        stated=ps.get("wall_coherence_near_boundary") is True)
+    return _primary_source_check(page, "wall_coherence_check")
 
 
 def _fcf_sign_vs_edgar_ocf(page: dict[str, Any]) -> ItemResult:
-    ps = _get(page, "mechanical", "primary_source")
-    if not isinstance(ps, dict):
-        return ItemResult(not_run="no primary_source block on the page")
-    return _cross_check(page, ps, "self_funding_check")
+    return _primary_source_check(page, "self_funding_check")
 
 
 def _ev_bridge_vs_ciq_tev(page: dict[str, Any]) -> ItemResult:

@@ -1453,7 +1453,11 @@ def cross_check_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str]
 
     ticker = str(doc.get("ticker"))
     cik = doc.get("cik")
-    assembled = date.fromisoformat(str(doc.get("assembled_at"))[:10])
+    if not doc.get("assembled_at"):
+        # the OCF sign is read as filed by this date; without it no line can be proved
+        raise RefreshRefusedError(f"{ticker}: no assembled_at — the facts cannot be read as "
+                                  "assembly read them")
+    assembled = date.fromisoformat(str(doc["assembled_at"])[:10])
     path = next((p for p in (doc.get("forward_consensus") or {}).get("paths") or []
                  if p.get("metric") == "EBITDA" and p.get("period") == "FY 2026"), None)
     points = (path or {}).get("points") or []
@@ -1494,6 +1498,10 @@ def cross_check_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str]
             _put(ie, "vintage_check", v_check,
                  coherent == ie_m.vintage_coherent and note == ie_m.coherence_note,
                  "coherence_note")
+        elif isinstance(ie, dict):
+            refused.append(f"{ticker}: implied_expectations carries no comps name row with net "
+                           "debt, or no bridge market cap — net_debt_check and vintage_check "
+                           "cannot be rebuilt")
         ps = out.get("primary_source")
         ps_m = m.primary_source
         if not isinstance(ps, dict) or ps_m is None:
@@ -1515,7 +1523,7 @@ def cross_check_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str]
         tenq = next((f for f in filed if f.accession == acc), None)
         balance = (tenq.report_date if tenq is not None else None) or dm._latest_balance_date(facts)
         wall = dm._wall_read(ps_m.filing, dm._wall_panel(m.capital_structure), balance)
-        wall_qa = [f for f in ps_m.qa_flags if f.startswith("wall coherence:")]
+        wall_qa = [f for f in ps_m.qa_flags if f.startswith(eps.WALL_FLAG)]
         proved = wall.line == ps_m.wall_coherence.value and wall.qa == wall_qa
         if (_put(ps, "wall_coherence_check", wall.check, proved, "wall_coherence")
                 and wall.near_boundary is not None):
