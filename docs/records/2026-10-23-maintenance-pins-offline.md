@@ -1,8 +1,8 @@
 ---
 id: 2026-10-23-maintenance-pins-offline
-status: open
+status: shipped
 date: 2026-10-23
-prs: []
+prs: [785]
 supersedes:
 superseded-by:
 ---
