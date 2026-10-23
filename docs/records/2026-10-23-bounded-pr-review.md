@@ -1,8 +1,8 @@
 ---
 id: 2026-10-23-bounded-pr-review
-status: open
+status: shipped
 date: 2026-10-23
-prs: []
+prs: [784]
 supersedes:
 superseded-by:
 ---
