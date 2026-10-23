@@ -25,6 +25,8 @@ import pathlib
 
 import pytest
 
+from tests.sec_offline_support import no_network, seed_sec_cache
+from vinci.config import Config
 from vinci.dossier import assemble as asm
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -89,7 +91,8 @@ def test_the_mechanical_only_mode_cannot_reach_the_guard() -> None:
     assert "LLM synthesis skipped (no ANTHROPIC client) — mechanical layer only" in src
 
 
-def test_the_failure_is_counted_as_an_error_not_a_flag(monkeypatch) -> None:  # type: ignore[no-untyped-def]
+def test_the_failure_is_counted_as_an_error_not_a_flag(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: pathlib.Path) -> None:
     """The 07-30 run reported ``0 error(s)`` while destroying an artifact. A guard whose failure is
     not COUNTED as a failure has closed nothing.
 
@@ -97,7 +100,15 @@ def test_the_failure_is_counted_as_an_error_not_a_flag(monkeypatch) -> None:  # 
     string "except Exception" appears in the function — which would pass even if the handler were
     narrowed to a type that does not catch `DossierAssemblyError`, letting the refusal crash the
     whole batch instead of failing one name. This runs the real collection path: one name raises,
-    and the cohort must return it as an ERROR while continuing."""
+    and the cohort must return it as an ERROR while continuing.
+
+    OFFLINE, ON A TEMP CONFIG (2026-10-23). It used to call `assemble_cohort([fin])` with no `cfg`,
+    i.e. the DEFAULT Config — the checkout's own `data/`. `assemble_cohort` preloads the resolver
+    index before any worker runs, so on a fresh checkout (no `data/cache`) it fetched SEC's
+    `company_tickers.json` live inside `-m "not network"`, and it created `data/cache/` in the
+    checkout as a side effect. Measured with outbound refused: the ninth and last such failure of
+    the offline suite. It now passes a temp Config seeded from committed fixtures, with the
+    network refused."""
     from vinci.rank import load_candidates_from_snapshot
 
     snap = ROOT / "data" / "snapshots" / "candidate_records.jsonl"
@@ -110,7 +121,10 @@ def test_the_failure_is_counted_as_an_error_not_a_flag(monkeypatch) -> None:  # 
         raise asm.DossierAssemblyError("TEST: synthesis returned NOTHING — refusing to write")
 
     monkeypatch.setattr(asm, "assemble_one", _boom)
-    dossiers, errors = asm.assemble_cohort([fin])
+    cfg = Config(data_dir=tmp_path)
+    seed_sec_cache(cfg)
+    with no_network():
+        dossiers, errors = asm.assemble_cohort([fin], cfg=cfg)
 
     assert dossiers == [], "a refused build must produce no dossier"
     assert len(errors) == 1, f"the refusal was not collected as an error: {errors}"
