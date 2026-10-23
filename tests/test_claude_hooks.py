@@ -363,3 +363,82 @@ def test_review_gate_reads_a_heredoc_as_data_not_a_pr(tmp_path: pathlib.Path) ->
     assert _create(repo, [_review("toolu_r"), wrote_tests]).returncode == 0
     assert _create(repo, [], command=heredoc).returncode == 0
     assert _create(repo, [], command="cd x\ngh pr create --fill").returncode == 2
+
+
+# ── the review gate judges the checkout the PR comes from (2026-10-23) ───────────────────────────
+# Found live: the gate read the hook's `cwd` — the SESSION's folder — so `cd <docs-only checkout> &&
+# gh pr create` was refused for code files that were merged commits on the session's stale branch,
+# and the reverse (a clean session folder, a code PR from elsewhere) would have passed unreviewed.
+
+def _two_branch_repo(tmp_path: pathlib.Path) -> pathlib.Path:
+    """One repo, `main` checked out and clean, plus a `code` branch and a `docs` branch."""
+    repo = tmp_path / "repo"
+    (repo / "vinci").mkdir(parents=True)
+    (repo / "vinci" / "__init__.py").write_text("")
+    git = ["git", "-C", str(repo), "-c", "user.email=t@t", "-c", "user.name=t"]
+    subprocess.run([*git, "init", "-q", "-b", "main"], check=True)
+    subprocess.run([*git, "add", "-A"], check=True)
+    subprocess.run([*git, "commit", "-qm", "base"], check=True)
+    for branch, path in (("code", "vinci/probe.py"), ("docs", "docs/note.md")):
+        subprocess.run([*git, "switch", "-qc", branch, "main"], check=True)
+        (repo / path).parent.mkdir(parents=True, exist_ok=True)
+        (repo / path).write_text("x = 1\n")
+        subprocess.run([*git, "add", "-A"], check=True)
+        subprocess.run([*git, "commit", "-qm", branch], check=True)
+    subprocess.run([*git, "switch", "-q", "main"], check=True)
+    return repo
+
+
+def test_review_gate_judges_the_checkout_a_leading_cd_names(tmp_path: pathlib.Path) -> None:
+    """The live false positive: the session's own folder changes code, the PR's does not."""
+    session = _branch_checkout(tmp_path / "session", "vinci/probe.py")
+    docs_pr = _branch_checkout(tmp_path / "pr", "docs/records/note.md")
+    assert _create(session, [], command=f"cd {docs_pr} && gh pr create --fill").returncode == 0
+    assert _create(session, [], command=f'cd "{docs_pr}" && gh pr create --fill').returncode == 0
+
+
+def test_review_gate_gates_a_code_pr_opened_from_another_checkout(tmp_path: pathlib.Path) -> None:
+    """The reverse: a clean session folder no longer waves through a code PR made elsewhere."""
+    session = _branch_checkout(tmp_path / "session", "docs/records/note.md")
+    code_pr = _branch_checkout(tmp_path / "pr", "vinci/probe.py")
+    out = _create(session, [], command=f"cd {code_pr} && gh pr create --fill")
+    assert out.returncode == 2 and "vinci/probe.py" in out.stderr
+    assert _create(session, [_review("toolu_r")],
+                   command=f"cd {code_pr} && gh pr create --fill").returncode == 0
+
+
+def test_review_gate_judges_the_head_branch_when_one_is_named(tmp_path: pathlib.Path) -> None:
+    repo = _two_branch_repo(tmp_path)              # `main` checked out, nothing changed
+    for command in ("gh pr create --head code", "gh pr create -H code --base main"):
+        out = _create(repo, [], command=command)
+        assert out.returncode == 2 and "branch code" in out.stderr, command
+    for command in ("gh pr create --head docs", "gh pr create --head=docs --fill"):
+        assert _create(repo, [], command=command).returncode == 0, command
+
+
+def test_review_gate_treats_an_unresolvable_checkout_as_code(tmp_path: pathlib.Path) -> None:
+    """`cd "$W"` names a folder only the shell knows: with no `--head`, the gate cannot see the PR
+    and fails CLOSED; naming the branch lets it judge the PR exactly."""
+    repo = _two_branch_repo(tmp_path)
+    out = _create(repo, [], command='cd "$W" && gh pr create --fill')
+    assert out.returncode == 2 and "could not be determined" in out.stderr
+    assert _create(repo, [_review("toolu_r")], command='cd "$W" && gh pr create').returncode == 0
+    assert _create(repo, [], command='cd "$W" && gh pr create --head docs').returncode == 0
+
+
+def test_review_gate_leaves_a_pr_from_another_repository_alone(tmp_path: pathlib.Path) -> None:
+    session = _branch_checkout(tmp_path / "session", "vinci/probe.py")
+    other = tmp_path / "other-repo"
+    other.mkdir()
+    subprocess.run(["git", "-C", str(other), "init", "-q"], check=True)
+    assert _create(session, [], command=f"cd {other} && gh pr create --fill").returncode == 0
+
+
+def test_review_gate_reads_head_through_wrappers_and_fork_syntax(tmp_path: pathlib.Path) -> None:
+    """Found by this change's own review: `time gh pr create --head …` hid the flag, and GitHub's
+    cross-fork `owner:branch` form named no ref, so both were judged on the wrong thing."""
+    repo = _two_branch_repo(tmp_path)
+    assert _create(repo, [], command="time gh pr create --head code").returncode == 2
+    assert _create(repo, [], command="env A=1 gh pr create --head docs").returncode == 0
+    assert _create(repo, [], command="gh pr create --head techmuns:docs").returncode == 0
+    assert _create(repo, [], command="gh pr create --head techmuns:code").returncode == 2
