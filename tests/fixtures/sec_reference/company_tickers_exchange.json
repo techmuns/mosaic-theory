@@ -1,0 +1,190 @@
+{
+ "data": [
+  [
+   1652044,
+   "Alphabet Inc.",
+   "GOOGL",
+   "Nasdaq"
+  ],
+  [
+   1018724,
+   "AMAZON COM INC",
+   "AMZN",
+   "Nasdaq"
+  ],
+  [
+   59478,
+   "ELI LILLY & Co",
+   "LLY",
+   "NYSE"
+  ],
+  [
+   1403161,
+   "VISA INC.",
+   "V",
+   "NYSE"
+  ],
+  [
+   1065280,
+   "NETFLIX INC",
+   "NFLX",
+   "Nasdaq"
+  ],
+  [
+   109198,
+   "TJX COMPANIES INC /DE/",
+   "TJX",
+   "NYSE"
+  ],
+  [
+   1543151,
+   "Uber Technologies, Inc",
+   "UBER",
+   "NYSE"
+  ],
+  [
+   745732,
+   "ROSS STORES, INC.",
+   "ROST",
+   "Nasdaq"
+  ],
+  [
+   27419,
+   "TARGET CORP",
+   "TGT",
+   "NYSE"
+  ],
+  [
+   320187,
+   "NIKE, Inc.",
+   "NKE",
+   "NYSE"
+  ],
+  [
+   1579298,
+   "Burlington Stores, Inc.",
+   "BURL",
+   "NYSE"
+  ],
+  [
+   749251,
+   "GARTNER INC",
+   "IT",
+   "NYSE"
+  ],
+  [
+   1262823,
+   "WESTLAKE CORP",
+   "WLK",
+   "NYSE"
+  ],
+  [
+   1352010,
+   "EPAM Systems, Inc.",
+   "EPAM",
+   "NYSE"
+  ],
+  [
+   907654,
+   "Oruka Therapeutics, Inc.",
+   "ORKA",
+   "Nasdaq"
+  ],
+  [
+   821483,
+   "PAR PACIFIC HOLDINGS, INC.",
+   "PARR",
+   "NYSE"
+  ],
+  [
+   1902733,
+   "nCino, Inc.",
+   "NCNO",
+   "Nasdaq"
+  ],
+  [
+   793074,
+   "WERNER ENTERPRISES INC",
+   "WERN",
+   "Nasdaq"
+  ],
+  [
+   1803599,
+   "Concentrix Corp",
+   "CNXC",
+   "Nasdaq"
+  ],
+  [
+   784199,
+   "ARTIVION, INC.",
+   "AORT",
+   "NYSE"
+  ],
+  [
+   1772016,
+   "BELLRING BRANDS, INC.",
+   "BRBR",
+   "NYSE"
+  ],
+  [
+   1702744,
+   "Simply Good Foods Co",
+   "SMPL",
+   "Nasdaq"
+  ],
+  [
+   1682745,
+   "VERRA MOBILITY Corp",
+   "VRRM",
+   "Nasdaq"
+  ],
+  [
+   1681087,
+   "Tectonic Therapeutic, Inc.",
+   "TECX",
+   "Nasdaq"
+  ],
+  [
+   1579733,
+   "Vital Farms, Inc.",
+   "VITL",
+   "Nasdaq"
+  ],
+  [
+   1484769,
+   "FuboTV Inc.",
+   "FUBO",
+   "NYSE"
+  ],
+  [
+   1760689,
+   "Microvast Holdings, Inc.",
+   "MVST",
+   "Nasdaq"
+  ],
+  [
+   1652044,
+   "Alphabet Inc.",
+   "GOOG",
+   "Nasdaq"
+  ],
+  [
+   1652044,
+   "Alphabet Inc.",
+   "GOOGM",
+   "Nasdaq"
+  ],
+  [
+   1652044,
+   "Alphabet Inc.",
+   "GOOGN",
+   "Nasdaq"
+  ]
+ ],
+ "fields": [
+  "cik",
+  "name",
+  "ticker",
+  "exchange"
+ ]
+}

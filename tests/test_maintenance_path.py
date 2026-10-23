@@ -22,20 +22,31 @@ import functools
 import json
 import pathlib
 import tempfile
+from collections.abc import Iterator
 from datetime import date as dt_date
 
 import pytest
 
 import vinci.dossier.assemble as asm
+from tests.sec_offline_support import no_network, seed_sec_cache
 from vinci.config import Config
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 PRICE_FIXTURES = ROOT / "tests" / "fixtures" / "prices"
 
 #: Everything under `data/` these pins legitimately read. Symlinked rather than copied so they run
-#: against the REAL committed artifacts; only the store is substituted.
-_LINKED = ("dossiers", "snapshots", "cache", "manual", "monitor", "followed.json",
-           "graph_coverage.json")
+#: against the REAL committed artifacts; only the store and the SEC cache are substituted. The cache
+#: is seeded from committed fixtures (`tests/sec_offline_support.py`): the real `data/cache` is
+#: git-ignored, so on a fresh checkout the resolver fetched `company_tickers.json` live inside
+#: `-m "not network"`, and 8 pins failed with the network refused (2026-10-23).
+_LINKED = ("dossiers", "snapshots", "manual", "monitor", "followed.json", "graph_coverage.json")
+
+
+@pytest.fixture(autouse=True)
+def _offline() -> Iterator[None]:
+    """Every pin runs with outbound connections refused: a fixture gap fails, never fetches."""
+    with no_network():
+        yield
 
 
 @functools.lru_cache(maxsize=1)
@@ -68,6 +79,7 @@ def _cfg() -> Config:
         if src.exists():
             (tmp / name).symlink_to(src)
     cfg = Config(data_dir=tmp)
+    seed_sec_cache(cfg)
     with Store(cfg.db_path) as store:
         for f in sorted(PRICE_FIXTURES.glob("*.jsonl")):
             store.write_prices([
