@@ -1,8 +1,8 @@
 ---
 id: 2026-10-23-offline-suite-is-offline
-status: open
+status: shipped
 date: 2026-10-23
-prs: []
+prs: [786]
 supersedes:
 superseded-by:
 ---
