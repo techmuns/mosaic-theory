@@ -2651,6 +2651,47 @@ def _cmd_audit_r1(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_audit_ciq(args: argparse.Namespace) -> int:
+    """CIQ data-quality scorecard — READ-ONLY over the committed pages (`vinci.audit_ciq`).
+
+    Prints every check's fleet counts and every name, then the coverage map. `--write` also writes
+    the dated snapshot, so the answer becomes a series. The boundary is stamped on both: the date,
+    the commit, whether the pages match it, and a hash of the page set itself. No pages is a
+    failure, never an empty scorecard."""
+    import subprocess
+    from datetime import date as _date
+
+    from vinci import audit_ciq as aq
+
+    root = Path.cwd()
+    pages = aq.load_pages(root)
+    if not pages:
+        print("no committed dossier under data/dossiers — nothing to score", file=sys.stderr)
+        return 1
+    try:  # the commit is boundary metadata — unavailable is a stated None, not a failure
+        head: str | None = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True,
+            timeout=5).stdout.strip() or None
+        dirty = subprocess.run(
+            ["git", "status", "--porcelain", "--", "data/dossiers"], capture_output=True,
+            text=True, check=True, timeout=10).stdout.strip()
+        match: bool | None = not dirty
+    except (OSError, subprocess.SubprocessError):
+        head, match = None, None
+    as_of = args.as_of or _date.today().isoformat()
+    card = aq.scorecard(pages, measured_on=as_of, git_head=head, dossiers_match_head=match,
+                        dossier_sha256=aq.dossier_set_sha256(root))
+    print(aq.render(card))
+    if args.write:
+        out = aq.snapshot_path(root, as_of)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        body = json.dumps(card, indent=1, ensure_ascii=False) + "\n"
+        before = out.read_text() if out.exists() else None
+        out.write_text(body)
+        print(f"\nsnapshot {'unchanged' if before == body else 'written'}: {out.relative_to(root)}")
+    return 0
+
+
 # Scenario statuses that are NOT ledger positions but must still be watched for staleness:
 #   watch            — a standing re-underwrite trigger (WERN)
 #   pending_analyst  — the underwrite is RUN and the verdict is outstanding (EPAM). A record
@@ -4457,6 +4498,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_spot = audit_sub.add_parser(
         "spot", help="every record's spot against the bar it claims to be (read-only; notes print)")
     p_spot.set_defaults(func=_cmd_audit_spot)
+    p_ciq = audit_sub.add_parser(
+        "ciq", help="CIQ data-quality scorecard over the committed pages (counts and statuses)")
+    p_ciq.add_argument("--as-of", dest="as_of",
+                       help="date stamp for the scorecard (default: today)")
+    p_ciq.add_argument("--write", action="store_true",
+                       help="also write data/snapshots/ciq_quality/<as-of>.json")
+    p_ciq.set_defaults(func=_cmd_audit_ciq)
 
     p_calls = sub.add_parser("calls", help="the calls tape — score a public account's stated calls")
     calls_sub = p_calls.add_subparsers(dest="calls_what", required=True)

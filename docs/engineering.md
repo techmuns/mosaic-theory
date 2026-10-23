@@ -119,6 +119,11 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **CIQ quality scorecard / internal vs independent check** (2026-10-23) — `vinci audit ciq`. Plain
+  words: *a count, per check and per name, of how often a CIQ figure on the committed pages agrees
+  with a second figure. **Independent:** the second figure is EDGAR's or the EOD close. **Internal:**
+  it is another CIQ export, which catches a misread or two different pulls, never CIQ being wrong.*
+  Home: `vinci/audit_ciq.py`; the series is `data/snapshots/ciq_quality/<date>.json`.
 - **Operator decision / re-tag** — the operator's own call on which valuation recipe fits a name.
   Plain words: *a hand re-tag, kept in its own block with its reason, who, when and where it is
   recorded — the machine's own recipe and reason sit beside it, never inside it.* Home:

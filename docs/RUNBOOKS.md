@@ -675,6 +675,40 @@ requires the latest day's panels to equal what today's pages emit, so a moved pa
 
 ---
 
+## k. CIQ DATA QUALITY — the scorecard, and the tests that need the workbooks
+
+**The scorecard** — `PYTHONPATH=$PWD $VENV/python -m vinci.cli audit ciq [--as-of YYYY-MM-DD] [--write]`
+(`vinci/audit_ciq.py`). Read-only over the COMMITTED pages (`data/dossiers/*/dossier.json`), never
+the workbooks, so it runs in any checkout and in CI. It prints every check (per name and fleet:
+confirmed / differs with a stated reason / differs unexplained / unchecked, plus pages not run or
+not applicable, each named), then the coverage map (each CIQ field family: independent, internal,
+single-source or unchecked). `--write` writes `data/snapshots/ciq_quality/<as-of>.json` — counts and
+statuses only, never a CIQ figure (the repo is public).
+- **When:** after every artifact pass that moves `data/dossiers/*`, and at the monthly sweep. Commit
+  the snapshot as an ARTIFACT commit, never bundled with code. `tests/test_audit_ciq.py` re-derives
+  the latest snapshot byte-for-byte whenever the page set's sha256 matches the one it names.
+- **Reading it:** "internal" means CIQ against another CIQ export: the sheets were read coherently and
+  the pulls match, not that CIQ is right. A family marked UNSCORED has a check that runs, but no
+  structured verdict on the page; the scorecard parses no display text.
+
+**The tests that need the licensed workbooks run only where `data/manual/ciq/` exists.** The folder is
+git-ignored, so CI never has it and a fresh worktree does not either. Measured 2026-10-23 at
+`4489e864` (`pytest -m "not network" -rs` in an app worktree without the folder): **27 test files skip
+479 tests** for want of the workbooks. One more file, `tests/test_primary_source.py`, needs them as
+well, but its test is `network`-marked, so the offline suite deselects it. Three files that name the
+loader (`test_ciq_charting`, `test_ev_ebitda_basis`, `test_release_amount_scale`) point it at
+synthetic data and run everywhere. A green suite in CI or in a `.claude/worktrees/*` checkout has
+therefore NOT run those 479 tests: run them in the operator's primary checkout, which holds the
+folder (as a link to the synced Drive copy).
+- **Worktrees can hold the folder too, and most hold a COPY.** On 2026-10-23, 54 of the 70 worktrees
+  registered on the operator's machine had `data/manual/ciq/`; the 6 app worktrees and 10 others did
+  not. Only 3 of the 54 resolve to the primary's folder (the primary and two siblings linked to it).
+  Three siblings (`-main`, `-sl`, `-ta`) hold their own copy, 47 agent scratch worktrees link to
+  `-ta`'s copy, and 1 links elsewhere. A copy can lag the Drive mirror, so before you read a run
+  outside the primary as covering the CURRENT workbooks, check where the folder resolves.
+
+---
+
 ## KNOWN GAP
 
 **None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut
