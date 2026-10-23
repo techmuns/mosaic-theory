@@ -62,7 +62,7 @@ def no_network() -> Iterator[None]:
 
     def refuse(*_a: object, **_k: object) -> object:
         raise AssertionError(
-            "a maintenance pin reached for the network — it reads committed SEC fixtures only. "
+            "a pin reached for the network — it reads committed SEC fixtures only. "
             "A missing name: run `python scripts/build_sec_reference_fixture.py` (ticker files) or "
             "`python scripts/build_companyfacts_fixture.py` (facts) in the SAME PR that adds it.")
 
