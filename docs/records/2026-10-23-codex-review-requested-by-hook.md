@@ -1,8 +1,8 @@
 ---
 id: 2026-10-23-codex-review-requested-by-hook
-status: open
+status: shipped
 date: 2026-10-23
-prs: []
+prs: [789]
 supersedes:
 superseded-by:
 ---
@@ -35,11 +35,27 @@ makes the opening request and that its own one re-review is separate from it.
 
 **WHY.** Codex is every PR's second reviewer (`2026-10-23-bounded-pr-review`), and its automatic
 review is enabled for the repo, but it never fired on a PR this repo's agents opened as
-`nogods404`. #784, #785, #786 and #788 each waited for a hand-typed `@codex review`, which is the
-step a busy session forgets. The operator asked for the request to be mandatory on a code PR,
-using the same code rule as the review gate.
+`nogods404`. #784, #785 and #786 were each reviewed only after a hand-typed `@codex review`.
+#787 (docs only) and #788 (code) opened and merged with no Codex review at all, because nobody
+typed one. That is the step a busy session forgets. The operator asked for the request to be
+mandatory on a code PR, using the same code rule as the review gate.
+
+The connector's other reply on open, *"To use Codex here, create an environment for this repo"*,
+is not a review. It appeared exactly on the PRs whose BODY mentions `@codex` (#784 and #789, of
+#784–#789), within 15 seconds of opening. A mention in the body starts no review; a comment does.
 
 **HOW VERIFIED.**
+
+- **Live, on this PR (#789).** This session's own `gh pr create` returned `gitOperation.pr` =
+  `{number: 789, action: "created"}`. That real command and real `tool_response`, read back from
+  the transcript, were fed to the hook under the system `/usr/bin/python3` (3.9.6), with the real
+  `gh` logged in as `nogods404`. The hook exited 0, told the agent the request was posted, and
+  `nogods404` commented `@codex review` at 12:15:10Z. Codex's review-summary comment followed at
+  12:15:29Z with its code review `"status":"running"` on the PR head `803c5d31`. The new hook
+  could not fire by itself in this session: hooks run from the primary checkout, which does not
+  have it yet.
+- **Live, a second time on the same payload:** exit 0, no output, and #789 still carries exactly
+  one `@codex review` comment.
 
 - **A dry replay of every real `gh pr create` in this session's transcript**, with `gh` replaced by
   a recorder on PATH so nothing was posted:
@@ -80,6 +96,8 @@ using the same code rule as the review gate.
 
 **BOUNDARY.**
 
+- **The live run.** PR #789's comments via `gh pr view --json comments`, 2026-10-23 12:15Z.
+- **The connector's reply.** PRs #784–#789, comments and bodies via `gh pr view`, 2026-10-23.
 - **The replay.** This session's transcript (`a08ef917…jsonl`) on 2026-10-23: 27 Bash calls whose
   command text contains `gh pr create` and that carry a recorded `tool_response`; 8 of them created
   a PR (#781–#788). Code judged by `--head` branch against `main` as of `0750e917`. PR file lists
