@@ -41,7 +41,8 @@ never a reading of its words. One that does not reproduce is left absent and nam
 
 **THE ANSWER, 2026-10-24** (27 committed pages after the back-fill; the five checks as the
 snapshot `data/snapshots/data_quality/ciq/2026-10-24.json` counts them, one unit per page; its
-`git_head` f02a5224, inputs matching it, page-set sha256 `1cd4ebfe…`). #792's 2026-10-23 point
+`git_head` dd4eb428, inputs matching it, page-set sha256 `1cd4ebfe…`; rewritten the same day on
+the merge of #792's `35ff09d0`, whose 2026-10-24 point it replaces). #792's 2026-10-23 point
 stands beside it, unchanged — the series' first, nine checks.
 
 | check | independence | confirmed | differs, stated | differs, unexplained | unchecked | not run |
@@ -50,7 +51,7 @@ stands beside it, unchanged — the series' first, nine checks.
 | `wall_vs_10q` — CIQ panel vs the 10-Q maturity wall | independent | 0 | 1 (MVST, an instrument at the +12m boundary) | 0 | 26 | 0 |
 | `fcf_sign_vs_edgar_ocf` — the two signs | independent | 20 | 0 | 7 (AORT BRBR CNXC EPAM MVST PARR WLK) | 0 | 0 |
 | `forward_multiple_vintage` — FY26 ladder at TEV vs FY26 consensus | internal | 18 | 0 | 1 (FUBO) | 8 | 0 |
-| `net_debt_vs_implied_bridge` — comps net debt vs the bridge | internal | 25 | 0 | 2 (ORKA, UBER) | 0 | 0 |
+| `net_debt_vs_implied_bridge` — comps net debt vs the bridge | internal | 25 | 1 (UBER: CIQ's netting) | 1 (ORKA) | 0 | 0 |
 
 The guide's 19 unchecked: no CIQ guide, a release with no number or only a qualitative one, a
 change guide against CIQ's level, a quarter against a year. The wall's 26: the 10-Q states no
@@ -58,8 +59,9 @@ change guide against CIQ's level, a quarter against a year. The wall's 26: the 1
 `vintage_coherent: true` and its probe never ran**: BURL NCNO NKE ROST TGT TJX have already
 reported FY 2026 (their ladder and Trends start at FY 2027), and ORKA and TECX carry no positive
 FY 2026 EV/EBITDA multiple. #792 could not score them; counted on the flag they would have been
-eight confirmations. The net-debt counts are #792's (every committed bridge has its structured
-floats); the field only makes them read off an outcome rather than a flag.
+eight confirmations. The net-debt counts are #792's: every committed bridge has its structured
+floats, and UBER's gap is exactly CIQ's netted long-term securities, a stated reason (#792's
+`35ff09d0`, merged in here). The field only makes them read off an outcome rather than a flag.
 
 Coverage, 25 families: **8 independent, 4 internal, 10 single-source, 3 unchecked** (was 5 / 4 /
 10 / 6). `financials.cash_flow`, `financials.capital_structure` and `estimates.guidance` become
@@ -123,7 +125,7 @@ prose cannot be read without parsing display text — which the house rule forbi
   named.
 
 **BOUNDARY.** Every count above is over the 27 committed pages (`data/dossiers/*/dossier.json`), as
-back-filled at `048fb657` and scored at `f02a5224` (the 2026-10-24 snapshot, written 00:00 IST), with one unit per page per
+back-filled at `048fb657` and scored at the merge of #792's `35ff09d0` (the 2026-10-24 snapshot), with one unit per page per
 check. The
 coverage and failure-class counts are over the CIQ source's 25 field families. The census ran at
 `57471a07` on the same 27 pages before any change. EDGAR was read on 2026-10-23, 23:00–23:30 IST

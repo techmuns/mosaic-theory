@@ -21,7 +21,7 @@ import pytest
 from vinci.cli import main
 from vinci.dossier.anchor import BASIS_AGREE_PTS, AnchorMidcycleGap
 from vinci.dossier.ciq import _WORKBOOK_KEYWORDS
-from vinci.dossier.ciq_sheets import EV_BRIDGE_CIQ_TOL
+from vinci.dossier.ciq_sheets import _NETTED_LABEL, EV_BRIDGE_CIQ_TOL
 from vinci.dossier.lease_basis import _RENT_DISAGREE, rent_disagrees
 from vinci.dossier.schemas import (
     CHECK_AGREE,
@@ -37,6 +37,7 @@ from vinci.dossier.schemas import (
     LeaseBasis,
     LeaseObservation,
     OwnHistoryBand,
+    PeerRow,
     PrimarySource,
     Sourced,
 )
@@ -318,6 +319,45 @@ def test_net_debt_flag_is_not_counted_where_the_bridge_is_absent() -> None:
     assert "not_run" in _row(_card({"FLG": bare}), "net_debt_vs_implied_bridge", "FLG")
 
 
+def _netting_page(ticker: str, *, comps_net_debt: float, netted: float | None) -> dict[str, Any]:
+    """A page whose comps net debt sits BELOW its cash/debt bridge (debt 20 − cash 10 = 10),
+    as CIQ's Net Debt does when it nets long-term marketable securities (UBER, 2026-10-23)."""
+    page = _page(ticker, iv=_implied_valuation(10.0, 20.0),
+                 ie=_ie(nd_reconciled=False, nd_check=CHECK_DIFFER))
+    page["mechanical"]["peer_comps"] = {"peer_grid": {"status": "present", "value": [
+        PeerRow(name="peer", ticker="X:P", net_debt=SENTINEL).model_dump(mode="json"),
+        PeerRow(name=ticker, ticker=f"X:{ticker}", is_name=True,
+                net_debt=comps_net_debt).model_dump(mode="json")]}}
+    if netted is not None:
+        page["ev_bridge"] = EvBridge(
+            lines=[ClaimLine(label="Total Debt", sign=1, value=20.0, source="synthetic"),
+                   ClaimLine(label=_NETTED_LABEL, sign=-1, value=netted, source="synthetic")],
+            claims=comps_net_debt, net_debt=comps_net_debt, rule="synthetic",
+        ).model_dump(mode="json")
+    return page
+
+
+def test_net_debt_gap_that_is_ciqs_netting_is_a_stated_reason() -> None:
+    """Operator, 2026-10-24: CIQ's Net Debt nets long-term marketable securities and the comps
+    bridge is debt − cash, so where the gap IS the page's netted line (UBER: 9,340 − 4,744 =
+    4,596 netted) the difference has a stated reason. A gap the netting does not account for,
+    or a page that carries no netted line (ORKA), stays unexplained."""
+    exact = _netting_page("NET", comps_net_debt=6.0, netted=4.0)
+    edge = _netting_page("EDG", comps_net_debt=6.0 - EV_BRIDGE_CIQ_TOL, netted=4.0)
+    wrong = _netting_page("WRG", comps_net_debt=5.0, netted=4.0)
+    none_ = _netting_page("NON", comps_net_debt=6.0, netted=None)
+    card = _card({"NET": exact, "EDG": edge, "WRG": wrong, "NON": none_})
+    assert _row(card, "net_debt_vs_implied_bridge", "NET") == _counts(stated=1)
+    assert _row(card, "net_debt_vs_implied_bridge", "EDG") == _counts(stated=1)
+    assert _row(card, "net_debt_vs_implied_bridge", "WRG") == _counts(unexplained=1)
+    assert _row(card, "net_debt_vs_implied_bridge", "NON") == _counts(unexplained=1)
+    # a page whose flag already agrees is confirmed whatever its netting
+    agree = _netting_page("AGR", comps_net_debt=10.0, netted=0.0)
+    agree["mechanical"]["valuation"]["implied_expectations"].update(
+        net_debt_reconciled=True, net_debt_check=CHECK_AGREE)
+    assert _row(_card({"AGR": agree}), "net_debt_vs_implied_bridge", "AGR") == _counts(confirmed=1)
+
+
 def test_net_debt_never_scores_a_display_parsed_bridge() -> None:
     """Codex, #792 round 1: the producer's `_ie_bridge_net_debt` falls back to PARSING the bridge's
     display string when its structured floats are absent. A bridge known only from display text is
@@ -560,6 +600,21 @@ def test_committed_corpus_card_is_coherent() -> None:
 
 
 @needs_pages
+def test_every_stated_net_debt_difference_is_exactly_the_netting() -> None:
+    card = core.scorecard(ciq.SOURCE, ciq.corpus(_PAGES, ""), measured_on="2026-10-24",
+                          git_head=None, inputs_match_head=None)
+    for t, row in _check(card, "net_debt_vs_implied_bridge")["by_name"].items():
+        if not row.get(core.DIFFERS_STATED):
+            continue
+        p = _PAGES[t]
+        iv = p["mechanical"]["implied_valuation"]
+        nd = next(r["net_debt"] for r in p["mechanical"]["peer_comps"]["peer_grid"]["value"]
+                  if r.get("is_name"))
+        netted = next(ln["value"] for ln in p["ev_bridge"]["lines"] if ln["label"] == _NETTED_LABEL)
+        assert abs(iv["bridge_debt"] - iv["bridge_cash"] - nd - netted) <= EV_BRIDGE_CIQ_TOL, t
+
+
+@needs_pages
 def test_committed_market_caps_are_ciqs() -> None:
     """The market-cap check is a CIQ check only while the page's cap IS CIQ's."""
     refs = {t: ((p["mechanical"]["stock_info"].get("market_cap") or {}).get("source_ref") or "")
@@ -647,6 +702,9 @@ def test_every_committed_outcome_is_scored_as_the_page_stores_it() -> None:
             if cid == "net_debt_vs_implied_bridge" and (iv.get("bridge_cash") is None
                                                         or iv.get("bridge_debt") is None):
                 want = core.UNCHECKED
+            if cid == "net_debt_vs_implied_bridge" and v == CHECK_DIFFER and row.get(
+                    core.DIFFERS_STATED):
+                want = core.DIFFERS_STATED   # CIQ's netting — which pages, the netting pin says
             assert row == {**_counts(), want: 1}, (cid, t, v, row)
 
 

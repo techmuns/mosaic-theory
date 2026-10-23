@@ -32,7 +32,7 @@ from typing import Any
 
 from vinci.dossier.anchor import BASIS_AGREE_PTS, MIDCYCLE_GAP_PTS
 from vinci.dossier.band_guards import _MAX_IMPLIED_DA_MARGIN, BAND_INCOHERENT
-from vinci.dossier.ciq_sheets import EV_BRIDGE_CIQ_TOL
+from vinci.dossier.ciq_sheets import _NETTED_LABEL, EV_BRIDGE_CIQ_TOL
 from vinci.dossier.ebitda_recon import DIFFERENT_SHARE
 from vinci.dossier.freshness import _INTEGER_TOLERANCE, reconcile_cap
 from vinci.dossier.lease_basis import (
@@ -232,10 +232,22 @@ def _net_debt_vs_implied_bridge(page: dict[str, Any]) -> ItemResult:
     # its outcome is read instead (`net_debt_check`). And the bridge counts only as its two
     # STRUCTURED floats: the producer's `_ie_bridge_net_debt` falls back to parsing the display
     # string, which is no structured second figure (Codex, #792 round 1)
-    r = _cross_check(page, ie, "net_debt_check")
     iv = _get(page, "mechanical", "implied_valuation")
-    if r.not_run is None and (_num(_get(iv, "bridge_cash")) is None
-                              or _num(_get(iv, "bridge_debt")) is None):
+    cash, debt = _num(_get(iv, "bridge_cash")), _num(_get(iv, "bridge_debt"))
+    # CIQ'S NET DEBT NETS LONG-TERM MARKETABLE SECURITIES; the comps bridge is debt − cash. Where
+    # the gap IS the page's netted line (UBER 2026-10-23: 9,340 − 4,744 = the 4,596 netted, to the
+    # dollar), a difference has a stated reason (operator, 2026-10-24). Every figure is a
+    # structured one: the comps net debt is the name's own row in the peer grid, the one
+    # `mechanical._implied_expectations` builds TEV from.
+    nd = next((_num(r.get("net_debt")) for r in _get(page, "mechanical", "peer_comps",
+                                                     "peer_grid", "value") or []
+               if isinstance(r, dict) and r.get("is_name")), None)
+    netted = next((_num(ln.get("value")) for ln in _get(page, "ev_bridge", "lines") or []
+                   if isinstance(ln, dict) and ln.get("label") == _NETTED_LABEL), None)
+    netting = (cash is not None and debt is not None and nd is not None and bool(netted)
+               and abs(debt - cash - nd - (netted or 0.0)) <= EV_BRIDGE_CIQ_TOL)
+    r = _cross_check(page, ie, "net_debt_check", stated=netting)
+    if r.not_run is None and (cash is None or debt is None):
         return one(UNCHECKED)
     return r
 
@@ -368,7 +380,9 @@ CHECKS: tuple[Check, ...] = (
           "net_debt_check, never its net_debt_reconciled flag, which also reads True with no "
           "bridge; counted only where the bridge's structured bridge_cash and bridge_debt both "
           "exist",
-          "pages carrying mechanical.valuation.implied_expectations", None, None,
+          "pages carrying mechanical.valuation.implied_expectations",
+          f"the gap is CIQ netting long-term marketable securities: debt − cash − comps net debt "
+          f"equals the page's netted line (ev_bridge) within ${EV_BRIDGE_CIQ_TOL:g}M", None,
           ("wrong_cell", "wrong_unit"),
           _net_debt_vs_implied_bridge),
     Check("multiples_sheet_coherence",

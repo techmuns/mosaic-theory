@@ -6,7 +6,7 @@
  },
  "boundary": {
   "measured_on": "2026-10-24",
-  "git_head": "f02a5224",
+  "git_head": "dd4eb428",
   "inputs_match_head": true,
   "reads": "data/dossiers/*/dossier.json",
   "item_noun": "page",
@@ -1804,7 +1804,7 @@
    "unit": "page",
    "tolerance": "within 10% of the net debt (mechanical._net_debt_probe) — the page's net_debt_check, never its net_debt_reconciled flag, which also reads True with no bridge; counted only where the bridge's structured bridge_cash and bridge_debt both exist",
    "population": "pages carrying mechanical.valuation.implied_expectations",
-   "stated_reason": null,
+   "stated_reason": "the gap is CIQ netting long-term marketable securities: debt − cash − comps net debt equals the page's netted line (ev_bridge) within $0.5M",
    "excluded_rule": null,
    "catches": [
     "wrong_cell",
@@ -1815,8 +1815,8 @@
     "items_run": 27,
     "units": 27,
     "confirmed": 25,
-    "differs_stated": 0,
-    "differs_unexplained": 2,
+    "differs_stated": 1,
+    "differs_unexplained": 1,
     "unchecked": 0,
     "excluded": 0,
     "items_not_run": 0,
@@ -1953,8 +1953,8 @@
     },
     "UBER": {
      "confirmed": 0,
-     "differs_stated": 0,
-     "differs_unexplained": 1,
+     "differs_stated": 1,
+     "differs_unexplained": 0,
      "unchecked": 0
     },
     "V": {
