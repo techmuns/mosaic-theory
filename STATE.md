@@ -717,6 +717,7 @@ Each line: *what it does* — *verified how*.
 - **TJX joins the followed names in the OVERSHOOT book, and its first page lands** (artifacts only, #747, on #748). Operator-chosen book and approved reason (2026-10-18); every price input at the 2026-10-16 close; draws 4 strongly-bullish / 1 mixed, so the machine proposal is withheld. `docs/records/2026-10-18-tjx-followed-and-assembled.md`
 - **Three CLAUDE.md rules are hooks** (`.claude/settings.json`, `.claude/hooks/`): the §5.0 index at session start, a Stop-time fast gate on uncommitted Python (ruff, `mypy --strict vinci`, the tests that import a changed module; blocks ≤3 times), and a prompt before a decision-line file is edited. Pinned positive and negative in `tests/test_claude_hooks.py`. `docs/records/2026-10-22-agent-hooks-checked-in.md`
 - **An agent's PR on a code change is reviewed before it opens** (`.claude/hooks/review_gate.py`, PreToolUse on Bash): `gh pr create` is refused until the session transcript shows a `code-review` at effort high or above since the last PR it opened; docs/data-only branches pass. `docs/records/2026-10-22-pr-review-gate.md`
+- **PR feedback is bounded** (`.claude/skills/pr-feedback`, `.gemini/`, `AGENTS.md` § Code Review Rules): Codex and Gemini review once and only comment; the PR's session triages — FIX only behind a failing test — at most 2 rounds. Apps not yet installed. `docs/records/2026-10-23-bounded-pr-review.md`
 
 ## 3. FALSIFIED — tested and retired (NOT deferred)
 

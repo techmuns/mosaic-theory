@@ -92,7 +92,11 @@ verdict placement.
   §5.0 index; a turn cannot end while uncommitted Python fails the fast gate (up to 3 tries); an
   edit to a decision-line file asks the operator first; `gh pr create` on a code change is refused
   until `/code-review high --fix` has run since the last PR (apply only confirmed fixes; list every
-  finding as FIXED or DISMISSED in the PR body). Fix what they report — never edit around them.
+  finding as a round-0 row of the PR body's Review dispositions table). Fix what they report — never edit around them.
+- **PR feedback is bounded** (`.claude/skills/pr-feedback`): Codex and Gemini review each PR when
+  it opens and only comment; the PR's own session triages every finding — FIX only behind a test that fails
+  first, else DISMISS or DEFER — one commit per round, at most 2 rounds, then stops. Never post
+  `@codex fix`; the operator merges.
 - **Regression-test every bug fix** — a fix without a test that would have caught it isn't done.
 - **Work on a local branch, never directly on main. The agent opens a PR and STOPS — it never merges
   to main itself.** Green (ruff + `mypy --strict` + `pytest`) is *necessary but not sufficient*: a

@@ -164,8 +164,9 @@ def main() -> int:
           "2. Keep only fixes for CONFIRMED correctness bugs or stated-requirement gaps; revert "
           "anything speculative or style-only (CLAUDE.md: hold scope).\n"
           "3. Commit the fixes through bin/commit and push.\n"
-          "4. In the PR body, add a 'Code review (high)' section listing every finding as FIXED or "
-          "DISMISSED with a one-line reason.", file=sys.stderr)
+          "4. In the PR body's '## Review dispositions' table, add every finding as a round-0 row "
+          "with its outcome — FIX, DISMISS or DEFER, with the test or the reason "
+          "(.claude/skills/pr-feedback).", file=sys.stderr)
     return 2
 
 
