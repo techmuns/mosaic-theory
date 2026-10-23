@@ -1,0 +1,34 @@
+# Gemini Code Assist on GitHub — a COMMENT-ONLY second reviewer.
+# The process it feeds: `.claude/skills/pr-feedback/SKILL.md` (bounded triage by the PR's own
+# Claude session); the reasoning: `docs/records/2026-10-23-bounded-pr-review.md`.
+#
+# - HIGH and above only: style, naming and "consider adding" comments cost a triage each and
+#   are the over-engineering a reviewer asked for gaps produces.
+# - No comment cap (-1): a cap drops findings without saying so, and this repo's rule is that a
+#   truncated output prints its own truncation. The severity floor bounds the volume instead.
+# - Review on open, drafts included; no summary or help post. Gemini is not asked to re-review.
+# - Derived data, records and prose are not reviewed: they are artifacts or narrative, and
+#   their checks live in the test suite.
+have_fun: false
+ignore_patterns:
+  - "data/**"
+  - "docs/**"
+  - "planning/**"
+  - "scenarios/**"
+  - "STATE.md"
+  - "frontend/dossiers/**"
+  - "frontend/theme-intelligence/**"
+  - "frontend/calls/**"
+  - "frontend/*.json"
+  - "frontend/**/*.json"
+  - "frontend/*.jsonl"
+  - "frontend/**/*.jsonl"
+code_review:
+  disable: false
+  comment_severity_threshold: HIGH
+  max_review_comments: -1
+  pull_request_opened:
+    help: false
+    summary: false
+    code_review: true
+    include_drafts: true
