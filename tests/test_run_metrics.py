@@ -328,3 +328,23 @@ def test_a_model_without_a_list_price_costs_unknown_not_zero() -> None:
         run_id="r", ticker="X", started=dt.datetime(2026, 10, 23, tzinfo=dt.UTC),
         finished=dt.datetime(2026, 10, 23, 0, 1, tzinfo=dt.UTC), meter=meter)
     assert record["usd"] is None and record["totals"]["input_tokens"] == 100
+
+
+def test_an_unpriced_model_stays_unknown_even_when_no_call_was_metered() -> None:
+    """Codex review of #791 (P2). With every call failing before a response, there was no cost to
+    look up, and the record wrote $0.00 — a priced zero for a model with no price. The model's
+    price is unknown whatever its calls did."""
+    class UnpricedNoResponse(LlmClient):
+        model = "claude-not-priced"  # type: ignore[assignment]
+
+        def extract(self, **kw: Any) -> dict[str, Any]:  # type: ignore[override]
+            raise ConnectionError("no response")
+
+    meter = MeteredLlmClient(UnpricedNoResponse())
+    with pytest.raises(ConnectionError):
+        meter.extract(system="s", user="u", tool={"name": "covenant_terms"})
+    record = run_metrics.name_record(
+        run_id="r", ticker="X", started=dt.datetime(2026, 10, 23, tzinfo=dt.UTC),
+        finished=dt.datetime(2026, 10, 23, 0, 1, tzinfo=dt.UTC), meter=meter)
+    assert record["totals"]["unmetered_calls"] == 1
+    assert record["usd"] is None, "an unpriced model's cost was recorded as a known $0.00"

@@ -55,6 +55,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+from vinci.config import LLM_PRICE_PER_MTOK
 from vinci.dossier.extraction_version import EXTRACTION_VERSION
 from vinci.dossier.schemas import Dossier
 from vinci.dossier.verdict import split_lean
@@ -120,7 +121,10 @@ def name_record(
     calls = [{**c, "error": _capped(c["error"])} for c in (meter.calls if meter else [])]
     metered = [c["usage"] for c in calls if c["usage"] is not None]
     model = meter.model if meter else None
-    costs = [cost_usd(model, u) for u in metered] if model is not None else []
+    # THE PRICE IS A PROPERTY OF THE MODEL, decided before looking at a single call: an unpriced
+    # model stays unknown even when no call was metered (Codex review of #791).
+    priced = model is not None and model in LLM_PRICE_PER_MTOK
+    costs = [c for u in metered if model is not None and (c := cost_usd(model, u)) is not None]
     outcome = ("written" if error is None
                else "refused" if isinstance(error, DossierAssemblyError) else "failed")
     return {
@@ -133,9 +137,7 @@ def name_record(
         "totals": {"calls": len(calls), "failed_calls": sum(1 for c in calls if not c["ok"]),
                    "unmetered_calls": len(calls) - len(metered),
                    **{k: sum(u.get(k, 0) for u in metered) for k in _TOKEN_FIELDS}},
-        "usd": (0.0 if meter is None
-                else round(sum(c for c in costs if c is not None), 6)
-                if all(c is not None for c in costs) else None),
+        "usd": 0.0 if meter is None else round(sum(costs), 6) if priced else None,
         "synthesis": _synthesis(dossier) if dossier is not None else None,
         "flags": ({"caveats": len(dossier.caveats), "qa_flags": len(dossier.qa_flags)}
                   if dossier is not None else None),

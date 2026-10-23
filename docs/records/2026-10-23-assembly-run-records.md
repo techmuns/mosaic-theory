@@ -82,7 +82,7 @@ full suite caught it: 2 of `tests/test_theme_intelligence_prompt_cache.py`'s pin
   proposal would be withheld. That is the reproducibility signal the series exists to accumulate.
   The rebuilt page, the run file and the copied inputs were NOT committed: this is a code PR, and
   the series starts with the first artifact pass after merge.
-- **`tests/test_run_metrics.py`, 12 pins:**
+- **`tests/test_run_metrics.py`, 13 pins:**
   - per-thread usage, and no stale usage;
   - the meter counting a call that raises, and passing requests through unchanged;
   - list price, and unknown cost recorded as unknown, never zero;
@@ -93,12 +93,15 @@ full suite caught it: 2 of `tests/test_theme_intelligence_prompt_cache.py`'s pin
   - a lost record reported as an error, with the dossier kept;
   - a long error saying it was cut;
   - the console total counting every name.
-- **Mutants: 14 of 14 killed.** One survived the first draft of the tests (unmetered calls counted
+- **Mutants: 15 of 15 killed.** One survived the first draft of the tests (unmetered calls counted
   as metered), and an added pin killed it.
 - **This change's own review** (`/code-review high --fix`) found 5 issues and fixed 2, each pinned:
   - an interrupted call (Ctrl-C) was recorded as a success;
   - the end-to-end pin named one living dossier, and now picks one from the corpus.
   The other 3 are the boundaries below.
+- **Codex's review of #791** found one more (P2), fixed behind a pin that failed first. When every
+  call failed before a response, a model with no list price was recorded at a known $0.00. The
+  price is now decided from the model alone, so an unpriced model stays `null`.
 
 **BOUNDARY.**
 
