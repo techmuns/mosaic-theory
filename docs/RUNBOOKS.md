@@ -680,21 +680,28 @@ requires the latest day's panels to equal what today's pages emit, so a moved pa
 
 ---
 
-## k. CIQ DATA QUALITY — the scorecard, and the tests that need the workbooks
+## k. DATA QUALITY — the scorecard, and the tests that need the CIQ workbooks
 
-**The scorecard** — `PYTHONPATH=$PWD $VENV/python -m vinci.cli audit ciq [--as-of YYYY-MM-DD] [--write]`
-(`vinci/audit_ciq.py`). Read-only over the COMMITTED pages (`data/dossiers/*/dossier.json`), never
-the workbooks, so it runs in any checkout and in CI. It prints every check (per name and fleet:
-confirmed / differs with a stated reason / differs unexplained / unchecked, plus pages not run or
-not applicable, each named), then the coverage map (each CIQ field family: independent, internal,
-single-source or unchecked). `--write` writes `data/snapshots/ciq_quality/<as-of>.json` — counts and
-statuses only, never a CIQ figure (the repo is public).
+**The scorecard** — `PYTHONPATH=$PWD $VENV/python -m vinci.cli audit quality [--source ID]
+[--as-of YYYY-MM-DD] [--write]` (`vinci/quality/`). One scorecard per registered SOURCE; the only
+source today is `ciq`, which reads the COMMITTED pages (`data/dossiers/*/dossier.json`), never the
+workbooks, so it runs in any checkout and in CI. Each prints every check (per name and fleet:
+confirmed / differs with a stated reason / differs unexplained / unchecked, plus items not run or not
+applicable, each named), then the coverage map: each field family's class (independent, internal,
+single-source, unchecked) and, per failure class (wrong file, cell, unit, period or vintage,
+different definition), whether an independent check guards it, an internal one, or nothing.
+`--write` writes `data/snapshots/data_quality/<source>/<as-of>.json` — counts and statuses only,
+never a source's figures (the repo is public).
 - **When:** after every artifact pass that moves `data/dossiers/*`, and at the monthly sweep. Commit
-  the snapshot as an ARTIFACT commit, never bundled with code. `tests/test_audit_ciq.py` re-derives
-  the latest snapshot byte-for-byte whenever the page set's sha256 matches the one it names.
-- **Reading it:** "internal" means CIQ against another CIQ export: the sheets were read coherently and
-  the pulls match, not that CIQ is right. A family marked UNSCORED has a check that runs, but no
-  structured verdict on the page; the scorecard parses no display text.
+  the snapshot as an ARTIFACT commit, never bundled with code. `tests/test_quality_ciq.py` re-derives
+  the latest CIQ snapshot byte-for-byte whenever the page set's sha256 matches the one it names.
+- **Reading it:** "internal" means the source against its own other output — CIQ against another CIQ
+  export: the sheets were read coherently and the pulls match, not that CIQ is right. A family marked
+  UNSCORED has a check that runs, but no structured verdict; the scorecard parses no display text.
+- **Adding a source** is one module under `vinci/quality/sources/` exposing `SOURCE` (its loader,
+  checks with the failure classes each can surface, and families). The core and the command name no
+  source (`tests/test_quality_core.py` holds them to it). Next, by priority: Polygon prices, then the
+  8-K release parser (`docs/records/2026-10-23-ciq-quality-scorecard.md`).
 
 **The tests that need the licensed workbooks run only where `data/manual/ciq/` exists.** The folder is
 git-ignored, so CI never has it and a fresh worktree does not either. Measured 2026-10-23 on

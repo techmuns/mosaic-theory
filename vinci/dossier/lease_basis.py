@@ -339,7 +339,7 @@ def edgar_lease_cost(facts: dict[str, Any] | None, fy: date | None) -> tuple[flo
 def rent_disagrees(rent: float, lease_cost: float) -> bool | None:
     """Whether CIQ's rent and EDGAR's lease cost sit more than `_RENT_DISAGREE` apart either way;
     None when either is not positive (there is no ratio). ONE definition: the page's sentence and
-    the CIQ quality scorecard (`vinci.audit_ciq`) both read it."""
+    the data-quality scorecard's CIQ source (`vinci.quality.sources.ciq`) both read it."""
     if rent <= 0 or lease_cost <= 0:
         return None
     return max(rent, lease_cost) / min(rent, lease_cost) > _RENT_DISAGREE

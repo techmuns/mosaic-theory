@@ -1,4 +1,5 @@
-"""CIQ DATA-QUALITY SCORECARD (`vinci.audit_ciq`) — pinned at two layers.
+"""THE CIQ SOURCE of the data-quality scorecard (`vinci.quality.sources.ciq`) — pinned at two
+layers.
 
 * A FROZEN FIXTURE built from the REAL schema types (`EbitdaReconQuarter`, `LeaseObservation`,
   `EvBridge`, `ImpliedValuation`, `AnchorMidcycleGap`, …) with SYNTHETIC values — every status of
@@ -16,7 +17,6 @@ from typing import Any
 
 import pytest
 
-from vinci import audit_ciq as aq
 from vinci.cli import main
 from vinci.dossier.anchor import BASIS_AGREE_PTS, AnchorMidcycleGap
 from vinci.dossier.ciq import _WORKBOOK_KEYWORDS
@@ -33,6 +33,8 @@ from vinci.dossier.schemas import (
     OwnHistoryBand,
     Sourced,
 )
+from vinci.quality import core
+from vinci.quality.sources import ciq
 
 ROOT = Path(__file__).resolve().parents[1]
 #: A CIQ-looking figure planted in every CIQ field of the fixture. It must never reach the snapshot.
@@ -177,8 +179,8 @@ def _fixture() -> dict[str, dict[str, Any]]:
 
 def _card(pages: dict[str, dict[str, Any]] | None = None) -> dict[str, Any]:
     pages = _fixture() if pages is None else pages
-    return aq.scorecard(pages, measured_on="2026-10-23", git_head="abc1234",
-                        dossiers_match_head=True, dossier_sha256="0" * 64)
+    return core.scorecard(ciq.SOURCE, ciq.corpus(pages, "0" * 64), measured_on="2026-10-23",
+                          git_head="abc1234", inputs_match_head=True)
 
 
 def _check(card: dict[str, Any], cid: str) -> dict[str, Any]:
@@ -192,8 +194,8 @@ def _row(card: dict[str, Any], cid: str, ticker: str) -> dict[str, Any]:
 
 def _counts(confirmed: int = 0, stated: int = 0, unexplained: int = 0,
             unchecked: int = 0) -> dict[str, int]:
-    return {aq.CONFIRMED: confirmed, aq.DIFFERS_STATED: stated,
-            aq.DIFFERS_UNEXPLAINED: unexplained, aq.UNCHECKED: unchecked}
+    return {core.CONFIRMED: confirmed, core.DIFFERS_STATED: stated,
+            core.DIFFERS_UNEXPLAINED: unexplained, core.UNCHECKED: unchecked}
 
 
 # --- every status of every check, on the fixture -----------------------------------------------
@@ -294,18 +296,18 @@ def test_snapshot_multiple_runs_on_tev_ebit_only() -> None:
 
 
 def _assert_coherent(card: dict[str, Any]) -> None:
-    n = card["boundary"]["pages"]
-    assert card["boundary"]["tickers"] == sorted(card["boundary"]["tickers"])
+    n = card["boundary"]["items"]
+    assert card["boundary"]["names"] == sorted(card["boundary"]["names"])
     for c in card["checks"]:
         f, rows = c["fleet"], c["by_name"]
-        assert sorted(rows) == card["boundary"]["tickers"]
-        assert f["pages"] == n == f["pages_run"] + f["pages_not_run"] + f["pages_not_applicable"]
-        for s in aq.STATUSES:   # the fleet total IS the sum of the names — nothing dropped
+        assert sorted(rows) == card["boundary"]["names"]
+        assert f["items"] == n == f["items_run"] + f["items_not_run"] + f["items_not_applicable"]
+        for s in core.STATUSES:   # the fleet total IS the sum of the names — nothing dropped
             assert f[s] == sum(r.get(s, 0) for r in rows.values()), (c["id"], s)
-        assert f["units"] == sum(f[s] for s in aq.STATUSES)
+        assert f["units"] == sum(f[s] for s in core.STATUSES)
         assert f["excluded"] == sum(r.get("excluded", 0) for r in rows.values())
-        listed = [t for g in c["not_run"] + c["not_applicable"] for t in g["tickers"]]
-        assert len(listed) == f["pages_not_run"] + f["pages_not_applicable"] == len(set(listed))
+        listed = [t for g in c["not_run"] + c["not_applicable"] for t in g["names"]]
+        assert len(listed) == f["items_not_run"] + f["items_not_applicable"] == len(set(listed))
 
 
 def _numbers(o: Any) -> list[Any]:
@@ -338,26 +340,45 @@ def test_no_ciq_figure_reaches_the_snapshot() -> None:
 
 
 def test_every_workbook_kind_has_a_place_in_the_map() -> None:
-    assert set(_WORKBOOK_KEYWORDS) <= {f.kind for f in aq.FAMILIES}
+    assert set(_WORKBOOK_KEYWORDS) <= {f.origin for f in ciq.FAMILIES}
 
 
 def test_every_check_is_mapped_and_every_mapped_check_exists() -> None:
-    mapped = {cid for f in aq.FAMILIES for cid in f.checks}
-    assert mapped == set(aq.CHECK_IDS)
-    assert len({f.id for f in aq.FAMILIES}) == len(aq.FAMILIES)
+    mapped = {cid for f in ciq.FAMILIES for cid in f.checks}
+    assert mapped == set(ciq.CHECK_IDS)
+    assert len({f.id for f in ciq.FAMILIES}) == len(ciq.FAMILIES)
 
 
 def test_classification_is_derived_from_the_scored_checks() -> None:
-    fam = {f.id: f for f in aq.FAMILIES}
-    assert aq.classify(fam["financials.quarterly_ebitda"]) == aq.INDEPENDENT
-    assert aq.classify(fam["financials.balance_sheet_claims"]) == aq.INTERNAL
-    assert aq.classify(fam["estimates.consensus"]) == aq.SINGLE_SOURCE
-    assert aq.classify(fam["estimates.guidance"]) == aq.UNVERIFIED
+    fam = {f.id: f for f in ciq.FAMILIES}
+    assert core.classify(ciq.SOURCE, fam["financials.quarterly_ebitda"]) == core.INDEPENDENT
+    assert core.classify(ciq.SOURCE, fam["financials.balance_sheet_claims"]) == core.INTERNAL
+    assert core.classify(ciq.SOURCE, fam["estimates.consensus"]) == core.SINGLE_SOURCE
+    assert core.classify(ciq.SOURCE, fam["estimates.guidance"]) == core.UNVERIFIED
     # a family with an internal AND an independent check is independent; internal alone is not
-    mixed = aq.Family("x", "comps", (), "x", checks=("ev_bridge_vs_ciq_tev", "ebitda_vs_xbrl"))
-    assert aq.classify(mixed) == aq.INDEPENDENT
-    assert aq.classify(aq.Family("y", "comps", (), "y", checks=("ev_bridge_vs_ciq_tev",))) \
-        == aq.INTERNAL
+    mixed = core.Family("x", "comps", (), "x", checks=("ev_bridge_vs_ciq_tev", "ebitda_vs_xbrl"))
+    assert core.classify(ciq.SOURCE, mixed) == core.INDEPENDENT
+    internal_only = core.Family("y", "comps", (), "y", checks=("ev_bridge_vs_ciq_tev",))
+    assert core.classify(ciq.SOURCE, internal_only) == core.INTERNAL
+
+
+def test_failure_guards_follow_the_checks_declared_classes() -> None:
+    """The guard a family shows per failure class is the strongest of its scored checks' — an
+    internal check never reads as an independent guard, and an unscored family guards nothing."""
+    fam = {f.id: f for f in ciq.FAMILIES}
+    ebitda = core.failure_guard(ciq.SOURCE, fam["financials.quarterly_ebitda"])
+    assert set(ebitda.values()) == {core.INDEPENDENT}
+    claims = core.failure_guard(ciq.SOURCE, fam["financials.balance_sheet_claims"])
+    assert claims["wrong_cell"] == core.INTERNAL and claims["different_definition"] == "none"
+    assert set(core.failure_guard(ciq.SOURCE, fam["estimates.consensus"]).values()) == {"none"}
+    card = _card()
+    single = sum(1 for f in ciq.FAMILIES if core.classify(ciq.SOURCE, f) == core.SINGLE_SOURCE)
+    for fc, row in card["failure_class_summary"].items():
+        assert sum(row.values()) == len(ciq.FAMILIES), fc
+        assert row["none_single_source"] == single, fc
+
+    # one read: the hash `load` stamps is the hash of exactly the pages it returns
+    assert ciq.load(ROOT).sha256 == ciq.dossier_set_sha256(ROOT)
 
 
 _CITED = re.compile(r"CIQ ([A-Z][A-Za-z &/-]*?)(?: \((?:Quarterly|Annual)\))?\s*→\s*"
@@ -388,19 +409,19 @@ def test_cited_sheet_reader_finds_an_undeclared_sheet() -> None:
             "y": {"source_ref": "CIQ Financials→Pension Detail (2026-08-01)"}}
     cited = _cited_sheets({"P": page})
     assert cited == {"Financials→Income Statement", "Financials→Pension Detail"}
-    declared = {s for f in aq.FAMILIES for s in f.sheets}
+    declared = {s for f in ciq.FAMILIES for s in f.cited_as}
     assert cited - declared == {"Financials→Pension Detail"}
 
 
 # --- end to end over the committed pages -------------------------------------------------------
 
-_PAGES = aq.load_pages(ROOT)
+_PAGES = ciq.load_pages(ROOT)
 needs_pages = pytest.mark.skipif(not _PAGES, reason="no committed dossiers")
 
 
 @needs_pages
 def test_every_sheet_the_committed_pages_cite_is_in_the_map() -> None:
-    declared = {s for f in aq.FAMILIES for s in f.sheets}
+    declared = {s for f in ciq.FAMILIES for s in f.cited_as}
     cited = _cited_sheets(_PAGES)
     assert cited, "the reader found no citation at all — it is not reading the pages"
     assert cited <= declared, sorted(cited - declared)
@@ -408,12 +429,13 @@ def test_every_sheet_the_committed_pages_cite_is_in_the_map() -> None:
 
 @needs_pages
 def test_committed_corpus_card_is_coherent() -> None:
-    card = aq.scorecard(_PAGES, measured_on="2026-10-23", git_head=None, dossiers_match_head=None,
-                        dossier_sha256=aq.dossier_set_sha256(ROOT))
+    card = core.scorecard(ciq.SOURCE, ciq.load(ROOT), measured_on="2026-10-23", git_head=None,
+                          inputs_match_head=None)
     _assert_coherent(card)
-    assert card["boundary"]["pages"] == len(list((ROOT / "data" / "dossiers").glob(
+    assert card["boundary"]["items"] == len(list((ROOT / "data" / "dossiers").glob(
         "*/dossier.json")))
     assert all(isinstance(x, int) for x in _numbers(card))
+    assert card["source"]["id"] == "ciq" and core.discover()["ciq"] is ciq.SOURCE
     # the EBITDA check counts every quarter the pages carry — none dropped, none invented
     quarters = sum(len(((p.get("mechanical") or {}).get("financial_summary") or {})
                        .get("ebitda_reconciliation", {}).get("quarters") or [])
@@ -437,12 +459,12 @@ def test_committed_market_caps_are_ciqs() -> None:
 
 @needs_pages
 def test_no_committed_page_is_confirmed_on_an_absent_bridge() -> None:
-    card = aq.scorecard(_PAGES, measured_on="2026-10-23", git_head=None, dossiers_match_head=None,
-                        dossier_sha256="")
+    card = core.scorecard(ciq.SOURCE, ciq.corpus(_PAGES, ""), measured_on="2026-10-23",
+                          git_head=None, inputs_match_head=None)
     for t, row in _check(card, "net_debt_vs_implied_bridge")["by_name"].items():
         iv = _PAGES[t]["mechanical"].get("implied_valuation") or {}
         if iv.get("bridge_cash") is None or iv.get("bridge_debt") is None:
-            assert row.get(aq.CONFIRMED, 0) == 0, t
+            assert row.get(core.CONFIRMED, 0) == 0, t
 
 
 @needs_pages
@@ -476,7 +498,7 @@ def test_the_all_clear_checks_fire_on_a_perturbed_committed_page() -> None:
 
 
 def _latest_snapshot() -> Path | None:
-    snaps = sorted((ROOT / "data" / "snapshots" / "ciq_quality").glob("*.json"))
+    snaps = sorted((ROOT / "data" / "snapshots" / "data_quality" / "ciq").glob("*.json"))
     return snaps[-1] if snaps else None
 
 
@@ -489,16 +511,16 @@ def test_the_committed_snapshot_reproduces_from_the_pages_it_names() -> None:
     if snap is None:
         pytest.skip("no committed CIQ quality snapshot yet")
     saved = json.loads(snap.read_text())
-    assert saved["schema"] == aq.SCHEMA
+    assert saved["schema"] == core.SCHEMA and saved["source"]["id"] == "ciq"
     assert snap.stem == saved["boundary"]["measured_on"]
     _assert_coherent(saved)
     assert all(isinstance(x, int) for x in _numbers(saved))
     b = saved["boundary"]
-    if b["dossier_set_sha256"] != aq.dossier_set_sha256(ROOT):
+    if b["inputs_sha256"] != ciq.dossier_set_sha256(ROOT):
         return
-    fresh = aq.scorecard(_PAGES, measured_on=b["measured_on"], git_head=b["git_head"],
-                         dossiers_match_head=b["dossiers_match_head"],
-                         dossier_sha256=b["dossier_set_sha256"])
+    fresh = core.scorecard(ciq.SOURCE, ciq.corpus(_PAGES, b["inputs_sha256"]),
+                           measured_on=b["measured_on"], git_head=b["git_head"],
+                           inputs_match_head=b["inputs_match_head"])
     assert fresh == saved
 
 
@@ -517,20 +539,20 @@ def test_command_prints_every_name_and_writes_a_dated_snapshot(
 ) -> None:
     _seed(tmp_path, _fixture())
     monkeypatch.chdir(tmp_path)
-    assert main(["audit", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    assert main(["audit", "quality", "--source", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
     out = capsys.readouterr().out
     for t in ("AAA", "BBB", "CCC"):
         assert t in out
-    assert "snapshot written: data/snapshots/ciq_quality/2026-10-23.json" in out
-    saved = json.loads((tmp_path / "data/snapshots/ciq_quality/2026-10-23.json").read_text())
-    assert saved["boundary"]["pages"] == 3 and saved["boundary"]["measured_on"] == "2026-10-23"
-    assert main(["audit", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    assert "snapshot written: data/snapshots/data_quality/ciq/2026-10-23.json" in out
+    saved = json.loads((tmp_path / "data/snapshots/data_quality/ciq/2026-10-23.json").read_text())
+    assert saved["boundary"]["items"] == 3 and saved["boundary"]["measured_on"] == "2026-10-23"
+    assert main(["audit", "quality", "--source", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
     assert "snapshot unchanged" in capsys.readouterr().out
 
 
 def test_command_with_no_pages_fails_loud(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.chdir(tmp_path)
-    assert main(["audit", "ciq"]) == 1
+    assert main(["audit", "quality", "--source", "ciq"]) == 1
     assert not (tmp_path / "data" / "snapshots").exists()
 
 
@@ -540,7 +562,7 @@ def test_command_refuses_an_as_of_that_is_not_a_date(
     _seed(tmp_path, _fixture())
     monkeypatch.chdir(tmp_path)
     for bad in ("2026/10/23", "../x", "today"):
-        assert main(["audit", "ciq", "--as-of", bad, "--write"]) == 1
+        assert main(["audit", "quality", "--source", "ciq", "--as-of", bad, "--write"]) == 1
     assert not (tmp_path / "data" / "snapshots").exists()
     assert not (tmp_path / "data" / "x.json").exists()
 
@@ -550,10 +572,10 @@ def test_a_changed_same_date_snapshot_says_it_replaced_one(
 ) -> None:
     _seed(tmp_path, {"AAA": _fixture()["AAA"]})
     monkeypatch.chdir(tmp_path)
-    assert main(["audit", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    assert main(["audit", "quality", "--source", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
     _seed(tmp_path, {"BBB": _fixture()["BBB"]})
     capsys.readouterr()
-    assert main(["audit", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    assert main(["audit", "quality", "--source", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
     assert "snapshot REPLACED" in capsys.readouterr().out
 
 
@@ -565,4 +587,4 @@ def test_two_folders_for_one_ticker_are_refused(tmp_path: Path) -> None:
     for name in ("tjx", "TJX"):
         (tmp_path / "data" / "dossiers" / name / "dossier.json").write_text("{}")
     with pytest.raises(ValueError, match="two dossier folders for TJX"):
-        aq.load_pages(tmp_path)
+        ciq.load_pages(tmp_path)

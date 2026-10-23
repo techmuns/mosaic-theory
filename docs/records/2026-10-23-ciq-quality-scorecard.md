@@ -7,11 +7,14 @@ supersedes:
 superseded-by:
 ---
 
-# "Is the CIQ data credible?" has one dated answer: a fleet scorecard over the committed pages, and a coverage map of what is verified how
+# "Is the CIQ data credible?" has one dated answer: a data-quality scorecard any source plugs into, with CIQ as its first source, and a coverage map read in five failure classes
 
-**WHAT.** `vinci audit ciq` (`vinci/audit_ciq.py`) reads the committed pages
-(`data/dossiers/*/dossier.json`) and never the licensed workbooks. For each check it counts how
-each unit came out, per name and for the fleet:
+**WHAT.** `vinci audit quality` is a source-agnostic scorecard. Its core is
+`vinci/quality/core.py`; a SOURCE is one module under `vinci/quality/sources/` exposing `SOURCE`
+(its loader, its checks, its field families). The only source in this build is CIQ
+(`vinci/quality/sources/ciq.py`). It reads the committed pages (`data/dossiers/*/dossier.json`) and
+never the licensed workbooks. For each check it counts how each unit came out, per name and for
+the fleet:
 
 - **confirmed**: a second figure agrees within the check's own tolerance;
 - **differs (stated)**: they differ, and the page gives a reason for that unit;
@@ -30,10 +33,32 @@ separately:
 - **single-source**: there is no second source among this repo's inputs;
 - **unchecked**: a second source exists in principle, but no structured verdict is on the page.
 
-`--write` writes `data/snapshots/ciq_quality/2026-10-23.json`. It holds counts and statuses only,
-never a CIQ figure. The repo is public.
+Every check also DECLARES which of the **five failure classes** it can surface, from what it
+compares (face validity, never measured against outcomes):
 
-**THE ANSWER, 2026-10-23** (27 pages at `ef7be730`, page-set sha256 `6b540749…`).
+- **wrong file**: another company's export, or another pull of it;
+- **wrong cell**: the right file, the wrong row or column;
+- **wrong unit**: the right cell, the wrong scale or currency;
+- **wrong period or vintage**;
+- **different definition**: the same name on a figure built another way.
+
+Each family then shows, per class, whether an independent check guards it, an internal one, or
+nothing.
+
+`--write` writes `data/snapshots/data_quality/ciq/2026-10-23.json`. It holds counts and statuses
+only, never a CIQ figure. The repo is public.
+
+**THE STRUCTURE IS THE OPERATOR'S** (design note, 2026-10-23): "structure the scorecard so each data
+source plugs in, keep this PR CIQ-only, and note prices and the release parser as the next sources."
+
+- The report, totals, snapshot writer and command name no source. `tests/test_quality_core.py`
+  holds them to it: the core imports nothing of this repo, the command's body names no source, and
+  a source defined inside the test is scored, rendered and written through the command unchanged.
+- Discovery refuses a source that contradicts itself: a duplicate check, an unknown failure class,
+  a family naming an unknown check, a check on no family, or two sources of one id.
+- No stub exists for any other source: a test pins the registry to `ciq` alone.
+
+**THE ANSWER, 2026-10-23** (27 pages, unchanged since main `4489e864`; page-set sha256 `6b540749…`).
 
 Independent checks (the second figure is EDGAR's, or the EOD close):
 
@@ -55,6 +80,20 @@ Internal checks (the second figure is another CIQ export):
 | forward TEV/EBIT struck at the CIQ snapshot | page | 2 | 0 | 0 | 0 | 2 run (AMZN, UBER); 25 n/a |
 
 Coverage, 25 families: **5 independent, 4 internal, 10 single-source, 6 unchecked.**
+
+By failure class: how many families are guarded by an independent check, by an internal check
+only, by nothing though a second source exists, and by nothing because they are single-source.
+
+| failure class | independent | internal only | nothing, a second source exists | nothing, single-source |
+|---|--:|--:|--:|--:|
+| wrong file | 4 | 1 | 10 | 10 |
+| wrong cell | 4 | 3 | 8 | 10 |
+| wrong unit | 4 | 2 | 9 | 10 |
+| wrong period or vintage | 3 | 3 | 9 | 10 |
+| different definition | 3 | 1 | 11 | 10 |
+
+The class a check can surface is DECLARED, so these rows say what the checks compare, not what they
+have caught.
 
 - **Independent:** quarterly EBITDA, annual income statement (the EBIT margin only, on 6 pages),
   rent, the lease rows, market cap.
@@ -103,6 +142,31 @@ against CIQ itself. Consensus cannot be checked here at all.
    Currency' cell verbatim.
 8. **"Skipped in every worktree" is true of CI and the app's worktrees only.** See BOUNDARY.
 
+**NEXT SOURCES — follow-ups, not built here** (the operator's order; each is one module under
+`vinci/quality/sources/`).
+
+1. **Polygon prices — highest priority.** Prices feed the screens, the anchors, the monitor, and
+   the scoring of the BUY−AVOID spread, whose first ledger outcome is VRRM on 2026-12-14 (the
+   operator's note).
+   - The only guard today is a COUNT: `vinci/eod/client.py` raises on a partial day,
+     `0 < rows < floor`. It never looks at the values. CLAUDE.md names that gap: "a count test
+     catches sparse corruption and cannot catch dense". FVRR carried 21 of 21 placeholder cells
+     that passed the count check.
+   - Measured 2026-10-23 with read-only queries: the primary checkout's `data/vinci.db` has bars
+     only through 2026-08-05 (`max(prices.bar_date)`); the `research-alpha-audit-bcba59`
+     worktree's store reaches 2026-10-16.
+   - Tiingo (`vinci/eod/tiingo.py`) is wired as the second source, and its live use waits for a
+     key. **Correction to the note:** a non-empty `TIINGO_API_KEY=` line IS present in the
+     primary checkout's `.env` (checked 2026-10-23; the value was not read, and whether it is a
+     valid key is untested). So a second price source may be one key test away.
+2. **The 8-K press-release parser** (`vinci/edgar/release_parse.py`).
+   - VRRM's "$380 million to $385 million" guidance range was read as an adjusted EBITDA of $38.0M
+     (`docs/records/2026-10-22-release-actuals-at-their-scale.md`; that record has the defect
+     reported on 2026-09-17).
+   - The 2026-09-18 fleet audit found 27 of 91 cited releases parsing zero rows, 4 of them real
+     misses (`docs/records/2026-09-18-release-parse-fleet-audit.md`).
+   - STATE.md §5.0 row 30: 22 real guidance ranges are still unread.
+
 **WHY.** The checks existed, but their results sat page by page, with no fleet view and no series
 over time. The question "is the CIQ data credible?" therefore had 27 partial answers and no dated
 one. A snapshot per date turns it into a series.
@@ -126,7 +190,10 @@ one. A snapshot per date turns it into a series.
 - **No-leak guard.** A sentinel sits in every CIQ field of the fixture and is absent from the
   card. Every number in the card, and in the committed snapshot, is an integer count. A planted
   float shows both guards can fire.
-- **Mutation:** 20 of 20 mutants killed, with stale bytecode off (`PYTHONDONTWRITEBYTECODE=1`).
+- **Mutation:** 25 of 25 mutants killed after the restructure, with stale bytecode off
+  (`PYTHONDONTWRITEBYTECODE=1`). The 20 on the checks and the card, re-run on the new files, plus
+  five on the core: the failure guard, the class validation, the duplicate-source refusal, the
+  orphan-check refusal, and an empty EBITDA block.
   One survived the first pass (M9: same-source ignored), because the fixture's same-source case
   also had no gap. It is now pinned on a page that has both.
 - **Coverage-map completeness.** Every workbook kind in `ciq._WORKBOOK_KEYWORDS` has a family.
@@ -145,7 +212,7 @@ one. A snapshot per date turns it into a series.
 
 **BOUNDARY.**
 
-- **Scorecard.** All 27 committed pages, `data/dossiers/*/dossier.json` at `ef7be730` (pages
+- **Scorecard.** All 27 committed pages, `data/dossiers/*/dossier.json` (pages
   unchanged since main `4489e864`), measured 2026-10-23. The unit is per check, as in the tables.
   The EBIT-margin check's population is conditional: only pages where the twelve months sit ≥5
   points from R1's median carry the comparison. The market-cap check tests the SHARE BASIS only:
