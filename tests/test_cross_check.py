@@ -86,6 +86,21 @@ def test_wall_read_outcome_and_the_boundary_reason() -> None:
     assert dm._wall_read(None, panel, None).check == CHECK_NOT_RUN       # no balance date
 
 
+def test_a_panel_with_no_dated_principal_is_not_a_second_figure() -> None:
+    """Codex, #793 round 1: with no CIQ instrument carrying BOTH a principal and a maturity, the
+    panel's same-window total cannot be established — it summed to $0.0 against the filing and
+    was stored as `differ`, an unexplained mismatch with no second figure. Not run, and the line
+    says so. A panel whose dated instruments all mature outside the window still compares."""
+    undated = [ps.PanelInstrument("Revolver", None, date(2027, 1, 31)),
+               ps.PanelInstrument("Notes Payable", 78.3, None)]
+    for panel in ([], undated):
+        r = ps.wall_coherence_read(150.0, panel, balance=_BAL)
+        assert (r.check, r.near_boundary, r.qa) == (CHECK_NOT_RUN, None, []), panel
+        assert "UNKNOWN" in r.line and "DIVERGES" not in r.line
+    later = [ps.PanelInstrument("Term Loan", 100.0, date(2029, 12, 31))]
+    assert ps.wall_coherence_read(150.0, later, balance=_BAL).check == CHECK_DIFFER
+
+
 def _guide(**kw: Any) -> ps.GuideVerification:
     args: dict[str, Any] = {"ciq_low": 100.0, "ciq_high": 110.0, **kw}
     lo, hi = args.pop("ciq_low"), args.pop("ciq_high")

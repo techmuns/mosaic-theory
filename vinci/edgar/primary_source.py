@@ -127,6 +127,12 @@ def wall_coherence_read(
     if filing_within_12m is None:
         return WallCoherence("wall coherence: UNKNOWN — filing states no ≤12m figure", [],
                              CHECK_NOT_RUN, None)
+    # NO DATED PRINCIPAL, NO SECOND FIGURE (Codex, #793): with no instrument carrying both a
+    # principal and a maturity the panel's same-window total cannot be established, and summing
+    # nothing to $0.0 would read as a divergence the panel never showed
+    if not any(i.principal_musd is not None and i.maturity is not None for i in panel):
+        return WallCoherence("wall coherence: UNKNOWN — the CIQ panel carries no instrument with "
+                             "both a principal and a maturity", [], CHECK_NOT_RUN, None)
     end = _plus_12m(balance)
     in_window = [i for i in panel if i.principal_musd is not None and i.maturity is not None
                  and balance <= i.maturity < end]
