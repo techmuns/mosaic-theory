@@ -204,6 +204,9 @@ def test_ebitda_statuses_follow_the_pages_own_flags() -> None:
     assert _row(card, "ebitda_vs_xbrl", "AAA") == _counts(1, 1, 1, 1)
     assert _row(card, "ebitda_vs_xbrl", "BBB") == {"not_run": "no ebitda_reconciliation block on "
                                                               "the page"}
+    # a block with no quarters is not a page the check ran on
+    empty = _page("EEE", quarters=[])
+    assert "not_run" in _row(_card({"EEE": empty}), "ebitda_vs_xbrl", "EEE")
 
 
 def test_lease_rows_statuses_and_the_pre_adoption_split() -> None:

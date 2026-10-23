@@ -2670,6 +2670,12 @@ def _cmd_audit_ciq(args: argparse.Namespace) -> int:
 
     from vinci import audit_ciq as aq
 
+    as_of = args.as_of or _date.today().isoformat()
+    try:  # the as-of names the snapshot file, so it is a date and nothing else
+        as_of = _date.fromisoformat(as_of).isoformat()
+    except ValueError:
+        print(f"--as-of {as_of!r} is not a YYYY-MM-DD date", file=sys.stderr)
+        return 1
     root = Path.cwd()
     pages = aq.load_pages(root)
     if not pages:
@@ -2685,12 +2691,6 @@ def _cmd_audit_ciq(args: argparse.Namespace) -> int:
         match: bool | None = not dirty
     except (OSError, subprocess.SubprocessError):
         head, match = None, None
-    as_of = args.as_of or _date.today().isoformat()
-    try:  # the as-of names the snapshot file, so it is a date and nothing else
-        as_of = _date.fromisoformat(as_of).isoformat()
-    except ValueError:
-        print(f"--as-of {as_of!r} is not a YYYY-MM-DD date", file=sys.stderr)
-        return 1
     card = aq.scorecard(pages, measured_on=as_of, git_head=head, dossiers_match_head=match,
                         dossier_sha256=aq.dossier_set_sha256(root))
     print(aq.render(card))

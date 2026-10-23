@@ -136,6 +136,8 @@ def _ebitda_vs_xbrl(page: dict[str, Any]) -> PageResult:
     er = _get(page, "mechanical", "financial_summary", "ebitda_reconciliation")
     if not isinstance(er, dict):
         return PageResult(not_run="no ebitda_reconciliation block on the page")
+    if not er.get("quarters"):
+        return PageResult(not_run="ebitda_reconciliation block carries no quarters")
     c: Counter[str] = Counter()
     for q in er.get("quarters") or []:
         if _num(q.get("filing_ebitda")) is None:

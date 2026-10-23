@@ -697,8 +697,8 @@ statuses only, never a CIQ figure (the repo is public).
   structured verdict on the page; the scorecard parses no display text.
 
 **The tests that need the licensed workbooks run only where `data/manual/ciq/` exists.** The folder is
-git-ignored, so CI never has it and a fresh worktree does not either. Measured 2026-10-23 at
-`4489e864` (`pytest -m "not network" -rs` in an app worktree without the folder): **27 test files skip
+git-ignored, so CI never has it and a fresh worktree does not either. Measured 2026-10-23 on
+`4489e864` plus this PR's scorecard code (`pytest -m "not network" -rs` in an app worktree without the folder): **27 test files skip
 479 tests** for want of the workbooks. One more file, `tests/test_primary_source.py`, needs them as
 well, but its test is `network`-marked, so the offline suite deselects it. Three files that name the
 loader (`test_ciq_charting`, `test_ev_ebitda_basis`, `test_release_amount_scale`) point it at
