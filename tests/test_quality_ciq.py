@@ -24,14 +24,20 @@ from vinci.dossier.ciq import _WORKBOOK_KEYWORDS
 from vinci.dossier.ciq_sheets import EV_BRIDGE_CIQ_TOL
 from vinci.dossier.lease_basis import _RENT_DISAGREE, rent_disagrees
 from vinci.dossier.schemas import (
+    CHECK_AGREE,
+    CHECK_DIFFER,
+    CHECK_NOT_RUN,
     ClaimLine,
+    CrossCheck,
     EbitdaReconciliation,
     EbitdaReconQuarter,
     EvBridge,
+    ImpliedExpectations,
     ImpliedValuation,
     LeaseBasis,
     LeaseObservation,
     OwnHistoryBand,
+    PrimarySource,
     Sourced,
 )
 from vinci.quality import core
@@ -103,18 +109,43 @@ def _band(*, margins: bool, flag: str | None) -> dict[str, Any]:
         implied_d_and_a_margin=0.1 if margins else None).model_dump(mode="json")
 
 
+def _ie(*, nd_reconciled: bool = True, nd_check: CrossCheck | None = None,
+        vintage_coherent: bool = True, vintage: CrossCheck | None = None) -> dict[str, Any]:
+    """The implied-expectations block, with its two flags and their stored outcomes."""
+    return ImpliedExpectations(
+        rows=[], tev=Sourced.present(SENTINEL, source_ref="synthetic"),
+        anchors=Sourced.unknown(note="synthetic"), heterogeneity_gate="synthetic",
+        tev_as_of="2026-10-01", multiples_as_of="2026-10-01", vintage_coherent=vintage_coherent,
+        vintage_check=vintage, coherence_note="synthetic", net_debt_reconciled=nd_reconciled,
+        net_debt_check=nd_check).model_dump(mode="json")
+
+
+def _ps(*, guide: CrossCheck | None = None, wall: CrossCheck | None = None,
+        near: bool | None = None, sign: CrossCheck | None = None) -> dict[str, Any]:
+    """The primary-source block: three display lines, and beside each its stored outcome."""
+    line = Sourced.present("synthetic", source_ref="synthetic")
+    return PrimarySource(
+        self_funding=line, self_funding_check=sign, wall_coherence=line,
+        wall_coherence_check=wall, wall_coherence_near_boundary=near,
+        basis_triangulation=line, guide_verification=line,
+        guide_verification_check=guide).model_dump(mode="json")
+
+
 def _page(ticker: str, *, quarters: list[dict[str, Any]] | None = None,
           lease: dict[str, Any] | None = None, bridge: dict[str, Any] | None = None,
-          nd_reconciled: bool = True, iv: dict[str, Any] | None = None,
+          ie: dict[str, Any] | None = None, iv: dict[str, Any] | None = None,
           cap: float | None = 1000.0, shares: float | None = 100e6, spot: float | None = 10.0,
           midcycle: dict[str, Any] | None = None,
           multiple: dict[str, Any] | None = None,
-          band: dict[str, Any] | None = None) -> dict[str, Any]:
+          band: dict[str, Any] | None = None,
+          ps: dict[str, Any] | None = None) -> dict[str, Any]:
     mech: dict[str, Any] = {
         "stock_info": {"market_cap": {"value": cap}, "shares_out": {"value": shares},
                        "price": {"value": spot}},
-        "valuation": {"implied_expectations": {"net_debt_reconciled": nd_reconciled}},
+        "valuation": {"implied_expectations": _ie() if ie is None else ie},
     }
+    if ps is not None:
+        mech["primary_source"] = ps
     if quarters is not None:
         mech["financial_summary"] = {"ebitda_reconciliation": EbitdaReconciliation(
             quarters=[EbitdaReconQuarter.model_validate(q) for q in quarters],
@@ -153,28 +184,35 @@ def _fixture() -> dict[str, dict[str, Any]]:
                 _obs("2019-12-31", "unreconciled", 50.0),
                 _obs("2020-03-31", "unchecked", None)]),
             bridge=_ev_bridge(500.0, 500.0 + EV_BRIDGE_CIQ_TOL),
-            iv=_implied_valuation(10.0, 20.0), nd_reconciled=True,
+            iv=_implied_valuation(10.0, 20.0),
+            ie=_ie(nd_check=CHECK_AGREE, vintage=CHECK_AGREE),
             midcycle=_gap(basis_gap=BASIS_AGREE_PTS - 0.01),
             multiple={"metric": "TEV/EBIT", "snapshot_reconciles": True},
-            band=_band(margins=True, flag=None)),
+            band=_band(margins=True, flag=None),
+            ps=_ps(guide=CHECK_AGREE, wall=CHECK_AGREE, sign=CHECK_AGREE)),
         "BBB": _page(
             "BBB",
             lease=_lease(material=False, rent=100.0, cost=100.0 * _RENT_DISAGREE + 1.0, obs=[]),
             bridge=_ev_bridge(500.0, 500.0 + EV_BRIDGE_CIQ_TOL + 0.1),
-            iv=_implied_valuation(10.0, 20.0), nd_reconciled=False,
+            iv=_implied_valuation(10.0, 20.0),
+            ie=_ie(nd_reconciled=False, nd_check=CHECK_DIFFER, vintage_coherent=False,
+                   vintage=CHECK_DIFFER),
             spot=20.0,                       # cap ÷ shares = $10/sh against a $20 close: a 2:1
             midcycle=_gap(basis_gap=BASIS_AGREE_PTS),
             multiple={"metric": "TEV/EBIT", "snapshot_reconciles": False},
-            band=_band(margins=True, flag="periodicity_mismatch+band_incoherent")),
+            band=_band(margins=True, flag="periodicity_mismatch+band_incoherent"),
+            ps=_ps(guide=CHECK_DIFFER, wall=CHECK_DIFFER, near=False, sign=CHECK_DIFFER)),
         "CCC": _page(
             "CCC",
             lease=_lease(material=True, rent=0.0, cost=50.0, obs=[]),
             bridge=_ev_bridge(500.0, None),
-            iv=None, nd_reconciled=True,     # the flag reads True with NO bridge to test it on
+            iv=None,                         # both flags read True with NOTHING tested
+            ie=_ie(nd_check=CHECK_NOT_RUN, vintage=CHECK_NOT_RUN),
             spot=None,
             midcycle=_gap(basis_gap=None, same_source=True),
             multiple={"metric": "Price/Earnings", "snapshot_reconciles": None},
-            band=_band(margins=False, flag="periodicity_mismatch")),
+            band=_band(margins=False, flag="periodicity_mismatch"),
+            ps=_ps(guide=CHECK_NOT_RUN, wall=CHECK_NOT_RUN, sign=CHECK_NOT_RUN)),
     }
 
 
@@ -270,11 +308,14 @@ def test_ev_bridge_tolerance_edge() -> None:
 def test_net_debt_flag_is_not_counted_where_the_bridge_is_absent() -> None:
     """THE NEGATIVE PIN: CCC's page says net_debt_reconciled=True with no bridge to test it on
     (the producer's `bridge_nd is None or …`). Counted as confirmed, it would be a pass the check
-    never made."""
+    never made — so the stored outcome is read, never the flag."""
     card = _card()
     assert _row(card, "net_debt_vs_implied_bridge", "AAA") == _counts(confirmed=1)
     assert _row(card, "net_debt_vs_implied_bridge", "BBB") == _counts(unexplained=1)
     assert _row(card, "net_debt_vs_implied_bridge", "CCC") == _counts(unchecked=1)
+    # the flag alone, with no outcome stored beside it, is a check the scorecard never saw run
+    bare = _page("FLG", iv=_implied_valuation(10.0, 20.0), ie=_ie(nd_reconciled=True))
+    assert "not_run" in _row(_card({"FLG": bare}), "net_debt_vs_implied_bridge", "FLG")
 
 
 def test_net_debt_never_scores_a_display_parsed_bridge() -> None:
@@ -284,9 +325,11 @@ def test_net_debt_never_scores_a_display_parsed_bridge() -> None:
     iv = _implied_valuation(None, None)
     iv["bridge"] = Sourced.present("+ cash $10.0M − total debt $20.0M",
                                    source_ref="synthetic").model_dump(mode="json")
-    page = _page("DSP", iv=iv, nd_reconciled=True)
+    # the producer DID compare (its parse found both), so its outcome agrees — and is still not
+    # counted, because the second figure is display text
+    page = _page("DSP", iv=iv, ie=_ie(nd_check=CHECK_AGREE))
     assert _row(_card({"DSP": page}), "net_debt_vs_implied_bridge", "DSP") == _counts(unchecked=1)
-    half = _page("HLF", iv=_implied_valuation(10.0, None), nd_reconciled=True)
+    half = _page("HLF", iv=_implied_valuation(10.0, None), ie=_ie(nd_check=CHECK_AGREE))
     assert _row(_card({"HLF": half}), "net_debt_vs_implied_bridge", "HLF") == _counts(unchecked=1)
 
 
@@ -304,6 +347,58 @@ def test_snapshot_multiple_runs_on_tev_ebit_only() -> None:
     assert _row(card, "snapshot_multiple", "AAA") == _counts(confirmed=1)
     assert _row(card, "snapshot_multiple", "BBB") == _counts(unexplained=1)
     assert "not_applicable" in _row(card, "snapshot_multiple", "CCC")
+
+
+#: The checks that read an outcome stored beside a line or flag (`schemas.CrossCheck`).
+_STORED = ("guide_vs_release", "wall_vs_10q", "fcf_sign_vs_edgar_ocf", "forward_multiple_vintage",
+           "net_debt_vs_implied_bridge")
+
+
+def test_a_stored_outcome_is_scored_as_stored() -> None:
+    card = _card()
+    for cid in _STORED:
+        assert _row(card, cid, "AAA") == _counts(confirmed=1), cid
+        assert _row(card, cid, "BBB") == _counts(unexplained=1), cid
+        assert _row(card, cid, "CCC") == _counts(unchecked=1), cid
+
+
+def test_the_vintage_flag_that_reads_coherent_without_running_is_unchecked() -> None:
+    """THE NEGATIVE PIN: CCC's `vintage_coherent` is True and its probe never ran. The flag alone
+    is never read; with no outcome beside it the page is one the check did not run on."""
+    assert _fixture()["CCC"]["mechanical"]["valuation"]["implied_expectations"][
+        "vintage_coherent"] is True
+    assert _row(_card(), "forward_multiple_vintage", "CCC") == _counts(unchecked=1)
+    bare = {"FLG": _page("FLG", ie=_ie(vintage_coherent=True))}
+    assert "no vintage_check on the page" in _row(_card(bare), "forward_multiple_vintage", "FLG")[
+        "not_run"]
+
+
+def test_a_divergence_the_page_explains_is_stated() -> None:
+    """An instrument maturing beside the window's +12m boundary is the reason the page states
+    for a wall divergence (`wall_coherence_near_boundary`) — never read as unexplained."""
+    page = {"EDG": _page("EDG", ps=_ps(wall=CHECK_DIFFER, near=True))}
+    assert _row(_card(page), "wall_vs_10q", "EDG") == _counts(stated=1)
+    assert _row(_card(), "wall_vs_10q", "BBB") == _counts(unexplained=1)    # near=False
+
+
+def test_an_absent_outcome_is_not_run_and_never_a_pass() -> None:
+    """A page that predates the outcomes, or has no block to carry them: not run, by name."""
+    old = {"OLD": _page("OLD", ps=_ps(), iv=_implied_valuation(10.0, 20.0))}
+    card = _card(old)
+    for cid in _STORED:
+        row = _row(card, cid, "OLD")
+        assert "on the page" in row["not_run"] and core.CONFIRMED not in row, cid
+    none = {"NON": _page("NON")}
+    del none["NON"]["mechanical"]["valuation"]["implied_expectations"]
+    for cid in _STORED:
+        assert "not_run" in _row(_card(none), cid, "NON"), cid
+
+
+def test_an_outcome_the_scorecard_was_not_taught_raises() -> None:
+    page = _page("ZZZ", ps=_ps())
+    page["mechanical"]["primary_source"]["guide_verification_check"] = "half-checked"
+    with pytest.raises(ValueError, match="half-checked"):
+        _card({"ZZZ": page})
 
 
 # --- invariants of the card itself -------------------------------------------------------------
@@ -368,7 +463,8 @@ def test_classification_is_derived_from_the_scored_checks() -> None:
     assert core.classify(ciq.SOURCE, fam["financials.quarterly_ebitda"]) == core.INDEPENDENT
     assert core.classify(ciq.SOURCE, fam["financials.balance_sheet_claims"]) == core.INTERNAL
     assert core.classify(ciq.SOURCE, fam["estimates.consensus"]) == core.SINGLE_SOURCE
-    assert core.classify(ciq.SOURCE, fam["estimates.guidance"]) == core.UNVERIFIED
+    assert core.classify(ciq.SOURCE, fam["estimates.guidance"]) == core.INDEPENDENT
+    assert core.classify(ciq.SOURCE, fam["financials.segments"]) == core.UNVERIFIED
     # a family with an internal AND an independent check is independent; internal alone is not
     mixed = core.Family("x", "comps", (), "x", checks=("ev_bridge_vs_ciq_tev", "ebitda_vs_xbrl"))
     assert core.classify(ciq.SOURCE, mixed) == core.INDEPENDENT
@@ -509,6 +605,65 @@ def test_the_all_clear_checks_fire_on_a_perturbed_committed_page() -> None:
     untouched = _card({t: _PAGES[t]})
     assert _row(untouched, "ev_bridge_vs_ciq_tev", t) == _counts(confirmed=1)
     assert _row(untouched, "market_cap_share_basis", t) == _counts(confirmed=1)
+
+
+#: Where each stored outcome sits on a page, by the check that scores it.
+_STORED_AT = {"guide_vs_release": ("primary_source", "guide_verification_check"),
+              "wall_vs_10q": ("primary_source", "wall_coherence_check"),
+              "fcf_sign_vs_edgar_ocf": ("primary_source", "self_funding_check"),
+              "forward_multiple_vintage": ("implied_expectations", "vintage_check"),
+              "net_debt_vs_implied_bridge": ("implied_expectations", "net_debt_check")}
+_STATUS_OF = {CHECK_AGREE: core.CONFIRMED, CHECK_DIFFER: core.DIFFERS_UNEXPLAINED,
+              CHECK_NOT_RUN: core.UNCHECKED}
+
+
+def _stored(page: dict[str, Any], cid: str) -> Any:
+    block, key = _STORED_AT[cid]
+    mech = page["mechanical"]
+    node = (mech.get("primary_source") if block == "primary_source"
+            else (mech.get("valuation") or {}).get("implied_expectations"))
+    return (node or {}).get(key)
+
+
+@needs_pages
+def test_every_committed_outcome_is_scored_as_the_page_stores_it() -> None:
+    """Each committed page's stored outcome lands as its status — the wall's divergence as STATED
+    where the page carries its boundary reason, a bridge known only from display text as
+    unchecked — and a page without one is not run, never confirmed."""
+    card = core.scorecard(ciq.SOURCE, ciq.corpus(_PAGES, ""), measured_on="2026-10-23",
+                          git_head=None, inputs_match_head=None)
+    for cid in _STORED_AT:
+        for t, row in _check(card, cid)["by_name"].items():
+            v = _stored(_PAGES[t], cid)
+            if v is None:
+                assert "not_run" in row, (cid, t)
+                continue
+            want = _STATUS_OF[v]
+            ps = _PAGES[t]["mechanical"].get("primary_source") or {}
+            if cid == "wall_vs_10q" and v == CHECK_DIFFER and ps.get(
+                    "wall_coherence_near_boundary") is True:
+                want = core.DIFFERS_STATED
+            iv = _PAGES[t]["mechanical"].get("implied_valuation") or {}
+            if cid == "net_debt_vs_implied_bridge" and (iv.get("bridge_cash") is None
+                                                        or iv.get("bridge_debt") is None):
+                want = core.UNCHECKED
+            assert row == {**_counts(), want: 1}, (cid, t, v, row)
+
+
+@needs_pages
+def test_no_committed_flag_that_passed_without_running_is_confirmed() -> None:
+    """CORPUS BEFORE SYNTHETIC: committed pages carry `vintage_coherent: true` where the probe
+    never ran. Each is unchecked on the card, never confirmed."""
+    card = core.scorecard(ciq.SOURCE, ciq.corpus(_PAGES, ""), measured_on="2026-10-23",
+                          git_head=None, inputs_match_head=None)
+    rows = _check(card, "forward_multiple_vintage")["by_name"]
+    silent = [t for t, p in _PAGES.items()
+              if ((p["mechanical"].get("valuation") or {}).get("implied_expectations") or {})
+              .get("vintage_coherent") is True and _stored(p, "forward_multiple_vintage")
+              == CHECK_NOT_RUN]
+    assert silent, "no committed page carries a coherent flag over a probe that did not run"
+    for t in silent:
+        assert rows[t] == _counts(unchecked=1), t
 
 
 def _latest_snapshot() -> Path | None:

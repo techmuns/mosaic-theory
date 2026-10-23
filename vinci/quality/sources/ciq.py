@@ -13,9 +13,10 @@ never the licensed workbooks, so it runs in every checkout and in CI.
 WHERE A PAGE STORES A VERDICT, IT IS READ; WHERE IT STORES ONLY THE INPUTS, THE PRODUCER'S OWN
 CONSTANT IS APPLIED (`EV_BRIDGE_CIQ_TOL`, `reconcile_cap`, `rent_disagrees`). Nothing is re-decided.
 
-STRUCTURED VALUES ONLY. A verdict that exists only as display text (guide verification, wall
-coherence, the vintage probe) is listed in the coverage map as UNSCORED, with its path — never
-parsed here.
+STRUCTURED VALUES ONLY. A verdict that exists only as display text is listed in the coverage map
+as UNSCORED, with its path — never parsed here. Five that were (guide verification, wall
+coherence, self-funding, the vintage probe, the net-debt flag) store their outcome beside the line
+since 2026-10-23 (`schemas.CrossCheck`), and are scored from that.
 
 COUNTS AND STATUSES ONLY. The repo is public (2026-10-22): no CIQ figure, gap or quote reaches the
 snapshot. The tolerances are this repo's constants, not CIQ data.
@@ -39,7 +40,11 @@ from vinci.dossier.lease_basis import (
     RECONCILE_TOL,
     rent_disagrees,
 )
+from vinci.dossier.mechanical import _IE_TOL
+from vinci.dossier.schemas import CHECK_AGREE, CHECK_DIFFER, CHECK_NOT_RUN
 from vinci.dossier.valuation_basis import SNAPSHOT_TOL
+from vinci.edgar.primary_source import _TOL as _WALL_TOL
+from vinci.edgar.primary_source import BOUNDARY_DAYS, GUIDE_MATCH
 from vinci.quality.core import (
     CONFIRMED,
     DIFFERS_STATED,
@@ -59,6 +64,11 @@ from vinci.quality.core import (
 #: The lease-observation statuses `lease_basis.observations` writes. Any other is a new state this
 #: scorecard has not been taught — it raises rather than drop out of the count.
 _LEASE_STATUSES = frozenset({"reconciled", "unreconciled", "unchecked", "pre-adoption"})
+#: Why a check that reads a stored `CrossCheck` did not run on a page that lacks it. Both causes
+#: are named because the page cannot say which: it predates the field, or the back-fill refused
+#: it (its stored line did not reproduce from the page's own inputs) and only assembly can write it.
+_ABSENT = ("no {key} on the page — it predates the field, or its stored line did not reproduce "
+           "from the page's own inputs (refresh.cross_check_transform); assembly writes it")
 
 
 def _get(d: Any, *path: str) -> Any:
@@ -71,6 +81,23 @@ def _get(d: Any, *path: str) -> Any:
 
 def _num(x: Any) -> float | None:
     return float(x) if isinstance(x, (int, float)) and not isinstance(x, bool) else None
+
+
+def _cross_check(page: dict[str, Any], node: Any, key: str, *, stated: bool = False) -> ItemResult:
+    """A stored `CrossCheck` → one unit: agree confirms, differ differs (stated when the page
+    states why for this page), not run is unchecked — the page exists and the check had no second
+    figure. ABSENT is not run, never a pass; a value this scorecard was not taught raises."""
+    v = node.get(key) if isinstance(node, dict) else None
+    if v is None:
+        return ItemResult(not_run=_ABSENT.format(key=key))
+    if v == CHECK_AGREE:
+        return one(CONFIRMED)
+    if v == CHECK_DIFFER:
+        return one(DIFFERS_STATED if stated else DIFFERS_UNEXPLAINED)
+    if v == CHECK_NOT_RUN:
+        return one(UNCHECKED)
+    raise ValueError(f"{page.get('ticker')}: {key} is {v!r}, not an outcome this scorecard knows "
+                     f"({[CHECK_AGREE, CHECK_DIFFER, CHECK_NOT_RUN]})")
 
 
 # --- the checks ---------------------------------------------------------------------------------
@@ -165,6 +192,28 @@ def _market_cap_share_basis(page: dict[str, Any]) -> ItemResult:
     return one(DIFFERS_STATED if rc.corporate_action else CONFIRMED)
 
 
+def _guide_vs_release(page: dict[str, Any]) -> ItemResult:
+    ps = _get(page, "mechanical", "primary_source")
+    if not isinstance(ps, dict):
+        return ItemResult(not_run="no primary_source block on the page")
+    return _cross_check(page, ps, "guide_verification_check")
+
+
+def _wall_vs_10q(page: dict[str, Any]) -> ItemResult:
+    ps = _get(page, "mechanical", "primary_source")
+    if not isinstance(ps, dict):
+        return ItemResult(not_run="no primary_source block on the page")
+    return _cross_check(page, ps, "wall_coherence_check",
+                        stated=ps.get("wall_coherence_near_boundary") is True)
+
+
+def _fcf_sign_vs_edgar_ocf(page: dict[str, Any]) -> ItemResult:
+    ps = _get(page, "mechanical", "primary_source")
+    if not isinstance(ps, dict):
+        return ItemResult(not_run="no primary_source block on the page")
+    return _cross_check(page, ps, "self_funding_check")
+
+
 def _ev_bridge_vs_ciq_tev(page: dict[str, Any]) -> ItemResult:
     eb = page.get("ev_bridge")
     if not isinstance(eb, dict):
@@ -179,14 +228,23 @@ def _net_debt_vs_implied_bridge(page: dict[str, Any]) -> ItemResult:
     ie = _get(page, "mechanical", "valuation", "implied_expectations")
     if not isinstance(ie, dict):
         return ItemResult(not_run="no implied_expectations block on the page")
-    iv = _get(page, "mechanical", "implied_valuation")
     # THE STORED FLAG READS TRUE WHEN THE BRIDGE IS ABSENT (`nd_ok = bridge_nd is None or …`), so
-    # it is never taken alone. And the bridge counts only as its two STRUCTURED floats: the
-    # producer's `_ie_bridge_net_debt` falls back to parsing the display string, which is no
-    # structured second figure (Codex, #792 round 1)
-    if _num(_get(iv, "bridge_cash")) is None or _num(_get(iv, "bridge_debt")) is None:
+    # its outcome is read instead (`net_debt_check`). And the bridge counts only as its two
+    # STRUCTURED floats: the producer's `_ie_bridge_net_debt` falls back to parsing the display
+    # string, which is no structured second figure (Codex, #792 round 1)
+    r = _cross_check(page, ie, "net_debt_check")
+    iv = _get(page, "mechanical", "implied_valuation")
+    if r.not_run is None and (_num(_get(iv, "bridge_cash")) is None
+                              or _num(_get(iv, "bridge_debt")) is None):
         return one(UNCHECKED)
-    return one(CONFIRMED if ie.get("net_debt_reconciled") else DIFFERS_UNEXPLAINED)
+    return r
+
+
+def _forward_multiple_vintage(page: dict[str, Any]) -> ItemResult:
+    ie = _get(page, "mechanical", "valuation", "implied_expectations")
+    if not isinstance(ie, dict):
+        return ItemResult(not_run="no implied_expectations block on the page")
+    return _cross_check(page, ie, "vintage_check")
 
 
 def _multiples_sheet_coherence(page: dict[str, Any]) -> ItemResult:
@@ -262,6 +320,38 @@ CHECKS: tuple[Check, ...] = (
           "every page", "a whole-number ratio: a share-basis mismatch between panels", None,
           ("wrong_unit", "wrong_period"),
           _market_cap_share_basis),
+    Check("guide_vs_release", "CIQ's revenue guide vs the 8-K release's guide",
+          "CIQ Estimates→Guidance revenue guide, the latest (a point or a range)",
+          "the 8-K EX-99.1 releases' revenue guide (release_parse)", INDEPENDENT, "page",
+          f"both bounds within {GUIDE_MATCH:g}, absolute (primary_source.GUIDE_MATCH) — the "
+          "page's guide_verification_check. Compared only where both sides guide a LEVEL for the "
+          "same period scope: a change guide, another period, a release with no number and the "
+          "vendor-echo flag are checks that did not run",
+          "pages carrying mechanical.primary_source.guide_verification_check", None, None,
+          ("wrong_file", "wrong_cell", "wrong_unit", "wrong_period"),
+          _guide_vs_release),
+    Check("wall_vs_10q", "CIQ's capital panel vs the 10-Q's maturity wall, one 12-month window",
+          "CIQ Financials→Capital Structure Details: principal maturing in [balance, +12m)",
+          "the latest 10-Q's stated maturities within 12 months (filing_sections.maturity_wall)",
+          INDEPENDENT, "page",
+          f"within {_WALL_TOL:.0%} of the filing's figure (primary_source.wall_coherence) — "
+          "principal against repayment basis, both labelled on the page's line. Run only where "
+          "the 10-Q states a 12-month figure",
+          "pages carrying mechanical.primary_source.wall_coherence_check",
+          f"an instrument matures within ±{BOUNDARY_DAYS}d of the window's +12m boundary — a "
+          "possible window-convention artifact (wall_coherence_near_boundary)", None,
+          ("wrong_file", "wrong_cell", "wrong_unit", "wrong_period"),
+          _wall_vs_10q),
+    Check("fcf_sign_vs_edgar_ocf", "The SIGN of CIQ's LTM FCF vs the sign of EDGAR's latest OCF",
+          "CIQ Financials→Cash Flow 'Levered Free Cash Flow', latest period — its sign",
+          "EDGAR XBRL operating cash flow, the latest single quarter — its sign", INDEPENDENT,
+          "page",
+          "SIGN ONLY, of two different measures (primary_source.self_funding_check): agree when "
+          "the signs match, both negative included. A differ is mostly capex or seasonality, not "
+          "by itself a CIQ error",
+          "pages carrying mechanical.primary_source.self_funding_check", None, None,
+          ("wrong_file", "wrong_cell"),
+          _fcf_sign_vs_edgar_ocf),
     Check("ev_bridge_vs_ciq_tev", "CIQ balance-sheet claims vs CIQ's own TEV less market cap",
           "CIQ Financials Balance Sheet Net Debt + preferred + minority (ev_bridge.claims)",
           "CIQ Comparable Analysis TEV − market cap (ev_bridge.ciq_tev_claims)", INTERNAL, "page",
@@ -274,9 +364,10 @@ CHECKS: tuple[Check, ...] = (
     Check("net_debt_vs_implied_bridge", "CIQ comps net debt vs the comps cash/debt bridge",
           "CIQ Comparable Analysis Financial Data net debt (the TEV build)",
           "CIQ Comparable Analysis Implied Valuation: total debt − cash", INTERNAL, "page",
-          "the page's net_debt_reconciled flag — counted only where the bridge's structured "
-          "bridge_cash and bridge_debt both exist, because the flag also reads True when it "
-          "does not",
+          f"within {_IE_TOL:.0%} of the net debt (mechanical._net_debt_probe) — the page's "
+          "net_debt_check, never its net_debt_reconciled flag, which also reads True with no "
+          "bridge; counted only where the bridge's structured bridge_cash and bridge_debt both "
+          "exist",
           "pages carrying mechanical.valuation.implied_expectations", None, None,
           ("wrong_cell", "wrong_unit"),
           _net_debt_vs_implied_bridge),
@@ -297,6 +388,19 @@ CHECKS: tuple[Check, ...] = (
           "snapshot_reconciles",
           "pages whose active recipe prices TEV/EBIT", None, None, ("wrong_file", "wrong_period"),
           _snapshot_multiple),
+    Check("forward_multiple_vintage",
+          "CIQ's FY 2026 forward multiple at CIQ's TEV vs CIQ's FY 2026 EBITDA consensus",
+          "CIQ Estimates→Multiples FY 2026 TEV/EBITDA, as comps TEV ÷ multiple (the EBITDA the "
+          "ladder implies)",
+          "CIQ Estimates→Trends FY 2026 EBITDA consensus, latest snapshot", INTERNAL, "page",
+          f"residual within {_IE_TOL:.0%} of the consensus (mechanical._vintage_probe) — the "
+          "page's vintage_check, never its vintage_coherent flag, which also reads True when the "
+          "probe cannot run",
+          "pages carrying mechanical.valuation.implied_expectations.vintage_check — FY 2026 "
+          "only, so a name that has reported FY 2026, or has no positive consensus for it, "
+          "cannot run it", None, None,
+          ("wrong_file", "wrong_unit", "wrong_period"),
+          _forward_multiple_vintage),
 )
 CHECK_IDS = tuple(c.id for c in CHECKS)
 
@@ -346,14 +450,15 @@ FAMILIES: tuple[Family, ...] = (
            note="the lease component is lease_rows_vs_edgar; TEV and the band's closes are not "
                 "rebuilt from another source"),
     Family("financials.cash_flow", "financials", ("Financials→Cash Flow",),
-           "operating cash flow, capex, free cash flow",
-           unscored=("mechanical.primary_source.self_funding — compares SIGNS with EDGAR, in "
-                     "display text only",)),
+           "operating cash flow, capex, free cash flow", checks=("fcf_sign_vs_edgar_ocf",),
+           note="a SIGN against a different measure only — the FCF figure itself is not set "
+                "against the filings, and a quarter's OCF and a year's levered FCF differ in sign "
+                "for ordinary reasons (capex, seasonality)"),
     Family("financials.capital_structure", "financials",
            ("Financials→Capital Structure Details", "Financials→Capital Structure Summary"),
-           "debt instruments and maturities",
-           unscored=("mechanical.primary_source.wall_coherence — the 10-Q maturity wall against "
-                     "the CIQ panel, verdict in display text only",)),
+           "debt instruments and maturities", checks=("wall_vs_10q",),
+           note="run only where the 10-Q states a 12-month maturity figure; the rest of the panel "
+                "(coupons, the later maturities) is not set against the filings"),
     Family("financials.segments", "financials", ("Financials→Segments",), "segment revenue",
            note="segment profit on the filer's measure comes from XBRL separately "
                 "(mechanical.concentration.segment_profit) and is not set against CIQ's segments"),
@@ -367,13 +472,12 @@ FAMILIES: tuple[Family, ...] = (
                 "not a pass/fail, by the schema's own rule, so they are counted, not scored",
            counted=_consensus_identities),
     Family("estimates.forward_multiples", "estimates", ("Estimates→Multiples",),
-           "the NTM multiples a recipe prices", checks=("snapshot_multiple",),
-           unscored=("mechanical.valuation.implied_expectations.vintage_coherent — reads True "
-                     "also when the probe cannot run; which it was is in coherence_note text "
-                     "only",)),
+           "the NTM multiples a recipe prices",
+           checks=("snapshot_multiple", "forward_multiple_vintage")),
     Family("estimates.guidance", "estimates", ("Estimates→Guidance",), "CIQ's record of guidance",
-           unscored=("mechanical.primary_source.guide_verification — CIQ's revenue guide against "
-                     "the 8-K release, verdict in display text only",)),
+           checks=("guide_vs_release",),
+           note="the revenue guide only; CIQ's other guided metrics are not set against the "
+                "releases"),
     Family("estimates.surprise", "estimates", ("Estimates→Surprise",),
            "final consensus against CIQ's actual, per completed year",
            note="the actuals are CIQ's own; they are not set against the filings"),
