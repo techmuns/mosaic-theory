@@ -96,6 +96,7 @@ def _guide(**kw: Any) -> ps.GuideVerification:
 def test_guide_read_agrees_only_when_verified_and_differs_only_on_a_mismatch() -> None:
     assert _guide(release_low=100.0, release_high=110.0).check == CHECK_AGREE
     assert _guide(release_low=100.0, release_high=110.0 + ps.GUIDE_MATCH).check == CHECK_DIFFER
+    assert _guide(release_low=100.0 + ps.GUIDE_MATCH, release_high=110.0).check == CHECK_DIFFER
     not_run = {
         "no CIQ guide": _guide(ciq_low=None, ciq_high=None, release_low=100.0, release_high=110.0),
         "cross-basis": _guide(release_low=-2.0, release_high=2.0, release_basis="change"),
@@ -284,3 +285,104 @@ def test_a_line_that_does_not_reproduce_is_named_and_left_absent() -> None:
     assert "guide_verification_check" not in out["primary_source"]
     assert f"{t}: guide_verification does not reproduce from the page's stored inputs" in refused
     assert "net_debt_check" in out["valuation"]["implied_expectations"]
+
+
+# --- each proof refuses on its own -------------------------------------------------------------
+
+
+def _one_page_backfilled(pick: Any) -> tuple[dict[str, Any], dict[str, Any]]:
+    """The first committed page `pick` accepts once back-filled from the fixtures: (raw page
+    without outcomes, the back-filled mechanical layer)."""
+    for path in PAGES:
+        raw = _without_outcomes(json.loads(path.read_text()))
+        out, _ = _backfill(raw)
+        if pick(raw, out):
+            return raw, out
+    pytest.fail("no committed page fits — the pin is vacuous")
+
+
+@pytest.mark.skipif(not PAGES, reason="no committed dossiers")
+def test_an_outcome_the_page_already_holds_is_kept_and_named_never_overwritten() -> None:
+    raw, out = _one_page_backfilled(
+        lambda r, o: "net_debt_check" in ((o.get("valuation") or {}).get("implied_expectations")
+                                          or {}))
+    real = out["valuation"]["implied_expectations"]["net_debt_check"]
+    wrong = CHECK_DIFFER if real != CHECK_DIFFER else CHECK_AGREE
+    raw["mechanical"]["valuation"]["implied_expectations"]["net_debt_check"] = wrong
+    planted, refused = _backfill(raw)
+    assert planted["valuation"]["implied_expectations"]["net_debt_check"] == wrong
+    assert f"{raw['ticker']}: net_debt_check is {wrong!r} on the page, the reproduction gives " \
+           f"{real!r}" in refused
+
+
+@pytest.mark.skipif(not PAGES, reason="no committed dossiers")
+def test_a_vintage_note_that_does_not_reproduce_refuses_only_the_vintage_outcome() -> None:
+    raw, _out = _one_page_backfilled(
+        lambda r, o: "vintage_check" in ((o.get("valuation") or {}).get("implied_expectations")
+                                         or {}))
+    raw["mechanical"]["valuation"]["implied_expectations"]["coherence_note"] += " (edited)"
+    out, refused = _backfill(raw)
+    ie = out["valuation"]["implied_expectations"]
+    assert "vintage_check" not in ie and "net_debt_check" in ie
+    assert f"{raw['ticker']}: coherence_note does not reproduce from the page's stored " \
+           "inputs" in refused
+
+
+@pytest.mark.skipif(not PAGES, reason="no committed dossiers")
+def test_a_wall_flag_the_rebuild_does_not_give_back_refuses_the_wall_outcome() -> None:
+    """The wall's QA flags are part of what must reproduce: the boundary reason is stored
+    beside the outcome, so a page whose stored flag the rebuild does not give back is refused."""
+    raw, _out = _one_page_backfilled(
+        lambda r, o: (o.get("primary_source") or {}).get("wall_coherence_check") == CHECK_NOT_RUN)
+    raw["mechanical"]["primary_source"]["qa_flags"].append(
+        "wall coherence: divergence with an instrument maturing within ±7d of the +12m boundary "
+        "(planted) — possible window-convention artifact, not a true divergence")
+    out, refused = _backfill(raw)
+    assert "wall_coherence_check" not in out["primary_source"]
+    assert f"{raw['ticker']}: wall_coherence does not reproduce from the page's stored " \
+           "inputs" in refused
+
+
+def _with_a_later_quarter(facts: dict[str, Any], filed: date) -> dict[str, Any]:
+    """The facts plus one more single quarter of the OTHER sign, filed on ``filed``."""
+    from vinci.edgar.concepts import CONCEPT_ALIASES, extract_points
+
+    pts = [p for p in extract_points(facts, "operating_cash_flow")
+           if p.period_start is not None and (p.period_end - p.period_start).days <= 100]
+    last = max(pts, key=lambda p: (p.period_end, p.filed))
+    start = last.period_end.toordinal() + 1
+    late = {"accn": "0000000000-26-999999", "start": date.fromordinal(start).isoformat(),
+            "end": date.fromordinal(start + 90).isoformat(), "filed": filed.isoformat(),
+            "form": "10-Q", "fp": "Q3", "fy": last.period_end.year,
+            "val": -1.0 if last.value > 0 else 1.0}
+    out: dict[str, Any] = json.loads(json.dumps(facts))
+    for tag in CONCEPT_ALIASES["operating_cash_flow"]:
+        for unit in ((out["facts"].get("us-gaap") or {}).get(tag) or {}).get("units", {}).values():
+            unit.append(late)
+    return out
+
+
+@pytest.mark.skipif(not PAGES, reason="no committed dossiers")
+def test_the_ocf_sign_is_read_as_it_stood_when_the_page_was_assembled() -> None:
+    """A quarter filed AFTER the page was assembled is not the one its line was built on: read as
+    filed by the assembly date, a later quarter of the other sign neither moves the outcome nor
+    refuses the line. Read as of today, it would."""
+    raw, out = _one_page_backfilled(
+        lambda r, o: "self_funding_check" in (o.get("primary_source") or {}))
+    assembled = date.fromisoformat(raw["assembled_at"][:10])
+    edgar = _FixtureEdgar()
+    facts = _with_a_later_quarter(edgar.companyfacts(raw["cik"]),
+                                  date.fromordinal(assembled.toordinal() + 1))
+    assert (dm._latest_quarter_ocf_positive(facts, filed_by=assembled)
+            != dm._latest_quarter_ocf_positive(facts))
+
+    class _Later(_FixtureEdgar):
+        def companyfacts(self, cik: str) -> dict[str, Any]:
+            return facts
+
+    refused: list[str] = []
+    with no_network():
+        late = cross_check_transform(raw, edgar=_Later(), refused=refused)(raw["mechanical"])
+    assert late["primary_source"]["self_funding_check"] == out["primary_source"][
+        "self_funding_check"]
+    assert not any("self_funding" in r for r in refused)
