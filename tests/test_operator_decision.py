@@ -16,10 +16,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
-from datetime import UTC, date, datetime
+import time
+from collections.abc import Iterator
+from contextlib import contextmanager
+from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -296,7 +300,9 @@ def test_retag_records_a_decision_and_moves_no_value(tmp_path: Path,
     assert a["operator_decision"] == {
         "recipe": "R3_forward_pe", "decided_by": "operator", "source_ref": "docs/records/x.md",
         "reason": "The forward P/E fits this name; the operator's words, verbatim.",
-        "decided_on": datetime.now(UTC).date().isoformat(),
+        # the operator's calendar, as `anchor-retag` dates it — UTC's here made this pin red every
+        # night from local midnight to UTC's (00:00–05:30 IST) and green in CI, which runs in UTC
+        "decided_on": date.today().isoformat(),
         "machine_recipe_at_decision": committed.recipe_hint}
     assert a["recipe_hint"] == "R3_forward_pe" and a["machine_recipe_hint"] == committed.recipe_hint
     assert a["reason"] == fresh.reason
@@ -689,6 +695,52 @@ def test_today_is_the_operators_calendar_and_never_the_future(
     dec = json.loads(path.read_text())["anchor"]["operator_decision"]
     assert dec["decided_on"] == "2031-01-02"
     assert dec["machine_recipe_at_decision"] == committed.recipe_hint
+
+
+@contextmanager
+def _process_zone(offset_hours: int) -> Iterator[None]:
+    """The process's LOCAL zone — what `date.today()` reads — at a fixed UTC offset, restored on
+    exit. A POSIX TZ string, so no tz database is needed; its sign is inverted: `<+14>-14` is
+    UTC+14."""
+    old = os.environ.get("TZ")
+    os.environ["TZ"] = f"<{offset_hours:+03d}>{-offset_hours:+d}"
+    time.tzset()
+    try:
+        yield
+    finally:
+        if old is None:
+            os.environ.pop("TZ", None)
+        else:
+            os.environ["TZ"] = old
+        time.tzset()
+
+
+def test_a_decision_made_now_is_dated_on_the_local_calendar_under_a_real_zone(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE NIGHTLY FLAKE (2026-10-24): the first re-tag pin expected UTC's date while the command
+    dates the operator's, so it was red every night from local midnight to UTC's (00:00–05:30 IST)
+    and green in CI, which runs in UTC. The `_Day` pin above patches `date` and drives an EXPLICIT
+    date; this one sets the process's REAL zone and drives the DEFAULT — no `--decided-on` — always
+    in the divergent case: UTC−12 reads yesterday until 12:00 UTC and UTC+14 reads tomorrow from
+    10:00 UTC, and switching at 11:00 keeps the zone's own midnight an hour from the run."""
+    now = datetime.now(UTC)
+    offset = -12 if now.hour < 11 else 14
+    t = _undecided_live()
+    path = _copy_page(tmp_path, t)
+    committed = Dossier.model_validate_json(path.read_text()).anchor
+    assert committed is not None
+    _stub_cli(monkeypatch, tmp_path, _machine_only(committed, committed.recipe_hint))
+    reason = tmp_path / "why.txt"
+    reason.write_text("a reason")
+    with _process_zone(offset):
+        local_today = datetime.now(timezone(timedelta(hours=offset))).date()
+        assert date.today() == local_today != now.date(), "the run is not the divergent case"
+        rc = cli._cmd_anchor_retag(_retag_args(t, recipe="R3_forward_pe", reason_file=str(reason),
+                                               decided_by="operator", source_ref="x"))
+    assert rc == 0
+    dec = json.loads(path.read_text())["anchor"]["operator_decision"]
+    assert dec["decided_on"] == local_today.isoformat(), "dated on UTC's calendar"
+    assert dec["machine_recipe_at_decision"] == committed.recipe_hint, "made now, read as backdated"
 
 
 @pytest.mark.parametrize("blank", ["decided_by", "source_ref", "recipe"])
