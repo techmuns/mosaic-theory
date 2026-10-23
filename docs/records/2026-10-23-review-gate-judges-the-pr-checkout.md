@@ -1,8 +1,8 @@
 ---
 id: 2026-10-23-review-gate-judges-the-pr-checkout
-status: open
+status: shipped
 date: 2026-10-23
-prs: []
+prs: [788]
 supersedes:
 superseded-by:
 ---
