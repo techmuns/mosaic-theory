@@ -24,10 +24,16 @@ production branch before (or together with) connecting the project.**
 
 `frontend/dossiers/*.json` are DERIVED from licensed CIQ workbooks (extracted
 `{value, source_ref}` facts + LLM synthesis + verbatim PUBLIC 10-K phrases — never
-reproduced licensed CIQ). They are committed to this **private** repo for the authed
+reproduced licensed CIQ). They were committed to this repo, then **private**, for the authed
 deploy (CLAUDE.md). **Once a reachable URL serves them unauthenticated, that cannot be
 retracted.** So the origin is built to **fail closed**, and you confirm the gate works
 (BLOCKER A) before sharing the URL.
+
+**2026-10-22 — THE REPO IS PUBLIC** (operator decision,
+`docs/records/2026-10-22-repo-made-public.md`). The committed files this gate serves are now
+also readable on GitHub without a login, so Basic Auth protects the deployed URL, not the data.
+Keep the gate (it still stops the URL being an open dashboard); do not read it as making a
+committed file private.
 
 ## The two BLOCKERS
 
@@ -48,7 +54,7 @@ retracted.** So the origin is built to **fail closed**, and you confirm the gate
 - `frontend/build.py` — the **Pages build step** (stdlib-only). Mirrors committed snapshots
   + derived dossiers + the slimmed graph into `frontend/` and writes `manifest.json`.
 - `data/dossiers/<TICKER>/dossier.json` and `data/graph_coverage.json` — committed, derived,
-  licensed-adjacent (private repo only).
+  licensed-adjacent (private repo only until 2026-10-22; public since, by operator decision).
 - `functions/_middleware.js` — the fail-closed Basic Auth gate.
 - `wrangler.toml` — declares `pages_build_output_dir = "frontend"` and enables Functions.
 
