@@ -234,6 +234,36 @@ def reviewed_since_last_pr(transcript: str, current_id: str) -> bool | None:
     return last_review > last_pr
 
 
+class Judged(NamedTuple):
+    """The code files a PR changes, where they were read, and the base they were read against."""
+
+    files: list[str]
+    where: str
+    base: str
+
+
+def judged_code(command: str, start: str) -> Judged | None:
+    """The CODE rule for the PR ``command`` opens when run from ``start`` — None when the PR comes
+    from a checkout of another repo. codex_request.py imports this, so both hooks share one rule."""
+    target = pr_target(command, start)
+    # A `cd` into a directory that does not exist is UNKNOWN, not "another repo": the shell may
+    # well run `gh pr create` from the folder it failed to leave.
+    directory = target.directory if target.directory and Path(target.directory).is_dir() else None
+    if directory is not None:
+        root = repo_root(directory)
+        if root is None:
+            return None                     # the PR comes from a checkout of another repo
+        code = code_files_changed(root, target.head, target.base)
+        where = f"branch {target.head}" if target.head else f"the checkout at {root}"
+    elif target.head is not None and (root := repo_root(start)) is not None:
+        code = code_files_changed(root, target.head, target.base)  # branches are repo-wide
+        where = f"branch {target.head}"
+    else:
+        code = ["(the checkout this PR comes from could not be determined — treated as code)"]
+        where = "this PR"
+    return Judged(code, where, target.base)
+
+
 def main() -> int:
     try:
         payload = json.load(sys.stdin)
@@ -243,24 +273,10 @@ def main() -> int:
     if payload.get("tool_name") != "Bash" or not opens_a_pr(command):
         return 0
     start = str(payload.get("cwd") or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd())
-    target = pr_target(command, start)
-    # A `cd` into a directory that does not exist is UNKNOWN, not "another repo": the shell may
-    # well run `gh pr create` from the folder it failed to leave.
-    directory = target.directory if target.directory and Path(target.directory).is_dir() else None
-    if directory is not None:
-        root = repo_root(directory)
-        if root is None:
-            return 0                        # the PR comes from a checkout of another repo
-        code = code_files_changed(root, target.head, target.base)
-        where = f"branch {target.head}" if target.head else f"the checkout at {root}"
-    elif target.head is not None and (root := repo_root(start)) is not None:
-        code = code_files_changed(root, target.head, target.base)  # branches are repo-wide
-        where = f"branch {target.head}"
-    else:
-        code = ["(the checkout this PR comes from could not be determined — treated as code)"]
-        where = "this PR"
-    if not code:
+    judged = judged_code(command, start)
+    if judged is None or not judged.files:
         return 0
+    code, where = judged.files, judged.where
     verdict = reviewed_since_last_pr(str(payload.get("transcript_path", "")),
                                      str(payload.get("tool_use_id", "")))
     if verdict is None:
@@ -271,7 +287,7 @@ def main() -> int:
         return 0
     shown = code[:10]
     print(f"PR CREATION IS GATED ON A CODE REVIEW (.claude/hooks/review_gate.py). {where} "
-          f"changes {len(code)} code file(s) against {target.base} (showing {len(shown)}: "
+          f"changes {len(code)} code file(s) against {judged.base} (showing {len(shown)}: "
           f"{', '.join(shown)}) and no code review at effort high or above has run since the last "
           "PR this session opened. Do this, then run gh pr create again:\n"
           "1. Run the code-review skill — Skill(skill=\"code-review\", args=\"high --fix\"), the "

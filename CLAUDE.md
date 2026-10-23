@@ -88,12 +88,14 @@ verdict placement.
   data, show the output, and demonstrate the **non-trivial / previously-broken** case specifically —
   not the easy case that was never in doubt. (The lookahead fix is the template.)
 - **Suite stays green** — ruff + `mypy --strict` clean; `pytest -m "not network"` passes. No red commit.
-- **Four of these rules are HOOKS, not memory** (`.claude/settings.json`): a session starts with the
+- **Five of these rules are HOOKS, not memory** (`.claude/settings.json`): a session starts with the
   §5.0 index; a turn cannot end while uncommitted Python fails the fast gate (up to 3 tries); an
   edit to a decision-line file asks the operator first; `gh pr create` on a code change is refused
   until `/code-review high --fix` has run since the last PR (apply only confirmed fixes; list every
-  finding as a round-0 row of the PR body's Review dispositions table). Fix what they report — never edit around them.
-- **PR feedback is bounded** (`.claude/skills/pr-feedback`): Codex reviews each PR when it opens
+  finding as a round-0 row of the PR body's Review dispositions table); and once that code PR
+  opens, its one `@codex review` request is posted for you — never post another. Fix what they
+  report — never edit around them.
+- **PR feedback is bounded** (`.claude/skills/pr-feedback`): Codex reviews each code PR when it opens
   and only comments (Gemini is NOT installed — operator decision 2026-10-23, $19/mo; `.gemini/` is
   kept inert, so never wait for or request a Gemini review); the PR's own session triages every
   finding — FIX only behind a test that fails first, else DISMISS or DEFER — one commit per round,

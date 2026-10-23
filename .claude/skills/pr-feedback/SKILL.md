@@ -7,8 +7,9 @@ description: Triage review feedback on a PR this session opened — Codex, a fai
 
 ROUND CAP: 2
 
-The PR's own session is the ONLY writer. Codex reviews when the PR opens (draft or not) and only
-comments. Gemini Code Assist is NOT installed (operator decision 2026-10-23: $19/mo); its
+The PR's own session is the ONLY writer. When `gh pr create` opens a code PR (draft or not),
+`.claude/hooks/codex_request.py` posts its one `@codex review` comment; Codex then reviews and only
+comments. Do not post that request yourself. Gemini Code Assist is NOT installed (operator decision 2026-10-23: $19/mo); its
 `.gemini/` config is inert, so never wait for or request a Gemini review. This skill turns review
 comments into at most two rounds of fixes, then stops, so that review → fix → re-review cannot run
 on forever or pile up defensive code.
@@ -51,7 +52,8 @@ first), then ONE push. Each FIX's test goes in the same commit.
 ## 4. Re-review — at most once per PR
 
 Only when a FIX changed behaviour beyond the lines the comment named, post `@codex review` once.
-That reply, if it comes, is round 2. Gemini is not asked to re-review.
+The hook's request when the PR opened does not count; this is the one re-review. That reply, if
+it comes, is round 2. Gemini is not asked to re-review.
 
 ## 5. Record — the PR body is the ledger
 

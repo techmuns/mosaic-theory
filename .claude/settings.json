@@ -44,6 +44,16 @@
             "timeout": 15
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/codex_request.py\"",
+            "timeout": 90
+          }
+        ]
       }
     ],
     "Stop": [

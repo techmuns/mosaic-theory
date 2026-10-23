@@ -70,7 +70,7 @@ def test_settings_wire_each_hook_to_a_script_that_exists() -> None:
 def test_hook_scripts_parse_as_python_3_9() -> None:
     """The system `python3` that runs them is 3.9: newer syntax would break every session."""
     scripts = sorted(HOOKS.glob("*.py"))
-    assert len(scripts) == 4
+    assert len(scripts) == 5
     for script in scripts:
         ast.parse(script.read_text(), filename=str(script), feature_version=(3, 9))
 
@@ -442,3 +442,157 @@ def test_review_gate_reads_head_through_wrappers_and_fork_syntax(tmp_path: pathl
     assert _create(repo, [], command="env A=1 gh pr create --head docs").returncode == 0
     assert _create(repo, [], command="gh pr create --head techmuns:docs").returncode == 0
     assert _create(repo, [], command="gh pr create --head techmuns:code").returncode == 2
+
+
+# ── PostToolUse on Bash: one `@codex review` request per code PR (2026-10-23) ─────────────────────
+# `gh` is a stand-in put first on PATH that records every call it receives. The tool_response is
+# the one Claude Code recorded for this session's real `gh pr create` of #788, number and URL
+# swapped — all eight real creates in that transcript (#781–#788) carry this exact shape.
+
+URL = "https://github.com/techmuns/mosaic-theory/pull/999"
+REQUEST = ["pr", "comment", URL, "--body", "@codex review"]
+_FAKE_GH = """
+import json, os, sys
+with open(os.environ["FAKE_GH_LOG"], "a") as log:
+    log.write(json.dumps(sys.argv[1:]) + "\\n")
+if sys.argv[1:3] == ["pr", "view"]:
+    print(os.environ["FAKE_GH_VIEW"])
+elif os.environ["FAKE_GH_FAIL"]:
+    sys.exit(os.environ["FAKE_GH_FAIL"])
+"""
+
+
+def _created(url: str = URL) -> dict[str, object]:
+    return {"stdout": url, "stderr": "", "interrupted": False, "isImage": False,
+            "noOutputExpected": False,
+            "gitOperation": {"pr": {"number": int(url.rsplit("/", 1)[-1]), "url": url,
+                                    "action": "created"}}}
+
+
+def _codex_repo(tmp_path: pathlib.Path) -> pathlib.Path:
+    repo = _two_branch_repo(tmp_path)
+    subprocess.run(["git", "-C", str(repo), "remote", "add", "origin",
+                    "https://github.com/techmuns/mosaic-theory.git"], check=True)
+    return repo
+
+
+def _opened(repo: pathlib.Path, command: str = "gh pr create --head code",
+            response: object = None, comments: tuple[str, ...] = (), fail: str = "",
+            tool: str = "Bash") -> tuple[subprocess.CompletedProcess[str], list[list[str]]]:
+    """Run the hook on one finished tool call; return its output and every `gh` call it made."""
+    fake = repo.parent / "bin" / "gh"
+    fake.parent.mkdir(exist_ok=True)
+    fake.write_text(f"#!{sys.executable}\n{_FAKE_GH}")
+    fake.chmod(0o755)
+    log = repo.parent / f"gh-{uuid.uuid4().hex}.log"
+    env = {"PATH": f"{fake.parent}{os.pathsep}{os.environ['PATH']}", "FAKE_GH_LOG": str(log),
+           "FAKE_GH_VIEW": json.dumps({"comments": [{"body": b} for b in comments]}),
+           "FAKE_GH_FAIL": fail}
+    out = _run("codex_request.py", {"tool_name": tool, "hook_event_name": "PostToolUse",
+                                    "cwd": str(repo), "tool_input": {"command": command},
+                                    "tool_response": _created() if response is None else response},
+               cwd=repo, env=env)
+    calls = [json.loads(x) for x in log.read_text().splitlines()] if log.exists() else []
+    return out, calls
+
+
+def test_codex_request_is_wired_to_every_finished_bash_call() -> None:
+    groups = json.loads(SETTINGS.read_text())["hooks"]["PostToolUse"]
+    wired = [g for g in groups if "codex_request.py" in json.dumps(g)]
+    assert len(wired) == 1 and wired[0]["matcher"] == "Bash"
+
+
+def test_codex_request_asks_codex_once_for_a_code_pr(tmp_path: pathlib.Path) -> None:
+    out, calls = _opened(_codex_repo(tmp_path))
+    assert out.returncode == 0
+    assert calls.count(REQUEST) == 1 and calls[-1] == REQUEST
+    told = json.loads(out.stdout)["hookSpecificOutput"]
+    assert told["hookEventName"] == "PostToolUse"
+    assert URL in told["additionalContext"] and "Do not post another" in told["additionalContext"]
+
+
+def test_codex_request_leaves_a_pr_that_changes_no_code_alone(tmp_path: pathlib.Path) -> None:
+    repo = _codex_repo(tmp_path)                    # `main` checked out, nothing changed
+    for command in ("gh pr create --head docs", "gh pr create --fill"):
+        out, calls = _opened(repo, command)
+        assert out.returncode == 0 and out.stdout == "" and calls == [], command
+
+
+def test_codex_request_uses_the_review_gates_own_code_rule(tmp_path: pathlib.Path) -> None:
+    """One rule, two hooks: a PR the gate holds for review is exactly a PR Codex is asked to
+    review — including the gate's fail-closed reading of a checkout it cannot resolve."""
+    repo = _codex_repo(tmp_path)
+    for command in ("gh pr create --head code", "gh pr create --head docs",
+                    "time gh pr create --head techmuns:code", "gh pr create --head techmuns:docs",
+                    'cd "$W" && gh pr create', "gh pr create --fill"):
+        gated = _create(repo, [], command=command).returncode == 2
+        _, calls = _opened(repo, command)
+        assert (REQUEST in calls) == gated, command
+
+
+def test_codex_request_posts_nothing_for_what_opened_no_pr(tmp_path: pathlib.Path) -> None:
+    """Run from a checkout that DOES change code, so only the not-a-PR reading keeps it quiet
+    (found by mutation: on a clean checkout the code rule alone hid a missing check)."""
+    repo = _codex_repo(tmp_path)
+    subprocess.run(["git", "-C", str(repo), "switch", "-q", "code"], check=True)
+    viewed = {"stdout": f"title:\tt\nnumber:\t999\n--\nView this pull request on GitHub: {URL}\n"}
+    for command in ('git commit -m "then gh pr create"', "gh pr view 999", "gh pr list"):
+        assert _opened(repo, command, response=viewed)[1] == [], command
+    assert _opened(repo, tool="Edit")[1] == []
+    browser = {"stdout": "Opening github.com/techmuns/mosaic-theory/compare in your browser."}
+    assert _opened(repo, "gh pr create --web --head code", response=browser)[1] == []
+    viewed = _created()
+    viewed["gitOperation"] = {"pr": {"number": 999, "url": URL, "action": "viewed"}}
+    assert _opened(repo, response=viewed)[1] == []
+
+
+def test_codex_request_reads_gh_output_when_claude_code_records_no_pr(
+        tmp_path: pathlib.Path) -> None:
+    repo = _codex_repo(tmp_path)
+    pushed = {"stdout": f"remote: ...\n{URL}\n",
+              "gitOperation": {"branch": {"ref": "origin/code", "action": "pushed"}}}
+    assert REQUEST in _opened(repo, "git push -u origin code && gh pr create --head code",
+                              response=pushed)[1]
+
+
+def test_codex_request_does_not_ask_twice(tmp_path: pathlib.Path) -> None:
+    repo = _codex_repo(tmp_path)
+    for existing in ("@codex review", "@codex review for security regressions"):
+        out, calls = _opened(repo, comments=("LGTM", existing))
+        assert REQUEST not in calls and out.stdout == "", existing
+    assert REQUEST in _opened(repo, comments=("ask @codex review later",))[1]
+
+
+def test_codex_request_never_comments_on_another_repository(tmp_path: pathlib.Path) -> None:
+    repo = _codex_repo(tmp_path)
+    elsewhere = _created("https://github.com/nostra-demus/equity-research/pull/12")
+    assert _opened(repo, response=elsewhere)[1] == []
+    other = tmp_path / "other-repo"
+    other.mkdir()
+    subprocess.run(["git", "-C", str(other), "init", "-q"], check=True)
+    assert _opened(repo, f"cd {other} && gh pr create --fill")[1] == []
+    subprocess.run(["git", "-C", str(repo), "remote", "remove", "origin"], check=True)
+    assert _opened(repo)[1] == []                   # no origin: the PR's repo cannot be matched
+
+
+def test_codex_request_matches_origin_however_it_is_written(tmp_path: pathlib.Path) -> None:
+    """GitHub names are case-blind and a remote may be ssh or lack `.git`; gh prints its own
+    canonical URL, so the match must not depend on how the operator typed the remote."""
+    repo = _codex_repo(tmp_path)
+    for origin in ("git@github.com:techmuns/mosaic-theory.git",
+                   "https://github.com/TechMuns/Mosaic-Theory",
+                   "ssh://git@github.com/techmuns/mosaic-theory.git"):
+        subprocess.run(["git", "-C", str(repo), "remote", "set-url", "origin", origin], check=True)
+        assert REQUEST in _opened(repo)[1], origin
+
+
+def test_codex_request_warns_and_never_blocks_when_gh_fails(tmp_path: pathlib.Path) -> None:
+    repo = _codex_repo(tmp_path)
+    out, calls = _opened(repo, fail="HTTP 502: Bad Gateway")
+    assert out.returncode == 0 and REQUEST in calls
+    told = json.loads(out.stdout)
+    assert "could NOT post" in told["systemMessage"] and "HTTP 502" in told["systemMessage"]
+    assert f"gh pr comment {URL}" in told["hookSpecificOutput"]["additionalContext"]
+    # a long error says it was cut (CLAUDE.md: a truncated output prints its own truncation)
+    long = json.loads(_opened(repo, fail="GraphQL: " + "x" * 400)[0].stdout)["systemMessage"]
+    assert "[first 300 of 409 characters]" in long
