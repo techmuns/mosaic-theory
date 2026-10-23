@@ -632,6 +632,7 @@ _Source §: 8-K 0001193125-09-194962 · dex101.htm_
   - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
   - 2026-10-22 · mechanical.primary_source — refresh at 2026-10-09.3
+  - 2026-10-23 · mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
 - **Price store:** `wt-nflx → mosaic-theory-ta` · reaching 2026-10-09
 - **Panel age:** oldest panel 4d old — 2026-10-06 (valuation.implied_expectations.tev_as_of), against a 2026-10-10 build
 - **Consensus age:** consensus 4d old (2026-10-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

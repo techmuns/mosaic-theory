@@ -535,6 +535,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-20 · anchor, qa_flags, valuation_basis — anchor-backfill at 2026-10-09.3
   - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
+  - 2026-10-23 · mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
 - **Price store:** `wt-burl → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 8d old — 2026-09-22 (stock_info.as_of), against a 2026-09-30 build
 - **Consensus age:** consensus 3d old (2026-09-27, valuation.implied_expectations.multiples_as_of) — within the ceiling
