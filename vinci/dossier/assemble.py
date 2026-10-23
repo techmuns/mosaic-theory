@@ -21,7 +21,7 @@ from typing import Any, TypeVar
 from pydantic import ValidationError
 
 from vinci.config import Config, get_config
-from vinci.dossier import ciq_sheets, requirements
+from vinci.dossier import ciq_sheets, requirements, run_metrics
 from vinci.dossier import flags as dossier_flags
 from vinci.dossier.anchor import (
     RECIPE_UNKNOWN,
@@ -60,7 +60,7 @@ from vinci.dossier.synthesis import (
 from vinci.edgar.client import EdgarClient
 from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
-from vinci.graph.llm import LlmClient
+from vinci.graph.llm import LlmClient, MeteredLlmClient
 from vinci.labels import resolve_label
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
@@ -1175,8 +1175,13 @@ def assemble_cohort(
     llm: LlmClient | None = None,
     manual: ManualDataStore | None = None,
     max_workers: int = 8,
+    run_log: run_metrics.RunLog | None = None,
 ) -> tuple[list[Dossier], list[str]]:
-    """Assemble the cohort in parallel → (dossiers, per-name errors). The batch never crashes."""
+    """Assemble the cohort in parallel → (dossiers, per-name errors). The batch never crashes.
+
+    Every name ATTEMPTED leaves one line in ``run_log`` (default: a new file under
+    ``<snapshots>/assembly_runs/``) — what its LLM calls cost and what the build produced, refused
+    builds included (`vinci.dossier.run_metrics`). Each name gets its OWN meter around ``llm``."""
     cfg = cfg or get_config()
     cfg.ensure_dirs()
     resolver = EntityResolver.from_config(cfg)
@@ -1184,15 +1189,30 @@ def assemble_cohort(
     graph = _load_graph(cfg)
     manual = manual or LocalFolderStore.from_config(cfg)
     out_root = cfg.data_dir / "dossiers"
+    log = run_log or run_metrics.RunLog(cfg.snapshots_dir)
 
     def task(fin: Finalist) -> tuple[Dossier | None, str | None]:
+        ticker = fin.data_record.identity.ticker
+        meter = MeteredLlmClient(llm) if llm is not None else None
+        started = datetime.now(UTC)
+        dossier: Dossier | None = None
+        failure: Exception | None = None
         try:
-            return assemble_one(
+            dossier = assemble_one(
                 fin, cfg=cfg, resolver=resolver, graph=graph, manual=manual,
-                out_root=out_root, llm=llm,
-            ), None
+                out_root=out_root, llm=meter,
+            )
         except Exception as exc:  # noqa: BLE001 — one bad name must not crash the cohort batch
-            return None, f"{fin.data_record.identity.ticker}: {type(exc).__name__}: {exc}"
+            failure = exc
+        error = f"{ticker}: {type(failure).__name__}: {failure}" if failure is not None else None
+        try:
+            log.add(run_metrics.name_record(
+                run_id=log.run_id, ticker=ticker, started=started, finished=datetime.now(UTC),
+                meter=meter, dossier=dossier, error=failure))
+        except Exception as exc:  # noqa: BLE001 — the dossier stands; the lost record is an error
+            lost = f"{ticker}: run record NOT written to {log.path} ({type(exc).__name__}: {exc})"
+            error = f"{error}; {lost}" if error else lost
+        return dossier, error
 
     dossiers: list[Dossier] = []
     errors: list[str] = []

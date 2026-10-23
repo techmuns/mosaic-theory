@@ -416,7 +416,10 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
             llm = AnthropicLlmClient.from_config(cfg)
         except Exception as exc:  # noqa: BLE001 — degrade to mechanical-only, never crash the CLI
             print(f"LLM unavailable ({exc}) — assembling the mechanical layer only")
-    dossiers, errors = assemble_cohort(finalists, cfg=cfg, llm=llm)
+    from vinci.dossier.run_metrics import RunLog, summary
+
+    run_log = RunLog(cfg.snapshots_dir)
+    dossiers, errors = assemble_cohort(finalists, cfg=cfg, llm=llm, run_log=run_log)
     out = cfg.data_dir / "dossiers"
     print(f"=== dossier · {len(dossiers)} done · {len(errors)} error(s) · → {out}/<ticker>/ ===")
     for d in sorted(dossiers, key=lambda d: d.rank or 1_000_000):
@@ -426,6 +429,10 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
             print(f"      ⚠ {c}")
     for e in errors:
         print(f"  ERROR {e}")
+    if run_log.records:
+        print(f"--- what each build cost and produced → {run_log.path}")
+        for line in summary(run_log.records):
+            print(line)
     # MIRROR WHAT WAS WRITTEN. Assembly is a DELIVERY PATH and it did not mirror — demonstrated on
     # this very command: SMPL's 2026-08-03 re-assembly wrote `data/dossiers/SMPL/` while the served
     # `frontend/dossiers/SMPL.md` stayed the older page. That is FUBO's missing-banner shape, which

@@ -30,6 +30,13 @@ US_EXCHANGES: dict[str, str] = {
     "NYSE American": "XASE",
 }
 
+# --- LLM list prices ----------------------------------------------------------------------------
+#: USD per million tokens (input, output) — Anthropic first-party list price as cached 2026-10-06.
+#: Cache writes bill 1.25x input and cache reads 0.1x input. ONE table for every path that prices a
+#: call — the fund's dossier assembly (`vinci.graph.llm.cost_usd`) and theme intelligence, which
+#: imports it from here. A model missing here makes a cost UNKNOWN, never zero.
+LLM_PRICE_PER_MTOK: dict[str, tuple[float, float]] = {"claude-opus-4-8": (5.0, 25.0)}
+
 
 class UniverseConfig(BaseModel, frozen=True):
     """The US universe gate (capacity gate). Coarse by design."""
