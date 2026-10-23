@@ -88,6 +88,11 @@ verdict placement.
   data, show the output, and demonstrate the **non-trivial / previously-broken** case specifically —
   not the easy case that was never in doubt. (The lookahead fix is the template.)
 - **Suite stays green** — ruff + `mypy --strict` clean; `pytest -m "not network"` passes. No red commit.
+- **Four of these rules are HOOKS, not memory** (`.claude/settings.json`): a session starts with the
+  §5.0 index; a turn cannot end while uncommitted Python fails the fast gate (up to 3 tries); an
+  edit to a decision-line file asks the operator first; `gh pr create` on a code change is refused
+  until `/code-review high --fix` has run since the last PR (apply only confirmed fixes; list every
+  finding as FIXED or DISMISSED in the PR body). Fix what they report — never edit around them.
 - **Regression-test every bug fix** — a fix without a test that would have caught it isn't done.
 - **Work on a local branch, never directly on main. The agent opens a PR and STOPS — it never merges
   to main itself.** Green (ruff + `mypy --strict` + `pytest`) is *necessary but not sufficient*: a
@@ -144,21 +149,27 @@ verdict placement.
 - **Never commit or log, ever:** the **raw licensed CIQ workbooks** (`data/manual/ciq/`), the working
   DB (`*.db`), any credential/token, (later) any LP/investor PII. Pasted licensed CIQ tables are never
   committed. Raw CIQ stays git-ignored REGARDLESS of repo/deploy privacy.
-- **DERIVED analytical artifacts ARE committable — to the PRIVATE/authed repo ONLY** (this repo is
-  private; the Cloudflare deploy is authed/internal). They are derived analysis, NOT reproduced
+- **THIS REPO IS PUBLIC** *(operator decision 2026-10-22,
+  `docs/records/2026-10-22-repo-made-public.md`)*: every committed file, its whole history, PR
+  bodies and CI logs are world-readable. The Cloudflare deploy stays behind Basic Auth, but it no
+  longer keeps anything committed here private. **Commit nothing you would not publish.**
+- **DERIVED analytical artifacts ARE committable** — the operator ruled on 2026-10-22 that the set
+  below STAYS committed in the public repo (it was authorized for the private repo first). They are
+  derived analysis, NOT reproduced
   licensed content: code, JSONL snapshots/docs, **`data/graph_coverage.json`** (the EDGAR-10-K-derived
   customer/supplier **exposure map** — every edge carries a verbatim 10-K phrase + accession; it
   borrows only CIQ's relationship-*type* taxonomy, never workbook data), and the per-ticker
   **`data/dossiers/<TICKER>/dossier.json`** (extracted facts, each a `{value, source_ref}`). The
   committable set: snapshots (ranked queue, ledger, universe/screen counts) + `graph_coverage.json` +
-  per-ticker `dossier.json`. **If the repo or the deploy ever becomes public, the graph + dossiers
-  revert to git-ignored / local-only.** (`data/graph_test0.json` — the falsified Edge-3 test artifact —
+  per-ticker `dossier.json`. *(Until 2026-10-22 this line said the graph + dossiers revert to
+  git-ignored if the repo went public. The operator overrode that when making it public: do NOT
+  un-track them — un-tracking would not un-publish history.)* (`data/graph_test0.json` — the falsified Edge-3 test artifact —
   stays git-ignored; only `graph_coverage.json` is authorized.)
   **Theme intelligence** (operator decision 2026-10-13, PR #703): **`frontend/theme-intelligence/`**
   — the research desk published into the app (`python -m vinci.theme_intelligence publish`):
-  derived analysis with titles, figures and SHORT verbatim source quotes, for internal use on the
-  authed deploy. Never an article's text, never a local path; it reverts to git-ignored with the
-  dossiers if the repo or deploy ever becomes public.
+  derived analysis with titles, figures and SHORT verbatim source quotes, published on the authed
+  deploy and, since 2026-10-22, readable in this public repo. Never an article's text, never a
+  local path.
 - **Execution is human-authorized and paper-gated** (when execution is built): nothing places a trade
   without an explicit, deliberate human action; default is paper; no code path reaches a live broker
   autonomously. State this in any execution code from its first line.

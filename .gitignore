@@ -12,6 +12,9 @@ __pycache__/
 .env.*
 !.env.example
 
+# Claude Code: `.claude/settings.json` (the shared hooks) is committed; personal permissions are not.
+.claude/settings.local.json
+
 # Local working store — durable state is the committed JSON/CSV snapshots, NOT the binary DB.
 *.db
 *.db-journal
@@ -25,7 +28,8 @@ __pycache__/
 # 10-K-derived exposure map — verbatim PUBLIC 10-K phrases + the relationship-TYPE taxonomy only,
 # never CIQ workbook data). All three are committed provenance for the authed deploy; the per-run
 # llm_call.log is a regenerated debug artifact and stays ignored.
-# NOTE: if the repo or deploy ever becomes public, dossiers + graph_coverage revert to git-ignored.
+# NOTE (2026-10-22): the repo is PUBLIC by operator decision and these STAY committed — un-ignoring
+# them now would not un-publish history (docs/records/2026-10-22-repo-made-public.md).
 data/*
 !data/snapshots/
 !data/dossiers/
