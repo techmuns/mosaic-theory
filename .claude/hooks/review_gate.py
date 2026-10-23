@@ -17,6 +17,15 @@ marker file an agent could write.
 WHAT IS NOT GATED. A branch that changes no code against `origin/main` — records, STATE.md,
 committed data, artifact passes — opens freely: reviewing a 266k-line artifact diff buys nothing.
 
+WHICH BRANCH IS JUDGED — THE ONE THE PR COMES FROM (2026-10-23). The gate first read the hook's
+`cwd`, the SESSION's folder. A session that opens a PR from another checkout (`cd <checkout> &&
+gh pr create`) was then judged on the wrong tree: live, a docs-only PR was refused for three code
+files that were already-merged commits on the session's own stale branch — and a session sitting
+in a clean folder could open a real code PR from elsewhere unreviewed. Now, in order:
+`--head <branch>` → that branch's commits against `--base` (the PR's exact content); else the
+directory the command `cd`s into before `gh pr create`; else the hook's `cwd`. A `cd` the hook
+cannot resolve (`cd "$W"`) with no `--head` is UNKNOWN, and unknown is gated like code.
+
 Fails OPEN with a visible warning when the transcript cannot be read; the operator still reviews
 and merges every PR. Standard library only, Python 3.9+ (hooks run under the system `python3`).
 """
@@ -25,13 +34,17 @@ from __future__ import annotations
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 from pathlib import Path
+from typing import NamedTuple
 
 #: `gh pr create` at a COMMAND position (start, or after ; & | ( or a newline, optionally behind
-#: VAR=value prefixes) — never inside a quoted commit message that merely mentions it.
-PR_CREATE = re.compile(r"(?:^|[;&|(\n])\s*(?:[A-Za-z_]\w*=\S*\s+)*gh\s+pr\s+create\b")
+#: VAR=value prefixes and wrapper words like `time`/`env`) — never inside a quoted commit message
+#: that merely mentions it.
+PR_CREATE = re.compile(r"(?:^|[;&|(\n])\s*(?:(?:[A-Za-z_]\w*=\S*|time|env|command|exec|nice|nohup)"
+                       r"\s+)*gh\s+pr\s+create\b")
 #: Heredoc bodies and quoted strings are DATA, not commands: a test file written with
 #: `cat <<'EOF'` that contains `cd x && gh pr create` opened no PR (found on this gate's own live
 #: transcript, 2026-10-22). They are removed before the command-position match.
@@ -60,17 +73,107 @@ def repo_root(start: str) -> Path | None:
     return root if root and (root / "vinci" / "__init__.py").exists() else None
 
 
-def code_files_changed(root: Path) -> list[str]:
-    """Code files this branch changes against origin/main (committed or not)."""
-    base = "origin/main"
-    code, merge_base = git(root, "merge-base", base, "HEAD")
+def _ref(root: Path, name: str) -> str | None:
+    """The first of ``origin/<name>`` and ``<name>`` that names a commit in ``root``'s repo."""
+    for candidate in (f"origin/{name}", name):
+        code, _ = git(root, "rev-parse", "--verify", "--quiet", f"{candidate}^{{commit}}")
+        if code == 0:
+            return candidate
+    return None
+
+
+def code_files_changed(root: Path, head: str | None = None, base: str = "main") -> list[str]:
+    """Code files the PR changes against ``base``.
+
+    With ``head``: that branch's commits since its merge base with ``base`` — the PR's content.
+    Without: ``root``'s checkout, committed and uncommitted.
+    """
+    base_ref = _ref(root, base)
+    head_ref = _ref(root, head) if head else "HEAD"
+    if base_ref is None or head_ref is None:
+        return [f"(branch {head or 'HEAD'!r} or base {base!r} not found — treated as code)"]
+    code, merge_base = git(root, "merge-base", base_ref, head_ref)
     if code != 0:
-        code, merge_base = git(root, "merge-base", "main", "HEAD")
-    if code != 0:
-        return ["(no merge base with main — treated as code)"]
-    _, committed = git(root, "diff", "--name-only", merge_base.strip(), "HEAD")
-    _, working = git(root, "diff", "--name-only", "HEAD")
-    return sorted({p for p in (committed + working).splitlines() if CODE.search(p)})
+        return [f"(no merge base with {base} — treated as code)"]
+    _, names = git(root, "diff", "--name-only", merge_base.strip(), head_ref)
+    if not head:
+        _, working = git(root, "diff", "--name-only", "HEAD")
+        names += working
+    return sorted({p for p in names.splitlines() if CODE.search(p)})
+
+
+class Target(NamedTuple):
+    """Where the PR comes from: the directory its command runs in (None = could not tell), the
+    ``--head`` branch if given, and the ``--base`` branch."""
+
+    directory: str | None
+    head: str | None
+    base: str
+
+
+#: A shell token made only of these characters separates commands (``&&``, ``;``, ``|`` …).
+_OPERATOR = re.compile(r"[;&|()<>]+")
+#: Words that run the command after them, so the command position carries through them.
+_WRAPPERS = {"time", "env", "command", "exec", "nice", "nohup"}
+
+
+def _flag(args: list[str], *names: str) -> str | None:
+    for i, arg in enumerate(args):
+        for name in names:
+            if arg == name and i + 1 < len(args):
+                return args[i + 1]
+            if name.startswith("--") and arg.startswith(name + "="):
+                return arg[len(name) + 1:]
+    return None
+
+
+def _cd(current: str | None, arg: str) -> str | None:
+    """Where ``cd arg`` lands from ``current`` — None when the shell alone could resolve it."""
+    if current is None or any(c in arg for c in "$`") or arg == "-":
+        return None
+    path = Path(os.path.expanduser(arg))
+    return str(path if path.is_absolute() else Path(current) / path)
+
+
+def pr_target(command: str, cwd: str) -> Target:
+    """Read the shell text the way the shell will run it, up to the `gh pr create` it contains."""
+    text = HEREDOC.sub("", command).replace("\n", " ; ")
+    lexer = shlex.shlex(text, posix=True, punctuation_chars=True)
+    lexer.whitespace_split = True
+    try:
+        tokens = list(lexer)
+    except ValueError:                      # unbalanced quotes: the shell's reading is unknowable
+        return Target(None, None, "main")
+    directory: str | None = cwd
+    at_start = True
+    i = 0
+    while i < len(tokens):
+        token = tokens[i]
+        if _OPERATOR.fullmatch(token):
+            at_start = True
+        elif at_start and (re.fullmatch(r"[A-Za-z_]\w*=.*", token) or token in _WRAPPERS):
+            pass                            # VAR=value or a wrapper word before the command
+        elif at_start and token == "cd":
+            nxt = tokens[i + 1] if i + 1 < len(tokens) else "~"
+            directory = _cd(directory, "~" if _OPERATOR.fullmatch(nxt) else nxt)
+            i += 0 if _OPERATOR.fullmatch(nxt) else 1
+            at_start = False
+        elif at_start and token == "gh" and tokens[i + 1:i + 3] == ["pr", "create"]:
+            args = []
+            for arg in tokens[i + 3:]:
+                if _OPERATOR.fullmatch(arg):
+                    break
+                args.append(arg)
+            head = _flag(args, "--head", "-H")
+            if head is not None and any(c in head for c in "$`"):
+                head = None                 # a computed branch name the hook cannot evaluate
+            elif head is not None:
+                head = head.split(":", 1)[-1]   # GitHub's cross-fork `owner:branch` form
+            return Target(directory, head, _flag(args, "--base", "-B") or "main")
+        else:
+            at_start = False
+        i += 1
+    return Target(directory, None, "main")
 
 
 def opens_a_pr(command: str) -> bool:
@@ -139,10 +242,23 @@ def main() -> int:
     command = str((payload.get("tool_input") or {}).get("command", ""))
     if payload.get("tool_name") != "Bash" or not opens_a_pr(command):
         return 0
-    root = repo_root(payload.get("cwd") or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd())
-    if root is None:
-        return 0
-    code = code_files_changed(root)
+    start = str(payload.get("cwd") or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd())
+    target = pr_target(command, start)
+    # A `cd` into a directory that does not exist is UNKNOWN, not "another repo": the shell may
+    # well run `gh pr create` from the folder it failed to leave.
+    directory = target.directory if target.directory and Path(target.directory).is_dir() else None
+    if directory is not None:
+        root = repo_root(directory)
+        if root is None:
+            return 0                        # the PR comes from a checkout of another repo
+        code = code_files_changed(root, target.head, target.base)
+        where = f"branch {target.head}" if target.head else f"the checkout at {root}"
+    elif target.head is not None and (root := repo_root(start)) is not None:
+        code = code_files_changed(root, target.head, target.base)  # branches are repo-wide
+        where = f"branch {target.head}"
+    else:
+        code = ["(the checkout this PR comes from could not be determined — treated as code)"]
+        where = "this PR"
     if not code:
         return 0
     verdict = reviewed_since_last_pr(str(payload.get("transcript_path", "")),
@@ -154,8 +270,8 @@ def main() -> int:
     if verdict:
         return 0
     shown = code[:10]
-    print(f"PR CREATION IS GATED ON A CODE REVIEW (.claude/hooks/review_gate.py). This branch "
-          f"changes {len(code)} code file(s) against origin/main (showing {len(shown)}: "
+    print(f"PR CREATION IS GATED ON A CODE REVIEW (.claude/hooks/review_gate.py). {where} "
+          f"changes {len(code)} code file(s) against {target.base} (showing {len(shown)}: "
           f"{', '.join(shown)}) and no code review at effort high or above has run since the last "
           "PR this session opened. Do this, then run gh pr create again:\n"
           "1. Run the code-review skill — Skill(skill=\"code-review\", args=\"high --fix\"), the "
