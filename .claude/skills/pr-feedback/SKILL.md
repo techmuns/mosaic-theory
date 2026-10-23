@@ -1,15 +1,17 @@
 ---
 name: pr-feedback
-description: Triage review feedback on a PR this session opened — Codex, Gemini Code Assist, a failed CI check or the operator — under the bounded process. FIX a finding only behind a test that fails first, otherwise DISMISS or DEFER; one fix commit per round; at most 2 rounds; then stop. Use when the app wakes the session about PR comments or a failed check, or when asked to address review feedback on a PR.
+description: Triage review feedback on a PR this session opened — Codex, a failed CI check or the operator (Gemini Code Assist only if it is ever installed; it is not) — under the bounded process. FIX a finding only behind a test that fails first, otherwise DISMISS or DEFER; one fix commit per round; at most 2 rounds; then stop. Use when the app wakes the session about PR comments or a failed check, or when asked to address review feedback on a PR.
 ---
 
 # PR feedback — bounded triage
 
 ROUND CAP: 2
 
-The PR's own session is the ONLY writer. Codex and Gemini review when the PR opens (draft or
-not) and only comment. This skill turns their comments into at most two rounds of fixes, then stops, so that
-review → fix → re-review cannot run on forever or pile up defensive code.
+The PR's own session is the ONLY writer. Codex reviews when the PR opens (draft or not) and only
+comments. Gemini Code Assist is NOT installed (operator decision 2026-10-23: $19/mo); its
+`.gemini/` config is inert, so never wait for or request a Gemini review. This skill turns review
+comments into at most two rounds of fixes, then stops, so that review → fix → re-review cannot run
+on forever or pile up defensive code.
 
 ## 1. Collect
 
