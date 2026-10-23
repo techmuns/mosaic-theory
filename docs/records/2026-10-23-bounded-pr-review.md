@@ -119,8 +119,9 @@ only HIGH or CRITICAL comments, and the session should be woken by the app, not 
 
 **2026-10-23 — Codex is live; Gemini is NOT installed (operator decision, $19/month).**
 
-- **Codex Code Review** was set up the same day. Asked once with `@codex review`, it reported
-  "Didn't find any major issues" on each of #784, #785 and #786, at their head commits
+- **Codex Code Review** was set up the same day. Asked with `@codex review` (once on #784 and
+  #785, twice on #786, see the next bullet), it reported "Didn't find any major issues" on each of
+  #784, #785 and #786, at their head commits
   (`e20a22e`, `93a16a2`, `5f62cdf`).
 - **Its first attempt on #786 failed** at environment setup ("Setup repeatedly failed"). The retry,
   made after the other two reviews finished, succeeded. The likely cause is three environment
