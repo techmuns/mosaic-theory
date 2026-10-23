@@ -142,6 +142,32 @@ against CIQ itself. Consensus cannot be checked here at all.
    Currency' cell verbatim.
 8. **"Skipped in every worktree" is true of CI and the app's worktrees only.** See BOUNDARY.
 
+**2026-10-24 — THE NET-DEBT CHECK READS CIQ'S NETTING** (operator, after a read-only dig into
+the flagged names).
+
+- **The cause.** CIQ's Net Debt nets long-term marketable securities, and the comps cash/debt bridge
+  is plain debt − cash. So the page's `net_debt_reconciled` flags every name that holds such
+  securities.
+- **The new rule.** Where debt − cash − the comps net debt equals the page's netted line
+  (`ev_bridge`, label `ciq_sheets._NETTED_LABEL`) within `EV_BRIDGE_CIQ_TOL`, the difference now
+  counts as stated, not unexplained. Every figure in that test is structured: the comps net debt is
+  the name's own peer-grid row, which `_implied_expectations` builds TEV from.
+- **What it moved.** On the same 27 pages, this changed exactly one name. UBER went from
+  unexplained to stated: 9,340 − 4,744 = the 4,596 netted, to the dollar.
+- **ORKA stays unexplained.** Its gap of 251.9 is exactly its non-current marketable securities
+  per its June 2026 10-Q (`MarketableSecuritiesNoncurrent`), but its page carries no `ev_bridge`
+  block, so the netting is not on the page.
+- **The series.** The 2026-10-24 snapshot records the new rule. The 2026-10-23 snapshot stays as
+  the old rule's point.
+- **The same dig, for the other flags.** None of the remaining flags is a CIQ error. The fixes they
+  suggest are follow-ups, not built here:
+  - NKE's rent is operating plus variable lease cost, and WLK's is short-term lease cost alone. The
+    rent check compares unlike scopes.
+  - UBER's four lease misses are 2019–2021 near-misses: the check carries EDGAR's year-end finance
+    lease onto quarter-ends.
+  - WLK's FY2025 margin gap is CIQ's EBIT leaving out a $727M goodwill impairment and other
+    charges.
+
 **NEXT SOURCES — follow-ups, not built here** (the operator's order; each is one module under
 `vinci/quality/sources/`).
 
@@ -203,6 +229,12 @@ one. A snapshot per date turns it into a series.
   known only from its display string no longer counts as checked: the net-debt check needs both
   structured floats. A written snapshot is dated the day it is measured, so `--as-of` with
   `--write` is refused for any other date.
+- **The netting rule, 2026-10-24.**
+  - The test failed on the head first.
+  - Four mutants are killed: the tolerance edge, "any gap with a netted line", the netting ignored,
+    and the agreeing flag skipped.
+  - A corpus invariant holds that every stated net-debt difference IS the netting.
+  - The real run moves only UBER.
 - **Snapshot reproducibility.** The committed snapshot equals a fresh run byte for byte whenever
   the page set's sha256 matches the one it names.
 - **Suite.** `pytest -m "not network"` with `-rs`: 6,437 passed, 530 skipped, 0 failed (before
