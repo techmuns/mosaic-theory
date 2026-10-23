@@ -148,6 +148,19 @@ class ImpliedExpectationRow(BaseModel):
     model_config = {"frozen": True}
 
 
+#: A CROSS-CHECK'S OUTCOME, stored beside the line or flag that prints it (2026-10-23). Three
+#: states, because the readings they sit beside collapse them: a bool reads True both when the
+#: check passed and when it could not run (`vintage_coherent`, `net_debt_reconciled`), and a
+#: display line holds its verdict in prose no reader may parse (`guide_verification`,
+#: `wall_coherence`, `self_funding`). ``agree``: the check ran and its two figures agree;
+#: ``differ``: it ran and they differ; ``not_run``: there was no second figure to compare.
+#: ABSENT until a page is built or refreshed with it (`DROP_WHEN_NONE`) — absent is never a pass.
+CrossCheck = Literal["agree", "differ", "not_run"]
+CHECK_AGREE: CrossCheck = "agree"
+CHECK_DIFFER: CrossCheck = "differ"
+CHECK_NOT_RUN: CrossCheck = "not_run"
+
+
 class ImpliedExpectations(BaseModel):
     """(G) Price-inverted expectations, MULTIPLES-space. At a FIXED, declared multiple set the block
     reports the fundamental LEVEL price implies (``TEV ÷ multiple``), juxtaposed with the consensus
@@ -166,8 +179,12 @@ class ImpliedExpectations(BaseModel):
     tev_as_of: str  # the Financial-Data as-of the TEV inputs carry
     multiples_as_of: str  # the multiples-sheet as-of
     vintage_coherent: bool  # G5: |derived-FY26 − direct-FY26 consensus| / direct ≤ 10%
+    # the probe's outcome — `vintage_coherent` is also True when it could not run (`CrossCheck`)
+    vintage_check: CrossCheck | None = None
     coherence_note: str  # the residual read (+ the re-pull caveat when not coherent)
     net_debt_reconciled: bool  # (cond. b) net_debt agrees with the cash/debt bridge, in tolerance
+    # the comparison's outcome — `net_debt_reconciled` is also True with no bridge (`CrossCheck`)
+    net_debt_check: CrossCheck | None = None
 
     model_config = {"frozen": True}
 
@@ -1965,7 +1982,14 @@ class PrimarySource(BaseModel):
     releases: list[ReleaseExtract] = Field(default_factory=list)
     filing: FilingSectionExtract | None = None
     self_funding: Sourced[str]        # two-input read: latest-Q OCF sign AND LTM FCF (MIXED / fund)
+    # do the two legs' SIGNS agree (`primary_source.self_funding_check`) — a different question
+    # from the line's, which asks whether the name funds itself (`CrossCheck`)
+    self_funding_check: CrossCheck | None = None
     wall_coherence: Sourced[str]      # same-window filing-vs-panel coherence, tranche-matched
+    wall_coherence_check: CrossCheck | None = None   # AGREES / DIVERGES / UNKNOWN (`CrossCheck`)
+    # set beside a `differ`: an instrument matures within ±7d of the window's +12m boundary, the
+    # possible window-convention artifact the QA flag names — a reason the page states for it
+    wall_coherence_near_boundary: bool | None = None
     basis_triangulation: Sourced[str]  # EBITDA/margin bases table — every leverage row labeled
     # (item 1 clause (c)) THE VERDICT-RELEVANT CURRENT GUIDE — the split out of
     # `drawdown_cause.revised_guidance`. That field follows the 99.1 on the DRAWDOWN 8-Ks, so it is
@@ -1978,6 +2002,8 @@ class PrimarySource(BaseModel):
     # price event occurred. UNKNOWN (attributed) when no release carries one.
     current_guide: Sourced[str] | None = None
     guide_verification: Sourced[str]  # CIQ guide vs release guide (vendor-echo / cross-source)
+    # VERIFIED / MISMATCH, else not run — every refusal and flag is a check that did not run
+    guide_verification_check: CrossCheck | None = None
     qa_flags: list[str] = Field(default_factory=list)
 
     model_config = {"frozen": True}
@@ -2644,7 +2670,8 @@ class Dossier(BaseModel):
 #: `"<key>": null`. That key would assert WE COMPUTED THIS AND GOT NOTHING when the truth is the
 #: dossier predates the field: ABSENT means NOT YET REFRESHED. `(parent field or "" for the
 #: mechanical root, key)` — `ebitda_basis` sits one level deeper, a property of the
-#: financial-summary TABLE rather than of the layer, so each entry names its own parent.
+#: financial-summary TABLE rather than of the layer, so each entry names its own parent; a dotted
+#: parent reaches a block nested inside a section (`valuation.implied_expectations`).
 #: Moved here from `vinci/dossier/refresh.py` with `dossier_json` below, which both writers use.
 DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("concentration", "segment_profit"),
@@ -2658,6 +2685,13 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("", "sbc"),
     ("leverage_survival", "credit_health_panels"),
     ("quality", "nonoperating_quarters"),
+    # the cross-checks' outcomes (`CrossCheck`, 2026-10-23)
+    ("primary_source", "self_funding_check"),
+    ("primary_source", "wall_coherence_check"),
+    ("primary_source", "wall_coherence_near_boundary"),
+    ("primary_source", "guide_verification_check"),
+    ("valuation.implied_expectations", "vintage_check"),
+    ("valuation.implied_expectations", "net_debt_check"),
 )
 
 
@@ -2701,13 +2735,16 @@ def dossier_json(doc: Dossier) -> str:
     mech = doc.mechanical
     root: dict[str, Any] = {}
     for parent, key in DROP_WHEN_NONE:
-        holder = getattr(mech, parent, None) if parent else mech
+        path = parent.split(".") if parent else []
+        holder: Any = mech
+        for name in path:
+            holder = getattr(holder, name, None)
         if holder is None or getattr(holder, key, "absent") is not None:
             continue
-        if parent:
-            root.setdefault(parent, set()).add(key)
-        else:
-            root[key] = True
+        node = root
+        for name in path:
+            node = node.setdefault(name, {})
+        node[key] = True
     excl: dict[str, Any] = {"mechanical": root} if root else {}
     # the anchor's mid-cycle gap is set only when it fires; an anchor that does not fire writes no
     # key, so every committed page it does not apply to stays byte-identical

@@ -335,12 +335,13 @@ def test_the_refresh_rebuilds_through_the_assemblers_builder(
     import vinci.dossier.ciq as ciq_mod
     import vinci.dossier.manual_store as ms
     from vinci.dossier.schemas import ReleaseExtract
+    from vinci.edgar.primary_source import GuideVerification
 
     seen: list[int] = []
 
-    def fake(rels: list[Any], **_k: Any) -> tuple[str, str]:
+    def fake(rels: list[Any], **_k: Any) -> tuple[str, GuideVerification]:
         seen.append(len(rels))
-        return (f"tri {len(seen)}", f"guide {len(seen)}")
+        return (f"tri {len(seen)}", GuideVerification(f"guide {len(seen)}", "not_run"))
 
     monkeypatch.setattr(dm, "_release_lines", fake)
     monkeypatch.setattr(ms.LocalFolderStore, "from_config", staticmethod(

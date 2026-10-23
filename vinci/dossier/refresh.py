@@ -968,12 +968,12 @@ def _rebuild_release_lines(ticker: str, out: dict[str, Any], before: list[Any], 
     nde = Sourced[float].model_validate(nde_raw) if nde_raw else None
     card = _read_scenario_card(ticker)
 
-    def lines(rels: list[Any]) -> dict[str, str]:
+    def lines(rels: list[Any]) -> tuple[dict[str, str], str]:
         tri, guide = dm._release_lines(rels, bundle=bundle, nde=nde, card=card,
                                        reference_date=reference_date)
-        return {"basis_triangulation": tri, "guide_verification": guide}
+        return {"basis_triangulation": tri, "guide_verification": guide.line}, guide.check
 
-    old, new = lines(before), lines(after)
+    (old, old_check), (new, new_check) = lines(before), lines(after)
     for key in ("basis_triangulation", "guide_verification"):
         node = ps.get(key) or {}
         if old[key] != node.get("value"):
@@ -982,6 +982,13 @@ def _rebuild_release_lines(ticker: str, out: dict[str, Any], before: list[Any], 
                 "CIQ export and record read now — they are not the ones it was built from; "
                 "re-assemble")
         ps[key] = {**node, "value": new[key]}
+    # THE OUTCOME FOLLOWS ITS LINE: a rebuilt guide line beside the old line's check would be the
+    # line and its structured reading disagreeing on one page (`guide_verification_check`)
+    if ps.get("guide_verification_check") not in (None, old_check):
+        raise RefreshRefusedError(
+            f"{ticker}: guide_verification_check does not reproduce from the page's own release "
+            "rows — re-assemble")
+    ps["guide_verification_check"] = new_check
 
 
 def credit_health_transform(ticker: str) -> Transform:
@@ -1408,6 +1415,123 @@ def ebitda_basis_transform() -> Transform:
         # class, one artifact over.
         table = FinTable.model_validate(raw) if isinstance(raw, dict) else None
         fs["ebitda_basis"] = json.loads(read_basis(table).model_dump_json())
+        return out
+
+    return _apply
+
+
+def cross_check_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str]) -> Transform:
+    """A `refresh_dossier` transform writing the five CROSS-CHECK OUTCOMES (`CrossCheck`) onto a
+    committed page, each beside the line or flag that prints it: `primary_source`'s
+    `self_funding_check`, `wall_coherence_check` (+ `wall_coherence_near_boundary`) and
+    `guide_verification_check`, and `valuation.implied_expectations`' `vintage_check` and
+    `net_debt_check`.
+
+    WHY (2026-10-23). The data-quality scorecard (`vinci audit quality`) reads structured fields
+    only, and these five had none it could score: three verdicts lived in display text, and two
+    bools read True both on a pass and when the check could not run. Assembly now stores the
+    outcome; this puts it on the pages already committed, under a KEPT synthesis.
+
+    NO CIQ WORKBOOK IS READ. Every input is on the page — the comps net debt and bridge, the
+    forward ladder and the Trends consensus (`forward_consensus`), the guidance-bridge rows and the
+    releases, the 10-Q's maturity wall and the CIQ capital panel, CIQ's LTM FCF — except two, both
+    EDGAR's and public: the latest-quarter OCF sign, read as FILED BY the page's assembly date, and
+    the balance date of the very 10-Q the page names (the wall's window). ``edgar`` supplies them
+    (`EdgarClient`: `companyfacts`, `recent_filings`).
+
+    EACH OUTCOME IS WRITTEN ONLY BEHIND A REPRODUCTION — the `_rebuild_release_lines` proof. The
+    producer's own composition re-runs on those inputs and must give back the page's stored line
+    (or flag) byte for byte, which shows the inputs are the ones the page was built from and makes
+    the outcome the stored line's own, never a reading of its words. One that does not reproduce
+    is left ABSENT and named in ``refused`` (absent reads as not run, never as a pass), and so is
+    one the page already holds with a different value."""
+    from vinci.dossier import mechanical as dm
+    from vinci.dossier.ciq_sheets import revenue_guide_from_rows
+    from vinci.dossier.schemas import MechanicalLayer, SourceStatus
+    from vinci.edgar import primary_source as eps
+    from vinci.netcache import HttpError
+
+    ticker = str(doc.get("ticker"))
+    cik = doc.get("cik")
+    assembled = date.fromisoformat(str(doc.get("assembled_at"))[:10])
+    path = next((p for p in (doc.get("forward_consensus") or {}).get("paths") or []
+                 if p.get("metric") == "EBITDA" and p.get("period") == "FY 2026"), None)
+    points = (path or {}).get("points") or []
+    # the newest vintage, as `trends_fy_level` reads it (`_snapshot_path`: oldest → newest)
+    direct26 = min(points, key=lambda p: p["months_ago"])["value"] if points else None
+
+    def _put(node: dict[str, Any], key: str, value: Any, proved: bool, what: str) -> bool:
+        if not proved:
+            refused.append(f"{ticker}: {what} does not reproduce from the page's stored inputs")
+            return False
+        if key in node and node[key] != value:
+            refused.append(f"{ticker}: {key} is {node[key]!r} on the page, the reproduction "
+                           f"gives {value!r}")
+            return False
+        node[key] = value
+        return True
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        m = MechanicalLayer.model_validate(out)
+        ie = (out.get("valuation") or {}).get("implied_expectations")
+        ie_m = m.valuation.implied_expectations
+        grid = m.peer_comps.peer_grid.value if m.peer_comps.peer_grid is not None else None
+        name = next((r for r in grid or [] if r.is_name), None)
+        iv = m.implied_valuation
+        if (isinstance(ie, dict) and ie_m is not None and iv is not None and name is not None
+                and name.net_debt is not None and iv.market_cap.value is not None):
+            net_debt = float(name.net_debt)
+            ok, nd_check, _b = dm._net_debt_probe(iv, net_debt)
+            _put(ie, "net_debt_check", nd_check, ok == ie_m.net_debt_reconciled,
+                 "net_debt_reconciled")
+            cna = m.catalyst_path.cross_name_anchor if m.catalyst_path is not None else None
+            mo = dm._ie_ladder(cna.value if cna is not None and cna.status is SourceStatus.PRESENT
+                               else None, "FY 2026", "TEV/EBITDA")
+            tev = float(iv.market_cap.value) + net_debt
+            a26 = tev / mo if (mo and mo > 0) else None
+            coherent, note, v_check = dm._vintage_probe(a26, direct26)
+            _put(ie, "vintage_check", v_check,
+                 coherent == ie_m.vintage_coherent and note == ie_m.coherence_note,
+                 "coherence_note")
+        ps = out.get("primary_source")
+        ps_m = m.primary_source
+        if not isinstance(ps, dict) or ps_m is None:
+            return out
+        # read as assembly reads them: a fetch that fails is no facts — and then no line reproduces
+        facts = dm._companyfacts_or_none(edgar, cik)
+        # (1) self-funding — the OCF sign as assembly saw it, CIQ's FCF as the page stores it
+        ocf = dm._latest_quarter_ocf_positive(facts, filed_by=assembled)
+        fcf = m.quality.free_cash_flow.value
+        fcf_sign = fcf > 0 if fcf is not None else None
+        _put(ps, "self_funding_check", eps.self_funding_check(ocf, fcf_sign),
+             eps.self_funding(ocf, fcf_sign) == ps_m.self_funding.value, "self_funding")
+        # (2) wall coherence — the window is the 10-Q the page names, else the latest instant
+        acc = dm._acc_of(ps_m.filing.source_ref) if ps_m.filing is not None else None
+        try:
+            filed = edgar.recent_filings(cik, forms=("10-Q",)) if cik and acc else []
+        except HttpError:
+            filed = []
+        tenq = next((f for f in filed if f.accession == acc), None)
+        balance = (tenq.report_date if tenq is not None else None) or dm._latest_balance_date(facts)
+        wall = dm._wall_read(ps_m.filing, dm._wall_panel(m.capital_structure), balance)
+        wall_qa = [f for f in ps_m.qa_flags if f.startswith("wall coherence:")]
+        proved = wall.line == ps_m.wall_coherence.value and wall.qa == wall_qa
+        if (_put(ps, "wall_coherence_check", wall.check, proved, "wall_coherence")
+                and wall.near_boundary is not None):
+            _put(ps, "wall_coherence_near_boundary", wall.near_boundary, True, "wall_coherence")
+        # (3) guide verification — CIQ's guide off the page's guidance-bridge rows
+        rows = m.catalyst_path.guidance_bridge_rows if m.catalyst_path is not None else None
+        lo, hi, period = revenue_guide_from_rows(
+            rows.value if rows is not None and rows.value is not None else [])
+        fy = dm._fy_reconciliation(ps_m.releases)
+        rel_lo, rel_hi, rel_qual, rel_basis, rel_period = dm._release_revenue_guide(ps_m.releases)
+        guide = eps.guide_verification_read(
+            "revenue", lo, hi, prior_fy_actual=fy.get("revenue"), release_qualitative=rel_qual,
+            release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis, ciq_period=period,
+            release_period=rel_period)
+        _put(ps, "guide_verification_check", guide.check,
+             guide.line == ps_m.guide_verification.value, "guide_verification")
         return out
 
     return _apply
