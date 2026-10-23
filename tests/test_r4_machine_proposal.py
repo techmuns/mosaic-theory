@@ -70,7 +70,9 @@ def _r1(doc: dict[str, Any]) -> Anchor:
     TAG replaced by what R1's tagger says for that `applicable` bit. A committed tag is the
     operator's (AMZN and UBER carry R4 since 2026-10-09), and the proposal is made on R1's read,
     never on a tag — reading the tag would make "unchanged" look like "proposed"."""
-    a = Anchor.model_validate(doc["anchor"])
+    # a machine read carries no operator decision (2026-10-22) — the page's block is the operator's
+    a = Anchor.model_validate(doc["anchor"]).model_copy(
+        update={"operator_decision": None, "machine_recipe_hint": None})
     # ...and R1's own REASON: since a re-assembly writes the machine's R4 reason onto a page whose
     # tag it agrees with (AMZN #700, UBER 2026-10-11), the committed reason IS the proposal's, so a
     # stand-in keeping it could not show the proposal moving the reason (CONSTRUCTED)
@@ -210,6 +212,10 @@ def test_a_re_assembly_shows_the_proposal_and_keeps_the_committed_recipe(
         # IS this build's R4 reason, and the caveat appends the fresh reason only where it differs
         # from the kept one — so a copy keeping it would test a state that never existed.
         page["anchor"]["reason"] = f"CONSTRUCTED: the hand reason for {committed}"
+        # ...and no decision block: these tags predate `operator_decision` (2026-10-22), so the
+        # copy replays the legacy rule the 2026-10-09 ruling was made under
+        page["anchor"].pop("operator_decision", None)
+        page["anchor"].pop("machine_recipe_hint", None)
         (folder / "dossier.json").write_text(json.dumps(page))
         doc = _with_count(t)
         doc["caveats"] = []
@@ -232,6 +238,10 @@ def test_a_re_assembly_shows_the_proposal_and_keeps_the_committed_recipe(
         kept = _keep_committed_recipe(fresh, folder)
         assert kept.anchor is not None and kept.anchor.recipe_hint == rp.RECIPE_R4
         assert not [c for c in kept.caveats if c.startswith("Recipe kept")], t
+        # the operator's re-tag rides through the agreeing build — the erasure of #700/#705
+        on_disk = json.loads((folder / "dossier.json").read_text())["anchor"]["operator_decision"]
+        assert kept.anchor.operator_decision is not None, f"{t}: the build dropped the decision"
+        assert kept.anchor.operator_decision.model_dump(mode="json") == on_disk, t
     new = tmp_path / "NEW"
     new.mkdir()
     assert _keep_committed_recipe(fresh, new).anchor.recipe_hint == rp.RECIPE_R4  # type: ignore[union-attr]
@@ -246,8 +256,11 @@ def test_both_writers_apply_the_proposal() -> None:
 
     src = inspect.getsource(assemble)
     assert src.index("recipe_proposal.propose(") < src.index("return _write(dossier, llm_log")
+    # the backfill's machine read lives in ONE helper (2026-10-22), shared with `anchor-retag`
+    assert "recipe_proposal.propose(" in inspect.getsource(cli._machine_anchor)
     bf = inspect.getsource(cli._cmd_anchor_backfill)
-    assert bf.index("recipe_proposal.propose(") < bf.index("preserve_operator_tag(d.anchor")
+    assert bf.index("_machine_anchor(") < bf.index("preserve_operator_tag(d.anchor")
+    assert "_machine_anchor(" in inspect.getsource(cli._cmd_anchor_retag)
 
 
 # --- the field: absent until built ---------------------------------------------------------------

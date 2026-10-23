@@ -38,6 +38,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
+from vinci.dossier.anchor import check_decision_write, committed_anchor_block
 from vinci.dossier.schemas import DROP_WHEN_NONE, Dossier, dossier_json
 from vinci.dossier.synthesis import (
     MATERIAL_FIGURE_FLOOR_MUSD,
@@ -531,6 +532,11 @@ def refresh_dossier(path: Path, *, transform: Transform | None = None,
     old_md = md_path.read_text() if md_path.exists() else None
     changed = new_json != path.read_text() or (old_md is not None and new_md != old_md)
     if changed:
+        # THE DECISION GUARD, as on every other write (review of #780). The top-level seam cannot
+        # set the anchor today (`_TOP_LEVEL_REFRESHABLE`), so this refuses nothing the corpus
+        # does — it is here so a seam opened later cannot drop a decision, and a legacy re-tag
+        # cannot ride a refresh, without saying so.
+        check_decision_write(committed_anchor_block(path), model.anchor)
         path.write_text(new_json)
         md_path.write_text(new_md)
     return changed

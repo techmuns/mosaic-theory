@@ -70,12 +70,18 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 | Dilution test / share | $210.82 | + 158,000,000 dilutive shares (diluted less basic weighted average, latest 10-Q) |
 | Overall confidence | firm |  |
 
+**The operator's decision: R3_forward_pe** — 2026-09-01, operator
+
+⚠ **The machine reads R1_midcycle_margin_evebitda.** The operator's decision stands; it changes only by hand.
+
+> OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers.
+
+_Where this decision is recorded: docs/records/2026-09-01-r3-reaches-the-create-path.md (#557)_
+
 **Mid-cycle assumption under strain.** The last twelve months' operating margin of 33.1% (CIQ EBIT) sits 6.8 points ABOVE the 9-year median of 26.3% (EDGAR GAAP operating income) that R1 reverts to. R1 pairs that median with the median multiple from the same history, so an R1 value answers what the business is worth if it is still what it was. If the gap is STRUCTURAL — a changed mix or model — that history understates it; if it is a cyclical PEAK, reverting is right. The two sources agree within 0.0 points on FY2024, so the gap is the business, not the source.
 
 **data_quality: vendor_bridge**
 - vendor bridge: d_and_a supplied by the CIQ workbook because EDGAR had no usable tag
-
-_OPERATOR RE-TAG 2026-09-01. The machine proposed R1 (mid-cycle margin x own-history EV/EBITDA); the underwrite of record is a FORWARD P/E on normalized EPS (IC memo 2026-08-17 SS5/SS7A), which is an EQUITY basis and reads no enterprise value at all. That is a judgment about which arithmetic fits this name and the machine cannot derive it: Alphabet's downside is multiple compression on earnings that still GROW (Bear EPS $15.388 exceeds today's NTM $13.28698), so a recipe reaching equity through EV minus net debt would model the wrong thing. The computed values below are the machine's R1 arithmetic and are left untouched - a re-tag is a judgment about the RECIPE, never a freeze on the numbers._
 
 ## The case
 _(top points; the full argument is in Analysis)_
@@ -624,6 +630,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-21 · anchor, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
+  - 2026-10-22 · anchor — anchor-retag at 2026-10-09.3
 - **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 7d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
 - **Consensus age:** consensus 11d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling

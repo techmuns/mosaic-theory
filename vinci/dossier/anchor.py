@@ -12,12 +12,14 @@ NAIVE reported-median margin — cycle / one-off / mix adjustments are the analy
 """
 from __future__ import annotations
 
+import json
 import re
 import statistics as st
 from datetime import datetime
+from pathlib import Path
 from typing import Any, NamedTuple
 
-from pydantic import BaseModel, computed_field
+from pydantic import BaseModel, ValidationError, computed_field
 
 from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
@@ -222,6 +224,34 @@ def scenario_eligibility(recipe_hint: str | None, applicable: bool) -> ScenarioE
                                fields=list(R1_VALUE_FIELDS), reason=why)
 
 
+#: A hand re-tag's text marker, as the re-tags before 2026-10-22 wrote it into `reason`.
+OPERATOR_RETAG_MARK = "OPERATOR RE-TAG"
+
+
+class OperatorDecision(BaseModel, frozen=True):
+    """THE OPERATOR'S RECIPE CALL, in its own block (operator ruling 2026-10-22: "keep my reasons in
+    their own block").
+
+    WHY A BLOCK. A re-tag lived in `reason`, the field the machine rewrites on every build, and the
+    one rule both writers share (`preserve_operator_tag`) kept a hand reason only while the machine
+    DISAGREED with the hand recipe — so a reason was lost exactly when the machine came to agree:
+    AMZN's R4 re-tag in #700, #752 and #762 (restored by hand each time) and UBER's in #705 (never
+    restored until this block). A field the machine writes cannot also be the human's.
+
+    `reason` is VERBATIM — the operator's words, or the words written at the operator's instruction
+    that the record names; `decided_by` says which, `source_ref` names the record. Every machine
+    writer copies the block unchanged (`preserve_operator_tag`), and every write refuses to drop or
+    alter it (`check_decision_write`); only `vinci anchor-retag` sets or retires one."""
+
+    recipe: str
+    reason: str
+    decided_by: str
+    decided_on: str                     # ISO date of the decision
+    source_ref: str                     # the record (and commit) the decision is taken from
+    # what the machine read when the decision was made — None where no record says
+    machine_recipe_at_decision: str | None = None
+
+
 class Anchor(BaseModel, frozen=True):
     """The R1 anchor block — source-bound, spot-independent. Optional on the Dossier so committed
     JSON predating it round-trips byte-identically. The UI does NOT ignore it: the page prints
@@ -272,6 +302,12 @@ class Anchor(BaseModel, frozen=True):
     anchor_ev_ebit: float | None = None
     overall_confidence: str | None = None  # firm | weak (the WEAKER of margin/multiple)
     note: str = _NOTE
+    # (2026-10-22) THE OPERATOR'S DECISION, beside the machine's read — never inside `reason`, which
+    # is always the machine's own. `machine_recipe_hint` is the machine's recipe on the build that
+    # wrote this block, kept only where a decision governs `recipe_hint` (so a divergence can be
+    # SHOWN, never auto-resolved). Both are absent, never null, where no decision exists.
+    operator_decision: OperatorDecision | None = None
+    machine_recipe_hint: str | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -1232,12 +1268,19 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                                   median_from_ciq=median_from_ciq))
 
 
-def anchor_absent_fields(anchor: Anchor) -> set[str]:
+def anchor_absent_fields(anchor: Anchor) -> dict[str, Any]:
     """Optional anchor keys written ABSENT, never null, when unset — so a page whose anchor does not
     carry them serialises without them (`midcycle_gap` set only when it fires; the dilution test's
-    value only where the filer tags both weighted averages)."""
-    return {k for k in ("midcycle_gap", "anchor_base_value_per_share_diluted")
-            if getattr(anchor, k) is None}
+    value only where the filer tags both weighted averages; a decision, and the machine's recipe
+    beside it, only where an operator has decided — and inside a decision, the machine's read at
+    decision only where a record says what it was). A pydantic `exclude` mapping."""
+    out: dict[str, Any] = {k: True for k in ("midcycle_gap", "anchor_base_value_per_share_diluted",
+                                             "operator_decision", "machine_recipe_hint")
+                           if getattr(anchor, k) is None}
+    if anchor.operator_decision is not None \
+            and anchor.operator_decision.machine_recipe_at_decision is None:
+        out["operator_decision"] = {"machine_recipe_at_decision": True}
+    return out
 
 
 def insert_anchor_block(text: str, anchor: Anchor) -> str:
@@ -1290,7 +1333,7 @@ def replace_valuation_fields(text: str, updates: dict[str, Any], *,
 
 #: Hints the machine writes when it could NOT compute a recipe: an input absent (`unknown`) or
 #: unresolved (`ANCHOR_UNRESOLVED`). A placeholder records a data gap, never a judgment.
-_PLACEHOLDER_HINTS = frozenset({RECIPE_UNKNOWN, RECIPE_UNRESOLVED})
+PLACEHOLDER_HINTS = frozenset({RECIPE_UNKNOWN, RECIPE_UNRESOLVED})
 
 
 def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list[str]]:
@@ -1302,13 +1345,15 @@ def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list
     vanishing. That was the queued overwrite defect; this closes it. Since #670 assembly applies
     the same rule, so this is the ONE rule for both paths that write an anchor.
 
-    Provenance is NOT recorded on the block, so the rule is deliberately the conservative one:
+    A RECORDED `operator_decision` (2026-10-22) governs outright: copied verbatim, its recipe
+    applied, the machine's own recipe and reason refreshed beside it. Without one, provenance is
+    NOT recorded on the block, so the rule is deliberately the conservative one:
     ANY divergence from a committed RECIPE keeps the committed value, rather than guessing which
     side was human. The machine's proposal is reported, never applied — the tagger is propose-only
     for the same reason. Two things on the block are not recipes, and the rule does not keep them
     (review of #670, both reproduced on the committed corpus):
 
-    * A PLACEHOLDER hint (``_PLACEHOLDER_HINTS``) is the machine saying it could not compute one.
+    * A PLACEHOLDER hint (``PLACEHOLDER_HINTS``) is the machine saying it could not compute one.
       Kept, it would outlive the data gap that wrote it — FUBO, ORKA and TECX sit committed as
       `unknown`, and keeping it over a later R1 would print "own-history multiple missing" above
       an anchor marked applicable. A real recipe IS still kept over a placeholder: NCNO went
@@ -1328,7 +1373,25 @@ def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list
     if old is None:
         return new, notes
     updates: dict[str, Any] = {}
-    if (old.recipe_hint and old.recipe_hint not in _PLACEHOLDER_HINTS
+    if old.operator_decision is not None:
+        # A RECORDED DECISION GOVERNS (2026-10-22). The block is copied verbatim; the recipe is its;
+        # the machine's own recipe and reason are kept beside it, refreshed like every computed
+        # value — so agreement no longer erases the operator's reason, and disagreement is shown.
+        d = old.operator_decision
+        # IDEMPOTENT: a `new` read off a committed page (it carries a decision) keeps the machine
+        # read recorded beside it, so preserve(page, page) == page — never the decision's recipe
+        # mistaken for the machine's (the corpus negative, rewriting every page over itself)
+        machine = new.machine_recipe_hint if new.operator_decision is not None else new.recipe_hint
+        updates = {"operator_decision": d, "recipe_hint": d.recipe, "machine_recipe_hint": machine}
+        if machine in PLACEHOLDER_HINTS:
+            # a data gap, as on an undecided page — never shown as the machine disagreeing
+            notes.append(f"NO MACHINE READ: this run's hint is {machine!r}, a data gap; the "
+                         f"operator's {d.recipe!r} (decided {d.decided_on}) stands")
+        elif machine != d.recipe:
+            notes.append(f"DIVERGES: the machine reads {machine!r}; the operator's "
+                         f"{d.recipe!r} (decided {d.decided_on}) stands — never auto-resolved")
+        return new.model_copy(update=updates), [*notes, *_dropped_detail(old, new)]
+    if (old.recipe_hint and old.recipe_hint not in PLACEHOLDER_HINTS
             and old.recipe_hint != new.recipe_hint):
         updates["recipe_hint"] = old.recipe_hint
         updates["reason"] = old.reason
@@ -1340,12 +1403,75 @@ def preserve_operator_tag(old: Anchor | None, new: Anchor) -> tuple[Anchor, list
     elif old.reason and old.reason != new.reason:
         notes.append(f"REFRESHED reason under {new.recipe_hint!r} — was {old.reason!r} "
                      f"(applicable={old.applicable} → {new.applicable})")
-    fresh_detail = new.data_quality_detail or []
-    dropped = [d for d in (old.data_quality_detail or []) if d not in fresh_detail]
-    if dropped:
-        notes.append(f"REVIEW: {len(dropped)} committed data_quality_detail line(s) are NOT "
-                     f"reproduced by this run and will be replaced — first: {dropped[0][:80]}…")
-    return (new.model_copy(update=updates) if updates else new), notes
+    kept = new.model_copy(update=updates) if updates else new
+    return kept, [*notes, *_dropped_detail(old, new)]
+
+
+def _dropped_detail(old: Anchor, new: Anchor) -> list[str]:
+    """The REVIEW note for committed `data_quality_detail` lines this run does not reproduce — the
+    same note whether or not a decision governs the page."""
+    fresh = new.data_quality_detail or []
+    dropped = [x for x in (old.data_quality_detail or []) if x not in fresh]
+    if not dropped:
+        return []
+    return [f"REVIEW: {len(dropped)} committed data_quality_detail line(s) are NOT reproduced by "
+            f"this run and will be replaced — first: {dropped[0][:80]}…"]
+
+
+class DecisionWriteError(ValueError):
+    """A write would drop or alter an operator's recorded decision, or would put a hand re-tag back
+    into the machine's `reason`."""
+
+
+def committed_anchor_block(path: Path) -> dict[str, Any] | None:
+    """The anchor block stored at `path`, for the decision guard — None only when there is no file
+    or the page carries no anchor. A file that EXISTS but cannot be read as a JSON object (a rebase
+    left conflict markers in it, a write was cut short) is REFUSED: a write over it could not show
+    that it keeps a decision it cannot see, which is how one would be lost (review of #780)."""
+    if not path.exists():
+        return None
+    try:
+        stored = json.loads(path.read_text())
+    except (OSError, ValueError) as exc:
+        raise DecisionWriteError(
+            f"{path}: the committed page cannot be read ({type(exc).__name__}) — a write over it "
+            "cannot show it keeps an operator's decision; repair the file first") from exc
+    if not isinstance(stored, dict):
+        raise DecisionWriteError(f"{path}: the committed page is not a JSON object — repair it")
+    block = stored.get("anchor")
+    return block if isinstance(block, dict) else None
+
+
+def check_decision_write(committed: dict[str, Any] | None, new: Anchor | None, *,
+                         decision_change: bool = False) -> None:
+    """THE GUARD EVERY WRITE OF A COMMITTED PAGE RUNS (2026-10-22). Refuses:
+
+    * a write that DROPS or ALTERS the committed `operator_decision` — unless `decision_change`,
+      which only `vinci anchor-retag` passes (a new decision, or a retired one, is the operator's);
+    * an anchor whose `reason` carries a hand re-tag (`OPERATOR_RETAG_MARK`) with no decision
+      block — the pre-2026-10-22 shape, which the next machine write erased.
+
+    `committed` is the page's stored anchor block as read (None when the page has none)."""
+    if new is not None and (new.reason or "").startswith(OPERATOR_RETAG_MARK) \
+            and new.operator_decision is None:
+        raise DecisionWriteError(
+            "the anchor's reason carries a hand re-tag with no operator_decision block — record it "
+            "with `vinci anchor-retag` so the next machine write cannot erase it")
+    block = (committed or {}).get("operator_decision")
+    if block is None or decision_change:
+        return
+    try:   # compared as the MODEL, so an absent optional key and a None are one value
+        old = OperatorDecision.model_validate(block)
+    except ValidationError as exc:
+        raise DecisionWriteError(
+            "the committed operator_decision does not validate — a write cannot show it keeps a "
+            "decision it cannot read; repair the block first") from exc
+    now = new.operator_decision if new is not None else None
+    if now != old:
+        raise DecisionWriteError(
+            f"this write would {'drop' if now is None else 'alter'} the operator's recorded "
+            f"decision ({old.recipe}, {old.decided_on}) — only `vinci anchor-retag` changes a "
+            "decision")
 
 
 def anchor_changed(old: Anchor | None, new: Anchor) -> bool:

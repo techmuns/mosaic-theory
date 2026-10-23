@@ -11396,6 +11396,14 @@
         "mechanical.drawdown_cause",
         "mechanical.primary_source"
       ]
+    },
+    {
+      "date": "2026-10-22",
+      "extraction_version": "2026-10-09.3",
+      "writer": "anchor-retag",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -11403,7 +11411,7 @@
     "applicable": false,
     "multiple_basis": "EV/EBITDA",
     "computed_at": "2026-08-31T13:29:33.908751Z",
-    "reason": "trailing ramp (0 to 11.6% EBIT margin over four years) with a guided forward reset (FY26E adjusted EBITDA $0-10M, gross margin 28% from 39%, founder exit, cash burn) - no trailing median describes this business in either direction; it is a forward-margin question. The EBITDA band also carries a vendor data defect (implied D&A about $329M against $15M recorded, systematic across every period); the TEV/LTM EBIT row reconciles exactly, so an EBIT-basis band is available if ever wanted.",
+    "reason": null,
     "data_quality": "band_incoherent+band_unreconciled",
     "data_quality_detail": [
       "own_history multiple: band_incoherent (periodicity quarterly)",
@@ -11461,6 +11469,14 @@
     "anchor_ev_ebit": null,
     "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+    "operator_decision": {
+      "recipe": "R2_NEEDED",
+      "reason": "trailing ramp (0 to 11.6% EBIT margin over four years) with a guided forward reset (FY26E adjusted EBITDA $0-10M, gross margin 28% from 39%, founder exit, cash burn) - no trailing median describes this business in either direction; it is a forward-margin question. The EBITDA band also carries a vendor data defect (implied D&A about $329M against $15M recorded, systematic across every period); the TEV/LTM EBIT row reconciles exactly, so an EBIT-basis band is available if ever wanted.",
+      "decided_by": "operator",
+      "decided_on": "2026-10-07",
+      "source_ref": "docs/records/2026-10-07-four-recipe-re-tags-restored.md (#671) — the re-tag was written 2026-07-21 in 9b9228bc, pending the analyst; the operator's instruction of 2026-10-07 restored it; whether to revise it is the operator's open ruling (STATE row 32 (11))"
+    },
+    "machine_recipe_hint": "R1_midcycle_margin_evebitda",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [
