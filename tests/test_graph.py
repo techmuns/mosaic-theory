@@ -230,9 +230,11 @@ class _UsageMsg:
 
 
 def _client(msg: object) -> object:
+    import threading
+
     from vinci.graph.llm import AnthropicLlmClient
     c = AnthropicLlmClient.__new__(AnthropicLlmClient)
-    c._model, c._max_tokens, c._last_usage = "m", 16384, None      # type: ignore[attr-defined]
+    c._model, c._max_tokens, c._usage = "m", 16384, threading.local()  # type: ignore[attr-defined]
     c._client = type("C", (), {"messages": type("M", (), {         # type: ignore[attr-defined]
         "create": staticmethod(lambda **kw: msg)})()})()
     return c

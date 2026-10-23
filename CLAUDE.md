@@ -356,7 +356,9 @@ incomplete regardless of code state.
   (owner + what unlocks it) and, where the item has reasoning worth keeping, a file under
   **`docs/records/`**. Never appended to §5, which is frozen.
 - **ARTIFACT-PASS RULE.** The standing post-merge artifact pass (re-assemble dossiers → build frontend
-  → commit `data/dossiers/*` + `frontend/dossiers/*` → push) runs the **FULL offline suite green
+  → commit `data/dossiers/*` + `frontend/dossiers/*` + every `data/snapshots/assembly_runs/*` file the
+  pass wrote, refused re-rolls included — the cost-and-outcome series, `vinci/dossier/run_metrics.py`
+  → push) runs the **FULL offline suite green
   BEFORE pushing** — an artifact commit is **not exempt from green-main**, because tests read the
   committed artifacts (a re-assembled dossier can turn a pinned test red). Verifying the rendered
   surface is necessary but **not sufficient**; run `pytest -m "not network"` on the freshly-committed

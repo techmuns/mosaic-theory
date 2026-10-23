@@ -608,6 +608,11 @@ is the 3.9 system one).
 
    *(Source: CLAUDE.md §ARTIFACT-PASS RULE.)*
 
+   Commit the pass's `data/snapshots/assembly_runs/*.jsonl` files with the dossiers — one per
+   `vinci dossier` run, a line per name ATTEMPTED, refused re-rolls included. They are the record of
+   what each build cost and produced (`vinci/dossier/run_metrics.py`); a pass that drops them
+   leaves a gap in the series no later run can fill.
+
 **Do NOT re-use a parked copy of an earlier build** — re-assemble whenever any rendering input has
 changed, or you ship the defect the fix removed (#365→#368). **Do NOT re-roll a synthesis to get
 cleaner flags** — that is selecting prose on outcome; the flags stay on the page for the human.

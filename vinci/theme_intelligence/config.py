@@ -18,7 +18,7 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
-from vinci.config import sec_user_agent
+from vinci.config import LLM_PRICE_PER_MTOK, sec_user_agent
 
 PACKAGE_DIR = Path(__file__).resolve().parent
 CONFIG_DIR = PACKAGE_DIR / "config"
@@ -47,10 +47,10 @@ PARSER_VERSION = "ti-parse-8"  # 8: overprinted PDF glyphs read once; 7: the pay
 #: running past the next 4 quarters is not near-term, a page label is no exposure (pilot)
 ENGINE_VERSION = "ti-engine-5"
 
-#: USD per million tokens (input, output) — Anthropic first-party list price as cached 2026-10-06.
-#: Cache writes bill 1.25x input and cache reads 0.1x input. Used for the run manifest's cost line;
-#: a model missing here makes the cost UNKNOWN, never zero.
-PRICE_PER_MTOK: dict[str, tuple[float, float]] = {"claude-opus-4-8": (5.0, 25.0)}
+#: USD per million tokens (input, output), for the run manifest's cost line. The table lives in
+#: `vinci.config` since 2026-10-23, so the fund's dossier assembly and this package price a call
+#: from ONE list; a model missing there makes the cost UNKNOWN, never zero.
+PRICE_PER_MTOK = LLM_PRICE_PER_MTOK
 
 #: Honest, identifying User-Agent. No browser spoofing: a site that refuses this is BLOCKED.
 USER_AGENT = (f"mosaic-theory-theme-intelligence/0.1 (research scanner; "

@@ -34,19 +34,13 @@ class ThemeLlmClient(AnthropicLlmClient):
             return super().extract(system=system, user=user, tool=tool)
         content = [{"type": "text", "text": head + end, "cache_control": {"type": "ephemeral"}},
                    {"type": "text", "text": tail}]
+        self._usage.value = None              # as the shared adapter: never a stale count
         msg = self._client.messages.create(  # type: ignore[call-overload]  # plain dicts ok at runtime
             model=self._model, max_tokens=self._max_tokens, system=system, tools=[tool],
             tool_choice={"type": "tool", "name": tool["name"]},
             messages=[{"role": "user", "content": content}])
         # as the shared adapter: usage recorded before any raise; truncation fails loud
-        u = getattr(msg, "usage", None)
-        self._last_usage = {
-            "input_tokens": int(getattr(u, "input_tokens", 0) or 0),
-            "output_tokens": int(getattr(u, "output_tokens", 0) or 0),
-            "cache_creation_input_tokens": int(getattr(u, "cache_creation_input_tokens", 0) or 0),
-            "cache_read_input_tokens": int(getattr(u, "cache_read_input_tokens", 0) or 0),
-            "max_tokens": self._max_tokens,
-        } if u is not None else None
+        self._record_usage(msg)
         if msg.stop_reason == "max_tokens":
             raise LlmError(f"model {self._model} truncated at max_tokens={self._max_tokens} — "
                            "tool call incomplete; raise the cap or shrink the prompt")
