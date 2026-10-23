@@ -529,3 +529,37 @@ def test_command_with_no_pages_fails_loud(tmp_path: Path, monkeypatch: pytest.Mo
     monkeypatch.chdir(tmp_path)
     assert main(["audit", "ciq"]) == 1
     assert not (tmp_path / "data" / "snapshots").exists()
+
+
+def test_command_refuses_an_as_of_that_is_not_a_date(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The as-of names the snapshot file: a path-shaped one must never become a directory."""
+    _seed(tmp_path, _fixture())
+    monkeypatch.chdir(tmp_path)
+    for bad in ("2026/10/23", "../x", "today"):
+        assert main(["audit", "ciq", "--as-of", bad, "--write"]) == 1
+    assert not (tmp_path / "data" / "snapshots").exists()
+    assert not (tmp_path / "data" / "x.json").exists()
+
+
+def test_a_changed_same_date_snapshot_says_it_replaced_one(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str],
+) -> None:
+    _seed(tmp_path, {"AAA": _fixture()["AAA"]})
+    monkeypatch.chdir(tmp_path)
+    assert main(["audit", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    _seed(tmp_path, {"BBB": _fixture()["BBB"]})
+    capsys.readouterr()
+    assert main(["audit", "ciq", "--as-of", "2026-10-23", "--write"]) == 0
+    assert "snapshot REPLACED" in capsys.readouterr().out
+
+
+def test_two_folders_for_one_ticker_are_refused(tmp_path: Path) -> None:
+    for name in ("tjx", "TJX"):
+        (tmp_path / "data" / "dossiers" / name).mkdir(parents=True, exist_ok=True)
+    if len(list((tmp_path / "data" / "dossiers").iterdir())) < 2:
+        pytest.skip("case-insensitive filesystem: the two folders are one")
+    for name in ("tjx", "TJX"):
+        (tmp_path / "data" / "dossiers" / name / "dossier.json").write_text("{}")
+    with pytest.raises(ValueError, match="two dossier folders for TJX"):
+        aq.load_pages(tmp_path)

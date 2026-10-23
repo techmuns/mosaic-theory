@@ -275,7 +275,7 @@ CHECKS: tuple[Check, ...] = (
           "CIQ Financials (quarterly) Income Statement 'EBITDA', the four quarters of its LTM",
           "EDGAR XBRL: operating income + D&A (else pre-tax − net interest + D&A)", INDEPENDENT,
           "quarter",
-          f"differs beyond {DIFFERENT_SHARE:.0%} of the rebuilt figure "
+          f"differs beyond {DIFFERENT_SHARE:.0%} of the rebuilt figure AND by at least $1M "
           "(ebitda_recon.DIFFERENT_SHARE) — the page's own `different` flag",
           "pages carrying mechanical.financial_summary.ebitda_reconciliation",
           "the quarter's own release states an amount matching the gap (quoted, not attributed)",
@@ -359,6 +359,14 @@ class Family:
     fallback: str = UNVERIFIED     # the class when no scored check covers it
     unscored: tuple[str, ...] = ()  # checks that run but leave no structured verdict
     note: str = ""
+    # facts COUNTED for the family but not scored (no pass/fail is defined for them)
+    counted: Callable[[dict[str, dict[str, Any]]], dict[str, int]] | None = None
+
+
+def _consensus_identities(pages: dict[str, dict[str, Any]]) -> dict[str, int]:
+    rows = {t: len(_get(p, "forward_consensus", "reconciliations") or []) for t, p in pages.items()}
+    return {"pages_with_identity_rows": sum(1 for n in rows.values() if n),
+            "identity_rows": sum(rows.values())}
 
 
 FAMILIES: tuple[Family, ...] = (
@@ -415,7 +423,8 @@ FAMILIES: tuple[Family, ...] = (
            fallback=SINGLE_SOURCE,
            note="no second consensus source; forward_consensus.reconciliations sets identities "
                 "(CFO − CapEx vs FCF, EBIT + D&A vs EBITDA) against the same means — information, "
-                "not a pass/fail, by the schema's own rule, so they are counted, not scored"),
+                "not a pass/fail, by the schema's own rule, so they are counted, not scored",
+           counted=_consensus_identities),
     Family("estimates.forward_multiples", "estimates", ("Estimates→Multiples",),
            "the NTM multiples a recipe prices", checks=("snapshot_multiple",),
            unscored=("mechanical.valuation.implied_expectations.vintage_coherent — reads True "
@@ -469,12 +478,6 @@ def classify(f: Family) -> str:
     return f.fallback
 
 
-def _consensus_identities(pages: dict[str, dict[str, Any]]) -> dict[str, int]:
-    rows = {t: len(_get(p, "forward_consensus", "reconciliations") or []) for t, p in pages.items()}
-    return {"pages_with_identity_rows": sum(1 for n in rows.values() if n),
-            "identity_rows": sum(rows.values())}
-
-
 # --- the scorecard ------------------------------------------------------------------------------
 
 
@@ -483,7 +486,10 @@ def load_pages(root: Path) -> dict[str, dict[str, Any]]:
     ddir = root / "data" / "dossiers"
     out: dict[str, dict[str, Any]] = {}
     for f in sorted(ddir.glob("*/dossier.json")) if ddir.is_dir() else []:
-        out[f.parent.name.upper()] = json.loads(f.read_text())
+        t = f.parent.name.upper()
+        if t in out:      # two folders one ticker apart only in case — never keep one silently
+            raise ValueError(f"two dossier folders for {t} under {ddir}")
+        out[t] = json.loads(f.read_text())
     return out
 
 
@@ -551,8 +557,8 @@ def scorecard(pages: dict[str, dict[str, Any]], *, measured_on: str, git_head: s
                  "units": by_id[cid]["fleet"]["units"],
                  "confirmed": by_id[cid]["fleet"][CONFIRMED]} for cid in f.checks],
             "unscored": list(f.unscored), "note": f.note or None}
-        if f.id == "estimates.consensus":
-            entry["counted"] = _consensus_identities(pages)
+        if f.counted is not None:
+            entry["counted"] = f.counted(pages)
         coverage.append(entry)
     return {
         "schema": SCHEMA,

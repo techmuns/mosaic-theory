@@ -2679,6 +2679,11 @@ def _cmd_audit_ciq(args: argparse.Namespace) -> int:
     except (OSError, subprocess.SubprocessError):
         head, match = None, None
     as_of = args.as_of or _date.today().isoformat()
+    try:  # the as-of names the snapshot file, so it is a date and nothing else
+        as_of = _date.fromisoformat(as_of).isoformat()
+    except ValueError:
+        print(f"--as-of {as_of!r} is not a YYYY-MM-DD date", file=sys.stderr)
+        return 1
     card = aq.scorecard(pages, measured_on=as_of, git_head=head, dossiers_match_head=match,
                         dossier_sha256=aq.dossier_set_sha256(root))
     print(aq.render(card))
@@ -2688,7 +2693,9 @@ def _cmd_audit_ciq(args: argparse.Namespace) -> int:
         body = json.dumps(card, indent=1, ensure_ascii=False) + "\n"
         before = out.read_text() if out.exists() else None
         out.write_text(body)
-        print(f"\nsnapshot {'unchanged' if before == body else 'written'}: {out.relative_to(root)}")
+        what = ("unchanged" if before == body else "written" if before is None
+                else "REPLACED — this date's earlier snapshot differed")
+        print(f"\nsnapshot {what}: {out.relative_to(root)}")
     return 0
 
 
