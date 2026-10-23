@@ -1,0 +1,152 @@
+{
+ "0": {
+  "cik_str": 1652044,
+  "ticker": "GOOGL",
+  "title": "Alphabet Inc."
+ },
+ "1": {
+  "cik_str": 1018724,
+  "ticker": "AMZN",
+  "title": "AMAZON COM INC"
+ },
+ "10": {
+  "cik_str": 1579298,
+  "ticker": "BURL",
+  "title": "Burlington Stores, Inc."
+ },
+ "11": {
+  "cik_str": 749251,
+  "ticker": "IT",
+  "title": "GARTNER INC"
+ },
+ "12": {
+  "cik_str": 1262823,
+  "ticker": "WLK",
+  "title": "WESTLAKE CORP"
+ },
+ "13": {
+  "cik_str": 1352010,
+  "ticker": "EPAM",
+  "title": "EPAM Systems, Inc."
+ },
+ "14": {
+  "cik_str": 907654,
+  "ticker": "ORKA",
+  "title": "Oruka Therapeutics, Inc."
+ },
+ "15": {
+  "cik_str": 821483,
+  "ticker": "PARR",
+  "title": "PAR PACIFIC HOLDINGS, INC."
+ },
+ "16": {
+  "cik_str": 1902733,
+  "ticker": "NCNO",
+  "title": "nCino, Inc."
+ },
+ "17": {
+  "cik_str": 1803599,
+  "ticker": "CNXC",
+  "title": "Concentrix Corp"
+ },
+ "18": {
+  "cik_str": 793074,
+  "ticker": "WERN",
+  "title": "WERNER ENTERPRISES INC"
+ },
+ "19": {
+  "cik_str": 784199,
+  "ticker": "AORT",
+  "title": "ARTIVION, INC."
+ },
+ "2": {
+  "cik_str": 59478,
+  "ticker": "LLY",
+  "title": "ELI LILLY & Co"
+ },
+ "20": {
+  "cik_str": 1772016,
+  "ticker": "BRBR",
+  "title": "BELLRING BRANDS, INC."
+ },
+ "21": {
+  "cik_str": 1702744,
+  "ticker": "SMPL",
+  "title": "Simply Good Foods Co"
+ },
+ "22": {
+  "cik_str": 1682745,
+  "ticker": "VRRM",
+  "title": "VERRA MOBILITY Corp"
+ },
+ "23": {
+  "cik_str": 1681087,
+  "ticker": "TECX",
+  "title": "Tectonic Therapeutic, Inc."
+ },
+ "24": {
+  "cik_str": 1579733,
+  "ticker": "VITL",
+  "title": "Vital Farms, Inc."
+ },
+ "25": {
+  "cik_str": 1484769,
+  "ticker": "FUBO",
+  "title": "FuboTV Inc."
+ },
+ "26": {
+  "cik_str": 1760689,
+  "ticker": "MVST",
+  "title": "Microvast Holdings, Inc."
+ },
+ "27": {
+  "cik_str": 1652044,
+  "ticker": "GOOG",
+  "title": "Alphabet Inc."
+ },
+ "28": {
+  "cik_str": 1652044,
+  "ticker": "GOOGN",
+  "title": "Alphabet Inc."
+ },
+ "29": {
+  "cik_str": 1652044,
+  "ticker": "GOOGM",
+  "title": "Alphabet Inc."
+ },
+ "3": {
+  "cik_str": 1403161,
+  "ticker": "V",
+  "title": "VISA INC."
+ },
+ "4": {
+  "cik_str": 1065280,
+  "ticker": "NFLX",
+  "title": "NETFLIX INC"
+ },
+ "5": {
+  "cik_str": 109198,
+  "ticker": "TJX",
+  "title": "TJX COMPANIES INC /DE/"
+ },
+ "6": {
+  "cik_str": 1543151,
+  "ticker": "UBER",
+  "title": "Uber Technologies, Inc"
+ },
+ "7": {
+  "cik_str": 745732,
+  "ticker": "ROST",
+  "title": "ROSS STORES, INC."
+ },
+ "8": {
+  "cik_str": 27419,
+  "ticker": "TGT",
+  "title": "TARGET CORP"
+ },
+ "9": {
+  "cik_str": 320187,
+  "ticker": "NKE",
+  "title": "NIKE, Inc."
+ }
+}

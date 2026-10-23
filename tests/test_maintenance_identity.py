@@ -23,9 +23,13 @@ import ast
 import json
 import pathlib
 import tempfile
+from collections.abc import Iterator
 from datetime import date
 
+import pytest
+
 import vinci.dossier.assemble as asm
+from tests.sec_offline_support import no_network, seed_sec_cache
 from vinci.config import Config
 from vinci.labels import resolve_label
 from vinci.resolver import EntityResolver
@@ -49,10 +53,19 @@ _BENCH = "IWM"
 #: Care; nothing is written to the real DB, which stays untouched.
 _STORE_SIC = "2836"
 
-#: Everything under ``data/`` the assembly legitimately reads — the resolver index and the EDGAR
-#: cache above all. Symlinked, never copied: only the STORE is substituted.
-_LINKED = ("dossiers", "snapshots", "cache", "manual", "monitor", "followed.json",
-           "graph_coverage.json")
+#: Everything under ``data/`` the assembly legitimately reads. Symlinked, never copied: only the
+#: STORE and the SEC CACHE are substituted. The cache is seeded from committed fixtures
+#: (``tests/sec_offline_support.py``): the real ``data/cache`` is git-ignored, so on a fresh
+#: checkout the resolver fetched ``company_tickers.json`` live inside ``-m "not network"``
+#: (measured 2026-10-23).
+_LINKED = ("dossiers", "snapshots", "manual", "monitor", "followed.json", "graph_coverage.json")
+
+
+@pytest.fixture(autouse=True)
+def _offline() -> Iterator[None]:
+    """Every pin runs with outbound connections refused: a fixture gap fails, never fetches."""
+    with no_network():
+        yield
 
 
 def _fixture_cfg(*, with_store_row: bool) -> tuple[Config, Identity]:
@@ -67,6 +80,7 @@ def _fixture_cfg(*, with_store_row: bool) -> tuple[Config, Identity]:
         if src.exists():
             (tmp / name).symlink_to(src)
     cfg = Config(data_dir=tmp)
+    seed_sec_cache(cfg)
     ident = EntityResolver.from_config(cfg).resolve_ticker(_NAME)
     with Store(cfg.db_path) as store:
         for sym in (_NAME, _BENCH):
