@@ -22,7 +22,6 @@ import pytest
 
 from vinci.cli import main
 from vinci.dossier.freshness import reconcile_cap, whole_number_ratio
-from vinci.eod.client import _SESSION_PRESENT_FRACTION
 from vinci.netcache import HttpError
 from vinci.quality import core
 from vinci.quality.sources import prices
@@ -129,7 +128,7 @@ def _seed_store(root: Path) -> None:
         for cik in ("0000000007", "0000000077"):              # one ticker, two securities
             add("GGG", _series(_ident("GGG", cik).internal_id, _walk({})), cik)
         add("HHH", [_bar(_ident("HHH").internal_id, DAYS[0], SENTINEL)])
-        for t in ("KKK", "LLL", "MMM"):
+        for t in ("KKK", "LLL", "MMM", "NNN.B"):
             add(t, _series(_ident(t).internal_id, [SENTINEL + i for i in range(N_SESSIONS)]))
         store.write_prices(bars)
     # a writer that bypasses `PriceBar` can store a high below the low, or a negative volume
@@ -140,7 +139,7 @@ def _seed_store(root: Path) -> None:
                 (_ident("BBB").internal_id, DAYS[8].isoformat()))
     con.commit()
     con.close()
-    for t in ("AAA", "KKK", "LLL", "MMM", "ZZZ"):             # ZZZ has a page and no bars
+    for t in ("AAA", "KKK", "LLL", "MMM", "NNN.B", "ZZZ"):    # ZZZ has a page and no bars
         page = root / "data" / "dossiers" / t / "dossier.json"
         page.parent.mkdir(parents=True, exist_ok=True)
         page.write_text("{}")
@@ -166,7 +165,9 @@ def _fake_tiingo(symbol: str, start: date, end: date) -> list[dict[str, Any]]:
         rows[10]["close"] = (SENTINEL + 11) / (1 + 2 * CLOSE_TOL)  # session 11, beyond the band
         return rows
     if symbol == "LLL":
-        raise HttpError("synthetic 404")
+        raise HttpError("Non-retryable 404 from https://api.tiingo.com/x: synthetic")
+    if symbol == "NNN-B":                       # Tiingo's spelling of the class NNN.B
+        return [_row(d, SENTINEL + i) for i, d in enumerate(DAYS)]
     return []                                                       # Tiingo holds no rows
 
 
@@ -249,8 +250,9 @@ def test_close_vs_tiingo_on_the_splits_only_basis(store: Path) -> None:
     # its partial-day bar has no Tiingo row
     assert by["AAA"] == _row_of(N_SESSIONS, 0, unchecked=1)
     assert by["KKK"] == _row_of(N_SESSIONS - 2, 1, unchecked=1)
-    assert by["LLL"] == {"not_run": "Tiingo LLL: HttpError — no comparison"}
+    assert by["LLL"] == {"not_run": "Tiingo LLL: HttpError (Non-retryable 404) — no comparison"}
     assert by["MMM"] == _row_of(0, 0, unchecked=N_SESSIONS)       # Tiingo returned no rows
+    assert by["NNN.B"] == _row_of(N_SESSIONS, 0)                   # asked for as nnn-b
     assert by["EEE"] == {"not_applicable": prices._NOT_SAMPLED}
 
 
@@ -268,7 +270,7 @@ def test_without_a_key_the_comparison_is_not_run_by_name(store: Path) -> None:
                           git_head=None, inputs_match_head=None)
     check = next(c for c in card["checks"] if c["id"] == "close_vs_tiingo")
     assert check["not_run"] == [{"reason": "no TIINGO_API_KEY in the environment",
-                                 "names": ["AAA", "KKK", "LLL", "MMM"]}]
+                                 "names": ["AAA", "KKK", "LLL", "MMM", "NNN.B"]}]
 
 
 def test_split_adjusted_closes_divide_by_later_factors_only() -> None:
@@ -298,8 +300,8 @@ def test_tiingo_is_asked_for_once_and_only_when_a_sampled_name_has_bars(store: P
         return None
 
     prices.read_store(store, tiingo=factory)
-    assert calls == [1]                     # four sampled names with bars, one ask
-    for t in ("AAA", "KKK", "LLL", "MMM"):  # ZZZ's page stays: it has no bars
+    assert calls == [1]                     # five sampled names with bars, one ask
+    for t in ("AAA", "KKK", "LLL", "MMM", "NNN.B"):     # ZZZ's page stays: it has no bars
         (store / "data" / "dossiers" / t / "dossier.json").unlink()
     prices.read_store(store, tiingo=factory)
     assert calls == [1]
@@ -310,7 +312,7 @@ def test_the_boundary_names_the_store_and_the_sample(store: Path) -> None:
     assert c.reads.startswith("data/vinci.db, read-only: ")
     assert (f"{N_SESSIONS} market sessions 2026-01-05 → {DAYS[-1].isoformat()} (+1 partial)"
             in c.reads)
-    assert "the 4 names with a committed page (1 more has no bars here)" in c.reads
+    assert "the 5 names with a committed page (1 more has no bars here)" in c.reads
     assert c.tracked == ()          # the store is not in git: whether it matches HEAD is unknown
 
 
@@ -386,7 +388,7 @@ def test_command_scores_the_store_and_writes_a_dated_snapshot(
     for name in ("AAA", "BBB", "FFF", "SEC-0000000077-GGG"):
         assert name in out
     saved = json.loads((store / f"data/snapshots/data_quality/prices/{today}.json").read_text())
-    assert saved["boundary"]["items"] == 12 and saved["boundary"]["inputs_match_head"] is None
+    assert saved["boundary"]["items"] == 13 and saved["boundary"]["inputs_match_head"] is None
 
 
 @pytest.mark.parametrize("prepare, why", [
@@ -421,13 +423,8 @@ def _live_series() -> prices.Series:
                            "WHERE internal_id = ? ORDER BY bar_date", (iid,)).fetchall()
     finally:
         con.close()
-    top = max(per_day.values())
-    market = sorted(date.fromisoformat(d).toordinal() for d, n in per_day.items()
-                    if n >= _SESSION_PRESENT_FRACTION * top)
     days = array("i", (date.fromisoformat(r[0]).toordinal() for r in rows))
-    from bisect import bisect_left, bisect_right
-    missed = array("i", (bisect_left(market, days[i]) - bisect_right(market, days[i - 1])
-                         for i in range(1, len(days))))
+    missed = prices.missed_sessions(prices.market_sessions(per_day), days)
     o, h, lo, c, v = (array("d", (r[k] for r in rows)) for k in range(1, 6))
     return prices.Series(iid, days, o, h, lo, c, v, missed)
 
@@ -463,7 +460,8 @@ def test_the_all_clear_checks_fire_on_a_perturbed_live_series() -> None:
         flat[i] = flat[k]
     assert _differs(prices._flat_close_run(with_(close=flat))) >= FLAT_RUN_SESSIONS
     # an unrestated 2:1 split: from bar k on, the series sits at half of where it should
-    k = next(i for i in range(k, len(s.days)) if s.missed[i - 1] == 0 and s.missed[i] == 0)
+    k = next((i for i in range(k, len(s.days) - 1) if s.missed[i - 1] == 0 == s.missed[i]),
+             None) or pytest.skip("no gap-free step in the live series' second half")
     rebase = s.close[k - 1] / s.close[k] / 2
     halved = array("d", (x * rebase if i >= k else x for i, x in enumerate(s.close)))
     assert _differs(prices._split_shaped_step(with_(close=halved))) == base["split_shaped_step"] + 1

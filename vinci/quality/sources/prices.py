@@ -274,6 +274,20 @@ def _default_fetch() -> Fetch | None:
     return lambda symbol, start, end: client.daily_rows(symbol, start=start, end=end)
 
 
+def market_sessions(per_day: dict[str, int]) -> list[int]:
+    """The store's market sessions, as day ordinals: the days holding bars for at least
+    `_SESSION_PRESENT_FRACTION` of the most names any one day holds. Others are partial days."""
+    top = max(per_day.values())
+    return sorted(date.fromisoformat(d).toordinal() for d, n in per_day.items()
+                  if n >= _SESSION_PRESENT_FRACTION * top)
+
+
+def missed_sessions(market: list[int], days: array[int]) -> array[int]:
+    """Per step between consecutive bars: the market sessions strictly between them."""
+    return array("i", (bisect_left(market, days[i]) - bisect_right(market, days[i - 1])
+                       for i in range(1, len(days))))
+
+
 def _empty(why: str) -> Corpus:
     return Corpus(items={}, reads=f"{READS} ({why})", item_noun="name",
                   sha256=hashlib.sha256(b"").hexdigest())
@@ -294,9 +308,7 @@ def read_store(root: Path, *,
         per_day = dict(con.execute("SELECT bar_date, COUNT(*) FROM prices GROUP BY bar_date"))
         if not per_day:
             return _empty("its prices table holds no rows")
-        top = max(per_day.values())
-        market = sorted(date.fromisoformat(d).toordinal() for d, n in per_day.items()
-                        if n >= _SESSION_PRESENT_FRACTION * top)
+        market = market_sessions(per_day)
         cols: dict[str, tuple[array[int], array[float], array[float], array[float],
                               array[float], array[float]]] = {}
         for iid, d, o, h, lo, c, v in con.execute(
@@ -319,8 +331,7 @@ def read_store(root: Path, *,
     for iid, (days, o, h, lo, c, v) in cols.items():
         ticker, symbol = secs.get(iid, (None, None))
         name = ticker if ticker is not None and held[ticker] == 1 else iid
-        missed = array("i", (bisect_left(market, days[i]) - bisect_right(market, days[i - 1])
-                             for i in range(1, len(days))))
+        missed = missed_sessions(market, days)
         closes: dict[int, float] | str | None = None
         if ticker in sample and symbol is not None:
             if not asked:
@@ -355,10 +366,13 @@ def _tiingo_closes(fetch: Fetch | None, symbol: str,
     if fetch is None:
         return "no TIINGO_API_KEY in the environment"
     try:
-        return split_adjusted_closes(fetch(symbol, date.fromordinal(days[0]),
+        # Tiingo spells a share class with a hyphen (brk-b) where Polygon uses a dot
+        return split_adjusted_closes(fetch(symbol.replace(".", "-"), date.fromordinal(days[0]),
                                            date.fromordinal(days[-1])))
     except (HttpError, KeyError, TypeError, ValueError) as exc:
-        return f"Tiingo {symbol}: {type(exc).__name__} — no comparison"
+        # the status, never the URL or the body: "Non-retryable 404" or "Exhausted retries"
+        what = str(exc).split(" from ")[0].split(" for ")[0][:40]
+        return f"Tiingo {symbol}: {type(exc).__name__} ({what}) — no comparison"
 
 
 def load(root: Path) -> Corpus:
