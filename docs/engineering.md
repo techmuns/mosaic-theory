@@ -127,6 +127,10 @@ PR (CLAUDE.md: coin-time translation).
   never the source being wrong. A **failure class** is one of five ways a figure goes wrong: wrong
   file, wrong cell, wrong unit, wrong period or vintage, different definition.* Home:
   `vinci/quality/core.py`, `vinci/quality/sources/`; series `data/snapshots/data_quality/<source>/`.
+- **Market session / partial day (the price store's calendar)** (2026-10-24) — Plain words: *a
+  day on which the store holds bars for at least half as many names as its fullest day holds
+  (`eod.client._SESSION_PRESENT_FRACTION`); any other day is partial — a few names' backfill. The
+  prices source counts a series gap in market sessions only.* Home: `vinci/quality/sources/prices.py`.
 - **Operator decision / re-tag** — the operator's own call on which valuation recipe fits a name.
   Plain words: *a hand re-tag, kept in its own block with its reason, who, when and where it is
   recorded — the machine's own recipe and reason sit beside it, never inside it.* Home:

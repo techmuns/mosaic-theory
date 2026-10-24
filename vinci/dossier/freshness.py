@@ -489,6 +489,21 @@ def panel_age(mechanical: object, as_of: dt.date | str, *,
                     days=(ref - dt.date.fromisoformat(ov)).days)
 
 
+def whole_number_ratio(ratio: float) -> bool:
+    """Is a positive ``ratio`` a share-basis change rather than drift — within `_INTEGER_TOLERANCE`
+    of a whole number ≥2, either way up? One rule for `reconcile_cap` and the prices source's
+    split-shaped step (`vinci.quality.sources.prices`).
+
+    A share-basis mismatch has NO PREFERRED DIRECTION: a PRE-split share count against a POST-split
+    cap gives ~11x (FUBO), and the reverse assignment gives ~1/11. Testing only ratio >= 2 catches
+    one and silently reports the other as ordinary drift — so fold the inverse in. Review finding
+    on #253; nothing guarantees which side of the pair is the stale one, and the remediation is
+    identical either way."""
+    folded = max(ratio, 1.0 / ratio)
+    nearest = round(folded)
+    return nearest >= 2 and abs(folded - nearest) / nearest <= _INTEGER_TOLERANCE
+
+
 def reconcile_cap(*, cap_musd: float | None, shares: float | None,
                   spot: float | None) -> CapReconciliation | None:
     """Does ``cap / shares`` agree with the rendered spot? None when any input is absent — an
@@ -500,17 +515,9 @@ def reconcile_cap(*, cap_musd: float | None, shares: float | None,
     if implied <= 0:
         return None
     ratio = spot / implied
-    # A share-basis mismatch has NO PREFERRED DIRECTION: a PRE-split share count against a
-    # POST-split cap gives ~11x (FUBO), and the reverse assignment gives ~1/11. Testing only
-    # ratio >= 2 catches one and silently reports the other as ordinary drift — so fold the
-    # inverse in. Review finding on #253; nothing guarantees which side of the pair is the stale
-    # one, and the remediation is identical either way.
-    folded = max(ratio, 1.0 / ratio)
-    nearest = round(folded)
-    corporate = nearest >= 2 and abs(folded - nearest) / nearest <= _INTEGER_TOLERANCE
     return CapReconciliation(
         cap_musd=cap_musd, shares=shares, spot=spot, implied_price=implied,
-        gap=(implied - spot) / spot, ratio=ratio, corporate_action=corporate)
+        gap=(implied - spot) / spot, ratio=ratio, corporate_action=whole_number_ratio(ratio))
 
 
 #: The inputs the reconciliation needs. A build missing ANY of them cannot be checked — and the
