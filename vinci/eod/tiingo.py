@@ -2,8 +2,9 @@
 
 Polygon Grouped Daily (whole-market) is the primary breadth feed; Tiingo is kept for per-symbol
 history deeper than Polygon's free 2-year window, "if ever needed". It is wired and its response
-parsing is unit-tested, but live use waits for a ``TIINGO_API_KEY`` — the parser is verified here
-while the network path is exercised only when a token is provided.
+parsing is unit-tested; the network path runs only where a ``TIINGO_API_KEY`` is set. Since
+2026-10-24 the data-quality scorecard reads it live (`vinci.quality.sources.prices`: Polygon's close
+against Tiingo's, per session, for the names with a committed page).
 
 Auth uses the ``Authorization: Token <key>`` header (not a ``?token=`` query param), keeping the key
 out of request URLs, the on-disk cache, and logs.
@@ -63,13 +64,21 @@ class TiingoEodClient:
         )
         return cls(http)
 
-    def price_history(
-        self, symbol: str, internal_id: str, *, start: date, end: date
-    ) -> list[PriceBar]:
+    def daily_rows(self, symbol: str, *, start: date, end: date) -> list[dict[str, Any]]:
+        """Tiingo's daily rows as served: the UNADJUSTED open/high/low/close/volume beside the
+        ``adj*`` fields, ``divCash`` and ``splitFactor``. The ``adj*`` fields remove dividends as
+        well as splits, while Polygon's ``adjusted=true`` restates splits only — so a comparison
+        with the store needs the unadjusted close and the split factors, which the parsed bars
+        drop."""
         url = _PRICES.format(symbol=symbol.lower())
         data = self._http.get_json(
             url,
             ttl_seconds=_ONE_DAY,
             params={"startDate": start.isoformat(), "endDate": end.isoformat(), "format": "json"},
         )
-        return parse_tiingo_prices(cast(list[dict[str, Any]], data), internal_id)
+        return cast(list[dict[str, Any]], data)
+
+    def price_history(
+        self, symbol: str, internal_id: str, *, start: date, end: date
+    ) -> list[PriceBar]:
+        return parse_tiingo_prices(self.daily_rows(symbol, start=start, end=end), internal_id)
