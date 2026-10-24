@@ -35,6 +35,9 @@ from vinci.dossier.ebitda_basis import read_basis as read_ebitda_basis
 from vinci.dossier.freshness import _COVERAGE_GAP_DAYS
 from vinci.dossier.midcycle import MIN_YEARS as _MIDCYCLE_MIN_YEARS
 from vinci.dossier.schemas import (
+    CHECK_AGREE,
+    CHECK_DIFFER,
+    CHECK_NOT_RUN,
     CapitalInstrument,
     CapitalStructure,
     CatalystCalendar,
@@ -45,6 +48,7 @@ from vinci.dossier.schemas import (
     ConsensusContext,
     ConsensusLevel,
     CovenantPointer,
+    CrossCheck,
     DilutionPipeline,
     DrawdownCause,
     FilingRef,
@@ -3898,24 +3902,10 @@ def _implied_expectations(
     # FY26 EBITDA consensus (Estimates→Trends latest — SAME source as the anchors). NTM is not a
     # sourced level, so FY26 — the nearest direct consensus — is the probe; shared-TEV ladder certs.
     direct26 = ciq_sheets.trends_fy_level(bundle, metric="EBITDA", fy_label="FY 2026")
-    coherent, pct = True, 0.0
-    if direct26 and direct26 > 0 and a26 is not None:
-        pct = abs(a26 - direct26) / direct26
-        coherent = pct <= _IE_TOL
-    # the residual is stated as a DECIMAL fraction, never a percentage — the block carries zero '%'
-    # tokens (the value-space fence: nothing here is differenced into a percentage gap).
-    if direct26 and a26 is not None:
-        coherence_note = (
-            f"vintage-coherent: derived FY26 ${a26:.1f}M vs direct consensus ${direct26:.1f}M "
-            f"(residual {pct:.3f} ≤ {_IE_TOL:.2f} tolerance)" if coherent else
-            f"multiple-pricing vintage differs from TEV as-of — re-pull comps (derived FY26 "
-            f"${a26:.1f}M vs direct ${direct26:.1f}M, residual {pct:.3f} > {_IE_TOL:.2f})")
-    else:
-        coherence_note = "vintage-coherence UNKNOWN — no direct FY26 EBITDA consensus to probe"
+    coherent, coherence_note, vintage_check = _vintage_probe(a26, direct26)
 
     # (condition b) net-debt coherence vs the cash/debt bridge — reconcile or soft-caveat (C3).
-    bridge_nd = _ie_bridge_net_debt(implied_val)
-    nd_ok = bridge_nd is None or abs(bridge_nd - net_debt) <= _IE_TOL * max(1.0, abs(net_debt))
+    nd_ok, net_debt_check, bridge_nd = _net_debt_probe(implied_val, net_debt)
     tev_src = (
         f"TEV = mcap {market_cap:.1f} + net debt {net_debt:.1f} "
         # THREE STATES, DISTINGUISHABLE (review finding): corrected, nothing-to-correct, and
@@ -3934,7 +3924,50 @@ def _implied_expectations(
         rows=rows, tev=Sourced.present(round(tev, 1), source_ref=tev_src), anchors=anchors,
         rev_anchors=rev_anchors, heterogeneity_gate=implied_val.comparability_gate.value or "",
         tev_as_of=tev_as_of, multiples_as_of=mult_as_of, vintage_coherent=coherent,
-        coherence_note=coherence_note, net_debt_reconciled=nd_ok)
+        vintage_check=vintage_check, coherence_note=coherence_note, net_debt_reconciled=nd_ok,
+        net_debt_check=net_debt_check)
+
+
+def _vintage_probe(a26: float | None,
+                   direct26: float | None) -> tuple[bool, str, CrossCheck]:
+    """(G5) The vintage probe — (`vintage_coherent`, `coherence_note`, `vintage_check`) from the
+    ladder-derived FY26 level (TEV ÷ the FY26 forward multiple, UNROUNDED) and the direct FY26
+    EBITDA consensus. Shared with the refresh that writes the check onto a committed page from its
+    stored inputs (`refresh.cross_check_transform`), so the two cannot decide it two ways.
+
+    THE BOOL IS TRUE WHEN THE PROBE CANNOT RUN — no direct consensus, a non-positive one, or no
+    ladder level — and stays so (pages and renderers read it). The check says which it was."""
+    ran = bool(direct26 and direct26 > 0 and a26 is not None)
+    coherent, pct = True, 0.0
+    if ran:
+        assert direct26 is not None and a26 is not None
+        pct = abs(a26 - direct26) / direct26
+        coherent = pct <= _IE_TOL
+    # the residual is stated as a DECIMAL fraction, never a percentage — the block carries zero '%'
+    # tokens (the value-space fence: nothing here is differenced into a percentage gap).
+    if direct26 and a26 is not None:
+        note = (
+            f"vintage-coherent: derived FY26 ${a26:.1f}M vs direct consensus ${direct26:.1f}M "
+            f"(residual {pct:.3f} ≤ {_IE_TOL:.2f} tolerance)" if coherent else
+            f"multiple-pricing vintage differs from TEV as-of — re-pull comps (derived FY26 "
+            f"${a26:.1f}M vs direct ${direct26:.1f}M, residual {pct:.3f} > {_IE_TOL:.2f})")
+    else:
+        note = "vintage-coherence UNKNOWN — no direct FY26 EBITDA consensus to probe"
+    check = CHECK_NOT_RUN if not ran else CHECK_AGREE if coherent else CHECK_DIFFER
+    return coherent, note, check
+
+
+def _net_debt_probe(implied: ImpliedValuation,
+                    net_debt: float) -> tuple[bool, CrossCheck, float | None]:
+    """(condition b) (`net_debt_reconciled`, `net_debt_check`, the bridge's net debt) — the comps
+    net debt against the cash/debt bridge, within `_IE_TOL`. Shared with
+    `refresh.cross_check_transform`. The bool is True with NO bridge to test against; the check
+    says not run."""
+    bridge_nd = _ie_bridge_net_debt(implied)
+    if bridge_nd is None:
+        return True, CHECK_NOT_RUN, None
+    ok = abs(bridge_nd - net_debt) <= _IE_TOL * max(1.0, abs(net_debt))
+    return ok, CHECK_AGREE if ok else CHECK_DIFFER, bridge_nd
 
 
 _PS_TTL = 24 * 3600  # primary-source fetch cache TTL (seconds)
@@ -4021,13 +4054,17 @@ def _ltm_adj_ebitda(releases: list[ReleaseExtract]) -> float | None:
     return round(vals[fy] - vals[prior] + vals[cur], 1)
 
 
-def _latest_quarter_ocf_positive(facts: dict[str, Any] | None) -> bool | None:
+def _latest_quarter_ocf_positive(facts: dict[str, Any] | None, *,
+                                 filed_by: date | None = None) -> bool | None:
     """Sign of the latest SINGLE-QUARTER operating cash flow (EDGAR) — the first self-funding input.
-    Single-quarter = duration ≤ ~100 days (excludes 6/9-month YTD durations). None = unavailable."""
+    Single-quarter = duration ≤ ~100 days (excludes 6/9-month YTD durations). None = unavailable.
+    ``filed_by`` reads the facts as they stood on a date — what assembly saw, for the refresh that
+    rebuilds a committed page's line (`refresh.cross_check_transform`)."""
     if not facts:
         return None
     pts = [p for p in extract_points(facts, "operating_cash_flow")
-           if p.period_start is not None and (p.period_end - p.period_start).days <= 100]
+           if p.period_start is not None and (p.period_end - p.period_start).days <= 100
+           and (filed_by is None or p.filed <= filed_by)]
     return max(pts, key=lambda p: (p.period_end, p.filed)).value > 0 if pts else None
 
 
@@ -4042,8 +4079,10 @@ def _latest_balance_date(facts: dict[str, Any] | None) -> date | None:
 
 def _release_lines(releases: list[ReleaseExtract], *, bundle: CiqBundle,
                    nde: Sourced[float] | None, card: Any | None,
-                   reference_date: date | None) -> tuple[str, str]:
-    """(`basis_triangulation`, `guide_verification`) — the two primary-source lines built FROM THE
+                   reference_date: date | None,
+                   ) -> tuple[str, primary_source.GuideVerification]:
+    """(`basis_triangulation`, the guide check whole — `guide_verification` and its outcome
+    `guide_verification_check`) — the two primary-source lines built FROM THE
     RELEASE ROWS, composed in ONE place. Assembly calls it; so does the refresh that re-reads the
     releases, which needs the same composition twice (from the page's old rows, to prove the CIQ
     export and record are the page's own; then from the new). A hand copy there was the twin-drift
@@ -4065,7 +4104,7 @@ def _release_lines(releases: list[ReleaseExtract], *, bundle: CiqBundle,
     ciq_lo, ciq_hi, ciq_period = ciq_sheets.revenue_guide_lohi(
         bundle, reference_date=reference_date)
     rel_lo, rel_hi, rel_qual, rel_basis, rel_period = _release_revenue_guide(releases)
-    guide = primary_source.guide_verification(
+    guide = primary_source.guide_verification_read(
         "revenue", ciq_lo, ciq_hi,
         prior_fy_actual=fy.get("revenue"), release_qualitative=rel_qual,
         release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis,
@@ -4337,30 +4376,14 @@ def _primary_source(
     # (3) derivations over structured inputs (never re-parsing a display string) -----------------
     fcf = ciq_sheets.free_cash_flow(bundle)
     fcf_sign = fcf.value > 0 if fcf.value is not None else None
-    self_fund = primary_source.self_funding(_latest_quarter_ocf_positive(facts), fcf_sign)
+    ocf_sign = _latest_quarter_ocf_positive(facts)
+    self_fund = primary_source.self_funding(ocf_sign, fcf_sign)
     # wall coherence — filing ≤12m vs CIQ panel same-window, tranche-matched, exclusive boundary.
     # Balance = the 10-Q's OWN period end (the wall's 'as of'), NOT the latest companyfacts instant
     # (which can be a later 10-K, shifting the window and dropping the 41.7M convertible bond).
     balance = filing_as_of or _latest_balance_date(facts)
-    cs_layer = mech.capital_structure
-    instruments = (cs_layer.instruments.value
-                   if cs_layer is not None and cs_layer.instruments.value is not None else [])
-    panel = [primary_source.PanelInstrument(
-                i.description, i.principal_musd,
-                date.fromisoformat(i.maturity_date) if i.maturity_date else None)
-             for i in instruments]
-    wall_qa: list[str] = []
-    mw = filing.maturity_wall if filing is not None else None
-    if balance is not None:
-        filing_conv = next((t.amount for t in (mw.tranches if mw else [])
-                            if "convert" in t.name.lower()), None)
-        wall_line, wall_qa = primary_source.wall_coherence(
-            mw.within_12m_total if mw else None, panel, balance=balance,
-            filing_convertible=filing_conv,
-            panel_convertible_principal=primary_source.panel_convertible_principal(panel, balance))
-    else:
-        wall_line = "wall coherence: UNKNOWN — no EDGAR balance-sheet date"
-    qa += wall_qa
+    wall = _wall_read(filing, _wall_panel(mech.capital_structure), balance)
+    qa += wall.qa
     # basis triangulation + guide verification — ONE builder, shared with the refresh that re-reads
     # the releases (`refresh.release_figures_transform`)
     nde = mech.leverage_survival.net_debt_to_ebitda if mech.leverage_survival is not None else None
@@ -4381,15 +4404,45 @@ def _primary_source(
         releases=releases, filing=filing,
         self_funding=Sourced.present(
             self_fund, source_ref="EDGAR latest-Q OCF sign + CIQ LTM FCF sign"),
+        self_funding_check=primary_source.self_funding_check(ocf_sign, fcf_sign),
         wall_coherence=Sourced.present(
-            wall_line, source_ref="10-Q maturity wall vs CIQ capital panel (same window)"),
+            wall.line, source_ref="10-Q maturity wall vs CIQ capital panel (same window)"),
+        wall_coherence_check=wall.check, wall_coherence_near_boundary=wall.near_boundary,
         basis_triangulation=Sourced.present(
             tri, source_ref="CIQ leverage bases + release LTM adj-EBITDA/margins"),
         guide_verification=Sourced.present(
-            guide, source_ref="CIQ revenue guide vs release actual/outlook"),
+            guide.line, source_ref="CIQ revenue guide vs release actual/outlook"),
+        guide_verification_check=guide.check,
         current_guide=_current_guide(releases),
         qa_flags=qa)
     return ps, latency, op_drivers
+
+
+def _wall_panel(cs_layer: CapitalStructure | None) -> list[primary_source.PanelInstrument]:
+    """The CIQ capital panel as the wall check reads it — one instrument per panel row."""
+    instruments = (cs_layer.instruments.value
+                   if cs_layer is not None and cs_layer.instruments.value is not None else [])
+    return [primary_source.PanelInstrument(
+                i.description, i.principal_musd,
+                date.fromisoformat(i.maturity_date) if i.maturity_date else None)
+            for i in instruments]
+
+
+def _wall_read(filing: FilingSectionExtract | None, panel: list[primary_source.PanelInstrument],
+               balance: date | None) -> primary_source.WallCoherence:
+    """The wall-coherence read from the 10-Q's maturity wall, the CIQ panel and the window's
+    balance date — the one composition, shared with `refresh.cross_check_transform`, which
+    rebuilds it from a committed page's stored wall and panel and the 10-Q's own date."""
+    if balance is None:
+        return primary_source.WallCoherence(
+            "wall coherence: UNKNOWN — no EDGAR balance-sheet date", [], CHECK_NOT_RUN, None)
+    mw = filing.maturity_wall if filing is not None else None
+    filing_conv = next((t.amount for t in (mw.tranches if mw else [])
+                        if "convert" in t.name.lower()), None)
+    return primary_source.wall_coherence_read(
+        mw.within_12m_total if mw else None, panel, balance=balance,
+        filing_convertible=filing_conv,
+        panel_convertible_principal=primary_source.panel_convertible_principal(panel, balance))
 
 
 _ASSEMBLY_PRICE_STALE_DAYS = 7  # one weekly refresh cadence + a weekend; older ⇒ refresh was missed

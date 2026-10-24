@@ -127,6 +127,11 @@ PR (CLAUDE.md: coin-time translation).
   never the source being wrong. A **failure class** is one of five ways a figure goes wrong: wrong
   file, wrong cell, wrong unit, wrong period or vintage, different definition.* Home:
   `vinci/quality/core.py`, `vinci/quality/sources/`; series `data/snapshots/data_quality/<source>/`.
+- **Cross-check outcome** (`CrossCheck`, 2026-10-23) — `agree` / `differ` / `not_run`, stored beside
+  a check's line or flag. Plain words: *did the check actually run, and if it did, did its two
+  figures agree — what a flag that reads True when skipped, or a verdict held in a sentence, could
+  not say.* Home: `vinci/dossier/schemas.py` (`CrossCheck`); written at assembly and onto committed
+  pages by `refresh.cross_check_transform`; scored by `vinci/quality/sources/ciq.py`.
 - **Market session / partial day (the price store's calendar)** (2026-10-24) — Plain words: *a
   day on which the store holds bars for at least half as many names as its fullest day holds
   (`eod.client._SESSION_PRESENT_FRACTION`); any other day is partial — a few names' backfill. The

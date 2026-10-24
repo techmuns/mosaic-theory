@@ -624,6 +624,7 @@ _Source §: 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm_
 - **Refreshed since assembly** (oldest first):
   - 2026-10-21 · mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
+  - 2026-10-23 · mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
 - **Price store:** `wt → mosaic-theory-ta` · reaching 2026-10-20
 - **Panel age:** oldest panel 5d old — 2026-10-16 (valuation.implied_expectations.tev_as_of), against a 2026-10-21 build
 - **Consensus age:** consensus 12d old (2026-10-09, valuation.implied_expectations.multiples_as_of) — within the ceiling

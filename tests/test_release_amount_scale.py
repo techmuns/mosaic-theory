@@ -335,12 +335,14 @@ def test_the_refresh_rebuilds_through_the_assemblers_builder(
     import vinci.dossier.ciq as ciq_mod
     import vinci.dossier.manual_store as ms
     from vinci.dossier.schemas import ReleaseExtract
+    from vinci.edgar.primary_source import GuideVerification
 
     seen: list[int] = []
 
-    def fake(rels: list[Any], **_k: Any) -> tuple[str, str]:
+    def fake(rels: list[Any], **_k: Any) -> tuple[str, GuideVerification]:
         seen.append(len(rels))
-        return (f"tri {len(seen)}", f"guide {len(seen)}")
+        check: Any = "not_run" if len(seen) % 2 else "agree"      # the old rows', the new rows'
+        return (f"tri {len(seen)}", GuideVerification(f"guide {len(seen)}", check))
 
     monkeypatch.setattr(dm, "_release_lines", fake)
     monkeypatch.setattr(ms.LocalFolderStore, "from_config", staticmethod(
@@ -349,10 +351,20 @@ def test_the_refresh_rebuilds_through_the_assemblers_builder(
     mech = json.loads(Path("data/dossiers/CNXC/dossier.json").read_text())["mechanical"]
     mech["primary_source"]["basis_triangulation"]["value"] = "tri 1"
     mech["primary_source"]["guide_verification"]["value"] = "guide 1"
+    # the planted lines are the fake's, so the page's own stored outcome is not theirs
+    mech["primary_source"].pop("guide_verification_check", None)
     rels = [ReleaseExtract.model_validate(r) for r in mech["primary_source"]["releases"]]
     rf._rebuild_release_lines("CNXC", mech, rels, rels, None)
     assert mech["primary_source"]["basis_triangulation"]["value"] == "tri 2"
     assert seen == [len(rels), len(rels)]
+    # THE OUTCOME FOLLOWS ITS LINE: the rebuilt guide line's, never the old one's
+    assert mech["primary_source"]["guide_verification_check"] == "agree"
+    # and a stored outcome the OLD rows do not give back refuses, as a stored line does
+    mech["primary_source"]["basis_triangulation"]["value"] = "tri 3"
+    mech["primary_source"]["guide_verification"]["value"] = "guide 3"
+    mech["primary_source"]["guide_verification_check"] = "differ"
+    with pytest.raises(rf.RefreshRefusedError, match="guide_verification_check does not reproduce"):
+        rf._rebuild_release_lines("CNXC", mech, rels, rels, None)
 
 
 # --- the visible card ----------------------------------------------------------------------------

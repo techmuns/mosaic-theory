@@ -6,7 +6,7 @@
  },
  "boundary": {
   "measured_on": "2026-10-24",
-  "git_head": "57471a07",
+  "git_head": "dd4eb428",
   "inputs_match_head": true,
   "reads": "data/dossiers/*/dossier.json",
   "item_noun": "page",
@@ -40,7 +40,7 @@
    "WERN",
    "WLK"
   ],
-  "inputs_sha256": "6b540749ce243a075abecbfe4b36f7aee396732dc8fd5aa97f2d0a558ecec843",
+  "inputs_sha256": "1cd4ebfe14aa4c4243e1711941c257cd3b250f312c47a4f74e1a16dbbdb2a255",
   "note": "reads the committed pages only, never the licensed workbooks"
  },
  "statuses": {
@@ -1011,6 +1011,596 @@
    }
   },
   {
+   "id": "guide_vs_release",
+   "title": "CIQ's revenue guide vs the 8-K release's guide",
+   "subject": "CIQ Estimates→Guidance revenue guide, the latest (a point or a range)",
+   "second_source": "the 8-K EX-99.1 releases' revenue guide (release_parse)",
+   "independence": "independent",
+   "unit": "page",
+   "tolerance": "both bounds within 0.01, absolute (primary_source.GUIDE_MATCH) — the page's guide_verification_check. Compared only where both sides guide a LEVEL for the same period scope: a change guide, another period, a release with no number and the vendor-echo flag are checks that did not run",
+   "population": "pages carrying mechanical.primary_source.guide_verification_check",
+   "stated_reason": null,
+   "excluded_rule": null,
+   "catches": [
+    "wrong_file",
+    "wrong_cell",
+    "wrong_unit",
+    "wrong_period"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 26,
+    "units": 26,
+    "confirmed": 5,
+    "differs_stated": 0,
+    "differs_unexplained": 2,
+    "unchecked": 19,
+    "excluded": 0,
+    "items_not_run": 1,
+    "items_not_applicable": 0
+   },
+   "not_run": [
+    {
+     "reason": "no guide_verification_check on the page — it predates the field, or its stored line did not reproduce from the page's own inputs (refresh.cross_check_transform); assembly writes it",
+     "names": [
+      "MVST"
+     ]
+    }
+   ],
+   "not_applicable": [],
+   "by_name": {
+    "AMZN": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "AORT": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "BRBR": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "BURL": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "CNXC": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "EPAM": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "FUBO": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "GOOGL": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "IT": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "LLY": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "MVST": {
+     "not_run": "no guide_verification_check on the page — it predates the field, or its stored line did not reproduce from the page's own inputs (refresh.cross_check_transform); assembly writes it"
+    },
+    "NCNO": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "NFLX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "NKE": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "ORKA": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "PARR": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "ROST": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "SMPL": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "TECX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "TGT": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "TJX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "UBER": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "V": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "VITL": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VRRM": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "WERN": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "WLK": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    }
+   }
+  },
+  {
+   "id": "wall_vs_10q",
+   "title": "CIQ's capital panel vs the 10-Q's maturity wall, one 12-month window",
+   "subject": "CIQ Financials→Capital Structure Details: principal maturing in [balance, +12m)",
+   "second_source": "the latest 10-Q's stated maturities within 12 months (filing_sections.maturity_wall)",
+   "independence": "independent",
+   "unit": "page",
+   "tolerance": "within 5% of the filing's figure (primary_source.wall_coherence) — principal against repayment basis, both labelled on the page's line. Run only where the 10-Q states a 12-month figure",
+   "population": "pages carrying mechanical.primary_source.wall_coherence_check",
+   "stated_reason": "an instrument matures within ±7d of the window's +12m boundary — a possible window-convention artifact (wall_coherence_near_boundary)",
+   "excluded_rule": null,
+   "catches": [
+    "wrong_file",
+    "wrong_cell",
+    "wrong_unit",
+    "wrong_period"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 27,
+    "units": 27,
+    "confirmed": 0,
+    "differs_stated": 1,
+    "differs_unexplained": 0,
+    "unchecked": 26,
+    "excluded": 0,
+    "items_not_run": 0,
+    "items_not_applicable": 0
+   },
+   "not_run": [],
+   "not_applicable": [],
+   "by_name": {
+    "AMZN": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "AORT": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "BRBR": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "BURL": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "CNXC": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "EPAM": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "FUBO": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "GOOGL": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "IT": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "LLY": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "MVST": {
+     "confirmed": 0,
+     "differs_stated": 1,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "NCNO": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "NFLX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "NKE": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "ORKA": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "PARR": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "ROST": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "SMPL": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "TECX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "TGT": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "TJX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "UBER": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "V": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "VITL": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "VRRM": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "WERN": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "WLK": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    }
+   }
+  },
+  {
+   "id": "fcf_sign_vs_edgar_ocf",
+   "title": "The SIGN of CIQ's LTM FCF vs the sign of EDGAR's latest OCF",
+   "subject": "CIQ Financials→Cash Flow 'Levered Free Cash Flow', latest period — its sign",
+   "second_source": "EDGAR XBRL operating cash flow, the latest single quarter — its sign",
+   "independence": "independent",
+   "unit": "page",
+   "tolerance": "SIGN ONLY, of two different measures (primary_source.self_funding_check): agree when the signs match, both negative included. A differ is mostly capex or seasonality, not by itself a CIQ error",
+   "population": "pages carrying mechanical.primary_source.self_funding_check",
+   "stated_reason": null,
+   "excluded_rule": null,
+   "catches": [
+    "wrong_file",
+    "wrong_cell"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 27,
+    "units": 27,
+    "confirmed": 20,
+    "differs_stated": 0,
+    "differs_unexplained": 7,
+    "unchecked": 0,
+    "excluded": 0,
+    "items_not_run": 0,
+    "items_not_applicable": 0
+   },
+   "not_run": [],
+   "not_applicable": [],
+   "by_name": {
+    "AMZN": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "AORT": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "BRBR": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "BURL": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "CNXC": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "EPAM": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "FUBO": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "GOOGL": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "IT": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "LLY": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "MVST": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "NCNO": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "NFLX": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "NKE": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "ORKA": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "PARR": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "ROST": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "SMPL": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "TECX": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "TGT": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "TJX": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "UBER": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "V": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VITL": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VRRM": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "WERN": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "WLK": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    }
+   }
+  },
+  {
    "id": "ev_bridge_vs_ciq_tev",
    "title": "CIQ balance-sheet claims vs CIQ's own TEV less market cap",
    "subject": "CIQ Financials Balance Sheet Net Debt + preferred + minority (ev_bridge.claims)",
@@ -1212,7 +1802,7 @@
    "second_source": "CIQ Comparable Analysis Implied Valuation: total debt − cash",
    "independence": "internal",
    "unit": "page",
-   "tolerance": "the page's net_debt_reconciled flag — counted only where the bridge's structured bridge_cash and bridge_debt both exist, because the flag also reads True when it does not",
+   "tolerance": "within 10% of the net debt (mechanical._net_debt_probe) — the page's net_debt_check, never its net_debt_reconciled flag, which also reads True with no bridge; counted only where the bridge's structured bridge_cash and bridge_debt both exist",
    "population": "pages carrying mechanical.valuation.implied_expectations",
    "stated_reason": "the gap is CIQ netting long-term marketable securities: debt − cash − comps net debt equals the page's netted line (ev_bridge) within $0.5M",
    "excluded_rule": null,
@@ -1747,6 +2337,201 @@
      "not_applicable": "the active recipe's multiple is not TEV/EBIT — the snapshot test runs on TEV/EBIT only"
     }
    }
+  },
+  {
+   "id": "forward_multiple_vintage",
+   "title": "CIQ's FY 2026 forward multiple at CIQ's TEV vs CIQ's FY 2026 EBITDA consensus",
+   "subject": "CIQ Estimates→Multiples FY 2026 TEV/EBITDA, as comps TEV ÷ multiple (the EBITDA the ladder implies)",
+   "second_source": "CIQ Estimates→Trends FY 2026 EBITDA consensus, latest snapshot",
+   "independence": "internal",
+   "unit": "page",
+   "tolerance": "residual within 10% of the consensus (mechanical._vintage_probe) — the page's vintage_check, never its vintage_coherent flag, which also reads True when the probe cannot run",
+   "population": "pages carrying mechanical.valuation.implied_expectations.vintage_check — FY 2026 only, so a name that has reported FY 2026, or has no positive consensus for it, cannot run it",
+   "stated_reason": null,
+   "excluded_rule": null,
+   "catches": [
+    "wrong_file",
+    "wrong_unit",
+    "wrong_period"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 27,
+    "units": 27,
+    "confirmed": 18,
+    "differs_stated": 0,
+    "differs_unexplained": 1,
+    "unchecked": 8,
+    "excluded": 0,
+    "items_not_run": 0,
+    "items_not_applicable": 0
+   },
+   "not_run": [],
+   "not_applicable": [],
+   "by_name": {
+    "AMZN": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "AORT": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "BRBR": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "BURL": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "CNXC": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "EPAM": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "FUBO": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "GOOGL": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "IT": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "LLY": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "MVST": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "NCNO": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "NFLX": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "NKE": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "ORKA": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "PARR": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "ROST": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "SMPL": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "TECX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "TGT": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "TJX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "UBER": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "V": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VITL": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VRRM": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "WERN": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "WLK": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    }
+   }
   }
  ],
  "coverage": [
@@ -1925,19 +2710,25 @@
     "Financials→Cash Flow"
    ],
    "carries": "operating cash flow, capex, free cash flow",
-   "classification": "unchecked",
+   "classification": "independent",
    "failure_guard": {
-    "wrong_file": "none",
-    "wrong_cell": "none",
+    "wrong_file": "independent",
+    "wrong_cell": "independent",
     "wrong_unit": "none",
     "wrong_period": "none",
     "different_definition": "none"
    },
-   "checks": [],
-   "unscored": [
-    "mechanical.primary_source.self_funding — compares SIGNS with EDGAR, in display text only"
+   "checks": [
+    {
+     "id": "fcf_sign_vs_edgar_ocf",
+     "independence": "independent",
+     "items_run": 27,
+     "units": 27,
+     "confirmed": 20
+    }
    ],
-   "note": null
+   "unscored": [],
+   "note": "a SIGN against a different measure only — the FCF figure itself is not set against the filings, and a quarter's OCF and a year's levered FCF differ in sign for ordinary reasons (capex, seasonality)"
   },
   {
    "family": "financials.capital_structure",
@@ -1947,19 +2738,25 @@
     "Financials→Capital Structure Summary"
    ],
    "carries": "debt instruments and maturities",
-   "classification": "unchecked",
+   "classification": "independent",
    "failure_guard": {
-    "wrong_file": "none",
-    "wrong_cell": "none",
-    "wrong_unit": "none",
-    "wrong_period": "none",
+    "wrong_file": "independent",
+    "wrong_cell": "independent",
+    "wrong_unit": "independent",
+    "wrong_period": "independent",
     "different_definition": "none"
    },
-   "checks": [],
-   "unscored": [
-    "mechanical.primary_source.wall_coherence — the 10-Q maturity wall against the CIQ panel, verdict in display text only"
+   "checks": [
+    {
+     "id": "wall_vs_10q",
+     "independence": "independent",
+     "items_run": 27,
+     "units": 27,
+     "confirmed": 0
+    }
    ],
-   "note": null
+   "unscored": [],
+   "note": "run only where the 10-Q states a 12-month maturity figure; the rest of the panel (coupons, the later maturities) is not set against the filings"
   },
   {
    "family": "financials.segments",
@@ -2036,7 +2833,7 @@
    "failure_guard": {
     "wrong_file": "internal",
     "wrong_cell": "none",
-    "wrong_unit": "none",
+    "wrong_unit": "internal",
     "wrong_period": "internal",
     "different_definition": "none"
    },
@@ -2047,11 +2844,16 @@
      "items_run": 2,
      "units": 2,
      "confirmed": 2
+    },
+    {
+     "id": "forward_multiple_vintage",
+     "independence": "internal",
+     "items_run": 27,
+     "units": 27,
+     "confirmed": 18
     }
    ],
-   "unscored": [
-    "mechanical.valuation.implied_expectations.vintage_coherent — reads True also when the probe cannot run; which it was is in coherence_note text only"
-   ],
+   "unscored": [],
    "note": null
   },
   {
@@ -2061,19 +2863,25 @@
     "Estimates→Guidance"
    ],
    "carries": "CIQ's record of guidance",
-   "classification": "unchecked",
+   "classification": "independent",
    "failure_guard": {
-    "wrong_file": "none",
-    "wrong_cell": "none",
-    "wrong_unit": "none",
-    "wrong_period": "none",
+    "wrong_file": "independent",
+    "wrong_cell": "independent",
+    "wrong_unit": "independent",
+    "wrong_period": "independent",
     "different_definition": "none"
    },
-   "checks": [],
-   "unscored": [
-    "mechanical.primary_source.guide_verification — CIQ's revenue guide against the 8-K release, verdict in display text only"
+   "checks": [
+    {
+     "id": "guide_vs_release",
+     "independence": "independent",
+     "items_run": 26,
+     "units": 26,
+     "confirmed": 5
+    }
    ],
-   "note": null
+   "unscored": [],
+   "note": "the revenue guide only; CIQ's other guided metrics are not set against the releases"
   },
   {
    "family": "estimates.surprise",
@@ -2323,27 +3131,27 @@
  ],
  "failure_class_summary": {
   "wrong_file": {
-   "independent": 4,
+   "independent": 7,
    "internal": 1,
-   "none": 10,
+   "none": 7,
    "none_single_source": 10
   },
   "wrong_cell": {
-   "independent": 4,
+   "independent": 7,
    "internal": 3,
-   "none": 8,
+   "none": 5,
    "none_single_source": 10
   },
   "wrong_unit": {
-   "independent": 4,
-   "internal": 2,
-   "none": 9,
+   "independent": 6,
+   "internal": 3,
+   "none": 6,
    "none_single_source": 10
   },
   "wrong_period": {
-   "independent": 3,
+   "independent": 5,
    "internal": 3,
-   "none": 9,
+   "none": 7,
    "none_single_source": 10
   },
   "different_definition": {

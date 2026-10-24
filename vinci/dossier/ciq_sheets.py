@@ -3821,6 +3821,28 @@ def revenue_guide_lohi(
     return (None, None, None)
 
 
+def revenue_guide_from_rows(
+    rows: list[GuidanceRow],
+) -> tuple[float | None, float | None, str | None]:
+    """:func:`revenue_guide_lohi` read back off a committed page's guidance-bridge rows, for the
+    refresh that rebuilds the guide check without the workbook (`refresh.cross_check_transform`):
+    the same selection (the first revenue row with a number), through the same `_parse_range`.
+
+    LOSSLESS FOR A RANGE, LOSSY FOR A POINT. A row keeps a range as its cell verbatim, quoted, and
+    a point as `_fig` rounds it (427.516 → 427.5). So whatever reads these proves them: the guide
+    line rebuilt from them must equal the stored one byte for byte, which a rounded point fails.
+    """
+    for r in rows:
+        if "revenue" not in r.metric.lower():
+            continue
+        cell = r.latest_guide
+        quoted = len(cell) >= 2 and cell[0] == cell[-1] == "'"
+        pr = _parse_range(cell[1:-1] if quoted else cell)
+        if pr is not None:
+            return (pr[0], pr[1], r.period)
+    return (None, None, None)
+
+
 def guidance_bridge_rows(
     bundle: CiqBundle, *, reference_date: date | None = None, stale_after_days: int = 45,
 ) -> Sourced[list[GuidanceRow]]:
