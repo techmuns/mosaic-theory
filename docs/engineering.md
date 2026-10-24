@@ -119,6 +119,14 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Data-quality scorecard / source / internal vs independent check / failure class** (2026-10-23)
+  — `vinci audit quality`. Plain words: *a count, per check and per name, of how often a data
+  source's figure agrees with a second figure. A **source** is one plug-in module (CIQ today).
+  **Independent:** the second figure comes from outside the source (EDGAR, the EOD close).
+  **Internal:** from the source's own other output, which catches a misread or two different pulls,
+  never the source being wrong. A **failure class** is one of five ways a figure goes wrong: wrong
+  file, wrong cell, wrong unit, wrong period or vintage, different definition.* Home:
+  `vinci/quality/core.py`, `vinci/quality/sources/`; series `data/snapshots/data_quality/<source>/`.
 - **Operator decision / re-tag** — the operator's own call on which valuation recipe fits a name.
   Plain words: *a hand re-tag, kept in its own block with its reason, who, when and where it is
   recorded — the machine's own recipe and reason sit beside it, never inside it.* Home:
