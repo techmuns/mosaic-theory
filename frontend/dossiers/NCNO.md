@@ -662,6 +662,7 @@ _Source §: latest 10-K 0001902733-26-000022 · exhibit1035secondamendment.htm_
   - 2026-10-20 · anchor — anchor-backfill at 2026-10-09.3
   - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
+  - 2026-10-23 · mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 32d old — 2026-07-17 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 27d old (2026-07-22, valuation.implied_expectations.multiples_as_of) — within the ceiling

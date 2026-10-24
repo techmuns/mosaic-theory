@@ -499,8 +499,10 @@
         "tev_as_of": "2026-08-07",
         "multiples_as_of": "2026-08-09",
         "vintage_coherent": true,
+        "vintage_check": "agree",
         "coherence_note": "vintage-coherent: derived FY26 $952.0M vs direct consensus $951.8M (residual 0.000 ≤ 0.10 tolerance)",
-        "net_debt_reconciled": true
+        "net_debt_reconciled": true,
+        "net_debt_check": "agree"
       },
       "lease_basis": {
         "rent_expense": 64.883,
@@ -6968,12 +6970,14 @@
         "status": "present",
         "note": null
       },
+      "self_funding_check": "differ",
       "wall_coherence": {
         "value": "wall coherence: UNKNOWN — filing states no ≤12m figure",
         "source_ref": "10-Q maturity wall vs CIQ capital panel (same window)",
         "status": "present",
         "note": null
       },
+      "wall_coherence_check": "not_run",
       "basis_triangulation": {
         "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ's EBITDA, vendor-normalised): -0.8x\n  total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 0.2x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: no structured source for this decision vintage",
         "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
@@ -6992,6 +6996,7 @@
         "status": "present",
         "note": null
       },
+      "guide_verification_check": "not_run",
       "qa_flags": []
     },
     "management_commentary": {
@@ -13481,6 +13486,15 @@
       "writer": "refresh",
       "layers": [
         "mechanical.primary_source"
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source",
+        "mechanical.valuation"
       ]
     }
   ],
