@@ -4,6 +4,11 @@ name: monthly-score
 # MANUAL TRIGGER ONLY — same ruling as `weekly-screen.yml` (2026-08-24), same reason: this job
 # commits `scoring_report.md`, the surface the BUY-AVOID spread is READ from, and that is a
 # decision surface. Two automated commits reached main from this cron.
+#
+# RUN IT LOCALLY, NOT HERE (operator ruling 2026-10-26, docs/RUNBOOKS.md §l). `main` requires a PR
+# and the `gate` check, so this job's closing `git push` to main is refused by design; a PR opened
+# with this job's own token would trigger no `gate` run. A run here scores, then fails at the push:
+# its log is all it leaves. The TIINGO_API_KEY line keeps that scoring on total return.
 on:
   workflow_dispatch: {} # OPERATOR-TRIGGERED ONLY — see weekly-screen.yml for the ruling
 
@@ -44,6 +49,7 @@ jobs:
           POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
         run: python -m vinci run-monthly
 
       - name: Rebuild the derived frontend mirror

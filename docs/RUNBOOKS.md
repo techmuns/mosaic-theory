@@ -760,6 +760,69 @@ folder (as a link to the synced Drive copy).
 
 ---
 
+## l. MONTHLY SCORING — run locally, land the report by PR
+
+*(Operator ruling 2026-10-26, option (b) of STATE.md §5.0 row 32 item (14); record
+`docs/records/2026-10-26-monthly-scoring-runs-locally.md`.)*
+
+`scoring_report.md` is the surface the BUY−AVOID spread is READ from. `main` requires a PR and the
+`gate` check, so `.github/workflows/monthly-score.yml` cannot land it: its closing push is refused.
+The score is produced on the operator's machine and lands like any other change. The basis is TOTAL
+return since 2026-10-26 (ruling B, §j), so the run needs `TIINGO_API_KEY`.
+
+**When.** Monthly, and on the first close after a ledger row matures. VRRM matures **2026-12-14**,
+and it is the first outcome the spread will ever carry.
+
+1. **Where: a clean worktree of current `main`, wired to the primary's store.** The working price
+   store `data/vinci.db` and the grouped-daily history `data/cache/polygon` live in the primary
+   checkout. `run-monthly` looks back 730 days, and without that cache the Polygon plan's ~5 requests
+   a minute makes it a multi-hour run.
+
+   Do NOT run it in the primary itself. `bin/commit` (step 6) refuses unstaged or untracked files,
+   and the primary carries some (a modified `.claude/launch.json`, `pr*-review-fixes.patch`). Never
+   `git stash` them: the stash is shared across every worktree. From the primary:
+
+   ```
+   git fetch origin main
+   git worktree add -b monthly-score/<YYYY-MM-DD> ../mosaic-theory-monthly origin/main
+   cd ../mosaic-theory-monthly
+   ln -s "$OLDPWD/data/vinci.db" data/vinci.db
+   ln -s "$OLDPWD/data/cache" data/cache
+   ln -s "$OLDPWD/.env" .env
+   ```
+
+   The run writes prices into the primary's store, which is the point: it is the working store.
+
+2. **Keys** in the repo-root `.env`: `POLYGON_API_KEY`, `TIINGO_API_KEY`, `SEC_USER_AGENT`. A resolved
+   row whose dividends cannot be read stops the run with `TotalReturnUnknownError`, by design.
+3. **Score:**
+
+   ```
+   $VENV/python -m vinci run-monthly
+   ```
+
+   `--as-of YYYY-MM-DD` defaults to today. The run first refreshes prices, then scores, exports the
+   snapshots and writes `data/snapshots/scoring_report.md`. It prints `spread=… pending=…`. Before
+   2026-12-14 no row has matured, so `pending` counts every ledger row.
+4. **Mirror:** `$VENV/python frontend/build.py`.
+5. **Read the report before committing.** Its `Return basis:` line must read total return, with
+   the price-return spread printed beside it. Check that the matured rows are the ones expected
+   for the date: VRRM on 2026-12-14, then IT and SMPL on 2027-01-16.
+6. **Commit through the gate, then open a PR:**
+
+   ```
+   git add data/snapshots frontend
+   bin/commit -m "monthly score: <YYYY-MM-DD>"
+   git push -u origin monthly-score/<YYYY-MM-DD>
+   gh pr create --fill
+   ```
+
+   `gate` runs on the PR, and the operator merges with "merge #N". Commit only the derived artifacts
+   the run wrote — never code in the same commit (CLAUDE.md: derived artifacts may be committed; code
+   may not ride with them).
+
+---
+
 ## KNOWN GAP
 
 **None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut
