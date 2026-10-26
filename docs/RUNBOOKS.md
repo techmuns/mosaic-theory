@@ -716,6 +716,12 @@ today's, so a backdated point would carry later data).
   page's own inputs. Re-run that transform through `refresh_fleet` after a pass that adds pages
   assembled before 2026-10-23. It needs EDGAR, not the workbooks. A refused outcome lands at the
   name's next re-assembly.
+- **Revenue and OCF against the filings (`statement_reconciliation`).** `revenue_vs_xbrl` and
+  `ocf_vs_xbrl` read a block assembly writes beside the annual table. A page assembled before
+  2026-10-26 gets it from `refresh.statement_recon_transform` through `refresh_fleet`, which DOES
+  need the workbooks: the export is read for each column's period end, and only after its Revenue
+  and CFO figures reproduce the page's table exactly — otherwise the page is refused and named. A
+  block whose figures are no longer the table's reads NOT RUN (stale) until it is rebuilt.
 - **Adding a source** is one module under `vinci/quality/sources/` exposing `SOURCE` (its loader,
   checks with the failure classes each can surface, and families). The core and the command name no
   source (`tests/test_quality_core.py` holds them to it). Next by priority: the 8-K release parser

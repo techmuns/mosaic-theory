@@ -1571,7 +1571,7 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
     left as it is and named in ``refused``."""
     from vinci.dossier import mechanical as dm
     from vinci.dossier import statement_recon as sr
-    from vinci.dossier.ciq import CiqUnavailableError
+    from vinci.dossier.ciq import CiqAmbiguousError, CiqParseError, CiqUnavailableError
 
     ticker = str(doc.get("ticker"))
     cik = doc.get("cik")
@@ -1589,7 +1589,8 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
             return out
         try:
             figures = figures_for(ticker)
-        except (FileNotFoundError, CiqUnavailableError) as exc:
+        except (FileNotFoundError, CiqUnavailableError, CiqAmbiguousError, CiqParseError) as exc:
+            # one name's unreadable folder is that name's refusal, never the whole pass's crash
             refused.append(f"{ticker}: no CIQ export to read the period ends from ({exc})")
             return out
         got = {(f.line, f.column): f.value for f in figures}

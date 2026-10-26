@@ -4,7 +4,8 @@ THE GAP (2026-10-26). Nothing set the financial summary's Revenue and CFO rows a
 revenue reached a check only inside a margin and a guide, and cash flow only as the SIGN of CIQ's
 LTM levered FCF against one quarter's OCF. Measured before any code, on the 27 committed pages and
 the workbooks they were built from: every page's Revenue and CFO rows reproduce exactly from its
-export, and CIQ carries the filer's LATEST-filed figure wherever both sides report the period.
+export, and CIQ carries the filer's LATEST-filed figure — within $1M on 451 of the 469 periods
+both sides report.
 
 FROZEN FIXTURES. The EDGAR side is the REAL companyfacts committed under
 `tests/fixtures/companyfacts/` (public; the dates and figures below are the filers' own). The CIQ
@@ -17,7 +18,7 @@ import json
 from datetime import date
 from functools import cache
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
@@ -119,7 +120,7 @@ def test_a_figure_on_another_alias_is_named() -> None:
 
 
 def test_a_figure_an_earlier_filing_carried_is_named() -> None:
-    """LILLY recast FY2017 for the Elanco separation (an 8-K, then the 2019 10-K): $22,871.3M as
+    """LILLY recast FY2017 (an 8-K of 2019-10-24, then the 10-K filed 2020-02-19): $22,871.3M as
     first filed, $19,973.8M now. A CIQ figure still on the first vintage names that filing."""
     r = _one("LLY", "revenue", "FY17", "2017-12-31", 22871.3, filed_by="2026-09-30")
     assert r.filing == 19973.8 and r.different is True
@@ -198,11 +199,11 @@ def _sheets(*, collide: bool = False) -> dict[str, list[list[Any]]]:
     and carries one twice. With ``collide``, two 53-week years end in one calendar year."""
     years = (["12 months\nJan-01-2022", "12 months\nDec-31-2022"] if collide else
              ["12 months\nDec-31-2024", "Reclassified\n12 months\nDec-31-2025"])
-    inc = [[_HDR, *years, "LTM\n12 months\nJun-30-2026"],
-           ["Total Revenue", 900.5, 1000.25, 1100.125],
-           ["EBITDA", 90.0, 100.0, 110.0]]
-    cf = [[_HDR, "LTM\n12 months\nJun-30-2026", *years, years[0]],
-          ["Cash from Ops.", 55.0, 40.0, 50.0, 41.0]]
+    inc: list[list[Any]] = [[_HDR, *years, "LTM\n12 months\nJun-30-2026"],
+                            ["Total Revenue", 900.5, 1000.25, 1100.125],
+                            ["EBITDA", 90.0, 100.0, 110.0]]
+    cf: list[list[Any]] = [[_HDR, "LTM\n12 months\nJun-30-2026", *years, years[0]],
+                           ["Cash from Ops.", 55.0, 40.0, 50.0, 41.0]]
     return {"Income Statement": inc, "Cash Flow": cf}
 
 
@@ -322,3 +323,117 @@ def test_the_backfill_reads_the_facts_as_assembly_did() -> None:
     assert rows[0]["filing"] == 60372.0 and rows[1]["filing"] is None
     with pytest.raises(Exception, match="assembled_at"):
         statement_recon_transform({"ticker": "X"}, edgar=_Edgar("TJX"), refused=[])
+
+
+def test_an_end_date_a_few_days_off_is_the_same_period() -> None:
+    """A 52/53-week filer's year can end a few days from the date another source prints; seven
+    days is the slack (`ebitda_recon`'s), and a week past it is another period."""
+    facts = _synthetic({"Revenues": [("2025-02-02", "2026-01-31", 100e6, "2026-03-20", "USD")]})
+    for end, found in ((date(2026, 2, 3), True), (date(2026, 2, 7), True),
+                       (date(2026, 2, 8), False)):
+        rec = sr.reconcile([sr.CiqFigure("revenue", "FY26", end, False, 100.0)], facts,
+                           filed_by=date(2026, 4, 1))
+        assert rec is not None and (rec.rows[0].filing is not None) is found, end
+
+
+def test_attach_builds_the_block_from_the_export_and_leaves_it_absent_without_one() -> None:
+    from vinci.dossier.schemas import FinancialSummary, MechanicalLayer, Sourced
+
+    fs = FinancialSummary(annual=Sourced.unknown(note="x"), quarterly=Sourced.unknown(note="x"),
+                          balance_sheet=Sourced.unknown(note="x"),
+                          coherence=Sourced.unknown(note="x"), as_of=Sourced.unknown(note="x"))
+    mech = cast(Any, MechanicalLayer).model_construct(financial_summary=fs)
+    facts = _synthetic({"Revenues": [("2025-01-01", "2025-12-31", 1000.25e6, "2026-02-20",
+                                      "USD")]})
+    out = sr.attach(mech, _Bundle(_sheets()), facts,  # type: ignore[arg-type]
+                    filed_by=date(2026, 3, 1))
+    rec = out.financial_summary.statement_reconciliation if out.financial_summary else None
+    assert rec is not None and rec.as_filed_by == "2026-03-01"
+    assert {(r.column, r.different) for r in rec.rows if r.filing is not None} == {
+        ("FY25 (R)", False)}
+    for bundle, f in ((None, facts), (_Bundle(_sheets()), None), (_Bundle({}), facts)):
+        same = sr.attach(mech, bundle, f, filed_by=date(2026, 3, 1))  # type: ignore[arg-type]
+        assert same.financial_summary is not None
+        assert same.financial_summary.statement_reconciliation is None
+
+
+def test_the_assembler_attaches_the_block_from_its_own_export_and_facts() -> None:
+    """PIN THE CALL SITE, not only the helper: `attach` is worth nothing if `assemble_mechanical`
+    stops calling it — assembly cannot run offline, so its source is read (the house idiom)."""
+    import inspect
+
+    from vinci.dossier import mechanical as dm
+
+    body = inspect.getsource(dm.assemble_mechanical)
+    facts = body.index("facts = _companyfacts_or_none(edgar, record.identity.cik)")
+    at = body.index("statement_recon.attach(mech, bundle, facts, "
+                    "filed_by=datetime.now(UTC).date())")
+    assert facts < at < body.index("return mech, flags")
+    # dated on `assembled_at`'s calendar (UTC), never the local day the back-fill cannot see
+    assert "filed_by=today" not in body
+
+
+def test_the_backfill_refuses_an_ambiguous_or_unparseable_folder_by_name() -> None:
+    """Two exports of a kind (`CiqAmbiguousError`, #706) or a malformed sheet is ONE name's
+    refusal; escaping `_apply` would abort `refresh_fleet` with half the pages rewritten."""
+    from vinci.dossier.ciq import CiqAmbiguousError, CiqParseError
+
+    for exc in (CiqAmbiguousError("two financials exports"), CiqParseError("bad sheet")):
+        def raising(_t: str, e: Exception = exc) -> list[sr.CiqFigure]:
+            raise e
+
+        out, refused = _run(_tjx_doc(), raising)
+        assert "statement_reconciliation" not in out["financial_summary"]
+        assert refused and "no CIQ export" in refused[0]
+
+
+def test_a_header_cell_the_reader_decoded_to_a_datetime_keeps_its_period() -> None:
+    from datetime import datetime
+
+    sheets = _sheets()
+    sheets["Income Statement"][0][1] = datetime(2024, 12, 31)
+    figs = sr.ciq_figures(_Bundle(sheets))  # type: ignore[arg-type]
+    assert {f.column: f.period_end for f in figs if f.line == "revenue"}["FY24"] == date(2024, 12,
+                                                                                          31)
+
+
+# --- END TO END: the committed pages ---------------------------------------------------------
+
+_DOSSIERS = Path(__file__).resolve().parents[1] / "data" / "dossiers"
+_COMMITTED = {p.parent.name: json.loads(p.read_text())
+              for p in sorted(_DOSSIERS.glob("*/dossier.json"))}
+
+
+def _page_figures(page: dict[str, Any]) -> list[sr.CiqFigure]:
+    """The figures a stored block names, valued from the page's OWN table — the export's figures
+    exactly, since the back-fill proved them equal before it wrote the block."""
+    fs = page["mechanical"]["financial_summary"]
+    table = sr.table_figures(fs["annual"]["value"])
+    return [sr.CiqFigure(r["line"], r["column"], date.fromisoformat(r["period_end"]), r["is_ltm"],
+                         table[(r["line"], r["column"])])
+            for r in fs["statement_reconciliation"]["rows"]]
+
+
+@pytest.mark.skipif(not _COMMITTED, reason="no committed dossiers")
+def test_every_committed_page_carries_the_block_and_it_reproduces_from_the_filings() -> None:
+    """PIN THE ARTIFACT: every committed page carries the block, and it is exactly what the
+    back-fill builds from the page's own table figures, the period ends the block states, and the
+    COMMITTED companyfacts as filed by the page's assembly date — so what the scorecard scores
+    follows from the page and the public filings, nothing else. Its proof runs too: a block missing
+    a figure the table shows would be refused here."""
+    for t, page in _COMMITTED.items():
+        fs = page["mechanical"]["financial_summary"]
+        stored = fs.get("statement_reconciliation")
+        assert stored is not None, f"{t}: no statement_reconciliation — run the back-fill"
+        doc = json.loads(json.dumps(page))
+        del doc["mechanical"]["financial_summary"]["statement_reconciliation"]
+        refused: list[str] = []
+
+        def figures(_t: str, p: dict[str, Any] = page) -> list[sr.CiqFigure]:
+            return _page_figures(p)
+
+        out = statement_recon_transform(doc, edgar=_Edgar(t), refused=refused,
+                                        figures_for=figures)(doc["mechanical"])
+        assert refused == [], refused
+        assert out["financial_summary"]["statement_reconciliation"] == stored, t
+        assert stored["as_filed_by"] == page["assembled_at"][:10], t

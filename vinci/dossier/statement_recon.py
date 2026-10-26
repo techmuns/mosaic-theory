@@ -6,9 +6,9 @@ page, and nothing set them against the filings: revenue reached a check only ins
 (`anchor.midcycle_gap`) and a guide (`guide_verification_check`), and cash flow only as the SIGN of
 CIQ's LTM levered FCF against the sign of one quarter's OCF — two measures over two periods
 (`self_funding_check`). The data-quality scorecard reads this block (`revenue_vs_xbrl`,
-`ocf_vs_xbrl`). Measured before it was built, on the 27 committed pages: CIQ carries the filer's
-LATEST-filed figure (LLY's and UBER's restated years, AMZN's and V's restated cash flow), to the
-dollar wherever both sides report the period.
+`ocf_vs_xbrl`). Measured on the 27 committed pages: CIQ carries the filer's LATEST-filed figure
+(LLY's and UBER's restated years, AMZN's and V's restated cash flow) — within $1M on 451 of the 469
+periods both sides report.
 
 THE PERIOD IS CIQ'S OWN, read off the export's period header — the header the table's columns come
 from — and never off a column label: a 52/53-week filer can end two fiscal years in one calendar
@@ -87,9 +87,9 @@ class CiqFigure:
 def _end(cell: Any) -> date | None:
     """A period-header cell → its end date: an Excel serial, or stacked text whose LAST line is
     the date ('12 months\\nJan-31-2026', 'LTM\\n12 months\\nAug-01-2026')."""
-    if isinstance(cell, (int, float)) and not isinstance(cell, bool):
-        return excel_date(cell)
-    text = str(cell or "").strip()
+    if not isinstance(cell, str):       # an Excel serial, or a cell the reader decoded already
+        return excel_date(cell) if cell is not None and not isinstance(cell, bool) else None
+    text = cell.strip()
     return excel_date(text.splitlines()[-1].strip()) if text else None
 
 
@@ -210,13 +210,18 @@ def _differs(ciq: float, filing: float) -> bool:
     return gap > DIFFERENT_SHARE * abs(filing) and gap >= DIFFERENT_FLOOR
 
 
-def _row(fig: CiqFigure, facts: dict[str, Any], filed_by: date) -> StatementReconRow:
+def _points(facts: dict[str, Any], concept: str, filed_by: date) -> dict[str, list[ConceptPoint]]:
+    """{alias: its USD duration points filed by ``filed_by``} — read ONCE per concept."""
+    return {tag: [p for p in points_for_tag(facts, tag) if p.unit == _USD
+                  and p.period_start is not None and p.filed <= filed_by]
+            for tag in CONCEPT_ALIASES[concept]}
+
+
+def _row(fig: CiqFigure, by_tag: dict[str, list[ConceptPoint]], filed_by: date,
+         ) -> StatementReconRow:
     concept = _BY_KEY[fig.line].concept
     base = {"line": fig.line, "column": fig.column, "period_end": fig.period_end.isoformat(),
             "ciq": fig.value, "is_ltm": fig.is_ltm}
-    by_tag = {tag: [p for p in points_for_tag(facts, tag) if p.unit == _USD
-                    and p.period_start is not None and p.filed <= filed_by]
-              for tag in CONCEPT_ALIASES[concept]}
     built = [(tag, r) for tag, pts in by_tag.items()
              if (r := _on_tag(pts, fig.period_end, fig.is_ltm)) is not None]
     if not built:
@@ -248,7 +253,8 @@ def reconcile(figures: list[CiqFigure], facts: dict[str, Any] | None, *,
     carry (stated per row)."""
     if facts is None or not figures:
         return None
-    return StatementReconciliation(rows=[_row(f, facts, filed_by) for f in figures],
+    by_concept = {ln.key: _points(facts, ln.concept, filed_by) for ln in LINES}
+    return StatementReconciliation(rows=[_row(f, by_concept[f.line], filed_by) for f in figures],
                                    as_filed_by=filed_by.isoformat(), source_ref=SOURCE_REF)
 
 
