@@ -68,3 +68,6 @@ each as filed by its own `assembled_at`; measured 2026-10-26.
    cut is still the right reproduction; the defect is the alias resolver's, shared by every concept
    reader, and no committed page's filer is in a transition. Falsifier: a committed page whose
    filer changed its OCF tag within the year.
+## Amendments
+
+**2026-10-26 — item 2 is FIXED for the latest-quarter reader, and only there.** `_latest_quarter_ocf` now takes the newest period ANY alias carries (`mechanical._latest_quarter`). The four EARLIER reads above (BURL, HLF, ORKA, TJX at their 2018 third quarters) now read the later quarter. `extract_points` and the annual readers are unchanged; their own form of the defect, a years-old annual served as the latest, is STATE.md §5.0 row 11. `docs/records/2026-10-26-latest-quarter-alias-at-quarterly-grain.md`

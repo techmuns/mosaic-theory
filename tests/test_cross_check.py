@@ -148,6 +148,78 @@ def test_the_tag_is_chosen_from_the_filings_of_that_day_too() -> None:
     assert dm._latest_quarter_ocf_positive(aort, filed_by=asof) is False
 
 
+def test_a_tag_the_filer_moved_back_to_mid_year_carries_the_latest_quarter() -> None:
+    """BURL moved its operating cash flow back to the plain tag from its second quarter of 2018.
+    As filed by 2018-11-28 (its third-quarter 10-Q) that tag's newest ANNUAL is FY2013 against the
+    continuing-operations tag's FY2017, so the annual-grain alias walk (`extract_points`) calls the
+    plain tag left behind and serves the other — whose newest quarter is the FIRST, to 2018-05-05
+    (+$60.2M). The latest quarter is the plain tag's nine months less its half: $375.4M − $166.3M,
+    to 2018-11-03."""
+    burl, asof = _facts("BURL"), date(2018, 11, 28)
+    got = dm._latest_quarter_ocf(burl, filed_by=asof)
+    assert got is not None and got[1] == date(2018, 11, 3)
+    assert got[0] == pytest.approx(375.353 - 166.307)
+
+
+def test_an_abandoned_alias_is_never_served_for_a_later_period() -> None:
+    """The other direction: UBER stopped tagging `RevenueFromContractWithCustomerExcludingAssessed
+    Tax` after 2019-06-30 and has used `Revenues` since. The latest period is the newest any alias
+    carries, so the abandoned one can never supply it once a later period is filed — read at every
+    date UBER filed a revenue row. As filed by 2019-11-05 the alias walk still served the abandoned
+    tag (its newest, 2019-06-30, inside the sibling allowance), with the quarter to 2019-09-30 filed
+    under `Revenues`."""
+    from vinci.edgar.concepts import CONCEPT_ALIASES, extract_points, facts_as_of, points_for_tag
+
+    uber, gone = _facts("UBER"), "RevenueFromContractWithCustomerExcludingAssessedTax"
+    tags = CONCEPT_ALIASES["revenue"]
+    dates = sorted({p.filed for t in tags for p in points_for_tag(uber, t)})
+    assert len(dates) == 32
+    for d in dates:
+        cut = facts_as_of(uber, d)
+        newest = max(p.period_end for t in tags for p in points_for_tag(cut, t)
+                     if p.period_start is not None)
+        got = dm._latest_quarter(cut, "revenue")
+        assert got is not None and got[1] == newest, d
+        assert not (got[2] == gone and got[1] > date(2019, 6, 30)), d
+    cut = facts_as_of(uber, date(2019, 11, 5))
+    assert extract_points(cut, "revenue")[0].tag == gone
+    got = dm._latest_quarter(cut, "revenue")
+    assert got is not None and got[1:] == (date(2019, 9, 30), "Revenues")
+    got = dm._latest_quarter(uber, "revenue")
+    assert got is not None and got[1:] == (date(2026, 6, 30), "Revenues")
+
+
+def test_a_period_two_aliases_carry_is_read_from_the_first_that_can_be_differenced() -> None:
+    """FUBO tagged its operating cash flow under BOTH aliases for a while. As filed by 2017-08-21
+    both carry the half to 2017-06-30 and both can be differenced: the plain tag wins by priority,
+    −$0.179M less −$0.083M (the continuing-operations one would read +$0.102M). As filed by
+    2015-11-16 both carry the nine months to 2015-09-30, but only the continuing-operations tag
+    carries the half to take from it: −$0.739M less −$0.581M. Never mixed across the two."""
+    fubo = _facts("FUBO")
+    got = dm._latest_quarter_ocf(fubo, filed_by=date(2017, 8, 21))
+    assert got is not None and got[1] == date(2017, 6, 30)
+    assert got[0] == pytest.approx(-0.179 + 0.083, abs=1e-3)
+    got = dm._latest_quarter_ocf(fubo, filed_by=date(2015, 11, 16))
+    assert got is not None and got[1] == date(2015, 9, 30)
+    assert got[0] == pytest.approx(-0.739 + 0.581, abs=1e-3)
+
+
+def test_only_an_alias_carrying_the_latest_period_end_itself_is_read() -> None:
+    """`_quarter` matches a period ending within a week. AORT as filed by 2014-04-30 carries the
+    quarter to 2014-03-31 on the continuing-operations tag only (−$2.0M). Give the higher-priority
+    plain tag a quarter closing three days earlier and it must not be read under 2014-03-31: it
+    does not carry that period."""
+    from vinci.edgar.concepts import facts_as_of
+
+    aort = facts_as_of(_facts("AORT"), date(2014, 4, 30))
+    rows = aort["facts"]["us-gaap"]["NetCashProvidedByUsedInOperatingActivities"]["units"]["USD"]
+    rows.append({"start": "2013-12-29", "end": "2014-03-28", "val": 99_000_000,
+                 "filed": "2014-04-30", "form": "10-Q", "fy": 2014, "fp": "Q1", "accn": "x"})
+    got = dm._latest_quarter_ocf(aort)
+    assert got is not None and got[1] == date(2014, 3, 31)
+    assert got[0] == pytest.approx(-2.038)
+
+
 def test_a_latest_period_that_cannot_be_differenced_is_unknown_never_an_older_quarter() -> None:
     """NKE's latest period on its 2026-09-30 page is the year to 2026-05-31. Without the nine
     months to take from it there is no fourth quarter, and the leg is UNKNOWN — never the first
