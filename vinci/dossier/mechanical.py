@@ -87,6 +87,7 @@ from vinci.edgar.concepts import (
     CONCEPT_ALIASES,
     ConceptPoint,
     extract_points,
+    facts_as_of,
     latest_instant,
     points_for_tag,
 )
@@ -4062,7 +4063,10 @@ def _latest_quarter_ocf(facts: dict[str, Any] | None, *,
     (`ebitda_recon._quarter` — Q2 = H1 − Q1, Q4 = the 10-K's year − nine months). A latest period
     that cannot be differenced is None (UNKNOWN), never an older quarter. ``filed_by`` reads the
     facts as they stood on a date — what assembly saw, for the refresh that rebuilds a committed
-    page's line (`refresh.cross_check_transform`).
+    page's line (`refresh.cross_check_transform`). The WHOLE blob is cut first
+    (`concepts.facts_as_of`), so the alias is chosen from that day's filings too: chosen from
+    today's, AORT's plain tag (it reaches 2026) served, as of 2014-04-30, the quarter to 2013-09-30
+    while that day's filings carried Q1 2014 on the continuing-operations tag.
 
     WHY (2026-10-26). This read the latest fact of ≤100 days. A 10-Q tags cash flow year-to-date,
     so that was the fiscal FIRST quarter on 25 of the 27 committed pages, and on 24 a later
@@ -4074,12 +4078,13 @@ def _latest_quarter_ocf(facts: dict[str, Any] | None, *,
 
     if not facts:
         return None
-    pts = [p for p in extract_points(facts, "operating_cash_flow")
-           if p.period_start is not None and (filed_by is None or p.filed <= filed_by)]
+    if filed_by is not None:
+        facts = facts_as_of(facts, filed_by)
+    pts = [p for p in extract_points(facts, "operating_cash_flow") if p.period_start is not None]
     if not pts:
         return None
     end = max(p.period_end for p in pts)
-    got = _quarter(facts, [pts[0].tag], end, filed_by=filed_by)
+    got = _quarter(facts, [pts[0].tag], end)
     return (got[0], end) if got is not None else None
 
 

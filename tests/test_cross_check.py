@@ -135,6 +135,19 @@ def test_both_legs_of_the_difference_are_read_as_filed_by_the_same_date() -> Non
     assert dm._latest_quarter_ocf_positive(hwm, filed_by=date(2017, 11, 9)) is True
 
 
+def test_the_tag_is_chosen_from_the_filings_of_that_day_too() -> None:
+    """AORT (then CryoLife) moved its operating cash flow to the continuing-operations tag in the
+    10-K filed 2014-02-21, kept it until 2017, then went back. Chosen from today's blob, the plain
+    tag wins (it reaches 2026), and read as filed by 2014-04-30 it serves its last quarter there:
+    Q3 2013, +$7.3M, seven months old. The filings of that day carry Q1 2014 on the other tag,
+    −$2.0M — and that blob is what an assembly on that day read (`concepts.facts_as_of`)."""
+    aort, asof = _facts("AORT"), date(2014, 4, 30)
+    got = dm._latest_quarter_ocf(aort, filed_by=asof)
+    assert got is not None and got[1] == date(2014, 3, 31)
+    assert got[0] == pytest.approx(-2.038)
+    assert dm._latest_quarter_ocf_positive(aort, filed_by=asof) is False
+
+
 def test_a_latest_period_that_cannot_be_differenced_is_unknown_never_an_older_quarter() -> None:
     """NKE's latest period on its 2026-09-30 page is the year to 2026-05-31. Without the nine
     months to take from it there is no fourth quarter, and the leg is UNKNOWN — never the first

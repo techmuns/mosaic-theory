@@ -64,21 +64,17 @@ def _signed(v: float) -> str:
     return f"{sign}${abs(v):,.0f}M"
 
 
-def _quarter(facts: dict[str, Any], tags: list[str] | tuple[str, ...], q: date, *,
-             filed_by: date | None = None) -> tuple[float, str] | None:
-    """($M, tag) — the discrete quarter ending ``q`` under the first tag that yields one. With
-    ``filed_by``, BOTH legs of a difference are read as filed by that date — a prior year-to-date
-    restated later is not the one the reader of that day had (the self-funding leg,
-    `mechanical._latest_quarter_ocf`)."""
+def _quarter(facts: dict[str, Any], tags: list[str] | tuple[str, ...], q: date,
+             ) -> tuple[float, str] | None:
+    """($M, tag) — the discrete quarter ending ``q`` under the first tag that yields one."""
     for tag in tags:
-        everything = [p for p in points_for_tag(facts, tag)
-                      if filed_by is None or p.filed <= filed_by]
-        pts = [p for p in everything
+        pts = [p for p in points_for_tag(facts, tag)
                if p.period_start is not None and abs((p.period_end - q).days) <= _SAME_END_DAYS]
         three = [p for p in pts if p.period_start is not None
                  and _QUARTER_DAYS[0] <= (p.period_end - p.period_start).days <= _QUARTER_DAYS[1]]
         if three:
             return max(three, key=lambda p: p.filed).value / 1e6, tag
+        everything = points_for_tag(facts, tag)
         for p in sorted(pts, key=lambda x: x.filed, reverse=True):
             prior = [x for x in everything if x.period_start == p.period_start
                      and _QUARTER_DAYS[0] <= (p.period_end - x.period_end).days
