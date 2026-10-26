@@ -13,6 +13,10 @@ Fences (why this is safe to let an LLM do):
 - **Machine-set source_ref.** The ``source_ref`` is set by THIS code to the exhibit actually fetched
   (``8-K <accession> · <filename>``) — the model cannot invent a citation; it fills only the value
   and a verbatim quote the human can grep for.
+- **The quote is checked, not trusted.** A term is kept PRESENT only when its quote is a span of the
+  exhibit text the model was sent (`vinci.verbatim`); otherwise it is UNKNOWN + a flag. The prompt
+  asks for the exact clause, but only the document can show a clause was READ rather than recalled
+  — and these exhibits are often years older than the model's training cutoff.
 - **Fail loud.** A fetch failure, an over-large exhibit, or an LLM error yields UNKNOWN + a flag —
   the covenant-terms row set is never silently blank and never partially fabricated.
 """
@@ -34,6 +38,7 @@ from vinci.graph.filings import html_to_text
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.netcache import CachedHttp
 from vinci.resolver.index import pad_cik
+from vinci.verbatim import SourceText
 
 _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 # An exhibit larger than this is not sent in a single pass — extract by hand rather than silently
@@ -390,16 +395,19 @@ def is_debt_agreement(title: str | None) -> bool:
 def _extract_from_exhibit(
     llm: LlmClient, text: str, *, name: str, ticker: str, source_ref: str,
     title: str | None = None, amendment: bool | None = None,
-) -> tuple[list[CovenantTerm], str]:
-    """Run the fenced tool against one exhibit → (rows, raw-log). source_ref is machine-set here, so
-    the model cannot invent a citation — it only fills value + a verbatim quote."""
+) -> tuple[list[CovenantTerm], list[str], str]:
+    """Run the fenced tool against one exhibit → (rows, flags, raw-log). source_ref is machine-set
+    here, so the model cannot invent a citation — it only fills value + a verbatim quote, and the
+    quote is CHECKED against ``text``, the exhibit it was sent."""
     user = (
         f"Company: {name} ({ticker}). Exhibit: {source_ref}. Extract the terms STATED in the "
         f"exhibit below. Answer each target term (present true/false): {'; '.join(_TARGET_TERMS)}."
         f"\n\n=== EXHIBIT TEXT (verbatim, may be long) ===\n{text}"
     )
     raw = llm.extract(system=_SYSTEM, user=user, tool=_TOOL)
+    source = SourceText(text)
     rows: list[CovenantTerm] = []
+    flags: list[str] = []
     for t in raw.get("terms", []):
         term_name = str(t.get("name", "")).strip()
         if not term_name:
@@ -408,9 +416,26 @@ def _extract_from_exhibit(
         # (RC-1.5d) the optional interest-rate components — populated only on a present term; they
         # inherit ``value``'s citation (same clause). Non-interest terms simply leave them None.
         components: dict[str, Any] = {}
-        if t.get("present") and str(t.get("value", "")).strip():
-            quote = str(t.get("quote", "")).strip()
-            note = f"verbatim: “{quote}”" if quote else None
+        stated = bool(t.get("present") and str(t.get("value", "")).strip())
+        quote = str(t.get("quote", "")).strip()
+        if stated and not source.match(quote).found:
+            # REFUSED, NOT SHOWN. The value is withheld whole — the term stays in the row set as a
+            # visible UNKNOWN whose note names the exhibit (so `governing_terms` still groups it by
+            # accession), and the flag names the term. A quote that is not a span is no evidence the
+            # clause was read: it may have been recalled, and a value bound to it is not
+            # source-bound. THE COST, measured when this landed (2026-10-26, the 27 committed
+            # dossiers at 545403de): 49 of 393 quoted terms fail. None of the 49 carries a figure
+            # absent from its exhibit — they are reordered, stitched, or read across page furniture
+            # — so the next re-assembly withholds values that were most likely read correctly.
+            # That is the trade: the check proves reading, and a quote that cannot prove it is
+            # refused rather than vouched for.
+            why = ("the model gave no quote from" if not quote
+                   else "the model's quote is not in")
+            val = Sourced.unknown(note=f"(E5) refused: {why} {source_ref}")
+            flags.append(f"(E5) covenant term refused — {why} the exhibit, so it is UNKNOWN: "
+                         f"{term_name} · {source_ref}")
+        elif stated:
+            note = f"verbatim: “{quote}”"
             val = Sourced.present(str(t["value"]).strip(), source_ref=source_ref, note=note)
             components = {
                 "base_rate_label": _opt_str(t.get("base_rate_label")),
@@ -425,7 +450,7 @@ def _extract_from_exhibit(
             CovenantTerm(name=term_name, value=val, agreement_title=title,
                          agreement_is_amendment=amendment, **components)
         )
-    return rows, str(raw)
+    return rows, flags, str(raw)
 
 
 def extract_covenant_terms(
@@ -482,7 +507,7 @@ def extract_covenant_terms(
             )
             continue
         try:
-            got, log = _extract_from_exhibit(
+            got, refused, log = _extract_from_exhibit(
                 llm, text, name=name, ticker=ticker, source_ref=src, title=title,
                 amendment=is_amendment(text))
         except LlmError as exc:
@@ -490,6 +515,7 @@ def extract_covenant_terms(
             continue
         logs.append(f"=== COVENANT EXTRACT: {src} ===\n{log}")
         rows.extend(got)
+        flags.extend(refused)
         extracted += 1
 
     if not rows:
@@ -774,7 +800,8 @@ def extract_maturity_event(
     """(P3/FIX-3) Fenced verbatim extraction of the resolution event at the maturity-anchored 8-K
     (E3's ``maturity_filings``). Returns ``(event|None, flags, log)`` — PRESENT with the verbatim +
     ``8-K <acc> (<date>)`` ref, UNKNOWN when the body states none, or None when there is no maturity
-    8-K to read. Fail-loud: fetch/LLM failure → flag, never a fabricated resolution."""
+    8-K to read. Fail-loud: a fetch/LLM failure, or a verbatim that is not a span of the body
+    (`vinci.verbatim`), → UNKNOWN + flag, never a fabricated resolution."""
     mf = cs.maturity_filings
     if mf.status is not SourceStatus.PRESENT or not mf.value:
         return None, [], ""
@@ -792,8 +819,9 @@ def extract_maturity_event(
     if text is None:
         return Sourced.unknown(note=f"(P3) maturity 8-K body fetch failed: {src}"), \
             [f"(P3) maturity 8-K fetch failed — UNKNOWN: {src}"], ""
+    sent = text[:_MAX_EXHIBIT_CHARS]
     user = (f"Company: {name} ({ticker}). 8-K: {src}. Extract the maturity-resolution event.\n\n"
-            f"=== 8-K BODY (verbatim) ===\n{text[:_MAX_EXHIBIT_CHARS]}")
+            f"=== 8-K BODY (verbatim) ===\n{sent}")
     try:
         raw = llm.extract(system=_MATURITY_SYSTEM, user=user, tool=_MATURITY_TOOL)
     except LlmError as exc:
@@ -801,6 +829,12 @@ def extract_maturity_event(
             [f"(P3) maturity-event LLM error — UNKNOWN: {src}: {exc}"], ""
     log = f"=== MATURITY EVENT: {src} ===\n{raw}"
     if raw.get("present") and str(raw.get("verbatim", "")).strip():
+        # The model's FULL verbatim is checked against the body it was sent — before the 400-char
+        # cut below, which only shortens a span that has already been found.
+        if not SourceText(sent).match(str(raw["verbatim"])).found:
+            return (Sourced.unknown(note=f"(P3) refused: the model's verbatim is not in {src}"),
+                    [f"(P3) maturity event refused — the model's verbatim is not in the 8-K body, "
+                     f"so it is UNKNOWN: {src}"], log)
         # (D-2) collapse whitespace so the verbatim is ONE clean line in both the markdown list item
         # and the digest — an embedded newline otherwise breaks the .md item (the web HTML collapses
         # it), a py↔js render divergence.
