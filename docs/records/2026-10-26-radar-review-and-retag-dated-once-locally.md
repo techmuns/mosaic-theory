@@ -2,7 +2,7 @@
 id: 2026-10-26-radar-review-and-retag-dated-once-locally
 status: shipped
 date: 2026-10-26
-prs: [800]
+prs: [802]
 supersedes:
 superseded-by:
 ---
