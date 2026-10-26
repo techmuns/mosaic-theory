@@ -4073,19 +4073,48 @@ def _latest_quarter_ocf(facts: dict[str, Any] | None, *,
     period was already filed — Westlake's page of 2026-09-28 read Q1's −$94M with Q2's +$318M
     filed; NKE's of 2026-09-30, the quarter to 2025-08-31. A first quarter is also where annual
     bonuses and working-capital builds land, so the stale read leaned negative.
-    `docs/records/2026-10-26-self-funding-reads-the-latest-quarter.md`."""
-    from vinci.dossier.ebitda_recon import _quarter
+    `docs/records/2026-10-26-self-funding-reads-the-latest-quarter.md`.
 
+    The period is the newest ANY alias carries (:func:`_latest_quarter`) — not the newest of the
+    alias `extract_points` serves, which is chosen by ANNUAL reach
+    (`docs/records/2026-10-26-latest-quarter-alias-at-quarterly-grain.md`)."""
     if not facts:
         return None
     if filed_by is not None:
         facts = facts_as_of(facts, filed_by)
-    pts = [p for p in extract_points(facts, "operating_cash_flow") if p.period_start is not None]
-    if not pts:
+    got = _latest_quarter(facts, "operating_cash_flow")
+    return got[:2] if got is not None else None
+
+
+def _latest_quarter(facts: dict[str, Any], concept: str) -> tuple[float, date, str] | None:
+    """($M, quarter end, tag) — the discrete quarter ending at the NEWEST flow period any of
+    ``concept``'s aliases carries, through `ebitda_recon._quarter`: the first alias, in priority
+    order, that yields that quarter, both legs of a difference on that one tag. So PRECEDENCE is
+    kept within a period, as in :func:`_quarterly_map`, and the next alias carrying the period is
+    read only where the first cannot be differenced. None when no alias can — never an older one.
+
+    NOT the alias :func:`extract_points` serves. That walk judges every alias by how far its
+    ANNUAL series reaches, which is right for an annual reader and wrong for a latest-quarter one:
+    a filer that moves back to a higher-priority tag mid-year has its newest quarters on that tag
+    and no annual on it yet, so the tag is skipped as left behind and the served tag's newest
+    quarter is stale. BURL, as filed by 2018-11-28, was served the quarter to 2018-05-05 on the
+    continuing-operations tag with the quarter to 2018-11-03 filed on the plain one. ScanSource
+    tags its 10-Ks on the continuing-operations tag and its 10-Qs on the plain one, so (its
+    companyfacts of 2026-08-13) the walk served the year to 2025-06-30 — UNKNOWN, no nine months
+    on that tag to take from it — with the quarter to 2026-03-31 filed. An ABANDONED alias still
+    cannot win: it carries no later period. UBER's
+    `RevenueFromContractWithCustomerExcludingAssessedTax` stops at 2019-06-30, and the walk served
+    it as filed by 2019-11-05 with the quarter to 2019-09-30 already under `Revenues`.
+    """
+    from vinci.dossier.ebitda_recon import _quarter
+
+    tags = CONCEPT_ALIASES[concept]
+    end = max((p.period_end for tag in tags for p in points_for_tag(facts, tag)
+               if p.period_start is not None), default=None)
+    if end is None:
         return None
-    end = max(p.period_end for p in pts)
-    got = _quarter(facts, [pts[0].tag], end)
-    return (got[0], end) if got is not None else None
+    got = _quarter(facts, tags, end)
+    return (got[0], end, got[1]) if got is not None else None
 
 
 def _latest_quarter_ocf_positive(facts: dict[str, Any] | None, *,
