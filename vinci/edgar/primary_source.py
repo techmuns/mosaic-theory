@@ -12,8 +12,21 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from datetime import date
+from typing import NamedTuple
 
-_TOL = 0.05  # 5% band for the same-window wall coherence + guide cross-source match
+from vinci.dossier.schemas import CHECK_AGREE, CHECK_DIFFER, CHECK_NOT_RUN, CrossCheck
+
+_TOL = 0.05  # 5% band for the same-window wall coherence
+#: The guide check's match: both bounds within this, ABSOLUTE, in the guide's own unit (named
+#: 2026-10-23 so the data-quality scorecard cites it rather than re-typing it — `_TOL` above had
+#: claimed to be this band too, and is not).
+GUIDE_MATCH = 0.01
+#: A wall divergence beside an instrument maturing within this many days of the window's +12m
+#: boundary is flagged a possible window-convention artifact.
+BOUNDARY_DAYS = 7
+#: Every QA flag the wall check writes opens with this — the refresh that rebuilds the check
+#: selects the page's stored wall flags by it (`refresh.cross_check_transform`).
+WALL_FLAG = "wall coherence:"
 
 
 # --- (surface 1) self-funding — two inputs, both must be positive -------------------------------
@@ -27,6 +40,17 @@ def self_funding(ocf_latest_q_positive: bool | None, ltm_fcf_positive: bool | No
     legs = (f"latest-Q OCF {'>' if ocf_latest_q_positive else '<'} 0, "
             f"LTM FCF {'>' if ltm_fcf_positive else '<'} 0")
     return f"self-funding: MIXED — {legs} (both must be positive to self-fund)"
+
+
+def self_funding_check(ocf_latest_q_positive: bool | None,
+                       ltm_fcf_positive: bool | None) -> CrossCheck:
+    """The two legs of :func:`self_funding` set against each other: EDGAR's latest-quarter OCF
+    sign and CIQ's LTM FCF sign. NOT ITS QUESTION: the line asks whether the name funds itself;
+    this asks whether the two sources point the same way, so two NEGATIVE legs AGREE here and
+    still read MIXED there. Not run when either sign is unavailable — the line's UNKNOWN."""
+    if ocf_latest_q_positive is None or ltm_fcf_positive is None:
+        return CHECK_NOT_RUN
+    return CHECK_AGREE if ocf_latest_q_positive == ltm_fcf_positive else CHECK_DIFFER
 
 
 # --- (surface 2) same-window wall coherence — tranche-matched, exclusive boundary ----------------
@@ -56,6 +80,16 @@ def panel_convertible_principal(panel: list[PanelInstrument], balance: date) -> 
     return round(sum(conv), 1) if conv else None
 
 
+class WallCoherence(NamedTuple):
+    """The wall read whole: the line and its QA flags, and beside them the outcome a reader may
+    not parse out of the line (`CrossCheck`) and whether a divergence states its boundary reason."""
+
+    line: str
+    qa: list[str]
+    check: CrossCheck
+    near_boundary: bool | None      # set on a divergence only: an instrument within ±7d of +12m
+
+
 def wall_coherence(
     filing_within_12m: float | None,
     panel: list[PanelInstrument],
@@ -65,16 +99,40 @@ def wall_coherence(
     panel_convertible_principal: float | None = None,
     tol: float = _TOL,
 ) -> tuple[str, list[str]]:
+    """(render_line, qa_flags) — :func:`wall_coherence_read`'s line and flags, for a caller that
+    stores no outcome."""
+    r = wall_coherence_read(filing_within_12m, panel, balance=balance,
+                            filing_convertible=filing_convertible,
+                            panel_convertible_principal=panel_convertible_principal, tol=tol)
+    return (r.line, r.qa)
+
+
+def wall_coherence_read(
+    filing_within_12m: float | None,
+    panel: list[PanelInstrument],
+    *,
+    balance: date,
+    filing_convertible: float | None = None,
+    panel_convertible_principal: float | None = None,
+    tol: float = _TOL,
+) -> WallCoherence:
     """Same-window filing-vs-panel wall coherence. Panel side = sum of instrument PRINCIPAL maturing
     in [balance, balance+12m) — EXCLUSIVE upper boundary (a maturity AT +12m is not 'within 12
     months'; the filing convention). Compare like-for-like to the filing's ≤12m figure; AGREE within
     tolerance ⇒ 'filing cross-validates panel'. Both figures carry BOTH basis labels; convertible
     delta (panel principal vs filing repayment = accrued PIK) is rendered as INFORMATION.
 
-    Returns (render_line, qa_flags). A divergence with an instrument maturing within ±7d of the
-    boundary is flagged a possible window-convention artifact — never a false-fire on convention."""
+    A divergence with an instrument maturing within ±7d of the boundary is flagged a possible
+    window-convention artifact — never a false-fire on convention."""
     if filing_within_12m is None:
-        return ("wall coherence: UNKNOWN — filing states no ≤12m figure", [])
+        return WallCoherence("wall coherence: UNKNOWN — filing states no ≤12m figure", [],
+                             CHECK_NOT_RUN, None)
+    # NO DATED PRINCIPAL, NO SECOND FIGURE (Codex, #793): with no instrument carrying both a
+    # principal and a maturity the panel's same-window total cannot be established, and summing
+    # nothing to $0.0 would read as a divergence the panel never showed
+    if not any(i.principal_musd is not None and i.maturity is not None for i in panel):
+        return WallCoherence("wall coherence: UNKNOWN — the CIQ panel carries no instrument with "
+                             "both a principal and a maturity", [], CHECK_NOT_RUN, None)
     end = _plus_12m(balance)
     in_window = [i for i in panel if i.principal_musd is not None and i.maturity is not None
                  and balance <= i.maturity < end]
@@ -84,11 +142,11 @@ def wall_coherence(
     agrees = pct <= tol
     qa: list[str] = []
     boundary = [i for i in panel if i.maturity is not None
-                and abs((i.maturity - end).days) <= 7]
+                and abs((i.maturity - end).days) <= BOUNDARY_DAYS]
     if not agrees and boundary:
-        qa.append("wall coherence: divergence with an instrument maturing within ±7d of the +12m "
-                  f"boundary ({', '.join(i.name for i in boundary)}) — possible window-convention "
-                  "artifact, not a true divergence")
+        qa.append(f"{WALL_FLAG} divergence with an instrument maturing within "
+                  f"±{BOUNDARY_DAYS}d of the +12m boundary ({', '.join(i.name for i in boundary)}) "
+                  "— possible window-convention artifact, not a true divergence")
     verb = "AGREES" if agrees else "DIVERGES"
     lead = ("filing cross-validates panel" if agrees
             else "filing DIVERGES from panel — verify; neither silently preferred")
@@ -100,7 +158,8 @@ def wall_coherence(
         delta = round(filing_convertible - panel_convertible_principal, 1)
         line += (f" Convertible: ${panel_convertible_principal}M panel-principal vs "
                  f"${filing_convertible}M filing-repayment (+${delta}M accrued PIK).")
-    return (line, qa)
+    return WallCoherence(line, qa, CHECK_AGREE if agrees else CHECK_DIFFER,
+                         None if agrees else bool(boundary))
 
 
 # --- (surface 3) EBITDA-basis triangulation — every leverage row basis-labeled -------------------
@@ -212,6 +271,13 @@ def period_scope(label: str | None) -> str | None:
     return None
 
 
+class GuideVerification(NamedTuple):
+    """The guide check whole: its line, and the outcome a reader may not parse out of it."""
+
+    line: str
+    check: CrossCheck
+
+
 def guide_verification(
     metric: str,
     ciq_low: float | None,
@@ -225,12 +291,38 @@ def guide_verification(
     ciq_period: str | None = None,
     release_period: str | None = None,
 ) -> str:
+    """:func:`guide_verification_read`'s line, for a caller that stores no outcome."""
+    return guide_verification_read(
+        metric, ciq_low, ciq_high, prior_fy_actual=prior_fy_actual,
+        release_qualitative=release_qualitative, release_low=release_low,
+        release_high=release_high, release_basis=release_basis, ciq_period=ciq_period,
+        release_period=release_period).line
+
+
+def guide_verification_read(
+    metric: str,
+    ciq_low: float | None,
+    ciq_high: float | None,
+    *,
+    prior_fy_actual: float | None = None,
+    release_qualitative: bool = False,
+    release_low: float | None = None,
+    release_high: float | None = None,
+    release_basis: str = "level",
+    ciq_period: str | None = None,
+    release_period: str | None = None,
+) -> GuideVerification:
     """Cross-check the CIQ guide against the release-parsed guide. VENDOR-ECHO requires BOTH: CIQ
     guide ≈ prior-FY actual (0.1% relative, source-rounding) AND the release gives NO corroborating
     number for this metric (absent or QUALITATIVE) — a stale carry-forward the primary source does
-    not confirm. Cross-source VERIFIED when the CIQ and release ranges match; else a mismatch."""
+    not confirm. Cross-source VERIFIED when the CIQ and release ranges match; else a mismatch.
+
+    THE OUTCOME: VERIFIED agrees and MISMATCH differs; every other branch is a check that did NOT
+    run — a refusal (cross-basis, cross-period), a missing side, and the vendor-echo and
+    plausibility flags alike, because none of them sets CIQ's guide against a release number."""
     if ciq_low is None:
-        return f"guide verification ({metric}): CIQ guide UNKNOWN — not cross-checked"
+        return GuideVerification(
+            f"guide verification ({metric}): CIQ guide UNKNOWN — not cross-checked", CHECK_NOT_RUN)
     # CROSS-BASIS: REFUSE, NEVER DERIVE (2026-08-05). CIQ guides a LEVEL; a release can guide a
     # CHANGE ("net sales expected to range between -2% and +2% year-over-year"). Comparing -2..+2
     # against 1,345..1,355 is meaningless, and the tempting fix — derive a level from the prior
@@ -240,10 +332,11 @@ def guide_verification(
     # would be manufacturing. Refusing loses no verification: before this the change guide was
     # dropped entirely, so "not cross-checked" is strictly more than the nothing it replaces.
     if release_basis == "change" and release_low is not None:
-        return (f"guide verification ({metric}): CIQ guides a LEVEL ({ciq_low}–{ciq_high}) and the "
-                f"release guides a CHANGE ({release_low}–{release_high}) — NOT CROSS-CHECKED. "
-                "Deriving a level from the prior period would compare a filing-derived guide "
-                "against a vendor-derived base; the two need not share a definition.")
+        return GuideVerification(
+            f"guide verification ({metric}): CIQ guides a LEVEL ({ciq_low}–{ciq_high}) and the "
+            f"release guides a CHANGE ({release_low}–{release_high}) — NOT CROSS-CHECKED. "
+            "Deriving a level from the prior period would compare a filing-derived guide "
+            "against a vendor-derived base; the two need not share a definition.", CHECK_NOT_RUN)
     # CROSS-PERIOD: REFUSE, the same way (2026-08-12). The two sources need not guide the SAME
     # period, and nothing here checked it: NFLX's CIQ revenue guide is FQ3 2026 (12,860.0) while the
     # release guides FY2026 ($50.7–51.7bn). Compared as bare numbers they cannot agree, so the check
@@ -257,11 +350,12 @@ def guide_verification(
         if ciq_scope is not None and rel_scope is not None and ciq_scope != rel_scope:
             # reads as English in the rendered line ("guides a QUARTER … guides a HALF-YEAR")
             noun = {"quarter": "QUARTER", "half": "HALF-YEAR", "annual": "YEAR"}
-            return (f"guide verification ({metric}): CIQ guides a {noun[ciq_scope]} "
-                    f"({ciq_period}: {ciq_low}–{ciq_high}) and the release guides a "
-                    f"{noun[rel_scope]} ({release_period}: {release_low}–{release_high}) "
-                    "— NOT CROSS-CHECKED. Different periods; annualising one to match the other "
-                    "would manufacture the base the comparison is supposed to verify.")
+            return GuideVerification(
+                f"guide verification ({metric}): CIQ guides a {noun[ciq_scope]} "
+                f"({ciq_period}: {ciq_low}–{ciq_high}) and the release guides a "
+                f"{noun[rel_scope]} ({release_period}: {release_low}–{release_high}) "
+                "— NOT CROSS-CHECKED. Different periods; annualising one to match the other "
+                "would manufacture the base the comparison is supposed to verify.", CHECK_NOT_RUN)
     # VENDOR-ECHO — TWO CONJUNCTS: (1) CIQ guide ≈ prior-FY actual within source-rounding (0.1% rel;
     # the release rounds $427.516→$427.5, so relative not absolute-3dp); AND (2) the release states
     # NO number for this metric (release_low is None) or only a QUALITATIVE outlook. A numeric
@@ -276,19 +370,24 @@ def guide_verification(
     if _echo:
         tail = ("release outlook QUALITATIVE-only — render the qualitative growth line"
                 if release_qualitative else "release states no outlook here — uncorroborated")
-        return (f"guide verification ({metric}): CIQ FY guide {ciq_low} ≈ prior-FY actual "
-                f"{prior_fy_actual} (within source-rounding) → VENDOR-ECHO flag (stale "
-                f"carry-forward); {tail}")
+        return GuideVerification(
+            f"guide verification ({metric}): CIQ FY guide {ciq_low} ≈ prior-FY actual "
+            f"{prior_fy_actual} (within source-rounding) → VENDOR-ECHO flag (stale "
+            f"carry-forward); {tail}", CHECK_NOT_RUN)
     if release_qualitative and release_low is None:
-        return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release QUALITATIVE "
-                "→ plausibility flag; render the qualitative growth line")
+        return GuideVerification(
+            f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release QUALITATIVE "
+            "→ plausibility flag; render the qualitative growth line", CHECK_NOT_RUN)
     if release_low is None:  # release stated no numeric guide — nothing to cross-check
-        return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
-                "NO NUMERIC OUTLOOK → not cross-checked")
+        return GuideVerification(
+            f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
+            "NO NUMERIC OUTLOOK → not cross-checked", CHECK_NOT_RUN)
     # release_low is now narrowed to a float by the early return above (no redundant None re-check).
-    if abs(ciq_low - release_low) < 0.01 and abs(
-            (ciq_high or 0.0) - (release_high or 0.0)) < 0.01:
-        return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
-                f"{release_low}–{release_high} → cross-source VERIFIED")
-    return (f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
-            f"{release_low}–{release_high} → MISMATCH flag")
+    if abs(ciq_low - release_low) < GUIDE_MATCH and abs(
+            (ciq_high or 0.0) - (release_high or 0.0)) < GUIDE_MATCH:
+        return GuideVerification(
+            f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
+            f"{release_low}–{release_high} → cross-source VERIFIED", CHECK_AGREE)
+    return GuideVerification(
+        f"guide verification ({metric}): CIQ {ciq_low}–{ciq_high} vs release "
+        f"{release_low}–{release_high} → MISMATCH flag", CHECK_DIFFER)

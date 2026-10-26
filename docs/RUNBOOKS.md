@@ -680,6 +680,69 @@ requires the latest day's panels to equal what today's pages emit, so a moved pa
 
 ---
 
+## k. DATA QUALITY — the scorecard, and the tests that need the CIQ workbooks
+
+**The scorecard** — `PYTHONPATH=$PWD $VENV/python -m vinci.cli audit quality [--source ID]
+[--as-of YYYY-MM-DD] [--write]` (`vinci/quality/`). One scorecard per registered SOURCE. `ciq` reads
+the COMMITTED pages (`data/dossiers/*/dossier.json`), never the workbooks, so it runs in any
+checkout and in CI. `prices` reads the git-ignored working store `data/vinci.db` READ-ONLY, plus
+Tiingo for the names with a committed page where `TIINGO_API_KEY` is set (see below). Each prints
+every check (per name and fleet:
+confirmed / differs with a stated reason / differs unexplained / unchecked, plus items not run or not
+applicable, each named), then the coverage map: each field family's class (independent, internal,
+single-source, unchecked) and, per failure class (wrong file, cell, unit, period or vintage,
+different definition), whether an independent check guards it, an internal one, or nothing.
+`--write` writes `data/snapshots/data_quality/<source>/<today>.json` — counts and statuses only,
+never a source's figures (the repo is public). A snapshot is dated the day it is measured:
+`--as-of` only labels a printed report, and `--write` refuses any other date (the pages read are
+today's, so a backdated point would carry later data).
+- **When:** after every artifact pass that moves `data/dossiers/*`, and at the monthly sweep. Commit
+  the snapshot as an ARTIFACT commit, never bundled with code. `tests/test_quality_ciq.py` re-derives
+  the latest CIQ snapshot byte-for-byte whenever the page set's sha256 matches the one it names.
+- **Reading it:** "internal" means the source against its own other output — CIQ against another CIQ
+  export: the sheets were read coherently and the pulls match, not that CIQ is right. A family marked
+  UNSCORED has a check that runs, but no structured verdict; the scorecard parses no display text.
+- **Stored outcomes (`CrossCheck`).** Five checks are scored from an outcome the page stores beside
+  its line or flag. A page without one reads NOT RUN, never a pass: it predates the field, or
+  `refresh.cross_check_transform` refused it because the stored line did not reproduce from the
+  page's own inputs. Re-run that transform through `refresh_fleet` after a pass that adds pages
+  assembled before 2026-10-23. It needs EDGAR, not the workbooks. A refused outcome lands at the
+  name's next re-assembly.
+- **Adding a source** is one module under `vinci/quality/sources/` exposing `SOURCE` (its loader,
+  checks with the failure classes each can surface, and families). The core and the command name no
+  source (`tests/test_quality_core.py` holds them to it). Next by priority: the 8-K release parser
+  (`docs/records/2026-10-23-ciq-quality-scorecard.md`).
+- **The prices source needs a populated store.** `data/vinci.db` is per checkout and git-ignored:
+  CI and a fresh worktree have none, so `--source prices` (and the default, every source) exits 1
+  saying the store is absent — never a clean card; `--source ciq` still runs. Run it where the store
+  you mean to judge lives, and read the boundary line: it names the market sessions the store spans,
+  its partial days (one name's backfill) and its latest bar, and the sha256 names exactly what was
+  read. Stores DIFFER by checkout (2026-10-24: the primary's ends 2026-08-05, the `-ta` copy's
+  whole-market days end 2026-09-22, the research-alpha copy reaches 2026-10-16). Tiingo is fetched
+  through the fund's adapter (`eod.tiingo`, cached a day under `data/cache/tiingo`), one request a
+  name. Its plan allows 50 requests an hour (as `theme_intelligence/market.py` records): past that,
+  each refused name waits out four 61-second retries (`netcache`) and then reads `not_run`. Without
+  the key the comparison is `not_run` by name. The snapshot is large (2026-10-24: 2.1 MB for 2,797
+  names) because the core writes every name for every check.
+
+**The tests that need the licensed workbooks run only where `data/manual/ciq/` exists.** The folder is
+git-ignored, so CI never has it and a fresh worktree does not either. Measured 2026-10-23 on
+`4489e864` plus this PR's scorecard code (`pytest -m "not network" -rs` in an app worktree without the folder): **27 test files skip
+479 tests** for want of the workbooks. One more file, `tests/test_primary_source.py`, needs them as
+well, but its test is `network`-marked, so the offline suite deselects it. Three files that name the
+loader (`test_ciq_charting`, `test_ev_ebitda_basis`, `test_release_amount_scale`) point it at
+synthetic data and run everywhere. A green suite in CI or in a `.claude/worktrees/*` checkout has
+therefore NOT run those 479 tests: run them in the operator's primary checkout, which holds the
+folder (as a link to the synced Drive copy).
+- **Worktrees can hold the folder too, and most hold a COPY.** On 2026-10-23, 54 of the 70 worktrees
+  registered on the operator's machine had `data/manual/ciq/`; the 6 app worktrees and 10 others did
+  not. Only 3 of the 54 resolve to the primary's folder (the primary and two siblings linked to it).
+  Three siblings (`-main`, `-sl`, `-ta`) hold their own copy, 47 agent scratch worktrees link to
+  `-ta`'s copy, and 1 links elsewhere. A copy can lag the Drive mirror, so before you read a run
+  outside the primary as covering the CURRENT workbooks, check where the folder resolves.
+
+---
+
 ## KNOWN GAP
 
 **None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut

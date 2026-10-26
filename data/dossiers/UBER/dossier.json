@@ -338,8 +338,10 @@
         "tev_as_of": "2026-10-09",
         "multiples_as_of": "2026-10-08",
         "vintage_coherent": true,
+        "vintage_check": "agree",
         "coherence_note": "vintage-coherent: derived FY26 $11296.4M vs direct consensus $11378.5M (residual 0.007 ≤ 0.10 tolerance)",
-        "net_debt_reconciled": false
+        "net_debt_reconciled": false,
+        "net_debt_check": "differ"
       },
       "lease_basis": {
         "rent_expense": 390.0,
@@ -7002,12 +7004,14 @@
         "status": "present",
         "note": null
       },
+      "self_funding_check": "agree",
       "wall_coherence": {
         "value": "wall coherence: UNKNOWN — filing states no ≤12m figure",
         "source_ref": "10-Q maturity wall vs CIQ capital panel (same window)",
         "status": "present",
         "note": null
       },
+      "wall_coherence_check": "not_run",
       "basis_triangulation": {
         "value": "EBITDA-basis triangulation (each leverage basis-labeled):\n  net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 0.6x\n  total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 1.9x\n  net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN\n  covenant basis: UNKNOWN (not disclosed)",
         "source_ref": "CIQ leverage bases + release LTM adj-EBITDA/margins",
@@ -7026,6 +7030,7 @@
         "status": "present",
         "note": null
       },
+      "guide_verification_check": "not_run",
       "qa_flags": [
         "primary-source: 8-K 0001552781-26-000486 carries 8.01 but no EX-99.1 exhibit was found",
         "primary-source: 8-K 0001543151-26-000005 carries 8.01 but no EX-99.1 exhibit was found"
@@ -14543,6 +14548,15 @@
       "writer": "anchor-retag",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-23",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.primary_source",
+        "mechanical.valuation"
       ]
     }
   ],

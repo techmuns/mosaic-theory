@@ -336,12 +336,21 @@ def edgar_lease_cost(facts: dict[str, Any] | None, fy: date | None) -> tuple[flo
     return None
 
 
+def rent_disagrees(rent: float, lease_cost: float) -> bool | None:
+    """Whether CIQ's rent and EDGAR's lease cost sit more than `_RENT_DISAGREE` apart either way;
+    None when either is not positive (there is no ratio). ONE definition: the page's sentence and
+    the data-quality scorecard's CIQ source (`vinci.quality.sources.ciq`) both read it."""
+    if rent <= 0 or lease_cost <= 0:
+        return None
+    return max(rent, lease_cost) / min(rent, lease_cost) > _RENT_DISAGREE
+
+
 def _cross_check(r: Rent, edgar: tuple[float, str] | None) -> str:
     """The sentence naming EDGAR's lease cost beside CIQ's rent — and saying so when they differ."""
     if edgar is None or r.rent is None:
         return ""
     v, tag = edgar
-    far = (r.rent > 0 and v > 0 and max(r.rent, v) / min(r.rent, v) > _RENT_DISAGREE)
+    far = rent_disagrees(r.rent, v) is True
     return (f"; EDGAR {tag} that year: ${v:,.0f}M"
             + (" — CIQ's rent and EDGAR's lease cost DISAGREE; read both" if far else ""))
 

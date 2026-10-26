@@ -585,6 +585,7 @@ _Source §: 8-K 0001564590-18-016500 · burl-ex101_6.htm · amended by 000119312
 - **Refreshed since assembly** (oldest first):
   - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
+  - 2026-10-23 · mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
 - **Price store:** `wt-ra → mosaic-theory-ta` · reaching 2026-10-20
 - **Panel age:** oldest panel 26d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-21 build
 - **Consensus age:** consensus 29d old (2026-09-22, valuation.implied_expectations.multiples_as_of) — within the ceiling
