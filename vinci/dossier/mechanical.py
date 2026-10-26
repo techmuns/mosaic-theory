@@ -4054,18 +4054,49 @@ def _ltm_adj_ebitda(releases: list[ReleaseExtract]) -> float | None:
     return round(vals[fy] - vals[prior] + vals[cur], 1)
 
 
-def _latest_quarter_ocf_positive(facts: dict[str, Any] | None, *,
-                                 filed_by: date | None = None) -> bool | None:
-    """Sign of the latest SINGLE-QUARTER operating cash flow (EDGAR) — the first self-funding input.
-    Single-quarter = duration ≤ ~100 days (excludes 6/9-month YTD durations). None = unavailable.
-    ``filed_by`` reads the facts as they stood on a date — what assembly saw, for the refresh that
-    rebuilds a committed page's line (`refresh.cross_check_transform`)."""
+def _latest_quarter_ocf(facts: dict[str, Any] | None, *,
+                        filed_by: date | None = None) -> tuple[float, date] | None:
+    """($M, quarter end) — the LATEST quarter's operating cash flow (EDGAR), the first self-funding
+    input. The latest cash-flow period filed, made DISCRETE: the 3-month fact where the filer tags
+    one, else the year-to-date less the prior year-to-date from the same start
+    (`ebitda_recon._quarter` — Q2 = H1 − Q1, Q4 = the 10-K's year − nine months). A latest period
+    that cannot be differenced is None (UNKNOWN), never an older quarter. ``filed_by`` reads the
+    facts as they stood on a date — what assembly saw, for the refresh that rebuilds a committed
+    page's line (`refresh.cross_check_transform`).
+
+    WHY (2026-10-26). This read the latest fact of ≤100 days. A 10-Q tags cash flow year-to-date,
+    so that was the fiscal FIRST quarter on 25 of the 27 committed pages, and on 24 a later
+    period was already filed — Westlake's page of 2026-09-28 read Q1's −$94M with Q2's +$318M
+    filed; NKE's of 2026-09-30, the quarter to 2025-08-31. A first quarter is also where annual
+    bonuses and working-capital builds land, so the stale read leaned negative.
+    `docs/records/2026-10-26-self-funding-reads-the-latest-quarter.md`."""
+    from vinci.dossier.ebitda_recon import _quarter
+
     if not facts:
         return None
     pts = [p for p in extract_points(facts, "operating_cash_flow")
-           if p.period_start is not None and (p.period_end - p.period_start).days <= 100
-           and (filed_by is None or p.filed <= filed_by)]
-    return max(pts, key=lambda p: (p.period_end, p.filed)).value > 0 if pts else None
+           if p.period_start is not None and (filed_by is None or p.filed <= filed_by)]
+    if not pts:
+        return None
+    end = max(p.period_end for p in pts)
+    got = _quarter(facts, [pts[0].tag], end, filed_by=filed_by)
+    return (got[0], end) if got is not None else None
+
+
+def _latest_quarter_ocf_positive(facts: dict[str, Any] | None, *,
+                                 filed_by: date | None = None) -> bool | None:
+    """Sign of :func:`_latest_quarter_ocf`. None = unavailable."""
+    q = _latest_quarter_ocf(facts, filed_by=filed_by)
+    return q[0] > 0 if q is not None else None
+
+
+def _self_funding_ref(facts: dict[str, Any] | None) -> str:
+    """The self-funding line's cite, NAMING the quarter its OCF leg read: the stale first quarter
+    went unseen for months behind a cite that said only 'latest-Q' (2026-10-26)."""
+    q = _latest_quarter_ocf(facts)
+    leg = (f"EDGAR OCF sign, quarter to {q[1].isoformat()}" if q is not None
+           else "EDGAR latest-Q OCF sign")
+    return f"{leg} + CIQ LTM FCF sign"
 
 
 def _latest_balance_date(facts: dict[str, Any] | None) -> date | None:
@@ -4402,8 +4433,7 @@ def _primary_source(
             "(item 18). Refusing the build: a gap invites a look, an UNKNOWN closes the question.")
     ps = PrimarySource(
         releases=releases, filing=filing,
-        self_funding=Sourced.present(
-            self_fund, source_ref="EDGAR latest-Q OCF sign + CIQ LTM FCF sign"),
+        self_funding=Sourced.present(self_fund, source_ref=_self_funding_ref(facts)),
         self_funding_check=primary_source.self_funding_check(ocf_sign, fcf_sign),
         wall_coherence=Sourced.present(
             wall.line, source_ref="10-Q maturity wall vs CIQ capital panel (same window)"),
