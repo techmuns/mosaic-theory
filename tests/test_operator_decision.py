@@ -743,6 +743,46 @@ def test_a_decision_made_now_is_dated_on_the_local_calendar_under_a_real_zone(
     assert dec["machine_recipe_at_decision"] == committed.recipe_hint, "made now, read as backdated"
 
 
+@pytest.mark.parametrize("typed", [False, True])
+def test_a_decision_made_as_local_midnight_passes_is_still_made_now(
+        typed: bool, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """THE DOUBLE READ (found in #794's review): the command read the local date once for the stamp
+    and the future check, and AGAIN after the machine's EDGAR read to ask whether the decision is
+    made now. A decision made as local midnight passed during that read was dated by the first
+    day and judged by the second, so it read as backdated and lost the machine's read at decision
+    — defaulted or typed as today. The clock is real: the process's zone moves to UTC+14 during
+    the stubbed EDGAR read, which steps the local date forward at any hour. It starts at UTC−12,
+    or at UTC from 11:00 to 13:00 UTC, so the start zone's own midnight is an hour from the run."""
+    start_offset = 0 if 11 <= datetime.now(UTC).hour < 13 else -12
+    t = _undecided_live()
+    path = _copy_page(tmp_path, t)
+    committed = Dossier.model_validate_json(path.read_text()).anchor
+    assert committed is not None
+    fresh = _machine_only(committed, committed.recipe_hint)
+    _stub_cli(monkeypatch, tmp_path, fresh)
+    after_read: list[date] = []
+
+    def _read_across_midnight(*a: Any, **k: Any) -> Anchor:
+        os.environ["TZ"] = "<+14>-14"
+        time.tzset()
+        after_read.append(date.today())
+        return fresh
+
+    monkeypatch.setattr(cli, "_machine_anchor", _read_across_midnight)
+    reason = tmp_path / "why.txt"
+    reason.write_text("a reason")
+    with _process_zone(start_offset):
+        start = date.today()
+        rc = cli._cmd_anchor_retag(_retag_args(
+            t, recipe="R3_forward_pe", reason_file=str(reason), decided_by="operator",
+            source_ref="x", decided_on=start.isoformat() if typed else None))
+    assert rc == 0
+    assert after_read and after_read[0] > start, "local midnight did not pass during the read"
+    dec = json.loads(path.read_text())["anchor"]["operator_decision"]
+    assert dec["decided_on"] == start.isoformat(), "dated after the read, not when it was made"
+    assert dec["machine_recipe_at_decision"] == committed.recipe_hint, "made now, read as backdated"
+
+
 @pytest.mark.parametrize("blank", ["decided_by", "source_ref", "recipe"])
 def test_a_blank_field_is_a_missing_field(blank: str, tmp_path: Path,
                                           monkeypatch: pytest.MonkeyPatch) -> None:
