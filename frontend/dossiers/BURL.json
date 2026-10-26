@@ -14,16 +14,16 @@
         "note": null
       },
       "pe": {
-        "value": 27.21976866456362,
+        "value": 26.038906414300737,
         "source_ref": "EDGAR XBRL eps_diluted × EOD latest stored close",
         "status": "present",
-        "note": "price 2026-10-20 ÷ annual diluted EPS for the period ending 2026-01-31 (262d old, filed 2026-03-19)"
+        "note": "price 2026-10-23 ÷ annual diluted EPS for the period ending 2026-01-31 (265d old, filed 2026-03-19)"
       },
       "pe_percentile_5y": {
-        "value": 0.036016949152542374,
+        "value": 0.018947368421052633,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y, at the latest stored close",
         "status": "present",
-        "note": "472 P/E observations over 1825d; price 2026-10-20 ÷ annual diluted EPS for the period ending 2026-01-31 (262d old, filed 2026-03-19)"
+        "note": "475 P/E observations over 1825d; price 2026-10-23 ÷ annual diluted EPS for the period ending 2026-01-31 (265d old, filed 2026-03-19)"
       },
       "ev_ebitda": {
         "value": 9.0,
@@ -44,7 +44,7 @@
         "note": "no revised guidance at the drawdown to read an adjusted figure from"
       },
       "adjusted_eps": {
-        "value": "next-fy adjusted EPS guide $11.77–$11.97; adj P/E ~21.8x at $258.86 (2026-10-20 close)",
+        "value": "next-fy adjusted EPS guide $11.77–$11.97; adj P/E ~20.9x at $247.63 (2026-10-23 close)",
         "source_ref": "8-K 0001193125-26-369502 EX-99.1 (filed 2026-08-27)",
         "status": "present",
         "note": null
@@ -415,36 +415,36 @@
             "column": "FY27E",
             "eps_basis": "EPS (Normalized)",
             "eps": 11.8,
-            "multiple": 21.9373,
-            "price": 258.86,
-            "price_as_of": "2026-10-20"
+            "multiple": 20.9856,
+            "price": 247.63,
+            "price_as_of": "2026-10-23"
           },
           {
             "label": "P/FY27E (GAAP)",
             "column": "FY27E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 11.48,
-            "multiple": 22.5488,
-            "price": 258.86,
-            "price_as_of": "2026-10-20"
+            "multiple": 21.5706,
+            "price": 247.63,
+            "price_as_of": "2026-10-23"
           },
           {
             "label": "P/FY28E (normalized)",
             "column": "FY28E",
             "eps_basis": "EPS (Normalized)",
             "eps": 13.68,
-            "multiple": 18.9225,
-            "price": 258.86,
-            "price_as_of": "2026-10-20"
+            "multiple": 18.1016,
+            "price": 247.63,
+            "price_as_of": "2026-10-23"
           },
           {
             "label": "P/FY28E (GAAP)",
             "column": "FY28E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 13.4,
-            "multiple": 19.3179,
-            "price": 258.86,
-            "price_as_of": "2026-10-20"
+            "multiple": 18.4799,
+            "price": 247.63,
+            "price_as_of": "2026-10-23"
           }
         ],
         "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
@@ -1216,17 +1216,17 @@
         "line": "CIQ's 9.0x divides TEV $21,201M (comps, 2026-09-25) by $2,356M: reported LTM EBITDA $1,361M + rent $961M (FY ending 2026-01-31) = $2,322M (1.5% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($1,361M, 42.2% below the denominator)."
       },
       "ev_ebitda_ex_lease_at_price": {
-        "value": 12.83905,
-        "price": 258.86,
-        "price_as_of": "2026-10-20",
+        "value": 12.320633,
+        "price": 247.63,
+        "price_as_of": "2026-10-23",
         "shares": 62815195.0,
         "shares_basis": "shares outstanding",
         "net_debt": 1209.869,
         "net_debt_source": "EDGAR: total debt incl. finance leases 1,914 − cash 704 ($M); operating leases 3,993 EXCLUDED — the multiple is struck on TEV less operating leases",
-        "ev": 17470.21,
+        "ev": 16764.796,
         "ltm_ebitda": 1360.709,
         "ltm_through": "2026-08-01",
-        "line": "at the page's $258.86 close (2026-10-20): ($258.86 × 62,815,195 shares outstanding + net debt $1,210M excluding operating leases) ÷ LTM EBITDA $1,361M (four quarters to 2026-08-01) = 12.8x"
+        "line": "at the page's $247.63 close (2026-10-23): ($247.63 × 62,815,195 shares outstanding + net debt $1,210M excluding operating leases) ÷ LTM EBITDA $1,361M (four quarters to 2026-08-01) = 12.3x"
       }
     },
     "quality": {
@@ -5024,7 +5024,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[SECURITY AGREEMENT · 0001193125-20-109457]\n  Principal / commitment amount: $300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025\n  Interest / coupon rate: 6.250% Senior Secured Notes due 2025\n  Maturity date: 6.250% Senior Secured Notes due 2025\n[SECOND AMENDED AND RESTATED CREDIT AGREEMENT · 0001564590-18-016500 · amended by 0001193125-21-364998, 0001193125-25-168007]\n  Principal / commitment amount: the Total Commitments after giving effect to the Commitment Increase will be…\n  Interest / coupon rate: Term SOFR / Daily SOFR plus Applicable Margin (Level I 1.125% / Level II 1.375%);…\n  Maturity date: July 25, 2030\n  Financial-maintenance covenants: Consolidated Fixed Charge Coverage Ratio not less than 1.00:1.00 (springing; tested…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[SECURITY AGREEMENT · 0001193125-20-109457]\n  Principal / commitment amount: $300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025\n  Interest / coupon rate: 6.250% Senior Secured Notes due 2025\n  Maturity date: 6.250% Senior Secured Notes due 2025\n[SECOND AMENDED AND RESTATED CREDIT AGREEMENT · 0001564590-18-016500 · amended by 0001193125-21-364998, 0001193125-25-168007]\n  Principal / commitment amount: Commitment Increase of $100,000,000; Total Commitments after giving effect to the…\n  Interest / coupon rate: Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate…\n  Maturity date: July 25, 2030 (amended from December 22, 2026)\n  Financial-maintenance covenants: Springing Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00,…",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -5053,7 +5053,7 @@
               "value": "$300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025",
               "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
               "status": "present",
-              "note": "verbatim: “pursuant to which the Company is issuing $300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025 (together with any additional notes issued under the Indenture, the “ Senior Secured Notes ”)”"
+              "note": "verbatim: “pursuant to which the Company is issuing $300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025 (together with any additional notes issued under the Indenture, the “Senior Secured Notes”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5085,7 +5085,7 @@
               "value": "6.250% Senior Secured Notes due 2025",
               "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
               "status": "present",
-              "note": "verbatim: “the Company is issuing $300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025”"
+              "note": "verbatim: “$300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5114,10 +5114,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "each Grantor hereby grants to the Collateral Agent ... a security interest in, and collaterally assigns to the Collateral Agent ... all of such Grantor’s right, title and interest in, to and under the Collateral ... “ Collateral ” shall mean all personal property of each Grantor",
+              "value": "each Grantor hereby grants to the Collateral Agent ... a security interest in, and collaterally assigns to the Collateral Agent ... all of such Grantor’s right, title and interest in, to and under the Collateral",
               "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
               "status": "present",
-              "note": "verbatim: “As security for the payment or performance, as the case may be, in full of its Secured Obligations, each Grantor hereby grants to the Collateral Agent, its successors and permitted assigns, for its own benefit and the benefit of the other Secured Parties, a security interest in, and collaterally assigns to the Collateral Agent ... all of such Grantor’s right, title and interest in, to and under the Collateral (the “ Security Interest ”) wherever located, and whether now existing or hereafter arising or acquired from time to time.”"
+              "note": "verbatim: “As security for the payment or performance, as the case may be, in full of its Secured Obligations, each Grantor hereby grants to the Collateral Agent, its successors and permitted assigns, for its own benefit and the benefit of the other Secured Parties, a security interest in, and collaterally assigns to the Collateral Agent, its successors and permitted assigns, for its own benefit and the benefit of the other Secured Parties, all of such Grantor’s right, title and interest in, to and under the Collateral (the “Security Interest”) wherever located, and whether now existing or hereafter arising or acquired from time to time.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5130,10 +5130,74 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "“ Event of Default ” shall mean, collectively, any “Event of Default” as defined in the Indenture or as defined in any Additional Pari Passu Document.",
+              "value": "“Event of Default” shall mean, collectively, any “Event of Default” as defined in the Indenture or as defined in any Additional Pari Passu Document.",
               "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
               "status": "present",
-              "note": "verbatim: ““ Event of Default ” shall mean, collectively, any “Event of Default” as defined in the Indenture or as defined in any Additional Pari Passu Document.”"
+              "note": "verbatim: ““Event of Default” shall mean, collectively, any “Event of Default” as defined in the Indenture or as defined in any Additional Pari Passu Document.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "SECURITY AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Collateral definition",
+            "value": {
+              "value": "“Collateral” shall mean all personal property of each Grantor, including, without limitation: all (A) Accounts, (B) Chattel Paper, (C) Commercial Tort Claims, (D) Deposit Accounts, (E) Documents, (F) Equipment, (G) Fixtures, (H) General Intangibles (including Payment Intangibles), (I) Goods, (J) Instruments, (K) Inventory, (L) Investment Property, (M) Letter-of-Credit Rights, (N) Software, (O) Supporting Obligations, (P) money, policies and certificates of insurance, deposits, cash, or other property ...",
+              "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+              "status": "present",
+              "note": "verbatim: ““Collateral” shall mean all personal property of each Grantor, including, without limitation: all (A) Accounts, (B) Chattel Paper, (C) Commercial Tort Claims, (D) Deposit Accounts, (E) Documents, (F) Equipment, (G) Fixtures, (H) General Intangibles (including Payment Intangibles), (I) Goods, (J) Instruments, (K) Inventory, (L) Investment Property, (M) Letter-of-Credit Rights, (N) Software, (O) Supporting Obligations, (P) money, policies and certificates of insurance, deposits, cash, or other property ... provided, however, that the Collateral shall not include ... (c) any Security, Investment Property or other equity interest representing more than 65% of the outstanding voting stock of (i) any Foreign Subsidiary”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "SECURITY AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Lien priority",
+            "value": {
+              "value": "The Security Interest is and shall be (i) pari passu with the Liens securing the Term Loan Obligations and any Additional Pari Passu Obligations and (ii) prior to any other Lien on any of the Collateral, subject only to (a) with respect to the ABL Priority Collateral only, Permitted Encumbrances under the ABL Credit Agreement including the senior lien of the ABL Collateral Agent on ABL Priority Collateral, and (b) other Permitted Encumbrances having priority by operation of Applicable Law.",
+              "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The Security Interest is and shall be (i) pari passu with the Liens securing the Term Loan Obligations and any Additional Pari Passu Obligations and (ii) prior to any other Lien on any of the Collateral, subject only to (a) with respect to the ABL Priority Collateral only, Permitted Encumbrances under the ABL Credit Agreement including the senior lien of the ABL Collateral Agent on ABL Priority Collateral, and (b) other Permitted Encumbrances having priority by operation of Applicable Law.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "SECURITY AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "THIS AGREEMENT SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.",
+              "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+              "status": "present",
+              "note": "verbatim: “THIS AGREEMENT SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "SECURITY AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Collateral Agent",
+            "value": {
+              "value": "Wilmington Trust, National Association, in its capacity as collateral agent for the Secured Parties",
+              "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+              "status": "present",
+              "note": "verbatim: “and Wilmington Trust, National Association, in its capacity as collateral agent for the Secured Parties (in such capacity and together with any successors in such capacity, the “Collateral Agent”)”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5162,10 +5226,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "the Total Commitments after giving effect to the Commitment Increase will be $1,000,000,000; Commitment Increase in an amount equal to $100,000,000; \"Total Commitments\" ... On the Sixth Amendment Effective Date, the Total Commitments are $1,000,000,000",
+              "value": "Commitment Increase of $100,000,000; Total Commitments after giving effect to the Commitment Increase = $1,000,000,000",
               "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
               "status": "present",
-              "note": "verbatim: “On the Fourth Sixth Amendment Effective Date, the Total Commitments are $ 900,000,000 1,000,000,000 .”"
+              "note": "verbatim: “the Lead Borrower has requested, among other things, an extension of the maturity date and an increase in the aggregate outstanding Commitments in an amount equal to $100,000,000 (the “ Commitment Increase ”), such that the Total Commitments after giving effect to the Commitment Increase will be $1,000,000,000”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5178,15 +5242,15 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR / Daily SOFR plus Applicable Margin (Level I 1.125% / Level II 1.375%); Prime Rate plus Applicable Margin (Level I 0.125% / Level II 0.375%)",
-              "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
-              "status": "present",
-              "note": "verbatim: “Subject to SECTION 2.12, each Prime Rate Loan shall bear interest ... at a rate per annum that shall be equal to the then Prime Rate plus the Applicable Margin for Prime Rate Loans. ... each Term SOFR Loan shall bear interest ... at a rate per annum equal, during each Interest Period applicable thereto, to Term SOFR for such Interest Period, plus the Applicable Margin for Term SOFR Loans. ... each Daily SOFR Loan shall bear interest ... at a fluctuating rate per annum equal to Daily SOFR plus the Applicable Margin for Daily SOFR Loans.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0001193125-25-168007 · d946952dex101.htm"
             },
-            "base_rate_label": "Term SOFR or Daily SOFR",
-            "margin_pct": 1.125,
+            "base_rate_label": null,
+            "margin_pct": null,
             "margin_bps": null,
-            "floor_pct": 0.0,
+            "floor_pct": null,
             "pik_pct": null,
             "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
             "agreement_is_amendment": true
@@ -5194,7 +5258,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "July 25, 2030",
+              "value": "July 25, 2030 (amended from December 22, 2026)",
               "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Maturity Date ” means December 22 July 25 , 2026 2030 .”"
@@ -5210,7 +5274,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Consolidated Fixed Charge Coverage Ratio not less than 1.00:1.00 (springing; tested only during the continuance of a Covenant Compliance Event)",
+              "value": "Springing Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00, tested only during the continuance of a Covenant Compliance Event (Specified Availability less than the greater of $70,000,000 or 10% of the Loan Cap)",
               "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
               "status": "present",
               "note": "verbatim: “SECTION 6.10 Consolidated Fixed Charge Coverage Ratio . During the continuance of a Covenant Compliance Event, the Loan Parties shall not permit the Consolidated Fixed Charge Coverage Ratio, tested on a trailing four quarter basis commencing with the Fiscal Quarter most recently ended, to be less than 1.00:1.00.”"
@@ -5226,7 +5290,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Secured by security interest in all Collateral (ABL Priority Collateral; Borrowing Base of credit card receivables and inventory) pursuant to Security Documents; Facility Guarantors listed on Schedule II (incl. Burlington Coat Factory Holdings, LLC; Burlington Coat Factory Investments Holdings, Inc.; and others); Borrowers listed on Schedule I",
+              "value": "Secured by security interest in all Collateral (ABL Priority Collateral) granted to Bank of America, N.A. as Collateral Agent; guaranteed by the Facility Guarantors (entities listed on Schedule II, including Burlington Coat Factory Holdings, LLC; Burlington Coat Factory Investments Holdings, Inc.; and others). Subject to the Intercreditor Agreement with the Term Loan Facility.",
               "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
               "status": "present",
               "note": "verbatim: “To secure the Secured Obligations (as defined in the Security Agreement), the Borrowers have granted (or shall grant) to the Collateral Agent, for its benefit and the benefit of the other Secured Parties, a security interest in all of the Collateral pursuant to the Security Document, with the priority provided for herein or in the other Loan Documents.”"
@@ -5242,7 +5306,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment when Total Outstandings cause Availability to be less than zero (SECTION 2.17); Events of Default enumerated in SECTION 7.01(a)-(p) incl. payment defaults, covenant breaches, cross-default on Material Indebtedness (>$150,000,000), Change in Control, insolvency, judgments >$150,000,000, ERISA, Lien invalidity, guaranty termination",
+              "value": "Mandatory prepayment required if Total Outstandings cause Availability to be less than zero (prepay to eliminate deficiency; cash collateralize 103% of Letters of Credit Outstanding). Events of Default set forth in Section 7.01 (payment defaults, covenant breaches, cross-default to Material Indebtedness, Change in Control, bankruptcy, judgments, ERISA, Lien invalidity, guaranty termination, etc.).",
               "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
               "status": "present",
               "note": "verbatim: “SECTION 2.17 Mandatory Prepayment; Commitment Termination; Cash Collateral . The outstanding Obligations shall be subject to prepayment as follows: (a) If at any time the Total Outstandings causes Availability to be less than zero, the Borrowers will, immediately upon notice from the Administrative Agent: (x) prepay the Revolving Credit Loans in an amount necessary to eliminate such deficiency; and (y) ... deposit cash into the Cash Collateral Account in an amount equal to 103% of the Letters of Credit Outstanding.”"
@@ -5274,7 +5338,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "On the Second Amendment Effective Date, the Total Commitments are $600,000,000. [Increase option: the Lead Borrower shall have the right to request an increase ... as would cause the Total Commitments not to exceed $900,000,000 in the aggregate.] Letter of Credit Sublimit: $100,000,000. Swingline Loan Ceiling: $60,000,000.",
+              "value": "On the Second Amendment Effective Date, the Total Commitments are $600,000,000. [Increase option: up to $900,000,000 pursuant to Section 2.02; Letter of Credit Sublimit $100,000,000; Swingline Loan Ceiling $60,000,000]",
               "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
               "status": "present",
               "note": "verbatim: ““ Total Commitments ” means the aggregate of the Commitments of all Lenders, as in effect from time to time.  On the First Second Amendment Effective Date, the Total Commitments are $600,000,000.”"
@@ -5290,10 +5354,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "LIBOR Rate Loans: Adjusted LIBOR Rate plus Applicable Margin (LIBOR Applicable Margin per pricing grid: Level I 1.25%, Level II 1.50%). Prime Rate Loans: Prime Rate plus Applicable Margin (Prime Rate Applicable Margin per grid: Level I 0.25%, Level II 0.50%). Default Rate: applicable rate plus two percent (2.00%) per annum. LIBOR floor: 'in no event shall such LIBOR Rate be less than zero'.",
+              "value": "Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Applicable Margin for LIBOR Rate Loans. Applicable Margin pricing grid: Level I (Availability ≥ 40% of Loan Cap): LIBOR 1.25%, Prime 0.25%; Level II (Availability < 40% of Loan Cap): LIBOR 1.50%, Prime 0.50%. Default Rate: applicable rate plus 2.00% per annum. LIBOR floor: not less than zero.",
               "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
               "status": "present",
-              "note": "verbatim: “each Prime Rate Loan shall bear interest ... at a rate per annum that shall be equal to the then Prime Rate plus the Applicable Margin for Prime Rate Loans. ... each LIBOR Rate Loan shall bear interest ... at a rate per annum equal, during each Interest Period applicable thereto, to the Adjusted  LIBOR Rate for such Interest Period, plus the Applicable Margin for LIBOR Rate Loans.”"
+              "note": "verbatim: “each LIBOR Rate Loan shall bear interest (computed on the basis of the actual number of days elapsed over a year of 360 days) at a rate per annum equal, during each Interest Period applicable thereto, to the Adjusted  LIBOR Rate for such Interest Period, plus the Applicable Margin for LIBOR Rate Loans.”"
             },
             "base_rate_label": "Adjusted LIBOR Rate",
             "margin_pct": 1.5,
@@ -5322,7 +5386,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00, springing / tested only during the continuance of a Covenant Compliance Event (Availability less than the greater of $50,000,000 or 10% of the Loan Cap). Section 7.04 provides a Financial Covenant Cure (equity cure).",
+              "value": "Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00 (springing covenant, tested only during the continuance of a Covenant Compliance Event). Covenant Compliance Event = Availability less than the greater of (x) $50,000,000 or (y) 10% of the Loan Cap.",
               "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
               "status": "present",
               "note": "verbatim: “During the continuance of a Covenant Compliance Event, the Loan Parties shall not permit the Consolidated Fixed Charge Coverage Ratio, (i) at all such times during the continuance of a Covenant Compliance Event that monthly financial statements are required to be delivered under SECTION 5.01(c), tested on a trailing twelve month basis commencing with the Fiscal Month most recently ended, to be less than 1.00:1.00 or (ii) on all such other times during the continuance of a Covenant Compliance Event, tested on a trailing four quarter basis commencing with the Fiscal Quarter most recently ended, to be less than 1.00:1.00.”"
@@ -5338,10 +5402,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "First-priority security interest in all Collateral (ABL Priority Collateral), subject to Permitted Encumbrances including Liens in favor of the agent under the Term Loan Financing Facility on Term Loan Priority Collateral. Secured via Security Agreement, Mortgages, Intellectual Property Security Agreement, Pledge Agreement, Facility Guarantee. Guaranteed by Facility Guarantors (Burlington Coat Factory Holdings, LLC; Burlington Coat Factory Investments Holdings, Inc.; and other entities listed on Schedule II). Administrative Agent and Collateral Agent: Bank of America, N.A.",
-              "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
-              "status": "present",
-              "note": "verbatim: “To secure their the Secured Obligations under this ... the Borrowers have granted (or shall grant) to the Collateral Agent, for its benefit and the benefit of the other Secured Parties, a first-priority security interest in ... all of the Collateral pursuant hereto and to the Security Documents”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0001564590-18-016500 · burl-ex101_6.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5354,10 +5418,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory Prepayment (Section 2.17): prepay Revolving Credit Loans if Total Outstandings cause Availability to be less than zero (plus 103% cash collateral of L/C Outstandings); Net Proceeds from a Prepayment Event applied to Obligations per Section 7.03. Events of Default (Section 7.01) include: nonpayment of principal (1 BD grace for 2.17(a) amounts), nonpayment of interest/fees (5 BD grace), incorrect representations, covenant breaches, cross-default on Material Indebtedness, Change in Control, bankruptcy/insolvency, judgments over $75,000,000, ERISA events, invalidity of Loan Documents/Liens, loss of Collateral, termination of Facility Guaranty, indictment, etc.",
+              "value": "Mandatory prepayment (Section 2.17): if Total Outstandings cause Availability to be less than zero, prepay to eliminate deficiency plus 103% cash collateral of L/C Outstandings; daily repayment under Section 2.18 during Cash Dominion Event; Net Proceeds from a Prepayment Event applied per Section 7.03. Events of Default (Section 7.01) include: nonpayment of principal (one Business Day grace under 2.17(a)); nonpayment of interest/fees (5 Business Day grace); incorrect representations/warranties; covenant breaches; cross-default on Material Indebtedness (>$75,000,000); Change in Control; voluntary/involuntary bankruptcy (60 days); monetary judgments >$75,000,000; ERISA Event; Lien invalidity; guaranty termination; indictment; etc.",
               "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
               "status": "present",
-              "note": "verbatim: “Section 2.17 SECTION 2.17 Mandatory Prepayment; Commitment Termination; Cash Collateral ... If at any time the Total Outstandings causes Availability to be less than zero, the Borrowers will, immediately upon notice from the Administrative Agent: (x) prepay the Revolving Credit Loans in an amount necessary to eliminate such deficiency; and (y) ... deposit cash into the Cash Collateral Account in an amount equal to 103% of the Letters of Credit Outstanding.”"
+              "note": "verbatim: “Section 2.17 SECTION 2.17 Mandatory Prepayment; Commitment Termination; Cash Collateral The outstanding Obligations shall be subject to prepayment as follows: If at any time the Total Outstandings causes Availability to be less than zero, the Borrowers will, immediately upon notice from the Administrative Agent: (x) prepay the Revolving Credit Loans in an amount necessary to eliminate such deficiency; and (y) ... deposit cash into the Cash Collateral Account in an amount equal to 103% of the Letters of Credit Outstanding.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5386,7 +5450,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "On the Third Amendment Effective Date, the Total Commitments are $650,000,000.",
+              "value": "On the Third Amendment Effective Date, the Total Commitments are $650,000,000. [Schedule 1.1(a): Bank of America, N.A. $190,000,000; Wells Fargo Bank, National Association $165,000,000; US Bank National Association $85,000,000; JPMorgan Chase Bank, N.A. $85,000,000; Truist Bank $85,000,000; PNC Bank, National Association $40,000,000; TOTAL $650,000,000]",
               "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Total Commitments ” means the aggregate of the Commitments of all Lenders, as in effect from time to time. On the Third Amendment Effective Date, the Total Commitments are $650,000,000.”"
@@ -5402,10 +5466,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Prime Rate Loans: the then Prime Rate plus the Applicable Margin for Prime Rate Loans. LIBOR Rate Loans: the Adjusted LIBOR Rate for such Interest Period, plus the Applicable Margin for LIBOR Rate Loans. Applicable Margin grid: Level I (Availability ≥ 40% of Loan Cap): LIBOR 1.125%, Prime 0.125%; Level II (Availability < 40% of Loan Cap): LIBOR 1.375%, Prime 0.375%.",
+              "value": "Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Applicable Margin for LIBOR Rate Loans. Applicable Margin pricing grid: Level I (Availability equal to or greater than 40% of the Loan Cap): LIBOR 1.125%, Prime Rate 0.125%; Level II (less than 40% of the Loan Cap): LIBOR 1.375%, Prime Rate 0.375%",
               "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
               "status": "present",
-              "note": "verbatim: “each LIBOR Rate Loan shall bear interest (computed on the basis of the actual number of days elapsed over a year of 360 days) at a rate per annum equal, during each Interest Period applicable thereto, to the Adjusted LIBOR Rate for such Interest Period, plus the Applicable Margin for LIBOR Rate Loans.”"
+              "note": "verbatim: “(a) Subject to SECTION 2.12, each Prime Rate Loan shall bear interest ... at a rate per annum that shall be equal to the then Prime Rate plus the Applicable Margin for Prime Rate Loans. (b) Subject to SECTION 2.09 through SECTION 2.12, each LIBOR Rate Loan shall bear interest ... at a rate per annum equal, during each Interest Period applicable thereto, to the Adjusted LIBOR Rate for such Interest Period, plus the Applicable Margin for LIBOR Rate Loans.”"
             },
             "base_rate_label": "LIBOR Rate",
             "margin_pct": null,
@@ -5434,7 +5498,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Springing Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00, tested on a trailing four quarter basis during the continuance of a Covenant Compliance Event (Specified Availability less than the greater of (x) $50,000,000 or (y) 10% of the Loan Cap).",
+              "value": "During the continuance of a Covenant Compliance Event, the Loan Parties shall not permit the Consolidated Fixed Charge Coverage Ratio, tested on a trailing four quarter basis commencing with the Fiscal Quarter most recently ended, to be less than 1.00:1.00. (Covenant Compliance Event = Specified Availability less than the greater of (x) $50,000,000 or (y) 10% of the Loan Cap)",
               "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
               "status": "present",
               "note": "verbatim: “SECTION 6.10 Consolidated Fixed Charge Coverage Ratio . During the continuance of a Covenant Compliance Event, the Loan Parties shall not permit the Consolidated Fixed Charge Coverage Ratio, tested on a trailing four quarter basis commencing with the Fiscal Quarter most recently ended, to be less than 1.00:1.00.”"
@@ -5450,7 +5514,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Obligations secured by a security interest in all of the Collateral granted to the Collateral Agent (Bank of America, N.A.) for the benefit of the Secured Parties, with first priority Liens (subject to Permitted Encumbrances, including Liens in favor of the Term Loan agent on Term Loan Priority Collateral). Guaranteed by the Facility Guarantors pursuant to the Facility Guarantee; “Loan Parties” means the Borrowers and the Facility Guarantors. ABL facility secured on ABL Priority Collateral per the Intercreditor Agreement.",
+              "value": "SECTION 2.26: Borrowers have granted to the Collateral Agent (Bank of America, N.A.), for its benefit and the benefit of the other Secured Parties, a security interest in all of the Collateral pursuant to the Security Document. Collateral Agent: Bank of America, N.A. Facility Guarantors listed on Schedule II: Burlington Coat Factory Holdings, LLC; Burlington Coat Factory Investments Holdings, Inc.; Burlington Coat Factory of Texas, Inc.; Burlington Coat Factory Realty of Edgewater Park, Inc.; Burlington Coat Factory Realty of Pinebrook, Inc.; Burlington Coat Factory Warehouse of Edgewater Park Urban Renewal Corp.; BCF Florence Urban Renewal, L.L.C.; BCF Florence Urban Renewal II, LLC; Burlington Merchandising Corporation. First priority Liens on Collateral subject to Permitted Encumbrances including those in favor of the agent under the Term Loan Financing Facility on any Term Loan Priority Collateral.",
               "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
               "status": "present",
               "note": "verbatim: “To secure the Secured Obligations (as defined in the Security Agreement), the Borrowers have granted (or shall grant) to the Collateral Agent, for its benefit and the benefit of the other Secured Parties, a security interest in all of the Collateral pursuant to the Security Document, with the priority provided for herein or in the other Loan Documents.”"
@@ -5466,7 +5530,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.17): if Total Outstandings cause Availability to be less than zero, prepay Revolving Credit Loans to eliminate deficiency and deposit cash collateral equal to 103% of Letters of Credit Outstanding. Events of Default (Section 7.01) include: (a)/(b) failure to pay principal/interest/fees; (c) incorrect representations/warranties; (d)/(e) failure to perform covenants; (f) cross-default on Material Indebtedness ($75,000,000 threshold); (g) Change in Control; (h)/(i) bankruptcy/insolvency; (k) judgments in excess of $75,000,000; (l) ERISA Event; (m)/(n) challenges to Loan Document validity; (o) Lien perfection failure; (p) termination of Facility Guarantee.",
+              "value": "Mandatory Prepayment (SECTION 2.17): If Total Outstandings causes Availability to be less than zero, Borrowers will immediately prepay Revolving Credit Loans to eliminate the deficiency and, if necessary, deposit cash into the Cash Collateral Account equal to 103% of the Letters of Credit Outstanding. Events of Default (SECTION 7.01): include (a) failure to pay principal/reimbursement obligations; (b) failure to pay interest, fees or other amounts (5 Business Day grace); (c) incorrect representation or warranty; (d)-(e) failure to observe covenants; (f) cross-default to Material Indebtedness; (g) Change in Control; (h)-(i) involuntary/voluntary insolvency proceedings; (k) final judgments in excess of $75,000,000; (l) ERISA Event; (m)-(n) challenges to Loan Document validity; (o) Lien ceasing to be valid and perfected; (p) termination of Facility Guarantee.",
               "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
               "status": "present",
               "note": "verbatim: “SECTION 2.17 Mandatory Prepayment; Commitment Termination; Cash Collateral . The outstanding Obligations shall be subject to prepayment as follows: (a) If at any time the Total Outstandings causes Availability to be less than zero, the Borrowers will, immediately upon notice from the Administrative Agent: (x) prepay the Revolving Credit Loans in an amount necessary to eliminate such deficiency; and (y) if, after giving effect to the prepayment in full of all outstanding Revolving Credit Loans such deficiency has not been eliminated, deposit cash into the Cash Collateral Account in an amount equal to 103% of the Letters of Credit Outstanding.”"
@@ -7430,7 +7494,7 @@
             "note": null
           }
         ],
-        "as_filed_by": "2026-10-21",
+        "as_filed_by": "2026-10-26",
         "source_ref": "CIQ Financials (Annual)→Income Statement 'Total Revenue' and →Cash Flow 'Cash from Ops.' against EDGAR XBRL (the first revenue / operating-cash-flow alias reporting the period)"
       }
     },
@@ -7699,7 +7763,7 @@
       },
       "self_funding": {
         "value": "self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0",
-        "source_ref": "EDGAR latest-Q OCF sign + CIQ LTM FCF sign",
+        "source_ref": "EDGAR OCF sign, quarter to 2026-08-01 + CIQ LTM FCF sign",
         "status": "present",
         "note": null
       },
@@ -7928,7 +7992,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 258.86,
+        "value": 247.63,
         "source_ref": "EOD BURL last close",
         "status": "present",
         "note": null
@@ -7937,13 +8001,13 @@
         "value": 378.33,
         "source_ref": "EOD BURL 52-week high",
         "status": "present",
-        "note": "52-week window 2025-10-16→2026-10-20: spans 369d over 254 bars"
+        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
       },
       "low_52w": {
         "value": 226.85,
         "source_ref": "EOD BURL 52-week low",
         "status": "present",
-        "note": "52-week window 2025-10-16→2026-10-20: spans 369d over 254 bars"
+        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
       },
       "shares_out": {
         "value": 62815195.0,
@@ -7963,7 +8027,7 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-10-20",
+      "as_of": "2026-10-23",
       "market_cap_as_of": "2026-09-25"
     },
     "stock_performance": {
@@ -9475,10 +9539,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "retail market share / cumulative business size",
-          "period": "3-year",
-          "value": "34% bigger than it was 3 years ago",
+          "kind": "leading_indicator",
+          "metric": "cumulative business size vs 3 years ago",
+          "period": "3 years",
+          "value": "34% bigger",
           "value_num": null,
           "unit": null,
           "verbatim": "This means that cumulatively, our business is now 34% bigger than it was 3 years ago.",
@@ -9500,7 +9564,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "gross new store openings",
+          "metric": "gross new stores opened",
           "period": "Q1 2026",
           "value": "40",
           "value_num": null,
@@ -9536,7 +9600,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "occupancy cost reduction from downsized stores",
+          "metric": "downsized stores occupancy cost reduction",
           "period": null,
           "value": "about 200 basis points",
           "value_num": null,
@@ -9549,7 +9613,7 @@
         {
           "kind": "leading_indicator",
           "metric": "sales per selling square foot",
-          "period": "today (2026)",
+          "period": "today",
           "value": "around $350 per square foot",
           "value_num": null,
           "unit": null,
@@ -9560,7 +9624,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "sales per selling square foot",
+          "metric": "sales per selling square foot (2019)",
           "period": "2019",
           "value": "around $220",
           "value_num": null,
@@ -9574,7 +9638,7 @@
           "kind": "leading_indicator",
           "metric": "sales productivity increase",
           "period": "6-year period",
-          "value": "a 55% increase",
+          "value": "55% increase",
           "value_num": null,
           "unit": null,
           "verbatim": "That's a 55% increase in sales productivity in a 6-year period.",
@@ -9584,20 +9648,56 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "total sales growth",
+          "metric": "operating margin expansion",
           "period": "Q1 2026",
-          "value": "14%",
+          "value": "20 basis points",
           "value_num": null,
           "unit": null,
-          "verbatim": "Starting with the first quarter, total sales grew 14%, while comp store sales increased 6%, well above our guidance range of 2% to 4% comp growth.",
-          "following_context": "The gross margin rate for the first quarter was 44.1%, an increase of 30 basis points versus last year. This was driven by a 20 basis point increase in merchandise margin and a 10 basis point decrease in freight expenses. Product sourcing costs were $216 million versus $197 million in the first quarter of 2025. Product sourcing costs decreased 30 basis points as a percentage of sales versus last year as we continue to execute on our supply chain productivity and cost savings initiatives.",
+          "verbatim": "Our operating margin in Q1 expanded by 20 basis points.",
+          "following_context": "This was significantly ahead of our guidance. As a reminder, we had expected a decline of 60 to 100 basis points, driven by headwinds specific to Q1. As it turned out, we rolled right over these headwinds and delivered operating margin expansion that was 100 basis points above the midpoint of our guidance. The drivers of this margin outperformance were higher merchant margin and stronger supply chain productivity.",
+          "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "gross margin rate",
+          "period": "Q1 2026",
+          "value": "44.1%, an increase of 30 basis points",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "The gross margin rate for the first quarter was 44.1%, an increase of 30 basis points versus last year.",
+          "following_context": "This was driven by a 20 basis point increase in merchandise margin and a 10 basis point decrease in freight expenses. Product sourcing costs were $216 million versus $197 million in the first quarter of 2025. Product sourcing costs decreased 30 basis points as a percentage of sales versus last year as we continue to execute on our supply chain productivity and cost savings initiatives.",
+          "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "merchandise margin increase",
+          "period": "Q1 2026",
+          "value": "20 basis point increase",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "This was driven by a 20 basis point increase in merchandise margin and a 10 basis point decrease in freight expenses.",
+          "following_context": "Product sourcing costs were $216 million versus $197 million in the first quarter of 2025. Product sourcing costs decreased 30 basis points as a percentage of sales versus last year as we continue to execute on our supply chain productivity and cost savings initiatives.",
+          "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "product sourcing costs",
+          "period": "Q1 2026",
+          "value": "$216 million versus $197 million",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Product sourcing costs were $216 million versus $197 million in the first quarter of 2025.",
+          "following_context": "Product sourcing costs decreased 30 basis points as a percentage of sales versus last year as we continue to execute on our supply chain productivity and cost savings initiatives.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
           "metric": "comparable store inventories",
-          "period": "end of Q1 2026 vs end of Q1 2025",
+          "period": "end of Q1 2026",
           "value": "increased 11%",
           "value_num": null,
           "unit": null,
@@ -9609,8 +9709,8 @@
         {
           "kind": "leading_indicator",
           "metric": "reserve inventory as % of total inventory",
-          "period": "end of Q1 2026",
-          "value": "41% of our total inventory versus 48% of our inventory last year",
+          "period": "Q1 2026",
+          "value": "41% versus 48%",
           "value_num": null,
           "unit": null,
           "verbatim": "Our reserve inventory was 41% of our total inventory versus 48% of our inventory last year.",
@@ -9620,9 +9720,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "net new stores added / store count",
-          "period": "Q1 2026",
-          "value": "30 net new stores in Q1, bringing our store count at the end of the quarter to 1,242 stores",
+          "metric": "store count",
+          "period": "end of Q1 2026",
+          "value": "1,242 stores",
           "value_num": null,
           "unit": null,
           "verbatim": "This resulted in the addition of 30 net new stores in Q1, bringing our store count at the end of the quarter to 1,242 stores.",
@@ -9634,7 +9734,7 @@
           "kind": "leading_indicator",
           "metric": "total sales growth",
           "period": "Q2 2026",
-          "value": "11%",
+          "value": "11% on top of 10% growth last year",
           "value_num": null,
           "unit": null,
           "verbatim": "Total sales grew 11% on top of 10% growth last year.",
@@ -9644,7 +9744,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "gross new store openings",
+          "metric": "gross new stores opened",
           "period": "Q2 2026",
           "value": "51",
           "value_num": null,
@@ -9668,9 +9768,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "gross new store openings (trailing 12 months)",
-          "period": "trailing 12-month",
-          "value": "178 gross new stores, translating to 149 net new stores",
+          "metric": "trailing 12-month gross new stores",
+          "period": "trailing 12 months",
+          "value": "178 gross new stores, 149 net new stores",
           "value_num": null,
           "unit": null,
           "verbatim": "This means that on a trailing 12-month basis, we have opened an extraordinary 178 gross new stores, translating to 149 net new stores after relocations and closures.",
@@ -9680,9 +9780,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "comp store sales growth",
+          "metric": "comp sales growth",
           "period": "Q2 2026",
-          "value": "2%",
+          "value": "2% on top of 5% comp growth last year",
           "value_num": null,
           "unit": null,
           "verbatim": "Comp sales increased 2% in Q2 on top of 5% comp growth last year.",
@@ -9693,7 +9793,7 @@
         {
           "kind": "leading_indicator",
           "metric": "2-year comp stack",
-          "period": "Q2 2026 2-year",
+          "period": "Q2 2026",
           "value": "7%",
           "value_num": null,
           "unit": null,
@@ -9716,9 +9816,21 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "EPS growth (trailing 4 quarters, excl. tariff refunds)",
+          "metric": "operating margin expansion",
+          "period": "Q2 2026",
+          "value": "100 basis points",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Operating margin expanded 100 basis points, well above the high end of our guidance for 60 basis points of expansion.",
+          "following_context": "As previously mentioned, adjusted EPS increased 38% on top of 39% for the same period last year. This was a high-quality earnings beat driven by stronger merchandise margin as well as supply chain and SG&A leverage. Once again, these results demonstrate our ability to drive strong margin expansion and earnings growth even on relatively modest comp store sales increases.",
+          "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "EPS growth (last 4 quarters, ex tariff refunds)",
           "period": "last 4 quarters",
-          "value": "EPS growth of 24% on total sales growth of 11% and comp store sales growth of 3%",
+          "value": "24% on total sales growth of 11% and comp store sales growth of 3%",
           "value_num": null,
           "unit": null,
           "verbatim": "Over that period, and again, excluding tariff refunds, we have driven EPS growth of 24% on total sales growth of 11% and comp store sales growth of 3%.",
@@ -9728,9 +9840,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "EPS growth (last 8 quarters, excl. tariff refunds)",
+          "metric": "EPS growth (last 8 quarters, 2-year stack)",
           "period": "last 8 quarters",
-          "value": "EPS growth of 51% on 19% total sales growth and 6% comp sales growth on a 2-year stack basis",
+          "value": "51% on 19% total sales growth and 6% comp sales growth",
           "value_num": null,
           "unit": null,
           "verbatim": "Going back even further, over the last 8 quarters, we have driven EPS growth of 51% on 19% total sales growth and 6% comp sales growth on a 2-year stack basis.",
@@ -9740,20 +9852,44 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "total sales growth",
+          "metric": "gross margin rate",
           "period": "Q2 2026",
-          "value": "11%",
+          "value": "44.3%, an increase of 60 basis points",
           "value_num": null,
           "unit": null,
-          "verbatim": "Total sales grew 11%, while comp store sales increased 2%, which was at the midpoint of our guidance range of 1% to 3% comp growth.",
-          "following_context": "The gross margin rate for the second quarter was 44.3%, an increase of 60 basis points versus last year. This was driven by a 70 basis point increase in merchandise margin, which was partially offset by a 10 basis point increase in freight expenses.",
+          "verbatim": "The gross margin rate for the second quarter was 44.3%, an increase of 60 basis points versus last year.",
+          "following_context": "This was driven by a 70 basis point increase in merchandise margin, which was partially offset by a 10 basis point increase in freight expenses.",
+          "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "merchandise margin increase",
+          "period": "Q2 2026",
+          "value": "70 basis point increase",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "This was driven by a 70 basis point increase in merchandise margin, which was partially offset by a 10 basis point increase in freight expenses.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "product sourcing costs",
+          "period": "Q2 2026",
+          "value": "$226 million versus $209 million",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Product sourcing costs were $226 million versus $209 million in the second quarter of 2025.",
+          "following_context": "Product sourcing costs decreased 20 basis points as a percentage of sales versus last year. Supply chain was the driver of the leverage as we continue to execute on our productivity and cost savings initiatives. We achieved leverage in supply chain despite the start-up of our new state-of-the-art Savannah distribution center.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
           "metric": "comparable store inventories",
-          "period": "end of Q2 2026 vs end of Q2 2025",
+          "period": "end of Q2 2026",
           "value": "increased 11%",
           "value_num": null,
           "unit": null,
@@ -9765,8 +9901,8 @@
         {
           "kind": "leading_indicator",
           "metric": "reserve inventory as % of total inventory",
-          "period": "end of Q2 2026",
-          "value": "43% of our total inventory versus 50% of our inventory last year",
+          "period": "Q2 2026",
+          "value": "43% versus 50%",
           "value_num": null,
           "unit": null,
           "verbatim": "Our reserve inventory was 43% of our total inventory versus 50% of our inventory last year.",
@@ -9776,9 +9912,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "net new stores added / store count",
-          "period": "Q2 2026",
-          "value": "45 net new stores in Q2, bringing our store count at the end of the quarter to 1,287 stores",
+          "metric": "store count",
+          "period": "end of Q2 2026",
+          "value": "1,287 stores",
           "value_num": null,
           "unit": null,
           "verbatim": "This resulted in the addition of 45 net new stores in Q2, bringing our store count at the end of the quarter to 1,287 stores.",
@@ -9793,78 +9929,83 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — rising absolute EBITDA and a raised guide offset by decelerating comps, downward revisions, and a forward multiple that is not actually cheap.",
+    "evidence_balance": "strongly-bullish — multiple at own-history floor while absolute EBITDA, margins and guidance all rise on a self-funding, growing base.",
     "bull_points": [
       {
-        "claim": "The de-rate is idiosyncratic — BURL fell ~24% over 180d while the mid-cap benchmark was roughly flat (-0.8%), a -23.5% relative move that is a stock-specific re-rating rather than a market wash-out.",
-        "source_ref": "EOD BURL−MDY 180d to 2026-10-16 (assembly, cap-band)",
+        "claim": "The drawdown is idiosyncratic and sharp — the name fell 24% over 180 days while the mid-cap benchmark was roughly flat, as a gradual bleed with no discrete gap-down, so the de-rate is a sentiment unwind rather than a disclosed impairment.",
+        "source_ref": "EOD BURL-MDY 180d to 2026-10-16 (assembly, cap-band)",
+        "cited": false
+      },
+      {
+        "claim": "The EV/EBITDA multiple sits at its own-history near-floor (8%ile of 38 quarterly closes, 9.0x vs median 12.8x) even as the underlying business is compounding, framing the move as an overshoot off trough sentiment rather than a terminal re-rating.",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "cited": true
       },
       {
-        "claim": "Absolute EBITDA has risen every year through the de-rate: $1,048M (FY25) → $1,241M (FY26) → $1,361M (LTM Aug-01-2026), so the compression is a multiple event, not an earnings collapse.",
+        "claim": "Absolute EBITDA is rising steadily through the de-rate — $1,048M (FY25) → $1,241M (FY26) → $1,361M LTM — so the lower multiple is being applied to a larger, growing earnings base, not a shrinking one.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Management raised full-year 2026 earnings guidance at the Aug-27 print (total sales now +10% to 11%), a mechanism directly opposite to a terminal-decline narrative.",
-        "source_ref": "CIQ Key Developments: Burlington Stores Inc NYSE BURL Key Developments.rtf · Aug-27-2026",
-        "cited": true
-      },
-      {
-        "claim": "The growth is driven by a validated, physical store-expansion engine — 178 gross / 149 net new stores on a trailing-12-month basis — which underpins the +11% Q2 total-sales growth.",
+        "claim": "Operating margin EXPANDED 100bps in Q2, well above the guided 60bps, a high-quality beat driven by merchandise margin plus supply-chain and SG&A leverage on only 2% comp — the earnings engine is intact, not impaired.",
         "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Fundamental_deltas show BURL screening BETTER than the peer median on the growth axes that justify a premium — rev growth 11% vs 9%, EBITDA growth 22% vs 13%, LT EPS growth 17% vs 8% — so the peer-multiple premium (EV/EBITDA 9x vs 7.1x) may be EARNED rather than residual overshoot; the human judges whether a HETEROGENEOUS peer set (caps $2.8B–$143.1B) supports that read.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "claim": "New-store expansion is the structural growth driver — 178 gross / 149 net new stores on a trailing-12-month basis — and management raised full-year guidance, pointing to revenue momentum that is self-generated rather than cyclical.",
+        "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "On its own 9.2-year history the trailing EV/EBITDA sits at 9.0x — the 8th percentile, near the floor of an 8.3–43.4x range — a level only seen near prior troughs; a possible overshoot if earnings hold, though trailing-only (see unknowns).",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
+        "claim": "Sales productivity has stepped up structurally (around $350/sq ft vs ~$220 in 2019, a 55% gain) as growth shifts into smaller, more productive formats, supporting future occupancy leverage.",
+        "source_ref": "CIQ transcript: Burlington Stores, Inc., Q1 2027 Earnings Call, May 28, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The balance sheet self-funds: LTM FCF positive and interest coverage 18.4x, so the de-rate does not carry a liquidity-forced-outcome mechanism.",
+        "claim": "The business is self-funding with ample coverage — FCF-positive, interest coverage 18.4x, and ~$1.6B total liquidity with an undrawn ABL — so survival is not in question even at 3.8x net-debt/EBITDA.",
         "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Aug-01-2026]",
         "cited": true
       },
       {
-        "claim": "Sell-side still carries a Buy consensus (1.00) with mean target $364.75 vs a $258.86 close, i.e. the Street has not re-rated the business to terminal even after the drawdown.",
+        "claim": "On growth metrics the name screens AHEAD of the peer median — revenue growth 11% vs 9%, EBITDA growth 22% vs 13%, LT EPS growth 17% vs 8% — posing whether any valuation premium is EARNED by superior fundamentals rather than a value trap; note the peer set is heterogeneous ($2.8B–$143.1B caps) so this is a confidence-gated read.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Sell-side remains constructive post-drawdown with a Buy consensus and mean target $364.75 vs a $247.63 close, indicating analysts read the move as dislocation rather than deterioration.",
         "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The forward multiple is NOT cheap once struck off estimates: NTM EV/EBITDA 13.75x vs peer median 9.49x and NTM P/E 21.12x vs 16.65x — BURL trades at a premium forward, so the 'near-floor trailing 9x' is partly an artifact of the trailing-vs-forward basis gap, not a clean discount.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "claim": "A genuine counter-point, OUTWEIGHED by rising absolute EBITDA and 100bps margin expansion: the headline cross-sectional multiples sit at a PREMIUM to peers (EV/EBITDA 9.0x vs 7.1x median, +27%; P/E 22.9x vs 16.3x, +40%), but the peer set is HETEROGENEOUS ($2.8B–$143.1B, 51x cap spread) so the 'premium' is a confidence-gated optical read, not a clean terminal signal.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "cited": true
       },
       {
-        "claim": "Comp momentum is decelerating and increasingly carried by new stores rather than same-store demand — Q2 comp +2% vs Q1 +6%, with cannibalization from the heavy opening pace now ~1.5pts of comp headwind, a genuine signal of softening underlying traffic that the consensus beat partly masks.",
-        "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "The broker revision tape at the de-rate is overwhelmingly negative — e.g. Guggenheim cut FY27 EPS Normalized 11.77→11.17 and the next-2-FQ breadth is near-uniformly down (EPS Normalized FQ3 2m 0↑/16↓) — estimates are being marked down into the print, the real signal behind the gradual bleed.",
-        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
-        "cited": true
-      },
-      {
-        "claim": "Leverage is elevated versus the comp set on both bases — net-debt/EBITDA 3.8x and comps total-debt/EBITDA 2.5x vs peer median 1.6x — and credit health scores weaker than peers (Overall 4 vs 2, BB+), a genuine load-bearing structural disadvantage.",
+        "claim": "A genuine counter-point, OUTWEIGHED by 18.4x interest coverage and self-funding FCF: leverage runs richer than peers at 2.5x total-debt/EBITDA (3.8x net-debt) vs peer median 1.6x, and the S&P issuer rating is BB+ (sub-investment-grade) — a real structural gap but not a near-term solvency threat.",
         "source_ref": "CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-25",
         "cited": true
       },
       {
-        "claim": "Insiders sold only — 0 buys vs 47 sells ($14.30M, 5 insiders) over 182 days with no purchase in the 3y scanned — no insider is stepping in against the drawdown.",
-        "source_ref": "EDGAR Form 4 (latest 0001641994-26-000001; 143 filings in the 1095d scanned; counts over 182d)",
+        "claim": "A genuine counter-point, OUTWEIGHED by raised FY guidance and 100bps margin beat: forward estimate revisions skewed DOWNWARD into the drawdown — Guggenheim cut FY27 EPS normalized to $11.17 and the next-2-quarter breadth is heavily negative (EBITDA FQ3/FQ4 0 up / 8 down) — signalling near-term consensus softening even as the full-year guide rose.",
+        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
         "cited": true
       },
       {
-        "claim": "The Q2 earnings optics were flattered by a $55M tariff refund (+$0.64 EPS) that management plans to fully reinvest in the back half, so reported momentum overstates the clean underlying earnings trajectory.",
+        "claim": "A genuine counter-point, OUTWEIGHED by management's stated economics of the program: underlying comp growth is decelerating to 2% in Q2 (from 6% in Q1), partly because new-store cannibalization is now worth ~1.5pts of comp — the growth is increasingly expansion-driven rather than same-store demand.",
         "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "A genuine counter-point, OUTWEIGHED by FCF-positive self-funding: capex has ballooned ($493M FY24 → $880M FY25 → $1,060M FY26) driving FCF down to a thin $105–107M LTM despite strong CFO, so the aggressive store rollout is consuming most of the cash it generates.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Aug-01-2026]",
+        "cited": true
+      },
+      {
+        "claim": "A genuine counter-point, OUTWEIGHED by consistent recent delivery (EPS floor beaten 49/52): insiders sold $14.3M across 47 open-market sales with zero buys over 182 days, offering no insider conviction at the depressed price.",
+        "source_ref": "EDGAR Form 4 (latest 0001641994-26-000001; 143 filings in the 1095d scanned; counts over 182d)",
         "cited": true
       }
     ],
@@ -9872,75 +10013,75 @@
       {
         "name": "The TJX Companies",
         "outcome": "recovered",
-        "distinguishing_fact": "Off-price apparel/home model that compounded via disciplined new-store and comp growth, re-rating through periodic multiple scares while absolute earnings kept rising.",
+        "distinguishing_fact": "Off-price apparel peer whose model of treasure-hunt value retailing and relentless store expansion proved durable through consumer-spending cycles, the pattern the bull case projects onto this name.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Ross Stores",
         "outcome": "recovered",
-        "distinguishing_fact": "Direct off-price peer whose premium multiple has been sustained by consistent unit growth and margin flow-through — the EARNED-premium analogue for BURL's growth-axis edge.",
+        "distinguishing_fact": "Direct off-price peer that periodically de-rated on soft-comp scares yet re-rated as margin expansion and new-store productivity reasserted — the overshoot-then-revert analogue.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Gap",
         "outcome": "went terminal",
-        "distinguishing_fact": "Specialty apparel retailer whose multiple compressed to a low single-digit EV/EBITDA on negative EBITDA growth — the value-trap analogue if BURL's comp deceleration proves structural.",
+        "distinguishing_fact": "Apparel retail peer whose comp stagnation and negative EBITDA growth left it stuck at a low multiple — the value-trap pattern if same-store demand truly fades rather than just cannibalizes.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Target Corporation",
+        "name": "Bed Bath & Beyond",
         "outcome": "went terminal",
-        "distinguishing_fact": "Large general-merchandise retailer that de-rated on stalled comps and margin pressure despite scale — the pattern if new-store unit growth masks fading same-store demand.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "Big-box retailer whose aggressive store footprint and leverage left it exposed when comps rolled over and liquidity tightened — the cautionary analogue for an expansion-funded model if demand stalls.",
+        "source": "[LLM-suggested, unverified]"
       },
       {
-        "name": "Five Below",
+        "name": "Burlington Stores (2022 trough)",
         "outcome": "recovered",
-        "distinguishing_fact": "Value-retail unit-growth story that endured a sharp sentiment de-rate while the physical expansion engine kept compounding sales — the overshoot-on-a-growth-name analogue.",
-        "source": "[LLM-suggested, unverified]"
+        "distinguishing_fact": "The name's own 2022 arc, when EV/EBITDA bottomed near its historical floor on margin pressure and then re-rated as EBITDA recovered — a resolved self-analogue for the current near-floor multiple.",
+        "source": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       }
     ],
     "decisive_question": {
-      "question": "Is the underlying same-store demand decelerating structurally (making the new-store-led growth a mask over fading comps and a justified de-rate), or is the comp softness a temporary, cannibalization-and-weather-driven dip over which a proven unit-growth engine keeps compounding earnings?",
+      "question": "Is the de-rate an overshoot on a temporarily decelerating comp that the proven margin-and-expansion engine will grow through, or the start of a real demand-and-return erosion as the model becomes dependent on store-count growth and cannibalization?",
       "evidence_for": [
         {
-          "claim": "Comp growth halved quarter-over-quarter (Q1 +6% → Q2 +2%) and management itself attributes ~1.5pts of the Q2 comp headwind to new-store cannibalization, signalling the organic base is thinner than the headline total-sales growth implies.",
+          "claim": "Operating margin expanded 100bps above a 60bps guide on just 2% comp, and management raised full-year guidance — the earnings engine converts modest comp into strong flow-through.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Forward estimates are being cut and the next-2-FQ revision breadth is near-uniformly downward, consistent with analysts reading the comp softness as a durable mark-down.",
-          "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+          "claim": "Absolute EBITDA keeps rising ($1,241M FY26 → $1,361M LTM) and the EV/EBITDA multiple is at its 8%ile floor, consistent with a mean-revert setup on a growing base.",
+          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Over the trailing 4 quarters EPS grew 24% on 11% total-sales and 3% comp growth (ex-tariff-refunds), and over 8 quarters 51% EPS on a 2-year comp stack of 6% — the model has repeatedly converted modest comps into strong earnings flow-through.",
+          "claim": "Comp decelerated to 2% in Q2 from 6% in Q1 with ~1.5pts of that drag now from new-store cannibalization, raising the question of whether same-store demand is actually weakening.",
           "source_ref": "CIQ transcript: Burlington Stores, Inc., Q2 2027 Earnings Call, Aug 27, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Management RAISED full-year 2026 guidance at the de-rate print (total sales now +10% to 11%), inconsistent with a structural demand break.",
-          "source_ref": "CIQ Key Developments: Burlington Stores Inc NYSE BURL Key Developments.rtf · Aug-27-2026",
+          "claim": "Forward consensus is being cut (Guggenheim FY27 EPS normalized to $11.17; next-2-quarter EBITDA breadth 0 up / 8 down), indicating the Street sees near-term earnings risk despite the raised annual guide.",
+          "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Trailing EV/EBITDA of 9.0x is 'trailing only — no forward basis' and the estimate EBITDA row runs on a different D&A add-back basis (2.16x the actuals), so the near-floor trailing multiple cannot be cleanly compared to the forward multiple — overshoot-vs-earned is unresolved on this leg alone.",
-      "No revised/adjusted forward EV/EBITDA or net-debt/adjusted-EBITDA is available at the drawdown (ev_ebitda_adjusted_fwd and net_debt_to_ebitda_adjusted both UNKNOWN) — the company-adjusted leverage picture is a gap.",
-      "Peer set is flagged HETEROGENEOUS (caps $2.8B–$143.1B, 51x span) — every peer-median multiple and delta is a confidence-gated input, not a clean benchmark; the human must weight comparability before reading any discount/premium.",
-      "Single-segment, single-geography reporting (Retail-Apparel, US) with no segment-EBITDA breakout and CIQ disclosing no customers — limited granularity to isolate where the comp softness originates; treat the absence as a risk, not neutral.",
-      "Back-half earnings guidance is held, not raised, and leans on reinvesting the $55M tariff refund to 'sharpen values' — the clean (ex-refund) back-half trajectory and whether the reinvestment defends comps is unresolved.",
-      "Export/as-of dating is a FLOOR (≥2026-09-22, export date unverified) and the capital-structure panel is 211d old — the wall-coherence read on the Dec-2027 convert ($297.1M) is UNKNOWN from the filing basis."
+      "No forward/adjusted EV/EBITDA basis is available at the drawdown (ev_ebitda_adjusted_fwd UNKNOWN), so the trailing 9.0x cannot be cleanly distinguished from a forward-depressed level — the overshoot-vs-terminal question stays open.",
+      "Single-segment reporting (Retail-Apparel) with no segment-EBITDA breakout and no disclosed customers — the opacity means the consolidated number cannot be decomposed to isolate where comp softness is concentrated (treat as a bearish disclosure gap).",
+      "The $297.1M 1.25% convertible matures 2027-12-15; wall coherence is UNKNOWN from the filing and no refinance/repay path is disclosed — a near-term capital-structure item left unresolved.",
+      "Covenant basis for the 3.8x leverage is UNKNOWN (not disclosed); the springing fixed-charge covenant exists but headroom at the depressed price is not quantifiable from the facts.",
+      "Whether the tariff-refund reinvestment into 'sharper values' in the back half protects comp or masks underlying demand softness — management frames it as neutral to full-year earnings but the comp effect is not isolable.",
+      "The actual trigger for the 24% idiosyncratic bleed is not identified (no catalyst 8-K, no gap-down) — the market's specific concern is unstated and must be resolved independently."
     ],
     "draw_agreement": {
       "attempted": 5,
       "completed": 5,
       "labels": {
-        "mixed": 3,
-        "strongly-bullish": 2
+        "mixed": 2,
+        "strongly-bullish": 3
       },
       "unanimous": false
     }
@@ -9948,24 +10089,31 @@
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Burlington Stores, the off-price apparel and home retailer, followed as an OVERSHOOT candidate by operator decision 2026-09-28. At $256.85 on 2026-09-22 it is 31.0% below its 52-week closing high of $372.19 (2026-07-30) and 13.0% above the low of $227.28 (2026-09-15), trailing IWM by 18.2 points over the window — the only one of the three retail follows that is genuinely de-rated. Its EV/EBITDA of 9.0x sits BELOW a 12.8x own-history median (38 closes, 9.5 years), so the multiple says overshoot. The question the underwrite has to answer is whether the margin does: on an 11-year reported median operating margin of 7.5% the R1 anchor is $183, which is BELOW spot — cheap on multiple is not the same as cheap on mid-cycle earnings, and the two disagree here. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
     "primary-source: 8-K 0001193125-26-332853 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+3.7s fetch)",
+    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+4.3s fetch)",
     "Net debt/EBITDA (3.8x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.8x as the covenant-basis leverage.",
-    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bullish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
+    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 2, 'strongly-bullish': 3}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Interest / coupon rate · 8-K 0001193125-25-168007 · d946952dex101.htm",
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Security / collateral / guarantors · 8-K 0001564590-18-016500 · burl-ex101_6.htm",
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0001193125-26-116001 · burl-ex10_39.htm declares itself no agreement at all",
     "(E5) exhibit not extracted (cost bound): Convertible Senior Notes 2.25% Mature on April 15 2025·d393601dex101.htm",
     "(E5) exhibit not extracted (cost bound): Senior Secured Term Loan Facility Term B-7 Loans·d772516dex101.htm",
-    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)"
+    "operating-drivers: Tier-B row dropped — value figure 14 not in its quote (retail market share proxy via total sales)",
+    "UNCITED bull_point: 'The drawdown is idiosyncratic and sharp — the name fell 24% over 180…' (ref not in mechanical facts)",
+    "TWIN 'Burlington Stores (2022 trough)' has numbers ['2022'] — must be non-numeric",
+    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
+    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
+    "TWIN ampersand-name 'Bed Bath & Beyond' — verify it is a single entity (kept)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-10-21T08:30:26.254326Z",
+  "assembled_at": "2026-10-26T15:23:39.294580Z",
   "extraction_version": "2026-10-09.3",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/02c47c64-e9cb-4955-a987-7de5008cdeca/scratchpad/wt-ra/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory--claude-worktrees-ai-agent-team-practices-e005c8/a08ef917-84bf-4d59-9bc3-5b40b1f95038/scratchpad/wt-pass/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-10-20"
+    "frontier": "2026-10-23"
   },
   "sector": "Consumer Discretionary",
   "industry": {
@@ -14006,10 +14154,10 @@
       "snapshot_market_cap": null,
       "snapshot_tev": null,
       "snapshot_reconciles": null,
-      "page_price": 258.86,
-      "page_price_as_of": "2026-10-20",
+      "page_price": 247.63,
+      "page_price_as_of": "2026-10-23",
       "days_price_after_snapshot": null,
-      "value_at_page_price": 12.83905,
+      "value_at_page_price": 12.320633,
       "value_at_page_price_basis": "(page price × point-in-time shares + net debt excluding operating leases) ÷ the history's latest LTM EBITDA — mechanical.valuation.ev_ebitda_ex_lease_at_price"
     },
     "history_series": "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV less operating leases / LTM EBITDA)",
@@ -14078,9 +14226,9 @@
   "date_semantics": {
     "screen_reference_date": "2026-10-16",
     "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
-    "analysis_as_of": "2026-10-20",
+    "analysis_as_of": "2026-10-23",
     "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
-    "price_as_of": "2026-10-20",
+    "price_as_of": "2026-10-23",
     "market_cap_as_of": "2026-09-25",
     "tev_as_of": "2026-09-25",
     "consensus_as_of": "≥2026-09-22",
@@ -14088,55 +14236,15 @@
     "historical_multiple_latest_observation": "2026-09-25",
     "historical_multiple_history_through": "2026-06-30",
     "stock_performance_as_of": "2026-10-16",
-    "assembled_at": "2026-10-21T08:30:26.254326Z",
+    "assembled_at": "2026-10-26T15:23:39.294580Z",
     "valuation_snapshot_as_of": "2026-09-25",
-    "price_days_after_valuation_snapshot": 25
+    "price_days_after_valuation_snapshot": 28
   },
-  "layer_refreshes": [
-    {
-      "date": "2026-10-21",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "caveats",
-        "mechanical.financial_summary",
-        "mechanical.primary_source",
-        "mechanical.valuation",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-21",
-      "extraction_version": "2026-10-09.3",
-      "writer": "anchor-backfill",
-      "layers": [
-        "anchor"
-      ]
-    },
-    {
-      "date": "2026-10-23",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.primary_source",
-        "mechanical.valuation"
-      ]
-    },
-    {
-      "date": "2026-10-26",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.financial_summary"
-      ]
-    }
-  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-21T11:18:47.472187Z",
+    "computed_at": "2026-10-26T15:40:48.283008Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [

@@ -2,7 +2,7 @@
   "ticker": "LLY",
   "name": "ELI LILLY & Co",
   "cik": "0000059478",
-  "reference_date": "2026-09-22",
+  "reference_date": "2026-10-16",
   "rank": null,
   "sleeve": "quality",
   "mechanical": {
@@ -14,16 +14,16 @@
         "note": null
       },
       "pe": {
-        "value": 50.986492374727675,
+        "value": 55.4884531590414,
         "source_ref": "EDGAR XBRL eps_diluted × EOD latest stored close",
         "status": "present",
         "note": "distorted — trailing EPS 22.95 is anomalous vs the recent median 8.76; not a clean multiple — see the P/E-basis flag"
       },
       "pe_percentile_5y": {
-        "value": 0.2610619469026549,
+        "value": 0.3726315789473684,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y, at the latest stored close",
         "status": "present",
-        "note": "452 P/E observations over 1825d; price 2026-09-22 ÷ annual diluted EPS for the period ending 2025-12-31 (265d old, filed 2026-02-12)"
+        "note": "475 P/E observations over 1825d; price 2026-10-23 ÷ annual diluted EPS for the period ending 2025-12-31 (296d old, filed 2026-02-12)"
       },
       "ev_ebitda": {
         "value": 25.8,
@@ -41,13 +41,13 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "adjusted figure not in the 99.1 revised guidance"
+        "note": "no revised guidance at the drawdown to read an adjusted figure from"
       },
       "adjusted_eps": {
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "adjusted figure not in the 99.1 revised guidance"
+        "note": "no revised guidance at the drawdown to read an adjusted figure from; the newest EX-99.1 release, 8-K 0000059478-26-000077 EX-99.1 (filed 2026-08-05), states no annual adjusted-EPS guide the parser reads"
       },
       "range_position": {
         "value": "EV/EBITDA (TEV/LTM) 25.8x as-of 2026-09-21 — trailing range 13.3–61.9x (median 26.1x) over 38 closes → 50%ile → below-center; P/LTM EPS 39.1x",
@@ -419,36 +419,36 @@
             "column": "FY26E",
             "eps_basis": "EPS (Normalized)",
             "eps": 36.73,
-            "multiple": 31.8579,
-            "price": 1170.14,
-            "price_as_of": "2026-09-22"
+            "multiple": 34.6708,
+            "price": 1273.46,
+            "price_as_of": "2026-10-23"
           },
           {
             "label": "P/FY26E (GAAP)",
             "column": "FY26E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 35.17,
-            "multiple": 33.271,
-            "price": 1170.14,
-            "price_as_of": "2026-09-22"
+            "multiple": 36.2087,
+            "price": 1273.46,
+            "price_as_of": "2026-10-23"
           },
           {
             "label": "P/FY27E (normalized)",
             "column": "FY27E",
             "eps_basis": "EPS (Normalized)",
             "eps": 47.34,
-            "multiple": 24.7178,
-            "price": 1170.14,
-            "price_as_of": "2026-09-22"
+            "multiple": 26.9003,
+            "price": 1273.46,
+            "price_as_of": "2026-10-23"
           },
           {
             "label": "P/FY27E (GAAP)",
             "column": "FY27E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 44.49,
-            "multiple": 26.3012,
-            "price": 1170.14,
-            "price_as_of": "2026-09-22"
+            "multiple": 28.6235,
+            "price": 1273.46,
+            "price_as_of": "2026-10-23"
           }
         ],
         "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
@@ -608,7 +608,7 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "adjusted figure not in the 99.1 revised guidance"
+        "note": "no revised guidance at the drawdown to read an adjusted figure from"
       },
       "survival_capacity": {
         "value": "net-debt/EBITDA 1.1x (CIQ) | FCF sign UNKNOWN — runway not assessable (a risk)",
@@ -994,20 +994,20 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": 0.30450390189520626,
-        "source_ref": "EOD LLY 180d to 2026-09-22",
+        "value": 0.35597553477233745,
+        "source_ref": "EOD LLY 180d to 2026-10-16",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.1988714752980203,
-        "source_ref": "EOD SPY 180d to 2026-09-22 (cap-band: $1038.3B @ 2026-09-22 → large (>$25B) → SPY)",
+        "value": 0.07478806995803655,
+        "source_ref": "EOD SPY 180d to 2026-10-16 (cap-band: $1038.3B @ 2026-10-16 → large (>$25B) → SPY)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": 0.10563242659718597,
-        "source_ref": "EOD LLY−SPY 180d to 2026-09-22 (assembly, cap-band)",
+        "value": 0.2811874648143009,
+        "source_ref": "EOD LLY−SPY 180d to 2026-10-16 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -1024,7 +1024,7 @@
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
       },
       "benchmark_symbol": "SPY",
-      "benchmark_basis": "cap-band: $1038.3B @ 2026-09-22 → large (>$25B) → SPY"
+      "benchmark_basis": "cap-band: $1038.3B @ 2026-10-16 → large (>$25B) → SPY"
     },
     "consensus_context": {
       "consensus_levels": {
@@ -1244,7 +1244,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "EPS Normalized: latest guide '35.50 - 36.50' for FY 2026 (dated 2026-08-05) (stale — 48d old); actual ≥ guided floor 36/40 resolved; most recent guidance outcome: FY 2025 MET; EPS (GAAP): latest guide '21.80 - 22.50' for FY 2025 (dated 2025-10-30) (stale — 327d old); actual ≥ guided floor 19/36 resolved; most recent guidance outcome: FY 2025 MET; DPS: latest guide 1.73 for FQ3 2026 (dated 2026-06-22) (stale — 92d old); none adjudicated · 24 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated); Revenue: latest guide '85,000.00 - 87,000.00' for FY 2026 (dated 2026-08-05) (stale — 48d old); actual ≥ guided floor 15/16 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MET; EBIT: latest guide '8,265.00 - 8,410.00' for FY 2022 (dated 2022-12-13) (stale — 1379d old); actual ≥ guided floor 2/4 resolved; most recent guidance outcome: FY 2022 MISSED; Net Income (Excl. Excep): latest guide 2,900.0 for FY 2014 (dated 2014-10-23) (stale — 4352d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FY 2014 MET; Net Income (GAAP): latest guide 2,600.0 for FY 2014 (dated 2014-10-23) (stale — 4352d old); actual ≥ guided floor 3/4 resolved; most recent guidance outcome: FY 2014 MISSED; Capital Expenditure: latest guide -1,200.0 for FY 2018 (dated 2018-11-06) (stale — 2877d old); spend ≤ guided ceiling 10/14 resolved; most recent guidance outcome: FY 2018 MISSED; Cash From Operations: latest guide 4,000.0 for FY 2014 (dated 2014-10-23) (stale — 4352d old); actual ≥ guided floor 4/4 resolved; most recent guidance outcome: FY 2014 MET; Gross Margin %: latest guide 83.2 for FQ1 2026 (dated 2026-02-04) (stale — 230d old); actual ≥ guided floor 6/10 resolved · 4 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ1 2026 MISSED; Effective Tax Rate %: latest guide '18.00 - 19.00' for FY 2026 (dated 2026-08-05) (stale — 48d old); spend ≤ guided ceiling 8/14 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MISSED  [data ≥ 2026-09-17 · export date unverified]",
+        "value": "EPS Normalized: latest guide '35.50 - 36.50' for FY 2026 (dated 2026-08-05) (stale — 72d old); actual ≥ guided floor 36/40 resolved; most recent guidance outcome: FY 2025 MET; EPS (GAAP): latest guide '21.80 - 22.50' for FY 2025 (dated 2025-10-30) (stale — 351d old); actual ≥ guided floor 19/36 resolved; most recent guidance outcome: FY 2025 MET; DPS: latest guide 1.73 for FQ3 2026 (dated 2026-06-22) (stale — 116d old); none adjudicated · 24 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated); Revenue: latest guide '85,000.00 - 87,000.00' for FY 2026 (dated 2026-08-05) (stale — 72d old); actual ≥ guided floor 15/16 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MET; EBIT: latest guide '8,265.00 - 8,410.00' for FY 2022 (dated 2022-12-13) (stale — 1403d old); actual ≥ guided floor 2/4 resolved; most recent guidance outcome: FY 2022 MISSED; Net Income (Excl. Excep): latest guide 2,900.0 for FY 2014 (dated 2014-10-23) (stale — 4376d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FY 2014 MET; Net Income (GAAP): latest guide 2,600.0 for FY 2014 (dated 2014-10-23) (stale — 4376d old); actual ≥ guided floor 3/4 resolved; most recent guidance outcome: FY 2014 MISSED; Capital Expenditure: latest guide -1,200.0 for FY 2018 (dated 2018-11-06) (stale — 2901d old); spend ≤ guided ceiling 10/14 resolved; most recent guidance outcome: FY 2018 MISSED; Cash From Operations: latest guide 4,000.0 for FY 2014 (dated 2014-10-23) (stale — 4376d old); actual ≥ guided floor 4/4 resolved; most recent guidance outcome: FY 2014 MET; Gross Margin %: latest guide 83.2 for FQ1 2026 (dated 2026-02-04) (stale — 254d old); actual ≥ guided floor 6/10 resolved · 4 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ1 2026 MISSED; Effective Tax Rate %: latest guide '18.00 - 19.00' for FY 2026 (dated 2026-08-05) (stale — 72d old); spend ≤ guided ceiling 8/14 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MISSED  [data ≥ 2026-09-17 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1256,7 +1256,7 @@
             "latest_guide": "'35.50 - 36.50'",
             "period": "FY 2026",
             "dated": "2026-08-05",
-            "age": "48d (stale)",
+            "age": "72d (stale)",
             "record": "actual ≥ floor 36/40",
             "most_recent": "FY 2025 MET"
           },
@@ -1265,7 +1265,7 @@
             "latest_guide": "'21.80 - 22.50'",
             "period": "FY 2025",
             "dated": "2025-10-30",
-            "age": "327d (stale)",
+            "age": "351d (stale)",
             "record": "actual ≥ floor 19/36",
             "most_recent": "FY 2025 MET"
           },
@@ -1274,7 +1274,7 @@
             "latest_guide": "1.73",
             "period": "FQ3 2026",
             "dated": "2026-06-22",
-            "age": "92d (stale)",
+            "age": "116d (stale)",
             "record": "— · 24 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ2 2026 AT GUIDE (±0.5% of a point)"
           },
@@ -1283,7 +1283,7 @@
             "latest_guide": "'85,000.00 - 87,000.00'",
             "period": "FY 2026",
             "dated": "2026-08-05",
-            "age": "48d (stale)",
+            "age": "72d (stale)",
             "record": "actual ≥ floor 15/16 · 2 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FY 2025 MET"
           },
@@ -1292,7 +1292,7 @@
             "latest_guide": "'8,265.00 - 8,410.00'",
             "period": "FY 2022",
             "dated": "2022-12-13",
-            "age": "1379d (stale)",
+            "age": "1403d (stale)",
             "record": "actual ≥ floor 2/4",
             "most_recent": "FY 2022 MISSED"
           },
@@ -1301,7 +1301,7 @@
             "latest_guide": "2,900.0",
             "period": "FY 2014",
             "dated": "2014-10-23",
-            "age": "4352d (stale)",
+            "age": "4376d (stale)",
             "record": "actual ≥ floor 1/1",
             "most_recent": "FY 2014 MET"
           },
@@ -1310,7 +1310,7 @@
             "latest_guide": "2,600.0",
             "period": "FY 2014",
             "dated": "2014-10-23",
-            "age": "4352d (stale)",
+            "age": "4376d (stale)",
             "record": "actual ≥ floor 3/4",
             "most_recent": "FY 2014 MISSED"
           },
@@ -1319,7 +1319,7 @@
             "latest_guide": "-1,200.0",
             "period": "FY 2018",
             "dated": "2018-11-06",
-            "age": "2877d (stale)",
+            "age": "2901d (stale)",
             "record": "spend ≤ ceiling 10/14",
             "most_recent": "FY 2018 MISSED"
           },
@@ -1328,7 +1328,7 @@
             "latest_guide": "4,000.0",
             "period": "FY 2014",
             "dated": "2014-10-23",
-            "age": "4352d (stale)",
+            "age": "4376d (stale)",
             "record": "actual ≥ floor 4/4",
             "most_recent": "FY 2014 MET"
           },
@@ -1337,7 +1337,7 @@
             "latest_guide": "83.2",
             "period": "FQ1 2026",
             "dated": "2026-02-04",
-            "age": "230d (stale)",
+            "age": "254d (stale)",
             "record": "actual ≥ floor 6/10 · 4 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ1 2026 MISSED"
           },
@@ -1346,7 +1346,7 @@
             "latest_guide": "'18.00 - 19.00'",
             "period": "FY 2026",
             "dated": "2026-08-05",
-            "age": "48d (stale)",
+            "age": "72d (stale)",
             "record": "spend ≤ ceiling 8/14 · 1 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FY 2025 MISSED"
           }
@@ -4119,14 +4119,14 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 6 (5 insiders, $34.59M) — in the last 182 days · last purchase $0.49M, EVP & CFO, 2025-08-15 (~13mo ago) · largest purchase $1.05M, President, Chair, and CEO, 2025-08-12 (~13mo ago) · last sale $7.64M, EVP & President, LLY Int'l, 2026-08-17 (~1mo ago) · largest sale $57664.29M, 10% owner, 2025-11-14 (~10mo ago) · grants 243 · last filing 2026-09-22 · other F×39/G×19/M×39",
-        "source_ref": "EDGAR Form 4 (latest 0001262388-26-000018; 393 filings in the 1095d scanned; counts over 182d)",
+        "value": "Open-market buys 0 · sells 6 (5 insiders, $34.59M) — in the last 182 days · last purchase $0.49M, EVP & CFO, 2025-08-15 (~14mo ago) · largest purchase $1.05M, President, Chair, and CEO, 2025-08-12 (~14mo ago) · last sale $7.64M, EVP & President, LLY Int'l, 2026-08-17 (~2mo ago) · largest sale $57664.29M, 10% owner, 2025-11-14 (~11mo ago) · grants 247 · last filing 2026-10-20 · other F×39/G×19/M×39",
+        "source_ref": "EDGAR Form 4 (latest 0001262388-26-000020; 396 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-09-15): 7.9M → 7.5M sh (-4.7%, falling) · 0.8% of shares out (EDGAR XBRL) · DTC 2.8d · recent: 2026-09-15 7.5M · 2026-08-31 7.9M · 2026-08-14 6.6M · 2026-07-31 9.1M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-09-15); DTC = 7,519,918 short ÷ 2,680,748 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-09-30): 7.5M → 7.0M sh (-6.4%, falling) · 0.7% of shares out (EDGAR XBRL) · DTC 2.8d · recent: 2026-09-30 7.0M · 2026-09-15 7.5M · 2026-08-31 7.9M · 2026-08-14 6.6M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-09-30); DTC = 7,035,434 short ÷ 2,474,522 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -4138,7 +4138,7 @@
           "expected_date": "2026-10-28",
           "date_basis": "cadence-estimate",
           "tests_what": "the next reported quarter against the committed trajectory",
-          "source_ref": "cadence: EDGAR submissions (median 84d gap over 23 results 8-Ks; last print 2026-08-05)"
+          "source_ref": "cadence: EDGAR submissions (median 84d gap over 22 results 8-Ks; last print 2026-08-05)"
         },
         {
           "event": "4.500% Notes Due 2027 * $1,000.0M matures",
@@ -4181,6 +4181,20 @@
           "date_basis": "stated",
           "tests_what": "refinance / repay / convert before the wall — the survival read",
           "source_ref": "CIQ capital-structure panel (maturity_date)"
+        },
+        {
+          "event": "4.000 Percent Fixed-rate Notes Due in 2028 * $1,000.0M matures",
+          "expected_date": "2028-10-15",
+          "date_basis": "stated",
+          "tests_what": "refinance / repay / convert before the wall — the survival read",
+          "source_ref": "CIQ capital-structure panel (maturity_date)"
+        },
+        {
+          "event": "Floating-rate Notes Due in 2028 * $750.0M matures",
+          "expected_date": "2028-10-15",
+          "date_basis": "stated",
+          "tests_what": "refinance / repay / convert before the wall — the survival read",
+          "source_ref": "CIQ capital-structure panel (maturity_date)"
         }
       ],
       "qa_flags": []
@@ -4215,6 +4229,26 @@
         "source_ref": null,
         "status": "unknown",
         "note": "Credit Health Panel: scale direction ambiguous — not rendered"
+      },
+      "credit_health_panels": {
+        "value": [
+          {
+            "population_kind": "industry",
+            "population": "Pharmaceuticals (GICS industry)",
+            "n": 22,
+            "overall": 1,
+            "operational": 1,
+            "solvency": 1,
+            "liquidity": 2,
+            "primary": true,
+            "scale_basis": "declared: the export's own Top…Bottom labels match its table on all four",
+            "sp_long_term_issuer": "AA-",
+            "data_through": "2026-09-18"
+          }
+        ],
+        "source_ref": "CIQ Credit Health Panel export→Summary (industry peers; export date not stamped)",
+        "status": "present",
+        "note": "comps panel: Credit Health Panel: scale direction ambiguous — not rendered"
       }
     },
     "implied_valuation": {
@@ -5066,7 +5100,7 @@
         "note": "(P3) 8-K body at 8-K 0000059478-26-000077 (2026-08-05) states no maturity-resolution event"
       },
       "panel_vintage": {
-        "value": "the debt schedule is 222d old (source filed 2026-02-12); no Item 1.02 (termination of a material agreement) has been filed since",
+        "value": "the debt schedule is 246d old (source filed 2026-02-12); no Item 1.02 (termination of a material agreement) has been filed since",
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-12-2026",
         "status": "present",
         "note": null
@@ -5187,8 +5221,8 @@
         }
       ],
       "line": {
-        "value": "shelf registrations 1 (S-3ASR, last 2025-02-19); prospectus supplements 10 (424B2, last 2026-05-08) — 3y window to 2026-09-22",
-        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-09-23→2026-09-22 · latest 0001193125-26-213175",
+        "value": "shelf registrations 1 (S-3ASR, last 2025-02-19); prospectus supplements 10 (424B2, last 2026-05-08) — 3y window to 2026-10-16",
+        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-10-17→2026-10-16 · latest 0001193125-26-213175",
         "status": "present",
         "note": null
       },
@@ -5278,8 +5312,8 @@
         }
       ],
       "line": {
-        "value": "no 13D on file · Schedule 13G filings 16 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-07-23) — 3y window to 2026-09-22",
-        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-09-23→2026-09-22 · latest 0000316011-26-000029",
+        "value": "no 13D on file · Schedule 13G filings 16 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-07-23) — 3y window to 2026-10-16",
+        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-10-17→2026-10-16 · latest 0000316011-26-000029",
         "status": "present",
         "note": null
       },
@@ -5339,16 +5373,16 @@
           "ticker": "JNJ",
           "is_subject": false,
           "market_cap": 649395.4,
-          "acquired": 96708.0,
-          "total_assets": 201061.0,
-          "pct_assets": 0.4809883567673492,
-          "pct_market_cap": 0.14892005702535002,
+          "acquired": 95126.0,
+          "total_assets": 197425.0,
+          "pct_assets": 0.48183360769912625,
+          "pct_market_cap": 0.1464839449124524,
           "note": null,
           "impairment": {
             "state": "none-in-window",
             "state_label": "no annual obs.",
-            "window_start": "2021-06-28",
-            "window_end": "2026-06-28",
+            "window_start": "2021-09-27",
+            "window_end": "2026-09-27",
             "observations": 0,
             "charged_years": 0,
             "total": null,
@@ -5569,10 +5603,10 @@
       "size_floor": 1000.0,
       "subject_pct_assets": 0.1894744980074921,
       "subject_pct_market_cap": 0.02596373475212044,
-      "median_all_assets": 0.46684238145486295,
-      "median_all_market_cap": 0.1650290714408052,
-      "median_large_assets": 0.46684238145486295,
-      "median_large_market_cap": 0.1650290714408052,
+      "median_all_assets": 0.46726500692075146,
+      "median_all_market_cap": 0.16381101538435638,
+      "median_large_assets": 0.46726500692075146,
+      "median_large_market_cap": 0.16381101538435638,
       "n_all": 8,
       "n_large": 8,
       "imp_window_years": 5,
@@ -6806,7 +6840,7 @@
             "note": null
           }
         ],
-        "as_filed_by": "2026-09-30",
+        "as_filed_by": "2026-10-26",
         "source_ref": "CIQ Financials (Annual)→Income Statement 'Total Revenue' and →Cash Flow 'Cash from Ops.' against EDGAR XBRL (the first revenue / operating-cash-flow alias reporting the period)"
       }
     },
@@ -6910,7 +6944,7 @@
       },
       "self_funding": {
         "value": "self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0",
-        "source_ref": "EDGAR latest-Q OCF sign + CIQ LTM FCF sign",
+        "source_ref": "EDGAR OCF sign, quarter to 2026-06-30 + CIQ LTM FCF sign",
         "status": "present",
         "note": null
       },
@@ -6929,7 +6963,7 @@
         "note": null
       },
       "current_guide": {
-        "value": "revenue 2026: 80,000.0–83,000.0 $M",
+        "value": "revenue 2026: 80,000.0–83,000.0 $M — 2 newer releases (filed 2026-04-30, 2026-08-05) carry no parsed guide: verify this one still governs",
         "source_ref": "8-K 0000059478-26-000008 EX-99.1 (filed 2026-02-04)",
         "status": "present",
         "note": null
@@ -7129,22 +7163,22 @@
     },
     "stock_info": {
       "price": {
-        "value": 1170.14,
+        "value": 1273.46,
         "source_ref": "EOD LLY last close",
         "status": "present",
-        "note": "PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling"
+        "note": null
       },
       "high_52w": {
-        "value": 1292.65,
+        "value": 1321.21,
         "source_ref": "EOD LLY 52-week high",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
+        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
       },
       "low_52w": {
-        "value": 712.05,
+        "value": 783.8454,
         "source_ref": "EOD LLY 52-week low",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
+        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
       },
       "shares_out": {
         "value": 941357065.0,
@@ -7164,1274 +7198,1274 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-09-22",
+      "as_of": "2026-10-23",
       "market_cap_as_of": "2026-09-21"
     },
     "stock_performance": {
       "points": [
         {
-          "date": "2025-09-23",
+          "date": "2025-10-17",
           "name": 100.0,
           "benchmark": 100.0
         },
         {
-          "date": "2025-09-24",
-          "name": 99.31,
-          "benchmark": 99.68
-        },
-        {
-          "date": "2025-09-25",
-          "name": 95.66,
-          "benchmark": 99.22
-        },
-        {
-          "date": "2025-09-26",
-          "name": 97.0,
-          "benchmark": 99.79
-        },
-        {
-          "date": "2025-09-29",
-          "name": 97.26,
-          "benchmark": 100.07
-        },
-        {
-          "date": "2025-09-30",
-          "name": 102.14,
-          "benchmark": 100.45
-        },
-        {
-          "date": "2025-10-01",
-          "name": 110.5,
-          "benchmark": 100.79
-        },
-        {
-          "date": "2025-10-02",
-          "name": 109.76,
-          "benchmark": 100.91
-        },
-        {
-          "date": "2025-10-03",
-          "name": 112.44,
-          "benchmark": 100.9
-        },
-        {
-          "date": "2025-10-06",
-          "name": 113.13,
-          "benchmark": 101.27
-        },
-        {
-          "date": "2025-10-07",
-          "name": 112.94,
-          "benchmark": 100.89
-        },
-        {
-          "date": "2025-10-08",
-          "name": 113.22,
-          "benchmark": 101.49
-        },
-        {
-          "date": "2025-10-09",
-          "name": 114.51,
-          "benchmark": 101.2
-        },
-        {
-          "date": "2025-10-10",
-          "name": 111.58,
-          "benchmark": 98.46
-        },
-        {
-          "date": "2025-10-13",
-          "name": 109.7,
-          "benchmark": 99.97
-        },
-        {
-          "date": "2025-10-14",
-          "name": 108.75,
-          "benchmark": 99.85
-        },
-        {
-          "date": "2025-10-15",
-          "name": 110.65,
-          "benchmark": 100.3
-        },
-        {
-          "date": "2025-10-16",
-          "name": 109.69,
-          "benchmark": 99.61
-        },
-        {
-          "date": "2025-10-17",
-          "name": 107.48,
-          "benchmark": 100.18
-        },
-        {
           "date": "2025-10-20",
-          "name": 108.3,
-          "benchmark": 101.22
+          "name": 100.76,
+          "benchmark": 101.04
         },
         {
           "date": "2025-10-21",
-          "name": 107.04,
-          "benchmark": 101.22
+          "name": 99.59,
+          "benchmark": 101.04
         },
         {
           "date": "2025-10-22",
-          "name": 108.76,
-          "benchmark": 100.69
+          "name": 101.2,
+          "benchmark": 100.51
         },
         {
           "date": "2025-10-23",
-          "name": 109.91,
-          "benchmark": 101.29
+          "name": 102.27,
+          "benchmark": 101.11
         },
         {
           "date": "2025-10-24",
-          "name": 110.5,
-          "benchmark": 102.12
+          "name": 102.82,
+          "benchmark": 101.94
         },
         {
           "date": "2025-10-27",
-          "name": 110.63,
-          "benchmark": 103.32
+          "name": 102.94,
+          "benchmark": 103.14
         },
         {
           "date": "2025-10-28",
-          "name": 109.79,
-          "benchmark": 103.6
+          "name": 102.15,
+          "benchmark": 103.41
         },
         {
           "date": "2025-10-29",
-          "name": 108.91,
-          "benchmark": 103.65
-        },
-        {
-          "date": "2025-10-30",
-          "name": 113.06,
-          "benchmark": 102.51
-        },
-        {
-          "date": "2025-10-31",
-          "name": 115.51,
-          "benchmark": 102.84
-        },
-        {
-          "date": "2025-11-03",
-          "name": 120.02,
-          "benchmark": 103.04
-        },
-        {
-          "date": "2025-11-04",
-          "name": 121.4,
-          "benchmark": 101.81
-        },
-        {
-          "date": "2025-11-05",
-          "name": 123.94,
-          "benchmark": 102.17
-        },
-        {
-          "date": "2025-11-06",
-          "name": 125.5,
-          "benchmark": 101.07
-        },
-        {
-          "date": "2025-11-07",
-          "name": 123.75,
-          "benchmark": 101.17
-        },
-        {
-          "date": "2025-11-10",
-          "name": 129.41,
-          "benchmark": 102.75
-        },
-        {
-          "date": "2025-11-11",
-          "name": 132.35,
-          "benchmark": 102.98
-        },
-        {
-          "date": "2025-11-12",
-          "name": 136.25,
-          "benchmark": 103.04
-        },
-        {
-          "date": "2025-11-13",
-          "name": 136.93,
-          "benchmark": 101.33
-        },
-        {
-          "date": "2025-11-14",
-          "name": 137.26,
-          "benchmark": 101.31
-        },
-        {
-          "date": "2025-11-17",
-          "name": 136.78,
-          "benchmark": 100.37
-        },
-        {
-          "date": "2025-11-18",
-          "name": 137.9,
-          "benchmark": 99.53
-        },
-        {
-          "date": "2025-11-19",
-          "name": 140.51,
-          "benchmark": 99.91
-        },
-        {
-          "date": "2025-11-20",
-          "name": 139.67,
-          "benchmark": 98.39
-        },
-        {
-          "date": "2025-11-21",
-          "name": 141.86,
-          "benchmark": 99.37
-        },
-        {
-          "date": "2025-11-24",
-          "name": 143.26,
-          "benchmark": 100.83
-        },
-        {
-          "date": "2025-11-25",
-          "name": 148.59,
-          "benchmark": 101.78
-        },
-        {
-          "date": "2025-11-26",
-          "name": 147.84,
-          "benchmark": 102.48
-        },
-        {
-          "date": "2025-11-28",
-          "name": 143.98,
-          "benchmark": 103.04
-        },
-        {
-          "date": "2025-12-01",
-          "name": 141.62,
-          "benchmark": 102.57
-        },
-        {
-          "date": "2025-12-02",
-          "name": 140.05,
-          "benchmark": 102.76
-        },
-        {
-          "date": "2025-12-03",
-          "name": 138.37,
-          "benchmark": 103.12
-        },
-        {
-          "date": "2025-12-04",
-          "name": 135.81,
-          "benchmark": 103.19
-        },
-        {
-          "date": "2025-12-05",
-          "name": 135.25,
-          "benchmark": 103.39
-        },
-        {
-          "date": "2025-12-08",
-          "name": 133.55,
-          "benchmark": 103.08
-        },
-        {
-          "date": "2025-12-09",
-          "name": 131.49,
-          "benchmark": 102.99
-        },
-        {
-          "date": "2025-12-10",
-          "name": 133.02,
-          "benchmark": 103.67
-        },
-        {
-          "date": "2025-12-11",
-          "name": 135.13,
-          "benchmark": 103.91
-        },
-        {
-          "date": "2025-12-12",
-          "name": 137.56,
-          "benchmark": 102.8
-        },
-        {
-          "date": "2025-12-15",
-          "name": 142.2,
-          "benchmark": 102.64
-        },
-        {
-          "date": "2025-12-16",
-          "name": 141.14,
-          "benchmark": 102.36
-        },
-        {
-          "date": "2025-12-17",
-          "name": 139.47,
-          "benchmark": 101.23
-        },
-        {
-          "date": "2025-12-18",
-          "name": 141.49,
-          "benchmark": 102.0
-        },
-        {
-          "date": "2025-12-19",
-          "name": 143.44,
-          "benchmark": 102.62
-        },
-        {
-          "date": "2025-12-22",
-          "name": 144.11,
-          "benchmark": 103.26
-        },
-        {
-          "date": "2025-12-23",
-          "name": 143.46,
-          "benchmark": 103.73
-        },
-        {
-          "date": "2025-12-24",
-          "name": 144.18,
-          "benchmark": 104.1
-        },
-        {
-          "date": "2025-12-26",
-          "name": 144.28,
-          "benchmark": 104.09
-        },
-        {
-          "date": "2025-12-29",
-          "name": 144.41,
-          "benchmark": 103.72
-        },
-        {
-          "date": "2025-12-30",
-          "name": 144.55,
-          "benchmark": 103.59
-        },
-        {
-          "date": "2025-12-31",
-          "name": 143.87,
-          "benchmark": 102.82
-        },
-        {
-          "date": "2026-01-02",
-          "name": 144.63,
-          "benchmark": 103.01
-        },
-        {
-          "date": "2026-01-05",
-          "name": 139.43,
-          "benchmark": 103.7
-        },
-        {
-          "date": "2026-01-06",
-          "name": 142.45,
-          "benchmark": 104.31
-        },
-        {
-          "date": "2026-01-07",
-          "name": 148.34,
-          "benchmark": 103.98
-        },
-        {
-          "date": "2026-01-08",
-          "name": 145.28,
-          "benchmark": 103.97
-        },
-        {
-          "date": "2026-01-09",
-          "name": 142.38,
-          "benchmark": 104.65
-        },
-        {
-          "date": "2026-01-12",
-          "name": 144.72,
-          "benchmark": 104.82
-        },
-        {
-          "date": "2026-01-13",
-          "name": 144.21,
-          "benchmark": 104.61
-        },
-        {
-          "date": "2026-01-14",
-          "name": 143.68,
-          "benchmark": 104.09
-        },
-        {
-          "date": "2026-01-15",
-          "name": 138.29,
-          "benchmark": 104.38
-        },
-        {
-          "date": "2026-01-16",
-          "name": 139.01,
-          "benchmark": 104.29
-        },
-        {
-          "date": "2026-01-20",
-          "name": 139.4,
-          "benchmark": 102.17
-        },
-        {
-          "date": "2026-01-21",
-          "name": 144.38,
-          "benchmark": 103.35
-        },
-        {
-          "date": "2026-01-22",
-          "name": 145.57,
-          "benchmark": 103.89
-        },
-        {
-          "date": "2026-01-23",
-          "name": 142.48,
-          "benchmark": 103.92
-        },
-        {
-          "date": "2026-01-26",
-          "name": 142.27,
-          "benchmark": 104.45
-        },
-        {
-          "date": "2026-01-27",
-          "name": 139.16,
-          "benchmark": 104.87
-        },
-        {
-          "date": "2026-01-28",
-          "name": 137.06,
-          "benchmark": 104.86
-        },
-        {
-          "date": "2026-01-29",
-          "name": 137.1,
-          "benchmark": 104.65
-        },
-        {
-          "date": "2026-01-30",
-          "name": 138.85,
-          "benchmark": 104.34
-        },
-        {
-          "date": "2026-02-02",
-          "name": 139.78,
-          "benchmark": 104.86
-        },
-        {
-          "date": "2026-02-03",
-          "name": 134.34,
-          "benchmark": 103.97
-        },
-        {
-          "date": "2026-02-04",
-          "name": 148.21,
+          "name": 101.33,
           "benchmark": 103.46
         },
         {
-          "date": "2026-02-05",
-          "name": 136.66,
-          "benchmark": 102.17
+          "date": "2025-10-30",
+          "name": 105.19,
+          "benchmark": 102.32
         },
         {
-          "date": "2026-02-06",
-          "name": 141.66,
-          "benchmark": 104.13
+          "date": "2025-10-31",
+          "name": 107.48,
+          "benchmark": 102.66
         },
         {
-          "date": "2026-02-09",
-          "name": 139.85,
-          "benchmark": 104.64
+          "date": "2025-11-03",
+          "name": 111.67,
+          "benchmark": 102.85
         },
         {
-          "date": "2026-02-10",
-          "name": 137.22,
-          "benchmark": 104.36
+          "date": "2025-11-04",
+          "name": 112.96,
+          "benchmark": 101.63
         },
         {
-          "date": "2026-02-11",
-          "name": 135.91,
-          "benchmark": 104.33
+          "date": "2025-11-05",
+          "name": 115.32,
+          "benchmark": 101.99
         },
         {
-          "date": "2026-02-12",
-          "name": 139.0,
-          "benchmark": 102.72
+          "date": "2025-11-06",
+          "name": 116.77,
+          "benchmark": 100.89
         },
         {
-          "date": "2026-02-13",
-          "name": 139.23,
+          "date": "2025-11-07",
+          "name": 115.14,
+          "benchmark": 100.99
+        },
+        {
+          "date": "2025-11-10",
+          "name": 120.4,
+          "benchmark": 102.57
+        },
+        {
+          "date": "2025-11-11",
+          "name": 123.14,
           "benchmark": 102.8
         },
         {
-          "date": "2026-02-17",
-          "name": 138.7,
-          "benchmark": 102.96
+          "date": "2025-11-12",
+          "name": 126.77,
+          "benchmark": 102.86
         },
         {
-          "date": "2026-02-18",
-          "name": 136.62,
-          "benchmark": 103.48
+          "date": "2025-11-13",
+          "name": 127.41,
+          "benchmark": 101.15
         },
         {
-          "date": "2026-02-19",
-          "name": 136.98,
-          "benchmark": 103.21
+          "date": "2025-11-14",
+          "name": 127.71,
+          "benchmark": 101.13
         },
         {
-          "date": "2026-02-20",
-          "name": 135.15,
-          "benchmark": 103.95
+          "date": "2025-11-17",
+          "name": 127.26,
+          "benchmark": 100.19
         },
         {
-          "date": "2026-02-23",
-          "name": 141.71,
-          "benchmark": 102.89
-        },
-        {
-          "date": "2026-02-24",
-          "name": 139.52,
-          "benchmark": 103.64
-        },
-        {
-          "date": "2026-02-25",
-          "name": 137.73,
-          "benchmark": 104.51
-        },
-        {
-          "date": "2026-02-26",
-          "name": 136.82,
-          "benchmark": 103.93
-        },
-        {
-          "date": "2026-02-27",
-          "name": 140.83,
-          "benchmark": 103.43
-        },
-        {
-          "date": "2026-03-02",
-          "name": 136.28,
-          "benchmark": 103.49
-        },
-        {
-          "date": "2026-03-03",
-          "name": 134.91,
-          "benchmark": 102.58
-        },
-        {
-          "date": "2026-03-04",
-          "name": 134.35,
-          "benchmark": 103.31
-        },
-        {
-          "date": "2026-03-05",
-          "name": 131.63,
-          "benchmark": 102.73
-        },
-        {
-          "date": "2026-03-06",
-          "name": 132.58,
-          "benchmark": 101.38
-        },
-        {
-          "date": "2026-03-09",
-          "name": 135.0,
-          "benchmark": 102.27
-        },
-        {
-          "date": "2026-03-10",
-          "name": 134.05,
-          "benchmark": 102.11
-        },
-        {
-          "date": "2026-03-11",
-          "name": 133.85,
-          "benchmark": 101.98
-        },
-        {
-          "date": "2026-03-12",
-          "name": 130.83,
-          "benchmark": 100.43
-        },
-        {
-          "date": "2026-03-13",
-          "name": 131.88,
-          "benchmark": 99.86
-        },
-        {
-          "date": "2026-03-16",
-          "name": 132.42,
-          "benchmark": 100.88
-        },
-        {
-          "date": "2026-03-17",
-          "name": 124.55,
-          "benchmark": 101.14
-        },
-        {
-          "date": "2026-03-18",
-          "name": 122.9,
-          "benchmark": 99.73
-        },
-        {
-          "date": "2026-03-19",
-          "name": 122.83,
-          "benchmark": 99.49
-        },
-        {
-          "date": "2026-03-20",
-          "name": 121.38,
-          "benchmark": 97.79
-        },
-        {
-          "date": "2026-03-23",
-          "name": 121.9,
-          "benchmark": 98.82
-        },
-        {
-          "date": "2026-03-24",
-          "name": 120.89,
-          "benchmark": 98.49
-        },
-        {
-          "date": "2026-03-25",
-          "name": 122.67,
-          "benchmark": 99.04
-        },
-        {
-          "date": "2026-03-26",
-          "name": 120.08,
-          "benchmark": 97.27
-        },
-        {
-          "date": "2026-03-27",
-          "name": 117.57,
-          "benchmark": 95.61
-        },
-        {
-          "date": "2026-03-30",
-          "name": 118.7,
-          "benchmark": 95.29
-        },
-        {
-          "date": "2026-03-31",
-          "name": 123.13,
-          "benchmark": 98.06
-        },
-        {
-          "date": "2026-04-01",
-          "name": 127.78,
-          "benchmark": 98.8
-        },
-        {
-          "date": "2026-04-02",
-          "name": 125.25,
-          "benchmark": 98.89
-        },
-        {
-          "date": "2026-04-06",
-          "name": 124.11,
+          "date": "2025-11-18",
+          "name": 128.3,
           "benchmark": 99.35
         },
         {
-          "date": "2026-04-07",
-          "name": 124.65,
-          "benchmark": 99.4
+          "date": "2025-11-19",
+          "name": 130.74,
+          "benchmark": 99.74
         },
         {
-          "date": "2026-04-08",
-          "name": 127.62,
+          "date": "2025-11-20",
+          "name": 129.95,
+          "benchmark": 98.21
+        },
+        {
+          "date": "2025-11-21",
+          "name": 132.0,
+          "benchmark": 99.19
+        },
+        {
+          "date": "2025-11-24",
+          "name": 133.3,
+          "benchmark": 100.65
+        },
+        {
+          "date": "2025-11-25",
+          "name": 138.25,
+          "benchmark": 101.6
+        },
+        {
+          "date": "2025-11-26",
+          "name": 137.56,
+          "benchmark": 102.3
+        },
+        {
+          "date": "2025-11-28",
+          "name": 133.96,
+          "benchmark": 102.86
+        },
+        {
+          "date": "2025-12-01",
+          "name": 131.77,
+          "benchmark": 102.39
+        },
+        {
+          "date": "2025-12-02",
+          "name": 130.3,
+          "benchmark": 102.58
+        },
+        {
+          "date": "2025-12-03",
+          "name": 128.74,
+          "benchmark": 102.94
+        },
+        {
+          "date": "2025-12-04",
+          "name": 126.36,
+          "benchmark": 103.01
+        },
+        {
+          "date": "2025-12-05",
+          "name": 125.84,
+          "benchmark": 103.21
+        },
+        {
+          "date": "2025-12-08",
+          "name": 124.26,
+          "benchmark": 102.9
+        },
+        {
+          "date": "2025-12-09",
+          "name": 122.34,
+          "benchmark": 102.81
+        },
+        {
+          "date": "2025-12-10",
+          "name": 123.77,
+          "benchmark": 103.49
+        },
+        {
+          "date": "2025-12-11",
+          "name": 125.73,
+          "benchmark": 103.73
+        },
+        {
+          "date": "2025-12-12",
+          "name": 127.99,
+          "benchmark": 102.61
+        },
+        {
+          "date": "2025-12-15",
+          "name": 132.31,
+          "benchmark": 102.46
+        },
+        {
+          "date": "2025-12-16",
+          "name": 131.32,
+          "benchmark": 102.18
+        },
+        {
+          "date": "2025-12-17",
+          "name": 129.76,
+          "benchmark": 101.06
+        },
+        {
+          "date": "2025-12-18",
+          "name": 131.64,
+          "benchmark": 101.82
+        },
+        {
+          "date": "2025-12-19",
+          "name": 133.46,
+          "benchmark": 102.44
+        },
+        {
+          "date": "2025-12-22",
+          "name": 134.09,
+          "benchmark": 103.08
+        },
+        {
+          "date": "2025-12-23",
+          "name": 133.48,
+          "benchmark": 103.55
+        },
+        {
+          "date": "2025-12-24",
+          "name": 134.15,
+          "benchmark": 103.91
+        },
+        {
+          "date": "2025-12-26",
+          "name": 134.24,
+          "benchmark": 103.9
+        },
+        {
+          "date": "2025-12-29",
+          "name": 134.37,
+          "benchmark": 103.53
+        },
+        {
+          "date": "2025-12-30",
+          "name": 134.49,
+          "benchmark": 103.4
+        },
+        {
+          "date": "2025-12-31",
+          "name": 133.86,
+          "benchmark": 102.64
+        },
+        {
+          "date": "2026-01-02",
+          "name": 134.57,
+          "benchmark": 102.83
+        },
+        {
+          "date": "2026-01-05",
+          "name": 129.73,
+          "benchmark": 103.51
+        },
+        {
+          "date": "2026-01-06",
+          "name": 132.54,
+          "benchmark": 104.13
+        },
+        {
+          "date": "2026-01-07",
+          "name": 138.02,
+          "benchmark": 103.79
+        },
+        {
+          "date": "2026-01-08",
+          "name": 135.17,
+          "benchmark": 103.78
+        },
+        {
+          "date": "2026-01-09",
+          "name": 132.48,
+          "benchmark": 104.47
+        },
+        {
+          "date": "2026-01-12",
+          "name": 134.65,
+          "benchmark": 104.63
+        },
+        {
+          "date": "2026-01-13",
+          "name": 134.17,
+          "benchmark": 104.42
+        },
+        {
+          "date": "2026-01-14",
+          "name": 133.69,
+          "benchmark": 103.91
+        },
+        {
+          "date": "2026-01-15",
+          "name": 128.67,
+          "benchmark": 104.19
+        },
+        {
+          "date": "2026-01-16",
+          "name": 129.34,
+          "benchmark": 104.1
+        },
+        {
+          "date": "2026-01-20",
+          "name": 129.7,
+          "benchmark": 101.99
+        },
+        {
+          "date": "2026-01-21",
+          "name": 134.34,
+          "benchmark": 103.16
+        },
+        {
+          "date": "2026-01-22",
+          "name": 135.44,
+          "benchmark": 103.7
+        },
+        {
+          "date": "2026-01-23",
+          "name": 132.57,
+          "benchmark": 103.74
+        },
+        {
+          "date": "2026-01-26",
+          "name": 132.38,
+          "benchmark": 104.27
+        },
+        {
+          "date": "2026-01-27",
+          "name": 129.48,
+          "benchmark": 104.68
+        },
+        {
+          "date": "2026-01-28",
+          "name": 127.52,
+          "benchmark": 104.67
+        },
+        {
+          "date": "2026-01-29",
+          "name": 127.57,
+          "benchmark": 104.46
+        },
+        {
+          "date": "2026-01-30",
+          "name": 129.19,
+          "benchmark": 104.15
+        },
+        {
+          "date": "2026-02-02",
+          "name": 130.06,
+          "benchmark": 104.67
+        },
+        {
+          "date": "2026-02-03",
+          "name": 124.99,
+          "benchmark": 103.78
+        },
+        {
+          "date": "2026-02-04",
+          "name": 137.9,
+          "benchmark": 103.28
+        },
+        {
+          "date": "2026-02-05",
+          "name": 127.16,
+          "benchmark": 101.99
+        },
+        {
+          "date": "2026-02-06",
+          "name": 131.81,
+          "benchmark": 103.95
+        },
+        {
+          "date": "2026-02-09",
+          "name": 130.12,
+          "benchmark": 104.45
+        },
+        {
+          "date": "2026-02-10",
+          "name": 127.67,
+          "benchmark": 104.17
+        },
+        {
+          "date": "2026-02-11",
+          "name": 126.45,
+          "benchmark": 104.15
+        },
+        {
+          "date": "2026-02-12",
+          "name": 129.33,
+          "benchmark": 102.54
+        },
+        {
+          "date": "2026-02-13",
+          "name": 129.54,
+          "benchmark": 102.61
+        },
+        {
+          "date": "2026-02-17",
+          "name": 129.05,
+          "benchmark": 102.78
+        },
+        {
+          "date": "2026-02-18",
+          "name": 127.12,
+          "benchmark": 103.3
+        },
+        {
+          "date": "2026-02-19",
+          "name": 127.45,
+          "benchmark": 103.02
+        },
+        {
+          "date": "2026-02-20",
+          "name": 125.75,
+          "benchmark": 103.77
+        },
+        {
+          "date": "2026-02-23",
+          "name": 131.85,
+          "benchmark": 102.71
+        },
+        {
+          "date": "2026-02-24",
+          "name": 129.81,
+          "benchmark": 103.46
+        },
+        {
+          "date": "2026-02-25",
+          "name": 128.15,
+          "benchmark": 104.33
+        },
+        {
+          "date": "2026-02-26",
+          "name": 127.3,
+          "benchmark": 103.75
+        },
+        {
+          "date": "2026-02-27",
+          "name": 131.04,
+          "benchmark": 103.25
+        },
+        {
+          "date": "2026-03-02",
+          "name": 126.8,
+          "benchmark": 103.31
+        },
+        {
+          "date": "2026-03-03",
+          "name": 125.52,
+          "benchmark": 102.4
+        },
+        {
+          "date": "2026-03-04",
+          "name": 125.0,
+          "benchmark": 103.12
+        },
+        {
+          "date": "2026-03-05",
+          "name": 122.47,
+          "benchmark": 102.55
+        },
+        {
+          "date": "2026-03-06",
+          "name": 123.35,
+          "benchmark": 101.2
+        },
+        {
+          "date": "2026-03-09",
+          "name": 125.6,
+          "benchmark": 102.09
+        },
+        {
+          "date": "2026-03-10",
+          "name": 124.73,
           "benchmark": 101.93
         },
         {
+          "date": "2026-03-11",
+          "name": 124.54,
+          "benchmark": 101.8
+        },
+        {
+          "date": "2026-03-12",
+          "name": 121.73,
+          "benchmark": 100.25
+        },
+        {
+          "date": "2026-03-13",
+          "name": 122.7,
+          "benchmark": 99.68
+        },
+        {
+          "date": "2026-03-16",
+          "name": 123.2,
+          "benchmark": 100.7
+        },
+        {
+          "date": "2026-03-17",
+          "name": 115.88,
+          "benchmark": 100.96
+        },
+        {
+          "date": "2026-03-18",
+          "name": 114.35,
+          "benchmark": 99.55
+        },
+        {
+          "date": "2026-03-19",
+          "name": 114.28,
+          "benchmark": 99.31
+        },
+        {
+          "date": "2026-03-20",
+          "name": 112.94,
+          "benchmark": 97.62
+        },
+        {
+          "date": "2026-03-23",
+          "name": 113.42,
+          "benchmark": 98.64
+        },
+        {
+          "date": "2026-03-24",
+          "name": 112.48,
+          "benchmark": 98.31
+        },
+        {
+          "date": "2026-03-25",
+          "name": 114.13,
+          "benchmark": 98.86
+        },
+        {
+          "date": "2026-03-26",
+          "name": 111.73,
+          "benchmark": 97.1
+        },
+        {
+          "date": "2026-03-27",
+          "name": 109.39,
+          "benchmark": 95.44
+        },
+        {
+          "date": "2026-03-30",
+          "name": 110.44,
+          "benchmark": 95.12
+        },
+        {
+          "date": "2026-03-31",
+          "name": 114.57,
+          "benchmark": 97.89
+        },
+        {
+          "date": "2026-04-01",
+          "name": 118.89,
+          "benchmark": 98.62
+        },
+        {
+          "date": "2026-04-02",
+          "name": 116.54,
+          "benchmark": 98.71
+        },
+        {
+          "date": "2026-04-06",
+          "name": 115.47,
+          "benchmark": 99.18
+        },
+        {
+          "date": "2026-04-07",
+          "name": 115.98,
+          "benchmark": 99.22
+        },
+        {
+          "date": "2026-04-08",
+          "name": 118.74,
+          "benchmark": 101.75
+        },
+        {
           "date": "2026-04-09",
-          "name": 127.87,
-          "benchmark": 102.52
+          "name": 118.98,
+          "benchmark": 102.34
         },
         {
           "date": "2026-04-10",
-          "name": 125.77,
-          "benchmark": 102.45
+          "name": 117.02,
+          "benchmark": 102.27
         },
         {
           "date": "2026-04-13",
-          "name": 124.44,
-          "benchmark": 103.45
+          "name": 115.78,
+          "benchmark": 103.27
         },
         {
           "date": "2026-04-14",
-          "name": 123.5,
-          "benchmark": 104.71
+          "name": 114.91,
+          "benchmark": 104.53
         },
         {
           "date": "2026-04-15",
-          "name": 121.16,
-          "benchmark": 105.54
+          "name": 112.73,
+          "benchmark": 105.35
         },
         {
           "date": "2026-04-16",
-          "name": 121.02,
-          "benchmark": 105.8
+          "name": 112.6,
+          "benchmark": 105.61
         },
         {
           "date": "2026-04-17",
-          "name": 124.1,
-          "benchmark": 107.08
+          "name": 115.47,
+          "benchmark": 106.89
         },
         {
           "date": "2026-04-20",
-          "name": 123.15,
-          "benchmark": 106.86
+          "name": 114.58,
+          "benchmark": 106.67
         },
         {
           "date": "2026-04-21",
-          "name": 120.89,
-          "benchmark": 106.16
+          "name": 112.48,
+          "benchmark": 105.97
         },
         {
           "date": "2026-04-22",
-          "name": 123.36,
-          "benchmark": 107.24
+          "name": 114.78,
+          "benchmark": 107.05
         },
         {
           "date": "2026-04-23",
-          "name": 122.85,
-          "benchmark": 106.82
+          "name": 114.3,
+          "benchmark": 106.63
         },
         {
           "date": "2026-04-24",
-          "name": 118.34,
-          "benchmark": 107.65
+          "name": 110.11,
+          "benchmark": 107.46
         },
         {
           "date": "2026-04-27",
-          "name": 116.24,
-          "benchmark": 107.83
+          "name": 108.15,
+          "benchmark": 107.64
         },
         {
           "date": "2026-04-28",
-          "name": 117.0,
-          "benchmark": 107.31
+          "name": 108.86,
+          "benchmark": 107.12
         },
         {
           "date": "2026-04-29",
-          "name": 113.95,
-          "benchmark": 107.29
+          "name": 106.03,
+          "benchmark": 107.1
         },
         {
           "date": "2026-04-30",
-          "name": 125.12,
-          "benchmark": 108.36
+          "name": 116.41,
+          "benchmark": 108.17
         },
         {
           "date": "2026-05-01",
-          "name": 128.96,
-          "benchmark": 108.66
+          "name": 119.99,
+          "benchmark": 108.47
         },
         {
           "date": "2026-05-04",
-          "name": 129.58,
-          "benchmark": 108.26
+          "name": 120.56,
+          "benchmark": 108.07
         },
         {
           "date": "2026-05-05",
-          "name": 132.38,
-          "benchmark": 109.13
+          "name": 123.17,
+          "benchmark": 108.94
         },
         {
           "date": "2026-05-06",
-          "name": 132.14,
-          "benchmark": 110.65
+          "name": 122.95,
+          "benchmark": 110.45
         },
         {
           "date": "2026-05-07",
-          "name": 130.52,
-          "benchmark": 110.31
+          "name": 121.44,
+          "benchmark": 110.11
         },
         {
           "date": "2026-05-08",
-          "name": 126.97,
-          "benchmark": 111.22
+          "name": 118.14,
+          "benchmark": 111.02
         },
         {
           "date": "2026-05-11",
-          "name": 129.45,
-          "benchmark": 111.47
+          "name": 120.45,
+          "benchmark": 111.28
         },
         {
           "date": "2026-05-12",
-          "name": 132.52,
-          "benchmark": 111.3
+          "name": 123.3,
+          "benchmark": 111.11
         },
         {
           "date": "2026-05-13",
-          "name": 135.98,
-          "benchmark": 111.93
-        },
-        {
-          "date": "2026-05-14",
-          "name": 134.77,
-          "benchmark": 112.81
-        },
-        {
-          "date": "2026-05-15",
-          "name": 134.53,
-          "benchmark": 111.45
-        },
-        {
-          "date": "2026-05-18",
-          "name": 132.28,
-          "benchmark": 111.37
-        },
-        {
-          "date": "2026-05-19",
-          "name": 136.74,
-          "benchmark": 110.63
-        },
-        {
-          "date": "2026-05-20",
-          "name": 136.4,
-          "benchmark": 111.77
-        },
-        {
-          "date": "2026-05-21",
-          "name": 139.45,
-          "benchmark": 111.99
-        },
-        {
-          "date": "2026-05-22",
-          "name": 142.57,
-          "benchmark": 112.43
-        },
-        {
-          "date": "2026-05-26",
-          "name": 142.54,
-          "benchmark": 113.18
-        },
-        {
-          "date": "2026-05-27",
-          "name": 144.97,
-          "benchmark": 113.16
-        },
-        {
-          "date": "2026-05-28",
-          "name": 150.85,
-          "benchmark": 113.78
-        },
-        {
-          "date": "2026-05-29",
-          "name": 147.93,
-          "benchmark": 114.06
-        },
-        {
-          "date": "2026-06-01",
-          "name": 144.88,
-          "benchmark": 114.37
-        },
-        {
-          "date": "2026-06-02",
-          "name": 142.46,
-          "benchmark": 114.53
-        },
-        {
-          "date": "2026-06-03",
-          "name": 144.42,
-          "benchmark": 113.73
-        },
-        {
-          "date": "2026-06-04",
-          "name": 150.64,
-          "benchmark": 114.16
-        },
-        {
-          "date": "2026-06-05",
-          "name": 151.47,
-          "benchmark": 111.21
-        },
-        {
-          "date": "2026-06-08",
-          "name": 153.84,
-          "benchmark": 111.46
-        },
-        {
-          "date": "2026-06-09",
-          "name": 153.24,
-          "benchmark": 111.13
-        },
-        {
-          "date": "2026-06-10",
-          "name": 152.13,
-          "benchmark": 109.38
-        },
-        {
-          "date": "2026-06-11",
-          "name": 155.42,
-          "benchmark": 111.24
-        },
-        {
-          "date": "2026-06-12",
-          "name": 151.68,
-          "benchmark": 111.84
-        },
-        {
-          "date": "2026-06-15",
-          "name": 151.19,
-          "benchmark": 113.81
-        },
-        {
-          "date": "2026-06-16",
-          "name": 150.27,
-          "benchmark": 113.14
-        },
-        {
-          "date": "2026-06-17",
-          "name": 148.87,
-          "benchmark": 111.72
-        },
-        {
-          "date": "2026-06-18",
-          "name": 147.07,
-          "benchmark": 112.59
-        },
-        {
-          "date": "2026-06-22",
-          "name": 147.54,
-          "benchmark": 112.24
-        },
-        {
-          "date": "2026-06-23",
-          "name": 148.21,
-          "benchmark": 110.61
-        },
-        {
-          "date": "2026-06-24",
-          "name": 149.57,
-          "benchmark": 110.56
-        },
-        {
-          "date": "2026-06-25",
-          "name": 150.97,
-          "benchmark": 110.72
-        },
-        {
-          "date": "2026-06-26",
-          "name": 161.73,
-          "benchmark": 109.92
-        },
-        {
-          "date": "2026-06-29",
-          "name": 164.65,
+          "name": 126.52,
           "benchmark": 111.73
         },
         {
-          "date": "2026-06-30",
-          "name": 160.57,
-          "benchmark": 112.6
+          "date": "2026-05-14",
+          "name": 125.39,
+          "benchmark": 112.61
         },
         {
-          "date": "2026-07-01",
-          "name": 159.54,
-          "benchmark": 112.45
+          "date": "2026-05-15",
+          "name": 125.17,
+          "benchmark": 111.26
         },
         {
-          "date": "2026-07-02",
-          "name": 162.51,
-          "benchmark": 112.3
+          "date": "2026-05-18",
+          "name": 123.08,
+          "benchmark": 111.18
         },
         {
-          "date": "2026-07-06",
-          "name": 160.65,
-          "benchmark": 113.28
+          "date": "2026-05-19",
+          "name": 127.23,
+          "benchmark": 110.44
         },
         {
-          "date": "2026-07-07",
-          "name": 165.41,
-          "benchmark": 112.74
+          "date": "2026-05-20",
+          "name": 126.91,
+          "benchmark": 111.57
         },
         {
-          "date": "2026-07-08",
-          "name": 162.77,
+          "date": "2026-05-21",
+          "name": 129.75,
+          "benchmark": 111.79
+        },
+        {
+          "date": "2026-05-22",
+          "name": 132.66,
+          "benchmark": 112.23
+        },
+        {
+          "date": "2026-05-26",
+          "name": 132.62,
+          "benchmark": 112.97
+        },
+        {
+          "date": "2026-05-27",
+          "name": 134.89,
+          "benchmark": 112.95
+        },
+        {
+          "date": "2026-05-28",
+          "name": 140.35,
+          "benchmark": 113.58
+        },
+        {
+          "date": "2026-05-29",
+          "name": 137.64,
+          "benchmark": 113.86
+        },
+        {
+          "date": "2026-06-01",
+          "name": 134.8,
+          "benchmark": 114.17
+        },
+        {
+          "date": "2026-06-02",
+          "name": 132.55,
+          "benchmark": 114.33
+        },
+        {
+          "date": "2026-06-03",
+          "name": 134.37,
+          "benchmark": 113.52
+        },
+        {
+          "date": "2026-06-04",
+          "name": 140.16,
+          "benchmark": 113.95
+        },
+        {
+          "date": "2026-06-05",
+          "name": 140.93,
+          "benchmark": 111.01
+        },
+        {
+          "date": "2026-06-08",
+          "name": 143.14,
+          "benchmark": 111.26
+        },
+        {
+          "date": "2026-06-09",
+          "name": 142.58,
+          "benchmark": 110.94
+        },
+        {
+          "date": "2026-06-10",
+          "name": 141.55,
+          "benchmark": 109.19
+        },
+        {
+          "date": "2026-06-11",
+          "name": 144.61,
+          "benchmark": 111.04
+        },
+        {
+          "date": "2026-06-12",
+          "name": 141.13,
+          "benchmark": 111.64
+        },
+        {
+          "date": "2026-06-15",
+          "name": 140.67,
+          "benchmark": 113.61
+        },
+        {
+          "date": "2026-06-16",
+          "name": 139.82,
+          "benchmark": 112.94
+        },
+        {
+          "date": "2026-06-17",
+          "name": 138.51,
+          "benchmark": 111.52
+        },
+        {
+          "date": "2026-06-18",
+          "name": 136.84,
           "benchmark": 112.39
         },
         {
+          "date": "2026-06-22",
+          "name": 137.27,
+          "benchmark": 112.04
+        },
+        {
+          "date": "2026-06-23",
+          "name": 137.9,
+          "benchmark": 110.41
+        },
+        {
+          "date": "2026-06-24",
+          "name": 139.17,
+          "benchmark": 110.36
+        },
+        {
+          "date": "2026-06-25",
+          "name": 140.46,
+          "benchmark": 110.52
+        },
+        {
+          "date": "2026-06-26",
+          "name": 150.48,
+          "benchmark": 109.72
+        },
+        {
+          "date": "2026-06-29",
+          "name": 153.2,
+          "benchmark": 111.53
+        },
+        {
+          "date": "2026-06-30",
+          "name": 149.4,
+          "benchmark": 112.4
+        },
+        {
+          "date": "2026-07-01",
+          "name": 148.44,
+          "benchmark": 112.25
+        },
+        {
+          "date": "2026-07-02",
+          "name": 151.2,
+          "benchmark": 112.1
+        },
+        {
+          "date": "2026-07-06",
+          "name": 149.48,
+          "benchmark": 113.08
+        },
+        {
+          "date": "2026-07-07",
+          "name": 153.9,
+          "benchmark": 112.54
+        },
+        {
+          "date": "2026-07-08",
+          "name": 151.44,
+          "benchmark": 112.19
+        },
+        {
           "date": "2026-07-09",
-          "name": 162.92,
-          "benchmark": 113.34
+          "name": 151.58,
+          "benchmark": 113.14
         },
         {
           "date": "2026-07-10",
-          "name": 159.12,
-          "benchmark": 113.83
+          "name": 148.05,
+          "benchmark": 113.63
         },
         {
           "date": "2026-07-13",
-          "name": 158.22,
-          "benchmark": 112.96
+          "name": 147.21,
+          "benchmark": 112.76
         },
         {
           "date": "2026-07-14",
-          "name": 154.29,
-          "benchmark": 113.36
+          "name": 143.56,
+          "benchmark": 113.16
         },
         {
           "date": "2026-07-15",
-          "name": 154.84,
-          "benchmark": 113.81
+          "name": 144.07,
+          "benchmark": 113.61
         },
         {
           "date": "2026-07-16",
-          "name": 156.52,
-          "benchmark": 113.19
+          "name": 145.63,
+          "benchmark": 112.99
         },
         {
           "date": "2026-07-17",
-          "name": 157.85,
-          "benchmark": 112.07
+          "name": 146.87,
+          "benchmark": 111.88
         },
         {
           "date": "2026-07-20",
-          "name": 153.54,
-          "benchmark": 111.89
+          "name": 142.86,
+          "benchmark": 111.69
         },
         {
           "date": "2026-07-21",
-          "name": 157.35,
-          "benchmark": 112.83
+          "name": 146.41,
+          "benchmark": 112.63
         },
         {
           "date": "2026-07-22",
-          "name": 155.69,
-          "benchmark": 112.7
+          "name": 144.86,
+          "benchmark": 112.5
         },
         {
           "date": "2026-07-23",
-          "name": 158.76,
-          "benchmark": 111.3
+          "name": 147.71,
+          "benchmark": 111.11
         },
         {
           "date": "2026-07-24",
-          "name": 160.12,
-          "benchmark": 111.42
+          "name": 148.98,
+          "benchmark": 111.22
         },
         {
           "date": "2026-07-27",
-          "name": 160.32,
-          "benchmark": 111.44
+          "name": 149.16,
+          "benchmark": 111.24
         },
         {
           "date": "2026-07-28",
-          "name": 163.41,
-          "benchmark": 111.71
+          "name": 152.04,
+          "benchmark": 111.51
         },
         {
           "date": "2026-07-29",
-          "name": 161.99,
-          "benchmark": 109.99
+          "name": 150.72,
+          "benchmark": 109.79
         },
         {
           "date": "2026-07-30",
-          "name": 154.62,
-          "benchmark": 111.83
+          "name": 143.86,
+          "benchmark": 111.63
         },
         {
           "date": "2026-07-31",
-          "name": 153.8,
-          "benchmark": 112.64
+          "name": 143.1,
+          "benchmark": 112.44
         },
         {
           "date": "2026-08-03",
-          "name": 150.12,
-          "benchmark": 114.24
+          "name": 139.68,
+          "benchmark": 114.04
         },
         {
           "date": "2026-08-04",
-          "name": 149.36,
-          "benchmark": 116.3
+          "name": 138.97,
+          "benchmark": 116.1
         },
         {
           "date": "2026-08-05",
-          "name": 156.61,
-          "benchmark": 116.07
+          "name": 145.72,
+          "benchmark": 115.86
         },
         {
           "date": "2026-08-06",
-          "name": 159.57,
-          "benchmark": 115.88
+          "name": 148.47,
+          "benchmark": 115.68
         },
         {
           "date": "2026-08-07",
-          "name": 158.73,
-          "benchmark": 116.59
+          "name": 147.69,
+          "benchmark": 116.39
         },
         {
           "date": "2026-08-10",
-          "name": 164.92,
-          "benchmark": 116.56
+          "name": 153.45,
+          "benchmark": 116.35
         },
         {
           "date": "2026-08-11",
-          "name": 162.66,
-          "benchmark": 116.19
+          "name": 151.34,
+          "benchmark": 115.98
         },
         {
           "date": "2026-08-12",
-          "name": 163.36,
-          "benchmark": 116.48
-        },
-        {
-          "date": "2026-08-13",
-          "name": 161.85,
-          "benchmark": 117.29
-        },
-        {
-          "date": "2026-08-14",
-          "name": 157.99,
-          "benchmark": 117.06
-        },
-        {
-          "date": "2026-08-17",
-          "name": 158.39,
-          "benchmark": 116.5
-        },
-        {
-          "date": "2026-08-18",
-          "name": 164.09,
-          "benchmark": 115.72
-        },
-        {
-          "date": "2026-08-19",
-          "name": 171.4,
-          "benchmark": 115.96
-        },
-        {
-          "date": "2026-08-20",
-          "name": 166.59,
-          "benchmark": 114.99
-        },
-        {
-          "date": "2026-08-21",
-          "name": 168.06,
-          "benchmark": 115.46
-        },
-        {
-          "date": "2026-08-24",
-          "name": 166.93,
-          "benchmark": 115.12
-        },
-        {
-          "date": "2026-08-25",
-          "name": 165.15,
-          "benchmark": 115.49
-        },
-        {
-          "date": "2026-08-26",
-          "name": 159.23,
-          "benchmark": 115.51
-        },
-        {
-          "date": "2026-08-27",
-          "name": 157.45,
+          "name": 152.0,
           "benchmark": 116.27
         },
         {
+          "date": "2026-08-13",
+          "name": 150.59,
+          "benchmark": 117.08
+        },
+        {
+          "date": "2026-08-14",
+          "name": 147.0,
+          "benchmark": 116.85
+        },
+        {
+          "date": "2026-08-17",
+          "name": 147.37,
+          "benchmark": 116.3
+        },
+        {
+          "date": "2026-08-18",
+          "name": 152.68,
+          "benchmark": 115.51
+        },
+        {
+          "date": "2026-08-19",
+          "name": 159.48,
+          "benchmark": 115.75
+        },
+        {
+          "date": "2026-08-20",
+          "name": 155.0,
+          "benchmark": 114.78
+        },
+        {
+          "date": "2026-08-21",
+          "name": 156.37,
+          "benchmark": 115.25
+        },
+        {
+          "date": "2026-08-24",
+          "name": 155.32,
+          "benchmark": 114.91
+        },
+        {
+          "date": "2026-08-25",
+          "name": 153.66,
+          "benchmark": 115.28
+        },
+        {
+          "date": "2026-08-26",
+          "name": 148.15,
+          "benchmark": 115.31
+        },
+        {
+          "date": "2026-08-27",
+          "name": 146.49,
+          "benchmark": 116.06
+        },
+        {
           "date": "2026-08-28",
-          "name": 157.25,
-          "benchmark": 116.0
+          "name": 146.31,
+          "benchmark": 115.8
         },
         {
           "date": "2026-08-31",
-          "name": 154.85,
-          "benchmark": 115.66
+          "name": 144.08,
+          "benchmark": 115.45
         },
         {
           "date": "2026-09-01",
-          "name": 155.29,
-          "benchmark": 114.86
+          "name": 144.49,
+          "benchmark": 114.66
         },
         {
           "date": "2026-09-02",
-          "name": 155.3,
-          "benchmark": 115.37
+          "name": 144.5,
+          "benchmark": 115.17
         },
         {
           "date": "2026-09-03",
-          "name": 155.24,
-          "benchmark": 116.58
+          "name": 144.44,
+          "benchmark": 116.37
         },
         {
           "date": "2026-09-04",
-          "name": 153.87,
-          "benchmark": 116.13
+          "name": 143.16,
+          "benchmark": 115.92
         },
         {
           "date": "2026-09-08",
-          "name": 150.46,
-          "benchmark": 115.49
+          "name": 139.99,
+          "benchmark": 115.29
         },
         {
           "date": "2026-09-09",
-          "name": 150.5,
-          "benchmark": 114.96
+          "name": 140.03,
+          "benchmark": 114.75
         },
         {
           "date": "2026-09-10",
-          "name": 150.34,
-          "benchmark": 114.27
+          "name": 139.88,
+          "benchmark": 114.06
         },
         {
           "date": "2026-09-11",
-          "name": 149.36,
-          "benchmark": 115.24
+          "name": 138.97,
+          "benchmark": 115.04
         },
         {
           "date": "2026-09-14",
-          "name": 152.38,
-          "benchmark": 114.73
+          "name": 141.78,
+          "benchmark": 114.52
         },
         {
           "date": "2026-09-15",
-          "name": 152.09,
-          "benchmark": 114.2
+          "name": 141.51,
+          "benchmark": 114.0
         },
         {
           "date": "2026-09-16",
-          "name": 152.32,
-          "benchmark": 113.7
+          "name": 141.73,
+          "benchmark": 113.5
         },
         {
           "date": "2026-09-17",
-          "name": 154.28,
-          "benchmark": 114.99
+          "name": 143.55,
+          "benchmark": 114.78
         },
         {
           "date": "2026-09-18",
-          "name": 154.35,
-          "benchmark": 114.85
+          "name": 143.61,
+          "benchmark": 114.65
         },
         {
           "date": "2026-09-21",
-          "name": 155.95,
-          "benchmark": 116.63
+          "name": 145.1,
+          "benchmark": 116.42
         },
         {
           "date": "2026-09-22",
-          "name": 156.65,
-          "benchmark": 116.61
+          "name": 145.75,
+          "benchmark": 116.4
+        },
+        {
+          "date": "2026-09-23",
+          "name": 143.37,
+          "benchmark": 115.57
+        },
+        {
+          "date": "2026-09-24",
+          "name": 147.22,
+          "benchmark": 115.47
+        },
+        {
+          "date": "2026-09-25",
+          "name": 147.41,
+          "benchmark": 116.1
+        },
+        {
+          "date": "2026-09-28",
+          "name": 147.58,
+          "benchmark": 115.24
+        },
+        {
+          "date": "2026-09-29",
+          "name": 147.56,
+          "benchmark": 115.02
+        },
+        {
+          "date": "2026-09-30",
+          "name": 144.13,
+          "benchmark": 114.79
+        },
+        {
+          "date": "2026-10-01",
+          "name": 143.22,
+          "benchmark": 114.99
+        },
+        {
+          "date": "2026-10-02",
+          "name": 142.35,
+          "benchmark": 115.84
+        },
+        {
+          "date": "2026-10-05",
+          "name": 142.39,
+          "benchmark": 116.62
+        },
+        {
+          "date": "2026-10-06",
+          "name": 144.18,
+          "benchmark": 117.26
+        },
+        {
+          "date": "2026-10-07",
+          "name": 148.07,
+          "benchmark": 116.98
+        },
+        {
+          "date": "2026-10-08",
+          "name": 145.68,
+          "benchmark": 116.49
+        },
+        {
+          "date": "2026-10-09",
+          "name": 146.89,
+          "benchmark": 117.19
+        },
+        {
+          "date": "2026-10-12",
+          "name": 147.31,
+          "benchmark": 117.11
+        },
+        {
+          "date": "2026-10-13",
+          "name": 145.3,
+          "benchmark": 117.1
+        },
+        {
+          "date": "2026-10-14",
+          "name": 150.56,
+          "benchmark": 115.84
+        },
+        {
+          "date": "2026-10-15",
+          "name": 155.9,
+          "benchmark": 116.17
+        },
+        {
+          "date": "2026-10-16",
+          "name": 156.57,
+          "benchmark": 114.88
         }
       ],
       "name_symbol": "LLY",
       "benchmark_symbol": "SPY",
-      "as_of": "2026-09-22",
+      "as_of": "2026-10-16",
       "window_days": 364,
-      "name_return": 0.5664944175212188,
-      "benchmark_return": 0.16611631308333696,
-      "source_ref": "EOD LLY vs SPY rebased to 100, 2025-09-23..2026-09-22"
+      "name_return": 0.5657486641007434,
+      "benchmark_return": 0.1487981456674543,
+      "source_ref": "EOD LLY vs SPY rebased to 100, 2025-10-17..2026-10-16"
     },
     "operating_drivers": {
       "rows": [
@@ -9853,19 +9887,31 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Mounjaro and Zepbound combined global revenue",
-          "period": "Q1 2026",
-          "value": "$12.8 billion combined, contributing $6.7 billion of growth compared to Q1 2025",
+          "metric": "key products revenue growth (dollar)",
+          "period": "Q1 2026 vs Q1 2025",
+          "value": "more than $7 billion",
           "value_num": null,
           "unit": null,
-          "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound global revenue was $12.8 billion combined, contributing $6.7 billion of growth compared to Q1 2025.",
-          "following_context": "As seen on Slide 9, the U.S. incretin analog market continued robust growth in Q1. The recent approval of oral GLP-1s expanded the market, enabling more people to benefit from the GLP-1s. Within the U.S. incretin analog obesity market, total prescriptions grew by over 80% in Q1, and Zepbound prescriptions grew at even faster rate.",
+          "verbatim": "Our key products currently defined as Ebglyss, Inluriyo, Jaypirca, Kisunla, Mounjaro, Omvoh, and Zepbound grew by more than $7 billion.",
+          "following_context": "Within key products, our Immunology, Oncology and Neuroscience medicines collectively grew by 160% compared to the same quarter last year as we continue to invest to drive growth across all of our therapeutic areas.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Immunology, Oncology and Neuroscience collective growth",
+          "period": "Q1 2026 vs same quarter last year",
+          "value": "160%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Within key products, our Immunology, Oncology and Neuroscience medicines collectively grew by 160% compared to the same quarter last year as we continue to invest to drive growth across all of our therapeutic areas.",
+          "following_context": null,
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "pricing_action",
-          "metric": "U.S. price",
+          "metric": "U.S. price change",
           "period": "Q1 2026",
           "value": "declined by 7%",
           "value_num": null,
@@ -9877,9 +9923,9 @@
         },
         {
           "kind": "pricing_action",
-          "metric": "U.S. price excluding rebate/discount adjustment",
+          "metric": "U.S. price change excluding one-time rebate adjustment",
           "period": "Q1 2026",
-          "value": "declined 10%",
+          "value": "would have declined 10%",
           "value_num": null,
           "unit": null,
           "verbatim": "Excluding this impact, U.S. price will have declined 10%.",
@@ -9890,8 +9936,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Ebglyss U.S. new patient starts",
-          "period": "Q1 2026",
-          "value": "increased by 90% compared to Q1 2025",
+          "period": "Q1 2026 vs Q1 2025",
+          "value": "increased by 90%",
           "value_num": null,
           "unit": null,
           "verbatim": "U.S. new patient starts increased by 90% compared to Q1 2025, and we steadily gained share within the specialty dermatology market.",
@@ -9902,8 +9948,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Jaypirca worldwide sales growth",
-          "period": "Q1 2026",
-          "value": "grew 79% compared to Q1 2025",
+          "period": "Q1 2026 vs Q1 2025",
+          "value": "grew 79%",
           "value_num": null,
           "unit": null,
           "verbatim": "Worldwide sales grew 79% compared to Q1 2025, and we continue to hear positive feedback from physicians globally.",
@@ -9915,7 +9961,7 @@
           "kind": "competitive_position",
           "metric": "Inluriyo share of oral SERD new patient starts",
           "period": "Q1 2026",
-          "value": "over 35% share of oral SERD new patient starts in metastatic breast cancer",
+          "value": "over 35%",
           "value_num": null,
           "unit": null,
           "verbatim": "Although still early, Inluriyo performance in the U.S. was encouraging during its first full quarter launch, achieving over 35% share of oral SERD new patient starts in metastatic breast cancer in Q1.",
@@ -9925,9 +9971,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Kisunla U.S. position in amyloid targeting therapies",
+          "metric": "Kisunla position in amyloid targeting therapies",
           "period": "Q1 2026",
-          "value": "the U.S. leader in amyloid targeting therapies",
+          "value": "U.S. leader",
           "value_num": null,
           "unit": null,
           "verbatim": "In Neuroscience, Kisunla continues to be the U.S. leader in amyloid targeting therapies.",
@@ -9937,9 +9983,33 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. incretin analog obesity market total prescriptions growth",
+          "metric": "Mounjaro and Zepbound global revenue",
           "period": "Q1 2026",
-          "value": "grew by over 80% in Q1",
+          "value": "$12.8 billion combined",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound global revenue was $12.8 billion combined, contributing $6.7 billion of growth compared to Q1 2025.",
+          "following_context": "As seen on Slide 9, the U.S. incretin analog market continued robust growth in Q1. The recent approval of oral GLP-1s expanded the market, enabling more people to benefit from the GLP-1s. Within the U.S. incretin analog obesity market, total prescriptions grew by over 80% in Q1, and Zepbound prescriptions grew at even faster rate.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "Mounjaro and Zepbound dollar growth",
+          "period": "Q1 2026 vs Q1 2025",
+          "value": "$6.7 billion of growth",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound global revenue was $12.8 billion combined, contributing $6.7 billion of growth compared to Q1 2025.",
+          "following_context": "As seen on Slide 9, the U.S. incretin analog market continued robust growth in Q1. The recent approval of oral GLP-1s expanded the market, enabling more people to benefit from the GLP-1s. Within the U.S. incretin analog obesity market, total prescriptions grew by over 80% in Q1, and Zepbound prescriptions grew at even faster rate.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "U.S. incretin obesity market total prescription growth",
+          "period": "Q1 2026",
+          "value": "over 80%",
           "value_num": null,
           "unit": null,
           "verbatim": "Within the U.S. incretin analog obesity market, total prescriptions grew by over 80% in Q1, and Zepbound prescriptions grew at even faster rate.",
@@ -9949,9 +10019,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Zepbound self-pay share of prescriptions",
+          "metric": "Zepbound self-pay share of total prescriptions",
           "period": "Q1 2026",
-          "value": "approximately 45% of total Zepbound prescriptions in Q1, and 55% of new prescriptions",
+          "value": "approximately 45%",
           "value_num": null,
           "unit": null,
           "verbatim": "Self-pay continues to be an important segment for Zepbound and accounted for approximately 45% of total Zepbound prescriptions in Q1, and 55% of new prescriptions.",
@@ -9961,7 +10031,19 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. type 2 diabetes incretin analog market total prescriptions growth",
+          "metric": "Zepbound self-pay share of new prescriptions",
+          "period": "Q1 2026",
+          "value": "55%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Self-pay continues to be an important segment for Zepbound and accounted for approximately 45% of total Zepbound prescriptions in Q1, and 55% of new prescriptions.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "U.S. type 2 diabetes incretin market total prescription growth",
           "period": "Q1 2026",
           "value": "grew 11%",
           "value_num": null,
@@ -9974,8 +10056,8 @@
         {
           "kind": "competitive_position",
           "metric": "Mounjaro U.S. type 2 diabetes market share gain",
-          "period": "Q1 2026",
-          "value": "gained another 3 percentage points of market share compared to the end of 2025",
+          "period": "Q1 2026 vs end of 2025",
+          "value": "gained another 3 percentage points",
           "value_num": null,
           "unit": null,
           "verbatim": "In the U.S. type 2 diabetes incretin analog market, total prescriptions grew 11%, and Mounjaro gained another 3 percentage points of market share compared to the end of 2025.",
@@ -9985,9 +10067,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "International incretin analog market growth (IQVIA gross sales)",
-          "period": "Q1 2026",
-          "value": "increased by 77% since the same period last year",
+          "metric": "international incretin market growth (IQVIA gross sales)",
+          "period": "Q1 2026 vs same period last year",
+          "value": "increased by 77%",
           "value_num": null,
           "unit": null,
           "verbatim": "The total international market has increased by 77% since the same period last year as measured by IQVIA gross sales.",
@@ -9997,9 +10079,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Lilly ex-U.S. incretin market leadership",
-          "period": "Q4 last year",
-          "value": "became the market leader outside the U.S.",
+          "metric": "Lilly ex-U.S. incretin market position",
+          "period": "Q4 last year / Q1 2026",
+          "value": "market leader outside the U.S.",
           "value_num": null,
           "unit": null,
           "verbatim": "In Q4 last year, Lilly became the market leader outside the U.S. and the strong growth of Mounjaro in Brazil, U.K., Korea, and China, among others, has resulted in additional share of market gains in Q1 2026.",
@@ -10009,45 +10091,33 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Q1 revenue growth",
+          "metric": "Foundayo telehealth platform availability",
           "period": "Q1 2026",
-          "value": "grew 56% compared to Q1 2025",
+          "value": "more than 12 major telehealth platforms",
           "value_num": null,
           "unit": null,
-          "verbatim": "Revenue grew 56% compared to Q1 2025, driven by Zepbound and Mounjaro, and solid momentum across all therapeutic areas and geographies.",
-          "following_context": "Gross margin as a percentage of revenue was 82.6% in Q1, a decrease of approximately 1 percentage point versus the same quarter last year. The change was driven primarily by low [ ICE ] prices.",
+          "verbatim": "Foundayo was broadly available in pharmacies on April 9 and is available on more than 12 major telehealth platforms.",
+          "following_context": "Discussions with payers have been productive and commercial access has been confirmed at 2 of the 3 largest U.S. pharmacy benefit managers, effectively mid-May. In addition, the GLP-1 Bridge program will start no later than July 1, which brings new access to anti-obesity medicines for people with insurance through Medicare.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. revenue growth",
-          "period": "Q1 2026",
-          "value": "increased 43% in Q1",
+          "metric": "Foundayo commercial access at largest U.S. PBMs",
+          "period": "effective mid-May",
+          "value": "2 of the 3 largest U.S. pharmacy benefit managers",
           "value_num": null,
           "unit": null,
-          "verbatim": "U.S. revenue increased 43% in Q1, primarily driven by volume growth from Zepbound and Mounjaro as well as contributions from our Immunology, Oncology, and Neuroscience portfolio.",
-          "following_context": "U.S. price declined by 7%, including the impact of the previously announced direct-to-patient prices for Zepbound. U.S. price was positively impacted by a onetime adjustment to estimates for rebates and discounts, primarily impacting Zepbound and Mounjaro. Excluding this impact, U.S. price will have declined 10%.",
+          "verbatim": "Discussions with payers have been productive and commercial access has been confirmed at 2 of the 3 largest U.S. pharmacy benefit managers, effectively mid-May.",
+          "following_context": "In addition, the GLP-1 Bridge program will start no later than July 1, which brings new access to anti-obesity medicines for people with insurance through Medicare.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "Immunology, Oncology and Neuroscience key products growth",
-          "period": "Q1 2026",
-          "value": "grew by 160% compared to the same quarter last year",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Within key products, our Immunology, Oncology and Neuroscience medicines collectively grew by 160% compared to the same quarter last year as we continue to invest to drive growth across all of our therapeutic areas.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "Q2 revenue growth",
+          "metric": "Key Products dollar growth",
           "period": "Q2 2026",
-          "value": "grew 48% compared to Q2 of 2025",
+          "value": "almost $6.8 billion",
           "value_num": null,
           "unit": null,
           "verbatim": "Revenue grew 48% compared to Q2 of 2025, and our Key Products increased by almost $6.8 billion.",
@@ -10057,9 +10127,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Oncology, Immunology, and Neuroscience key products growth",
-          "period": "Q2 2026",
-          "value": "grew 121% compared to the same quarter last year",
+          "metric": "Oncology, Immunology, and Neuroscience collective growth",
+          "period": "Q2 2026 vs same quarter last year",
+          "value": "grew 121%",
           "value_num": null,
           "unit": null,
           "verbatim": "Within Key Products, our Oncology, Immunology, and Neuroscience medicines collectively grew 121% compared to the same quarter last year, as we continue to expand our presence across the portfolio.",
@@ -10068,8 +10138,32 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "leading_indicator",
+          "metric": "Medicare GLP-1 Bridge program eligible Americans",
+          "period": "launched July 1",
+          "value": "20 million eligible Americans",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "As shown on Slide 6, the Medicare GLP-1 Bridge program launched on July 1, granting 20 million eligible Americans insurance coverage for GLP-1s for obesity at the low out-of-pocket price of $50 per month.",
+          "following_context": "With this expansion, 35% more people now have coverage for our obesity medicines in the United States.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "increase in people with coverage for obesity medicines",
+          "period": "Q2 2026",
+          "value": "35% more people",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "With this expansion, 35% more people now have coverage for our obesity medicines in the United States.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "pricing_action",
-          "metric": "U.S. price",
+          "metric": "U.S. price change",
           "period": "Q2 2026",
           "value": "declined by 3%",
           "value_num": null,
@@ -10081,7 +10175,7 @@
         },
         {
           "kind": "pricing_action",
-          "metric": "U.S. price excluding rebate/discount adjustments",
+          "metric": "U.S. price change excluding rebate adjustments",
           "period": "Q2 2026",
           "value": "declined by 9%",
           "value_num": null,
@@ -10093,21 +10187,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. revenue growth",
-          "period": "Q2 2026",
-          "value": "increased 33% in Q2",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "U.S. revenue increased 33% in Q2, primarily driven by volume growth from Zepbound and Mounjaro, as well as contributions from our Immunology, Oncology, and Neuroscience portfolio.",
-          "following_context": "U.S. price declined by 3%, driven by Zepbound and Mounjaro.",
-          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
           "metric": "Ebglyss worldwide sales growth",
-          "period": "Q2 2026",
-          "value": "more than doubled compared to Q2 2025",
+          "period": "Q2 2026 vs Q2 2025",
+          "value": "more than doubled",
           "value_num": null,
           "unit": null,
           "verbatim": "Within Immunology, Ebglyss worldwide sales more than doubled compared to Q2 2025.",
@@ -10118,8 +10200,8 @@
         {
           "kind": "competitive_position",
           "metric": "Ebglyss U.S. share of new prescriptions gain",
-          "period": "Q2 2026",
-          "value": "increasing by approximately 4 percentage points in the specialty dermatology market since last year",
+          "period": "since last year",
+          "value": "increasing by approximately 4 percentage points",
           "value_num": null,
           "unit": null,
           "verbatim": "In the U.S., Ebglyss continued to gain share of new prescriptions, increasing by approximately 4 percentage points in the specialty dermatology market since last year.",
@@ -10130,8 +10212,8 @@
         {
           "kind": "leading_indicator",
           "metric": "Jaypirca worldwide sales growth",
-          "period": "Q2 2026",
-          "value": "increased 56% compared to Q2 2025",
+          "period": "Q2 2026 vs Q2 2025",
+          "value": "increased 56%",
           "value_num": null,
           "unit": null,
           "verbatim": "In Oncology, Jaypirca had another strong quarter of growth, and worldwide sales increased 56% compared to Q2 2025.",
@@ -10141,9 +10223,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Inluriyo U.S. new prescription share in oral SERD market",
+          "metric": "Inluriyo U.S. share of new prescriptions in oral SERD market",
           "period": "Q2 2026",
-          "value": "the U.S. leader in new prescriptions, with more than 50% share",
+          "value": "more than 50% share",
           "value_num": null,
           "unit": null,
           "verbatim": "After only 2 full quarters, Inluyro is the U.S. leader in new prescriptions, with more than 50% share.",
@@ -10153,9 +10235,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "P-tau217 blood tests",
-          "period": "Q2 2026",
-          "value": "more than doubled compared to Q2 2025",
+          "metric": "P-tau217 blood tests growth",
+          "period": "Q2 2026 vs Q2 2025",
+          "value": "more than doubled",
           "value_num": null,
           "unit": null,
           "verbatim": "Diagnostic testing momentum also continues to build, and the number of P-tau217 blood tests more than doubled compared to Q2 2025.",
@@ -10167,7 +10249,7 @@
           "kind": "leading_indicator",
           "metric": "Mounjaro and Zepbound combined revenue",
           "period": "Q2 2026",
-          "value": "$14.9 billion of revenue, and contributing $6.3 billion of growth compared to Q2 2025",
+          "value": "$14.9 billion",
           "value_num": null,
           "unit": null,
           "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound had another strong quarter, combining for $14.9 billion of revenue, and contributing $6.3 billion of growth compared to Q2 2025.",
@@ -10177,9 +10259,21 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. incretin analogs market total prescriptions growth",
-          "period": "Q2 2026",
-          "value": "grew 31% compared to Q2 2025",
+          "metric": "Mounjaro and Zepbound dollar growth",
+          "period": "Q2 2026 vs Q2 2025",
+          "value": "$6.3 billion of growth",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Finally, in Cardiometabolic Health, Mounjaro and Zepbound had another strong quarter, combining for $14.9 billion of revenue, and contributing $6.3 billion of growth compared to Q2 2025.",
+          "following_context": "As seen on Slide 10, total prescriptions in the U.S. incretin analogs market grew 31% compared to Q2 2025. The early uptake of oral GLP-1s has been encouraging, expanding the market of people who are taking incretin therapy. Additionally, injectable incretins continue to be an important growth driver, and account for 3 out of 4 new patient starts.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "U.S. incretin analogs market total prescription growth",
+          "period": "Q2 2026 vs Q2 2025",
+          "value": "grew 31%",
           "value_num": null,
           "unit": null,
           "verbatim": "As seen on Slide 10, total prescriptions in the U.S. incretin analogs market grew 31% compared to Q2 2025.",
@@ -10188,10 +10282,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "Injectable incretins share of new patient starts",
+          "kind": "leading_indicator",
+          "metric": "injectable incretins share of new patient starts",
           "period": "Q2 2026",
-          "value": "account for 3 out of 4 new patient starts",
+          "value": "3 out of 4 new patient starts",
           "value_num": null,
           "unit": null,
           "verbatim": "Additionally, injectable incretins continue to be an important growth driver, and account for 3 out of 4 new patient starts.",
@@ -10201,9 +10295,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. incretin analogs obesity market total prescriptions growth",
+          "metric": "U.S. incretin obesity market total prescription growth",
           "period": "Q2 2026",
-          "value": "grew by 78% in Q2",
+          "value": "grew by 78%",
           "value_num": null,
           "unit": null,
           "verbatim": "Within the U.S. incretin analogs obesity market, total prescriptions grew by 78% in Q2, and the Lilly anti-obesity portfolio continues to lead.",
@@ -10213,9 +10307,21 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "Lilly share of U.S. obesity prescriptions",
+          "metric": "Lilly share of U.S. obesity total prescriptions",
           "period": "Q2 2026",
-          "value": "approximately 6 out of 10 total prescriptions and approximately 7 out of 10 injectable prescriptions were for a Lilly medicine",
+          "value": "approximately 6 out of 10 total prescriptions",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "In Q2, approximately 6 out of 10 total prescriptions and approximately 7 out of 10 injectable prescriptions were for a Lilly medicine.",
+          "following_context": "Self-pay continues to be an important segment within obesity, and accounted for approximately 45% of total Zepbound prescriptions in Q2 and approximately 55% of new prescriptions.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "Lilly share of U.S. obesity injectable prescriptions",
+          "period": "Q2 2026",
+          "value": "approximately 7 out of 10 injectable prescriptions",
           "value_num": null,
           "unit": null,
           "verbatim": "In Q2, approximately 6 out of 10 total prescriptions and approximately 7 out of 10 injectable prescriptions were for a Lilly medicine.",
@@ -10225,9 +10331,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Zepbound self-pay share of prescriptions",
+          "metric": "Zepbound self-pay share of total prescriptions",
           "period": "Q2 2026",
-          "value": "approximately 45% of total Zepbound prescriptions in Q2 and approximately 55% of new prescriptions",
+          "value": "approximately 45%",
           "value_num": null,
           "unit": null,
           "verbatim": "Self-pay continues to be an important segment within obesity, and accounted for approximately 45% of total Zepbound prescriptions in Q2 and approximately 55% of new prescriptions.",
@@ -10237,9 +10343,21 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "U.S. type 2 diabetes incretin analogs market total prescriptions growth",
+          "metric": "Zepbound self-pay share of new prescriptions",
           "period": "Q2 2026",
-          "value": "grew 9% compared to Q2 2025",
+          "value": "approximately 55%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Self-pay continues to be an important segment within obesity, and accounted for approximately 45% of total Zepbound prescriptions in Q2 and approximately 55% of new prescriptions.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "U.S. type 2 diabetes incretin market total prescription growth",
+          "period": "Q2 2026 vs Q2 2025",
+          "value": "grew 9%",
           "value_num": null,
           "unit": null,
           "verbatim": "In the U.S., type 2 diabetes incretin analogs market, total prescriptions grew 9% compared to Q2 2025, reflecting a more mature market compared to obesity.",
@@ -10251,7 +10369,7 @@
           "kind": "competitive_position",
           "metric": "Lilly share of U.S. type 2 diabetes incretin prescriptions",
           "period": "Q2 2026",
-          "value": "more than 6 out of 10 prescriptions for an incretin were for a Lilly medicine",
+          "value": "more than 6 out of 10 prescriptions",
           "value_num": null,
           "unit": null,
           "verbatim": "The Lilly portfolio continues to lead here as well, as more than 6 out of 10 prescriptions for an incretin were for a Lilly medicine.",
@@ -10261,9 +10379,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "International incretin analogs market growth (IQVIA gross sales)",
-          "period": "Q2 2026",
-          "value": "increased by 74% since the same period last year",
+          "metric": "international incretin market growth (IQVIA gross sales)",
+          "period": "Q2 2026 vs same period last year",
+          "value": "increased by 74%",
           "value_num": null,
           "unit": null,
           "verbatim": "Slide 11 shows aggregate trends in the international incretin analogs market, which has increased by 74% since the same period last year, as measured by IQVIA gross sales.",
@@ -10274,7 +10392,7 @@
         {
           "kind": "competitive_position",
           "metric": "Lilly global incretin market share",
-          "period": "Q2 2026",
+          "period": "Q2 2026 vs Q1 2026",
           "value": "gaining almost 2 percentage points of share compared to Q1 2026, reaching approximately 55%",
           "value_num": null,
           "unit": null,
@@ -10291,137 +10409,162 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bullish — volume-led 48% revenue and 73% EBITDA growth with rising RoCE plausibly justify the premium; falling price and concentration are real but currently outweighed.",
+    "evidence_balance": "strongly-bullish — volume-led 48% revenue growth and rising ROIC/EBITDA margins broadly justify the EARNED premium, though price give-back and a full multiple are genuine checks.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA has compounded from $11,852M (FY23) to $41,707M (LTM Jun-30-2026) while revenue rose from $34,124M to $79,666M, a runway of durable operating scale-up rather than a one-off.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "claim": "The runway is being built now: Lilly broke ground in Houston as one of ten U.S. manufacturing sites announced since 2020 under a $50B reshoring push, directly expanding the capacity behind forward revenue.",
+        "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Sep-21-2026",
         "cited": true
       },
       {
-        "claim": "The engine is validated by mechanism: Q2 2026 revenue grew 48% YoY with Mounjaro+Zepbound combining for $14.9B and contributing $6.3B of growth, driven by volume not price.",
+        "claim": "Volume (not price) is driving growth: U.S. revenue rose 33% in Q2 2026 primarily on Zepbound/Mounjaro volume even as U.S. price declined 3% (9% excluding rebate adjustments), so the trajectory rests on unit demand rather than pricing.",
         "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Growth is broadening beyond incretins — Oncology, Immunology and Neuroscience key products collectively grew 121% YoY in Q2 2026, reducing reliance on a single franchise.",
+        "claim": "The incretin franchise keeps compounding: Mounjaro and Zepbound combined for $14.9B of revenue in Q2 2026, adding $6.3B of growth versus Q2 2025, with injectables holding 3 of 4 new-patient starts.",
         "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Fundamental deltas beside the peer multiple show the premium rests on far superior operating characteristics: EBITDA margin 52% vs peer-median 39%, revenue growth 50% vs 5%, EBITDA growth 73% vs 6%, LT EPS growth 22% vs 7% — the human must judge whether the premium is earned by these or residual.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "Returns on capital are rising into the scale-up: RoCE moved from 20.0% (FY23) to 33.7% (LTM), evidence the reinvestment is high-returning rather than dilutive.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "Consensus embeds a long runway with rising forward earnings — FY27E EBITDA $54,009M and FY27E normalized EPS $47.34 pulling the forward P/E to 24.7x, materially below the 39.1x trailing multiple.",
-        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
-        "cited": true
-      },
-      {
-        "claim": "The oral GLP-1 Foundayo launch adds an at-scale future leg: FDA-approved Apr 2026, now under review in 40+ countries with a full global rollout expected in 2027.",
+        "claim": "The oral GLP-1 Foundayo opens a second leg: approved and broadly available in the U.S. from April 2026, under review in 40+ countries, with a scalable small-molecule profile management frames as reaching a >1B-patient opportunity.",
         "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Apr-01-2026",
         "cited": true
       },
       {
-        "claim": "Management raised FY2026 guidance twice, lifting the revenue range to $85–87B in August after an April raise, corroborating the demand trajectory.",
-        "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Aug-05-2026",
+        "claim": "Access is widening the funnel: the Medicare GLP-1 Bridge program launched July 1 2026 granting 20M eligible Americans $50/month coverage, lifting the covered U.S. obesity-medicine population by 35%.",
+        "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Absolute profitability is scaling with the top line, not just the margin %: EBITDA rose from $18,807M (FY24) to $31,693M (FY25) to $41,707M LTM as EBITDA margin climbed to 52%.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "Returns on capital are rising with scale: ROIC improved from 24.7% (FY24) to 31.1% (FY25) to 33.7% LTM, consistent with a high-return reinvestment machine rather than a maturing one.",
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "On fundamentals the name is an outlier within its peer set, not a discount candidate: EBITDA margin 52% vs peer-median 39%, revenue growth 50% vs 5%, EBITDA growth 73% vs 6%, LT EPS growth 22% vs 7% — the human must judge whether its premium multiple is EARNED by these deltas rather than residual.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Non-GLP-1 pillars are compounding fast: Oncology, Immunology and Neuroscience medicines collectively grew 121% YoY in Q2 2026, broadening the growth base beyond the incretins.",
+        "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The forward earnings ramp compresses the multiple: on normalized EPS of $36.73 (FY26E) rising to $47.34 (FY27E) the P/E falls from 34.7x to 26.9x, so the embedded growth meaningfully de-rates the price if delivered.",
+        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The quality is already richly paid for: EV/EBITDA 25.8x is +83% over peer median 14.1x and P/E 39.1x is +57% over peer median 24.9x — but this is the trailing-only read (no forward basis), so the human must weigh it against the forward P/E of 24.7x on FY27E that closes much of the gap.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
+        "claim": "The price demands beats, not matches: at an NTM TEV/EBITDA of 21.52x versus peer-median NTM 12.27x, the quality is already paid for — the premium is the real signal here, not a consensus misread, because the fundamental_deltas (52% vs 39% margin, 73% vs 6% EBITDA growth) confirm the gap is largely EARNED, leaving little margin for disappointment.",
+        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
         "cited": true
       },
       {
-        "claim": "Expectations are demanding: at the name's own NTM TEV/EBITDA of 21.52x the market implies an EBITDA level far above where peers trade, so the runway must be delivered, not merely hoped — a genuine counter-point, though outweighed by the 73% EBITDA growth and twice-raised guidance behind the number.",
-        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+        "claim": "Reported price is set ahead of a filing-level guidance gap: the primary 8-K EX-99.1 states a CURRENT FY2026 revenue guide of $80,000–$83,000M, flagged as a MISMATCH against the CIQ $85,000–$87,000M guide used downstream — the operative company figure is lower than the vendor path assumes.",
+        "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Feb-04-2026",
         "cited": true
       },
       {
-        "claim": "U.S. price is falling — down 3% in Q2 2026 (down 9% excluding rebate/discount adjustments) on Zepbound and Mounjaro — a real headwind if volume growth ever normalises, though currently more than offset by 33% U.S. volume-led revenue growth.",
+        "claim": "Pricing is a persistent drag beneath the volume story: U.S. price declined 3% in Q2 2026, and 9% excluding a one-time rebate/discount adjustment — the headline price decline is the optical read, the ex-adjustment -9% is the REAL underlying signal that the franchise is funding volume with price give-back.",
         "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The premium multiple sits against a HETEROGENEOUS peer set (caps $102.4B–$649.4B vs the name's $1,038.3B), so the peer median is not a clean benchmark and any 'expensive vs peers' read is confidence-gated — a caution, outweighed by the fundamental deltas that plausibly justify a premium.",
-        "source_ref": "CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description",
+        "claim": "The EV/EBITDA multiple is trailing-only with no forward adjusted basis available, so a 'below its own 50th percentile' reading cannot distinguish a durably supported level from one that normalises down as the comp base rises.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "cited": true
+      },
+      {
+        "claim": "Business-development intensity is heavy and capitalised into IPR&D: acquired IPR&D charges were $3.03/share in Q2 2026 alone across a dense run of deals (Kelonia $7B, Centessa $5.9B, AtaiBeckley $2.6B, Merida $2.9B), a counter-point OUTWEIGHED by the 33.7% LTM ROIC and 52% EBITDA margin but a genuine call on cash and a dilution-of-returns risk if hit rates disappoint.",
+        "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "Consensus is already richly positioned: mean target $1,325.39 sits only modestly above the $1,273.46 last close, so the sell-side upside embedded in the name is thin — a counter-point OUTWEIGHED by the volume-led earnings ramp but a sign expectations are full.",
+        "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
         "name": "Novo Nordisk",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "A pure-play incretin/obesity franchise leader that sustained a large premium multiple while volume-led revenue and margins compounded — the closest analogue to the same demand wave.",
+        "outcome": "kept compounding then re-rated sharply on competitive/execution concerns",
+        "distinguishing_fact": "the other incretin leader whose premium rested on GLP-1 volume dominance — shows how durable a franchise can be and how fast expectations reset when volume or price momentum wobbles.",
         "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "Merck & Co.",
+        "outcome": "re-rated to fair value as concentration risk around a flagship franchise grew",
+        "distinguishing_fact": "a single-dominant-product pharma whose multiple tracked the durability of one mega-franchise — the pattern the human must weigh against Lilly's incretin concentration.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "AbbVie Inc.",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A pharma whose valuation and earnings pivoted on the durability of a dominant franchise as pricing and competitive dynamics evolved — the pattern of a franchise-concentration re-rating.",
+        "outcome": "kept compounding by refilling a pipeline ahead of a flagship's maturity",
+        "distinguishing_fact": "a pharma that sustained value by transitioning off a single blockbuster via heavy BD — the analogue for Lilly's dense acquisition cadence and multi-therapy broadening.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Regeneron Pharmaceuticals",
-        "outcome": "kept compounding",
-        "distinguishing_fact": "A high-return drug developer that broadened beyond a single blockbuster into oncology/immunology to extend its reinvestment runway — the diversification-of-a-hit pattern.",
-        "source": "[LLM-suggested, unverified]"
-      },
-      {
-        "name": "Gilead Sciences",
-        "outcome": "re-rated to fair value",
-        "distinguishing_fact": "A drugmaker whose premium compressed when a dominant therapeutic wave matured and pricing/volume tailwinds faded — the cautionary path if incretin growth normalises.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "name": "Eli Lilly (own 2017–2020 arc)",
+        "outcome": "kept compounding as the multiple expanded off a low-teens EV/EBITDA base",
+        "distinguishing_fact": "the name's own history shows EV/EBITDA rising from ~13x (2018) toward the 50–60x peak (2024) — the resolved arc against which today's 25.8x sits mid-range.",
+        "source": "CIQ Financials→Multiples (Close; last col = current, excluded from history)"
       }
     ],
     "decisive_question": {
-      "question": "Is the incretin-led volume runway (plus a broadening oncology/immunology/neuro portfolio and the Foundayo oral launch) long and large enough to grow into a trailing 25.8x EV/EBITDA — or is the premium already discounting a durability that falling U.S. price and franchise concentration will erode?",
+      "question": "Can incretin volume growth and the Foundayo/oral second leg keep compounding fast enough to grow INTO the embedded premium while U.S. price continues to decline — i.e., is the premium EARNED runway or fully-priced quality?",
       "evidence_for": [
         {
-          "claim": "Q2 2026 U.S. revenue rose 33% on volume, and total U.S. incretin obesity-market prescriptions grew 78%, with Lilly holding ~6 of 10 total and ~7 of 10 injectable scripts — the volume engine is intact and share-leading.",
+          "claim": "Q2 2026 Mounjaro/Zepbound combined for $14.9B revenue, adding $6.3B of growth YoY, with injectables holding 3 of 4 new-patient starts — the volume engine the premium turns on is still accelerating.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Consensus revenue is modeled climbing to $132,888M by FY2030 and $162,650M by FY2033, an explicit multi-year runway many analysts underwrite.",
-          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus Revenue, latest snapshot)",
+          "claim": "The Medicare GLP-1 Bridge program launched July 1 2026 added coverage for 20M eligible Americans and lifted the covered U.S. obesity-medicine population by 35%, widening the demand funnel into FY27.",
+          "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The Foundayo oral GLP-1 opens a scalable non-injectable leg under review in 40+ countries with a 2027 global rollout planned.",
-          "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Apr-01-2026",
+          "claim": "Consensus EBITDA is modelled to ramp from FY26E $43,513.7M to FY27E $54,008.7M, the step-up the forward multiple de-rate depends on.",
+          "source_ref": "CIQ Estimates→Trends (FY26E/FY27E consensus EBITDA, latest snapshot)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "U.S. price fell 9% ex-adjustments in Q2 2026 on the two lead products — the growth is volume that must keep outrunning erosion in price.",
+          "claim": "U.S. price declined 9% ex-rebate adjustment in Q2 2026, a persistent give-back that erodes the revenue-per-script even as volumes climb.",
           "source_ref": "CIQ transcript: Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The business is a single reported segment concentrated in cardiometabolic products, so a demand-curve or competitive shock has no offsetting segment to cushion it.",
-          "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Dec-31-2025)",
+          "claim": "The operative company revenue guide on the primary filing is $80,000–$83,000M, below the $85,000–$87,000M vendor path that underpins the forward multiples, flagged as a MISMATCH.",
+          "source_ref": "CIQ Key Developments: Eli Lilly and Company NYSE LLY Key Developments.rtf · Feb-04-2026",
+          "cited": true
+        },
+        {
+          "claim": "Even on the forward ramp the name trades at NTM TEV/EBITDA 21.52x vs peer-median 12.27x, so the premium must be defended by delivered growth, not assumed.",
+          "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Trailing EV/EBITDA of 25.8x sits at its own 5y 50th percentile and P/LTM EPS 39.1x near its own-history low-end (30.6 pctile) — a neutral fact whose overshoot-vs-terminal read is unresolved; the adjusted/company-defined forward EBITDA multiple is not in the revised guidance and must be reconciled.",
-      "FCF sign is flagged UNKNOWN in survival_capacity and two competing FCF bases exist (CIQ Levered FCF $11,066M vs CFO$28,083M−capex$9,893M=$18,190M) — the self-funding/per-share read depends on which basis; a missing clean cash-runway disclosure is a risk.",
-      "The EBITDA-basis triangulation is UNRESOLVED (implied D&A 1.78x in the 1.5–2.0x band where GAAP-actuals-vs-adjusted-estimates basis changes have gone unflagged) — reconcile the estimate row against the company's guidance basis before comparing forward multiples.",
-      "A guide-verification MISMATCH flag: CIQ revenue guide $85,000–87,000M vs a release actual/outlook $80,000–83,000M — the human must confirm which guidance vintage governs.",
-      "No segment or per-product EBITDA breakout (single-segment reporting) — franchise-level profitability and the true concentration in Mounjaro/Zepbound cannot be sized from the filings; an opacity risk.",
-      "Price is STALE at assembly (last close 2026-09-22, 8 days before assembly) and the CIQ export date is unverified (a floor ≥ 2026-09-17) — all price-derived multiples should be refreshed.",
-      "Insider signal is one-directional (0 buys, 6 sells / $34.59M over 182d; last buy ~13mo ago) — read against the twice-raised guidance."
+      "No forward/adjusted EV/EBITDA basis and no adjusted-EPS guide the parser reads at the drawdown — the trailing-only multiple cannot distinguish a durably supported level from one normalising down as the comp base rises (surface as a disclosure gap, not neutral).",
+      "Guidance MISMATCH unresolved: filing-level FY2026 revenue guide $80,000–$83,000M vs the $85,000–$87,000M CIQ guide feeding forward multiples — which basis the human relies on materially changes the forward-multiple read.",
+      "Segment economics are opaque: single-segment reporting with NO segment EBITDA breakout, so the incretin-vs-rest profit mix and the true concentration of earnings in Mounjaro/Zepbound cannot be sized (a bearish visibility gap).",
+      "The EBITDA actual-vs-estimate implied-D&A ratio (1.78x) sits in the 1.5–2.0x band where a GAAP-vs-adjusted basis change has gone unflagged on this fleet — the estimate row should be reconciled to the company's own guidance basis before comparing across the boundary.",
+      "Company-defined FCF basis ambiguity: CIQ 'Levered FCF' $11,065.9M vs CFO−capex $18,190.0M (0.61x apart) and FCF sign leg tagged UNKNOWN in survival_capacity — the self-funding read depends on which basis is used.",
+      "Durability of pricing: whether U.S. price decline (-9% ex-adjustment) stabilises or deepens as competition and policy evolve — the variable that most directly offsets volume growth.",
+      "Clinical/regulatory outcomes for the pipeline carrying the premium (retatrutide Phase 3 program, Foundayo ex-U.S. approvals in 40+ markets, OSA readout later in 2026) are unresolved future events."
     ],
     "draw_agreement": {
       "attempted": 5,
@@ -10436,26 +10579,25 @@
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Incretin/GLP-1 franchise followed under the QUALITY book: the question is whether durable demand and manufacturing scale outlast what the price already pays, not whether a de-rating is overdone — the name is near its highs and has never broken, which is the shape the overshoot twin cannot ask about. Also the natural first ticker for the GLP-1 demand-shift driver registered with zero names (#484). The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
     "primary-source: 8-K 0001193125-26-232707 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001193125-25-184093 carries 8.01 but no EX-99.1 exhibit was found",
-    "stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling",
-    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+6.7s fetch)",
+    "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+4.9s fetch)",
     "P/E may be distorted by non-recurring EPS — latest annual EPS 22.95 vs recent median 8.76; verify against normalized/forward EPS (CIQ)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0000059478-26-000013 · lly-12312025x10kexhibit103.htm declares itself no agreement at all",
-    "operating-drivers: Tier-B row dropped — value figure 35 not in its quote (Medicare GLP-1 Bridge program coverage)",
-    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)",
+    "TWIN 'Eli Lilly (own 2017–2020 arc)' has numbers ['13', '2018', '2024', '25.8', '50', '60'] — must be non-numeric",
     "DIRECTIONAL language 'fair value' — human review (dossier frames, not concludes)",
+    "TWIN ampersand-name 'Merck & Co.' — verify it is a single entity (kept)",
     "VALUATION_RECIPE_BASIS_CONFLICT: LLY: the two share counts disagree by 5.06% — stock_info.shares_out 941,357,065 against anchor.diluted_shares 893,700,000 (diluted weighted-average). Beyond 2% that is a structural change (a conversion, a raise, a split), not the buyback pace. Resolve which count belongs in the denominator before writing a value per share."
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-30T13:33:51.880494Z",
-  "extraction_version": "2026-08-16.1",
+  "assembled_at": "2026-10-26T15:09:57.420626Z",
+  "extraction_version": "2026-10-09.3",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-burl/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory--claude-worktrees-ai-agent-team-practices-e005c8/a08ef917-84bf-4d59-9bc3-5b40b1f95038/scratchpad/wt-pass/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-09-22"
+    "frontier": "2026-10-23"
   },
   "sector": "Health Care",
   "industry": {
@@ -13970,7 +14112,7 @@
     "estimate_type": "final consensus before each result — CIQ Estimates→Surprise 'Estimate', Fiscal Years, company level",
     "usable_as_forecast_error_cross_check": true,
     "usable_as_revision_distribution": false,
-    "eligibility_note": "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has been. It is NOT a distribution of how far consensus moves over a holding period; that needs point-in-time consensus snapshots, which no Estimates Report carries.",
+    "eligibility_note": "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has been. It is NOT a distribution of how far consensus moves over a holding period; that needs point-in-time consensus snapshots, which no Estimates Report carries. Each 'actual' is the figure CIQ's Estimates set against its own consensus, which is often NOT the line the financial statements report; `accounting_basis` names the filer's accounting STANDARD (US GAAP, IFRS), never the basis of that actual.",
     "usage_note": "EBIT- or EBITDA-level shock today: error_per_forecast_revenue × today's revenue consensus. Revenue × margin scenario: the SAME year's Revenue pct_error and ratio_error, kept together. ratio_error alone answers how wrong the margin (or capex-intensity) forecast was, and multiplied by revenue it drops the revenue miss's effect. Exact identity: error_per_forecast_revenue = ratio_error + (actual ÷ actual revenue) × (actual revenue ÷ forecast revenue − 1).",
     "series": [
       {
@@ -15160,10 +15302,10 @@
       "snapshot_market_cap": 1038332.9,
       "snapshot_tev": 1083494.9,
       "snapshot_reconciles": null,
-      "page_price": 1170.14,
-      "page_price_as_of": "2026-09-22",
+      "page_price": 1273.46,
+      "page_price_as_of": "2026-10-23",
       "days_price_after_snapshot": null,
-      "value_at_page_price": 27.30459,
+      "value_at_page_price": 29.620553,
       "value_at_page_price_basis": "(page price × point-in-time shares outstanding + CIQ claims) ÷ (snapshot TEV ÷ the multiple)"
     },
     "history_series": "mechanical.valuation.own_history (trailing EV/EBITDA, TEV/LTM)",
@@ -15232,138 +15374,27 @@
     ]
   },
   "date_semantics": {
-    "screen_reference_date": "2026-09-22",
+    "screen_reference_date": "2026-10-16",
     "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
-    "analysis_as_of": "2026-09-22",
+    "analysis_as_of": "2026-10-23",
     "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
-    "price_as_of": "2026-09-22",
+    "price_as_of": "2026-10-23",
     "market_cap_as_of": "2026-09-21",
     "tev_as_of": "2026-09-21",
     "consensus_as_of": "≥2026-09-17",
     "balance_sheet_date": "2026-06-30",
     "historical_multiple_latest_observation": "2026-09-21",
     "historical_multiple_history_through": "2026-06-30",
-    "stock_performance_as_of": "2026-09-22",
-    "assembled_at": "2026-09-30T13:33:51.880494Z",
+    "stock_performance_as_of": "2026-10-16",
+    "assembled_at": "2026-10-26T15:09:57.420626Z",
     "valuation_snapshot_as_of": "2026-09-21",
-    "price_days_after_valuation_snapshot": 1
+    "price_days_after_valuation_snapshot": 32
   },
-  "layer_refreshes": [
-    {
-      "date": "2026-10-07",
-      "extraction_version": "2026-08-16.1",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus",
-        "mechanical.catalyst_path"
-      ]
-    },
-    {
-      "date": "2026-10-07",
-      "extraction_version": "2026-08-16.1",
-      "writer": "refresh",
-      "layers": [
-        "forward_multiple_history"
-      ]
-    },
-    {
-      "date": "2026-10-08",
-      "extraction_version": "2026-10-08.2",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus",
-        "forward_multiple_history",
-        "historical_forecast_error"
-      ]
-    },
-    {
-      "date": "2026-10-08",
-      "extraction_version": "2026-10-08.3",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus"
-      ]
-    },
-    {
-      "date": "2026-10-09",
-      "extraction_version": "2026-10-08.4",
-      "writer": "refresh",
-      "layers": [
-        "ev_bridge"
-      ]
-    },
-    {
-      "date": "2026-10-10",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "date_semantics",
-        "forward_multiple_history",
-        "qa_flags",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-18",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.idiosyncratic_vs_shared",
-        "mechanical.stock_performance"
-      ]
-    },
-    {
-      "date": "2026-10-20",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.valuation"
-      ]
-    },
-    {
-      "date": "2026-10-21",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "mechanical.financial_summary",
-        "mechanical.primary_source",
-        "mechanical.valuation",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-21",
-      "extraction_version": "2026-10-09.3",
-      "writer": "anchor-backfill",
-      "layers": [
-        "anchor"
-      ]
-    },
-    {
-      "date": "2026-10-23",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.primary_source",
-        "mechanical.valuation"
-      ]
-    },
-    {
-      "date": "2026-10-26",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.financial_summary"
-      ]
-    }
-  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-21T11:18:49.721981Z",
+    "computed_at": "2026-10-26T15:16:19.855105Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [],

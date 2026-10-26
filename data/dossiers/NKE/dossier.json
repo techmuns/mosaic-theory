@@ -2,7 +2,7 @@
   "ticker": "NKE",
   "name": "NIKE, Inc.",
   "cik": "0000320187",
-  "reference_date": "2026-09-22",
+  "reference_date": "2026-10-16",
   "rank": null,
   "sleeve": "overshoot",
   "mechanical": {
@@ -14,16 +14,16 @@
         "note": null
       },
       "pe": {
-        "value": 17.19047619047619,
+        "value": 17.76190476190476,
         "source_ref": "EDGAR XBRL eps_diluted × EOD latest stored close",
         "status": "present",
-        "note": "price 2026-09-22 ÷ annual diluted EPS for the period ending 2026-05-31 (114d old, filed 2026-07-15)"
+        "note": "price 2026-10-23 ÷ annual diluted EPS for the period ending 2026-05-31 (145d old, filed 2026-07-15)"
       },
       "pe_percentile_5y": {
-        "value": 0.1415929203539823,
+        "value": 0.1957894736842105,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y, at the latest stored close",
         "status": "present",
-        "note": "452 P/E observations over 1825d; price 2026-09-22 ÷ annual diluted EPS for the period ending 2026-05-31 (114d old, filed 2026-07-15)"
+        "note": "475 P/E observations over 1825d; price 2026-10-23 ÷ annual diluted EPS for the period ending 2026-05-31 (145d old, filed 2026-07-15)"
       },
       "ev_ebitda": {
         "value": 9.1,
@@ -41,13 +41,13 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "adjusted figure not in the 99.1 revised guidance"
+        "note": "no revised guidance at the drawdown to read an adjusted figure from"
       },
       "adjusted_eps": {
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "adjusted figure not in the 99.1 revised guidance"
+        "note": "no revised guidance at the drawdown to read an adjusted figure from; the newest EX-99.1 release, 8-K 0000320187-26-000184 EX-99.1 (filed 2026-10-01), states no annual adjusted-EPS guide the parser reads"
       },
       "range_position": {
         "value": "EV/EBITDA (TEV/LTM) 9.1x as-of 2026-09-21 — trailing range 11.2–37.4x (median 21.1x) over 38 closes → 0%ile → near-floor; P/LTM EPS 17.2x",
@@ -427,36 +427,36 @@
             "column": "FY27E",
             "eps_basis": "EPS (Normalized)",
             "eps": 1.7,
-            "multiple": 21.2353,
-            "price": 36.1,
-            "price_as_of": "2026-09-22"
+            "multiple": 21.9412,
+            "price": 37.3,
+            "price_as_of": "2026-10-23"
           },
           {
             "label": "P/FY27E (GAAP)",
             "column": "FY27E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 1.69,
-            "multiple": 21.3609,
-            "price": 36.1,
-            "price_as_of": "2026-09-22"
+            "multiple": 22.071,
+            "price": 37.3,
+            "price_as_of": "2026-10-23"
           },
           {
             "label": "P/FY28E (normalized)",
             "column": "FY28E",
             "eps_basis": "EPS (Normalized)",
             "eps": 2.28,
-            "multiple": 15.8333,
-            "price": 36.1,
-            "price_as_of": "2026-09-22"
+            "multiple": 16.3596,
+            "price": 37.3,
+            "price_as_of": "2026-10-23"
           },
           {
             "label": "P/FY28E (GAAP)",
             "column": "FY28E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 2.18,
-            "multiple": 16.5596,
-            "price": 36.1,
-            "price_as_of": "2026-09-22"
+            "multiple": 17.1101,
+            "price": 37.3,
+            "price_as_of": "2026-10-23"
           }
         ],
         "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
@@ -1182,17 +1182,17 @@
         "source_ref": "CIQ Financials (Quarterly)→Historical Capitalization 'Total Enterprise Value' less the operating leases inside it (Balance Sheet 'Curr. Port. of Leases' + 'Long-Term Leases' less EDGAR FinanceLeaseLiability), over Income Statement 'EBITDA' summed over four quarters; checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)→Income Statement 'Net Rental Exp.' / 'EBITDA'"
       },
       "ev_ebitda_ex_lease_at_price": {
-        "value": 11.234676,
-        "price": 36.1,
-        "price_as_of": "2026-09-22",
+        "value": 11.601349,
+        "price": 37.3,
+        "price_as_of": "2026-10-23",
         "shares": 1483500000.0,
         "shares_basis": "shares outstanding",
         "net_debt": 990.0,
         "net_debt_source": "EDGAR: total debt 7,893 + finance leases 0 − cash 6,903 ($M); operating leases 3,179 EXCLUDED — the multiple is struck on TEV less operating leases",
-        "ev": 54544.35,
+        "ev": 56324.55,
         "ltm_ebitda": 4855.0,
         "ltm_through": "2026-05-31",
-        "line": "at the page's $36.10 close (2026-09-22): ($36.10 × 1,483,500,000 shares outstanding + net debt $990M excluding operating leases) ÷ LTM EBITDA $4,855M (four quarters to 2026-05-31) = 11.2x"
+        "line": "at the page's $37.30 close (2026-10-23): ($37.30 × 1,483,500,000 shares outstanding + net debt $990M excluding operating leases) ÷ LTM EBITDA $4,855M (four quarters to 2026-05-31) = 11.6x"
       }
     },
     "quality": {
@@ -1230,7 +1230,7 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "adjusted figure not in the 99.1 revised guidance"
+        "note": "no revised guidance at the drawdown to read an adjusted figure from"
       },
       "survival_capacity": {
         "value": "net-debt/EBITDA 0.4x (CIQ) | FCF-positive → self-funding",
@@ -1621,66 +1621,43 @@
     },
     "drawdown_cause": {
       "shape": {
-        "value": "discrete gap-downs — 2026-04-01 earnings (2.02)",
-        "source_ref": "EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)",
+        "value": "gradual bleed — no discrete gap-down detected",
+        "source_ref": "EOD gap-down detector (screen events): none",
         "status": "present",
         "note": null
       },
       "gap_down_dates": {
-        "value": [
-          "2026-04-01"
-        ],
-        "source_ref": "EOD gap-down detector (screen events)",
-        "status": "present",
-        "note": null
+        "value": null,
+        "source_ref": null,
+        "status": "unknown",
+        "note": "no gap-down events on the data-record"
       },
-      "filings": [
-        {
-          "gap_date": "2026-04-01",
-          "filing_date": "2026-03-31",
-          "form": "8-K",
-          "items": [
-            "2.02",
-            "9.01"
-          ],
-          "item_types": [
-            "2.02 Results of Operations and Financial Condition",
-            "9.01 Financial Statements and Exhibits"
-          ],
-          "accession": "0000320187-26-000026",
-          "url": "https://www.sec.gov/Archives/edgar/data/320187/000032018726000026/nke-20260331.htm",
-          "events": [
-            "2.02 Results of Operations and Financial Condition: Results of Operations and Financial Condition Today NIKE, Inc. issued a press release disclosing financial results for the fiscal quarter ended February 28, 2026. The text of the release is furnished herewith as Exhibit 99.1"
-          ],
-          "drivers": null,
-          "explanatory": true
-        }
-      ],
+      "filings": [],
       "revised_guidance": {
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "no revised-outlook block matched in the parsed 99.1 for 8-Ks ['0000320187-26-000026']"
+        "note": "no catalyst 8-K to follow for a revised-guidance exhibit"
       },
       "gap_threshold": -0.1,
       "gap_window_days": 180
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": -0.30670251584405606,
-        "source_ref": "EOD NKE 180d to 2026-09-22",
+        "value": -0.19335216163371716,
+        "source_ref": "EOD NKE 180d to 2026-10-16",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.16890666418639255,
-        "source_ref": "EOD SPY 180d to 2026-09-22 (cap-band: $53.6B @ 2026-09-22 → large (>$25B) → SPY)",
+        "value": 0.07478806995803655,
+        "source_ref": "EOD SPY 180d to 2026-10-16 (cap-band: $53.6B @ 2026-10-16 → large (>$25B) → SPY)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": -0.4756091800304486,
-        "source_ref": "EOD NKE−SPY 180d to 2026-09-22 (assembly, cap-band)",
+        "value": -0.2681402315917537,
+        "source_ref": "EOD NKE−SPY 180d to 2026-10-16 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -1697,7 +1674,7 @@
         "note": "no graph cohort to compare — see rel_vs_market for the name-vs-market read"
       },
       "benchmark_symbol": "SPY",
-      "benchmark_basis": "cap-band: $53.6B @ 2026-09-22 → large (>$25B) → SPY"
+      "benchmark_basis": "cap-band: $53.6B @ 2026-10-16 → large (>$25B) → SPY"
     },
     "consensus_context": {
       "consensus_levels": {
@@ -1917,7 +1894,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "EPS Normalized: latest guide '0.35 - 0.35' for FQ2 2015 (dated 2014-09-25) (stale — 4380d old); actual ≥ guided floor 2/2 resolved; most recent guidance outcome: FQ2 2015 MET; EPS (GAAP): latest guide '0.35 - 0.35' for FQ2 2015 (dated 2014-09-25) (stale — 4380d old); actual ≥ guided floor 4/5 resolved; most recent guidance outcome: FQ2 2015 MET; DPS: latest guide 0.41 for FQ1 2027 (dated 2026-08-06) (stale — 47d old); actual ≥ guided floor 1/5 resolved · 6 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ4 2026 AT GUIDE (±0.5% of a point — not adjudicated); Revenue: latest guide '11,016.80 - 11,602.80' for FQ1 2027 (dated 2026-06-30) (stale — 84d old); actual ≥ guided floor 39/51 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ4 2026 MET; Gross Margin %: latest guide 42.2 for FQ1 2027 (dated 2026-06-30) (stale — 84d old); actual ≥ guided floor 22/37 resolved · 5 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ4 2026 MET; Effective Tax Rate %: latest guide '20.00 - 23.00' for FY 2027 (dated 2026-06-30) (stale — 84d old); spend ≤ guided ceiling 22/27 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2026 MET; Interest Expense: latest guide -12.0 for FQ4 2019 (dated 2019-03-21) (stale — 2742d old); spend ≤ guided ceiling 7/7 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ4 2019 AT GUIDE (±0.5% of a point — not adjudicated)  [data ≥ 2026-09-20 · export date unverified]",
+        "value": "EPS Normalized: latest guide '0.35 - 0.35' for FQ2 2015 (dated 2014-09-25) (stale — 4404d old); actual ≥ guided floor 2/2 resolved; most recent guidance outcome: FQ2 2015 MET; EPS (GAAP): latest guide '0.35 - 0.35' for FQ2 2015 (dated 2014-09-25) (stale — 4404d old); actual ≥ guided floor 4/5 resolved; most recent guidance outcome: FQ2 2015 MET; DPS: latest guide 0.41 for FQ1 2027 (dated 2026-08-06) (stale — 71d old); actual ≥ guided floor 1/5 resolved · 6 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ4 2026 AT GUIDE (±0.5% of a point — not adjudicated); Revenue: latest guide '11,016.80 - 11,602.80' for FQ1 2027 (dated 2026-06-30) (stale — 108d old); actual ≥ guided floor 39/51 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ4 2026 MET; Gross Margin %: latest guide 42.2 for FQ1 2027 (dated 2026-06-30) (stale — 108d old); actual ≥ guided floor 22/37 resolved · 5 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ4 2026 MET; Effective Tax Rate %: latest guide '20.00 - 23.00' for FY 2027 (dated 2026-06-30) (stale — 108d old); spend ≤ guided ceiling 22/27 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2026 MET; Interest Expense: latest guide -12.0 for FQ4 2019 (dated 2019-03-21) (stale — 2766d old); spend ≤ guided ceiling 7/7 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ4 2019 AT GUIDE (±0.5% of a point — not adjudicated)  [data ≥ 2026-09-20 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1929,7 +1906,7 @@
             "latest_guide": "'0.35 - 0.35'",
             "period": "FQ2 2015",
             "dated": "2014-09-25",
-            "age": "4380d (stale)",
+            "age": "4404d (stale)",
             "record": "actual ≥ floor 2/2",
             "most_recent": "FQ2 2015 MET"
           },
@@ -1938,7 +1915,7 @@
             "latest_guide": "'0.35 - 0.35'",
             "period": "FQ2 2015",
             "dated": "2014-09-25",
-            "age": "4380d (stale)",
+            "age": "4404d (stale)",
             "record": "actual ≥ floor 4/5",
             "most_recent": "FQ2 2015 MET"
           },
@@ -1947,7 +1924,7 @@
             "latest_guide": "0.41",
             "period": "FQ1 2027",
             "dated": "2026-08-06",
-            "age": "47d (stale)",
+            "age": "71d (stale)",
             "record": "actual ≥ floor 1/5 · 6 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ4 2026 AT GUIDE (±0.5% of a point)"
           },
@@ -1956,7 +1933,7 @@
             "latest_guide": "'11,016.80 - 11,602.80'",
             "period": "FQ1 2027",
             "dated": "2026-06-30",
-            "age": "84d (stale)",
+            "age": "108d (stale)",
             "record": "actual ≥ floor 39/51 · 2 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ4 2026 MET"
           },
@@ -1965,7 +1942,7 @@
             "latest_guide": "42.2",
             "period": "FQ1 2027",
             "dated": "2026-06-30",
-            "age": "84d (stale)",
+            "age": "108d (stale)",
             "record": "actual ≥ floor 22/37 · 5 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ4 2026 MET"
           },
@@ -1974,7 +1951,7 @@
             "latest_guide": "'20.00 - 23.00'",
             "period": "FY 2027",
             "dated": "2026-06-30",
-            "age": "84d (stale)",
+            "age": "108d (stale)",
             "record": "spend ≤ ceiling 22/27 · 1 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FY 2026 MET"
           },
@@ -1983,7 +1960,7 @@
             "latest_guide": "-12.0",
             "period": "FQ4 2019",
             "dated": "2019-03-21",
-            "age": "2742d (stale)",
+            "age": "2766d (stale)",
             "record": "spend ≤ ceiling 7/7 · 1 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ4 2019 AT GUIDE (±0.5% of a point)"
           }
@@ -4756,14 +4733,14 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 4 (4 insiders, $2.73M) · sells 9 (5 insiders, $1.57M) — in the last 182 days · last purchase $1.00M, PRESIDENT & CEO, 2026-04-13 (~5mo ago) · largest purchase $2.95M, director, 2025-12-22 (~9mo ago) · last sale $0.10M, EVP: CHIEF INN,PROD&DSG OFCR, 2026-09-09 (~0mo ago) · largest sale $11.55M, EXECUTIVE CHAIRMAN, 2024-02-14 (~31mo ago) · grants 65 · last filing 2026-09-17 · other C×1/F×46/G×19/J×6/M×8",
-        "source_ref": "EDGAR Form 4 (latest 0000320187-26-000174; 160 filings in the 1095d scanned; counts over 182d)",
+        "value": "Open-market buys 0 · sells 9 (5 insiders, $1.57M) — in the last 182 days · last purchase $1.00M, PRESIDENT & CEO, 2026-04-13 (~6mo ago) · largest purchase $2.95M, director, 2025-12-22 (~10mo ago) · last sale $0.10M, EVP: CHIEF INN,PROD&DSG OFCR, 2026-09-09 (~1mo ago) · largest sale $11.55M, EXECUTIVE CHAIRMAN, 2024-02-14 (~32mo ago) · grants 65 · last filing 2026-10-16 · other C×1/F×47/G×17/J×6/M×8",
+        "source_ref": "EDGAR Form 4 (latest 0000320187-26-000195; 159 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-09-15): 75.6M → 85.7M sh (+13.4%, rising) · DTC 3.1d · recent: 2026-09-15 85.7M · 2026-08-31 75.6M · 2026-08-14 68.8M · 2026-07-31 57.4M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-09-15); DTC = 85,698,150 short ÷ 27,375,178 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-09-30): 85.7M → 99.2M sh (+15.8%, rising) · DTC 3.0d · recent: 2026-09-30 99.2M · 2026-09-15 85.7M · 2026-08-31 75.6M · 2026-08-14 68.8M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-09-30); DTC = 99,243,778 short ÷ 32,630,140 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -4771,39 +4748,18 @@
     "catalyst_calendar": {
       "rows": [
         {
-          "event": "effective as of September 4, 2026, to pursue another opportunity",
-          "expected_date": "2026-09",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: NIKE Inc NYSE NKE Key Developments.rtf · Aug-10-2026"
-        },
-        {
-          "event": "Matthew Friend will step down as Executive Vice President as of the effective date, at that time and remain with the…",
-          "expected_date": "2026-09",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: NIKE Inc NYSE NKE Key Developments.rtf · Jun-23-2026"
-        },
-        {
-          "event": "Matthew Friend will step down as Chief Financial Officer as of the Effective Dateat that time and remain with the com…",
-          "expected_date": "2026-09",
-          "date_basis": "stated",
-          "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
-          "source_ref": "CIQ Key Developments: NIKE Inc NYSE NKE Key Developments.rtf · Jun-23-2026"
-        },
-        {
-          "event": "Next results print",
-          "expected_date": "2026-09-24",
-          "date_basis": "cadence-estimate",
-          "tests_what": "the next reported quarter against the committed trajectory",
-          "source_ref": "cadence: EDGAR submissions (median 86d gap over 57 results 8-Ks; last print 2026-06-30)"
-        },
-        {
           "event": "2.375% Corporate Term Notes - November 1, 2026 $1,000.0M matures",
           "expected_date": "2026-11-01",
           "date_basis": "stated",
           "tests_what": "refinance / repay / convert before the wall — the survival read",
           "source_ref": "CIQ capital-structure panel (maturity_date)"
+        },
+        {
+          "event": "Next results print",
+          "expected_date": "2026-12-28",
+          "date_basis": "cadence-estimate",
+          "tests_what": "the next reported quarter against the committed trajectory",
+          "source_ref": "cadence: EDGAR submissions (median 88d gap over 57 results 8-Ks; last print 2026-10-01)"
         },
         {
           "event": "364-day Committed Credit Facility matures",
@@ -4850,6 +4806,39 @@
       "credit_health": {
         "value": "name Overall/Operational/Solvency/Liquidity 2/2/2/2 (S&P issuer rating A+); peer-median O/Op/S/L 3/3/3/3; scale 1=strongest … 4=weakest (S&P-MI PD model)",
         "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-21",
+        "status": "present",
+        "note": null
+      },
+      "credit_health_panels": {
+        "value": [
+          {
+            "population_kind": "industry",
+            "population": "Footwear (GICS industry)",
+            "n": 21,
+            "overall": 3,
+            "operational": 2,
+            "solvency": 3,
+            "liquidity": 2,
+            "primary": true,
+            "scale_basis": "declared: the export's own Top…Bottom labels match its table on all four",
+            "sp_long_term_issuer": "A+",
+            "data_through": "2026-09-13"
+          },
+          {
+            "population_kind": "comps",
+            "population": "comp set (CIQ comps template)",
+            "n": 11,
+            "overall": 2,
+            "operational": 2,
+            "solvency": 2,
+            "liquidity": 2,
+            "primary": false,
+            "scale_basis": "verified from the comp set: investment-grade peers score at or below sub-IG peers",
+            "sp_long_term_issuer": "A+",
+            "data_through": null
+          }
+        ],
+        "source_ref": "CIQ Credit Health Panel export→Summary (industry peers; export date not stamped) · CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-21",
         "status": "present",
         "note": null
       }
@@ -5201,7 +5190,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[364-DAY CREDIT AGREEMENT · 0000320187-25-000008 · amended by 0000320187-26-000020]\n  Principal / commitment amount: The aggregate amount of the Banks' Commitments on the Effective Date is…\n  Interest / coupon rate: Term SOFR Loan or Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis…\n  Maturity date: Termination Date: the first to occur of (a) the later of (i) March 5, 2027 and (ii)…\n[CREDIT AGREEMENT · 0000320187-23-000006 · amended by 0000320187-24-000009]\n  Principal / commitment amount: $1,000,000,000 (aggregate Commitments on the Effective Date); increase option not…\n  Interest / coupon rate: Term SOFR plus the Applicable Margin (Applicable Margin (in basis points): Level I…\n  Maturity date: Termination Date: the later of (i) March 7, 2025 and (ii) if extended pursuant to…",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[364-DAY CREDIT AGREEMENT · 0000320187-25-000008 · amended by 0000320187-26-000020]\n  Principal / commitment amount: $1,000,000,000 (aggregate Commitments on the Effective Date). Increase option: may…\n  Interest / coupon rate: Term SOFR Loan / Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis…\n  Maturity date: Termination Date: the later of (i) March 5, 2027 and (ii) if extended pursuant to…\n  Default interest rate: Base Rate plus Applicable Margin plus 2% per annum (for Term SOFR / Alternative…\n  Negative covenant - Liens: Section 6.12 negative pledge with enumerated exceptions; basket under 6.12.13 up to…\n[CREDIT AGREEMENT · 0000320187-23-000006 · amended by 0000320187-24-000009]\n  Principal / commitment amount: $1,000,000,000 (aggregate Commitments on the Effective Date); increase option up to…\n  Interest / coupon rate: Term SOFR plus the Applicable Margin (Applicable Margin in basis points based on…\n  Maturity date: March 7, 2025 (Termination Date), subject to 364-day extension per Section 2.6 and…\n  Default interest rate: applicable rate (including Applicable Margin) plus 2% per annum",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -5243,15 +5232,15 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR plus Applicable Margin (Level I 35.75 bps; Level II 48.0 bps; Level III 58.5 bps; Level IV 69.0 bps), plus Term SOFR Adjustment of 0.10% (10 bps); Base Rate = highest of (a) Federal Funds Rate plus 1/2 of 1%, (b) Bank of America prime rate, (c) Term SOFR plus 1.00%; Alternative Currency Daily Rate / Alternative Currency Term Rate plus Applicable Margin",
-              "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
-              "status": "present",
-              "note": "verbatim: ““ Term SOFR Advance ” means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin. ... “ Applicable Margin ” means, on any date and with respect to each Loan, the applicable margin set forth below based on the Applicable Rating Level on such date: Applicable Rating Level Applicable Margin (in basis points) Level I 35.75 Level II 48.0 Level III 58.5 Level IV 69.0 ... “ Term SOFR Adjustment ” means with respect to Term SOFR 0.10% (10 basis points) for an Interest Period of one, three or six-month’s duration.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm"
             },
-            "base_rate_label": "Term SOFR",
+            "base_rate_label": null,
             "margin_pct": null,
-            "margin_bps": 35.75,
-            "floor_pct": 0.0,
+            "margin_bps": null,
+            "floor_pct": null,
             "pik_pct": null,
             "agreement_title": "364-DAY CREDIT AGREEMENT",
             "agreement_is_amendment": false
@@ -5259,10 +5248,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Termination Date: the later of (i) March 6, 2026 and (ii) any extended maturity date pursuant to Section 2.6 (or earlier cancellation/termination); Term Out Option available to convert Loans due on first anniversary of the Termination Date",
+              "value": "March 6, 2026 (Termination Date), subject to extension under Section 2.6 and the Term Out Option (Section 2.10, first anniversary of the Termination Date)",
               "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: ““ Termination Date ” means the first to occur of (a) the later of (i) March 6, 2026 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided , however , if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
+              "note": "verbatim: “\"Termination Date\" means the first to occur of (a) the later of (i) March 6, 2026 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided , however , if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5291,10 +5280,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Company Guaranty Agreement: the Company guarantees the obligations of each Designated Borrower (Exhibit M). No security/collateral stated; facility is unsecured (rating based on Company's long-term, senior unsecured, non-credit-enhanced debt)",
+              "value": "Company guarantees the obligations of each Designated Borrower (Company Guaranty Agreement, Exhibit M). No collateral/security interest stated; facility is based on the Company's long-term, senior unsecured, non-credit-enhanced debt ratings.",
               "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: ““ Company Guaranty Agreement ” means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M . ... The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
+              "note": "verbatim: “\"Company Guaranty Agreement\" means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M . ... The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5307,10 +5296,122 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to exchange rate changes, prepay within 2 Business Days to reduce to not more than 100% of Commitments. Events of Default (Article VII): 7.1 material false representation/warranty; 7.2 nonpayment of principal when due, or interest/fees/other Obligations within 5 Business Days; 7.3 breach of Sections 6.10, 6.11, 6.12, 6.14, 6.15, or other covenant not cured within 30 days; 7.4 cross-default on Indebtedness in excess of $200,000,000; 7.5-7.6 bankruptcy/insolvency; 7.8 unpaid judgments in excess of $200,000,000; 7.9 Reportable Event/Unfunded Liabilities; 7.10 Change in Control. Acceleration per Article VIII",
+              "value": "Mandatory prepayment: Section 2.5.3(b) — if Total Outstandings exceed 105% of Aggregate Commitments due to exchange rate changes, prepay within 2 Business Days to not exceed 100% of Commitments. Events of Default (Article VII): 7.1 material misrepresentation; 7.2 nonpayment of principal when due / interest or fees within 5 Business Days; 7.3 breach of covenants (Sections 6.10, 6.11, 6.12, 6.14, 6.15; other breaches 30-day cure); 7.4 cross-default on Indebtedness over $200,000,000; 7.5/7.6 bankruptcy/insolvency; 7.8 unpaid judgments over $200,000,000; 7.9 ERISA Reportable Event/material Unfunded Liabilities; 7.10 Change in Control",
               "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect ... The occurrence of any one or more of the following events shall constitute a Default: 7.1 ... 7.4 Failure of the Company or any Subsidiary to pay any Indebtedness in an aggregate principal amount in excess of $200,000,000 ... 7.10 Any Change in Control shall occur.”"
+              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect ... The occurrence of any one or more of the following events shall constitute a Default: 7.1 Any representation or warranty ... shall be materially false ... 7.2 Nonpayment of principal ... 7.4 Failure ... to pay any Indebtedness in an aggregate principal amount in excess of $200,000,000 ... 7.10 Any Change in Control shall occur.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Facility Fee",
+            "value": {
+              "value": "Applicable Facility Fee Rate: Level I 1.75 bps; Level II 2.0 bps; Level III 4.0 bps; Level IV 6.0 bps",
+              "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “\"Applicable Facility Fee Rate\" means, on any date and with respect to each Commitment whether used or unused, the applicable fee (in basis points) set forth below based on the Applicable Rating Level on such date: Applicable Rating Level Facility Fee Rate (in basis points) Level I 1.75 Level II 2.0 Level III 4.0 Level IV 6.0”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Default interest rate",
+            "value": {
+              "value": "Base Rate plus Applicable Margin plus 2% per annum (for Term SOFR / Alternative Currency Advances, otherwise applicable rate including Applicable Margin plus 2% per annum)",
+              "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “any Advance not paid at maturity, whether by acceleration or otherwise, shall bear interest until paid in full at a rate per annum equal to the Base Rate plus the Applicable Margin, if any, applicable to Base Rate Loans plus 2% per annum”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Increase in Commitments (accordion)",
+            "value": {
+              "value": "Increase up to $500,000,000 in aggregate; minimum request $50,000,000",
+              "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “the Company may from time to time, request an increase in the Commitments by an amount (for all such requests) not exceeding $500,000,000; provided that any such request for an increase shall be in a minimum amount of $50,000,000.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Change in Control",
+            "value": {
+              "value": "(a) acquisition (other than by the Knight Family) of 50% or more of outstanding Class B Common Stock; or (b) Knight Family fails to own and control 67% or more of outstanding Class A Common Stock",
+              "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “\"Change in Control\" means either (a) with respect to the Company's Class B Common Stock, the acquisition after the date of this Agreement by any Person or two or more Persons acting in concert, other than the Knight Family, of beneficial ownership ... of 50% or more of the outstanding shares of such Class B Common Stock; or (b) with respect to the Borrower's Class A Common Stock, if the Knight Family shall at any time fail to own and control 67% or more of the outstanding shares of such Class A Common Stock.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Term Out Option",
+            "value": {
+              "value": "Convert outstanding Loans into term loans due on first anniversary of Termination Date; fee of 0.50% times aggregate outstanding principal so converted",
+              "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “The Borrower may, upon notice to the Administrative Agent not later than the Termination Date, elect to convert all of the Loans outstanding on the Termination Date in effect at such time into “term loans” ... shall instead be due and payable on the first anniversary of the Termination Date ... the Borrower shall have paid to the Administrative Agent for the account of the Banks a fee in the amount equal to (x) 0.50% multiplied by (y) the aggregate outstanding principal amount of all Loans so converted.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Negative covenant - Liens",
+            "value": {
+              "value": "Section 6.12 negative pledge with enumerated exceptions; basket under 6.12.13 up to greater of $2,105,550,000.00 and 15% of consolidated net worth",
+              "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “6.12 Liens . The Company will not, nor will it permit any Subsidiary to, create, incur, or suffer to exist any Lien in, of or on the property of the Company or any Subsidiary, except: ... 6.12.13 Liens not otherwise permitted hereunder; provided that the aggregate principal amount of Indebtedness or other obligations secured thereby ... shall not at the time of incurrence exceed the greater of $2,105,550,000.00 and 15% of the consolidated net worth of the Company and its Subsidiaries”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364-DAY CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of New York (giving effect to federal laws applicable to national banks)",
+              "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “THE LOAN DOCUMENTS (OTHER THAN THOSE CONTAINING A CONTRARY EXPRESS CHOICE OF LAW PROVISION) SHALL BE CONSTRUED IN ACCORDANCE WITH THE INTERNAL LAWS (AND NOT THE LAW OF CONFLICTS) OF THE STATE OF NEW YORK BUT GIVING EFFECT TO FEDERAL LAWS APPLICABLE TO NATIONAL BANKS.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5339,7 +5440,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,000,000,000 (aggregate Commitments on the Effective Date); increase option not exceeding $500,000,000 (Section 2.7.1)",
+              "value": "$1,000,000,000 (aggregate Commitments on the Effective Date); increase option up to $500,000,000 additional per Section 2.7.1 (minimum $50,000,000 per request)",
               "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
               "status": "present",
               "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
@@ -5355,15 +5456,15 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR plus the Applicable Margin (Applicable Margin (in basis points): Level I 35.75; Level II 48.0; Level III 58.5; Level IV 69.0). \"Term SOFR Adjustment\" means with respect to Term SOFR 0.10% (10 basis points). Base Rate Advances bear interest at the Base Rate. Alternative Currency Daily Rate / Alternative Currency Term Rate Advances bear interest at the applicable rate plus the Applicable Margin.",
-              "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
-              "status": "present",
-              "note": "verbatim: “\"Term SOFR Advance\" means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm"
             },
-            "base_rate_label": "Term SOFR",
+            "base_rate_label": null,
             "margin_pct": null,
-            "margin_bps": 35.75,
-            "floor_pct": 0.0,
+            "margin_bps": null,
+            "floor_pct": null,
             "pik_pct": null,
             "agreement_title": "CREDIT AGREEMENT",
             "agreement_is_amendment": false
@@ -5371,10 +5472,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Termination Date: the later of (i) March 7, 2025 and (ii) if extended pursuant to Section 2.6, such extended maturity date; subject to Term Out Option (Section 2.10) extending outstanding Loans to the first anniversary of the Termination Date",
+              "value": "March 7, 2025 (Termination Date), subject to 364-day extension per Section 2.6 and Term Out Option under Section 2.10 (one year after Termination Date)",
               "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “\"Termination Date\" means the first to occur of (a) the later of (i) March 7, 2025 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided , however , if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
+              "note": "verbatim: ““ Termination Date ” means the first to occur of (a) the later of (i) March 7, 2025 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5403,7 +5504,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Company Guaranty Agreement: the Company guarantees the obligations of each Designated Borrower (Exhibit M). \"Company Guaranty Agreement\" means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M. No collateral/security interest granted; facility is unsecured (Applicable Rating Level determined by ratings of the Company's long-term, senior unsecured, non-credit-enhanced debt).",
+              "value": "Unsecured facility (no collateral stated); Company guarantees obligations of each Designated Borrower pursuant to Company Guaranty Agreement (Exhibit M). Ratings reference Company's long-term, senior unsecured, non-credit-enhanced debt.",
               "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
               "status": "present",
               "note": "verbatim: “The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
@@ -5419,7 +5520,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to exchange rate changes, prepay within two Business Days to not exceed 100% of aggregate Commitments. Events of Default (Article VII / \"Default\"): 7.1 material false representation/warranty; 7.2 nonpayment of principal when due, or interest/facility fee/other Obligations within five Business Days; 7.3 breach of Sections 6.10, 6.11, 6.12, 6.14 or 6.15, and other covenant breaches not remedied within 30 days; 7.4 cross-default on Indebtedness in excess of $200,000,000; 7.5 & 7.6 bankruptcy/insolvency events (60-day cure for involuntary proceedings); 7.8 unpaid judgments in excess of $200,000,000 not discharged within 60 days; 7.9 ERISA Reportable Event / material Unfunded Liabilities; 7.10 any Change in Control. Acceleration under Section 8.1.",
+              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes, prepay within 2 Business Days to reduce to ≤100% of Commitments. Events of Default (Article VII): 7.1 misrepresentation; 7.2 nonpayment of principal when due / interest or fees within 5 Business Days; 7.3 breach of Sections 6.10, 6.11, 6.12, 6.14, 6.15 and other covenants (30-day cure); 7.4 cross-default on Indebtedness in excess of $200,000,000 (30 days); 7.5/7.6 bankruptcy/insolvency; 7.8 unpaid judgments in excess of $200,000,000 (60 days); 7.9 ERISA Reportable Event / Unfunded Liabilities; 7.10 Change in Control. Acceleration per Section 8.1.",
               "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
               "status": "present",
               "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect”"
@@ -5451,10 +5552,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.",
+              "value": "$1,000,000,000 (aggregate Commitments on the Effective Date). Increase option: may request increase not exceeding $500,000,000, minimum $50,000,000 (Section 2.7.1)",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
-              "note": "verbatim: “\"Commitment\" means for each Bank, the obligation of the Bank to make Loans not exceeding the amount set forth opposite the Bank's name in Schedule 2 hereof ... The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
+              "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5467,7 +5568,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR Loan or Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis points); Base Rate Loan: 0.00% (0 basis points). Term SOFR Loan bears interest at a rate based on Term SOFR plus the Applicable Margin.",
+              "value": "Term SOFR Loan / Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis points); Base Rate Loan: 0.00% (0 basis points). Rate Options: Base Rate, Term SOFR, Alternative Currency Daily Rate or Alternative Currency Term Rate (each plus Applicable Margin). Base Rate = highest of (a) Federal Funds Rate plus 1/2 of 1%, (b) BofA prime rate, (c) Term SOFR plus 1.00%.",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
               "note": "verbatim: “\"Applicable Margin\" means, on any date and (i) with respect to a Term SOFR Loan or Alternative Currency Loan, 0.595% (59.5 basis points) or (ii) with respect to a Base Rate Loan, 0.00% (0 basis points).”"
@@ -5483,10 +5584,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Termination Date: the first to occur of (a) the later of (i) March 5, 2027 and (ii) if extended pursuant to Section 2.6, such extended maturity date and (b) the date the Commitments or this Agreement are earlier cancelled or terminated",
+              "value": "Termination Date: the later of (i) March 5, 2027 and (ii) if extended pursuant to Section 2.6, such extended date; or earlier cancellation/termination. Term Out Option (Section 2.10): Loans may convert to term loans due on first anniversary of the Termination Date.",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
-              "note": "verbatim: “\"Termination Date\" means the first to occur of (a) the later of (i) March 5, 2027 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided , however , if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
+              "note": "verbatim: “\"Termination Date\" means the first to occur of (a) the later of (i) March 5, 2027 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5515,10 +5616,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "The Company shall guarantee the obligations of each Designated Borrower pursuant to the Company Guaranty Agreement (Exhibit M). No security/collateral pledge stated (facility is unsecured).",
+              "value": "Company Guaranty Agreement: Company guarantees obligations of each Designated Borrower (Section 2.9.2: \"the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M\"). No collateral/security interest stated; facility is unsecured (no grant of security interest found; negative pledge in Section 6.12 Liens).",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
-              "note": "verbatim: “\"Company Guaranty Agreement\" means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M . ... 2.9.2 The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
+              "note": "verbatim: “\"Company Guaranty Agreement\" means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M .”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5531,10 +5632,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: if Total Outstandings exceed 105% of Aggregate Commitments due to exchange rate changes, prepay within 2 Business Days to not exceed 100% of Commitments (Section 2.5.3(b)). Events of Default (Article VII) include: material false representation (7.1); nonpayment of principal when due or interest/fees within 5 Business Days (7.2); breach of covenants (7.3); cross-default on Indebtedness in excess of $200,000,000 (7.4); bankruptcy/insolvency (7.5, 7.6); unpaid judgments in excess of $200,000,000 (7.8); ERISA events (7.9); Change in Control (7.10). Acceleration per Section 8.1.",
+              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes, prepay within 2 Business Days to reduce to not more than 100% of Commitments. Defaults (Article VII, Sections 7.1–7.10) include: materially false representation/warranty (7.1); nonpayment of principal when due or interest/fees within 5 Business Days (7.2); breach of specified covenants, other covenants not cured within 30 days (7.3); cross-default on Indebtedness in excess of $200,000,000 (7.4); bankruptcy/insolvency events (7.5, 7.6); unpaid judgments in excess of $200,000,000 within 60 days (7.8); ERISA Reportable Event/Unfunded Liabilities (7.9); Change in Control (7.10). Acceleration per Section 8.1.",
               "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
               "status": "present",
-              "note": "verbatim: “2.5.3(b) If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect. ... ARTICLE VII DEFAULTS The occurrence of any one or more of the following events shall constitute a Default: 7.1 ... 7.2 Nonpayment of principal of any Loan (in the Agreed Currency) when due, or nonpayment of interest ... within five (5) Business Days after the same becomes due. ... 7.4 Failure of the Company or any Subsidiary to pay any Indebtedness in an aggregate principal amount in excess of $200,000,000 ... 7.10 Any Change in Control shall occur.”"
+              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall ... prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount ... to an amount not to exceed 100% of the aggregate Commitments then in effect”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5563,7 +5664,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,000,000,000 (aggregate Commitments on the Effective Date); increase option not exceeding $500,000,000 (Section 2.7.1)",
+              "value": "$1,000,000,000 (aggregate Commitments on the Effective Date); increase option up to an additional $500,000,000 pursuant to Section 2.7.1",
               "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
               "status": "present",
               "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
@@ -5579,15 +5680,31 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Term SOFR plus Applicable Margin (35.75 / 48.0 / 58.5 / 69.0 basis points by Rating Level); Base Rate, Alternative Currency Daily Rate or Alternative Currency Term Rate also available, each plus Applicable Margin. Term SOFR Adjustment 0.10% (10 bps). Term SOFR deemed zero if less than zero (floor).",
+              "value": "Term SOFR plus the Applicable Margin (Applicable Margin in basis points based on Applicable Rating Level: Level I 35.75, Level II 48.0, Level III 58.5, Level IV 69.0); Term SOFR Adjustment 0.10% (10 basis points); Base Rate Advances at Base Rate; Alternative Currency Daily Rate / Alternative Currency Term Rate plus Applicable Margin",
               "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: ““ Term SOFR Advance ” means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin. ... “ Applicable Margin ” means, on any date and with respect to each Loan, the applicable margin set forth below based on the Applicable Rating Level on such date: Applicable Rating Level Applicable Margin (in basis points) Level I 35.75 Level II 48.0 Level III 58.5 Level IV 69.0”"
+              "note": "verbatim: ““ Term SOFR Advance ” means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin.”"
             },
             "base_rate_label": "Term SOFR",
             "margin_pct": null,
-            "margin_bps": 35.75,
+            "margin_bps": null,
             "floor_pct": 0.0,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Interest / coupon rate — Base Rate",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
             "pik_pct": null,
             "agreement_title": "CREDIT AGREEMENT",
             "agreement_is_amendment": false
@@ -5595,7 +5712,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Termination Date: the later of (i) March 8, 2024 and (ii) any extended maturity date per Section 2.6 (extension for an additional 364 days); Term Out Option (Section 2.10) allows conversion to term loans due on the first anniversary of the Termination Date",
+              "value": "March 8, 2024 (subject to extension under Section 2.6 and Term Out Option under Section 2.10 extending to first anniversary of the Termination Date)",
               "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
               "status": "present",
               "note": "verbatim: ““ Termination Date ” means the first to occur of (a) the later of (i) March 8, 2024 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof”"
@@ -5627,10 +5744,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Company Guaranty Agreement (Company guarantees obligations of each Designated Borrower, per Exhibit M). No collateral/security stated (Applicable Rating Level references the Company's long-term, senior unsecured, non-credit-enhanced debt).",
+              "value": "Company Guaranty Agreement: the Company guarantees the obligations of each Designated Borrower (Section 2.9.2). No security/collateral stated (unsecured facility — ratings based on Company's long-term, senior unsecured, non-credit-enhanced debt)",
               "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: ““ Company Guaranty Agreement ” means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M . ... The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
+              "note": "verbatim: ““ Company Guaranty Agreement ” means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M .”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5643,10 +5760,74 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes, prepay within 2 Business Days to ≤100% of Commitments. Defaults (Article VII) include: false representations (7.1); nonpayment of principal when due, or interest/fees within 5 Business Days (7.2); breach of covenants 6.10, 6.11, 6.12, 6.14, 6.15, and other covenant breaches not cured within 30 days (7.3); cross-default on Indebtedness in excess of $200,000,000 (7.4); bankruptcy/insolvency (7.5, 7.6); unpaid judgments in excess of $200,000,000 within 60 days (7.8); ERISA (7.9); Change in Control (7.10). Acceleration per Section 8.1.",
+              "value": "Mandatory prepayment: currency fluctuation prepayment under Section 2.5.3(b) (Total Outstandings exceeding 105% of Aggregate Commitments). Defaults (Article VII) include: material false representation/warranty (7.1); nonpayment of principal when due or interest/fees within 5 Business Days (7.2); breach of Sections 6.10, 6.11, 6.12, 6.14, 6.15 and other covenant breaches not remedied within 30 days (7.3); cross-default on Indebtedness in excess of $200,000,000 (7.4); bankruptcy/insolvency (7.5, 7.6); unpaid judgments in excess of $200,000,000 within 60 days (7.8); ERISA (7.9); Change in Control (7.10). Acceleration per Section 8.1",
               "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
               "status": "present",
-              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect ... ARTICLE VII DEFAULTS The occurrence of any one or more of the following events shall constitute a Default”"
+              "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Facility Fee",
+            "value": {
+              "value": "Facility Fee Rate (in basis points): Level I 1.75, Level II 2.0, Level III 4.0, Level IV 6.0",
+              "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: ““ Applicable Facility Fee Rate ” means, on any date and with respect to each Commitment whether used or unused, the applicable fee (in basis points) set forth below based on the Applicable Rating Level on such date:”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Default interest rate",
+            "value": {
+              "value": "applicable rate (including Applicable Margin) plus 2% per annum",
+              "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “any Advance not paid at maturity, whether by acceleration or otherwise, shall bear interest until paid in full at a rate per annum equal to the Base Rate plus the Applicable Margin, if any, applicable to Base Rate Loans plus 2% per annum”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Term Out Option fee",
+            "value": {
+              "value": "0.50% of aggregate outstanding principal of Loans converted to term loans",
+              "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “the Borrower shall have paid to the Administrative Agent for the account of the Banks a fee in the amount equal to (x) 0.50% multiplied by (y) the aggregate outstanding principal amount of all Loans so converted.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Governing law",
+            "value": {
+              "value": "State of New York (giving effect to federal laws applicable to national banks)",
+              "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+              "status": "present",
+              "note": "verbatim: “THE LOAN DOCUMENTS (OTHER THAN THOSE CONTAINING A CONTRARY EXPRESS CHOICE OF LAW PROVISION) SHALL BE CONSTRUED IN ACCORDANCE WITH THE INTERNAL LAWS (AND NOT THE LAW OF CONFLICTS) OF THE STATE OF NEW YORK BUT GIVING EFFECT TO FEDERAL LAWS APPLICABLE TO NATIONAL BANKS.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5663,7 +5844,7 @@
       },
       "maturity_event": null,
       "panel_vintage": {
-        "value": "the debt schedule is 69d old (source filed 2026-07-15); no Item 1.02 (termination of a material agreement) has been filed since",
+        "value": "the debt schedule is 93d old (source filed 2026-07-15); no Item 1.02 (termination of a material agreement) has been filed since",
         "source_ref": "CIQ Capital Structure Details — A 2026 filed Jul-15-2026",
         "status": "present",
         "note": null
@@ -5672,13 +5853,13 @@
     "capital_allocation": {
       "goodwill": {
         "value": 240.0,
-        "source_ref": "EDGAR companyfacts Goodwill (as at 2026-05-31)",
+        "source_ref": "EDGAR companyfacts Goodwill (as at 2026-08-31)",
         "status": "present",
         "note": null
       },
       "intangibles": {
         "value": 259.0,
-        "source_ref": "EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-05-31)",
+        "source_ref": "EDGAR companyfacts IntangibleAssetsNetExcludingGoodwill (as at 2026-08-31)",
         "status": "present",
         "note": null
       },
@@ -5686,17 +5867,17 @@
         "value": 0.0,
         "source_ref": "EDGAR companyfacts GoodwillImpairmentLoss (2024-06-01→2025-05-31, 364d)",
         "status": "present",
-        "note": null
+        "note": "STALE — the last such charge covers 2024-06-01→2025-05-31, 364d, 1.3 years before the balance beside it (as at 2026-08-31), so it measures no current period. Nothing has been written down since"
       },
       "intangible_impairment": {
         "value": 0.0,
         "source_ref": "EDGAR companyfacts ImpairmentOfIntangibleAssetsExcludingGoodwill (2009-06-01→2010-02-28, 272d)",
         "status": "present",
-        "note": "STALE — the last such charge covers 2009-06-01→2010-02-28, 272d, 16.3 years before the balance beside it (as at 2026-05-31), so it measures no current period. Nothing has been written down since"
+        "note": "STALE — the last such charge covers 2009-06-01→2010-02-28, 272d, 16.5 years before the balance beside it (as at 2026-08-31), so it measures no current period. Nothing has been written down since"
       },
       "buyback_cash": {
-        "value": 146.0,
-        "source_ref": "EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-06-01→2026-05-31, 364d)",
+        "value": 0.0,
+        "source_ref": "EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2026-06-01→2026-08-31, 91d)",
         "status": "present",
         "note": null
       },
@@ -5739,8 +5920,8 @@
         }
       ],
       "line": {
-        "value": "shelf registrations 1 (S-3ASR, last 2025-07-17) · employee-plan (S-8) 1 (S-8, last 2026-04-10) — routine — 3y window to 2026-09-22",
-        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-09-23→2026-09-22 · latest 0001193125-26-151296",
+        "value": "shelf registrations 1 (S-3ASR, last 2025-07-17) · employee-plan (S-8) 1 (S-8, last 2026-04-10) — routine — 3y window to 2026-10-16",
+        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-10-17→2026-10-16 · latest 0001193125-26-151296",
         "status": "present",
         "note": null
       },
@@ -5790,8 +5971,8 @@
         }
       ],
       "line": {
-        "value": "no 13D on file · Schedule 13G filings 8 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-08-12) — 3y window to 2026-09-22",
-        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-09-23→2026-09-22 · latest 0001422849-26-000147",
+        "value": "no 13D on file · Schedule 13G filings 8 (SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-08-12) — 3y window to 2026-10-16",
+        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-10-17→2026-10-16 · latest 0001422849-26-000147",
         "status": "present",
         "note": null
       },
@@ -5826,15 +6007,15 @@
           "is_subject": true,
           "market_cap": 53554.3,
           "acquired": 499.0,
-          "total_assets": 38410.0,
-          "pct_assets": 0.01299140848737308,
+          "total_assets": 37794.0,
+          "pct_assets": 0.0132031539397788,
           "pct_market_cap": 0.009317645828626273,
           "note": null,
           "impairment": {
             "state": "explicit-zero",
             "state_label": "reports nil",
-            "window_start": "2021-05-31",
-            "window_end": "2026-05-31",
+            "window_start": "2021-08-31",
+            "window_end": "2026-08-31",
             "observations": 1,
             "charged_years": 0,
             "total": null,
@@ -5992,20 +6173,20 @@
           "ticker": "LEVI",
           "is_subject": false,
           "market_cap": 7627.7,
-          "acquired": 474.8,
-          "total_assets": 6627.5,
-          "pct_assets": 0.07164089023010185,
-          "pct_market_cap": 0.062246810965297536,
+          "acquired": 477.9,
+          "total_assets": 6929.1,
+          "pct_assets": 0.06896999610339004,
+          "pct_market_cap": 0.0626532244320044,
           "note": null,
           "impairment": {
             "state": "charged",
             "state_label": "wrote down",
-            "window_start": "2021-05-31",
-            "window_end": "2026-05-31",
+            "window_start": "2021-08-30",
+            "window_end": "2026-08-30",
             "observations": 4,
             "charged_years": 4,
             "total": 212.1,
-            "pct_acquired": 0.44671440606571183,
+            "pct_acquired": 0.4438166980539862,
             "last_charge_end": "2025-11-30",
             "last_charge_amount": 2.5,
             "pending": null,
@@ -6094,12 +6275,12 @@
         }
       ],
       "size_floor": 1000.0,
-      "subject_pct_assets": 0.01299140848737308,
+      "subject_pct_assets": 0.0132031539397788,
       "subject_pct_market_cap": 0.009317645828626273,
       "median_all_assets": 0.08770808370450407,
-      "median_all_market_cap": 0.062246810965297536,
+      "median_all_market_cap": 0.0626532244320044,
       "median_large_assets": 0.08770808370450407,
-      "median_large_market_cap": 0.062246810965297536,
+      "median_large_market_cap": 0.0626532244320044,
       "n_all": 9,
       "n_large": 9,
       "imp_window_years": 5,
@@ -7359,12 +7540,32 @@
             "note": null
           }
         ],
-        "as_filed_by": "2026-09-30",
+        "as_filed_by": "2026-10-26",
         "source_ref": "CIQ Financials (Annual)→Income Statement 'Total Revenue' and →Cash Flow 'Cash from Ops.' against EDGAR XBRL (the first revenue / operating-cash-flow alias reporting the period)"
       }
     },
     "primary_source": {
       "releases": [
+        {
+          "filed": "2026-10-01",
+          "source_ref": "8-K 0000320187-26-000184 EX-99.1",
+          "guidance": [],
+          "reconciliation": [
+            {
+              "metric": "gross margin",
+              "period": "Q1 2027",
+              "value": 42.8,
+              "change": null,
+              "verbatim": "Gross margin 42.8 %",
+              "source_ref": "8-K 0000320187-26-000184 EX-99.1"
+            }
+          ],
+          "one_offs": [],
+          "event_impacts": [],
+          "qa_flags": [
+            "no anchored pattern matched — guidance/outlook: 8-K 0000320187-26-000184 EX-99.1"
+          ]
+        },
         {
           "filed": "2026-06-30",
           "source_ref": "8-K 0000320187-26-000076 EX-99.1",
@@ -7408,30 +7609,10 @@
           "qa_flags": [
             "no anchored pattern matched — guidance/outlook: 8-K 0000320187-26-000026 EX-99.1"
           ]
-        },
-        {
-          "filed": "2025-12-18",
-          "source_ref": "8-K 0000320187-25-000138 EX-99.1",
-          "guidance": [],
-          "reconciliation": [
-            {
-              "metric": "gross margin",
-              "period": "Q2 2026",
-              "value": 40.6,
-              "change": null,
-              "verbatim": "Gross margin 40.6 %",
-              "source_ref": "8-K 0000320187-25-000138 EX-99.1"
-            }
-          ],
-          "one_offs": [],
-          "event_impacts": [],
-          "qa_flags": [
-            "no anchored pattern matched — guidance/outlook: 8-K 0000320187-25-000138 EX-99.1"
-          ]
         }
       ],
       "filing": {
-        "source_ref": "10-Q 0000320187-26-000037",
+        "source_ref": "10-Q 0000320187-26-000193",
         "going_concern": null,
         "maturity_wall": {
           "within_12m_total": null,
@@ -7439,17 +7620,17 @@
           "state": "not_stated",
           "note": "no near-term wall stated in filing — composition table present; see CIQ panel",
           "verbatim": "",
-          "source_ref": "10-Q 0000320187-26-000037"
+          "source_ref": "10-Q 0000320187-26-000193"
         },
         "concentration": null,
         "commitments": [],
         "qa_flags": [
-          "no anchored pattern matched — customer concentration: 10-Q 0000320187-26-000037"
+          "no anchored pattern matched — customer concentration: 10-Q 0000320187-26-000193"
         ]
       },
       "self_funding": {
         "value": "self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0",
-        "source_ref": "EDGAR latest-Q OCF sign + CIQ LTM FCF sign",
+        "source_ref": "EDGAR OCF sign, quarter to 2026-08-31 + CIQ LTM FCF sign",
         "status": "present",
         "note": null
       },
@@ -7665,22 +7846,22 @@
     },
     "stock_info": {
       "price": {
-        "value": 36.1,
+        "value": 37.3,
         "source_ref": "EOD NKE last close",
         "status": "present",
-        "note": "PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling"
+        "note": null
       },
       "high_52w": {
-        "value": 76.97,
+        "value": 70.44,
         "source_ref": "EOD NKE 52-week high",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
+        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
       },
       "low_52w": {
-        "value": 35.35,
+        "value": 31.97,
         "source_ref": "EOD NKE 52-week low",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
+        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
       },
       "shares_out": {
         "value": 1483500000.0,
@@ -7700,1274 +7881,1274 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-09-22",
+      "as_of": "2026-10-23",
       "market_cap_as_of": "2026-09-21"
     },
     "stock_performance": {
       "points": [
         {
-          "date": "2025-09-23",
+          "date": "2025-10-17",
           "name": 100.0,
           "benchmark": 100.0
         },
         {
-          "date": "2025-09-24",
-          "name": 100.41,
-          "benchmark": 99.68
-        },
-        {
-          "date": "2025-09-25",
-          "name": 97.62,
-          "benchmark": 99.22
-        },
-        {
-          "date": "2025-09-26",
-          "name": 97.72,
-          "benchmark": 99.79
-        },
-        {
-          "date": "2025-09-29",
-          "name": 98.05,
-          "benchmark": 100.07
-        },
-        {
-          "date": "2025-09-30",
-          "name": 98.31,
-          "benchmark": 100.45
-        },
-        {
-          "date": "2025-10-01",
-          "name": 104.61,
-          "benchmark": 100.79
-        },
-        {
-          "date": "2025-10-02",
-          "name": 105.13,
-          "benchmark": 100.91
-        },
-        {
-          "date": "2025-10-03",
-          "name": 101.41,
-          "benchmark": 100.9
-        },
-        {
-          "date": "2025-10-06",
-          "name": 100.34,
-          "benchmark": 101.27
-        },
-        {
-          "date": "2025-10-07",
-          "name": 97.15,
-          "benchmark": 100.89
-        },
-        {
-          "date": "2025-10-08",
-          "name": 97.41,
-          "benchmark": 101.49
-        },
-        {
-          "date": "2025-10-09",
-          "name": 95.95,
-          "benchmark": 101.2
-        },
-        {
-          "date": "2025-10-10",
-          "name": 91.95,
-          "benchmark": 98.46
-        },
-        {
-          "date": "2025-10-13",
-          "name": 95.0,
-          "benchmark": 99.97
-        },
-        {
-          "date": "2025-10-14",
-          "name": 95.36,
-          "benchmark": 99.85
-        },
-        {
-          "date": "2025-10-15",
-          "name": 96.52,
-          "benchmark": 100.3
-        },
-        {
-          "date": "2025-10-16",
-          "name": 94.23,
-          "benchmark": 99.61
-        },
-        {
-          "date": "2025-10-17",
-          "name": 94.98,
-          "benchmark": 100.18
-        },
-        {
           "date": "2025-10-20",
-          "name": 95.33,
-          "benchmark": 101.22
+          "name": 100.37,
+          "benchmark": 101.04
         },
         {
           "date": "2025-10-21",
-          "name": 96.38,
-          "benchmark": 101.22
+          "name": 101.47,
+          "benchmark": 101.04
         },
         {
           "date": "2025-10-22",
-          "name": 97.39,
-          "benchmark": 100.69
+          "name": 102.54,
+          "benchmark": 100.51
         },
         {
           "date": "2025-10-23",
-          "name": 98.24,
-          "benchmark": 101.29
+          "name": 103.43,
+          "benchmark": 101.11
         },
         {
           "date": "2025-10-24",
-          "name": 97.43,
-          "benchmark": 102.12
+          "name": 102.58,
+          "benchmark": 101.94
         },
         {
           "date": "2025-10-27",
-          "name": 96.7,
-          "benchmark": 103.32
+          "name": 101.81,
+          "benchmark": 103.14
         },
         {
           "date": "2025-10-28",
-          "name": 95.07,
-          "benchmark": 103.6
+          "name": 100.09,
+          "benchmark": 103.41
         },
         {
           "date": "2025-10-29",
-          "name": 92.13,
-          "benchmark": 103.65
-        },
-        {
-          "date": "2025-10-30",
-          "name": 91.5,
-          "benchmark": 102.51
-        },
-        {
-          "date": "2025-10-31",
-          "name": 91.06,
-          "benchmark": 102.84
-        },
-        {
-          "date": "2025-11-03",
-          "name": 88.33,
-          "benchmark": 103.04
-        },
-        {
-          "date": "2025-11-04",
-          "name": 86.32,
-          "benchmark": 101.81
-        },
-        {
-          "date": "2025-11-05",
-          "name": 87.57,
-          "benchmark": 102.17
-        },
-        {
-          "date": "2025-11-06",
-          "name": 87.26,
-          "benchmark": 101.07
-        },
-        {
-          "date": "2025-11-07",
-          "name": 86.13,
-          "benchmark": 101.17
-        },
-        {
-          "date": "2025-11-10",
-          "name": 85.72,
-          "benchmark": 102.75
-        },
-        {
-          "date": "2025-11-11",
-          "name": 89.03,
-          "benchmark": 102.98
-        },
-        {
-          "date": "2025-11-12",
-          "name": 90.51,
-          "benchmark": 103.04
-        },
-        {
-          "date": "2025-11-13",
-          "name": 93.09,
-          "benchmark": 101.33
-        },
-        {
-          "date": "2025-11-14",
-          "name": 90.47,
-          "benchmark": 101.31
-        },
-        {
-          "date": "2025-11-17",
-          "name": 88.68,
-          "benchmark": 100.37
-        },
-        {
-          "date": "2025-11-18",
-          "name": 88.1,
-          "benchmark": 99.53
-        },
-        {
-          "date": "2025-11-19",
-          "name": 88.31,
-          "benchmark": 99.91
-        },
-        {
-          "date": "2025-11-20",
-          "name": 86.61,
-          "benchmark": 98.39
-        },
-        {
-          "date": "2025-11-21",
-          "name": 88.54,
-          "benchmark": 99.37
-        },
-        {
-          "date": "2025-11-24",
-          "name": 87.31,
-          "benchmark": 100.83
-        },
-        {
-          "date": "2025-11-25",
-          "name": 89.78,
-          "benchmark": 101.78
-        },
-        {
-          "date": "2025-11-26",
-          "name": 90.7,
-          "benchmark": 102.48
-        },
-        {
-          "date": "2025-11-28",
-          "name": 91.12,
-          "benchmark": 103.04
-        },
-        {
-          "date": "2025-12-01",
-          "name": 92.19,
-          "benchmark": 102.57
-        },
-        {
-          "date": "2025-12-02",
-          "name": 91.54,
-          "benchmark": 102.76
-        },
-        {
-          "date": "2025-12-03",
-          "name": 92.56,
-          "benchmark": 103.12
-        },
-        {
-          "date": "2025-12-04",
-          "name": 92.61,
-          "benchmark": 103.19
-        },
-        {
-          "date": "2025-12-05",
-          "name": 92.85,
-          "benchmark": 103.39
-        },
-        {
-          "date": "2025-12-08",
-          "name": 89.58,
-          "benchmark": 103.08
-        },
-        {
-          "date": "2025-12-09",
-          "name": 89.29,
-          "benchmark": 102.99
-        },
-        {
-          "date": "2025-12-10",
-          "name": 92.75,
-          "benchmark": 103.67
-        },
-        {
-          "date": "2025-12-11",
-          "name": 95.5,
-          "benchmark": 103.91
-        },
-        {
-          "date": "2025-12-12",
-          "name": 95.12,
-          "benchmark": 102.8
-        },
-        {
-          "date": "2025-12-15",
-          "name": 95.56,
-          "benchmark": 102.64
-        },
-        {
-          "date": "2025-12-16",
-          "name": 94.63,
-          "benchmark": 102.36
-        },
-        {
-          "date": "2025-12-17",
-          "name": 92.61,
-          "benchmark": 101.23
-        },
-        {
-          "date": "2025-12-18",
-          "name": 92.53,
-          "benchmark": 102.0
-        },
-        {
-          "date": "2025-12-19",
-          "name": 82.77,
-          "benchmark": 102.62
-        },
-        {
-          "date": "2025-12-22",
-          "name": 80.67,
-          "benchmark": 103.26
-        },
-        {
-          "date": "2025-12-23",
-          "name": 80.84,
-          "benchmark": 103.73
-        },
-        {
-          "date": "2025-12-24",
-          "name": 84.59,
-          "benchmark": 104.1
-        },
-        {
-          "date": "2025-12-26",
-          "name": 85.9,
-          "benchmark": 104.09
-        },
-        {
-          "date": "2025-12-29",
-          "name": 86.3,
-          "benchmark": 103.72
-        },
-        {
-          "date": "2025-12-30",
-          "name": 86.27,
-          "benchmark": 103.59
-        },
-        {
-          "date": "2025-12-31",
-          "name": 89.82,
-          "benchmark": 102.82
-        },
-        {
-          "date": "2026-01-02",
-          "name": 89.21,
-          "benchmark": 103.01
-        },
-        {
-          "date": "2026-01-05",
-          "name": 90.98,
-          "benchmark": 103.7
-        },
-        {
-          "date": "2026-01-06",
-          "name": 92.13,
-          "benchmark": 104.31
-        },
-        {
-          "date": "2026-01-07",
-          "name": 89.13,
-          "benchmark": 103.98
-        },
-        {
-          "date": "2026-01-08",
-          "name": 92.01,
-          "benchmark": 103.97
-        },
-        {
-          "date": "2026-01-09",
-          "name": 92.94,
-          "benchmark": 104.65
-        },
-        {
-          "date": "2026-01-12",
-          "name": 92.54,
-          "benchmark": 104.82
-        },
-        {
-          "date": "2026-01-13",
-          "name": 93.47,
-          "benchmark": 104.61
-        },
-        {
-          "date": "2026-01-14",
-          "name": 92.44,
-          "benchmark": 104.09
-        },
-        {
-          "date": "2026-01-15",
-          "name": 91.06,
-          "benchmark": 104.38
-        },
-        {
-          "date": "2026-01-16",
-          "name": 90.77,
-          "benchmark": 104.29
-        },
-        {
-          "date": "2026-01-20",
-          "name": 89.71,
-          "benchmark": 102.17
-        },
-        {
-          "date": "2026-01-21",
-          "name": 92.22,
-          "benchmark": 103.35
-        },
-        {
-          "date": "2026-01-22",
-          "name": 92.29,
-          "benchmark": 103.89
-        },
-        {
-          "date": "2026-01-23",
-          "name": 91.7,
-          "benchmark": 103.92
-        },
-        {
-          "date": "2026-01-26",
-          "name": 91.63,
-          "benchmark": 104.45
-        },
-        {
-          "date": "2026-01-27",
-          "name": 88.95,
-          "benchmark": 104.87
-        },
-        {
-          "date": "2026-01-28",
-          "name": 87.75,
-          "benchmark": 104.86
-        },
-        {
-          "date": "2026-01-29",
-          "name": 88.26,
-          "benchmark": 104.65
-        },
-        {
-          "date": "2026-01-30",
-          "name": 87.14,
-          "benchmark": 104.34
-        },
-        {
-          "date": "2026-02-02",
-          "name": 87.66,
-          "benchmark": 104.86
-        },
-        {
-          "date": "2026-02-03",
-          "name": 85.9,
-          "benchmark": 103.97
-        },
-        {
-          "date": "2026-02-04",
-          "name": 90.54,
+          "name": 97.0,
           "benchmark": 103.46
         },
         {
-          "date": "2026-02-05",
-          "name": 88.4,
-          "benchmark": 102.17
+          "date": "2025-10-30",
+          "name": 96.33,
+          "benchmark": 102.32
         },
         {
-          "date": "2026-02-06",
-          "name": 90.12,
-          "benchmark": 104.13
+          "date": "2025-10-31",
+          "name": 95.87,
+          "benchmark": 102.66
         },
         {
-          "date": "2026-02-09",
-          "name": 87.99,
-          "benchmark": 104.64
+          "date": "2025-11-03",
+          "name": 92.99,
+          "benchmark": 102.85
         },
         {
-          "date": "2026-02-10",
-          "name": 88.88,
-          "benchmark": 104.36
+          "date": "2025-11-04",
+          "name": 90.89,
+          "benchmark": 101.63
         },
         {
-          "date": "2026-02-11",
-          "name": 87.9,
-          "benchmark": 104.33
+          "date": "2025-11-05",
+          "name": 92.19,
+          "benchmark": 101.99
         },
         {
-          "date": "2026-02-12",
-          "name": 86.14,
-          "benchmark": 102.72
+          "date": "2025-11-06",
+          "name": 91.87,
+          "benchmark": 100.89
         },
         {
-          "date": "2026-02-13",
-          "name": 89.0,
+          "date": "2025-11-07",
+          "name": 90.68,
+          "benchmark": 100.99
+        },
+        {
+          "date": "2025-11-10",
+          "name": 90.25,
+          "benchmark": 102.57
+        },
+        {
+          "date": "2025-11-11",
+          "name": 93.74,
           "benchmark": 102.8
         },
         {
-          "date": "2026-02-17",
-          "name": 91.39,
-          "benchmark": 102.96
+          "date": "2025-11-12",
+          "name": 95.29,
+          "benchmark": 102.86
         },
         {
-          "date": "2026-02-18",
-          "name": 92.42,
-          "benchmark": 103.48
+          "date": "2025-11-13",
+          "name": 98.01,
+          "benchmark": 101.15
         },
         {
-          "date": "2026-02-19",
-          "name": 92.5,
-          "benchmark": 103.21
+          "date": "2025-11-14",
+          "name": 95.25,
+          "benchmark": 101.13
         },
         {
-          "date": "2026-02-20",
-          "name": 92.2,
-          "benchmark": 103.95
+          "date": "2025-11-17",
+          "name": 93.36,
+          "benchmark": 100.19
         },
         {
-          "date": "2026-02-23",
-          "name": 88.95,
-          "benchmark": 102.89
-        },
-        {
-          "date": "2026-02-24",
-          "name": 90.36,
-          "benchmark": 103.64
-        },
-        {
-          "date": "2026-02-25",
-          "name": 89.38,
-          "benchmark": 104.51
-        },
-        {
-          "date": "2026-02-26",
-          "name": 90.16,
-          "benchmark": 103.93
-        },
-        {
-          "date": "2026-02-27",
-          "name": 87.66,
-          "benchmark": 103.43
-        },
-        {
-          "date": "2026-03-02",
-          "name": 86.01,
-          "benchmark": 103.49
-        },
-        {
-          "date": "2026-03-03",
-          "name": 83.73,
-          "benchmark": 102.58
-        },
-        {
-          "date": "2026-03-04",
-          "name": 82.67,
-          "benchmark": 103.31
-        },
-        {
-          "date": "2026-03-05",
-          "name": 81.8,
-          "benchmark": 102.73
-        },
-        {
-          "date": "2026-03-06",
-          "name": 80.38,
-          "benchmark": 101.38
-        },
-        {
-          "date": "2026-03-09",
-          "name": 79.7,
-          "benchmark": 102.27
-        },
-        {
-          "date": "2026-03-10",
-          "name": 79.06,
-          "benchmark": 102.11
-        },
-        {
-          "date": "2026-03-11",
-          "name": 78.53,
-          "benchmark": 101.98
-        },
-        {
-          "date": "2026-03-12",
-          "name": 76.31,
-          "benchmark": 100.43
-        },
-        {
-          "date": "2026-03-13",
-          "name": 76.1,
-          "benchmark": 99.86
-        },
-        {
-          "date": "2026-03-16",
-          "name": 77.25,
-          "benchmark": 100.88
-        },
-        {
-          "date": "2026-03-17",
-          "name": 77.71,
-          "benchmark": 101.14
-        },
-        {
-          "date": "2026-03-18",
-          "name": 75.38,
-          "benchmark": 99.73
-        },
-        {
-          "date": "2026-03-19",
-          "name": 75.34,
-          "benchmark": 99.49
-        },
-        {
-          "date": "2026-03-20",
-          "name": 73.83,
-          "benchmark": 97.79
-        },
-        {
-          "date": "2026-03-23",
-          "name": 74.31,
-          "benchmark": 98.82
-        },
-        {
-          "date": "2026-03-24",
-          "name": 75.41,
-          "benchmark": 98.49
-        },
-        {
-          "date": "2026-03-25",
-          "name": 74.69,
-          "benchmark": 99.04
-        },
-        {
-          "date": "2026-03-26",
-          "name": 73.41,
-          "benchmark": 97.27
-        },
-        {
-          "date": "2026-03-27",
-          "name": 72.42,
-          "benchmark": 95.61
-        },
-        {
-          "date": "2026-03-30",
-          "name": 72.24,
-          "benchmark": 95.29
-        },
-        {
-          "date": "2026-03-31",
-          "name": 74.47,
-          "benchmark": 98.06
-        },
-        {
-          "date": "2026-04-01",
-          "name": 62.92,
-          "benchmark": 98.8
-        },
-        {
-          "date": "2026-04-02",
-          "name": 62.3,
-          "benchmark": 98.89
-        },
-        {
-          "date": "2026-04-06",
-          "name": 62.08,
+          "date": "2025-11-18",
+          "name": 92.76,
           "benchmark": 99.35
         },
         {
-          "date": "2026-04-07",
-          "name": 60.19,
-          "benchmark": 99.4
+          "date": "2025-11-19",
+          "name": 92.98,
+          "benchmark": 99.74
         },
         {
-          "date": "2026-04-08",
-          "name": 60.81,
+          "date": "2025-11-20",
+          "name": 91.18,
+          "benchmark": 98.21
+        },
+        {
+          "date": "2025-11-21",
+          "name": 93.22,
+          "benchmark": 99.19
+        },
+        {
+          "date": "2025-11-24",
+          "name": 91.93,
+          "benchmark": 100.65
+        },
+        {
+          "date": "2025-11-25",
+          "name": 94.52,
+          "benchmark": 101.6
+        },
+        {
+          "date": "2025-11-26",
+          "name": 95.49,
+          "benchmark": 102.3
+        },
+        {
+          "date": "2025-11-28",
+          "name": 95.93,
+          "benchmark": 102.86
+        },
+        {
+          "date": "2025-12-01",
+          "name": 97.06,
+          "benchmark": 102.39
+        },
+        {
+          "date": "2025-12-02",
+          "name": 96.38,
+          "benchmark": 102.58
+        },
+        {
+          "date": "2025-12-03",
+          "name": 97.45,
+          "benchmark": 102.94
+        },
+        {
+          "date": "2025-12-04",
+          "name": 97.51,
+          "benchmark": 103.01
+        },
+        {
+          "date": "2025-12-05",
+          "name": 97.76,
+          "benchmark": 103.21
+        },
+        {
+          "date": "2025-12-08",
+          "name": 94.31,
+          "benchmark": 102.9
+        },
+        {
+          "date": "2025-12-09",
+          "name": 94.0,
+          "benchmark": 102.81
+        },
+        {
+          "date": "2025-12-10",
+          "name": 97.65,
+          "benchmark": 103.49
+        },
+        {
+          "date": "2025-12-11",
+          "name": 100.55,
+          "benchmark": 103.73
+        },
+        {
+          "date": "2025-12-12",
+          "name": 100.15,
+          "benchmark": 102.61
+        },
+        {
+          "date": "2025-12-15",
+          "name": 100.61,
+          "benchmark": 102.46
+        },
+        {
+          "date": "2025-12-16",
+          "name": 99.63,
+          "benchmark": 102.18
+        },
+        {
+          "date": "2025-12-17",
+          "name": 97.51,
+          "benchmark": 101.06
+        },
+        {
+          "date": "2025-12-18",
+          "name": 97.42,
+          "benchmark": 101.82
+        },
+        {
+          "date": "2025-12-19",
+          "name": 87.15,
+          "benchmark": 102.44
+        },
+        {
+          "date": "2025-12-22",
+          "name": 84.93,
+          "benchmark": 103.08
+        },
+        {
+          "date": "2025-12-23",
+          "name": 85.11,
+          "benchmark": 103.55
+        },
+        {
+          "date": "2025-12-24",
+          "name": 89.06,
+          "benchmark": 103.91
+        },
+        {
+          "date": "2025-12-26",
+          "name": 90.44,
+          "benchmark": 103.9
+        },
+        {
+          "date": "2025-12-29",
+          "name": 90.86,
+          "benchmark": 103.53
+        },
+        {
+          "date": "2025-12-30",
+          "name": 90.83,
+          "benchmark": 103.4
+        },
+        {
+          "date": "2025-12-31",
+          "name": 94.57,
+          "benchmark": 102.64
+        },
+        {
+          "date": "2026-01-02",
+          "name": 93.93,
+          "benchmark": 102.83
+        },
+        {
+          "date": "2026-01-05",
+          "name": 95.78,
+          "benchmark": 103.51
+        },
+        {
+          "date": "2026-01-06",
+          "name": 97.0,
+          "benchmark": 104.13
+        },
+        {
+          "date": "2026-01-07",
+          "name": 93.84,
+          "benchmark": 103.79
+        },
+        {
+          "date": "2026-01-08",
+          "name": 96.87,
+          "benchmark": 103.78
+        },
+        {
+          "date": "2026-01-09",
+          "name": 97.85,
+          "benchmark": 104.47
+        },
+        {
+          "date": "2026-01-12",
+          "name": 97.43,
+          "benchmark": 104.63
+        },
+        {
+          "date": "2026-01-13",
+          "name": 98.41,
+          "benchmark": 104.42
+        },
+        {
+          "date": "2026-01-14",
+          "name": 97.33,
+          "benchmark": 103.91
+        },
+        {
+          "date": "2026-01-15",
+          "name": 95.87,
+          "benchmark": 104.19
+        },
+        {
+          "date": "2026-01-16",
+          "name": 95.56,
+          "benchmark": 104.1
+        },
+        {
+          "date": "2026-01-20",
+          "name": 94.45,
+          "benchmark": 101.99
+        },
+        {
+          "date": "2026-01-21",
+          "name": 97.09,
+          "benchmark": 103.16
+        },
+        {
+          "date": "2026-01-22",
+          "name": 97.16,
+          "benchmark": 103.7
+        },
+        {
+          "date": "2026-01-23",
+          "name": 96.54,
+          "benchmark": 103.74
+        },
+        {
+          "date": "2026-01-26",
+          "name": 96.47,
+          "benchmark": 104.27
+        },
+        {
+          "date": "2026-01-27",
+          "name": 93.65,
+          "benchmark": 104.68
+        },
+        {
+          "date": "2026-01-28",
+          "name": 92.39,
+          "benchmark": 104.67
+        },
+        {
+          "date": "2026-01-29",
+          "name": 92.92,
+          "benchmark": 104.46
+        },
+        {
+          "date": "2026-01-30",
+          "name": 91.75,
+          "benchmark": 104.15
+        },
+        {
+          "date": "2026-02-02",
+          "name": 92.3,
+          "benchmark": 104.67
+        },
+        {
+          "date": "2026-02-03",
+          "name": 90.44,
+          "benchmark": 103.78
+        },
+        {
+          "date": "2026-02-04",
+          "name": 95.32,
+          "benchmark": 103.28
+        },
+        {
+          "date": "2026-02-05",
+          "name": 93.07,
+          "benchmark": 101.99
+        },
+        {
+          "date": "2026-02-06",
+          "name": 94.88,
+          "benchmark": 103.95
+        },
+        {
+          "date": "2026-02-09",
+          "name": 92.64,
+          "benchmark": 104.45
+        },
+        {
+          "date": "2026-02-10",
+          "name": 93.57,
+          "benchmark": 104.17
+        },
+        {
+          "date": "2026-02-11",
+          "name": 92.55,
+          "benchmark": 104.15
+        },
+        {
+          "date": "2026-02-12",
+          "name": 90.69,
+          "benchmark": 102.54
+        },
+        {
+          "date": "2026-02-13",
+          "name": 93.71,
+          "benchmark": 102.61
+        },
+        {
+          "date": "2026-02-17",
+          "name": 96.21,
+          "benchmark": 102.78
+        },
+        {
+          "date": "2026-02-18",
+          "name": 97.3,
+          "benchmark": 103.3
+        },
+        {
+          "date": "2026-02-19",
+          "name": 97.39,
+          "benchmark": 103.02
+        },
+        {
+          "date": "2026-02-20",
+          "name": 97.08,
+          "benchmark": 103.77
+        },
+        {
+          "date": "2026-02-23",
+          "name": 93.65,
+          "benchmark": 102.71
+        },
+        {
+          "date": "2026-02-24",
+          "name": 95.13,
+          "benchmark": 103.46
+        },
+        {
+          "date": "2026-02-25",
+          "name": 94.11,
+          "benchmark": 104.33
+        },
+        {
+          "date": "2026-02-26",
+          "name": 94.92,
+          "benchmark": 103.75
+        },
+        {
+          "date": "2026-02-27",
+          "name": 92.3,
+          "benchmark": 103.25
+        },
+        {
+          "date": "2026-03-02",
+          "name": 90.56,
+          "benchmark": 103.31
+        },
+        {
+          "date": "2026-03-03",
+          "name": 88.15,
+          "benchmark": 102.4
+        },
+        {
+          "date": "2026-03-04",
+          "name": 87.04,
+          "benchmark": 103.12
+        },
+        {
+          "date": "2026-03-05",
+          "name": 86.12,
+          "benchmark": 102.55
+        },
+        {
+          "date": "2026-03-06",
+          "name": 84.62,
+          "benchmark": 101.2
+        },
+        {
+          "date": "2026-03-09",
+          "name": 83.91,
+          "benchmark": 102.09
+        },
+        {
+          "date": "2026-03-10",
+          "name": 83.24,
           "benchmark": 101.93
         },
         {
+          "date": "2026-03-11",
+          "name": 82.68,
+          "benchmark": 101.8
+        },
+        {
+          "date": "2026-03-12",
+          "name": 80.35,
+          "benchmark": 100.25
+        },
+        {
+          "date": "2026-03-13",
+          "name": 80.12,
+          "benchmark": 99.68
+        },
+        {
+          "date": "2026-03-16",
+          "name": 81.33,
+          "benchmark": 100.7
+        },
+        {
+          "date": "2026-03-17",
+          "name": 81.82,
+          "benchmark": 100.96
+        },
+        {
+          "date": "2026-03-18",
+          "name": 79.37,
+          "benchmark": 99.55
+        },
+        {
+          "date": "2026-03-19",
+          "name": 79.32,
+          "benchmark": 99.31
+        },
+        {
+          "date": "2026-03-20",
+          "name": 77.73,
+          "benchmark": 97.62
+        },
+        {
+          "date": "2026-03-23",
+          "name": 78.24,
+          "benchmark": 98.64
+        },
+        {
+          "date": "2026-03-24",
+          "name": 79.4,
+          "benchmark": 98.31
+        },
+        {
+          "date": "2026-03-25",
+          "name": 78.64,
+          "benchmark": 98.86
+        },
+        {
+          "date": "2026-03-26",
+          "name": 77.29,
+          "benchmark": 97.1
+        },
+        {
+          "date": "2026-03-27",
+          "name": 76.25,
+          "benchmark": 95.44
+        },
+        {
+          "date": "2026-03-30",
+          "name": 76.06,
+          "benchmark": 95.12
+        },
+        {
+          "date": "2026-03-31",
+          "name": 78.4,
+          "benchmark": 97.89
+        },
+        {
+          "date": "2026-04-01",
+          "name": 66.25,
+          "benchmark": 98.62
+        },
+        {
+          "date": "2026-04-02",
+          "name": 65.59,
+          "benchmark": 98.71
+        },
+        {
+          "date": "2026-04-06",
+          "name": 65.36,
+          "benchmark": 99.18
+        },
+        {
+          "date": "2026-04-07",
+          "name": 63.37,
+          "benchmark": 99.22
+        },
+        {
+          "date": "2026-04-08",
+          "name": 64.02,
+          "benchmark": 101.75
+        },
+        {
           "date": "2026-04-09",
-          "name": 62.03,
-          "benchmark": 102.52
+          "name": 65.31,
+          "benchmark": 102.34
         },
         {
           "date": "2026-04-10",
-          "name": 60.09,
-          "benchmark": 102.45
+          "name": 63.26,
+          "benchmark": 102.27
         },
         {
           "date": "2026-04-13",
-          "name": 60.5,
-          "benchmark": 103.45
+          "name": 63.69,
+          "benchmark": 103.27
         },
         {
           "date": "2026-04-14",
-          "name": 62.31,
-          "benchmark": 104.71
+          "name": 65.61,
+          "benchmark": 104.53
         },
         {
           "date": "2026-04-15",
-          "name": 64.06,
-          "benchmark": 105.54
+          "name": 67.45,
+          "benchmark": 105.35
         },
         {
           "date": "2026-04-16",
-          "name": 64.43,
-          "benchmark": 105.8
+          "name": 67.83,
+          "benchmark": 105.61
         },
         {
           "date": "2026-04-17",
-          "name": 64.89,
-          "benchmark": 107.08
+          "name": 68.32,
+          "benchmark": 106.89
         },
         {
           "date": "2026-04-20",
-          "name": 65.53,
-          "benchmark": 106.86
+          "name": 68.99,
+          "benchmark": 106.67
         },
         {
           "date": "2026-04-21",
-          "name": 65.4,
-          "benchmark": 106.16
+          "name": 68.86,
+          "benchmark": 105.97
         },
         {
           "date": "2026-04-22",
-          "name": 64.4,
-          "benchmark": 107.24
+          "name": 67.8,
+          "benchmark": 107.05
         },
         {
           "date": "2026-04-23",
-          "name": 63.13,
-          "benchmark": 106.82
+          "name": 66.47,
+          "benchmark": 106.63
         },
         {
           "date": "2026-04-24",
-          "name": 63.01,
-          "benchmark": 107.65
+          "name": 66.34,
+          "benchmark": 107.46
         },
         {
           "date": "2026-04-27",
-          "name": 63.64,
-          "benchmark": 107.83
+          "name": 67.0,
+          "benchmark": 107.64
         },
         {
           "date": "2026-04-28",
-          "name": 63.49,
-          "benchmark": 107.31
+          "name": 66.84,
+          "benchmark": 107.12
         },
         {
           "date": "2026-04-29",
-          "name": 62.58,
-          "benchmark": 107.29
+          "name": 65.89,
+          "benchmark": 107.1
         },
         {
           "date": "2026-04-30",
-          "name": 62.54,
-          "benchmark": 108.36
+          "name": 65.85,
+          "benchmark": 108.17
         },
         {
           "date": "2026-05-01",
-          "name": 62.6,
-          "benchmark": 108.66
+          "name": 65.9,
+          "benchmark": 108.47
         },
         {
           "date": "2026-05-04",
-          "name": 60.75,
-          "benchmark": 108.26
+          "name": 63.96,
+          "benchmark": 108.07
         },
         {
           "date": "2026-05-05",
-          "name": 60.71,
-          "benchmark": 109.13
+          "name": 63.92,
+          "benchmark": 108.94
         },
         {
           "date": "2026-05-06",
-          "name": 61.86,
-          "benchmark": 110.65
+          "name": 65.13,
+          "benchmark": 110.45
         },
         {
           "date": "2026-05-07",
-          "name": 62.61,
-          "benchmark": 110.31
+          "name": 65.92,
+          "benchmark": 110.11
         },
         {
           "date": "2026-05-08",
-          "name": 62.23,
-          "benchmark": 111.22
+          "name": 65.52,
+          "benchmark": 111.02
         },
         {
           "date": "2026-05-11",
-          "name": 59.76,
-          "benchmark": 111.47
+          "name": 62.92,
+          "benchmark": 111.28
         },
         {
           "date": "2026-05-12",
-          "name": 59.71,
-          "benchmark": 111.3
+          "name": 62.86,
+          "benchmark": 111.11
         },
         {
           "date": "2026-05-13",
-          "name": 59.69,
-          "benchmark": 111.93
+          "name": 62.85,
+          "benchmark": 111.73
         },
         {
           "date": "2026-05-14",
-          "name": 59.24,
-          "benchmark": 112.81
+          "name": 62.37,
+          "benchmark": 112.61
         },
         {
           "date": "2026-05-15",
-          "name": 59.04,
-          "benchmark": 111.45
+          "name": 62.16,
+          "benchmark": 111.26
         },
         {
           "date": "2026-05-18",
-          "name": 60.02,
-          "benchmark": 111.37
+          "name": 63.19,
+          "benchmark": 111.18
         },
         {
           "date": "2026-05-19",
-          "name": 59.81,
-          "benchmark": 110.63
+          "name": 62.97,
+          "benchmark": 110.44
         },
         {
           "date": "2026-05-20",
-          "name": 62.3,
-          "benchmark": 111.77
+          "name": 65.59,
+          "benchmark": 111.57
         },
         {
           "date": "2026-05-21",
-          "name": 62.58,
-          "benchmark": 111.99
+          "name": 65.89,
+          "benchmark": 111.79
         },
         {
           "date": "2026-05-22",
-          "name": 62.98,
-          "benchmark": 112.43
+          "name": 66.31,
+          "benchmark": 112.23
         },
         {
           "date": "2026-05-26",
-          "name": 63.36,
-          "benchmark": 113.18
+          "name": 66.71,
+          "benchmark": 112.97
         },
         {
           "date": "2026-05-27",
-          "name": 64.82,
-          "benchmark": 113.16
+          "name": 68.25,
+          "benchmark": 112.95
         },
         {
           "date": "2026-05-28",
-          "name": 66.78,
-          "benchmark": 113.78
+          "name": 70.31,
+          "benchmark": 113.58
         },
         {
           "date": "2026-05-29",
-          "name": 65.18,
-          "benchmark": 114.06
+          "name": 68.62,
+          "benchmark": 113.86
         },
         {
           "date": "2026-06-01",
-          "name": 64.75,
-          "benchmark": 114.37
+          "name": 68.18,
+          "benchmark": 114.17
         },
         {
           "date": "2026-06-02",
-          "name": 61.65,
-          "benchmark": 114.53
+          "name": 64.91,
+          "benchmark": 114.33
         },
         {
           "date": "2026-06-03",
-          "name": 61.77,
-          "benchmark": 113.73
+          "name": 65.03,
+          "benchmark": 113.52
         },
         {
           "date": "2026-06-04",
-          "name": 61.5,
-          "benchmark": 114.16
+          "name": 64.75,
+          "benchmark": 113.95
         },
         {
           "date": "2026-06-05",
-          "name": 60.59,
-          "benchmark": 111.21
+          "name": 63.8,
+          "benchmark": 111.01
         },
         {
           "date": "2026-06-08",
-          "name": 60.95,
-          "benchmark": 111.46
+          "name": 64.17,
+          "benchmark": 111.26
         },
         {
           "date": "2026-06-09",
-          "name": 62.95,
-          "benchmark": 111.13
+          "name": 66.28,
+          "benchmark": 110.94
         },
         {
           "date": "2026-06-10",
-          "name": 61.98,
-          "benchmark": 109.38
+          "name": 65.25,
+          "benchmark": 109.19
         },
         {
           "date": "2026-06-11",
-          "name": 64.8,
-          "benchmark": 111.24
+          "name": 68.22,
+          "benchmark": 111.04
         },
         {
           "date": "2026-06-12",
-          "name": 63.34,
-          "benchmark": 111.84
+          "name": 66.69,
+          "benchmark": 111.64
         },
         {
           "date": "2026-06-15",
-          "name": 63.72,
-          "benchmark": 113.81
+          "name": 67.09,
+          "benchmark": 113.61
         },
         {
           "date": "2026-06-16",
+          "name": 66.85,
+          "benchmark": 112.94
+        },
+        {
+          "date": "2026-06-17",
+          "name": 65.59,
+          "benchmark": 111.52
+        },
+        {
+          "date": "2026-06-18",
+          "name": 67.09,
+          "benchmark": 112.39
+        },
+        {
+          "date": "2026-06-22",
+          "name": 64.11,
+          "benchmark": 112.04
+        },
+        {
+          "date": "2026-06-23",
+          "name": 62.91,
+          "benchmark": 110.41
+        },
+        {
+          "date": "2026-06-24",
+          "name": 62.08,
+          "benchmark": 110.36
+        },
+        {
+          "date": "2026-06-25",
+          "name": 60.71,
+          "benchmark": 110.52
+        },
+        {
+          "date": "2026-06-26",
+          "name": 60.49,
+          "benchmark": 109.72
+        },
+        {
+          "date": "2026-06-29",
+          "name": 61.57,
+          "benchmark": 111.53
+        },
+        {
+          "date": "2026-06-30",
+          "name": 60.93,
+          "benchmark": 112.4
+        },
+        {
+          "date": "2026-07-01",
+          "name": 63.92,
+          "benchmark": 112.25
+        },
+        {
+          "date": "2026-07-02",
+          "name": 65.44,
+          "benchmark": 112.1
+        },
+        {
+          "date": "2026-07-06",
+          "name": 64.33,
+          "benchmark": 113.08
+        },
+        {
+          "date": "2026-07-07",
+          "name": 64.14,
+          "benchmark": 112.54
+        },
+        {
+          "date": "2026-07-08",
+          "name": 63.66,
+          "benchmark": 112.19
+        },
+        {
+          "date": "2026-07-09",
           "name": 63.5,
           "benchmark": 113.14
         },
         {
-          "date": "2026-06-17",
-          "name": 62.3,
-          "benchmark": 111.72
-        },
-        {
-          "date": "2026-06-18",
-          "name": 63.72,
-          "benchmark": 112.59
-        },
-        {
-          "date": "2026-06-22",
-          "name": 60.89,
-          "benchmark": 112.24
-        },
-        {
-          "date": "2026-06-23",
-          "name": 59.75,
-          "benchmark": 110.61
-        },
-        {
-          "date": "2026-06-24",
-          "name": 58.96,
-          "benchmark": 110.56
-        },
-        {
-          "date": "2026-06-25",
-          "name": 57.66,
-          "benchmark": 110.72
-        },
-        {
-          "date": "2026-06-26",
-          "name": 57.45,
-          "benchmark": 109.92
-        },
-        {
-          "date": "2026-06-29",
-          "name": 58.48,
-          "benchmark": 111.73
-        },
-        {
-          "date": "2026-06-30",
-          "name": 57.87,
-          "benchmark": 112.6
-        },
-        {
-          "date": "2026-07-01",
-          "name": 60.71,
-          "benchmark": 112.45
-        },
-        {
-          "date": "2026-07-02",
-          "name": 62.16,
-          "benchmark": 112.3
-        },
-        {
-          "date": "2026-07-06",
-          "name": 61.1,
-          "benchmark": 113.28
-        },
-        {
-          "date": "2026-07-07",
-          "name": 60.92,
-          "benchmark": 112.74
-        },
-        {
-          "date": "2026-07-08",
-          "name": 60.47,
-          "benchmark": 112.39
-        },
-        {
-          "date": "2026-07-09",
-          "name": 60.31,
-          "benchmark": 113.34
-        },
-        {
           "date": "2026-07-10",
-          "name": 62.55,
-          "benchmark": 113.83
+          "name": 65.86,
+          "benchmark": 113.63
         },
         {
           "date": "2026-07-13",
-          "name": 61.69,
-          "benchmark": 112.96
+          "name": 64.95,
+          "benchmark": 112.76
         },
         {
           "date": "2026-07-14",
-          "name": 60.43,
-          "benchmark": 113.36
+          "name": 63.62,
+          "benchmark": 113.16
         },
         {
           "date": "2026-07-15",
-          "name": 60.3,
-          "benchmark": 113.81
+          "name": 63.49,
+          "benchmark": 113.61
         },
         {
           "date": "2026-07-16",
-          "name": 62.84,
-          "benchmark": 113.19
+          "name": 66.16,
+          "benchmark": 112.99
         },
         {
           "date": "2026-07-17",
-          "name": 61.69,
-          "benchmark": 112.07
+          "name": 64.95,
+          "benchmark": 111.88
         },
         {
           "date": "2026-07-20",
-          "name": 61.29,
-          "benchmark": 111.89
+          "name": 64.52,
+          "benchmark": 111.69
         },
         {
           "date": "2026-07-21",
-          "name": 60.57,
-          "benchmark": 112.83
+          "name": 63.77,
+          "benchmark": 112.63
         },
         {
           "date": "2026-07-22",
-          "name": 59.51,
-          "benchmark": 112.7
+          "name": 62.65,
+          "benchmark": 112.5
         },
         {
           "date": "2026-07-23",
-          "name": 57.79,
-          "benchmark": 111.3
+          "name": 60.84,
+          "benchmark": 111.11
         },
         {
           "date": "2026-07-24",
-          "name": 58.79,
-          "benchmark": 111.42
+          "name": 61.9,
+          "benchmark": 111.22
         },
         {
           "date": "2026-07-27",
-          "name": 59.41,
-          "benchmark": 111.44
+          "name": 62.55,
+          "benchmark": 111.24
         },
         {
           "date": "2026-07-28",
-          "name": 60.69,
-          "benchmark": 111.71
+          "name": 63.9,
+          "benchmark": 111.51
         },
         {
           "date": "2026-07-29",
-          "name": 60.93,
-          "benchmark": 109.99
+          "name": 64.15,
+          "benchmark": 109.79
         },
         {
           "date": "2026-07-30",
-          "name": 59.62,
-          "benchmark": 111.83
+          "name": 62.77,
+          "benchmark": 111.63
         },
         {
           "date": "2026-07-31",
-          "name": 58.8,
-          "benchmark": 112.64
+          "name": 61.91,
+          "benchmark": 112.44
         },
         {
           "date": "2026-08-03",
-          "name": 60.12,
-          "benchmark": 114.24
+          "name": 63.29,
+          "benchmark": 114.04
         },
         {
           "date": "2026-08-04",
-          "name": 58.55,
-          "benchmark": 116.3
+          "name": 61.64,
+          "benchmark": 116.1
         },
         {
           "date": "2026-08-05",
-          "name": 59.85,
-          "benchmark": 116.07
+          "name": 63.01,
+          "benchmark": 115.86
         },
         {
           "date": "2026-08-06",
-          "name": 59.21,
-          "benchmark": 115.88
+          "name": 62.34,
+          "benchmark": 115.68
         },
         {
           "date": "2026-08-07",
-          "name": 58.79,
-          "benchmark": 116.59
+          "name": 61.9,
+          "benchmark": 116.39
         },
         {
           "date": "2026-08-10",
-          "name": 59.37,
-          "benchmark": 116.56
+          "name": 62.51,
+          "benchmark": 116.35
         },
         {
           "date": "2026-08-11",
-          "name": 58.25,
-          "benchmark": 116.19
+          "name": 61.33,
+          "benchmark": 115.98
         },
         {
           "date": "2026-08-12",
-          "name": 57.11,
-          "benchmark": 116.48
-        },
-        {
-          "date": "2026-08-13",
-          "name": 58.13,
-          "benchmark": 117.29
-        },
-        {
-          "date": "2026-08-14",
-          "name": 57.42,
-          "benchmark": 117.06
-        },
-        {
-          "date": "2026-08-17",
-          "name": 55.11,
-          "benchmark": 116.5
-        },
-        {
-          "date": "2026-08-18",
-          "name": 56.48,
-          "benchmark": 115.72
-        },
-        {
-          "date": "2026-08-19",
-          "name": 57.87,
-          "benchmark": 115.96
-        },
-        {
-          "date": "2026-08-20",
-          "name": 56.69,
-          "benchmark": 114.99
-        },
-        {
-          "date": "2026-08-21",
-          "name": 57.47,
-          "benchmark": 115.46
-        },
-        {
-          "date": "2026-08-24",
-          "name": 57.45,
-          "benchmark": 115.12
-        },
-        {
-          "date": "2026-08-25",
-          "name": 55.66,
-          "benchmark": 115.49
-        },
-        {
-          "date": "2026-08-26",
-          "name": 54.41,
-          "benchmark": 115.51
-        },
-        {
-          "date": "2026-08-27",
-          "name": 54.19,
+          "name": 60.13,
           "benchmark": 116.27
         },
         {
+          "date": "2026-08-13",
+          "name": 61.2,
+          "benchmark": 117.08
+        },
+        {
+          "date": "2026-08-14",
+          "name": 60.46,
+          "benchmark": 116.85
+        },
+        {
+          "date": "2026-08-17",
+          "name": 58.02,
+          "benchmark": 116.3
+        },
+        {
+          "date": "2026-08-18",
+          "name": 59.46,
+          "benchmark": 115.51
+        },
+        {
+          "date": "2026-08-19",
+          "name": 60.93,
+          "benchmark": 115.75
+        },
+        {
+          "date": "2026-08-20",
+          "name": 59.69,
+          "benchmark": 114.78
+        },
+        {
+          "date": "2026-08-21",
+          "name": 60.5,
+          "benchmark": 115.25
+        },
+        {
+          "date": "2026-08-24",
+          "name": 60.49,
+          "benchmark": 114.91
+        },
+        {
+          "date": "2026-08-25",
+          "name": 58.6,
+          "benchmark": 115.28
+        },
+        {
+          "date": "2026-08-26",
+          "name": 57.28,
+          "benchmark": 115.31
+        },
+        {
+          "date": "2026-08-27",
+          "name": 57.06,
+          "benchmark": 116.06
+        },
+        {
           "date": "2026-08-28",
-          "name": 55.83,
-          "benchmark": 116.0
+          "name": 58.78,
+          "benchmark": 115.8
         },
         {
           "date": "2026-08-31",
-          "name": 55.07,
-          "benchmark": 115.66
+          "name": 57.98,
+          "benchmark": 115.45
         },
         {
           "date": "2026-09-01",
-          "name": 53.74,
-          "benchmark": 114.86
+          "name": 56.58,
+          "benchmark": 114.66
         },
         {
           "date": "2026-09-02",
-          "name": 53.91,
-          "benchmark": 115.37
+          "name": 56.76,
+          "benchmark": 115.17
         },
         {
           "date": "2026-09-03",
-          "name": 54.66,
-          "benchmark": 116.58
+          "name": 57.55,
+          "benchmark": 116.37
         },
         {
           "date": "2026-09-04",
-          "name": 54.14,
-          "benchmark": 116.13
+          "name": 57.0,
+          "benchmark": 115.92
         },
         {
           "date": "2026-09-08",
-          "name": 53.71,
-          "benchmark": 115.49
+          "name": 56.55,
+          "benchmark": 115.29
         },
         {
           "date": "2026-09-09",
-          "name": 52.66,
-          "benchmark": 114.96
+          "name": 55.44,
+          "benchmark": 114.75
         },
         {
           "date": "2026-09-10",
-          "name": 51.63,
-          "benchmark": 114.27
+          "name": 54.36,
+          "benchmark": 114.06
         },
         {
           "date": "2026-09-11",
-          "name": 51.88,
-          "benchmark": 115.24
+          "name": 54.62,
+          "benchmark": 115.04
         },
         {
           "date": "2026-09-14",
-          "name": 52.23,
-          "benchmark": 114.73
+          "name": 54.99,
+          "benchmark": 114.52
         },
         {
           "date": "2026-09-15",
-          "name": 51.06,
-          "benchmark": 114.2
+          "name": 53.76,
+          "benchmark": 114.0
         },
         {
           "date": "2026-09-16",
-          "name": 50.44,
-          "benchmark": 113.7
+          "name": 53.11,
+          "benchmark": 113.5
         },
         {
           "date": "2026-09-17",
-          "name": 51.26,
-          "benchmark": 113.7
+          "name": 53.97,
+          "benchmark": 114.78
         },
         {
           "date": "2026-09-18",
-          "name": 50.06,
-          "benchmark": 113.7
+          "name": 52.71,
+          "benchmark": 114.65
         },
         {
           "date": "2026-09-21",
-          "name": 50.9,
-          "benchmark": 113.7
+          "name": 53.58,
+          "benchmark": 116.42
         },
         {
           "date": "2026-09-22",
-          "name": 50.9,
-          "benchmark": 113.7
+          "name": 53.58,
+          "benchmark": 116.4
+        },
+        {
+          "date": "2026-09-23",
+          "name": 53.51,
+          "benchmark": 115.57
+        },
+        {
+          "date": "2026-09-24",
+          "name": 53.42,
+          "benchmark": 115.47
+        },
+        {
+          "date": "2026-09-25",
+          "name": 53.07,
+          "benchmark": 116.1
+        },
+        {
+          "date": "2026-09-28",
+          "name": 54.02,
+          "benchmark": 115.24
+        },
+        {
+          "date": "2026-09-29",
+          "name": 53.2,
+          "benchmark": 115.02
+        },
+        {
+          "date": "2026-09-30",
+          "name": 52.55,
+          "benchmark": 114.79
+        },
+        {
+          "date": "2026-10-01",
+          "name": 52.17,
+          "benchmark": 114.99
+        },
+        {
+          "date": "2026-10-02",
+          "name": 50.27,
+          "benchmark": 115.84
+        },
+        {
+          "date": "2026-10-05",
+          "name": 50.41,
+          "benchmark": 116.62
+        },
+        {
+          "date": "2026-10-06",
+          "name": 51.37,
+          "benchmark": 117.26
+        },
+        {
+          "date": "2026-10-07",
+          "name": 51.0,
+          "benchmark": 116.98
+        },
+        {
+          "date": "2026-10-08",
+          "name": 51.57,
+          "benchmark": 116.49
+        },
+        {
+          "date": "2026-10-09",
+          "name": 51.52,
+          "benchmark": 117.19
+        },
+        {
+          "date": "2026-10-12",
+          "name": 52.47,
+          "benchmark": 117.11
+        },
+        {
+          "date": "2026-10-13",
+          "name": 52.44,
+          "benchmark": 117.1
+        },
+        {
+          "date": "2026-10-14",
+          "name": 52.4,
+          "benchmark": 115.84
+        },
+        {
+          "date": "2026-10-15",
+          "name": 55.13,
+          "benchmark": 116.17
+        },
+        {
+          "date": "2026-10-16",
+          "name": 55.11,
+          "benchmark": 114.88
         }
       ],
       "name_symbol": "NKE",
       "benchmark_symbol": "SPY",
-      "as_of": "2026-09-22",
+      "as_of": "2026-10-16",
       "window_days": 364,
-      "name_return": -0.49104751163118565,
-      "benchmark_return": 0.13697019043741787,
-      "source_ref": "EOD NKE vs SPY rebased to 100, 2025-09-23..2026-09-22"
+      "name_return": -0.4488644797387561,
+      "benchmark_return": 0.1487981456674543,
+      "source_ref": "EOD NKE vs SPY rebased to 100, 2025-10-17..2026-10-16"
     },
     "operating_drivers": {
       "rows": [
@@ -9118,7 +9299,7 @@
         {
           "kind": "leading_indicator",
           "metric": "NIKE Running revenue growth",
-          "period": "Q3 fiscal 2026",
+          "period": "Q3 FY2026 quarter",
           "value": "up over 20%",
           "value_num": null,
           "unit": null,
@@ -9130,11 +9311,11 @@
         {
           "kind": "leading_indicator",
           "metric": "classic footwear inventory removal headwind to reported results",
-          "period": "Q3 fiscal 2026",
+          "period": "Q3 FY2026 quarter",
           "value": "roughly a 5-point headwind",
           "value_num": null,
           "unit": null,
-          "verbatim": "One of the most important actions we took this quarter was further removing unhealthy inventory of our classic footwear franchises from the marketplace. That created roughly a 5-point headwind to our reported results.",
+          "verbatim": "That created roughly a 5-point headwind to our reported results.",
           "following_context": "It was intentional. It was necessary. And while it weighed on the quarter, it is improving the health of the marketplace, the quality of our revenue and the foundation for more sustainable growth ahead.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
           "tier": "llm-fenced"
@@ -9143,7 +9324,7 @@
           "kind": "leading_indicator",
           "metric": "football doors with elevated presentation",
           "period": "by the end of the tournament",
-          "value": "more than 5,000 football doors around the world",
+          "value": "more than 5,000 football doors",
           "value_num": null,
           "unit": null,
           "verbatim": "By the end of the tournament, we will have elevated our presentation in more than 5,000 football doors around the world with wholesale partners and NIKE Direct because winning in football goes beyond winning the World Cup.",
@@ -9154,7 +9335,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Nike Mind patents filed",
-          "period": "the quarter",
+          "period": null,
           "value": "over 150 patents filed globally",
           "value_num": null,
           "unit": null,
@@ -9165,9 +9346,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Nike Mind production increase / notify me sign-ups",
-          "period": "over the next 2 seasons",
-          "value": "doubling production... more than 2 million consumers who signed up",
+          "metric": "Nike Mind consumer notify-me sign-ups",
+          "period": null,
+          "value": "more than 2 million consumers",
           "value_num": null,
           "unit": null,
           "verbatim": "We responded by doubling production of Nike Mind over the next 2 seasons to meet demand from more than 2 million consumers who signed up for notify me on nike.com.",
@@ -9177,7 +9358,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Aero-FIT airflow increase over regular Dri-FIT",
+          "metric": "Aero-FIT airflow increase over Dri-FIT",
           "period": null,
           "value": "increases airflow by 200%",
           "value_num": null,
@@ -9189,9 +9370,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "ACG retail door presentation",
-          "period": "this quarter",
-          "value": "more than 600 retail doors around the world",
+          "metric": "ACG retail doors with elevated presentation",
+          "period": null,
+          "value": "more than 600 retail doors",
           "value_num": null,
           "unit": null,
           "verbatim": "We executed creative brand marketing including an experiential chain from Milan to the Alps called the All Conditions Express, and we elevated our presentation in more than 600 retail doors around the world, including a stand-alone ACG door in Beijing.",
@@ -9201,8 +9382,8 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "revenue reduced from peak levels of classic footwear franchises",
-          "period": "by the end of this fiscal year",
+          "metric": "intentional revenue reduction from classic footwear franchises",
+          "period": "by the end of this fiscal year, from peak levels",
           "value": "over $4 billion of revenue",
           "value_num": null,
           "unit": null,
@@ -9214,7 +9395,7 @@
         {
           "kind": "leading_indicator",
           "metric": "performance business growth",
-          "period": "this fiscal year (FY '26)",
+          "period": "fiscal year 2026",
           "value": "grew mid-single digits",
           "value_num": null,
           "unit": null,
@@ -9237,7 +9418,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "consecutive quarters of double-digit growth in NIKE Running",
+          "metric": "consecutive quarters of double-digit NIKE Running growth",
           "period": null,
           "value": "5 consecutive quarters of double-digit growth",
           "value_num": null,
@@ -9250,7 +9431,7 @@
         {
           "kind": "leading_indicator",
           "metric": "revenue added to Running business",
-          "period": "over that period (5 quarters)",
+          "period": "over that period",
           "value": "roughly $1 billion",
           "value_num": null,
           "unit": null,
@@ -9261,9 +9442,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "running market share gain in statement footwear",
-          "period": "FY '26",
-          "value": "gained 5 points of running market share... more than any other top 5 brand",
+          "metric": "running market share in statement footwear",
+          "period": "FY '26, across Western Europe and North America",
+          "value": "gained 5 points of running market share in statement footwear, more than any other top 5 brand",
           "value_num": null,
           "unit": null,
           "verbatim": "In FY '26, across Western Europe and North America, we gained 5 points of running market share in statement footwear, more than any other top 5 brand.",
@@ -9274,8 +9455,8 @@
         {
           "kind": "leading_indicator",
           "metric": "wholesale revenue growth",
-          "period": "for the fiscal year (FY '26)",
-          "value": "wholesale revenue grew 4%, led by double-digit growth in North America",
+          "period": "fiscal year 2026",
+          "value": "grew 4%, led by double-digit growth in North America",
           "value_num": null,
           "unit": null,
           "verbatim": "For the fiscal year, wholesale revenue grew 4%, led by double-digit growth in North America.",
@@ -9285,9 +9466,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "wholesale door spaces refreshed",
+          "metric": "wholesale doors refreshed",
           "period": null,
-          "value": "more than 15,000 spaces in wholesale doors around the world",
+          "value": "more than 15,000 spaces",
           "value_num": null,
           "unit": null,
           "verbatim": "And we've also made significant investments in physical marketplace, refreshing more than 15,000 spaces in wholesale doors around the world.",
@@ -9309,7 +9490,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Greater China sales increase in invested doors",
+          "metric": "Greater China sales increase when investing in must-win doors",
           "period": null,
           "value": "sales increase high single digits",
           "value_num": null,
@@ -9321,19 +9502,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "World Cup story views",
-          "period": "by the first week of the World Cup",
-          "value": "1.5 billion views",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "By the first week of the World Cup, we had 1.5 billion views of our various stories.",
-          "following_context": "This is about deeply understanding today's consumers and building modern, meaningful and innovative connections with them. This is nothing new for NIKE. Once again, we're out front rewriting our own marketing playbook.",
-          "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "national team kits sold vs prior World Cup",
+          "metric": "World Cup kit sales versus World Cup '22",
           "period": "by the start of the tournament",
           "value": "2.5x the number of kits compared to the same period in World Cup '22",
           "value_num": null,
@@ -9344,8 +9513,8 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "competitive_position",
-          "metric": "Mercurial launch speed record in NIKE Direct",
+          "kind": "leading_indicator",
+          "metric": "Mercurial launch speed",
           "period": null,
           "value": "fastest-selling 24-hour launch for cleated footwear in the history of NIKE Direct",
           "value_num": null,
@@ -9357,25 +9526,37 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "Sportswear and Jordan Streetwear share of revenue",
-          "period": null,
-          "value": "approximately half of our revenue",
+          "metric": "views of World Cup stories",
+          "period": "by the first week of the World Cup",
+          "value": "1.5 billion views",
           "value_num": null,
           "unit": null,
-          "verbatim": "We know changing their trajectory is critical to restoring sustainable top-line growth because together, they represent approximately half of our revenue.",
-          "following_context": "We are moving quickly to reposition both businesses.",
+          "verbatim": "By the first week of the World Cup, we had 1.5 billion views of our various stories.",
+          "following_context": "This is about deeply understanding today's consumers and building modern, meaningful and innovative connections with them. This is nothing new for NIKE. Once again, we're out front rewriting our own marketing playbook.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
           "tier": "llm-fenced"
         },
         {
           "kind": "leading_indicator",
-          "metric": "planned elevation of NIKE Direct owned fleet",
-          "period": "by the end of the (fiscal year)",
-          "value": "elevate 50% of our NIKE Direct owned fleet",
+          "metric": "football doors activated",
+          "period": null,
+          "value": "over 5,000 football doors",
           "value_num": null,
           "unit": null,
-          "verbatim": "And we will continue to invest in how we show up as a premium brand in both digital and physical retail, including a plan to elevate 50% of our NIKE Direct owned fleet by the end of the",
-          "following_context": null,
+          "verbatim": "And as we talked about last quarter, we're activating the marketplace, elevating over 5,000 football doors around the world.",
+          "following_context": "The World Cup is always a moment to prove ourselves. It's one of the toughest battlegrounds in sport, and we're coming with our best. We're leading the conversation and shaping football culture, a strong early proof point for the Sport Offense.",
+          "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "pricing_action",
+          "metric": "discounting on NIKE Digital",
+          "period": "FY '26",
+          "value": "discounting less on NIKE Digital",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "We're elevating the user experience by leading with performance, celebrating sport moments, and we're discounting less on NIKE Digital.",
+          "following_context": "In FY '26, we've elevated more than 150 stores with sport-led experiences. Over time, we will continue to rezone and elevate our fleet and close the doors that are no longer aligned to our strategy. At our scale, this takes time. We're not finished yet. I'm confident our investments in the integrated marketplace will pay dividends for years to come.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -9387,158 +9568,153 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — fortress balance sheet and a genuinely inflecting performance core against still-collapsing forward estimates, a negative half of revenue, and a premium (not discounted) multiple.",
+    "evidence_balance": "mixed — a deep, still-worsening earnings/margin collapse sits against a self-funding balance sheet, finite self-inflicted cleanup, and a working Running growth engine.",
     "bull_points": [
       {
-        "claim": "Absolute EBITDA rose year-on-year from $4,477M (FY25) to $4,929M (FY26) even as the EBITDA margin sat near a trough at 11%, so the headline margin compression overstates the deterioration — EBITDA is turning up in dollars.",
-        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "claim": "The forward earnings path is a recovery trajectory, not terminal decay: consensus FY27E EPS $1.70 rises to FY28E $2.28, with EBITDA recovering from $3,796M (FY27E) to $4,549M (FY28E).",
+        "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
         "cited": true
       },
       {
-        "claim": "The balance sheet is fortress-grade: net-debt/EBITDA 0.4x with FCF-positive self-funding, an A+ S&P issuer rating, and interest coverage 21.6x — leaving ample time to fund the turnaround without dilution or a survival threat.",
-        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
-        "cited": true
-      },
-      {
-        "claim": "The performance core is inflecting on real operating drivers: NIKE Running delivered 5 consecutive quarters of double-digit growth and added roughly $1B, and the performance business grew mid-single digits in FY26.",
+        "claim": "The performance business is a genuine mechanism of recovery, with NIKE Running delivering 5 consecutive quarters of double-digit growth and adding roughly $1 billion to that business.",
         "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The dominant self-inflicted drag is intentional, not secular: management removed over $4B of classic footwear revenue from peak levels, a deliberate marketplace cleanup expected to finish by the end of the calendar year.",
+        "claim": "Nike gained 5 points of running market share in statement footwear across Western Europe and North America in FY26, more than any other top-5 brand — a share-gain signal underneath the depressed reported total.",
+        "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "A large chunk of the revenue weakness is self-inflicted and finite: management intentionally removed over $4 billion of classic-footwear revenue from peak, expecting Win Now actions to finish by the end of the calendar year.",
         "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The wholesale channel is recovering — FY26 wholesale revenue grew 4%, led by double-digit growth in North America — evidence the reset is regaining the channel where most consumers shop.",
-        "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
+        "claim": "The balance sheet is investment-grade and self-funding — net-debt/EBITDA 0.4x, interest coverage 21.6x, FCF-positive — so this is not a solvency story that forces a terminal outcome.",
+        "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "On a forward basis the multiple compresses sharply as earnings recover — P/FY28E normalized 15.8x vs P/FY27E normalized 21.2x — posing whether the trailing floor overstates permanent impairment; the peer set is HETEROGENEOUS ($2.0B–$28.6B vs the name's $53.6B) so the peer median is not a clean benchmark.",
-        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
+        "claim": "On its own 9-year history the trailing EV/EBITDA (9.1x) and P/LTM-EPS (17.2x) both sit at the 0th percentile, framing the de-rate as an extreme versus the name's own record rather than a normal level.",
+        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The consensus FY27 earnings path is collapsing, not stabilising: FY27 normalized EPS was cut ~31% (2.48→1.70) and FY27 EBITDA ~25% (5,056→3,796) over 12m→latest — the real signal is deteriorating forward fundamentals, not an optical trailing-multiple quirk.",
+        "claim": "The EBITDA-margin % fell from 15% (FY24) to 10% (FY25) and 11% (FY26) AND absolute EBITDA collapsed with it, from $7,550M (FY24) to $4,477M (FY25) and $4,929M (FY26) — this is the REAL signal, not an optical %-compression masking rising dollars.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The trailing EV/EBITDA of 9.1x is paired with a forward NTM TEV/EBITDA of 14.64x — i.e. the 'near-floor trailing multiple' EXPANDS on forward numbers because forward EBITDA is lower, so the cheap-looking trailing figure is the MISREAD, not the bargain.",
+        "source_ref": "CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)",
+        "cited": true
+      },
+      {
+        "claim": "Forward estimates are being cut hard and broadly: FY27 EPS(GAAP) fell -32% over 12m (2.50→1.69) and FY27 EBITDA -25%, with last-month FY27 revisions 0 up / 3-4 down — the fundamentals are still deteriorating, not stabilising.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "Revision breadth is one-directional and heavy — Revenue FY27 0↑/4↓ and EPS FY27 0↑/3↓ last month, with the near-term quarters overwhelmingly downward (Revenue FQ2 2027 3m 0↑/18↓) — confirming the estimate cuts are broad, not a single stale outlier.",
-        "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
-        "cited": true
-      },
-      {
-        "claim": "ROIC has stepped down and stayed low — 9.1% (FY25) to 10.4% (FY26) versus a 19–22% history — signalling the profit erosion is structural returns compression, not solely the inventory cleanup.",
+        "claim": "ROIC has structurally stepped down to 10.4% (FY26) from the high-teens/low-20s of FY17-19, evidence the business is earning materially less on capital than its own prior norm.",
         "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
         "cited": true
       },
       {
-        "claim": "Roughly half of revenue is Sportswear and Jordan Streetwear, which management expects to stay negative this fiscal year with improvement only in the back half — the largest revenue pool is still in decline, not yet turned.",
+        "claim": "Roughly half the business is still shrinking: management expects Sportswear and Jordan Streetwear — together ~half of revenue — to remain negative this fiscal year, with sell-through challenged and order books impaired.",
         "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "Greater China is deteriorating at the channel level: Pou Sheng was notified NIKE will completely terminate the Group's existing mainland-China online sales of Nike products from January 1, 2027 — a dated contraction in a 13%-of-revenue geography.",
+        "claim": "A dated, specific demand loss is in train: Pou Sheng was notified that Nike's existing online sales in mainland China terminate completely from January 1, 2027, confirming Greater China (13% of revenue) is still deteriorating.",
         "source_ref": "CIQ Key Developments: NIKE Inc NYSE NKE Key Developments.rtf · Jul-22-2026",
         "cited": true
       },
       {
-        "claim": "The name trades at a PREMIUM, not a discount, to the peer set — EV/EBITDA 9.1x vs peer median 6.5x (+40%) and NTM TEV/EBITDA 14.64x vs peer median 8.37x — while its rev growth (0%) trails the peer median (7%), so the premium is not obviously earned by superior near-term growth.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
-        "cited": true
-      },
-      {
-        "claim": "Sell-side conviction has broken down — 26 Hold vs 9 Buy ratings, mean target $48.07 amid a wave of downgrades (one from Buy to Sell, target $92→$30) and rising short interest (+13.4% to 85.7M shares) — signalling widening skepticism on the recovery timeline.",
-        "source_ref": "CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)",
-        "cited": true
-      },
-      {
-        "claim": "The stock is idiosyncratically weak, down ~30.7% over 180d while SPY rose ~16.9% (-47.6% relative), with the decline anchored to a discrete earnings gap-down on 2026-04-01 — a company-specific, not market-driven, de-rating.",
-        "source_ref": "EOD NKE−SPY 180d to 2026-09-22 (assembly, cap-band)",
+        "claim": "The stock's decline is idiosyncratic, not market-driven: NKE returned -19.3% over 180d while SPY rose +7.5%, a -26.8pt relative loss, and short interest rose +15.8% to 99.2M shares.",
+        "source_ref": "EOD NKE−SPY 180d to 2026-10-16 (assembly, cap-band)",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "Under Armour",
-        "outcome": "went terminal",
-        "distinguishing_fact": "athletic-apparel peer in the same roster that saw revenue and margins erode as brand heat faded and wholesale relationships frayed, with no durable inflection back to premium pricing.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
         "name": "lululemon athletica inc.",
         "outcome": "went terminal",
-        "distinguishing_fact": "athletic peer in the roster whose growth stalled and de-rated sharply on decelerating demand despite premium positioning, showing a category brand can compress even from a strong base.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "A premium athletic peer whose multiple and growth collapsed as category momentum reversed; a same-set peer where a strong brand did not prevent a sharp de-rate.",
+        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21"
       },
       {
         "name": "adidas AG",
         "outcome": "recovered",
-        "distinguishing_fact": "closest scale athletic peer that executed a multi-year brand and marketplace reset after a demand slump and returned to growth, the direct analogue for a large-brand comeback thesis.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "A direct global athletic competitor that executed a multi-year brand-and-marketplace turnaround after a demand/inventory trough, the closest scale analogue in the peer set.",
+        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21"
       },
       {
-        "name": "Ralph Lauren Corporation",
-        "outcome": "recovered",
-        "distinguishing_fact": "premium apparel brand that pulled back on discounting and rationalised distribution to restore margin and brand equity — the elevate-and-clean-the-marketplace playbook NIKE describes.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
-        "name": "The Gap",
+        "name": "Under Armour",
         "outcome": "went terminal",
-        "distinguishing_fact": "apparel retailer whose repeated turnaround attempts on a challenged core brand delivered flat revenue and depressed multiples over an extended stretch, the value-trap analogue.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+        "distinguishing_fact": "An athletic-apparel brand whose turnaround stalled into persistent revenue decline and margin erosion — the cautionary 'brand strength did not arrest the slide' case.",
+        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21"
+      },
+      {
+        "name": "Starbucks Corporation",
+        "outcome": "recovered",
+        "distinguishing_fact": "A dominant global consumer brand that de-rated on a self-described reset of pricing/experience, then re-accelerated when the founder-led operating playbook took hold.",
+        "source": "[LLM-suggested, unverified]"
+      },
+      {
+        "name": "The Gap, Inc.",
+        "outcome": "went terminal",
+        "distinguishing_fact": "A legacy apparel name stuck in a multi-year low-growth, low-margin band despite repeated turnaround attempts — the value-trap pattern.",
+        "source": "CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21"
       }
     ],
     "decisive_question": {
-      "question": "Is the earnings collapse a temporary trough driven by an intentional, near-complete inventory/marketplace cleanup that reverses as the performance business scales — or a structural returns and top-line impairment that the still-premium multiple has not yet fully discounted?",
+      "question": "Is the collapse in EBITDA and margins self-inflicted-and-finite (the deliberate classic-footwear/inventory cleanup ending this calendar year, with Running share-gains seeding broad re-acceleration), or structural (a permanently lower earnings base as half the portfolio keeps shrinking and China keeps deteriorating)?",
       "evidence_for": [
         {
-          "claim": "Management frames the largest drag as deliberate and time-bound — over $4B of classic footwear revenue removed from peak levels, with Win Now actions expected to finish by end of calendar year.",
+          "claim": "Management frames the revenue hit as intentional — over $4 billion of classic-footwear revenue removed from peak — with Win Now actions expected to finish by the end of the calendar year.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q3 2026 Earnings Call, Mar 31, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The performance engine is compounding through the cleanup — NIKE Running posted 5 consecutive quarters of double-digit growth and added roughly $1B — evidence a healthy core exists beneath the reset.",
+          "claim": "A concrete growth engine is already working: 5 consecutive quarters of double-digit Running growth, ~$1B added, and 5 points of statement-footwear share gained in Western Europe/North America.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Absolute EBITDA already turned up (FY25 $4,477M → FY26 $4,929M) even at trough margins, consistent with a cyclical rather than terminal bottom.",
-          "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+          "claim": "Consensus itself models recovery: FY28E EBITDA $4,549M and EPS $2.28 above FY27E $3,796M / $1.70.",
+          "source_ref": "CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Forward consensus is still cutting hard — FY27 normalized EPS down ~31% over 12m→latest — which is not what a trough about to reverse typically produces.",
-          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
-          "cited": true
-        },
-        {
-          "claim": "About half of revenue — Sportswear and Jordan Streetwear — is expected to remain negative this fiscal year, so the biggest pool has not inflected.",
+          "claim": "Sportswear and Jordan Streetwear — together ~half of revenue — are guided to stay negative this fiscal year with challenged sell-through and impaired order books.",
           "source_ref": "CIQ transcript: NIKE, Inc., Q4 2026 Earnings Call, Jun 30, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "A dated channel contraction is underway in Greater China: NIKE will fully terminate the Pou Sheng mainland-China online sales channel from January 1, 2027.",
+          "claim": "Estimates are still being cut, not stabilising: FY27 EBITDA -25% and EPS(GAAP) -32% over 12 months, with last-month revisions all downward.",
+          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
+          "cited": true
+        },
+        {
+          "claim": "Greater China (13% of revenue) shows a dated, hard demand loss — Nike's existing mainland-China online sales via Pou Sheng terminate entirely from January 1, 2027.",
           "source_ref": "CIQ Key Developments: NIKE Inc NYSE NKE Key Developments.rtf · Jul-22-2026",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Adjusted/forward EV/EBITDA and adjusted EPS are UNKNOWN (not in the 99.1 revised guidance) — the trailing 9.1x cannot be cleanly separated into a depressed vs impaired level without a forward basis.",
-      "No revised-outlook block was parsed and the release carried NO NUMERIC OUTLOOK — forward revenue/margin guidance from management cannot be verified against consensus (opacity around the go-forward guide).",
-      "Segment EBITDA is not disclosed (only revenue by segment and NIKE Brand vs Converse EBIT) — profitability of Greater China, Sportswear/Jordan, and the recovering performance lines cannot be isolated (a bearish disclosure gap).",
-      "Share-count trend is UNKNOWN (<2 XBRL shares points in trailing ~2y) — cannot confirm buyback pace or dilution direction; buyback cash fell to $146M in FY26.",
-      "The Investor Day (management-promised detailed long-term view, 'this fall') has no confirmed date in the calendar — the key catalyst for reframing the recovery timeline is not yet scheduled.",
-      "Timing of the Sportswear/Jordan back-half improvement is management-asserted only; no order-book or forward KPI in the facts confirms the inflection point.",
-      "Export date on the CIQ estimates/trends pull is unverified (a floor ≥ 2026-09-20) and the stock price is stale (last close 8 calendar days before assembly) — the freshest revision picture may be understated."
+      "No revised/forward adjusted-EPS or adjusted-EV/EBITDA guide exists at the drawdown — the newest EX-99.1 states no annual adjusted-EPS guide and no numeric revenue outlook, so the forward-margin recovery is consensus-modeled, not company-confirmed (a bearish disclosure gap).",
+      "Segment EBITDA is not disclosed — only revenue is segmented and the filer gives NIKE Brand vs Converse EBIT only; there is no profit breakout for North America / EMEA / China / Sportswear to size where the margin damage concentrates (opacity).",
+      "Whether the ex-lease multiple (12.8x trailing, 11.6x at $37.30) vs the forward NTM 14.6x is overshoot or a correctly-higher forward level cannot be resolved from the trailing-only basis supplied.",
+      "The peer set is HETEROGENEOUS (caps $2.0B–$28.6B vs the name $53.6B), so the 'premium to peer-median EV/EBITDA 6.5x / P/E 14.2x' is a confidence-gated input, not a clean benchmark — the earned-vs-residual split of that premium is unresolved.",
+      "CIQ's EBITDA is vendor-normalised and runs +$258M above the LTM figure rebuilt from filings ($4,855M vs $4,597M); every EV/EBITDA on the page divides the higher CIQ number, so the true multiple is modestly understated.",
+      "Investor Day (promised 'this fall') is a pending catalyst for a detailed long-term view, but its date and content are not in the supplied facts.",
+      "Depth and durability of the China reset is unquantified beyond 'high single digit' sales lifts in invested doors — no figure ties that to the China segment's full revenue base."
     ],
     "draw_agreement": {
       "attempted": 5,
@@ -9551,25 +9727,25 @@
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — NIKE, the athletic footwear and apparel company (NIKE, Jordan, Converse), followed as an OVERSHOOT candidate by operator decision 2026-09-22: at $36.10 on 2026-09-21 it is down 51.6% from its 52-week closing high of $74.57 (2025-10-02) and 1.7% above its 52-week low ($35.51, 2026-09-18) — a ~$53.6bn market cap on $46.4bn of FY2026 (May) revenue. The question is whether the de-rating overshoots the business. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
-    "stock-info: PRICE STALE AT ASSEMBLY: last stored close 2026-09-22 is 8 calendar days before assembly — run `vinci refresh` before assembling",
-    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+4.9s fetch)",
-    "Heterogeneous-peer benchmark (a bear point): 'The name trades at a PREMIUM, not a discount, to the peer set — EV/EBITDA 9.1x vs peer median 6.5x (+40%) and NTM TEV/EBITDA 14.64x vs peer median 8.37x — while its rev growth (0%) trails the peer median (7%), so the premium is not obviously earned by superior near-term growth.' — leans on the peer set as a clean benchmark, but comparability flags it HETEROGENEOUS; confidence-gate every peer stat"
+    "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+3.1s fetch)",
+    "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-10-01, EDGAR 8-K item 2.02), the oldest by 11d: valuation multiples as-of 2026-09-20; implied-TEV inputs as-of 2026-09-21. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Interest / coupon rate · 8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Interest / coupon rate · 8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0000320187-26-000088 · nke-5312026exhibit1029.htm declares itself no agreement at all",
-    "DIRECTIONAL language 'conviction' — human review (dossier frames, not concludes)",
-    "DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)",
-    "DIRECTIONAL language 'buy' — human review (dossier frames, not concludes)"
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Interest / coupon rate — Base Rate · 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+    "DIRECTIONAL language 'sell' — human review (dossier frames, not concludes)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-30T13:26:03.145231Z",
-  "extraction_version": "2026-08-16.1",
+  "assembled_at": "2026-10-26T15:16:24.362750Z",
+  "extraction_version": "2026-10-09.3",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-burl/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory--claude-worktrees-ai-agent-team-practices-e005c8/a08ef917-84bf-4d59-9bc3-5b40b1f95038/scratchpad/wt-pass/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-09-22"
+    "frontier": "2026-10-23"
   },
   "sector": "Consumer Discretionary",
   "industry": {
@@ -13083,7 +13259,7 @@
     "estimate_type": "final consensus before each result — CIQ Estimates→Surprise 'Estimate', Fiscal Years, company level",
     "usable_as_forecast_error_cross_check": true,
     "usable_as_revision_distribution": false,
-    "eligibility_note": "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has been. It is NOT a distribution of how far consensus moves over a holding period; that needs point-in-time consensus snapshots, which no Estimates Report carries.",
+    "eligibility_note": "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has been. It is NOT a distribution of how far consensus moves over a holding period; that needs point-in-time consensus snapshots, which no Estimates Report carries. Each 'actual' is the figure CIQ's Estimates set against its own consensus, which is often NOT the line the financial statements report; `accounting_basis` names the filer's accounting STANDARD (US GAAP, IFRS), never the basis of that actual.",
     "usage_note": "EBIT- or EBITDA-level shock today: error_per_forecast_revenue × today's revenue consensus. Revenue × margin scenario: the SAME year's Revenue pct_error and ratio_error, kept together. ratio_error alone answers how wrong the margin (or capex-intensity) forecast was, and multiplied by revenue it drops the revenue miss's effect. Exact identity: error_per_forecast_revenue = ratio_error + (actual ÷ actual revenue) × (actual revenue ÷ forecast revenue − 1).",
     "series": [
       {
@@ -14279,10 +14455,10 @@
       "snapshot_market_cap": null,
       "snapshot_tev": null,
       "snapshot_reconciles": null,
-      "page_price": 36.1,
-      "page_price_as_of": "2026-09-22",
+      "page_price": 37.3,
+      "page_price_as_of": "2026-10-23",
       "days_price_after_snapshot": null,
-      "value_at_page_price": 11.234676,
+      "value_at_page_price": 11.601349,
       "value_at_page_price_basis": "(page price × point-in-time shares + net debt excluding operating leases) ÷ the history's latest LTM EBITDA — mechanical.valuation.ev_ebitda_ex_lease_at_price"
     },
     "history_series": "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV less operating leases / LTM EBITDA)",
@@ -14349,156 +14525,27 @@
     "conflicts": []
   },
   "date_semantics": {
-    "screen_reference_date": "2026-09-22",
+    "screen_reference_date": "2026-10-16",
     "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
-    "analysis_as_of": "2026-09-22",
+    "analysis_as_of": "2026-10-23",
     "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
-    "price_as_of": "2026-09-22",
+    "price_as_of": "2026-10-23",
     "market_cap_as_of": "2026-09-21",
     "tev_as_of": "2026-09-21",
     "consensus_as_of": "≥2026-09-20",
     "balance_sheet_date": "2026-05-31",
     "historical_multiple_latest_observation": "2026-09-21",
     "historical_multiple_history_through": "2026-06-30",
-    "stock_performance_as_of": "2026-09-22",
-    "assembled_at": "2026-09-30T13:26:03.145231Z",
+    "stock_performance_as_of": "2026-10-16",
+    "assembled_at": "2026-10-26T15:16:24.362750Z",
     "valuation_snapshot_as_of": "2026-09-21",
-    "price_days_after_valuation_snapshot": 1
+    "price_days_after_valuation_snapshot": 32
   },
-  "layer_refreshes": [
-    {
-      "date": "2026-10-07",
-      "extraction_version": "2026-08-16.1",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus",
-        "mechanical.catalyst_path"
-      ]
-    },
-    {
-      "date": "2026-10-07",
-      "extraction_version": "2026-08-16.1",
-      "writer": "refresh",
-      "layers": [
-        "forward_multiple_history"
-      ]
-    },
-    {
-      "date": "2026-10-08",
-      "extraction_version": "2026-10-08.2",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus",
-        "forward_multiple_history",
-        "historical_forecast_error"
-      ]
-    },
-    {
-      "date": "2026-10-08",
-      "extraction_version": "2026-10-08.3",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus"
-      ]
-    },
-    {
-      "date": "2026-10-09",
-      "extraction_version": "2026-10-08.4",
-      "writer": "refresh",
-      "layers": [
-        "ev_bridge"
-      ]
-    },
-    {
-      "date": "2026-10-10",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "date_semantics",
-        "forward_multiple_history",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-20",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.valuation",
-        "qa_flags",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-20",
-      "extraction_version": "2026-10-09.3",
-      "writer": "anchor-backfill",
-      "layers": [
-        "anchor",
-        "qa_flags",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-20",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "ev_bridge"
-      ]
-    },
-    {
-      "date": "2026-10-21",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "mechanical.financial_summary",
-        "mechanical.primary_source",
-        "mechanical.valuation",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-21",
-      "extraction_version": "2026-10-09.3",
-      "writer": "anchor-backfill",
-      "layers": [
-        "anchor"
-      ]
-    },
-    {
-      "date": "2026-10-22",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.primary_source"
-      ]
-    },
-    {
-      "date": "2026-10-23",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.primary_source",
-        "mechanical.valuation"
-      ]
-    },
-    {
-      "date": "2026-10-26",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.financial_summary"
-      ]
-    }
-  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-21T11:18:48.073925Z",
+    "computed_at": "2026-10-26T15:23:34.577075Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [

@@ -306,6 +306,12 @@ def test_one_snapshot_holds_one_basis() -> None:
             assert snap.return_basis == "total" and snap.price_basis == mon.RETURN_BASIS, p.name
             assert "PX-EXC%" in mon.render_table(snap), p.name
     assert before_ruling <= seen, f"a pre-ruling day is missing: {sorted(before_ruling - seen)}"
+    # the post-ruling side, pinned on the committed corpus too (#810 review, deferred to the PR
+    # that committed it): the first total-return day is present and on the total basis
+    first_total = ROOT / "data" / "monitor" / "2026-10-23.json"
+    assert first_total.is_file(), "the first total-return day (2026-10-23) is missing"
+    assert mon.MonitorSnapshot.model_validate(
+        json.loads(first_total.read_text())).return_basis == "total"
 
 
 def test_the_monitor_command_writes_a_total_return_day(tmp_path: Path,

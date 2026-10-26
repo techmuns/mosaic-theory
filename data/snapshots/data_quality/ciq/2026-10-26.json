@@ -6,8 +6,8 @@
  },
  "boundary": {
   "measured_on": "2026-10-26",
-  "git_head": "fa801a62",
-  "inputs_match_head": true,
+  "git_head": "121c29be",
+  "inputs_match_head": false,
   "reads": "data/dossiers/*/dossier.json",
   "item_noun": "page",
   "items": 27,
@@ -40,7 +40,7 @@
    "WERN",
    "WLK"
   ],
-  "inputs_sha256": "0269fd57b906250195e2d5c9ae73f54525acaf5ebf8fcf94493a5a5566499f74",
+  "inputs_sha256": "e6e09ad94958d67e48ac0bac88879af4d4a3c1a7e4cf87b04628f4a409dab8f3",
   "note": "reads the committed pages only, never the licensed workbooks"
  },
  "statuses": {
@@ -83,14 +83,14 @@
    ],
    "fleet": {
     "items": 27,
-    "items_run": 24,
-    "units": 96,
+    "items_run": 25,
+    "units": 100,
     "confirmed": 37,
-    "differs_stated": 5,
-    "differs_unexplained": 29,
-    "unchecked": 25,
+    "differs_stated": 4,
+    "differs_unexplained": 30,
+    "unchecked": 29,
     "excluded": 0,
-    "items_not_run": 3,
+    "items_not_run": 2,
     "items_not_applicable": 0
    },
    "not_run": [
@@ -98,7 +98,6 @@
      "reason": "no ebitda_reconciliation block on the page",
      "names": [
       "FUBO",
-      "ORKA",
       "TECX"
      ]
     }
@@ -187,7 +186,10 @@
      "unchecked": 0
     },
     "ORKA": {
-     "not_run": "no ebitda_reconciliation block on the page"
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 4
     },
     "PARR": {
      "confirmed": 3,
@@ -230,8 +232,8 @@
     },
     "V": {
      "confirmed": 0,
-     "differs_stated": 1,
-     "differs_unexplained": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 3,
      "unchecked": 1
     },
     "VITL": {
@@ -676,14 +678,14 @@
    ],
    "fleet": {
     "items": 27,
-    "items_run": 17,
-    "units": 486,
-    "confirmed": 443,
+    "items_run": 18,
+    "units": 492,
+    "confirmed": 449,
     "differs_stated": 5,
     "differs_unexplained": 5,
     "unchecked": 33,
     "excluded": 90,
-    "items_not_run": 4,
+    "items_not_run": 3,
     "items_not_applicable": 6
    },
    "not_run": [
@@ -691,7 +693,6 @@
      "reason": "no lease_basis block on the page",
      "names": [
       "FUBO",
-      "ORKA",
       "TECX",
       "VITL"
      ]
@@ -736,7 +737,7 @@
      "excluded": 9
     },
     "CNXC": {
-     "confirmed": 23,
+     "confirmed": 24,
      "differs_stated": 0,
      "differs_unexplained": 0,
      "unchecked": 0
@@ -789,7 +790,10 @@
      "excluded": 9
     },
     "ORKA": {
-     "not_run": "no lease_basis block on the page"
+     "confirmed": 5,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
     },
     "PARR": {
      "confirmed": 30,
@@ -878,14 +882,14 @@
    ],
    "fleet": {
     "items": 27,
-    "items_run": 23,
-    "units": 23,
+    "items_run": 24,
+    "units": 24,
     "confirmed": 21,
     "differs_stated": 0,
     "differs_unexplained": 2,
-    "unchecked": 0,
+    "unchecked": 1,
     "excluded": 0,
-    "items_not_run": 4,
+    "items_not_run": 3,
     "items_not_applicable": 0
    },
    "not_run": [
@@ -893,7 +897,6 @@
      "reason": "no lease_basis block on the page",
      "names": [
       "FUBO",
-      "ORKA",
       "TECX",
       "VITL"
      ]
@@ -983,7 +986,10 @@
      "unchecked": 0
     },
     "ORKA": {
-     "not_run": "no lease_basis block on the page"
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
     },
     "PARR": {
      "confirmed": 1,
@@ -1821,9 +1827,9 @@
     "items": 27,
     "items_run": 27,
     "units": 27,
-    "confirmed": 20,
+    "confirmed": 25,
     "differs_stated": 0,
-    "differs_unexplained": 7,
+    "differs_unexplained": 2,
     "unchecked": 0,
     "excluded": 0,
     "items_not_run": 0,
@@ -1839,15 +1845,15 @@
      "unchecked": 0
     },
     "AORT": {
-     "confirmed": 0,
+     "confirmed": 1,
      "differs_stated": 0,
-     "differs_unexplained": 1,
+     "differs_unexplained": 0,
      "unchecked": 0
     },
     "BRBR": {
-     "confirmed": 0,
+     "confirmed": 1,
      "differs_stated": 0,
-     "differs_unexplained": 1,
+     "differs_unexplained": 0,
      "unchecked": 0
     },
     "BURL": {
@@ -1857,9 +1863,9 @@
      "unchecked": 0
     },
     "CNXC": {
-     "confirmed": 0,
+     "confirmed": 1,
      "differs_stated": 0,
-     "differs_unexplained": 1,
+     "differs_unexplained": 0,
      "unchecked": 0
     },
     "EPAM": {
@@ -1923,9 +1929,9 @@
      "unchecked": 0
     },
     "PARR": {
-     "confirmed": 0,
+     "confirmed": 1,
      "differs_stated": 0,
-     "differs_unexplained": 1,
+     "differs_unexplained": 0,
      "unchecked": 0
     },
     "ROST": {
@@ -1989,9 +1995,9 @@
      "unchecked": 0
     },
     "WLK": {
-     "confirmed": 0,
+     "confirmed": 1,
      "differs_stated": 0,
-     "differs_unexplained": 1,
+     "differs_unexplained": 0,
      "unchecked": 0
     }
    }
@@ -2014,14 +2020,14 @@
    ],
    "fleet": {
     "items": 27,
-    "items_run": 24,
-    "units": 24,
+    "items_run": 25,
+    "units": 25,
     "confirmed": 24,
     "differs_stated": 0,
-    "differs_unexplained": 0,
+    "differs_unexplained": 1,
     "unchecked": 0,
     "excluded": 0,
-    "items_not_run": 3,
+    "items_not_run": 2,
     "items_not_applicable": 0
    },
    "not_run": [
@@ -2029,7 +2035,6 @@
      "reason": "no ev_bridge block on the page",
      "names": [
       "FUBO",
-      "ORKA",
       "TECX"
      ]
     }
@@ -2043,9 +2048,9 @@
      "unchecked": 0
     },
     "AORT": {
-     "confirmed": 1,
+     "confirmed": 0,
      "differs_stated": 0,
-     "differs_unexplained": 0,
+     "differs_unexplained": 1,
      "unchecked": 0
     },
     "BRBR": {
@@ -2118,7 +2123,10 @@
      "unchecked": 0
     },
     "ORKA": {
-     "not_run": "no ev_bridge block on the page"
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
     },
     "PARR": {
      "confirmed": 1,
@@ -2211,8 +2219,8 @@
     "items_run": 27,
     "units": 27,
     "confirmed": 25,
-    "differs_stated": 1,
-    "differs_unexplained": 1,
+    "differs_stated": 2,
+    "differs_unexplained": 0,
     "unchecked": 0,
     "excluded": 0,
     "items_not_run": 0,
@@ -2307,8 +2315,8 @@
     },
     "ORKA": {
      "confirmed": 0,
-     "differs_stated": 0,
-     "differs_unexplained": 1,
+     "differs_stated": 1,
+     "differs_unexplained": 0,
      "unchecked": 0
     },
     "PARR": {
@@ -2950,8 +2958,8 @@
     {
      "id": "ebitda_vs_xbrl",
      "independence": "independent",
-     "items_run": 24,
-     "units": 96,
+     "items_run": 25,
+     "units": 100,
      "confirmed": 37
     }
    ],
@@ -3011,8 +3019,8 @@
     {
      "id": "rent_vs_edgar_lease_cost",
      "independence": "independent",
-     "items_run": 23,
-     "units": 23,
+     "items_run": 24,
+     "units": 24,
      "confirmed": 21
     }
    ],
@@ -3038,8 +3046,8 @@
     {
      "id": "ev_bridge_vs_ciq_tev",
      "independence": "internal",
-     "items_run": 24,
-     "units": 24,
+     "items_run": 25,
+     "units": 25,
      "confirmed": 24
     }
    ],
@@ -3068,9 +3076,9 @@
     {
      "id": "lease_rows_vs_edgar",
      "independence": "independent",
-     "items_run": 17,
-     "units": 486,
-     "confirmed": 443
+     "items_run": 18,
+     "units": 492,
+     "confirmed": 449
     }
    ],
    "unscored": [],
@@ -3134,7 +3142,7 @@
      "independence": "independent",
      "items_run": 27,
      "units": 27,
-     "confirmed": 20
+     "confirmed": 25
     }
    ],
    "unscored": [],
@@ -3229,7 +3237,7 @@
    "note": "no second consensus source; forward_consensus.reconciliations sets identities (CFO − CapEx vs FCF, EBIT + D&A vs EBITDA) against the same means — information, not a pass/fail, by the schema's own rule, so they are counted, not scored",
    "counted": {
     "pages_with_identity_rows": 25,
-    "identity_rows": 139
+    "identity_rows": 140
    }
   },
   {
@@ -3359,8 +3367,8 @@
     {
      "id": "ev_bridge_vs_ciq_tev",
      "independence": "internal",
-     "items_run": 24,
-     "units": 24,
+     "items_run": 25,
+     "units": 25,
      "confirmed": 24
     },
     {
