@@ -31,27 +31,13 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import review_gate  # noqa: E402  (the sibling hook that owns the CODE rule)
+from review_gate import PR_URL, created_pr  # noqa: E402  (the gate counts a PR opened by it too)
 
 REQUEST = "@codex review"
 #: A comment that already asks Codex for a review (Codex reads `@codex review <focus>` too).
 REQUESTED = re.compile(r"\s*@codex\s+review\b", re.I)
-#: A GitHub pull-request URL: owner, repository, number.
-PR_URL = re.compile(r"https://github\.com/([\w.-]+)/([\w.-]+)/pull/(\d+)")
 #: The repository an `origin` remote names, over https or ssh.
 ORIGIN = re.compile(r"github\.com[:/]([\w.-]+?)/([\w.-]+?)(?:\.git)?/?$")
-
-
-def created_pr(response: object) -> str | None:
-    """The URL of the PR this tool call created — Claude Code's own record first, else gh's."""
-    if not isinstance(response, dict):
-        return None
-    operation = response.get("gitOperation")
-    pr = operation.get("pr") if isinstance(operation, dict) else None
-    if isinstance(pr, dict):
-        url = str(pr.get("url", ""))
-        return url if pr.get("action") == "created" and PR_URL.fullmatch(url) else None
-    urls = [m.group(0) for m in PR_URL.finditer(str(response.get("stdout", "")))]
-    return urls[-1] if urls else None   # gh pr create prints the new PR's URL last
 
 
 def same_repo(url: str, root: Path) -> bool:
