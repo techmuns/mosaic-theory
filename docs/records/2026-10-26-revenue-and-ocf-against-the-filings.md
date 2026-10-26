@@ -1,8 +1,8 @@
 ---
 id: 2026-10-26-revenue-and-ocf-against-the-filings
-status: open
+status: shipped
 date: 2026-10-26
-prs: []
+prs: [805]
 supersedes:
 superseded-by:
 ---
@@ -158,9 +158,15 @@ scale, another year, another construction of the line.
   sentinel never reaches the card), the staleness guard, the corpus counts, and the perturbation.
 - **Mutation.** 28 mutants of the new production code in a scratch copy of the tree
   (`statement_recon` 19, the assembler's call site 1, the back-fill 3, the scorecard 5): 28 of 28
-  killed on the first pass. The end-to-end pin killed one the unit pins could not see — dropping the
+  killed on the first pass; after the review's fixes, 31 of 31 on the committed code (three more:
+  the UTC date, the refused folder errors, the datetime header). The end-to-end pin killed one the unit pins could not see — dropping the
   fiscal-year guard composes FUBO's four fiscal years on both lines from a December year's
   year-to-date, eight false differences.
+
+- **Review, round 0** (`/code-review high --fix`, four findings, all fixed behind a pin): the
+  back-fill crashed `refresh_fleet` on a `CiqAmbiguousError` or `CiqParseError` folder; assembly
+  dated the facts on local `today` while `assembled_at` is UTC (a day apart before 05:30 IST);
+  a datetime-decoded header cell lost its period; companyfacts were re-parsed per figure.
 
 **BOUNDARY.** Every count: the 27 pages committed at 646b1fdf (`data/dossiers/*/dossier.json`); a
 unit is one actual column of the annual table (each fiscal year and the first LTM) where CIQ reports
