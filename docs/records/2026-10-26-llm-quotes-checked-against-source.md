@@ -147,7 +147,7 @@ The judge called 12 of the 13 `real_supply_chain`.
   was invented.
 
 *Pins and mutation.*
-- `tests/test_verbatim.py` has 26 tests. Of the 16 real cases, 9 are kept (verbatim or elided) and
+- `tests/test_verbatim.py` has 27 tests, one of them network-marked. Of the 16 real cases, 9 are kept (verbatim or elided) and
   7 are refused, drawn from all three corpora.
 - End-to-end pins drive real text through `extract_covenant_terms`, `extract_maturity_event`,
   `extract_graph_edges` and `graph_coverage`.
