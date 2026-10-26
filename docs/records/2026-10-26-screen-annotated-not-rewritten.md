@@ -63,7 +63,7 @@ reader work a name the corrected data does not admit.
   
   The first cut also printed the record path inline. It wrapped over several lines and made the row
   tall, so it moved into the tooltip.
-- **`tests/test_screen_annotations.py`, 11 pins**, all on the committed files:
+- **`tests/test_screen_annotations.py`, 12 pins**, all on the committed files:
   - end to end against the committed Markdown;
   - only the two names marked;
   - unchanged without annotations;
@@ -73,8 +73,9 @@ reader work a name the corrected data does not admit.
   - malformed and doubled files refused;
   - the app's mirror and keying;
   - the queue writer keeps the ruling;
-  - a bad annotation file stops the writer before it replaces the JSONL.
-- **Mutants: 10 of 10 killed**, among them the writer dropping the annotations, the section
+  - a bad annotation file stops the writer before it replaces the JSONL;
+  - one ticker on two screen dates marks only the annotated run's row.
+- **Mutants: 12 of 12 killed**, among them the writer dropping the annotations, the section
   printing only names inside the cut, a screen date ignored, and the app's mirror emptied.
 - **This change's own review** (`/code-review high --fix`) found 3 issues and fixed all 3:
   - the writer replaced `ranked_queue.jsonl` before the Markdown step could raise on a bad
@@ -82,6 +83,10 @@ reader work a name the corrected data does not admit.
     fails on the old order;
   - a dead helper;
   - a runtime import needed only for typing.
+- **Codex's review** found one more (P2), fixed behind a pin that failed first. The Markdown
+  path keyed annotations by ticker alone, so a mixed-vintage queue holding one ticker from two
+  screen dates would mark both rows. It now keys by each row's candidate id. The committed
+  queue has no such duplicate, so `ranked_queue.md` is unchanged.
 
 **BOUNDARY.**
 

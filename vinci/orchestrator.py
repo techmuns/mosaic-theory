@@ -217,12 +217,13 @@ def write_queue_snapshots(
 
 def queue_annotations(snapshots_dir: Path, ranked: list[RankedCandidate]
                       ) -> dict[str, ScreenAnnotation]:
-    """The annotations on the screen run(s) this queue came from, keyed by ticker. A name is
-    matched on its OWN screen date, so a later run of the same ticker is never marked."""
+    """The annotations on the screen run(s) this queue came from, keyed by CANDIDATE id. A row is
+    matched on its OWN screen date, and keyed by its own candidate, so a later run of the same
+    ticker in a mixed-vintage queue is never marked (Codex review of #799)."""
     out: dict[str, ScreenAnnotation] = {}
     for day in sorted({r.screen_run_at.date() for r in ranked}):
         on_day = annotations_for_screen_date(snapshots_dir, day)
-        out |= {r.ticker: on_day[r.ticker] for r in ranked
+        out |= {r.candidate_id: on_day[r.ticker] for r in ranked
                 if r.screen_run_at.date() == day and r.ticker in on_day}
     return out
 

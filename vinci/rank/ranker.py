@@ -515,7 +515,7 @@ def _annotation_section(ranked: list[RankedCandidate],
                         annotations: Mapping[str, ScreenAnnotation]) -> list[str]:
     """The annotations on this run's names, in queue order — every annotated name in the queue,
     including one below the table's cut, so a reader never meets a warning that is not shown."""
-    named = [(r, annotations[r.ticker]) for r in ranked if r.ticker in annotations]
+    named = [(r, annotations[r.candidate_id]) for r in ranked if r.candidate_id in annotations]
     if not named:
         return []
     out = ["", "## Annotations on this screen run", "",
@@ -537,8 +537,9 @@ def render_queue_markdown(ranked: list[RankedCandidate], *, top: int | None = No
                           annotations: Mapping[str, ScreenAnnotation] | None = None) -> str:
     """A deterministic, committed Markdown view of the queue (a compact per-name table).
 
-    ``annotations`` (ticker → annotation on THIS run, `vinci.screens.annotations`) marks a name ⚠
-    and lists the annotation after the table. Without one the output is unchanged, byte for byte."""
+    ``annotations`` (candidate id → the annotation on that row's own run,
+    `orchestrator.queue_annotations`) marks a row ⚠ and lists the annotation after the table.
+    Without one the output is unchanged, byte for byte."""
     notes = annotations or {}
     rows = ranked if top is None else ranked[:top]
     intro = (
@@ -561,7 +562,7 @@ def render_queue_markdown(ranked: list[RankedCandidate], *, top: int | None = No
     for r in rows:
         flag = " ⟂" if r.tradeability_gated else ""
         out.append(
-            f"| {r.rank} | {r.ticker}{' ⚠' if r.ticker in notes else ''} | "
+            f"| {r.rank} | {r.ticker}{' ⚠' if r.candidate_id in notes else ''} | "
             f"{r.priority_score:.3f} | {r.depth_band} | "
             f"{_md_cell(r, 'idiosyncrasy')} | {_md_cell(r, 'depth')} | "
             f"{_md_cell(r, 'character')} | {_md_cell(r, 'multiple')} | "

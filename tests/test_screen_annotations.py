@@ -80,7 +80,8 @@ def test_a_name_from_another_screen_date_is_not_marked() -> None:
     rows = _queue()
     later = [r.model_copy(update={"screen_run_at": dt.datetime(2026, 10, 23)})
              if r.ticker == "SFBS" else r for r in rows]
-    assert set(queue_annotations(SNAPS, later)) == {"IESC"}
+    ids = queue_annotations(SNAPS, later)
+    assert {r.ticker for r in later if r.candidate_id in ids} == {"IESC"}
 
 
 def _gate(**over: Any) -> dict[str, Any]:
@@ -154,3 +155,18 @@ def test_a_bad_annotation_file_stops_the_writer_before_it_writes(tmp_path: pathl
     with pytest.raises(ValidationError):
         write_queue_snapshots(cfg, _queue())
     assert (cfg.snapshots_dir / "ranked_queue.jsonl").read_text() == "old\n"
+
+
+def test_one_ticker_on_two_screen_dates_marks_only_the_annotated_run() -> None:
+    """Codex review of #799 (P2). A mixed-vintage queue can hold one ticker from two screen runs;
+    keyed by ticker alone, the 2026-10-16 note marked BOTH rows, putting post-run corrections
+    against a run they are not about. Each row is matched on its own candidate."""
+    rows = _queue()
+    sfbs = next(r for r in rows if r.ticker == "SFBS")
+    later = sfbs.model_copy(update={"candidate_id": "SFBS-screen2-20261023", "rank": 344,
+                                    "screen_run_at": dt.datetime(2026, 10, 23)})
+    md = render_queue_markdown([*rows, later], annotations=queue_annotations(SNAPS, [*rows, later]))
+    marked = [line.split("|")[1].strip() for line in md.splitlines()
+              if line.startswith("| ") and "SFBS" in line and "⚠" in line]
+    assert marked == ["5"], f"rows marked for SFBS: {marked}"
+    assert "**SFBS** (rank 344)" not in md
