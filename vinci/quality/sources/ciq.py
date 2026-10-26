@@ -43,6 +43,9 @@ from vinci.dossier.lease_basis import (
 )
 from vinci.dossier.mechanical import _IE_TOL
 from vinci.dossier.schemas import CHECK_AGREE, CHECK_DIFFER, CHECK_NOT_RUN
+from vinci.dossier.statement_recon import DIFFERENT_FLOOR as _STMT_FLOOR
+from vinci.dossier.statement_recon import DIFFERENT_SHARE as _STMT_SHARE
+from vinci.dossier.statement_recon import table_figures
 from vinci.dossier.valuation_basis import SNAPSHOT_TOL
 from vinci.edgar.primary_source import _TOL as _WALL_TOL
 from vinci.edgar.primary_source import BOUNDARY_DAYS, GUIDE_MATCH
@@ -121,6 +124,42 @@ def _ebitda_vs_xbrl(page: dict[str, Any]) -> ItemResult:
         else:
             c[DIFFERS_UNEXPLAINED] += 1
     return ItemResult(counts=dict(c))
+
+
+def _statement_vs_xbrl(page: dict[str, Any], line: str) -> ItemResult:
+    fs = _get(page, "mechanical", "financial_summary")
+    sr = _get(fs, "statement_reconciliation")
+    if not isinstance(sr, dict):
+        return ItemResult(not_run="no statement_reconciliation block on the page")
+    rows = [r for r in sr.get("rows") or [] if isinstance(r, dict) and r.get("line") == line]
+    # THE BLOCK IS SCORED ONLY WHILE IT IS THE TABLE'S: a refresh that moved the table and left the
+    # block would otherwise score figures the page no longer shows
+    want = {k: v for k, v in table_figures(_get(fs, "annual", "value")).items() if k[0] == line}
+    if {(line, r.get("column")): r.get("ciq") for r in rows} != want:
+        return ItemResult(not_run="the block's CIQ figures are not the annual table's — a stale "
+                                  "block; assembly or refresh.statement_recon_transform rebuilds "
+                                  "it")
+    if not rows:
+        return ItemResult(not_applicable="CIQ's annual table carries no figure for this line")
+    c: Counter[str] = Counter()
+    for r in rows:
+        if _num(r.get("filing")) is None:
+            c[UNCHECKED] += 1
+        elif not r.get("different"):
+            c[CONFIRMED] += 1
+        elif r.get("other_tag") or r.get("earlier_accession"):
+            c[DIFFERS_STATED] += 1
+        else:
+            c[DIFFERS_UNEXPLAINED] += 1
+    return ItemResult(counts=dict(c))
+
+
+def _revenue_vs_xbrl(page: dict[str, Any]) -> ItemResult:
+    return _statement_vs_xbrl(page, "revenue")
+
+
+def _ocf_vs_xbrl(page: dict[str, Any]) -> ItemResult:
+    return _statement_vs_xbrl(page, "operating_cash_flow")
 
 
 def _lease_rows_vs_edgar(page: dict[str, Any]) -> ItemResult:
@@ -297,6 +336,35 @@ CHECKS: tuple[Check, ...] = (
           "the quarter's own release states an amount matching the gap (quoted, not attributed)",
           None, ("wrong_file", "wrong_cell", "wrong_unit", "wrong_period", "different_definition"),
           _ebitda_vs_xbrl),
+    Check("revenue_vs_xbrl", "CIQ annual revenue vs the same period from the filings",
+          "CIQ Financials (annual) Income Statement 'Total Revenue' — the financial summary's "
+          "Revenue row, each fiscal year and the LTM, at the period end CIQ's header states",
+          "EDGAR XBRL revenue on the first alias reporting the period (ASC 606 net, gross, "
+          "Revenues, SalesRevenueNet), as filed by the page's assembly date; the LTM a twelve-"
+          "month fact, else fiscal year + year-to-date − prior year-to-date on one tag",
+          INDEPENDENT, "period",
+          f"differs beyond {_STMT_SHARE:.1%} of the filing figure AND by at least "
+          f"${_STMT_FLOOR:g}M (statement_recon.DIFFERENT_SHARE) — the row's own `different` flag",
+          "pages carrying mechanical.financial_summary.statement_reconciliation",
+          "the filings carry CIQ's figure themselves: another revenue alias for the same period, "
+          "or an earlier filing's figure for the fiscal year (restated since)", None,
+          ("wrong_file", "wrong_cell", "wrong_unit", "wrong_period", "different_definition"),
+          _revenue_vs_xbrl),
+    Check("ocf_vs_xbrl", "CIQ annual operating cash flow vs the same period from the filings",
+          "CIQ Financials (annual) Cash Flow 'Cash from Ops.' — the financial summary's CFO row, "
+          "each fiscal year and the LTM, at the period end CIQ's header states",
+          "EDGAR XBRL NetCashProvidedByUsedInOperatingActivities (else its continuing-operations "
+          "tag), as filed by the page's assembly date; the LTM a twelve-month fact, else fiscal "
+          "year + year-to-date − prior year-to-date on one tag (a 10-Q tags cash flow "
+          "year-to-date)",
+          INDEPENDENT, "period",
+          f"differs beyond {_STMT_SHARE:.1%} of the filing figure AND by at least "
+          f"${_STMT_FLOOR:g}M (statement_recon.DIFFERENT_SHARE) — the row's own `different` flag",
+          "pages carrying mechanical.financial_summary.statement_reconciliation",
+          "the filings carry CIQ's figure themselves: the other operating-cash-flow alias for the "
+          "same period, or an earlier filing's figure for the fiscal year (restated since)", None,
+          ("wrong_file", "wrong_cell", "wrong_unit", "wrong_period", "different_definition"),
+          _ocf_vs_xbrl),
     Check("lease_rows_vs_edgar", "CIQ's lease rows inside TEV vs EDGAR's operating leases",
           "CIQ 'Curr. Port. of Leases' + 'Long-Term Leases', per balance-sheet date",
           "EDGAR operating-lease liability on the same date (finance leases either side)",
@@ -436,9 +504,10 @@ FAMILIES: tuple[Family, ...] = (
                 "treats as unusual — ebitda_recon), so 'differs' is not by itself a CIQ error"),
     Family("financials.annual_income_statement", "financials",
            ("Financials→Income Statement",), "revenue, EBIT, EPS in the Financial Summary",
-           checks=("ebit_margin_vs_gaap",),
-           note="only the EBIT margin is compared, and only on the conditional sample its check "
-                "names; revenue and EPS are not set against the filings"),
+           checks=("revenue_vs_xbrl", "ebit_margin_vs_gaap"),
+           note="revenue is set against the filings per fiscal year and the LTM; the EBIT margin "
+                "only on the conditional sample its check names; EBIT and EPS themselves are not "
+                "set against the filings"),
     Family("financials.rent", "financials", ("Financials→Income Statement",),
            "'Net Rental Exp.' — the lease-materiality reading",
            checks=("rent_vs_edgar_lease_cost",)),
@@ -464,10 +533,12 @@ FAMILIES: tuple[Family, ...] = (
            note="the lease component is lease_rows_vs_edgar; TEV and the band's closes are not "
                 "rebuilt from another source"),
     Family("financials.cash_flow", "financials", ("Financials→Cash Flow",),
-           "operating cash flow, capex, free cash flow", checks=("fcf_sign_vs_edgar_ocf",),
-           note="a SIGN against a different measure only — the FCF figure itself is not set "
-                "against the filings, and a quarter's OCF and a year's levered FCF differ in sign "
-                "for ordinary reasons (capex, seasonality)"),
+           "operating cash flow, capex, free cash flow",
+           checks=("ocf_vs_xbrl", "fcf_sign_vs_edgar_ocf"),
+           note="operating cash flow is set against the filings per fiscal year and the LTM; "
+                "capex and the levered FCF figure are not — the FCF reaches the filings only as a "
+                "SIGN against a different measure, and a quarter's OCF and a year's levered FCF "
+                "differ in sign for ordinary reasons (capex, seasonality)"),
     Family("financials.capital_structure", "financials",
            ("Financials→Capital Structure Details", "Financials→Capital Structure Summary"),
            "debt instruments and maturities", checks=("wall_vs_10q",),

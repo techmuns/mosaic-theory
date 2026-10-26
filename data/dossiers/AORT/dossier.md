@@ -775,6 +775,7 @@ _Source §: 8-K 0000784199-16-000175 · c199-20160125ex101fad737.htm_
   - 2026-10-22 · mechanical.drawdown_cause, mechanical.primary_source — refresh at 2026-10-09.3
   - 2026-10-22 · anchor — anchor-retag at 2026-10-09.3
   - 2026-10-23 · mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-26 · mechanical.financial_summary — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 20d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus is 49d old (2026-06-30, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.
