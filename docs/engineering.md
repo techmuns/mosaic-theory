@@ -132,6 +132,15 @@ PR (CLAUDE.md: coin-time translation).
   figures agree — what a flag that reads True when skipped, or a verdict held in a sentence, could
   not say.* Home: `vinci/dossier/schemas.py` (`CrossCheck`); written at assembly and onto committed
   pages by `refresh.cross_check_transform`; scored by `vinci/quality/sources/ciq.py`.
+- **Anchor session / restated bar / return basis** (2026-10-26). Plain words:
+  - the **anchor** is *the newest stored day a price refresh would otherwise skip, fetched again to
+    see whether Polygon has since put that name on a new split basis*;
+  - a **restated bar** is *a stored bar this repo moved onto Polygon's current basis by Polygon's own
+    factor (`prices.source` ends `+restated`)*;
+  - the **return basis** is *whether a return counts dividends — TOTAL (dividends reinvested on the
+    ex-date) for scoring and the monitor since 2026-10-26, PRICE before*.
+
+  Home: `vinci/eod/client.py` (`restate_held`), `vinci/eod/dividends.py`, `monitor.return_basis`.
 - **Market session / partial day (the price store's calendar)** (2026-10-24) — Plain words: *a
   day on which the store holds bars for at least half as many names as its fullest day holds
   (`eod.client._SESSION_PRESENT_FRACTION`); any other day is partial — a few names' backfill. The

@@ -43,7 +43,8 @@ def _row(ticker: str, verdict: str, *, excess_via: float, closed: bool = False,
     return position_row(
         ticker=ticker, verdict=verdict, sector="Industrials", entry_price=100.0, entry_date=entry,
         current_price=excess_via, current_date=date(2026, 3, 1), benchmark="IWM",
-        benchmark_entry=100.0, benchmark_now=100.0, horizon_days=180, closed=closed)
+        benchmark_entry=100.0, benchmark_now=100.0, horizon_days=180, closed=closed,
+        position_growth=1.0, benchmark_growth=1.0)
 
 
 # --------------------------------------------------------------------------------------------
@@ -98,13 +99,15 @@ def test_the_render_shows_both_figures_only_when_something_is_closed() -> None:
                    _row("MEH", "BUY", excess_via=95.0),
                    _row("BAD", "AVOID_TERMINAL", excess_via=90.0)]
     txt = render_table(MonitorSnapshot(
-        as_of=date(2026, 3, 1), rows=closed_book, spread=compute_spread(closed_book)))
+        as_of=date(2026, 3, 1), rows=closed_book, spread=compute_spread(closed_book),
+        return_basis="total"))
     assert "STILL HELD" in txt, f"the open-only spread never reached the printed book:\n{txt}"
     assert "CLOSED positions" in txt
 
     open_book = [_row("A", "BUY", excess_via=120.0), _row("B", "AVOID_TERMINAL", excess_via=90.0)]
     plain = render_table(MonitorSnapshot(
-        as_of=date(2026, 3, 1), rows=open_book, spread=compute_spread(open_book)))
+        as_of=date(2026, 3, 1), rows=open_book, spread=compute_spread(open_book),
+        return_basis="total"))
     assert "STILL HELD" not in plain, (
         "a book with nothing closed printed a decomposition line — noise that trains the reader to "
         "skip it")

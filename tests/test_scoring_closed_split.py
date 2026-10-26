@@ -21,6 +21,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.dividend_support import no_dividends
 from vinci.schemas.ledger import EVENT_CLOSE, Confidence, LedgerEntry, Verdict
 from vinci.schemas.market import PriceBar
 from vinci.scoring import score_ledger
@@ -63,7 +64,7 @@ def _score(tmp_path: Path, entries: list[LedgerEntry], *, as_of: date = AS_OF):
         store.write_prices(_bars("SEC-BAD", 100.0, 90.0))     # −10%
         for e in entries:
             store.append_ledger(e)
-        return score_ledger(store, as_of=as_of)
+        return score_ledger(store, as_of=as_of, dividends=no_dividends)
 
 
 def test_the_headline_keeps_closed_rows_and_the_split_sits_beside_it(tmp_path: Path) -> None:
@@ -179,7 +180,7 @@ def test_a_screen_row_in_neither_leg_does_not_corrupt_the_counts(tmp_path: Path)
         for e in (win, bad, odd):
             store.append_ledger(e)
         store.append_ledger(_close_of(odd, on=date(2026, 2, 1)))
-        _s, rep = score_ledger(store, as_of=AS_OF)
+        _s, rep = score_ledger(store, as_of=AS_OF, dividends=no_dividends)
 
     assert rep.n_closed == 0, (
         "a closed row belonging to NEITHER leg was counted against the spread's own breakdown")

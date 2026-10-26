@@ -16,7 +16,7 @@ stays out of request URLs, the on-disk cache, and error messages.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Iterable, Iterator, Sequence
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from datetime import UTC, date, datetime, timedelta
 from typing import Any, cast
 
@@ -80,9 +80,24 @@ _SESSION_LOOKBACK_DAYS = 10
 #: 1,304 whole-market calls — because CI carries no store and builds one from scratch each run. On
 #: a data plan serving ~5 requests/min that finishes nowhere: the run died on the rate limit
 #: locally AND in CI. The bars beyond this window are already in the local store; acquiring them
-#: again was the waste. THE COST, stated: a split older than this window leaves the bars before it
-#: on the pre-split basis until something re-pulls them (`refresh --aggs` on the name does).
+#: again was the waste. THE COST, as first stated: a split older than this window leaves the bars
+#: before it on the pre-split basis until something re-pulls them.
+#:
+#: THAT COST LANDED (2026-10-24), and a re-pull cannot pay it. IESC, SFBS and BYND sat pre-split
+#: before 2026-08-06 in the 2026-10-16 weekly's store, and SFBS's G1 PASS rested on the step
+#: (`docs/records/2026-10-24-prices-quality-source.md`). The plan serves two years, so held bars
+#: older than that can never be pulled again. So each refresh now re-fetches ONE held session it
+#: would skip — the latest, its ANCHOR — and `restate_held` puts the older held bars of any name the
+#: source has restated onto the current basis
+#: (`docs/records/2026-10-26-split-restatement-and-total-return.md`).
 RESTATE_WINDOW_DAYS = 30
+
+#: A held bar and its re-fetch describe one session on two split bases when all four prices moved
+#: by ONE factor, and that factor is away from 1, both within this fraction. Measured 2026-10-26 on
+#: 2026-08-05's whole market: 2,340 of 2,350 names came back identical, and the other 10 moved by a
+#: single factor to 1e-6, with volume moving inversely to the cent. A bar that changed any other way
+#: is a correction, not a new basis, and restates nothing.
+RESTATE_TOL = 0.005
 
 #: A session counts as already ingested only when the store holds bars for at least this share of
 #: the securities being ingested — never on presence alone. `refresh --aggs` on one name writes a
@@ -133,6 +148,53 @@ def last_completed_session(client: EodClient, *, today: date,
     )
 
 
+def restatement_factor(held: PriceBar, fresh: RawBar) -> float | None:
+    """``fresh ÷ held`` when the source has put this session's bar on a new split basis — open,
+    high, low and close all scaled by one factor that is away from 1 — else None (unchanged, or
+    changed some other way)."""
+    pairs = ((fresh.open, held.open), (fresh.high, held.high), (fresh.low, held.low),
+             (fresh.close, held.close))
+    if any(h <= 0 or f <= 0 for f, h in pairs):
+        return None
+    ratios = [f / h for f, h in pairs]
+    if abs(ratios[3] - 1.0) <= RESTATE_TOL or max(ratios) / min(ratios) - 1.0 > RESTATE_TOL:
+        return None
+    return ratios[3]
+
+
+def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
+                 boundaries: Sequence[date],
+                 sym_to_id: Mapping[str, str]) -> dict[str, list[tuple[date, float]]]:
+    """Put held bars back on the source's CURRENT split basis, one pull at a time.
+
+    Each boundary is the LAST session of one pull of the store. That session is fetched again and
+    set beside the held copy, name by name. Where the source has restated a name
+    (`restatement_factor`), the name's held bars from just after the previous boundary through
+    this one are scaled by that factor (`Store.restate_bars`). A segment's bars are assumed to
+    share their boundary's pull, which is true of a refresh: it writes every session it fetches in
+    one pass.
+
+    Why a factor, not a re-pull: the plan serves two years of bars, so an older held bar cannot be
+    fetched again. The factor is the source's own, read off a bar it serves today. Returns
+    ``{internal_id: [(boundary, factor), ...]}`` for each name restated."""
+    bounds = sorted(set(boundaries))
+    id_to_sym = {iid: sym for sym, iid in sym_to_id.items()}
+    found: dict[str, dict[date, float]] = {}
+    for b in bounds:
+        fresh = fetch(b)
+        for iid, held in store.bars_on(b, list(id_to_sym)).items():
+            bar = fresh.get(id_to_sym[iid])
+            if bar is not None and (r := restatement_factor(held, bar)) is not None:
+                found.setdefault(iid, {})[b] = r
+    for iid, by_bound in found.items():
+        prev: date | None = None
+        for b in bounds:
+            if b in by_bound:
+                store.restate_bars(iid, by_bound[b], through=b, after=prev)
+            prev = b
+    return {iid: sorted(v.items()) for iid, v in found.items()}
+
+
 def ingest_prices(
     client: EodClient,
     store: Any,
@@ -142,7 +204,7 @@ def ingest_prices(
     end: date,
     progress: ProgressFn | None = None,
     restate_window_days: int = RESTATE_WINDOW_DAYS,
-) -> dict[str, int]:
+) -> dict[str, Any]:
     """Backfill/refresh EOD bars for ``securities`` over [start, end] into the store.
 
     Fails loud: a degraded day raises inside ``grouped_daily`` and aborts the whole refresh, so the
@@ -167,14 +229,34 @@ def ingest_prices(
     days_skipped = 0
     bars_written = 0
     trading_days = 0
+    # THE ANCHOR: the latest held session this refresh would skip. Fetched once and set beside the
+    # held copy, so a split since that pull restates the older held bars instead of leaving them on
+    # the old basis under bars pulled on the new one (see RESTATE_WINDOW_DAYS). Every session after
+    # it is fetched below, so the anchor bounds the only bars that can still be stale.
+    # A store that cannot hand back a held bar is never asked to restate one (an older or foreign
+    # store), and the anchor then skips like any held session, exactly as before.
+    anchor = (max((d for d in days if d < restate_from and stored.get(d, 0) >= present_floor),
+                  default=None) if callable(getattr(store, "bars_on", None)) else None)
+    restated: dict[str, list[tuple[date, float]]] = {}
+    anchor_bars: dict[str, RawBar] = {}
+    on_anchor: set[str] = set()
+    if anchor is not None:
+        days_fetched += 1
+        anchor_bars = client.grouped_daily(anchor)
+        on_anchor = set(store.bars_on(anchor, list(sym_to_id.values())))
+        restated = restate_held(store, lambda _d: anchor_bars, [anchor], sym_to_id)
+    written: set[str] = set()
     for day in days:
         days_seen += 1
-        if day < restate_from and stored.get(day, 0) >= present_floor:
+        if day != anchor and day < restate_from and stored.get(day, 0) >= present_floor:
             days_skipped += 1
             reporter.tick(days_seen, suffix=f"{bars_written:,} bars · {days_skipped} held")
             continue
-        days_fetched += 1
-        raw = client.grouped_daily(day)
+        if day == anchor:
+            raw = anchor_bars                     # fetched once, above; written like any session
+        else:
+            days_fetched += 1
+            raw = client.grouped_daily(day)
         if not raw:
             reporter.tick(days_seen, suffix=f"{bars_written:,} bars")
             continue  # non-trading day (holiday/weekend)
@@ -194,13 +276,31 @@ def ingest_prices(
             if t in sym_to_id
         ]
         bars_written += store.write_prices(rows)
+        written.update(r.internal_id for r in rows)
         reporter.tick(days_seen, suffix=f"{bars_written:,} bars")
+    id_to_sym = {iid: sym for sym, iid in sym_to_id.items()}
+    # A NAME WITH NO BAR ON THE ANCHOR is not checked by it — it did not trade that day, or had
+    # stopped. If this run wrote it new bars, its older held bars are set beside the source at its
+    # OWN latest held session, one call per distinct date. Measured 2026-10-26: PSTV's held bars end
+    # 2026-07-31, before the anchor, and Polygon now serves its whole history ×0.04 — bars resuming
+    # on the new basis would have spliced it. Names that got no new bars cost nothing here.
+    if anchor is not None:
+        late: dict[date, dict[str, str]] = {}
+        for iid in sorted(written - on_anchor):
+            if (last := store.last_bar_before(iid, anchor)) is not None:
+                late.setdefault(last, {})[id_to_sym[iid]] = iid
+        for last, group in sorted(late.items()):
+            days_fetched += 1
+            restated.update(restate_held(store, client.grouped_daily, [last], group))
     return {
         "days_fetched": days_fetched,
         "days_skipped": days_skipped,
         "trading_days": trading_days,
         "bars_written": bars_written,
         "universe_size": len(sym_to_id),
+        # SAID IN THE SUMMARY, NEVER SILENT: which names had held bars restated, and by what
+        "anchor": anchor.isoformat() if anchor is not None else None,
+        "restated": {id_to_sym[iid]: [f for _b, f in v] for iid, v in sorted(restated.items())},
     }
 
 

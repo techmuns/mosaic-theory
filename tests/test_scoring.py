@@ -12,16 +12,30 @@ from pathlib import Path
 
 import pytest
 
+from tests.dividend_support import no_dividends
 from vinci.schemas.ledger import Confidence, Disposition, LedgerEntry, Verdict
 from vinci.schemas.market import PriceBar
-from vinci.scoring import aggregate, ols_beta_alpha, score_ledger, total_return
+from vinci.scoring import (
+    aggregate,
+    ols_beta_alpha,
+    price_return,
+    score_ledger,
+    total_return,
+)
 from vinci.scoring.metrics import VerdictScore
 from vinci.store import Store
 
 
-def test_total_return() -> None:
-    assert total_return(100.0, 130.0) == pytest.approx(0.30)
-    assert total_return(50.0, 40.0) == pytest.approx(-0.20)
+def test_price_return_and_total_return() -> None:
+    """`total_return` WAS a price return until 2026-10-26 (operator ruling B): the closes alone,
+    under a total return's name. Now the price return carries its own name and the total return
+    multiplies in the growth reinvested dividends add."""
+    assert price_return(100.0, 130.0) == pytest.approx(0.30)
+    assert price_return(50.0, 40.0) == pytest.approx(-0.20)
+    assert total_return(100.0, 130.0, 1.0) == pytest.approx(0.30)        # no dividend in window
+    assert total_return(100.0, 100.0, 1.02) == pytest.approx(0.02)       # a 2% yield, flat price
+    with pytest.raises(ValueError, match="growth must be > 0"):
+        total_return(100.0, 130.0, 0.0)
 
 
 def test_ols_beta_alpha_recovers_known_beta() -> None:
@@ -150,7 +164,8 @@ def test_score_ledger_backfilled_math_only(tmp_path: Path) -> None:
                                    machine_proposal=Verdict.AVOID_TERMINAL,
                                    disposition=Disposition.CONFIRMED))
 
-        scores, report = score_ledger(store, as_of=date(2025, 5, 1), cost_bps=25.0)
+        scores, report = score_ledger(store, as_of=date(2025, 5, 1), cost_bps=25.0,
+        dividends=no_dividends)
 
     assert {s.ticker: round(s.name_return, 4) for s in scores} == {"AAA": 0.30, "BBB": -0.20}
     assert all(s.resolved for s in scores)  # horizon passed by the as-of date
@@ -172,7 +187,7 @@ def test_score_ledger_pending_when_horizon_not_reached(tmp_path: Path) -> None:
         store.write_prices(_bars("SEC-A", [(entry_d, 100.0), (date(2026, 6, 10), 90.0)]))
         store.append_ledger(_entry("AAA", "SEC-A", Verdict.BUY, 100.0, entry_d))
         # as-of is well before entry+90d -> unresolved -> pending, not scored
-        _scores, report = score_ledger(store, as_of=date(2026, 6, 10))
+        _scores, report = score_ledger(store, as_of=date(2026, 6, 10), dividends=no_dividends)
     assert report.n_resolved_buy == 0
     assert report.n_pending == 1
     assert report.buy_avoid_spread is None

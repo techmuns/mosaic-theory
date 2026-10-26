@@ -320,6 +320,8 @@ def test_a_session_the_store_already_holds_is_not_re_pulled(tmp_path) -> None:  
 
     ⊕ a fully-held session older than the restatement window is skipped;
     ⊖ a held session INSIDE the window is re-pulled anyway (that is what restates a split);
+    ⊖ the LATEST held session it would skip is re-pulled ONCE, as the anchor that detects a split
+      since that pull (2026-10-26, `restate_held`) — one call, never the whole held history;
     ⊖ a session holding only a single-name refresh's rows is not "held" — it is re-pulled;
     ⊖ a store that cannot report what it holds re-pulls everything, exactly as before."""
     from vinci.eod.client import RESTATE_WINDOW_DAYS, ingest_prices
@@ -327,21 +329,23 @@ def test_a_session_the_store_already_holds_is_not_re_pulled(tmp_path) -> None:  
     syms = [f"AA{i}" for i in range(10)]
     secs = [_ident_for(s) for s in syms]
     start, end = date(2026, 6, 1), date(2026, 9, 1)
-    held_old, partial_old = date(2026, 6, 10), date(2026, 6, 11)
+    held_older, held_old, partial_old = date(2026, 6, 9), date(2026, 6, 10), date(2026, 6, 11)
     held_recent = end - timedelta(days=RESTATE_WINDOW_DAYS - 5)          # inside the window
     with Store(tmp_path / "skip.db") as store:
         for s in secs:
             store.upsert_security(s)
-        _seed(store, syms, held_old)                  # a whole-market day already ingested
+        _seed(store, syms, held_older)                # a whole-market day already ingested
+        _seed(store, syms, held_old)                  # the latest such day: the anchor
         _seed(store, syms[:1], partial_old)           # what `refresh --aggs` on ONE name leaves
         _seed(store, syms, held_recent)
         client = _CountingClient(syms)
         summary = ingest_prices(client, store, secs, start=start, end=end)  # type: ignore[arg-type]
-    assert held_old not in client.calls, "a session the store already holds was re-pulled"
+    assert held_older not in client.calls, "a session the store already holds was re-pulled"
+    assert client.calls.count(held_old) == 1, "the anchor was not re-pulled exactly once"
     assert partial_old in client.calls, "a one-name refresh's rows passed for a whole-market day"
     assert held_recent in client.calls, "the restatement window did not re-pull a held session"
-    assert summary["days_skipped"] == 1
-    assert summary["days_fetched"] == len(client.calls)
+    assert summary["days_skipped"] == 1 and summary["anchor"] == held_old.isoformat()
+    assert summary["days_fetched"] == len(client.calls) and summary["restated"] == {}
 
     class _StoreWithoutCounts:                        # an older/foreign store: never trusted
         def __init__(self) -> None:
@@ -378,3 +382,218 @@ def test_a_day_the_universe_holds_is_still_fetched_for_the_benchmark(tmp_path) -
         summary = ingest_prices(client, store, [bench], start=start, end=end)  # type: ignore[arg-type]
     assert old in client.calls, "the benchmark was skipped on a day only the universe holds"
     assert summary["days_skipped"] == 0
+
+
+# --- (2026-10-26) a split since the held pull restates the held bars, never splices them --------
+# THE DEFECT: the restatement window re-pulled 30 days, and skipped every older held session. After
+# a split, the bars it pulled came back on the new basis while the held ones stayed on the old, so
+# the series stepped by the split ratio at the pull boundary. Measured in the 2026-10-16 weekly's
+# store: IESC, SFBS and BYND at 2026-08-06, and SFBS's G1 PASS rested on it
+# (docs/records/2026-10-24-prices-quality-source.md). The held bars cannot be re-pulled (the plan
+# serves two years), so the fix restates them by the factor the source applies to a bar it serves.
+
+def _px(day: date) -> float:
+    """A close that moves every day (so a step is visible) — synthetic, never a real price."""
+    return 100.0 + (day.toordinal() % 7)
+
+
+def _bar_at(sym: str, day: date, scale: float = 1.0, *, close_only: float = 1.0) -> RawBar:
+    p = _px(day) * scale
+    return RawBar(ticker=sym, open=p, high=p * 1.01, low=p * 0.99, close=p * close_only,
+                  volume=1000.0 / scale)
+
+
+class _BasisClient:
+    """Serves every day on the CURRENT basis: names in ``scale`` have split since the store's pull
+    (a 2:1 halves every price and doubles volume — what `adjusted=true` returns afterwards)."""
+
+    def __init__(self, syms: list[str], scale: dict[str, float],
+                 close_only: dict[str, float] | None = None) -> None:
+        self.syms, self.scale, self.close_only, self.calls = syms, scale, close_only or {}, []
+
+    def grouped_daily(self, day: date) -> dict[str, RawBar]:
+        self.calls.append(day)
+        if day.weekday() >= 5:
+            return {}
+        return {s: _bar_at(s, day, self.scale.get(s, 1.0), close_only=self.close_only.get(s, 1.0))
+                for s in self.syms}
+
+
+def _hold(store: Store, syms: list[str], days: list[date]) -> None:
+    """The store's earlier pull, on the OLD basis (scale 1)."""
+    store.write_prices([PriceBar(internal_id=f"SEC-{s}", bar_date=d, open=b.open, high=b.high,
+                                 low=b.low, close=b.close, volume=b.volume,
+                                 source="polygon-grouped")
+                        for d in days for s in syms for b in [_bar_at(s, d)]])
+
+
+def test_restatement_factor_reads_one_basis_change_and_nothing_else() -> None:
+    from vinci.eod.client import RESTATE_TOL, restatement_factor
+    d = date(2026, 8, 5)
+    held = PriceBar(internal_id="SEC-X", bar_date=d, **{k: getattr(_bar_at("X", d), k) for k in
+                    ("open", "high", "low", "close", "volume")}, source="polygon-grouped")
+    assert restatement_factor(held, _bar_at("X", d)) is None                  # unchanged
+    assert restatement_factor(held, _bar_at("X", d, 0.5)) == pytest.approx(0.5)  # 2-for-1
+    assert restatement_factor(held, _bar_at("X", d, 30.0)) == pytest.approx(30.0)  # 1-for-30
+    assert restatement_factor(held, _bar_at("X", d, 2 / 3)) == pytest.approx(2 / 3)  # 3-for-2 too
+    # a correction to the close alone is not a new basis, however large
+    assert restatement_factor(held, _bar_at("X", d, close_only=0.5)) is None
+    # inside the band either way: no restatement
+    assert restatement_factor(held, _bar_at("X", d, 1 + RESTATE_TOL * 0.8)) is None
+    assert restatement_factor(held, _bar_at("X", d, 1 + RESTATE_TOL * 1.2)) is not None
+
+
+def test_a_split_since_the_held_pull_leaves_no_step(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    """⊕ the split name's whole stored series ends on the current basis, with no whole-number
+    step anywhere, and the summary names it with its factor;
+    ⊖ a name that did not split, and one whose anchor bar changed only in its close (a correction),
+    keep every held bar as it was."""
+    from vinci.dossier.freshness import whole_number_ratio
+    from vinci.eod.client import RESTATE_WINDOW_DAYS, ingest_prices
+
+    syms = ["SPL", "KEEP", "FIX"] + [f"CC{i}" for i in range(7)]
+    secs = [_ident_for(s) for s in syms]
+    start, end = date(2026, 5, 1), date(2026, 9, 1)
+    restate_from = end - timedelta(days=RESTATE_WINDOW_DAYS)
+    held_days = [d for d in (start + timedelta(days=i) for i in range(60))
+                 if d.weekday() < 5 and d < restate_from]
+    client = _BasisClient(syms, {"SPL": 0.5}, close_only={"FIX": 0.97})
+    with Store(tmp_path / "split.db") as store:
+        for s in secs:
+            store.upsert_security(s)
+        _hold(store, syms, held_days)
+        summary = ingest_prices(client, store, secs, start=start, end=end)  # type: ignore[arg-type]
+        spl = store.get_price_history("SEC-SPL")
+        keep = store.get_price_history("SEC-KEEP")
+        fix = store.get_price_history("SEC-FIX")
+    # THE SUBSTANCE FIRST: on the old ingest this is where it fails — a ×0.5 step at the boundary
+    assert not any(whole_number_ratio(b.close / a.close)
+                   for a, b in zip(spl, spl[1:], strict=False))
+    assert all(b.close == pytest.approx(_px(b.bar_date) * 0.5) for b in spl)
+    assert summary["anchor"] == held_days[-1].isoformat()
+    assert summary["restated"] == {"SPL": [pytest.approx(0.5)]}
+    assert all(b.source.endswith("+restated") for b in spl if b.bar_date < held_days[-1])
+    assert all(b.close == pytest.approx(_px(b.bar_date)) and b.source == "polygon-grouped"
+               for b in keep)
+    held_fix = [b for b in fix if b.bar_date < held_days[-1]]
+    assert held_fix and all(b.close == pytest.approx(_px(b.bar_date)) for b in held_fix)
+
+
+def test_restate_held_restates_each_pull_by_its_own_factor(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    """The REPAIR path, for a store that already holds a splice: two pulls, the older ending on
+    b1, the newer on b2. A name split between them (IESC's shape) restates only the older pull; a
+    name split after both (IMMP's shape, ×20 after 2026-10-16) restates both, each by its own."""
+    from vinci.eod.client import restate_held
+
+    b1, b2 = date(2026, 8, 5), date(2026, 8, 14)
+    old = [date(2026, 8, 3), date(2026, 8, 4), b1]
+    new = [date(2026, 8, 6), date(2026, 8, 7), b2]
+    with Store(tmp_path / "repair.db") as store:
+        for s in ("MID", "LATE", "NONE"):
+            store.upsert_security(_ident_for(s))
+        _hold(store, ["MID", "LATE", "NONE"], old)
+        # MID's newer pull is already on the post-split basis (scale 0.5) — the splice
+        store.write_prices([PriceBar(internal_id="SEC-MID", bar_date=d, **{
+            k: getattr(_bar_at("MID", d, 0.5), k) for k in ("open", "high", "low", "close",
+                                                            "volume")}, source="polygon-grouped")
+            for d in new])
+        _hold(store, ["LATE", "NONE"], new)
+        today = {"MID": 0.5, "LATE": 20.0}
+
+        def fetch(day: date) -> dict[str, RawBar]:
+            return {s: _bar_at(s, day, today.get(s, 1.0)) for s in ("MID", "LATE", "NONE")}
+
+        found = restate_held(store, fetch, [b2, b1],
+                             {s: f"SEC-{s}" for s in ("MID", "LATE", "NONE")})
+        hist = {s: store.get_price_history(f"SEC-{s}") for s in ("MID", "LATE", "NONE")}
+    assert found == {"SEC-MID": [(b1, pytest.approx(0.5))],
+                     "SEC-LATE": [(b1, pytest.approx(20.0)), (b2, pytest.approx(20.0))]}
+    for s, scale in (("MID", 0.5), ("LATE", 20.0), ("NONE", 1.0)):
+        assert all(b.close == pytest.approx(_px(b.bar_date) * scale) for b in hist[s]), s
+        assert all(b.volume == pytest.approx(1000.0 / scale) for b in hist[s]), s
+
+
+def test_restate_bars_bounds_tags_once_and_refuses_a_bad_factor(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    days = [date(2026, 8, 3), date(2026, 8, 4), date(2026, 8, 5)]
+    with Store(tmp_path / "r.db") as store:
+        store.upsert_security(_ident_for("X"))
+        _hold(store, ["X"], days)
+        assert store.restate_bars("SEC-X", 0.5, through=days[1], after=days[0]) == 1
+        assert store.restate_bars("SEC-X", 1.0, through=days[1], after=days[0]) == 1
+        with pytest.raises(ValueError, match="not positive"):
+            store.restate_bars("SEC-X", 0.0, through=days[2])
+        got = {b.bar_date: b for b in store.get_price_history("SEC-X")}
+        on = store.bars_on(days[1], ["SEC-X", "SEC-MISSING"])
+    assert got[days[0]].close == pytest.approx(_px(days[0]))            # `after` is exclusive
+    assert got[days[1]].close == pytest.approx(_px(days[1]) * 0.5)      # `through` inclusive
+    assert got[days[2]].close == pytest.approx(_px(days[2]))
+    assert got[days[1]].source == "polygon-grouped+restated"            # tagged once
+    assert set(on) == {"SEC-X"}
+
+
+def test_restate_prices_command_repairs_a_spliced_store(tmp_path, monkeypatch, capsys) -> None:  # type: ignore[no-untyped-def]
+    """The command a store that already holds a splice is repaired with: the boundary given, the
+    latest market session added, each pull restated by its own factor — and a boundary after the
+    latest market session refused."""
+    from vinci import cli
+    from vinci.dossier.freshness import whole_number_ratio
+
+    syms = ["SPL"] + [f"CC{i}" for i in range(5)]
+    old = [date(2026, 8, 3), date(2026, 8, 4), date(2026, 8, 5)]
+    new = [date(2026, 8, 6), date(2026, 8, 7)]
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "data").mkdir()
+    with Store(tmp_path / "data" / "vinci.db") as store:
+        for s in syms:
+            store.upsert_security(_ident_for(s))
+        _hold(store, syms, old)
+        _hold(store, syms[1:], new)
+        store.write_prices([PriceBar(internal_id="SEC-SPL", bar_date=d, **{
+            k: getattr(_bar_at("SPL", d, 0.5), k) for k in ("open", "high", "low", "close",
+                                                            "volume")}, source="polygon-grouped")
+            for d in new])
+    client = _BasisClient(syms, {"SPL": 0.5})
+    monkeypatch.setattr(cli.PolygonEodClient, "from_config",
+                        classmethod(lambda cls, cfg=None: client))
+    assert cli.main(["restate-prices", "--through", "2026-08-05"]) == 0
+    out = capsys.readouterr().out
+    assert "SPL" in out and "×0.5" in out and "1 name(s) restated" in out
+    assert client.calls == [date(2026, 8, 5), date(2026, 8, 7)]     # the latest session added
+    with Store(tmp_path / "data" / "vinci.db") as store:
+        spl = store.get_price_history("SEC-SPL")
+    assert not any(whole_number_ratio(b.close / a.close)
+                   for a, b in zip(spl, spl[1:], strict=False))
+    assert cli.main(["restate-prices", "--through", "2026-08-10"]) == 1
+    assert "after the store's latest market session" in capsys.readouterr().err
+
+
+def test_a_name_with_no_bar_on_the_anchor_is_checked_at_its_own_last_bar(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    """PSTV'S SHAPE (measured 2026-10-26): its held bars end before the anchor session, so the
+    anchor never compares it, and Polygon now serves its whole history on a later basis. When its
+    bars resume in a refresh, its older held bars must be restated at its OWN last held session —
+    ⊕ no step, the name in the summary; ⊖ a name that got no new bars costs no call."""
+    from vinci.dossier.freshness import whole_number_ratio
+    from vinci.eod.client import RESTATE_WINDOW_DAYS, ingest_prices
+
+    syms = ["GONE", "BACK"] + [f"CC{i}" for i in range(8)]
+    secs = [_ident_for(s) for s in syms]
+    start, end = date(2026, 5, 1), date(2026, 9, 1)
+    restate_from = end - timedelta(days=RESTATE_WINDOW_DAYS)
+    held_days = [d for d in (start + timedelta(days=i) for i in range(60))
+                 if d.weekday() < 5 and d < restate_from]
+    early = held_days[:10]                         # BACK and GONE stopped trading after these
+    client = _BasisClient([s for s in syms if s != "GONE"], {"BACK": 1 / 25})
+    with Store(tmp_path / "late.db") as store:
+        for s in secs:
+            store.upsert_security(s)
+        _hold(store, [f"CC{i}" for i in range(8)], held_days)
+        _hold(store, ["BACK", "GONE"], early)
+        summary = ingest_prices(client, store, secs, start=start, end=end)  # type: ignore[arg-type]
+        back = store.get_price_history("SEC-BACK")
+        gone = store.get_price_history("SEC-GONE")
+    assert not any(whole_number_ratio(b.close / a.close)
+                   for a, b in zip(back, back[1:], strict=False))
+    assert all(b.close == pytest.approx(_px(b.bar_date) / 25) for b in back)
+    assert summary["restated"] == {"BACK": [pytest.approx(1 / 25)]}
+    assert client.calls.count(early[-1]) == 1      # BACK's own last held session, fetched once
+    assert all(b.source == "polygon-grouped" for b in gone)   # no new bars: never asked about

@@ -6,6 +6,7 @@ from vinci.scoring.metrics import (
     VerdictScore,
     aggregate,
     ols_beta_alpha,
+    price_return,
     total_return,
 )
 
@@ -14,6 +15,7 @@ __all__ = [
     "VerdictScore",
     "aggregate",
     "ols_beta_alpha",
+    "price_return",
     "score_ledger",
     "total_return",
 ]

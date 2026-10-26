@@ -18,6 +18,7 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
+from tests.dividend_support import no_dividends
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
     Confidence,
@@ -70,7 +71,7 @@ def _score(tmp_path: Path, entries: list[LedgerEntry]) -> tuple[list, object]:
         store.write_prices(_bars("SEC-B", 100.0, 80.0))          # the AVOID name -20%
         for e in entries:
             store.append_ledger(e)
-        return score_ledger(store, as_of=EXIT_D)
+        return score_ledger(store, as_of=EXIT_D, dividends=no_dividends)
 
 
 def test_a_close_row_does_not_become_a_second_buy_leg(tmp_path: Path) -> None:
@@ -151,7 +152,7 @@ def test_a_close_is_not_counted_as_pending_either(tmp_path: Path) -> None:
         # NO bars for SEC-A → both rows take the no-forward-price branch
         store.append_ledger(buy)
         store.append_ledger(_close_of(buy))
-        _scores, report = score_ledger(store, as_of=EXIT_D)
+        _scores, report = score_ledger(store, as_of=EXIT_D, dividends=no_dividends)
     assert report.n_pending == 1, (
         f"n_pending={report.n_pending} for ONE undecided name — the close row was counted as a "
         f"second pending decision")

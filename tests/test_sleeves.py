@@ -15,6 +15,7 @@ from typing import Any, cast
 
 import pytest
 
+from tests.dividend_support import no_dividends
 from vinci import sleeves as sl
 from vinci.schemas.market import PriceBar
 
@@ -631,7 +632,7 @@ def test_pending_from_the_no_price_branch_is_screen_scoped_too(tmp_path: Path) -
         # neither name has bars → both take the no-forward-price branch
         store.append_ledger(row("AAA", "SEC-A", Verdict.BUY, "screen", "overshoot"))
         store.append_ledger(row("UUU", "SEC-U", Verdict.BUY, "followed", "quality"))
-        scores, report = score_ledger(store, as_of=date(2026, 6, 10))
+        scores, report = score_ledger(store, as_of=date(2026, 6, 10), dividends=no_dividends)
 
     assert scores == []  # neither row could be scored — both hit the branch
     assert report.n_pending == 1, (
@@ -989,7 +990,8 @@ def _row(tag: str, verdict: str, excess: float, origin: str, sleeve: str) -> Any
         ticker=tag, verdict=verdict, sector="Test", entry_price=100.0,
         entry_date=date(2026, 1, 1), current_price=100.0 * (1 + excess),
         current_date=date(2026, 6, 1), benchmark="IWM", benchmark_entry=100.0,
-        benchmark_now=100.0, horizon_days=180, origin=origin, sleeve=sleeve)
+        benchmark_now=100.0, horizon_days=180, origin=origin, sleeve=sleeve,
+        position_growth=1.0, benchmark_growth=1.0)
     return r
 
 
@@ -1031,7 +1033,7 @@ def test_the_monitor_panel_names_a_non_default_book() -> None:
             _row("U", "BUY", 0.40, "followed", "quality")]
     text = render_table(MonitorSnapshot(
         as_of=date(2026, 6, 1), rows=rows, spread=compute_spread(rows),
-        freshness=[], price_basis="test", notes=[]))
+        freshness=[], price_basis="test", notes=[], return_basis="total"))
     assert "[quality]" in text, "the followed row does not say which book it belongs to"
     assert "[overshoot]" not in text, "the default book is tagged — that is noise on every row"
     assert "screen-origin" in text, "the spread does not state the scope it now measures"

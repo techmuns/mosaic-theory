@@ -16,9 +16,27 @@ from dataclasses import dataclass, field
 from vinci.schemas.ledger import ORIGIN_SCREEN, Disposition, Verdict
 from vinci.sleeves import DEFAULT_SLEEVE
 
+#: THE RETURN BASIS, ruled 2026-10-26 (operator, ruling B) and registered before the first ledger
+#: outcome (VRRM, 2026-12-14): every name AND benchmark leg is a TOTAL return, dividends reinvested
+#: on the ex-date (`vinci.eod.dividends`). Price return is printed beside it for continuity — the
+#: monitor's readings before 2026-10-26 were price return — and never enters a spread.
+RETURN_BASIS = ("TOTAL return, names and benchmarks alike — dividends reinvested on the ex-date "
+                "(Tiingo divCash); price return printed beside it, never in the spread "
+                "(operator ruling 2026-10-26)")
 
-def total_return(entry_price: float, exit_price: float) -> float:
+
+def price_return(entry_price: float, exit_price: float) -> float:
+    """``exit ÷ entry − 1`` on the closes alone: dividends excluded. Until 2026-10-26 this was
+    named ``total_return`` and was every return the report printed — a price return under a total
+    return's name."""
     return exit_price / entry_price - 1.0
+
+
+def total_return(entry_price: float, exit_price: float, dividend_growth: float) -> float:
+    """The price ratio times the growth reinvested dividends add (`vinci.eod.dividends.growth`)."""
+    if not dividend_growth > 0:
+        raise ValueError(f"dividend growth must be > 0 (got {dividend_growth!r})")
+    return exit_price / entry_price * dividend_growth - 1.0
 
 
 @dataclass(frozen=True)
@@ -29,6 +47,7 @@ class VerdictScore:
     ticker: str
     verdict: Verdict
     resolved: bool  # True once the thesis horizon has passed
+    # TOTAL returns (RETURN_BASIS): what every spread and hit-rate below reads
     name_return: float
     bench_return: float
     sector: str | None = None  # carried from the ledger entry — for the per-sector spread read
@@ -53,6 +72,10 @@ class VerdictScore:
     #: Has the POSITION been closed? The decision keeps accruing to its horizon regardless (the
     #: 2026-08-12 ruling), so this only lets the report decompose the spread — it changes no number.
     closed: bool = False
+    #: The same two legs on PRICE return — printed beside the total return for continuity, never
+    #: read by a spread. None only on a score built before the 2026-10-26 ruling.
+    name_price_return: float | None = None
+    bench_price_return: float | None = None
 
     @property
     def excess_gross(self) -> float:
@@ -225,6 +248,12 @@ class ScoreReport:
     n_open_avoid: int = 0
     buy_avoid_spread_open_only: float | None = None
     open_only_note: str | None = None
+    # --- THE SAME PRIMARY ON PRICE RETURN, beside it (ruling 2026-10-26) ------------------------
+    # Printed for continuity with the monitor's history; it is a disclosure, never the spread.
+    return_basis: str = RETURN_BASIS
+    buy_mean_price_return: float | None = None
+    avoid_mean_price_return: float | None = None
+    buy_avoid_spread_price: float | None = None
 
     def to_dict(self) -> dict[str, object]:
         d: dict[str, object] = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -260,6 +289,10 @@ class ScoreReport:
             f"- **BUY−AVOID spread (primary): {pct(self.buy_avoid_spread)}**",
             "  _Screen-origin overshoot ONLY — the discriminator measured on the $300M–$10B "
             "hunting ground it claims to measure. Other books are below, never pooled in._",
+            f"  _Return basis: {self.return_basis}._",
+            f"  _Beside it, on price return: BUY−AVOID {pct(self.buy_avoid_spread_price)} "
+            f"(BUY mean {pct(self.buy_mean_price_return)} · AVOID mean "
+            f"{pct(self.avoid_mean_price_return)})._",
             f"- BUY mean return {pct(self.buy_mean_return)} · AVOID mean return "
             f"{pct(self.avoid_mean_return)}",
             f"- Hit-rate — BUY beat benchmark: {pct(self.buy_hit_rate)} · "
@@ -523,6 +556,13 @@ def aggregate(
     buy_mean = mean([s.name_return for s in buys])
     avoid_mean = mean([s.name_return for s in avoids])
     spread = buy_mean - avoid_mean if buy_mean is not None and avoid_mean is not None else None
+    # THE PRICE-RETURN DISCLOSURE, over the SAME legs. A leg scored before the ruling carries no
+    # price figure; then the disclosure is None rather than a mean over fewer rows.
+    def price_mean(leg: list[VerdictScore]) -> float | None:
+        xs = [s.name_price_return for s in leg]
+        return mean([x for x in xs if x is not None]) if xs and None not in xs else None
+
+    buy_price, avoid_price = price_mean(buys), price_mean(avoids)
     # THE SAME ARITHMETIC OVER POSITIONS STILL HELD. Computed off `primary` — the identical set the
     # headline uses — so the two figures are comparable by construction rather than by coincidence.
     open_buys = [s.name_return for s in buys if not s.closed]
@@ -578,6 +618,10 @@ def aggregate(
         buy_mean_return=buy_mean,
         avoid_mean_return=avoid_mean,
         buy_avoid_spread=spread,
+        buy_mean_price_return=buy_price,
+        avoid_mean_price_return=avoid_price,
+        buy_avoid_spread_price=(buy_price - avoid_price) if (buy_price is not None
+                                                             and avoid_price is not None) else None,
         n_closed=n_closed,
         n_open_buy=len(open_buys),
         n_open_avoid=len(open_avoids),
