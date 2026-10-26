@@ -4108,12 +4108,14 @@ def _latest_quarter(facts: dict[str, Any], concept: str) -> tuple[float, date, s
     """
     from vinci.dossier.ebitda_recon import _quarter
 
-    tags = CONCEPT_ALIASES[concept]
-    end = max((p.period_end for tag in tags for p in points_for_tag(facts, tag)
-               if p.period_start is not None), default=None)
+    ends = {tag: {p.period_end for p in points_for_tag(facts, tag) if p.period_start is not None}
+            for tag in CONCEPT_ALIASES[concept]}
+    end = max((d for got in ends.values() for d in got), default=None)
     if end is None:
         return None
-    got = _quarter(facts, tags, end)
+    # only the aliases carrying THAT period end: `_quarter` matches within a week, so an alias
+    # whose newest period closed a few days earlier would otherwise be read under this date
+    got = _quarter(facts, [tag for tag, got in ends.items() if end in got], end)
     return (got[0], end, got[1]) if got is not None else None
 
 

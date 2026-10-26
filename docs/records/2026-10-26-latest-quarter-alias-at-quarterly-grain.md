@@ -67,6 +67,14 @@ and the served tag's newest period is a quarter or a year old. Found in #807
   - no `filed_by` cut;
   - the period from today's blob with the quarter from the cut;
   - the first alias's name reported for another's value.
+- **Found in review (`/code-review high`), fixed behind a pin that failed first.** `_quarter`
+  matches a period ending within a week. So, tried over every alias, a higher-priority alias whose
+  newest quarter closed a few days earlier would have been read under the later date. Only the
+  aliases carrying that exact period end are now differenced.
+  `test_only_an_alias_carrying_the_latest_period_end_itself_is_read` uses AORT as filed by
+  2014-04-30, with a plain-tag quarter to 2014-03-28 added. Before the fix it read 99.0 under
+  2014-03-31; it now reads −2.038. It is a constructed row on a real fixture: no such case exists
+  in the corpus. The three real runs below are byte-identical before and after this fix.
 - **Real run, nothing written.**
   - **(1) The 27 committed pages, each as filed by its own `assembled_at`: 0 move.** Every page reads
     the same quarter and value as under #807, so no stored line, cite or `fcf_sign_vs_edgar_ocf`

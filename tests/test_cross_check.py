@@ -204,6 +204,22 @@ def test_a_period_two_aliases_carry_is_read_from_the_first_that_can_be_differenc
     assert got[0] == pytest.approx(-0.739 + 0.581, abs=1e-3)
 
 
+def test_only_an_alias_carrying_the_latest_period_end_itself_is_read() -> None:
+    """`_quarter` matches a period ending within a week. AORT as filed by 2014-04-30 carries the
+    quarter to 2014-03-31 on the continuing-operations tag only (−$2.0M). Give the higher-priority
+    plain tag a quarter closing three days earlier and it must not be read under 2014-03-31: it
+    does not carry that period."""
+    from vinci.edgar.concepts import facts_as_of
+
+    aort = facts_as_of(_facts("AORT"), date(2014, 4, 30))
+    rows = aort["facts"]["us-gaap"]["NetCashProvidedByUsedInOperatingActivities"]["units"]["USD"]
+    rows.append({"start": "2013-12-29", "end": "2014-03-28", "val": 99_000_000,
+                 "filed": "2014-04-30", "form": "10-Q", "fy": 2014, "fp": "Q1", "accn": "x"})
+    got = dm._latest_quarter_ocf(aort)
+    assert got is not None and got[1] == date(2014, 3, 31)
+    assert got[0] == pytest.approx(-2.038)
+
+
 def test_a_latest_period_that_cannot_be_differenced_is_unknown_never_an_older_quarter() -> None:
     """NKE's latest period on its 2026-09-30 page is the year to 2026-05-31. Without the nine
     months to take from it there is no fourth quarter, and the leg is UNKNOWN — never the first
