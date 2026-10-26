@@ -11,11 +11,13 @@ from __future__ import annotations
 
 import argparse
 import json
+from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
 import pytest
 
+from tests.test_operator_decision import _process_zone
 from vinci.cli import _cmd_themes_draft, _cmd_themes_review
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.themes.drafts import (
@@ -318,8 +320,6 @@ def test_review_happy_writes_analyst_entry(
     """A valid key with no matching draft → by:'analyst', appended to reviews.json with the members
     resolved from the snapshot. `reviewed` is the DATE OF REVIEW (today), NOT the scan date — the
     scan date already lives in the key (the 'Reviewed' column means when-reviewed)."""
-    from datetime import UTC, datetime
-
     monkeypatch.chdir(tmp_path)
     _write_snapshot(tmp_path, [_cluster("T004", ["CLSK", "RIOT", "MARA"])])
     _write_radar(tmp_path, [])
@@ -329,8 +329,30 @@ def test_review_happy_writes_analyst_entry(
     entry = doc["reviews"][-1]
     assert entry["key"] == "2026-07-14:T004" and entry["decision"] == "keep-for-checks"
     assert entry["by"] == "analyst" and entry["members"] == ["CLSK", "RIOT", "MARA"]
-    assert entry["reviewed"] == datetime.now(UTC).date().isoformat()  # today, not the scan date
+    # today on the analyst's calendar, not the scan date (and not UTC's: see the real-zone pin)
+    assert entry["reviewed"] == date.today().isoformat()
     assert entry["reviewed"] != "2026-07-14"  # NOT the scan date (regression pin)
+
+
+def test_a_review_made_now_is_dated_on_the_local_calendar_under_a_real_zone(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A REVIEW IS A HUMAN DECISION, dated on the operator's calendar like every other one (#794):
+    stamped on UTC's, a review recorded between local midnight and UTC's (00:00–05:30 IST) was
+    dated the day before. Drives the real command under the process's REAL zone, always in the
+    divergent case: UTC−12 reads yesterday until 12:00 UTC and UTC+14 reads tomorrow from 10:00
+    UTC, and switching at 11:00 keeps the zone's own midnight an hour from the run."""
+    now = datetime.now(UTC)
+    offset = -12 if now.hour < 11 else 14
+    monkeypatch.chdir(tmp_path)
+    _write_snapshot(tmp_path, [_cluster("T004", ["CLSK", "RIOT", "MARA"])])
+    _write_radar(tmp_path, [])
+    with _process_zone(offset):
+        local_today = datetime.now(timezone(timedelta(hours=offset))).date()
+        assert date.today() == local_today != now.date(), "the run is not the divergent case"
+        rc = _cmd_themes_review(_review_ns("2026-07-14:T004", "park", "a reason"))
+    assert rc == 0
+    doc = json.loads((tmp_path / "frontend" / "radar" / "reviews.json").read_text())
+    assert doc["reviews"][-1]["reviewed"] == local_today.isoformat(), "dated on UTC's calendar"
 
 
 def test_review_ratified_when_decision_and_reason_match_draft(

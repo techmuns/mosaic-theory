@@ -981,7 +981,9 @@ def _cmd_anchor_retag(args: argparse.Namespace) -> int:
             print(f"{t}: the reason file is empty — a decision states its reason", file=sys.stderr)
             return 1
         # the OPERATOR'S calendar (local), never UTC's — a decision dated "today" just after local
-        # midnight must not read as backdated (review of #780); an ISO date or a refusal
+        # midnight must not read as backdated (review of #780); an ISO date or a refusal. Read
+        # ONCE: a second read after the EDGAR call below lands on the next day if local midnight
+        # passes during it, and a decision made now then reads as backdated
         today = date.today()
         try:
             decided_on = date.fromisoformat(args.decided_on.strip()) if args.decided_on else today
@@ -1021,7 +1023,7 @@ def _cmd_anchor_retag(args: argparse.Namespace) -> int:
         assert decided_on is not None
         # the machine's read NOW stands for its read AT DECISION only when the decision is made
         # now — a backdated decision records what was read then, or nothing (never today's read)
-        at_decision = at_given or (fresh.recipe_hint if decided_on == date.today() else None)
+        at_decision = at_given or (fresh.recipe_hint if decided_on == today else None)
         decision = OperatorDecision(
             recipe=recipe, reason=reason, decided_by=decided_by,
             decided_on=decided_on.isoformat(), source_ref=source_ref,
@@ -3477,9 +3479,9 @@ def _cmd_themes_review(args: argparse.Namespace) -> int:
     record). Validates the key against the latest snapshot; refuses an existing key without --amend;
     attributes by:"analyst", or "analyst (ratified advisor draft)" when decision+reason match.
     `reviewed` is the DATE OF REVIEW (today), not the scan date — the scan date already lives in the
-    key. An --amend PRESERVES any extra fields on the existing entry (e.g. map_ref)."""
-    from datetime import UTC, datetime
-
+    key — and today on the analyst's LOCAL calendar, as every human decision is dated (#794); UTC's
+    stamped a review made between local midnight and UTC's (00:00–05:30 IST) the day before. An
+    --amend PRESERVES any extra fields on the existing entry (e.g. map_ref)."""
     snap_path, clusters, scan_date = _load_latest_component_a()
     if snap_path is None:
         print("!! no component-a snapshot — run `themes` first")
@@ -3513,7 +3515,7 @@ def _cmd_themes_review(args: argparse.Namespace) -> int:
             or " ".join(members[:3]))
     # {**existing, …} PRESERVES extra fields (map_ref) on --amend; a fresh review starts from {}.
     entry = {**(existing or {}), "key": key, "display_name": name, "decision": args.decision,
-             "reviewed": datetime.now(UTC).date().isoformat(), "by": by, "reason": args.reason,
+             "reviewed": date.today().isoformat(), "by": by, "reason": args.reason,
              "members": members}
     doc["reviews"] = [r for r in doc["reviews"] if r["key"] != key] + [entry]
     reviews_path.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
