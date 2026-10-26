@@ -41,9 +41,9 @@ def graph_coverage(
     for f in focals:
         try:
             edges, info = extract_graph_edges(edgar, resolver, llm, f, http=http)
-            status = info.get("status")
+            status, refused = info.get("status"), int(info.get("evidence_refused", 0))
         except Exception as exc:  # one bad name must never lose a whole 100+-name run
-            edges, status = [], f"error:{type(exc).__name__}"
+            edges, status, refused = [], f"error:{type(exc).__name__}", 0
         all_edges.extend(edges)
         per_name.append(
             {
@@ -52,6 +52,7 @@ def graph_coverage(
                 "status": status,
                 "edges": len(edges),
                 "us_listed": sum(1 for e in edges if e.node_kind == "us_listed"),
+                "evidence_refused": refused,  # dropped: evidence not a span of the excerpts
             }
         )
 
@@ -78,6 +79,7 @@ def graph_coverage(
         "n_names": n,
         "names_with_edges": sum(1 for p in per_name if p["edges"]),
         "total_edges": len(all_edges),
+        "evidence_refused": sum(p["evidence_refused"] for p in per_name),
         "real_edges": real,
         "real_us_listed": us_listed,  # real edge to a position-eligible US node
         "real_global": real - us_listed,  # real edge to a foreign/private connector node

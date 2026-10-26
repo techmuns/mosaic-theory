@@ -1434,8 +1434,12 @@ def test_covenant_extract_present_is_verbatim_source_bound_and_absent_is_unknown
         {"name": "Interest / coupon rate", "present": False, "value": "", "quote": ""},
     ]}
     cs_in = _cs_with_pointers([_pointer_rows()[0], _pointer_rows()[2]])  # one extractable exhibit
+    # The exhibit must CONTAIN what the model quotes — the quote is checked against it.
+    exhibit = ("LOAN AND SECURITY AGREEMENT … “Conversion Price” means, as of any date of "
+               "determination, an amount equal to $1.00 divided by the applicable Conversion Rate "
+               "at such time.")
     term_rows, summary, flags, log = ce.extract_covenant_terms(
-        cs_in, llm=_FakeLlm(payload), http=typing.cast(typing.Any, _FakeExhibitHttp()),
+        cs_in, llm=_FakeLlm(payload), http=typing.cast(typing.Any, _FakeExhibitHttp(text=exhibit)),
         cik="0001760689", ticker="MVST", name="Microvast")
     assert term_rows is not None and term_rows.status is ds.SourceStatus.PRESENT
     conv = next(r for r in term_rows.value if r.name.startswith("Conversion"))
@@ -1590,14 +1594,18 @@ def test_p3_extract_maturity_event_verbatim_or_unknown() -> None:
             "8-K at maturity 2026-05-28: filed 2026-05-28 [0000947871-26-000585] 8.01 Other Events",
             source_ref="EDGAR"),
         covenant_pointers=u, covenant_terms=u)
-    http = _FakeMaturityHttp(body="Item 8.01. On May 28, 2026 the $25.0M principal was converted.")
+    # MVST's REAL 8-K body sentence (the committed dossier's maturity event). The verbatim was a
+    # paraphrase of the body here until the verbatim-span check, which refuses exactly that.
+    said = ("On May 28, 2026, Mr. Wu delivered a Notice of Conversion in respect of the full $25.0 "
+            "million principal amount outstanding under the Loan Agreement. Such principal amount "
+            "will be converted into shares of common stock of the Company in accordance with the "
+            "terms of the Loan Agreement.")
+    http = _FakeMaturityHttp(body=f"Item 8.01 Other Events. {said}")
     ev, flags, _ = ce.extract_maturity_event(
-        cs, llm=_FakeLlm({"present": True,
-                          "verbatim": "On May 28, 2026 the $25.0M principal converted to common "
-                          "stock (Notice of Conversion)."}),
+        cs, llm=_FakeLlm({"present": True, "verbatim": said}),
         http=typing.cast(typing.Any, http), cik="0001760689", ticker="MVST", name="Microvast")
     assert ev is not None and ev.status is ds.SourceStatus.PRESENT and not flags
-    assert "converted to common stock" in (ev.value or "")
+    assert "converted into shares of common stock" in (ev.value or "")
     assert ev.source_ref == "8-K 0000947871-26-000585 (2026-05-28)"
     # body states none → UNKNOWN
     ev2, _, _ = ce.extract_maturity_event(
@@ -1780,7 +1788,8 @@ def test_audit_maturity_event_verbatim_is_single_line() -> None:
     ev, _f, _l = ce.extract_maturity_event(
         cs, llm=_FakeLlm({"present": True,
                           "verbatim": "On May 28, 2026 the\nprincipal was\n\nconverted to stock."}),
-        http=typing.cast(typing.Any, _FakeMaturityHttp(body="Item 8.01. Resolution.")),
+        http=typing.cast(typing.Any, _FakeMaturityHttp(
+            body="Item 8.01. On May 28, 2026 the principal was converted to stock.")),
         cik="0001760689", ticker="MVST", name="Microvast")
     assert ev is not None and ev.status is ds.SourceStatus.PRESENT
     assert "\n" not in str(ev.value) and "  " not in str(ev.value)  # one clean, single-spaced line
