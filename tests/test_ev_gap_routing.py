@@ -77,15 +77,28 @@ def test_the_full_route_carries_a_caution_count_rather_than_narrowing() -> None:
     assert why["n"] == 5 and why["caution"] is True
 
 
+def _cnxc_two_years() -> dict[str, list[dict[str, object]]]:
+    """CNXC's consensus block as committed when it held exactly two forward years — FROZEN.
+
+    The live page cannot hold this case: its year set is whatever the latest CIQ export carries,
+    and the 2026-10-26 export added FY2028, which turned both pins below red on fresh data rather
+    than on a defect. A value pin belongs on a frozen fixture, never on a re-drawn artifact
+    (CLAUDE.md, TEST-LAYER RULE)."""
+    raw = json.loads((ROOT / "tests" / "fixtures" / "cnxc_consensus_levels_two_years.json")
+                     .read_text())
+    levels: dict[str, list[dict[str, object]]] = raw["consensus_levels"]
+    return levels
+
+
 def test_cnxc_has_exactly_the_two_forward_years_the_adjacent_check_needs() -> None:
     """CNXC is the MINIMUM case: two forward years, so the adjacent-year check has exactly one
     alternative and proves it works rather than degrading silently."""
-    d = json.loads((ROOT / "data" / "dossiers" / "CNXC" / "dossier.json").read_text())
-    lv = d["mechanical"]["consensus_context"]["consensus_levels"]
+    lv = _cnxc_two_years()
     assert [c["fy"] for c in lv["Revenue"]] == ["2026", "2027"]
     assert [c["fy"] for c in lv["EBITDA"]] == ["2026", "2027"]
     for fy in ("2026", "2027"):
-        assert route_for(_cell("CNXC", "EBITDA", fy))[0] == Route.FULL
+        cell = next(c for c in lv["EBITDA"] if str(c["fy"]) == fy)
+        assert route_for(cell)[0] == Route.FULL
 
 
 #: Committed names that carry NO EBITDA consensus block, so routing has nothing to decide on. Each
@@ -211,8 +224,7 @@ def test_cnxc_has_exactly_one_adjacent_year_which_is_what_proves_the_check() -> 
     would let it degrade silently. Two is where it has to work."""
     from vinci.dossier.ev_gap import adjacent_year
 
-    d = json.loads((ROOT / "data" / "dossiers" / "CNXC" / "dossier.json").read_text())
-    lv = d["mechanical"]["consensus_context"]["consensus_levels"]
+    lv = _cnxc_two_years()
     assert adjacent_year(lv, "2026") == "2027"
     assert adjacent_year(lv, "2027") is None, "the last forward year has no adjacent year"
 

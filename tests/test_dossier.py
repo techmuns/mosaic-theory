@@ -8615,6 +8615,33 @@ def test_desc_first_sentence_boundaries() -> None:
     assert nocomma.startswith(out2)
 
 
+def test_desc_word_cut_never_ends_on_a_function_word() -> None:
+    """(2026-10-26 artifact pass) The comma-free word cut can still end MID-CLAUSE. Jack Henry's
+    descriptor in V's 2026-10-12 comps export is a 173-character sentence against the 160 cap, and
+    the cut left "…payment processing services in the" — the shape
+    `test_committed_peer_rosters_have_no_midclause_clip` refuses on a committed page. The cut now
+    backs off past any trailing function word. Real string, frozen."""
+    f = cs._desc_first_sentence
+    jkhy = ("operates as a financial technology company that connects people and financial "
+            "institutions through technology solutions and payment processing services in the "
+            "United States.")
+    out = f(jkhy)
+    assert out == ("operates as a financial technology company that connects people and "
+                   "financial institutions through technology solutions and payment processing "
+                   "services")
+    assert jkhy.startswith(out)
+    # a word cut already ending on a content word is untouched — the backoff removes only
+    # function words, never a word that carries meaning
+    plain = "provides " + "specialized " * 20 + "services worldwide."
+    assert f(plain, cap=60) == plain[:60].rsplit(" ", 1)[0]
+    # a run of function words never empties the descriptor
+    assert f("operates in the of the and the of the in the of the and the", cap=30) == "operates"
+    # the CLAUSE cut backs off too: a comma that follows "and" would leave "…in the US and"
+    clause_and = ("provides payment processing and card services in the US and, through its "
+                  "subsidiaries in Europe and Asia, to banks and merchants worldwide.")
+    assert f(clause_and, cap=90) == "provides payment processing and card services in the US"
+
+
 def test_peerset_drift_guard_directions() -> None:
     """(peerset-backfill vintage guard) Same-text proves itself by a prefix relation in EITHER
     direction — widened capture (fresh extends committed) or trimmed sentence-two spill

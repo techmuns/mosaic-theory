@@ -111,8 +111,11 @@ def r4(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
                 multiple_derivation="today's NTM EV/EBIT, scaled")
         tpl["scenarios"]["base"].update(years_to_terminal=1.25, leg_fy="2028")
         tpl["scenarios"]["bear"]["bear_basis"] = "analyst"
+        # struck on the page's OWN close: a fixed date reds on every re-assembly onto a later
+        # close (`scenario-create` refuses a spot after the underwrite date, correctly)
+        assert tpl["spot_as_of"], "AMZN: the page carries no spot date to strike the legs on"
         tpl.update(entry_basis="NTM", entry_denominator=round(ebit / 1.5, 1),
-                   underwrite_date="2026-10-09", analyst="test")
+                   underwrite_date=tpl["spot_as_of"], analyst="test")
         tpl_path.write_text(json.dumps(tpl))
         assert _cmd_scenario_create(argparse.Namespace(ticker="AMZN",
                                                        from_file=str(tpl_path))) == 0

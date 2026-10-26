@@ -4740,15 +4740,22 @@ _DESC_SENTENCE_CAP = 160  # clause-boundary cap when the first sentence runs lon
 # same abbreviation set as render._brief_oneliner — the two surfaces must agree on what ends a
 # sentence (a split at "Inc." mid-name is the failure both guard against)
 _DESC_ABBREV_RE = re.compile(r"\b(Inc|Corp|Ltd|Co|LLC|LP|plc|Ltda|S\.A|N\.V)\.$")
+# a word cut never ENDS on one of these — the mid-clause smell ("…services in the") that
+# `test_committed_peer_rosters_have_no_midclause_clip` refuses on every committed page
+_DESC_DANGLING = frozenset(
+    {"the", "a", "an", "of", "in", "and", "or", "for", "to", "as", "its", "with", "on", "at", "by"})
 
 
 def _desc_first_sentence(text: str, cap: int = _DESC_SENTENCE_CAP) -> str:
     """First sentence of a peer business description, abbreviation-aware; a sentence longer than
-    ``cap`` cuts at the last CLAUSE boundary (","/";") inside the cap, else the last word.
+    ``cap`` cuts at the last CLAUSE boundary (","/";") inside the cap, else the last word — and
+    then backs off past any trailing function word, so neither cut can end mid-clause.
 
     Replaces the old hard ``[:55]`` capture that clipped mid-clause ("…risk assessment firm in
     the") — the record should carry a readable capture; display never has to signal truncation
-    for a text that ends at a real boundary."""
+    for a text that ends at a real boundary. The word cut reproduced that defect on a sentence
+    with no comma under the cap: Jack Henry's 173-character descriptor in V's 2026-10-12 comps
+    export ended "…payment processing services in the"."""
     text = text.strip()
     sent = ""
     for piece in re.split(r"(?<=\.)\s+", text):
@@ -4758,7 +4765,11 @@ def _desc_first_sentence(text: str, cap: int = _DESC_SENTENCE_CAP) -> str:
     if len(sent) > cap:
         cut = sent[:cap]
         clause = max(cut.rfind(","), cut.rfind(";"))
-        sent = cut[:clause].rstrip() if clause > 0 else cut.rsplit(" ", 1)[0]
+        words = (cut[:clause].rstrip() if clause > 0 else cut.rsplit(" ", 1)[0]).split(" ")
+        # either cut can land on a function word ("…in the" / "…in the US and, through …")
+        while len(words) > 1 and words[-1].lower() in _DESC_DANGLING:
+            words.pop()
+        sent = " ".join(words)
     # The roster line joins peers with "; " and splits name from descriptor on " — ", so a
     # descriptor carrying either delimiter would corrupt the segment split for every consumer
     # (web parser, md table, this module's own vintage guard). The old 55-char clip rarely
