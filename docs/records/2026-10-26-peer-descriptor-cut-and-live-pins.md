@@ -1,8 +1,8 @@
 ---
 id: 2026-10-26-peer-descriptor-cut-and-live-pins
-status: open
+status: shipped
 date: 2026-10-26
-prs: []
+prs: [809]
 supersedes:
 superseded-by:
 ---
