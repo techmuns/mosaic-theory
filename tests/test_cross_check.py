@@ -59,6 +59,110 @@ def test_self_funding_check_asks_whether_the_signs_agree() -> None:
         assert "UNKNOWN" in ps.self_funding(*legs)
 
 
+# --- the OCF leg: the LATEST quarter, made discrete from the year-to-date (2026-10-26) ------------
+# Every value below is the committed companyfacts fixture (frozen 2026-10-23) read as filed by the
+# date named — a frozen fixture, so the pins are values, never the living pages.
+
+
+def _facts(ticker: str) -> dict[str, Any]:
+    out: dict[str, Any] = json.loads((COMPANYFACTS / f"{ticker}.json").read_text())
+    return out
+
+
+def _ocf(facts: dict[str, Any], start: date, end: date, filed_by: date) -> list[float]:
+    from vinci.edgar.concepts import extract_points
+
+    return [p.value / 1e6 for p in extract_points(facts, "operating_cash_flow")
+            if p.period_start == start and p.period_end == end and p.filed <= filed_by]
+
+
+def test_the_ocf_leg_is_the_latest_quarter_not_the_last_one_tagged_alone() -> None:
+    """A 10-Q tags cash flow YEAR-TO-DATE, so the one quarter most filers tag on its own is the
+    first. Westlake's page, assembled 2026-09-28, read its Q1 (−$94M) three months after the
+    second quarter had been filed. The latest quarter is the six months less the first:
+    $224M − (−$94M) = +$318M."""
+    wlk, asof = _facts("WLK"), date(2026, 9, 28)
+    assert _ocf(wlk, date(2026, 1, 1), date(2026, 3, 31), asof) == [-94.0]
+    assert dm._latest_quarter_ocf(wlk, filed_by=asof) == (318.0, date(2026, 6, 30))
+    assert dm._latest_quarter_ocf_positive(wlk, filed_by=asof) is True
+
+
+def test_a_fourth_quarter_is_the_year_less_its_nine_months() -> None:
+    """No 10-Q covers a fourth quarter: the 10-K's year less the third 10-Q's nine months does.
+    PARR's FY2024 (10-K filed 2025-02-28) is $83.8M less $99.2M = −$15.5M — a NEGATIVE quarter in
+    a positive year whose first quarter was positive too, so neither the year-to-date's own sign
+    nor the old single-quarter read can give it."""
+    parr, asof = _facts("PARR"), date(2025, 3, 15)
+    assert _ocf(parr, date(2024, 1, 1), date(2024, 12, 31), asof) == [pytest.approx(83.776)]
+    assert _ocf(parr, date(2024, 1, 1), date(2024, 3, 31), asof)[0] > 0
+    got = dm._latest_quarter_ocf(parr, filed_by=asof)
+    assert got is not None and got[1] == date(2024, 12, 31)
+    assert got[0] == pytest.approx(83.776 - 99.242)
+    assert dm._latest_quarter_ocf_positive(parr, filed_by=asof) is False
+
+
+def test_the_quarter_not_the_year_to_date_carries_the_sign() -> None:
+    """The other direction: AORT's first half of 2025 is −$1.9M and its second quarter +$15.0M
+    (less a first quarter of −$17.0M). The leg reads the quarter."""
+    aort, asof = _facts("AORT"), date(2025, 8, 31)
+    assert _ocf(aort, date(2025, 1, 1), date(2025, 6, 30), asof) == [pytest.approx(-1.942)]
+    got = dm._latest_quarter_ocf(aort, filed_by=asof)
+    assert got is not None and got[1] == date(2025, 6, 30)
+    assert got[0] == pytest.approx(-1.942 + 16.953)
+    assert dm._latest_quarter_ocf_positive(aort, filed_by=asof) is True
+
+
+def test_a_quarter_the_filer_tags_on_its_own_is_read_as_tagged() -> None:
+    """AMZN tags its second quarter discretely: that fact is the quarter, no difference taken."""
+    got = dm._latest_quarter_ocf(_facts("AMZN"), filed_by=date(2026, 10, 9))
+    assert got == (45387.0, date(2026, 6, 30))
+
+
+def test_both_legs_of_the_difference_are_read_as_filed_by_the_same_date() -> None:
+    """HWM's first quarter of 2020 was filed at −$291M and RESTATED to −$208M a year later. Read as
+    filed by 2020-08-31, the second quarter is the first half (−$260M) less the first quarter AS
+    THEN FILED: +$31M. The restated figure would make it −$52M — a sign the reader of that day
+    could not have seen.
+
+    And where BOTH legs were restated: the third quarter of 2017, read as filed by 2017-11-09, is
+    +$172M; from the year-to-dates as later recast it is −$57M. A cut on one leg alone would not
+    see that, nor would one on neither."""
+    hwm, asof = _facts("HWM"), date(2020, 8, 31)
+    assert _ocf(hwm, date(2020, 1, 1), date(2020, 3, 31), date(2099, 1, 1)) == [-291.0, -208.0]
+    assert dm._latest_quarter_ocf(hwm, filed_by=asof) == (31.0, date(2020, 6, 30))
+    assert dm._latest_quarter_ocf_positive(hwm, filed_by=asof) is True
+    assert dm._latest_quarter_ocf(hwm, filed_by=date(2017, 11, 9)) == (172.0, date(2017, 9, 30))
+    assert dm._latest_quarter_ocf_positive(hwm, filed_by=date(2017, 11, 9)) is True
+
+
+def test_a_latest_period_that_cannot_be_differenced_is_unknown_never_an_older_quarter() -> None:
+    """NKE's latest period on its 2026-09-30 page is the year to 2026-05-31. Without the nine
+    months to take from it there is no fourth quarter, and the leg is UNKNOWN — never the first
+    quarter to 2025-08-31 (+$222M) that the old read served, nine months stale."""
+    from vinci.edgar.concepts import CONCEPT_ALIASES
+
+    nke = _facts("NKE")
+    for tag in CONCEPT_ALIASES["operating_cash_flow"]:
+        for rows in (((nke["facts"].get("us-gaap") or {}).get(tag) or {}).get("units")
+                     or {}).values():
+            rows[:] = [r for r in rows
+                       if (r.get("start"), r.get("end")) != ("2025-06-01", "2026-02-28")]
+    asof = date(2026, 9, 30)
+    assert _ocf(nke, date(2025, 6, 1), date(2025, 8, 31), asof) == [222.0]
+    assert dm._latest_quarter_ocf(nke, filed_by=asof) is None
+    assert dm._latest_quarter_ocf_positive(nke, filed_by=asof) is None
+    # and with the nine months in place, the fourth quarter: $2,868M − $1,231M
+    assert dm._latest_quarter_ocf(_facts("NKE"), filed_by=asof) == (1637.0, date(2026, 5, 31))
+
+
+def test_the_self_funding_cite_names_the_quarter_it_read() -> None:
+    """The stale quarter went unseen behind a cite that said only 'latest-Q'. The cite assembly
+    writes names it — and falls back to the old words only where there is no quarter to name."""
+    assert dm._self_funding_ref(_facts("WLK")) == (
+        "EDGAR OCF sign, quarter to 2026-06-30 + CIQ LTM FCF sign")
+    assert dm._self_funding_ref(None) == "EDGAR latest-Q OCF sign + CIQ LTM FCF sign"
+
+
 _BAL = date(2026, 6, 30)
 
 
@@ -360,17 +464,17 @@ def test_a_wall_flag_the_rebuild_does_not_give_back_refuses_the_wall_outcome() -
 
 
 def _with_a_later_quarter(facts: dict[str, Any], filed: date) -> dict[str, Any]:
-    """The facts plus one more single quarter of the OTHER sign, filed on ``filed``."""
-    from vinci.edgar.concepts import CONCEPT_ALIASES, extract_points
+    """The facts plus one more single quarter of the OTHER sign, after the latest quarter the leg
+    reads, filed on ``filed``."""
+    from vinci.edgar.concepts import CONCEPT_ALIASES
 
-    pts = [p for p in extract_points(facts, "operating_cash_flow")
-           if p.period_start is not None and (p.period_end - p.period_start).days <= 100]
-    last = max(pts, key=lambda p: (p.period_end, p.filed))
-    start = last.period_end.toordinal() + 1
+    last = dm._latest_quarter_ocf(facts)
+    assert last is not None
+    start = last[1].toordinal() + 1
     late = {"accn": "0000000000-26-999999", "start": date.fromordinal(start).isoformat(),
             "end": date.fromordinal(start + 90).isoformat(), "filed": filed.isoformat(),
-            "form": "10-Q", "fp": "Q3", "fy": last.period_end.year,
-            "val": -1.0 if last.value > 0 else 1.0}
+            "form": "10-Q", "fp": "Q3", "fy": last[1].year,
+            "val": -1.0 if last[0] > 0 else 1.0}
     out: dict[str, Any] = json.loads(json.dumps(facts))
     for tag in CONCEPT_ALIASES["operating_cash_flow"]:
         for unit in ((out["facts"].get("us-gaap") or {}).get(tag) or {}).get("units", {}).values():

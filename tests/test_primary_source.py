@@ -207,6 +207,7 @@ def test_primary_source_assembly_mvst_live() -> None:
     primary, _lat = mech._primary_source(
         rec, EdgarClient(http), http, bundle, date.fromisoformat(d["reference_date"]), layer)  # type: ignore[arg-type]
     assert "MIXED" in primary.self_funding.value  # latest-Q OCF < 0
+    assert "quarter to 20" in primary.self_funding.source_ref  # the cite names its quarter
     assert "AGREES" in primary.wall_coherence.value and "109.6" in primary.wall_coherence.value
     assert "~18.7x" in primary.basis_triangulation.value  # LTM 10.7 computed end-to-end
     assert "VENDOR-ECHO" in primary.guide_verification.value
