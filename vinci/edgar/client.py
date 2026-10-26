@@ -25,7 +25,7 @@ from typing import Any, NoReturn, cast
 from pydantic import BaseModel
 
 from vinci.config import Config, get_config
-from vinci.edgar.concepts import extract_points, latest_annual
+from vinci.edgar.concepts import extract_points, facts_as_of, latest_annual
 from vinci.edgar.net_debt import NO_DEBT_OR_CASH, Basis, net_debt
 from vinci.edgar.submissions import RegistrantHistory, parse_registrant_history
 from vinci.netcache import CachedHttp, HttpError
@@ -113,8 +113,17 @@ def all_unknown_snapshot(cik10: str) -> FundamentalSnapshot:
     )
 
 
-def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any]) -> FundamentalSnapshot:
-    """Pure: derive the non-distress signals + step-5 inputs from a ``companyfacts`` dict."""
+def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
+                                 as_of: date | None = None) -> FundamentalSnapshot:
+    """Pure: derive the non-distress signals + step-5 inputs from a ``companyfacts`` dict.
+
+    ``as_of`` reads the facts as they stood on that date — every row FILED after it is dropped
+    before anything is read (:func:`vinci.edgar.concepts.facts_as_of`, which says why the cut is on
+    the filing date and not the period end). ``None`` reads every row, as before: the latest the
+    blob knows, which on a past date is a lookahead.
+    """
+    if as_of is not None:
+        facts = facts_as_of(facts, as_of)
     op = latest_annual(extract_points(facts, "operating_income"))
     da = latest_annual(extract_points(facts, "dep_amort"))
     ocf = latest_annual(extract_points(facts, "operating_cash_flow"))
@@ -381,14 +390,16 @@ class EdgarClient:
         caller makes explicitly, never one it inherits."""
         return self.shares_outstanding_with_provenance(periods)[0]
 
-    def fundamental_snapshot(self, cik: int | str) -> FundamentalSnapshot:
-        """Non-distress signals + step-5 inputs, each enveloped (UNKNOWN where XBRL is absent)."""
+    def fundamental_snapshot(self, cik: int | str, *,
+                             as_of: date | None = None) -> FundamentalSnapshot:
+        """Non-distress signals + step-5 inputs, each enveloped (UNKNOWN where XBRL is absent).
+        ``as_of`` cuts at the filing date (:func:`compute_fundamental_snapshot`)."""
         cik10 = pad_cik(cik)
         try:
             facts = self.companyfacts(cik10)
         except Exception:  # noqa: BLE001 — absent/!XBRL issuer → all UNKNOWN, never crash
             return all_unknown_snapshot(cik10)
-        return compute_fundamental_snapshot(cik10, facts)
+        return compute_fundamental_snapshot(cik10, facts, as_of=as_of)
 
     # --- 8-K full-text search (the de-rating trigger) -----------------------------------------
     def fulltext_search(

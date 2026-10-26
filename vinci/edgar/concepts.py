@@ -157,6 +157,44 @@ def filer_frontier(facts: dict[str, Any]) -> date | None:
     return max(ends) if ends else None
 
 
+def facts_as_of(facts: dict[str, Any], as_of: date) -> dict[str, Any]:
+    """``facts`` as they stood on ``as_of``: every row FILED after it removed, same shape.
+
+    THE CUT IS ON ``filed``, NEVER ON ``end``. ``filed`` is the day a number became public; ``end``
+    is the day the period it describes closed — weeks before a 10-K is filed — and every later
+    filing re-reports that period as a comparative, restated or not. A cut on ``end`` admits both
+    a figure not yet filed and every later RESTATEMENT of a closed period: WOR's FY2023 operating
+    income was $212.4M as filed on 2023-07-31 and $29.8M as restated on 2024-07-30 after the steel
+    spin-off, and on any day between only the first was knowable.
+
+    THE WHOLE BLOB, NOT THE RETURNED POINTS. :func:`extract_points` picks an alias by how far its
+    series reaches against its SIBLING aliases', and net debt reads a dozen tags at one
+    balance-sheet date; both would see the future through a later filing even when every point
+    they finally return was filed in time. Pruning before any reader runs makes each of them
+    point-in-time without threading a date through every one.
+
+    ``filed == as_of`` is KEPT, as in every ``p.filed <= d`` reader here: a row carries a date, not
+    an acceptance time. A row whose ``filed`` is missing is DROPPED — its knowable date cannot be
+    shown. A unit, tag or namespace left with no row is dropped too, so a namespace not yet reported
+    on ``as_of`` cannot shadow one that was (:func:`points_for_tag` takes the FIRST one present).
+    """
+    nsmap: dict[str, Any] = {}
+    for ns, tags in (facts.get("facts") or {}).items():
+        kept_tags: dict[str, Any] = {}
+        for tag, body in (tags or {}).items():
+            units: dict[str, list[dict[str, Any]]] = {}
+            for unit, rows in (body.get("units") or {}).items():
+                kept = [r for r in rows
+                        if (filed := _parse_date(r.get("filed"))) is not None and filed <= as_of]
+                if kept:
+                    units[unit] = kept
+            if units:
+                kept_tags[tag] = {**body, "units": units}
+        if kept_tags:
+            nsmap[ns] = kept_tags
+    return {**facts, "facts": nsmap}
+
+
 def extract_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
     """Extract all reported points for a logical concept, trying alias tags in priority order.
 
