@@ -289,10 +289,23 @@ def test_one_snapshot_holds_one_basis() -> None:
     with pytest.raises(ValueError, match="lack the price figures"):
         mon.MonitorSnapshot(as_of=date(2026, 2, 1), rows=[legacy], spread=spread,
                             return_basis="total")
+    # EVERY committed day agrees with its OWN stated basis. The days committed before ruling B are
+    # price return and are never restated; a day recorded after it is total return — the first is
+    # 2026-10-23, run 2026-10-26 — and a pin of "every day is price" would refuse the ruling itself.
+    before_ruling = {"2026-07-20", "2026-08-11", "2026-09-16", "2026-09-22", "2026-10-09"}
+    seen: set[str] = set()
     for p in sorted((ROOT / "data" / "monitor").glob("20*.json")):
         snap = mon.MonitorSnapshot.model_validate(json.loads(p.read_text()))
-        assert snap.return_basis == "price" and snap.price_basis == mon.PRICE_RETURN_BASIS, p.name
-        assert "PX-EXC%" not in mon.render_table(snap)
+        seen.add(p.stem)
+        if p.stem in before_ruling:
+            assert snap.return_basis == "price", f"{p.name}: a pre-ruling day was restated"
+        if snap.return_basis == "price":
+            assert snap.price_basis == mon.PRICE_RETURN_BASIS, p.name
+            assert "PX-EXC%" not in mon.render_table(snap)
+        else:
+            assert snap.return_basis == "total" and snap.price_basis == mon.RETURN_BASIS, p.name
+            assert "PX-EXC%" in mon.render_table(snap), p.name
+    assert before_ruling <= seen, f"a pre-ruling day is missing: {sorted(before_ruling - seen)}"
 
 
 def test_the_monitor_command_writes_a_total_return_day(tmp_path: Path,

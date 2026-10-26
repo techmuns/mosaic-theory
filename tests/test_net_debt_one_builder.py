@@ -35,6 +35,7 @@ from vinci.screens.assemble import enrich_with_fundamentals
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 FACTS = ROOT / "tests" / "fixtures" / "companyfacts"
+FROZEN = ROOT / "tests" / "fixtures" / "companyfacts_frozen"
 SHAPES = ROOT / "tests" / "fixtures" / "net_debt_shapes"
 CIQ: dict[str, dict[str, Any]] = json.loads(
     (ROOT / "tests" / "fixtures" / "ciq_net_debt_one_builder.json").read_text())["names"]
@@ -42,7 +43,11 @@ M = 1e6
 
 
 def _facts(ticker: str) -> dict[str, Any]:
-    p = FACTS / f"{ticker}.json"
+    # a FROZEN vintage first: these pins compare EDGAR with CIQ figures frozen at a shared date, and
+    # the tracking fixture moves with every re-assembly (`tests/fixtures/companyfacts_frozen/`)
+    p = FROZEN / f"{ticker}.json"
+    if not p.is_file():
+        p = FACTS / f"{ticker}.json"
     if not p.is_file():
         p = SHAPES / f"{ticker}.json"
     facts: dict[str, Any] = json.loads(p.read_text())
@@ -401,7 +406,7 @@ def test_every_tag_the_builder_requests_is_frozen_in_the_fixtures(
         return real_extract(facts, concept)
 
     monkeypatch.setattr(nd, "extract_points", spy_extract)
-    for p in [*FACTS.glob("*.json"), *SHAPES.glob("*.json")]:
+    for p in [*FACTS.glob("*.json"), *FROZEN.glob("*.json"), *SHAPES.glob("*.json")]:
         nd.net_debt(json.loads(p.read_text()))
     asked |= set(nd._DEBT_WITNESS_TAGS) | {nd._FILER_TOTAL_DEBT}  # read raw by `_unread_debt`
     assert asked <= nd.READ_TAGS, sorted(asked - nd.READ_TAGS)
@@ -444,7 +449,7 @@ def test_every_leg_is_read_in_dollars() -> None:
     """LPL files in won and HSAI in yuan, with dollar convenience figures beside them. Cash was
     read in ANY unit while debt is read in dollars, so LPL netted dollar debt against won cash
     (3.26 trillion "dollars"). Every point the builder reads, on every fixture, is now USD."""
-    for p in [*FACTS.glob("*.json"), *SHAPES.glob("*.json")]:
+    for p in [*FACTS.glob("*.json"), *FROZEN.glob("*.json"), *SHAPES.glob("*.json")]:
         r = nd.net_debt(json.loads(p.read_text()))
         if r is None:
             continue

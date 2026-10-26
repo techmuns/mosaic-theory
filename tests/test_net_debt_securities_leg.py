@@ -33,7 +33,11 @@ CIQ: dict[str, dict[str, Any]] = json.loads(
 
 
 def _facts(ticker: str) -> dict[str, Any]:
-    p = FIXTURES / f"{ticker}.json"
+    # a FROZEN vintage first: CIQ's side is frozen at its balance-sheet date, and the tracking
+    # fixture moves with every re-assembly (`tests/fixtures/companyfacts_frozen/`)
+    p = FIXTURES.parent / "companyfacts_frozen" / f"{ticker}.json"
+    if not p.is_file():
+        p = FIXTURES / f"{ticker}.json"
     if not p.is_file():
         pytest.skip(f"no committed companyfacts fixture for {ticker}")
     facts: dict[str, Any] = json.loads(p.read_text())
