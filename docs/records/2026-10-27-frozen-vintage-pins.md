@@ -1,8 +1,8 @@
 ---
 id: 2026-10-27-frozen-vintage-pins
-status: open
+status: shipped
 date: 2026-10-27
-prs: []
+prs: [810]
 supersedes:
 superseded-by:
 ---
