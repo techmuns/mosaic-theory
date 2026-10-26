@@ -112,6 +112,16 @@ agent loop is allowed. Both are closed here.
     resolves attribute chains through any name an import bound. Five parser pins fail on the PR
     head. As mutants in `screens/screen2.py` and `cohort.py`, both shapes SURVIVE the PR-head fence
     and are KILLED by the fixed one.
+  - **Round 2 (Codex P2 ×2, after the operator's `@codex review`).** Three more shapes got past:
+    - `from vinci.schemas import *`, which binds `LedgerEntry` by its bare name;
+    - `import_module` imported under an alias (`from importlib import import_module as load`);
+    - `import_module(name='vinci.monitor')`, the target passed by keyword.
+
+    A star import now yields the module's `__all__` (else what it binds). A dynamic import is
+    matched by the helper's resolved name, with positional or `name=` argument. Four parser pins
+    fail on `36ac9e2a`. As mutants in `screen2.py`, `cohort.py` and `triggers.py`, all three
+    SURVIVE the `36ac9e2a` fence and are KILLED by the fixed one. This was the last review round
+    allowed under the cap.
 - **Corpus before synthetic.**
   - `test_the_committed_ledger_cannot_be_rewritten_once_loaded` loads the LIVE committed ledger and
     attacks every real row three ways.

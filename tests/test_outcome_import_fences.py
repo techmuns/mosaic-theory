@@ -25,8 +25,10 @@ as reaching `vinci.store`, while a fresh `import vinci.rank` loads neither. `vin
 is banned DIRECTLY only, because `vinci/schemas/__init__.py` re-exports it and any
 `vinci.schemas.*` import therefore loads it.
 
-WHICH HALF THIS COVERS: imports, static and literal-string dynamic, and attribute chains through
-an imported name (`schemas.LedgerEntry` after `from vinci import schemas`); the Store's two ledger
+WHICH HALF THIS COVERS: imports — static, star (by what the module exports) and literal-string
+dynamic, the helper matched by its resolved name whatever its alias or argument form — and
+attribute chains through an imported name (`schemas.LedgerEntry` after `from vinci import
+schemas`); the Store's two ledger
 readers by attribute name; and `decision_ledger` named in code (raw SQL, or the committed JSONL
 by path), docstrings excepted. A path built from parts, `getattr` with a computed name, or a read
 of `data/monitor/*.json` or the scoring report is NOT caught. None of the four does today (grep,
@@ -72,6 +74,25 @@ def _top_level_names(path: pathlib.Path) -> set[str]:
     return out
 
 
+def _star_names(module: str) -> set[str]:
+    """What `from <module> import *` binds: its literal `__all__`, else every top-level name it
+    defines or imports. An unknown (non-repo) module binds nothing this fence can name."""
+    if module not in MODULES:
+        return set()
+    tree = ast.parse(MODULES[module].read_text())
+    for node in tree.body:
+        if (isinstance(node, ast.Assign) and any(
+                isinstance(t, ast.Name) and t.id == "__all__" for t in node.targets)
+                and isinstance(node.value, ast.List | ast.Tuple)):
+            return {e.value for e in node.value.elts
+                    if isinstance(e, ast.Constant) and isinstance(e.value, str)}
+    names = _top_level_names(MODULES[module])
+    for node in tree.body:
+        if isinstance(node, ast.Import | ast.ImportFrom):
+            names.update(a.asname or a.name.split(".")[0] for a in node.names if a.name != "*")
+    return names
+
+
 #: `from vinci.schemas import LedgerEntry` reaches the row type through the package's re-export,
 #: and reads as `vinci.schemas.LedgerEntry` — so every name the ledger schema defines is banned
 #: under the package too, not only under its own module path.
@@ -96,7 +117,10 @@ def imported_names(src: str, *, module: str, is_package: bool = False) -> set[st
 
     PLUS every attribute chain rooted in a name an import bound, resolved to its dotted target:
     `from vinci import schemas` then `schemas.LedgerEntry` yields `vinci.schemas.LedgerEntry`.
-    A package import is a handle on everything the package re-exports (Codex P2 on #800)."""
+    A package import is a handle on everything the package re-exports (Codex P2 on #800).
+    A star import yields each name the module exports (its `__all__`, else what it binds), and a
+    dynamic import is matched by the helper's RESOLVED name, so an alias (`import_module as load`)
+    or a `name=` keyword does not hide it (Codex P2 ×2, round 2)."""
     pkg = module if is_package else module.rpartition(".")[0]
     tree = ast.parse(src)
     out: set[str] = set()
@@ -115,23 +139,34 @@ def imported_names(src: str, *, module: str, is_package: bool = False) -> set[st
                 base = f"{anchor}.{base}" if base else anchor
             out.add(base)
             for a in node.names:
-                out.add(f"{base}.{a.name}")
-                bound[a.asname or a.name] = f"{base}.{a.name}"
-        elif isinstance(node, ast.Call):
-            fn = node.func
-            called = fn.attr if isinstance(fn, ast.Attribute) else getattr(fn, "id", None)
-            arg = node.args[0] if node.args else None
-            if (called in ("import_module", "__import__") and isinstance(arg, ast.Constant)
-                    and isinstance(arg.value, str)):
-                out.add(arg.value)
-    for node in ast.walk(tree):
+                names = _star_names(base) if a.name == "*" else {a.asname or a.name}
+                for n in names:
+                    target = f"{base}.{n if a.name == '*' else a.name}"
+                    out.add(target)
+                    bound[n] = target
+
+    def dotted(expr: ast.expr, *, imported_only: bool) -> str | None:
+        """The dotted name an attribute chain resolves to through the import bindings; a chain
+        rooted in an unbound local resolves to None when ``imported_only``."""
         attrs: list[str] = []
-        root: ast.expr = node if isinstance(node, ast.Attribute) else ast.Constant(None)
-        while isinstance(root, ast.Attribute):
-            attrs.append(root.attr)
-            root = root.value
-        if attrs and isinstance(root, ast.Name) and root.id in bound:
-            out.add(".".join([bound[root.id], *reversed(attrs)]))
+        while isinstance(expr, ast.Attribute):
+            attrs.append(expr.attr)
+            expr = expr.value
+        if not isinstance(expr, ast.Name) or (imported_only and expr.id not in bound):
+            return None
+        return ".".join([bound.get(expr.id, expr.id), *reversed(attrs)])
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Attribute):
+            if (name := dotted(node, imported_only=True)) is not None:
+                out.add(name)
+        elif isinstance(node, ast.Call):
+            called = dotted(node.func, imported_only=False)
+            arg = node.args[0] if node.args else next(
+                (k.value for k in node.keywords if k.arg == "name"), None)
+            if (called is not None and called.rsplit(".", 1)[-1] in ("import_module", "__import__")
+                    and isinstance(arg, ast.Constant) and isinstance(arg.value, str)):
+                out.add(arg.value)
     return out
 
 
@@ -276,6 +311,12 @@ def test_the_fences_scan_the_modules_they_name() -> None:
     "import vinci.schemas as s\nx = s.LedgerEntry.model_fields",
     "import vinci.schemas.candidate\nx = vinci.schemas.ledger.LedgerEntry",
     "import vinci\nx = vinci.scoring.metrics",
+    # Round 2 (Codex P2 ×2 on #800): a star import takes the package's re-exports by bare name,
+    # and a dynamic import escapes when its helper is aliased or its target passed by keyword.
+    "from vinci.schemas import *",
+    "from importlib import import_module as load\nload('vinci.scoring')",
+    "import importlib as il\nil.import_module(name='vinci.ledger')",
+    "import importlib\nimportlib.import_module(name='vinci.monitor')",
 ])
 def test_every_import_shape_reaching_the_outcome_layer_is_seen(src: str) -> None:
     """NEGATIVE PIN. Each of these crosses the line. `from vinci import scoring` is the shape the
@@ -294,6 +335,8 @@ def test_every_import_shape_reaching_the_outcome_layer_is_seen(src: str) -> None
     "x = 'vinci.scoring'",
     "import vinci.schemas.candidate\nx = vinci.schemas.candidate.CandidateRecord",
     "schemas = load()\nx = schemas.LedgerEntry",           # a local, not an import
+    "from vinci.schemas.candidate import *",
+    "from importlib import import_module as load\nload('vinci.scenarios')",
 ])
 def test_words_about_the_outcome_layer_are_not_an_import(src: str) -> None:
     """POSITIVE PIN. A docstring, a comment or a string that is not imported does not cross; nor
