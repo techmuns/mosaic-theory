@@ -7,7 +7,10 @@ LLM-proposed ticker first (verified through the resolver, never trusted blind), 
 normalised name — so the graph is comparable, edge-for-edge, to the CIQ ground truth in Test 0.
 
 Extraction and resolution are kept separate on purpose: the LLM's job is to *read the filing* (name
-the company, quote the line); mapping a name to the internal key is the resolver's job.
+the company, quote the line); mapping a name to the internal key is the resolver's job. The quote is
+then CHECKED: an edge whose evidence is not a span of the excerpts the model was sent
+(`vinci.verbatim`) is refused and counted — a phrase the filing does not contain is no evidence
+the link was read rather than recalled.
 A ticker the model proposes is only a hint — if it doesn't resolve we fall back to the name; the
 model never mints the internal id. Direction mirrors CIQ (downstream = focal→counterparty).
 """
@@ -28,6 +31,7 @@ from vinci.netcache import CachedHttp
 from vinci.resolver import AmbiguousResolutionError, EntityResolver, UnknownSymbolError
 from vinci.resolver.index import normalize_name
 from vinci.schemas.data_record import Identity
+from vinci.verbatim import SourceText
 
 # Relationship vocabulary + the goods-flow direction each implies *from the focal's perspective*
 # (the filer wrote the 10-K). The allow-list is exactly CIQ's SUPPLY_CHAIN_TYPES — the same
@@ -237,8 +241,9 @@ def extract_graph_edges(
 ) -> tuple[list[GraphEdge], dict[str, Any]]:
     """Extract + resolve the focal issuer's named supply-chain edges from its latest 10-K.
 
-    Returns ``(edges, info)`` where ``info`` records the accession (or ``no_10k``) and a resolution
-    breakdown. Self-loops (counterparty resolving to the focal) are dropped.
+    Returns ``(edges, info)`` where ``info`` records the accession (or ``no_10k``), a resolution
+    breakdown, and ``evidence_refused`` — the edges dropped because their evidence is not in the
+    excerpts. Self-loops (counterparty resolving to the focal) are dropped.
     """
     info: dict[str, Any] = {"focal": focal.eod_symbol, "accession": None}
     got = latest_10k_excerpts(edgar, focal.cik, http=http)
@@ -254,6 +259,7 @@ def extract_graph_edges(
     raw = llm.extract(system=_SYSTEM, user=text, tool=EXTRACT_TOOL)
     rels = raw.get("relationships", []) if isinstance(raw, dict) else []
 
+    source = SourceText(text)
     edges: list[GraphEdge] = []
     counts: Counter[str] = Counter()
     for rel in rels:
@@ -267,6 +273,13 @@ def extract_graph_edges(
             continue
         if _is_generic_placeholder(name):  # unnamed placeholder — a non-node, drop it
             counts["skipped_generic"] += 1
+            continue
+        evidence = str(rel.get("evidence", "")).strip()
+        if not source.match(evidence).found:
+            # Refused before resolution. Measured on the committed graph when this landed
+            # (2026-10-26, graph_coverage.json at 545403de, each focal's 10-K reconstructed as the
+            # latest filed on or before 2026-06-26 — the file carries no accession): 13 of 339.
+            counts["evidence_refused"] += 1
             continue
         ticker = rel.get("counterparty_ticker") or None
         node = _resolve_node(resolver, name, ticker)
@@ -288,7 +301,7 @@ def extract_graph_edges(
                 node_kind=node.node_kind,
                 relationship_type=rtype,
                 direction=_direction(rtype),
-                evidence=str(rel.get("evidence", "")).strip(),
+                evidence=evidence,
                 accession=accession,
                 source_model=llm.model,
                 resolution=node.resolution,
@@ -296,5 +309,6 @@ def extract_graph_edges(
         )
     info["status"] = "ok"
     info["edges"] = len(edges)
+    info["evidence_refused"] = counts["evidence_refused"]
     info["resolution"] = dict(counts)
     return edges, info

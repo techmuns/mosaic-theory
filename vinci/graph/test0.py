@@ -103,6 +103,7 @@ def score_test0(
                 "status": info.get("status"),
                 "accession": info.get("accession"),
                 "edges_extracted": len(edges),
+                "evidence_refused": int(info.get("evidence_refused", 0)),  # not in the excerpts
                 "edges_resolved": len(resolved),
                 "ciq_truth": len(truth),
                 "matched": sorted(matched),
