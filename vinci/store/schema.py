@@ -142,6 +142,29 @@ CREATE TABLE IF NOT EXISTS decision_ledger (
     decided_at        TEXT NOT NULL,
     payload           TEXT NOT NULL          -- full LedgerEntry JSON
 );
+
+-- APPEND-ONLY IN THE ENGINE, not by convention alone (2026-10-26) — the same BEFORE UPDATE /
+-- BEFORE DELETE abort the theme-intelligence registry installs, so a bug cannot rewrite a verdict.
+-- The third trigger closes the door those two leave open: `INSERT OR REPLACE` (the snapshot
+-- rebuild's write) deletes a conflicting row WITHOUT firing delete triggers unless
+-- `recursive_triggers` is on, so a replace under an existing entry_id is refused unless the new
+-- row is identical — an identical re-seed stays a no-op. `IF NOT EXISTS` makes `init_schema`
+-- the migration: an existing working DB gains the triggers the next time it is opened.
+-- Not a defence against a deliberate `DROP TRIGGER`; the committed JSONL's history is that.
+CREATE TRIGGER IF NOT EXISTS decision_ledger_no_update BEFORE UPDATE ON decision_ledger
+BEGIN SELECT RAISE(ABORT, 'decision_ledger is append-only'); END;
+CREATE TRIGGER IF NOT EXISTS decision_ledger_no_delete BEFORE DELETE ON decision_ledger
+BEGIN SELECT RAISE(ABORT, 'decision_ledger is append-only'); END;
+CREATE TRIGGER IF NOT EXISTS decision_ledger_no_rewrite BEFORE INSERT ON decision_ledger
+WHEN EXISTS (
+    SELECT 1 FROM decision_ledger AS d WHERE d.entry_id = NEW.entry_id AND (
+        d.candidate_id IS NOT NEW.candidate_id OR d.internal_id IS NOT NEW.internal_id
+        OR d.ticker IS NOT NEW.ticker OR d.verdict IS NOT NEW.verdict
+        OR d.entry_price IS NOT NEW.entry_price OR d.entry_price_as_of IS NOT NEW.entry_price_as_of
+        OR d.horizon_days IS NOT NEW.horizon_days OR d.decided_at IS NOT NEW.decided_at
+        OR d.payload IS NOT NEW.payload))
+BEGIN SELECT RAISE(ABORT, 'decision_ledger is append-only: entry_id already holds a different row');
+END;
 """
 
 # Tables exported to durable, committed snapshots (the working DB is rebuilt from these).
