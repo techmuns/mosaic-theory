@@ -2998,7 +2998,8 @@ def _cmd_graph_coverage(args: argparse.Namespace) -> int:
     print(f"=== Graph coverage · {rep['model']} · {rep['n_names']} {label} small/mid names ===")
     print(
         f"edges {rep['total_edges']} ({rep['names_with_edges']} names w/ edges) · density "
-        f"{rep['edges_per_name']}/name · real {rep['real_edges_per_name']}/name"
+        f"{rep['edges_per_name']}/name · real {rep['real_edges_per_name']}/name · "
+        f"{rep['evidence_refused']} refused (evidence not in the 10-K excerpts)"
     )
     print(
         f"evidence-precision {rep['evidence_precision']:.0%} ({rep['real_edges']} real = "

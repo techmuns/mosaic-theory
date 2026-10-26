@@ -116,6 +116,19 @@ def test_score_test0_precision_recall(monkeypatch: Any) -> None:
     assert rep["recall"] == 0.5  # 1 of 2 CIQ edges found
 
 
+def test_score_test0_states_the_edges_refused_for_their_evidence(monkeypatch: Any) -> None:
+    """(-) An edge the verbatim check refused is absent from Test 0's matches, so a CIQ edge it
+    would have matched reads as MISSED — the per-focal row must say how many were refused."""
+    def _fake_extract(edgar: Any, resolver: Any, llm: Any, focal: Any, **kw: Any) -> Any:
+        return [_graph_edge("0000000001")], {"status": "ok", "accession": "acc",
+                                             "evidence_refused": 2}
+
+    monkeypatch.setattr(t0mod, "extract_graph_edges", _fake_extract)
+    rep = score_test0(edgar=cast(Any, None), resolver=_RESOLVER, llm=_FakeLlm(),
+                      ciq_edges=[_ciq_edge("SEC-0000000001-ACME", ticker="ACME")])
+    assert rep["per_focal"][0]["evidence_refused"] == 2
+
+
 class _FakeLlm(LlmClient):
     @property
     def model(self) -> str:
