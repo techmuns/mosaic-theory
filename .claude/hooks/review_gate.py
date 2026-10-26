@@ -11,8 +11,19 @@ opened, and the refusal tells the agent exactly what to run and how to report it
 
 WHAT COUNTS AS REVIEWED. A `Skill` tool call for `code-review` whose args name an effort of
 high, xhigh, max or ultra, found in the session transcript AFTER the last other `gh pr create`
-call (so a second PR in one session needs its own review). The transcript is the evidence, not a
-marker file an agent could write.
+that opened a PR (so a second PR in one session needs its own review). The transcript is the
+evidence, not a marker file an agent could write.
+
+WHICH CREATES COUNT AS A PR OPENED (2026-10-26). Every `gh pr create` did, so one that FAILED voided
+the review before it: live on 2026-10-23, a create on a wrong `--repo` sent a session back to
+review a second time. Now a create whose recorded outcome shows no PR — a refusal, a non-zero
+exit, or a failure a pipe hid from the exit code — is skipped. The outcome is Claude Code's own
+record of the call (`created_pr`, the reading codex_request.py posts on), not `is_error`: four of
+the ten real failed creates read `is_error: false`, the live one among them. A create whose
+outcome cannot be read still counts: the next call of the same message runs before this one's
+result reaches the transcript (measured 2026-10-26), several results in one entry share no
+record, and a create that printed nothing (`> out.txt`) leaves none — so an unread outcome may be
+a PR just opened.
 
 WHAT IS NOT GATED. A branch that changes no code against `origin/main` — records, STATE.md,
 committed data, artifact passes — opens freely: reviewing a 266k-line artifact diff buys nothing.
@@ -54,6 +65,8 @@ QUOTED = re.compile(r"'[^']*'|\"(?:\\.|[^\"\\])*\"")
 TYPED_REVIEW = re.compile(r"<command-name>/?(?:[\w-]+:)?code-review</command-name>")
 TYPED_ARGS = re.compile(r"<command-args>([^<]*)</command-args>")
 EFFORTS = {"high", "xhigh", "max", "ultra"}
+#: A GitHub pull-request URL: owner, repository, number.
+PR_URL = re.compile(r"https://github\.com/([\w.-]+)/([\w.-]+)/pull/(\d+)")
 #: What counts as CODE for the gate — anything that executes or configures execution.
 CODE = re.compile(r"\.(py|js|mjs|ts|sh|toml|ya?ml)$|^bin/|^functions/|^\.claude/settings\.json$")
 
@@ -199,21 +212,59 @@ def _pr_create(item: dict[str, object]) -> bool:
     return isinstance(inp, dict) and opens_a_pr(str(inp.get("command", "")))
 
 
+def created_pr(response: object) -> str | None:
+    """The URL of the PR this tool call created — Claude Code's own record first, else gh's.
+    codex_request.py imports this, so the gate counts a PR opened exactly when Codex is asked."""
+    if not isinstance(response, dict):
+        return None
+    operation = response.get("gitOperation")
+    pr = operation.get("pr") if isinstance(operation, dict) else None
+    if isinstance(pr, dict):
+        url = str(pr.get("url", ""))
+        return url if pr.get("action") == "created" and PR_URL.fullmatch(url) else None
+    urls = [m.group(0) for m in PR_URL.finditer(str(response.get("stdout", "")))]
+    return urls[-1] if urls else None   # gh pr create prints the new PR's URL last
+
+
+def _outcomes(entry: dict[str, object]) -> dict[str, bool]:
+    """Whether each tool call whose result ``entry`` carries opened a PR — for the calls whose
+    outcome it shows. An errored result opened none; a result that ran is read through
+    ``created_pr`` on the entry's own record, which is unattributable when it shares the entry,
+    and shows nothing when the call printed nothing (`gh pr create > out.txt` opens a PR silently).
+    """
+    message = entry.get("message")
+    content = message.get("content") if isinstance(message, dict) else None
+    results = [r for r in content if isinstance(r, dict) and r.get("type") == "tool_result"
+               and r.get("tool_use_id")] if isinstance(content, list) else []
+    record = entry.get("toolUseResult")
+    shown: dict[str, bool] = {}
+    for result in results:
+        if result.get("is_error") is True:
+            shown[str(result["tool_use_id"])] = False
+        elif len(results) == 1 and isinstance(record, dict) and (
+                created_pr(record) or str(record.get("stdout", "")).strip()):
+            shown[str(result["tool_use_id"])] = created_pr(record) is not None
+    return shown
+
+
 def reviewed_since_last_pr(transcript: str, current_id: str) -> bool | None:
     """True/False from the transcript; None when it cannot be read."""
     try:
         lines = Path(transcript).read_text(encoding="utf-8", errors="ignore").splitlines()
     except OSError:
         return None
-    last_review = last_pr = -1
+    last_review = -1
+    creates: list[tuple[int, str]] = []         # (line, tool_use id) of every other create
+    opened: dict[str, bool] = {}                # tool_use id → whether its outcome shows a PR
     seen: set[str] = set()
     for i, line in enumerate(lines):
         try:
             entry = json.loads(line)
         except ValueError:
             continue
-        if isinstance(entry, dict) and entry.get("type") == "user" and TYPED_REVIEW.search(line):
-            typed = TYPED_ARGS.search(line)
+        if isinstance(entry, dict) and entry.get("type") == "user":
+            opened.update(_outcomes(entry))
+            typed = TYPED_ARGS.search(line) if TYPED_REVIEW.search(line) else None
             if typed and any(a in EFFORTS for a in typed.group(1).lower().split()):
                 last_review = i
             continue
@@ -230,7 +281,9 @@ def reviewed_since_last_pr(transcript: str, current_id: str) -> bool | None:
             if _skill_review(item):
                 last_review = i
             elif _pr_create(item) and item_id != current_id:
-                last_pr = i
+                creates.append((i, item_id))
+    # a create whose outcome the transcript does not show counts as opened: it may be one
+    last_pr = max((i for i, tool_id in creates if opened.get(tool_id, True)), default=-1)
     return last_review > last_pr
 
 

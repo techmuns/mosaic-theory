@@ -596,3 +596,87 @@ def test_codex_request_warns_and_never_blocks_when_gh_fails(tmp_path: pathlib.Pa
     # a long error says it was cut (CLAUDE.md: a truncated output prints its own truncation)
     long = json.loads(_opened(repo, fail="GraphQL: " + "x" * 400)[0].stdout)["systemMessage"]
     assert "[first 300 of 409 characters]" in long
+
+
+# ── the review gate counts only a create that OPENED a PR (2026-10-26) ───────────────────────────
+# Found live 2026-10-23: a `gh pr create` that failed on a wrong `--repo` reset the gate, so the
+# review run before it stopped counting and the session had to review a second time. Each result
+# below is the shape a real transcript records: the item's `is_error`, and Claude Code's own record
+# of the call on the entry's `toolUseResult` (a dict for a call that ran, the error text otherwise).
+
+#: The live failure, verbatim. Piped through `tail -2`, it exited 0: `is_error` is FALSE, and only
+#: the missing creation record says no PR opened (4 of the 10 real failed creates read this way).
+PIPED_FAILURE = {"stdout": "92\nGraphQL: Could not resolve to a Repository with the name "
+                 "'nogods404/mosaic-theory'. (repository)", "stderr": "", "interrupted": False,
+                 "isImage": False, "noOutputExpected": False}
+EXIT_FAILURE = ('Error: Exit code 1\nPost "https://api.github.com/graphql": dial tcp '
+                '20.207.73.85:443: i/o timeout')
+REFUSED = ('Error: PreToolUse:Bash hook error: [python3 "$CLAUDE_PROJECT_DIR/.claude/hooks/'
+           'review_gate.py"]: PR CREATION IS GATED ON A CODE REVIEW '
+           '(.claude/hooks/review_gate.py).')
+
+
+def _result(tool_id: str, response: object, is_error: bool = False) -> str:
+    text = response if isinstance(response, str) else json.dumps(response)
+    return json.dumps({"type": "user", "message": {"role": "user", "content": [
+        {"tool_use_id": tool_id, "type": "tool_result", "content": text, "is_error": is_error}]},
+        "toolUseResult": response})
+
+
+def test_review_gate_does_not_count_a_create_that_failed(tmp_path: pathlib.Path) -> None:
+    """The live incident: review, a create that failed, then the real create — which must pass."""
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    for failed in (_result("toolu_f", PIPED_FAILURE),
+                   _result("toolu_f", EXIT_FAILURE, is_error=True),
+                   _result("toolu_f", REFUSED, is_error=True)):
+        assert _create(repo, [_review("toolu_r"), _pr("toolu_f"), failed]).returncode == 0, failed
+
+
+def test_review_gate_still_counts_a_create_that_opened_a_pr(tmp_path: pathlib.Path) -> None:
+    """A PR that opened still needs its successor reviewed afresh — on Claude Code's own record,
+    or on the URL gh prints when there is none (the reading codex_request.py posts on)."""
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    printed = {"stdout": f"remote: ...\n{URL}\n", "stderr": ""}
+    for opened in (_result("toolu_pr1", _created()), _result("toolu_pr1", printed)):
+        assert _create(repo, [_review("toolu_r"), _pr("toolu_pr1"), opened]).returncode == 2
+    retried = [_review("toolu_r"), _pr("toolu_f"), _result("toolu_f", PIPED_FAILURE),
+               _pr("toolu_pr1"), _result("toolu_pr1", _created())]
+    assert _create(repo, retried).returncode == 2
+    reviewed_again = [*retried, _review("toolu_r2"), _pr("toolu_f2"),
+                      _result("toolu_f2", REFUSED, is_error=True)]
+    assert _create(repo, reviewed_again).returncode == 0
+
+
+def test_review_gate_still_refuses_after_a_refused_create(tmp_path: pathlib.Path) -> None:
+    """A refusal is no review, and skipping it never revives a review an opened PR used up."""
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    refused = [_pr("toolu_f"), _result("toolu_f", REFUSED, is_error=True)]
+    assert _create(repo, refused).returncode == 2
+    used_up = [_review("toolu_r"), _pr("toolu_pr1"), _result("toolu_pr1", _created()), *refused]
+    assert _create(repo, used_up).returncode == 2
+
+
+def test_review_gate_counts_a_create_whose_outcome_is_not_recorded(tmp_path: pathlib.Path) -> None:
+    """No readable outcome counts as OPENED. Measured live 2026-10-26: a call's result is not yet
+    in the transcript when the next call of the same message runs, so an earlier create with no
+    result may just have opened a PR. Several results in one entry share no `toolUseResult`
+    (374 of 87,486 real entries), so a create's record there cannot be read either."""
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    assert _create(repo, [_review("toolu_r"), _pr("toolu_pr1")]).returncode == 2
+    # `gh pr create > pr.txt` opens a PR and prints nothing, so Claude Code records none
+    silent = {**PIPED_FAILURE, "stdout": ""}
+    assert _create(repo, [_review("toolu_r"), _pr("toolu_pr1"),
+                          _result("toolu_pr1", silent)]).returncode == 2
+    # every real shared entry records None; a record there (none seen) would be another call's
+    for record in (None, PIPED_FAILURE):
+        shared = json.dumps({"type": "user", "toolUseResult": record, "message": {"content": [
+            {"tool_use_id": "toolu_x", "type": "tool_result", "content": "ok", "is_error": False},
+            {"tool_use_id": "toolu_pr1", "type": "tool_result", "content": URL,
+             "is_error": False}]}})
+        assert _create(repo, [_review("toolu_r"), _pr("toolu_pr1"), shared]).returncode == 2
+
+
+def test_the_hooks_share_one_reading_of_a_created_pr() -> None:
+    """The gate counts a PR opened exactly when codex_request.py asks Codex to review it."""
+    codex = _load("codex_request.py")
+    assert codex.created_pr is codex.review_gate.created_pr
