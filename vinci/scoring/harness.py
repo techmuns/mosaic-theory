@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
+from vinci.eod.dividends import DividendSource, DividendsUnknownError, growth
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
     ORIGIN_SCREEN,
@@ -20,13 +21,26 @@ from vinci.schemas.ledger import (
 )
 from vinci.schemas.market import PriceBar
 
-# Imported under its old private name so the call sites below read unchanged. The DEFINITION moved
-# to `baseline`, because the basket must read "the price on this date" exactly as the benchmark
-# does — see that module's note on why it is shared rather than copied.
-from vinci.scoring.baseline import Basket, basket_return
-from vinci.scoring.baseline import close_on_or_before as _close_on_or_before
-from vinci.scoring.metrics import ScoreReport, VerdictScore, aggregate, total_return
+# The bar lookup lives in `baseline`, because the basket must read "the price on this date" exactly
+# as the benchmark does — see that module's note on why it is shared rather than copied.
+from vinci.scoring.baseline import Basket, bar_on_or_before, basket_return
+from vinci.scoring.metrics import (
+    ScoreReport,
+    VerdictScore,
+    aggregate,
+    price_return,
+    total_return,
+)
 from vinci.store import Store
+
+
+class TotalReturnUnknownError(RuntimeError):
+    """A RESOLVED row whose dividends — the name's or its benchmark's — could not be read.
+
+    Raised rather than scored on price return: the basis is total return (operator ruling
+    2026-10-26), and a leg quietly measured without its dividends would sit in the spread beside
+    legs measured with them. Gated on ``resolved`` for the same reason the sealed-benchmark guard
+    below is: an interim row feeds no number."""
 
 
 class BenchmarkMismatchError(RuntimeError):
@@ -57,8 +71,15 @@ def score_ledger(
     cost_bps: float = _DEFAULT_COST_BPS,
     benchmark_internal_id: str = _DEFAULT_BENCHMARK_ID,
     baskets: dict[str, Basket] | None = None,
+    dividends: DividendSource,
 ) -> tuple[list[VerdictScore], ScoreReport]:
     """Score every ledger verdict as of ``as_of``; return per-verdict scores and the aggregate.
+
+    EVERY RETURN IS A TOTAL RETURN (operator ruling 2026-10-26): the name, its benchmark and each
+    basket member carry the dividends ``dividends`` reads for their own window, reinvested on the
+    ex-date; price return rides beside on each score. ``dividends`` has no default, so no caller
+    can drop it by omission and land back on price return. A resolved row it cannot read raises
+    `TotalReturnUnknownError`; an unresolved one is pending, like a row with no forward price.
 
     ``baskets`` maps sleeve key → its passive comparator (see ``vinci.scoring.baseline``). Supplied
     by the caller rather than read here, because the follow list is a data-layer fact and the
@@ -144,10 +165,15 @@ def score_ledger(
         scoring_date = min(horizon_date, as_of)
 
         name_bars = store.get_price_history(entry.internal_id)
-        exit_price = _close_on_or_before(name_bars, scoring_date)
-        bench_entry = _close_on_or_before(bench_bars, entry_date)
-        bench_exit = _close_on_or_before(bench_bars, scoring_date)
-        if exit_price is None or bench_entry is None or bench_exit is None:
+        exit_bar = bar_on_or_before(name_bars, scoring_date)
+        # THE SESSION THE SEALED ENTRY DATE RESOLVES TO — the dividend window starts there, so an
+        # entry stamped on a non-session day is read from the close it actually is
+        name_in = bar_on_or_before(name_bars, entry_date)
+        bench_in = bar_on_or_before(bench_bars, entry_date)
+        bench_out = bar_on_or_before(bench_bars, scoring_date)
+        # A bar dated BEFORE the entry is no forward price: the name's bars stop short of it
+        if (exit_bar is None or bench_in is None or bench_out is None
+                or exit_bar.bar_date < entry_date):
             # No forward/benchmark price yet → cannot score. SCOPED HERE TOO, and this is the
             # easier half to miss: the row never reaches ``scores``, so the origin filter below
             # can never see it. A followed name whose bars are not loaded yet would land in the
@@ -156,6 +182,28 @@ def score_ledger(
             if origin_of(entry) == ORIGIN_SCREEN:
                 pending += 1
             continue
+
+        # THE DIVIDENDS, each leg over its OWN window — the sealed entry session to the exit bar's
+        # session for the name, the benchmark's own bars for the benchmark. Read through the
+        # store's symbol (Tiingo is asked by symbol); a name the store has no row for is asked by
+        # its ledger ticker.
+        sec = store.get_security(entry.internal_id)
+        name_sym = sec.eod_symbol if sec is not None else entry.ticker
+        try:
+            name_div = dividends(name_sym, name_in.bar_date if name_in is not None else entry_date,
+                                 exit_bar.bar_date)
+            bench_div = dividends(_applied, bench_in.bar_date, bench_out.bar_date)
+        except DividendsUnknownError as exc:
+            if resolved:
+                raise TotalReturnUnknownError(
+                    f"{entry.entry_id} has RESOLVED and its dividends are unknown — {exc}. Its "
+                    f"total return cannot be measured, and it is never scored on price return "
+                    f"instead.") from exc
+            if origin_of(entry) == ORIGIN_SCREEN:
+                pending += 1
+            continue
+        name_growth, bench_growth = growth(name_div), growth(bench_div)
+        name_ex, bench_ex = dict(name_div), dict(bench_div)
 
         # THE PASSIVE COMPARATOR, over THIS verdict's window — the counterfactual of holding the
         # whole follow list from this entry date to this scoring date instead of picking within it.
@@ -171,15 +219,18 @@ def score_ledger(
         basket = (baskets or {}).get(sleeve_key)
         if basket is not None:
             b_ret, b_note, b_members = basket_return(
-                basket, basket_bars.get(sleeve_key, {}), entry_date, scoring_date)
+                basket, basket_bars.get(sleeve_key, {}), entry_date, scoring_date,
+                dividends=dividends)
 
         score = VerdictScore(
             entry_id=entry.entry_id,
             ticker=entry.ticker,
             verdict=entry.verdict,
             resolved=resolved,
-            name_return=total_return(entry.entry_price, exit_price),
-            bench_return=total_return(bench_entry, bench_exit),
+            name_return=total_return(entry.entry_price, exit_bar.close, name_growth),
+            bench_return=total_return(bench_in.close, bench_out.close, bench_growth),
+            name_price_return=price_return(entry.entry_price, exit_bar.close),
+            bench_price_return=price_return(bench_in.close, bench_out.close),
             basket_return=b_ret,
             basket_note=b_note,
             basket_members=b_members,
@@ -201,11 +252,13 @@ def score_ledger(
         # quality BUY pooling its daily returns in here would move a number the reader takes to
         # describe the overshoot book. The scope claim has to hold for every primary input, not
         # just for the spread itself.
+        # ON THE SAME BASIS AS THE SPREAD: a day that is an ex-date carries its dividend in BOTH
+        # series, so the regression printed beside a total-return spread is not a price-return one.
         if resolved and entry.verdict is Verdict.BUY and origin_of(entry) == ORIGIN_SCREEN:
             for d, r in _daily_returns(name_bars, entry_date, scoring_date):
                 if d in bench_daily:
-                    book_rets.append(r)
-                    bench_rets.append(bench_daily[d])
+                    book_rets.append((1.0 + r) * (1.0 + name_ex.get(d, 0.0)) - 1.0)
+                    bench_rets.append((1.0 + bench_daily[d]) * (1.0 + bench_ex.get(d, 0.0)) - 1.0)
 
     resolved_scores = [s for s in scores if s.resolved]
     # PENDING IS A PRIMARY-REPORT FIGURE and is scoped the same way, for the same reason: it is

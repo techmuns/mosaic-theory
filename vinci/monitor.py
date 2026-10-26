@@ -9,10 +9,11 @@ touching the frozen record. Three things it does and one it refuses:
    this rule; the committed assignment artifact SUPERSEDES it for scoring (the ledger is
    append-only — a wrong yardstick is corrected FORWARD, never by mutating a logged row).
 2. **Excess return per leg** — position return minus its assigned benchmark's return over the
-   SAME window. Both sides are PRICE returns (Polygon daily closes): dividends are excluded on
-   the position AND the benchmark alike. That understates a dividend-paying name's total return
-   and its benchmark's alike; the bias is not zero and it is not symmetric. It is recorded here
-   and printed in every artifact — never silently mixed with a total-return series.
+   SAME window. Since 2026-10-26 (operator ruling B) both sides are TOTAL returns: Polygon's closes
+   with dividends reinvested on the ex-date (`vinci.eod.dividends`), the position AND the benchmark
+   alike. Price return is carried beside each figure for continuity and never enters the spread.
+   EVERY SNAPSHOT BEFORE 2026-10-26 WAS PRICE RETURN on both sides: each states its own basis
+   (``return_basis``, defaulting to "price" for them), and none is restated.
 3. **The BUY−AVOID spread** = mean(BUY excess) − mean(AVOID excess). SIGN CONVENTION: an AVOID
    leg that FALLS against its benchmark has NEGATIVE excess, and subtracting a negative makes the
    spread MORE positive — i.e. being right about a terminal decline pays into the spread exactly
@@ -29,9 +30,9 @@ import re
 from collections.abc import Callable, Mapping
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from vinci.labels import resolve_label
 from vinci.panels_emit import PanelRow
@@ -45,11 +46,16 @@ CAP_BAND_SMALL_MAX = 4_000_000_000.0     # < $4B  → IWM  (Russell 2000)
 CAP_BAND_MID_MAX = 25_000_000_000.0      # $4–25B → MDY  (S&P MidCap 400)
 BENCHMARK_SMALL, BENCHMARK_MID, BENCHMARK_LARGE = "IWM", "MDY", "SPY"
 
-RETURN_BASIS = ("price-return both sides (Polygon daily closes; dividends excluded on the "
-                "position AND the benchmark alike — never mixed with a total-return series)")
+#: The basis every snapshot before 2026-10-26 carried, verbatim — the default for a snapshot that
+#: predates ``return_basis``, so a legacy day keeps describing itself truthfully.
+PRICE_RETURN_BASIS = ("price-return both sides (Polygon daily closes; dividends excluded on the "
+                      "position AND the benchmark alike — never mixed with a total-return series)")
+RETURN_BASIS = ("TOTAL return both sides (Polygon daily closes, dividends reinvested on the "
+                "ex-date from Tiingo; the position AND the benchmark alike) — price return printed "
+                "beside it for continuity, never in the spread (operator ruling 2026-10-26)")
 SPREAD_CAVEAT = (
     "DIAGNOSTIC ONLY until each row reaches its horizon date (§7: never tuned on). "
-    "A leg's excess is price-return vs its assigned benchmark over the same window."
+    "A leg's excess is total return vs its assigned benchmark's total return, same window."
 )
 #: A dated snapshot filename — so a stray file in the directory cannot be read as a day.
 _SNAPSHOT_DAY = re.compile(r"\d{4}-\d{2}-\d{2}")
@@ -110,6 +116,7 @@ class PositionRow(BaseModel):
     entry_date: date
     current_price: float
     current_date: date
+    # ON THE SNAPSHOT'S ``return_basis``: TOTAL return since 2026-10-26, price return before
     position_return: float           # fraction, e.g. 0.0412 = +4.12%
     benchmark: str
     benchmark_entry: float
@@ -124,6 +131,12 @@ class PositionRow(BaseModel):
     # closed row keeps marking to its horizon (the ruling), so this is the flag that lets a reader
     # separate "the call was right" from "the book held it" instead of inferring it from a note.
     closed: bool = False
+    # THE SAME LEG ON PRICE RETURN, beside the total return (ruling 2026-10-26) — for continuity
+    # with the snapshots before it; never read by the spread. None on a price-basis snapshot,
+    # where the figures above already ARE price return.
+    position_price_return: float | None = None
+    benchmark_price_return: float | None = None
+    excess_price: float | None = None
 
 
 class SpreadDiagnostic(BaseModel):
@@ -161,6 +174,11 @@ class SpreadDiagnostic(BaseModel):
     open_avoid_n: int = 0
     spread_open_only: float | None = None
     open_undefined_reason: str | None = None
+    # THE SAME SPREAD ON PRICE RETURN, beside the headline (ruling 2026-10-26). A disclosure for
+    # continuity with the price-basis days; never the spread.
+    buy_mean_excess_price: float | None = None
+    avoid_mean_excess_price: float | None = None
+    spread_price: float | None = None
 
 
 class RealizedRow(BaseModel):
@@ -194,7 +212,11 @@ class MonitorSnapshot(BaseModel):
     """One dated run — the auditable book history. Committed per run."""
 
     as_of: date
-    price_basis: str = RETURN_BASIS
+    # THE BASIS, structured and in words. Both default to the PRICE basis every snapshot carried
+    # before 2026-10-26, so a legacy day still reads as what it was; the monitor sets "total" and
+    # RETURN_BASIS explicitly, and `_one_basis` refuses a day whose rows disagree with it.
+    return_basis: Literal["price", "total"] = "price"
+    price_basis: str = PRICE_RETURN_BASIS
     rows: list[PositionRow] = Field(default_factory=list)
     spread: SpreadDiagnostic
     freshness: list[FreshnessRow] = Field(default_factory=list)
@@ -221,6 +243,19 @@ class MonitorSnapshot(BaseModel):
     # Typed as a forward reference to avoid a cycle — `vinci.panels_emit` imports the panel stack,
     # which must not import the monitor.
     panels: list[PanelRow] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _one_basis(self) -> MonitorSnapshot:
+        """ONE BASIS PER DAY. A total-return day carries the price figures beside every row; a
+        price-return day carries none (its figures already are price return). A day that mixes the
+        two is refused — the ruling's "no surface may mix bases", held by the model."""
+        beside = [r.position_price_return is not None for r in self.rows]
+        if self.return_basis == "total" and not all(beside):
+            raise ValueError("a total-return snapshot whose rows lack the price figures beside "
+                             "them")
+        if self.return_basis == "price" and any(beside):
+            raise ValueError("a price-return snapshot carrying total-return rows")
+        return self
 
 
 class EvidenceDate(BaseModel):
@@ -511,6 +546,14 @@ def compute_spread(rows: list[PositionRow]) -> SpreadDiagnostic:
     o_buy, o_avoid, o_nb, o_na, o_reason = legs(still_open)
     if o_reason is not None and len(still_open) < len(scoped):
         o_reason += f" among the {len(still_open)} of {len(scoped)} rows still held"
+    # THE PRICE-RETURN DISCLOSURE over the SAME legs — only when every row carries it (a total-
+    # return day). A price-basis day already IS price return and gets no second copy.
+    px_b = [r.excess_price for r in scoped if _is_buy(r.verdict)]
+    px_a = [r.excess_price for r in scoped if not _is_buy(r.verdict)]
+    px_bm = (sum(x for x in px_b if x is not None) / len(px_b)
+             if px_b and None not in px_b else None)
+    px_am = (sum(x for x in px_a if x is not None) / len(px_a)
+             if px_a and None not in px_a else None)
     return SpreadDiagnostic(
         buy_n=n_buy, avoid_n=n_avoid,
         buy_mean_excess=buy_mean, avoid_mean_excess=avoid_mean,
@@ -525,21 +568,32 @@ def compute_spread(rows: list[PositionRow]) -> SpreadDiagnostic:
         spread_open_only=(o_buy - o_avoid) if (o_buy is not None and o_avoid is not None)
         else None,
         open_undefined_reason=o_reason,
+        buy_mean_excess_price=px_bm, avoid_mean_excess_price=px_am,
+        spread_price=(px_bm - px_am) if (px_bm is not None and px_am is not None) else None,
     )
 
 
 def position_row(*, ticker: str, verdict: str, sector: str | None, entry_price: float,
                  entry_date: date, current_price: float, current_date: date, benchmark: str,
                  benchmark_entry: float, benchmark_now: float, horizon_days: int,
+                 position_growth: float, benchmark_growth: float,
                  origin: str = ORIGIN_SCREEN, sleeve: str = DEFAULT_SLEEVE,
                  closed: bool = False) -> PositionRow:
-    """Mark one leg. Fails loud on a non-positive entry or benchmark price — a return computed
-    off a zero base is not a number this fund reports."""
+    """Mark one leg on TOTAL return: each side's price ratio times the growth its dividends add
+    over the window (`vinci.eod.dividends.growth`) — required, so no caller lands on price return
+    by leaving it out. Price return rides beside. Fails loud on a non-positive entry or benchmark
+    price, or a non-positive growth — a return computed off a zero base is not a number this fund
+    reports."""
     if not entry_price > 0 or not benchmark_entry > 0:
         raise ValueError(f"{ticker}: entry_price and benchmark_entry must be > 0 "
                          f"(got {entry_price!r}, {benchmark_entry!r})")
-    pos_ret = current_price / entry_price - 1.0
-    bench_ret = benchmark_now / benchmark_entry - 1.0
+    if not position_growth > 0 or not benchmark_growth > 0:
+        raise ValueError(f"{ticker}: dividend growth must be > 0 "
+                         f"(got {position_growth!r}, {benchmark_growth!r})")
+    pos_px = current_price / entry_price - 1.0
+    bench_px = benchmark_now / benchmark_entry - 1.0
+    pos_ret = (1.0 + pos_px) * position_growth - 1.0
+    bench_ret = (1.0 + bench_px) * benchmark_growth - 1.0
     horizon_date = entry_date + timedelta(days=horizon_days)
     return PositionRow(
         ticker=ticker, verdict=verdict, sector=sector,
@@ -552,6 +606,8 @@ def position_row(*, ticker: str, verdict: str, sector: str | None, entry_price: 
         horizon_days=horizon_days, horizon_date=horizon_date,
         resolved=current_date >= horizon_date,
         closed=closed,
+        position_price_return=pos_px, benchmark_price_return=bench_px,
+        excess_price=pos_px - bench_px,
     )
 
 
@@ -1001,8 +1057,12 @@ def latest_snapshot(root: Path | None = None) -> MonitorSnapshot | None:
 def render_table(snap: MonitorSnapshot) -> str:
     """The terminal view — the same numbers the artifact carries, with the caveats attached."""
     out = [f"BOOK as of {snap.as_of}  ({snap.price_basis})", ""]
+    # A TOTAL-RETURN DAY carries the price excess beside each row (PX-EXC%), for continuity with
+    # the price-basis days; on a price-basis day the EXCESS% column already is price return.
+    total = snap.return_basis == "total"
     hdr = (f"{'TICKER':<7}{'VERDICT':<16}{'ENTRY':>9}{'NOW':>9}{'POS%':>8}"
-           f"{'BMK':>5}{'BMK%':>8}{'EXCESS%':>9}{'DAYS':>7}  HORIZON")
+           f"{'BMK':>5}{'BMK%':>8}{'EXCESS%':>9}" + (f"{'PX-EXC%':>9}" if total else "")
+           + f"{'DAYS':>8}  HORIZON")
     out.append(hdr)
     for r in sorted(snap.rows, key=lambda r: r.ticker):
         # THE BOOK IS NAMED ONLY WHEN IT IS NOT THE DEFAULT — a tag on every row is noise, and its
@@ -1013,7 +1073,9 @@ def render_table(snap: MonitorSnapshot) -> str:
         out.append(
             f"{r.ticker:<7}{r.verdict:<16}{r.entry_price:>9.2f}{r.current_price:>9.2f}"
             f"{r.position_return * 100:>+8.2f}{r.benchmark:>5}{r.benchmark_return * 100:>+8.2f}"
-            f"{r.excess * 100:>+9.2f}{f'{r.days_elapsed}/{r.horizon_days}':>7}  "
+            f"{r.excess * 100:>+9.2f}"
+            + (f"{(r.excess_price or 0.0) * 100:>+9.2f}" if total else "")
+            + f"{f'{r.days_elapsed}/{r.horizon_days}':>8}  "
             f"{r.horizon_date}{'' if not r.resolved else '  RESOLVED'}{book}")
     s = snap.spread
     # THE SCOPE IS STATED, because the number's meaning narrowed. It measures the discriminator on
@@ -1028,6 +1090,9 @@ def render_table(snap: MonitorSnapshot) -> str:
         out.append(f"  BUY  n={s.buy_n} mean excess {s.buy_mean_excess * 100:+.2f} pp")
     if s.avoid_mean_excess is not None:
         out.append(f"  AVOID n={s.avoid_n} mean excess {s.avoid_mean_excess * 100:+.2f} pp")
+    if total:
+        out.append("  beside it, on PRICE return (continuity; never the spread): "
+                   + ("UNDEFINED" if s.spread_price is None else f"{s.spread_price * 100:+.2f} pp"))
     # Denominator from the diagnostic, NOT from the row list: `resolved_n` counts scoped rows
     # only. A legacy snapshot predating `scoped_n` reports 0 → fall back to the row count, which
     # is exactly right for it (every row it holds is screen-origin).

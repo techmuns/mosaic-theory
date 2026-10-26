@@ -22,6 +22,7 @@ from vinci.cohort import cohort_reads, sic_by_ticker
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, ingest_prices
+from vinci.eod.dividends import default_dividends
 from vinci.evidence import evidence_strip
 from vinci.labels import resolve_label
 from vinci.progress import ProgressFn
@@ -425,6 +426,13 @@ def run_monthly(
             # `scoring_report.md` is the artifact most readers open, so a kill test missing
             # from it is missing.
             baskets=resolve_baskets(cfg.data_dir / "followed.json", store.iter_securities()),
+            # TOTAL RETURN (operator ruling 2026-10-26): Tiingo's dividends over the ledger's
+            # whole span. Without TIINGO_API_KEY every window reads unknown, so a RESOLVED row
+            # stops this run rather than scoring on price return (the CI secret is an operator
+            # item — docs/records/2026-10-26-split-restatement-and-total-return.md).
+            dividends=default_dividends(
+                start=min((e.entry_price_as_of for e in store.iter_ledger()), default=as_of),
+                end=as_of),
         )
         store.export_snapshots(cfg.snapshots_dir)
     (cfg.snapshots_dir / "scoring_report.md").write_text(report.to_markdown())

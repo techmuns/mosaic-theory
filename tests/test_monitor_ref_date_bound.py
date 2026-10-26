@@ -28,6 +28,7 @@ from typing import Any
 
 import pytest
 
+from tests.dividend_support import no_dividends
 from vinci import monitor as mon
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -238,6 +239,8 @@ def _wire(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, records: list[dict[st
     monkeypatch.chdir(tmp_path)
     monkeypatch.setattr(cli, "PolygonEodClient", _Eod)
     monkeypatch.setattr(cli, "EdgarClient", _Edgar)
+    # total return since 2026-10-26: the flat synthetic prices above pay no dividends
+    monkeypatch.setattr(cli, "default_dividends", lambda **_kw: no_dividends)
     return calls
 
 

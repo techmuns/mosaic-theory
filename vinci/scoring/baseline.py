@@ -47,6 +47,7 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
+from vinci.eod.dividends import DividendSource, DividendsUnknownError, growth
 from vinci.followed import FollowRecord, follow_records
 from vinci.schemas.data_record import Identity
 from vinci.schemas.market import PriceBar
@@ -103,6 +104,18 @@ def resolve_baskets(path: Path, securities: Iterable[Identity]) -> dict[str, Bas
     }
 
 
+def bar_on_or_before(bars: list[PriceBar], target: date) -> PriceBar | None:
+    """The last bar at or before ``target``; None if the series starts after it. Its DATE matters
+    as much as its close: a total return's dividend window is (entry session, exit session]."""
+    chosen: PriceBar | None = None
+    for b in bars:  # bars come from the store ordered ascending by date
+        if b.bar_date <= target:
+            chosen = b
+        else:
+            break
+    return chosen
+
+
 def close_on_or_before(bars: list[PriceBar], target: date) -> float | None:
     """The last close at or before ``target``; None if the series starts after it.
 
@@ -110,13 +123,8 @@ def close_on_or_before(bars: list[PriceBar], target: date) -> float | None:
     price on this date" is how a benchmark and a basket come to disagree about the same window
     while both look right — and the basket exists to be compared with numbers the harness produced.
     """
-    chosen: float | None = None
-    for b in bars:  # bars come from the store ordered ascending by date
-        if b.bar_date <= target:
-            chosen = b.close
-        else:
-            break
-    return chosen
+    bar = bar_on_or_before(bars, target)
+    return bar.close if bar is not None else None
 
 
 def basket_return(
@@ -124,8 +132,13 @@ def basket_return(
     bars_by_ticker: dict[str, list[PriceBar]],
     start: date,
     end: date,
+    *,
+    dividends: DividendSource,
 ) -> tuple[float | None, str | None, tuple[str, ...]]:
-    """Equal-weight total return of ``basket`` over ``[start, end]``, on the roster AS OF ``start``.
+    """Equal-weight TOTAL return of ``basket`` over ``[start, end]``, on the roster AS OF
+    ``start`` — dividends reinvested on the ex-date, the basis every leg it is compared with
+    carries (operator ruling 2026-10-26). A member whose dividends cannot be read refuses the
+    basket, exactly as a member with no bars does: never a price return in a total-return basket.
 
     Returns ``(return, refusal_reason, members_used)`` — exactly one of the first two is None. The
     reason is carried rather than logged because it has to reach the REPORT: a missing baseline
@@ -146,17 +159,27 @@ def basket_return(
             f"book's first follow entry, so there is no roster to have indexed"), ()
     rets: list[float] = []
     missing: list[str] = []
+    unknown: list[str] = []
     for ticker in members:
         bars = bars_by_ticker.get(ticker) or []
-        px_in = close_on_or_before(bars, start)
-        px_out = close_on_or_before(bars, end)
-        if px_in is None or px_out is None or px_in <= 0:
+        b_in = bar_on_or_before(bars, start)
+        b_out = bar_on_or_before(bars, end)
+        if b_in is None or b_out is None or b_in.close <= 0:
             missing.append(ticker)
             continue
-        rets.append(px_out / px_in - 1.0)
+        try:
+            g = growth(dividends(ticker, b_in.bar_date, b_out.bar_date))
+        except DividendsUnknownError as exc:
+            unknown.append(str(exc))
+            continue
+        rets.append(b_out.close / b_in.close * g - 1.0)
     if missing:
         return None, (
             f"no bars over {start}–{end} for {', '.join(missing)} — an equal-weight basket "
             f"missing a member is a different basket, so it is refused rather than reweighted"
         ), members
+    if unknown:
+        return None, (
+            f"dividends unknown — {'; '.join(unknown)} — so no total return for the basket; it is "
+            f"refused rather than priced without them"), members
     return statistics.fmean(rets), None, members

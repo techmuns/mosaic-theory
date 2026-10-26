@@ -631,6 +631,14 @@ and record-read fields read TODAY's pages, records and cards. So a day re-run af
 writes later information into an earlier date, and the only safe re-run is of the latest close
 itself.
 
+**The return basis is TOTAL return since 2026-10-26** (operator ruling B,
+`docs/records/2026-10-26-split-restatement-and-total-return.md`). Each position and its benchmark are
+marked with dividends reinvested on the ex-date, read from Tiingo, so the run needs `TIINGO_API_KEY`.
+A leg whose dividends cannot be read stops the run; it is never marked on price return instead.
+Price return is printed beside each row (`PX-EXC%`) and beside the spread. Every committed day before
+2026-10-26 was price return: each states its own basis (`return_basis`, `price_basis`), and none is
+restated.
+
 **When.** Any routine mark of the book, AND whenever `tests/test_panel_emit.py::
 test_emit_is_deterministic_over_the_committed_corpus` goes red after an artifact pass. That pin
 requires the latest day's panels to equal what today's pages emit, so a moved page turns it red.
@@ -712,6 +720,15 @@ today's, so a backdated point would carry later data).
   checks with the failure classes each can surface, and families). The core and the command name no
   source (`tests/test_quality_core.py` holds them to it). Next by priority: the 8-K release parser
   (`docs/records/2026-10-23-ciq-quality-scorecard.md`).
+- **A split splice already in a store is repaired, never left.** `vinci restate-prices --through
+  <the last session of an older pull>` re-fetches that session and the store's latest market session.
+  Every held bar Polygon has since restated is put back on the current basis by Polygon's own factor:
+  all four prices moved by one factor, volume inversely. Those bars are tagged `+restated` in
+  `prices.source`. A refresh guards new splices itself: it re-fetches the latest held session it would
+  otherwise skip (its anchor). Find the boundary from the scorecard's split-shaped steps: a pull
+  boundary is where they cluster on one date (2026-08-06 in the research-alpha copy, after its
+  2026-08-05 August pull; 2026-08-12 in `-ta`). See
+  `docs/records/2026-10-26-split-restatement-and-total-return.md`.
 - **The prices source needs a populated store.** `data/vinci.db` is per checkout and git-ignored:
   CI and a fresh worktree have none, so `--source prices` (and the default, every source) exits 1
   saying the store is absent — never a clean card; `--source ciq` still runs. Run it where the store

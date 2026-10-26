@@ -437,6 +437,47 @@ class Store:
                 out[d] = out.get(d, 0) + int(r["n"])
         return out
 
+    def bars_on(self, day: date, internal_ids: Sequence[str]) -> dict[str, PriceBar]:
+        """The stored bar of each of ``internal_ids`` on ``day``, by internal id — absent when the
+        store holds none. Read by `eod.client.restate_held` to set a held bar beside a fresh one."""
+        ids = sorted(set(internal_ids))
+        out: dict[str, PriceBar] = {}
+        for i in range(0, len(ids), _ID_CHUNK):
+            chunk = ids[i:i + _ID_CHUNK]
+            for r in self._conn.execute(
+                    f"SELECT * FROM prices WHERE bar_date = ? AND internal_id IN "
+                    f"({','.join('?' * len(chunk))})", (_iso(day), *chunk)):
+                out[r["internal_id"]] = PriceBar(
+                    internal_id=r["internal_id"], bar_date=date.fromisoformat(r["bar_date"]),
+                    open=r["open"], high=r["high"], low=r["low"], close=r["close"],
+                    volume=r["volume"], source=r["source"])
+        return out
+
+    def last_bar_before(self, internal_id: str, day: date) -> date | None:
+        """The newest bar date for one name strictly before ``day`` — None when it has none."""
+        row = self._conn.execute(
+            "SELECT MAX(bar_date) AS d FROM prices WHERE internal_id = ? AND bar_date < ?",
+            (internal_id, _iso(day))).fetchone()
+        return date.fromisoformat(row["d"]) if row and row["d"] else None
+
+    def restate_bars(self, internal_id: str, factor: float, *, through: date,
+                     after: date | None = None) -> int:
+        """Put one name's held bars dated in ``(after, through]`` on the current split basis:
+        prices × ``factor``, volume ÷ ``factor`` — what the source's own restatement does. The
+        source column gains ``+restated`` (once), so a bar this repo rescaled never reads as one
+        the provider served. Returns the bars changed."""
+        if not factor > 0:
+            raise ValueError(f"restate {internal_id}: factor {factor!r} is not positive")
+        cur = self._conn.execute(
+            "UPDATE prices SET open = open * ?, high = high * ?, low = low * ?, close = close * ?, "
+            "volume = volume / ?, source = CASE WHEN source LIKE '%+restated' THEN source "
+            "ELSE source || '+restated' END "
+            "WHERE internal_id = ? AND bar_date <= ? AND bar_date > ?",
+            (factor, factor, factor, factor, factor, internal_id, _iso(through),
+             _iso(after) if after is not None else ""))
+        self._conn.commit()
+        return int(cur.rowcount)
+
     def price_frontier(self) -> date | None:
         """The newest bar date in the store, across every name — or None when there are no bars.
 

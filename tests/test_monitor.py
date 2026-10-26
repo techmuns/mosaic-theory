@@ -32,7 +32,8 @@ def _row(ticker: str, verdict: str, *, pos: float, bench: float,
     return mon.position_row(
         ticker=ticker, verdict=verdict, sector=None, entry_price=100.0, entry_date=entry,
         current_price=100.0 * (1 + pos), current_date=now, benchmark="IWM",
-        benchmark_entry=100.0, benchmark_now=100.0 * (1 + bench), horizon_days=horizon)
+        benchmark_entry=100.0, benchmark_now=100.0 * (1 + bench), horizon_days=horizon,
+        position_growth=1.0, benchmark_growth=1.0)
 
 
 def test_cap_bands_assign_the_stated_benchmarks_including_the_edges() -> None:
@@ -85,7 +86,8 @@ def test_position_row_math_and_resolution() -> None:
     r = mon.position_row(ticker="X", verdict="BUY", sector="Industrials", entry_price=50.0,
                          entry_date=date(2026, 1, 1), current_price=55.0,
                          current_date=date(2026, 2, 1), benchmark="MDY", benchmark_entry=200.0,
-                         benchmark_now=204.0, horizon_days=180)
+                         benchmark_now=204.0, horizon_days=180,
+                         position_growth=1.0, benchmark_growth=1.0)
     assert r.position_return == pytest.approx(0.10)
     assert r.benchmark_return == pytest.approx(0.02)
     assert r.excess == pytest.approx(0.08)
@@ -94,14 +96,16 @@ def test_position_row_math_and_resolution() -> None:
     at_horizon = mon.position_row(ticker="X", verdict="BUY", sector=None, entry_price=50.0,
                                   entry_date=date(2026, 1, 1), current_price=55.0,
                                   current_date=date(2026, 6, 30), benchmark="MDY",
-                                  benchmark_entry=200.0, benchmark_now=204.0, horizon_days=180)
+                                  benchmark_entry=200.0, benchmark_now=204.0, horizon_days=180,
+                                  position_growth=1.0, benchmark_growth=1.0)
     assert at_horizon.resolved
     # a zero/absent base price must fail loud, never produce a return off a fabricated base
     with pytest.raises(ValueError, match="must be > 0"):
         mon.position_row(ticker="X", verdict="BUY", sector=None, entry_price=0.0,
                          entry_date=date(2026, 1, 1), current_price=1.0,
                          current_date=date(2026, 2, 1), benchmark="IWM", benchmark_entry=1.0,
-                         benchmark_now=1.0, horizon_days=180)
+                         benchmark_now=1.0, horizon_days=180,
+                         position_growth=1.0, benchmark_growth=1.0)
 
 
 def test_last_evidence_date_prefers_a_later_amendment() -> None:

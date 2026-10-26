@@ -27,6 +27,7 @@ from vinci.eod import (
     ingest_prices_per_symbol,
     last_completed_session,
 )
+from vinci.eod.dividends import DividendsUnknownError, default_dividends, growth
 from vinci.ledger import LedgerError, log_verdict
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
 from vinci.orchestrator import (
@@ -190,6 +191,49 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
               f"{', '.join(sic_failures)} stored with SIC UNKNOWN (bars are unaffected, and no "
               f"stored SIC was overwritten). Re-run `scripts/backfill_entity_master_sic.py` once "
               f"EDGAR is healthy to fill them.")
+    return 0
+
+
+def _cmd_restate_prices(args: argparse.Namespace) -> int:
+    """Put a store that ALREADY holds a split splice back on Polygon's current basis.
+
+    A refresh guards new splices itself (its anchor, `eod.client.ingest_prices`); this repairs one
+    taken before that existed. Each ``--through`` is the LAST session of one pull of the store, for
+    example the last day of an older copy that later pulls were appended to. The store's latest
+    market session is always added as the final boundary, so bars pulled since the last one are
+    restated by their own factor and never by an older pull's. One grouped-daily call per boundary.
+    Bars after the latest market session (a few names' backfill) are left as they are."""
+    from vinci.eod.client import _SESSION_PRESENT_FRACTION, restate_held
+
+    cfg = get_config()
+    try:
+        bounds = sorted({date.fromisoformat(d) for d in args.through})
+    except ValueError as exc:
+        print(f"--through must be YYYY-MM-DD: {exc}", file=sys.stderr)
+        return 1
+    client = PolygonEodClient.from_config(cfg)
+    with Store(cfg.db_path) as store:
+        sym_to_id = {s.eod_symbol: s.internal_id for s in store.iter_securities()}
+        frontier = store.price_frontier()
+        if frontier is None:
+            print(f"{cfg.db_path}: no price bars — nothing to restate", file=sys.stderr)
+            return 1
+        per_day = store.session_bar_counts(date(1900, 1, 1), frontier, list(sym_to_id.values()))
+        top = max(per_day.values())
+        latest = max(d for d, n in per_day.items() if n >= _SESSION_PRESENT_FRACTION * top)
+        if bounds[-1] > latest:
+            print(f"--through {bounds[-1]} is after the store's latest market session {latest}",
+                  file=sys.stderr)
+            return 1
+        bounds = sorted({*bounds, latest})
+        print(f"restating against Polygon's current basis at {', '.join(map(str, bounds))} "
+              f"({len(bounds)} grouped-daily call(s))…")
+        found = restate_held(store, client.grouped_daily, bounds, sym_to_id)
+    id_to_sym = {iid: sym for sym, iid in sym_to_id.items()}
+    for iid, factors in sorted(found.items(), key=lambda kv: id_to_sym.get(kv[0], kv[0])):
+        print(f"  {id_to_sym.get(iid, iid):<8} " + " · ".join(
+            f"through {b}: ×{f:.6g}" for b, f in factors))
+    print(f"done: {len(found)} name(s) restated; every other held bar at those sessions matched")
     return 0
 
 
@@ -2292,6 +2336,12 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             f"{len(rows_raw) - len(asof_rows)} decision(s) entered after {now_date} are excluded "
             f"— this book is the state as of that date, not today's ledger re-marked backwards")
     rows: list[mon.PositionRow] = []
+    # TOTAL RETURN (operator ruling 2026-10-26): every leg's dividends, the position's and its
+    # benchmark's, over the book's whole span — one Tiingo read per symbol. A leg whose dividends
+    # cannot be read stops the run below; it is never marked on price return instead.
+    dividends = default_dividends(
+        start=min((date.fromisoformat(r["entry_price_as_of"]) for r in asof_rows),
+                  default=now_date), end=now_date)
     for r in asof_rows:
         payload = json.loads(r["payload"])
         # Re-validated ONCE rather than dict-read: the absent-means-screen/overshoot fallbacks live
@@ -2304,6 +2354,12 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             if need not in entry_bars or need not in now_bars:
                 raise RuntimeError(f"{tkr}: no {where} bar for {need} "
                                    f"({entry_day} / {now_date}) — refusing to guess a price")
+        try:
+            pos_growth = growth(dividends(tkr, entry_day, now_date))
+            bench_growth = growth(dividends(asg.benchmark, entry_day, now_date))
+        except DividendsUnknownError as exc:
+            raise RuntimeError(f"{tkr}: dividends UNKNOWN ({exc}) — refusing to mark this leg "
+                               f"on price return in a total-return book") from exc
         live_sic = sic_by_ticker.get(tkr)
         live_sector = mon.sector_for_display(live_sic)
         if (note := mon.sector_note(
@@ -2316,6 +2372,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             current_price=now_bars[tkr].close, current_date=now_date,
             benchmark=asg.benchmark, benchmark_entry=entry_bars[asg.benchmark].close,
             benchmark_now=now_bars[asg.benchmark].close, horizon_days=r["horizon_days"],
+            position_growth=pos_growth, benchmark_growth=bench_growth,
             # Is the POSITION still held? Read from the close rows, which name the decision they
             # close — never inferred from the ticker, since a name can be re-entered (SMPL is, and
             # its two decisions are on opposite sides of this flag).
@@ -2482,6 +2539,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     except Exception as exc:  # noqa: BLE001 — surfaced as a note; see the comment above
         notes.append(f"PANEL GRID UNAVAILABLE ({type(exc).__name__}): {exc}")
     snap = mon.MonitorSnapshot(as_of=now_date, rows=rows, spread=mon.compute_spread(rows),
+                               return_basis="total", price_basis=mon.RETURN_BASIS,
                                freshness=fresh, notes=notes, realized=realized_rows,
                                theme_falsifiers=theme_rows, panels=panel_rows)
     print(mon.render_table(snap))
@@ -2804,6 +2862,10 @@ def _cmd_score(args: argparse.Namespace) -> int:
             # reachable from only one of them is invisible to every reader of the other.
             baskets=resolve_baskets(
                 cfg.data_dir / "followed.json", store.iter_securities()),
+            # TOTAL RETURN (operator ruling 2026-10-26) — see the same argument in `run_monthly`.
+            dividends=default_dividends(
+                start=min((e.entry_price_as_of for e in store.iter_ledger()), default=ref),
+                end=ref),
         )
     print(report.to_markdown())
     if args.json:
@@ -4236,6 +4298,14 @@ def build_parser() -> argparse.ArgumentParser:
                            help="per-symbol aggregates (ONE call/name) — backfill a NEW name's "
                                 "history; default grouped-daily is the whole-universe refresh")
     p_refresh.set_defaults(func=_cmd_refresh)
+    p_restate = sub.add_parser(
+        "restate-prices",
+        help="repair a split splice already in the store: re-fetch each pull's last session and "
+             "restate the held bars Polygon has since restated")
+    p_restate.add_argument("--through", action="append", required=True,
+                           help="the last session of one pull of the store, YYYY-MM-DD "
+                                "(repeatable; the latest market session is always added)")
+    p_restate.set_defaults(func=_cmd_restate_prices)
 
     p_eod = sub.add_parser("eod", help="show computed Screen-2 price features for a ticker")
     p_eod.add_argument("ticker", help="ticker (e.g. AAPL)")
