@@ -622,6 +622,7 @@ _Source §: 8-K 0001803599-21-000215 · exhibit101122721.htm_
   - 2026-10-22 · mechanical.primary_source — refresh at 2026-10-09.3
   - 2026-10-22 · anchor — anchor-retag at 2026-10-09.3
   - 2026-10-23 · mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-26 · mechanical.financial_summary — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 21d old — 2026-07-28 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 43d old (2026-07-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

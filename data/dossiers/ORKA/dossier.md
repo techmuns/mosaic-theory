@@ -467,6 +467,7 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-28; (R) = Reclas
   - 2026-10-21 · anchor, mechanical.primary_source — refresh at 2026-10-09.3
   - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
   - 2026-10-23 · mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
+  - 2026-10-26 · mechanical.financial_summary — refresh at 2026-10-09.3
 - **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
 - **Panel age:** oldest panel 28d old — 2026-08-31 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
 - **Consensus age:** consensus 31d old (2026-08-28, valuation.implied_expectations.multiples_as_of) — within the ceiling

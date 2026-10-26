@@ -40,6 +40,8 @@ from vinci.dossier.schemas import (
     PeerRow,
     PrimarySource,
     Sourced,
+    StatementReconciliation,
+    StatementReconRow,
 )
 from vinci.quality import core
 from vinci.quality.sources import ciq
@@ -132,6 +134,27 @@ def _ps(*, guide: CrossCheck | None = None, wall: CrossCheck | None = None,
         guide_verification_check=guide).model_dump(mode="json")
 
 
+_LINE_LABEL = {"revenue": "Revenue ($M)", "operating_cash_flow": "CFO ($M)"}
+
+
+def _stmt(rows: list[tuple[str, str, float | None, bool, str | None, str | None]],
+          ) -> dict[str, Any]:
+    """An annual table and its statement block that AGREE — every CIQ figure the sentinel. A row:
+    (line, column, filing, different, other_tag, earlier_accession)."""
+    cols = list(dict.fromkeys(c for _ln, c, *_r in rows))
+    have = {(ln, c) for ln, c, *_r in rows}
+    table = {"columns": cols, "is_estimate": [False] * len(cols), "note": "synthetic",
+             "rows": [{"label": lbl, "cells": [], "material": False,
+                       "values": [SENTINEL if (ln, c) in have else None for c in cols]}
+                      for ln, lbl in _LINE_LABEL.items()]}
+    block = StatementReconciliation(rows=[StatementReconRow(
+        line=ln, column=c, period_end="2025-12-31", ciq=SENTINEL, filing=f,
+        gap=(SENTINEL - f) if f is not None else None, different=d, other_tag=o,
+        earlier_accession=e) for ln, c, f, d, o, e in rows],
+        as_filed_by="2026-10-23", source_ref="synthetic").model_dump(mode="json")
+    return {"annual": {"value": table, "status": "present"}, "statement_reconciliation": block}
+
+
 def _page(ticker: str, *, quarters: list[dict[str, Any]] | None = None,
           lease: dict[str, Any] | None = None, bridge: dict[str, Any] | None = None,
           ie: dict[str, Any] | None = None, iv: dict[str, Any] | None = None,
@@ -139,7 +162,8 @@ def _page(ticker: str, *, quarters: list[dict[str, Any]] | None = None,
           midcycle: dict[str, Any] | None = None,
           multiple: dict[str, Any] | None = None,
           band: dict[str, Any] | None = None,
-          ps: dict[str, Any] | None = None) -> dict[str, Any]:
+          ps: dict[str, Any] | None = None,
+          stmt: dict[str, Any] | None = None) -> dict[str, Any]:
     mech: dict[str, Any] = {
         "stock_info": {"market_cap": {"value": cap}, "shares_out": {"value": shares},
                        "price": {"value": spot}},
@@ -152,6 +176,8 @@ def _page(ticker: str, *, quarters: list[dict[str, Any]] | None = None,
             quarters=[EbitdaReconQuarter.model_validate(q) for q in quarters],
             ciq_ltm=SENTINEL, any_different=any(q["different"] for q in quarters),
             line="synthetic", source_ref="synthetic").model_dump(mode="json")}
+    if stmt is not None:
+        mech.setdefault("financial_summary", {}).update(stmt)
     if lease is not None:
         mech["valuation"]["lease_basis"] = lease
     if iv is not None:
@@ -190,7 +216,14 @@ def _fixture() -> dict[str, dict[str, Any]]:
             midcycle=_gap(basis_gap=BASIS_AGREE_PTS - 0.01),
             multiple={"metric": "TEV/EBIT", "snapshot_reconciles": True},
             band=_band(margins=True, flag=None),
-            ps=_ps(guide=CHECK_AGREE, wall=CHECK_AGREE, sign=CHECK_AGREE)),
+            ps=_ps(guide=CHECK_AGREE, wall=CHECK_AGREE, sign=CHECK_AGREE),
+            stmt=_stmt([("revenue", "FY22", 100.0, True, None, None),           # unexplained
+                        ("revenue", "FY23", 100.0, True, None, "0000000000-24-000001"),
+                        ("revenue", "FY24", 100.0, True, "Revenues", None),      # both stated
+                        ("revenue", "FY25", 100.0, False, None, None),           # confirmed
+                        ("revenue", "LTM", None, False, None, None),             # unchecked
+                        ("operating_cash_flow", "FY25", 50.0, False, None, None),
+                        ("operating_cash_flow", "LTM", 50.0, False, None, None)])),
         "BBB": _page(
             "BBB",
             lease=_lease(material=False, rent=100.0, cost=100.0 * _RENT_DISAGREE + 1.0, obs=[]),
@@ -213,7 +246,9 @@ def _fixture() -> dict[str, dict[str, Any]]:
             midcycle=_gap(basis_gap=None, same_source=True),
             multiple={"metric": "Price/Earnings", "snapshot_reconciles": None},
             band=_band(margins=False, flag="periodicity_mismatch"),
-            ps=_ps(guide=CHECK_NOT_RUN, wall=CHECK_NOT_RUN, sign=CHECK_NOT_RUN)),
+            ps=_ps(guide=CHECK_NOT_RUN, wall=CHECK_NOT_RUN, sign=CHECK_NOT_RUN),
+            # no revenue figure at all (a pre-revenue name); one OCF year differs, unexplained
+            stmt=_stmt([("operating_cash_flow", "FY25", 50.0, True, None, None)])),
     }
 
 
@@ -249,6 +284,31 @@ def test_ebitda_statuses_follow_the_pages_own_flags() -> None:
     # a block with no quarters is not a page the check ran on
     empty = _page("EEE", quarters=[])
     assert "not_run" in _row(_card({"EEE": empty}), "ebitda_vs_xbrl", "EEE")
+
+
+def test_statement_statuses_follow_the_rows_own_flags() -> None:
+    card = _card()
+    assert _row(card, "revenue_vs_xbrl", "AAA") == _counts(confirmed=1, stated=2, unexplained=1,
+                                                           unchecked=1)
+    assert _row(card, "ocf_vs_xbrl", "AAA") == _counts(confirmed=2)
+    assert _row(card, "ocf_vs_xbrl", "CCC") == _counts(unexplained=1)
+    assert _row(card, "revenue_vs_xbrl", "CCC") == {
+        "not_applicable": "CIQ's annual table carries no figure for this line"}
+    for cid in ("revenue_vs_xbrl", "ocf_vs_xbrl"):     # no block: never looked, not 'unchecked'
+        assert set(_row(card, cid, "BBB")) == {"not_run"}
+
+
+def test_a_statement_block_that_is_not_the_tables_is_not_scored() -> None:
+    """A refresh that moved the table and left the block would score figures the page no longer
+    shows — so the block is scored only while each of its CIQ figures IS the table's."""
+    page = _fixture()["AAA"]
+    page["mechanical"]["financial_summary"]["annual"]["value"]["rows"][0]["values"][0] += 1.0
+    card = _card({"AAA": page})
+    assert "stale" in _row(card, "revenue_vs_xbrl", "AAA")["not_run"]
+    assert _row(card, "ocf_vs_xbrl", "AAA") == _counts(confirmed=2)    # the other line still is
+    page = _fixture()["AAA"]
+    page["mechanical"]["financial_summary"]["statement_reconciliation"]["rows"].pop(0)
+    assert "stale" in _row(_card({"AAA": page}), "revenue_vs_xbrl", "AAA")["not_run"]
 
 
 def test_lease_rows_statuses_and_the_pre_adoption_split() -> None:
@@ -660,6 +720,96 @@ def test_the_all_clear_checks_fire_on_a_perturbed_committed_page() -> None:
     untouched = _card({t: _PAGES[t]})
     assert _row(untouched, "ev_bridge_vs_ciq_tev", t) == _counts(confirmed=1)
     assert _row(untouched, "market_cap_share_basis", t) == _counts(confirmed=1)
+
+
+def _stmt_rows(page: dict[str, Any], line: str) -> list[dict[str, Any]]:
+    sr = ((page["mechanical"].get("financial_summary") or {}).get("statement_reconciliation")
+          or {})
+    return [r for r in sr.get("rows") or [] if r["line"] == line]
+
+
+@needs_pages
+def test_the_statement_checks_count_every_committed_row_and_find_real_differences() -> None:
+    card = core.scorecard(ciq.SOURCE, ciq.corpus(_PAGES, ""), measured_on="2026-10-26",
+                          git_head=None, inputs_match_head=None)
+    for cid, line in (("revenue_vs_xbrl", "revenue"), ("ocf_vs_xbrl", "operating_cash_flow")):
+        c = _check(card, cid)
+        # every row the pages carry is a unit — none dropped, none invented — and every committed
+        # block is its own table's (none stale)
+        assert c["fleet"]["units"] == sum(len(_stmt_rows(p, line)) for p in _PAGES.values()), cid
+        assert c["fleet"]["items_not_run"] == 0, c["not_run"]
+        for t, row in c["by_name"].items():
+            rows = _stmt_rows(_PAGES[t], line)
+            named = sum(1 for r in rows if r["different"]
+                        and (r["other_tag"] or r["earlier_accession"]))
+            assert row.get(core.DIFFERS_STATED, 0) == named, (cid, t)
+    # CORPUS BEFORE SYNTHETIC: both 'differs' readings occur on a real page before being relied on
+    assert _check(card, "revenue_vs_xbrl")["fleet"][core.DIFFERS_STATED] > 0
+    assert _check(card, "ocf_vs_xbrl")["fleet"][core.DIFFERS_UNEXPLAINED] > 0
+
+
+class _FixtureEdgar:
+    """EDGAR answered from the committed companyfacts fixtures — the network is never touched."""
+
+    def __init__(self, ticker: str) -> None:
+        self._path = ROOT / "tests" / "fixtures" / "companyfacts" / f"{ticker}.json"
+
+    def companyfacts(self, cik: str) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(self._path.read_text())
+        return out
+
+
+@needs_pages
+def test_the_statement_checks_fire_on_a_perturbed_committed_page() -> None:
+    """CORPUS BEFORE SYNTHETIC. A committed page whose every revenue and OCF period confirms is
+    perturbed IN MEMORY the ways a CIQ figure goes wrong — another unit (×1,000), another period
+    (the year before's figure), another cell (revenue in the cash-flow row) — and rebuilt through
+    the back-fill against the committed filings: each lands as an unexplained difference, and the
+    untouched page still confirms."""
+    from vinci.dossier import statement_recon as sr
+    from vinci.dossier.refresh import statement_recon_transform
+
+    def years(p: dict[str, Any]) -> list[str]:
+        """Fiscal-year columns both lines carry, oldest first."""
+        ocf = {r["column"] for r in _stmt_rows(p, "operating_cash_flow") if not r["is_ltm"]}
+        return [r["column"] for r in _stmt_rows(p, "revenue")
+                if not r["is_ltm"] and r["column"] in ocf]
+
+    def clean(p: dict[str, Any]) -> bool:
+        """Every period confirms, and the year shift and the row swap are real errors on it."""
+        rows = _stmt_rows(p, "revenue") + _stmt_rows(p, "operating_cash_flow")
+        if len(years(p)) < 3 or any(r["filing"] is None or r["different"] for r in rows):
+            return False
+        v: dict[tuple[str, str], float] = {(r["line"], r["column"]): r["ciq"] for r in rows}
+        _u, c, y = years(p)[-3:]
+        return (abs(v[("revenue", c)] / v[("revenue", y)] - 1) > 0.05
+                and abs(v[("revenue", c)] / v[("operating_cash_flow", c)] - 1) > 0.05)
+
+    t = next(t for t, p in sorted(_PAGES.items()) if clean(p))
+    page = json.loads(json.dumps(_PAGES[t]))
+    fs = page["mechanical"]["financial_summary"]
+    table = fs["annual"]["value"]
+    vals = {r["label"]: r["values"] for r in table["rows"]}
+    rev, ocf = vals["Revenue ($M)"], vals["CFO ($M)"]
+    unit, cell, period = (table["columns"].index(c) for c in years(page)[-3:])
+    rev[unit] *= 1000.0                 # another unit: thousands read as millions
+    rev[period] = rev[cell]             # another period: the year before's revenue
+    ocf[cell] = rev[cell]               # another cell: revenue in the cash-flow row
+    figures = [sr.CiqFigure(r["line"], r["column"], date.fromisoformat(r["period_end"]),
+                            r["is_ltm"], sr.table_figures(table)[(r["line"], r["column"])])
+               for r in fs.pop("statement_reconciliation")["rows"]]
+    refused: list[str] = []
+    page["mechanical"] = statement_recon_transform(
+        page, edgar=_FixtureEdgar(t), refused=refused, figures_for=lambda _t: figures)(
+        page["mechanical"])
+    assert refused == []
+    card = _card({t: page})
+    n_rev, n_ocf = len(_stmt_rows(page, "revenue")), len(_stmt_rows(page, "operating_cash_flow"))
+    assert _row(card, "revenue_vs_xbrl", t) == _counts(confirmed=n_rev - 2, unexplained=2)
+    assert _row(card, "ocf_vs_xbrl", t) == _counts(confirmed=n_ocf - 1, unexplained=1)
+    untouched = _card({t: _PAGES[t]})
+    assert _row(untouched, "revenue_vs_xbrl", t) == _counts(confirmed=n_rev)
+    assert _row(untouched, "ocf_vs_xbrl", t) == _counts(confirmed=n_ocf)
 
 
 #: Where each stored outcome sits on a page, by the check that scores it.

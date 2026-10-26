@@ -5106,6 +5106,172 @@
         "ratio": null,
         "divergent": false,
         "note": "no actual column carries both EBITDA and EBIT — nothing to compare across the boundary"
+      },
+      "statement_reconciliation": {
+        "rows": [
+          {
+            "line": "revenue",
+            "column": "FY22",
+            "period_end": "2022-10-01",
+            "ciq": 3419.391,
+            "is_ltm": false,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no revenue fact for this period on any alias tag, as filed by 2026-08-18"
+          },
+          {
+            "line": "revenue",
+            "column": "FY23",
+            "period_end": "2023-09-30",
+            "ciq": 3845.619,
+            "is_ltm": false,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no revenue fact for this period on any alias tag, as filed by 2026-08-18"
+          },
+          {
+            "line": "revenue",
+            "column": "FY24",
+            "period_end": "2024-09-28",
+            "ciq": 4219.63,
+            "is_ltm": false,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no revenue fact for this period on any alias tag, as filed by 2026-08-18"
+          },
+          {
+            "line": "revenue",
+            "column": "FY25",
+            "period_end": "2025-09-27",
+            "ciq": 4412.982,
+            "is_ltm": false,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no revenue fact for this period on any alias tag, as filed by 2026-08-18"
+          },
+          {
+            "line": "revenue",
+            "column": "LTM",
+            "period_end": "2026-06-30",
+            "ciq": 5711.988,
+            "is_ltm": true,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no revenue fact for this period on any alias tag, as filed by 2026-08-18 (no twelve-month figure, and no fiscal year with both year-to-dates on one tag)"
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "FY22",
+            "period_end": "2022-10-01",
+            "ciq": -166.9,
+            "is_ltm": false,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no operating_cash_flow fact for this period on any alias tag, as filed by 2026-08-18"
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "FY23",
+            "period_end": "2023-09-30",
+            "ciq": -95.6,
+            "is_ltm": false,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no operating_cash_flow fact for this period on any alias tag, as filed by 2026-08-18"
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "FY24",
+            "period_end": "2024-09-28",
+            "ciq": -140.2,
+            "is_ltm": false,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no operating_cash_flow fact for this period on any alias tag, as filed by 2026-08-18"
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "FY25",
+            "period_end": "2025-09-27",
+            "ciq": -166.4,
+            "is_ltm": false,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no operating_cash_flow fact for this period on any alias tag, as filed by 2026-08-18"
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "LTM",
+            "period_end": "2026-06-30",
+            "ciq": -455.7,
+            "is_ltm": true,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no operating_cash_flow fact for this period on any alias tag, as filed by 2026-08-18 (no twelve-month figure, and no fiscal year with both year-to-dates on one tag)"
+          }
+        ],
+        "as_filed_by": "2026-08-18",
+        "source_ref": "CIQ Financials (Annual)→Income Statement 'Total Revenue' and →Cash Flow 'Cash from Ops.' against EDGAR XBRL (the first revenue / operating-cash-flow alias reporting the period)"
       }
     },
     "primary_source": {
@@ -9483,6 +9649,14 @@
       "layers": [
         "mechanical.primary_source",
         "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-10-26",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
       ]
     }
   ],
