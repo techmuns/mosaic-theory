@@ -255,6 +255,120 @@ def test_ledger_append_get_iter_and_no_dup(store: Store) -> None:
         store.append_ledger(entry)
 
 
+# --- the ledger is append-only IN THE ENGINE (triggers, 2026-10-26) ---------------------------
+_APPEND_ONLY = "decision_ledger is append-only"
+_TRIGGERS = {"decision_ledger_no_update", "decision_ledger_no_delete", "decision_ledger_no_rewrite"}
+
+
+def _ledger_rows(s: Store) -> list[dict[str, object]]:
+    return [dict(r) for r in s._conn.execute(                              # noqa: SLF001
+        "SELECT * FROM decision_ledger ORDER BY entry_id")]
+
+
+def test_the_engine_refuses_every_rewrite_of_a_logged_verdict(store: Store) -> None:
+    """NEGATIVE PIN. Until now `decision_ledger` was append-only only because no caller happened to
+    issue an UPDATE or a DELETE. Each SQL shape that can change a logged row is refused now:
+    UPDATE, DELETE, an UPSERT (whose DO UPDATE fires the update trigger), and `INSERT OR REPLACE`
+    with a different row under the same entry_id. The last one matters most. REPLACE deletes the
+    conflicting row WITHOUT firing delete triggers (recursive_triggers is off), so with only the
+    two theme-intelligence-style triggers it rewrites a verdict silently, and it is the very
+    statement `rebuild_from_snapshots` runs."""
+    store.append_ledger(_ledger_entry(_identity()))
+    before = _ledger_rows(store)
+    conn = store._conn                                                     # noqa: SLF001
+    rewrites = [
+        ("UPDATE decision_ledger SET verdict = 'AVOID_TERMINAL' WHERE entry_id = 'led-0001'", ()),
+        ("DELETE FROM decision_ledger WHERE entry_id = 'led-0001'", ()),
+        ("DELETE FROM decision_ledger", ()),
+        ("INSERT INTO decision_ledger SELECT * FROM decision_ledger WHERE entry_id = 'led-0001' "
+         "ON CONFLICT(entry_id) DO UPDATE SET entry_price = 1.0", ()),
+        ("INSERT OR REPLACE INTO decision_ledger (entry_id, candidate_id, internal_id, ticker, "
+         "verdict, entry_price, entry_price_as_of, horizon_days, decided_at, payload) "
+         "SELECT entry_id, candidate_id, internal_id, ticker, verdict, ?, entry_price_as_of, "
+         "horizon_days, decided_at, payload FROM decision_ledger", (1.0,)),
+    ]
+    for sql, params in rewrites:
+        with pytest.raises(sqlite3.IntegrityError, match=_APPEND_ONLY):
+            conn.execute(sql, params)
+    assert _ledger_rows(store) == before, "a refused rewrite must leave the logged row untouched"
+
+
+def test_the_legitimate_writes_still_land(store: Store, tmp_path: Path) -> None:
+    """POSITIVE PIN — the triggers must not break a write the fund relies on. A new entry appends;
+    re-seeding a DB that already holds the identical rows (what the weekly screen and the monthly
+    score do on every run, via `rebuild_from_snapshots`) is a no-op, not an error; and a re-seed
+    that brings a NEW entry_id appends it."""
+    ident = _identity()
+    store.append_ledger(_ledger_entry(ident))
+    second = _ledger_entry(ident).model_copy(update={"entry_id": "led-0002"})
+    store.append_ledger(second)
+    snaps = tmp_path / "snaps"
+    store.export_snapshots(snaps, tables=["decision_ledger"])
+    before = _ledger_rows(store)
+    assert store.rebuild_from_snapshots(snaps, tables=["decision_ledger"]) == {
+        "decision_ledger": 2}
+    assert _ledger_rows(store) == before
+    with Store(tmp_path / "other.db") as other:               # a DB holding only the first row
+        other.append_ledger(_ledger_entry(ident))
+        other.rebuild_from_snapshots(snaps, tables=["decision_ledger"])
+        assert _ledger_rows(other) == before
+
+
+def test_an_existing_working_db_gains_the_triggers_when_opened(tmp_path: Path) -> None:
+    """THE MIGRATION. Every operator DB predates the triggers; `init_schema` runs on each open and
+    the DDL says `IF NOT EXISTS`, so opening one installs them with its rows intact. Simulated by
+    dropping them from a DB that already holds a verdict — the shape of every DB built before
+    2026-10-26 (the two real working DBs holding the 7-row ledger carried no trigger at all)."""
+    db = tmp_path / "old.db"
+    with Store(db) as s:
+        s.append_ledger(_ledger_entry(_identity()))
+        for t in _TRIGGERS:
+            s._conn.execute(f"DROP TRIGGER {t}")                           # noqa: SLF001
+        s._conn.commit()                                                   # noqa: SLF001
+        before = _ledger_rows(s)
+    with Store(db) as s:
+        names = {r[0] for r in s._conn.execute(                            # noqa: SLF001
+            "SELECT name FROM sqlite_master WHERE type = 'trigger'")}
+        assert names >= _TRIGGERS
+        assert _ledger_rows(s) == before
+        with pytest.raises(sqlite3.IntegrityError, match=_APPEND_ONLY):
+            s._conn.execute("DELETE FROM decision_ledger")                 # noqa: SLF001
+    with Store(db) as s:     # every LATER open meets the triggers already there — and must not fail
+        assert _ledger_rows(s) == before
+
+
+def test_the_committed_ledger_cannot_be_rewritten_once_loaded(tmp_path: Path) -> None:
+    """CORPUS, NOT A FIXTURE. Loads the LIVE committed `decision_ledger.jsonl` the way the weekly
+    screen and the monthly score do, then tries to change every real row three ways. Each is
+    refused, a second identical load is a no-op, and every row still equals its committed line."""
+    committed = Path(__file__).resolve().parents[1] / "data" / "snapshots" / "decision_ledger.jsonl"
+    lines = [json.loads(ln) for ln in committed.read_text().splitlines() if ln.strip()]
+    assert len(lines) >= 7, f"the committed ledger read {len(lines)} rows — it only grows"
+    snaps = tmp_path / "snaps"
+    snaps.mkdir()
+    (snaps / "decision_ledger.jsonl").write_text(committed.read_text())
+    with Store(tmp_path / "w.db") as s:
+        s.rebuild_from_snapshots(snaps, tables=["decision_ledger"])
+        conn = s._conn                                                     # noqa: SLF001
+        for row in lines:
+            eid = row["entry_id"]
+            for sql, params in (
+                ("UPDATE decision_ledger SET payload = '{}' WHERE entry_id = ?", (eid,)),
+                ("DELETE FROM decision_ledger WHERE entry_id = ?", (eid,)),
+                ("INSERT OR REPLACE INTO decision_ledger (entry_id, candidate_id, internal_id, "
+                 "ticker, verdict, entry_price, entry_price_as_of, horizon_days, decided_at, "
+                 "payload) VALUES (?,?,?,?,?,?,?,?,?,?)",
+                 (eid, row["candidate_id"], row["internal_id"], row["ticker"], row["verdict"],
+                  row["entry_price"] * 2, row["entry_price_as_of"], row["horizon_days"],
+                  row["decided_at"], row["payload"])),
+            ):
+                with pytest.raises(sqlite3.IntegrityError, match=_APPEND_ONLY):
+                    conn.execute(sql, params)
+        s.rebuild_from_snapshots(snaps, tables=["decision_ledger"])      # identical re-seed
+        assert _ledger_rows(s) == sorted(lines, key=lambda r: r["entry_id"])
+        assert len(list(s.iter_ledger())) == len(lines)
+
+
 # --- durable snapshot round-trip --------------------------------------------------------------
 def test_snapshot_export_and_rebuild(tmp_path: Path) -> None:
     snap = tmp_path / "snapshots"

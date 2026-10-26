@@ -119,6 +119,12 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Outcome layer / outcome fence** (2026-10-26). Plain words: *the outcome layer is the code that
+  computes or writes forward returns — `vinci.scoring` (the spread at each horizon), `vinci.ledger`
+  (verdict writes) and `vinci.monitor` (excess returns, the interim spread, realized P&L). An
+  outcome fence is a test that fails if a module setting a gate, threshold or criterion can import
+  any of it, directly or through another module.* Home: `tests/test_outcome_import_fences.py`; the
+  older per-package fences in `test_rank.py`, `test_themes.py`, `test_dossier.py`, `test_sleeves.py`.
 - **Data-quality scorecard / source / internal vs independent check / failure class** (2026-10-23)
   — `vinci audit quality`. Plain words: *a count, per check and per name, of how often a data
   source's figure agrees with a second figure. A **source** is one plug-in module (CIQ today).
