@@ -1545,6 +1545,75 @@ def cross_check_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str]
     return _apply
 
 
+def _export_figures(ticker: str) -> list[Any]:
+    """The annual Revenue and CFO figures of the name's CIQ export, each with its period end."""
+    from vinci.dossier import statement_recon as sr
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    files = LocalFolderStore.from_config().files(ticker)
+    return sr.ciq_figures(CiqBundle.from_files(ticker, files))
+
+
+def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str],
+                              figures_for: Callable[[str], list[Any]] = _export_figures,
+                              ) -> Transform:
+    """A `refresh_dossier` transform writing `financial_summary.statement_reconciliation` — CIQ's
+    annual revenue and operating cash flow against the filings, per column — onto a committed page,
+    under a KEPT synthesis, through the assembler's own builder (`statement_recon.reconcile`).
+
+    THE EXPORT IS READ FOR ONE THING THE PAGE DOES NOT CARRY: each column's period end (CIQ's
+    header; a column label names only a year). Its figures are PROVED the page's own first —
+    every Revenue and CFO figure the export gives must equal the page's stored value in the same
+    column, and none may be missing (`statement_recon.table_figures`) — so the block is built on the
+    page's numbers, never a later pull's. EDGAR's facts are read as FILED BY the page's assembly
+    date. A page that does not reproduce, has no export, or already holds a different block is
+    left as it is and named in ``refused``."""
+    from vinci.dossier import mechanical as dm
+    from vinci.dossier import statement_recon as sr
+    from vinci.dossier.ciq import CiqUnavailableError
+
+    ticker = str(doc.get("ticker"))
+    cik = doc.get("cik")
+    if not doc.get("assembled_at"):
+        raise RefreshRefusedError(f"{ticker}: no assembled_at — the facts cannot be read as "
+                                  "assembly read them")
+    assembled = date.fromisoformat(str(doc["assembled_at"])[:10])
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        fs = out.get("financial_summary")
+        table = ((fs or {}).get("annual") or {}).get("value")
+        if not isinstance(fs, dict) or not isinstance(table, dict):
+            refused.append(f"{ticker}: no annual financial-summary table")
+            return out
+        try:
+            figures = figures_for(ticker)
+        except (FileNotFoundError, CiqUnavailableError) as exc:
+            refused.append(f"{ticker}: no CIQ export to read the period ends from ({exc})")
+            return out
+        got = {(f.line, f.column): f.value for f in figures}
+        if got != (want := sr.table_figures(table)):
+            off = sorted({k for k in got.keys() | want.keys() if got.get(k) != want.get(k)})
+            refused.append(f"{ticker}: the export does not reproduce the page's annual table at "
+                           f"{len(off)} figure(s), first {off[0]} — not the page's own export")
+            return out
+        rec = sr.reconcile(figures, dm._companyfacts_or_none(edgar, cik), filed_by=assembled)
+        if rec is None:
+            refused.append(f"{ticker}: no EDGAR facts, or no CIQ figure — nothing to set side by "
+                           "side")
+            return out
+        new = json.loads(rec.model_dump_json())
+        if fs.get("statement_reconciliation") not in (None, new):
+            refused.append(f"{ticker}: statement_reconciliation on the page differs from the "
+                           "rebuild — kept, never overwritten")
+            return out
+        fs["statement_reconciliation"] = new
+        return out
+
+    return _apply
+
+
 def _base_leg(ticker: str) -> dict[str, Any] | None:
     """The `base` scenario leg plus the facts the decomposition needs, or None.
 

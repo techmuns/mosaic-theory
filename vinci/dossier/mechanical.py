@@ -21,7 +21,7 @@ from datetime import date, timedelta
 from typing import Any, NamedTuple, TypeVar
 
 from vinci.config import get_config
-from vinci.dossier import ciq_sheets, edgar_fundamentals, lease_basis
+from vinci.dossier import ciq_sheets, edgar_fundamentals, lease_basis, statement_recon
 from vinci.dossier.capital_allocation import (
     build_capital_allocation,
     build_peer_capital_intensity,
@@ -4788,9 +4788,12 @@ def assemble_mechanical(
     # price, and CIQ's EBITDA against the filings — deterministic, from the page's own fields, the
     # EDGAR facts and the releases parsed above, and BEFORE the synthesis reads `mech`, so the
     # prose argues from the stated bases rather than a bare 13.3x
+    facts = _companyfacts_or_none(edgar, record.identity.cik)
     mech = with_valuation_bases(
-        mech, _companyfacts_or_none(edgar, record.identity.cik), bundle,
-        text_for=release_text_fn(http, record.identity.cik))
+        mech, facts, bundle, text_for=release_text_fn(http, record.identity.cik))
+    # (2026-10-26) the annual table's revenue and operating cash flow against the filings, per
+    # column, from the same export — what the data-quality scorecard's two checks read
+    mech = statement_recon.attach(mech, bundle, facts, filed_by=today)
     # (catalyst calendar) dated events + what each tests — needs drawdown_cause (the guide) and
     # capital_structure (maturities), both on mech by now; its misses ride the QA channel.
     calendar = _catalyst_calendar(edgar, record.identity.cik, reference_date, mech)
