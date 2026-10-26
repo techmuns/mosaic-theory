@@ -4356,6 +4356,108 @@
         "ratio": 0.0,
         "divergent": true,
         "note": "the estimate columns imply 0 of D&A against 1 in the actuals (0.00x) — the consensus EBITDA row adds back LESS than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row."
+      },
+      "statement_reconciliation": {
+        "rows": [
+          {
+            "line": "operating_cash_flow",
+            "column": "FY21",
+            "period_end": "2021-12-31",
+            "ciq": -12.454,
+            "is_ltm": false,
+            "filing": -98.025,
+            "construction": "fiscal year",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "accession": "0000950170-23-009527",
+            "gap": 85.571,
+            "different": true,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": null
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "FY22",
+            "period_end": "2022-12-31",
+            "ciq": -27.637,
+            "is_ltm": false,
+            "filing": -97.208,
+            "construction": "fiscal year",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "accession": "0000950170-24-031635",
+            "gap": 69.571,
+            "different": true,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": null
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "FY23",
+            "period_end": "2023-12-31",
+            "ciq": -40.681,
+            "is_ltm": false,
+            "filing": -40.681,
+            "construction": "fiscal year",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "accession": "0000950170-25-042648",
+            "gap": 0.0,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": null
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "FY24",
+            "period_end": "2024-12-31",
+            "ciq": -59.08,
+            "is_ltm": false,
+            "filing": -59.08,
+            "construction": "fiscal year",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "accession": "0001193125-26-076793",
+            "gap": 0.0,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": null
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "FY25",
+            "period_end": "2025-12-31",
+            "ciq": -60.078,
+            "is_ltm": false,
+            "filing": -60.078,
+            "construction": "fiscal year",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "accession": "0001193125-26-076793",
+            "gap": 0.0,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": null
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "LTM",
+            "period_end": "2026-06-30",
+            "ciq": -72.14,
+            "is_ltm": true,
+            "filing": -72.14,
+            "construction": "fiscal year + year-to-date − prior year-to-date",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "accession": "0001193125-26-338062",
+            "gap": 0.0,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": null
+          }
+        ],
+        "as_filed_by": "2026-09-28",
+        "source_ref": "CIQ Financials (Annual)→Income Statement 'Total Revenue' and →Cash Flow 'Cash from Ops.' against EDGAR XBRL (the first revenue / operating-cash-flow alias reporting the period)"
       }
     },
     "primary_source": {
@@ -8129,6 +8231,14 @@
       "layers": [
         "mechanical.primary_source",
         "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-10-26",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
       ]
     }
   ],

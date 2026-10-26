@@ -1647,6 +1647,37 @@ class EbitdaReconciliation(BaseModel, frozen=True):
     source_ref: str
 
 
+class StatementReconRow(BaseModel, frozen=True):
+    """One figure of the annual table's Revenue or CFO row set against the same period rebuilt
+    from the filer's XBRL (`vinci.dossier.statement_recon`)."""
+
+    line: str                                 # "revenue" | "operating_cash_flow"
+    column: str                               # the annual table's own column label
+    period_end: str                           # ISO — read off CIQ's period header, never a label
+    ciq: float                                # $M — the table's value in that column, unrounded
+    is_ltm: bool = False
+    filing: float | None = None               # $M, as filed by `as_filed_by`; None when not rebuilt
+    construction: str | None = None
+    tag: str | None = None
+    accession: str | None = None
+    gap: float | None = None                  # $M, ciq − filing
+    different: bool = False                   # beyond `statement_recon.DIFFERENT_SHARE`
+    # A DIFFERENCE THE FILINGS EXPLAIN, named: CIQ's figure is another alias tag's for the same
+    # period, or an earlier filing's for the fiscal year (restated since)
+    other_tag: str | None = None
+    earlier_accession: str | None = None
+    note: str | None = None                   # why no filing figure
+
+
+class StatementReconciliation(BaseModel, frozen=True):
+    """CIQ's annual revenue and operating cash flow against the filings, column by column
+    (2026-10-26) — what the data-quality scorecard's `revenue_vs_xbrl` and `ocf_vs_xbrl` read."""
+
+    rows: list[StatementReconRow]
+    as_filed_by: str                          # ISO — the facts as filed by this date
+    source_ref: str
+
+
 class FinancialSummary(BaseModel):
     """The FINANCIAL-SUMMARY appendix (C1–C4): the fusion of CIQ Financials ACTUALS with Estimates
     CONSENSUS, rendered after the twins. ``annual`` = last-4-FY + LTM + FY26E/FY27E (E cols marked
@@ -1667,6 +1698,9 @@ class FinancialSummary(BaseModel):
     #: (2026-10-21) CIQ's quarterly EBITDA against the filings' (`vinci.dossier.ebitda_recon`).
     #: Absent until built (`DROP_WHEN_NONE`).
     ebitda_reconciliation: EbitdaReconciliation | None = None
+    #: (2026-10-26) the annual table's Revenue and CFO against the filings
+    #: (`vinci.dossier.statement_recon`). Absent until built (`DROP_WHEN_NONE`).
+    statement_reconciliation: StatementReconciliation | None = None
 
     model_config = {"frozen": True}
 
@@ -2678,6 +2712,7 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("consensus_context", "consensus_levels"),
     ("financial_summary", "ebitda_basis"),
     ("financial_summary", "ebitda_reconciliation"),
+    ("financial_summary", "statement_reconciliation"),
     ("", "capital_allocation"),
     ("", "peer_capital_intensity"),
     ("", "dilution_pipeline"),
