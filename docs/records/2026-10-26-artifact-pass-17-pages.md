@@ -1,8 +1,8 @@
 ---
 id: 2026-10-26-artifact-pass-17-pages
-status: open
+status: shipped
 date: 2026-10-26
-prs: []
+prs: [811]
 supersedes:
 superseded-by:
 ---
