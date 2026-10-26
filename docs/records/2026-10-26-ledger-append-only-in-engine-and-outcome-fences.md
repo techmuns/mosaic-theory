@@ -106,6 +106,12 @@ agent loop is allowed. Both are closed here.
 
     The last two came from this build's `/code-review high`, which found both bypasses. Both
     were fenced, and both mutants were then killed.
+  - **Round 1 (Codex P2 on #800).** A PACKAGE import followed by an attribute got past the fence:
+    `from vinci import schemas` then `schemas.LedgerEntry`, or `import vinci.schemas.candidate`
+    then `vinci.schemas.ledger.LedgerEntry`. The import names only the package. The parser now
+    resolves attribute chains through any name an import bound. Five parser pins fail on the PR
+    head. As mutants in `screens/screen2.py` and `cohort.py`, both shapes SURVIVE the PR-head fence
+    and are KILLED by the fixed one.
 - **Corpus before synthetic.**
   - `test_the_committed_ledger_cannot_be_rewritten_once_loaded` loads the LIVE committed ledger and
     attacks every real row three ways.

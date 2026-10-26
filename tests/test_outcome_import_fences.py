@@ -25,7 +25,8 @@ as reaching `vinci.store`, while a fresh `import vinci.rank` loads neither. `vin
 is banned DIRECTLY only, because `vinci/schemas/__init__.py` re-exports it and any
 `vinci.schemas.*` import therefore loads it.
 
-WHICH HALF THIS COVERS: imports, static and literal-string dynamic; the Store's two ledger
+WHICH HALF THIS COVERS: imports, static and literal-string dynamic, and attribute chains through
+an imported name (`schemas.LedgerEntry` after `from vinci import schemas`); the Store's two ledger
 readers by attribute name; and `decision_ledger` named in code (raw SQL, or the committed JSONL
 by path), docstrings excepted. A path built from parts, `getattr` with a computed name, or a read
 of `data/monitor/*.json` or the scoring report is NOT caught. None of the four does today (grep,
@@ -91,12 +92,21 @@ def _files(name: str) -> list[pathlib.Path]:
 def imported_names(src: str, *, module: str, is_package: bool = False) -> set[str]:
     """Every dotted name ``src`` imports — `import a.b`, `from a import b` (as `a` AND `a.b`, so
     `from vinci import scoring` is seen), relative imports resolved against ``module``, imports
-    inside functions, and `importlib.import_module("…")` / `__import__("…")` with a literal."""
+    inside functions, and `importlib.import_module("…")` / `__import__("…")` with a literal.
+
+    PLUS every attribute chain rooted in a name an import bound, resolved to its dotted target:
+    `from vinci import schemas` then `schemas.LedgerEntry` yields `vinci.schemas.LedgerEntry`.
+    A package import is a handle on everything the package re-exports (Codex P2 on #800)."""
     pkg = module if is_package else module.rpartition(".")[0]
+    tree = ast.parse(src)
     out: set[str] = set()
-    for node in ast.walk(ast.parse(src)):
+    bound: dict[str, str] = {}
+    for node in ast.walk(tree):
         if isinstance(node, ast.Import):
-            out.update(a.name for a in node.names)
+            for a in node.names:
+                out.add(a.name)
+                head = a.name.split(".")[0]
+                bound[a.asname or head] = a.name if a.asname else head
         elif isinstance(node, ast.ImportFrom):
             base = node.module or ""
             if node.level:
@@ -104,7 +114,9 @@ def imported_names(src: str, *, module: str, is_package: bool = False) -> set[st
                 anchor = ".".join(parts[: len(parts) - (node.level - 1)])
                 base = f"{anchor}.{base}" if base else anchor
             out.add(base)
-            out.update(f"{base}.{a.name}" for a in node.names)
+            for a in node.names:
+                out.add(f"{base}.{a.name}")
+                bound[a.asname or a.name] = f"{base}.{a.name}"
         elif isinstance(node, ast.Call):
             fn = node.func
             called = fn.attr if isinstance(fn, ast.Attribute) else getattr(fn, "id", None)
@@ -112,6 +124,14 @@ def imported_names(src: str, *, module: str, is_package: bool = False) -> set[st
             if (called in ("import_module", "__import__") and isinstance(arg, ast.Constant)
                     and isinstance(arg.value, str)):
                 out.add(arg.value)
+    for node in ast.walk(tree):
+        attrs: list[str] = []
+        root: ast.expr = node if isinstance(node, ast.Attribute) else ast.Constant(None)
+        while isinstance(root, ast.Attribute):
+            attrs.append(root.attr)
+            root = root.value
+        if attrs and isinstance(root, ast.Name) and root.id in bound:
+            out.add(".".join([bound[root.id], *reversed(attrs)]))
     return out
 
 
@@ -249,6 +269,13 @@ def test_the_fences_scan_the_modules_they_name() -> None:
     "__import__('vinci.scoring')",
     "from ..scoring import metrics",
     "from vinci.schemas import LedgerEntry",
+    # THE PACKAGE, THEN AN ATTRIBUTE (Codex P2 on #800): the import names only `vinci.schemas`,
+    # and the row type is reached through the package's re-export one attribute later.
+    "from vinci import schemas\nx = schemas.LedgerEntry",
+    "import vinci.schemas\nx = vinci.schemas.LedgerEntry",
+    "import vinci.schemas as s\nx = s.LedgerEntry.model_fields",
+    "import vinci.schemas.candidate\nx = vinci.schemas.ledger.LedgerEntry",
+    "import vinci\nx = vinci.scoring.metrics",
 ])
 def test_every_import_shape_reaching_the_outcome_layer_is_seen(src: str) -> None:
     """NEGATIVE PIN. Each of these crosses the line. `from vinci import scoring` is the shape the
@@ -265,6 +292,8 @@ def test_every_import_shape_reaching_the_outcome_layer_is_seen(src: str) -> None
     "from vinci.store import Store",
     "import vinci.scenarios",
     "x = 'vinci.scoring'",
+    "import vinci.schemas.candidate\nx = vinci.schemas.candidate.CandidateRecord",
+    "schemas = load()\nx = schemas.LedgerEntry",           # a local, not an import
 ])
 def test_words_about_the_outcome_layer_are_not_an_import(src: str) -> None:
     """POSITIVE PIN. A docstring, a comment or a string that is not imported does not cross; nor
