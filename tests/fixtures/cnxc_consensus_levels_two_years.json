@@ -1,0 +1,41 @@
+{
+ "_source": "data/dossiers/CNXC/dossier.json at main 7213d486, mechanical.consensus_context.consensus_levels (assembled 2026-08-18) \u2014 FROZEN: the two-forward-year minimum case for the adjacent-year check; the live page moves with every CIQ export (FY2028 arrived 2026-10-26)",
+ "consensus_levels": {
+  "EBITDA": [
+   {
+    "estimates": "3/3",
+    "fy": "2026",
+    "high": 1461.005,
+    "low": 1400.0,
+    "median": 1429.10059,
+    "std_dev": 24.91395
+   },
+   {
+    "estimates": "3/3",
+    "fy": "2027",
+    "high": 1504.092,
+    "low": 1473.6,
+    "median": 1474.18318,
+    "std_dev": 14.2386
+   }
+  ],
+  "Revenue": [
+   {
+    "estimates": "3/3",
+    "fy": "2026",
+    "high": 10000.0,
+    "low": 9925.012,
+    "median": 9975.32728,
+    "std_dev": 31.20465
+   },
+   {
+    "estimates": "3/3",
+    "fy": "2027",
+    "high": 10161.873,
+    "low": 10035.40357,
+    "median": 10074.7,
+    "std_dev": 52.84974
+   }
+  ]
+ }
+}

@@ -226,8 +226,11 @@ def test_propose_then_create_writes_an_r4_record_on_the_pages_bridge(
                  multiple_derivation="today's NTM EV/EBIT, scaled for the leg")
     tpl["scenarios"]["base"].update(years_to_terminal=1.25, leg_fy="2028")
     tpl["scenarios"]["bear"]["bear_basis"] = "analyst"
+    # struck on the page's OWN close: a fixed date reds on every re-assembly onto a later close
+    # (`scenario-create` refuses a spot after the underwrite date, correctly)
+    assert tpl["spot_as_of"], f"{ticker}: the page carries no spot date to strike the legs on"
     tpl.update(entry_basis="NTM", entry_denominator=round(ebit / 1.5, 1),
-               underwrite_date="2026-10-09", analyst="test")
+               underwrite_date=tpl["spot_as_of"], analyst="test")
     out.write_text(json.dumps(tpl))
     assert _cmd_scenario_create(argparse.Namespace(ticker=ticker, from_file=str(out))) == 0
 
