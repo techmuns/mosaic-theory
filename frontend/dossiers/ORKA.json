@@ -4563,6 +4563,60 @@
         "ratio": -19.879518072289436,
         "divergent": true,
         "note": "the estimate columns imply -2 of D&A against 0 in the actuals (-19.88x) — the consensus EBITDA row adds back LESS than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row."
+      },
+      "statement_reconciliation": {
+        "rows": [
+          {
+            "line": "operating_cash_flow",
+            "column": "FY24",
+            "period_end": "2024-12-31",
+            "ciq": -63.095,
+            "is_ltm": false,
+            "filing": null,
+            "construction": null,
+            "tag": null,
+            "accession": null,
+            "gap": null,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": "no operating_cash_flow fact for this period on any alias tag, as filed by 2026-09-28"
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "FY25",
+            "period_end": "2025-12-31",
+            "ciq": -88.21,
+            "is_ltm": false,
+            "filing": -88.21,
+            "construction": "fiscal year",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "accession": "0001213900-26-026929",
+            "gap": 0.0,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": null
+          },
+          {
+            "line": "operating_cash_flow",
+            "column": "LTM",
+            "period_end": "2026-06-30",
+            "ciq": -100.919,
+            "is_ltm": true,
+            "filing": -100.919,
+            "construction": "fiscal year + year-to-date − prior year-to-date",
+            "tag": "NetCashProvidedByUsedInOperatingActivities",
+            "accession": "0001213900-26-087231",
+            "gap": 0.0,
+            "different": false,
+            "other_tag": null,
+            "earlier_accession": null,
+            "note": null
+          }
+        ],
+        "as_filed_by": "2026-09-28",
+        "source_ref": "CIQ Financials (Annual)→Income Statement 'Total Revenue' and →Cash Flow 'Cash from Ops.' against EDGAR XBRL (the first revenue / operating-cash-flow alias reporting the period)"
       }
     },
     "primary_source": {
@@ -8728,6 +8782,14 @@
       "layers": [
         "mechanical.primary_source",
         "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-10-26",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
       ]
     }
   ],
