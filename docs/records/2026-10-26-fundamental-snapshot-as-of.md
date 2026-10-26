@@ -1,8 +1,8 @@
 ---
 id: 2026-10-26-fundamental-snapshot-as-of
-status: open
+status: shipped
 date: 2026-10-26
-prs: []
+prs: [801]
 supersedes:
 superseded-by:
 ---
