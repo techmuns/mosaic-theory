@@ -166,9 +166,14 @@ def score_ledger(
 
         name_bars = store.get_price_history(entry.internal_id)
         exit_bar = bar_on_or_before(name_bars, scoring_date)
+        # THE SESSION THE SEALED ENTRY DATE RESOLVES TO — the dividend window starts there, so an
+        # entry stamped on a non-session day is read from the close it actually is
+        name_in = bar_on_or_before(name_bars, entry_date)
         bench_in = bar_on_or_before(bench_bars, entry_date)
         bench_out = bar_on_or_before(bench_bars, scoring_date)
-        if exit_bar is None or bench_in is None or bench_out is None:
+        # A bar dated BEFORE the entry is no forward price: the name's bars stop short of it
+        if (exit_bar is None or bench_in is None or bench_out is None
+                or exit_bar.bar_date < entry_date):
             # No forward/benchmark price yet → cannot score. SCOPED HERE TOO, and this is the
             # easier half to miss: the row never reaches ``scores``, so the origin filter below
             # can never see it. A followed name whose bars are not loaded yet would land in the
@@ -185,7 +190,8 @@ def score_ledger(
         sec = store.get_security(entry.internal_id)
         name_sym = sec.eod_symbol if sec is not None else entry.ticker
         try:
-            name_div = dividends(name_sym, entry_date, exit_bar.bar_date)
+            name_div = dividends(name_sym, name_in.bar_date if name_in is not None else entry_date,
+                                 exit_bar.bar_date)
             bench_div = dividends(_applied, bench_in.bar_date, bench_out.bar_date)
         except DividendsUnknownError as exc:
             if resolved:

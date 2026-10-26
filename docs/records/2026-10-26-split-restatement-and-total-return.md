@@ -192,6 +192,14 @@ outcome.
   early edit to `vinci/scoring/__init__.py` was made by script; it was reverted and re-made through
   the Edit tool so the guard asked. Later edits to `metrics.py` by script came after its approved
   Edit, inside the guard's once-per-file approval.
+- **Review.** `/code-review high --fix`, round 0, 5 findings:
+  - Two fixed, each behind a pin that fails on the pre-fix harness:
+    - a name whose bars stop before its entry crashed the harness with ValueError; it is now
+      pending, since a bar before the entry is no forward price;
+    - the name's dividend window started at the sealed entry date rather than the session it
+      resolves to.
+  - Three skipped: the Tiingo pre-publication cache, the anchor beyond the plan window, and a
+    duplicated anchor read (see WHAT IT COSTS).
 - **Suite and gate.** `pytest -m "not network"` on the final tree: 6,550 passed, 526 skipped, 0 failed. Ruff and `mypy --strict` are clean. The `bin/commit` gate runs again on every commit.
 
 **BOUNDARY.**
@@ -222,6 +230,13 @@ outcome.
   needs each boundary named to `restate-prices`.
 - **ACCEPTED: the 49 older remaining steps are not re-checked**, because the plan cannot re-fetch
   them. A Tiingo pass over their 45 names is the follow-up.
+- **ACCEPTED: run the monitor after Tiingo has posted the close.** A Tiingo span fetched before the
+  latest session's row exists stops the run ("rows do not cover"), and the adapter caches that
+  response for a day under the same end date. The stop is the intended loud failure. Changing the
+  shared adapter's cache policy is outside this PR.
+- **ACCEPTED: a store more than two years stale cannot be restated.** Its anchor lies beyond the
+  plan's window, the re-fetch comes back empty, and nothing is compared. No re-fetch could serve
+  those bars anyway.
 - **ACCEPTED: Tiingo is the only dividend source.** If Tiingo misses a dividend while still serving
   the row (divCash 0 on an ex-date), it reads as none. Falsifier: a Polygon dividends-endpoint
   ex-date in a window Tiingo reads as clean.

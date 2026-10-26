@@ -325,3 +325,39 @@ def test_the_monitor_command_writes_a_total_return_day(tmp_path: Path,
         cli._cmd_monitor(argparse.Namespace(ref="2026-10-23", out=str(scratch2)))
     assert not (scratch2 / "data" / "monitor").exists() or not any(
         p.name.startswith("2026") for p in (scratch2 / "data" / "monitor").iterdir())
+
+
+def test_a_name_whose_bars_stop_before_entry_is_pending_not_a_crash(tmp_path: Path) -> None:
+    """Review round 0: an exit bar dated before the sealed entry sent a backwards window to the
+    dividend source and the harness died with ValueError. It is no forward price — pending."""
+    with Store(tmp_path / "s.db") as store:
+        store.write_prices(_bars("IDX-IWM", 100.0, 105.0))
+        store.write_prices([PriceBar(internal_id="SEC-PAY", bar_date=ENTRY - timedelta(days=9),
+                                     open=1, high=1, low=1, close=1, volume=1, source="t")])
+        store.append_ledger(_entry("PAY", Verdict.BUY))
+        scores, report = score_ledger(store, as_of=HORIZON, dividends=no_dividends)
+    assert scores == [] and report.n_pending == 1
+
+
+def test_the_dividend_window_starts_at_the_session_the_entry_resolves_to(tmp_path: Path) -> None:
+    """Review round 0: an entry stamped on a non-session day (a Saturday) is the Friday close, and
+    Tiingo has no Saturday row — the window must start on the Friday."""
+    sat = date(2025, 1, 18)
+    fri = sat - timedelta(days=1)
+    asked: list[tuple[str, date, date]] = []
+
+    def src(symbol: str, a: date, b: date) -> list[tuple[date, float]]:
+        asked.append((symbol, a, b))
+        if a.weekday() >= 5:
+            raise DividendsUnknownError("no row on a weekend")
+        return []
+
+    with Store(tmp_path / "s.db") as store:
+        for iid in ("IDX-IWM", "SEC-PAY"):
+            store.write_prices([PriceBar(internal_id=iid, bar_date=d, open=c, high=c, low=c,
+                                         close=c, volume=1, source="t")
+                                for d, c in ((fri, 100.0), (HORIZON, 110.0))])
+        e = _entry("PAY", Verdict.BUY).model_copy(update={"entry_price_as_of": sat})
+        store.append_ledger(e)
+        scores, _r = score_ledger(store, as_of=HORIZON + timedelta(days=5), dividends=src)
+    assert ("PAY", fri, HORIZON) in asked and len(scores) == 1
