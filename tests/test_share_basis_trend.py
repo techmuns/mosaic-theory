@@ -40,7 +40,9 @@ from vinci.edgar.concepts import extract_points
 from vinci.screens.assemble import share_basis_change
 
 REF = date(2026, 7, 29)
-NFLX = Path("tests/fixtures/companyfacts/NFLX.json")
+# FROZEN at the June-quarter vintage these pins were measured on (the "-1.4%" below): the tracking
+# fixture moves with every re-assembly (`tests/fixtures/companyfacts_frozen/README.md`)
+NFLX = Path(__file__).resolve().parent / "fixtures" / "companyfacts_frozen" / "NFLX.json"
 
 
 class _Stub:
