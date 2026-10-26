@@ -382,11 +382,23 @@ function renderRows() {
     const flag = sunk && r.structuralFlag
       ? `<div class="cite" style="color:var(--danger);">⛔ ${escapeHtml(r.structuralFlag.signal)} · ${escapeHtml(r.structuralFlag.source)}</div>` : "";
     const gated = r.gated ? ` <span class="pill locked" title="below the deep-work ADV floor">thin</span>` : "";
+    // AN ANNOTATED RESULT (operator ruling 2026-10-26): the run's result stands, and the line says
+    // what later data showed. The verdict is computed from the structured gates, never parsed.
+    const a = r.annotation;
+    const pct = (v) => `${v > 0 ? "+" : ""}${(v * 100).toFixed(1)}%`;
+    const failed = a ? a.gates.filter((g) => !g.repaired.passes).map((g) => g.gate) : [];
+    const note = a
+      ? `<div class="cite" style="color:var(--warn-text);" title="${escapeHtml(
+          a.gates.map((g) => `${g.gate} ${g.label}: as committed ${pct(g.as_committed.value)} ${g.as_committed.passes ? "PASS" : "FAIL"}, `
+            + `corrected ${pct(g.repaired.value)} ${g.repaired.passes ? "PASS" : "FAIL"}`).join(" · ")
+          + ` — ${a.finding} Record: ${a.record}`)}">⚠ annotated ${escapeHtml(a.annotated_on)} — ${failed.length
+          ? `fails ${escapeHtml(failed.join(", "))} on the corrected data` : "passes every gate on the corrected data"
+        }</div>` : "";
     return `
       <tr data-ticker="${escapeHtml(r.ticker)}" style="cursor:pointer;${sunk ? "opacity:0.62;" : ""}">
         <td class="num muted">${r.rank}</td>
-        <td><span class="mono" style="font-weight:600;">${escapeHtml(r.ticker)}</span>${sunk ? " ⛔" : ""}
-          <div class="muted" style="font-size:11.5px;">${escapeHtml((r.name || "").slice(0, 40))}</div>${flag}</td>
+        <td><span class="mono" style="font-weight:600;">${escapeHtml(r.ticker)}</span>${sunk ? " ⛔" : ""}${a ? " ⚠" : ""}
+          <div class="muted" style="font-size:11.5px;">${escapeHtml((r.name || "").slice(0, 40))}</div>${flag}${note}</td>
         <td class="muted" style="font-size:12px;"><span style="display:inline-block; max-width:92px; line-height:1.25;">${escapeHtml(dispIndustry(r))}${GICS[r.ticker] ? ` <span class="gics-mark" title="CIQ GICS Primary Industry Classification — ${escapeHtml(GICS[r.ticker].source_ref || "committed dossier")}">CIQ</span>` : ""}</span></td>
         <td>${STATE_BADGE[stateOf(r.ticker)] || ""}</td>
         <td class="num" style="font-weight:600;">${fmtScore(r.score)}</td>

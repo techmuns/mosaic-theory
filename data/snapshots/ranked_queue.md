@@ -8,7 +8,7 @@
 | 2 | ABR | 0.917 | A | -64% vs market | -78% from 52w high | sharp discrete — 2 gap-downs (latest 2026-05-12, 157d ago) · LLM: — | P/E 0%ile of own 5y range | workable |
 | 3 | CAPR | 0.815 | A | -79% vs market | -83% from 52w high | sharp discrete — 6 gap-downs (latest 2026-10-05, 11d ago) · LLM: — | UNKNOWN | ample |
 | 4 | MPLT | 0.809 | A | -72% vs market | -81% from 52w high | sharp discrete — 1 gap-down (latest 2026-07-27, 81d ago) · LLM: — | UNKNOWN | workable |
-| 5 | SFBS | 0.786 | A | -48% vs market | -57% from 52w high | sharp discrete — 1 gap-down (latest 2026-08-06, 71d ago) · LLM: — | P/E 1%ile of own 5y range | workable |
+| 5 | SFBS ⚠ | 0.786 | A | -48% vs market | -57% from 52w high | sharp discrete — 1 gap-down (latest 2026-08-06, 71d ago) · LLM: — | P/E 1%ile of own 5y range | workable |
 | 6 | HTZ | 0.781 | A | -75% vs market | -79% from 52w high | sharp discrete — 7 gap-downs (latest 2026-08-13, 64d ago) · LLM: — | UNKNOWN | ample |
 | 7 | VITL | 0.779 | A | -30% vs market | -80% from 52w high | sharp discrete — 1 gap-down (latest 2026-05-07, 162d ago) · LLM: — | P/E 0%ile of own 5y range | workable |
 | 8 | WHR | 0.776 | A | -49% vs market | -71% from 52w high | sharp discrete — 1 gap-down (latest 2026-05-07, 162d ago) · LLM: — | P/E 7%ile of own 5y range | ample |
@@ -51,6 +51,19 @@
 | 45 | OI | 0.648 | A | -45% vs market | -66% from 52w high | sharp discrete — 3 gap-downs (latest 2026-07-29, 79d ago) · LLM: — | UNKNOWN | workable |
 | 46 | TREE | 0.648 | A | -45% vs market | -63% from 52w high | sharp discrete — 2 gap-downs (latest 2026-07-30, 78d ago) · LLM: — | UNKNOWN | workable |
 | 47 | AHCO | 0.647 | A | -51% vs market | -55% from 52w high | sharp discrete — 1 gap-down (latest 2026-08-04, 73d ago) · LLM: — | UNKNOWN | workable |
-| 48 | IESC | 0.646 | A | -51% vs market | -69% from 52w high | sharp discrete — 1 gap-down (latest 2026-08-06, 71d ago) · LLM: — | P/E 21%ile of own 5y range | ample |
+| 48 | IESC ⚠ | 0.646 | A | -51% vs market | -69% from 52w high | sharp discrete — 1 gap-down (latest 2026-08-06, 71d ago) · LLM: — | P/E 21%ile of own 5y range | ample |
 | 49 | BLDP | 0.640 | A | -45% vs market | -76% from 52w high | sharp discrete — 3 gap-downs (latest 2026-06-24, 114d ago) · LLM: — | UNKNOWN | workable |
 | 50 | TMQ | 0.639 | A | -45% vs market | -74% from 52w high | sharp discrete — 1 gap-down (latest 2026-06-05, 133d ago) · LLM: — | UNKNOWN | thin |
+
+## Annotations on this screen run
+
+_Added after the run, by operator ruling. The results above stand as the run produced them; ⚠ marks an annotated name._
+
+- **SFBS** (rank 5) — annotated 2026-10-26. Passed G1 and G2 on spliced bars: the price store took a 2:1 split at 2026-08-06 as a price fall, and the queue's one gap-down on that date is the split. On the bars put on one split basis it fails both gates, so it would not be a candidate.
+  - G1 drawdown from high (passes at ≤ -30.0%): as committed -57.1% PASS · on the corrected data -14.5% FAIL
+  - G2 return relative to IWM (passes at ≤ -15.0%): as committed -47.5% PASS · on the corrected data +3.0% FAIL
+  - Measured: The screen's own build_price_record and gates, reference 2026-10-16, IWM, Screen2Thresholds defaults, on the repaired copy of the store #795 scored (restate-prices --through 2026-08-05), 2026-10-26. Record: `docs/records/2026-10-26-split-restatement-and-total-return.md`
+- **IESC** (rank 48) — annotated 2026-10-26. Passed G2 on spliced bars: the price store took a 2:1 split at 2026-08-06 as a price fall, and the queue's one gap-down on that date is the split. On the bars put on one split basis it still passes G1 but fails G2, so it would not be a candidate.
+  - G1 drawdown from high (passes at ≤ -30.0%): as committed -68.7% PASS · on the corrected data -38.3% PASS
+  - G2 return relative to IWM (passes at ≤ -15.0%): as committed -51.2% PASS · on the corrected data -4.3% FAIL
+  - Measured: The screen's own build_price_record and gates, reference 2026-10-16, IWM, Screen2Thresholds defaults, on the repaired copy of the store #795 scored (restate-prices --through 2026-08-05), 2026-10-26. Record: `docs/records/2026-10-26-split-restatement-and-total-return.md`

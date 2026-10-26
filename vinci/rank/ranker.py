@@ -25,8 +25,10 @@ top-to-bottom, every position defensible.
 from __future__ import annotations
 
 import json
+from collections.abc import Mapping
 from datetime import date
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, model_validator
 
@@ -39,6 +41,9 @@ from vinci.rank.profile import (
     StructuralDisqualifier,
 )
 from vinci.schemas.candidate import CandidateRecord
+
+if TYPE_CHECKING:
+    from vinci.screens.annotations import ScreenAnnotation
 from vinci.schemas.data_record import DataRecord, EventType, Fundamentals, PriceFeatures
 
 # --- Tier-1 axis calibration (face-validity constants; see the module docstring on tuning) ----
@@ -502,8 +507,39 @@ def _md_cell(r: RankedCandidate, name: str) -> str:
     return "UNKNOWN" if ax.score is None else ax.label
 
 
-def render_queue_markdown(ranked: list[RankedCandidate], *, top: int | None = None) -> str:
-    """A deterministic, committed Markdown view of the queue (a compact per-name table)."""
+def _pct(v: float) -> str:
+    return f"{v * 100:+.1f}%"
+
+
+def _annotation_section(ranked: list[RankedCandidate],
+                        annotations: Mapping[str, ScreenAnnotation]) -> list[str]:
+    """The annotations on this run's names, in queue order — every annotated name in the queue,
+    including one below the table's cut, so a reader never meets a warning that is not shown."""
+    named = [(r, annotations[r.ticker]) for r in ranked if r.ticker in annotations]
+    if not named:
+        return []
+    out = ["", "## Annotations on this screen run", "",
+           "_Added after the run, by operator ruling. The results above stand as the run "
+           "produced them; ⚠ marks an annotated name._", ""]
+    for r, a in named:
+        out.append(f"- **{r.ticker}** (rank {r.rank}) — annotated {a.annotated_on}. {a.finding}")
+        for g in a.gates:
+            out.append(
+                f"  - {g.gate} {g.label} (passes at ≤ {_pct(g.threshold)}): as committed "
+                f"{_pct(g.as_committed.value)} {'PASS' if g.as_committed.passes else 'FAIL'} · "
+                f"on the corrected data {_pct(g.repaired.value)} "
+                f"{'PASS' if g.repaired.passes else 'FAIL'}")
+        out.append(f"  - Measured: {a.measured} Record: `{a.record}`")
+    return out
+
+
+def render_queue_markdown(ranked: list[RankedCandidate], *, top: int | None = None,
+                          annotations: Mapping[str, ScreenAnnotation] | None = None) -> str:
+    """A deterministic, committed Markdown view of the queue (a compact per-name table).
+
+    ``annotations`` (ticker → annotation on THIS run, `vinci.screens.annotations`) marks a name ⚠
+    and lists the annotation after the table. Without one the output is unchanged, byte for byte."""
+    notes = annotations or {}
     rows = ranked if top is None else ranked[:top]
     intro = (
         "> Orders the screen's Edge-2 candidates by face-valid structural promise so scarce human "
@@ -525,9 +561,11 @@ def render_queue_markdown(ranked: list[RankedCandidate], *, top: int | None = No
     for r in rows:
         flag = " ⟂" if r.tradeability_gated else ""
         out.append(
-            f"| {r.rank} | {r.ticker} | {r.priority_score:.3f} | {r.depth_band} | "
+            f"| {r.rank} | {r.ticker}{' ⚠' if r.ticker in notes else ''} | "
+            f"{r.priority_score:.3f} | {r.depth_band} | "
             f"{_md_cell(r, 'idiosyncrasy')} | {_md_cell(r, 'depth')} | "
             f"{_md_cell(r, 'character')} | {_md_cell(r, 'multiple')} | "
             f"{r.liquidity_tier.value}{flag} |"
         )
+    out += _annotation_section(ranked, notes)
     return "\n".join(out) + "\n"

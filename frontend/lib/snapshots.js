@@ -154,6 +154,17 @@ let _ranked = null;
 export async function getRankedQueue() {
   if (_ranked) return _ranked; // immutable per page load — sorting/filtering is client-side, no re-fetch
   const raw = await _jsonl(`${SNAPSHOTS}/ranked_queue.jsonl`);
+  // ANNOTATIONS ON THE RUN THIS QUEUE CAME FROM (operator ruling 2026-10-26), matched on the
+  // name's OWN screen date so a later run of the same ticker is never marked. build.py always
+  // writes the file; if it cannot be read the queue still renders, and the console says why.
+  const notes = new Map();
+  try {
+    for (const run of await _json(`${SNAPSHOTS}/screen_annotations.json`)) {
+      for (const a of run.annotations) notes.set(`${run.reference_date}|${a.ticker}`, a);
+    }
+  } catch (e) {
+    console.error("screen annotations unreadable — annotated names are NOT marked:", e);
+  }
   const rows = raw
     .map((r) => ({
       rank: r.rank,
@@ -189,6 +200,8 @@ export async function getRankedQueue() {
       structuralFlag: r.structural_flag
         ? { signal: r.structural_flag.signal, detail: r.structural_flag.detail, source: r.structural_flag.source }
         : null,
+      // {annotated_on, finding, gates:[{gate,label,threshold,as_committed,repaired}], record}|null
+      annotation: notes.get(`${String(r.screen_run_at).slice(0, 10)}|${r.ticker}`) ?? null,
       axes: Object.fromEntries(
         ["idiosyncrasy", "depth", "character", "multiple"].map((k) => {
           const a = r.axes?.[k] || {};
