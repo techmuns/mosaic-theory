@@ -176,6 +176,11 @@ agent loop is allowed. Both are closed here.
    compares primary keys only. A fresh DB loads the edited row, and the triggers only stop a
    working DB that already holds the old row (it now fails loud on the re-seed). A CI check that
    every row on the merge base is byte-identical on the PR would close it.
+6. *A RELATIVE dynamic import is not resolved* (Codex P2, round 3 on #800). DEFERRED under the
+   two-round cap. `importlib.import_module(".scoring", package="vinci")`, or with `"vinci"`
+   positional, loads `vinci.scoring`. The parser records `.scoring`, so both fences stay green.
+   Confirmed on `9761e634`. The fix is to resolve a leading-dot target against the call's
+   `package` argument, behind a parser pin that fails first.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - *Not a defence against a deliberate `DROP TRIGGER`.* The same is true of the theme-intelligence
