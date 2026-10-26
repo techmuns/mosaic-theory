@@ -200,6 +200,11 @@ outcome.
       resolves to.
   - Three skipped: the Tiingo pre-publication cache, the anchor beyond the plan window, and a
     duplicated anchor read (see WHAT IT COSTS).
+- **Codex, round 1 (one P2, FIXED behind a test that failed on the PR head `029074d1`).** A
+  refresh whose range starts inside the restatement window skips no held session, so it had no
+  anchor and no check. That also happens with a store that cannot report what it holds. The
+  per-name check now runs without an anchor too: each name that gets new bars is checked at its last
+  held bar before the range.
 - **Suite and gate.** `pytest -m "not network"` on the final tree: 6,550 passed, 526 skipped, 0 failed. Ruff and `mypy --strict` are clean. The `bin/commit` gate runs again on every commit.
 
 **BOUNDARY.**

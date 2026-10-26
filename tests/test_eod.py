@@ -597,3 +597,30 @@ def test_a_name_with_no_bar_on_the_anchor_is_checked_at_its_own_last_bar(tmp_pat
     assert summary["restated"] == {"BACK": [pytest.approx(1 / 25)]}
     assert client.calls.count(early[-1]) == 1      # BACK's own last held session, fetched once
     assert all(b.source == "polygon-grouped" for b in gone)   # no new bars: never asked about
+
+
+def test_a_refresh_starting_inside_the_window_still_checks_the_basis(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    """Codex, #796 round 1: `vinci refresh --start` inside the restatement window leaves no held
+    session to skip, so there was no anchor and no check — the window's bars were written on the
+    new basis beside held ones on the old, the step this fix exists to prevent. Each name that
+    gets new bars is checked at its own last held bar before the range instead."""
+    from vinci.dossier.freshness import whole_number_ratio
+    from vinci.eod.client import ingest_prices
+
+    syms = ["SPL"] + [f"CC{i}" for i in range(9)]
+    secs = [_ident_for(s) for s in syms]
+    end = date(2026, 9, 1)
+    start = end - timedelta(days=10)                     # inside the 30-day window
+    held = [d for d in (date(2026, 7, 1) + timedelta(days=i) for i in range(50))
+            if d.weekday() < 5 and d < start]
+    client = _BasisClient(syms, {"SPL": 0.5})
+    with Store(tmp_path / "window.db") as store:
+        for s in secs:
+            store.upsert_security(s)
+        _hold(store, syms, held)
+        summary = ingest_prices(client, store, secs, start=start, end=end)  # type: ignore[arg-type]
+        spl = store.get_price_history("SEC-SPL")
+    assert summary["anchor"] is None
+    assert not any(whole_number_ratio(b.close / a.close)
+                   for a, b in zip(spl, spl[1:], strict=False))
+    assert summary["restated"] == {"SPL": [pytest.approx(0.5)]}

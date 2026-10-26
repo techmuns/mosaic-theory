@@ -284,10 +284,14 @@ def ingest_prices(
     # OWN latest held session, one call per distinct date. Measured 2026-10-26: PSTV's held bars end
     # 2026-07-31, before the anchor, and Polygon now serves its whole history ×0.04 — bars resuming
     # on the new basis would have spliced it. Names that got no new bars cost nothing here.
-    if anchor is not None:
+    # AND WHEN THERE IS NO ANCHOR AT ALL (Codex, #796 round 1): a range that starts inside the
+    # restatement window skips no held session, so every name that got new bars is checked at its
+    # last held bar BEFORE THE RANGE — the bars this run did not touch.
+    before = anchor if anchor is not None else (days[0] if days else None)
+    if before is not None and callable(getattr(store, "bars_on", None)):
         late: dict[date, dict[str, str]] = {}
         for iid in sorted(written - on_anchor):
-            if (last := store.last_bar_before(iid, anchor)) is not None:
+            if (last := store.last_bar_before(iid, before)) is not None:
                 late.setdefault(last, {})[id_to_sym[iid]] = iid
         for last, group in sorted(late.items()):
             days_fetched += 1
