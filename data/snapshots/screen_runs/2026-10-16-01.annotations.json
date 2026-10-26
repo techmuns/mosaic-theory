@@ -1,0 +1,38 @@
+{
+  "run_id": "2026-10-16-01",
+  "reference_date": "2026-10-16",
+  "annotations": [
+    {
+      "ticker": "SFBS",
+      "annotated_on": "2026-10-26",
+      "ruling": "Operator, 2026-10-26: annotate the committed screen, do not rewrite it (STATE.md §5.0 row 32 item 16).",
+      "finding": "Passed G1 and G2 on spliced bars: the price store took a 2:1 split at 2026-08-06 as a price fall, and the queue's one gap-down on that date is the split. On the bars put on one split basis it fails both gates, so it would not be a candidate.",
+      "gates": [
+        {"gate": "G1", "label": "drawdown from high", "threshold": -0.30,
+         "as_committed": {"value": -0.571, "passes": true},
+         "repaired": {"value": -0.145, "passes": false}},
+        {"gate": "G2", "label": "return relative to IWM", "threshold": -0.15,
+         "as_committed": {"value": -0.475, "passes": true},
+         "repaired": {"value": 0.030, "passes": false}}
+      ],
+      "measured": "The screen's own build_price_record and gates, reference 2026-10-16, IWM, Screen2Thresholds defaults, on the repaired copy of the store #795 scored (restate-prices --through 2026-08-05), 2026-10-26.",
+      "record": "docs/records/2026-10-26-split-restatement-and-total-return.md"
+    },
+    {
+      "ticker": "IESC",
+      "annotated_on": "2026-10-26",
+      "ruling": "Operator, 2026-10-26: annotate the committed screen, do not rewrite it (STATE.md §5.0 row 32 item 16).",
+      "finding": "Passed G2 on spliced bars: the price store took a 2:1 split at 2026-08-06 as a price fall, and the queue's one gap-down on that date is the split. On the bars put on one split basis it still passes G1 but fails G2, so it would not be a candidate.",
+      "gates": [
+        {"gate": "G1", "label": "drawdown from high", "threshold": -0.30,
+         "as_committed": {"value": -0.687, "passes": true},
+         "repaired": {"value": -0.383, "passes": true}},
+        {"gate": "G2", "label": "return relative to IWM", "threshold": -0.15,
+         "as_committed": {"value": -0.512, "passes": true},
+         "repaired": {"value": -0.043, "passes": false}}
+      ],
+      "measured": "The screen's own build_price_record and gates, reference 2026-10-16, IWM, Screen2Thresholds defaults, on the repaired copy of the store #795 scored (restate-prices --through 2026-08-05), 2026-10-26.",
+      "record": "docs/records/2026-10-26-split-restatement-and-total-return.md"
+    }
+  ]
+}

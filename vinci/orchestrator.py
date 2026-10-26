@@ -40,6 +40,8 @@ from vinci.rank import (
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
+from vinci.screens.annotations import ScreenAnnotation
+from vinci.screens.annotations import for_screen_date as annotations_for_screen_date
 from vinci.screens.retention import (
     BandConfig,
     RunManifest,
@@ -200,13 +202,30 @@ def write_queue_snapshots(
     """Write ranked_queue.jsonl + .md. Returns both paths so a caller can report what it wrote."""
     cfg.ensure_dirs()
     snaps = cfg.snapshots_dir
+    # BOTH FILES ARE COMPOSED BEFORE EITHER IS WRITTEN: a malformed annotation file raises here,
+    # before the JSONL is replaced, so the committed pair can never disagree.
+    md_text = render_queue_markdown(ranked, top=md_top,
+                                    annotations=queue_annotations(snaps, ranked))
     jsonl = snaps / "ranked_queue.jsonl"
     with jsonl.open("w") as f:
         for r in ranked:
             f.write(r.model_dump_json() + "\n")
     md = snaps / "ranked_queue.md"
-    md.write_text(render_queue_markdown(ranked, top=md_top))
+    md.write_text(md_text)
     return jsonl, md
+
+
+def queue_annotations(snapshots_dir: Path, ranked: list[RankedCandidate]
+                      ) -> dict[str, ScreenAnnotation]:
+    """The annotations on the screen run(s) this queue came from, keyed by CANDIDATE id. A row is
+    matched on its OWN screen date, and keyed by its own candidate, so a later run of the same
+    ticker in a mixed-vintage queue is never marked (Codex review of #799)."""
+    out: dict[str, ScreenAnnotation] = {}
+    for day in sorted({r.screen_run_at.date() for r in ranked}):
+        on_day = annotations_for_screen_date(snapshots_dir, day)
+        out |= {r.candidate_id: on_day[r.ticker] for r in ranked
+                if r.screen_run_at.date() == day and r.ticker in on_day}
+    return out
 
 
 def refresh_queue(cfg: Config, *, structural: bool = False) -> dict[str, int]:

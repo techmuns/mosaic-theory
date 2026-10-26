@@ -680,6 +680,13 @@ def emit_monitor() -> list[str]:
     return days
 
 
+def _screen_annotations(snap: Path) -> list[Any]:
+    """Every committed screen-run annotation file, as written, in path order — what the queue view
+    reads to mark a name (`frontend/lib/snapshots.js`). Validated by `vinci.screens.annotations`."""
+    return [json.loads(p.read_text())
+            for p in sorted((snap / "screen_runs").glob("*.annotations.json"))]
+
+
 def _mirror_theme_side_files(src: Path, out: Path) -> list[str]:
     """Mirror a committed per-driver data-side dir → its frontend dir, keyed by the card's own
     machine-stamped ``mirror_slug``, and PRUNE anything the source no longer justifies.
@@ -1491,6 +1498,12 @@ def main(argv: list[str] | None = None) -> None:
 
     for name in _MIRRORED:
         shutil.copyfile(SNAP / name, OUT_SNAP / name)
+    # SCREEN-RUN ANNOTATIONS (operator ruling 2026-10-26) — a note on a committed run's result that
+    # later data showed was wrong; the queue view prints it under the name, the result stands. ONE
+    # file, written even when empty, so an absent one is a deploy fault, never "none". Validated by
+    # `vinci.screens.annotations` (tests); copied here as written.
+    (OUT_SNAP / "screen_annotations.json").write_text(
+        json.dumps(_screen_annotations(SNAP), indent=2) + "\n")
     # universe gate-exclusion health stats — present once the universe has been built with the
     # stats emit (vinci/universe.py). Absent on older snapshots → the ingestion screen degrades.
     if (SNAP / "universe_stats.json").exists():
