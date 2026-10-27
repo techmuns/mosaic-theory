@@ -168,7 +168,76 @@ def _scaled(num: str, scale: str | None) -> float | None:
     return v * _unit_scale(scale)
 
 
-def _verbatim(text: str, start: int, end: int, *, cap: int = 200) -> str:
+#: The length a stored quote is cut at (`_verbatim`). A quote this long may end before its figure.
+VERBATIM_CAP = 200
+
+
+class QuotedFigure(NamedTuple):
+    """One figure a quote states, at the scale the quote states it in."""
+
+    value: float          # unsigned; in `unit`
+    unit: str             # "$M" (a stated scale), "$" (a dollar figure with none), "%", "bps"
+    half_unit: float      # half a unit of its last stated digit, in `unit` — its rounding
+
+
+#: A figure as a quote states it: an optional `$`, the parser's own number token (a bracketed
+#: negative included; "$.97" — TJX drops the leading zero, and the guidance pattern reads it), then
+#: ONE unit — a scale word, a percent or basis points. "zero" is a figure too: a rate floor is
+#: written "less than zero … deemed to be zero" as often as "0%".
+_QUOTED_NUM = rf"(?:{_NUM}|\.\d+)"
+#: A scale word before one of these is a COUNT, never money ("approximately 61.2 million diluted
+#: common shares" — Concentrix's guide bullet): read as $M it could confirm a mis-scaled figure.
+_COUNT_NOUN = (r"(?:\w+\s+){0,2}?(?:shares|units|subscribers|customers|members|users|accounts|"
+               r"vehicles|stores|locations|employees|people|households|devices|miles|barrels)\b")
+_QUOTED = re.compile(
+    rf"(?P<cur>\$)?\s*\(?(?P<num>{_QUOTED_NUM})\)?\s*"
+    rf"(?:(?P<scale>{_SCALE})(?![A-Za-z])(?!\s+(?:{_COUNT_NOUN}))|(?P<pct>%|percent\b)|"
+    r"(?P<bps>basis\s+points|bps\b))?+"
+    r"|(?P<zero>\bzero\b)", re.I)
+#: A RANGE whose low side states no unit inherits the high side's — the rule `_guidance` scales by
+#: ("$2.465 to $2.49 billion", "between 300 and 350 basis points", "$80-100 million").
+_QUOTED_RANGE = re.compile(
+    rf"\$?\s*\(?(?P<lo>{_QUOTED_NUM})\)?\s*(?:to|and|through|[-–—])\s*"
+    r"(?:(?:approximately|about|around|roughly|nearly)\s+)?[+-]?\$?\s*\(?"
+    rf"{_QUOTED_NUM}\)?\s*"
+    rf"(?:(?P<scale>{_SCALE})(?![A-Za-z])|(?P<pct>%)|(?P<bps>basis\s+points|bps\b))", re.I)
+
+
+def _figure(num: str, cur: str | None, scale: str | None, pct: str | None,
+            bps: str | None) -> QuotedFigure | None:
+    v = _money(num)
+    if v is None:
+        return None
+    decimals = len(num.split(".")[1]) if "." in num else 0
+    half = 0.5 * 10.0 ** -decimals
+    if scale:
+        s = _unit_scale(scale)
+        return QuotedFigure(v * s, "$M", half * s)
+    if pct:
+        return QuotedFigure(v, "%", half)
+    if bps:
+        return QuotedFigure(v, "bps", half)
+    return QuotedFigure(v, "$", half) if cur else None
+
+
+def quoted_figures(quote: str) -> list[QuotedFigure]:
+    """Every figure ``quote`` states, at its own scale — the ONE reader of a stored quote's figures
+    (the data-quality release source sets each stored value against its own quote with it). A
+    figure that states no unit and no `$` is not a figure here: it is a count, a date or a section
+    number. A range's unit-less low side is read at the high side's unit as well."""
+    out: list[QuotedFigure] = []
+    for m in _QUOTED.finditer(quote):
+        if m["zero"]:
+            out += [QuotedFigure(0.0, u, 0.0) for u in ("$M", "$", "%", "bps")]
+        elif f := _figure(m["num"], m["cur"], m["scale"], m["pct"], m["bps"]):
+            out.append(f)
+    for m in _QUOTED_RANGE.finditer(quote):
+        if f := _figure(m["lo"], "$", m["scale"], m["pct"], m["bps"]):
+            out.append(f)
+    return out
+
+
+def _verbatim(text: str, start: int, end: int, *, cap: int = VERBATIM_CAP) -> str:
     """A ≤cap-char verbatim window, snapped back to the enclosing bullet/sentence, single-spaced."""
     lo0 = max(0, start - 170)
     b = max(text.rfind("•", lo0, start), text.rfind(". ", lo0, start))
@@ -1010,12 +1079,25 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
 #: (the lookbehinds). Why this form and not the rest of row 30's: with `_opener_period` in place
 #: every GAAP diluted range in the 118 cited releases reads a period (EPAM's, TJX's); operating
 #: income and non-GAAP EPS still fall to `next-fy` on bullet headers, so they stay held.
+#:
+#: OPERATING INCOME AND NON-GAAP EPS ADMITTED (2026-10-27, §5.0 row 30) — the falsifier the hold
+#: named ("if a bullet-list header can be resolved without crossing into a neighbouring section")
+#: is met by `_header_period`. Over the 119 releases the pages cite, the two forms add 17 ranges and
+#: every one reads its period from its own list's header: Amazon's and Concentrix's operating
+#: income, nCino's and Concentrix's non-GAAP operating income, Concentrix's and Uber's non-GAAP EPS.
+#: GAAP operating income is its own metric; the non-GAAP and adjusted forms are `adjusted operating
+#: income` (the name the actuals already use) and non-GAAP EPS is `adjusted eps`. THE PREFIX-FREE
+#: "EPS" / "earnings per share" STAYS HELD: Ross's "2024 fourth quarter and full year earnings per
+#: share of $1.79 and $6.32" reads as a range of $1.79–$6.32 — two ACTUALS joined by "and" — and its
+#: "13 weeks ending January 31, 2026" labels a quarter with a date's year.
 _GAAP_DILUTED_EPS = (r"(?<!non-)(?<!adjusted\s)(?<!non-gaap\s)(?:gaap\s+)?"
                      r"diluted\s+(?:earnings\s+per\s+share|eps)")
 _GUIDE_METRICS = (
     r"total\s+revenues?|net\s+sales|revenues?|adjusted\s+ebitda|adjusted\s+eps|"
     r"adjusted\s+earnings\s+per\s+share|adjusted\s+diluted\s+(?:earnings\s+per\s+share|eps)|"
-    rf"{_GAAP_DILUTED_EPS}|free\s+cash\s+flow|gross\s+margin"
+    rf"{_GAAP_DILUTED_EPS}|free\s+cash\s+flow|gross\s+margin|"
+    r"(?:non-gaap\s+|adjusted\s+)?operating\s+income|"
+    r"non-gaap\s+(?:diluted\s+)?(?:eps|earnings\s+per\s+share)"
 )
 
 
@@ -1024,12 +1106,10 @@ _GUIDE_RANGE = re.compile(
     # Metric names as filers write them (net sales / total revenues — BellRing, Simply Good, nCino
     # all guide on these and were invisible), an optional footnote marker, and BOTH range
     # phrasings: "outlook of $X to $Y" and "expected to range between $X and $Y".
-    # OPERATING INCOME and a prefix-free DILUTED EPS did NOT join the vocabulary on 2026-09-18 —
-    # Amazon's "Operating income is expected to be between $22.5 billion and $27.5 billion" and
-    # EPAM's "diluted EPS will be in the range of $2.33 to $2.41" are still not extracted. Every one
-    # of the 22 ranges they would add states its period in a bullet-list header the clause cannot
-    # reach, so all 22 would land on `next-fy`, which `period_scope` reads as ANNUAL. See
-    # `_GUIDE_METRICS` above for the measurement and the falsifier.
+    # OPERATING INCOME and a prefix-free DILUTED EPS did NOT join the vocabulary on 2026-09-18:
+    # every range they would add stated its period in a bullet-list header the clause could not
+    # reach. GAAP diluted EPS joined 2026-10-21, operating income and non-GAAP EPS 2026-10-27 once
+    # `_header_period` read those headers — see `_GUIDE_METRICS` for the measurement.
     rf"(?P<metric>{_GUIDE_METRICS})"
     # Artivion writes "revenues FOR THE FULL YEAR 2026 TO BE in the range of $486 to $504 million";
     # the old pattern required the introducer to follow the metric immediately, so a real, numeric,
@@ -1042,7 +1122,7 @@ _GUIDE_RANGE = re.compile(
     # moved the match start, which shifted `_period_near`'s window and dropped the year off eight
     # otherwise-correct items. A wildcard between a metric and its number is the same
     # wrong-magnitude class this whole item exists to remove.
-    r"\s*[*†‡]?\s*(?:for\s+the\s+full\s+year(?:\s+20\d\d)?\s+)?"
+    r"\s*[*†‡]{0,2}\s*(?:for\s+the\s+full\s+year(?:\s+20\d\d)?\s+)?"
     # THE AUXILIARY IS A SLOT, NOT A GAP (2026-09-18). The introducer had to follow the metric
     # almost immediately, so the most ordinary English shape a filer uses was invisible: "Net sales
     # ARE EXPECTED TO BE between $197.0 billion and $202.0 billion" (Amazon, both 2026 releases) and
@@ -1140,7 +1220,7 @@ _DIRECTION = r"(?P<dir>decline|decrease|contract|improve|increase|expand|grow|ri
 _DECLINE = {"decline", "decrease", "contract"}
 # a CHANGE range: "…decline between 300 and 350 basis points" / "…increase 4% to 5%"
 _GUIDE_CHANGE_RANGE = re.compile(
-    rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]?\s*"
+    rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]{{0,2}}\s*"
     rf"(?:expected\s+to\s+|to\s+)?{_DIRECTION}\s+"
     r"(?:by\s+)?(?:in\s+a\s+range\s+of\s+|in\s+the\s+range\s+of\s+|between\s+)?"
     r"(?P<low>[\d,.]+)\s*(?P<lowunit>%|basis\s+points|bps)?\s*(?:to|and|[-–—])\s*"
@@ -1149,7 +1229,7 @@ _GUIDE_CHANGE_RANGE = re.compile(
 )
 # a SINGLE-POINT change: "…decline approximately 375 basis points" / "…decline by ~200 bps"
 _GUIDE_CHANGE_POINT = re.compile(
-    rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]?\s*"
+    rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]{{0,2}}\s*"
     rf"(?:expected\s+to\s+|to\s+)?{_DIRECTION}\s+"
     r"(?:by\s+)?(?:approximately|about|roughly|~)?\s*"
     r"(?P<low>[\d,.]+)\s*(?P<unitword>%|basis\s+points|bps)",
@@ -1158,7 +1238,7 @@ _GUIDE_CHANGE_POINT = re.compile(
 # a SIGNED two-sided change: "expected to range between -2% and +2% year-over-year". No direction
 # word — the signs carry it — so this cannot share the pattern above.
 _GUIDE_CHANGE_SIGNED = re.compile(
-    rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]?\s*"
+    rf"(?P<metric>{_METRIC_ALT})\s*[*†‡]{{0,2}}\s*"
     r"(?:expected\s+to\s+range\s+between|to\s+range\s+between|expected\s+to\s+be\s+between)\s+"
     r"(?P<low>[+-][\d,.]+)\s*(?P<lowunit>%)\s*(?:to|and|[-–—])\s*"
     r"(?P<high>[+-][\d,.]+)\s*(?P<unitword>%)",
@@ -1192,10 +1272,16 @@ def _guide_metric(raw: str) -> str:
         return "revenue"
     if "ebitda" in r:
         return "adjusted ebitda"
+    if "operating income" in r:
+        # GAAP and non-GAAP operating income are different figures and never share a name
+        return ("adjusted operating income" if r.startswith(("adjusted", "non-gaap"))
+                else "operating income")
     if "eps" in r or "per share" in r:
-        # the vocabulary admits a per-share metric only with an `adjusted` prefix or as GAAP
-        # diluted EPS (`_GAAP_DILUTED_EPS`); the two are different bases and never share a name
-        return "adjusted eps" if r.startswith("adjusted") else "gaap diluted eps"
+        # the vocabulary admits a per-share metric only with an `adjusted` / `non-GAAP` prefix or
+        # as GAAP diluted EPS (`_GAAP_DILUTED_EPS`); the two are different bases and never share a
+        # name — "non-GAAP diluted EPS" is an ADJUSTED figure, whatever word follows the prefix
+        return ("adjusted eps" if r.startswith(("adjusted", "non-gaap"))
+                else "gaap diluted eps")
     if "cash flow" in r:
         return "free cash flow"
     if "margin" in r:
@@ -1319,6 +1405,120 @@ def _opener_period(text: str, start: int, end: int) -> str | None:
     return f"Fiscal {opener['fy']}" if opener["fy"] else "FY"
 
 
+# --- THE PERIOD A BULLET LIST'S HEADER STATES (2026-10-27, §5.0 row 30) ---------------------------
+# A release states a list's period ONCE, in the header above its bullets, and every guide in the
+# list inherits it:
+#     "Third Quarter 2026 Guidance • Net sales are expected to be between $197.0 billion and $202.0
+#      billion, … • Operating income is expected to be between $22.5 billion and $26.5 billion, …"
+#                                                                              (Amazon, Q2 2026)
+#     "nCino is providing guidance for its second quarter ending July 31, 2026, as follows: • Total
+#      revenues between … • Non-GAAP operating income between $35.5 million and $37.5 million."
+# The clause and the 60-character lead-in reach only the FIRST bullet, so every later one fell to
+# `next-fy` — which `period_scope` reads as ANNUAL: Uber's quarterly adjusted-EBITDA guide of
+# $2.86–2.96bn sat on its page as a full year. And the lead-in read the YEAR INSIDE nCino's DATE
+# ("ending July 31, 2026") as the guide's year: its quarterly revenue range of $157.75–159.75M is
+# filed as "2026", a full year on a business near $640M. `_PHRASE` lets a date swallow its own year.
+#
+# THE HEADER IS FOUND BY WALKING BACK OVER THE GUIDE'S OWN LIST, never by searching above it. Each
+# step crosses ONE bullet item: a segment whose text ends at a sentence end (an item ends with its
+# full stop, or with no stop at all). The walk stops at the first segment that leaves TEXT after its
+# last sentence end — a header carries no full stop ("Fourth Quarter Fiscal 2026 Expectations:",
+# "For Q3 2026, we anticipate:") — or that is longer than any one item: then the header is that
+# segment's LAST SENTENCE ("…we are reaffirming 2026 full year guidance for all financial
+# measures." — Verra Mobility). A HEADER STATES NO FIGURE: text after a stop that carries an amount
+# is the tail of an item ("…excludes $8 million … in Fiscal 2026 vs. $35 million incurred in Fiscal
+# 2025;" — Burlington, whose "vs." once read as a full stop and labelled its FY26 EPS guide Fiscal
+# 2025), and the walk goes on past it. A header must introduce its list — a forward word, or the
+# colon a list opens with ("For the fourth quarter of fiscal year 2026:" — Simply Good, whose
+# bullets carry the "expects"). A results heading, or a header naming two periods, is no answer, and
+# the guide keeps whatever the next reader finds.
+_BULLET = re.compile(r"[•●○◦■▪]")
+#: A sentence end, a closing quote or bracket after the stop included (`brand.” For fiscal…`) —
+#: never the "vs." of a comparison, nor an abbreviation ("Inc.", "U.S.", "No.", "approx.").
+_SENTENCE_END = re.compile(r"(?<!\bvs)(?<!\bInc)(?<!\bCo)(?<!\bNo)(?<!\bU\.S)(?<!\bapprox)"
+                           r"[.!?][”\"’)\]]*\s+", re.I)
+#: Longer than any one bullet item measured over the 119 cited releases: Amazon's longest guide item
+#: (net sales, with its Prime Day and FX sentences) is ~420 characters. A longer segment is prose.
+_ITEM_REACH = 600
+#: The words that make a header an OUTLOOK's: `_FORWARD`, plus the noun Concentrix heads its list
+#: with ("Fourth Quarter Fiscal 2026 Expectations:"), which `_FORWARD`'s verb forms do not cover.
+_HEADER_FORWARD = re.compile(rf"{_FORWARD.pattern}|\bexpectations\b", re.I)
+#: A period phrase that names what was REPORTED, not what is guided — "Based on our first quarter
+#: 2026 results … we are reaffirming 2026 full year guidance".
+_RESULTS_AFTER = re.compile(r"\s*(?:financial\s+|operating\s+)?(?:results|performance)\b", re.I)
+#: Two quarters joined — Ross's "for both the third and fourth quarters". `_PHRASE` would read the
+#: second alone and label both quarters' bullets with it.
+_TWO_QUARTERS = re.compile(r"\b(?:first|second|third|fourth|Q[1-4])\s+(?:and|&|through|to|-)\s+"
+                           r"(?:the\s+)?(?:first|second|third|fourth|Q[1-4])\b", re.I)
+
+
+def _list_header(text: str, start: int) -> str | None:
+    """The header of the bullet list whose item opens at the guide at ``start``, or None when the
+    guide does not open a bullet item, or no header is found within `_OPENER_REACH`."""
+    floor = max(0, start - _OPENER_REACH)
+    bullets = [b.start() for b in _BULLET.finditer(text, floor, start)]
+    if not bullets or _SENTENCE_END.search(text, bullets[-1], start):
+        return None                    # the guide is not the head of its own bullet item
+    pos = bullets.pop()
+    while True:
+        item = bool(bullets)           # a bullet opens this segment: it may be one item of the list
+        lo = bullets.pop() + 1 if item else floor
+        seg = text[lo:pos]
+        ends = list(_SENTENCE_END.finditer(seg))
+        tail = seg[ends[-1].end():].strip() if ends else ""
+        if tail and not _AMOUNT.search(tail):
+            return tail                                  # text after the last stop: a header
+        if len(seg) > _ITEM_REACH or not item:
+            if not ends:
+                return None                              # prose with no sentence to stand alone
+            cut = ends[-2].end() if len(ends) > 1 else 0
+            last = seg[cut:ends[-1].start() + 1].strip()  # the last sentence before the list
+            return None if _AMOUNT.search(last) else last
+        pos = lo - 1
+
+
+def _header_period(text: str, start: int) -> str | None:
+    """The ONE period the guide's bullet-list header states, or None — never a guess. A header
+    naming a quarter and a year scope, two quarters or two years, a relative or year-to-date
+    period, or a reported (`… results`) period alone is no answer."""
+    header = _list_header(text, start)
+    if not header or not (_HEADER_FORWARD.search(header) or header.endswith(":")):
+        return None
+    if (h := _HEADING.search(header)) and h.group(2) != "Results":
+        return None                    # "Second Quarter 2026 Highlights": a section of results
+    if _TWO_QUARTERS.search(header):
+        return None                    # "the third and fourth quarters" — `_PHRASE` reads one
+    quarters: set[int] = set()
+    years: set[str] = set()
+    annual = fiscal = False
+    for p in _PHRASE.finditer(header):
+        if _RESULTS_AFTER.match(header, p.end()):
+            continue                   # what was reported is the basis, not the guided period
+        g = p.groupdict()              # a date ("ending July 31, 2026") swallows its own year
+        if g["ytd"] or g["relq"] or g["relp"] or g["qended"] or g["yended"] or g["quarterly"]:
+            return None
+        if g["q"] or g["qs"]:
+            quarters.add(_QN[g["qn"].lower()] if g["q"] else int(g["qsn"]))
+            if y := g["qy"] or g["qsy"]:
+                years.add(y)
+        elif g["fy"] or g["bare"]:
+            y = g["fyy"] or g["fyy2"] or g["bareyear"]
+            # "Fiscal 2026 Fourth Quarter" — a year standing just before a quarter is that quarter's
+            nxt = _PHRASE.match(header, p.end() + 1) if header[p.end():p.end() + 1] == " " else None
+            if not (y and nxt and nxt["q"] and not nxt["qy"]):
+                annual, fiscal = True, fiscal or "fiscal" in p.group(0).lower()
+            if y:
+                years.add(y)
+    if len(years) > 1 or len(quarters) > 1 or (quarters and annual) or not (quarters or annual):
+        return None
+    year = next(iter(years), None)
+    if quarters:
+        return f"Q{quarters.pop()}" + (f" {year}" if year else "")
+    if year is None:
+        return "FY"
+    return f"Fiscal {year}" if fiscal else year
+
+
 def _guide_unit(metric: str, pct_marker: str | None) -> str:
     """The unit a guidance range is stated in — DERIVED, never assumed (2026-07-29).
 
@@ -1376,6 +1576,10 @@ def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
     tq = next((x for x in _QUARTER.finditer(text, end, tail_hi) if _introduced(text, x)), None)
     ty = next((x for x in _PERIOD.finditer(text, end, tail_hi) if _introduced(text, x)), None)
     if tq is None and ty is None:
+        # THE LIST'S HEADER (2026-10-27) — before the lead-in, which reaches only a list's first
+        # bullet and reads a date's year as a label (nCino: "second quarter ending July 31, 2026")
+        if (hp := _header_period(text, start)) is not None:
+            return hp
         # the LEAD-IN, which is where a bullet list states the period once for the bullets under it
         # ("Third Quarter 2026 Guidance • Net sales are expected to be between…"). Quarter-first for
         # the same reason as the verbatim: a quarterly range wearing an annual label is the error.

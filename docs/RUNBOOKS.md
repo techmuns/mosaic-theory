@@ -724,8 +724,10 @@ today's, so a backdated point would carry later data).
   block whose figures are no longer the table's reads NOT RUN (stale) until it is rebuilt.
 - **Adding a source** is one module under `vinci/quality/sources/` exposing `SOURCE` (its loader,
   checks with the failure classes each can surface, and families). The core and the command name no
-  source (`tests/test_quality_core.py` holds them to it). Next by priority: the 8-K release parser
-  (`docs/records/2026-10-23-ciq-quality-scorecard.md`).
+  source (`tests/test_quality_core.py` holds them to it). The third, `release` (2026-10-27), reads
+  the committed pages' stored release and covenant rows and each filer's companyfacts from the SEC
+  cache ONLY — it never fetches, so a checkout without `data/cache/sec` runs its quote check alone
+  and names the XBRL checks not run (`docs/records/2026-10-27-release-source-and-page-furniture.md`).
 - **A split splice already in a store is repaired, never left.** `vinci restate-prices --through
   <the last session of an older pull>` re-fetches that session and the store's latest market session.
   Every held bar Polygon has since restated is put back on the current basis by Polygon's own factor:

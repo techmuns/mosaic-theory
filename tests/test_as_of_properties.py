@@ -16,8 +16,11 @@ years that have not happened yet. Tags come from the blob, never from `CONCEPT_A
 properties hold through a change to the alias lists.
 
 THE PRICE SIDE. `Store.close_as_of` and `relative_return` each state a cut at their reference date
-and are pinned the same way, on the committed real bars (`tests/fixtures/prices/`). The one
-permutation property pins a contract line that says so (`compute_price_features`, "any order").
+and are pinned the same way, on the committed real bars (`tests/fixtures/prices/`). So is the
+SCREEN as a whole (`screen_universe`): the rows it retains at d are the rows a store holding only
+the bars to d gives, which is what makes a `vinci screen --ref <past>` replay say what a run on
+that day said. The one permutation property pins a contract line that says so
+(`compute_price_features`, "any order").
 
 Deterministic and bounded: `derandomize=True`, a fixed `max_examples`, no example database, no
 deadline. The mutation evidence — each property red under a mutant that reads one post-cut fact —
@@ -28,20 +31,26 @@ from __future__ import annotations
 import functools
 import json
 import pathlib
+import tempfile
 from collections.abc import Iterator
 from datetime import date, timedelta
 from typing import Any, cast
+from unittest import mock
 
 import pytest
 from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
 
-from vinci.edgar.client import EdgarClient, compute_fundamental_snapshot
+from vinci.edgar.client import EdgarClient, all_unknown_snapshot, compute_fundamental_snapshot
 from vinci.edgar.concepts import ANNUAL_MAX_DAYS, ANNUAL_MIN_DAYS, facts_as_of, filer_fiscal_year
 from vinci.eod.features import compute_price_features, relative_return
 from vinci.netcache import CachedHttp
-from vinci.schemas.envelope import DataField
+from vinci.resolver.index import pad_cik
+from vinci.schemas.data_record import Identity
+from vinci.schemas.envelope import DataField, SourceTier
 from vinci.schemas.market import PriceBar
+from vinci.screens import run as screen_run
+from vinci.screens.retention import read_rows
 from vinci.store.store import Store
 
 FIXTURES = pathlib.Path(__file__).resolve().parents[1] / "tests" / "fixtures"
@@ -408,7 +417,9 @@ def test_price_features_read_a_bar_history_in_any_order(name: str, data: st.Data
     """CONTRACT (`compute_price_features`): "from a bar history (any order; sorted internally)".
 
     The only permutation property here, because it is the only reader that states one. NOT an
-    as-of property: this function reads its LATEST bar whatever the reference date (record)."""
+    as-of property: this function reads its LATEST bar whatever the reference date, so the screen
+    cuts its bars before calling it (`screens.run._bars_to`, pinned below), and the dossier's price
+    box reads the latest stored close on purpose (`mechanical._at_latest_close`)."""
     bars = _bars(name)
     shuffled = data.draw(st.permutations(bars))
     d = _bar_cut(data.draw, bars)
@@ -417,3 +428,75 @@ def test_price_features_read_a_bar_history_in_any_order(name: str, data: st.Data
                                   market_cap=cap) == \
         compute_price_features(list(bars), reference_date=d, staleness_days=staleness,
                                market_cap=cap)
+
+
+# --- THE SCREEN ------------------------------------------------------------------------------
+
+
+class _Fundamentals:
+    """EDGAR for the screen, with nothing to read: every fundamental UNKNOWN, so G3 defers and
+    only the price gates decide. The properties here are about prices."""
+
+    def fundamental_snapshot(self, cik: str, **kw: object) -> Any:
+        return all_unknown_snapshot(pad_cik(cik))
+
+    def companyfacts(self, cik: str) -> dict[str, Any]:
+        return {}
+
+
+def _screen(name: str, bars: list[PriceBar], bench: list[PriceBar], d: date) -> str:
+    """The retention rows `screen_universe` writes at ``d`` for ``name`` alone, over a store holding
+    ``bars`` and the benchmark's ``bench`` — the screen's own artifact, as JSONL. Ingest is a no-op:
+    the store already holds every bar, and the refresh is not what this pins."""
+    iid = _bars(name)[0].internal_id
+    _, cik, ticker = iid.split("-")
+    ident = Identity(internal_id=iid, issuer_id=f"ISS-{cik}", cik=cik, ticker=ticker, mic="XNYS",
+                     exchange="NYSE", eod_symbol=ticker, name=f"{ticker} Inc.")
+    run_id = f"{d.isoformat()}-01"
+    with tempfile.TemporaryDirectory() as tmp_dir, Store(":memory:") as store:
+        tmp = pathlib.Path(tmp_dir)
+        store.upsert_security(ident)
+        cap = DataField.present(1e9, as_of=d, source="DERIVED", tier=SourceTier.DERIVED)
+        store.record_universe(as_of=d, internal_id=iid, in_universe=True, market_cap=cap)
+        store.write_prices([*bars, *bench])
+        with mock.patch.object(screen_run, "ingest_prices", lambda *a, **k: {}):
+            screen_run.screen_universe(
+                store, cast(Any, None), cast(EdgarClient, _Fundamentals()), reference_date=d,
+                lookback_days=10, staleness_days=5, retain_run_id=run_id, retain_dir=tmp)
+        return "\n".join(r.model_dump_json() for r in read_rows(run_id, tmp))
+
+
+@pytest.mark.parametrize("name", _NAMES)
+@settings(_SETTINGS, max_examples=6)
+@given(data=st.data())
+def test_the_screen_never_reads_a_bar_after_its_reference_date(
+        name: str, data: st.DataObject) -> None:
+    """CONTRACT (`screen_universe`, through `screens.run._bars_to`): the screen reads each name's
+    bars, and the benchmark's, "on or before the reference date".
+
+    Every retained row — each gate's outcome and each gate input with its own stamp and window — is
+    the one a store holding only the bars to d gives, however the bars after d are changed. On
+    main before the cut, a name's G1 drawdown read the store's LATEST bar whatever the reference
+    date (`compute_price_features` takes `bars[-1]`), so every past-dated replay read later prices
+    (`docs/records/2026-10-28-screen-reads-bars-to-its-reference-date.md`)."""
+    bars, bench = _bars(name), _bars(_BENCH)
+    d = _bar_cut(data.draw, bars)
+    got = _screen(name, _later_bars(bars, d, data.draw(_BAR_OPS)),
+                  _later_bars(bench, d, data.draw(_BAR_OPS)), d)
+    assert got == _screen(name, [b for b in bars if b.bar_date <= d],
+                          [b for b in bench if b.bar_date <= d], d)
+
+
+def test_amzn_replayed_at_2025_12_31_reads_g1_off_that_days_close() -> None:
+    """THE CASE THAT OPENED IT (#824's record). The committed AMZN bars run to 2026-10-16. Replayed
+    at 2025-12-31, the screen's G1 input read the 2026-10-16 close ($250.00) and stamped it
+    2026-10-16. It reads the 2025-12-31 close now, stamped that day. Phrased on the stamp, not the
+    value: a refreshed price fixture moves an adjusted close, never the day it belongs to."""
+    d = date(2025, 12, 31)
+    row = json.loads(_screen("AMZN", list(_bars("AMZN")), list(_bars(_BENCH)), d))
+    drawdown = row["gate_inputs"]["drawdown_from_high"]
+    assert drawdown["as_of"] == d.isoformat()
+    assert drawdown["value"] == json.loads(_screen(
+        "AMZN", [b for b in _bars("AMZN") if b.bar_date <= d],
+        [b for b in _bars(_BENCH) if b.bar_date <= d], d))["gate_inputs"]["drawdown_from_high"][
+        "value"]

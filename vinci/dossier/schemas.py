@@ -277,7 +277,12 @@ class LeaseBasis(BaseModel, frozen=True):
     # EDGAR's own lease cost for that fiscal year — a cross-check beside CIQ's rent, named on the
     # materiality sentence when the two disagree; it does not decide materiality
     edgar_lease_cost: float | None = None     # $M
-    edgar_lease_cost_tag: str | None = None   # "LeaseCost" | "OperatingLeaseCost"
+    # "LeaseCost", else the components the filer tags, summed ("OperatingLeaseCost +
+    # VariableLeaseCost") — its TOTAL lease cost either way (`lease_basis.edgar_lease_cost`)
+    edgar_lease_cost_tag: str | None = None
+    # (2026-10-27) the ONE component of that total CIQ's rent equals, where it is not the total
+    # (WLK: ShortTermLeaseCost) — a different definition, so the two are not compared
+    rent_component: str | None = None
     threshold: float
     material: bool
     materiality: str                          # one sentence: what was measured and what follows
@@ -289,6 +294,15 @@ class LeaseBasis(BaseModel, frozen=True):
     pre_adoption_dates: int = 0
     observations: list[LeaseObservation] = Field(default_factory=list)
     source_ref: str
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        """`rent_component` (2026-10-27) is ABSENT, never null, when unset — so a block built
+        before it round-trips byte-identically (the `forward_multiples` rule)."""
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("rent_component") is None:
+            out.pop("rent_component", None)
+        return out
 
 
 class ForwardMultiple(BaseModel):
@@ -1707,7 +1721,26 @@ class EbitdaReconQuarter(BaseModel, frozen=True):
     # table row with its header, `ebitda_recon._matching_row`), verbatim
     matching_amount: str | None = None
     matching_source: str | None = None
+    # (2026-10-27) the period_end of another quarter of the LTM whose gap cancels this one's — one
+    # amount CIQ books in another quarter than the filings (`ebitda_recon._offsets`), a PERIOD
+    # mismatch; written only where the quarter has no matching amount of its own
+    offset_by: str | None = None
+    # (2026-10-27) $M — CIQ's OWN unusual items for the quarter ('EBT Excl. Unusual Items' − 'EBT
+    # Incl. Unusual Items', its quarterly Income Statement): what CIQ says it normalised out. Where
+    # it equals the gap (`ebitda_recon.unusual_explains`), the difference is that normalisation
+    ciq_unusual: float | None = None
     note: str | None = None                   # why no filing figure
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        """The two keys added 2026-10-27 are ABSENT, never null, when unset — so a block built
+        before them round-trips byte-identically (the `forward_multiples` rule above)."""
+        out = nxt(self)
+        if isinstance(out, dict):
+            for key in ("offset_by", "ciq_unusual"):
+                if out.get(key) is None:
+                    out.pop(key, None)
+        return out
 
 
 class EbitdaReconciliation(BaseModel, frozen=True):

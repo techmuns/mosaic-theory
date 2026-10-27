@@ -16,6 +16,7 @@ The fixture is TJX's REAL filed figures, frozen — Q4 is the 10-K year less the
 from __future__ import annotations
 
 import json
+import re
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -162,7 +163,13 @@ def test_every_committed_reconciliation_is_internally_consistent_e2e() -> None:
             want = abs(q["gap"]) > er.DIFFERENT_SHARE * abs(q["filing_ebitda"]) and abs(
                 q["gap"]) >= 1.0
             assert q["different"] == want, (p.parent.name, q)
-            if q["matching_amount"]:
+            if q["matching_amount"] and (q.get("matching_source") or "").endswith(" XBRL"):
+                # (2026-10-27) a TAGGED amount re-matches by its own figure, within $1K
+                m = re.search(r" (-?[\d,]+) USD ", q["matching_amount"])
+                assert m is not None, (p.parent.name, q)
+                tagged = abs(int(m.group(1).replace(",", ""))) / 1e6
+                assert abs(tagged - abs(q["gap"])) <= 0.001 + 1e-9, (p.parent.name, q)
+            elif q["matching_amount"]:
                 assert er._matching_sentence(q["matching_amount"], q["gap"]) is not None
         assert rec["any_different"] == any(q["different"] for q in qs)
     assert seen >= 15, f"only {seen} pages carry the reconciliation — the pass did not land"

@@ -420,10 +420,11 @@ def _standalone_record(cfg: Config, ticker: str, reference_date: date) -> DataRe
         bars = store.get_price_history(identity.internal_id)
         bench_bars = store.get_price_history(bench.internal_id)
     # TRUNCATE TO THE REFERENCE DATE — `compute_price_features` takes `bars[-1]` as "latest" and
-    # never filters; it uses `reference_date` only for staleness and window starts. The screen gets
-    # away with passing full history because at screen time the store frontier IS the reference
-    # date. Here it is not: IT's record would otherwise carry the 2026-08-04 close ($185.79) under
-    # a 2026-07-06 stamp — a record whose own vintage mark contradicts its value. Truncating makes
+    # never filters; it uses `reference_date` only for staleness and window starts. The screen cuts
+    # its bars the same way (`screens.run._bars_to`, 2026-10-28): a past-dated replay read later
+    # prices before it did. Here the store frontier is rarely the reference date: IT's record
+    # would otherwise carry the 2026-08-04 close ($185.79) under a 2026-07-06 stamp — a record
+    # whose own vintage mark contradicts its value. Truncating makes
     # a maintained name's record mean exactly what a candidate record at the same reference date
     # means, which is the only way the two are comparable.
     bars = [b for b in bars if b.bar_date <= reference_date]
@@ -886,9 +887,15 @@ def _assembly_anchor(mech: dict[str, Any], *, facts: dict[str, Any], bundle: Ciq
 
     It takes the CIQ facts `anchor-backfill` takes, through the same `ciq_bridge` (row 27 (7)).
     Called with none, every input only the workbook supplies went UNKNOWN on each re-assembly and
-    each pass had to backfill it back. A refused extraction is handed on as nothing, as there."""
+    each pass had to backfill it back. A refused extraction is handed on as nothing, as there.
+    The bridge's UNIT check outcome rides beside it (`anchor.ciq_scale_check`, 2026-10-27)."""
+    from vinci.dossier.ciq_balance import scale_outcome
+
     ciq, _note = ciq_bridge(bundle, ticker)
-    return compute_anchor(mech, facts=facts, computed_at=computed_at, ciq=ciq)
+    anchor = compute_anchor(mech, facts=facts, computed_at=computed_at, ciq=ciq)
+    # the bridge's own read carries the outcome; only a refused one (None) is read again
+    scale = ciq.scale_check if ciq is not None else scale_outcome(bundle, ticker)
+    return anchor.model_copy(update={"ciq_scale_check": scale})
 
 
 def assemble_one(

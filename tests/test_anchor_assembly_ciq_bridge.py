@@ -26,7 +26,7 @@ import pytest
 
 from vinci.dossier import assemble as asm
 from vinci.dossier import ciq_balance, recipe_proposal
-from vinci.dossier.anchor import DQ_VENDOR_BRIDGE, Anchor, preserve_operator_tag
+from vinci.dossier.anchor import CIQ_DA_BASIS, DQ_VENDOR_BRIDGE, Anchor, preserve_operator_tag
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.ciq_balance import CiqFact, CiqFacts
 
@@ -37,6 +37,23 @@ T0 = datetime(2026, 10, 27, tzinfo=UTC)
 
 #: The input only CIQ supplies on each name — the one the 2026-10-26 pass dropped.
 VENDOR_INPUT = {"GOOGL": "d_and_a", "ORKA": "net_debt"}
+
+#: Fields a fresh assembly now writes differently from the committed block, ON PURPOSE: the anchor's
+#: D&A must be the filer's current year (`docs/records/2026-10-27-the-anchors-dep-amort-reads-the-
+#: guarded-line.md`). ORKA's EDGAR D&A is FY2023 ($0.015M), two years behind its FY2025, so the
+#: bridge fills it from the workbook ($0.134M) and the vendor list names it. The page refreshes in
+#: the next artifact pass; until then this is a recorded difference. GOOGL's bridged D&A keeps its
+#: value and source and changes only its BASIS text: the workbook's last column is its LTM, which
+#: was labelled "consolidated latest FY" (review of #830, `anchor.CIQ_DA_BASIS`).
+MOVED_BY_THE_DA_GUARD = {"ORKA": ("d_and_a", "data_quality_detail"), "GOOGL": ("d_and_a",)}
+
+
+def _vendor_filled(a: Anchor) -> set[str]:
+    """The inputs the anchor's own detail line says the CIQ workbook supplied."""
+    for line in a.data_quality_detail or []:
+        if line.startswith("vendor bridge: "):
+            return set(line.removeprefix("vendor bridge: ").split(" supplied by")[0].split(", "))
+    return set()
 
 
 def _ciq(t: str, *, drop: str | None = None, failures: list[str] | None = None) -> CiqFacts:
@@ -54,6 +71,9 @@ def _committed(t: str) -> Anchor:
 def _fields(a: Anchor) -> dict[str, Any]:
     out = a.model_dump(mode="json")
     out.pop("computed_at")
+    # the bridge's scale-check outcome (2026-10-27) postdates the frozen cut; it is pinned on its
+    # own in tests/test_ciq_bridge_currency_and_scale.py
+    out.pop("ciq_scale_check")
     return out
 
 
@@ -78,7 +98,20 @@ def test_a_fresh_assembly_writes_the_backfilled_anchor(
     GOOGL's operator decision and base value included, because its D&A is what makes R1 applicable
     there."""
     got = _assembled(t, _ciq(t), monkeypatch)
-    assert _fields(got) == _fields(_committed(t))
+    moved = MOVED_BY_THE_DA_GUARD.get(t, ())
+    fresh, committed = _fields(got), _fields(_committed(t))
+    assert {k: v for k, v in fresh.items() if k not in moved} == {
+        k: v for k, v in committed.items() if k not in moved}
+    if moved:   # the recorded move, pinned rather than skipped
+        assert got.d_and_a is not None and got.d_and_a.basis == CIQ_DA_BASIS
+        assert got.d_and_a.value == CUT[t]["ciq"]["facts"]["d_and_a"]["value"]
+        assert got.d_and_a.source.startswith("CIQ")
+    if t == "ORKA":
+        assert fresh["d_and_a"]["value"] != committed["d_and_a"]["value"]
+        assert "EDGAR D&A withheld" in (got.d_and_a.source if got.d_and_a else "")
+    if t == "GOOGL":   # the label only
+        assert {k: v for k, v in fresh["d_and_a"].items() if k != "basis"} == {
+            k: v for k, v in committed["d_and_a"].items() if k != "basis"}
     vin = getattr(got, VENDOR_INPUT[t])
     assert vin.value is not None and vin.source.startswith("CIQ"), (
         f"{t}: {VENDOR_INPUT[t]} must be the workbook's figure, stamped as the vendor's")
@@ -135,11 +168,15 @@ def test_a_name_with_no_ciq_pull_still_reads_unknown(
 @pytest.mark.parametrize("t", sorted(VENDOR_INPUT))
 def test_a_workbook_without_the_value_leaves_it_unknown(
         t: str, monkeypatch: pytest.MonkeyPatch) -> None:
-    """A workbook on file that carries no row for the input fills nothing — never a guess."""
+    """A workbook on file that carries no row for the input fills nothing — never a guess. (ORKA's
+    D&A is still bridge-filled here, its own row being present: the vendor list must not name
+    the dropped input.)"""
     got = _assembled(t, _ciq(t, drop=VENDOR_INPUT[t]), monkeypatch)
     vin = getattr(got, VENDOR_INPUT[t])
     assert vin.value is None and vin.source.startswith("UNKNOWN")
-    assert DQ_VENDOR_BRIDGE not in (got.data_quality or "")
+    assert VENDOR_INPUT[t] not in _vendor_filled(got)
+    if t not in MOVED_BY_THE_DA_GUARD:
+        assert DQ_VENDOR_BRIDGE not in (got.data_quality or "")
 
 
 @pytest.mark.parametrize("t", sorted(VENDOR_INPUT))
