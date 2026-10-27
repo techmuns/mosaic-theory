@@ -114,6 +114,9 @@ class PositionRow(BaseModel):
     sleeve: str = DEFAULT_SLEEVE
     entry_price: float
     entry_date: date
+    # THE SESSION MARKED, and its close. The run's own session while the row is short of its
+    # horizon; once the run has reached the horizon, the last session on or before it — for good
+    # (`mark_session`, 2026-10-27), so a resolved row reads the number the scoring report scores.
     current_price: float
     current_date: date
     # ON THE SNAPSHOT'S ``return_basis``: TOTAL return since 2026-10-26, price return before
@@ -578,12 +581,17 @@ def position_row(*, ticker: str, verdict: str, sector: str | None, entry_price: 
                  benchmark_entry: float, benchmark_now: float, horizon_days: int,
                  position_growth: float, benchmark_growth: float,
                  origin: str = ORIGIN_SCREEN, sleeve: str = DEFAULT_SLEEVE,
-                 closed: bool = False) -> PositionRow:
+                 closed: bool = False, session_date: date | None = None) -> PositionRow:
     """Mark one leg on TOTAL return: each side's price ratio times the growth its dividends add
     over the window (`vinci.eod.dividends.growth`) — required, so no caller lands on price return
     by leaving it out. Price return rides beside. Fails loud on a non-positive entry or benchmark
     price, or a non-positive growth — a return computed off a zero base is not a number this fund
-    reports."""
+    reports.
+
+    ``current_date`` is the session MARKED; ``session_date`` the session the run reached, which
+    decides ``resolved`` (default: the marked one). They differ once the run has passed the row's
+    horizon (`mark_session`): a Saturday horizon resolves on Monday's run, priced at Friday's
+    close — the scoring harness's rule, so the two surfaces resolve a row on the same day."""
     if not entry_price > 0 or not benchmark_entry > 0:
         raise ValueError(f"{ticker}: entry_price and benchmark_entry must be > 0 "
                          f"(got {entry_price!r}, {benchmark_entry!r})")
@@ -604,7 +612,7 @@ def position_row(*, ticker: str, verdict: str, sector: str | None, entry_price: 
         benchmark_now=benchmark_now, benchmark_return=bench_ret, excess=pos_ret - bench_ret,
         days_elapsed=(current_date - entry_date).days,
         horizon_days=horizon_days, horizon_date=horizon_date,
-        resolved=current_date >= horizon_date,
+        resolved=(session_date or current_date) >= horizon_date,
         closed=closed,
         position_price_return=pos_px, benchmark_price_return=bench_px,
         excess_price=pos_px - bench_px,
@@ -951,6 +959,25 @@ def session_on_or_before(fetch: Callable[[date], Mapping[str, Any]], day: date,
     raise RuntimeError(f"no EOD session found within {lookback - 1} days of {day}")
 
 
+def mark_session(on_or_before: Callable[[date], tuple[date, dict[str, Any]]], *,
+                 run_date: date, run_bars: dict[str, Any],
+                 horizon_date: date) -> tuple[date, dict[str, Any]]:
+    """The session a row is MARKED on: the run's own until the run reaches the row's horizon,
+    then the last session on or before the horizon, for good.
+
+    THE PRE-REGISTERED READ IS AT THE HORIZON (this module's docstring; the 2026-08-12 ruling that a
+    row marks "to its horizon"). Until 2026-10-27 every row marked to the run's session, so a row
+    past its horizon kept moving: from the first run after 2026-12-14, VRRM would have read
+    RESOLVED on the web with a return through whatever day the monitor ran, while the scoring
+    report scored it on the 12-14 close (record 2026-10-27-score-on-the-horizon-close, FOUND 1).
+    ``on_or_before`` is the run's `session_on_or_before` closure — only an empty day steps back,
+    and a failed fetch stops the run. A name missing from the horizon session is the caller's to
+    refuse: it is never marked on an older bar, nor on a later one."""
+    if run_date < horizon_date:
+        return run_date, run_bars
+    return on_or_before(horizon_date)
+
+
 # --- persistence -------------------------------------------------------------------------------
 def monitor_dir(root: Path | None = None) -> Path:
     return (root or Path.cwd()) / "data" / "monitor"
@@ -1070,13 +1097,15 @@ def render_table(snap: MonitorSnapshot) -> str:
         # call). Without it a followed row sits in this table indistinguishable from a screen one
         # while being deliberately excluded from the spread printed underneath.
         book = "" if r.sleeve == DEFAULT_SLEEVE else f"  [{r.sleeve}]"
+        # A RESOLVED row's NOW is its horizon close, not the run's — said on the row, with the date
+        done = f"  RESOLVED · marked at its horizon close {r.current_date}" if r.resolved else ""
         out.append(
             f"{r.ticker:<7}{r.verdict:<16}{r.entry_price:>9.2f}{r.current_price:>9.2f}"
             f"{r.position_return * 100:>+8.2f}{r.benchmark:>5}{r.benchmark_return * 100:>+8.2f}"
             f"{r.excess * 100:>+9.2f}"
             + (f"{(r.excess_price or 0.0) * 100:>+9.2f}" if total else "")
             + f"{f'{r.days_elapsed}/{r.horizon_days}':>8}  "
-            f"{r.horizon_date}{'' if not r.resolved else '  RESOLVED'}{book}")
+            f"{r.horizon_date}{done}{book}")
     s = snap.spread
     # THE SCOPE IS STATED, because the number's meaning narrowed. It measures the discriminator on
     # the $300M–$10B hunting ground; a reader meeting an unlabelled "BUY−AVOID SPREAD" would carry

@@ -2345,14 +2345,24 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         # them that could drift from the scoring path's.
         led_entry = LedgerEntry.model_validate(payload)
         tkr, asg = r["ticker"], assignments[r["ticker"]]
-        entry_day, entry_bars = bars_on_or_before(date.fromisoformat(r["entry_price_as_of"]))
+        entry_date = date.fromisoformat(r["entry_price_as_of"])
+        entry_day, entry_bars = bars_on_or_before(entry_date)
+        # A ROW PAST ITS HORIZON IS MARKED AT ITS HORIZON SESSION, never at the run's (2026-10-27):
+        # the read the scoring report scores. Resolved is still the RUN's session (below).
+        horizon_date = entry_date + timedelta(days=r["horizon_days"])
+        mark_day, mark_bars = mon.mark_session(
+            bars_on_or_before, run_date=now_date, run_bars=now_bars, horizon_date=horizon_date)
         for need, where in ((tkr, "position"), (asg.benchmark, "benchmark")):
-            if need not in entry_bars or need not in now_bars:
+            if need not in entry_bars or need not in mark_bars:
+                at_horizon = (f" — {mark_day} is its HORIZON session, and a row is never marked "
+                              f"on another bar (the scoring report raises on the same gap)"
+                              if now_date >= horizon_date else "")
                 raise RuntimeError(f"{tkr}: no {where} bar for {need} "
-                                   f"({entry_day} / {now_date}) — refusing to guess a price")
+                                   f"({entry_day} / {mark_day}) — refusing to guess a price"
+                                   f"{at_horizon}")
         try:
-            pos_growth = growth(dividends(tkr, entry_day, now_date))
-            bench_growth = growth(dividends(asg.benchmark, entry_day, now_date))
+            pos_growth = growth(dividends(tkr, entry_day, mark_day))
+            bench_growth = growth(dividends(asg.benchmark, entry_day, mark_day))
         except DividendsUnknownError as exc:
             raise RuntimeError(f"{tkr}: dividends UNKNOWN ({exc}) — refusing to mark this leg "
                                f"on price return in a total-return book") from exc
@@ -2364,10 +2374,10 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         rows.append(mon.position_row(
             ticker=tkr, verdict=r["verdict"], sector=live_sector,
             origin=origin_of(led_entry), sleeve=sleeve_of(led_entry),
-            entry_price=r["entry_price"], entry_date=date.fromisoformat(r["entry_price_as_of"]),
-            current_price=now_bars[tkr].close, current_date=now_date,
+            entry_price=r["entry_price"], entry_date=entry_date,
+            current_price=mark_bars[tkr].close, current_date=mark_day, session_date=now_date,
             benchmark=asg.benchmark, benchmark_entry=entry_bars[asg.benchmark].close,
-            benchmark_now=now_bars[asg.benchmark].close, horizon_days=r["horizon_days"],
+            benchmark_now=mark_bars[asg.benchmark].close, horizon_days=r["horizon_days"],
             position_growth=pos_growth, benchmark_growth=bench_growth,
             # Is the POSITION still held? Read from the close rows, which name the decision they
             # close — never inferred from the ticker, since a name can be re-entered (SMPL is, and

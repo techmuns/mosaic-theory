@@ -136,7 +136,7 @@ const BODY = {
     // verdictWord, not the raw field: the decision log and the dossier both shorten AVOID_TERMINAL
     // to AVOID, and a third view printing the enum would be the same verdict spelled three ways.
     return `<p class="pn-big">${escapeHtml(verdictWord(v.verdict) || DASH)}<small>${escapeHtml(sub)}</small></p>
-      <p class="pn-sub">now ${fmtPrice(v.current_price)} · ${v.closed ? "CLOSED" : "held"}${
+      <p class="pn-sub">${v.resolved ? "horizon close" : "now"} ${fmtPrice(v.current_price)} · ${v.closed ? "CLOSED" : "held"}${
       v.horizon_date ? ` · horizon ${escapeHtml(fmtDate(v.horizon_date))}` : ""}</p>`;
   },
   attribution(v) {
