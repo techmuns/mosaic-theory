@@ -112,6 +112,9 @@ def test_build_universe_persists_fetched_sic_onto_identity(
         def sic_for(self, cik: str) -> tuple[str, str]:
             return ("7372", "Services-Prepackaged Software")  # operating-co software → admitted
 
+        def registered_line(self, cik: str, ticker: str, as_of: date) -> None:
+            return None  # no cover read: the line keeps what the type allowlist decided
+
     class _FakeEod:
         @classmethod
         def from_config(cls, cfg: object) -> _FakeEod:
