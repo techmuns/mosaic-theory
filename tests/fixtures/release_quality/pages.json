@@ -1,0 +1,2459 @@
+{
+ "VRRM@dd85adf5": {
+  "ticker": "VRRM",
+  "cik": "0001682745",
+  "commit": "dd85adf5",
+  "releases": [
+   {
+    "filed": "2026-08-05",
+    "source_ref": "8-K 0001193125-26-335111 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q2 2026",
+      "value": 110.7,
+      "verbatim": "Adjusted EBITDA* : Adjusted EBITDA was $110.7 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q2 2026",
+      "value": 1.1,
+      "verbatim": "Adjusted EPS of $1.1"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q2 2026",
+      "value": 263.6,
+      "verbatim": "Total revenue of $263.6 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 945.0,
+      "high": 965.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Total Revenue of $945 million to $965 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 360.0,
+      "high": 370.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA of $360 million to $370 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "next-fy",
+      "low": 1.11,
+      "high": 1.17,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EPS of $1.11 to $1.17"
+     },
+     {
+      "metric": "free cash flow",
+      "period": "2026",
+      "low": 105.0,
+      "high": 115.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Free Cash Flow of $105 million to $115 million"
+     }
+    ],
+    "one_offs": [
+     {
+      "amount": 94.3,
+      "verbatim": "The aggregate adjustments to reconcile net (loss) income to net cash provided by operating activities increased $94.3 million mainly due to the impairments on goodwill and intangible assets recorded f"
+     },
+     {
+      "amount": 64.0,
+      "verbatim": "Goodwill and Intangible Assets Impairments We recorded a $64.0 million impairment to goodwill in our Parking Solutions segment during the six months ended June 3"
+     },
+     {
+      "amount": 40.4,
+      "verbatim": "As part of this assessment, we determined that the carrying value of certain intangibles within the Parking Solutions segment were not recoverable and recorded a $40.4 million impairment to intangible"
+     }
+    ],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-05-26",
+    "source_ref": "8-K 0001193125-26-239351 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "2026",
+      "value": 38.0,
+      "verbatim": "Adjusted EBITDA of $38"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "2026",
+      "value": 1.1,
+      "verbatim": "Adjusted EPS of $1.1"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 985.0,
+      "high": 995.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Total Revenue of $985 million to $995 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 380.0,
+      "high": 385.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA of $380 million to $385 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "next-fy",
+      "low": 1.19,
+      "high": 1.25,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EPS of $1.19 to $1.25"
+     },
+     {
+      "metric": "free cash flow",
+      "period": "2026",
+      "low": 140.0,
+      "high": 150.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Free Cash Flow of $140 million to $150 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": [
+     {
+      "low": 135.0,
+      "high": 145.0,
+      "verbatim": "The Company currently expects the termination to reduce Commercial Services’ 2026 annualized revenue by approximately $135 million to $145"
+     },
+     {
+      "low": 120.0,
+      "high": 125.0,
+      "verbatim": "The Company currently expects the termination to reduce Commercial Services’ 2026 annualized revenue by approximately $135 million to $145 million and 2026 annualized segment profit by approximately $"
+     }
+    ]
+   },
+   {
+    "filed": "2026-05-06",
+    "source_ref": "8-K 0001193125-26-209031 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q1 2026",
+      "value": 86.0,
+      "verbatim": "Adjusted EBITDA* : Adjusted EBITDA was $86.0 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q1 2026",
+      "value": 1.3,
+      "verbatim": "Adjusted EPS of $1.3"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q1 2026",
+      "value": 223.6,
+      "verbatim": "Total revenue of $223.6 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 1020.0,
+      "high": 1030.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Total Revenue of $1,020 million to $1,030 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 405.0,
+      "high": 415.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA of $405 million to $415 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "next-fy",
+      "low": 1.32,
+      "high": 1.38,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EPS of $1.32 to $1.38"
+     },
+     {
+      "metric": "free cash flow",
+      "period": "2026",
+      "low": 150.0,
+      "high": 160.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Free Cash Flow of $150 million to $160 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-02-24",
+    "source_ref": "8-K 0001193125-26-067015 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "2025",
+      "value": 101.8,
+      "verbatim": "Adjusted EBITDA* : Adjusted EBITDA was $101.8 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "2025",
+      "value": 1.3,
+      "verbatim": "Adjusted EPS of $1.3"
+     },
+     {
+      "metric": "revenue",
+      "period": "2025",
+      "value": 979.1,
+      "verbatim": "Full year 2025 revenue of $979.1 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "next-fy",
+      "low": 1020.0,
+      "high": 1030.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Total Revenue of $1,020 million to $1,030 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 405.0,
+      "high": 415.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA of $405 million to $415 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "next-fy",
+      "low": 1.32,
+      "high": 1.38,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EPS of $1.32 to $1.38"
+     },
+     {
+      "metric": "free cash flow",
+      "period": "2026",
+      "low": 150.0,
+      "high": 160.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Free Cash Flow of $150 million to $160 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": []
+ },
+ "NKE@dd85adf5": {
+  "ticker": "NKE",
+  "cik": "0000320187",
+  "commit": "dd85adf5",
+  "releases": [
+   {
+    "filed": "2026-06-30",
+    "source_ref": "8-K 0000320187-26-000076 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "gross margin",
+      "period": "2025",
+      "value": 49.2,
+      "verbatim": "Gross margin 49.2 %"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-06-23",
+    "source_ref": "8-K 0000320187-26-000070 EX-99.1",
+    "reconciliation": [],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-03-31",
+    "source_ref": "8-K 0000320187-26-000026 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "gross margin",
+      "period": "2025",
+      "value": 40.2,
+      "verbatim": "Gross margin 40.2 %"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-12-18",
+    "source_ref": "8-K 0000320187-25-000138 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "gross margin",
+      "period": "2024",
+      "value": 40.6,
+      "verbatim": "Gross margin 40.6 %"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: ““ Term SOFR Advance ” means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin. ... “ Applicable Margin ” means, on any date and with respect to each Loan, the applicable margin set forth below based on the Applicable Rating Level on such date: Applicable Rating Level Applicable Margin (in basis points) Level I 35.75 Level II 48.0 Level III 58.5 Level IV 69.0 ... “ Term SOFR Adjustment ” means with respect to Term SOFR 0.10% (10 basis points) for an Interest Period of one, three or six-month’s duration.”"
+    },
+    "margin_pct": null,
+    "margin_bps": 35.75,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “\"Term SOFR Advance\" means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin.”"
+    },
+    "margin_pct": null,
+    "margin_bps": 35.75,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “\"Applicable Margin\" means, on any date and (i) with respect to a Term SOFR Loan or Alternative Currency Loan, 0.595% (59.5 basis points) or (ii) with respect to a Base Rate Loan, 0.00% (0 basis points).”"
+    },
+    "margin_pct": 0.595,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: ““ Term SOFR Advance ” means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin. ... “ Applicable Margin ” means, on any date and with respect to each Loan, the applicable margin set forth below based on the Applicable Rating Level on such date: Applicable Rating Level Applicable Margin (in basis points) Level I 35.75 Level II 48.0 Level III 58.5 Level IV 69.0”"
+    },
+    "margin_pct": null,
+    "margin_bps": 35.75,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   }
+  ]
+ },
+ "V@dd85adf5": {
+  "ticker": "V",
+  "cik": "0001403161",
+  "commit": "dd85adf5",
+  "releases": [
+   {
+    "filed": "2026-07-28",
+    "source_ref": "8-K 0001403161-26-000103 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted net income",
+      "period": "Q3 2026",
+      "value": 6.3,
+      "verbatim": "GAAP net income of $5.6B or $2.97 per share and non-GAAP net income of $6.3"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q3 2026",
+      "value": 1.5,
+      "verbatim": "Other revenue of $1.5 billion"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-04-28",
+    "source_ref": "8-K 0001403161-26-000077 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted net income",
+      "period": "Q2 2026",
+      "value": 6.3,
+      "verbatim": "GAAP net income of $6.0B or $3.14 per share and non-GAAP net income of $6.3"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q2 2026",
+      "value": 1.3,
+      "verbatim": "Other revenue of $1.3 billion"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-01-29",
+    "source_ref": "8-K 0001403161-26-000044 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted net income",
+      "period": "Q1 2026",
+      "value": 6.1,
+      "verbatim": "GAAP net income of $5.9B or $3.03 per share and non-GAAP net income of $6.1"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q1 2026",
+      "value": 1.2,
+      "verbatim": "Other revenue of $1.2 billion"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “Each Base Rate Advance shall bear interest ... at a rate per annum equal to (x) the Base Rate for such day plus (y) the Applicable Margin in effect from time to time. ... Each Eurocurrency Advance shall bear interest ... at a rate per annum equal to (x) the Eurocurrency Rate plus (y) the Applicable Margin in effect from time to time”"
+    },
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   }
+  ]
+ },
+ "UBER@dd85adf5": {
+  "ticker": "UBER",
+  "cik": "0001543151",
+  "commit": "dd85adf5",
+  "releases": [
+   {
+    "filed": "2026-08-05",
+    "source_ref": "8-K 0001543151-26-000027 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted operating income",
+      "period": "Q2 2026",
+      "value": 2.1,
+      "verbatim": "Non-GAAP Operating Income of $2.1 billion"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q2 2026",
+      "value": 0.81,
+      "verbatim": "Non-GAAP EPS of $0.81,"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 2860.0,
+      "high": 2960.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "◦ Our outlook translates to Adjusted EBITDA of $2.86 billion to $2.96 billion"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-05-06",
+    "source_ref": "8-K 0001543151-26-000019 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted operating income",
+      "period": "Q1 2026",
+      "value": 1.9,
+      "verbatim": "Non-GAAP Operating Income of $1.9 billion"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q1 2026",
+      "value": 0.72,
+      "verbatim": "Non-GAAP EPS of $0.72,"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 2700.0,
+      "high": 2800.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "◦ Our outlook translates to Adjusted EBITDA of $2.70 billion to $2.80 billion"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-02-04",
+    "source_ref": "8-K 0001543151-26-000011 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q4 2025",
+      "value": 2.5,
+      "verbatim": "Adjusted EBITDA of $2.5 billion"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 2370.0,
+      "high": 2470.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "◦ Our outlook translates to Adjusted EBITDA of $2.37 billion to $2.47 billion"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “The “Applicable Rate” with respect to the 2021 Refinancing Term Loans shall be (x) 3.50% with respect to Eurodollar Loans and (y) 2.50% with respect to ABR Loans. ... The “Applicable Rate” with respect to the 2021 Incremental Term Loans shall be (x) 3.50% with respect to Eurodollar Loans and (y) 2.50% with respect to ABR Loans.”"
+    },
+    "margin_pct": 3.5,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. ... The Revolving Loans comprising each Eurodollar Term SOFR Borrowing shall bear interest at the Adjusted LIBO Rate Term SOFR for the Interest Period in effect for such Borrowing plus the Applicable Rate. ... \"Applicable Rate\" means, for any day, (i) 1.00% per annum with respect to any Eurodollar Term SOFR Loan, EURIBOR Loan, HIBOR Loan, SIBOR Loan, Australian Bank Bill Rate Loan, Canadian BA Rate Loan, TIBOR Loan or RFR Loan, (ii) 0.00% per annum with respect to any ABR Loan and (iii) 0.15% per annum with respect to the Commitment Fee.”"
+    },
+    "margin_pct": 1.0,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “The \"Applicable Rate\" with respect to the 2023 Refinancing Term Loans shall be (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans.”"
+    },
+    "margin_pct": 2.75,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “The “Applicable Rate” with respect to the 2023 Refinancing Term Loans shall be (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans.”"
+    },
+    "margin_pct": 2.75,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   }
+  ]
+ },
+ "FUBO@dd85adf5": {
+  "ticker": "FUBO",
+  "cik": "0001484769",
+  "commit": "dd85adf5",
+  "releases": [
+   {
+    "filed": "2026-08-05",
+    "source_ref": "8-K 0001493152-26-036098 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "value": 1.482,
+      "verbatim": "● Revenue of $1.482 billion"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-05-06",
+    "source_ref": "8-K 0001493152-26-021406 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "revenue",
+      "period": "Q2 2026",
+      "value": 1.57,
+      "verbatim": "We delivered North America revenue of $1.57 billion"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-04-06",
+    "source_ref": "8-K 0001493152-26-015252 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "2026",
+      "value": 59.0,
+      "verbatim": "See also “Basis of Presentation” and “Key Performance Metrics and Non-GAAP Financial Measures.” ● Generated Pro Forma Net Loss of $(178) million and Pro Forma Adjusted EBITDA of $59 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Fiscal 2026",
+      "low": 80.0,
+      "high": 100.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "We currently expect: ● Fiscal 2026 Pro Forma Adjusted EBITDA of $80-100 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-02-03",
+    "source_ref": "8-K 0001493152-26-004826 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "2026",
+      "value": 77.9,
+      "verbatim": "Adjusted EBITDA of $77.9 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "value": 1.549,
+      "verbatim": "1 ● Reported Revenue of $1.549 billion"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": []
+ },
+ "NCNO@56500bb1": {
+  "ticker": "NCNO",
+  "cik": "0001902733",
+  "commit": "56500bb1",
+  "releases": [
+   {
+    "filed": "2026-05-27",
+    "source_ref": "8-K 0001902733-26-000064 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 157.75,
+      "high": 159.75,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Total revenues between $157.75 million and $159.75 million"
+     },
+     {
+      "metric": "free cash flow",
+      "period": "next-fy",
+      "low": 135.0,
+      "high": 140.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Free Cash Flow between $135.0 million and $140.0 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-03-31",
+    "source_ref": "8-K 0001902733-26-000019 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 154.5,
+      "high": 156.5,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Total revenues between $154.5 million and $156.5 million"
+     },
+     {
+      "metric": "free cash flow",
+      "period": "next-fy",
+      "low": 132.0,
+      "high": 137.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Free Cash Flow between $132.0 million and $137.0 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-12-08",
+    "source_ref": "8-K 0001902733-25-000133 EX-99.1",
+    "reconciliation": [],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-12-03",
+    "source_ref": "8-K 0001902733-25-000130 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 146.75,
+      "high": 148.25,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Total revenues between $146.75 million and $148.25 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-08-26",
+    "source_ref": "8-K 0001902733-25-000105 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2025",
+      "low": 146.0,
+      "high": 148.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Total revenues between $146.0 million and $148.0 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-05-28",
+    "source_ref": "8-K 0001902733-25-000074 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2025",
+      "low": 142.0,
+      "high": 144.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Total revenues between $142.0 million and $144.0 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period from the applicable Borrowing date at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate; (ii) each Base Rate Loan (other than a Swingline Loan) shall bear interest on the outstanding principal amount thereof from the applicable Borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate”"
+    },
+    "margin_pct": 2.0,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   }
+  ]
+ },
+ "SMPL@56500bb1": {
+  "ticker": "SMPL",
+  "cik": "0001702744",
+  "commit": "56500bb1",
+  "releases": [
+   {
+    "filed": "2026-07-09",
+    "source_ref": "8-K 0001702744-26-000021 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q3 2026",
+      "value": 57.0,
+      "verbatim": "We delivered third quarter net sales of $357 million and Adjusted EBITDA of $57 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q3 2026",
+      "value": 0.42,
+      "verbatim": "Adjusted Diluted EPS was $0.42"
+     },
+     {
+      "metric": "gross margin",
+      "period": "Q3 2026",
+      "value": 32.5,
+      "verbatim": "Gross margin was 32.5%"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "net sales",
+      "period": "2026",
+      "low": 1345.0,
+      "high": 1355.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Net sales expected to range between $1.345 and $1.355 billion"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 220.0,
+      "high": 225.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA expected to range between $220 and $225 million"
+     },
+     {
+      "metric": "gross margin",
+      "period": "next-fy",
+      "low": -375.0,
+      "high": -375.0,
+      "unit": "bps",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Gross margins expected to decline approximately 375 basis points"
+     }
+    ],
+    "one_offs": [
+     {
+      "amount": 6.2,
+      "verbatim": "General and administrative (\"G&A\") expenses of $40.5 million, which contain $6.2 million in restructuring costs, decreased 1"
+     }
+    ],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-04-09",
+    "source_ref": "8-K 0001702744-26-000010 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q2 2026",
+      "value": 55.5,
+      "verbatim": "Adjusted EBITDA of $55.5 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q2 2026",
+      "value": 0.45,
+      "verbatim": "Adjusted diluted EPS was $0.45"
+     },
+     {
+      "metric": "gross margin",
+      "period": "Q2 2026",
+      "value": 31.6,
+      "verbatim": "Gross margin was 31.6%"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "net sales",
+      "period": "2026",
+      "low": 1310.0,
+      "high": 1350.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Net sales expected to range between $1.31 and $1.35 billion"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 217.0,
+      "high": 225.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA expected to range between $217 and $225 million"
+     },
+     {
+      "metric": "gross margin",
+      "period": "next-fy",
+      "low": -350.0,
+      "high": -300.0,
+      "unit": "bps",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Gross margins expected to decline between 300 and 350 basis points"
+     }
+    ],
+    "one_offs": [
+     {
+      "amount": 3.9,
+      "verbatim": "Excluding $3.9 million of one-time OWYN integration expenses in the current year period and a"
+     },
+     {
+      "amount": 4.5,
+      "verbatim": "Excluding for the current period $4.5 million in restructuring costs, integration expenses of"
+     }
+    ],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-01-08",
+    "source_ref": "8-K 0001702744-26-000004 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q1 2026",
+      "value": 55.6,
+      "verbatim": "Adjusted EBITDA of $55.6 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q1 2026",
+      "value": 0.39,
+      "verbatim": "Adjusted Diluted EPS was $0.39"
+     },
+     {
+      "metric": "gross margin",
+      "period": "Q1 2026",
+      "value": 32.3,
+      "verbatim": "Gross margin was 32.3%"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "net sales",
+      "period": "2026",
+      "low": -2.0,
+      "high": 2.0,
+      "unit": "%",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Net sales expected to range between -2% and +2%"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": -4.0,
+      "high": 1.0,
+      "unit": "%",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA expected to range between -4% and +1%"
+     },
+     {
+      "metric": "gross margin",
+      "period": "next-fy",
+      "low": -150.0,
+      "high": -100.0,
+      "unit": "bps",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Gross margins expected to decline between 100 and 150 basis points"
+     }
+    ],
+    "one_offs": [
+     {
+      "amount": 2.6,
+      "verbatim": "Excluding $2.6 million of one-time OWYN integration expenses in the current year period and a"
+     }
+    ],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-10-23",
+    "source_ref": "8-K 0001702744-25-000043 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q4 2025",
+      "value": 66.2,
+      "verbatim": "Adjusted EBITDA of $66.2 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q4 2025",
+      "value": 0.46,
+      "verbatim": "Adjusted Diluted EPS was $0.46"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "2025",
+      "value": 278.2,
+      "verbatim": "2 Adjusted EBITDA of $278.2 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "2025",
+      "value": 1.92,
+      "verbatim": "Adjusted Diluted EPS was $1.92"
+     },
+     {
+      "metric": "gross margin",
+      "period": "Q4 2025",
+      "value": 34.3,
+      "verbatim": "As a result, gross margin was 34.3%"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "net sales",
+      "period": "2026",
+      "low": -2.0,
+      "high": 2.0,
+      "unit": "%",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Net sales expected to range between -2% and +2%"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "2025",
+      "low": -4.0,
+      "high": 1.0,
+      "unit": "%",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA expected to range between -4% and +1%"
+     },
+     {
+      "metric": "gross margin",
+      "period": "next-fy",
+      "low": -150.0,
+      "high": -100.0,
+      "unit": "bps",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Gross margins expected to decline between 100 and 150 basis points"
+     }
+    ],
+    "one_offs": [
+     {
+      "amount": 60.9,
+      "verbatim": "As part of the Company's process to evaluate the carrying value of our intangible assets, we recognized a $60.9 million non-cash Loss on Impairment related to the Atkins brand and related intangible a"
+     },
+     {
+      "amount": 60.9,
+      "verbatim": "As part of the Company's process to evaluate the carrying value of our brands, we recognized a $60.9 million impairment charge related to the Atkins brand and related intangible assets"
+     }
+    ],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-07-10",
+    "source_ref": "8-K 0001702744-25-000035 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q3 2025",
+      "value": 73.9,
+      "verbatim": "Adjusted EBITDA of $73.9 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q3 2025",
+      "value": 0.51,
+      "verbatim": "Adjusted Diluted EPS was $0.51"
+     },
+     {
+      "metric": "gross margin",
+      "period": "Q3 2025",
+      "value": 36.4,
+      "verbatim": "As a result, gross margin was 36.4%"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "net sales",
+      "period": "2025",
+      "low": 8.5,
+      "high": 9.5,
+      "unit": "%",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Net sales expected to increase 8.5% to 9.5%"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "2024",
+      "low": 4.0,
+      "high": 5.0,
+      "unit": "%",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA expected to increase 4% to 5%"
+     },
+     {
+      "metric": "gross margin",
+      "period": "next-fy",
+      "low": -200.0,
+      "high": -200.0,
+      "unit": "bps",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "In addition, the Company is maintaining its outlook for full year gross margin to decline by approximately 200 basis points"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “(b) (i) at any date prior to the 2018 Amendment Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 3.00% per annum, and with respect to any Initial Term Loan that is a Eurodollar Loan, 4.00% per annum, and (ii) at any date on or after the 2018 Amendment Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 2.50% per annum, and with respect to any Initial Term Loan that is a Eurodollar Loan, 3.50% per annum.”"
+    },
+    "margin_pct": 3.5,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “The definition of \"Applicable Rate\" is amended by replacing clause (b) of such definition with following: \"(b) ... (ii) on and after the Amendment No. 2 Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 2.75% per annum, and with respect to any Initial Term Loan that is a Eurodollar Loan, 3.75% per annum”"
+    },
+    "margin_pct": 3.75,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null
+   }
+  ]
+ },
+ "VITL@56500bb1": {
+  "ticker": "VITL",
+  "cik": "0001579733",
+  "commit": "56500bb1",
+  "releases": [
+   {
+    "filed": "2026-08-06",
+    "source_ref": "8-K 0001193125-26-336692 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted net income",
+      "period": "Q2 2026",
+      "value": -20.0,
+      "verbatim": "Adjusted EBITDA loss of $26.6 million and Adjusted Net Loss of $20.0 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q2 2025",
+      "value": 29.9,
+      "verbatim": "Adjusted EBITDA was a loss of $26.6 million in the second quarter of 2026, compared to Adjusted EBITDA of $29.9 million"
+     },
+     {
+      "metric": "adjusted net income",
+      "period": "Q2 2025",
+      "value": 16.6,
+      "verbatim": "Adjusted net loss was $20.0 million for the second quarter of 2026, compared to adjusted net income of $16.6 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q2 2026",
+      "value": 166.0,
+      "verbatim": "Net Revenue of $166.0 Million"
+     },
+     {
+      "metric": "gross margin",
+      "period": "Q2 2026",
+      "value": 6.6,
+      "verbatim": "Gross Margin of 6.6%"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 775.0,
+      "high": 800.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Revenue Outlook of $775 Million to $800 Million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "2026",
+      "low": 0.0,
+      "high": 10.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA Outlook of $0 Million to $10 Million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-05-07",
+    "source_ref": "8-K 0001193125-26-210294 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q1 2026",
+      "value": 5.0,
+      "verbatim": "Adjusted EBITDA of $5.0 million"
+     },
+     {
+      "metric": "gross margin",
+      "period": "Q1 2026",
+      "value": 28.3,
+      "verbatim": "Gross Margin of 28.3%"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 775.0,
+      "high": 800.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Net revenue of $775 million to $800 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 0.0,
+      "high": 10.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA of $0 to $10 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-02-26",
+    "source_ref": "8-K 0001193125-26-073373 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q4 2025",
+      "value": 29.2,
+      "verbatim": "Adjusted EBITDA was $29.2 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "2025",
+      "value": 114.0,
+      "verbatim": "Adjusted EBITDA was $114.0 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "2025",
+      "value": 759.4,
+      "verbatim": "Net Revenue of $759.4 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2025",
+      "low": 900.0,
+      "high": 920.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Net revenue of $900 million to $920 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 105.0,
+      "high": 115.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Adjusted EBITDA of $105 million to $115 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-11-04",
+    "source_ref": "8-K 0001193125-25-263585 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q3 2025",
+      "value": 27.4,
+      "verbatim": "Adjusted EBITDA of $27.4 million"
+     },
+     {
+      "metric": "gross margin",
+      "period": "Q3 2025",
+      "value": 37.7,
+      "verbatim": "Gross Margin of 37.7%"
+     }
+    ],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-08-07",
+    "source_ref": "8-K 0000950170-25-104561 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q2 2025",
+      "value": 29.9,
+      "verbatim": "Adjusted EBITDA of $29.9 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q2 2025",
+      "value": 184.8,
+      "verbatim": "Net Revenue of $184.8 Million"
+     },
+     {
+      "metric": "gross margin",
+      "period": "Q2 2025",
+      "value": 38.9,
+      "verbatim": "Gross Margin of 38.9%"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2025",
+      "low": null,
+      "high": null,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": true,
+      "verbatim": "Fiscal 2025 Outlook Thilo Wrede, Vital Farms’ Chief Financial Officer, commented: \"We are raising our net revenue and Adjusted EBITDA guidance for fiscal 2025, reflecting the strong performance of our"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": []
+ },
+ "AORT@56500bb1": {
+  "ticker": "AORT",
+  "cik": "0000784199",
+  "commit": "56500bb1",
+  "releases": [
+   {
+    "filed": "2026-08-06",
+    "source_ref": "8-K 0001628280-26-054294 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted net income",
+      "period": "Q2 2026",
+      "value": 6.3,
+      "verbatim": "Net loss for the second quarter of 2026 was $(13.5) million, or $(0.28) per fully diluted share, and non-GAAP net income was $6.3 million"
+     },
+     {
+      "metric": "adjusted net income",
+      "period": "Q2 2025",
+      "value": 10.7,
+      "verbatim": "Non-GAAP net income for the second quarter of 2026 was $6.3 million, or $0.13 per fully diluted common share, compared to non-GAAP net income of $10.7 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q2 2026",
+      "value": 125.8,
+      "verbatim": "Achieved revenue of $125.8 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 480.0,
+      "high": 496.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "2026 Financial Outlook Artivion is reiterating its expectations for revenue for the full year 2026 to be in the range of $480 to $496 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "2026",
+      "low": 92.0,
+      "high": 99.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Artivion is reiterating its full year 2026 adjusted EBITDA to be in the range of $92 to $99 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-05-18",
+    "source_ref": "8-K 0001628280-26-035798 EX-99.1",
+    "reconciliation": [],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-05-07",
+    "source_ref": "8-K 0001628280-26-032097 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted net income",
+      "period": "Q1 2026",
+      "value": 4.2,
+      "verbatim": "Net income for the first quarter of 2026 was $1.4 million, or $0.03 per fully diluted share, and non-GAAP net income was $4.2 million"
+     },
+     {
+      "metric": "adjusted net income",
+      "period": "Q1 2025",
+      "value": 2.5,
+      "verbatim": "Non-GAAP net income for the first quarter of 2026 was $4.2 million, or $0.08 per fully diluted common share, compared to non-GAAP net income of $2.5 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q1 2026",
+      "value": 116.3,
+      "verbatim": "Achieved revenue of $116.3 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 480.0,
+      "high": 496.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "2026 Financial Outlook Artivion has lowered its expectations for revenue for the full year 2026 and now expects revenue to be in the range of $480 to $496 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "2026",
+      "low": 100.0,
+      "high": 107.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "adjusted EBITDA in the range of $100 to $107 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-02-12",
+    "source_ref": "8-K 0001628280-26-007674 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted net income",
+      "period": "Q4 2025",
+      "value": 8.6,
+      "verbatim": "Non-GAAP net income was $8.6 million"
+     },
+     {
+      "metric": "adjusted net income",
+      "period": "2025",
+      "value": 29.7,
+      "verbatim": "For the full year, non-GAAP net income was $29.7 million"
+     },
+     {
+      "metric": "adjusted net income",
+      "period": "Q4 2024",
+      "value": 0.2,
+      "verbatim": "Non-GAAP net income for the fourth quarter of 2025 was $8.6 million, or $0.17 per fully diluted common share, compared to non-GAAP net income of $0.2 million"
+     },
+     {
+      "metric": "adjusted net income",
+      "period": "2024",
+      "value": 10.8,
+      "verbatim": "Non-GAAP net income for the full year of 2025 was $29.7 million, or $0.63 per fully diluted common share, compared to non-GAAP net income of $10.8 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 486.0,
+      "high": 504.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Page 2 of 13 2026 Financial Outlooks Artivion expects revenues for the full year 2026 to be in the range of $486 to $504 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "2025",
+      "low": 105.0,
+      "high": 110.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "adjusted EBITDA in the range of $105 to $110 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-11-06",
+    "source_ref": "8-K 0001628280-25-050164 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted net income",
+      "period": "Q3 2025",
+      "value": 7.9,
+      "verbatim": "Net income was $6.5 million, or $0.13 per fully diluted share, and non-GAAP net income was $7.9 million"
+     },
+     {
+      "metric": "adjusted net income",
+      "period": "Q3 2024",
+      "value": 5.0,
+      "verbatim": "Non-GAAP net income for the third quarter of 2025 was $7.9 million, or $0.16 per fully diluted common share, compared to non-GAAP net income of $5.0 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q3 2025",
+      "value": 113.4,
+      "verbatim": "Achieved revenue of $113.4 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "next-fy",
+      "low": 439.0,
+      "high": 445.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company expects reported revenues to be in the range of $439 to $445 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 88.0,
+      "high": 91.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company expects adjusted EBITDA to be in the range of $88 to $91 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-08-07",
+    "source_ref": "8-K 0001628280-25-038873 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted net income",
+      "period": "Q2 2025",
+      "value": 10.7,
+      "verbatim": "Net income was $1.3 million, or $0.03 per fully diluted share and non-GAAP net income was $10.7 million"
+     },
+     {
+      "metric": "adjusted net income",
+      "period": "Q2 2024",
+      "value": 2.9,
+      "verbatim": "Non-GAAP net income for the second quarter of 2025 was $10.7 million, or $0.24 per fully diluted common share, compared to non-GAAP net income of $2.9 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q2 2025",
+      "value": 113.0,
+      "verbatim": "Achieved revenue of $113.0 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "next-fy",
+      "low": 435.0,
+      "high": 443.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company expects reported revenues to be in the range of $435 to $443 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "next-fy",
+      "low": 86.0,
+      "high": 91.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company expects adjusted EBITDA to be in the range of $86 to $91 million"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “Interest Rate: 4.250% per year.”"
+    },
+    "margin_pct": 4.25,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “with respect to Initial Term Loans on and after the Second Amendment Effective Date, a percentage per annum equal to (x) for SOFR Loans, 4.75% and (y) for Base Rate Loans, 3.75%”"
+    },
+    "margin_pct": 4.75,
+    "margin_bps": null,
+    "floor_pct": 2.0,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: ““ Applicable Margin ” means: (a) with respect to Initial Term Loans, initially a percentage per annum equal to (i) for SOFR Loans, 6.50% and (ii) for Base Rate Loans, 5.50% ... (c) with respect to Revolving Loans, a percentage per annum equal to (x) for SOFR Loans, 4.00% and (y) for Base Rate Loans, 3.00%.”"
+    },
+    "margin_pct": 6.5,
+    "margin_bps": null,
+    "floor_pct": 2.0,
+    "pik_pct": null
+   }
+  ]
+ },
+ "CNXC@56500bb1": {
+  "ticker": "CNXC",
+  "cik": "0001803599",
+  "commit": "56500bb1",
+  "releases": [
+   {
+    "filed": "2026-09-29",
+    "source_ref": "8-K 0001803599-26-000147 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted operating income",
+      "period": "Q3 2026",
+      "value": 309.0,
+      "verbatim": "Non-GAAP operating income of $309.0 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q3 2026",
+      "value": 363.0,
+      "verbatim": "Adjusted EBITDA of $363.0 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q3 2026",
+      "value": 2.92,
+      "verbatim": "Non-GAAP diluted EPS was $2.92"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q3 2026",
+      "value": 2453.7,
+      "verbatim": "Revenue of $2,453.7 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q3 2025",
+      "value": 2483.3,
+      "verbatim": "Revenue of $2,453.7 million, a decrease of (1.2)% year-on-year on an as reported basis compared to revenue of $2,483.3 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "Q4",
+      "low": 2410.0,
+      "high": 2460.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Fourth quarter reported revenue of $2.410 billion to $2.460 billion"
+     },
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 9827.0,
+      "high": 9877.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Full year reported revenue of $9.827 billion to $9.877 billion"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-06-29",
+    "source_ref": "8-K 0001803599-26-000133 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted operating income",
+      "period": "Q2 2026",
+      "value": 292.0,
+      "verbatim": "Non-GAAP operating income of $292.0 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q2 2026",
+      "value": 347.4,
+      "verbatim": "Adjusted EBITDA of $347.4 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q2 2026",
+      "value": 2.63,
+      "verbatim": "Non-GAAP diluted EPS was $2.63"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q2 2026",
+      "value": 2462.5,
+      "verbatim": "Revenue of $2,462.5 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q2 2025",
+      "value": 2417.4,
+      "verbatim": "Revenue of $2,462.5 million, an increase of 1.9% year-on-year on an as reported basis compared to revenue of $2,417.4 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "Q3",
+      "low": 2465.0,
+      "high": 2490.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Third quarter reported revenue of $2.465 billion to $2.490 billion"
+     },
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 9925.0,
+      "high": 10025.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Full year reported revenue of $9.925 billion to $10.025 billion"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-03-24",
+    "source_ref": "8-K 0001803599-26-000084 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted operating income",
+      "period": "Q1 2026",
+      "value": 295.0,
+      "verbatim": "Non-GAAP operating income of $295.0 million"
+     },
+     {
+      "metric": "adjusted ebitda",
+      "period": "Q1 2026",
+      "value": 348.2,
+      "verbatim": "Adjusted EBITDA of $348.2 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q1 2026",
+      "value": 2.61,
+      "verbatim": "Non-GAAP diluted EPS was $2.61"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q1 2026",
+      "value": 2500.4,
+      "verbatim": "Revenue of $2,500.4 million"
+     },
+     {
+      "metric": "revenue",
+      "period": "Q1 2025",
+      "value": 2372.2,
+      "verbatim": "Revenue of $2,500.4 million, an increase of 5.4% year-on-year on an as reported basis compared to revenue of $2,372.2 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "Q2",
+      "low": 2460.0,
+      "high": 2485.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Second quarter reported revenue of $2.460 billion to $2.485 billion"
+     },
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 10035.0,
+      "high": 10180.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Full year reported revenue of $10.035 billion to $10.180 billion"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-02-13",
+    "source_ref": "8-K 0001803599-26-000068 EX-99.1",
+    "reconciliation": [],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to Term SOFR for such Interest Period plus the Applicable Rate, (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate and (iii) each Swing Line Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to Daily Simple SOFR plus the Applicable Rate for Term SOFR Loans.”"
+    },
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   }
+  ]
+ },
+ "AMZN@56500bb1": {
+  "ticker": "AMZN",
+  "cik": "0001018724",
+  "commit": "56500bb1",
+  "releases": [
+   {
+    "filed": "2026-07-30",
+    "source_ref": "8-K 0001018724-26-000024 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "net sales",
+      "period": "Q3 2026",
+      "low": 197000.0,
+      "high": 202000.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Net sales are expected to be between $197.0 billion and $202.0 billion"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-04-29",
+    "source_ref": "8-K 0001018724-26-000012 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "net sales",
+      "period": "Q2 2026",
+      "low": 194000.0,
+      "high": 199000.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Net sales are expected to be between $194.0 billion and $199.0 billion"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Default Rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: ““Default Rate” means an interest rate equal to (a) the Base Rate plus (b) the Applicable Rate, if any, applicable to Base Rate Loans plus (c) 2% per annum; provided that with respect to a Term SOFR Loan, a Daily Simple SOFR Loan or, in each case, any interest thereon, the Default Rate shall be an interest rate equal to the interest rate (including any Applicable Rate) otherwise applicable to such Loan plus 2% per annum.”"
+    },
+    "margin_pct": 2.0,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “(i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the LIBO Rate for such Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing or conversion date at a rate per annum equal to the Base Rate plus the Applicable Rate.”"
+    },
+    "margin_pct": 0.5,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “(i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurocurrency Rate for such Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate.”"
+    },
+    "margin_pct": 0.625,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null
+   },
+   {
+    "name": "Default Rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: ““ Default Rate ” means an interest rate equal to (a) the Base Rate plus (b) the Applicable Rate, if any, applicable to Base Rate Loans plus (c) 2% per annum; provided that with respect to a Eurocurrency Rate Loan, the Default Rate shall be an interest rate equal to the interest rate (including any Applicable Rate) otherwise applicable to such Loan plus 2% per annum.”"
+    },
+    "margin_pct": 2.0,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null
+   }
+  ]
+ },
+ "TJX@56500bb1": {
+  "ticker": "TJX",
+  "cik": "0000109198",
+  "commit": "56500bb1",
+  "releases": [
+   {
+    "filed": "2026-08-19",
+    "source_ref": "8-K 0000109198-26-000045 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "gaap diluted eps",
+      "period": "Q3 2027",
+      "low": 1.36,
+      "high": 1.38,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company expects diluted earnings per share to be in the range of $1.36 to $1.38"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q3 2027",
+      "low": 1.3,
+      "high": 1.32,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Excluding an expected net benefit of $.06 from tariff refunds, the Company expects adjusted diluted earnings per share to be in the range of $1.30 to $1.32"
+     },
+     {
+      "metric": "gaap diluted eps",
+      "period": "Fiscal 2027",
+      "low": 5.31,
+      "high": 5.36,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company is increasing its full-year diluted earnings per share outlook to be in the range of $5.31 to $5.36"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Fiscal 2027",
+      "low": 5.15,
+      "high": 5.2,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Excluding an expected net benefit of $.16 from tariff refunds, the Company is increasing its full year outlook for adjusted diluted earnings per share to be in the range of $5.15 to $5.20"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-05-20",
+    "source_ref": "8-K 0000109198-26-000023 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "gaap diluted eps",
+      "period": "Q2 2027",
+      "low": 1.15,
+      "high": 1.17,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "diluted earnings per share to be in the range of $1.15 to $1.17"
+     },
+     {
+      "metric": "gaap diluted eps",
+      "period": "Fiscal 2027",
+      "low": 5.08,
+      "high": 5.15,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company is increasing its pretax profit margin outlook to be in the range of 11.9% to 12.0% and raising its diluted earnings per share outlook to be in the range of $5.08 to $5.15"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-02-25",
+    "source_ref": "8-K 0000109198-26-000004 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "gaap diluted eps",
+      "period": "Q1 2027",
+      "low": 0.97,
+      "high": 0.99,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "diluted earnings per share to be in the range of $.97 to $.99"
+     },
+     {
+      "metric": "gaap diluted eps",
+      "period": "Fiscal 2027",
+      "low": 4.93,
+      "high": 5.02,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "For the full year Fiscal 2027, the Company is plann ing consolidated comparable sales to be up 2% to 3%, pretax profit margin to be in the range of 11.7% to 11.8%, and diluted earnings per share to be"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-11-19",
+    "source_ref": "8-K 0000109198-25-000058 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "gaap diluted eps",
+      "period": "Q4 2026",
+      "low": 1.33,
+      "high": 1.36,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "diluted earnings per share to be in the range of $1.33 to $1.36"
+     },
+     {
+      "metric": "gaap diluted eps",
+      "period": "Fiscal 2026",
+      "low": 4.63,
+      "high": 4.66,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company is also raising its diluted earnings per share outlook to be in the range of $4.63 to $4.66"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-08-20",
+    "source_ref": "8-K 0000109198-25-000051 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "gaap diluted eps",
+      "period": "Q3 2026",
+      "low": 1.17,
+      "high": 1.19,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company is planning third quarter Fiscal 2026 diluted earnings per share to be in the range of $1.17 to $1.19"
+     },
+     {
+      "metric": "gaap diluted eps",
+      "period": "Fiscal 2026",
+      "low": 4.52,
+      "high": 4.57,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company is also raising its diluted earnings per share outlook to be in the range of $4.52 to $4.57"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-05-21",
+    "source_ref": "8-K 0000109198-25-000037 EX-99.1",
+    "reconciliation": [],
+    "guidance": [
+     {
+      "metric": "gaap diluted eps",
+      "period": "Q2 2026",
+      "low": 0.97,
+      "high": 1.0,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company is planning second quarter Fiscal 2026 diluted earnings per share to be in the range of $.97 to $1.00"
+     },
+     {
+      "metric": "gaap diluted eps",
+      "period": "Fiscal 2026",
+      "low": 4.34,
+      "high": 4.43,
+      "unit": "$/sh",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "The Company continues to expect full year Fiscal 2026 diluted earnings per share to be in the range of $4.34 to $4.43"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: ““ Eurodollar Base Rate ” means, for any Interest Period, the rate per annum equal to LIBOR as administered by ICE Benchmark Administration ... provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75% for the purposes of this Agreement.”"
+    },
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": 0.75,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “(i) each Eurodollar Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurodollar Rate for such Interest Period plus the Applicable Margin; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin.”"
+    },
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": 0.75,
+    "pik_pct": null
+   },
+   {
+    "name": "Default Rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: ““ Default Rate ” means an interest rate equal to (i) the Base Rate plus (ii) the Applicable Margin, if any, applicable to Base Rate Loans plus (iii) 2% per annum; provided , however , that with respect to a Eurodollar Rate Loan, the Default Rate shall be an interest rate equal to the interest rate (including the Applicable Margin) otherwise applicable to such Revolving Loan plus 2% per annum.”"
+    },
+    "margin_pct": 2.0,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null
+   },
+   {
+    "name": "Base Rate floor",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “provided that if the Base Rate shall be less than 1.75%, such rate shall be deemed to be 1.75%.”"
+    },
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": 1.75,
+    "pik_pct": null
+   }
+  ]
+ },
+ "EPAM@56500bb1": {
+  "ticker": "EPAM",
+  "cik": "0001352010",
+  "commit": "56500bb1",
+  "releases": [
+   {
+    "filed": "2026-08-06",
+    "source_ref": "8-K 0001352010-26-000043 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted eps",
+      "period": "Q2 2026",
+      "value": 3.38,
+      "verbatim": "Second quarter GAAP diluted EPS of $1.97, an increase of $0.41, or 26.3%, and non-GAAP diluted EPS of $3.38"
+     },
+     {
+      "metric": "adjusted operating income",
+      "period": "Q2 2026",
+      "value": 232.7,
+      "verbatim": "Non-GAAP income from operations was $232.7 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "next-fy",
+      "low": 3.2,
+      "high": 4.2,
+      "unit": "%",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "For the full year, EPAM now expects the year-over-year revenue growth rate to be in the range of 3.2% to 4.2%"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-05-07",
+    "source_ref": "8-K 0001352010-26-000026 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted eps",
+      "period": "Q1 2026",
+      "value": 2.86,
+      "verbatim": "First quarter GAAP diluted EPS of $1.52, an increase of $0.24, or 18.8%, and non-GAAP diluted EPS of $2.86"
+     },
+     {
+      "metric": "adjusted operating income",
+      "period": "Q1 2026",
+      "value": 200.7,
+      "verbatim": "Non-GAAP income from operations was $200.7 million"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "next-fy",
+      "low": 4.0,
+      "high": 6.5,
+      "unit": "%",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "For the full year, EPAM now expects the year-over-year revenue growth rate to be in the range of 4.0% to 6.5%"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2026-02-19",
+    "source_ref": "8-K 0001352010-26-000010 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted operating income",
+      "period": "Q4 2025",
+      "value": 230.0,
+      "verbatim": "Non-GAAP income from operations was $230.0 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q4 2025",
+      "value": 3.26,
+      "verbatim": "Non-GAAP diluted EPS was $3.26"
+     },
+     {
+      "metric": "adjusted operating income",
+      "period": "2025",
+      "value": 831.5,
+      "verbatim": "Non-GAAP income from operations was $831.5 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "2025",
+      "value": 11.5,
+      "verbatim": "Non-GAAP diluted EPS was $11.50"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "2026",
+      "low": 4.5,
+      "high": 7.5,
+      "unit": "%",
+      "basis": "change",
+      "qualitative": false,
+      "verbatim": "The Company expects the year-over-year revenue growth rate to be in the range of 4.5% to 7.5%"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-11-06",
+    "source_ref": "8-K 0001352010-25-000053 EX-99.1",
+    "reconciliation": [
+     {
+      "metric": "adjusted operating income",
+      "period": "Q3 2025",
+      "value": 222.8,
+      "verbatim": "Non-GAAP income from operations was $222.8 million"
+     },
+     {
+      "metric": "adjusted eps",
+      "period": "Q3 2025",
+      "value": 3.08,
+      "verbatim": "Non-GAAP diluted EPS was $3.08"
+     }
+    ],
+    "guidance": [
+     {
+      "metric": "revenue",
+      "period": "next-fy",
+      "low": 5430.0,
+      "high": 5445.0,
+      "unit": "$M",
+      "basis": "level",
+      "qualitative": false,
+      "verbatim": "Based on the strength of organic constant currency revenue growth and updates to our foreign exchange rate assumptions, the Company raises its expected revenues to be in the range of $5.430 billion to"
+     }
+    ],
+    "one_offs": [],
+    "event_impacts": []
+   },
+   {
+    "filed": "2025-10-21",
+    "source_ref": "8-K 0001352010-25-000050 EX-99.1",
+    "reconciliation": [],
+    "guidance": [],
+    "one_offs": [],
+    "event_impacts": []
+   }
+  ],
+  "covenants": [
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “(i) Revolving Credit Base Rate Option: A fluctuating rate per annum equal to the Base Rate plus the Applicable Margin, such interest rate to change automatically from time to time effective as of the effective date of each change in the Base Rate; or (ii) Revolving Credit Euro-Rate Option: A rate per annum equal to the Euro-Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
+    },
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "status": "present",
+     "note": "verbatim: “Revolving Credit Base Rate Option: A fluctuating rate per annum ... equal to the Base Rate plus the Applicable Margin ... Revolving Credit Eurocurrency Rate Option: A rate per annum ... equal to the Adjusted Eurocurrency Rate as determined for each applicable Interest Period plus the Applicable Margin.”"
+    },
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null
+   }
+  ]
+ }
+}
