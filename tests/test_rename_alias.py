@@ -78,19 +78,19 @@ def test_a_rename_is_confirmed_on_the_share_class_figi() -> None:
     share-class FIGI and CIK: one class, two tickers."""
     asked, details = _details()
     [alias] = detect_renames([_ident("HOS")], [_ident("HLX"), _ident("HOS")], {"HOS": "CS"},
-                             details, _first_session)
+                             details, _first_session, as_of=_REF)
     assert (alias.predecessor_id, alias.successor_id) == (_HLX, _HOS)
     assert alias.share_class_figi == "BBG001S978V8" and alias.listed == _LISTED
-    assert asked == [("HOS", None), ("HLX", date(2026, 9, 1))]
+    assert asked == [("HOS", _REF), ("HLX", date(2026, 9, 1))]
 
 
 def test_the_boundary_is_the_new_tickers_first_session_not_its_list_date() -> None:
     """Polygon's ``list_date`` is the SHARE CLASS's listing: SVIA reads 2025-12-08, the day the
     class listed as BRR. A HOS record carrying that shape must still read HLX the day before HOS's
     first session, not before a listing the old ticker itself made."""
-    asked, details = _details({"HOS": {"list_date": "1997-07-01"}})
+    asked, details = _details({"HOS@2026-10-16": {"list_date": "1997-07-01"}})
     [alias] = detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details,
-                             _first_session)
+                             _first_session, as_of=_REF)
     assert alias.listed == _LISTED
     assert asked[-1] == ("HLX", date(2026, 9, 1))
 
@@ -100,14 +100,14 @@ def test_a_different_figi_is_two_classes_never_one_record() -> None:
     HLX's real record with a different FIGI must not splice two series into one."""
     _, details = _details({"HLX@2026-09-01": {"share_class_figi": "BBG000000000"}})
     assert detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details,
-                          _first_session) == []
+                          _first_session, as_of=_REF) == []
 
 
 def test_a_line_with_no_figi_is_never_aliased() -> None:
     """NEGATIVE — PLGO carries no FIGI in any pull. With no key there is no rename, only a guess."""
-    _, details = _details({"HOS": {"share_class_figi": None}})
+    _, details = _details({"HOS@2026-10-16": {"share_class_figi": None}})
     assert detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details,
-                          _first_session) == []
+                          _first_session, as_of=_REF) == []
 
 
 def test_only_an_inactive_sibling_of_the_same_class_costs_a_call() -> None:
@@ -115,9 +115,9 @@ def test_only_an_inactive_sibling_of_the_same_class_costs_a_call() -> None:
     share class is not either: neither is ever looked up."""
     asked, details = _details()
     assert detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS", "HLX": "CS"},
-                          details, _first_session) == []
+                          details, _first_session, as_of=_REF) == []
     assert detect_renames([_ident("HOS")], [_ident("HLX", share_class="B")], {"HOS": "CS"},
-                          details, _first_session) == []
+                          details, _first_session, as_of=_REF) == []
     assert asked == []
 
 
@@ -126,7 +126,7 @@ def test_the_alias_table_only_ever_grows(tmp_path: Path) -> None:
     never dropped, and writing it again adds nothing."""
     _, details = _details()
     found = detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details,
-                           _first_session)
+                           _first_session, as_of=_REF)
     assert write_aliases(tmp_path, found) == 1
     assert write_aliases(tmp_path, found) == 0
     assert write_aliases(tmp_path, []) == 0
@@ -238,7 +238,8 @@ def test_an_alias_round_trips_through_its_row(tmp_path: Path) -> None:
 
 # --- through the REAL universe builder -----------------------------------------------------------
 
-def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, sibling: bool = False
+def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, sibling: bool = False,
+           overrides: dict[str, dict[str, Any]] | None = None,
            ) -> tuple[dict[str, int], set[str], list[tuple[str, date | None]]]:
     """The REAL builder on 2026-10-16: the entity master holds HLX (its real committed row), the
     2026-08-24 population admitted it, and the resolver now lists HOS — plus, with ``sibling``,
@@ -266,7 +267,7 @@ def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, sibling: bool = F
         "internal_id": _HLX, "market_cap": 1.0, "source": "fixture"}) + "\n")
     close = _FIX["bars"]["HOS"][-1][4]
     lines = [_ident("HOS")] + ([_ident("HOS.B", share_class="B")] if sibling else [])
-    asked, details = _details()
+    asked, details = _details(overrides)
 
     class _R:
         @classmethod
@@ -350,3 +351,17 @@ def test_incumbency_follows_a_chain_of_renames() -> None:
     chain = [step(_HLX, _HOS), step(_HOS, f"SEC-{_CIK}-HOX")]
     assert heirs(chain, {_HLX}) == {_HOS, f"SEC-{_CIK}-HOX"}
     assert heirs(chain, {"SEC-0000000001-ZZZ"}) == set()
+
+
+def test_the_new_tickers_record_is_read_as_of_the_build_not_today(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """CODEX, #833 round 1. A build dated 2026-10-16 must not be swayed by what Polygon says about
+    HOS today. HOS's record TODAY is given another class's FIGI — the shape of a ticker reused
+    after the build — while its real record as of 2026-10-16 carries BBG001S978V8: the build
+    confirms the alias from the record dated to its own day, and never asks for today's."""
+    _, _, asked = _build(monkeypatch, tmp_path,
+                         overrides={"HOS": {"share_class_figi": "BBG000000000"}})
+    [alias] = load_aliases(tmp_path / "snapshots")
+    assert (alias.predecessor_id, alias.successor_id) == (_HLX, _HOS)
+    assert ("HOS", _REF) in asked and ("HOS", None) not in asked

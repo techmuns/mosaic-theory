@@ -68,6 +68,15 @@ Polygon's `list_date`. That field is the SHARE CLASS's listing:
 The boundary is now the first session the source serves under the new ticker. It is pinned with
 a record carrying SVIA's shape.
 
+**ROUND 1 (Codex P2, #833): the new ticker's record is read as of the BUILD, not today.** The first
+cut read the successor's record undated, i.e. as Polygon has it today. That let a replayed build be
+swayed by later identity data: a ticker reused after the run date could flip whether the alias is
+recorded. `detect_renames` now takes the build's date and reads the successor as of it.
+- **Pinned:** HOS's record today is given another class's FIGI, while its REAL record as of
+  2026-10-16 (frozen) carries BBG001S978V8. The test fails on the PR head and passes now.
+- **The replay below was re-run under the fix:** 13 more live calls, the same 10 aliases (identical
+  FIGIs and first sessions), membership 2,065, HOS 1,287 bars.
+
 **REAL RUN — the 2026-10-16 build, replayed on main's population.**
 - **Inputs:** the 10-16 run's own cache and a copy of its own STORE (`vinci.db`), TTL ignored. The
   network was refused except for 49 live Polygon calls (ticker details and per-symbol bars) for
@@ -123,7 +132,7 @@ a record carrying SVIA's shape.
     pre-prune reads 343 of 343.
 
 **HOW VERIFIED.**
-- **`tests/test_rename_alias.py`, 14 pins.** Frozen REAL records (`tests/fixtures/rename_hlx_hos.json`):
+- **`tests/test_rename_alias.py`, 15 pins.** Frozen REAL records (`tests/fixtures/rename_hlx_hos.json`):
   both Polygon records, both tickers' bars, and the HLX bars the 10-16 store held.
   - FIGI confirms; a different FIGI refuses; no FIGI refuses; only an inactive same-class sibling
     costs a call; the boundary is the first session, never `list_date` (SVIA's shape).

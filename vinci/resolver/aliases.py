@@ -88,13 +88,15 @@ def write_aliases(snapshots_dir: Path, aliases: Iterable[ShareClassAlias]) -> in
 
 def detect_renames(lines: Iterable[Identity], master: Iterable[Identity],
                    active: Mapping[str, object], details: Details,
-                   first_session: Callable[[Identity], date | None],
+                   first_session: Callable[[Identity], date | None], *, as_of: date,
                    known: Iterable[ShareClassAlias] = ()) -> list[ShareClassAlias]:
     """The renames among ``lines``: for each line, an entity-master id of the SAME CIK and share
     class whose ticker is no longer ``active`` (absent from today's reference pull), confirmed by
-    equal share-class FIGIs — the line's today, the old ticker's as of the day before the line's
-    ``first_session`` under its own ticker. Only an inactive sibling is a candidate, so an issuer's
-    other live classes cost no call; an alias already ``known`` costs none either.
+    equal share-class FIGIs — the line's as of ``as_of`` (the build's date, never today: a
+    replayed build must not be swayed by what the source says later — Codex, #833), the old
+    ticker's as of the day before the line's ``first_session`` under its own ticker. Only an
+    inactive sibling is a candidate, so an issuer's other live classes cost no call; an alias
+    already ``known`` costs none either.
 
     THE BOUNDARY IS THE NEW TICKER'S FIRST SESSION, NEVER ``list_date``. Polygon's ``list_date``
     is the share class's listing: HOS reads 2026-09-02, the rename, but SVIA reads 2025-12-08, the
@@ -113,7 +115,7 @@ def detect_renames(lines: Iterable[Identity], master: Iterable[Identity],
                 and (p.internal_id, s.internal_id) not in seen]
         if not olds:
             continue
-        now = details(s.eod_symbol, None)
+        now = details(s.eod_symbol, as_of)
         figi = (now or {}).get("share_class_figi")
         if not figi or (on := first_session(s)) is None:
             continue

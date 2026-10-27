@@ -562,7 +562,7 @@ def build_universe(
             return bars[0][0] if bars else None
         found = detect_renames([row[0] for row in admitted], store.iter_securities(), sec_types,
                                lambda t, on: eod.ticker_details(t, on), _first_session,
-                               known=aliases)
+                               as_of=reference_date, known=aliases)
         write_aliases(cfg.snapshots_dir, found)
         aliases += found
         incumbents = incumbents | heirs(aliases, incumbents)
