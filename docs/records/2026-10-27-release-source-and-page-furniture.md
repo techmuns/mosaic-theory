@@ -212,6 +212,17 @@ non-GAAP EPS has none.
     metrics each with its own range refuses the second (CNXC, EPAM, LLY);
   - a refused covenant rate component is not withheld (a decision for its own build);
   - the prefix-free EPS form (ROST) needs an "X and Y" refusal before it can be admitted.
+- **DEFERRED, Codex P2 on #829 (round 1):** `_list_header`'s bullet set omits the middle dot "·"
+  (U+00B7), so a guide in a "·"-bulleted list under a quarter-only header would miss the header
+  and could fall to `next-fy`. The glyph is NOT added, because nothing real uses it that way:
+  - in the 132 EX-99 / EX-99.1 exhibits in the SEC cache on 2026-10-28 (the 119 the pages cite +
+    13 others), **0 carry a middle dot**, raw (`·`, `&#183;`, `&#xb7;`, `&middot;`) or after
+    `html_to_text`;
+  - the one known release that bullets with it, Ribbon's (8-K 0001104659-26-010898, fetched from
+    EDGAR), uses it in its results highlights: 18 dots, while its outlook is prose;
+  - with "·" added to the set, no guide moves in either population.
+  **Falsifier:** a real release whose guide opens a "·" item under a header stating the period.
+  Then the glyph joins `_BULLET`, pinned on that text. `_EDGE` already treats it as a clause edge.
 
 **Incident → invariant.** Row 30 → `_header_period`, pinned on real text, the vocabulary admitted.
 #804's furniture follow-up → `html_to_text`, pinned on real HTML. "A quote is present, not
