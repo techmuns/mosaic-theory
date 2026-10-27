@@ -14,7 +14,7 @@ REAL stored rows, at two layers.
 from __future__ import annotations
 
 import json
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -313,3 +313,36 @@ def test_the_committed_snapshot_is_counts_and_statuses_only() -> None:
         for r in page["releases"]:
             for g in r["guidance"]:
                 assert g["verbatim"] not in text
+
+
+def test_a_scaled_count_is_not_money() -> None:
+    """REVIEW FIX: Concentrix's real guide bullet "…assuming approximately 61.2 million diluted
+    common shares outstanding" states a COUNT; read as $61.2M it could confirm a mis-scaled
+    figure."""
+    from vinci.edgar.release_parse import quoted_figures
+    got = quoted_figures("Non-GAAP diluted EPS of $2.86 to $2.98, assuming approximately 61.2 "
+                         "million diluted common shares outstanding")
+    assert ("$M", 61.2) not in {(f.unit, f.value) for f in got}
+    assert ("$", 2.98) in {(f.unit, f.value) for f in got}
+
+
+def test_a_margin_divides_one_filings_figures() -> None:
+    """REVIEW FIX: gross profit is set over the revenue its OWN filing states. Mutated into Simply
+    Good's real facts: a recast revenue, 20% higher, filed the day after the release and before the
+    10-K (the Q4 2025 row: release 2025-10-23, 10-K 2025-10-28). Dividing the 10-K's gross profit by
+    the recast would read a margin no filing states."""
+    p = _page("SMPL@56500bb1")
+    rel = next(r for r in p.releases if any(x["metric"] == "gross margin" and x["period"] ==
+                                            "Q4 2025" for x in r["reconciliation"]))
+    row = next(x for x in rel["reconciliation"] if x["metric"] == "gross margin")
+    one = src.Page("SMPL", [{**rel, "reconciliation": [row]}], [], p.facts)
+    assert src._gross_margin_vs_xbrl(one).counts == {CONFIRMED: 1}
+    _fp, _y, start, end = src._place(one.calendar, row["period"])
+    facts = json.loads(json.dumps(p.facts))
+    day_after = (src._filed(rel) + timedelta(days=1)).isoformat()
+    for tag in src.CONCEPT_ALIASES["revenue"]:
+        for rows in (facts["facts"]["us-gaap"].get(tag) or {}).get("units", {}).values():
+            rows += [{**r, "filed": day_after, "val": r["val"] * 1.2} for r in list(rows)
+                     if r["end"] == end.isoformat()]
+    got = src._gross_margin_vs_xbrl(src.Page("SMPL", one.releases, [], facts)).counts
+    assert got == {CONFIRMED: 1}, got

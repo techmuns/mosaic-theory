@@ -147,10 +147,19 @@ non-GAAP EPS has none.
     labelled mutations of real text.
 - **Mutation: 37 mutants, all killed**: 34 in the first full run; the 3 header guards that
   survived it got their own pins and were killed on re-run. Each kill and its test is in the PR.
+- `/code-review high --fix` found six. Four are fixed, each behind a pin that fails without it:
+  - a scaled count ("61.2 million diluted common shares") read as $M;
+  - a gross margin dividing one filing's gross profit by another's revenue;
+  - "U.S." / "Inc." / "No." / "approx." read as full stops;
+  - the fiscal calendar rebuilt per check.
+  Two are reported, not fixed: the cap heuristic (its root fix changes every stored quote) and the
+  covenant note format re-typed outside `covenant_extract`. None moved a count on the corpus.
 - One existing pin asserted the held vocabulary
   (`test_guidance_gaap_eps.py::test_a_non_gaap_diluted_eps_is_never_read_as_gaap`, "`== []`"). It
   now asserts the row is `adjusted eps`, never GAAP — its own stated intent.
-- Full offline suite: see the PR (`pytest -m "not network"`, ruff, `mypy --strict vinci`).
+- Full offline suite on the final code (rebased on main 23a6b855): 7,328 passed, 528 skipped,
+  0 failed; ruff and `mypy --strict vinci` clean. The snapshot is
+  `data/snapshots/data_quality/release/2026-10-27.json`, written at f0d144cc.
 
 **DIFFERS-UNEXPLAINED ROWS — gold-corpus candidates, not built:**
 - `guide_scale_vs_xbrl`: NCNO ×5 — quarterly revenue guides $142–160M labelled 2025 / 2026,

@@ -27,6 +27,7 @@ COUNTS AND STATUSES ONLY. The repo is public: no figure, quote or period reaches
 """
 from __future__ import annotations
 
+import functools
 import hashlib
 import json
 from collections import Counter
@@ -86,6 +87,11 @@ class Page:
     releases: list[dict[str, Any]]
     covenants: list[dict[str, Any]] = field(default_factory=list)
     facts: dict[str, Any] | str | None = None
+
+    @functools.cached_property
+    def calendar(self) -> dict[tuple[str, int], date]:
+        """The filer's fiscal calendar, built ONCE per page for every check that places a label."""
+        return _calendar(self.facts) if isinstance(self.facts, dict) else {}
 
 
 # --- the filer's XBRL: its fiscal calendar and its figures ---------------------------------------
@@ -174,11 +180,15 @@ def _by_tag(facts: dict[str, Any], tags: tuple[str, ...] | list[str], start: dat
     return out
 
 
-def _governing(figs: list[tuple[date, float]], filed: date | None) -> float:
-    """The figure the release's own filing period gives: the first filed on or after the release
-    (its 10-Q/10-K, or a later recast), else the latest before."""
+def _governing_filed(figs: list[tuple[date, float]], filed: date | None) -> tuple[date, float]:
+    """(filed, figure) the release's own filing period gives: the first filed on or after the
+    release (its 10-Q/10-K, or a later recast), else the latest before."""
     after = sorted(f for f in figs if filed is not None and f[0] >= filed)
-    return after[0][1] if after else max(figs)[1]
+    return after[0] if after else max(figs)
+
+
+def _governing(figs: list[tuple[date, float]], filed: date | None) -> float:
+    return _governing_filed(figs, filed)[1]
 
 
 def _differs(release: float, filing: float, half_unit: float) -> bool:
@@ -251,7 +261,7 @@ def _revenue_vs_xbrl(page: Page) -> ItemResult:
     facts = _facts(page)
     if isinstance(facts, ItemResult):
         return facts
-    cal = _calendar(facts)
+    cal = page.calendar
     c: Counter[str] = Counter()
     for r, x in rows:
         placed = _place(cal, str(x.get("period") or ""))
@@ -284,7 +294,7 @@ def _gross_margin_vs_xbrl(page: Page) -> ItemResult:
     facts = _facts(page)
     if isinstance(facts, ItemResult):
         return facts
-    cal = _calendar(facts)
+    cal = page.calendar
     c: Counter[str] = Counter()
     for r, x in rows:
         placed = _place(cal, str(x.get("period") or ""))
@@ -294,10 +304,14 @@ def _gross_margin_vs_xbrl(page: Page) -> ItemResult:
         _fp, _y, start, end = placed
         gp = _by_tag(facts, ("GrossProfit",), start, end)
         rev = _by_tag(facts, CONCEPT_ALIASES["revenue"], start, end)
-        if not gp or not rev or not (base := _governing(rev[0], _filed(r))):
+        # ONE FILING'S RATIO: gross profit over the revenue THAT filing states for the period —
+        # never one filing's gross profit over another's recast revenue
+        gross = _governing_filed(gp[0], _filed(r)) if gp else None
+        base = next((v for f, v in rev[0] if gross and f == gross[0]), None) if rev else None
+        if gross is None or not base:
             c[UNCHECKED] += 1
             continue
-        gap = abs(float(x["value"]) - 100.0 * _governing(gp[0], _filed(r)) / base)
+        gap = abs(float(x["value"]) - 100.0 * gross[1] / base)
         c[CONFIRMED if gap <= MARGIN_TOL_PTS + _SAME else DIFFERS_UNEXPLAINED] += 1
     return ItemResult(counts=dict(c))
 
@@ -317,7 +331,7 @@ def _guide_scale_vs_xbrl(page: Page) -> ItemResult:
     facts = _facts(page)
     if isinstance(facts, ItemResult):
         return facts
-    cal = _calendar(facts)
+    cal = page.calendar
     c: Counter[str] = Counter()
     for r, g in guides:
         filed, lab = _filed(r), _label(str(g.get("period") or ""))
@@ -349,7 +363,7 @@ def _guide_period_forward(page: Page) -> ItemResult:
     facts = _facts(page)
     if isinstance(facts, ItemResult):
         return facts
-    cal = _calendar(facts)
+    cal = page.calendar
     c: Counter[str] = Counter()
     for r, g in guides:
         filed, lab = _filed(r), _label(str(g.get("period") or ""))

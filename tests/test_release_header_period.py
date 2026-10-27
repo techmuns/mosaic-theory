@@ -200,3 +200,12 @@ def test_a_tail_stating_a_figure_is_an_item_not_a_header() -> None:
     assert "That compares with $35 million" in text
     at = text.index("Adjusted EPS in the range of $10.95")
     assert rp._header_period(text, at) == "Fiscal 2026"
+
+
+def test_an_abbreviation_ends_no_sentence() -> None:
+    """REVIEW FIX: "U.S.", "Inc.", "No." and "approx." are not full stops, so the words after
+    one inside an item are never taken for a list's header."""
+    for text in ("revenue from U.S. operations", "Acme Inc. guidance", "Note No. 4",
+                 "approx. 25%", "growth vs. last year"):
+        assert not rp._SENTENCE_END.search(text), text
+    assert rp._SENTENCE_END.search("guidance for all financial measures. • Total")

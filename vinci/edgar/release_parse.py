@@ -185,9 +185,14 @@ class QuotedFigure(NamedTuple):
 #: ONE unit — a scale word, a percent or basis points. "zero" is a figure too: a rate floor is
 #: written "less than zero … deemed to be zero" as often as "0%".
 _QUOTED_NUM = rf"(?:{_NUM}|\.\d+)"
+#: A scale word before one of these is a COUNT, never money ("approximately 61.2 million diluted
+#: common shares" — Concentrix's guide bullet): read as $M it could confirm a mis-scaled figure.
+_COUNT_NOUN = (r"(?:\w+\s+){0,2}?(?:shares|units|subscribers|customers|members|users|accounts|"
+               r"vehicles|stores|locations|employees|people|households|devices|miles|barrels)\b")
 _QUOTED = re.compile(
     rf"(?P<cur>\$)?\s*\(?(?P<num>{_QUOTED_NUM})\)?\s*"
-    rf"(?:(?P<scale>{_SCALE})(?![A-Za-z])|(?P<pct>%|percent\b)|(?P<bps>basis\s+points|bps\b))?+"
+    rf"(?:(?P<scale>{_SCALE})(?![A-Za-z])(?!\s+(?:{_COUNT_NOUN}))|(?P<pct>%|percent\b)|"
+    r"(?P<bps>basis\s+points|bps\b))?+"
     r"|(?P<zero>\bzero\b)", re.I)
 #: A RANGE whose low side states no unit inherits the high side's — the rule `_guidance` scales by
 #: ("$2.465 to $2.49 billion", "between 300 and 350 basis points", "$80-100 million").
@@ -1429,8 +1434,9 @@ def _opener_period(text: str, start: int, end: int) -> str | None:
 # the guide keeps whatever the next reader finds.
 _BULLET = re.compile(r"[•●○◦■▪]")
 #: A sentence end, a closing quote or bracket after the stop included (`brand.” For fiscal…`) —
-#: never the "vs." of a comparison.
-_SENTENCE_END = re.compile(r"(?<!\bvs)[.!?][”\"’)\]]*\s+", re.I)
+#: never the "vs." of a comparison, nor an abbreviation ("Inc.", "U.S.", "No.", "approx.").
+_SENTENCE_END = re.compile(r"(?<!\bvs)(?<!\bInc)(?<!\bCo)(?<!\bNo)(?<!\bU\.S)(?<!\bapprox)"
+                           r"[.!?][”\"’)\]]*\s+", re.I)
 #: Longer than any one bullet item measured over the 119 cited releases: Amazon's longest guide item
 #: (net sales, with its Prime Day and FX sentences) is ~420 characters. A longer segment is prose.
 _ITEM_REACH = 600
