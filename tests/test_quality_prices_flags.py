@@ -378,13 +378,16 @@ def test_after_a_tiingo_plan_limit_nothing_more_is_asked_this_run(
             asked.append(symbol)
             if symbol == "GAPS":          # the sixth name asked: PAGE, then internal-id order
                 if refusal == "monthly":
-                    raise TiingoRefusedError("over the plan's monthly symbol limit")
+                    raise TiingoRefusedError("over the plan's monthly symbol limit",
+                                             monthly_cap=True)
                 try:
                     raise HttpError("429 from https://api.tiingo.com/x")
                 except HttpError as exc:
                     raise HttpError("Exhausted retries for https://api.tiingo.com/x") from exc
             if symbol == "ERR":                   # any other refusal stops nothing
                 raise HttpError("Non-retryable 404 from https://api.tiingo.com/x")
+            if symbol == "ETN":                   # nor a 200 refusal that is not the cap
+                raise TiingoRefusedError("refused, no rows: synthetic", monthly_cap=False)
             return FakeTiingo()(symbol, start, end)
 
         def cached_rows(self, symbol: str, *, start: date, end: date,
@@ -418,7 +421,7 @@ def test_a_refusal_served_as_200_is_raised_and_never_kept(tmp_path: Path) -> Non
     body = {"detail": "You have run over your 500 symbol look up for this month. Please upgrade."}
 
     class Http(CachedHttp):
-        served: list[Any] = [body, [_row(0, P0)]]
+        served: list[Any] = [body, [_row(0, P0)], {"detail": "Error: synthetic"}]
 
         def _fetch_with_retries(self, url: str, *, json_body: Any = None) -> str:
             import json
@@ -426,11 +429,15 @@ def test_a_refusal_served_as_200_is_raised_and_never_kept(tmp_path: Path) -> Non
 
     http = Http(cache_dir=tmp_path, user_agent="t", min_interval_sec=0.0, namespace="tiingo")
     client = TiingoEodClient(http)
-    with pytest.raises(TiingoRefusedError, match="over the plan's monthly symbol limit"):
+    with pytest.raises(TiingoRefusedError, match="over the plan's monthly symbol limit") as got:
         client.daily_rows("x", start=DAYS[0], end=DAYS[0], ttl_seconds=None)
+    assert got.value.monthly_cap
     assert not list((tmp_path / "tiingo").glob("*.json"))          # dropped, not kept
     assert client.daily_rows("x", start=DAYS[0], end=DAYS[0], ttl_seconds=None)[0]["close"] == P0
     assert len(list((tmp_path / "tiingo").glob("*.json"))) == 1    # real rows are kept
+    with pytest.raises(TiingoRefusedError, match="refused, no rows: Error: synthetic") as other:
+        client.daily_rows("y", start=DAYS[0], end=DAYS[0])
+    assert not other.value.monthly_cap                  # about the one request, not the month
 
 
 def test_cached_rows_reads_the_cache_alone(tmp_path: Path) -> None:

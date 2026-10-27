@@ -28,7 +28,13 @@ _ONE_DAY = 86_400.0
 class TiingoRefusedError(HttpError):
     """Tiingo answered 200 with a refusal instead of rows. Measured 2026-10-27 from 20:01 IST:
     ``{"detail": "You have run over your 500 symbol look up for this month. ..."}`` — the plan
-    caps the distinct symbols a key may ask for in a calendar month, shared by every user of it."""
+    caps the distinct symbols a key may ask for in a calendar month, shared by every user of it.
+    ``monthly_cap`` says whether it was that cap, which refuses every NEW symbol until the month
+    turns; any other refusal is about the one request."""
+
+    def __init__(self, message: str, *, monthly_cap: bool) -> None:
+        super().__init__(message)
+        self.monthly_cap = monthly_cap
 
 
 #: the refusal's wording for the monthly cap, as served
@@ -95,9 +101,9 @@ class TiingoEodClient:
             # netcache caches every 200 and exposes no eviction; its own path rule is used here
             self._http._cache_path(self._http._with_params(url, params)).unlink(missing_ok=True)
             detail = str(data.get("detail") if isinstance(data, dict) else type(data).__name__)
-            raise TiingoRefusedError(
-                "over the plan's monthly symbol limit" if MONTHLY_SYMBOL_LIMIT in detail
-                else f"refused, no rows: {detail[:60]}")
+            cap = MONTHLY_SYMBOL_LIMIT in detail
+            raise TiingoRefusedError("over the plan's monthly symbol limit" if cap
+                                     else f"refused, no rows: {detail[:60]}", monthly_cap=cap)
         return cast(list[dict[str, Any]], data)
 
     def cached_rows(self, symbol: str, *, start: date, end: date,

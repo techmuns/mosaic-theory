@@ -178,7 +178,7 @@ none of them a ledger name or benchmark (rehearsal above).
   the cap, and then refused even names whose answers were already kept. BHVN, CORZ, CCCC and others
   read not_run though cached. After a stop, a kept answer is now still read (`cached_rows`, never a
   request), pinned in the plan-limit test, and the snapshot is from the re-run.
-- **Mutation: 39 of 39 killed**, stale bytecode off, on a baseline proven green with the
+- **Mutation: 41 of 41 killed**, stale bytecode off, on a baseline proven green with the
   snapshot-ids pin deselected (that pin is red until this commit's snapshot exists). The first pass
   was invalid: every mutant "died" on that pin, which was caught and re-run. The second pass left 4
   survivors. Three were missing pins (no rows at all ×2, a negative volume), now added; the fourth
@@ -193,6 +193,10 @@ none of them a ledger name or benchmark (rehearsal above).
   - 3 skipped: renames, as above; a recomputed flag scan (about 1–2 s on a 16 s run); two row
     validators that read different fields.
   - 1 no change: a missing Tiingo row read as no trade is the stated rule.
+  - A second pass over the refusal code added after it found 1 more, fixed behind a pin: any
+    200 refusal stopped the run labelled "monthly symbol limit". Only the cap stops it now
+    (`TiingoRefusedError.monthly_cap`). The snapshot, measured at 1d3809d4 just before this fix,
+    is unaffected: its one refusal was the cap.
 
 **BOUNDARY.**
 

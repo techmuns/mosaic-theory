@@ -467,8 +467,9 @@ def _default_fetch() -> Fetch | None:
             raise HttpError(f"not asked: {stopped[0]}")
         try:
             return client.daily_rows(symbol, start=start, end=end, ttl_seconds=ttl)
-        except TiingoRefusedError:
-            stopped.append("monthly symbol limit")
+        except TiingoRefusedError as exc:
+            if exc.monthly_cap:               # every new symbol is refused until the month turns
+                stopped.append("monthly symbol limit")
             raise
         except HttpError as exc:
             if "429" in str(exc.__cause__):
