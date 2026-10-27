@@ -100,3 +100,13 @@ def test_a_d_and_a_its_concept_has_reported_past_is_refused() -> None:
     assert isinstance(got, str)
     assert got.startswith("stale annual dep_amort: DepreciationAndAmortization for the year to "
                           "2024-12-31, 546d behind")
+
+
+def test_a_bridged_d_and_a_does_not_claim_a_fiscal_year() -> None:
+    """REVIEW FINDING (Codex, #830). The bridge reads the workbook's LAST annual column, which is
+    `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27; NKE's is a fiscal year, MCK's
+    carries no header), yet the filled D&A was labelled "consolidated latest FY". The basis now
+    says what the column is: LTM where the workbook carries one, else the latest fiscal year."""
+    basis = _bridge_inputs({}, _facts("CNXC"), _ciq(CNXC_CIQ_DA))["d_and_a"].basis or ""
+    assert basis != "consolidated latest FY"
+    assert "latest annual column" in basis and "LTM" in basis

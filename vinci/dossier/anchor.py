@@ -756,6 +756,12 @@ def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: boo
 
 
 DQ_VENDOR_BRIDGE = "vendor_bridge"
+
+#: What the bridged D&A's twelve months ARE. `ciq_balance` reads the annual sheet's LAST column,
+#: which is `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27; NKE's is a fiscal year,
+#: MCK's carries no header) — it was labelled "consolidated latest FY" (review of #830).
+CIQ_DA_BASIS = ("consolidated, the CIQ workbook's latest annual column — LTM where the workbook "
+                "carries one, else its latest fiscal year (vendor basis)")
 _NO_VENDOR_EX_LEASE = ("; CIQ's net debt is not substituted, because it carries the operating "
                        "leases this bridge excludes")
 
@@ -794,7 +800,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                    else f"EDGAR D&A withheld — {got_da}")
             da = (v * _USD_M, f"CIQ Financials->Cash Flow (vendor basis; {why}) "
                               f"[{ciq.source_file} sha {ciq.source_sha256}]",
-                  "consolidated latest FY")
+                  CIQ_DA_BASIS)
             vendor.append("d_and_a")
         if nd_val is None and not ex_lease and (v := ciq.value("net_debt")) is not None:
             nd_val = v * _USD_M

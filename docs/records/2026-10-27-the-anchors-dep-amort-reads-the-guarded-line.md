@@ -96,7 +96,7 @@ the vendor's D&A, stamped as such, rather than a guess.
   | ORKA | 0.015, EDGAR combined FY2023 (731d behind FY2025) | CIQ bridge 0.134 (LTM to 2026-06-30) |
   | AMZN | 75,200, unchanged | the vintage note reads "over 1 staler candidate(s)", was "over 2" |
 
-  - GOOGL's and MVST's text is unchanged.
+  - GOOGL's bridged D&A keeps its value and source; only its basis label changes (cost 1). MVST's text is unchanged.
   - **The relay expected CNXC and WERN to keep their committed figures through the bridge
     ($660.433M; $286.321M vs $286.4M).** Those are the workbooks' FY25 columns; the bridge reads
     the last column, the LTM. That LTM matches the LTM EBIT it is added to better than a fiscal
@@ -151,14 +151,16 @@ the vendor's D&A, stamped as such, rather than a guess.
   hash-checked against Drive.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-1. **FOUND, NOT FIXED — the bridge's D&A is LTM, labelled a fiscal year.**
-   `ciq_balance._cf_row(..., annual=True)` takes the annual Cash Flow sheet's last column, which
-   is `LTM 12 months` in every workbook checked (CNXC, WERN, FUBO, ORKA, GOOGL). The fact is
-   labelled "latest full year", and `_bridge_inputs` gives the filled D&A the basis
-   "consolidated latest FY". The VALUE is the better-matched one for an LTM EBITDA; the LABEL is
-   wrong. That is on GOOGL's committed page already, and it reaches CNXC, WERN, FUBO and ORKA at
-   re-assembly. The fix is in `ciq_balance` (the CIQ lane's file) and in the bridge's basis
-   string.
+1. **The bridge's D&A is the workbook's LAST annual column, not a fiscal year.**
+   - `ciq_balance._cf_row(..., annual=True)` takes the annual Cash Flow sheet's last column. That
+     column is `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27); NKE's is a fiscal
+     year, and MCK's carries no header.
+   - **Fixed in the anchor (review of #830, round 1).** The filled D&A was labelled "consolidated
+     latest FY". It now carries `CIQ_DA_BASIS` ("the CIQ workbook's latest annual column — LTM
+     where the workbook carries one, else its latest fiscal year"). GOOGL's committed vendor D&A
+     changes that label, and nothing else, at re-assembly.
+   - **DEFERRED:** naming the exact column needs `ciq_balance` to read its header. Its own fact
+     still says "latest full year". That is the CIQ lane's file.
 2. **A filer that never tagged a combined line has no EDGAR D&A** (107 cached). Its split is
    unverifiable from companyfacts alone. CNXC's split equals its CIQ FY25 exactly and WERN's is
    within 0.03%, so for those two the split was right; but nothing in the filings shows it, and
