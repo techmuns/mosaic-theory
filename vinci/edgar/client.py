@@ -25,7 +25,13 @@ from typing import Any, NoReturn, cast
 from pydantic import BaseModel
 
 from vinci.config import Config, get_config
-from vinci.edgar.concepts import StaleAnnual, current_annual, facts_as_of
+from vinci.edgar.concepts import (
+    StaleAnnual,
+    current_annual,
+    current_pair,
+    facts_as_of,
+    filer_fiscal_year,
+)
 from vinci.edgar.net_debt import NO_DEBT_OR_CASH, Basis, net_debt
 from vinci.edgar.submissions import RegistrantHistory, parse_registrant_history
 from vinci.netcache import CachedHttp, HttpError
@@ -134,25 +140,32 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     # (vinci.edgar.concepts.current_annual, §5.0 row 11). The latest annual alone was served however
     # old it was: Climb Global's FY2019 capex came off its FY2025 operating cash flow, and
     # AbCellera's FY2023 D&A was added to its FY2025 operating income.
-    op, op_stale = current_annual(facts, "operating_income")
-    da, da_stale = current_annual(facts, "dep_amort")
-    ocf, ocf_stale = current_annual(facts, "operating_cash_flow")
-    capex, capex_stale = current_annual(facts, "capex")
-    eps, eps_stale = current_annual(facts, "eps_diluted")
+    fy = filer_fiscal_year(facts)
+    op, op_stale = current_annual(facts, "operating_income", fy)
+    ocf, ocf_stale = current_annual(facts, "operating_cash_flow", fy)
+    eps, eps_stale = current_annual(facts, "eps_diluted", fy)
+    # A COMBINED FIGURE READS BOTH LEGS FOR ONE FISCAL YEAR (vinci.edgar.concepts.current_pair).
+    # Each leg's own latest annual was combined, so a concept stopped on every alias was paired
+    # with a current one: Johnson & Johnson's FY2014 operating income with its FY2025 D&A.
+    fcf_legs, fcf_stale = current_pair(facts, "operating_cash_flow", "capex", fy)
+    ebitda_legs, ebitda_stale = current_pair(facts, "operating_income", "dep_amort", fy)
 
     op_sign = (_present_i(_sign(op.value), op.filed) if op
                else _unknown_i(_why("no operating_income", op_stale)))
-    if ocf and capex:
-        fcf_sign = _present_i(_sign(ocf.value - capex.value), max(ocf.filed, capex.filed))
+    if fcf_legs:
+        fcf_ocf, fcf_capex = fcf_legs
+        fcf_sign = _present_i(_sign(fcf_ocf.value - fcf_capex.value),
+                              max(fcf_ocf.filed, fcf_capex.filed))
     else:
-        fcf_sign = _unknown_i(_why("no OCF/capex", ocf_stale, capex_stale))
+        fcf_sign = _unknown_i(fcf_stale.note if fcf_stale else "no OCF/capex")
 
     ebitda_val: float | None = None
-    if op and da:
-        ebitda_val = op.value + da.value
-        ebitda = _present_f(op.value + da.value, max(op.filed, da.filed))
+    if ebitda_legs:
+        eb_op, eb_da = ebitda_legs
+        ebitda_val = eb_op.value + eb_da.value
+        ebitda = _present_f(ebitda_val, max(eb_op.filed, eb_da.filed))
     else:
-        ebitda = _unknown_f(_why("no operating_income/D&A", op_stale, da_stale))
+        ebitda = _unknown_f(ebitda_stale.note if ebitda_stale else "no operating_income/D&A")
 
     # ONE builder, every line at ONE balance-sheet date (vinci.edgar.net_debt, §5.0 row 27 (1)):
     # each leg used to be read at its OWN latest date, so a tag the filer stopped using was served
@@ -183,7 +196,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     if net_debt_val is None:
         net_lev = _unknown_f(no_nd)
     elif ebitda_val is None:
-        net_lev = _unknown_f(_why("no EBITDA in XBRL", op_stale, da_stale))
+        net_lev = _unknown_f(ebitda_stale.note if ebitda_stale else "no EBITDA in XBRL")
     elif ebitda_val <= 0:
         net_lev = _unknown_f("EBITDA<=0 (ratio meaningless)")
     elif not net_debt_f.as_of:
@@ -207,7 +220,8 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
 
     eps_df = (_present_f(eps.value, eps.filed) if eps
               else _unknown_f(_why("no diluted EPS", eps_stale)))
-    filed_dates = [p.filed for p in (op, da, ocf, capex, eps) if p] + ([nd.filed] if nd else [])
+    read = [op, ocf, eps, *(fcf_legs or ()), *(ebitda_legs or ())]
+    filed_dates = [p.filed for p in read if p] + ([nd.filed] if nd else [])
     return FundamentalSnapshot(
         cik=cik10,
         op_income_sign=op_sign,

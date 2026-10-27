@@ -521,7 +521,7 @@ def test_a_trailing_10q_window_is_labelled_by_its_period_not_its_filing_year() -
         "PaymentsToAcquirePropertyPlantAndEquipment": _ttm_facts("capex", 131_819e6, 173_028e6),
         "DepreciationDepletionAndAmortization": _ttm_facts("da", 65_756e6, 75_200e6)}}}
     fcf = anc._latest_fcf(facts)
-    assert fcf is not None
+    assert isinstance(fcf, tuple), fcf
     value, basis, source = fcf
     assert value == pytest.approx(-11_625e6)                      # the value never changed
     assert "12m to 2026-06-30" in basis and "12m to 2026-06-30" in source
@@ -542,7 +542,7 @@ def test_a_trailing_10q_window_is_labelled_by_its_period_not_its_filing_year() -
         "PaymentsToAcquirePropertyPlantAndEquipment": {"units": {"USD": [_ttm_facts(
             "", 131_819e6, 0)["units"]["USD"][0]]}}}}}              # type: ignore[index]
     fy = anc._latest_fcf(fy_only)
-    assert fy is not None and fy[1] == "latest FY2025 (not LTM)"
+    assert isinstance(fy, tuple) and fy[1] == "latest FY2025 (not LTM)"
 
 
 # --- (2026-09-21) the R1 mid-cycle flag — real values, frozen as of the day it shipped --------

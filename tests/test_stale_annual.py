@@ -229,20 +229,20 @@ def test_a_transition_period_is_not_a_fiscal_year() -> None:
     assert stale is None and point is not None and point.period_end == date(2025, 4, 30)
 
 
-# --- THE GAP, pinned so it stays a decision ----------------------------------------------------
+# --- THE GAP #817 LEFT, closed: a concept stopped on every alias --------------------------------
 
 
-def test_a_concept_stopped_on_every_alias_is_not_caught_and_says_so() -> None:
+def test_a_concept_stopped_on_every_alias_is_withheld_against_the_filer() -> None:
     """SL Green: no capex alias carries a period after 2019-12-31, so the served annual IS the
-    concept's newest period and this check passes it. The screen's FCF sign still takes FY2025
-    operating cash flow less FY2019 capex.
-
-    THIS PIN IS THE FALSIFIER, not an endorsement. It reddens the day the check also measures
-    against the filer's newest fiscal year — the family the record leaves open (410 served
-    annuals in 346 filers on the 2026-10-27 census) — and that is when the record and STATE.md
-    §5.0 row 11 must change."""
+    concept's newest period and #817's check passes it — this pin was its falsifier, asserting the
+    year was still served. The annual is now also measured against the filer's newest fiscal year
+    (`concepts.behind_filer`), and FY2019 is 2,192d behind FY2025: withheld, and the screen's FCF
+    sign no longer takes FY2025 operating cash flow less FY2019 capex
+    (`docs/records/2026-10-27-combined-annual-figures-read-one-fiscal-year.md`)."""
     facts = _facts("SLG")
     capex, stale = current_annual(facts, "capex")
-    assert stale is None and capex is not None and capex.period_end == date(2019, 12, 31)
+    assert capex is None and stale is not None and stale.against_filer
+    assert (stale.period_end, stale.newer_end, stale.lag_days) == (
+        date(2019, 12, 31), date(2025, 12, 31), 2192)
     fcf = compute_fundamental_snapshot("SLG", facts).fcf_sign
-    assert fcf.coverage_status is CoverageStatus.PRESENT
+    assert fcf.coverage_status is CoverageStatus.UNKNOWN

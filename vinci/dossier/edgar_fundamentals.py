@@ -27,7 +27,7 @@ from datetime import date
 from typing import Any
 
 from vinci.dossier.schemas import PeerComps, Sourced, SourceStatus
-from vinci.edgar.concepts import ConceptPoint, concept_frontier, extract_points, stale_against
+from vinci.edgar.concepts import ConceptPoint, annual_by_period, current_pair, extract_points
 
 _USD_M = 1e6  # EDGAR companyfacts report in dollars; the dossier/CIQ convention is $M
 
@@ -39,19 +39,6 @@ CROSS_SOURCE_DELTA_FLAG = (
     "name fundamentals are EDGAR-GAAP basis (CIQ fundamentals empty) vs peers on CIQ basis — a "
     "delta may be definitional, not a real gap"
 )
-
-
-def _annual_by_period(points: list[ConceptPoint]) -> dict[date, ConceptPoint]:
-    """Latest-FILED annual point per fiscal ``period_end`` — collapses restatements to the most
-    recent filing without mutating earlier rows (same rule as :func:`latest_annual`)."""
-    out: dict[date, ConceptPoint] = {}
-    for p in points:
-        if not p.is_annual:
-            continue
-        cur = out.get(p.period_end)
-        if cur is None or p.filed > cur.filed:
-            out[p.period_end] = p
-    return out
 
 
 def _period_label(p: ConceptPoint) -> str:
@@ -72,11 +59,11 @@ class EdgarFundamentals:
     when the CIQ fundamentals are empty + Multiples present (see :func:`build_fallback`)."""
 
     def __init__(self, facts: dict[str, Any]) -> None:
-        self._rev = _annual_by_period(extract_points(facts, "revenue"))
-        self._op = _annual_by_period(extract_points(facts, "operating_income"))
-        self._da = _annual_by_period(extract_points(facts, "dep_amort"))
-        self._ocf = _annual_by_period(extract_points(facts, "operating_cash_flow"))
-        self._capex = _annual_by_period(extract_points(facts, "capex"))
+        self._rev = annual_by_period(extract_points(facts, "revenue"))
+        self._op = annual_by_period(extract_points(facts, "operating_income"))
+        self._da = annual_by_period(extract_points(facts, "dep_amort"))
+        self._ocf = annual_by_period(extract_points(facts, "operating_cash_flow"))
+        self._capex = annual_by_period(extract_points(facts, "capex"))
         # EBITDA per period: operating_income + D&A, BOTH the same fiscal period. A period missing
         # D&A is DROPPED (fail-loud), never operating_income alone. CNXC (op present, D&A absent) →
         # this dict stays empty → EBITDA-margin / EBITDA-trajectory are UNKNOWN, never fabricated.
@@ -92,27 +79,26 @@ class EdgarFundamentals:
             for pe in sorted(self._ocf.keys() & self._capex.keys())
             if self._ocf[pe].period_start == self._capex[pe].period_start
         }
-        # The newest period each FCF leg's concept carries: the latest FCF year is judged against
-        # both, so a pair that last met years ago is never served as this year's FCF.
-        self._newest = {c: concept_frontier(facts, c) for c in ("operating_cash_flow", "capex")}
+        self._facts = facts
 
     # --- the three CIQ-sourced fundamentals fields, mirrored on a raw-GAAP basis -----------------
 
     def free_cash_flow(self) -> Sourced[float]:
         """Latest annual FCF ($M) = operating cash flow − capex (same period). Fail-loud UNKNOWN.
 
-        UNKNOWN, too, when that period is a fiscal year or more behind the newest period either
-        leg's concept carries (:func:`vinci.edgar.concepts.current_annual`): Climb Global's last
-        year with both legs is FY2019, and it read as the latest FCF beside quarters to 2026."""
+        UNKNOWN, too, when that period is not current (:func:`vinci.edgar.concepts.current_pair`,
+        the pairing the screen's FCF sign reads): a fiscal year or more behind the newest period
+        either leg's concept carries — Climb Global's last year with both legs is FY2019, and it
+        read as the latest FCF beside quarters to 2026 — or more than one fiscal year behind the
+        filer's newest."""
         if not self._fcf:
             return Sourced.unknown(
                 note="EDGAR: no fiscal period with both operating cash flow and capex"
             )
-        pe = max(self._fcf)
-        stale = [s for s in (stale_against(self._ocf[pe], self._newest["operating_cash_flow"]),
-                             stale_against(self._capex[pe], self._newest["capex"])) if s]
-        if stale:
-            return Sourced.unknown(note="EDGAR: " + "; ".join(s.note for s in stale))
+        legs, stale = current_pair(self._facts, "operating_cash_flow", "capex")
+        if legs is None:
+            return Sourced.unknown(note="EDGAR: " + (stale.note if stale else "no FCF pair"))
+        pe = legs[0].period_end
         ref = (
             f"EDGAR XBRL companyfacts {self._ocf[pe].tag} − {self._capex[pe].tag} "
             f"[{_period_label(self._ocf[pe])}] ($M)"

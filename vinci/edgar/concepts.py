@@ -334,6 +334,19 @@ def latest_annual(points: list[ConceptPoint]) -> ConceptPoint | None:
     return max(annual, key=lambda p: (p.period_end, p.filed))
 
 
+def annual_by_period(points: list[ConceptPoint]) -> dict[date, ConceptPoint]:
+    """Latest-FILED annual point per fiscal ``period_end`` — collapses restatements to the most
+    recent filing without mutating earlier rows (same rule as :func:`latest_annual`)."""
+    out: dict[date, ConceptPoint] = {}
+    for p in points:
+        if not p.is_annual:
+            continue
+        cur = out.get(p.period_end)
+        if cur is None or p.filed > cur.filed:
+            out[p.period_end] = p
+    return out
+
+
 #: An annual is NOT CURRENT once its own concept carries a period ending at least this long after
 #: it: a whole fiscal year (the shortest one :attr:`ConceptPoint.is_annual` admits) has then closed
 #: past it AND been reported, so the annual describes the year before last. MEASURED 2026-10-27 on
@@ -353,12 +366,20 @@ class StaleAnnual(NamedTuple):
     concept: str
     tag: str  # the alias whose annual was served
     period_end: date  # that annual's period end
-    newer_tag: str  # the alias carrying the concept's newest period
+    newer_tag: str  # the alias carrying the concept's newest period (the filer's: see below)
     newer_end: date  # that period's end
     lag_days: int
+    # True when the newer period is the FILER's newest fiscal year (:func:`behind_filer`), not
+    # one of this concept's own: the concept stopped on every alias and the filer moved on.
+    against_filer: bool = False
 
     @property
     def note(self) -> str:
+        if self.against_filer:
+            return (f"stale annual {self.concept}: {self.tag} for the year to "
+                    f"{self.period_end.isoformat()}, {self.lag_days}d behind the filer's newest "
+                    f"fiscal year ({self.newer_tag} to {self.newer_end.isoformat()}) — more "
+                    f"than one fiscal year behind")
         return (f"stale annual {self.concept}: {self.tag} for the year to "
                 f"{self.period_end.isoformat()}, {self.lag_days}d behind {self.newer_tag} to "
                 f"{self.newer_end.isoformat()} — not the current year")
@@ -395,11 +416,61 @@ def stale_against(annual: ConceptPoint, newest: ConceptPoint | None) -> StaleAnn
                        newer_tag=newest.tag, newer_end=newest.period_end, lag_days=lag)
 
 
+#: The flow concepts whose annual periods date the filer's newest fiscal year.
+FLOW_CONCEPTS = ("revenue", "operating_income", "pretax_income", "net_income", "eps_diluted",
+                 "operating_cash_flow", "capex", "dep_amort")
+
+#: An annual is NOT CURRENT once the FILER's newest fiscal year ends at least this long after it:
+#: two fiscal years (the shortest :attr:`ConceptPoint.is_annual` admits) have then closed past it,
+#: so it is more than one fiscal year behind. MEASURED 2026-10-27 on 2,161 cached companyfacts,
+#: each annual the screen served (main 64f91b2a) against its filer's newest fiscal year: 8,811 at
+#: 0–29d, 10 at 60–299d (a 10-Q's trailing column, a transition period), 53 at 360–371d (one
+#: fiscal year behind, which stays), NOTHING from 372d to 727d, then 273 at 728d or more. Set by
+#: that gap — never by what a reading would have paid.
+FILER_STALE_DAYS = 2 * ANNUAL_STALE_DAYS
+
+
+def filer_fiscal_year(facts: dict[str, Any]) -> ConceptPoint | None:
+    """The point with the newest ANNUAL period any alias of any :data:`FLOW_CONCEPTS` carries —
+    the filer's newest reported fiscal year. A tie goes to the concept, then alias, first in order.
+
+    Its annual periods only, never the filer's frontier of any tag (``filer_frontier``), which
+    counts quarters, instants and contexts dated years ahead (Innodata's reaches 2034). A period
+    ending after its own filing date is skipped, as in :func:`concept_frontier`. A 10-Q's
+    trailing-twelve-month column counts, as it does for every annual reader here (Amazon tags
+    one); :data:`FILER_STALE_DAYS` leaves room for it."""
+    newest: ConceptPoint | None = None
+    for concept in FLOW_CONCEPTS:
+        for tag in CONCEPT_ALIASES[concept]:
+            for p in points_for_tag(facts, tag, concept=concept):
+                if not p.is_annual or p.period_end > p.filed:
+                    continue
+                if newest is None or p.period_end > newest.period_end:
+                    newest = p
+    return newest
+
+
+def behind_filer(annual: ConceptPoint, fiscal_year: ConceptPoint | None) -> StaleAnnual | None:
+    """``annual`` judged against the filer's newest fiscal year — a :class:`StaleAnnual` when it
+    is more than one fiscal year behind (:data:`FILER_STALE_DAYS`), else ``None``."""
+    if fiscal_year is None:
+        return None
+    lag = (fiscal_year.period_end - annual.period_end).days
+    if lag < FILER_STALE_DAYS:
+        return None
+    return StaleAnnual(concept=annual.concept, tag=annual.tag, period_end=annual.period_end,
+                       newer_tag=fiscal_year.tag, newer_end=fiscal_year.period_end,
+                       lag_days=lag, against_filer=True)
+
+
 def current_annual(
-    facts: dict[str, Any], concept: str
+    facts: dict[str, Any], concept: str, fiscal_year: ConceptPoint | None = None
 ) -> tuple[ConceptPoint | None, StaleAnnual | None]:
     """The latest annual an annual reader may serve AS CURRENT: ``(point, None)``; ``(None, why)``
     when it is stale; ``(None, None)`` when the concept has no annual at all.
+
+    ``fiscal_year`` is the filer's newest (:func:`filer_fiscal_year`), computed when not given;
+    a caller judging several concepts passes it once.
 
     THE ANNUAL-GRAIN LAG CHECK (STATE.md §5.0 row 11). :func:`extract_points` picks an alias by how
     far its ANNUAL series reaches against its siblings', and that is right for choosing an alias.
@@ -414,15 +485,87 @@ def current_annual(
     frontier is any tag at all, including future-dated contexts (Innodata's reaches 2034).
     This measures the served ANNUAL against the newest period of its OWN concept.
 
-    A concept that has stopped on EVERY alias is not caught: its newest period IS the served
-    annual's. That family is recorded, not handled
-    (``docs/records/2026-10-27-annual-readers-withhold-a-stale-annual.md``).
+    THEN AGAINST THE FILER (:func:`behind_filer`). A concept that has stopped on EVERY alias passes
+    the first check, since its newest period IS the served annual's: Johnson & Johnson's
+    `OperatingIncomeLoss` ends at FY2014 and SL Green's capex at FY2019, each served beside FY2025
+    figures. So the annual must also be at most one fiscal year behind the filer's newest fiscal
+    year. One year behind stays: that is the newest figure the filer gives for the concept.
     """
     served = latest_annual(extract_points(facts, concept))
     if served is None:
         return None, None
-    stale = stale_against(served, concept_frontier(facts, concept))
+    stale = (stale_against(served, concept_frontier(facts, concept))
+             or behind_filer(served, fiscal_year or filer_fiscal_year(facts)))
     return (None, stale) if stale else (served, None)
+
+
+class StalePair(NamedTuple):
+    """Two annual legs a combined figure cannot read AS CURRENT for one fiscal year.
+
+    ``period_end`` is the newest year both legs carry, or ``None`` when no year carries both.
+    ``behind`` is that year judged against the filer's newest fiscal year, ``legs`` each leg at
+    that year judged against its own concept; either makes the year not current."""
+
+    first: str
+    second: str
+    period_end: date | None
+    behind: StaleAnnual | None
+    legs: tuple[StaleAnnual, ...]
+    first_end: date  # each leg's own latest annual, named when the two share no year
+    second_end: date
+
+    @property
+    def note(self) -> str:
+        if self.period_end is None:
+            return (f"no fiscal year carries both {self.first} and {self.second} (their latest "
+                    f"annuals end {self.first_end.isoformat()} and "
+                    f"{self.second_end.isoformat()})")
+        head = (f"newest year both {self.first} and {self.second} carry ends "
+                f"{self.period_end.isoformat()}")
+        if self.behind:
+            head += (f", {self.behind.lag_days}d behind the filer's newest fiscal year "
+                     f"({self.behind.newer_tag} to {self.behind.newer_end.isoformat()}) — more "
+                     f"than one fiscal year behind")
+        return "; ".join([head, *(s.note for s in self.legs)])
+
+
+def current_pair(
+    facts: dict[str, Any], first: str, second: str, fiscal_year: ConceptPoint | None = None
+) -> tuple[tuple[ConceptPoint, ConceptPoint] | None, StalePair | None]:
+    """Both legs of a combined annual figure (FCF = operating cash flow − capex, EBITDA =
+    operating income + D&A) for ONE fiscal year: ``((first, second), None)``; ``(None, why)``
+    when that year is not current or there is none; ``(None, None)`` when a leg has no annual.
+
+    THE NEWEST YEAR BOTH LEGS CARRY, same start and same end — never each leg's own latest. Two
+    latest annuals added together are a number that never existed when their years differ:
+    Johnson & Johnson's EBITDA paired FY2014 operating income with FY2025 D&A, and SL Green's FCF
+    took FY2019 capex off FY2025 operating cash flow. Measured 2026-10-27 on 2,161 cached
+    companyfacts: 132 filers' screen FCF sign and 150 filers' EBITDA paired two fiscal years.
+
+    That year is then judged as :func:`current_annual` judges one annual, on both counts: each
+    leg against its own concept's newest period, and the year against the filer's newest fiscal
+    year. So a pair that last met years ago is never served as this year's figure: when one leg
+    has moved on, the other leg's year is not the current one. The CIQ-empty FCF fallback has
+    paired this way since #817; this is that pairing, shared.
+    """
+    by_first = annual_by_period(extract_points(facts, first))
+    by_second = annual_by_period(extract_points(facts, second))
+    if not by_first or not by_second:
+        return None, None
+    shared = [e for e in by_first.keys() & by_second.keys()
+              if by_first[e].period_start == by_second[e].period_start]
+    if not shared:
+        return None, StalePair(first=first, second=second, period_end=None, behind=None,
+                               legs=(), first_end=max(by_first), second_end=max(by_second))
+    end = max(shared)
+    a, b = by_first[end], by_second[end]
+    behind = behind_filer(a, fiscal_year or filer_fiscal_year(facts))
+    legs = tuple(s for s in (stale_against(a, concept_frontier(facts, first)),
+                             stale_against(b, concept_frontier(facts, second))) if s)
+    if behind or legs:
+        return None, StalePair(first=first, second=second, period_end=end, behind=behind,
+                               legs=legs, first_end=max(by_first), second_end=max(by_second))
+    return (a, b), None
 
 
 def latest_instant(points: list[ConceptPoint]) -> ConceptPoint | None:

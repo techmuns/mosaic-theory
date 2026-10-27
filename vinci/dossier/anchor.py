@@ -26,7 +26,7 @@ from vinci.dossier import midcycle as mc
 from vinci.edgar.concepts import (
     CONCEPT_ALIASES,
     ConceptPoint,
-    extract_points,
+    current_pair,
     latest_annual,
     points_for_tag,
 )
@@ -620,17 +620,23 @@ def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str, str] | None:
     return best[1], best[2] + note, basis
 
 
-def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | None:
-    """Latest-FY free cash flow ($) → (value, basis, source). OCF − capex, both from the SAME
-    fiscal period or nothing: an FY2025 OCF net of FY2024 capex is a number that never existed.
+def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | str:
+    """Latest-FY free cash flow ($) → (value, basis, source), or why there is none. OCF − capex,
+    both from the SAME fiscal period or nothing: an FY2025 OCF net of FY2024 capex is a number
+    that never existed.
 
     ANNUAL basis on purpose, and the basis travels with the value. The R2 survival gate divides
     cash by this when it is negative, so an over-claimed 'LTM' would propagate straight into a
-    runway the company does not have. Capex absent entirely → None (never a zero-capex FCF)."""
-    ocf = latest_annual(extract_points(facts, "operating_cash_flow"))
-    capex = latest_annual(extract_points(facts, "capex"))
-    if not ocf or not capex or ocf.period_end != capex.period_end:
-        return None
+    runway the company does not have. Capex absent entirely → no FCF (never a zero-capex FCF).
+
+    The year must be CURRENT (:func:`vinci.edgar.concepts.current_pair`, the pairing the screen's
+    FCF sign reads). A same-period pair was served however old: FUBO's anchor carried
+    "operating_cash_flow − capex (FY2024, same period)" while both concepts carried quarters a
+    fiscal year past it."""
+    legs, stale = current_pair(facts, "operating_cash_flow", "capex")
+    if legs is None:
+        return stale.note if stale else "no aligned operating-cash-flow + capex pair"
+    ocf, capex = legs
     lbl, trailing = _period_label(ocf)
     basis = (f"trailing {lbl} (the filer's own 10-Q column)" if trailing
              else f"latest {lbl} (not LTM)")
@@ -753,7 +759,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     out, out_src = _shares_outstanding(mechanical, facts, dil)
     inc = _dilutive_increment(facts, dil) if out is not None else None
     ltm_rev = _ltm_revenue_from_fs(mechanical)
-    fcf = _latest_fcf(facts)
+    got_fcf = _latest_fcf(facts)
+    fcf = None if isinstance(got_fcf, str) else got_fcf
 
     # EDGAR-FIRST, ALWAYS. The vendor sheet fills a HOLE; it never overrides a primary filing.
     # A filled hole is stamped so the human can see which numbers are not EDGAR's — the manual CIQ
@@ -813,8 +820,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                                    source="committed financial_summary.annual (LTM)"),
         "ltm_fcf": AnchorInput(value=(round(fcf[0] / _USD_M, 3) if fcf else None), unit="$M",
                                basis=(fcf[1] if fcf else "free cash flow"),
-                               source=(fcf[2] if fcf else
-                                       "UNKNOWN — no aligned operating-cash-flow + capex pair")),
+                               source=(fcf[2] if fcf else f"UNKNOWN — {got_fcf}")),
     }
 
 

@@ -27,3 +27,10 @@ The filer's frontier (`filer_frontier`) is computed over every tag, so on a subs
 filer's. Nothing pinned here depends on it: the alias walk reads it only to see that one exists,
 and the check measures an annual against its own concept's aliases, which are all kept. Each
 subset serves the alias the full blob serves (checked at cut time against the census).
+
+The filer's newest FISCAL YEAR (`filer_fiscal_year`, since the pairing build) is computed over
+the kept flow concepts, so on a subset it can be earlier than the filer's. One pin here reads it:
+`test_a_concept_stopped_on_every_alias_is_withheld_against_the_filer`, on `SLG.json`, whose kept
+operating cash flow carries FY2025 to 2025-12-31 — the full blob's newest fiscal year too
+(checked 2026-10-27). The pins of the pairing build use their own fixtures, cut with every
+concept's newest fiscal year checked (`tests/fixtures/annual_pairs/README.md`).
