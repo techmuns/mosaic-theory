@@ -5,7 +5,7 @@ _October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-10-09.3
 # Brief — first cut
 
 ## At a glance
-> ⚠ **Verify before the verdict:** Net debt/EBITDA (1.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** Net debt/EBITDA (1.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; Debt maturity: the filing governs 'Unsecured Revolving Credit Facility' — full caveats in Analysis.
 
 Target Corporation operates as a general merchandise retailer in the United States.
 **Mixed** — a genuine traffic-led comp inflection and double-digit consensus upgrades offset by a multiple that has already re-rated above its own center on a still-depressed margin base.
@@ -398,16 +398,15 @@ _industry = 23 Consumer Staples Merchandise Retail companies (GICS industry), th
 |---|---|---:|---|---|---|---|---|---|
 | 364-Day Unsecured Revolving Credit Facility | Revolving Credit | – | NA | NA | 2026-08-14 | N | N | USD |
 | Unsecured Fixed Rate - Note * | Bonds and Notes | $1,000.0M | 1.950% | NA | 2027-01-01 | N | N | USD |
-| Unsecured Revolving Credit Facility | Revolving Credit | – | NA | NA | 2026-08-14 | N | N | USD |
 
-_12 undated / later aggregate line item(s) in the appendix panel_
+_13 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
   - **matured (pre-reference): $0.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2026-08-14 (63d before ref): – 364-Day Unsecured Revolving Credit
-    - 2026-08-14 (63d before ref): – Unsecured Revolving Credit Facilit
   - due 2027: $1,000.0M
   - due 2028: $500.0M
+  - due 2031: $0.0M
   - due 2032: $1,000.0M
   - due 2033: $500.0M
   - due 2034: $750.0M
@@ -433,10 +432,11 @@ _12 undated / later aggregate line item(s) in the appendix panel_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
-_2 to verify._
+_3 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Target, the US general-merchandise retailer, followed under the QUALITY book by operator decision 2026-09-28. At $159.02 on 2026-09-22 it is 6.4% below its 52-week closing high of $169.89 (2026-08-24) and 90.0% above the low of $83.68 (2025-11-20), ahead of IWM by 66.2 points over the window — the strongest of the three, and NOT a de-rated name whatever the earlier framing assumed. It is booked as quality because the question is durability of the recovery, not whether a fall overshot. EV/EBITDA 9.2x against an 8.4x own-history median (38 closes, 9.5 years), and R1 anchors at $138 on a 10-year median operating margin of 5.6% — the only one of the three whose margin leg reads FIRM. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.
 - Net debt/EBITDA (1.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage.
+- Debt maturity: the filing governs 'Unsecured Revolving Credit Facility' — CIQ's capital-structure panel (A 2026 filed Mar-11-2026) dates it 2026-08-14, the 10-Q 0000027419-26-000042 (filed 2026-08-28) states 2031-08-14 (it states the month; the day is from the 8-K 0000027419-26-000032 (filed 2026-08-14)). This page prints 2031-08-14; prose written before this check may still cite the panel's date.
 
 # Appendix — data & audit
 
@@ -514,7 +514,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Unsecured Fixed Rate - Note * | Bonds and Notes | $1,000.0M | 2.950% | NA | 2052-01-01 | N | N | USD |
 | Unsecured Fixed Rate Debt - Note * | Bonds and Notes | $1,150.0M | 4.800% | NA | 2053-01-01 | N | N | USD |
 | Unsecured Fixed Rate Debt - Note * | Bonds and Notes | $500.0M | 4.400% | NA | 2033-01-01 | N | N | USD |
-| Unsecured Revolving Credit Facility | Revolving Credit | – | NA | NA | 2026-08-14 | N | N | USD |
+| Unsecured Revolving Credit Facility | Revolving Credit | – | NA | NA | 2031-08-14 | N | N | USD |
 
 - **8-Ks at instrument maturities:** 8-K at maturity 2026-08-14: filed 2026-08-14 [0000027419-26-000032] 1.01 Entry into a Material Definitive Agreement, 1.02 Termination of a Material Definitive Agreement, 2.03 Item 2.03, 9.01 Financial Statements and Exhibits — read for resolution; 8-K at maturity 2026-08-14: filed 2026-08-19 [0000027419-26-000034] 2.02 Results of Operations and Financial Condition, 9.01 Financial Statements and Exhibits — read for resolution [66]
 - **Covenant / contract pointers (CIK-verified execution filings)** — [67]  <!-- ds-table -->
@@ -577,6 +577,7 @@ _Source §: 8-K 0000027419-26-000032 · five-yearcreditagreementex.htm_
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · caveats, mechanical.capital_structure — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 31d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 39d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling

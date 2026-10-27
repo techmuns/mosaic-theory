@@ -1028,6 +1028,28 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
                     + (f" ({as_of})" if as_of else "")))
 
 
+#: How many instruments the flat line prints — the panel rows `liquidity_covenant_flags` reads.
+LIQUIDITY_LINE_ROWS = 11
+
+
+def liquidity_line(instruments: list[CapitalInstrument]) -> str:
+    """The flat debt-instrument line built from the STRUCTURED instruments, in the format
+    `liquidity_covenant_flags` prints from the panel's rows (2026-10-27).
+
+    It exists so the line can print a maturity a FILING governs (`mechanical.maturity_check`)
+    without re-reading the workbook and without editing the display string: the caller first
+    proves that this function rebuilds the stored line from the panel's own instruments, byte for
+    byte (it does on 27 of 27 committed pages, measured 2026-10-27), and only then rebuilds it
+    from the governed ones."""
+    out: list[str] = []
+    for i in instruments[:LIQUIDITY_LINE_ROWS]:
+        amt = f"{i.principal_musd:,.0f}" if i.principal_musd is not None else "undrawn/–"
+        year = date.fromisoformat(i.maturity_date).year if i.maturity_date else None
+        due = f" Due {year}" if year is not None and 2000 <= year <= 2100 else ""
+        out.append(f"{i.description} ({i.type}) {amt} @ {i.coupon}{due}")
+    return "; ".join(out)
+
+
 # --- E1: STRUCTURED capital structure (instruments + summary aggregates) -----------------------
 _CS_COLS = (  # Details-panel columns, located by header LABEL (order not contractually fixed)
     "Description", "Type", "Principal Due", "Coupon", "Floating Rate", "Maturity",

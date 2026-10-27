@@ -5554,6 +5554,177 @@
         "source_ref": "CIQ Capital Structure Details — A 2026 filed Mar-19-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-03-19",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001193125-26-371311",
+            "filed": "2026-08-27",
+            "read_as": "the latest periodic report",
+            "statements": 15,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-25-168007",
+            "filed": "2025-07-29",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-22-200058",
+            "filed": "2022-07-22",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-21-364998",
+            "filed": "2021-12-22",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-20-109457",
+            "filed": "2020-04-16",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001564590-18-016500",
+            "filed": "2018-07-02",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-14-313404",
+            "filed": "2014-08-18",
+            "read_as": "an 8-K the page links",
+            "statements": 8,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "ABL Senior Secured Revolving Facility",
+            "ciq_maturity_date": "2030-07-25",
+            "check": "agree",
+            "filing_maturity": "2030-07-25",
+            "source": "10-Q 0001193125-26-371311 (filed 2026-08-27)",
+            "source_filed": "2026-08-27",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "7 186,071 297,069 297,069 ABL senior secured revolving facility, SOFR plus spread based on average outstanding balance, matures on July 25, 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "Convertible Senior Notes 1.25% Mature on December 15 2027",
+            "ciq_maturity_date": "2027-12-15",
+            "check": "agree",
+            "filing_maturity": "2027-12-15",
+            "source": "10-Q 0001193125-26-371311 (filed 2026-08-27)",
+            "source_filed": "2026-08-27",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "notes, 1.25 %, matures on December 15, 2027",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "Convertible Senior Notes 2.25% Mature on April 15 2025",
+            "ciq_maturity_date": "2025-04-15",
+            "check": "agree",
+            "filing_maturity": "2025",
+            "source": "10-Q 0001193125-26-371311 (filed 2026-08-27)",
+            "source_filed": "2026-08-27",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-20-109457 (filed 2020-04-16)"
+            ],
+            "quote": "2.25 % Convertible Senior Notes due 2025",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "Finance Lease Obligations",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 4,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 5,
+            "description": "Senior Secured Term Loan Facility Term B-7 Loans",
+            "ciq_maturity_date": "2031-09-24",
+            "check": "agree",
+            "filing_maturity": "2031-09-24",
+            "source": "10-Q 0001193125-26-371311 (filed 2026-08-27)",
+            "source_filed": "2026-08-27",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "ary 31, August 2, 2026 2026 2025 Senior secured term loan facility, adjusted SOFR (with a floor of 0.00 %) plus 1.75 %, matures on September 24, 2031",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "Short-term Promissory Note",
+            "ciq_maturity_date": "2026-02-09",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -14412,6 +14583,14 @@
       "writer": "refresh",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_structure"
       ]
     }
   ],

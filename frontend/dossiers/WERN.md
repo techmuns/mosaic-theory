@@ -694,6 +694,7 @@ _Source §: 8-K 0000793074-25-000019 · wern-2025327ex101.htm_
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 30d old — 2026-08-18 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus 35d old (2026-08-13, valuation.implied_expectations.multiples_as_of) — within the ceiling

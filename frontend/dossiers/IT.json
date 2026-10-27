@@ -4685,6 +4685,156 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-12-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-02-12",
+        "bound": "2026-08-14",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0000749251-26-000245",
+            "filed": "2026-08-04",
+            "read_as": "the latest periodic report",
+            "statements": 10,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-24-083467",
+            "filed": "2024-04-01",
+            "read_as": "an 8-K the page links",
+            "statements": 4,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "24 Credit Agreement - Revolving Credit Facility",
+            "ciq_maturity_date": "2029-03-26",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "3.625% Senior Notes Due 2029",
+            "ciq_maturity_date": "2029-06-15",
+            "check": "agree",
+            "filing_maturity": "2029",
+            "source": "10-Q 0000749251-26-000245 (filed 2026-08-04)",
+            "source_filed": "2026-08-04",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-24-083467 (filed 2024-04-01)"
+            ],
+            "quote": "3.625 % Senior Notes due 2029",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "3.75% Senior Notes Due 2030",
+            "ciq_maturity_date": "2030-10-01",
+            "check": "agree",
+            "filing_maturity": "2030",
+            "source": "10-Q 0000749251-26-000245 (filed 2026-08-04)",
+            "source_filed": "2026-08-04",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-24-083467 (filed 2024-04-01)"
+            ],
+            "quote": "3.75 % Senior Notes due 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "4.50% Senior Notes Due 2028",
+            "ciq_maturity_date": "2028-07-01",
+            "check": "agree",
+            "filing_maturity": "2028",
+            "source": "10-Q 0000749251-26-000245 (filed 2026-08-04)",
+            "source_filed": "2026-08-04",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-24-083467 (filed 2024-04-01)"
+            ],
+            "quote": "4.50 % Senior Notes due 2028",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "4.95% Senior Notes Due 2031",
+            "ciq_maturity_date": "2031-03-20",
+            "check": "agree",
+            "filing_maturity": "2031",
+            "source": "10-Q 0000749251-26-000245 (filed 2026-08-04)",
+            "source_filed": "2026-08-04",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "4.95 % Senior Notes due 2031",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "5.60% Senior Notes Due 2035",
+            "ciq_maturity_date": "2035-11-20",
+            "check": "agree",
+            "filing_maturity": "2035",
+            "source": "10-Q 0000749251-26-000245 (filed 2026-08-04)",
+            "source_filed": "2026-08-04",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "5.60 % Senior Notes due 2035",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 7,
+            "description": "State of Connecticut Economic Development Loan",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -13986,6 +14136,14 @@
       "writer": "refresh",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_structure"
       ]
     }
   ],

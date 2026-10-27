@@ -5076,6 +5076,101 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Oct-28-2025",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2025-10-28",
+        "bound": "2026-08-14",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001702744-26-000023",
+            "filed": "2026-07-09",
+            "read_as": "the latest periodic report",
+            "statements": 16,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001104659-25-114309",
+            "filed": "2025-11-20",
+            "read_as": "an 8-K after the panel",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001104659-19-060856",
+            "filed": "2019-11-07",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001213900-18-003172",
+            "filed": "2018-03-20",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "Credit Agreement With Barclays Bank PLC and Other Parties - Revolving Credit Facility",
+            "ciq_maturity_date": "2029-12-16",
+            "check": "agree",
+            "filing_maturity": "2029-12-16",
+            "source": "10-Q 0001702744-26-000023 (filed 2026-07-09)",
+            "source_filed": "2026-07-09",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001104659-25-114309 (filed 2025-11-20)"
+            ],
+            "quote": "…date of the Revolving Commitments and Revolving Loans (each as defined in the Credit Agreement) from December 16, 2026, to the earlier of (i) 91 days prior to the then-effective maturity date of the Term Facility and (ii) December 16, 2029",
+            "springing": [
+              {
+                "clause": "91 days prior to the then-effective maturity date of the Term Facility",
+                "springs_to": null,
+                "source": "10-Q 0001702744-26-000023 (filed 2026-07-09)"
+              }
+            ],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "Credit Agreement With Barclays Bank PLC and Other Parties - Term Loan",
+            "ciq_maturity_date": "2030-03-17",
+            "check": "agree",
+            "filing_maturity": "2030-03-17",
+            "source": "10-Q 0001702744-26-000023 (filed 2026-07-09)",
+            "source_filed": "2026-07-09",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001104659-25-114309 (filed 2025-11-20)"
+            ],
+            "quote": "extension of the maturity date from March 17, 2027 to March 17, 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "Operating Lease",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -9784,7 +9879,8 @@
   "caveats": [
     "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.5s fetch)",
     "EDGAR P/E 11.1x does not rest on LTM GAAP earnings — LTM GAAP diluted EPS is NEGATIVE (-2.08), so a positive multiple must use some other denominator (an EPS from a non-current period, or a normalized/adjusted figure — the displayed basis does not say which). Do not read it as a GAAP trailing multiple.",
-    "Net debt/EBITDA (1.5x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage."
+    "Net debt/EBITDA (1.5x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.5x as the covenant-basis leverage.",
+    "Debt maturity: 'Credit Agreement With Barclays Bank PLC and Other Parties - Revolving Credit Facility' matures earlier on a condition — it matures 2029-12-16, and the filing says “91 days prior to the then-effective maturity date of the Term Facility” [10-Q 0001702744-26-000023 (filed 2026-07-09)]."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
@@ -14125,6 +14221,15 @@
       "writer": "refresh",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "caveats",
+        "mechanical.capital_structure"
       ]
     }
   ],

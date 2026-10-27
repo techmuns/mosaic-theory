@@ -6,7 +6,7 @@
  },
  "boundary": {
   "measured_on": "2026-10-27",
-  "git_head": "820f414a",
+  "git_head": "dcf02a5f",
   "inputs_match_head": true,
   "reads": "data/dossiers/*/dossier.json",
   "item_noun": "page",
@@ -40,7 +40,7 @@
    "WERN",
    "WLK"
   ],
-  "inputs_sha256": "4dedc3df90b46aa41e7d7e89699a837ef3a1c8a5314de6b4b6c4588b317663bd",
+  "inputs_sha256": "cf48f5a64f8a4455a3f505325fbac07ff27da7edba6a2a8d6760b5ee970ed28e",
   "note": "reads the committed pages only, never the licensed workbooks"
  },
  "statuses": {
@@ -3510,6 +3510,227 @@
      "unchecked": 0
     }
    }
+  },
+  {
+   "id": "maturity_vs_filing",
+   "title": "Each CIQ panel maturity vs the newest filing that states it",
+   "subject": "CIQ Financials→Capital Structure Details: each instrument's 'Maturity'",
+   "second_source": "the latest 10-Q/10-K, the 8-Ks with Item 1.01/2.03 filed after the panel's source filing and the 8-Ks the page's covenant pointers link, none after the reference date — read by an anchored sentence grammar (edgar.debt_maturities)",
+   "independence": "independent",
+   "unit": "instrument",
+   "tolerance": "exact, at the precision the filing states (a day, a month or a year). Agreement needs the filing's set of current maturities for the class to equal the page's; a difference only where the pairing is forced (one instrument, one date) — and never for a note or a generic 'Credit Agreement', which can confirm a date but not move one",
+   "population": "pages carrying capital_structure.maturity_check — one unit per instrument",
+   "stated_reason": "the filing was filed on or after the panel's own source filing, so the panel lags it and the filing's date governs the page (maturity_check row `governs`)",
+   "excluded_rule": "a lease, commercial-paper or other-borrowings line, a note with no single coupon, or an instrument the panel gives no maturity — no filing statement names one",
+   "catches": [
+    "wrong_file",
+    "wrong_period"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 27,
+    "units": 208,
+    "confirmed": 77,
+    "differs_stated": 5,
+    "differs_unexplained": 0,
+    "unchecked": 126,
+    "excluded": 75,
+    "items_not_run": 0,
+    "items_not_applicable": 0
+   },
+   "not_run": [],
+   "not_applicable": [],
+   "by_name": {
+    "AMZN": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 3,
+     "excluded": 13
+    },
+    "AORT": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1,
+     "excluded": 3
+    },
+    "BRBR": {
+     "confirmed": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 1
+    },
+    "BURL": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1,
+     "excluded": 2
+    },
+    "CNXC": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1,
+     "excluded": 7
+    },
+    "EPAM": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 2
+    },
+    "FUBO": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 3,
+     "excluded": 1
+    },
+    "GOOGL": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 8,
+     "excluded": 7
+    },
+    "IT": {
+     "confirmed": 5,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1,
+     "excluded": 2
+    },
+    "LLY": {
+     "confirmed": 7,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 45,
+     "excluded": 4
+    },
+    "MVST": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 5,
+     "excluded": 3
+    },
+    "NCNO": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 2
+    },
+    "NFLX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 19,
+     "excluded": 3
+    },
+    "NKE": {
+     "confirmed": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 8,
+     "excluded": 2
+    },
+    "ORKA": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 1
+    },
+    "PARR": {
+     "confirmed": 1,
+     "differs_stated": 1,
+     "differs_unexplained": 0,
+     "unchecked": 2,
+     "excluded": 2
+    },
+    "ROST": {
+     "confirmed": 6,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1,
+     "excluded": 1
+    },
+    "SMPL": {
+     "confirmed": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 1
+    },
+    "TECX": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 2
+    },
+    "TGT": {
+     "confirmed": 0,
+     "differs_stated": 1,
+     "differs_unexplained": 0,
+     "unchecked": 10,
+     "excluded": 4
+    },
+    "TJX": {
+     "confirmed": 7,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 1
+    },
+    "UBER": {
+     "confirmed": 2,
+     "differs_stated": 1,
+     "differs_unexplained": 0,
+     "unchecked": 9,
+     "excluded": 3
+    },
+    "V": {
+     "confirmed": 18,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1,
+     "excluded": 2
+    },
+    "VITL": {
+     "confirmed": 0,
+     "differs_stated": 1,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 2
+    },
+    "VRRM": {
+     "confirmed": 2,
+     "differs_stated": 1,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 1
+    },
+    "WERN": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 2,
+     "excluded": 1
+    },
+    "WLK": {
+     "confirmed": 8,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 6,
+     "excluded": 2
+    }
+   }
   }
  ],
  "coverage": [
@@ -3808,6 +4029,13 @@
      "confirmed": 0
     },
     {
+     "id": "maturity_vs_filing",
+     "independence": "independent",
+     "items_run": 27,
+     "units": 208,
+     "confirmed": 77
+    },
+    {
      "id": "currency_stated_usd",
      "independence": "internal",
      "items_run": 25,
@@ -3816,7 +4044,7 @@
     }
    ],
    "unscored": [],
-   "note": "run only where the 10-Q states a 12-month maturity figure; the rest of the panel (coupons, the later maturities) is not set against the filings"
+   "note": "each maturity is set against the newest filing that states it (maturity_vs_filing); the 12-month wall only where the 10-Q states that figure; coupons and principal are not set against the filings"
   },
   {
    "family": "financials.segments",
