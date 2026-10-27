@@ -4372,6 +4372,89 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Nov-18-2025",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2025-11-18",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001772016-26-000022",
+            "filed": "2026-08-04",
+            "read_as": "the latest periodic report",
+            "statements": 3,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001772016-21-000029",
+            "filed": "2021-02-26",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-19-270862",
+            "filed": "2019-10-21",
+            "read_as": "an 8-K the page links",
+            "statements": 1,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "7.00% Senior Notes Maturing in March 2030",
+            "ciq_maturity_date": "2030-03-15",
+            "check": "agree",
+            "filing_maturity": "2030-03",
+            "source": "10-Q 0001772016-26-000022 (filed 2026-08-04)",
+            "source_filed": "2026-08-04",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "7.00 % senior notes maturing in March 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 2,
+            "description": "Revolving Credit Facility",
+            "ciq_maturity_date": "2030-08-22",
+            "check": "agree",
+            "filing_maturity": "2030-08-22",
+            "source": "10-Q 0001772016-26-000022 (filed 2026-08-04)",
+            "source_filed": "2026-08-04",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "extend the maturity date of the Revolving Credit Facility to August 22, 2030",
+            "springing": [
+              {
+                "clause": "provided that if on December 14, 2029, the Company’s 7.00 % Senior Notes have not been redeemed in full in cash or refinanced and replaced in full with notes and/or loans maturing at least 91 days after August 22, 2030, then the maturity date of the Revolving Credit Facility will be December 14, 2029",
+                "springs_to": "2029-12-14",
+                "source": "10-Q 0001772016-26-000022 (filed 2026-08-04)"
+              }
+            ],
+            "note": "",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -8698,7 +8781,8 @@
     "Catalyst-path as-of UNVERIFIABLE — the CIQ Estimates export carries no as-of stamp; its data is on/after 2026-08-26 (the latest embedded revision event), so it is up to 51d before the 2026-10-16 reference — beyond the 45d tolerance — and the true export date is unknown, so freshness cannot be confirmed. Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).",
     "Unreconciled margin-compression (a bear point): 'The gross-margin collapse is mechanism-backed and severe: adjusted gross margin fell to 22.7% from 34.5% a year earlier on input-cost inflation, tariffs, unfavorable price/mix and freight — a structural cost problem, not a one-quarter blip.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
     "Unreconciled margin-compression (a decisive-against point): 'Adjusted gross margin fell to 22.7% from 34.5% YoY on input inflation, tariffs, price/mix and freight — the magnitude points to a structural cost reset, not a one-off.' — cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)",
-    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bearish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
+    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bearish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)",
+    "Debt maturity: 'Revolving Credit Facility' springs to 2029-12-14 — it matures 2030-08-22, and the filing says “provided that if on December 14, 2029, the Company’s 7.00 % Senior Notes have not been redeemed in full in cash or refinanced and replaced in full with notes and/or loans maturing at least 91 days after August 22, 2030, then the maturity date of the Revolving Credit Facility will be December 14, 2029” [10-Q 0001772016-26-000022 (filed 2026-08-04)]."
   ],
   "qa_flags": [
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (Revolving Credit Facility): 8-K 0001193125-19-270862 · d812149dex101.htm declares itself “AMENDED AND RESTATED LIMITED LIABILITY COMPANY AGREEMENT”",
@@ -12500,6 +12584,15 @@
       "writer": "refresh",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "caveats",
+        "mechanical.capital_structure"
       ]
     }
   ],

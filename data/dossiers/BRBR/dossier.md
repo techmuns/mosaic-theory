@@ -28,7 +28,7 @@ Analysed and not buying at any price near today's. The operating case is alive �
 - Material reduction in net debt.
 - Margin recovery that survives the fiscal 2027 price increase.
 
-> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.4x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis — full caveats in Analysis.
+> ⚠ **Verify before the verdict:** Net debt/EBITDA (3.4x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; Debt maturity: 'Revolving Credit Facility' springs to 2029-12-14 — full caveats in Analysis.
 
 BellRing Brands, Inc., together with its subsidiaries, provides various nutrition products in the United States.
 - **Segments:** Protein-Based Consumer Goods — single segment [1]
@@ -477,7 +477,7 @@ _industry = 38 Personal Care Products companies (GICS industry), the primary pan
 
 ## ⚠ Analyst caveats — verify before the verdict
 
-_9 to verify._
+_10 to verify._
 
 - Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: "Updated fiscal year 2026 net sales outlook of $2.335-$2.375 billion and Adjusted EBITDA* outlook of $275-$295 million" (8-K 0001628280-26-052137 EX-99.1)
 - Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: "Updated fiscal year 2026 net sales outlook of $2.325-$2.365 billion and Adjusted EBITDA* outlook of $315-$335 million" (8-K 0001628280-26-030115 EX-99.1)
@@ -493,6 +493,7 @@ _9 to verify._
     - _where:_ a decisive-against point
   - _why it matters:_ cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)
 - synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bearish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)
+- Debt maturity: 'Revolving Credit Facility' springs to 2029-12-14 — it matures 2030-08-22, and the filing says “provided that if on December 14, 2029, the Company’s 7.00 % Senior Notes have not been redeemed in full in cash or refinanced and replaced in full with notes and/or loans maturing at least 91 days after August 22, 2030, then the maturity date of the Revolving Credit Facility will be December 14, 2029” [10-Q 0001772016-26-000022 (filed 2026-08-04)].
 
 # Appendix — data & audit
 
@@ -660,6 +661,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · caveats, mechanical.capital_structure — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 35d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus is 61d old (2026-08-26, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.
