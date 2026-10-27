@@ -743,7 +743,7 @@ def test_a_gh_api_post_to_the_pulls_endpoint_is_a_pr_create() -> None:
     gate = _load("review_gate.py")
     for command in API_CREATES:
         assert gate.opens_a_pr(command), command
-        assert gate.pr_target(command, str(ROOT))[1:] == ("code", "main"), command
+        assert gate.pr_target(command, str(ROOT))[1:] == ("code", "main", False), command
     assert gate.pr_target("gh api /repos/o/r/pulls --input pr.json", str(ROOT)).head is None
     assert gate.opens_a_pr("gh api /repos/o/r/pulls --input pr.json")
     assert gate.pr_target("gh api repos/o/r/pulls -f head=o:code -f base=dev", "/").head == "code"
@@ -772,6 +772,34 @@ def test_review_gate_refuses_every_unreviewed_route_and_judges_its_head(
         assert _create(repo, [], command=docs.replace("--head code", "--head docs")).returncode == 0
     for command in API_NOT_CREATES:
         assert _create(repo, [], command=command).returncode == 0, command
+
+
+#: A `gh api` create whose head the command does not carry: in the payload file (Codex on #813,
+#: P1, its command verbatim) or computed by the shell.
+API_HIDDEN_HEAD = ("gh api repos/techmuns/mosaic-theory/pulls --method POST --input pr.json",
+                   'gh api repos/techmuns/mosaic-theory/pulls -f head="$B" -f base=main -f title=t')
+
+
+def test_review_gate_fails_closed_when_a_gh_api_create_hides_its_head(
+        tmp_path: pathlib.Path) -> None:
+    """Codex on #813 (P1): with the head inside `pr.json`, the gate judged the clean `main`
+    checkout the command ran in and let a code PR through unreviewed. An API create names its head
+    only in its payload, so one the hook cannot read is UNKNOWN, gated like code — as an
+    unresolvable `cd` is."""
+    repo = _two_branch_repo(tmp_path)              # `main` checked out, nothing changed
+    for command in API_HIDDEN_HEAD:
+        out = _create(repo, [], command=command)
+        assert out.returncode == 2 and "could not be read" in out.stderr, command
+        assert _create(repo, [_review("toolu_r")], command=command).returncode == 0, command
+    # a head the command names is still judged exactly, and `gh pr create` with no `--head` still
+    # opens the checkout's own branch, so it is still judged there
+    assert _create(repo, [], command=API_CREATE.replace("head=code", "head=docs")).returncode == 0
+    assert _create(repo, [], command="gh pr create --fill").returncode == 0
+    # a PR from another repository's checkout is still that repository's business
+    other = tmp_path / "other-repo"
+    other.mkdir()
+    subprocess.run(["git", "-C", str(other), "init", "-q"], check=True)
+    assert _create(repo, [], command=f"cd {other} && {API_HIDDEN_HEAD[0]}").returncode == 0
 
 
 def test_review_gate_counts_a_pr_opened_through_gh_api(tmp_path: pathlib.Path) -> None:
@@ -815,7 +843,7 @@ def test_codex_request_asks_for_a_review_of_a_pr_opened_any_of_these_ways(
     repo = _codex_repo(tmp_path)
     api_printed = {"stdout": json.dumps(API_RECORD), "stderr": ""}
     for command, response in ((ENV_UNSET, None), (SPACED_VALUE, None),
-                              *((c, api_printed) for c in API_CREATES)):
+                              *((c, api_printed) for c in (*API_CREATES, *API_HIDDEN_HEAD))):
         assert REQUEST in _opened(repo, command, response=response)[1], command
     # on a checkout that DOES change code, only the not-a-create reading keeps these quiet
     subprocess.run(["git", "-C", str(repo), "switch", "-q", "code"], check=True)

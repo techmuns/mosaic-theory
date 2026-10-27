@@ -41,7 +41,9 @@ files that were already-merged commits on the session's own stale branch — and
 in a clean folder could open a real code PR from elsewhere unreviewed. Now, in order:
 `--head <branch>` → that branch's commits against `--base` (the PR's exact content); else the
 directory the command `cd`s into before `gh pr create`; else the hook's `cwd`. A `cd` the hook
-cannot resolve (`cd "$W"`) with no `--head` is UNKNOWN, and unknown is gated like code.
+cannot resolve (`cd "$W"`) with no `--head` is UNKNOWN, and unknown is gated like code. So is a
+`gh api` create whose head the command does not show (`--input pr.json`, `head=$B`): it opens that
+head, never the checkout's branch (Codex on #813).
 
 Fails OPEN with a visible warning when the transcript cannot be read; the operator still reviews
 and merges every PR. Standard library only, Python 3.9+ (hooks run under the system `python3`).
@@ -133,11 +135,13 @@ def code_files_changed(root: Path, head: str | None = None, base: str = "main") 
 
 class Target(NamedTuple):
     """Where the PR comes from: the directory its command runs in (None = could not tell), the
-    head branch if named (``--head``, or a `gh api` ``head=`` field), and the base branch."""
+    head branch if named (``--head``, or a `gh api` ``head=`` field), the base branch, and whether
+    the PR has a head the command does not show (a `gh api` create's, in ``--input`` or ``$B``)."""
 
     directory: str | None
     head: str | None
     base: str
+    head_unread: bool = False
 
 
 #: A shell token made only of these characters separates commands (``&&``, ``;``, ``|`` …).
@@ -207,21 +211,25 @@ def _api_fields(args: list[str]) -> dict[str, str] | None:
     return fields if posts and endpoint is not None and PULLS.fullmatch(endpoint) else None
 
 
-def _created(words: list[str]) -> tuple[str | None, str] | None:
-    """The ``(head, base)`` of the pull request the command ``words`` opens — None when it opens
-    none: `gh pr create|new [--head H] [--base B]`, or `gh api` POSTing `head=H base=B` to the
-    pulls endpoint (the route a memory note recommended until 2026-10-27, unseen by both hooks)."""
+def _created(words: list[str]) -> tuple[str | None, str, bool] | None:
+    """The ``(head, base, head_unread)`` of the pull request the command ``words`` opens — None
+    when it opens none: `gh pr create|new [--head H] [--base B]`, or `gh api` POSTing `head=H
+    base=B` to the pulls endpoint (the route a memory note recommended until 2026-10-27, unseen by
+    both hooks). `gh pr create` without a head opens the checkout's own branch; a `gh api` create
+    always has one, so when the hook cannot read it (Codex on #813: `--input pr.json` carries it in
+    the file) ``head_unread`` is True — the head is UNKNOWN, not the checkout's."""
+    api = False
     if words[:3] in (["gh", "pr", "create"], ["gh", "pr", "new"]):
         head, base = _flag(words[3:], "--head", "-H"), _flag(words[3:], "--base", "-B")
     elif words[:2] == ["gh", "api"] and (fields := _api_fields(words[2:])) is not None:
-        head, base = fields.get("head"), fields.get("base")
+        head, base, api = fields.get("head"), fields.get("base"), True
     else:
         return None
     if head is not None and any(c in head for c in "$`"):
         head = None                         # a computed branch name the hook cannot evaluate
     elif head is not None:
         head = head.split(":", 1)[-1]       # GitHub's cross-fork `owner:branch` form
-    return head, base or "main"
+    return head, base or "main", api and head is None
 
 
 def _walk(command: str, cwd: str | None) -> tuple[Target, bool]:
@@ -259,7 +267,7 @@ def _walk(command: str, cwd: str | None) -> tuple[Target, bool]:
                 words.append(word)
             created = _created(words)
             if created is not None:
-                return Target(directory, created[0], created[1]), True
+                return Target(directory, *created), True
             at_start = False
         else:
             at_start = False
@@ -395,6 +403,9 @@ def judged_code(command: str, start: str) -> Judged | None:
         root = repo_root(directory)
         if root is None:
             return None                     # the PR comes from a checkout of another repo
+        if target.head_unread:
+            return Judged(["(the head branch could not be read from the command — treated as "
+                           "code)"], "this PR", target.base)
         code = code_files_changed(root, target.head, target.base)
         where = f"branch {target.head}" if target.head else f"the checkout at {root}"
     elif target.head is not None and (root := repo_root(start)) is not None:

@@ -20,7 +20,8 @@ forms as a create:
   pattern was `\S*`, so it stopped at the space inside `$( … )`.
 - **`gh api` POSTing to `repos/{owner}/{repo}/pulls`.** The method can be `-X POST`, `-XPOST`,
   `--method POST` or `--method=POST`. With no method given, gh POSTs when any field (`-f`, `-F`,
-  `--field`, `--raw-field`) or `--input` is passed. Any other method, or another path, opens
+  `--field`, `--raw-field`) or `--input` is passed (checked with `--verbose` against an
+  unresolvable host, gh 2.102.0: `--input` alone sends POST). Any other method, or another path, opens
   nothing. That covers a GET of `…/pulls` or `…/pulls?state=open`, `-X GET … -f state=open`,
   `pulls/N`, a merge (`PUT pulls/N/merge`), reviews, comments and replies, and a reopen
   (`PATCH pulls/N`). A short option's value may be attached (`-fhead=code`, `-XPOST`), as gh's
@@ -35,6 +36,13 @@ directory it runs in. It changed in three ways:
   from `gh pr create`.
 - It joins a backslash-newline into one command. Before, a `\`-continued `gh api` call lost every
   field on its later lines.
+
+**A `gh api` create whose head the command does not show is UNKNOWN, gated like code** (Codex on
+#813, P1). `gh pr create` with no `--head` opens the checkout's own branch, so judging the checkout
+is right for it. A `gh api` create always names a head, and where it sits in `--input pr.json` or a
+shell variable (`head="$B"`), the first version judged the checkout instead: from a clean `main`
+checkout, a code PR opened that way passed unreviewed. It is now gated as an unresolvable `cd` is.
+A PR from another repository's checkout is still left alone.
 
 Each piece of the prefix grammar matches only one way. A `$` opens a `$(…)` only where a `(`
 follows it, and an `env -u`/`--unset` name never starts with `-`. This branch's first draft let
@@ -92,6 +100,10 @@ cites another PR.
     reached.
   - Ablation: without the continuation join, 11 of the 531 targets differ (the `head=` field on a
     continuation line).
+  - With the hidden-head fix (round 1): 0 of the 531 creates has an unread head, since all 62 real
+    `gh api` creates carry `head=`, and no directory, head or base changes. Measured on the 1,009
+    calls that mention `gh pr create|new`, `/pulls` or `createPullRequest`, the candidates among
+    the 51,853.
 - **The hooks, end to end on this checkout, under the system `python3` 3.9.6.** The PreToolUse
   gate ran with this session's own transcript, in which no code review had run, then with a copy
   ending in one `code-review high` call:
@@ -116,7 +128,22 @@ cites another PR.
   | this branch | #812's form | `pr comment …/pull/812 --body "@codex review"` |
   | this branch | `gh api` route, #812's real API record as the output | `pr comment …/pull/812 --body "@codex review"` |
 
-- **Pins.** `tests/test_claude_hooks.py` has 6 new tests (52 pass in the file). Their commands are
+- **Round 1, the hidden head, from a clean `main` checkout.** A throwaway detached worktree at
+  `origin/main` (`18d19bfb`), this session's own transcript (a PR opened after its last review),
+  the system `python3` 3.9.6:
+
+  | Hook | Command | No review since the last PR | After review |
+  |---|---|---|---|
+  | `027bc611` | Codex's `--method POST --input pr.json` | allowed, unchecked | allowed |
+  | `027bc611` | `head="$B"` | allowed, unchecked | allowed |
+  | `027bc611` | `head=` this branch | **refused (exit 2)**, 3 code files | allowed |
+  | `027bc611` | `gh pr create --fill` | allowed (no code on `main`) | allowed |
+  | the fix | Codex's `--method POST --input pr.json` | **refused (exit 2)**, head unread | allowed |
+  | the fix | `head="$B"` | **refused (exit 2)**, head unread | allowed |
+  | the fix | `head=` this branch | **refused (exit 2)**, 3 code files | allowed |
+  | the fix | `gh pr create --fill` | allowed (no code on `main`) | allowed |
+
+- **Pins.** `tests/test_claude_hooks.py` has 7 new tests (53 pass in the file). Their commands are
   real ones from the transcripts, with titles, body paths and branch names shortened:
   - the `env`-option and spaced-value forms are read as creates, and their `--head` is read. The
     forms read before still are; mentions and `env -u … gh pr view` are not creates.
@@ -129,6 +156,10 @@ cites another PR.
     or the whole JSON record. A 422 that a pipe hid from the exit code voids nothing.
   - `codex_request.py` asks for one review on each route, with the URL read from the API record.
     On a checkout that changes code, the 8 non-creates post nothing.
+  - a `gh api` create whose head is in `--input` or `"$B"` is refused unreviewed from a clean
+    `main` checkout, and `codex_request.py` asks for its review. A named `docs` head, a plain
+    `gh pr create --fill` and a PR from another repository's checkout still pass. Both tests
+    failed on `027bc611` first.
   - the reading stays linear: 25 `$(a)` segments, 37 `-u` and 36 `--unset` with no create after
     them each finish in under 1 s.
 - **Mutants.** 11 of 11 killed, against the 5 new tests, restored byte for byte, run with
@@ -140,6 +171,10 @@ cites another PR.
   - any method counts; an implied POST ignored; any `…/pulls…` path counts;
   - no `gh api` route in `opens_a_pr`;
   - the `head=` field not read.
+
+  Round 1's fix, 4 of 4 killed: never unread; every headless create unread (so `gh pr create
+  --fill` is gated); `judged_code` ignoring it; and the check placed before the other-repository
+  rule.
 
   The timing pin was run separately against four grammars: commit 1's, and each of its three
   ambiguities alone. 4 of 4 are killed, each by a run that takes seconds where the fix takes
@@ -187,6 +222,13 @@ cites another PR.
     branch: `main` reads `gh pr create` the same way. Turning shlex comments off would make an
     apostrophe in a real comment line unbalance the quotes. Found by this branch's code review;
     0 real creates are affected.
+  - **`gh pr create --head "$B"` is judged on the checkout.** A computed head reads as no head,
+    and `gh pr create` with no head opens the checkout's branch, so the gate judges the checkout
+    rather than `$B`. This predates the branch (`main` reads it the same way), and round 1 left
+    it alone to hold scope. 2 real creates use it (`--head $B`, both 2026-10-21, both after a `cd`
+    into one worktree). One pushes `HEAD:$B` in the same command, so its checkout carries `$B`'s
+    commits; for the other this record did not check. **Falsifier:** a `gh pr create --head "$X"`
+    from a checkout that is not on `$X`.
   - **Other wrappers' options.** `nice -n 10`, `time -p` and `gh pr -R x create` are not read.
     0 real.
 - **ACCEPTED: `created_pr` takes the last PR URL in the output.** A `gh api` create whose JSON
