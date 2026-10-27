@@ -168,9 +168,16 @@ AFTER, each named above.
 
 **THE SCORECARD, BEFORE → AFTER.**
 
-- **BEFORE:** `data/snapshots/data_quality/ciq/2026-10-27.json` as committed at 56500bb1. It was
-  re-run on main and matched on all 18 checks (inputs sha `4dedc3df…`).
-- **AFTER:** the same path, rewritten by `vinci audit quality --source ciq --write` on this branch.
+- **BEFORE, on the code as merged:** `data/snapshots/data_quality/ciq/2026-10-27.json` as main
+  holds it at 3ab4747f. That is #826's point: 19 checks, with `maturity_vs_filing` and without
+  this branch, inputs sha `cf48f5a6…`.
+- **AFTER:** `data/snapshots/data_quality/ciq/2026-10-28.json`, written by `vinci audit quality
+  --source ciq --write` at 4977cd09. That is 20 checks, inputs sha `c0799716…`. The command dates
+  its snapshot by the day it runs, and the merge with #826 ran on 2026-10-28, so the 2026-10-27
+  point stays main's.
+- **Only this branch's three checks move**, `maturity_vs_filing` included among those that do
+  not. The counts are the same as on the first basis: main 56500bb1 (inputs `4dedc3df…`) against
+  this branch before #826 merged.
 
 Counts are units: confirmed / differs stated / differs unexplained / unchecked.
 
