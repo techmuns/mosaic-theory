@@ -111,7 +111,9 @@ def test_assemble_one_builds_its_anchor_through_the_bridge() -> None:
     source: the anchor comes from `_assembly_anchor`, never a bare `compute_anchor` call — the call
     that had no `ciq=`."""
     src = inspect.getsource(asm.assemble_one)
-    assert "_assembly_anchor(" in src
+    # the exact call, not the bare name: a comment naming the helper would satisfy a name search
+    assert ("anchor = _assembly_anchor(mech.model_dump(mode=\"json\"), facts=anchor_facts, "
+            "bundle=bundle,") in src
     assert "compute_anchor(" not in src
 
 
