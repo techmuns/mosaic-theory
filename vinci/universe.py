@@ -23,7 +23,9 @@ from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.edgar.client import SHARES_TAG_WAVG
 from vinci.eod import EodClient, PolygonEodClient
+from vinci.eod.client import carry_forward
 from vinci.resolver import EntityResolver
+from vinci.resolver.aliases import detect_renames, load_aliases, write_aliases
 from vinci.resolver.instrument import FOREIGN_PRIVATE_ISSUER_FORMS
 from vinci.schemas.data_record import Identity
 from vinci.schemas.envelope import DataField, SourceTier
@@ -575,6 +577,26 @@ def build_universe(
             store.upsert_security(ident, first_seen=reference_date)
             admitted.append((ident, market_cap, shares_source, approximate))
 
+        # A RENAME CONTINUES ITS LINE (2026-10-27). A new ticker mints a new internal id, so HOS
+        # entered the 2026-09-22 population with no history while HLX — the same share class —
+        # left with all of it, and the screen could not evaluate it. Renames among the admitted
+        # lines are confirmed on Polygon's share-class FIGI and recorded in the committed alias
+        # table; the new id then (a) inherits the old id's incumbency, so the record is not
+        # treated as a new choice, and (b) is given the old id's bars before its listing date.
+        # The old id is never re-keyed (`vinci/resolver/aliases.py`).
+        aliases = load_aliases(cfg.snapshots_dir)
+        found = detect_renames([row[0] for row in admitted], store.iter_securities(), sec_types,
+                               lambda t, on: eod.ticker_details(t, on), known=aliases)
+        write_aliases(cfg.snapshots_dir, found)
+        aliases += found
+        incumbents = incumbents | {al.successor_id for al in aliases
+                                   if al.predecessor_id in incumbents}
+        admitted_ids = {row[0].internal_id for row in admitted}
+        for al in aliases:
+            if al.successor_id in admitted_ids:
+                carry_forward(eod, store, predecessor_id=al.predecessor_id,
+                              predecessor_symbol=al.predecessor_symbol,
+                              successor_id=al.successor_id, listed=al.listed, end=reference_date)
         for ident, market_cap, cap_source, approximate in _one_line_per_issuer(admitted):
             stats["in_universe"] += 1
             # Stamped on the admitted row and counted in the run's health numbers, so an
