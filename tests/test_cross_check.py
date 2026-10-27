@@ -346,12 +346,12 @@ def test_a_point_guide_cannot_be_read_back_off_the_page() -> None:
     row = GuidanceRow(metric="Revenue", latest_guide="'197,000.00 - 202,000.00'",
                       period="FQ3 2026", dated="2026-07-30", age="fresh", record="—",
                       most_recent="—")
-    assert revenue_guide_from_rows([row]) == (197000.0, 202000.0, "FQ3 2026")
+    assert revenue_guide_from_rows([row]) == (197000.0, 202000.0, "FQ3 2026", date(2026, 7, 30))
     point = row.model_copy(update={"latest_guide": _fig(427.516)})
-    assert revenue_guide_from_rows([point]) == (427.5, 427.5, "FQ3 2026")
+    assert revenue_guide_from_rows([point]) == (427.5, 427.5, "FQ3 2026", date(2026, 7, 30))
     other = row.model_copy(update={"metric": "EBITDA"})
     assert revenue_guide_from_rows([other, row])[2] == "FQ3 2026"   # the first REVENUE row
-    assert revenue_guide_from_rows([other]) == (None, None, None)
+    assert revenue_guide_from_rows([other]) == (None, None, None, None)
 
 
 # --- the write: absent until built, beside its sibling when built --------------------------------

@@ -247,3 +247,141 @@ def test_a_stated_amount_matches_only_at_its_own_precision() -> None:
             "provision associated with the interchange multidistrict litigation (\"MDL\") case.")
     assert er._matching_sentence(visa, 708.0) is not None
     assert er._matching_sentence(visa, 709.0) is None              # two units off
+
+
+# --- an amount the release states only in a TABLE (2026-10-27, VRRM) -----------------------------
+
+#: VERRA MOBILITY's real figures for CIQ's LTM to 2026-03-31, frozen: CIQ's quarterly EBITDA as the
+#: page stores it, and the companyfacts points (as of 2026-10-27) the quarters are rebuilt from.
+_VRRM_CIQ = {"Jun-30-2025": 92.349, "Sep-30-2025": 103.343, "Dec-31-2025": 81.279,
+             "Mar-31-2026": 81.025}
+_VRRM_POINTS: dict[str, list[tuple[str, str, int, str, str]]] = {
+    "OperatingIncomeLoss": [("2025-01-01", "2025-06-30", 120579000, "2025-08-06", "10-Q"),
+                            ("2025-04-01", "2025-06-30", 63194000, "2025-08-06", "10-Q"),
+                            ("2025-01-01", "2025-09-30", 195388000, "2025-10-29", "10-Q"),
+                            ("2025-07-01", "2025-09-30", 74809000, "2025-10-29", "10-Q"),
+                            ("2025-01-01", "2025-12-31", 238414000, "2026-02-24", "10-K"),
+                            ("2026-01-01", "2026-03-31", 51800000, "2026-05-06", "10-Q")],
+    _DA: [("2025-01-01", "2025-03-31", 27490000, "2025-05-07", "10-Q"),
+          ("2025-01-01", "2025-06-30", 56645000, "2025-08-06", "10-Q"),
+          ("2025-01-01", "2025-09-30", 85179000, "2025-10-29", "10-Q"),
+          ("2025-01-01", "2025-12-31", 114080000, "2026-02-24", "10-K"),
+          ("2026-01-01", "2026-03-31", 29225000, "2026-05-06", "10-Q")],
+}
+#: VRRM 8-K 0001193125-26-067015 EX-99.1 (filed 2026-02-24), its fourth-quarter cash-flow table as
+#: `html_to_text` flattens it, verbatim. The quarter's $9.352M gap is the impairment row, to the
+#: thousand; the release states it in no sentence.
+_VRRM_TABLE = (
+    "VERRA MOBILITY CORPORATION CONDENSED CONSOLIDATED STATEMENTS OF CASH FLOWS (Unaudited) Three "
+    "Months Ended December 31, ($ in thousands) 2025 2024 Cash Flows from Operating Activities: "
+    "Net income (loss) $ 18,880 $ (66,656 ) Adjustments to reconcile net income (loss) to net cash "
+    "provided by operating activities: Depreciation and amortization 28,901 27,543 Amortization of "
+    "deferred financing costs and discounts 589 669 Tax receivable agreement liability adjustment "
+    "687 (257 ) Loss on extinguishment of debt 1,266 1,117 Gain on lease modification (1,517 ) — "
+    "Credit loss expense 4,609 1,577 Deferred income taxes 14,640 (8,328 ) Stock-based "
+    "compensation 6,480 4,372 Uncertain tax position reserve release (762 ) — Goodwill impairment "
+    "— 97,076 Impairment of long-lived assets and right of use assets 9,352 170 Other 692 654 "
+    "Changes in operating assets and liabilities: Accounts receivable (10,011 ) (14,773 ) Unbilled "
+    "receivables 3,184 1,925 Inventory (359 ) 1,406 Prepaid expenses and other assets (5,206 ) "
+    "9,349 Deferred revenue (2,690 ) (170 )")
+#: SIMPLY GOOD 8-K 0001702744-26-000004 EX-99.1 (filed 2026-01-08), its EBITDA reconciliation for
+#: the quarter to 2025-11-29, verbatim: the page's +$5.918M gap is the integration-expense row.
+_SMPL_TABLE = (
+    "(In thousands) Thirteen Weeks Ended November 29, 2025 November 30, 2024 Net income $ 25,269 $ "
+    "38,122 Interest income (499) (776) Interest expense 4,286 7,861 Income tax expense 8,547 "
+    "9,553 Depreciation and amortization 6,205 5,047 EBITDA 43,808 59,807 Stock-based compensation "
+    "expense 3,083 3,844 Business transaction costs — 643 Inventory step-up — 974 Integration "
+    "expense 5,918 4,931")
+
+
+def test_vrrm_q4_gap_is_the_impairment_row_its_release_states_in_a_table() -> None:
+    """THE RED (VRRM's committed page, 2026-10-27). The quarter to 2025-12-31 reads CIQ $81.279M
+    against $71.927M rebuilt (operating income 238.414 − 195.388, D&A 114.080 − 85.179): +$9.352M,
+    the "Impairment of long-lived assets and right of use assets 9,352" row of the quarter's own
+    cash-flow table — CIQ leaves impairments out of its EBITDA. The prose reader saw no "$… million"
+    and quoted nothing, so the scorecard read the gap as unexplained. The quote carries the table's
+    scale with the row, both verbatim, and re-matches on its own."""
+    rel = _rel("0001193125-26-067015", "2026-02-24", [])
+    rec = er.reconcile(_Bundle(_VRRM_CIQ), _facts(_VRRM_POINTS), [rel],  # type: ignore[arg-type]
+                       lambda r: _VRRM_TABLE)
+    q4 = rec.quarters[2]
+    assert q4.period_end == "2025-12-31" and q4.filing_ebitda == pytest.approx(71.927)
+    assert q4.gap == pytest.approx(9.352) and q4.different
+    assert q4.matching_amount == ("Three Months Ended December 31, ($ in thousands) 2025 2024 … "
+                                  "Impairment of long-lived assets and right of use assets 9,352")
+    assert q4.matching_source == "8-K 0001193125-26-067015 EX-99.1"
+    assert er._matching_sentence(q4.matching_amount, q4.gap) is not None
+    assert [r.different for r in rec.quarters] == [False, False, True, False]
+
+
+def test_a_table_row_matches_only_as_the_first_figure_under_a_thousands_header() -> None:
+    """(+) SIMPLY GOOD's integration expense, the second real table case on the corpus. (−) Each
+    way a table figure is NOT the stated amount, on the real text: the prior-year column "9,349"
+    (Prepaid expenses — the one coincidence the shifted-gap test found on 544 trials); one $1K
+    unit off; the same row under a millions header or under no header; and a prose amount still
+    wins where the release states one."""
+    assert er._matching_sentence(_SMPL_TABLE, 5.918) == (
+        "(In thousands) Thirteen Weeks Ended November 29, 2025 November 30, 2024 … Integration "
+        "expense 5,918")
+    assert er._matching_sentence(_VRRM_TABLE, 9.349) is None       # a second column, no label
+    assert er._matching_sentence(_VRRM_TABLE, 9.354) is None       # two units off
+    assert er._matching_sentence(_VRRM_TABLE, 9.353) is not None   # one unit: the rounding
+    assert er._matching_sentence(_VRRM_TABLE.replace("($ in thousands)", "($ in millions)"),
+                                 9.352) is None
+    assert er._matching_sentence(_VRRM_TABLE.replace("($ in thousands) ", ""), 9.352) is None
+    # a later table headed with a word before "in" ends the thousands header's reach
+    later = _VRRM_TABLE.replace("Impairment of", "(Dollars in millions) Impairment of")
+    assert er._matching_sentence(later, 9.352) is None
+    assert er._matching_sentence(_RELEASE + " (In thousands) Tariff refunds 331,000", -331.0) == (
+        er._matching_sentence(_RELEASE, -331.0))
+
+
+#: NCINO 8-K 0001902733-26-000064 EX-99.1 (filed 2026-05-27), its cash-flow table, verbatim: the
+#: column heading lists the PRIOR year first ("April 30, 2025 2026") — 30 of the 258 thousands
+#: headers in the committed pages' releases order their periods oldest-first (Codex, #818).
+_NCNO_TABLE = (
+    "(In thousands) (Unaudited) Three Months Ended April 30, 2025 2026 Cash flows from operating "
+    "activities Net income attributable to nCino, Inc. $ 5,562 $ 13,641 Net income and adjustment "
+    "attributable to redeemable non-controlling interest 455 1,350 Net income 6,017 14,991 "
+    "Adjustments to reconcile net income to net cash provided by operating activities: "
+    "Depreciation and amortization 10,705 10,083 Non-cash operating lease costs 1,161 908")
+
+
+def test_a_table_whose_heading_lists_the_prior_period_first_is_not_read() -> None:
+    """(−) nCino's real table: the first figure is the PRIOR year's, so a gap equal to it is not a
+    stated amount for the quarter. (+) The current-first tables still match, and their quote
+    carries the column heading that proves the order, so it re-matches on its own."""
+    assert er._matching_sentence(_NCNO_TABLE, 10.705) is None
+    assert er._matching_sentence(_NCNO_TABLE.replace("2025 2026", "2026 2025"), 10.705) == (
+        "(In thousands) (Unaudited) Three Months Ended April 30, 2026 2025 … Depreciation and "
+        "amortization 10,705")
+    assert er._matching_sentence(_VRRM_TABLE, 9.352) == (
+        "Three Months Ended December 31, ($ in thousands) 2025 2024 … Impairment of long-lived "
+        "assets and right of use assets 9,352")
+    assert er._matching_sentence(_VRRM_TABLE.replace("($ in thousands) 2025 2024",
+                                                     "($ in thousands)"), 9.352) is None
+
+
+#: VRRM 8-K 0001193125-26-067015 EX-99.1, its FULL-YEAR cash-flow table, verbatim (from the cell
+#: before its title): the same release carries a three-month table and a year table (Codex, #818).
+_VRRM_FY_TABLE = (
+    "d of period $ 68,318 $ 81,154 12 VERRA MOBILITY CORPORATION CONDENSED CONSOLIDATED STATEMENTS "
+    "OF CASH FLOWS (Unaudited) For the Year Ended December 31, ($ in thousands) 2025 2024 Cash "
+    "Flows from Operating Activities: Net income $ 136,633 $ 31,448 Adjustments to reconcile net "
+    "income to net cash provided by operating activities: Depreciation and amortization 114,080 "
+    "108,525")
+
+
+def test_a_table_row_is_read_only_for_the_quarter_its_heading_names() -> None:
+    """(−) A YEAR table's first figure is not a stated amount for a quarter: VRRM's full-year
+    D&A, 114,080, is never quoted as a quarter's gap. (−) A three-month table whose heading names
+    another year than the quarter's. (−) A table whose heading states no duration. (+) The
+    quarter's own table, its duration phrase carried in the quote so it re-matches on its own."""
+    assert er._matching_sentence(_VRRM_FY_TABLE, 114.080) is None
+    q4 = date(2025, 12, 31)
+    assert er._matching_sentence(_VRRM_TABLE, 9.352, quarter_end=q4) == (
+        "Three Months Ended December 31, ($ in thousands) 2025 2024 … Impairment of long-lived "
+        "assets and right of use assets 9,352")
+    assert er._matching_sentence(_VRRM_TABLE, 9.352, quarter_end=date(2024, 12, 31)) is None
+    assert er._matching_sentence(_VRRM_TABLE.replace("Three Months Ended December 31, ", ""),
+                                 9.352) is None

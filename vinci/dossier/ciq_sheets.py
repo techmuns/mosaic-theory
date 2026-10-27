@@ -3794,36 +3794,41 @@ def guidance_bridge(
 
 def revenue_guide_lohi(
     bundle: CiqBundle, *, reference_date: date | None = None
-) -> tuple[float | None, float | None, str | None]:
-    """The latest CIQ revenue guide as (low, high, PERIOD) — a POINT guide reads (v, v, period), a
-    RANGE reads (lo, hi, period), absent reads (None, None, None). The cross-source input for guide
-    verification (a point echoing the prior-FY actual = vendor artifact; a range matching the
-    release = VERIFIED). Reuses the guidance-bridge reads (single source; a STRUCTURED value, not a
-    display re-parse).
+) -> tuple[float | None, float | None, str | None, date | None]:
+    """The latest CIQ revenue guide as (low, high, PERIOD, DATED) — a POINT guide reads (v, v,
+    period, dated), a RANGE reads (lo, hi, period, dated), absent reads (None, None, None, None).
+    The cross-source input for guide verification (a point echoing the prior-FY actual = vendor
+    artifact; a range matching the release = VERIFIED). Reuses the guidance-bridge reads (single
+    source; a STRUCTURED value, not a display re-parse).
 
     THE PERIOD RIDES WITH THE NUMBERS (2026-08-12), for the reason the BASIS does. This guide is
     whichever period CIQ last published — NFLX's is FQ3 2026, not the fiscal year the old docstring
     assumed — and handing (low, high) onward without saying which period they cover is how a
     quarterly 12,860 got compared against an annual 50,700–51,700 and printed MISMATCH. The caller
     refuses on it.
+
+    AND SO DOES THE DATE (2026-10-27): the guide is the one CIQ dated, and the release it is
+    checked against is the release of that date. VRRM's guide is dated 2026-05-26 and was set
+    against the 2026-08-05 release that cut it, printing MISMATCH on two sources that agree
+    (`mechanical._guide_verification`).
     """
     try:
         rows = bundle.sheet("estimates", "Guidance")
     except CiqUnavailableError:
-        return (None, None, None)
+        return (None, None, None, None)
     for r in _guidance_reads(rows, _metric_starts(rows, _GUIDANCE_METRICS), reference_date, 45):
         if "revenue" not in r.metric.lower():
             continue
         if r.guide_num is not None:
-            return (r.guide_num, r.guide_num, r.period)
+            return (r.guide_num, r.guide_num, r.period, r.dated)
         if r.guide_range is not None:
-            return (*r.guide_range, r.period)
-    return (None, None, None)
+            return (*r.guide_range, r.period, r.dated)
+    return (None, None, None, None)
 
 
 def revenue_guide_from_rows(
     rows: list[GuidanceRow],
-) -> tuple[float | None, float | None, str | None]:
+) -> tuple[float | None, float | None, str | None, date | None]:
     """:func:`revenue_guide_lohi` read back off a committed page's guidance-bridge rows, for the
     refresh that rebuilds the guide check without the workbook (`refresh.cross_check_transform`):
     the same selection (the first revenue row with a number), through the same `_parse_range`.
@@ -3839,8 +3844,8 @@ def revenue_guide_from_rows(
         quoted = len(cell) >= 2 and cell[0] == cell[-1] == "'"
         pr = _parse_range(cell[1:-1] if quoted else cell)
         if pr is not None:
-            return (pr[0], pr[1], r.period)
-    return (None, None, None)
+            return (pr[0], pr[1], r.period, date.fromisoformat(r.dated))
+    return (None, None, None, None)
 
 
 def guidance_bridge_rows(

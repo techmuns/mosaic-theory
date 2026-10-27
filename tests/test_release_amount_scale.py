@@ -512,7 +512,8 @@ def test_a_line_that_does_not_reproduce_refuses(monkeypatch: pytest.MonkeyPatch)
     monkeypatch.setattr(ciq_sheets, "comps_total_debt_ebitda_value",
                         lambda _b: Sourced[float].unknown(note="x"))
     monkeypatch.setattr(ciq_sheets, "net_debt", lambda _b: Sourced[float].unknown(note="x"))
-    monkeypatch.setattr(ciq_sheets, "revenue_guide_lohi", lambda _b, **_k: (None, None, None))
+    monkeypatch.setattr(ciq_sheets, "revenue_guide_lohi",
+                        lambda _b, **_k: (None, None, None, None))
     rels = [ReleaseExtract.model_validate(r) for r in mech["primary_source"]["releases"]]
     with pytest.raises(rf.RefreshRefusedError, match="does not reproduce"):
         rf._rebuild_release_lines("CNXC", mech, rels, rels, None)

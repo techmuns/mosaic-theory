@@ -1530,14 +1530,10 @@ def cross_check_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str]
             _put(ps, "wall_coherence_near_boundary", wall.near_boundary, True, "wall_coherence")
         # (3) guide verification — CIQ's guide off the page's guidance-bridge rows
         rows = m.catalyst_path.guidance_bridge_rows if m.catalyst_path is not None else None
-        lo, hi, period = revenue_guide_from_rows(
+        lo, hi, period, dated = revenue_guide_from_rows(
             rows.value if rows is not None and rows.value is not None else [])
-        fy = dm._fy_reconciliation(ps_m.releases)
-        rel_lo, rel_hi, rel_qual, rel_basis, rel_period = dm._release_revenue_guide(ps_m.releases)
-        guide = eps.guide_verification_read(
-            "revenue", lo, hi, prior_fy_actual=fy.get("revenue"), release_qualitative=rel_qual,
-            release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis, ciq_period=period,
-            release_period=rel_period)
+        guide = dm._guide_verification(ps_m.releases, ciq_lo=lo, ciq_hi=hi, ciq_period=period,
+                                       ciq_dated=dated)
         _put(ps, "guide_verification_check", guide.check,
              guide.line == ps_m.guide_verification.value, "guide_verification")
         return out

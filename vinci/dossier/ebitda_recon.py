@@ -22,6 +22,18 @@ or, failing that, the year-to-date less the prior quarter's year-to-date from th
 WHAT THE RELEASE STATES IS QUOTED, NEVER INFERRED: where a quarter differs, the release filed for it
 is searched for a stated dollar amount within :data:`MATCH_TOL` of the gap, and the sentence is
 carried verbatim. A match is evidence for the reader to weigh, not an attribution this code makes.
+
+A TABLE STATES AMOUNTS TOO (2026-10-27, VRRM). Verra Mobility's quarter to 2025-12-31 is +$9.352M,
+the "Impairment of long-lived assets and right of use assets 9,352" row of the quarter's own
+cash-flow table "($ in thousands)" — to the thousand, and in no sentence, so the prose reader quoted
+nothing and the gap read as unexplained. Where no sentence matches, a table row's FIRST figure under
+the nearest preceding thousands header is read at its own precision, $1K — only where the column
+heading proves that first column is the reconciled quarter (`_matching_row`); the quote is that
+heading and that row, verbatim, so it re-matches on its own. Shifting every
+differing quarter's gap on the corpus by ±3 to ±307 units (544 trials) found one coincidence when
+any figure could match — a prior-year column with no label of its own, which a first figure cannot
+be — and one with the rule: VITL's $1.359M shifted to $1.382M meets a finance-lease line of 1,381.
+Small gaps are where a $1K figure coincides; a table quote is evidence to weigh, as a sentence is.
 """
 from __future__ import annotations
 
@@ -52,6 +64,27 @@ _QUARTER_DAYS = (80, 100)
 _NET_INTEREST_INCOME = ("InterestRevenueExpenseNet", "InterestIncomeExpenseNet",
                         "InterestIncomeExpenseNonoperatingNet")
 _AMOUNT = re.compile(r"\$\s?([\d,]+(?:\.\d+)?)\s*(million|billion)\b", re.I)
+#: A release table states its scale once, in its header — "($ in thousands)", "(In thousands,
+#: except per share data)", "(Dollars in millions)". A header opening with a word must be read
+#: too: missed, the rows under it would inherit an earlier thousands header, 1,000x off.
+_TABLE_SCALE = re.compile(r"\(\s*(?:\$\s*|[A-Za-z.]+\s+)?in\s+(thousands|millions|billions)\b"
+                          r"[^()]{0,60}\)", re.I)
+#: A table row as `html_to_text` flattens it: its label, then its FIRST figure — the current
+#: period's column. A figure with no label before it is a later column of the row it follows.
+_TABLE_ROW = re.compile(r"[A-Za-z][A-Za-z ,'’&/()\-]{0,150}?[A-Za-z)]\s+(?:\$\s*)?\(?\s*"
+                        r"(\d{1,3}(?:,\d{3})+)(?![\d,]|\.\d)")
+#: A year in a table's column heading — the text between its scale header and its first row.
+_HEADING_YEAR = re.compile(r"\b(?:19|20)\d\d\b")
+#: The span a table's columns cover, as its heading states it. A QUARTER span opens the heading of
+#: the table that can state a quarter's amount; any other span (six or nine months, a year, year to
+#: date) means the first column is not the quarter.
+_QUARTER_SPAN = re.compile(r"\b(?:three|3)[\s-]+months?\s+ended|\b(?:thirteen|13)[\s-]+weeks?\s+"
+                           r"ended|\bquarters?\s+ended", re.I)
+_SPAN = re.compile(rf"{_QUARTER_SPAN.pattern}|\b(?:six|nine|twelve|6|9|12)[\s-]+months?\s+ended|"
+                   r"\b(?:twenty-six|thirty-nine|fifty-two|fifty-three|26|39|52|53)[\s-]+weeks?\s+"
+                   r"ended|\byears?\s+ended|\byear[\s-]+to[\s-]+date", re.I)
+#: A table cell — where the rows before a table's title end, so its heading is read from there.
+_CELL = re.compile(r"\d{1,3}(?:,\d{3})+")
 _OPERATING = "operating income + D&A"
 _PRETAX = "pre-tax income − net interest income + D&A (other non-operating items stay inside)"
 SOURCE_REF = ("CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL "
@@ -109,12 +142,17 @@ def _ciq_quarters(bundle: CiqBundle) -> dict[date, float]:
     return {d: v for d, v in by_end.items() if v is not None}
 
 
-def _matching_sentence(text: str, gap: float) -> str | None:
+def _matching_sentence(text: str, gap: float, quarter_end: date | None = None) -> str | None:
     """The first sentence stating a dollar amount within `MATCH_TOL` of |gap| AND within one unit of
-    the amount's own stated precision, verbatim, or None."""
+    the amount's own stated precision, verbatim — else the first such table row of the quarter
+    ending ``quarter_end`` (`_matching_row`) — or None."""
     want = abs(gap)
     if want <= 0:
         return None
+    return _matching_prose(text, want) or _matching_row(text, want, quarter_end)
+
+
+def _matching_prose(text: str, want: float) -> str | None:
     for m in _AMOUNT.finditer(text):
         digits = m.group(1).replace(",", "")
         try:
@@ -130,6 +168,49 @@ def _matching_sentence(text: str, gap: float) -> str | None:
             hi = text.find(". ", m.end())
             hi = m.end() + 200 if hi == -1 else min(hi + 1, m.end() + 200)
             return " ".join(text[lo:hi].split())
+    return None
+
+
+def _matching_row(text: str, want: float, quarter_end: date | None = None) -> str | None:
+    """The first table row whose first figure, under the nearest preceding header, is in thousands
+    and sits within `MATCH_TOL` of ``want`` AND within one unit ($1K): the table's heading (its
+    span, scale and years) and the row, verbatim, joined by an ellipsis — or None. A row in
+    millions, or under no header, has no stated scale here and is never read.
+
+    THE FIRST COLUMN MUST BE THE QUARTER (Codex, #818, two rounds). Its heading — from the last
+    table cell before the header to the first row after it — must:
+    * name a QUARTER span first (`_QUARTER_SPAN`): VRRM's release carries a three-month cash-flow
+      table AND a full-year one, and the year's 114,080 of D&A is no quarter's amount;
+    * name a year after the header, the first the latest: nCino heads "Three Months Ended April 30,
+      2025 2026", the prior year first, as do 30 of the 258 thousands headers in the committed
+      pages' releases;
+    * when ``quarter_end`` is given, have that first year be the quarter's.
+    Otherwise the period is unproven and the table is not read. The quote carries the heading, so
+    it proves the period on its own."""
+    heads = list(_TABLE_SCALE.finditer(text))
+    # a header is never part of a row's label: masked to the same length, so positions hold
+    masked = _TABLE_SCALE.sub(lambda h: "|" * len(h.group(0)), text)
+    for m in _TABLE_ROW.finditer(masked):
+        head = next((h for h in reversed(heads) if h.end() <= m.start()), None)
+        if head is None or head.group(1).lower() != "thousands":
+            continue
+        off = abs(int(m.group(1).replace(",", "")) / 1000.0 - want)
+        if off > MATCH_TOL * want or off > 0.001 + 1e-9:
+            continue
+        first = _TABLE_ROW.search(masked, head.end())
+        end = first.start() if first is not None else head.end()
+        years = list(_HEADING_YEAR.finditer(text, head.end(), end))
+        if not years or int(years[0].group(0)) != max(int(y.group(0)) for y in years):
+            continue
+        if quarter_end is not None and int(years[0].group(0)) != quarter_end.year:
+            continue
+        cells = [c.end() for c in _CELL.finditer(text, max(0, head.start() - 300), head.start())]
+        start = cells[-1] if cells else max(0, head.start() - 300)
+        spans = list(_SPAN.finditer(text, start, end))
+        if not spans or not _QUARTER_SPAN.fullmatch(spans[0].group(0)):
+            continue
+        lead = " ".join(text[min(spans[0].start(), head.start()):years[-1].end()].split())
+        return f"{lead} … {' '.join(text[m.start():m.end()].split())}"
     return None
 
 
@@ -162,7 +243,7 @@ def reconcile(bundle: CiqBundle, facts: dict[str, Any] | None, releases: list[Re
                 if r.filed is None or not q <= r.filed <= q + timedelta(days=_RELEASE_WINDOW_DAYS):
                     continue
                 text = text_for(r)
-                if text and (quote := _matching_sentence(text, gap)):
+                if text and (quote := _matching_sentence(text, gap, q)):
                     source = r.source_ref
                     break
         rows.append(EbitdaReconQuarter(
