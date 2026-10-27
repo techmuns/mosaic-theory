@@ -1299,7 +1299,9 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
             recorded_d_and_a=bg.recorded_d_and_a_outcome(
                 implied_d_and_a_margin=mult["implied_d_and_a_margin"], revenue=ltm_rev,
                 recorded_d_and_a=(da[0] / _USD_M if da else None)),
-            market_reconciliation=bg.reconciliation_outcome(recon)),
+            market_reconciliation=bg.reconciliation_outcome(recon),
+            d_and_a_source=(("ciq" if "d_and_a" in bridge["vendor_filled"] else "edgar")
+                            if da else None)),
         midcycle_gap=midcycle_gap(margin_val, margin_years, ltm_ebit=ltm_ebit,
                                   ltm_revenue=ltm_rev, median_source=margin_source,
                                   basis=(None if median_from_ciq

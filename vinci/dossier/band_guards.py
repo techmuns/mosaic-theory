@@ -27,9 +27,9 @@ refuse to publish a value derived from the tainted input.
 """
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, SerializerFunctionWrapHandler, model_serializer
 
 BAND_INCOHERENT = "band_incoherent"
 BAND_UNRECONCILED = "band_unreconciled"
@@ -68,6 +68,18 @@ class BandChecks(BaseModel, frozen=True):
 
     recorded_d_and_a: BandOutcome
     market_reconciliation: BandOutcome
+    # WHERE THE RECORDED D&A CAME FROM (Codex, #819): 'edgar', or 'ciq' where the workbook filled a
+    # hole EDGAR left (`anchor._bridge_inputs`' vendor bridge) — then the recorded-D&A guard sets
+    # CIQ against CIQ, and its agreement confirms nothing independent. None: no recorded D&A, or a
+    # block written before the field; it is then left out of the JSON, never written null.
+    d_and_a_source: Literal["edgar", "ciq"] | None = None
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, handler: SerializerFunctionWrapHandler) -> Any:
+        out = handler(self)
+        if isinstance(out, dict) and out.get("d_and_a_source") is None:
+            out.pop("d_and_a_source", None)
+        return out
 
 
 class SheetCoherence(BaseModel, frozen=True):

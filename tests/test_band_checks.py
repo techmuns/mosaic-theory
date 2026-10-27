@@ -33,7 +33,8 @@ def test_a_coherent_band_stores_two_agreements() -> None:
     a = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_synth_facts(),
                        computed_at=_now())
     assert a.data_quality is None
-    assert a.band_checks == bg.BandChecks(recorded_d_and_a="agree", market_reconciliation="agree")
+    assert a.band_checks == bg.BandChecks(recorded_d_and_a="agree", market_reconciliation="agree",
+                                          d_and_a_source="edgar")
 
 
 def test_each_guard_that_trips_differs_and_only_that_one() -> None:
@@ -42,7 +43,7 @@ def test_each_guard_that_trips_differs_and_only_that_one() -> None:
     da = compute_anchor(_synth_mech(da_margin=0.419146, current=8.0), facts=_synth_facts(),
                         computed_at=_now())
     assert da.band_checks == bg.BandChecks(recorded_d_and_a="differ",
-                                           market_reconciliation="agree")
+                                           market_reconciliation="agree", d_and_a_source="edgar")
     mkt = compute_anchor(_synth_mech(da_margin=None, current=1.6), facts=_synth_facts(),
                          computed_at=_now())
     assert mkt.band_checks is not None and mkt.band_checks.market_reconciliation == "differ"
@@ -57,12 +58,14 @@ def test_a_guard_that_could_not_run_is_not_run_never_agree() -> None:
                                computed_at=_now())
     assert no_margin.data_quality is None
     assert no_margin.band_checks == bg.BandChecks(recorded_d_and_a="not_run",
-                                                  market_reconciliation="agree")
+                                                  market_reconciliation="agree",
+                                                  d_and_a_source="edgar")
     mech = _synth_mech(da_margin=0.010, current=8.0)
     mech["implied_valuation"]["market_cap"]["value"] = None
     no_cap = compute_anchor(mech, facts=_synth_facts(), computed_at=_now())
     assert no_cap.band_checks == bg.BandChecks(recorded_d_and_a="agree",
-                                               market_reconciliation="not_run")
+                                               market_reconciliation="not_run",
+                                               d_and_a_source="edgar")
 
 
 def test_the_outcome_reads_the_flags_own_gate() -> None:
@@ -222,10 +225,103 @@ def test_the_scorecard_reads_the_block_and_absent_is_not_run() -> None:
                                           "market_reconciliation": "differ"}))
     assert r.counts == {core.UNCHECKED: 1} and m.counts == {core.DIFFERS_UNEXPLAINED: 1}
     assert qciq._recorded_d_and_a_vs_edgar(page({"recorded_d_and_a": "agree",
-                                                 "market_reconciliation": "agree"})).counts == {
+                                                 "market_reconciliation": "agree",
+                                                 "d_and_a_source": "edgar"})).counts == {
         core.CONFIRMED: 1}
     assert qciq._market_reconciliation(page(None)).not_run is not None
     assert qciq._market_reconciliation({"ticker": "T"}).not_run is not None
     fam = next(f for f in qciq.FAMILIES if f.id == "financials.tev_history")
     assert {"recorded_d_and_a_vs_edgar", "market_reconciliation"} <= set(fam.checks)
     assert fam.unscored == ()
+
+
+# --- the recorded D&A's provenance (Codex, #819 round 3) ----------------------------------------
+
+
+def _vendor_da_facts() -> dict[str, typing.Any]:
+    """`_synth_facts` with no EDGAR D&A tag at all, so the CIQ workbook fills it."""
+    facts = _synth_facts()
+    facts["facts"]["us-gaap"].pop("DepreciationDepletionAndAmortization")
+    return facts
+
+
+def _ciq_da(value: float) -> typing.Any:
+    from vinci.dossier.ciq_balance import CiqFact, CiqFacts
+
+    return CiqFacts(ticker="T", as_of=None, source_file="T Financials_Quarterly.xls",
+                    source_sha256="0123456789", checks=[], failures=[],
+                    facts={"d_and_a": CiqFact(value=value, unit="$M", basis="latest FY",
+                                              source="CIQ")})
+
+
+def test_the_anchor_records_where_its_recorded_d_and_a_came_from() -> None:
+    """(+/−) EDGAR's D&A → 'edgar'; a D&A the CIQ workbook filled (no EDGAR tag) → 'ciq', so
+    the recorded-D&A guard is known to compare CIQ with CIQ."""
+    edgar = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_synth_facts(),
+                           computed_at=_now())
+    vendor = compute_anchor(_synth_mech(da_margin=0.010, current=8.0), facts=_vendor_da_facts(),
+                            computed_at=_now(), ciq=_ciq_da(10.0))
+    assert edgar.band_checks is not None and edgar.band_checks.d_and_a_source == "edgar"
+    assert vendor.band_checks is not None and vendor.band_checks.d_and_a_source == "ciq"
+    assert vendor.band_checks.recorded_d_and_a == "agree"
+    # no recorded D&A: the provenance is unset, and left out of the JSON — never written null
+    bare = bg.BandChecks(recorded_d_and_a="not_run", market_reconciliation="agree")
+    assert "d_and_a_source" not in bare.model_dump(mode="json")
+    assert "d_and_a_source" not in json.loads(bare.model_dump_json())
+
+
+def test_a_ciq_d_and_a_agreement_is_not_an_independent_confirmation() -> None:
+    """(−) GOOGL's shape: the guard agrees, but the recorded D&A is CIQ's — two CIQ figures
+    agreeing confirm nothing about CIQ, so the unit is unchecked; so is an agreement whose D&A
+    provenance the block does not carry. A CIQ-against-CIQ DIFFERENCE still differs: CIQ
+    contradicting itself is a defect whoever's D&A it is. EDGAR's agreement still confirms."""
+    from vinci.quality import core
+    from vinci.quality.sources import ciq as qciq
+
+    def scored(outcome: str, source: str | None) -> dict[str, int]:
+        bc = {"recorded_d_and_a": outcome, "market_reconciliation": "agree"}
+        if source is not None:
+            bc["d_and_a_source"] = source
+        return qciq._recorded_d_and_a_vs_edgar({"ticker": "T", "anchor": {"band_checks": bc}}
+                                              ).counts
+
+    assert scored("agree", "edgar") == {core.CONFIRMED: 1}
+    assert scored("agree", "ciq") == {core.UNCHECKED: 1}
+    assert scored("agree", None) == {core.UNCHECKED: 1}
+    assert scored("differ", "ciq") == {core.DIFFERS_UNEXPLAINED: 1}
+
+
+def test_the_backfill_reads_whose_d_and_a_from_the_anchors_own_line(tmp_path: Path) -> None:
+    """(+/−) A block written before `d_and_a_source` gains it — 'ciq' on a page whose anchor's
+    vendor-bridge line names d_and_a — and nothing else moves; a vendor-bridge line the anchor's
+    `vendor_bridge` flag does not match is refused. The case exists on the corpus — asserted
+    first."""
+    from vinci.dossier import refresh
+
+    def vendor_da(p: dict[str, typing.Any]) -> bool:
+        line = next((x for x in _detail(p) if x.startswith(refresh._VENDOR_LEAD)), "")
+        return "d_and_a" in line and (p.get("anchor") or {}).get("band_checks") is not None
+
+    pages = _pages_where(vendor_da)
+    assert pages, "no committed page whose anchor's D&A the CIQ workbook filled"
+    src = pages[0]
+    held = json.loads(src.read_text())["anchor"]["band_checks"]
+    assert held["d_and_a_source"] == "ciq"
+
+    def predates(p: dict[str, typing.Any]) -> None:
+        p["anchor"]["band_checks"] = {k: v for k, v in held.items() if k != "d_and_a_source"}
+
+    up = _bare_copy(src, tmp_path / "b", predates)
+    refused: list[str] = []
+    assert refresh.band_checks_backfill(up, refused=refused, unreached=[]) and refused == []
+    assert json.loads(up.read_text())["anchor"]["band_checks"] == held
+
+    def no_line(p: dict[str, typing.Any]) -> None:
+        p["anchor"]["data_quality_detail"] = [x for x in _detail(p)
+                                              if not x.startswith(refresh._VENDOR_LEAD)]
+
+    bad = _bare_copy(src, tmp_path / "c", no_line)
+    before = bad.read_text()
+    assert not refresh.band_checks_backfill(bad, refused=refused, unreached=[])
+    assert len(refused) == 1 and "vendor-bridge line" in refused[0]
+    assert bad.read_text() == before

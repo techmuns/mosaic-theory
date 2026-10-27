@@ -345,7 +345,15 @@ def _band_check(page: dict[str, Any], key: str) -> ItemResult:
 
 
 def _recorded_d_and_a_vs_edgar(page: dict[str, Any]) -> ItemResult:
-    return _band_check(page, "recorded_d_and_a")
+    r = _band_check(page, "recorded_d_and_a")
+    # A CONFIRMATION NEEDS AN INDEPENDENT SECOND FIGURE (Codex, #819). Where the recorded D&A is
+    # CIQ's — the vendor bridge filled it (GOOGL) — or the block does not say whose it is, an
+    # agreement is CIQ against CIQ: unchecked. A difference stays one: CIQ contradicting itself is
+    # a defect whoever's D&A it is
+    if r.counts.get(CONFIRMED) and _get(page, "anchor", "band_checks",
+                                        "d_and_a_source") != "edgar":
+        return one(UNCHECKED)
+    return r
 
 
 def _market_reconciliation(page: dict[str, Any]) -> ItemResult:
@@ -542,7 +550,9 @@ CHECKS: tuple[Check, ...] = (
           INDEPENDENT, "page",
           f"within {_MAX_DA_RATIO:g}x either way (band_guards.recorded_d_and_a_check) — an "
           "order-of-magnitude screen, the anchor's band_checks. Not run on the ex-lease history, "
-          "which carries no implied D&A margin",
+          "which carries no implied D&A margin. An agreement counts only where the recorded D&A "
+          "is EDGAR's (band_checks.d_and_a_source): one the CIQ workbook filled is CIQ against "
+          "CIQ, unchecked; a difference counts either way",
           "pages whose anchor reached the band guards (anchor.band_checks)", None, None,
           ("wrong_file", "wrong_cell", "wrong_unit", "different_definition"),
           _recorded_d_and_a_vs_edgar),

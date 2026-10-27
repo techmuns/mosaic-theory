@@ -1699,6 +1699,9 @@ def ciq_currency_transform(doc: dict[str, Any], *, refused: list[str],
 #: The lines the anchor writes into `data_quality_detail` for each band guard (`compute_anchor`).
 _DA_TRIP_LEAD = "Multiples sheet implies D&A of "
 _RECON_TRIP_LEAD = "market-implied EBITDA "
+#: The anchor's vendor-bridge line (`compute_anchor`): the inputs the CIQ workbook filled, by key.
+_VENDOR_LEAD = "vendor bridge: "
+_VENDOR_TAIL = " supplied by the CIQ workbook because EDGAR had no usable tag"
 _DA_EX_LEASE_LINE = ("recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, which the "
                      "ex-lease history does not use")
 
@@ -1724,6 +1727,7 @@ def band_checks_backfill(path: Path, *, refused: list[str], unreached: list[str]
     from vinci.dossier import band_guards as bg
     from vinci.dossier import layer_refresh
     from vinci.dossier.anchor import (
+        DQ_VENDOR_BRIDGE,
         _band_read,
         _ltm_ebit_from_fs,
         _market_cap_from_mechanical,
@@ -1774,15 +1778,30 @@ def band_checks_backfill(path: Path, *, refused: list[str], unreached: list[str]
         if sorted(lines) != sorted(x for x in detail if x.startswith(lead)):
             refused.append(f"{t}: the {what} check's trip lines do not reproduce from the page")
             return False
+    # WHOSE D&A (Codex, #819): the inputs the vendor bridge filled, off the anchor's own line, which
+    # must sit on the page exactly when its `vendor_bridge` flag does
+    vendor = [x for x in detail if x.startswith(_VENDOR_LEAD) and x.endswith(_VENDOR_TAIL)]
+    if len(vendor) > 1 or bool(vendor) != (DQ_VENDOR_BRIDGE in (a.get("data_quality") or "")
+                                           .split("+")):
+        refused.append(f"{t}: the vendor-bridge line does not match the anchor's flag")
+        return False
+    filled = vendor[0][len(_VENDOR_LEAD):-len(_VENDOR_TAIL)].split(", ") if vendor else []
     new = bg.BandChecks(
         recorded_d_and_a=bg.recorded_d_and_a_outcome(
             implied_d_and_a_margin=mult.get("implied_d_and_a_margin"), revenue=rev,
             recorded_d_and_a=da),
-        market_reconciliation=bg.reconciliation_outcome(recon)).model_dump(mode="json")
-    if a.get("band_checks") is not None:
-        if a["band_checks"] != new:
-            refused.append(f"{t}: band_checks on the page differs from the rebuild — kept")
-        return False
+        market_reconciliation=bg.reconciliation_outcome(recon),
+        d_and_a_source=(("ciq" if "d_and_a" in filled else "edgar") if da else None),
+    ).model_dump(mode="json")
+    held_bc = a.get("band_checks")
+    if held_bc is not None:
+        # a block written before `d_and_a_source` gains it; any other difference is kept
+        predates = ("d_and_a_source" not in held_bc
+                    and held_bc == {k: v for k, v in new.items() if k != "d_and_a_source"})
+        if held_bc == new or not predates:
+            if held_bc != new:
+                refused.append(f"{t}: band_checks on the page differs from the rebuild — kept")
+            return False
     a["band_checks"] = new
     model = Dossier.model_validate(doc)
     if moved := layer_refresh.moved_layers(json.loads(original), json.loads(dossier_json(model))):
