@@ -141,26 +141,38 @@ def test_missing_own_history_multiple_is_inapplicable_not_crash() -> None:
 
 
 # --- D&A split-sum period alignment ------------------------------------------------------------
-def _da_facts(dep_end: str, am_end: str) -> dict[str, object]:
-    """Minimal companyfacts carrying only the SPLIT D&A tags (no combined tag), at the given
-    period ends — the CNXC shape, which forces the split fallback."""
-    def series(end: str, val: float) -> dict[str, object]:
+def _da_facts(dep_end: str, am_end: str, *, combined: bool = True) -> dict[str, object]:
+    """Minimal companyfacts: a combined D&A line that stops at FY2024, and the SPLIT tags that
+    match it there exactly ($660M) and run on to the given period ends — the Scotts shape.
+    ``combined=False`` leaves only the split: the CNXC shape."""
+    def row(end: str, val: float) -> dict[str, object]:
         start = f"{int(end[:4]) - 1}{end[4:]}"  # ~12-month span → is_annual
-        return {"units": {"USD": [{"start": start, "end": end, "val": val, "filed": "2026-02-01",
-                                   "fy": int(end[:4]), "fp": "FY", "form": "10-K", "accn": "x"}]}}
-    return {"facts": {"us-gaap": {"Depreciation": series(dep_end, 226e6),
-                                  "AmortizationOfIntangibleAssets": series(am_end, 434e6)}}}
+        return {"start": start, "end": end, "val": val, "filed": f"{int(end[:4]) + 1}-02-01",
+                "fy": int(end[:4]), "fp": "FY", "form": "10-K", "accn": "x"}
+    gaap: dict[str, object] = {
+        "Depreciation": {"units": {"USD": [row("2024-11-30", 226e6), row(dep_end, 230e6)]}},
+        "AmortizationOfIntangibleAssets": {"units": {"USD": [row("2024-11-30", 434e6),
+                                                             row(am_end, 440e6)]}}}
+    if combined:
+        gaap["DepreciationDepletionAndAmortization"] = {"units": {"USD": [row("2024-11-30",
+                                                                              660e6)]}}
+    return {"facts": {"us-gaap": gaap}}
 
 
 def test_dep_amort_split_requires_the_same_fiscal_period() -> None:
-    """The D&A split-sum is period-ALIGNED or nothing: adding an FY2025 depreciation to an FY2024
-    amortisation would fabricate a D&A that never existed (the same discipline edgar_fundamentals
-    applies to its own EBITDA add-back). Misaligned → UNKNOWN, flagged, never blended."""
+    """The split is period-ALIGNED or nothing: adding an FY2025 depreciation to an FY2024
+    amortisation would fabricate a D&A that never existed. Since 2026-10-27 the split is read only
+    as the continuation of a combined line it matched (`concepts.annual_line`)."""
     aligned = _latest_dep_amort(_da_facts("2025-11-30", "2025-11-30"))   # positive pin
-    assert aligned is not None
+    assert isinstance(aligned, tuple)
     value, source, _basis = aligned
-    assert value == pytest.approx(660e6) and "split, FY2025" in source
-    assert _latest_dep_amort(_da_facts("2025-11-30", "2024-11-30")) is None  # negative pin
+    assert value == pytest.approx(670e6) and "split, FY2025" in source
+    # ⊖ misaligned: never summed — the combined line's FY2024 is what is read
+    misaligned = _latest_dep_amort(_da_facts("2025-11-30", "2024-11-30"))
+    assert isinstance(misaligned, tuple) and misaligned[0] == pytest.approx(660e6)
+    # ⊖ no combined line at all (CNXC, WERN): nothing for a split to continue — EDGAR has no D&A
+    assert _latest_dep_amort(_da_facts("2025-11-30", "2025-11-30", combined=False)) == (
+        anc.NO_COMBINED_DEP_AMORT)
 
 
 # --- revenue-denominator tag selection (the AORT defect) ---------------------------------------

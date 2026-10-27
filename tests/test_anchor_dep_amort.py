@@ -1,0 +1,102 @@
+"""The anchor's D&A reads the screen's guarded line, and must be the filer's newest fiscal year.
+
+`anchor._latest_dep_amort` picked among the combined D&A aliases and the `Depreciation` +
+`AmortizationOfIntangibleAssets` split by vintage alone, so a split fresher than every combined
+alias won however little of D&A it held. It now reads `concepts.current_annual` (the split only
+where the filer proved it continues the combined line, #822), and refuses a year behind the
+filer's newest, because the anchor adds this D&A to LTM EBIT. A refusal is the reason; the CIQ
+bridge then fills the hole
+(`docs/records/2026-10-27-the-anchors-dep-amort-reads-the-guarded-line.md`).
+
+Pins run on FROZEN real filers (`tests/fixtures/retagged_legs/`, README there). The one CIQ figure
+used is CNXC's, as its workbook's bridge read it on 2026-10-27.
+"""
+from __future__ import annotations
+
+import json
+import pathlib
+from typing import Any
+
+from vinci.dossier import ciq_balance as cb
+from vinci.dossier.anchor import NO_COMBINED_DEP_AMORT, _bridge_inputs, _latest_dep_amort
+from vinci.edgar.concepts import ANNUAL_STALE_DAYS
+
+FIXTURES = pathlib.Path(__file__).resolve().parents[1] / "tests" / "fixtures" / "retagged_legs"
+
+#: CNXC's D&A as `anchor.ciq_bridge` read its workbook on 2026-10-27 — the workbook's last annual
+#: column, which is the LTM to 2026-08-31 ($660.433M is its FY25 column).
+CNXC_CIQ_DA = 642.82
+
+
+def _facts(ticker: str) -> dict[str, Any]:
+    facts: dict[str, Any] = json.loads((FIXTURES / f"{ticker}.json").read_text())
+    return facts
+
+
+def _ciq(da: float) -> cb.CiqFacts:
+    return cb.CiqFacts(ticker="X", as_of=None, source_file="wb.xls", source_sha256="sha",
+                       facts={"d_and_a": cb.CiqFact(value=da, unit="$M", basis="b", source="s")})
+
+
+def test_a_proven_split_is_the_anchors_d_and_a() -> None:
+    """Scotts: the split continues `DepreciationAndAmortization`, which stops at FY2024 where the
+    two match exactly ($80.6M). The anchor reads FY2025's $75.0M and names the line it continues."""
+    da = _bridge_inputs({}, _facts("SMG"))["d_and_a"]
+    assert da.value == 75.0
+    src = da.source or ""
+    assert "split, FY2025" in src and "continues DepreciationAndAmortization" in src
+    assert "CHOSEN BY VINTAGE" not in src, "the split continues that line; it did not beat it"
+
+
+def test_a_component_split_and_a_year_old_line_are_both_refused() -> None:
+    """Ecovyst: the old reader took the split for FY2025 ($76.432M), which was $68.383M against a
+    combined $89.362M in FY2024 — a component. The split is refused (#822), and the combined line's
+    FY2024 is a year behind the filer's FY2025, so it is refused too: the anchor adds D&A to LTM
+    EBIT. EDGAR has no D&A, and says why — never the stale combined figure."""
+    got = _latest_dep_amort(_facts("ECVT"))
+    assert isinstance(got, str)
+    assert got.startswith("newest D&A is DepreciationDepletionAndAmortization for the year to "
+                          "2024-12-31, 365d behind the filer's newest fiscal year")
+    da = _bridge_inputs({}, _facts("ECVT"))["d_and_a"]
+    assert da.value is None and da.source == f"UNKNOWN — {got}"
+
+
+def test_a_withheld_edgar_d_and_a_is_filled_by_the_ciq_bridge_and_says_why() -> None:
+    """The bridge fills the hole, stamped as vendor, and its source says EDGAR's figure was
+    WITHHELD (not absent), naming the reason."""
+    bridge = _bridge_inputs({}, _facts("ECVT"), _ciq(100.0))
+    assert bridge["d_and_a"].value == 100.0 and "d_and_a" in bridge["vendor_filled"]
+    assert "EDGAR D&A withheld — newest D&A is DepreciationDepletionAndAmortization" in (
+        bridge["d_and_a"].source or "")
+
+
+def test_a_filer_with_no_combined_line_reads_the_ciq_bridge() -> None:
+    """CNXC never tagged a combined D&A line, so its split has nothing to continue and nothing to
+    be checked against: EDGAR has no D&A, and says that — not "no D&A tag", which would send a
+    reader looking for a tag CNXC does file. The bridge supplies the workbook's figure, $642.82M —
+    the LTM to 2026-08-31 — where the page carried the EDGAR split's FY2025 $660.433M."""
+    facts = _facts("CNXC")
+    assert _latest_dep_amort(facts) == NO_COMBINED_DEP_AMORT
+    da = _bridge_inputs({}, facts, _ciq(CNXC_CIQ_DA))["d_and_a"]
+    assert da.value == CNXC_CIQ_DA
+    src = da.source or ""
+    assert src.startswith("CIQ Financials->Cash Flow (vendor basis; EDGAR D&A withheld — no "
+                          "combined D&A line")
+
+
+def test_the_newest_year_cutoff_sits_in_the_measured_gap() -> None:
+    """Anchor D&A years against the filer's newest fiscal year, 2,161 filers: 1,620 within 29 days,
+    one at 181, NONE from 300 to 349, then 11 at 350–371. The cutoff (a whole shortest fiscal year)
+    sits at the top of that gap."""
+    assert 299 < ANNUAL_STALE_DAYS <= 350
+
+
+def test_a_d_and_a_its_concept_has_reported_past_is_refused() -> None:
+    """FUBO moved its year end to September: its newest annual D&A is calendar 2024 ($38.548M, on
+    the committed anchor) while the concept carries quarters to 2026-06-30. That year is not the
+    current one (#817's check), though it IS the filer's newest fiscal year — so the newest-year
+    cutoff alone would serve it."""
+    got = _latest_dep_amort(_facts("FUBO"))
+    assert isinstance(got, str)
+    assert got.startswith("stale annual dep_amort: DepreciationAndAmortization for the year to "
+                          "2024-12-31, 546d behind")

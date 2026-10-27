@@ -362,7 +362,11 @@ ANCHORS_AWAITING_BACKFILL: set[str] = set()
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than
 #: skipped: the first cut counted them toward the anti-vacuity floor while never comparing them, so
 #: the floor could be met entirely by anchors nothing had checked.
-BRIDGE_ONLY_ANCHORS: set[str] = {"GOOGL", "NFLX", "IT", "LLY"}
+#: CNXC and WERN joined on 2026-10-27: their D&A is a split with no combined line to continue,
+#: which EDGAR no longer reads (the record
+#: `docs/records/2026-10-27-the-anchors-dep-amort-reads-the-guarded-line.md`), so their D&A, and
+#: the base R1 builds on it, needs the workbook.
+BRIDGE_ONLY_ANCHORS: set[str] = {"GOOGL", "NFLX", "IT", "LLY", "CNXC", "WERN"}
 
 
 def test_the_period_fix_moves_the_committed_anchor_and_exactly_these_names(
