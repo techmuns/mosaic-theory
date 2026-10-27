@@ -399,7 +399,7 @@ def _ciq_scale_vs_revenue(page: dict[str, Any]) -> ItemResult:
     if a.get("ciq_scale_check") is None:
         return ItemResult(not_run="no anchor.ciq_scale_check — it predates the field, or the "
                                   "back-fill could not prove the folder's Financials export the "
-                                  "page's own (ciq_balance.scale_check_backfill); assembly "
+                                  "page's own (ciq_scale_backfill.scale_check_backfill); assembly "
                                   "writes it")
     return _cross_check(page, a, "ciq_scale_check")
 

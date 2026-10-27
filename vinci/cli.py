@@ -897,10 +897,10 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
         scale = ciq.scale_check if ciq is not None else scale_outcome(bundle, t)
         if note:
             print(f"  {t}: {note}")
-    except (CiqAmbiguousError, CiqCurrencyError):
-        # two exports of one kind is not "no workbook", and a money panel stating another
-        # currency is refused as assembly refuses it (#819 review) — the operator clears either
-        raise
+    except CiqAmbiguousError:
+        raise   # two exports of one kind is not "no workbook" — the operator clears it first
+    except CiqCurrencyError:
+        raise   # a money panel stating another currency is refused, as assembly refuses it
     except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
         print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
     anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,

@@ -68,3 +68,57 @@ def test_an_unreadable_workbook_is_not_run_not_a_crash(monkeypatch: pytest.Monke
 
     monkeypatch.setattr(cb, "extract", boom)
     assert cb.scale_outcome(_Held(), "X") == CHECK_NOT_RUN  # type: ignore[arg-type]
+
+
+# --- the back-fill writes the outcome only behind its proof ---------------------------------------
+
+def _page_copy(tmp_path: Any, ticker: str = "VRRM") -> Any:
+    """A committed page copied out, its scale outcome removed — the state the back-fill met."""
+    import json
+    import pathlib
+
+    src = pathlib.Path(__file__).resolve().parents[1] / "data" / "dossiers" / ticker
+    dst = tmp_path / "dossiers" / ticker
+    dst.mkdir(parents=True)
+    doc = json.loads((src / "dossier.json").read_text())
+    doc["anchor"].pop("ciq_scale_check", None)
+    (dst / "dossier.json").write_text(json.dumps(doc, indent=2, ensure_ascii=False))
+    return dst / "dossier.json", doc
+
+
+class _Quarterly:
+    path = "q.xls"
+
+    def workbook(self, kind: str, freq: str | None = None) -> object | None:
+        return self if freq == "quarterly" else None
+
+
+def test_the_backfill_writes_only_the_pages_own_exports_outcome(
+        monkeypatch: pytest.MonkeyPatch, tmp_path: Any) -> None:
+    """VRRM's committed page: the quarterly export proven by its stamp → the outcome is written,
+    and nothing else on the anchor moves; another sha → refused, the page untouched."""
+    import json
+
+    from vinci.dossier import ciq_scale_backfill as sb
+    from vinci.dossier import ciq_sheets as cs
+
+    path, doc = _page_copy(tmp_path)
+    stamp = doc["ev_bridge"]["source_sha256"]
+    monkeypatch.setattr(cb, "scale_outcome", lambda _b, _t: CHECK_AGREE)
+    monkeypatch.setattr(sb, "scale_outcome", lambda _b, _t: CHECK_AGREE)
+
+    monkeypatch.setattr(cs, "file_provenance", lambda _p: ("0123456789", None))
+    refused: list[str] = []
+    before = path.read_text()
+    assert sb.scale_check_backfill(path, bundle=_Quarterly(), refused=refused) is False
+    assert refused and "not the export the page stamps" in refused[0]
+    assert path.read_text() == before
+
+    monkeypatch.setattr(cs, "file_provenance", lambda _p: (stamp, None))
+    assert sb.scale_check_backfill(path, bundle=_Quarterly(), refused=[]) is True
+    after = json.loads(path.read_text())["anchor"]
+    assert after.pop("ciq_scale_check") == CHECK_AGREE
+    held = dict(doc["anchor"])
+    assert after == held
+    # a second run finds the outcome held and writes nothing
+    assert sb.scale_check_backfill(path, bundle=_Quarterly(), refused=[]) is False
