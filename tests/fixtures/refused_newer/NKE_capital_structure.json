@@ -1,0 +1,922 @@
+{
+ "instruments": {
+  "value": [
+   {
+    "description": "2.375% Corporate Term Notes - November 1, 2026",
+    "type": "Bonds and Notes",
+    "principal_musd": 1000.0,
+    "coupon": "2.375%",
+    "floating_rate": "NA",
+    "maturity_date": "2026-11-01",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "2.75% Corporate Term Note March 27, 2027",
+    "type": "Bonds and Notes",
+    "principal_musd": 1000.0,
+    "coupon": "2.750%",
+    "floating_rate": "NA",
+    "maturity_date": "2027-03-27",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "2.85% Corporate Term Note March 27, 2030",
+    "type": "Bonds and Notes",
+    "principal_musd": 1495.0,
+    "coupon": "2.850%",
+    "floating_rate": "NA",
+    "maturity_date": "2030-03-27",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "3.25% Corporate Term Note March 27, 2040",
+    "type": "Bonds and Notes",
+    "principal_musd": 986.0,
+    "coupon": "3.250%",
+    "floating_rate": "NA",
+    "maturity_date": "2040-03-27",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "3.375% Corporate Term Notes March 27, 2050",
+    "type": "Bonds and Notes",
+    "principal_musd": 1484.0,
+    "coupon": "3.375%",
+    "floating_rate": "NA",
+    "maturity_date": "2050-03-27",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "3.375% Corporate Term Notes November 1, 2046",
+    "type": "Bonds and Notes",
+    "principal_musd": 493.0,
+    "coupon": "3.375%",
+    "floating_rate": "NA",
+    "maturity_date": "2046-11-01",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "3.625% Corporate Term Note May 1, 2043",
+    "type": "Bonds and Notes",
+    "principal_musd": 497.0,
+    "coupon": "3.625%",
+    "floating_rate": "NA",
+    "maturity_date": "2043-05-01",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "3.875% Corporate Term Notes - November 1, 2045",
+    "type": "Bonds and Notes",
+    "principal_musd": 987.0,
+    "coupon": "3.875%",
+    "floating_rate": "NA",
+    "maturity_date": "2045-11-01",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "364-day Committed Credit Facility",
+    "type": "Revolving Credit",
+    "principal_musd": null,
+    "coupon": "NA",
+    "floating_rate": "SOFR + 0.625%",
+    "maturity_date": "2027-03-05",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "Commercial Paper Program",
+    "type": "Commercial Paper",
+    "principal_musd": null,
+    "coupon": "0.000%",
+    "floating_rate": "NA",
+    "maturity_date": null,
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "Committed Credit Facilities",
+    "type": "Revolving Credit",
+    "principal_musd": null,
+    "coupon": "NA",
+    "floating_rate": "SOFR + 0.725%",
+    "maturity_date": "2030-03-07",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "Operating Lease Liabilities",
+    "type": "Capital Lease",
+    "principal_musd": 3091.0,
+    "coupon": "3.600%",
+    "floating_rate": "NA",
+    "maturity_date": null,
+    "seniority": "Senior",
+    "secured": true,
+    "convertible": false,
+    "currency": "USD"
+   }
+  ],
+  "source_ref": "CIQ Financials→Capital Structure Details (A 2026 filed Jul-15-2026)",
+  "status": "present",
+  "note": null
+ },
+ "summary": {
+  "value": "senior bonds 7,942.0; leases 3,091.0; total principal 11,033.0; total debt 11,043.0 (3 months FQ4/CQ2 May-31-2026) ($M)",
+  "source_ref": "CIQ Financials→Capital Structure Summary",
+  "status": "present",
+  "note": null
+ },
+ "detail_as_of": "A 2026 filed Jul-15-2026",
+ "maturity_filings": {
+  "value": null,
+  "source_ref": null,
+  "status": "unknown",
+  "note": "no trailing-12m instrument maturity to anchor an 8-K"
+ },
+ "covenant_pointers": {
+  "value": "material contracts (10-K exhibit i [0000320187-26-000088]; 364-day Committed Credit Facility [0000320187-25-000008]; 364-day Committed Credit Facility [0000320187-26-000020]; Committed Credit Facilities [0000320187-24-000009]; Committed Credit Facilities [0000320187-23-000006]",
+  "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+  "status": "present",
+  "note": null
+ },
+ "covenant_pointer_rows": {
+  "value": [
+   {
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-07-15",
+    "accession": "0000320187-26-000088",
+    "exhibits": [
+     "nke-5312026exhibit1029.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "364-day Committed Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2025-03-10",
+    "accession": "0000320187-25-000008",
+    "exhibits": [
+     "nike-364xdaycreditagreemen.htm",
+     "nikefiveyearcreditagreemen.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "364-day Committed Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2026-03-09",
+    "accession": "0000320187-26-000020",
+    "exhibits": [
+     "a364-daycreditagreementxni.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Committed Credit Facilities",
+    "filing": "8-K",
+    "filing_date": "2024-03-11",
+    "accession": "0000320187-24-000009",
+    "exhibits": [
+     "nike-364xdaycreditagreemen.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Committed Credit Facilities",
+    "filing": "8-K",
+    "filing_date": "2023-03-13",
+    "accession": "0000320187-23-000006",
+    "exhibits": [
+     "nike-364xdaycreditagreemen.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "2.375% Corporate Term Notes",
+    "filing": "—",
+    "filing_date": "",
+    "accession": "",
+    "exhibits": [],
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "family": "2.75% Corporate Term Note March 27, 2027",
+    "filing": "—",
+    "filing_date": "",
+    "accession": "",
+    "exhibits": [],
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "family": "2.85% Corporate Term Note March 27, 2030",
+    "filing": "—",
+    "filing_date": "",
+    "accession": "",
+    "exhibits": [],
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "family": "3.25% Corporate Term Note March 27, 2040",
+    "filing": "—",
+    "filing_date": "",
+    "accession": "",
+    "exhibits": [],
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+  "status": "present",
+  "note": null
+ },
+ "covenant_terms": {
+  "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[364-DAY CREDIT AGREEMENT · 0000320187-25-000008 · amended by 0000320187-26-000020]\n  Principal / commitment amount: $1,000,000,000 (aggregate Commitments on the Effective Date). Increase option: may…\n  Interest / coupon rate: Term SOFR Loan / Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis…\n  Maturity date: Termination Date: the later of (i) March 5, 2027 and (ii) if extended pursuant to…\n  Default interest rate: Base Rate plus Applicable Margin plus 2% per annum (for Term SOFR / Alternative…\n  Negative covenant - Liens: Section 6.12 negative pledge with enumerated exceptions; basket under 6.12.13 up to…\n[CREDIT AGREEMENT · 0000320187-23-000006 · amended by 0000320187-24-000009]\n  Principal / commitment amount: $1,000,000,000 (aggregate Commitments on the Effective Date); increase option up to…\n  Interest / coupon rate: Term SOFR plus the Applicable Margin (Applicable Margin in basis points based on…\n  Maturity date: March 7, 2025 (Termination Date), subject to 364-day extension per Section 2.6 and…\n  Default interest rate: applicable rate (including Applicable Margin) plus 2% per annum",
+  "source_ref": "fenced Tier-2 digest (P1)",
+  "status": "present",
+  "note": null
+ },
+ "covenant_term_rows": {
+  "value": [
+   {
+    "name": "Conversion price / mechanics",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Principal / commitment amount",
+    "value": {
+     "value": "$1,000,000,000 (aggregate Commitments on the Effective Date)",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "(E5) refused: the model's quote is not in 8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Maturity date",
+    "value": {
+     "value": "March 6, 2026 (Termination Date), subject to extension under Section 2.6 and the Term Out Option (Section 2.10, first anniversary of the Termination Date)",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “\"Termination Date\" means the first to occur of (a) the later of (i) March 6, 2026 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof; provided , however , if such date is not a Business Day, the Termination Date shall be the next preceding Business Day.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Financial-maintenance covenants",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Security / collateral / guarantors",
+    "value": {
+     "value": "Company guarantees the obligations of each Designated Borrower (Company Guaranty Agreement, Exhibit M). No collateral/security interest stated; facility is based on the Company's long-term, senior unsecured, non-credit-enhanced debt ratings.",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “\"Company Guaranty Agreement\" means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M . ... The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Mandatory prepayment / events of default",
+    "value": {
+     "value": "Mandatory prepayment: Section 2.5.3(b) — if Total Outstandings exceed 105% of Aggregate Commitments due to exchange rate changes, prepay within 2 Business Days to not exceed 100% of Commitments. Events of Default (Article VII): 7.1 material misrepresentation; 7.2 nonpayment of principal when due / interest or fees within 5 Business Days; 7.3 breach of covenants (Sections 6.10, 6.11, 6.12, 6.14, 6.15; other breaches 30-day cure); 7.4 cross-default on Indebtedness over $200,000,000; 7.5/7.6 bankruptcy/insolvency; 7.8 unpaid judgments over $200,000,000; 7.9 ERISA Reportable Event/material Unfunded Liabilities; 7.10 Change in Control",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect ... The occurrence of any one or more of the following events shall constitute a Default: 7.1 Any representation or warranty ... shall be materially false ... 7.2 Nonpayment of principal ... 7.4 Failure ... to pay any Indebtedness in an aggregate principal amount in excess of $200,000,000 ... 7.10 Any Change in Control shall occur.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Facility Fee",
+    "value": {
+     "value": "Applicable Facility Fee Rate: Level I 1.75 bps; Level II 2.0 bps; Level III 4.0 bps; Level IV 6.0 bps",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “\"Applicable Facility Fee Rate\" means, on any date and with respect to each Commitment whether used or unused, the applicable fee (in basis points) set forth below based on the Applicable Rating Level on such date: Applicable Rating Level Facility Fee Rate (in basis points) Level I 1.75 Level II 2.0 Level III 4.0 Level IV 6.0”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Default interest rate",
+    "value": {
+     "value": "Base Rate plus Applicable Margin plus 2% per annum (for Term SOFR / Alternative Currency Advances, otherwise applicable rate including Applicable Margin plus 2% per annum)",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “any Advance not paid at maturity, whether by acceleration or otherwise, shall bear interest until paid in full at a rate per annum equal to the Base Rate plus the Applicable Margin, if any, applicable to Base Rate Loans plus 2% per annum”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Increase in Commitments (accordion)",
+    "value": {
+     "value": "Increase up to $500,000,000 in aggregate; minimum request $50,000,000",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “the Company may from time to time, request an increase in the Commitments by an amount (for all such requests) not exceeding $500,000,000; provided that any such request for an increase shall be in a minimum amount of $50,000,000.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Change in Control",
+    "value": {
+     "value": "(a) acquisition (other than by the Knight Family) of 50% or more of outstanding Class B Common Stock; or (b) Knight Family fails to own and control 67% or more of outstanding Class A Common Stock",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “\"Change in Control\" means either (a) with respect to the Company's Class B Common Stock, the acquisition after the date of this Agreement by any Person or two or more Persons acting in concert, other than the Knight Family, of beneficial ownership ... of 50% or more of the outstanding shares of such Class B Common Stock; or (b) with respect to the Borrower's Class A Common Stock, if the Knight Family shall at any time fail to own and control 67% or more of the outstanding shares of such Class A Common Stock.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Term Out Option",
+    "value": {
+     "value": "Convert outstanding Loans into term loans due on first anniversary of Termination Date; fee of 0.50% times aggregate outstanding principal so converted",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “The Borrower may, upon notice to the Administrative Agent not later than the Termination Date, elect to convert all of the Loans outstanding on the Termination Date in effect at such time into “term loans” ... shall instead be due and payable on the first anniversary of the Termination Date ... the Borrower shall have paid to the Administrative Agent for the account of the Banks a fee in the amount equal to (x) 0.50% multiplied by (y) the aggregate outstanding principal amount of all Loans so converted.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Negative covenant - Liens",
+    "value": {
+     "value": "Section 6.12 negative pledge with enumerated exceptions; basket under 6.12.13 up to greater of $2,105,550,000.00 and 15% of consolidated net worth",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “6.12 Liens . The Company will not, nor will it permit any Subsidiary to, create, incur, or suffer to exist any Lien in, of or on the property of the Company or any Subsidiary, except: ... 6.12.13 Liens not otherwise permitted hereunder; provided that the aggregate principal amount of Indebtedness or other obligations secured thereby ... shall not at the time of incurrence exceed the greater of $2,105,550,000.00 and 15% of the consolidated net worth of the Company and its Subsidiaries”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Governing law",
+    "value": {
+     "value": "State of New York (giving effect to federal laws applicable to national banks)",
+     "source_ref": "8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “THE LOAN DOCUMENTS (OTHER THAN THOSE CONTAINING A CONTRARY EXPRESS CHOICE OF LAW PROVISION) SHALL BE CONSTRUED IN ACCORDANCE WITH THE INTERNAL LAWS (AND NOT THE LAW OF CONFLICTS) OF THE STATE OF NEW YORK BUT GIVING EFFECT TO FEDERAL LAWS APPLICABLE TO NATIONAL BANKS.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Conversion price / mechanics",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Principal / commitment amount",
+    "value": {
+     "value": "$1,000,000,000 (aggregate Commitments on the Effective Date); increase option up to $500,000,000 additional per Section 2.7.1 (minimum $50,000,000 per request)",
+     "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "(E5) refused: the model's quote is not in 8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Maturity date",
+    "value": {
+     "value": "March 7, 2025 (Termination Date), subject to 364-day extension per Section 2.6 and Term Out Option under Section 2.10 (one year after Termination Date)",
+     "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: ““ Termination Date ” means the first to occur of (a) the later of (i) March 7, 2025 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Financial-maintenance covenants",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Security / collateral / guarantors",
+    "value": {
+     "value": "Unsecured facility (no collateral stated); Company guarantees obligations of each Designated Borrower pursuant to Company Guaranty Agreement (Exhibit M). Ratings reference Company's long-term, senior unsecured, non-credit-enhanced debt.",
+     "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “The Obligations of the Company and each Designated Borrower shall be several in nature; provided that the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M .”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Mandatory prepayment / events of default",
+    "value": {
+     "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes, prepay within 2 Business Days to reduce to ≤100% of Commitments. Events of Default (Article VII): 7.1 misrepresentation; 7.2 nonpayment of principal when due / interest or fees within 5 Business Days; 7.3 breach of Sections 6.10, 6.11, 6.12, 6.14, 6.15 and other covenants (30-day cure); 7.4 cross-default on Indebtedness in excess of $200,000,000 (30 days); 7.5/7.6 bankruptcy/insolvency; 7.8 unpaid judgments in excess of $200,000,000 (60 days); 7.9 ERISA Reportable Event / Unfunded Liabilities; 7.10 Change in Control. Acceleration per Section 8.1.",
+     "source_ref": "8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Conversion price / mechanics",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Principal / commitment amount",
+    "value": {
+     "value": "$1,000,000,000 (aggregate Commitments on the Effective Date). Increase option: may request increase not exceeding $500,000,000, minimum $50,000,000 (Section 2.7.1)",
+     "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
+     "status": "present",
+     "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "value": "Term SOFR Loan / Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis points); Base Rate Loan: 0.00% (0 basis points). Rate Options: Base Rate, Term SOFR, Alternative Currency Daily Rate or Alternative Currency Term Rate (each plus Applicable Margin). Base Rate = highest of (a) Federal Funds Rate plus 1/2 of 1%, (b) BofA prime rate, (c) Term SOFR plus 1.00%.",
+     "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
+     "status": "present",
+     "note": "verbatim: “\"Applicable Margin\" means, on any date and (i) with respect to a Term SOFR Loan or Alternative Currency Loan, 0.595% (59.5 basis points) or (ii) with respect to a Base Rate Loan, 0.00% (0 basis points).”"
+    },
+    "base_rate_label": "Term SOFR",
+    "margin_pct": 0.595,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Maturity date",
+    "value": {
+     "value": "Termination Date: the later of (i) March 5, 2027 and (ii) if extended pursuant to Section 2.6, such extended date; or earlier cancellation/termination. Term Out Option (Section 2.10): Loans may convert to term loans due on first anniversary of the Termination Date.",
+     "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
+     "status": "present",
+     "note": "verbatim: “\"Termination Date\" means the first to occur of (a) the later of (i) March 5, 2027 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Financial-maintenance covenants",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Security / collateral / guarantors",
+    "value": {
+     "value": "Company Guaranty Agreement: Company guarantees obligations of each Designated Borrower (Section 2.9.2: \"the Company shall guarantee the obligations of each Designated Borrower pursuant to a guaranty agreement substantially in the form of Exhibit M\"). No collateral/security interest stated; facility is unsecured (no grant of security interest found; negative pledge in Section 6.12 Liens).",
+     "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
+     "status": "present",
+     "note": "verbatim: “\"Company Guaranty Agreement\" means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M .”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Mandatory prepayment / events of default",
+    "value": {
+     "value": "Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes, prepay within 2 Business Days to reduce to not more than 100% of Commitments. Defaults (Article VII, Sections 7.1–7.10) include: materially false representation/warranty (7.1); nonpayment of principal when due or interest/fees within 5 Business Days (7.2); breach of specified covenants, other covenants not cured within 30 days (7.3); cross-default on Indebtedness in excess of $200,000,000 (7.4); bankruptcy/insolvency events (7.5, 7.6); unpaid judgments in excess of $200,000,000 within 60 days (7.8); ERISA Reportable Event/Unfunded Liabilities (7.9); Change in Control (7.10). Acceleration per Section 8.1.",
+     "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
+     "status": "present",
+     "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall ... prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount ... to an amount not to exceed 100% of the aggregate Commitments then in effect”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Conversion price / mechanics",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Principal / commitment amount",
+    "value": {
+     "value": "$1,000,000,000 (aggregate Commitments on the Effective Date); increase option up to an additional $500,000,000 pursuant to Section 2.7.1",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “The aggregate amount of the Banks' Commitments on the Effective Date is $1,000,000,000.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "value": "Term SOFR plus the Applicable Margin (Applicable Margin in basis points based on Applicable Rating Level: Level I 35.75, Level II 48.0, Level III 58.5, Level IV 69.0); Term SOFR Adjustment 0.10% (10 basis points); Base Rate Advances at Base Rate; Alternative Currency Daily Rate / Alternative Currency Term Rate plus Applicable Margin",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: ““ Term SOFR Advance ” means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin.”"
+    },
+    "base_rate_label": "Term SOFR",
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Interest / coupon rate — Base Rate",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "(E5) refused: the model's quote is not in 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Maturity date",
+    "value": {
+     "value": "March 8, 2024 (subject to extension under Section 2.6 and Term Out Option under Section 2.10 extending to first anniversary of the Termination Date)",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: ““ Termination Date ” means the first to occur of (a) the later of (i) March 8, 2024 and (ii) if maturity is extended pursuant to Section 2.6 , such extended maturity date determined pursuant to such Section and (b) the date the Commitments or this Agreement are earlier cancelled or terminated pursuant to the terms hereof”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Financial-maintenance covenants",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Security / collateral / guarantors",
+    "value": {
+     "value": "Company Guaranty Agreement: the Company guarantees the obligations of each Designated Borrower (Section 2.9.2). No security/collateral stated (unsecured facility — ratings based on Company's long-term, senior unsecured, non-credit-enhanced debt)",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: ““ Company Guaranty Agreement ” means the guarantee issued by the Company for the benefit of the Administrative Agent and the Banks substantially in the form of Exhibit M .”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Mandatory prepayment / events of default",
+    "value": {
+     "value": "Mandatory prepayment: currency fluctuation prepayment under Section 2.5.3(b) (Total Outstandings exceeding 105% of Aggregate Commitments). Defaults (Article VII) include: material false representation/warranty (7.1); nonpayment of principal when due or interest/fees within 5 Business Days (7.2); breach of Sections 6.10, 6.11, 6.12, 6.14, 6.15 and other covenant breaches not remedied within 30 days (7.3); cross-default on Indebtedness in excess of $200,000,000 (7.4); bankruptcy/insolvency (7.5, 7.6); unpaid judgments in excess of $200,000,000 within 60 days (7.8); ERISA (7.9); Change in Control (7.10). Acceleration per Section 8.1",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “If the Administrative Agent notifies the Company at any time that, as a result of a change in the applicable exchange rates relating to Alternative Currencies the Total Outstandings at such time exceed an amount equal to 105% of the Aggregate Commitments then in effect, then, within two (2) Business Days after receipt of such notice, the Company shall, or shall instruct one or more Borrowers to, prepay Loans in an aggregate amount sufficient to reduce such Outstanding Amount as of such date of payment to an amount not to exceed 100% of the aggregate Commitments then in effect”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Facility Fee",
+    "value": {
+     "value": "Facility Fee Rate (in basis points): Level I 1.75, Level II 2.0, Level III 4.0, Level IV 6.0",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: ““ Applicable Facility Fee Rate ” means, on any date and with respect to each Commitment whether used or unused, the applicable fee (in basis points) set forth below based on the Applicable Rating Level on such date:”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Default interest rate",
+    "value": {
+     "value": "applicable rate (including Applicable Margin) plus 2% per annum",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “any Advance not paid at maturity, whether by acceleration or otherwise, shall bear interest until paid in full at a rate per annum equal to the Base Rate plus the Applicable Margin, if any, applicable to Base Rate Loans plus 2% per annum”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Term Out Option fee",
+    "value": {
+     "value": "0.50% of aggregate outstanding principal of Loans converted to term loans",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “the Borrower shall have paid to the Administrative Agent for the account of the Banks a fee in the amount equal to (x) 0.50% multiplied by (y) the aggregate outstanding principal amount of all Loans so converted.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Governing law",
+    "value": {
+     "value": "State of New York (giving effect to federal laws applicable to national banks)",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "note": "verbatim: “THE LOAN DOCUMENTS (OTHER THAN THOSE CONTAINING A CONTRARY EXPRESS CHOICE OF LAW PROVISION) SHALL BE CONSTRUED IN ACCORDANCE WITH THE INTERNAL LAWS (AND NOT THE LAW OF CONFLICTS) OF THE STATE OF NEW YORK BUT GIVING EFFECT TO FEDERAL LAWS APPLICABLE TO NATIONAL BANKS.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "CREDIT AGREEMENT",
+    "agreement_is_amendment": false
+   }
+  ],
+  "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+  "status": "present",
+  "note": null
+ },
+ "maturity_event": null,
+ "panel_vintage": {
+  "value": "the debt schedule is 93d old (source filed 2026-07-15); no Item 1.02 (termination of a material agreement) has been filed since",
+  "source_ref": "CIQ Capital Structure Details — A 2026 filed Jul-15-2026",
+  "status": "present",
+  "note": null
+ }
+}

@@ -1447,6 +1447,38 @@ def _covenant_source_suffix(g: Any, dates: dict[str, str]) -> str:
     return f" — per an 8-K filed {base}{tail}"
 
 
+def _pointer_dates(ptrs: Any) -> dict[str, str]:
+    """accession → filing_date from the covenant pointer rows — the one map that dates a governing
+    value on the main-body line and in the appendix table (mirrors dossier.js ``pointerDates``)."""
+    return {p.accession: p.filing_date
+            for p in (ptrs.value if ptrs is not None and ptrs.value else [])
+            if p.accession and p.filing_date}
+
+
+def _refused_newer_text(g: GoverningTerm, dates: dict[str, str]) -> str:
+    """(#804's follow-up) The LEAD of a governing term whose value a later refusal withholds:
+    'UNKNOWN — not verified since <date>: a later exhibit (filed <date>) states this term, but its
+    quote could not be matched to the filing, so its value is withheld'.
+
+    IT LEADS, AND THE OLDER VALUE FOLLOWS IT. The stamp-position rule: read after the clause, a
+    caveat arrives once the reader has already taken the clause as the term in force — which is
+    the defect. The older value stays on the page, labelled ``Last verified``, because curating
+    never deletes a fact and a dated, superseded-perhaps value is still evidence. The dates come
+    from the pointer rows that dated the collapse; an accession the rows do not date is named
+    as itself — an identifier, never a guessed date. Mirrors dossier.js ``refusedNewerText``."""
+    lv = _ACC_IN_REF.search(str(g.last_verified.source_ref if g.last_verified else ""))
+    since = (dates.get(lv.group(1)) or lv.group(1)) if lv else "the last verified exhibit"
+    later = [dates.get(m.group(1)) or m.group(1)
+             for r in g.refused_newer if (m := _ACC_IN_REF.search(r.note or ""))]
+    if len(later) == 1:
+        tail = (f"a later exhibit (filed {later[0]}) states this term, but its quote could not be "
+                f"matched to the filing, so its value is withheld")
+    else:
+        tail = (f"{len(later)} later exhibits (filed {', '.join(later)}) state this term, but "
+                f"their quotes could not be matched to the filings, so their values are withheld")
+    return f"UNKNOWN — not verified since {since}: {tail}"
+
+
 def _covenant_summary_lines(cs: Any) -> list[str]:
     """(K1) CURATED covenant summary for the MAIN body — the governing VALUES that drive survival
     (financial-maintenance / conversion / interest / maturity / a 1-line events-of-default), each a
@@ -1459,9 +1491,7 @@ def _covenant_summary_lines(cs: Any) -> list[str]:
         return []
     gov = governing_terms(rows_s.value, ptrs.value if ptrs is not None and ptrs.value else [])
     # accession -> filing_date, so each governing value can name the filing it was read from
-    _pdates = {p.accession: p.filing_date
-               for p in (ptrs.value if ptrs is not None and ptrs.value else [])
-               if p.accession and p.filing_date}
+    _pdates = _pointer_dates(ptrs)
     fams: list[str] = []
     for g in gov:
         fl = g.family.lower()
@@ -1473,14 +1503,21 @@ def _covenant_summary_lines(cs: Any) -> list[str]:
     for fam in fams:
         parts: list[str] = []
         for g in (t for t in gov if t.family == fam):
-            if g.value.status is not SourceStatus.PRESENT:
+            # a later refusal withholds the value but keeps the line: the term was stated, and the
+            # reader must see that what follows is the last VERIFIED value, not the one in force
+            shown = g.last_verified if g.refused_newer else g.value
+            if shown is None or shown.status is not SourceStatus.PRESENT:
                 continue
             label = next((lbl for key, lbl in _SUMMARY_TERMS if key in g.term.lower()), None)
             if label is None:
                 continue
-            raw = str(g.value.value)
+            raw = str(shown.value)
             lead = _covenant_value_lead(label, raw, g)  # (K1) lead with the extractable value
             clause = f"{lead} · {_clip120(raw)}" if lead else _clip120(raw)
+            if g.refused_newer:
+                parts.append(f"  - **{label}:** {_refused_newer_text(g, _pdates)}. "
+                             f"Last verified: {clause}")
+                continue
             parts.append(f"  - **{label}:** {clause}{_covenant_source_suffix(g, _pdates)}")
         if parts:
             out.append(f"- **Covenants — {fam}** (governing values; full verbatim in appendix):")
@@ -1589,6 +1626,7 @@ def _covenant_term_lines(cs: Any) -> list[str]:
     gov = governing_terms(rows_s.value, ptrs.value if ptrs is not None and ptrs.value else [])
     if not gov:
         return [_fact("Covenant terms (from the filed agreement)", cs.covenant_terms)]
+    _pdates = _pointer_dates(ptrs)
     families: list[str] = []
     for g in gov:
         if g.family not in families:
@@ -1599,15 +1637,17 @@ def _covenant_term_lines(cs: Any) -> list[str]:
         fam_terms = [g for g in gov if g.family == fam]
         # (T2) the family source lineage moves to the table FOOTER, not repeated on every row: the
         # base accession/exhibit + the amendment-accession chain.
-        present_bases = [g.base_ref for g in fam_terms
-                         if g.value.status is SourceStatus.PRESENT and g.base_ref]
+        present_bases = [g.base_ref for g in fam_terms  # a withheld term's last verified counts
+                         if (g.value.status is SourceStatus.PRESENT or g.refused_newer)
+                         and g.base_ref]
         fam_base = present_bases[0] if present_bases else rows_s.source_ref
         amend_accs = sorted({a for g in fam_terms for a in g.amended_by})
         footer = ("Source §: " + str(fam_base)
                   + (f" · amended by {', '.join(amend_accs)}" if amend_accs else ""))
         rows: list[list[str]] = []
         for g in fam_terms:
-            v = g.value
+            # a later refusal withholds the value; the row shows the last VERIFIED one, labelled
+            v = g.last_verified if g.refused_newer and g.last_verified is not None else g.value
             if v.status is not SourceStatus.PRESENT:  # UNKNOWN — one row, not above a present (P5)
                 rows.append([g.term, "UNKNOWN", v.note or "not stated"])
                 continue
@@ -1633,6 +1673,10 @@ def _covenant_term_lines(cs: Any) -> list[str]:
                 ref = f"amended by {', '.join(g.amended_by)}"
             else:
                 ref = "base (footer)"
+            if g.refused_newer:  # the provenance tier names each refused exhibit and why
+                why = "; ".join(r.note or "" for r in g.refused_newer)
+                cell = f"{_refused_newer_text(g, _pdates)} — {why}. Last verified: {cell}"
+                ref = f"last verified: {ref}"
             rows.append([g.term, cell, ref])
         out += _table(f"Covenant terms — {fam} (governing agreement)", rows_s.source_ref,
                       cols, rows, note=footer)

@@ -41,6 +41,10 @@ from vinci.resolver.index import pad_cik
 from vinci.verbatim import SourceText
 
 _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
+# The note a refused term carries (#804). `governing_terms` reads it to tell a REFUSED statement
+# from a term the exhibit never stated — no structured field carries that, and the committed rows
+# predate one — so the writer and the reader share this one constant, and dossier.js mirrors it.
+REFUSED_NOTE_PREFIX = "(E5) refused:"
 # An exhibit larger than this is not sent in a single pass — extract by hand rather than silently
 # truncate (a term past the cut would read as a false UNKNOWN). THAT REFUSAL IS UNCHANGED; only the
 # threshold moved, because the old one was set against a window the configured model does not have.
@@ -431,7 +435,7 @@ def _extract_from_exhibit(
             # refused rather than vouched for.
             why = ("the model gave no quote from" if not quote
                    else "the model's quote is not in")
-            val = Sourced.unknown(note=f"(E5) refused: {why} {source_ref}")
+            val = Sourced.unknown(note=f"{REFUSED_NOTE_PREFIX} {why} {source_ref}")
             flags.append(f"(E5) covenant term refused — {why} the exhibit, so it is UNKNOWN: "
                          f"{term_name} · {source_ref}")
         elif stated:
@@ -545,9 +549,12 @@ def _acc_of(text: str | None) -> str:
 class GoverningTerm(NamedTuple):
     """One (family, term) collapsed to its GOVERNING value — the latest exhibit's PRESENT value
     (an amendment overrides the base). ``base_ref`` is the base exhibit; ``amended_by`` chains the
-    later accessions that changed it. ``value`` is UNKNOWN only when NO exhibit stated the term.
+    later accessions that changed it. ``value`` is UNKNOWN when NO exhibit stated the term, or when
+    a LATER exhibit stated it and its quote was refused (``refused_newer``, oldest→newest): the
+    value in force is then not verified, and the latest PRESENT value moves to ``last_verified``.
     The optional interest-rate components (RC-1.5d) ride along from the WINNING exhibit's row so the
-    render composes the value-lead from structure — they carry the same citation as ``value``."""
+    render composes the value-lead from structure — they carry the same citation as ``value``, or as
+    ``last_verified`` when a later refusal withholds the value."""
 
     family: str
     term: str
@@ -559,6 +566,8 @@ class GoverningTerm(NamedTuple):
     margin_bps: float | None = None
     floor_pct: float | None = None
     pik_pct: float | None = None
+    refused_newer: tuple[Sourced[str], ...] = ()
+    last_verified: Sourced[str] | None = None
 
 
 def _ambiguous_titles(
@@ -606,7 +615,8 @@ def governing_terms(
     latest-dated exhibit's PRESENT value wins (amendment over base), with the base ref + an
     ``amended by`` chain. Grouped by instrument family via the pointers' accession→(family, date)
     map, so a facility's terms never merge with another's. A term no exhibit stated stays
-    UNKNOWN — but the collapse guarantees a PRESENT answer is never ordered below an UNKNOWN.
+    UNKNOWN — but the collapse guarantees a PRESENT answer is never ordered below an UNKNOWN,
+    except where a later exhibit stated the term and its quote was refused (see below).
     The winning row's interest components ride along so the render composes from structure."""
     meta = {p.accession: (p.family, p.filing_date) for p in pointers if p.accession}
     ambiguous = _ambiguous_titles(term_rows, meta)
@@ -633,8 +643,35 @@ def governing_terms(
     for fam, term in order:
         dated = sorted(grouped[(fam, term)], key=lambda dr: dr[0])  # oldest→newest (stable on ties)
         present = [(dt, r) for dt, r in dated if r.value.status is SourceStatus.PRESENT]
+        value: Sourced[str]
+        refused: tuple[Sourced[str], ...] = ()
+        last_verified: Sourced[str] | None = None
         if present:
-            gov_row = present[-1][1]  # latest PRESENT governs — its components ride along
+            gov_dt, gov_row = present[-1]  # latest PRESENT governs — its components ride along
+            value = gov_row.value
+            # A LATER REFUSAL WITHHOLDS THE VALUE, IT DOES NOT HAND IT TO THE OLDER EXHIBIT (#804's
+            # follow-up). An amendment that never mentions a term leaves it in force, so a later
+            # "not stated" row changes nothing. A later REFUSED row is different: that exhibit
+            # STATED the term, and the source check withheld what it said. Letting the older value
+            # govern then assumes the amendment did not change it — on BURL that put a LIBOR grid
+            # from 2021 on the page as the rate in force over a 2025 amendment. So the value in
+            # force is UNKNOWN, and the older one is kept, labelled, as the last verified value.
+            # Only a strictly later, dated refusal counts — the (X-4) rule below: tied or empty
+            # dates cannot establish that one exhibit came after another. Measured at 18d19bfb over
+            # the 22 committed pages with term rows: 39 refused rows; 3 later than their group's
+            # latest PRESENT row (NKE, BURL, NFLX), 6 earlier, 30 in groups with no PRESENT row,
+            # 0 tied or undated.
+            refused = tuple(r.value for dt, r in dated
+                            if gov_dt and dt > gov_dt
+                            and r.value.status is not SourceStatus.PRESENT
+                            and (r.value.note or "").startswith(REFUSED_NOTE_PREFIX))
+            if refused:
+                last_verified = gov_row.value
+                value = Sourced.unknown(note=(
+                    f"(E5) not verified since {gov_dt}: {len(refused)} later exhibit(s) stated "
+                    f"this term and each quote was refused "
+                    f"({'; '.join(_acc_of(r.note) for r in refused)}); last verified in "
+                    f"{gov_row.value.source_ref}"))
             base_ref = present[0][1].value.source_ref
             # (X-4) an ``amended by`` chain is a REAL base→amendment relationship — assert it ONLY
             # on a true chronology (distinct, non-empty dates). Tied/empty dates (filing_date may be
@@ -646,11 +683,13 @@ def governing_terms(
                              if _acc_of(r.value.source_ref)) if ordered else ())
         else:
             gov_row = dated[-1][1]
+            value = gov_row.value
             base_ref, amended = None, ()
         out.append(GoverningTerm(
-            fam, term, gov_row.value, base_ref, amended,
+            fam, term, value, base_ref, amended,
             base_rate_label=gov_row.base_rate_label, margin_pct=gov_row.margin_pct,
-            margin_bps=gov_row.margin_bps, floor_pct=gov_row.floor_pct, pik_pct=gov_row.pik_pct))
+            margin_bps=gov_row.margin_bps, floor_pct=gov_row.floor_pct, pik_pct=gov_row.pik_pct,
+            refused_newer=refused, last_verified=last_verified))
     return out
 
 

@@ -1,0 +1,750 @@
+{
+ "instruments": {
+  "value": [
+   {
+    "description": "ABL Senior Secured Revolving Facility",
+    "type": "Revolving Credit",
+    "principal_musd": null,
+    "coupon": "5.500%",
+    "floating_rate": "SOFR + 1.375%",
+    "maturity_date": "2030-07-25",
+    "seniority": "Senior",
+    "secured": true,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "Convertible Senior Notes 1.25% Mature on December 15 2027",
+    "type": "Bonds and Notes",
+    "principal_musd": 297.1,
+    "coupon": "1.250%",
+    "floating_rate": "NA",
+    "maturity_date": "2027-12-15",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": true,
+    "currency": "USD"
+   },
+   {
+    "description": "Convertible Senior Notes 2.25% Mature on April 15 2025",
+    "type": "Bonds and Notes",
+    "principal_musd": null,
+    "coupon": "2.250%",
+    "floating_rate": "NA",
+    "maturity_date": "2025-04-15",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": true,
+    "currency": "USD"
+   },
+   {
+    "description": "Finance Lease Obligations",
+    "type": "Capital Lease",
+    "principal_musd": 22.9,
+    "coupon": "5.500%",
+    "floating_rate": "NA",
+    "maturity_date": null,
+    "seniority": "Senior",
+    "secured": true,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "Operating Lease Liabilities",
+    "type": "Capital Lease",
+    "principal_musd": 3922.8,
+    "coupon": "6.200%",
+    "floating_rate": "NA",
+    "maturity_date": null,
+    "seniority": "Senior",
+    "secured": true,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "Senior Secured Term Loan Facility Term B-7 Loans",
+    "type": "Term Loans",
+    "principal_musd": 1719.4,
+    "coupon": "5.500%",
+    "floating_rate": "SOFR + 1.750%",
+    "maturity_date": "2031-09-24",
+    "seniority": "Senior",
+    "secured": true,
+    "convertible": false,
+    "currency": "USD"
+   },
+   {
+    "description": "Short-term Promissory Note",
+    "type": "Bonds and Notes",
+    "principal_musd": 50.6,
+    "coupon": "0.000%",
+    "floating_rate": "NA",
+    "maturity_date": "2026-02-09",
+    "seniority": "Senior",
+    "secured": false,
+    "convertible": false,
+    "currency": "USD"
+   }
+  ],
+  "source_ref": "CIQ Financials→Capital Structure Details (A 2026 filed Mar-19-2026)",
+  "status": "present",
+  "note": null
+ },
+ "summary": {
+  "value": "term loans 1,711.7 (3 months Q1 May-02-2026 1,715.5 → 3 months Q2 Aug-01-2026 1,711.7); senior bonds 186.1; leases 4,014.3; total principal 5,912.1; total debt 5,906.1 (3 months Q2 Aug-01-2026) ($M)",
+  "source_ref": "CIQ Financials→Capital Structure Summary",
+  "status": "present",
+  "note": null
+ },
+ "detail_as_of": "A 2026 filed Mar-19-2026",
+ "maturity_filings": {
+  "value": null,
+  "source_ref": null,
+  "status": "unknown",
+  "note": "no 8-K within ±10d of a trailing-12m maturity (2026-02-09)"
+ },
+ "covenant_pointers": {
+  "value": "material contracts (10-K exhibit i [0001193125-26-116001]; Convertible Senior Notes 1.25% Mat [0001193125-20-109457]; Convertible Senior Notes 1.25% Mat [0001193125-21-364998]; Convertible Senior Notes 2.25% Mat [0001193125-25-168007]; Convertible Senior Notes 2.25% Mat [0001193125-22-200058]; Senior Secured Term Loan Facility  [0001564590-18-016500]; Senior Secured Term Loan Facility  [0001193125-14-313404]",
+  "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+  "status": "present",
+  "note": null
+ },
+ "covenant_pointer_rows": {
+  "value": [
+   {
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-03-19",
+    "accession": "0001193125-26-116001",
+    "exhibits": [
+     "burl-ex10_39.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Convertible Senior Notes 1.25% Mature on December 15 2027",
+    "filing": "8-K",
+    "filing_date": "2020-04-16",
+    "accession": "0001193125-20-109457",
+    "exhibits": [
+     "d883886dex101.htm",
+     "d883886dex102.htm",
+     "d883886dex103.htm",
+     "d883886dex104.htm",
+     "d883886dex105.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Convertible Senior Notes 1.25% Mature on December 15 2027",
+    "filing": "8-K",
+    "filing_date": "2021-12-22",
+    "accession": "0001193125-21-364998",
+    "exhibits": [
+     "d275638dex101.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Convertible Senior Notes 2.25% Mature on April 15 2025",
+    "filing": "8-K",
+    "filing_date": "2025-07-29",
+    "accession": "0001193125-25-168007",
+    "exhibits": [
+     "d946952dex101.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Convertible Senior Notes 2.25% Mature on April 15 2025",
+    "filing": "8-K",
+    "filing_date": "2022-07-22",
+    "accession": "0001193125-22-200058",
+    "exhibits": [
+     "d393601dex101.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Senior Secured Term Loan Facility Term B-7 Loans",
+    "filing": "8-K",
+    "filing_date": "2018-07-02",
+    "accession": "0001564590-18-016500",
+    "exhibits": [
+     "burl-ex101_6.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Senior Secured Term Loan Facility Term B-7 Loans",
+    "filing": "8-K",
+    "filing_date": "2014-08-18",
+    "accession": "0001193125-14-313404",
+    "exhibits": [
+     "d772516dex101.htm",
+     "d772516dex102.htm"
+    ],
+    "note": ""
+   },
+   {
+    "family": "Finance Lease Obligations",
+    "filing": "—",
+    "filing_date": "",
+    "accession": "",
+    "exhibits": [],
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "accession": "",
+    "exhibits": [],
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "family": "Short-term Promissory Note",
+    "filing": "—",
+    "filing_date": "",
+    "accession": "",
+    "exhibits": [],
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "source_ref": "EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)",
+  "status": "present",
+  "note": null
+ },
+ "covenant_terms": {
+  "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[SECURITY AGREEMENT · 0001193125-20-109457]\n  Principal / commitment amount: $300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025\n  Interest / coupon rate: 6.250% Senior Secured Notes due 2025\n  Maturity date: 6.250% Senior Secured Notes due 2025\n[SECOND AMENDED AND RESTATED CREDIT AGREEMENT · 0001564590-18-016500 · amended by 0001193125-21-364998, 0001193125-25-168007]\n  Principal / commitment amount: Commitment Increase of $100,000,000; Total Commitments after giving effect to the…\n  Interest / coupon rate: Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate…\n  Maturity date: July 25, 2030 (amended from December 22, 2026)\n  Financial-maintenance covenants: Springing Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00,…",
+  "source_ref": "fenced Tier-2 digest (P1)",
+  "status": "present",
+  "note": null
+ },
+ "covenant_term_rows": {
+  "value": [
+   {
+    "name": "Conversion price / mechanics",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0001193125-20-109457 · d883886dex101.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Principal / commitment amount",
+    "value": {
+     "value": "$300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "note": "verbatim: “pursuant to which the Company is issuing $300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025 (together with any additional notes issued under the Indenture, the “Senior Secured Notes”)”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "value": "6.250% Senior Secured Notes due 2025",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "note": "verbatim: “the Company is issuing $300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025”"
+    },
+    "base_rate_label": null,
+    "margin_pct": 6.25,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Maturity date",
+    "value": {
+     "value": "6.250% Senior Secured Notes due 2025",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "note": "verbatim: “$300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Financial-maintenance covenants",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0001193125-20-109457 · d883886dex101.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Security / collateral / guarantors",
+    "value": {
+     "value": "each Grantor hereby grants to the Collateral Agent ... a security interest in, and collaterally assigns to the Collateral Agent ... all of such Grantor’s right, title and interest in, to and under the Collateral",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "note": "verbatim: “As security for the payment or performance, as the case may be, in full of its Secured Obligations, each Grantor hereby grants to the Collateral Agent, its successors and permitted assigns, for its own benefit and the benefit of the other Secured Parties, a security interest in, and collaterally assigns to the Collateral Agent, its successors and permitted assigns, for its own benefit and the benefit of the other Secured Parties, all of such Grantor’s right, title and interest in, to and under the Collateral (the “Security Interest”) wherever located, and whether now existing or hereafter arising or acquired from time to time.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Mandatory prepayment / events of default",
+    "value": {
+     "value": "“Event of Default” shall mean, collectively, any “Event of Default” as defined in the Indenture or as defined in any Additional Pari Passu Document.",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "note": "verbatim: ““Event of Default” shall mean, collectively, any “Event of Default” as defined in the Indenture or as defined in any Additional Pari Passu Document.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Collateral definition",
+    "value": {
+     "value": "“Collateral” shall mean all personal property of each Grantor, including, without limitation: all (A) Accounts, (B) Chattel Paper, (C) Commercial Tort Claims, (D) Deposit Accounts, (E) Documents, (F) Equipment, (G) Fixtures, (H) General Intangibles (including Payment Intangibles), (I) Goods, (J) Instruments, (K) Inventory, (L) Investment Property, (M) Letter-of-Credit Rights, (N) Software, (O) Supporting Obligations, (P) money, policies and certificates of insurance, deposits, cash, or other property ...",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "note": "verbatim: ““Collateral” shall mean all personal property of each Grantor, including, without limitation: all (A) Accounts, (B) Chattel Paper, (C) Commercial Tort Claims, (D) Deposit Accounts, (E) Documents, (F) Equipment, (G) Fixtures, (H) General Intangibles (including Payment Intangibles), (I) Goods, (J) Instruments, (K) Inventory, (L) Investment Property, (M) Letter-of-Credit Rights, (N) Software, (O) Supporting Obligations, (P) money, policies and certificates of insurance, deposits, cash, or other property ... provided, however, that the Collateral shall not include ... (c) any Security, Investment Property or other equity interest representing more than 65% of the outstanding voting stock of (i) any Foreign Subsidiary”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Lien priority",
+    "value": {
+     "value": "The Security Interest is and shall be (i) pari passu with the Liens securing the Term Loan Obligations and any Additional Pari Passu Obligations and (ii) prior to any other Lien on any of the Collateral, subject only to (a) with respect to the ABL Priority Collateral only, Permitted Encumbrances under the ABL Credit Agreement including the senior lien of the ABL Collateral Agent on ABL Priority Collateral, and (b) other Permitted Encumbrances having priority by operation of Applicable Law.",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "note": "verbatim: “The Security Interest is and shall be (i) pari passu with the Liens securing the Term Loan Obligations and any Additional Pari Passu Obligations and (ii) prior to any other Lien on any of the Collateral, subject only to (a) with respect to the ABL Priority Collateral only, Permitted Encumbrances under the ABL Credit Agreement including the senior lien of the ABL Collateral Agent on ABL Priority Collateral, and (b) other Permitted Encumbrances having priority by operation of Applicable Law.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Governing law",
+    "value": {
+     "value": "THIS AGREEMENT SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "note": "verbatim: “THIS AGREEMENT SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Collateral Agent",
+    "value": {
+     "value": "Wilmington Trust, National Association, in its capacity as collateral agent for the Secured Parties",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "note": "verbatim: “and Wilmington Trust, National Association, in its capacity as collateral agent for the Secured Parties (in such capacity and together with any successors in such capacity, the “Collateral Agent”)”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECURITY AGREEMENT",
+    "agreement_is_amendment": false
+   },
+   {
+    "name": "Conversion price / mechanics",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0001193125-25-168007 · d946952dex101.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Principal / commitment amount",
+    "value": {
+     "value": "Commitment Increase of $100,000,000; Total Commitments after giving effect to the Commitment Increase = $1,000,000,000",
+     "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
+     "status": "present",
+     "note": "verbatim: “the Lead Borrower has requested, among other things, an extension of the maturity date and an increase in the aggregate outstanding Commitments in an amount equal to $100,000,000 (the “ Commitment Increase ”), such that the Total Commitments after giving effect to the Commitment Increase will be $1,000,000,000”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "(E5) refused: the model's quote is not in 8-K 0001193125-25-168007 · d946952dex101.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Maturity date",
+    "value": {
+     "value": "July 25, 2030 (amended from December 22, 2026)",
+     "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
+     "status": "present",
+     "note": "verbatim: ““ Maturity Date ” means December 22 July 25 , 2026 2030 .”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Financial-maintenance covenants",
+    "value": {
+     "value": "Springing Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00, tested only during the continuance of a Covenant Compliance Event (Specified Availability less than the greater of $70,000,000 or 10% of the Loan Cap)",
+     "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
+     "status": "present",
+     "note": "verbatim: “SECTION 6.10 Consolidated Fixed Charge Coverage Ratio . During the continuance of a Covenant Compliance Event, the Loan Parties shall not permit the Consolidated Fixed Charge Coverage Ratio, tested on a trailing four quarter basis commencing with the Fiscal Quarter most recently ended, to be less than 1.00:1.00.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Security / collateral / guarantors",
+    "value": {
+     "value": "Secured by security interest in all Collateral (ABL Priority Collateral) granted to Bank of America, N.A. as Collateral Agent; guaranteed by the Facility Guarantors (entities listed on Schedule II, including Burlington Coat Factory Holdings, LLC; Burlington Coat Factory Investments Holdings, Inc.; and others). Subject to the Intercreditor Agreement with the Term Loan Facility.",
+     "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
+     "status": "present",
+     "note": "verbatim: “To secure the Secured Obligations (as defined in the Security Agreement), the Borrowers have granted (or shall grant) to the Collateral Agent, for its benefit and the benefit of the other Secured Parties, a security interest in all of the Collateral pursuant to the Security Document, with the priority provided for herein or in the other Loan Documents.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Mandatory prepayment / events of default",
+    "value": {
+     "value": "Mandatory prepayment required if Total Outstandings cause Availability to be less than zero (prepay to eliminate deficiency; cash collateralize 103% of Letters of Credit Outstanding). Events of Default set forth in Section 7.01 (payment defaults, covenant breaches, cross-default to Material Indebtedness, Change in Control, bankruptcy, judgments, ERISA, Lien invalidity, guaranty termination, etc.).",
+     "source_ref": "8-K 0001193125-25-168007 · d946952dex101.htm",
+     "status": "present",
+     "note": "verbatim: “SECTION 2.17 Mandatory Prepayment; Commitment Termination; Cash Collateral . The outstanding Obligations shall be subject to prepayment as follows: (a) If at any time the Total Outstandings causes Availability to be less than zero, the Borrowers will, immediately upon notice from the Administrative Agent: (x) prepay the Revolving Credit Loans in an amount necessary to eliminate such deficiency; and (y) ... deposit cash into the Cash Collateral Account in an amount equal to 103% of the Letters of Credit Outstanding.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Conversion price / mechanics",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0001564590-18-016500 · burl-ex101_6.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Principal / commitment amount",
+    "value": {
+     "value": "On the Second Amendment Effective Date, the Total Commitments are $600,000,000. [Increase option: up to $900,000,000 pursuant to Section 2.02; Letter of Credit Sublimit $100,000,000; Swingline Loan Ceiling $60,000,000]",
+     "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
+     "status": "present",
+     "note": "verbatim: ““ Total Commitments ” means the aggregate of the Commitments of all Lenders, as in effect from time to time.  On the First Second Amendment Effective Date, the Total Commitments are $600,000,000.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "value": "Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Applicable Margin for LIBOR Rate Loans. Applicable Margin pricing grid: Level I (Availability ≥ 40% of Loan Cap): LIBOR 1.25%, Prime 0.25%; Level II (Availability < 40% of Loan Cap): LIBOR 1.50%, Prime 0.50%. Default Rate: applicable rate plus 2.00% per annum. LIBOR floor: not less than zero.",
+     "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
+     "status": "present",
+     "note": "verbatim: “each LIBOR Rate Loan shall bear interest (computed on the basis of the actual number of days elapsed over a year of 360 days) at a rate per annum equal, during each Interest Period applicable thereto, to the Adjusted  LIBOR Rate for such Interest Period, plus the Applicable Margin for LIBOR Rate Loans.”"
+    },
+    "base_rate_label": "Adjusted LIBOR Rate",
+    "margin_pct": 1.5,
+    "margin_bps": null,
+    "floor_pct": 0.0,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Maturity date",
+    "value": {
+     "value": "June 29, 2023",
+     "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
+     "status": "present",
+     "note": "verbatim: ““ Maturity Date ” means August 13, 2019. June 29, 2023.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Financial-maintenance covenants",
+    "value": {
+     "value": "Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00 (springing covenant, tested only during the continuance of a Covenant Compliance Event). Covenant Compliance Event = Availability less than the greater of (x) $50,000,000 or (y) 10% of the Loan Cap.",
+     "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
+     "status": "present",
+     "note": "verbatim: “During the continuance of a Covenant Compliance Event, the Loan Parties shall not permit the Consolidated Fixed Charge Coverage Ratio, (i) at all such times during the continuance of a Covenant Compliance Event that monthly financial statements are required to be delivered under SECTION 5.01(c), tested on a trailing twelve month basis commencing with the Fiscal Month most recently ended, to be less than 1.00:1.00 or (ii) on all such other times during the continuance of a Covenant Compliance Event, tested on a trailing four quarter basis commencing with the Fiscal Quarter most recently ended, to be less than 1.00:1.00.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Security / collateral / guarantors",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "(E5) refused: the model's quote is not in 8-K 0001564590-18-016500 · burl-ex101_6.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Mandatory prepayment / events of default",
+    "value": {
+     "value": "Mandatory prepayment (Section 2.17): if Total Outstandings cause Availability to be less than zero, prepay to eliminate deficiency plus 103% cash collateral of L/C Outstandings; daily repayment under Section 2.18 during Cash Dominion Event; Net Proceeds from a Prepayment Event applied per Section 7.03. Events of Default (Section 7.01) include: nonpayment of principal (one Business Day grace under 2.17(a)); nonpayment of interest/fees (5 Business Day grace); incorrect representations/warranties; covenant breaches; cross-default on Material Indebtedness (>$75,000,000); Change in Control; voluntary/involuntary bankruptcy (60 days); monetary judgments >$75,000,000; ERISA Event; Lien invalidity; guaranty termination; indictment; etc.",
+     "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
+     "status": "present",
+     "note": "verbatim: “Section 2.17 SECTION 2.17 Mandatory Prepayment; Commitment Termination; Cash Collateral The outstanding Obligations shall be subject to prepayment as follows: If at any time the Total Outstandings causes Availability to be less than zero, the Borrowers will, immediately upon notice from the Administrative Agent: (x) prepay the Revolving Credit Loans in an amount necessary to eliminate such deficiency; and (y) ... deposit cash into the Cash Collateral Account in an amount equal to 103% of the Letters of Credit Outstanding.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Conversion price / mechanics",
+    "value": {
+     "value": null,
+     "source_ref": null,
+     "status": "unknown",
+     "note": "not stated in 8-K 0001193125-21-364998 · d275638dex101.htm"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Principal / commitment amount",
+    "value": {
+     "value": "On the Third Amendment Effective Date, the Total Commitments are $650,000,000. [Schedule 1.1(a): Bank of America, N.A. $190,000,000; Wells Fargo Bank, National Association $165,000,000; US Bank National Association $85,000,000; JPMorgan Chase Bank, N.A. $85,000,000; Truist Bank $85,000,000; PNC Bank, National Association $40,000,000; TOTAL $650,000,000]",
+     "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
+     "status": "present",
+     "note": "verbatim: ““ Total Commitments ” means the aggregate of the Commitments of all Lenders, as in effect from time to time. On the Third Amendment Effective Date, the Total Commitments are $650,000,000.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Interest / coupon rate",
+    "value": {
+     "value": "Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Applicable Margin for LIBOR Rate Loans. Applicable Margin pricing grid: Level I (Availability equal to or greater than 40% of the Loan Cap): LIBOR 1.125%, Prime Rate 0.125%; Level II (less than 40% of the Loan Cap): LIBOR 1.375%, Prime Rate 0.375%",
+     "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
+     "status": "present",
+     "note": "verbatim: “(a) Subject to SECTION 2.12, each Prime Rate Loan shall bear interest ... at a rate per annum that shall be equal to the then Prime Rate plus the Applicable Margin for Prime Rate Loans. (b) Subject to SECTION 2.09 through SECTION 2.12, each LIBOR Rate Loan shall bear interest ... at a rate per annum equal, during each Interest Period applicable thereto, to the Adjusted LIBOR Rate for such Interest Period, plus the Applicable Margin for LIBOR Rate Loans.”"
+    },
+    "base_rate_label": "LIBOR Rate",
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Maturity date",
+    "value": {
+     "value": "December 22, 2026",
+     "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
+     "status": "present",
+     "note": "verbatim: ““ Maturity Date ” means December 22, 2026.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Financial-maintenance covenants",
+    "value": {
+     "value": "During the continuance of a Covenant Compliance Event, the Loan Parties shall not permit the Consolidated Fixed Charge Coverage Ratio, tested on a trailing four quarter basis commencing with the Fiscal Quarter most recently ended, to be less than 1.00:1.00. (Covenant Compliance Event = Specified Availability less than the greater of (x) $50,000,000 or (y) 10% of the Loan Cap)",
+     "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
+     "status": "present",
+     "note": "verbatim: “SECTION 6.10 Consolidated Fixed Charge Coverage Ratio . During the continuance of a Covenant Compliance Event, the Loan Parties shall not permit the Consolidated Fixed Charge Coverage Ratio, tested on a trailing four quarter basis commencing with the Fiscal Quarter most recently ended, to be less than 1.00:1.00.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Security / collateral / guarantors",
+    "value": {
+     "value": "SECTION 2.26: Borrowers have granted to the Collateral Agent (Bank of America, N.A.), for its benefit and the benefit of the other Secured Parties, a security interest in all of the Collateral pursuant to the Security Document. Collateral Agent: Bank of America, N.A. Facility Guarantors listed on Schedule II: Burlington Coat Factory Holdings, LLC; Burlington Coat Factory Investments Holdings, Inc.; Burlington Coat Factory of Texas, Inc.; Burlington Coat Factory Realty of Edgewater Park, Inc.; Burlington Coat Factory Realty of Pinebrook, Inc.; Burlington Coat Factory Warehouse of Edgewater Park Urban Renewal Corp.; BCF Florence Urban Renewal, L.L.C.; BCF Florence Urban Renewal II, LLC; Burlington Merchandising Corporation. First priority Liens on Collateral subject to Permitted Encumbrances including those in favor of the agent under the Term Loan Financing Facility on any Term Loan Priority Collateral.",
+     "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
+     "status": "present",
+     "note": "verbatim: “To secure the Secured Obligations (as defined in the Security Agreement), the Borrowers have granted (or shall grant) to the Collateral Agent, for its benefit and the benefit of the other Secured Parties, a security interest in all of the Collateral pursuant to the Security Document, with the priority provided for herein or in the other Loan Documents.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   },
+   {
+    "name": "Mandatory prepayment / events of default",
+    "value": {
+     "value": "Mandatory Prepayment (SECTION 2.17): If Total Outstandings causes Availability to be less than zero, Borrowers will immediately prepay Revolving Credit Loans to eliminate the deficiency and, if necessary, deposit cash into the Cash Collateral Account equal to 103% of the Letters of Credit Outstanding. Events of Default (SECTION 7.01): include (a) failure to pay principal/reimbursement obligations; (b) failure to pay interest, fees or other amounts (5 Business Day grace); (c) incorrect representation or warranty; (d)-(e) failure to observe covenants; (f) cross-default to Material Indebtedness; (g) Change in Control; (h)-(i) involuntary/voluntary insolvency proceedings; (k) final judgments in excess of $75,000,000; (l) ERISA Event; (m)-(n) challenges to Loan Document validity; (o) Lien ceasing to be valid and perfected; (p) termination of Facility Guarantee.",
+     "source_ref": "8-K 0001193125-21-364998 · d275638dex101.htm",
+     "status": "present",
+     "note": "verbatim: “SECTION 2.17 Mandatory Prepayment; Commitment Termination; Cash Collateral . The outstanding Obligations shall be subject to prepayment as follows: (a) If at any time the Total Outstandings causes Availability to be less than zero, the Borrowers will, immediately upon notice from the Administrative Agent: (x) prepay the Revolving Credit Loans in an amount necessary to eliminate such deficiency; and (y) if, after giving effect to the prepayment in full of all outstanding Revolving Credit Loans such deficiency has not been eliminated, deposit cash into the Cash Collateral Account in an amount equal to 103% of the Letters of Credit Outstanding.”"
+    },
+    "base_rate_label": null,
+    "margin_pct": null,
+    "margin_bps": null,
+    "floor_pct": null,
+    "pik_pct": null,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "agreement_is_amendment": true
+   }
+  ],
+  "source_ref": "fenced Tier-2 extraction (verbatim, source-bound)",
+  "status": "present",
+  "note": null
+ },
+ "maturity_event": null,
+ "panel_vintage": {
+  "value": "the debt schedule is 211d old (source filed 2026-03-19); no Item 1.02 (termination of a material agreement) has been filed since",
+  "source_ref": "CIQ Capital Structure Details — A 2026 filed Mar-19-2026",
+  "status": "present",
+  "note": null
+ }
+}

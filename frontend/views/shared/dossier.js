@@ -2624,16 +2624,37 @@ function covenantSourceSuffix(g, dates) {
   return ` — per an 8-K filed ${base}${newest ? `, amended ${newest}` : ""}`;
 }
 
+// (mirrors render._pointer_dates) accession -> filing_date from the covenant pointer rows — the one
+// map that dates a governing value on both the main-body line and the appendix table.
+function pointerDates(ptrs) {
+  const out = {};
+  for (const pt of (ptrs && ptrs.value) || []) {
+    if (pt.accession && pt.filing_date) out[pt.accession] = pt.filing_date;
+  }
+  return out;
+}
+
+// (#804's follow-up, mirrors render._refused_newer_text) the LEAD of a governing term whose value a
+// later refusal withholds — it leads, the last VERIFIED value follows it (the stamp-position rule).
+// An accession the pointer rows do not date is named as itself, never a guessed date.
+function refusedNewerText(g, dates) {
+  const lv = _ACC_IN_REF.exec(String((g.lastVerified && g.lastVerified.source_ref) || ""));
+  const since = lv ? (dates[lv[1]] || lv[1]) : "the last verified exhibit";
+  const later = (g.refusedNewer || []).map((r) => _ACC_IN_REF.exec(String(r.note || "")))
+    .filter(Boolean).map((m) => dates[m[1]] || m[1]);
+  const tail = later.length === 1
+    ? `a later exhibit (filed ${later[0]}) states this term, but its quote could not be matched to the filing, so its value is withheld`
+    : `${later.length} later exhibits (filed ${later.join(", ")}) state this term, but their quotes could not be matched to the filings, so their values are withheld`;
+  return `UNKNOWN — not verified since ${since}: ${tail}`;
+}
+
 function covenantSummary(cs) {
   const rs = cs.covenant_term_rows;
   if (!rs || rs.status !== "present" || !Array.isArray(rs.value) || !rs.value.length) return "";
   const ptrs = cs.covenant_pointer_rows;
   const gov = governingTerms(rs.value, (ptrs && ptrs.value) || []);
   // accession -> filing_date, so each governing value can name the filing it was read from
-  const _pdates = {};
-  for (const pt of (ptrs && ptrs.value) || []) {
-    if (pt.accession && pt.filing_date) _pdates[pt.accession] = pt.filing_date;
-  }
+  const _pdates = pointerDates(ptrs);
   const fams = [];
   for (const g of gov) {
     const fl = (g.fam || "").toLowerCase();
@@ -2644,7 +2665,9 @@ function covenantSummary(cs) {
   for (const fam of fams) {
     const parts = [];
     for (const g of gov.filter((t) => t.fam === fam)) {
-      const v = g.value || {};
+      // a later refusal withholds the value but keeps the line (mirrors render._covenant_summary_lines)
+      const withheld = (g.refusedNewer || []).length > 0;
+      const v = (withheld ? g.lastVerified : g.value) || {};
       if (v.status !== "present") continue;
       const entry = _SUMMARY_TERMS.find(([key]) => (g.term || "").toLowerCase().includes(key));
       if (!entry) continue;
@@ -2652,6 +2675,12 @@ function covenantSummary(cs) {
       const raw = String(v.value);
       const lead = covenantValueLead(label, raw, g);  // (K1) lead with the extractable value
       const clause = lead ? `${lead} · ${clip120(raw)}` : clip120(raw);
+      if (withheld) {
+        const text = refusedNewerText(g, _pdates).replace(/^UNKNOWN/, "");  // the pill carries it
+        parts.push(`<li><b>${escapeHtml(label)}:</b> <span class="pill unresolved">UNKNOWN</span>` +
+          `${escapeHtml(`${text}. `)}<span class="muted">${escapeHtml(`Last verified: ${clause}`)}</span></li>`);
+        continue;
+      }
       parts.push(`<li><b>${escapeHtml(label)}:</b> ` +
         `${escapeHtml(clause + covenantSourceSuffix(g, _pdates))}</li>`);
     }
@@ -2739,15 +2768,40 @@ function covenantPointers(cs) {
 
 // (P5, mirrors covenant_extract.governing_terms) collapse per-exhibit rows to ONE governing value
 // per (family, term): the latest-dated PRESENT value wins (amendment over base), base ref + an
-// "amended by" chain; grouped by family via the pointers' accession→(family, date) map.
+// "amended by" chain; grouped by family via the pointers' accession→(family, date) map. A strictly
+// LATER refused row (#804) withholds the value: it reads UNKNOWN, the older one moves to lastVerified.
 const _accOf = (s) => { const m = (s || "").match(/\b(\d{10}-\d{2}-\d{6})\b/); return m ? m[1] : ""; };
+const _REFUSED_NOTE_PREFIX = "(E5) refused:";  // mirrors covenant_extract.REFUSED_NOTE_PREFIX
+// (mirrors covenant_extract._ambiguous_titles, #653) titles that cover MORE THAN ONE BASE document
+// from DIFFERENT pointer families cannot identify one contract, so the collapse must not group by them.
+function _ambiguousTitles(rows, meta) {
+  const bases = new Map();
+  (rows || []).forEach((r) => {
+    const title = r.agreement_title;
+    if (!title || r.agreement_is_amendment) return;
+    const v = r.value || {};
+    const acc = _accOf(v.source_ref) || _accOf(v.note) || "";
+    const fam = (meta[acc] || ["", ""])[0];
+    if (!bases.has(title)) bases.set(title, new Set());
+    bases.get(title).add(fam + "\x00" + acc);
+  });
+  const out = new Set();
+  bases.forEach((keys, title) => {
+    if (new Set([...keys].map((k) => k.split("\x00")[0])).size > 1) out.add(title);
+  });
+  return out;
+}
 function governingTerms(rows, pointers) {
   const meta = {};
   (pointers || []).forEach((p) => { if (p.accession) meta[p.accession] = [p.family, p.filing_date || ""]; });
+  const ambiguous = _ambiguousTitles(rows, meta);
   const grouped = new Map(), order = [];
   (rows || []).forEach((r) => {
     const v = r.value || {};
-    const [fam, dt] = meta[_accOf(v.source_ref) || _accOf(v.note)] || ["(unmapped)", ""];
+    const [ptrFam, dt] = meta[_accOf(v.source_ref) || _accOf(v.note)] || ["(unmapped)", ""];
+    // (#652/#653, py parity) THE DOCUMENT OUTRANKS THE POINTER: the exhibit's own title names the
+    // group, so an amendment groups with what it amends; an ambiguous title falls back to the pointer.
+    const fam = (r.agreement_title && !ambiguous.has(r.agreement_title)) ? r.agreement_title : ptrFam;
     const key = fam + "\x00" + r.name;
     if (!grouped.has(key)) { grouped.set(key, { fam, term: r.name, list: [] }); order.push(key); }
     grouped.get(key).list.push([dt, r]);  // (RC-1.5d) store the whole row — components ride along
@@ -2756,23 +2810,38 @@ function governingTerms(rows, pointers) {
     const { fam, term, list } = grouped.get(key);
     list.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));  // oldest → newest
     const present = list.filter(([, r]) => (r.value || {}).status === "present");
-    let govRow, baseRef, amendedBy;
+    let govRow, baseRef, amendedBy, value, refusedNewer = [], lastVerified = null;
     if (present.length) {
       // (X-4) assert amendedBy only on a REAL chronology (distinct, non-empty dates); tied/empty
       // dates can't establish supersession — don't fabricate the chain from input order (py parity).
       const pdates = present.map(([dt]) => dt);
       const ordered = pdates.every(Boolean) && new Set(pdates).size === pdates.length;
+      const govDt = present[present.length - 1][0];
       govRow = present[present.length - 1][1];  // latest PRESENT governs — components ride along
+      value = govRow.value;
       baseRef = present[0][1].value.source_ref;
       amendedBy = ordered ? present.slice(1).map(([, r]) => _accOf(r.value.source_ref)).filter(Boolean) : [];
+      // a strictly later, dated REFUSED row withholds the value (py parity — see governing_terms)
+      refusedNewer = list.filter(([dt, r]) => govDt && dt > govDt
+        && (r.value || {}).status !== "present"
+        && String((r.value || {}).note || "").startsWith(_REFUSED_NOTE_PREFIX)).map(([, r]) => r.value);
+      if (refusedNewer.length) {
+        lastVerified = govRow.value;
+        value = { value: null, source_ref: null, status: "unknown",
+          note: `(E5) not verified since ${govDt}: ${refusedNewer.length} later exhibit(s) stated ` +
+            `this term and each quote was refused ` +
+            `(${refusedNewer.map((r) => _accOf(r.note)).join("; ")}); last verified in ` +
+            `${govRow.value.source_ref}` };
+      }
     } else {
       govRow = list[list.length - 1][1];
+      value = govRow.value;
       baseRef = null; amendedBy = [];
     }
-    return { fam, term, value: govRow.value, baseRef, amendedBy,
+    return { fam, term, value, baseRef, amendedBy,
       baseRateLabel: govRow.base_rate_label ?? null, marginPct: govRow.margin_pct ?? null,
       marginBps: govRow.margin_bps ?? null, floorPct: govRow.floor_pct ?? null,
-      pikPct: govRow.pik_pct ?? null };
+      pikPct: govRow.pik_pct ?? null, refusedNewer, lastVerified };
   });
 }
 
@@ -2788,18 +2857,23 @@ function covenantTerms(cs) {
   if (!gov.length) return fact("Covenant terms (from the filed agreement)", cs.covenant_terms);
   const families = [];
   gov.forEach((g) => { if (!families.includes(g.fam)) families.push(g.fam); });
+  const _pdates = pointerDates(ptrs);
   const cols = ["Governing value (lead · clause ≤200c)", "Source §"];
   const tables = families.map((fam) => {
     const famTerms = gov.filter((g) => g.fam === fam);
     // (T2) the family source lineage moves to the table FOOTER, not repeated on every row: the base
     // accession/exhibit + the amendment-accession chain (mirrors render._covenant_term_lines footer).
+    // A withheld term's last verified value still counts toward the lineage (py parity).
     const presentBases = famTerms
-      .filter((g) => (g.value || {}).status === "present" && g.baseRef).map((g) => g.baseRef);
+      .filter((g) => ((g.value || {}).status === "present" || (g.refusedNewer || []).length) && g.baseRef)
+      .map((g) => g.baseRef);
     const famBase = presentBases.length ? presentBases[0] : rs.source_ref;
     const amendAccs = [...new Set(famTerms.flatMap((g) => g.amendedBy))].sort();
     const footer = `Source §: ${famBase}` + (amendAccs.length ? ` · amended by ${amendAccs.join(", ")}` : "");
     const rows = famTerms.map((g) => {
-      const v = g.value || {};
+      // a later refusal withholds the value; the row shows the last VERIFIED one, labelled
+      const withheld = (g.refusedNewer || []).length > 0 && g.lastVerified;
+      const v = (withheld ? g.lastVerified : g.value) || {};
       if (v.status !== "present") return { label: g.term, cells: ["UNKNOWN", v.note || "not stated"] };
       // (T2) value = the extractable value-lead + a ≤200c clause; "full verbatim in JSON" only when trimmed.
       const entry = _SUMMARY_TERMS.find(([key]) => (g.term || "").toLowerCase().includes(key));
@@ -2816,6 +2890,11 @@ function covenantTerms(cs) {
       // amendment ref; a plain base row points at the footer.
       const ref = (g.baseRef && g.baseRef !== famBase) ? g.baseRef
         : g.amendedBy.length ? `amended by ${g.amendedBy.join(", ")}` : "base (footer)";
+      if (withheld) {  // the provenance tier names each refused exhibit and why (py parity)
+        const why = g.refusedNewer.map((r) => r.note || "").join("; ");
+        return { label: g.term,
+          cells: [`${refusedNewerText(g, _pdates)} — ${why}. Last verified: ${cell}`, `last verified: ${ref}`] };
+      }
       return { label: g.term, cells: [cell, ref] };
     });
     return dataTable(`Covenant terms — ${fam} (governing agreement)`, rs.source_ref, cols, rows, footer);
