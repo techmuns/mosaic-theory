@@ -23,7 +23,8 @@ forms as a create:
   `--field`, `--raw-field`) or `--input` is passed. Any other method, or another path, opens
   nothing. That covers a GET of `…/pulls` or `…/pulls?state=open`, `-X GET … -f state=open`,
   `pulls/N`, a merge (`PUT pulls/N/merge`), reviews, comments and replies, and a reopen
-  (`PATCH pulls/N`).
+  (`PATCH pulls/N`). A short option's value may be attached (`-fhead=code`, `-XPOST`), as gh's
+  flag parser allows; this branch's code review found that the first draft missed it.
 - **`gh pr new`.** This is `gh pr create`'s own alias (`gh pr create --help`, gh 2.102.0).
 
 The word-by-word reading (`pr_target`, now `_walk`) finds the PR's head branch, its base and the
@@ -180,6 +181,12 @@ cites another PR.
     Python ones sit in heredocs, which are data by this rule. 0 GraphQL `createPullRequest`.
   - **`"$(gh pr create …)"` inside double quotes.** It reads as data, though the shell runs it.
     0 real.
+  - **A `#` inside a word cuts the walk.** The walk uses shlex's comment rule, which starts a
+    comment at a `#` inside a word, as bash does not. So in `gh pr create --title fix#3 --head
+    code`, the head is not read, and the gate judges the session's checkout. This predates the
+    branch: `main` reads `gh pr create` the same way. Turning shlex comments off would make an
+    apostrophe in a real comment line unbalance the quotes. Found by this branch's code review;
+    0 real creates are affected.
   - **Other wrappers' options.** `nice -n 10`, `time -p` and `gh pr -R x create` are not read.
     0 real.
 - **ACCEPTED: `created_pr` takes the last PR URL in the output.** A `gh api` create whose JSON

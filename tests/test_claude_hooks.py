@@ -747,6 +747,11 @@ def test_a_gh_api_post_to_the_pulls_endpoint_is_a_pr_create() -> None:
     assert gate.pr_target("gh api /repos/o/r/pulls --input pr.json", str(ROOT)).head is None
     assert gate.opens_a_pr("gh api /repos/o/r/pulls --input pr.json")
     assert gate.pr_target("gh api repos/o/r/pulls -f head=o:code -f base=dev", "/").head == "code"
+    # gh's flag parser also takes a short option's value attached (found by this change's review)
+    for attached in ("gh api repos/o/r/pulls -fhead=code -ftitle=t",
+                     "gh api -XPOST repos/o/r/pulls"):
+        assert gate.opens_a_pr(attached), attached
+    assert gate.pr_target("gh api repos/o/r/pulls -fhead=code -fbase=main", "/").head == "code"
     for command in API_NOT_CREATES:
         assert not gate.opens_a_pr(command), command
     for command in (f"bin/commit -m {json.dumps(API_CREATE)}",

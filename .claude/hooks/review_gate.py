@@ -183,7 +183,12 @@ def _api_fields(args: list[str]) -> dict[str, str] | None:
     i = 0
     while i < len(args):
         arg = args[i]
-        name, eq, value = arg.partition("=") if arg.startswith("--") else (arg, "", "")
+        if arg.startswith("--"):
+            name, eq, value = arg.partition("=")
+        elif arg[:2] in _API_VALUED and len(arg) > 2:
+            name, eq, value = arg[:2], "=", arg[2:]     # `-fhead=x`, `-XPOST`: value attached
+        else:
+            name, eq, value = arg, "", ""
         if name in _API_VALUED:
             if not eq:
                 value = args[i + 1] if i + 1 < len(args) else ""
@@ -195,8 +200,6 @@ def _api_fields(args: list[str]) -> dict[str, str] | None:
             elif name in ("-f", "--raw-field", "-F", "--field"):
                 key, _, val = value.partition("=")
                 fields[key] = val
-        elif re.fullmatch(r"-X\w+", arg):
-            method = arg[2:]                # `-XPOST`
         elif not arg.startswith("-") and endpoint is None:
             endpoint = arg
         i += 1
