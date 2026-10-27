@@ -292,7 +292,8 @@ def test_a_ticker_two_securities_carry_is_named_by_internal_id(store: Path) -> N
     assert {"SEC-0000000007-GGG", "SEC-0000000077-GGG"} <= set(items)
 
 
-def test_tiingo_is_asked_for_once_and_only_when_a_sampled_name_has_bars(store: Path) -> None:
+def test_tiingo_is_asked_for_once_and_only_when_a_sampled_or_flagged_name_has_bars(
+        store: Path) -> None:
     calls: list[int] = []
 
     def factory() -> prices.Fetch | None:
@@ -304,7 +305,14 @@ def test_tiingo_is_asked_for_once_and_only_when_a_sampled_name_has_bars(store: P
     for t in ("AAA", "KKK", "LLL", "MMM", "NNN.B"):     # ZZZ's page stays: it has no bars
         (store / "data" / "dossiers" / t / "dossier.json").unlink()
     prices.read_store(store, tiingo=factory)
-    assert calls == [1]
+    assert calls == [1, 1]                  # no page with bars left, but CCC, EEE, FFF are flagged
+    clean = store / "clean"                 # neither a page nor a flag: never asked
+    (clean / "data").mkdir(parents=True)
+    with Store(clean / "data" / "vinci.db") as s:
+        s.upsert_security(_ident("AAA"))
+        s.write_prices(_series(_ident("AAA").internal_id, _walk({})))
+    prices.read_store(clean, tiingo=factory)
+    assert calls == [1, 1]
 
 
 def test_the_boundary_names_the_store_and_the_sample(store: Path) -> None:
@@ -362,12 +370,14 @@ def test_the_card_is_coherent_and_deterministic(store: Path) -> None:
 def test_the_coverage_map_is_derived_from_the_checks() -> None:
     src = core.validate(prices.SOURCE)
     cls = {f.id: core.classify(src, f) for f in src.families}
+    # bars.volume is independent through zero_volume_vs_tiingo (2026-10-27): Tiingo judges a
+    # stored zero, and only a zero
     assert cls == {"bars.close": core.INDEPENDENT, "bars.range": core.INTERNAL,
-                   "bars.volume": core.INTERNAL}
+                   "bars.volume": core.INDEPENDENT}
     guard = {f.id: core.failure_guard(src, f) for f in src.families}
     assert set(guard["bars.close"].values()) == {core.INDEPENDENT}
     assert guard["bars.range"]["different_definition"] == "none"
-    assert guard["bars.volume"] == {"wrong_file": core.INTERNAL, "wrong_cell": "none",
+    assert guard["bars.volume"] == {"wrong_file": core.INTERNAL, "wrong_cell": core.INDEPENDENT,
                                     "wrong_unit": "none", "wrong_period": core.INTERNAL,
                                     "different_definition": "none"}
 
