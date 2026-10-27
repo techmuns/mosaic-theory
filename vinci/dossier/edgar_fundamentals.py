@@ -27,7 +27,7 @@ from datetime import date
 from typing import Any
 
 from vinci.dossier.schemas import PeerComps, Sourced, SourceStatus
-from vinci.edgar.concepts import ConceptPoint, extract_points
+from vinci.edgar.concepts import ConceptPoint, concept_frontier, extract_points, stale_against
 
 _USD_M = 1e6  # EDGAR companyfacts report in dollars; the dossier/CIQ convention is $M
 
@@ -92,16 +92,27 @@ class EdgarFundamentals:
             for pe in sorted(self._ocf.keys() & self._capex.keys())
             if self._ocf[pe].period_start == self._capex[pe].period_start
         }
+        # The newest period each FCF leg's concept carries: the latest FCF year is judged against
+        # both, so a pair that last met years ago is never served as this year's FCF.
+        self._newest = {c: concept_frontier(facts, c) for c in ("operating_cash_flow", "capex")}
 
     # --- the three CIQ-sourced fundamentals fields, mirrored on a raw-GAAP basis -----------------
 
     def free_cash_flow(self) -> Sourced[float]:
-        """Latest annual FCF ($M) = operating cash flow − capex (same period). Fail-loud UNKNOWN."""
+        """Latest annual FCF ($M) = operating cash flow − capex (same period). Fail-loud UNKNOWN.
+
+        UNKNOWN, too, when that period is a fiscal year or more behind the newest period either
+        leg's concept carries (:func:`vinci.edgar.concepts.current_annual`): Climb Global's last
+        year with both legs is FY2019, and it read as the latest FCF beside quarters to 2026."""
         if not self._fcf:
             return Sourced.unknown(
                 note="EDGAR: no fiscal period with both operating cash flow and capex"
             )
         pe = max(self._fcf)
+        stale = [s for s in (stale_against(self._ocf[pe], self._newest["operating_cash_flow"]),
+                             stale_against(self._capex[pe], self._newest["capex"])) if s]
+        if stale:
+            return Sourced.unknown(note="EDGAR: " + "; ".join(s.note for s in stale))
         ref = (
             f"EDGAR XBRL companyfacts {self._ocf[pe].tag} − {self._capex[pe].tag} "
             f"[{_period_label(self._ocf[pe])}] ($M)"

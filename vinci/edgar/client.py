@@ -25,7 +25,7 @@ from typing import Any, NoReturn, cast
 from pydantic import BaseModel
 
 from vinci.config import Config, get_config
-from vinci.edgar.concepts import extract_points, facts_as_of, latest_annual
+from vinci.edgar.concepts import StaleAnnual, current_annual, facts_as_of
 from vinci.edgar.net_debt import NO_DEBT_OR_CASH, Basis, net_debt
 from vinci.edgar.submissions import RegistrantHistory, parse_registrant_history
 from vinci.netcache import CachedHttp, HttpError
@@ -98,6 +98,12 @@ def _unknown_i(note: str) -> DataField[int]:
     return DataField.unknown(source="EDGAR", tier=SourceTier.EDGAR, note=note)
 
 
+def _why(absent: str, *stale: StaleAnnual | None) -> str:
+    """Why a field is UNKNOWN: every leg withheld as stale, by name — else the plain absence."""
+    notes = [s.note for s in stale if s]
+    return "; ".join(notes) if notes else absent
+
+
 def all_unknown_snapshot(cik10: str) -> FundamentalSnapshot:
     """Snapshot for an issuer with no usable XBRL — every field UNKNOWN (graceful degradation)."""
     return FundamentalSnapshot(
@@ -124,24 +130,29 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     """
     if as_of is not None:
         facts = facts_as_of(facts, as_of)
-    op = latest_annual(extract_points(facts, "operating_income"))
-    da = latest_annual(extract_points(facts, "dep_amort"))
-    ocf = latest_annual(extract_points(facts, "operating_cash_flow"))
-    capex = latest_annual(extract_points(facts, "capex"))
-    eps = latest_annual(extract_points(facts, "eps_diluted"))
+    # EACH LEG IS THE LATEST ANNUAL ITS CONCEPT SERVES AS CURRENT, or it is withheld and named
+    # (vinci.edgar.concepts.current_annual, §5.0 row 11). The latest annual alone was served however
+    # old it was: Climb Global's FY2019 capex came off its FY2025 operating cash flow, and
+    # AbCellera's FY2023 D&A was added to its FY2025 operating income.
+    op, op_stale = current_annual(facts, "operating_income")
+    da, da_stale = current_annual(facts, "dep_amort")
+    ocf, ocf_stale = current_annual(facts, "operating_cash_flow")
+    capex, capex_stale = current_annual(facts, "capex")
+    eps, eps_stale = current_annual(facts, "eps_diluted")
 
-    op_sign = _present_i(_sign(op.value), op.filed) if op else _unknown_i("no operating_income")
+    op_sign = (_present_i(_sign(op.value), op.filed) if op
+               else _unknown_i(_why("no operating_income", op_stale)))
     if ocf and capex:
         fcf_sign = _present_i(_sign(ocf.value - capex.value), max(ocf.filed, capex.filed))
     else:
-        fcf_sign = _unknown_i("no OCF/capex")
+        fcf_sign = _unknown_i(_why("no OCF/capex", ocf_stale, capex_stale))
 
     ebitda_val: float | None = None
     if op and da:
         ebitda_val = op.value + da.value
         ebitda = _present_f(op.value + da.value, max(op.filed, da.filed))
     else:
-        ebitda = _unknown_f("no operating_income/D&A")
+        ebitda = _unknown_f(_why("no operating_income/D&A", op_stale, da_stale))
 
     # ONE builder, every line at ONE balance-sheet date (vinci.edgar.net_debt, §5.0 row 27 (1)):
     # each leg used to be read at its OWN latest date, so a tag the filer stopped using was served
@@ -172,7 +183,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     if net_debt_val is None:
         net_lev = _unknown_f(no_nd)
     elif ebitda_val is None:
-        net_lev = _unknown_f("no EBITDA in XBRL")
+        net_lev = _unknown_f(_why("no EBITDA in XBRL", op_stale, da_stale))
     elif ebitda_val <= 0:
         net_lev = _unknown_f("EBITDA<=0 (ratio meaningless)")
     elif not net_debt_f.as_of:
@@ -186,7 +197,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     if net_debt_val is None:
         net_ocf = _unknown_f(no_nd)
     elif ocf is None:
-        net_ocf = _unknown_f("no operating cash flow in XBRL")
+        net_ocf = _unknown_f(_why("no operating cash flow in XBRL", ocf_stale))
     elif ocf.value <= 0:
         net_ocf = _unknown_f("OCF<=0 (ratio meaningless)")
     elif not net_debt_f.as_of:
@@ -194,7 +205,8 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     else:
         net_ocf = _present_f(net_debt_val / ocf.value, net_debt_f.as_of)
 
-    eps_df = _present_f(eps.value, eps.filed) if eps else _unknown_f("no diluted EPS")
+    eps_df = (_present_f(eps.value, eps.filed) if eps
+              else _unknown_f(_why("no diluted EPS", eps_stale)))
     filed_dates = [p.filed for p in (op, da, ocf, capex, eps) if p] + ([nd.filed] if nd else [])
     return FundamentalSnapshot(
         cik=cik10,
