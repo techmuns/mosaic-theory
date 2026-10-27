@@ -6,8 +6,9 @@ automatic review never fired on a PR this repo's agents open: #784, #785, #786 a
 unreviewed until someone typed `@codex review` by hand, which is the step a busy session forgets.
 This posts it the moment `gh pr create` succeeds, so Codex reviews while the session works on.
 
-WHEN. All of: the Bash command RUNS `gh pr create` (review_gate.opens_a_pr — a commit message that
-mentions it opens nothing); the call succeeded (PostToolUse fires only on exit 0 — a failed create
+WHEN. All of: the Bash command RUNS a PR create — `gh pr create`, `env -u GH_TOKEN gh pr create`,
+or `gh api` POSTing to the pulls endpoint (review_gate.opens_a_pr — a commit message that mentions
+one opens nothing); the call succeeded (PostToolUse fires only on exit 0 — a failed create
 fires PostToolUseFailure, which this is not wired to); Claude Code reports the PR it created
 (`tool_response.gitOperation.pr`, else the URL gh prints); the PR is in this checkout's own GitHub
 repository (`origin`), so a PR opened elsewhere from this session is never commented on; and the

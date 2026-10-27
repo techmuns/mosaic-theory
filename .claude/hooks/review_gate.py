@@ -25,6 +25,12 @@ result reaches the transcript (measured 2026-10-26), several results in one entr
 record, and a create that printed nothing (`> out.txt`) leaves none — so an unread outcome may be
 a PR just opened.
 
+WHAT OPENS A PR (2026-10-27). `gh pr create` or its alias `gh pr new`, behind any VAR=value,
+wrapper word or `env` option; or `gh api` POSTing to `repos/{owner}/{repo}/pulls`. #812 opened with
+`env -u GH_TOKEN … gh pr create`, which the reading missed — so this gate never checked it and no
+Codex review was asked for — and a memory note recommended the `gh api` route, which neither hook
+saw at all. A GET of `…/pulls`, a merge, a review or a comment opens nothing.
+
 WHAT IS NOT GATED. A branch that changes no code against `origin/main` — records, STATE.md,
 committed data, artifact passes — opens freely: reviewing a 266k-line artifact diff buys nothing.
 
@@ -35,7 +41,9 @@ files that were already-merged commits on the session's own stale branch — and
 in a clean folder could open a real code PR from elsewhere unreviewed. Now, in order:
 `--head <branch>` → that branch's commits against `--base` (the PR's exact content); else the
 directory the command `cd`s into before `gh pr create`; else the hook's `cwd`. A `cd` the hook
-cannot resolve (`cd "$W"`) with no `--head` is UNKNOWN, and unknown is gated like code.
+cannot resolve (`cd "$W"`) with no `--head` is UNKNOWN, and unknown is gated like code. So is a
+`gh api` create whose head the command does not show (`--input pr.json`, `head=$B`): it opens that
+head, never the checkout's branch (Codex on #813).
 
 Fails OPEN with a visible warning when the transcript cannot be read; the operator still reviews
 and merges every PR. Standard library only, Python 3.9+ (hooks run under the system `python3`).
@@ -51,16 +59,26 @@ import sys
 from pathlib import Path
 from typing import NamedTuple
 
-#: `gh pr create` at a COMMAND position (start, or after ; & | ( or a newline, optionally behind
-#: VAR=value prefixes and wrapper words like `time`/`env`) — never inside a quoted commit message
-#: that merely mentions it.
-PR_CREATE = re.compile(r"(?:^|[;&|(\n])\s*(?:(?:[A-Za-z_]\w*=\S*|time|env|command|exec|nice|nohup)"
-                       r"\s+)*gh\s+pr\s+create\b")
+#: Words before a command that only set up how it runs: VAR=value, a wrapper word like `time`,
+#: or `env` with its own options. Two real forms ran unseen until 2026-10-27: `env -u GH_TOKEN gh
+#: pr create` (#812) and `GH_TOKEN=$(cat ~/.mosaic_gh_token) gh pr create`, a value holding a
+#: space (60 creates in this project's transcripts). Each piece matches ONE way — a `$` opens a
+#: `$(…)` only where one follows, an option's NAME never starts with `-` — or a long run of them
+#: ending in no create backtracks exponentially (22 `$(a)` segments took 1.2 s, doubling each).
+_PREFIX = (r"(?:[A-Za-z_]\w*=(?:\$\([^()]*\)|[^\s$]|\$(?!\())*|time|command|exec|nice|nohup"
+           r"|env(?:\s+(?:-u\s+[^\s-]\S*|--unset\s+[^\s-]\S*|-\S*))*)")
+#: `gh pr create` (or its alias `gh pr new`) at a COMMAND position (start, or after ; & | ( or a
+#: newline, optionally behind _PREFIX words) — never inside a quoted commit message that merely
+#: mentions it.
+PR_CREATE = re.compile(rf"(?:^|[;&|(\n])\s*(?:{_PREFIX}\s+)*gh\s+pr\s+(?:create|new)\b")
 #: Heredoc bodies and quoted strings are DATA, not commands: a test file written with
 #: `cat <<'EOF'` that contains `cd x && gh pr create` opened no PR (found on this gate's own live
 #: transcript, 2026-10-22). They are removed before the command-position match.
 HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1[^\n]*\n.*?^\s*\2\s*$", re.S | re.M)
 QUOTED = re.compile(r"'[^']*'|\"(?:\\.|[^\"\\])*\"")
+#: A backslash-newline joins two lines into one command: read as a break, it cut the `head=` field
+#: off 11 of the 62 real `gh api` creates in this project's transcripts (2026-10-27).
+CONTINUATION = re.compile(r"\\\n")
 #: An operator-typed `/code-review <args>` is recorded as a user command message.
 TYPED_REVIEW = re.compile(r"<command-name>/?(?:[\w-]+:)?code-review</command-name>")
 TYPED_ARGS = re.compile(r"<command-args>([^<]*)</command-args>")
@@ -117,17 +135,27 @@ def code_files_changed(root: Path, head: str | None = None, base: str = "main") 
 
 class Target(NamedTuple):
     """Where the PR comes from: the directory its command runs in (None = could not tell), the
-    ``--head`` branch if given, and the ``--base`` branch."""
+    head branch if named (``--head``, or a `gh api` ``head=`` field), the base branch, and whether
+    the PR has a head the command does not show (a `gh api` create's, in ``--input`` or ``$B``)."""
 
     directory: str | None
     head: str | None
     base: str
+    head_unread: bool = False
 
 
 #: A shell token made only of these characters separates commands (``&&``, ``;``, ``|`` …).
 _OPERATOR = re.compile(r"[;&|()<>]+")
 #: Words that run the command after them, so the command position carries through them.
 _WRAPPERS = {"time", "env", "command", "exec", "nice", "nohup"}
+#: `env` options whose value is the next word (`env -u GH_TOKEN gh pr create`).
+_ENV_VALUED = {"-u", "--unset"}
+#: The REST endpoint a POST to which opens a pull request: /repos/{owner}/{repo}/pulls.
+PULLS = re.compile(r"(?:https://api\.github\.com)?/?repos/[^/\s?]+/[^/\s?]+/pulls/?(?:\?\S*)?")
+#: `gh api` options whose value is the next word, so that word is not the endpoint.
+_API_VALUED = {"-X", "--method", "-f", "--raw-field", "-F", "--field", "-H", "--header",
+               "--input", "-q", "--jq", "-t", "--template", "--hostname", "-p", "--preview",
+               "--cache"}
 
 
 def _flag(args: list[str], *names: str) -> str | None:
@@ -148,22 +176,82 @@ def _cd(current: str | None, arg: str) -> str | None:
     return str(path if path.is_absolute() else Path(current) / path)
 
 
-def pr_target(command: str, cwd: str) -> Target:
-    """Read the shell text the way the shell will run it, up to the `gh pr create` it contains."""
-    text = HEREDOC.sub("", command).replace("\n", " ; ")
+def _api_fields(args: list[str]) -> dict[str, str] | None:
+    """The fields of the pull request a `gh api` call with ``args`` opens — None when it opens
+    none. gh sends ``--method`` when given, else POST when a field or ``--input`` is passed, else
+    GET: so a GET of `…/pulls`, a merge, a review or a comment never counts as a create."""
+    endpoint: str | None = None
+    method = ""
+    fields: dict[str, str] = {}
+    has_input = False
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        if arg.startswith("--"):
+            name, eq, value = arg.partition("=")
+        elif arg[:2] in _API_VALUED and len(arg) > 2:
+            name, eq, value = arg[:2], "=", arg[2:]     # `-fhead=x`, `-XPOST`: value attached
+        else:
+            name, eq, value = arg, "", ""
+        if name in _API_VALUED:
+            if not eq:
+                value = args[i + 1] if i + 1 < len(args) else ""
+                i += 1
+            if name in ("-X", "--method"):
+                method = value
+            elif name == "--input":
+                has_input = True
+            elif name in ("-f", "--raw-field", "-F", "--field"):
+                key, _, val = value.partition("=")
+                fields[key] = val
+        elif not arg.startswith("-") and endpoint is None:
+            endpoint = arg
+        i += 1
+    posts = (method or ("POST" if fields or has_input else "GET")).upper() == "POST"
+    return fields if posts and endpoint is not None and PULLS.fullmatch(endpoint) else None
+
+
+def _created(words: list[str]) -> tuple[str | None, str, bool] | None:
+    """The ``(head, base, head_unread)`` of the pull request the command ``words`` opens — None
+    when it opens none: `gh pr create|new [--head H] [--base B]`, or `gh api` POSTing `head=H
+    base=B` to the pulls endpoint (the route a memory note recommended until 2026-10-27, unseen by
+    both hooks). `gh pr create` without a head opens the checkout's own branch; a `gh api` create
+    always has one, so when the hook cannot read it (Codex on #813: `--input pr.json` carries it in
+    the file) ``head_unread`` is True — the head is UNKNOWN, not the checkout's."""
+    api = False
+    if words[:3] in (["gh", "pr", "create"], ["gh", "pr", "new"]):
+        head, base = _flag(words[3:], "--head", "-H"), _flag(words[3:], "--base", "-B")
+    elif words[:2] == ["gh", "api"] and (fields := _api_fields(words[2:])) is not None:
+        head, base, api = fields.get("head"), fields.get("base"), True
+    else:
+        return None
+    if head is not None and any(c in head for c in "$`"):
+        head = None                         # a computed branch name the hook cannot evaluate
+    elif head is not None:
+        head = head.split(":", 1)[-1]       # GitHub's cross-fork `owner:branch` form
+    return head, base or "main", api and head is None
+
+
+def _walk(command: str, cwd: str | None) -> tuple[Target, bool]:
+    """Read the shell text the way the shell will run it, up to the first PR create it contains:
+    where that PR comes from, and whether a create was found at all."""
+    text = CONTINUATION.sub("", HEREDOC.sub("", command)).replace("\n", " ; ")
     lexer = shlex.shlex(text, posix=True, punctuation_chars=True)
     lexer.whitespace_split = True
     try:
         tokens = list(lexer)
     except ValueError:                      # unbalanced quotes: the shell's reading is unknowable
-        return Target(None, None, "main")
+        return Target(None, None, "main"), False
     directory: str | None = cwd
     at_start = True
+    in_env = False                          # reading `env`'s own options
     i = 0
     while i < len(tokens):
         token = tokens[i]
         if _OPERATOR.fullmatch(token):
             at_start = True
+        elif at_start and in_env and token.startswith("-"):
+            i += 1 if token in _ENV_VALUED else 0   # `-u NAME`: NAME is the option's, no command
         elif at_start and (re.fullmatch(r"[A-Za-z_]\w*=.*", token) or token in _WRAPPERS):
             pass                            # VAR=value or a wrapper word before the command
         elif at_start and token == "cd":
@@ -171,27 +259,36 @@ def pr_target(command: str, cwd: str) -> Target:
             directory = _cd(directory, "~" if _OPERATOR.fullmatch(nxt) else nxt)
             i += 0 if _OPERATOR.fullmatch(nxt) else 1
             at_start = False
-        elif at_start and token == "gh" and tokens[i + 1:i + 3] == ["pr", "create"]:
-            args = []
-            for arg in tokens[i + 3:]:
-                if _OPERATOR.fullmatch(arg):
+        elif at_start and token == "gh":
+            words = [token]
+            for word in tokens[i + 1:]:
+                if _OPERATOR.fullmatch(word):
                     break
-                args.append(arg)
-            head = _flag(args, "--head", "-H")
-            if head is not None and any(c in head for c in "$`"):
-                head = None                 # a computed branch name the hook cannot evaluate
-            elif head is not None:
-                head = head.split(":", 1)[-1]   # GitHub's cross-fork `owner:branch` form
-            return Target(directory, head, _flag(args, "--base", "-B") or "main")
+                words.append(word)
+            created = _created(words)
+            if created is not None:
+                return Target(directory, *created), True
+            at_start = False
         else:
             at_start = False
+        in_env = at_start and (token == "env" or (in_env and token.startswith("-")))
         i += 1
-    return Target(directory, None, "main")
+    return Target(directory, None, "main"), False
+
+
+def pr_target(command: str, cwd: str) -> Target:
+    """Where the PR the shell text opens comes from (``_walk``)."""
+    return _walk(command, cwd)[0]
 
 
 def opens_a_pr(command: str) -> bool:
-    """True when the shell text RUNS `gh pr create`, not when it merely contains the words."""
-    return bool(PR_CREATE.search(QUOTED.sub("''", HEREDOC.sub("", command))))
+    """True when the shell text RUNS a PR create — `gh pr create`, or a POST to the pulls endpoint
+    through `gh api` — not when it merely contains the words."""
+    if PR_CREATE.search(QUOTED.sub("''", HEREDOC.sub("", command))):
+        return True
+    # A POST's method, endpoint and fields sit in any order among its words, so only the word-by-
+    # word reading can see one; the `pulls` test keeps that reading off every other command.
+    return "pulls" in command and _walk(command, None)[1]
 
 
 def _skill_review(item: dict[str, object]) -> bool:
@@ -306,6 +403,9 @@ def judged_code(command: str, start: str) -> Judged | None:
         root = repo_root(directory)
         if root is None:
             return None                     # the PR comes from a checkout of another repo
+        if target.head_unread:
+            return Judged(["(the head branch could not be read from the command — treated as "
+                           "code)"], "this PR", target.base)
         code = code_files_changed(root, target.head, target.base)
         where = f"branch {target.head}" if target.head else f"the checkout at {root}"
     elif target.head is not None and (root := repo_root(start)) is not None:
