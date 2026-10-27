@@ -405,7 +405,9 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # 11 since 2026-10-27: `foreign_private_issuer` joined the funnel by operator ruling (STATE row
     # 33) — a line the feed types ADRC/GDR/OS, or whose issuer's latest periodic report is a 20-F
     # or 40-F, leaves the primary band with its evidence. A real drop stage, emitting its row.
-    assert len(DROP_STAGES) == 11, DROP_STAGES
+    # 12 the same day (#828, round 1): `fpi_status_unread` — an issuer whose filing index could not
+    # be read is held out under its own reason rather than admitted as a domestic filer.
+    assert len(DROP_STAGES) == 12, DROP_STAGES
     tree = ast.parse(inspect.getsource(build_universe).lstrip())
     fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
               and n.name == "build_universe")

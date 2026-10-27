@@ -66,7 +66,8 @@ OUT = SNAP / "cohort_pool.jsonl"
 #: readiness), not out of their industries: an industry's move is the industry's wherever the
 #: issuer files, and without this stage the 262 lines it removes from the 2026-10-16 build (85 typed
 #: ADRC, 114 on a 20-F, 63 on a 40-F) would leave the medians as well as the queue.
-POOLABLE = ("out_of_band", "below_adv_floor", "no_shares", "foreign_private_issuer")
+POOLABLE = ("out_of_band", "below_adv_floor", "no_shares", "foreign_private_issuer",
+            "fpi_status_unread")
 
 #: How many EDGAR resolver failures are tolerated before the run is abandoned. A few dead CIKs are
 #: normal; a wave is an outage, and an outage that only thins the pool is invisible in the output.

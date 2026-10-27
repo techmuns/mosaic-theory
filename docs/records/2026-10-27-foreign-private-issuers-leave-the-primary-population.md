@@ -33,6 +33,22 @@ readiness lands.** This record ships that ruling.
   changes the yardstick, not the shopping list" — still holds. Without this, the excluded names
   would have left the industry medians as well as the queue.
 
+**ROUND 1 (Codex P2, lane owner's ruling): the WHOLE filing index is read, and an unread one is held
+out.** The first cut read only the submissions index's RECENT block. An issuer whose latest 20-F/40-F
+had scrolled out of it — behind many 6-Ks, or in a historical build — read as having no periodic
+report and was admitted as a domestic filer: absence read off incomplete data.
+- `EntityResolver.latest_report` now walks the older pages (`filings.files`), newest first,
+  skipping any that begins after the reference date.
+- A page the SEC will not serve raises, and the builder holds that line out at a SECOND named
+  stage, **`fpi_status_unread`** (`DROP_STAGES` 11 → 12), counted in the snapshot and never
+  admitted by default. It is poolable like `foreign_private_issuer`.
+- **Pinned** on ZIM's real index split where its 20-F falls (fails on the PR head), an unreadable
+  page, a page dated after the build, and RIG held out when its index cannot be read.
+- **Real run re-done:** the 2026-10-16 replay is unchanged at 1,803, with 0 lines at
+  `fpi_status_unread`. No member needed an older page on that run; the replay refuses the
+  network, so any page fetch would have shown. AYA, OGC, GORO and MDA are still admitted: each
+  one's whole filing history sits in its recent block, and none has filed a periodic report.
+
 **THE SIGNED-OFF POPULATION MOVES, BY OPERATOR RULING.** `docs/records/2026-09-01-population-
 signoff-2113.md` sealed 2,113 as the baseline and said a build moving it owes its own sign-off. This
 move IS one: the operator's ruling of 2026-10-27, not an engineering choice.

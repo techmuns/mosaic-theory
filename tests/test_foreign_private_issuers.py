@@ -45,7 +45,7 @@ def _ident(t: str) -> Identity:
 
 
 def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, tickers: list[str], *,
-         exclude: bool | None = None, band_name: str = "primary",
+         exclude: bool | None = None, band_name: str = "primary", unread: bool = False,
          ) -> tuple[dict, set[str], dict[str, dict]]:
     """The REAL builder over real lines, one issuer each; returns (stats, admitted, drops)."""
     idents = [_ident(t) for t in tickers]
@@ -59,6 +59,9 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, tickers: list[str], *,
         def latest_report(self, cik: str, as_of: date) -> tuple[str, date, str] | None:
             t = next(t for t in tickers if _FIX[t]["cik"] == cik)
             assert "recent_filings" in _FIX[t], f"{t} is decided by its type, never its filings"
+            if unread:
+                from vinci.netcache import HttpError
+                raise HttpError("503 from the SEC on an older submissions page")
             return latest_report(_subs(t), as_of)
 
     class _E:
@@ -181,3 +184,73 @@ def test_every_admitted_type_but_common_stock_is_a_foreign_line() -> None:
     allowlist later must be classed one way or the other, deliberately."""
     from vinci.universe import FOREIGN_LINE_TYPES
     assert set(FOREIGN_LINE_TYPES) == set(Config().universe.allowed_security_types) - {"CS"}
+
+
+class _PagedIndex:
+    """ZIM's REAL filing index, split where its 20-F falls: every row before it as the RECENT
+    block, the 20-F and the rows after it as one older page (the split is the construction — a
+    heavy 6-K filer's recent block runs out before its annual report; every row is ZIM's)."""
+
+    def __init__(self, *, page_from: str = "2025-01-01", page_fails: bool = False) -> None:
+        rows = _FIX["ZIM"]["recent_filings"]
+        i = rows["form"].index("20-F")
+        self.recent = {k: v[:i] for k, v in rows.items()}
+        self.page = {k: v[i:] for k, v in rows.items()}
+        self.page_from, self.page_fails = page_from, page_fails
+        self.asked: list[str] = []
+
+    def get_json(self, url: str, *, ttl_seconds: float | None = None,
+                 params: object = None) -> Any:
+        self.asked.append(url.rsplit("/", 1)[-1])
+        if url.endswith(f"CIK{_FIX['ZIM']['cik']}.json"):
+            return {"filings": {"recent": self.recent, "files": [
+                {"name": "CIK0001654126-submissions-001.json", "filingFrom": self.page_from,
+                 "filingTo": "2026-03-31"}]}}
+        if self.page_fails:
+            from vinci.netcache import HttpError
+            raise HttpError("503 from the SEC")
+        return self.page
+
+
+def test_a_20f_older_than_the_recent_block_is_found_on_the_older_pages() -> None:
+    """CODEX, #828 round 1. Reading only the RECENT block took "no periodic report there" for "not
+    a foreign private issuer" and admitted the line — absence read off incomplete data. The older
+    pages are walked until a periodic report is found."""
+    from vinci.resolver import EntityResolver
+    http = _PagedIndex()
+    assert latest_report({"filings": {"recent": http.recent}}, _REF) is None   # the old reading
+    got = EntityResolver(http=http).latest_report(_FIX["ZIM"]["cik"], _REF)  # type: ignore[arg-type]
+    assert got == ("20-F", date(2026, 3, 9), "0001178913-26-000784")
+    assert http.asked[-1] == "CIK0001654126-submissions-001.json"
+
+
+def test_an_older_page_that_cannot_be_read_fails_loud() -> None:
+    """A page the SEC will not serve is not "no report": the reader raises rather than answer
+    None, which the builder would read as a domestic filer."""
+    from vinci.netcache import HttpError
+    from vinci.resolver import EntityResolver
+    with pytest.raises(HttpError):
+        EntityResolver(http=_PagedIndex(page_fails=True)).latest_report(  # type: ignore[arg-type]
+            _FIX["ZIM"]["cik"], _REF)
+
+
+def test_a_page_that_starts_after_the_reference_date_is_never_read() -> None:
+    """POINT IN TIME, and no wasted call: a page of filings made after the build's date cannot hold
+    the report the build may read."""
+    from vinci.resolver import EntityResolver
+    http = _PagedIndex(page_from="2026-11-01")
+    assert EntityResolver(http=http).latest_report(  # type: ignore[arg-type]
+        _FIX["ZIM"]["cik"], _REF) is None
+    assert http.asked == ["CIK0001654126.json"]
+
+
+def test_an_issuer_whose_index_cannot_be_read_is_held_out_under_its_own_reason(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """#828, round 1 (the lane owner's ruling): an unread filing index is held out at
+    `fpi_status_unread`, counted — never admitted as a domestic filer, and never the build's end.
+    RIG, a real 10-Q filer, shows it: unread, it does not get in on the absence of an answer."""
+    assert "fpi_status_unread" in DROP_STAGES
+    stats, admitted, drops = _run(monkeypatch, tmp_path, ["RIG"], unread=True)
+    assert admitted == set() and stats["fpi_status_unread"] == 1
+    assert drops["RIG"]["stage"] == "fpi_status_unread"
