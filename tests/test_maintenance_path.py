@@ -310,10 +310,10 @@ def test_the_caveat_reports_the_last_real_verdict_not_the_bare_absence() -> None
 def test_the_standalone_record_is_truncated_to_its_own_reference_date() -> None:
     """THE VINTAGE PIN, and the bug it caught. `compute_price_features` takes `bars[-1]` as
     "latest" and never filters — it uses `reference_date` only for staleness and window starts. The
-    screen gets away with passing full history because at screen time the frontier IS the reference
-    date. Here it is not, and the first cut stamped IT's 2026-08-04 close ($185.79) onto a
-    2026-07-06 record: a value contradicting its own vintage mark, which is the class this repo
-    keeps paying for.
+    screen cuts the same way since 2026-10-28 (`screens.run._bars_to`); before, a past-dated replay
+    read later prices. Here the frontier is rarely the reference date, and the first cut stamped
+    IT's 2026-08-04 close ($185.79) onto a 2026-07-06 record: a value contradicting its own vintage
+    mark, which is the class this repo keeps paying for.
 
     Asserted against the STORE, not a literal, so it cannot rot as bars accumulate."""
     import datetime as dt
