@@ -107,7 +107,7 @@ def screen_universe(
     bench = benchmark_identity(benchmark)
     store.upsert_security(bench)
     ingest_prices(eod, store, [bench], start=start, end=reference_date)
-    bench_bars = store.get_price_history(bench.internal_id)
+    bench_bars = _bars_to(store, bench.internal_id, reference_date)
 
     run_at = datetime.combine(reference_date, datetime.min.time())
     store.clear_candidates()  # FULL replace — a re-screen is a clean snapshot, never an accretion
@@ -134,7 +134,7 @@ def screen_universe(
 
     for i, s in enumerate(universe, start=1):
         reporter.tick(i, suffix=f"{g1_survivors} enriched")
-        bars = store.get_price_history(s.internal_id)
+        bars = _bars_to(store, s.internal_id, reference_date)
         rec = build_price_record(
             s, price_bars=bars, benchmark_bars=bench_bars,
             reference_date=reference_date, staleness_days=staleness_days,
@@ -197,6 +197,23 @@ def screen_universe(
         "universe_as_of": universe_as_of.isoformat() if universe_as_of else None,
     }
     return candidates, stats
+
+
+def _bars_to(store: Store, internal_id: str, reference_date: date) -> list[PriceBar]:
+    """One name's stored bars ON OR BEFORE ``reference_date`` — the screen's only read of prices.
+
+    THE CUT IS HERE, ONCE, for every reader downstream: the record (`build_price_record`), the
+    gate inputs retained with their windows (`_gate_inputs`) and the fundamentals' P/E range.
+    `compute_price_features` takes ``bars[-1]`` as the latest close and uses ``reference_date``
+    only for staleness and window starts, so it read the store's LATEST bar whatever the date.
+    A run on today's date never saw that, because the store's frontier IS its reference date. A
+    ``vinci screen --ref <past>`` replay did: AMZN replayed at 2025-12-31 drew G1 off the
+    2026-10-16 close ($250.00, a drawdown of −12.95%) and stamped it 2026-10-16, where that day's
+    close was $230.82 (−10.74%). The maintenance route has cut its bars this way since the IT case
+    (`dossier/assemble.py`); the dossier's price box reads the latest close on purpose
+    (`mechanical._at_latest_close`), so the cut belongs to the screen, not the feature function.
+    """
+    return [b for b in store.get_price_history(internal_id) if b.bar_date <= reference_date]
 
 
 #: The G1/G2 price inputs. Windowed, so each also carries span_days + observations.
