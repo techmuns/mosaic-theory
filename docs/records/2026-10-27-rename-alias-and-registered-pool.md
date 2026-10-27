@@ -177,6 +177,16 @@ recorded. `detect_renames` now takes the build's date and reads the successor as
 5. **A line renamed TWICE carries only its last step's bars.** C gets B's bars, and B holds A's
    only if B was ever admitted (review round 0, deferred: no chain exists in the measured
    renames). Incumbency DOES follow the whole chain.
-6. **Old ids in the ledger are not mirrored forward.** No ledger row is on a renamed line today.
+6. **An old ticker another issuer has since reused is not a candidate** (Codex P2, #833 round 2,
+   DEFERRED). The candidate filter skips an old ticker that is in TODAY's reference pull, so if
+   another issuer reused it, the rename is missed and the successor gets neither the history nor
+   the incumbency.
+   - Measured: across the 8 pulls (2026-07-13 → 10-17), 49 classes were renamed and **0** old
+     tickers are active again under another class or CIK.
+   - Fixing it needs a ticker-ownership check per candidate (CIK-aware, not ticker-only), which
+     reaches every resolver fake in the suite. Deferred, not built speculatively.
+   - FALSIFIER: an old ticker of a renamed class appearing in a reference pull under another CIK
+     or FIGI.
+7. **Old ids in the ledger are not mirrored forward.** No ledger row is on a renamed line today.
    If one were, its scoring would stop at the rename (StaleExitError, #820). FALSIFIER: a ledger
    row whose id has a successor in the alias table.
