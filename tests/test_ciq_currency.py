@@ -360,6 +360,20 @@ def test_each_backfill_proof_refuses_on_its_own(tmp_path: pathlib.Path) -> None:
         assert out.get("ciq_currency") == before, why
 
 
+def test_a_stamped_export_missing_from_the_folder_refuses_the_backfill(
+        tmp_path: pathlib.Path) -> None:
+    """(−) Codex, #819 round 1: the page stamps a Financials and an Estimates export, and the folder
+    no longer holds one of them. Building the block from what remains would leave that export's
+    panels unreported, so the page is refused and keeps no block."""
+    full = _bundle("AMZN", drop=("comps",), root=tmp_path)
+    for i, gone in enumerate(("financials", "estimates")):
+        (tmp_path / str(i)).mkdir()
+        rest = _bundle("AMZN", drop=("comps", gone), root=tmp_path / str(i))
+        out, refused = _run(_page(full), rest)
+        assert len(refused) == 1 and "the folder does not hold" in refused[0], (gone, refused)
+        assert "ciq_currency" not in out, gone
+
+
 def test_every_committed_block_agrees_with_its_own_panels() -> None:
     """END TO END on the committed pages, phrasing-free: where a page carries the block, every
     panel's outcome is what its stated currencies give, and the page's is what its panels give."""

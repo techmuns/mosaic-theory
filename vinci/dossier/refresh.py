@@ -1651,6 +1651,11 @@ def ciq_currency_transform(doc: dict[str, Any], *, refused: list[str],
         if e is not None and (est is None or _sha(e) != est):
             out.append("the Estimates is not the export the page stamps"
                        if est else "the page stamps no Estimates export")
+        # A STAMPED EXPORT THE FOLDER NO LONGER HOLDS (Codex, #819): the block built from what is
+        # left would leave that export's panels unreported
+        for held, stamp, what in ((q, fin_q, "quarterly Financials"), (e, est, "Estimates")):
+            if held is None and stamp is not None:
+                out.append(f"the page stamps a {what} export the folder does not hold")
         if bundle.workbook("financials", freq="annual") is not None:
             table = ((mech.get("financial_summary") or {}).get("annual") or {}).get("value")
             got = {(f.line, f.column): f.value for f in sr.ciq_figures(bundle)}

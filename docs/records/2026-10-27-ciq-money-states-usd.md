@@ -52,6 +52,8 @@ superseded-by:
   - the annual Financials by its revenue and operating cash flow reproducing the page's annual
     table (#805's proof);
   - the comps book by its peer grid reproducing the page's, row for row.
+  - A page whose stamped Financials or Estimates export is no longer in the folder is refused,
+    so no block is built from what remains (Codex, #819 round 1).
 
 **Item 10: checks that give no structured outcome, re-measured.**
 
