@@ -70,8 +70,9 @@ Auto-fix on, so Codex's comments, on both reviews, wake it.
     `HEAD:<branch>`, `cd`, `-C`, `env -u`, and an upstream named apart from the local branch.
   - A push that has not landed tells the session and does not ask.
   - The gate refuses a create on a heredoc marker line.
-- **Mutation:** 13 mutants, one per condition, plus the reader and heredoc changes. All 13 are
-  killed. The upstream-branch mutant survived the first run, and its pin was then added.
+- **Mutation:** 15 mutants, one per condition, plus the reader and heredoc changes. All 15 are
+  killed. The upstream-branch mutant survived the first run, and its pin was then added. The
+  `--git-dir` and combined `-qn` mutants were added with the code review's fixes.
 - **Gates:** `ruff` and `mypy --strict` are clean on both hooks. Both hooks parse as Python 3.9,
   the system `python3` the hooks run under.
 
@@ -91,7 +92,13 @@ Auto-fix on, so Codex's comments, on both reviews, wake it.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **API calls:** every `git push` now makes one `gh pr list` call (about a second). A push whose
-  PR head has not moved yet makes up to three calls with 2-second waits.
+  PR head has not moved yet makes up to three calls with 2-second waits. No further look starts
+  after 10 s, and the push path's gh calls are capped at 20 s each, so the hook stays inside its
+  90 s.
+- **The pushed commit is the checkout's HEAD.** A push of another ref onto the PR's branch
+  (`git push origin other:code`) is not recognised as landed. It waits, and if Codex found issues
+  and code changed, it tells the session to check by hand. Found by the code review and left as
+  it is: the session is told, never silently skipped.
 - **Trigger timing:** the re-review fires on the FIRST code push after Codex's findings. A code
   push before the round's fixes, such as a lint fix pushed early, spends it. The skill's §3 says to
   push a round's fixes together.

@@ -946,7 +946,7 @@ def test_codex_request_reads_only_a_real_push(tmp_path: pathlib.Path) -> None:
     """Nothing is asked of GitHub for what pushes nothing — a dry run, a mention, another git
     command — so the hook costs no call on the Bash calls that are not pushes."""
     repo, _, head = _fixed(tmp_path)
-    for command in ("git push -n origin code", "git push --dry-run", "git status",
+    for command in ("git push -n origin code", "git push -qn", "git push --dry-run", "git status",
                     "echo 'then git push'", 'git commit -qm "fix, then git push"',
                     "cat > note.md <<'EOF'\ngit push -q\nEOF"):
         assert _opened(repo, command, response=PUSHED, prs=_pr_list(head))[1] == [], command
@@ -959,17 +959,17 @@ def test_codex_request_reads_every_way_this_project_pushes(tmp_path: pathlib.Pat
     elsewhere = tmp_path / "session"
     elsewhere.mkdir()
     comments = ("@codex review", _codex_summary(reviewed))
-    for command in (
-            "git add -A && git commit -q -F - <<'MSG' && git push -q 2>&1 | tail -1\n"
-            "Fix what Codex found\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nMSG",
-            "git -c credential.helper= -c 'credential.helper=!gh auth git-credential' "
-            "push -q origin HEAD:code",
-            f"cd {repo} && git push -q -u origin code",
-            f"git -C {repo} push",
-            "env -u GH_TOKEN git push --force-with-lease"):
+    for command, start in (
+            ("git add -A && git commit -q -F - <<'MSG' && git push -q 2>&1 | tail -1\n"
+             "Fix what Codex found\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nMSG", repo),
+            ("git -c credential.helper= -c 'credential.helper=!gh auth git-credential' "
+             "push -q origin HEAD:code", repo),
+            (f"cd {repo} && git push -q -u origin code", elsewhere),
+            (f"git -C {repo} push", elsewhere),
+            (f"git --git-dir {repo}/.git -C {repo} push", elsewhere),
+            ("env -u GH_TOKEN git push --force-with-lease", repo)):
         assert REQUEST in _opened(repo, command, response=PUSHED, comments=comments,
-                                  prs=_pr_list(head), start=elsewhere if repo.name in command
-                                  else None)[1], command
+                                  prs=_pr_list(head), start=start)[1], command
 
 
 def test_codex_request_finds_the_pr_a_bare_push_lands_on(tmp_path: pathlib.Path) -> None:
@@ -997,6 +997,11 @@ def test_codex_request_says_so_when_the_push_has_not_reached_the_pr(
     assert REQUEST not in calls and sum(c[:2] == ["pr", "list"] for c in calls) == 3
     told = json.loads(out.stdout)["hookSpecificOutput"]["additionalContext"]
     assert "post the one re-review by hand" in told and f"gh pr comment {URL}" in told
+    # a lagging push that changed no code owes Codex nothing, so it advises nothing
+    docs, reviewed, _ = _fixed(tmp_path / "d", "docs")
+    out, calls = _opened(docs, "git push", response=PUSHED, prs=_pr_list(reviewed, "docs"),
+                         comments=("@codex review", _codex_summary(reviewed)))
+    assert REQUEST not in calls and out.stdout == ""
 
 
 def test_codex_request_tells_the_session_to_switch_on_auto_fix(tmp_path: pathlib.Path) -> None:

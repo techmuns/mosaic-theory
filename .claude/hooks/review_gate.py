@@ -177,7 +177,7 @@ def _flag(args: list[str], *names: str) -> str | None:
     return None
 
 
-def _cd(current: str | None, arg: str) -> str | None:
+def resolve_cd(current: str | None, arg: str) -> str | None:
     """Where ``cd arg`` lands from ``current`` — None when the shell alone could resolve it."""
     if current is None or any(c in arg for c in "$`") or arg == "-":
         return None
@@ -270,7 +270,7 @@ def commands(command: str, cwd: str | None) -> Iterator[tuple[str | None, list[s
                     break
                 words.append(word)
             if token == "cd":
-                directory = _cd(directory, words[1] if len(words) > 1 else "~")
+                directory = resolve_cd(directory, words[1] if len(words) > 1 else "~")
             yield directory, words
             i += len(words) - 1
             at_start = False

@@ -63,10 +63,14 @@ CAP = 2
 #: Codex's own record on its summary comment — the commit it last reviewed, whether that review
 #: completed, and whether it found anything: `<!-- codex-review-state:v1 {"code_review": …} -->`.
 CODEX_STATE = re.compile(r"codex-review-state:v1\s+(\{.*?\})\s*-->", re.S)
+#: git's own options whose value is the next word (`git -C <dir> push`, `git --git-dir <d> push`).
+_GIT_VALUED = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--config-env"}
 #: `git push` options whose value is the next word, so that word is not a remote or a refspec.
 _PUSH_VALUED = {"-o", "--push-option", "--repo", "--receive-pack", "--exec"}
-#: How often to look for the pushed commit on the PR before saying it could not be checked.
-_TRIES, _WAIT = 3, 2.0
+#: How often to look for the pushed commit on the PR before saying it could not be checked, and
+#: the time after which no further look starts — the push path's gh calls (each capped at
+#: _GH_TIMEOUT) and sleeps must finish inside the hook's 90 s (.claude/settings.json).
+_TRIES, _WAIT, _LOOK_FOR, _GH_TIMEOUT = 3, 2.0, 10.0, 20.0
 
 
 def _origin(root: Path) -> tuple[str, str] | None:
@@ -84,17 +88,17 @@ def same_repo(url: str, root: Path) -> bool:
     return [p.lower() for p in mine] == [p.lower() for p in theirs.group(1, 2)]
 
 
-def gh(*args: str) -> tuple[int, str]:
+def gh(*args: str, timeout: float = 30) -> tuple[int, str]:
     try:
-        out = subprocess.run(["gh", *args], capture_output=True, text=True, timeout=30)
+        out = subprocess.run(["gh", *args], capture_output=True, text=True, timeout=timeout)
     except (OSError, subprocess.SubprocessError) as exc:
         return 1, str(exc)
     return out.returncode, out.stdout if out.returncode == 0 else (out.stderr or out.stdout)
 
 
-def _comments(url: str) -> list[str] | None:
+def _comments(url: str, timeout: float = 30) -> list[str] | None:
     """The bodies of the PR's conversation comments — None when gh cannot read them."""
-    code, out = gh("pr", "view", url, "--json", "comments")
+    code, out = gh("pr", "view", url, "--json", "comments", timeout=timeout)
     try:
         comments = json.loads(out).get("comments") if code == 0 else None
     except (ValueError, AttributeError):
@@ -179,17 +183,17 @@ def pushed(command: str, cwd: str) -> tuple[str | None, list[str]] | None:
                 continue
             i = 1
             while i < len(words) and words[i].startswith("-"):
-                if words[i] in ("-C", "-c") and i + 1 < len(words):
+                if words[i] in _GIT_VALUED and i + 1 < len(words):
                     if words[i] == "-C":    # `git -C <dir>` runs in <dir>
-                        directory = review_gate._cd(directory, words[i + 1])
+                        directory = review_gate.resolve_cd(directory, words[i + 1])
                     i += 1
                 i += 1
             if words[i:i + 1] != ["push"]:
                 continue
             args, positional, j = words[i + 1:], [], 0
             while j < len(args):
-                if args[j] in ("-n", "--dry-run"):
-                    return None
+                if args[j] == "--dry-run" or re.fullmatch(r"-[a-mp-z]*n[a-z]*", args[j]):
+                    return None                 # `-n`, alone or combined (`-qn`)
                 if args[j] in _PUSH_VALUED:
                     j += 1
                 elif not args[j].startswith("-"):
@@ -222,12 +226,14 @@ def _pull_request(repo: str, names: set[str], head: str) -> tuple[str | None, bo
     """The open PR whose head is one of ``names`` (its URL, or None when there is none) and
     whether its head commit is already ``head`` — looked for a few times, as GitHub may take a
     moment to move a PR's head after a push."""
-    url = None
+    url, started = None, time.monotonic()
     for attempt in range(_TRIES):
         if attempt:
+            if time.monotonic() - started > _LOOK_FOR:
+                break
             time.sleep(_WAIT)
         code, out = gh("pr", "list", "-R", repo, "--state", "open", "--limit", "100",
-                       "--json", "url,headRefName,headRefOid")
+                       "--json", "url,headRefName,headRefOid", timeout=_GH_TIMEOUT)
         try:
             prs = json.loads(out) if code == 0 else None
         except ValueError:
@@ -252,6 +258,8 @@ def _changed_code(root: Path, reviewed: str, head: str) -> bool:
 
 
 def _on_push(payload: dict[str, object], command: str) -> int:
+    if "push" not in command:               # the hook runs on every Bash call: no reading needed
+        return 0
     start = str(payload.get("cwd") or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd())
     push = pushed(command, start)
     if push is None or push[0] is None:
@@ -265,7 +273,7 @@ def _on_push(payload: dict[str, object], command: str) -> int:
     if origin is None or code != 0 or not head:
         return 0
     url, landed = _pull_request("/".join(origin), _branches(root, push[1]), head)
-    bodies = _comments(url) if url is not None else None
+    bodies = _comments(url, _GH_TIMEOUT) if url is not None else None
     if url is None or bodies is None or requests(bodies) != 1:
         return 0                            # no PR, never asked (no code), or re-review spent
     state = codex_state(bodies)
@@ -273,13 +281,13 @@ def _on_push(payload: dict[str, object], command: str) -> int:
     if (state is None or state.get("status") != "completed"
             or state.get("has_any_findings") is not True or not reviewed):
         return 0
+    if not _changed_code(root, reviewed, head):
+        return 0                            # a record or docs push owes Codex nothing
     if not landed:
         _tell(f"Codex found issues in {reviewed[:8]} on {url}, but the PR does not show "
               f"{head[:8]} as its head yet, so codex_request.py could not tell whether this push "
               f"landed. If it did and it fixed them, post the one re-review by hand: "
               f"gh pr comment {url} --body '{REQUEST}'")
-        return 0
-    if not _changed_code(root, reviewed, head):
         return 0
     _post(url, f"`{REQUEST}` is posted on {url} again ({CAP} of {CAP}, .claude/hooks/"
                f"codex_request.py): Codex found issues in {reviewed[:8]} and this push changed "
