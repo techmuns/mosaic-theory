@@ -639,3 +639,32 @@ def test_every_governed_date_is_what_the_committed_page_prints() -> None:
             assert r.excluded == (dmx.panel_key(ln) is None or ln.maturity is None), d["ticker"]
         line = d["mechanical"]["quality"]["liquidity_covenant_flags"]["value"]
         assert line is None or line == liquidity_line(insts), d["ticker"]
+
+
+def test_the_rendered_page_prints_the_governing_date() -> None:
+    """END TO END (the TEST-LAYER rule: VRRM's stale date was seen in the RENDERED page). On every
+    committed page a filing governs, the rendered Markdown's instrument row prints the filing's
+    date, and no line of the instrument's own — a table row whose first cell is its name, or a
+    calendar entry — prints the panel's date. (Another instrument may share the date: TGT's
+    364-day revolver is also 2026-08-14.)"""
+    seen = 0
+    for d in _committed():
+        mc = (d["mechanical"].get("capital_structure") or {}).get("maturity_check") or {}
+        gov = [r for r in mc.get("rows", []) if r["governs"]]
+        if not gov:
+            continue
+        md = (ROOT / "data" / "dossiers" / d["ticker"] / "dossier.md").read_text()
+        assert md == (ROOT / "frontend" / "dossiers" / f"{d['ticker']}.md").read_text()
+        insts = d["mechanical"]["capital_structure"]["instruments"]["value"]
+        for r in gov:
+            inst = insts[r["instrument"]]
+            row = [ln for ln in md.splitlines()
+                   if ln.startswith(f"| {inst['description']} | {inst['type']} |")]
+            assert row and all(r["filing_maturity"] in ln and r["ciq_maturity_date"] not in ln
+                               for ln in row), d["ticker"]
+            own = (f"| {inst['description']} |", f"- **{inst['description']} ")
+            stray = [ln for ln in md.splitlines()
+                     if ln.startswith(own) and r["ciq_maturity_date"] in ln]
+            assert not stray, (d["ticker"], stray)
+            seen += 1
+    assert seen, "no committed page carries a governed maturity"
