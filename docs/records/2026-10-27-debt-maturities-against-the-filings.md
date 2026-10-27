@@ -50,6 +50,9 @@ superseded-by:
   - A month-precise difference takes its day from a same-month, day-precise statement in another
     filing read, when there is exactly one (TGT).
   - A panel newer than the filing keeps CIQ's date, and the page says so.
+  - A panel that states NO source date never yields: the order of panel and filing is unknown, so
+    the difference is reported and CIQ's date kept (Codex, #826 round 1). All 27 committed pages
+    state one, so none moved.
   - Governing writes the filing's date into `maturity_date`, keeps CIQ's as `ciq_maturity_date`
     and names the filing in `maturity_source`. So the instrument table, the calendar (cited to the
     filing), the wall check and the trailing-12m 8-K line all read the governed date at assembly.
@@ -178,7 +181,8 @@ false read:
     pinned. The case-sensitivity rule's own pin is PARR's "the prior ABL Credit Facility … (“ABL
     Credit Facility due 2031”", where a case-blind marker would supersede the NEW name.
 - **The scorecard, by the real command:** `vinci audit quality --source ciq --write` on the
-  committed back-filled pages (`inputs_match_head` true, git head dcf02a5f). It REPLACED this date's
+  committed back-filled pages (`inputs_match_head` true, git head dcf02a5f — a pre-rebase commit;
+  its rebased twin is f7f83f1d, the same page tree, so the inputs hash still holds). It REPLACED this date's
   snapshot, which #819 wrote at 820f414a and which stays in history.
   - `maturity_vs_filing`: 208 instruments on 27 of 27 pages — 77 confirmed, 5 differ (stated),
     0 unexplained, 126 unchecked, 75 excluded.

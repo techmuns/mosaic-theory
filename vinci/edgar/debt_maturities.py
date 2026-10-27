@@ -640,8 +640,9 @@ def check(lines: list[PanelLine], sources: list[Source], *, panel_filed: date | 
     decision; an instrument no source decides is not run. A difference GOVERNS — the page prints
     the filing's date — when the deciding filing was filed on or after the panel's own source
     filing (the panel could not have known it, or mis-read the very filing it cites) and states
-    the day. A panel newer than the filing may reflect a change the filing predates, so the page
-    keeps CIQ's date and says so.
+    the day. A panel that states no source date establishes no order, and never yields. A panel
+    newer than the filing may reflect a change the filing predates, so the page keeps CIQ's date
+    and says so.
 
     FAIL LOUD. With ``unread`` (the submissions index could not be read) every row is not run with
     that reason. A filing that could not be read is listed with its error, and no OLDER filing
@@ -709,17 +710,20 @@ def _row(ln: PanelLine, decisions: list[tuple[Source, dict[int, Decision]]],
                 source=other.cite) for x in o.stated.springing
                 if x.clause not in {s.clause for s in springing}]
     differ = dec.check == CHECK_DIFFER
-    newer = panel_filed is None or src.filed >= panel_filed
+    # an UNKNOWN panel date establishes no order, so it never lets a filing govern (Codex, #826)
+    newer = panel_filed is not None and src.filed >= panel_filed
     when, precision, day_note = st.when, st.precision, ""
     if differ and precision != DAY and (day := _day_for(st, [s for s, _ in decisions])):
         when, precision = day[0], DAY
         day_note = f"it states the {st.precision}; the day is from the {day[1]}"
     governs = differ and newer and precision == DAY
     note = (day_note if not differ or governs else
+            "the panel states no source filing date, so whether this filing postdates it is "
+            "unknown and the page keeps CIQ's date" if panel_filed is None else
             f"the filing states only the {st.precision}, so the page keeps CIQ's date"
             if newer else
-            f"the panel's source filing ({panel_filed.isoformat() if panel_filed else '—'}) is "
-            "newer than this one and may reflect a later change, so the page keeps CIQ's date")
+            f"the panel's source filing ({panel_filed.isoformat()}) is newer than this one and "
+            "may reflect a later change, so the page keeps CIQ's date")
     return MaturityCheckRow(
         **base, check=dec.check, filing_maturity=iso(when, precision), source=src.cite,
         source_filed=src.filed.isoformat(), governs=governs, also_stated_by=also,

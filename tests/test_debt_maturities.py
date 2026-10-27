@@ -325,6 +325,20 @@ def test_a_panel_newer_than_the_filing_keeps_its_date() -> None:
     assert same_day.governs
 
 
+def test_an_unknown_panel_date_never_lets_a_filing_govern() -> None:
+    """Codex, #826 round 1. With no panel source date (a blank or unparseable `detail_as_of`) the
+    order of panel and filing is unknown, so VRRM's 2032 difference is reported and the page keeps
+    CIQ's date — never overwritten on an order nobody established."""
+    page = _PAGES["VRRM"]
+    mc = dmx.check(dm._panel_lines(_insts("VRRM")), [_source(VRRM_10Q), _source(VRRM_8K)],
+                   panel_filed=None, bound=date.fromisoformat(page["reference_date"]))
+    tl = _row(mc, "2021 Term Loan Due 2028")
+    assert (tl.check, tl.filing_maturity, tl.governs) == (CHECK_DIFFER, "2032-10-15", False)
+    assert "unknown" in tl.note
+    assert dm.govern_instruments(Sourced.present(_insts("VRRM"), source_ref="CIQ"),
+                                 mc).value == _insts("VRRM")
+
+
 def test_an_unreadable_newer_filing_stops_an_older_one_deciding() -> None:
     """FAIL LOUD. With the 10-Q unread, the 8-K would govern the term loan by itself; instead the
     row is not run and names the filing that could not be read."""
