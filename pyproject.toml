@@ -29,6 +29,7 @@ dev = [
     "pytest>=8.0",
     "ruff>=0.6",
     "mypy>=1.11",
+    "hypothesis>=6.100",  # as-of invariance properties (tests/test_as_of_properties.py)
 ]
 
 [project.scripts]
