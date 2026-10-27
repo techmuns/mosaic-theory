@@ -16,7 +16,9 @@ PAYLOAD SHAPES, by panel key. Each is a plain JSON object; the renderer formats 
 a missing optional key (an older committed snapshot will not carry a field added later):
 
   the_call            {verdict, sleeve, entry_date, entry_price, current_price, closed,
-                       horizon_date, benchmark}
+                       horizon_date, benchmark[, resolved]}   resolved: true only on a resolved
+                       row, whose current_price is its horizon session's close, not the run's
+                       (`monitor.mark_session`); absent otherwise, so no committed day restates
   kills               {criteria: [{text, metric, reading, threshold, unit_checked}]}
   multiple_and_price  {metric, current, low, high, median, percentile, n_closes, as_of,
                        series: [[date, value], …], current_is_last_point,
@@ -54,6 +56,9 @@ def the_call(row: dict[str, Any]) -> dict[str, Any]:
         "entry_date": row.get("entry_date"), "entry_price": _num(row.get("entry_price")),
         "current_price": _num(row.get("current_price")), "closed": bool(row.get("closed")),
         "horizon_date": row.get("horizon_date"), "benchmark": row.get("benchmark"),
+        # ONLY WHEN TRUE: every committed day predates a resolved row, and a key on every payload
+        # would make the latest day stop reproducing (`test_emit_is_deterministic_...`).
+        **({"resolved": True} if row.get("resolved") is True else {}),
     }
 
 

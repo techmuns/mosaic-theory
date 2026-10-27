@@ -475,7 +475,8 @@ function rangeRail(c) {
 // and base values, so (base − spot) / (base − bear) is the weight the market is putting on the
 // bear leg. It is arithmetic ON the card's own numbers — not a probability the fund claims, and
 // not a forecast. `spot` comes from the latest COMMITTED monitor mark (dated on screen), never a
-// live fetch; with no mark the line renders nothing at all.
+// live fetch; with no mark the line renders nothing at all. A RESOLVED row's mark is its horizon
+// close (the monitor, 2026-10-27), so the line says so rather than reading as today's price.
 function impliedOdds(c, mark) {
   if (!mark || typeof mark.current_price !== "number") return "";
   const leg = (n) => (c.scenarios || []).find((s) => s.name === n);
@@ -487,7 +488,7 @@ function impliedOdds(c, mark) {
   const w = (base.valuePerShare - mark.current_price) / span;
   const note = w < 0 ? " — above base: the market prices better than the base case"
     : w > 1 ? " — below bear: the market prices worse than the bear case" : "";
-  return `<div class="uw-odds">Market-implied bear weight at ${escapeHtml(fmtPrice(mark.current_price))}
+  return `<div class="uw-odds">Market-implied bear weight at ${mark.resolved ? "its horizon close " : ""}${escapeHtml(fmtPrice(mark.current_price))}
     (${escapeHtml(fmtDate(mark.current_date))}) =
     (base ${escapeHtml(fmtPrice(base.valuePerShare))} − spot) ÷ (base − bear ${escapeHtml(fmtPrice(bear.valuePerShare))})
     = <b>${(w * 100).toFixed(0)}%</b>${escapeHtml(note)} <span class="muted">— derived from this
