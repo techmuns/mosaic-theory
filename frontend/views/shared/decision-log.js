@@ -58,8 +58,8 @@ export async function render(root, _params, { item, frame }) {
 }
 
 // The BUY−AVOID spread, carrying its own caveats — a DIAGNOSTIC until every row reaches its
-// horizon. The sign convention is printed beside the number, not assumed.
-function spreadCard(mon) {
+// horizon. The sign convention is printed beside the number, not assumed. Exported for the node pin.
+export function spreadCard(mon) {
   if (!mon) {
     return `<div class="notice" style="margin-bottom:14px;">No monitor snapshot committed yet —
       live columns read ${DASH}. Run <span class="mono">python -m vinci monitor</span>.</div>`;
@@ -74,7 +74,8 @@ function spreadCard(mon) {
         <span style="font-size:12px; text-transform:uppercase; letter-spacing:0.04em; color:var(--ink-3);">BUY−AVOID spread</span>
         ${val}
         <span class="pill conditional">diagnostic</span>
-        <span class="muted" style="font-size:12px; margin-left:auto;">marked ${fmtDate(mon.as_of)}</span>
+        <span class="muted" style="font-size:12px; margin-left:auto;">marked ${fmtDate(mon.as_of)}${
+          (mon.rows || []).some((r) => r.resolved) ? " · resolved rows at their horizon close" : ""}</span>
       </div>
       <div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:8px; font-size:13px;">
         <div><span class="muted">BUY legs</span> <span class="mono">${fmtInt(s.buy_n)}</span> <span class="mono ${signCls(s.buy_mean_excess)}">${pct(s.buy_mean_excess)}</span> <span class="muted">mean excess</span></div>
@@ -222,11 +223,13 @@ function entryCard(e, mark) {
 
 // Live marks for one leg — all four cells or none (an absent snapshot shows nothing rather than
 // a half-populated row). Excess is against the leg's ASSIGNED benchmark over the same window.
-function liveRow(mark) {
+// A RESOLVED row is marked at its HORIZON SESSION's close (the monitor, 2026-10-27), never the
+// run's — so its price is labelled as that, not "Current". Exported for the node pin.
+export function liveRow(mark) {
   if (!mark) return "";
   return `
     <div style="display:flex; gap:22px; flex-wrap:wrap; margin-top:8px; padding-top:8px; border-top:1px solid var(--line); font-size:13px;">
-      <div><span class="muted">Current</span> <span class="mono">${fmtPrice(mark.current_price)}</span> <span class="muted">@ ${fmtDate(mark.current_date)}</span></div>
+      <div><span class="muted">${mark.resolved ? "Horizon close" : "Current"}</span> <span class="mono">${fmtPrice(mark.current_price)}</span> <span class="muted">@ ${fmtDate(mark.current_date)}</span></div>
       <div><span class="muted">Return</span> <span class="mono ${signCls(mark.position_return)}">${pct(mark.position_return)}</span></div>
       <div><span class="muted">vs ${escapeHtml(mark.benchmark)}</span> <span class="mono ${signCls(mark.benchmark_return)}">${pct(mark.benchmark_return)}</span></div>
       <div><span class="muted">Excess</span> <span class="mono ${signCls(mark.excess)}" style="font-weight:600;">${pct(mark.excess)}</span></div>
