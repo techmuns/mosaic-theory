@@ -6101,7 +6101,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A tag for this quarter"
+            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
           },
           {
             "period_end": "2025-12-31",
@@ -6113,38 +6113,48 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A tag for this quarter"
+            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
           },
           {
             "period_end": "2026-03-31",
             "ciq_ebitda": 46356.0,
-            "filing_ebitda": null,
-            "construction": null,
-            "tags": [],
-            "gap": null,
+            "filing_ebitda": 46356.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "Depreciation",
+              "AmortizationOfIntangibleAssets"
+            ],
+            "gap": 0.0,
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A tag for this quarter"
+            "ciq_unusual": -36804.0,
+            "note": null
           },
           {
             "period_end": "2026-06-30",
             "ciq_ebitda": 48241.0,
-            "filing_ebitda": null,
-            "construction": null,
-            "tags": [],
-            "gap": null,
+            "filing_ebitda": 48241.0,
+            "construction": "operating income + D&A",
+            "tags": [
+              "OperatingIncomeLoss",
+              "Depreciation",
+              "AmortizationOfIntangibleAssets"
+            ],
+            "gap": 0.0,
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A tag for this quarter"
+            "ciq_unusual": -98999.0,
+            "note": null
           }
         ],
         "ciq_ltm": 173410.0,
         "filing_ltm": null,
         "ltm_gap": null,
         "any_different": false,
-        "line": "CIQ's quarterly EBITDA could not be set against the filings — no quarterly D&A tag for this quarter.",
+        "line": "CIQ's EBITDA matches the filings in each quarter set against them (rebuilt as operating income + D&A) (2 of the four quarters could not be rebuilt) — the LTM the multiples divide is the reported figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -15292,6 +15302,22 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -15394,6 +15420,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "ciq"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

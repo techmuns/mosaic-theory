@@ -375,9 +375,10 @@
         "rent_fiscal_year": "2025-12-31",
         "edgar_lease_cost": 306.0,
         "edgar_lease_cost_tag": "LeaseCost",
+        "rent_component": "ShortTermLeaseCost",
         "threshold": 0.05,
         "material": true,
-        "materiality": "rent 15.3% of EBITDA (FY ending 2025-12-31: $128M of $834M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $306M — CIQ's rent and EDGAR's lease cost DISAGREE; read both",
+        "materiality": "rent 15.3% of EBITDA (FY ending 2025-12-31: $128M of $834M) — material (≥5%); R1 uses the ex-lease history; EDGAR LeaseCost that year: $306M — CIQ's rent is the filer's ShortTermLeaseCost, a narrower cost than its total lease cost; the two are not compared",
         "ex_lease_band": {
           "metric": "EV/EBITDA ex-lease (TEV less operating leases / LTM EBITDA)",
           "current": 13.025236,
@@ -7184,6 +7185,7 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 744.0,
             "note": null
           },
           {
@@ -7199,6 +7201,7 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 504.0,
             "note": null
           },
           {
@@ -7214,6 +7217,7 @@
             "different": true,
             "matching_amount": "Identified Items $ 36 $ 45 $ 80 EBITDA margin (2) 2% 3% 4% i ______________________________ (1) For the three months ended March 31, 2026, Identified Items include a $67 million charge to settle certain litigation involving direct purchasers of PVC pipe and fittings and $18 million of charges related to previously announced facility shutdowns.",
             "matching_source": "8-K 0001262823-26-000019 EX-99.1",
+            "ciq_unusual": 18.0,
             "note": null
           },
           {
@@ -7229,6 +7233,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 3.0,
             "note": null
           }
         ],
@@ -7236,7 +7241,7 @@
         "filing_ltm": -75.0,
         "ltm_gap": 1133.0,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $1,058M against $-75M rebuilt from the filings (+$1,133M); the quarter to 2025-09-30: CIQ $281M against $-463M (+$744M); the quarter to 2025-12-31: CIQ $-6M against $-374M (+$368M); the quarter to 2026-03-31: CIQ $130M against $112M (+$18M) — its release states a matching amount: “Identified Items $ 36 $ 45 $ 80 EBITDA margin (2) 2% 3% 4% i ______________________________ (1) For the three months ended March 31, 2026, Identified Items include a $67 million charge to settle certain litigation involving direct purchasers of PVC pipe and fittings and $18 million of charges related to previously announced facility shutdowns.” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $1,058M against $-75M rebuilt from the filings (+$1,133M); the quarter to 2025-09-30: CIQ $281M against $-463M (+$744M) — CIQ's own export itemises unusual items of $744.000M for the quarter, which it leaves out; the quarter to 2025-12-31: CIQ $-6M against $-374M (+$368M); the quarter to 2026-03-31: CIQ $130M against $112M (+$18M) — its release states a matching amount: “Identified Items $ 36 $ 45 $ 80 EBITDA margin (2) 2% 3% 4% i ______________________________ (1) For the three months ended March 31, 2026, Identified Items include a $67 million charge to settle certain litigation involving direct purchasers of PVC pipe and fittings and $18 million of charges related to previously announced facility shutdowns.” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14657,6 +14662,23 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary",
+        "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -14756,6 +14778,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

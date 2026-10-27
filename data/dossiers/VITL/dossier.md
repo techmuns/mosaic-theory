@@ -85,7 +85,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 > **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 24 of D&A against 4 in the actuals (5.38x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $79M against $74M rebuilt from the filings (+$6M); the quarter to 2025-06-29: CIQ $27M against $26M (+$1M); the quarter to 2025-09-28: CIQ $25M against $23M (+$1M); the quarter to 2025-12-28: CIQ $26M against $24M (+$2M); the quarter to 2026-03-29: CIQ $2M against $0M (+$1M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $79M against $74M rebuilt from the filings (+$6M); the quarter to 2025-06-29: CIQ $27M against $26M (+$1M) — its filing tags a matching amount: FinanceLeaseRightOfUseAssetAmortization 1,067,000 USD for the quarter to 2025-06-29; the quarter to 2025-09-28: CIQ $25M against $23M (+$1M) — its filing tags a matching amount: FinanceLeaseRightOfUseAssetAmortization 1,193,000 USD for the quarter to 2025-09-28; the quarter to 2025-12-28: CIQ $26M against $24M (+$2M); the quarter to 2026-03-29: CIQ $2M against $0M (+$1M) — its filing tags a matching amount: FinanceLeaseRightOfUseAssetAmortization 1,360,000 USD for the quarter to 2026-03-29 (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -569,6 +569,8 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
   - 2026-10-26 · mechanical.financial_summary — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 20d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build

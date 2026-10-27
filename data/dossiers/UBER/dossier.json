@@ -6807,6 +6807,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": -1471.0,
             "note": null
           },
           {
@@ -6822,6 +6823,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 1602.0,
             "note": null
           },
           {
@@ -6837,6 +6839,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 1474.0,
             "note": null
           },
           {
@@ -6852,6 +6855,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": -1612.0,
             "note": null
           }
         ],
@@ -15031,6 +15035,22 @@
       "layers": [
         "mechanical.ciq_currency"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -15098,6 +15118,7 @@
       "machine_recipe_at_decision": "R4_forward_ev_ebit"
     },
     "machine_recipe_hint": "R4_forward_ev_ebit",
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

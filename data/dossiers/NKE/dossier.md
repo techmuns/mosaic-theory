@@ -70,7 +70,7 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $4,855M against $4,597M rebuilt from the filings (+$258M); the quarter to 2025-08-31: CIQ $1,117M against $1,094M (+$23M); the quarter to 2026-02-28: CIQ $968M against $820M (+$148M); the quarter to 2026-05-31: CIQ $1,585M against $1,514M (+$71M) (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $4,855M against $4,597M rebuilt from the filings (+$258M); the quarter to 2025-08-31: CIQ $1,117M against $1,094M (+$23M) — its filing tags a matching amount: OtherNonoperatingIncomeExpense -23,000,000 USD for the quarter to 2025-08-31; the quarter to 2026-02-28: CIQ $968M against $820M (+$148M); the quarter to 2026-05-31: CIQ $1,585M against $1,514M (+$71M) (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -599,6 +599,8 @@ _Source §: 8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm · amende
 - **Refreshed since assembly** (oldest first):
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.financial_summary, mechanical.valuation — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 35d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build

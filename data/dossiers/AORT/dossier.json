@@ -6757,6 +6757,7 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 5.264,
             "note": null
           },
           {
@@ -6772,6 +6773,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": -0.9,
             "note": null
           },
           {
@@ -6787,6 +6789,7 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": -1.39,
             "note": null
           },
           {
@@ -6802,6 +6805,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.24,
             "note": null
           }
         ],
@@ -13971,6 +13975,22 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -14059,6 +14079,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

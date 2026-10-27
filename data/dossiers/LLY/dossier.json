@@ -6451,72 +6451,6 @@
         "divergent": false,
         "note": "implied D&A is 1,557 in the actuals and 2,766 in the estimates (1.78x) — below the 2.0x flag, so NO DIVERGENCE WAS DETECTED. That is not a finding that the rows share a basis: this check tests implied D&A against one threshold, and nothing here proves agreement. This ratio sits in the 1.5-2.0x BAND WHERE A REAL BASIS CHANGE HAS BEEN OBSERVED ON THIS FLEET WITHOUT BEING FLAGGED (GAAP actuals against ADJUSTED estimates), so treat this as UNRESOLVED rather than clear: reconcile the estimate row against the company's own guidance basis before comparing across the boundary."
       },
-      "ebitda_reconciliation": {
-        "quarters": [
-          {
-            "period_end": "2022-12-31",
-            "ciq_ebitda": 10175.8,
-            "filing_ebitda": null,
-            "construction": null,
-            "tags": [
-              "DepreciationDepletionAndAmortization"
-            ],
-            "gap": null,
-            "different": false,
-            "matching_amount": null,
-            "matching_source": null,
-            "note": "no operating income, and no pre-tax income with a net interest line, for this quarter"
-          },
-          {
-            "period_end": "2023-12-31",
-            "ciq_ebitda": 11852.0,
-            "filing_ebitda": null,
-            "construction": null,
-            "tags": [
-              "DepreciationDepletionAndAmortization"
-            ],
-            "gap": null,
-            "different": false,
-            "matching_amount": null,
-            "matching_source": null,
-            "note": "no operating income, and no pre-tax income with a net interest line, for this quarter"
-          },
-          {
-            "period_end": "2024-12-31",
-            "ciq_ebitda": 18807.0,
-            "filing_ebitda": null,
-            "construction": null,
-            "tags": [
-              "DepreciationDepletionAndAmortization"
-            ],
-            "gap": null,
-            "different": false,
-            "matching_amount": null,
-            "matching_source": null,
-            "note": "no operating income, and no pre-tax income with a net interest line, for this quarter"
-          },
-          {
-            "period_end": "2025-12-31",
-            "ciq_ebitda": 31693.0,
-            "filing_ebitda": null,
-            "construction": null,
-            "tags": [
-              "DepreciationDepletionAndAmortization"
-            ],
-            "gap": null,
-            "different": false,
-            "matching_amount": null,
-            "matching_source": null,
-            "note": "no operating income, and no pre-tax income with a net interest line, for this quarter"
-          }
-        ],
-        "ciq_ltm": 72527.8,
-        "filing_ltm": null,
-        "ltm_gap": null,
-        "any_different": false,
-        "line": "CIQ's quarterly EBITDA could not be set against the filings — no operating income, and no pre-tax income with a net interest line, for this quarter.",
-        "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
-      },
       "statement_reconciliation": {
         "rows": [
           {
@@ -15563,6 +15497,22 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -15653,6 +15603,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

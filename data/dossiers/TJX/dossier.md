@@ -622,6 +622,8 @@ _Source §: 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm_
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 10d old — 2026-10-16 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 17d old (2026-10-09, valuation.implied_expectations.multiples_as_of) — within the ceiling

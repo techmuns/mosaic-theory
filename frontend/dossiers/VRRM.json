@@ -349,11 +349,11 @@
         "rent_ebitda": 361.846,
         "rent_to_ebitda": 0.028465,
         "rent_fiscal_year": "2025-12-31",
-        "edgar_lease_cost": 10.3,
-        "edgar_lease_cost_tag": "OperatingLeaseCost",
+        "edgar_lease_cost": 14.0,
+        "edgar_lease_cost_tag": "OperatingLeaseCost + VariableLeaseCost",
         "threshold": 0.05,
         "material": false,
-        "materiality": "rent 2.8% of EBITDA (FY ending 2025-12-31: $10M of $362M) — immaterial (<5%); R1 keeps CIQ's TEV/LTM EBITDA history; EDGAR OperatingLeaseCost that year: $10M",
+        "materiality": "rent 2.8% of EBITDA (FY ending 2025-12-31: $10M of $362M) — immaterial (<5%); R1 keeps CIQ's TEV/LTM EBITDA history; EDGAR OperatingLeaseCost + VariableLeaseCost that year: $14M",
         "ex_lease_band": null,
         "refusal": null,
         "reconciled_dates": 0,
@@ -5398,6 +5398,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.023,
             "note": null
           },
           {
@@ -5413,6 +5414,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.021,
             "note": null
           },
           {
@@ -5426,8 +5428,9 @@
             ],
             "gap": 9.352,
             "different": true,
-            "matching_amount": null,
-            "matching_source": null,
+            "matching_amount": "Three Months Ended December 31, ($ in thousands) 2025 2024 … Impairment of long-lived assets and right of use assets 9,352",
+            "matching_source": "8-K 0001193125-26-067015 EX-99.1",
+            "ciq_unusual": 10.618,
             "note": null
           },
           {
@@ -5443,6 +5446,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.0,
             "note": null
           }
         ],
@@ -5450,7 +5454,7 @@
         "filing_ltm": 348.644,
         "ltm_gap": 9.352,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $358M against $349M rebuilt from the filings (+$9M); the quarter to 2025-12-31: CIQ $81M against $72M (+$9M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $358M against $349M rebuilt from the filings (+$9M); the quarter to 2025-12-31: CIQ $81M against $72M (+$9M) — its release states a matching amount: “Three Months Ended December 31, ($ in thousands) 2025 2024 … Impairment of long-lived assets and right of use assets 9,352” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -11945,6 +11949,23 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary",
+        "mechanical.valuation"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -12029,6 +12050,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [
