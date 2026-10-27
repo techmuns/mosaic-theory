@@ -307,8 +307,8 @@ def test_vrrm_q4_gap_is_the_impairment_row_its_release_states_in_a_table() -> No
     q4 = rec.quarters[2]
     assert q4.period_end == "2025-12-31" and q4.filing_ebitda == pytest.approx(71.927)
     assert q4.gap == pytest.approx(9.352) and q4.different
-    assert q4.matching_amount == ("($ in thousands) … Impairment of long-lived assets and right "
-                                  "of use assets 9,352")
+    assert q4.matching_amount == ("($ in thousands) 2025 2024 … Impairment of long-lived assets "
+                                  "and right of use assets 9,352")
     assert q4.matching_source == "8-K 0001193125-26-067015 EX-99.1"
     assert er._matching_sentence(q4.matching_amount, q4.gap) is not None
     assert [r.different for r in rec.quarters] == [False, False, True, False]
@@ -320,8 +320,9 @@ def test_a_table_row_matches_only_as_the_first_figure_under_a_thousands_header()
     (Prepaid expenses — the one coincidence the shifted-gap test found on 544 trials); one $1K
     unit off; the same row under a millions header or under no header; and a prose amount still
     wins where the release states one."""
-    assert er._matching_sentence(_SMPL_TABLE, 5.918) == ("(In thousands) … Integration expense "
-                                                         "5,918")
+    assert er._matching_sentence(_SMPL_TABLE, 5.918) == (
+        "(In thousands) Thirteen Weeks Ended November 29, 2025 November 30, 2024 … Integration "
+        "expense 5,918")
     assert er._matching_sentence(_VRRM_TABLE, 9.349) is None       # a second column, no label
     assert er._matching_sentence(_VRRM_TABLE, 9.354) is None       # two units off
     assert er._matching_sentence(_VRRM_TABLE, 9.353) is not None   # one unit: the rounding
@@ -333,3 +334,29 @@ def test_a_table_row_matches_only_as_the_first_figure_under_a_thousands_header()
     assert er._matching_sentence(later, 9.352) is None
     assert er._matching_sentence(_RELEASE + " (In thousands) Tariff refunds 331,000", -331.0) == (
         er._matching_sentence(_RELEASE, -331.0))
+
+
+#: NCINO 8-K 0001902733-26-000064 EX-99.1 (filed 2026-05-27), its cash-flow table, verbatim: the
+#: column heading lists the PRIOR year first ("April 30, 2025 2026") — 30 of the 258 thousands
+#: headers in the committed pages' releases order their periods oldest-first (Codex, #818).
+_NCNO_TABLE = (
+    "(In thousands) (Unaudited) Three Months Ended April 30, 2025 2026 Cash flows from operating "
+    "activities Net income attributable to nCino, Inc. $ 5,562 $ 13,641 Net income and adjustment "
+    "attributable to redeemable non-controlling interest 455 1,350 Net income 6,017 14,991 "
+    "Adjustments to reconcile net income to net cash provided by operating activities: "
+    "Depreciation and amortization 10,705 10,083 Non-cash operating lease costs 1,161 908")
+
+
+def test_a_table_whose_heading_lists_the_prior_period_first_is_not_read() -> None:
+    """(−) nCino's real table: the first figure is the PRIOR year's, so a gap equal to it is not a
+    stated amount for the quarter. (+) The current-first tables still match, and their quote
+    carries the column heading that proves the order, so it re-matches on its own."""
+    assert er._matching_sentence(_NCNO_TABLE, 10.705) is None
+    assert er._matching_sentence(_NCNO_TABLE.replace("2025 2026", "2026 2025"), 10.705) == (
+        "(In thousands) (Unaudited) Three Months Ended April 30, 2026 2025 … Depreciation and "
+        "amortization 10,705")
+    assert er._matching_sentence(_VRRM_TABLE, 9.352) == (
+        "($ in thousands) 2025 2024 … Impairment of long-lived assets and right of use assets "
+        "9,352")
+    assert er._matching_sentence(_VRRM_TABLE.replace("($ in thousands) 2025 2024",
+                                                     "($ in thousands)"), 9.352) is None

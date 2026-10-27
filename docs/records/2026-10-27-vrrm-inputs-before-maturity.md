@@ -27,10 +27,15 @@ Every other VRRM check is confirmed or not applicable/not run with the reason th
 the six price checks are confirmed (1,287 bars, close against Tiingo).
 
 - **`vinci/dossier/ebitda_recon.py`** — where no sentence matches, `_matching_row` reads a table
-  row's FIRST figure (the current period's column) under the nearest preceding "(… in thousands …)"
-  header, within `MATCH_TOL` and one $1K unit. The quote is the header and the row, verbatim,
-  joined by an ellipsis, so it re-matches on its own (the committed-corpus invariant) and passes
-  `vinci/verbatim` as an ELIDED span. A row under a millions header, or under none, is never read.
+  row's FIRST figure under the nearest preceding "(… in thousands …)" header, within `MATCH_TOL` and
+  one $1K unit — only where the column heading between that header and its first row names a year
+  and its first year is the latest, so the first column is the current period (Codex, round 1: 30
+  of the 258 thousands headers in the committed pages' releases list the prior period first —
+  nCino's "Three Months Ended April 30, 2025 2026" among them). The quote is the header with that
+  heading, and the row, verbatim, joined by an ellipsis — "($ in thousands) 2025 2024 … Impairment
+  of long-lived assets and right of use assets 9,352" — so it re-matches on its own (the
+  committed-corpus invariant) and passes `vinci/verbatim` as an ELIDED span. A row under a millions
+  header, or under none, is never read.
 - **The guide** — `mechanical._guide_verification` is now the ONE composition, called by assembly
   (`_release_lines`) and by `refresh.cross_check_transform`, which held a hand copy. It sets CIQ's
   guide against the newest guide-bearing release filed by CIQ's guide date plus
@@ -48,12 +53,13 @@ touched: each unit moves because the page will state its reason.
 
 **HOW VERIFIED.**
 
-- *Fail first.* `tests/test_ebitda_recon.py` (two tests, VRRM's and SMPL's real release text and
-  VRRM's companyfacts points, frozen) and `tests/test_guide_check_vintage.py` (five tests, VRRM's
-  four releases' guidance and CIQ's row, frozen from the committed page) were red before the code
-  and green after. Negative pins: the prior-year column "9,349"; one unit off; a millions header;
-  no header; a prose amount still winning; a same-vintage vendor misread still differing; a release
-  one day past the lag; an undated guide; a later release restating the same guide.
+- *Fail first.* `tests/test_ebitda_recon.py` (three tests: VRRM's, SMPL's and nCino's real
+  release text and VRRM's companyfacts points, frozen) and `tests/test_guide_check_vintage.py` (five
+  tests, VRRM's four releases' guidance and CIQ's row, frozen from the committed page) were red
+  before the code and green after. Negative pins: the prior-year column "9,349"; one unit off; a
+  millions header; no header; a heading without a year; nCino's prior-period-first heading; a prose
+  amount still winning; a same-vintage vendor misread still differing; a release one day past the
+  lag; an undated guide; a later release restating the same guide.
 - *Corpus before synthetic — the table reader* (27 committed pages, 34 quarters flagged
   `different`, main `47d8ca27` plus this branch): the 4 stored prose quotes reproduce byte for byte;
   2 quarters gain a table quote (VRRM 2025-12-31 impairment 9,352; SMPL 2025-11-29 integration

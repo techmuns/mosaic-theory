@@ -26,9 +26,10 @@ carried verbatim. A match is evidence for the reader to weigh, not an attributio
 A TABLE STATES AMOUNTS TOO (2026-10-27, VRRM). Verra Mobility's quarter to 2025-12-31 is +$9.352M,
 the "Impairment of long-lived assets and right of use assets 9,352" row of the quarter's own
 cash-flow table "($ in thousands)" — to the thousand, and in no sentence, so the prose reader quoted
-nothing and the gap read as unexplained. Where no sentence matches, a table row's FIRST figure (the
-current period's column) under the nearest preceding thousands header is read at its own precision,
-$1K; the quote is that header and that row, verbatim, so it re-matches on its own. Shifting every
+nothing and the gap read as unexplained. Where no sentence matches, a table row's FIRST figure under
+the nearest preceding thousands header is read at its own precision, $1K — only where the column
+heading proves that first column is the latest period (`_matching_row`); the quote is that header,
+its heading and that row, verbatim, so it re-matches on its own. Shifting every
 differing quarter's gap on the corpus by ±3 to ±307 units (544 trials) found one coincidence when
 any figure could match — a prior-year column with no label of its own, which a first figure cannot
 be — and one with the rule: VITL's $1.359M shifted to $1.382M meets a finance-lease line of 1,381.
@@ -72,6 +73,8 @@ _TABLE_SCALE = re.compile(r"\(\s*(?:\$\s*|[A-Za-z.]+\s+)?in\s+(thousands|million
 #: period's column. A figure with no label before it is a later column of the row it follows.
 _TABLE_ROW = re.compile(r"[A-Za-z][A-Za-z ,'’&/()\-]{0,150}?[A-Za-z)]\s+(?:\$\s*)?\(?\s*"
                         r"(\d{1,3}(?:,\d{3})+)(?![\d,]|\.\d)")
+#: A year in a table's column heading — the text between its scale header and its first row.
+_HEADING_YEAR = re.compile(r"\b(?:19|20)\d\d\b")
 _OPERATING = "operating income + D&A"
 _PRETAX = "pre-tax income − net interest income + D&A (other non-operating items stay inside)"
 SOURCE_REF = ("CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL "
@@ -160,9 +163,15 @@ def _matching_prose(text: str, want: float) -> str | None:
 
 def _matching_row(text: str, want: float) -> str | None:
     """The first table row whose first figure, under the nearest preceding header, is in thousands
-    and sits within `MATCH_TOL` of ``want`` AND within one unit ($1K): the header and the row,
-    verbatim, joined by an ellipsis — or None. A row in millions, or under no header, has no
-    stated scale here and is never read."""
+    and sits within `MATCH_TOL` of ``want`` AND within one unit ($1K): the header with its column
+    heading, and the row, verbatim, joined by an ellipsis — or None. A row in millions, or under no
+    header, has no stated scale here and is never read.
+
+    THE FIRST COLUMN MUST BE THE LATEST PERIOD (Codex, #818). nCino heads its tables "Three Months
+    Ended April 30, 2025 2026" — the prior year first — and so do 30 of the 258 thousands headers
+    in the committed pages' releases. So the heading between the header and its first row must
+    name a year, and its first year must be the latest; otherwise the order is unproven and the
+    table is not read. The quote carries that heading, so it proves the order on its own."""
     heads = list(_TABLE_SCALE.finditer(text))
     # a header is never part of a row's label: masked to the same length, so positions hold
     masked = _TABLE_SCALE.sub(lambda h: "|" * len(h.group(0)), text)
@@ -171,9 +180,15 @@ def _matching_row(text: str, want: float) -> str | None:
         if head is None or head.group(1).lower() != "thousands":
             continue
         off = abs(int(m.group(1).replace(",", "")) / 1000.0 - want)
-        if off <= MATCH_TOL * want and off <= 0.001 + 1e-9:
-            row = " ".join(text[m.start():m.end()].split())
-            return f"{' '.join(head.group(0).split())} … {row}"
+        if off > MATCH_TOL * want or off > 0.001 + 1e-9:
+            continue
+        first = _TABLE_ROW.search(masked, head.end())
+        heading = text[head.end():first.start() if first is not None else head.end()]
+        years = list(_HEADING_YEAR.finditer(heading))
+        if not years or int(years[0].group(0)) != max(int(y.group(0)) for y in years):
+            continue
+        lead = " ".join(text[head.start():head.end() + years[-1].end()].split())
+        return f"{lead} … {' '.join(text[m.start():m.end()].split())}"
     return None
 
 
