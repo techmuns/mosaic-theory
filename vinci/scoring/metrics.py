@@ -76,6 +76,10 @@ class VerdictScore:
     #: read by a spread. None only on a score built before the 2026-10-26 ruling.
     name_price_return: float | None = None
     bench_price_return: float | None = None
+    #: Why this mark is not a full-window reading, when it is not: a row past its horizon awaiting
+    #: the horizon session's close, or an interim mark on a name whose bars stop before the
+    #: benchmark's (`vinci.scoring.harness`). None on an ordinary mark.
+    note: str | None = None
 
     @property
     def excess_gross(self) -> float:
@@ -254,6 +258,11 @@ class ScoreReport:
     buy_mean_price_return: float | None = None
     avoid_mean_price_return: float | None = None
     buy_avoid_spread_price: float | None = None
+    # --- ROWS HELD BACK OR MARKED SHORT, BY NAME (2026-10-27) ----------------------------------
+    # A row past its horizon whose horizon session's close is not in the store yet is pending, and
+    # an interim mark on a name whose bars stop before the benchmark's is on a stale close. Each is
+    # named here, beside the pending count, so the count can be audited row by row.
+    row_notes: tuple[str, ...] = ()
 
     def to_dict(self) -> dict[str, object]:
         d: dict[str, object] = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -286,6 +295,7 @@ class ScoreReport:
             "",
             f"- Resolved verdicts: **{self.n_resolved_buy} BUY**, "
             f"**{self.n_resolved_avoid} AVOID** ({self.n_pending} pending)",
+            *(f"  - {n}" for n in self.row_notes),
             f"- **BUY−AVOID spread (primary): {pct(self.buy_avoid_spread)}**",
             "  _Screen-origin overshoot ONLY — the discriminator measured on the $300M–$10B "
             "hunting ground it claims to measure. Other books are below, never pooled in._",
@@ -537,8 +547,10 @@ def aggregate(
     book_daily: list[float] | None = None,
     bench_daily: list[float] | None = None,
     basket_labels: dict[str, str] | None = None,
+    row_notes: tuple[str, ...] = (),
 ) -> ScoreReport:
-    """Aggregate per-verdict scores into the report. ``*_daily`` feed the beta/alpha regression."""
+    """Aggregate per-verdict scores into the report. ``*_daily`` feed the beta/alpha regression;
+    ``row_notes`` (the harness's, per row held back or marked short) are carried to the report."""
     # THE PRIMARY SPREAD IS SCREEN-ORIGIN ONLY (operator decision 2026-08-07). The spread is the
     # fund's proof and it measures the discriminator ON the $300M–$10B hunting ground; pooling
     # followed megacap verdicts into it would silently change what the number means. Every other
@@ -644,4 +656,5 @@ def aggregate(
         n_overridden=sum(1 for s in scores if s.disposition is Disposition.OVERRIDDEN),
         n_no_proposal=sum(1 for s in scores if s.disposition is Disposition.NO_PROPOSAL),
         overrides=overrides,
+        row_notes=row_notes,
     )
