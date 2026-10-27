@@ -1,8 +1,8 @@
 ---
 id: 2026-10-27-vrrm-inputs-before-maturity
-status: open
+status: shipped
 date: 2026-10-27
-prs: []
+prs: [818]
 supersedes:
 superseded-by:
 ---
