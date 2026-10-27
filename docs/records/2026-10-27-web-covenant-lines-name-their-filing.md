@@ -1,7 +1,7 @@
 ---
-status: open
+status: shipped
 date: 2026-10-27
-prs: []
+prs: [814]
 supersedes:
 superseded-by:
 ---
@@ -121,7 +121,10 @@ pins, then restored.
   static page carrying `styles.css`, `ds-print-full` and every `<details>` opened. The app's
   `beforeprint` handlers do not run in that static page; they split wide tables and rename the
   file, and neither touches this line.
-- **Re-taken after rebasing onto main** once #812 merged — see the PR body for that run.
+- **Re-taken after rebasing onto main** once #812 merged (`0fc52abd`), on 2026-10-27, with main's
+  `dossier.js` as "before": the same 27 pages, the same 146 / 143 / 3 / 0 → 143, 0 mismatches, and
+  the same per-page gains. Mutation re-run on the rebased tree: 6 of 6 killed. Full suite on the PR
+  head: 6,862 passed, 533 skipped, 0 failed.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **Every web covenant line grows by about 30 characters.** The Markdown has carried the same
