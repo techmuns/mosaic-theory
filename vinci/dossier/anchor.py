@@ -756,14 +756,24 @@ def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: boo
 
 
 DQ_VENDOR_BRIDGE = "vendor_bridge"
-
-#: What the bridged D&A's twelve months ARE. `ciq_balance` reads the annual sheet's LAST column,
-#: which is `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27; NKE's is a fiscal year,
-#: MCK's carries no header) — it was labelled "consolidated latest FY" (review of #830).
-CIQ_DA_BASIS = ("consolidated, the CIQ workbook's latest annual column — LTM where the workbook "
-                "carries one, else its latest fiscal year (vendor basis)")
 _NO_VENDOR_EX_LEASE = ("; CIQ's net debt is not substituted, because it carries the operating "
                        "leases this bridge excludes")
+
+
+def ciq_da_basis(ciq: Any) -> str:
+    """What the bridged D&A's twelve months ARE, from the fact's STRUCTURED period
+    (`ciq_balance.header_period`, read off the column's own header). `ciq_balance` reads the annual
+    sheet's LAST column, which is `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27;
+    NKE's is a fiscal year, MCK's carries no header) — it was labelled "consolidated latest FY"
+    whatever it was (review of #830)."""
+    fact = ciq.facts.get("d_and_a") if ciq is not None else None
+    period, end = (fact.period, fact.period_end) if fact is not None else (None, None)
+    if end is not None and period == "LTM":
+        return (f"consolidated trailing twelve months to {end.isoformat()} (CIQ workbook, "
+                f"vendor basis)")
+    if end is not None and period == "FY":
+        return f"consolidated fiscal year to {end.isoformat()} (CIQ workbook, vendor basis)"
+    return "consolidated, period not stated in the CIQ workbook's column header (vendor basis)"
 
 
 def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
@@ -800,7 +810,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                    else f"EDGAR D&A withheld — {got_da}")
             da = (v * _USD_M, f"CIQ Financials->Cash Flow (vendor basis; {why}) "
                               f"[{ciq.source_file} sha {ciq.source_sha256}]",
-                  CIQ_DA_BASIS)
+                  ciq_da_basis(ciq))
             vendor.append("d_and_a")
         if nd_val is None and not ex_lease and (v := ciq.value("net_debt")) is not None:
             nd_val = v * _USD_M

@@ -151,16 +151,53 @@ the vendor's D&A, stamped as such, rather than a guess.
   hash-checked against Drive.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-1. **The bridge's D&A is the workbook's LAST annual column, not a fiscal year.**
-   - `ciq_balance._cf_row(..., annual=True)` takes the annual Cash Flow sheet's last column. That
-     column is `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27); NKE's is a fiscal
-     year, and MCK's carries no header.
-   - **Fixed in the anchor (review of #830, round 1).** The filled D&A was labelled "consolidated
-     latest FY". It now carries `CIQ_DA_BASIS` ("the CIQ workbook's latest annual column — LTM
-     where the workbook carries one, else its latest fiscal year"). GOOGL's committed vendor D&A
-     changes that label, and nothing else, at re-assembly.
-   - **DEFERRED:** naming the exact column needs `ciq_balance` to read its header. Its own fact
-     still says "latest full year". That is the CIQ lane's file.
+1. **The bridge's D&A is the workbook's LAST annual column, not a fiscal year — now stated.**
+   - `ciq_balance` reads the annual Cash Flow sheet's last column. It is `LTM 12 months` on 33
+     of the 35 workbooks on file (2026-10-27); NKE's is a fiscal year, and MCK's carries no
+     header.
+   - The anchor labelled the filled D&A "consolidated latest FY" whatever it was.
+   - **Fixed in review of #830 (Codex P2; operator ruling).** The period is a STRUCTURED value
+     read off the column's own header cell: `ciq_balance.header_period` → `CiqFact.period`
+     ("LTM" | "FY") and `CiqFact.period_end`. The anchor's basis names it
+     (`anchor.ciq_da_basis`), for example "consolidated trailing twelve months to 2026-08-31
+     (CIQ workbook, vendor basis)". A header that states nothing says so, never "latest FY".
+   - The CIQ fact's own basis text now reads "the annual sheet's latest column".
+   - **Measured on the real workbooks:** CNXC LTM to 2026-08-31; WERN, GOOGL and ORKA LTM to
+     2026-06-30.
+   - GOOGL's committed vendor D&A changes only that label at re-assembly. #816's frozen cut
+     (`tests/fixtures/anchor_ciq_bridge.json`) now carries the period beside GOOGL's and ORKA's
+     facts, as `extract` returns it.
+
+**THE ANCHOR'S INPUTS AND THEIR PERIODS, after this change** (operator ask, review of #830):
+
+| input | read from | period |
+|---|---|---|
+| D&A, EDGAR | `concepts.current_annual`, newest-year cutoff | the filer's newest fiscal year (10-K), or a 10-Q's trailing column where the filer tags one (AMZN) |
+| D&A, CIQ bridge | the annual sheet's last column | LTM to the header's date where the workbook carries one (33 of 35), else a fiscal year; now stated |
+| LTM revenue | the page's committed `financial_summary` LTM column | LTM |
+| LTM EBIT | the same, `_ltm_ebit_from_fs` | LTM |
+| FCF, EDGAR | `current_pair`, OCF − capex | one fiscal year, or one 10-Q trailing column, both legs |
+| FCF, CIQ bridge | `ltm_ocf` − the annual sheet's last-column capex | OCF LTM; capex LTM on 33 of 35, a fiscal year on NKE — labelled "trailing twelve months" either way |
+| net debt | EDGAR balance sheet (or CIQ's) | one instant, the latest balance-sheet date |
+| diluted shares | the latest 10-Q quarter's diluted weighted average | the latest quarter |
+
+**FOUND, NOT FIXED — the anchor pairs an LTM leg with a fiscal-year D&A.**
+- **Three computations add or divide D&A beside an LTM figure:**
+  - `market_reconciliation`'s recorded EBITDA (LTM EBIT + D&A);
+  - `recorded_d_and_a_check` (D&A ÷ LTM revenue);
+  - R1's base (`scenario_value`: LTM revenue × margin, + D&A).
+- **24 of the 27 committed anchors carry an EDGAR fiscal-year D&A,** so on those pages each of
+  the three pairs two periods. AMZN's 10-Q trailing column, GOOGL's CIQ LTM and MVST (no D&A) are
+  the three exceptions.
+- This predates the PR. It moves CNXC, WERN, FUBO and ORKA onto an LTM D&A, so for them the legs
+  now match.
+- **The CIQ FCF fill can pair the same way.** It takes LTM OCF less last-column capex. That is LTM
+  − LTM on 33 workbooks, but LTM − FY on a workbook like NKE's, still labelled "trailing twelve
+  months". No committed page's FCF is filled from such a workbook today.
+- **Recorded in STATE.md §5.0 row 11 as open.** The fix is a period-matched D&A for the anchor
+  (an EDGAR trailing D&A built from 10-K and 10-Q figures, or the CIQ LTM where present), and
+  it moves R1 bases.
+
 2. **A filer that never tagged a combined line has no EDGAR D&A** (107 cached). Its split is
    unverifiable from companyfacts alone. CNXC's split equals its CIQ FY25 exactly and WERN's is
    within 0.03%, so for those two the split was right; but nothing in the filings shows it, and

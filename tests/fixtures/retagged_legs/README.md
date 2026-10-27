@@ -27,6 +27,7 @@ frozen fixtures.
 | `DRH.json` | DiamondRock Hospitality (1298946) | 2026-08-13 | operating cash flow, capex | a missing year ends the continuation |
 | `CNXC.json` | Concentrix (1803599) | 2026-10-26 | D&A (+ the split tags), revenue | no combined line ever: the anchor's EDGAR D&A is refused, the CIQ bridge fills |
 | `FUBO.json` | FuboTV (1484769) | 2026-10-22 | D&A (+ the split tags), revenue | the anchor's FY2024 D&A has been reported past (#817's check) |
+| `WERN.json` | Werner Enterprises (793074) | 2026-10-22 | D&A (+ the split tags), revenue | no combined line ever: the bridged D&A carries its period (review of #830) |
 
-`CNXC.json` and `FUBO.json` were cut for `tests/test_anchor_dep_amort.py` (2026-10-27), with the same
+`CNXC.json`, `FUBO.json` and `WERN.json` were cut for `tests/test_anchor_dep_amort.py` (2026-10-27), with the same
 check: `_latest_dep_amort` and the newest fiscal year read as on the full blob.
