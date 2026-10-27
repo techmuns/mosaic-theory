@@ -38,8 +38,8 @@ Details = Callable[[str, "date | None"], "Mapping[str, Any] | None"]
 
 @dataclass(frozen=True)
 class ShareClassAlias:
-    """``successor_id`` continues ``predecessor_id``: the same CIK and share-class FIGI, listed
-    under a new ticker on ``listed``."""
+    """``successor_id`` continues ``predecessor_id``: the same CIK and share-class FIGI, trading
+    under a new ticker from ``listed`` (its first session as that ticker)."""
 
     predecessor_id: str
     successor_id: str
@@ -88,12 +88,19 @@ def write_aliases(snapshots_dir: Path, aliases: Iterable[ShareClassAlias]) -> in
 
 def detect_renames(lines: Iterable[Identity], master: Iterable[Identity],
                    active: Mapping[str, object], details: Details,
+                   first_session: Callable[[Identity], date | None],
                    known: Iterable[ShareClassAlias] = ()) -> list[ShareClassAlias]:
     """The renames among ``lines``: for each line, an entity-master id of the SAME CIK and share
     class whose ticker is no longer ``active`` (absent from today's reference pull), confirmed by
-    equal share-class FIGIs — the line's today, the old ticker's as of the day before the line was
-    listed. Only an inactive sibling is a candidate, so an issuer's other live classes cost no call;
-    an alias already ``known`` costs none either."""
+    equal share-class FIGIs — the line's today, the old ticker's as of the day before the line's
+    ``first_session`` under its own ticker. Only an inactive sibling is a candidate, so an issuer's
+    other live classes cost no call; an alias already ``known`` costs none either.
+
+    THE BOUNDARY IS THE NEW TICKER'S FIRST SESSION, NEVER ``list_date``. Polygon's ``list_date``
+    is the share class's listing: HOS reads 2026-09-02, the rename, but SVIA reads 2025-12-08, the
+    day the class listed as BRR — reading BRR "as of 2025-12-07" asks for a ticker that did not
+    exist yet. The first bar the source serves under the new symbol is the day it started trading
+    as that symbol (HOS: 2026-09-02; HLX's last: 2026-09-01)."""
     seen = {(a.predecessor_id, a.successor_id) for a in known}
     by_cik: dict[str, list[Identity]] = {}
     for m in master:
@@ -107,10 +114,9 @@ def detect_renames(lines: Iterable[Identity], master: Iterable[Identity],
         if not olds:
             continue
         now = details(s.eod_symbol, None)
-        figi, listed = (now or {}).get("share_class_figi"), (now or {}).get("list_date")
-        if not figi or not listed:
+        figi = (now or {}).get("share_class_figi")
+        if not figi or (on := first_session(s)) is None:
             continue
-        on = date.fromisoformat(str(listed))
         for p in olds:
             then = details(p.eod_symbol, on - timedelta(days=1))
             if (then or {}).get("share_class_figi") == figi and (then or {}).get("cik") == s.cik:
@@ -119,8 +125,8 @@ def detect_renames(lines: Iterable[Identity], master: Iterable[Identity],
                     share_class_figi=str(figi), predecessor_symbol=p.eod_symbol,
                     successor_symbol=s.eod_symbol, listed=on,
                     evidence=(f"Polygon ticker details: {p.eod_symbol} as of "
-                              f"{(on - timedelta(days=1)).isoformat()} and {s.eod_symbol} (listed "
-                              f"{on.isoformat()}) carry share_class_figi {figi}")))
+                              f"{(on - timedelta(days=1)).isoformat()} and {s.eod_symbol} (first "
+                              f"session {on.isoformat()}) carry share_class_figi {figi}")))
     return out
 
 

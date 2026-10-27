@@ -60,6 +60,11 @@ def _details(overrides: dict[str, dict[str, Any]] | None = None
     return asked, details
 
 
+def _first_session(line: Identity) -> date | None:
+    """HOS's first bar under its own ticker, from its frozen aggregates: 2026-09-02."""
+    return _bars(line.eod_symbol)[0][0]
+
+
 def _bars(t: str) -> list[tuple[date, RawBar]]:
     return [(date.fromisoformat(d), RawBar(ticker=t, open=o, high=h, low=lo, close=c, volume=v))
             for d, o, h, lo, c, v in _FIX["bars"][t]]
@@ -72,23 +77,36 @@ def test_a_rename_is_confirmed_on_the_share_class_figi() -> None:
     share-class FIGI and CIK: one class, two tickers."""
     asked, details = _details()
     [alias] = detect_renames([_ident("HOS")], [_ident("HLX"), _ident("HOS")], {"HOS": "CS"},
-                             details)
+                             details, _first_session)
     assert (alias.predecessor_id, alias.successor_id) == (_HLX, _HOS)
     assert alias.share_class_figi == "BBG001S978V8" and alias.listed == _LISTED
     assert asked == [("HOS", None), ("HLX", date(2026, 9, 1))]
+
+
+def test_the_boundary_is_the_new_tickers_first_session_not_its_list_date() -> None:
+    """Polygon's ``list_date`` is the SHARE CLASS's listing: SVIA reads 2025-12-08, the day the
+    class listed as BRR. A HOS record carrying that shape must still read HLX the day before HOS's
+    first session, not before a listing the old ticker itself made."""
+    asked, details = _details({"HOS": {"list_date": "1997-07-01"}})
+    [alias] = detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details,
+                             _first_session)
+    assert alias.listed == _LISTED
+    assert asked[-1] == ("HLX", date(2026, 9, 1))
 
 
 def test_a_different_figi_is_two_classes_never_one_record() -> None:
     """NEGATIVE — the reuse shape L7 measured (UMBF / UMBFO, WTFC / WTFCN: one CIK, two classes).
     HLX's real record with a different FIGI must not splice two series into one."""
     _, details = _details({"HLX@2026-09-01": {"share_class_figi": "BBG000000000"}})
-    assert detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details) == []
+    assert detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details,
+                          _first_session) == []
 
 
 def test_a_line_with_no_figi_is_never_aliased() -> None:
     """NEGATIVE — PLGO carries no FIGI in any pull. With no key there is no rename, only a guess."""
     _, details = _details({"HOS": {"share_class_figi": None}})
-    assert detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details) == []
+    assert detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details,
+                          _first_session) == []
 
 
 def test_only_an_inactive_sibling_of_the_same_class_costs_a_call() -> None:
@@ -96,9 +114,9 @@ def test_only_an_inactive_sibling_of_the_same_class_costs_a_call() -> None:
     share class is not either: neither is ever looked up."""
     asked, details = _details()
     assert detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS", "HLX": "CS"},
-                          details) == []
+                          details, _first_session) == []
     assert detect_renames([_ident("HOS")], [_ident("HLX", share_class="B")], {"HOS": "CS"},
-                          details) == []
+                          details, _first_session) == []
     assert asked == []
 
 
@@ -106,7 +124,8 @@ def test_the_alias_table_only_ever_grows(tmp_path: Path) -> None:
     """ACCUMULATE-ONLY: a successor must always trace to its predecessor, so a row once written is
     never dropped, and writing it again adds nothing."""
     _, details = _details()
-    found = detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details)
+    found = detect_renames([_ident("HOS")], [_ident("HLX")], {"HOS": "CS"}, details,
+                           _first_session)
     assert write_aliases(tmp_path, found) == 1
     assert write_aliases(tmp_path, found) == 0
     assert write_aliases(tmp_path, []) == 0

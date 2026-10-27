@@ -23,7 +23,7 @@ from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.edgar.client import SHARES_TAG_WAVG
 from vinci.eod import EodClient, PolygonEodClient
-from vinci.eod.client import carry_forward
+from vinci.eod.client import CARRY_DAYS, carry_forward
 from vinci.resolver import EntityResolver
 from vinci.resolver.aliases import detect_renames, load_aliases, write_aliases
 from vinci.resolver.instrument import FOREIGN_PRIVATE_ISSUER_FORMS
@@ -585,8 +585,14 @@ def build_universe(
         # treated as a new choice, and (b) is given the old id's bars before its listing date.
         # The old id is never re-keyed (`vinci/resolver/aliases.py`).
         aliases = load_aliases(cfg.snapshots_dir)
+        def _first_session(line: Identity) -> date | None:
+            """The first session the source serves under this line's own ticker."""
+            bars = eod.daily_bars(line.eod_symbol,
+                                  reference_date - timedelta(days=CARRY_DAYS), reference_date)
+            return bars[0][0] if bars else None
         found = detect_renames([row[0] for row in admitted], store.iter_securities(), sec_types,
-                               lambda t, on: eod.ticker_details(t, on), known=aliases)
+                               lambda t, on: eod.ticker_details(t, on), _first_session,
+                               known=aliases)
         write_aliases(cfg.snapshots_dir, found)
         aliases += found
         incumbents = incumbents | {al.successor_id for al in aliases
