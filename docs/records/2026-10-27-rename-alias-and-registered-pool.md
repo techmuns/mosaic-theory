@@ -117,7 +117,7 @@ a record carrying SVIA's shape.
     pre-prune reads 343 of 343.
 
 **HOW VERIFIED.**
-- **`tests/test_rename_alias.py`, 13 pins.** Frozen REAL records (`tests/fixtures/rename_hlx_hos.json`):
+- **`tests/test_rename_alias.py`, 14 pins.** Frozen REAL records (`tests/fixtures/rename_hlx_hos.json`):
   both Polygon records, both tickers' bars, and the HLX bars the 10-16 store held.
   - FIGI confirms; a different FIGI refuses; no FIGI refuses; only an inactive same-class sibling
     costs a call; the boundary is the first session, never `list_date` (SVIA's shape).
@@ -128,7 +128,8 @@ a record carrying SVIA's shape.
   - A bar the old id holds after the rename is never carried (L7's reused-ticker mirror).
   - The screen can evaluate HOS after the carry.
   - The builder writes the alias and carries.
-  - The heir of an incumbent keeps the slot (counterfactual sibling).
+  - The heir of an incumbent keeps the slot (counterfactual sibling), and incumbency follows a
+    chain of renames (A → B → C; review round 0).
 - **`tests/test_cohort_pool_registered.py`, 3 pins.** The call site; the new
   `foreign_private_issuer` stage is poolable; end to end on the committed pool, none of the named
   failure lines remains and OBAI (a common the feed names like a bond) does.
@@ -158,6 +159,9 @@ a record carrying SVIA's shape.
    carry is caught only by the anchor restatement on the new id's own bars.
 4. **The committed queue's cohort context is stale for 47 names until the next re-render.** A
    re-render needs the structural scan's EDGAR calls, so it is left to the weekly run.
-5. **Old ids in the ledger are not mirrored forward.** No ledger row is on a renamed line today.
+5. **A line renamed TWICE carries only its last step's bars.** C gets B's bars, and B holds A's
+   only if B was ever admitted (review round 0, deferred: no chain exists in the measured
+   renames). Incumbency DOES follow the whole chain.
+6. **Old ids in the ledger are not mirrored forward.** No ledger row is on a renamed line today.
    If one were, its scoring would stop at the rename (StaleExitError, #820). FALSIFIER: a ledger
    row whose id has a successor in the alias table.

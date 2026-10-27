@@ -26,6 +26,7 @@ from vinci.eod.features import compute_price_features
 from vinci.resolver.aliases import (
     ShareClassAlias,
     detect_renames,
+    heirs,
     load_aliases,
     predecessors,
     write_aliases,
@@ -337,3 +338,15 @@ def test_the_heir_of_an_incumbent_keeps_its_issuers_slot(
     HOS continues it, so a more-traded sibling (counterfactual, above) does not take the slot."""
     _, admitted, _ = _build(monkeypatch, tmp_path, sibling=True)
     assert admitted == {_HOS}
+
+
+def test_incumbency_follows_a_chain_of_renames() -> None:
+    """A → B → C: C is the heir of an incumbent A even though B never sat in a population (review,
+    round 0: a one-step test missed C). Built on the real HLX → HOS alias, extended by one step."""
+    def step(a: str, b: str) -> ShareClassAlias:
+        return ShareClassAlias(predecessor_id=a, successor_id=b, cik=_CIK,
+                               share_class_figi="BBG001S978V8", predecessor_symbol=a[-3:],
+                               successor_symbol=b[-3:], listed=_LISTED, evidence="fixture")
+    chain = [step(_HLX, _HOS), step(_HOS, f"SEC-{_CIK}-HOX")]
+    assert heirs(chain, {_HLX}) == {_HOS, f"SEC-{_CIK}-HOX"}
+    assert heirs(chain, {"SEC-0000000001-ZZZ"}) == set()

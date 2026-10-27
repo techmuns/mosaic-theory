@@ -26,7 +26,7 @@ from vinci.eod import EodClient, PolygonEodClient
 from vinci.eod.client import CARRY_DAYS, carry_forward
 from vinci.netcache import HttpError
 from vinci.resolver import EntityResolver
-from vinci.resolver.aliases import detect_renames, load_aliases, write_aliases
+from vinci.resolver.aliases import detect_renames, heirs, load_aliases, write_aliases
 from vinci.resolver.instrument import FOREIGN_PRIVATE_ISSUER_FORMS
 from vinci.schemas.data_record import Identity
 from vinci.schemas.envelope import DataField, SourceTier
@@ -606,8 +606,7 @@ def build_universe(
                                known=aliases)
         write_aliases(cfg.snapshots_dir, found)
         aliases += found
-        incumbents = incumbents | {al.successor_id for al in aliases
-                                   if al.predecessor_id in incumbents}
+        incumbents = incumbents | heirs(aliases, incumbents)
         admitted_ids = {row[0].internal_id for row in admitted}
         for al in aliases:
             if al.successor_id in admitted_ids:

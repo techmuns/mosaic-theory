@@ -130,6 +130,14 @@ def detect_renames(lines: Iterable[Identity], master: Iterable[Identity],
     return out
 
 
+def heirs(aliases: Iterable[ShareClassAlias], incumbents: Iterable[str]) -> set[str]:
+    """Every id that continues an incumbent through ANY number of renames (A → B → C makes C the
+    heir of an incumbent A even when B never sat in a population)."""
+    held = set(incumbents)
+    return {succ for succ, chain in predecessors(aliases).items()
+            if any(a.predecessor_id in held for a in chain)}
+
+
 def predecessors(aliases: Iterable[ShareClassAlias]) -> dict[str, list[ShareClassAlias]]:
     """``{successor_id: [its aliases, oldest first]}`` — every step back, so a line renamed twice
     reaches both its predecessors."""
