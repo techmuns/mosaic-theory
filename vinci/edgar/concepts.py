@@ -385,17 +385,20 @@ class StaleAnnual(NamedTuple):
                 f"{self.newer_end.isoformat()} — not the current year")
 
 
-def concept_frontier(facts: dict[str, Any], concept: str) -> ConceptPoint | None:
+def concept_frontier(
+    facts: dict[str, Any], concept: str, substitute: tuple[str, ...] = ()
+) -> ConceptPoint | None:
     """The point with the newest period end ANY alias of ``concept`` carries, of any duration.
 
     Every alias, not the one :func:`extract_points` serves: the served alias is the one this is
-    measured against. A tie goes to the alias first in priority order.
+    measured against. A tie goes to the alias first in priority order. ``substitute`` adds the
+    tags of a substitute :func:`annual_line` accepted, since they now carry the concept too.
 
     A point whose period ends AFTER the day it was filed is skipped: it is a forward-dated
     context, not a period the filer has reported. Measured 2026-10-27 on the 2,161 cached
     companyfacts: 61 such points in 18 filers across the eight flow concepts' aliases."""
     newest: ConceptPoint | None = None
-    for tag in CONCEPT_ALIASES[concept]:
+    for tag in (*CONCEPT_ALIASES[concept], *substitute):
         for p in points_for_tag(facts, tag, concept=concept):
             if p.period_end > p.filed:
                 continue
@@ -463,6 +466,125 @@ def behind_filer(annual: ConceptPoint, fiscal_year: ConceptPoint | None) -> Stal
                        lag_days=lag, against_filer=True)
 
 
+#: Where a filer may move a concept's annual line once its aliases stop: each entry is one tag,
+#: or a split whose same-period values SUM to the line. Chosen by MEANING — the whole line under
+#: another name, never a component of it: no class of PP&E (machinery, construction in progress),
+#: no capex net of disposal proceeds, no `Depreciation` without the amortization, no "other" D&A.
+#: Measured 2026-10-27 on the legs #821 withholds (2,161 cached companyfacts): no tag of that kind
+#: carries a later operating income or operating cash flow, so those have none; diluted EPS's one
+#: candidate (`EarningsPerShareBasicAndDiluted`) recovered none of 23 legs, its own series having
+#: stopped too, and no production reader takes the snapshot's EPS. A substitute is only a
+#: CANDIDATE: :func:`annual_line` accepts it per filer, on evidence.
+SUBSTITUTES: dict[str, tuple[tuple[str, ...], ...]] = {
+    "capex": (("PaymentsToAcquireOtherPropertyPlantAndEquipment",),
+              ("PaymentsToAcquireOtherProductiveAssets",),
+              ("PaymentsForCapitalImprovements",)),
+    "dep_amort": (("Depreciation", "AmortizationOfIntangibleAssets"),),
+}
+
+#: A substitute is the old line only where it reports the old line's figure, to rounding, in the
+#: LATEST year both carry — the handover. A re-tag is the same line, so it carries the same
+#: number; a different number is a different quantity. MEASURED 2026-10-27 on the substitutes
+#: above for the legs #821 withholds (112 with such a year): 44 within 0.05%, NOTHING from 0.05% to
+#: 0.15%, then a continuum — AbCellera's split 0.15% (30% the year before), DiamondRock 0.40%,
+#: Thor's two capex tags 1.13% (one 10-K carries both, at $121.62M and $122.99M: two quantities),
+#: Grocery Outlet's split 1.63% short (a component left out, in both years), Ecovyst's 23% short,
+#: and 51 beyond 5%. The latest year, not every year: Scotts' split matches exactly from FY2018 to
+#: FY2024 and differs 5–17% in FY2014–FY2017, which its filings tagged on another basis. Set by
+#: that gap — never by what a reading would have paid.
+SUBSTITUTE_TOLERANCE = 0.001
+
+
+class AnnualLine(NamedTuple):
+    """A concept's annual values by period end, and the substitute continuing them, if any."""
+
+    by_period: dict[date, ConceptPoint]
+    substitute: tuple[str, ...]  # the substitute's tags; () when the aliases alone carry it
+
+
+def _substitute_series(facts: dict[str, Any], concept: str, tags: tuple[str, ...],
+                       unit: str) -> dict[date, ConceptPoint]:
+    """A substitute's annual values by period end, in ``unit``; a split sums its tags for each
+    period they ALL carry over the same span, and is stamped with every tag it read."""
+    maps = [annual_by_period([p for p in points_for_tag(facts, t, concept=concept)
+                              if p.unit == unit]) for t in tags]
+    if len(maps) == 1:
+        return maps[0]
+    out: dict[date, ConceptPoint] = {}
+    for end in set.intersection(*(set(m) for m in maps)):
+        legs = [m[end] for m in maps]
+        if any(p.period_start != legs[0].period_start for p in legs):
+            continue
+        last = max(legs, key=lambda p: p.filed)
+        out[end] = last.model_copy(update={"tag": " + ".join(tags),
+                                           "value": sum(p.value for p in legs)})
+    return out
+
+
+def _agrees(old: dict[date, ConceptPoint], new: dict[date, ConceptPoint]) -> bool:
+    """``new`` reports ``old``'s figure, within :data:`SUBSTITUTE_TOLERANCE`, in the LATEST year
+    both carry over the same span — and there is such a year."""
+    years = [e for e in old.keys() & new.keys() if old[e].period_start == new[e].period_start]
+    if not years:
+        return False
+    end = max(years)
+    return abs(new[end].value - old[end].value) <= SUBSTITUTE_TOLERANCE * abs(old[end].value)
+
+
+def _continuation(sub: dict[date, ConceptPoint], last: date) -> dict[date, ConceptPoint]:
+    """``sub``'s years after ``last``, while they run unbroken: each ends at most one fiscal year
+    (:data:`ANNUAL_MAX_DAYS`) after the one before and carries a figure other than zero."""
+    out: dict[date, ConceptPoint] = {}
+    prev = last
+    for end in sorted(e for e in sub if e > last):
+        if (end - prev).days > ANNUAL_MAX_DAYS or sub[end].value == 0:
+            break
+        out[end] = sub[end]
+        prev = end
+    return out
+
+
+def annual_line(facts: dict[str, Any], concept: str) -> AnnualLine:
+    """``concept``'s annual values by period end: its served alias's (:func:`extract_points`),
+    continued past their last year by a :data:`SUBSTITUTES` entry the filer has PROVEN to be the
+    same line.
+
+    A FILER THAT RE-TAGS A LINE HAS NOT STOPPED REPORTING IT. Scotts Miracle-Gro's combined D&A
+    ends at FY2024; its FY2025 is `Depreciation` + `AmortizationOfIntangibleAssets`, and in FY2023
+    and FY2024 those two summed to the combined figure exactly ($92.5M, $80.6M). So the split
+    continues the line. Ecovyst's split ran 23% short of its combined D&A in FY2024: a component,
+    not the line, and it is refused.
+
+    THE EVIDENCE IS THE OVERLAP, never the tag name: a substitute is accepted only where it reports
+    the served line's figure in the latest year both carry (:data:`SUBSTITUTE_TOLERANCE`). With no
+    such year there is nothing to check it against, and it is refused. It then serves only periods
+    AFTER the served line's last annual — never in place of a year the aliases report. Two
+    accepted substitutes that disagree on those later years are refused together.
+
+    THE CONTINUATION MUST BE UNBROKEN (:func:`_continuation`): one fiscal year after another from
+    the served line's last, each a figure other than zero. A missing year or a zero ends it.
+    Lantheus's `PaymentsToAcquireOtherProductiveAssets` matched its capex at the FY2023 handover
+    ($45.3M), then read $80.9M and, for FY2025, $0 — while `PaymentsForCapitalImprovements` carried
+    $36.1M. A line the filer emptied is not a year it spent nothing."""
+    served = annual_by_period(extract_points(facts, concept))
+    if not served:
+        return AnnualLine(served, ())
+    last = max(served)
+    unit = served[last].unit
+    accepted: list[tuple[tuple[str, ...], dict[date, ConceptPoint]]] = []
+    for tags in SUBSTITUTES.get(concept, ()):
+        sub = _substitute_series(facts, concept, tags, unit)
+        later = _continuation(sub, last)
+        if later and _agrees(served, sub):
+            accepted.append((tags, later))
+    if not accepted:
+        return AnnualLine(served, ())
+    tags, later = accepted[0]
+    if any(not _agrees(later, other) for _, other in accepted[1:]):
+        return AnnualLine(served, ())
+    return AnnualLine({**served, **later}, tags)
+
+
 def current_annual(
     facts: dict[str, Any], concept: str, fiscal_year: ConceptPoint | None = None
 ) -> tuple[ConceptPoint | None, StaleAnnual | None]:
@@ -490,11 +612,15 @@ def current_annual(
     `OperatingIncomeLoss` ends at FY2014 and SL Green's capex at FY2019, each served beside FY2025
     figures. So the annual must also be at most one fiscal year behind the filer's newest fiscal
     year. One year behind stays: that is the newest figure the filer gives for the concept.
+
+    The annual read is the concept's :func:`annual_line`: a substitute the filer proved to be the
+    same line continues it, and is judged by both checks exactly as an alias is.
     """
-    served = latest_annual(extract_points(facts, concept))
-    if served is None:
+    line = annual_line(facts, concept)
+    if not line.by_period:
         return None, None
-    stale = (stale_against(served, concept_frontier(facts, concept))
+    served = line.by_period[max(line.by_period)]
+    stale = (stale_against(served, concept_frontier(facts, concept, line.substitute))
              or behind_filer(served, fiscal_year or filer_fiscal_year(facts)))
     return (None, stale) if stale else (served, None)
 
@@ -546,10 +672,11 @@ def current_pair(
     leg against its own concept's newest period, and the year against the filer's newest fiscal
     year. So a pair that last met years ago is never served as this year's figure: when one leg
     has moved on, the other leg's year is not the current one. The CIQ-empty FCF fallback has
-    paired this way since #817; this is that pairing, shared.
+    paired this way since #817; this is that pairing, shared. Each leg is its concept's
+    :func:`annual_line`, so a re-tagged leg pairs on the year the filer re-tagged it in.
     """
-    by_first = annual_by_period(extract_points(facts, first))
-    by_second = annual_by_period(extract_points(facts, second))
+    line_first, line_second = annual_line(facts, first), annual_line(facts, second)
+    by_first, by_second = line_first.by_period, line_second.by_period
     if not by_first or not by_second:
         return None, None
     shared = [e for e in by_first.keys() & by_second.keys()
@@ -560,8 +687,9 @@ def current_pair(
     end = max(shared)
     a, b = by_first[end], by_second[end]
     behind = behind_filer(a, fiscal_year or filer_fiscal_year(facts))
-    legs = tuple(s for s in (stale_against(a, concept_frontier(facts, first)),
-                             stale_against(b, concept_frontier(facts, second))) if s)
+    legs = tuple(s for s in (
+        stale_against(a, concept_frontier(facts, first, line_first.substitute)),
+        stale_against(b, concept_frontier(facts, second, line_second.substitute))) if s)
     if behind or legs:
         return None, StalePair(first=first, second=second, period_end=end, behind=behind,
                                legs=legs, first_end=max(by_first), second_end=max(by_second))

@@ -638,7 +638,8 @@ def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | str:
     The year must be CURRENT (:func:`vinci.edgar.concepts.current_pair`, the pairing the screen's
     FCF sign reads). A same-period pair was served however old: FUBO's anchor carried
     "operating_cash_flow − capex (FY2024, same period)" while both concepts carried quarters a
-    fiscal year past it."""
+    fiscal year past it. Capex may be read from a substitute the filer proved to be the same line
+    (:func:`vinci.edgar.concepts.annual_line`), and the source then names its tag."""
     legs, stale = current_pair(facts, "operating_cash_flow", "capex")
     if legs is None:
         return stale.note if stale else "no aligned operating-cash-flow + capex pair"
@@ -646,9 +647,11 @@ def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | str:
     lbl, trailing = _period_label(ocf)
     basis = (f"trailing {lbl} (the filer's own 10-Q column)" if trailing
              else f"latest {lbl} (not LTM)")
+    via = ("" if capex.tag in CONCEPT_ALIASES["capex"]
+           else f"; capex read from {capex.tag}, the filer's line once its capex tags stopped")
     # capex is reported as a POSITIVE outflow in the cash-flow statement; subtract its magnitude
     return (ocf.value - abs(capex.value), basis,
-            f"EDGAR companyfacts operating_cash_flow − capex ({lbl}, same period)")
+            f"EDGAR companyfacts operating_cash_flow − capex ({lbl}, same period{via})")
 
 
 def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
