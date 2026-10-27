@@ -399,7 +399,13 @@ def test_every_later_refusal_on_the_corpus_is_flagged_and_no_earlier_one() -> No
         pytest.skip("no committed refused row sits beside a PRESENT one")
 
 
-def test_python_and_js_collapse_agree_on_every_committed_page() -> None:
+#: Linux caps ONE argv string at MAX_ARG_STRLEN = 131,072 bytes; macOS does not, so an inline
+#: `node -e` payload passed locally and died on the `gate` runner (#812: 532 KB of rows,
+#: "Argument list too long"). The rows go through a file; the script stays well under the cap.
+_ARGV_STRING_CAP = 131_072
+
+
+def test_python_and_js_collapse_agree_on_every_committed_page(tmp_path: pathlib.Path) -> None:
     """(py↔js) The WHOLE collapse — group, term, status, note, accession, the refused rows, the
     last verified ref and the flag's lead text — through each engine on every committed page with
     term rows and on the three frozen blocks. The web grouped by the pointer's guessed family
@@ -427,7 +433,9 @@ def test_python_and_js_collapse_agree_on_every_committed_page() -> None:
     payload = {t: [[r.model_dump(mode="json") for r in rows], [p.model_dump(mode="json")
                                                                 for p in ptrs]]
                for t, (rows, ptrs) in pages.items()}
-    driver = ("const P=" + json.dumps(payload) + ";const o={};"
+    rows_file = tmp_path / "pages.json"
+    rows_file.write_text(json.dumps(payload))
+    driver = ("const P=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'));const o={};"
               "for(const [t,[r,p]] of Object.entries(P)){const d={};"
               "for(const x of p){if(x.accession&&x.filing_date)d[x.accession]=x.filing_date;}"
               "o[t]=governingTerms(r,p).map(g=>[g.fam,g.term,g.value.status,g.value.note??null,"
@@ -437,7 +445,9 @@ def test_python_and_js_collapse_agree_on_every_committed_page() -> None:
               "console.log(JSON.stringify(o));")
     # node -e rejects a NUL in argv; the collapse's Map key separator is one (see the RC-1.5d pin)
     src = (text_fn + "\n" + collapse + "\n" + driver).replace(chr(0), "\\u0000")
-    out = subprocess.run(["node", "-e", src], capture_output=True, text=True, check=True)
+    assert len(src.encode()) < _ARGV_STRING_CAP // 2, len(src.encode())  # fails on macOS too
+    out = subprocess.run(["node", "-e", src, str(rows_file)], capture_output=True, text=True,
+                         check=True)
     assert json.loads(out.stdout) == py
 
 
