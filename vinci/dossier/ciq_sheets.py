@@ -44,6 +44,7 @@ from vinci.dossier.schemas import (
     ConsensusSpread,
     ConsensusYear,
     CreditHealthPanel,
+    CrossCheck,
     CurrentMultiple,
     DriverKind,
     EpsBasis,
@@ -6167,7 +6168,7 @@ _WHERE = {
 }
 
 
-def _panel_check(stated: list[str]) -> Literal["agree", "differ", "not_run"]:
+def _panel_check(stated: list[str]) -> CrossCheck:
     if not stated:
         return CHECK_NOT_RUN
     return CHECK_AGREE if set(stated) <= USD_STATED else CHECK_DIFFER

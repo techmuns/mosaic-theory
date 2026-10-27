@@ -1541,14 +1541,19 @@ def cross_check_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str]
     return _apply
 
 
-def _export_figures(ticker: str) -> list[Any]:
-    """The annual Revenue and CFO figures of the name's CIQ export, each with its period end."""
-    from vinci.dossier import statement_recon as sr
+def _page_bundle(ticker: str) -> Any:
+    """The name's CIQ exports, as assembly loads them."""
     from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.manual_store import LocalFolderStore
 
-    files = LocalFolderStore.from_config().files(ticker)
-    return sr.ciq_figures(CiqBundle.from_files(ticker, files))
+    return CiqBundle.from_files(ticker, LocalFolderStore.from_config().files(ticker))
+
+
+def _export_figures(ticker: str) -> list[Any]:
+    """The annual Revenue and CFO figures of the name's CIQ export, each with its period end."""
+    from vinci.dossier import statement_recon as sr
+
+    return sr.ciq_figures(_page_bundle(ticker))
 
 
 def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str],
@@ -1609,14 +1614,6 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
         return out
 
     return _apply
-
-
-def _page_bundle(ticker: str) -> Any:
-    """The name's CIQ exports, as assembly loads them."""
-    from vinci.dossier.ciq import CiqBundle
-    from vinci.dossier.manual_store import LocalFolderStore
-
-    return CiqBundle.from_files(ticker, LocalFolderStore.from_config().files(ticker))
 
 
 def ciq_currency_transform(doc: dict[str, Any], *, refused: list[str],

@@ -168,6 +168,12 @@ def test_the_reported_currency_is_the_exports_own_never_a_default() -> None:
             sheets["estimates||Guidance"][0][0] = f"Currency: {name}"
         return edit
 
+    # no Consensus sheet to resolve 'Reported Currency' through: unstated, never a default
+    def no_consensus(sheets: Sheets) -> None:
+        del sheets["estimates||Consensus"]
+
+    gone = _panel(_read("BRBR", no_consensus), "Estimates→Guidance")
+    assert (gone.stated, gone.check) == ([], CHECK_NOT_RUN)
     usd = _panel(_read("BRBR", header("US Dollar")), "Estimates→Guidance")
     eur = _panel(_read("BRBR", header("Euro")), "Estimates→Guidance")
     assert (usd.stated, usd.check) == (["US Dollar"], CHECK_AGREE)
