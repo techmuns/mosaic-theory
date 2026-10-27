@@ -24,9 +24,13 @@ from pydantic import BaseModel, ValidationError, computed_field
 from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
 from vinci.edgar.concepts import (
+    ANNUAL_STALE_DAYS,
     CONCEPT_ALIASES,
     ConceptPoint,
+    annual_line,
+    current_annual,
     current_pair,
+    filer_fiscal_year,
     latest_annual,
     points_for_tag,
 )
@@ -570,60 +574,74 @@ def _period_label(p: ConceptPoint) -> tuple[str, bool]:
     return f"FY{p.fy or p.period_end.year}", False
 
 
-def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str, str] | None:
-    """Latest consolidated D&A ($) → (value, source, basis). Picks by VINTAGE, not by tag name.
-    The basis says what the twelve months ARE (`_period_label`): a fiscal year, or a filer's own
-    trailing column.
+#: Why EDGAR has no D&A when no tag carries one at all: the text every committed page carries.
+NO_DEP_AMORT = "no D&A tag (combined or split)"
+SPLIT_DEP_AMORT = ("Depreciation", "AmortizationOfIntangibleAssets")
+#: Why, when the filer tags the split but never a combined line: the split has nothing to continue.
+NO_COMBINED_DEP_AMORT = ("no combined D&A line, so the split (Depreciation + "
+                         "AmortizationOfIntangibleAssets) has no year to be checked against")
 
-    Was: prefer the combined tag whenever present, else the split pair. That preference is a
-    landmine for any filer that CHANGED tags — the abandoned tag stays in companyfacts forever at
-    its last reported value. FUBO's combined ``dep_amort`` last reported **$0.003M in FY2014**
-    while its current split tags sum to **~$38.5M**; name-preference picked the twelve-year-old
-    number, and it flowed straight into the anchor's EBITDA basis. (Queued 2026-07-21, closed here.)
 
-    Now: build both candidates, and take the one whose fiscal period is FRESHER. Ties keep the
-    combined tag, which is the filer's own single-line disclosure and needs no summation.
+def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str, str] | str:
+    """Latest consolidated D&A ($) → (value, source, basis), or why EDGAR has none. The basis says
+    what the twelve months ARE (`_period_label`): a fiscal year, or a filer's own trailing column.
 
-    The split pair still requires the SAME fiscal period on both legs — summing an FY2025
-    depreciation into an FY2024 amortisation would fabricate a D&A that never existed."""
-    # EVERY combined alias is considered, not just the first one carrying data. ``extract_points``
-    # resolves aliases by ORDER — first-with-any-data wins — which is right for breadth and wrong
-    # for vintage: an abandoned tag keeps its last value forever and still sorts first. EPAM's
-    # `DepreciationDepletionAndAmortization` last reported FY2019 ($45.3M) while its
-    # `DepreciationAndAmortization` reports FY2025 ($124.8M), and the FY2019 figure was sitting in
-    # a committed anchor under a PENDING underwrite. The shared resolver is deliberately left
-    # untouched (other consumers depend on its ordering); the vintage rule lives here.
-    cands: list[tuple[Any, float, str, bool]] = []
-    for tag in CONCEPT_ALIASES["dep_amort"]:
-        p = latest_annual(points_for_tag(facts, tag))
-        if p:
-            lbl, trailing = _period_label(p)
-            cands.append((p.period_end, p.value,
-                          f"EDGAR companyfacts {tag} (combined, {lbl})", trailing))
-    dep = latest_annual(points_for_tag(facts, "Depreciation"))
-    am = latest_annual(points_for_tag(facts, "AmortizationOfIntangibleAssets"))
-    # SAME fiscal period or nothing: summing an FY2025 depreciation into an FY2024 amortisation
-    # would fabricate a D&A that never existed.
-    if dep and am and dep.period_end == am.period_end:
-        lbl, trailing = _period_label(dep)
-        cands.append((dep.period_end, dep.value + am.value,
-                      f"EDGAR Depreciation + AmortizationOfIntangibleAssets (split, {lbl})",
-                      trailing))
-    if not cands:
-        return None
-    freshest = max(c[0] for c in cands)
-    # Ties keep the EARLIEST candidate at that vintage — alias order first, the summed split last,
-    # because a filer's own single line needs no summation to be right.
-    best = next(c for c in cands if c[0] == freshest)
-    stale = [c for c in cands if c[0] < freshest]
-    note = ""
-    if stale:
-        oldest = min(c[0] for c in stale)
-        note = (f" — CHOSEN BY VINTAGE over {len(stale)} staler candidate(s), oldest "
-                f"FY{oldest.year} ({(freshest - oldest).days // 365}y behind)")
-    basis = ("consolidated trailing twelve months (the filer's own 10-Q column)" if best[3]
+    ONE READER, THE SCREEN'S (:func:`vinci.edgar.concepts.current_annual`, 2026-10-27). This used to
+    pick among the combined aliases and the `Depreciation` + `AmortizationOfIntangibleAssets` split
+    by VINTAGE alone, so a split FRESHER than every combined alias won however little of D&A it
+    held: Ecovyst's split read $76.4M for FY2025 against a combined line of $89.4M in FY2024, a
+    split that was $68.4M against that $89.4M in the one year both carry. Now:
+    - the combined line is the alias walk's, which already skips an abandoned alias for a current
+      one (MC1) — FUBO's FY2014 `DepreciationDepletionAndAmortization` ($0.003M) loses to its FY2024
+      `DepreciationAndAmortization`, EPAM's FY2019 to its FY2025;
+    - the split continues it only where the filer PROVED it is the line: the same figure, to 0.1%,
+      in the latest year both carry, then unbroken (:func:`vinci.edgar.concepts.annual_line`);
+    - and the year must be current: not reported past by the concept, and — stricter than the
+      screen — the filer's NEWEST fiscal year. The anchor adds this D&A to LTM EBIT, so a year
+      behind would make its EBITDA basis a two-year figure, the pairing #821 forbids. Measured
+      2026-10-27 on 2,161 cached companyfacts: 1,620 anchor D&A years within 29 days of the filer's
+      newest, one at 181 (a 10-Q's trailing column), none from 300 to 349, then 11 at 350–371
+      (Ecovyst, Grocery Outlet, CSW Industries, Accenture among them) — refused.
+
+    A refusal is the reason, never the stale combined figure: the CIQ bridge then supplies the
+    workbook's D&A, stamped `vendor_bridge` (:func:`_bridge_inputs`). A filer that never tagged a
+    combined line (CNXC, WERN) has nothing for a split to continue, so EDGAR has no D&A for it."""
+    fy = filer_fiscal_year(facts)
+    point, stale = current_annual(facts, "dep_amort", fy)
+    if point is None:
+        if stale:
+            return stale.note
+        if all(latest_annual(points_for_tag(facts, t)) for t in SPLIT_DEP_AMORT):
+            return NO_COMBINED_DEP_AMORT
+        return NO_DEP_AMORT
+    if fy is not None and (lag := (fy.period_end - point.period_end).days) >= ANNUAL_STALE_DAYS:
+        return (f"newest D&A is {point.tag} for the year to {point.period_end.isoformat()}, "
+                f"{lag}d behind the filer's newest fiscal year ({fy.tag} to "
+                f"{fy.period_end.isoformat()}) — the anchor adds D&A to LTM EBIT, so it must be "
+                f"the newest year")
+    lbl, trailing = _period_label(point)
+    if point.tag not in CONCEPT_ALIASES["dep_amort"]:
+        # a split continuing the combined line: name the line and where it stopped
+        aliased = [q for q in annual_line(facts, "dep_amort").by_period.values()
+                   if q.tag in CONCEPT_ALIASES["dep_amort"]]
+        last = max(aliased, key=lambda q: q.period_end)
+        source = (f"EDGAR {point.tag} (split, {lbl}; continues {last.tag}, which stops at the "
+                  f"year to {last.period_end.isoformat()} — the same figure, to 0.1%, in the last "
+                  f"year both carry)")
+    else:
+        source = f"EDGAR companyfacts {point.tag} (combined, {lbl})"
+        # The vintage note survives the reader it was written for: which combined aliases the
+        # filer left behind, and how far — so the next reader does not re-derive the choice.
+        ends = [q.period_end for tag in CONCEPT_ALIASES["dep_amort"]
+                if (q := latest_annual(points_for_tag(facts, tag)))]
+        staler = [e for e in ends if e < point.period_end]
+        if staler:
+            oldest = min(staler)
+            source += (f" — CHOSEN BY VINTAGE over {len(staler)} staler candidate(s), oldest "
+                       f"FY{oldest.year} ({(point.period_end - oldest).days // 365}y behind)")
+    basis = ("consolidated trailing twelve months (the filer's own 10-Q column)" if trailing
              else "consolidated latest FY")
-    return best[1], best[2] + note, basis
+    return point.value, source, basis
 
 
 def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | str:
@@ -744,6 +762,12 @@ def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: boo
 
 
 DQ_VENDOR_BRIDGE = "vendor_bridge"
+
+#: What the bridged D&A's twelve months ARE. `ciq_balance` reads the annual sheet's LAST column,
+#: which is `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27; NKE's is a fiscal year,
+#: MCK's carries no header) — it was labelled "consolidated latest FY" (review of #830).
+CIQ_DA_BASIS = ("consolidated, the CIQ workbook's latest annual column — LTM where the workbook "
+                "carries one, else its latest fiscal year (vendor basis)")
 _NO_VENDOR_EX_LEASE = ("; CIQ's net debt is not substituted, because it carries the operating "
                        "leases this bridge excludes")
 
@@ -761,7 +785,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     ``ex_lease`` (2026-10-19): the multiple is the ex-lease history (`lease_basis`), so net debt
     leaves the operating leases out — and the CIQ workbook may NOT fill a missing net debt, because
     CIQ's net debt carries those leases. A hole stays a hole rather than a mixed bridge."""
-    da = _latest_dep_amort(facts)
+    got_da = _latest_dep_amort(facts)
+    da = None if isinstance(got_da, str) else got_da
     nd = _lease_inclusive_net_debt(facts, ex_operating_leases=ex_lease)
     nd_val = nd[0] if nd else None
     dil = _latest_point(facts, _DILUTED_TAG)
@@ -777,9 +802,11 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     vendor: list[str] = []
     if ciq is not None and ciq.ok:
         if da is None and (v := ciq.value("d_and_a")) is not None:
-            da = (v * _USD_M, f"CIQ Financials->Cash Flow (vendor basis; no EDGAR D&A tag) "
+            why = ("no EDGAR D&A tag" if got_da == NO_DEP_AMORT
+                   else f"EDGAR D&A withheld — {got_da}")
+            da = (v * _USD_M, f"CIQ Financials->Cash Flow (vendor basis; {why}) "
                               f"[{ciq.source_file} sha {ciq.source_sha256}]",
-                  "consolidated latest FY")
+                  CIQ_DA_BASIS)
             vendor.append("d_and_a")
         if nd_val is None and not ex_lease and (v := ciq.value("net_debt")) is not None:
             nd_val = v * _USD_M
@@ -799,7 +826,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
         "d_and_a": AnchorInput(
             value=(round(da[0] / _USD_M, 3) if da else None), unit="$M",
             basis=(da[2] if da else "consolidated latest FY"),
-            source=(da[1] if da else "UNKNOWN — no D&A tag (combined or split)")),
+            source=(da[1] if da else f"UNKNOWN — {got_da}")),
         "net_debt": AnchorInput(value=(round(nd_val / _USD_M, 3) if nd_val is not None else None),
                                 unit="$M", basis=(NET_DEBT_EX_LEASE if ex_lease
                                                   else "lease-inclusive net debt (latest 10-Q)"),
