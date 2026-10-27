@@ -29,6 +29,8 @@ def _extract(monkeypatch: pytest.MonkeyPatch, *, revenue: float | None,
         "Total Cash") else (None, None))
     monkeypatch.setattr(cb, "_cf_row", lambda b, label, annual: revenue if label == (
         "Total Revenue") else None)
+    # D&A is read with its column's period since the #830 review; no D&A row here either
+    monkeypatch.setattr(cb, "_cf_cell", lambda b, label, annual: None)
     monkeypatch.setattr(cb, "_sourced", lambda b, fn: None)
     return cb.extract(_NoWorkbook(), "VITL")  # type: ignore[arg-type]
 
