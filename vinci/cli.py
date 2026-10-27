@@ -879,6 +879,8 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     guessed)."""
     from vinci.dossier.anchor import ciq_bridge, compute_anchor
     from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
+    from vinci.dossier.ciq_balance import scale_outcome
+    from vinci.dossier.ciq_sheets import CiqCurrencyError
 
     try:
         facts = edgar.companyfacts(resolver.resolve_ticker(t).cik)
@@ -887,19 +889,24 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
         return None
     # DEPTH-STAGE FALLBACK: the CIQ workbook fills a hole EDGAR left, never overrides it — read
     # through `ciq_bridge`, the one read assembly takes too (row 27 (7)).
-    ciq = None
+    ciq, scale = None, None
     try:
         from vinci.dossier.manual_store import LocalFolderStore as _Store
         bundle = CiqBundle.from_files(t, _Store.from_config(cfg).files(t))
         ciq, note = ciq_bridge(bundle, t)
+        scale = scale_outcome(bundle, t)
         if note:
             print(f"  {t}: {note}")
-    except CiqAmbiguousError:
-        raise   # two exports of one kind is not "no workbook" — the operator clears it first
+    except (CiqAmbiguousError, CiqCurrencyError):
+        # two exports of one kind is not "no workbook", and a money panel stating another
+        # currency is refused as assembly refuses it (#819 review) — the operator clears either
+        raise
     except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
         print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
     anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
                             computed_at=datetime.now(UTC), ciq=ciq)
+    if scale is not None:
+        anchor = anchor.model_copy(update={"ciq_scale_check": scale})
     # (2026-10-09) the machine's R4 proposal, on the page as committed — the same rule the
     # assembler applies, and like it only ever a PROPOSAL: the committed recipe is kept by the
     # caller's `preserve_operator_tag`

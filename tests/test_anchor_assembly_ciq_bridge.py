@@ -54,6 +54,9 @@ def _committed(t: str) -> Anchor:
 def _fields(a: Anchor) -> dict[str, Any]:
     out = a.model_dump(mode="json")
     out.pop("computed_at")
+    # the bridge's scale-check outcome (2026-10-27) postdates the frozen cut; it is pinned on its
+    # own in tests/test_ciq_bridge_currency_and_scale.py
+    out.pop("ciq_scale_check")
     return out
 
 

@@ -37,8 +37,9 @@ from vinci.dossier.band_guards import (
     _MAX_MARKET_RATIO,
     BAND_INCOHERENT,
 )
+from vinci.dossier.ciq_balance import _SCALE_HI, _SCALE_LO
 from vinci.dossier.ciq_sheets import _NETTED_LABEL, EV_BRIDGE_CIQ_TOL, USD_STATED
-from vinci.dossier.ebitda_recon import DIFFERENT_SHARE
+from vinci.dossier.ebitda_recon import DIFFERENT_SHARE, unusual_explains
 from vinci.dossier.freshness import _INTEGER_TOLERANCE, reconcile_cap
 from vinci.dossier.lease_basis import (
     _RENT_DISAGREE,
@@ -115,7 +116,11 @@ def _cross_check(page: dict[str, Any], node: Any, key: str, *, stated: bool = Fa
 def _ebitda_vs_xbrl(page: dict[str, Any]) -> ItemResult:
     er = _get(page, "mechanical", "financial_summary", "ebitda_reconciliation")
     if not isinstance(er, dict):
-        return ItemResult(not_run="no ebitda_reconciliation block on the page")
+        # `ebitda_recon.reconcile` writes no block without a quarterly export, EDGAR facts, or four
+        # columns that ARE four quarters (LLY's quarterly export is its annual one, 2026-10-27)
+        return ItemResult(not_run="no ebitda_reconciliation block on the page — no quarterly CIQ "
+                                  "export, no EDGAR facts, or the export's four latest columns "
+                                  "are not four consecutive quarters")
     if not er.get("quarters"):
         return ItemResult(not_run="ebitda_reconciliation block carries no quarters")
     c: Counter[str] = Counter()
@@ -124,7 +129,8 @@ def _ebitda_vs_xbrl(page: dict[str, Any]) -> ItemResult:
             c[UNCHECKED] += 1
         elif not q.get("different"):
             c[CONFIRMED] += 1
-        elif q.get("matching_amount"):
+        elif (q.get("matching_amount") or q.get("offset_by")
+              or unusual_explains(_num(q.get("gap")), _num(q.get("ciq_unusual")))):
             c[DIFFERS_STATED] += 1
         else:
             c[DIFFERS_UNEXPLAINED] += 1
@@ -207,7 +213,9 @@ def _rent_vs_edgar_lease_cost(page: dict[str, Any]) -> ItemResult:
         return ItemResult(not_run="no lease_basis block on the page")
     rent, cost = _num(lb.get("rent_expense")), _num(lb.get("edgar_lease_cost"))
     verdict = rent_disagrees(rent, cost) if rent is not None and cost is not None else None
-    if verdict is None:
+    # CIQ'S RENT IS ONE PART OF THE TOTAL (WLK: the short-term lease cost, 2026-10-27): a different
+    # definition, never compared — unchecked, not a difference
+    if verdict is None or lb.get("rent_component"):
         return one(UNCHECKED)
     return one(DIFFERS_UNEXPLAINED if verdict else CONFIRMED)
 
@@ -384,6 +392,18 @@ def _currency_stated_usd(page: dict[str, Any]) -> ItemResult:
     return ItemResult(counts=dict(c))
 
 
+def _ciq_scale_vs_revenue(page: dict[str, Any]) -> ItemResult:
+    a = page.get("anchor")
+    if not isinstance(a, dict):
+        return ItemResult(not_run="no anchor block on the page")
+    if a.get("ciq_scale_check") is None:
+        return ItemResult(not_run="no anchor.ciq_scale_check — it predates the field, or the "
+                                  "back-fill could not prove the folder's Financials export the "
+                                  "page's own (ciq_balance.scale_check_backfill); assembly "
+                                  "writes it")
+    return _cross_check(page, a, "ciq_scale_check")
+
+
 CHECKS: tuple[Check, ...] = (
     Check("ebitda_vs_xbrl", "CIQ quarterly EBITDA vs the same quarter rebuilt from the filings",
           "CIQ Financials (quarterly) Income Statement 'EBITDA', the four quarters of its LTM",
@@ -392,7 +412,12 @@ CHECKS: tuple[Check, ...] = (
           f"differs beyond {DIFFERENT_SHARE:.0%} of the rebuilt figure AND by at least $1M "
           "(ebitda_recon.DIFFERENT_SHARE) — the page's own `different` flag",
           "pages carrying mechanical.financial_summary.ebitda_reconciliation",
-          "the quarter's own release states an amount matching the gap (quoted, not attributed)",
+          "the quarter's own release states an amount matching the gap, or its filing TAGS one "
+          "(XBRL, a family of unusual-item and D&A-component tags, matched to $1K) — quoted, not "
+          "attributed; or CIQ's own export itemises unusual items equal to the gap "
+          "(ebitda_recon.unusual_explains — CIQ's normalisation, by its own account); or another "
+          "quarter of the LTM differs by the same amount the other way (a period mismatch, "
+          "offset_by)",
           None, ("wrong_file", "wrong_cell", "wrong_unit", "wrong_period", "different_definition"),
           _ebitda_vs_xbrl),
     Check("revenue_vs_xbrl", "CIQ annual revenue vs the same period from the filings",
@@ -428,7 +453,10 @@ CHECKS: tuple[Check, ...] = (
           "CIQ 'Curr. Port. of Leases' + 'Long-Term Leases', per balance-sheet date",
           "EDGAR operating-lease liability on the same date (finance leases either side)",
           INDEPENDENT, "balance-sheet date",
-          f"within {RECONCILE_TOL:.0%} of EDGAR's figure (lease_basis.RECONCILE_TOL)",
+          f"within {RECONCILE_TOL:.0%} of EDGAR's figure (lease_basis.RECONCILE_TOL). LIKE WITH "
+          "LIKE: CIQ's rows less EDGAR's finance leases only where that finance figure is the "
+          "date's own; rows above the operating figure on a date EDGAR tags no finance lease for "
+          "are unchecked (lease_basis._split), never a difference",
           f"pages whose rent is material (≥{MATERIALITY:.0%} of EBITDA, lease_basis.MATERIALITY)",
           "CIQ's balance sheet as originally filed predates ASC 842; EDGAR's figure is a later "
           "comparative", "dates before ASC 842 on both sides — no operating lease to compare",
@@ -436,8 +464,11 @@ CHECKS: tuple[Check, ...] = (
           _lease_rows_vs_edgar),
     Check("rent_vs_edgar_lease_cost", "CIQ's rent vs EDGAR's lease cost, one fiscal year",
           "CIQ annual Income Statement 'Net Rental Exp.'",
-          "EDGAR LeaseCost (else OperatingLeaseCost), the same fiscal year", INDEPENDENT, "page",
-          f"within {_RENT_DISAGREE:g}x either way (lease_basis.rent_disagrees) — a loose band",
+          "EDGAR's total lease cost the same fiscal year: LeaseCost, else the parts the filer "
+          "tags, summed (lease_basis.edgar_lease_cost)", INDEPENDENT, "page",
+          f"within {_RENT_DISAGREE:g}x either way (lease_basis.rent_disagrees) — a loose band. "
+          "Where CIQ's rent equals ONE part of that total (lease_basis.rent_component — WLK's "
+          "short-term lease cost), it is a narrower cost: unchecked, never a difference",
           "pages carrying mechanical.valuation.lease_basis", None, None,
           ("wrong_file", "wrong_cell", "wrong_unit"),
           _rent_vs_edgar_lease_cost),
@@ -581,6 +612,17 @@ CHECKS: tuple[Check, ...] = (
           "only where a back-fill found one",
           "pages carrying mechanical.ciq_currency — one unit per money panel the folder holds",
           None, None, ("wrong_unit",), _currency_stated_usd),
+    Check("ciq_scale_vs_revenue",
+          "The magnitude of each CIQ money figure the bridge reads vs CIQ's own revenue",
+          "CIQ Financials: cash, total debt, D&A, operating cash flow and capex — the figures "
+          "the anchor's CIQ bridge may fill a hole from (ciq_balance.extract)",
+          "CIQ Financials 'Total Revenue', the same workbook — a scale reference, not a second "
+          "figure for the same thing", INTERNAL, "page",
+          f"each figure within [{_SCALE_LO:g}, {_SCALE_HI:g}]x revenue (ciq_balance."
+          "_assert_scale) — a UNIT screen by magnitude: whole dollars or billions read as $M land "
+          "1,000x outside it. Not run where the workbook reports no revenue or no such figure",
+          "pages carrying anchor.ciq_scale_check", None, None, ("wrong_unit",),
+          _ciq_scale_vs_revenue),
 )
 CHECK_IDS = tuple(c.id for c in CHECKS)
 
@@ -611,11 +653,10 @@ FAMILIES: tuple[Family, ...] = (
            checks=("rent_vs_edgar_lease_cost", "currency_stated_usd")),
     Family("financials.balance_sheet_claims", "financials", ("Financials→Balance Sheet",),
            "Net Debt, Total Debt, cash, preferred, minority — the EV bridge",
-           checks=("ev_bridge_vs_ciq_tev", "currency_stated_usd"),
-           unscored=("ciq_balance.extract — the UNIT (scale) check against revenue, D&A "
-                     "containment and the net-debt cross-read; runs only in anchor-backfill / "
-                     "anchor-retag on the raw workbooks, and its result is printed, never stored "
-                     "on the page",),
+           checks=("ev_bridge_vs_ciq_tev", "currency_stated_usd", "ciq_scale_vs_revenue"),
+           unscored=("ciq_balance.extract — D&A containment and the net-debt cross-read; they "
+                     "run where the anchor reads the CIQ bridge, and their result is a line, "
+                     "never stored on the page (its UNIT check is: ciq_scale_vs_revenue)",),
            note="EDGAR's net debt sits beside the bridge (ev_bridge.edgar_net_debt) on another "
                 "basis and is never compared — no tolerance is defined across the two"),
     Family("financials.lease_rows", "financials",

@@ -34,9 +34,39 @@ differing quarter's gap on the corpus by ±3 to ±307 units (544 trials) found o
 any figure could match — a prior-year column with no label of its own, which a first figure cannot
 be — and one with the rule: VITL's $1.359M shifted to $1.382M meets a finance-lease line of 1,381.
 Small gaps are where a $1K figure coincides; a table quote is evidence to weigh, as a sentence is.
+
+WAVE 2 (2026-10-27): the 59 quarters still differing unexplained or unchecked, each given its cause.
+
+* THE FOUR COLUMNS MUST BE FOUR QUARTERS. LLY's "Financials_Quarterly" is byte-for-byte its annual
+  export (it states 'Period Type: Annual'), so its four "quarters" were four fiscal years set
+  against four rebuilt quarters. Columns spanning other than ~273 days are not an LTM: no block.
+* D&A ON THE SPLIT PAIR. CNXC tags `Depreciation` and `AmortizationOfIntangibleAssets`, never a
+  combined line; the anchor already reads that pair (`anchor._latest_dep_amort`), the quarter now
+  does too — the SAME quarter on both legs, or none.
+* GROSS INTEREST EXPENSE. BURL stopped tagging a net interest line after its 2025 second quarter
+  and tags `InterestExpenseNonoperating` instead; pre-tax income + that expense + D&A is stated as
+  its own construction (interest income stays inside with the other non-operating items).
+* THE FILING'S OWN TAGGED AMOUNT. A page keeps only the releases among its last ten 8-Ks, so the
+  LTM's earlier quarters often have none to search (V, AMZN, WLK). The quarter's own XBRL is
+  searched too, for a tagged amount of the kind CIQ leaves out or our construction keeps
+  (:data:`_TAGGED_FAMILY`) — matched to $1K, as a table row is. V's three quarters are its
+  `LossContingencyLossInPeriod` to the million (903, 708, 329); VITL's its finance-lease
+  right-of-use amortization; PARR's the D&A inside its cost of sales; NKE's first its other
+  non-operating line. A tag outside the family is never read: TGT's `ContractWithCustomer…
+  RevenueRecognized` equals its 115.000 gap exactly and is gift-card revenue, not an EBITDA item.
+* CIQ'S OWN ITEMISATION. CIQ's EBITDA is its EBIT plus D&A, and its EBIT leaves out the unusual
+  items its quarterly Income Statement lists between 'EBT Excl.' and 'EBT Incl. Unusual Items'.
+  Where their net equals the gap (:func:`unusual_explains`), the difference is that normalisation
+  by CIQ's own account — a SUM no single stated amount can match: SMPL's $249.0M impairment with
+  its restructuring and integration costs, CNXC's goodwill impairments with its merger costs. It
+  agrees with every quote already found (TJX, ROST, BRBR, WLK, SMPL to the thousand).
+* OFFSETTING QUARTERS. AMZN's quarter to 2025-09-30 is +$2,500M and the next −$2,500M; the LTM
+  agrees. Two quarters whose gaps cancel (:func:`_offsets`) state each other: one item, booked in
+  another quarter at CIQ — a period mismatch, not a normalisation.
 """
 from __future__ import annotations
 
+import json
 import re
 from collections.abc import Callable
 from datetime import date, timedelta
@@ -63,6 +93,22 @@ _SAME_END_DAYS = 7
 _QUARTER_DAYS = (80, 100)
 _NET_INTEREST_INCOME = ("InterestRevenueExpenseNet", "InterestIncomeExpenseNet",
                         "InterestIncomeExpenseNonoperatingNet")
+#: A GROSS interest-expense line — an expense, so its sign is unambiguous; read only where no net
+#: line is tagged for the quarter (BURL from its 2025 third quarter).
+_INTEREST_EXPENSE = ("InterestExpenseNonoperating", "InterestExpense")
+#: D&A on the split pair, where no combined alias reports the quarter (`anchor._latest_dep_amort`).
+_SPLIT_DA = ("Depreciation", "AmortizationOfIntangibleAssets")
+#: Four quarter-ends span ~273 days (`lease_basis._LTM_SPAN_DAYS`); anything else is not an LTM.
+_LTM_SPAN_DAYS = (240, 300)
+#: THE TAGGED AMOUNTS A GAP MAY BE QUOTED FROM — us-gaap tag names carrying one of these, the kinds
+#: CIQ's EBITDA leaves out (impairments, restructuring, litigation, gains and losses, deal costs)
+#: or counts differently (the parts of D&A a filer tags apart). Every other tag is never read: an
+#: exact $1M figure in a large filer's facts is common enough to coincide (TGT, 2026-10-27).
+_TAGGED_FAMILY = re.compile(r"Impairment|Restructuring|LossContingency|Litigation|GainLoss|"
+                            r"BusinessCombination(?:Acquisition|Integration)RelatedCosts|"
+                            r"RightOfUseAssetAmortization|CostOfGoodsAndServicesSoldDepreciation")
+#: ...and, for the pre-tax construction only, the non-operating line it keeps inside (NKE).
+_TAGGED_NONOPERATING = re.compile(r"^OtherNonoperatingIncome")
 _AMOUNT = re.compile(r"\$\s?([\d,]+(?:\.\d+)?)\s*(million|billion)\b", re.I)
 #: A release table states its scale once, in its header — "($ in thousands)", "(In thousands,
 #: except per share data)", "(Dollars in millions)". A header opening with a word must be read
@@ -87,6 +133,8 @@ _SPAN = re.compile(rf"{_QUARTER_SPAN.pattern}|\b(?:six|nine|twelve|6|9|12)[\s-]+
 _CELL = re.compile(r"\d{1,3}(?:,\d{3})+")
 _OPERATING = "operating income + D&A"
 _PRETAX = "pre-tax income − net interest income + D&A (other non-operating items stay inside)"
+_PRETAX_GROSS = ("pre-tax income + interest expense + D&A (interest income and other "
+                 "non-operating items stay inside)")
 SOURCE_REF = ("CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL "
               "(OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)")
 
@@ -100,38 +148,77 @@ def _signed(v: float) -> str:
 def _quarter(facts: dict[str, Any], tags: list[str] | tuple[str, ...], q: date,
              ) -> tuple[float, str] | None:
     """($M, tag) — the discrete quarter ending ``q`` under the first tag that yields one."""
+    got = _quarter_cited(facts, tags, q)
+    return (got[0], got[1]) if got is not None else None
+
+
+def _quarter_cited(facts: dict[str, Any], tags: list[str] | tuple[str, ...], q: date,
+                   ) -> tuple[float, str, str | None, str | None] | None:
+    """($M, tag, form, accession) — `_quarter`, with the filing whose fact ends at ``q`` (a
+    derived quarter's later filing, the one that states the longer period)."""
     for tag in tags:
         pts = [p for p in points_for_tag(facts, tag)
                if p.period_start is not None and abs((p.period_end - q).days) <= _SAME_END_DAYS]
         three = [p for p in pts if p.period_start is not None
                  and _QUARTER_DAYS[0] <= (p.period_end - p.period_start).days <= _QUARTER_DAYS[1]]
         if three:
-            return max(three, key=lambda p: p.filed).value / 1e6, tag
+            p = max(three, key=lambda p: p.filed)
+            return p.value / 1e6, tag, p.form, p.accession
         everything = points_for_tag(facts, tag)
         for p in sorted(pts, key=lambda x: x.filed, reverse=True):
             prior = [x for x in everything if x.period_start == p.period_start
                      and _QUARTER_DAYS[0] <= (p.period_end - x.period_end).days
                      <= _QUARTER_DAYS[1]]
             if prior:
-                return (p.value - max(prior, key=lambda x: x.filed).value) / 1e6, tag
+                return ((p.value - max(prior, key=lambda x: x.filed).value) / 1e6, tag, p.form,
+                        p.accession)
     return None
+
+
+def _dep_amort(facts: dict[str, Any], q: date) -> tuple[float, list[str]] | None:
+    """($M, tags) — the quarter's D&A: the first combined alias reporting it, else the split pair
+    `Depreciation` + `AmortizationOfIntangibleAssets`, BOTH for this quarter or nothing (one leg
+    alone is not the filer's D&A — ORKA and GOOGL's 2025 quarters tag depreciation only)."""
+    da = _quarter(facts, CONCEPT_ALIASES["dep_amort"], q)
+    if da is not None:
+        return da[0], [da[1]]
+    legs = [_quarter(facts, [tag], q) for tag in _SPLIT_DA]
+    if any(leg is None for leg in legs):
+        return None
+    return sum(leg[0] for leg in legs if leg is not None), list(_SPLIT_DA)
+
+
+def _reports_quarter(facts: dict[str, Any], q: date) -> bool:
+    """Whether EDGAR carries ANY duration fact ending at ``q`` on the tags the rebuild reads —
+    False means the filings, as companyfacts serves them, have not reported the quarter yet."""
+    tags = (*CONCEPT_ALIASES["dep_amort"], *_SPLIT_DA, *CONCEPT_ALIASES["operating_income"],
+            *CONCEPT_ALIASES["pretax_income"])
+    return any(p.period_start is not None and abs((p.period_end - q).days) <= _SAME_END_DAYS
+               for tag in tags for p in points_for_tag(facts, tag))
 
 
 def _filing_ebitda(facts: dict[str, Any], q: date,
                    ) -> tuple[float, str, list[str]] | tuple[None, str, list[str]]:
     """(EBITDA $M, construction, tags) — or (None, why, tags) when the quarter cannot be rebuilt."""
-    da = _quarter(facts, CONCEPT_ALIASES["dep_amort"], q)
+    da = _dep_amort(facts, q)
     if da is None:
-        return None, "no quarterly D&A tag for this quarter", []
+        if not _reports_quarter(facts, q):
+            return None, ("EDGAR reports nothing for this quarter yet — no D&A, operating-income "
+                          "or pre-tax fact ends on it"), []
+        return None, ("no quarterly D&A — neither a combined D&A tag nor both of Depreciation and "
+                      "AmortizationOfIntangibleAssets for this quarter"), []
     op = _quarter(facts, CONCEPT_ALIASES["operating_income"], q)
     if op is not None:
-        return op[0] + da[0], _OPERATING, [op[1], da[1]]
+        return op[0] + da[0], _OPERATING, [op[1], *da[1]]
     pt = _quarter(facts, CONCEPT_ALIASES["pretax_income"], q)
     ni = _quarter(facts, _NET_INTEREST_INCOME, q)
-    if pt is None or ni is None:
-        return None, ("no operating income, and no pre-tax income with a net interest line, for "
-                      "this quarter"), [da[1]]
-    return pt[0] - ni[0] + da[0], _PRETAX, [pt[1], ni[1], da[1]]
+    if pt is not None and ni is not None:
+        return pt[0] - ni[0] + da[0], _PRETAX, [pt[1], ni[1], *da[1]]
+    ie = _quarter(facts, _INTEREST_EXPENSE, q)
+    if pt is not None and ie is not None:
+        return pt[0] + ie[0] + da[0], _PRETAX_GROSS, [pt[1], ie[1], *da[1]]
+    return None, ("no operating income, and no pre-tax income with a net interest line or an "
+                  "interest-expense line, for this quarter"), list(da[1])
 
 
 def _ciq_quarters(bundle: CiqBundle) -> dict[date, float]:
@@ -140,6 +227,30 @@ def _ciq_quarters(bundle: CiqBundle) -> dict[date, float]:
     by_end = lb._dated(lb._row(inc, "For the Fiscal Period Ending", prefix=True),
                        lb._row(inc, "EBITDA"))
     return {d: v for d, v in by_end.items() if v is not None}
+
+
+def _ciq_unusual(bundle: CiqBundle) -> dict[date, float]:
+    """CIQ's OWN unusual items by fiscal period end, $M — 'EBT Excl. Unusual Items' less 'EBT Incl.
+    Unusual Items' on the same quarterly Income Statement: the net of what CIQ itemises and leaves
+    out of its EBIT (restructuring, merger costs, impairments, asset writedowns, legal and insurance
+    settlements, gains on sale). Empty where the export carries neither row."""
+    inc = bundle.sheet("financials", "Income Statement", freq="quarterly")
+    head = lb._row(inc, "For the Fiscal Period Ending", prefix=True)
+    excl = lb._dated(head, lb._row(inc, "EBT Excl. Unusual Items"))
+    incl = lb._dated(head, lb._row(inc, "EBT Incl. Unusual Items"))
+    return {d: x - i for d, x in excl.items() if x is not None and (i := incl.get(d)) is not None}
+
+
+def unusual_explains(gap: float | None, unusual: float | None) -> bool:
+    """Whether CIQ's own unusual items for a quarter equal its gap, within `MATCH_TOL` of the gap —
+    the difference is then CIQ's normalisation, by its own itemisation (SMPL's quarter to
+    2026-02-28: +$258.227M against $258.206M — the $249.0M brand impairment its release states,
+    with restructuring and integration costs). ONE definition: the page's line and the
+    data-quality scorecard (`vinci.quality.sources.ciq`) both read it. The comparison stays
+    independent — the filing's figure is EDGAR's; only the REASON is CIQ's account of itself."""
+    if gap is None or unusual is None or gap == 0:
+        return False
+    return abs(gap - unusual) <= MATCH_TOL * abs(gap)
 
 
 def _matching_sentence(text: str, gap: float, quarter_end: date | None = None) -> str | None:
@@ -214,6 +325,50 @@ def _matching_row(text: str, want: float, quarter_end: date | None = None) -> st
     return None
 
 
+def _matching_fact(facts: dict[str, Any], gap: float, q: date, construction: str,
+                   ) -> tuple[str, str] | None:
+    """(quote, source) — the first us-gaap tag in the family (:data:`_TAGGED_FAMILY`, and the
+    non-operating line for a pre-tax construction) whose discrete quarter ending ``q`` sits within
+    `MATCH_TOL` of |gap| AND within $1K — the precision a table row is read at — or None. The
+    quote is the fact as tagged: its name, its amount in dollars and its quarter, so it re-matches
+    on its own."""
+    want = abs(gap)
+    if want <= 0:
+        return None
+    family = [_TAGGED_FAMILY] + ([_TAGGED_NONOPERATING] if construction != _OPERATING else [])
+    for tag in sorted(facts.get("facts", {}).get("us-gaap", {})):
+        if not any(f.search(tag) for f in family):
+            continue
+        got = _quarter_cited(facts, [tag], q)
+        if got is None:
+            continue
+        off = abs(abs(got[0]) - want)
+        if off > MATCH_TOL * want or off > 0.001 + 1e-9:
+            continue
+        form, acc = got[2] or "filing", got[3] or "?"
+        return (f"{tag} {got[0] * 1e6:,.0f} USD for the quarter to {q.isoformat()}",
+                f"{form} {acc} XBRL")
+    return None
+
+
+def _offsets(rows: list[EbitdaReconQuarter]) -> dict[str, str]:
+    """{period_end: the other quarter's} for each pair of DIFFERENT quarters whose gaps cancel —
+    opposite signs, the sum within $1M and within `MATCH_TOL` of either gap: one amount CIQ books in
+    another quarter than the filings (AMZN, ±$2,500M). A quarter pairs once, oldest first."""
+    diff = [r for r in rows if r.different and r.gap is not None]
+    out: dict[str, str] = {}
+    for i, a in enumerate(diff):
+        for b in diff[i + 1:]:
+            if a.period_end in out or b.period_end in out:
+                continue
+            assert a.gap is not None and b.gap is not None
+            s = abs(a.gap + b.gap)
+            if (a.gap * b.gap < 0 and s <= 1.0
+                    and s <= MATCH_TOL * min(abs(a.gap), abs(b.gap))):
+                out[a.period_end], out[b.period_end] = b.period_end, a.period_end
+    return out
+
+
 def reconcile(bundle: CiqBundle, facts: dict[str, Any] | None, releases: list[ReleaseExtract],
               text_for: Callable[[ReleaseExtract], str | None]) -> EbitdaReconciliation | None:
     """The four quarters of CIQ's LTM against the filings. None when there is no quarterly CIQ
@@ -223,10 +378,15 @@ def reconcile(bundle: CiqBundle, facts: dict[str, Any] | None, releases: list[Re
         return None
     try:
         ciq = _ciq_quarters(bundle)
+        unusual = _ciq_unusual(bundle)
     except CiqUnavailableError:
         return None
     ends = sorted(ciq)[-4:]
     if len(ends) < 4:
+        return None
+    # FOUR QUARTERS OR NO LTM: LLY's quarterly export is its annual one (2026-10-27), and four
+    # fiscal years set against four rebuilt quarters would read as four quarters that differ
+    if not _LTM_SPAN_DAYS[0] <= (ends[-1] - ends[0]).days <= _LTM_SPAN_DAYS[1]:
         return None
     rows: list[EbitdaReconQuarter] = []
     for q in ends:
@@ -246,10 +406,20 @@ def reconcile(bundle: CiqBundle, facts: dict[str, Any] | None, releases: list[Re
                 if text and (quote := _matching_sentence(text, gap, q)):
                     source = r.source_ref
                     break
+            if quote is None and (fact := _matching_fact(facts, gap, q, how)) is not None:
+                quote, source = fact
+        u = unusual.get(q)
         rows.append(EbitdaReconQuarter(
             period_end=q.isoformat(), ciq_ebitda=round(ciq[q], 3), filing_ebitda=round(filing, 3),
             construction=how, tags=tags, gap=round(gap, 3), different=different,
-            matching_amount=quote, matching_source=source))
+            matching_amount=quote, matching_source=source,
+            ciq_unusual=round(u, 3) if u is not None else None))
+    # A PAIR THAT CANCELS IS ONE ITEM IN TWO QUARTERS — written on a quarter with no reason of its
+    # own, so a quoted or itemised reason is never displaced (that quarter still pairs its mirror)
+    offsets = _offsets(rows)
+    rows = [r.model_copy(update={"offset_by": offsets[r.period_end]})
+            if r.period_end in offsets and not r.matching_amount
+            and not unusual_explains(r.gap, r.ciq_unusual) else r for r in rows]
     ciq_ltm = sum(r.ciq_ebitda for r in rows)
     built = [r for r in rows if r.filing_ebitda is not None]
     filing_ltm = sum(r.filing_ebitda or 0.0 for r in built) if len(built) == 4 else None
@@ -294,9 +464,93 @@ def _line(rows: list[EbitdaReconQuarter], ciq_ltm: float, filing_ltm: float | No
         assert r.filing_ebitda is not None and r.gap is not None
         part = (f"the quarter to {r.period_end}: CIQ ${r.ciq_ebitda:,.0f}M against "
                 f"${r.filing_ebitda:,.0f}M ({_signed(r.gap)})")
-        if r.matching_amount:
+        if r.matching_amount and (r.matching_source or "").endswith(" XBRL"):
+            part += f" — its filing tags a matching amount: {r.matching_amount}"
+        elif r.matching_amount:
             part += f" — its release states a matching amount: “{r.matching_amount}”"
+        elif unusual_explains(r.gap, r.ciq_unusual):
+            part += (f" — CIQ's own export itemises unusual items of ${r.ciq_unusual:,.3f}M for "
+                     "the quarter, which it leaves out")
+        elif r.offset_by:
+            part += (f" — the quarter to {r.offset_by} differs by the same amount the other way: "
+                     "one item, in another quarter at CIQ")
         parts.append(part)
     return (f"CIQ's EBITDA is CIQ's own normalised figure, not the filing's{ltm}; "
             + "; ".join(parts) + f" ({how}){tail}. Every EV/EBITDA on this page divides CIQ's "
             "figure.")
+
+
+# --- the back-fill (2026-10-27): wave 2's reasons onto committed pages, behind a reproduction -----
+
+#: What a committed quarter that WAS rebuilt must carry again, exactly — the figures and how they
+#: were built. Its reasons may be added (never changed), and the new keys may appear.
+_REPRODUCED = ("ciq_ebitda", "filing_ebitda", "construction", "tags", "gap", "different")
+
+
+def _unreproduced(held: dict[str, Any], new: dict[str, Any]) -> str | None:
+    """The first way ``new`` fails to reproduce the committed block ``held``, or None. A quarter
+    the old code rebuilt keeps every :data:`_REPRODUCED` value and any quote it had; a quarter it
+    could not rebuild may now be rebuilt (the split pair, the gross interest line) or say better
+    why not. The LTM CIQ figure is CIQ's own and never moves."""
+    ends = [q.get("period_end") for q in held.get("quarters") or []]
+    if ends != [q.get("period_end") for q in new.get("quarters") or []]:
+        return f"the quarters are {ends}, the rebuild's another set"
+    if held.get("ciq_ltm") != new.get("ciq_ltm"):
+        return "CIQ's LTM figure"
+    for h, n in zip(held["quarters"], new["quarters"], strict=True):
+        if h.get("filing_ebitda") is None:
+            if h.get("ciq_ebitda") != n.get("ciq_ebitda"):
+                return f"the quarter to {h['period_end']}: ciq_ebitda"
+            continue
+        for key in _REPRODUCED:
+            if h.get(key) != n.get(key):
+                return f"the quarter to {h['period_end']}: {key}"
+        for key in ("matching_amount", "matching_source"):
+            if h.get(key) is not None and h.get(key) != n.get(key):
+                return f"the quarter to {h['period_end']}: its committed {key}"
+    return None
+
+
+def backfill_transform(ticker: str, *, facts: dict[str, Any] | None, bundle: CiqBundle | None,
+                       text_for: Callable[[ReleaseExtract], str | None],
+                       refused: list[str]) -> Callable[[dict[str, Any]], dict[str, Any]]:
+    """A `refresh.refresh_dossier` transform rewriting a committed page's
+    `financial_summary.ebitda_reconciliation` with wave 2's reasons, under a KEPT synthesis.
+
+    ONLY BEHIND A REPRODUCTION: the quarterly export is the one the page's bands stamp
+    (`lease_basis.own_quarterly_export`), and the rebuild from it, EDGAR and the page's own releases
+    carries every committed figure again (:func:`_unreproduced`). The one block it REMOVES is one
+    whose four columns are not an LTM (LLY's, its annual export under the quarterly name) — proven
+    off the committed dates themselves. Anything else is named in ``refused`` and left as it is;
+    a page without a block gets none (assembly writes it)."""
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        fs = out.get("financial_summary")
+        held = fs.get("ebitda_reconciliation") if isinstance(fs, dict) else None
+        if not isinstance(fs, dict) or not isinstance(held, dict):
+            return out
+        if bundle is None or not lb.own_quarterly_export(out, bundle):
+            refused.append(f"{ticker}: ebitda_reconciliation — the quarterly export is not the "
+                           "page's own")
+            return out
+        releases = [ReleaseExtract.model_validate(r) for r in
+                    ((out.get("primary_source") or {}).get("releases") or [])]
+        rec = reconcile(bundle, facts, releases, text_for)
+        if rec is None:
+            ends = sorted(date.fromisoformat(q["period_end"]) for q in held.get("quarters") or [])
+            if len(ends) == 4 and not (_LTM_SPAN_DAYS[0] <= (ends[-1] - ends[0]).days
+                                       <= _LTM_SPAN_DAYS[1]):
+                fs.pop("ebitda_reconciliation")
+            else:
+                refused.append(f"{ticker}: ebitda_reconciliation — the rebuild wrote no block")
+            return out
+        new = json.loads(rec.model_dump_json())
+        if (why := _unreproduced(held, new)) is not None:
+            refused.append(f"{ticker}: ebitda_reconciliation — the rebuild does not reproduce "
+                           f"{why}")
+            return out
+        fs["ebitda_reconciliation"] = new
+        return out
+
+    return _apply

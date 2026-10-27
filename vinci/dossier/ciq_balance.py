@@ -33,12 +33,20 @@ DERIVED scalars with a source stamp. The workbooks themselves are never committe
 """
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
-from vinci.dossier.schemas import SourceStatus
+from vinci.dossier.schemas import (
+    CHECK_AGREE,
+    CHECK_DIFFER,
+    CHECK_NOT_RUN,
+    CrossCheck,
+    SourceStatus,
+)
 
 # --- tolerances (face-validity, never outcome-tuned) -------------------------------------------
 # The two sheets are the same filer's own disclosure of the same year, so they should agree closely;
@@ -81,6 +89,11 @@ class CiqFacts:
     facts: dict[str, CiqFact] = field(default_factory=dict)
     checks: list[str] = field(default_factory=list)
     failures: list[str] = field(default_factory=list)
+    #: (2026-10-27) the UNIT check's outcome as a structured value, beside its lines: agree when
+    #: every monetary figure sits in range, differ when one does not, not_run when there is no
+    #: revenue to measure against or no figure to measure (ORKA and TECX report no revenue). The
+    #: lines said only "checks passed", so a scale check that never ran read the same as a pass.
+    scale_check: CrossCheck = CHECK_NOT_RUN
 
     @property
     def ok(self) -> bool:
@@ -214,13 +227,19 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     failures: list[str] = []
 
     # (3) UNIT scale, first — a scale error would make the other two checks meaningless
-    for key in ("cash", "total_debt", "d_and_a", "ocf", "capex"):
+    scaled = ("cash", "total_debt", "d_and_a", "ocf", "capex")
+    for key in scaled:
         bad = _assert_scale(key, facts[key].value if key in facts else None, revenue)
         if bad:
             failures.append(f"SCALE: {bad}")
     if not failures and revenue:
         checks.append(f"scale: every monetary figure within [{_SCALE_LO:g}, {_SCALE_HI:g}]x "
                       f"revenue {revenue:,.1f} ($M) — consistent with a $M sheet")
+    measured = bool(revenue and revenue > 0
+                    and any(key in facts and facts[key].value != 0 for key in scaled))
+    scale_check: CrossCheck = (CHECK_NOT_RUN if not measured
+                               else CHECK_DIFFER if any(f.startswith("SCALE:") for f in failures)
+                               else CHECK_AGREE)
 
     # (1) D&A: the CONTAINMENT invariant, not an equality.
     #
@@ -262,7 +281,16 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
                       f"cross-read needs a market cap the workbook does not carry — deferred to "
                       f"the anchor, which holds one")
     return CiqFacts(ticker=ticker, as_of=None, source_file=src_file, source_sha256=sha,
-                    facts=facts, checks=checks, failures=failures)
+                    facts=facts, checks=checks, failures=failures, scale_check=scale_check)
+
+
+def scale_outcome(bundle: CiqBundle, ticker: str) -> CrossCheck:
+    """The scale check's outcome for a name's CIQ exports — `extract`'s, which runs it first. A
+    folder with no Financials workbook has nothing to measure: not run."""
+    if (bundle.workbook("financials", freq="quarterly") is None
+            and bundle.workbook("financials", freq="annual") is None):
+        return CHECK_NOT_RUN
+    return extract(bundle, ticker).scale_check
 
 
 def net_debt_cross_read(facts: CiqFacts, *, market_cap: float | None,
@@ -283,3 +311,57 @@ def net_debt_cross_read(facts: CiqFacts, *, market_cap: float | None,
     return (f"NET DEBT: balance sheet {nd:,.1f} vs multiple-implied {implied:,.1f} "
             f"(TEV {current_multiple:,.2f}x x EBITDA {ltm_ebitda:,.1f} - market cap "
             f"{market_cap:,.1f}) — {gap:.1%} apart, tolerance {_ND_TOLERANCE:.0%}")
+
+
+def scale_check_backfill(path: Path, *, bundle: CiqBundle, refused: list[str]) -> bool:
+    """Write `anchor.ciq_scale_check` onto ONE committed page, under a KEPT synthesis and every
+    other anchor value as committed. True when the page moved.
+
+    THE OUTCOME IS NOT ON THE PAGE, so the Financials exports are read — and only behind proof that
+    each is the one the page was built from (`refresh.ciq_currency_transform`'s two proofs): the
+    quarterly by the sha256 the page stamps (`ev_bridge.source_sha256`), the annual by its revenue
+    and operating cash flow reproducing the page's annual table. A page that does not prove, has
+    no anchor, or already holds a different outcome is named in ``refused`` — absent reads as not
+    run, never as a pass."""
+    from vinci.dossier import layer_refresh
+    from vinci.dossier import statement_recon as sr
+    from vinci.dossier.assemble import _read_scenario_card
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import Dossier, dossier_json, write_dossier
+
+    original = path.read_text()
+    doc = json.loads(original)
+    t = str(doc.get("ticker"))
+    a, mech = doc.get("anchor"), doc.get("mechanical") or {}
+    if (path.parent / "known_wrong.json").exists():
+        refused.append(f"{t}: SEALED by its own known_wrong.json")
+        return False
+    if not isinstance(a, dict):
+        refused.append(f"{t}: no anchor block")
+        return False
+    stamp = (doc.get("ev_bridge") or {}).get("source_sha256")
+    q = bundle.workbook("financials", freq="quarterly")
+    if stamp is None or q is None or cs.file_provenance(q.path)[0] != stamp:
+        refused.append(f"{t}: the quarterly Financials is not the export the page stamps")
+        return False
+    if bundle.workbook("financials", freq="annual") is not None:
+        table = ((mech.get("financial_summary") or {}).get("annual") or {}).get("value")
+        got = {(f.line, f.column): f.value for f in sr.ciq_figures(bundle)}
+        if not isinstance(table, dict) or got != sr.table_figures(table):
+            refused.append(f"{t}: the annual Financials does not reproduce the page's annual "
+                           "table")
+            return False
+    new = scale_outcome(bundle, t)
+    held = a.get("ciq_scale_check")
+    if held is not None:
+        if held != new:
+            refused.append(f"{t}: ciq_scale_check on the page differs from the rebuild — kept")
+        return False
+    a["ciq_scale_check"] = new
+    model = Dossier.model_validate(doc)
+    if moved := layer_refresh.moved_layers(json.loads(original), json.loads(dossier_json(model))):
+        model = layer_refresh.append(model, layer_refresh.entry("refresh", moved))
+    write_dossier(path, model)       # the one writer: the operator's decision is guarded there
+    path.with_name("dossier.md").write_text(render_markdown(
+        model, card=_read_scenario_card(model.ticker), dossiers_root=path.parent.parent))
+    return True
