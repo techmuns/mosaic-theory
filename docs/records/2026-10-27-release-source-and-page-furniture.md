@@ -154,6 +154,12 @@ non-GAAP EPS has none.
   - the fiscal calendar rebuilt per check.
   Two are reported, not fixed: the cap heuristic (its root fix changes every stored quote) and the
   covenant note format re-typed outside `covenant_extract`. None moved a count on the corpus.
+- **#804's real-case fixture moves with the text it was cut from** (`tests/fixtures/verbatim/
+  real_cases.json`, checked against EDGAR by its network-marked test). Four of its 16 windows held a
+  page number: uber-cut-stop, uber-cut-stop-after-ellipsis and tgt-elided-out-of-order are re-cut
+  from the document as read now, each dropping only that number, with their answers unchanged.
+  tjx-page-furniture goes from refused to verbatim — this fix's effect. Its old window is kept as
+  `window_with_furniture`, where the span check still refuses the digit gap.
 - One existing pin asserted the held vocabulary
   (`test_guidance_gaap_eps.py::test_a_non_gaap_diluted_eps_is_never_read_as_gaap`, "`== []`"). It
   now asserts the row is `adjusted eps`, never GAAP — its own stated intent.
