@@ -28,8 +28,8 @@ the "Impairment of long-lived assets and right of use assets 9,352" row of the q
 cash-flow table "($ in thousands)" — to the thousand, and in no sentence, so the prose reader quoted
 nothing and the gap read as unexplained. Where no sentence matches, a table row's FIRST figure under
 the nearest preceding thousands header is read at its own precision, $1K — only where the column
-heading proves that first column is the latest period (`_matching_row`); the quote is that header,
-its heading and that row, verbatim, so it re-matches on its own. Shifting every
+heading proves that first column is the reconciled quarter (`_matching_row`); the quote is that
+heading and that row, verbatim, so it re-matches on its own. Shifting every
 differing quarter's gap on the corpus by ±3 to ±307 units (544 trials) found one coincidence when
 any figure could match — a prior-year column with no label of its own, which a first figure cannot
 be — and one with the rule: VITL's $1.359M shifted to $1.382M meets a finance-lease line of 1,381.
@@ -75,6 +75,16 @@ _TABLE_ROW = re.compile(r"[A-Za-z][A-Za-z ,'’&/()\-]{0,150}?[A-Za-z)]\s+(?:\$\
                         r"(\d{1,3}(?:,\d{3})+)(?![\d,]|\.\d)")
 #: A year in a table's column heading — the text between its scale header and its first row.
 _HEADING_YEAR = re.compile(r"\b(?:19|20)\d\d\b")
+#: The span a table's columns cover, as its heading states it. A QUARTER span opens the heading of
+#: the table that can state a quarter's amount; any other span (six or nine months, a year, year to
+#: date) means the first column is not the quarter.
+_QUARTER_SPAN = re.compile(r"\b(?:three|3)[\s-]+months?\s+ended|\b(?:thirteen|13)[\s-]+weeks?\s+"
+                           r"ended|\bquarters?\s+ended", re.I)
+_SPAN = re.compile(rf"{_QUARTER_SPAN.pattern}|\b(?:six|nine|twelve|6|9|12)[\s-]+months?\s+ended|"
+                   r"\b(?:twenty-six|thirty-nine|fifty-two|fifty-three|26|39|52|53)[\s-]+weeks?\s+"
+                   r"ended|\byears?\s+ended|\byear[\s-]+to[\s-]+date", re.I)
+#: A table cell — where the rows before a table's title end, so its heading is read from there.
+_CELL = re.compile(r"\d{1,3}(?:,\d{3})+")
 _OPERATING = "operating income + D&A"
 _PRETAX = "pre-tax income − net interest income + D&A (other non-operating items stay inside)"
 SOURCE_REF = ("CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL "
@@ -132,14 +142,14 @@ def _ciq_quarters(bundle: CiqBundle) -> dict[date, float]:
     return {d: v for d, v in by_end.items() if v is not None}
 
 
-def _matching_sentence(text: str, gap: float) -> str | None:
+def _matching_sentence(text: str, gap: float, quarter_end: date | None = None) -> str | None:
     """The first sentence stating a dollar amount within `MATCH_TOL` of |gap| AND within one unit of
-    the amount's own stated precision, verbatim — else the first such table row (`_matching_row`)
-    — or None."""
+    the amount's own stated precision, verbatim — else the first such table row of the quarter
+    ending ``quarter_end`` (`_matching_row`) — or None."""
     want = abs(gap)
     if want <= 0:
         return None
-    return _matching_prose(text, want) or _matching_row(text, want)
+    return _matching_prose(text, want) or _matching_row(text, want, quarter_end)
 
 
 def _matching_prose(text: str, want: float) -> str | None:
@@ -161,17 +171,22 @@ def _matching_prose(text: str, want: float) -> str | None:
     return None
 
 
-def _matching_row(text: str, want: float) -> str | None:
+def _matching_row(text: str, want: float, quarter_end: date | None = None) -> str | None:
     """The first table row whose first figure, under the nearest preceding header, is in thousands
-    and sits within `MATCH_TOL` of ``want`` AND within one unit ($1K): the header with its column
-    heading, and the row, verbatim, joined by an ellipsis — or None. A row in millions, or under no
-    header, has no stated scale here and is never read.
+    and sits within `MATCH_TOL` of ``want`` AND within one unit ($1K): the table's heading (its
+    span, scale and years) and the row, verbatim, joined by an ellipsis — or None. A row in
+    millions, or under no header, has no stated scale here and is never read.
 
-    THE FIRST COLUMN MUST BE THE LATEST PERIOD (Codex, #818). nCino heads its tables "Three Months
-    Ended April 30, 2025 2026" — the prior year first — and so do 30 of the 258 thousands headers
-    in the committed pages' releases. So the heading between the header and its first row must
-    name a year, and its first year must be the latest; otherwise the order is unproven and the
-    table is not read. The quote carries that heading, so it proves the order on its own."""
+    THE FIRST COLUMN MUST BE THE QUARTER (Codex, #818, two rounds). Its heading — from the last
+    table cell before the header to the first row after it — must:
+    * name a QUARTER span first (`_QUARTER_SPAN`): VRRM's release carries a three-month cash-flow
+      table AND a full-year one, and the year's 114,080 of D&A is no quarter's amount;
+    * name a year after the header, the first the latest: nCino heads "Three Months Ended April 30,
+      2025 2026", the prior year first, as do 30 of the 258 thousands headers in the committed
+      pages' releases;
+    * when ``quarter_end`` is given, have that first year be the quarter's.
+    Otherwise the period is unproven and the table is not read. The quote carries the heading, so
+    it proves the period on its own."""
     heads = list(_TABLE_SCALE.finditer(text))
     # a header is never part of a row's label: masked to the same length, so positions hold
     masked = _TABLE_SCALE.sub(lambda h: "|" * len(h.group(0)), text)
@@ -183,11 +198,18 @@ def _matching_row(text: str, want: float) -> str | None:
         if off > MATCH_TOL * want or off > 0.001 + 1e-9:
             continue
         first = _TABLE_ROW.search(masked, head.end())
-        heading = text[head.end():first.start() if first is not None else head.end()]
-        years = list(_HEADING_YEAR.finditer(heading))
+        end = first.start() if first is not None else head.end()
+        years = list(_HEADING_YEAR.finditer(text, head.end(), end))
         if not years or int(years[0].group(0)) != max(int(y.group(0)) for y in years):
             continue
-        lead = " ".join(text[head.start():head.end() + years[-1].end()].split())
+        if quarter_end is not None and int(years[0].group(0)) != quarter_end.year:
+            continue
+        cells = [c.end() for c in _CELL.finditer(text, max(0, head.start() - 300), head.start())]
+        start = cells[-1] if cells else max(0, head.start() - 300)
+        spans = list(_SPAN.finditer(text, start, end))
+        if not spans or not _QUARTER_SPAN.fullmatch(spans[0].group(0)):
+            continue
+        lead = " ".join(text[min(spans[0].start(), head.start()):years[-1].end()].split())
         return f"{lead} … {' '.join(text[m.start():m.end()].split())}"
     return None
 
@@ -221,7 +243,7 @@ def reconcile(bundle: CiqBundle, facts: dict[str, Any] | None, releases: list[Re
                 if r.filed is None or not q <= r.filed <= q + timedelta(days=_RELEASE_WINDOW_DAYS):
                     continue
                 text = text_for(r)
-                if text and (quote := _matching_sentence(text, gap)):
+                if text and (quote := _matching_sentence(text, gap, q)):
                     source = r.source_ref
                     break
         rows.append(EbitdaReconQuarter(

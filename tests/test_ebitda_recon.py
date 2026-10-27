@@ -307,8 +307,8 @@ def test_vrrm_q4_gap_is_the_impairment_row_its_release_states_in_a_table() -> No
     q4 = rec.quarters[2]
     assert q4.period_end == "2025-12-31" and q4.filing_ebitda == pytest.approx(71.927)
     assert q4.gap == pytest.approx(9.352) and q4.different
-    assert q4.matching_amount == ("($ in thousands) 2025 2024 … Impairment of long-lived assets "
-                                  "and right of use assets 9,352")
+    assert q4.matching_amount == ("Three Months Ended December 31, ($ in thousands) 2025 2024 … "
+                                  "Impairment of long-lived assets and right of use assets 9,352")
     assert q4.matching_source == "8-K 0001193125-26-067015 EX-99.1"
     assert er._matching_sentence(q4.matching_amount, q4.gap) is not None
     assert [r.different for r in rec.quarters] == [False, False, True, False]
@@ -356,7 +356,32 @@ def test_a_table_whose_heading_lists_the_prior_period_first_is_not_read() -> Non
         "(In thousands) (Unaudited) Three Months Ended April 30, 2026 2025 … Depreciation and "
         "amortization 10,705")
     assert er._matching_sentence(_VRRM_TABLE, 9.352) == (
-        "($ in thousands) 2025 2024 … Impairment of long-lived assets and right of use assets "
-        "9,352")
+        "Three Months Ended December 31, ($ in thousands) 2025 2024 … Impairment of long-lived "
+        "assets and right of use assets 9,352")
     assert er._matching_sentence(_VRRM_TABLE.replace("($ in thousands) 2025 2024",
                                                      "($ in thousands)"), 9.352) is None
+
+
+#: VRRM 8-K 0001193125-26-067015 EX-99.1, its FULL-YEAR cash-flow table, verbatim (from the cell
+#: before its title): the same release carries a three-month table and a year table (Codex, #818).
+_VRRM_FY_TABLE = (
+    "d of period $ 68,318 $ 81,154 12 VERRA MOBILITY CORPORATION CONDENSED CONSOLIDATED STATEMENTS "
+    "OF CASH FLOWS (Unaudited) For the Year Ended December 31, ($ in thousands) 2025 2024 Cash "
+    "Flows from Operating Activities: Net income $ 136,633 $ 31,448 Adjustments to reconcile net "
+    "income to net cash provided by operating activities: Depreciation and amortization 114,080 "
+    "108,525")
+
+
+def test_a_table_row_is_read_only_for_the_quarter_its_heading_names() -> None:
+    """(−) A YEAR table's first figure is not a stated amount for a quarter: VRRM's full-year
+    D&A, 114,080, is never quoted as a quarter's gap. (−) A three-month table whose heading names
+    another year than the quarter's. (−) A table whose heading states no duration. (+) The
+    quarter's own table, its duration phrase carried in the quote so it re-matches on its own."""
+    assert er._matching_sentence(_VRRM_FY_TABLE, 114.080) is None
+    q4 = date(2025, 12, 31)
+    assert er._matching_sentence(_VRRM_TABLE, 9.352, quarter_end=q4) == (
+        "Three Months Ended December 31, ($ in thousands) 2025 2024 … Impairment of long-lived "
+        "assets and right of use assets 9,352")
+    assert er._matching_sentence(_VRRM_TABLE, 9.352, quarter_end=date(2024, 12, 31)) is None
+    assert er._matching_sentence(_VRRM_TABLE.replace("Three Months Ended December 31, ", ""),
+                                 9.352) is None
