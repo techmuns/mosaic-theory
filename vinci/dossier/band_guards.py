@@ -27,6 +27,8 @@ refuse to publish a value derived from the tainted input.
 """
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 BAND_INCOHERENT = "band_incoherent"
@@ -49,6 +51,23 @@ BAND_UNRECONCILED = "band_unreconciled"
 _MAX_IMPLIED_DA_MARGIN = 0.25
 _MAX_DA_RATIO = 8.0
 _MAX_MARKET_RATIO = 2.5
+
+
+#: A guard's OUTCOME — `schemas.CrossCheck`'s three states, spelled here because `schemas` imports
+#: the anchor, which imports this module (a test holds the two equal). Both guards below return
+#: nothing on a pass AND when they cannot run, so the flag alone cannot tell them apart.
+BandOutcome = Literal["agree", "differ", "not_run"]
+
+
+class BandChecks(BaseModel, frozen=True):
+    """THE TWO ANCHOR-TIME GUARDS' OUTCOMES, stored on the anchor beside the flag (2026-10-27).
+    ``agree``: the guard ran and the multiple describes this company; ``differ``: it ran and
+    tripped (the flag is on ``data_quality``); ``not_run``: an input was missing — the ex-lease
+    history carries no implied D&A margin, a recorded figure is absent or non-positive. An anchor
+    that never reaches the guards (no own-history multiple, an R2 or R4 recipe) carries no block."""
+
+    recorded_d_and_a: BandOutcome
+    market_reconciliation: BandOutcome
 
 
 class SheetCoherence(BaseModel, frozen=True):
@@ -119,6 +138,14 @@ def sheet_coherence(
         flag=BAND_INCOHERENT if detail else None, detail=detail)
 
 
+def _d_and_a_runs(implied_d_and_a_margin: float | None, revenue: float | None,
+                  recorded_d_and_a: float | None) -> bool:
+    """Whether :func:`recorded_d_and_a_check` has the inputs to run — its one gate, shared with
+    :func:`recorded_d_and_a_outcome` so the outcome and the flag cannot read it two ways."""
+    return (implied_d_and_a_margin is not None and bool(revenue) and bool(recorded_d_and_a)
+            and (revenue or 0.0) > 0 and (recorded_d_and_a or 0.0) > 0)
+
+
 def recorded_d_and_a_check(
     *, implied_d_and_a_margin: float | None, revenue: float | None, recorded_d_and_a: float | None,
 ) -> tuple[str | None, list[str]]:
@@ -130,10 +157,9 @@ def recorded_d_and_a_check(
 
     Both sides are the SAME units (the caller's — $M throughout the anchor), because only their
     ratio is used."""
-    if implied_d_and_a_margin is None or not revenue or not recorded_d_and_a:
+    if not _d_and_a_runs(implied_d_and_a_margin, revenue, recorded_d_and_a):
         return None, []
-    if revenue <= 0 or recorded_d_and_a <= 0:
-        return None, []
+    assert implied_d_and_a_margin is not None and revenue and recorded_d_and_a  # narrowed above
     implied = implied_d_and_a_margin * revenue
     ratio = implied / recorded_d_and_a
     if 1 / _MAX_DA_RATIO <= ratio <= _MAX_DA_RATIO:
@@ -142,6 +168,25 @@ def recorded_d_and_a_check(
         f"Multiples sheet implies D&A of {implied:,.1f} against {recorded_d_and_a:,.1f} recorded "
         f"({ratio:,.1f}x) — outside the {_MAX_DA_RATIO:.0f}x band; the EV/EBITDA denominator does "
         "not match this company's own cost structure"]
+
+
+def recorded_d_and_a_outcome(
+    *, implied_d_and_a_margin: float | None, revenue: float | None, recorded_d_and_a: float | None,
+) -> BandOutcome:
+    """:func:`recorded_d_and_a_check`'s OUTCOME from the same inputs: not_run where it lacks one,
+    else differ when it flags and agree when it does not — the flag's own decision, not a second."""
+    if not _d_and_a_runs(implied_d_and_a_margin, revenue, recorded_d_and_a):
+        return "not_run"
+    flag, _detail = recorded_d_and_a_check(implied_d_and_a_margin=implied_d_and_a_margin,
+                                           revenue=revenue, recorded_d_and_a=recorded_d_and_a)
+    return "differ" if flag else "agree"
+
+
+def reconciliation_outcome(recon: ReconCheck | None) -> BandOutcome:
+    """:func:`market_reconciliation`'s OUTCOME: None (it could not run) is not_run, never a pass."""
+    if recon is None:
+        return "not_run"
+    return "differ" if recon.flag else "agree"
 
 
 def market_reconciliation(
