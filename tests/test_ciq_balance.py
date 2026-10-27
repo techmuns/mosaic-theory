@@ -131,16 +131,21 @@ def test_dep_amort_keeps_the_combined_tag_when_it_is_current() -> None:
     assert "CHOSEN BY VINTAGE" not in source
 
 
-def test_dep_amort_takes_a_fresher_split_over_a_stale_combined() -> None:
-    """The split pair wins when it is newer — the CNXC shape crossed with the FUBO one."""
+def test_dep_amort_never_reads_an_unproven_split_or_a_stale_combined() -> None:
+    """The split used to win whenever it was FRESHER than every combined alias (the CNXC shape
+    crossed with the FUBO one). Since 2026-10-27 it continues the combined line only where the
+    filer proved it is that line (the same figure in a year both carry); here they share no year.
+    The combined line's FY2020 is five years behind the filer's FY2025 revenue, so it is not served
+    either: EDGAR has no D&A, says why, and the CIQ bridge fills the hole."""
     from vinci.dossier.anchor import _latest_dep_amort
     f = _facts_us(
         DepreciationDepletionAndAmortization=[_pt("a", "2020-12-31", 10_000_000.0, 2020)],
         Depreciation=[_pt("d", "2025-12-31", 53_100_000.0, 2025)],
-        AmortizationOfIntangibleAssets=[_pt("m", "2025-12-31", 71_367_000.0, 2025)])
-    value, source, _basis = _latest_dep_amort(f)  # type: ignore[misc]
-    assert value == pytest.approx(124_467_000.0)
-    assert "split" in source and "CHOSEN BY VINTAGE" in source
+        AmortizationOfIntangibleAssets=[_pt("m", "2025-12-31", 71_367_000.0, 2025)],
+        Revenues=[_pt("r", "2025-12-31", 1_000_000_000.0, 2025)])
+    got = _latest_dep_amort(f)
+    assert isinstance(got, str), f"read {got}"
+    assert "2020-12-31" in got and "behind the filer's newest fiscal year" in got
 
 
 def test_dep_amort_refuses_a_misaligned_split() -> None:
@@ -158,8 +163,9 @@ def test_dep_amort_refuses_a_misaligned_split() -> None:
 def test_dep_amort_absent_everywhere_is_none_not_zero() -> None:
     """MVST's shape: no depreciation tag at all. UNKNOWN is flagged upstream; a zero would silently
     inflate every EBITDA-basis number downstream."""
-    from vinci.dossier.anchor import _latest_dep_amort
-    assert _latest_dep_amort(_facts_us(Revenues=[_pt("r", "2025-12-31", 1.0, 2025)])) is None
+    from vinci.dossier.anchor import NO_DEP_AMORT, _latest_dep_amort
+    assert _latest_dep_amort(_facts_us(Revenues=[_pt("r", "2025-12-31", 1.0, 2025)])) == (
+        NO_DEP_AMORT)
 
 
 def test_dep_amort_magnitude_survives_the_dollars_to_millions_boundary() -> None:
