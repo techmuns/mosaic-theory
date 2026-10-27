@@ -458,6 +458,8 @@ with open(os.environ["FAKE_GH_LOG"], "a") as log:
     log.write(json.dumps(sys.argv[1:]) + "\\n")
 if sys.argv[1:3] == ["pr", "view"]:
     print(os.environ["FAKE_GH_VIEW"])
+elif sys.argv[1:3] == ["pr", "list"]:
+    print(os.environ.get("FAKE_GH_LIST", "[]"))
 elif os.environ["FAKE_GH_FAIL"]:
     sys.exit(os.environ["FAKE_GH_FAIL"])
 """
@@ -479,8 +481,11 @@ def _codex_repo(tmp_path: pathlib.Path) -> pathlib.Path:
 
 def _opened(repo: pathlib.Path, command: str = "gh pr create --head code",
             response: object = None, comments: tuple[str, ...] = (), fail: str = "",
-            tool: str = "Bash") -> tuple[subprocess.CompletedProcess[str], list[list[str]]]:
-    """Run the hook on one finished tool call; return its output and every `gh` call it made."""
+            tool: str = "Bash", prs: list[dict[str, str]] | None = None,
+            start: pathlib.Path | None = None
+            ) -> tuple[subprocess.CompletedProcess[str], list[list[str]]]:
+    """Run the hook on one finished tool call; return its output and every `gh` call it made.
+    ``prs`` is what `gh pr list` reports; ``start`` is the session's folder (default ``repo``)."""
     fake = repo.parent / "bin" / "gh"
     fake.parent.mkdir(exist_ok=True)
     fake.write_text(f"#!{sys.executable}\n{_FAKE_GH}")
@@ -488,11 +493,12 @@ def _opened(repo: pathlib.Path, command: str = "gh pr create --head code",
     log = repo.parent / f"gh-{uuid.uuid4().hex}.log"
     env = {"PATH": f"{fake.parent}{os.pathsep}{os.environ['PATH']}", "FAKE_GH_LOG": str(log),
            "FAKE_GH_VIEW": json.dumps({"comments": [{"body": b} for b in comments]}),
-           "FAKE_GH_FAIL": fail}
+           "FAKE_GH_LIST": json.dumps(prs or []), "FAKE_GH_FAIL": fail}
+    folder = start or repo
     out = _run("codex_request.py", {"tool_name": tool, "hook_event_name": "PostToolUse",
-                                    "cwd": str(repo), "tool_input": {"command": command},
+                                    "cwd": str(folder), "tool_input": {"command": command},
                                     "tool_response": _created() if response is None else response},
-               cwd=repo, env=env)
+               cwd=folder, env=env)
     calls = [json.loads(x) for x in log.read_text().splitlines()] if log.exists() else []
     return out, calls
 
@@ -861,3 +867,152 @@ def test_the_create_reading_stays_linear_on_a_long_prefix() -> None:
         started = time.perf_counter()
         assert not gate.opens_a_pr(command)
         assert time.perf_counter() - started < 1.0, command[:24]
+
+
+# ── the re-review: ONE more `@codex review` after a push that fixes what Codex found (2026-10-27)
+# Operator, 2026-10-27: a fix written to answer Codex is code Codex never saw, and a push does not
+# re-trigger it. Replayed on the real PRs #770–#813, the rule asks on exactly #791, #793, #796 and
+# #799 — the four where Codex found issues and the session then pushed code it never re-reviewed.
+
+#: What a finished `git push` returns to the hook: Claude Code records no `gitOperation` for it.
+PUSHED = {"stdout": "", "stderr": "To https://github.com/techmuns/mosaic-theory.git\n"
+          "   1111111..2222222  HEAD -> code\n", "interrupted": False, "isImage": False,
+          "noOutputExpected": False}
+
+
+def _codex_summary(reviewed: str, found: bool | None = True, status: str = "completed") -> str:
+    """Codex's summary comment as it posts it — #811's, verbatim but for the commit and values."""
+    state = {"code_review": {"commit_sha": reviewed, "has_any_findings": found,
+                             "has_unresolved_findings": found, "status": status},
+             "security_review": {"commit_sha": None, "has_any_findings": None,
+                                 "has_unresolved_findings": None, "status": None}}
+    return ("<!-- codex-pull-request-review-summary -->\n"
+            f"<!-- codex-review-state:v1 {json.dumps(state, separators=(',', ':'))} -->\n\n"
+            "## Codex Review Summary\n")
+
+
+def _sha(repo: pathlib.Path, ref: str) -> str:
+    return subprocess.run(["git", "-C", str(repo), "rev-parse", ref], capture_output=True,
+                          text=True, check=True).stdout.strip()
+
+
+def _pr_list(head: str, branch: str = "code") -> list[dict[str, str]]:
+    return [{"url": URL, "headRefName": branch, "headRefOid": head}]
+
+
+def _fixed(tmp_path: pathlib.Path, branch: str = "code") -> tuple[pathlib.Path, str, str]:
+    """A checkout on ``branch``: Codex reviewed `main`'s commit, the branch's commit is the fix."""
+    repo = _codex_repo(tmp_path)
+    subprocess.run(["git", "-C", str(repo), "switch", "-q", branch], check=True)
+    return repo, _sha(repo, "main"), _sha(repo, branch)
+
+
+def test_codex_request_asks_again_after_a_push_that_fixes_what_codex_found(
+        tmp_path: pathlib.Path) -> None:
+    repo, reviewed, head = _fixed(tmp_path)
+    out, calls = _opened(repo, "git push -q origin code", response=PUSHED,
+                         comments=("@codex review", _codex_summary(reviewed)), prs=_pr_list(head))
+    assert out.returncode == 0
+    assert calls.count(REQUEST) == 1 and calls[-1] == REQUEST
+    told = json.loads(out.stdout)["hookSpecificOutput"]["additionalContext"]
+    assert "2 of 2" in told and "round 2" in told and reviewed[:8] in told
+
+
+def test_codex_request_asks_again_only_when_every_condition_holds(tmp_path: pathlib.Path) -> None:
+    repo, reviewed, head = _fixed(tmp_path)
+    asked, summary = "@codex review", _codex_summary(reviewed)
+    for why, comments, prs in (
+            ("Codex found nothing", (asked, _codex_summary(reviewed, found=False)), _pr_list(head)),
+            ("its review is still running", (asked, _codex_summary(reviewed, True, "running")),
+             _pr_list(head)),
+            ("its record names no commit", (asked, _codex_summary("")), _pr_list(head)),
+            ("the re-review is spent", (asked, summary, "@codex review again"), _pr_list(head)),
+            ("Codex was never asked (no code)", (summary,), _pr_list(head)),
+            ("Codex reviewed this very commit", (asked, _codex_summary(head)), _pr_list(head)),
+            ("Codex left no record", (asked,), _pr_list(head)),
+            ("no open PR has the branch", (asked, summary), []),
+            ("the open PR is another branch's", (asked, summary), _pr_list(head, "other"))):
+        out, calls = _opened(repo, "git push -q origin code", response=PUSHED, comments=comments,
+                             prs=prs)
+        assert REQUEST not in calls and out.stdout == "", why
+    # a push that changed no CODE since the review (a record, a docs edit) asks nothing
+    docs, reviewed, head = _fixed(tmp_path / "d", "docs")
+    assert REQUEST not in _opened(docs, "git push", response=PUSHED,
+                                  comments=("@codex review", _codex_summary(reviewed)),
+                                  prs=_pr_list(head, "docs"))[1]
+
+
+def test_codex_request_reads_only_a_real_push(tmp_path: pathlib.Path) -> None:
+    """Nothing is asked of GitHub for what pushes nothing — a dry run, a mention, another git
+    command — so the hook costs no call on the Bash calls that are not pushes."""
+    repo, _, head = _fixed(tmp_path)
+    for command in ("git push -n origin code", "git push --dry-run", "git status",
+                    "echo 'then git push'", 'git commit -qm "fix, then git push"',
+                    "cat > note.md <<'EOF'\ngit push -q\nEOF"):
+        assert _opened(repo, command, response=PUSHED, prs=_pr_list(head))[1] == [], command
+
+
+def test_codex_request_reads_every_way_this_project_pushes(tmp_path: pathlib.Path) -> None:
+    """The shapes this project's transcripts push with (2026-10-27): behind the commit message's
+    heredoc marker, through the gh credential helper to `HEAD:<branch>`, from a `cd`, with `-C`."""
+    repo, reviewed, head = _fixed(tmp_path)
+    elsewhere = tmp_path / "session"
+    elsewhere.mkdir()
+    comments = ("@codex review", _codex_summary(reviewed))
+    for command in (
+            "git add -A && git commit -q -F - <<'MSG' && git push -q 2>&1 | tail -1\n"
+            "Fix what Codex found\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nMSG",
+            "git -c credential.helper= -c 'credential.helper=!gh auth git-credential' "
+            "push -q origin HEAD:code",
+            f"cd {repo} && git push -q -u origin code",
+            f"git -C {repo} push",
+            "env -u GH_TOKEN git push --force-with-lease"):
+        assert REQUEST in _opened(repo, command, response=PUSHED, comments=comments,
+                                  prs=_pr_list(head), start=elsewhere if repo.name in command
+                                  else None)[1], command
+
+
+def test_codex_request_finds_the_pr_a_bare_push_lands_on(tmp_path: pathlib.Path) -> None:
+    """A bare `git push` lands on the branch's UPSTREAM, which may be named apart from the local
+    branch (a session's worktree branch pushed to the PR's)."""
+    repo, reviewed, head = _fixed(tmp_path)
+    git = ["git", "-C", str(repo)]
+    subprocess.run([*git, "switch", "-qc", "worktree-local"], check=True)
+    subprocess.run([*git, "update-ref", "refs/remotes/origin/code", head], check=True)
+    subprocess.run([*git, "branch", "-q", "--set-upstream-to=origin/code"], check=True)
+    assert REQUEST in _opened(repo, "git push -q", response=PUSHED,
+                              comments=("@codex review", _codex_summary(reviewed)),
+                              prs=_pr_list(head))[1]
+
+
+def test_codex_request_says_so_when_the_push_has_not_reached_the_pr(
+        tmp_path: pathlib.Path) -> None:
+    """A failed push piped through `tail` still exits 0, so the PR's head must BE the pushed
+    commit: looked for three times, then the session is told rather than Codex re-reviewing
+    the commit it already reviewed."""
+    repo, reviewed, _ = _fixed(tmp_path)
+    out, calls = _opened(repo, "git push -q 2>&1 | tail -1", response=PUSHED,
+                         comments=("@codex review", _codex_summary(reviewed)),
+                         prs=_pr_list(reviewed))
+    assert REQUEST not in calls and sum(c[:2] == ["pr", "list"] for c in calls) == 3
+    told = json.loads(out.stdout)["hookSpecificOutput"]["additionalContext"]
+    assert "post the one re-review by hand" in told and f"gh pr comment {URL}" in told
+
+
+def test_codex_request_tells_the_session_to_switch_on_auto_fix(tmp_path: pathlib.Path) -> None:
+    """Codex's comments reach a session only through the PR's Auto-fix monitor; #813's session
+    missed both reviews' delivery until the operator allowed `mcp__ccd_pr__set_monitor`."""
+    told = json.loads(_opened(_codex_repo(tmp_path))[0].stdout)["hookSpecificOutput"]
+    assert "Auto-fix" in told["additionalContext"]
+    assert "mcp__ccd_pr__set_monitor" in told["additionalContext"]
+
+
+def test_review_gate_reads_a_create_on_a_heredoc_marker_line(tmp_path: pathlib.Path) -> None:
+    """A heredoc's BODY is data; the rest of its marker's line still runs. Read as one, it hid 3
+    real creates in this project's transcripts (`… <<'MSG' && git push && gh pr create`)."""
+    gate = _load("review_gate.py")
+    marker_line = "git commit -q -F - <<'MSG' && git push -q && gh pr create --fill\nbody\nMSG"
+    assert gate.opens_a_pr(marker_line)
+    assert not gate.opens_a_pr("cat > note.md <<'EOF'\ngh pr create --fill\nEOF")
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    assert _create(repo, [], command=marker_line).returncode == 2

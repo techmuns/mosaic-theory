@@ -56,6 +56,7 @@ import re
 import shlex
 import subprocess
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 from typing import NamedTuple
 
@@ -73,8 +74,16 @@ _PREFIX = (r"(?:[A-Za-z_]\w*=(?:\$\([^()]*\)|[^\s$]|\$(?!\())*|time|command|exec
 PR_CREATE = re.compile(rf"(?:^|[;&|(\n])\s*(?:{_PREFIX}\s+)*gh\s+pr\s+(?:create|new)\b")
 #: Heredoc bodies and quoted strings are DATA, not commands: a test file written with
 #: `cat <<'EOF'` that contains `cd x && gh pr create` opened no PR (found on this gate's own live
-#: transcript, 2026-10-22). They are removed before the command-position match.
-HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1[^\n]*\n.*?^\s*\2\s*$", re.S | re.M)
+#: transcript, 2026-10-22). They are removed before the command-position match — the BODY only:
+#: the rest of the marker's own line still runs. Removing it hid the `git push` of every `git commit
+#: -F - <<'MSG' && git push` — 368 of the 3,000 pushes, and 3 of the 1,037 PR creates, in this
+#: project's 74,721 transcript Bash calls (148 transcripts, read 2026-10-27).
+HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1([^\n]*)\n.*?^\s*\2\s*$", re.S | re.M)
+
+
+def unheredoc(text: str) -> str:
+    """``text`` with each heredoc's body removed and the rest of its marker's line kept."""
+    return HEREDOC.sub(lambda m: " " + m.group(3), text)
 QUOTED = re.compile(r"'[^']*'|\"(?:\\.|[^\"\\])*\"")
 #: A backslash-newline joins two lines into one command: read as a break, it cut the `head=` field
 #: off 11 of the 62 real `gh api` creates in this project's transcripts (2026-10-27).
@@ -232,16 +241,16 @@ def _created(words: list[str]) -> tuple[str | None, str, bool] | None:
     return head, base or "main", api and head is None
 
 
-def _walk(command: str, cwd: str | None) -> tuple[Target, bool]:
-    """Read the shell text the way the shell will run it, up to the first PR create it contains:
-    where that PR comes from, and whether a create was found at all."""
-    text = CONTINUATION.sub("", HEREDOC.sub("", command)).replace("\n", " ; ")
+def commands(command: str, cwd: str | None) -> Iterator[tuple[str | None, list[str]]]:
+    """Each simple command the shell text runs, in order: the directory it runs in and its words,
+    read past VAR=value, wrapper words and `env`'s options. A `cd` is yielded too, with the
+    directory it lands in (None once only the shell could resolve it). Raises ValueError on
+    unbalanced quotes, where the shell's reading is unknowable. codex_request.py reads a `git
+    push` through this same reader, so the two hooks cannot read a command two ways."""
+    text = CONTINUATION.sub("", unheredoc(command)).replace("\n", " ; ")
     lexer = shlex.shlex(text, posix=True, punctuation_chars=True)
     lexer.whitespace_split = True
-    try:
-        tokens = list(lexer)
-    except ValueError:                      # unbalanced quotes: the shell's reading is unknowable
-        return Target(None, None, "main"), False
+    tokens = list(lexer)
     directory: str | None = cwd
     at_start = True
     in_env = False                          # reading `env`'s own options
@@ -254,25 +263,32 @@ def _walk(command: str, cwd: str | None) -> tuple[Target, bool]:
             i += 1 if token in _ENV_VALUED else 0   # `-u NAME`: NAME is the option's, no command
         elif at_start and (re.fullmatch(r"[A-Za-z_]\w*=.*", token) or token in _WRAPPERS):
             pass                            # VAR=value or a wrapper word before the command
-        elif at_start and token == "cd":
-            nxt = tokens[i + 1] if i + 1 < len(tokens) else "~"
-            directory = _cd(directory, "~" if _OPERATOR.fullmatch(nxt) else nxt)
-            i += 0 if _OPERATOR.fullmatch(nxt) else 1
-            at_start = False
-        elif at_start and token == "gh":
+        elif at_start:
             words = [token]
             for word in tokens[i + 1:]:
                 if _OPERATOR.fullmatch(word):
                     break
                 words.append(word)
-            created = _created(words)
-            if created is not None:
-                return Target(directory, *created), True
-            at_start = False
-        else:
+            if token == "cd":
+                directory = _cd(directory, words[1] if len(words) > 1 else "~")
+            yield directory, words
+            i += len(words) - 1
             at_start = False
         in_env = at_start and (token == "env" or (in_env and token.startswith("-")))
         i += 1
+
+
+def _walk(command: str, cwd: str | None) -> tuple[Target, bool]:
+    """Read the shell text the way the shell will run it (``commands``), up to the first PR create
+    it contains: where that PR comes from, and whether a create was found at all."""
+    directory = cwd
+    try:
+        for directory, words in commands(command, cwd):
+            created = _created(words)
+            if created is not None:
+                return Target(directory, *created), True
+    except ValueError:                      # unbalanced quotes: the shell's reading is unknowable
+        return Target(None, None, "main"), False
     return Target(directory, None, "main"), False
 
 
@@ -284,7 +300,7 @@ def pr_target(command: str, cwd: str) -> Target:
 def opens_a_pr(command: str) -> bool:
     """True when the shell text RUNS a PR create — `gh pr create`, or a POST to the pulls endpoint
     through `gh api` — not when it merely contains the words."""
-    if PR_CREATE.search(QUOTED.sub("''", HEREDOC.sub("", command))):
+    if PR_CREATE.search(QUOTED.sub("''", unheredoc(command))):
         return True
     # A POST's method, endpoint and fields sit in any order among its words, so only the word-by-
     # word reading can see one; the `pulls` test keeps that reading off every other command.

@@ -99,7 +99,9 @@ verdict placement.
   and only comments (Gemini is NOT installed — operator decision 2026-10-23, $19/mo; `.gemini/` is
   kept inert, so never wait for or request a Gemini review); the PR's own session triages every
   finding — FIX only behind a test that fails first, else DISMISS or DEFER — one commit per round,
-  at most 2 rounds, then stops. Never post `@codex fix`; the operator merges.
+  at most 2 rounds, then stops. Codex reviews ONCE more after the push that fixes what it found
+  (`codex_request.py` posts both requests, at most 2 per PR). Never post `@codex fix`; the operator
+  merges.
 - **Regression-test every bug fix** — a fix without a test that would have caught it isn't done.
 - **Work on a local branch, never directly on main. The agent opens a PR and STOPS — it never merges
   to main itself.** Green (ruff + `mypy --strict` + `pytest`) is *necessary but not sufficient*: a
