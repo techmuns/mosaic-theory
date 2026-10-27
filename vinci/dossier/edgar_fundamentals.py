@@ -90,20 +90,21 @@ class EdgarFundamentals:
         the pairing the screen's FCF sign reads): a fiscal year or more behind the newest period
         either leg's concept carries — Climb Global's last year with both legs is FY2019, and it
         read as the latest FCF beside quarters to 2026 — or more than one fiscal year behind the
-        filer's newest."""
-        if not self._fcf:
-            return Sourced.unknown(
-                note="EDGAR: no fiscal period with both operating cash flow and capex"
-            )
+        filer's newest. The capex leg may be a substitute the filer proved to be the same line
+        (:func:`vinci.edgar.concepts.annual_line`); the source names the tag read."""
         legs, stale = current_pair(self._facts, "operating_cash_flow", "capex")
         if legs is None:
-            return Sourced.unknown(note="EDGAR: " + (stale.note if stale else "no FCF pair"))
-        pe = legs[0].period_end
+            if stale is None or stale.period_end is None:
+                return Sourced.unknown(
+                    note="EDGAR: no fiscal period with both operating cash flow and capex"
+                )
+            return Sourced.unknown(note="EDGAR: " + stale.note)
+        ocf, capex = legs
         ref = (
-            f"EDGAR XBRL companyfacts {self._ocf[pe].tag} − {self._capex[pe].tag} "
-            f"[{_period_label(self._ocf[pe])}] ($M)"
+            f"EDGAR XBRL companyfacts {ocf.tag} − {capex.tag} "
+            f"[{_period_label(ocf)}] ($M)"
         )
-        return Sourced.present(round(self._fcf[pe] / _USD_M, 1), source_ref=ref)
+        return Sourced.present(round((ocf.value - capex.value) / _USD_M, 1), source_ref=ref)
 
     def margin_trend(self) -> Sourced[str]:
         """EBITDA-margin trajectory (% per period) PAIRED with the absolute EBITDA + revenue

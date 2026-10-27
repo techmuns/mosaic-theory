@@ -151,6 +151,13 @@ PR (CLAUDE.md: coin-time translation).
   day on which the store holds bars for at least half as many names as its fullest day holds
   (`eod.client._SESSION_PRESENT_FRACTION`); any other day is partial — a few names' backfill. The
   prices source counts a series gap in market sessions only.* Home: `vinci/quality/sources/prices.py`.
+- **Substitute / handover / annual line** (2026-10-27). Plain words: *when a filer stops tagging
+  an annual line (capex, D&A) under its usual XBRL tags and moves it to another tag, the other tag
+  is a **substitute**; it is read only if, in the **handover** year (the latest year both tags
+  carry), it reports the same figure within 0.1%, and it then runs year after year with no gap and
+  no zero. The **annual line** is the usual tags' years continued by such a substitute.* A
+  filer's XBRL re-tag, NOT the operator's recipe re-tag below. Home: `vinci/edgar/concepts.py`
+  (`SUBSTITUTES`, `SUBSTITUTE_TOLERANCE`, `annual_line`).
 - **Operator decision / re-tag** — the operator's own call on which valuation recipe fits a name.
   Plain words: *a hand re-tag, kept in its own block with its reason, who, when and where it is
   recorded — the machine's own recipe and reason sit beside it, never inside it.* Home:
