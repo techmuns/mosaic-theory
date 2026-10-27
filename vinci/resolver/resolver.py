@@ -14,13 +14,14 @@ component hardened hardest.
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
+from datetime import date
 from typing import Any, cast
 
 from pydantic import BaseModel
 
 from vinci.config import Config, get_config
 from vinci.edgar.submissions import parse_former_names
-from vinci.netcache import CachedHttp
+from vinci.netcache import CachedHttp, HttpError
 from vinci.resolver.errors import (
     AmbiguousResolutionError,
     ResolutionError,
@@ -34,11 +35,13 @@ from vinci.resolver.index import (
     share_class_of,
     to_eod_symbol,
 )
+from vinci.resolver.instrument import RegisteredLine, latest_periodic, registered_line
 from vinci.schemas.data_record import Identity
 
 _CT_URL = "https://www.sec.gov/files/company_tickers.json"
 _CTE_URL = "https://www.sec.gov/files/company_tickers_exchange.json"
 _SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik}.json"
+_ARCHIVE_DOC = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 _ONE_DAY = 86_400.0
 
 # SEC exchange strings → ISO 10383 MIC. Unknown venues resolve to None (still identifiable).
@@ -196,6 +199,30 @@ class EntityResolver:
         d = self.submissions(cik)
         sic = str(d["sic"]) if d.get("sic") else None
         return sic, (d.get("sicDescription") or None)
+
+    def registered_line(self, cik: int | str, ticker: str, as_of: date) -> RegisteredLine | None:
+        """How the issuer's latest cover page filed on or before ``as_of`` registers ``ticker`` —
+        the instrument check the reference feed's ``type`` cannot make (see
+        :mod:`vinci.resolver.instrument`).
+
+        None when there is nothing to read: no periodic report in the recent submissions, a cover
+        that does not carry the symbol, or a document the SEC would not serve. None changes
+        nothing for the caller — a line is excluded only on what its issuer's cover SAYS, never on
+        a cover that could not be read (the same retreat as `share_class_counts`: one bad lookup
+        must not end a build, and an unread cover is no evidence the line is debt)."""
+        cik10 = pad_cik(cik)
+        filing = latest_periodic(self.submissions(cik10), as_of)
+        if filing is None:
+            return None
+        form, filed, acc, doc = filing
+        if self._http is None:
+            raise RuntimeError("cover-page reading requires an HTTP client")
+        url = _ARCHIVE_DOC.format(cik=int(cik10), acc=acc.replace("-", ""), doc=doc)
+        try:
+            html = self._http.get_text(url, ttl_seconds=None)   # a filed document never changes
+        except HttpError:
+            return None
+        return registered_line(html, ticker, form=form, filed=filed, accession=acc)
 
     # --- internals ----------------------------------------------------------------------------
     def _exchange_for(self, norm_ticker: str) -> str | None:

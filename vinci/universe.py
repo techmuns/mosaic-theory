@@ -71,6 +71,29 @@ def latest_close_and_adv(
     return closes, adv
 
 
+def incumbent_lines(snapshots_dir: Path, table: str,
+                    reference_date: date) -> tuple[frozenset[str], date | None]:
+    """The lines a band's COMMITTED snapshot admitted — the record the forward return is already
+    accumulating against — and the date it was built, or ``(∅, None)`` when there is none to keep.
+
+    Read from the committed file, not the store: the store is git-ignored and starts empty on every
+    CI run, while the file is the population that was signed off and screened. Only a snapshot
+    dated ON OR BEFORE ``reference_date`` counts — a backdated rebuild must not be steered by a
+    population chosen later. A malformed row raises; a guessed incumbent would be worse than none.
+    """
+    path = snapshots_dir / f"{table}.jsonl"
+    if not path.exists():
+        return frozenset(), None
+    by_date: dict[date, set[str]] = defaultdict(set)
+    for line in path.read_text().splitlines():
+        if line.strip() and (row := json.loads(line))["in_universe"]:
+            by_date[date.fromisoformat(row["as_of"])].add(row["internal_id"])
+    usable = [d for d in by_date if d <= reference_date]
+    if not usable:
+        return frozenset(), None
+    return frozenset(by_date[max(usable)]), max(usable)
+
+
 def admit_security_type(ptype: str | None, allowed: tuple[str, ...]) -> bool:
     """Instrument-type ALLOWLIST test (Axis 2). Admit ONLY listed operating-co equity types.
 
@@ -151,10 +174,12 @@ def build_universe(
     if band_name not in UNIVERSE_BANDS:
         raise ValueError(f"unknown universe band {band_name!r} — expected one of "
                          f"{sorted(UNIVERSE_BANDS)}")
-    band_attr, _band_table, stats_filename = UNIVERSE_BANDS[band_name]
+    band_attr, band_table, stats_filename = UNIVERSE_BANDS[band_name]
     band = getattr(cfg, band_attr)
     export_tables = (BUILD_UNIVERSE_TABLES if band_name == "primary"
                      else BUILD_THEME_UNIVERSE_TABLES)
+    # READ BEFORE THE EXPORT BELOW OVERWRITES IT — the population this build is about to replace
+    incumbents, incumbent_as_of = incumbent_lines(cfg.snapshots_dir, band_table, reference_date)
 
     closes, adv = latest_close_and_adv(eod, reference_date)
     sec_types = eod.security_types()  # instrument-type axis (one cached bulk reference pull)
@@ -242,6 +267,14 @@ def build_universe(
 
             Ties break on market cap then ticker, so the choice is deterministic and a re-run can
             never silently swap which line the ledger accumulates against.
+
+            THE INCUMBENT KEEPS THE SLOT WHILE IT CLEARS EVERY GATE (2026-10-27). ADV is a 90-day
+            average, so a NEW run could still swap the line — and #549's pre-registered falsifier
+            fired: U-Haul entered the population as UHAL on 2026-08-24, and on 2026-09-22 UHAL.B
+            fell below the $10B ceiling, entered the band, and took the slot on ADV ($22.1M/day
+            against $11.9M) while UHAL still cleared every gate. One company's record then spanned
+            two tickers. So the line the committed snapshot admitted ranks first; ADV decides only
+            among lines with no record, or once the incumbent has failed a gate and left `rows`.
             """
             by_cik: dict[str, list[tuple[Identity, float, str, bool]]] = defaultdict(list)
             for row in rows:
@@ -250,10 +283,26 @@ def build_universe(
             for lines in by_cik.values():
                 ranked = sorted(
                     lines,
-                    key=lambda r: (-adv.get(r[0].eod_symbol, 0.0), -r[1], r[0].eod_symbol))
+                    key=lambda r: (r[0].internal_id not in incumbents,
+                                   -adv.get(r[0].eod_symbol, 0.0), -r[1], r[0].eod_symbol))
                 winner = ranked[0]
                 kept.append(winner)
                 for loser in ranked[1:]:
+                    if (winner[0].internal_id in incumbents
+                            and loser[0].internal_id not in incumbents
+                            and adv.get(loser[0].eod_symbol, 0.0)
+                            > adv.get(winner[0].eod_symbol, 0.0)):
+                        # ADV alone would have chosen the loser — say that the record decided
+                        _drop(loser[0].eod_symbol, "duplicate_class",
+                              f"the incumbent line {winner[0].eod_symbol} — admitted in the "
+                              f"{incumbent_as_of} population — keeps its issuer's slot while it "
+                              f"clears every gate, though this line trades "
+                              f"${adv.get(loser[0].eod_symbol, 0.0) / 1e6:,.1f}M/day against its "
+                              f"${adv.get(winner[0].eod_symbol, 0.0) / 1e6:,.1f}M; switching "
+                              f"lines would split one issuer's forward record across two tickers",
+                              StampedInput(value=winner[0].internal_id, as_of=incumbent_as_of,
+                                           source=f"{band_table}.jsonl (the incumbent line)"))
+                        continue
                     _drop(loser[0].eod_symbol, "duplicate_class",
                           f"another listed class of the same issuer is more tradeable — "
                           f"{winner[0].eod_symbol} carries "
@@ -461,6 +510,22 @@ def build_universe(
                       f"security type {ptype or 'MISSING'} not in the operating-equity allowlist",
                       StampedInput(value=(ptype if ptype else None), as_of=reference_date,
                                    source="Polygon security reference"))
+                continue
+            # Axis 3 — what the line IS in the ISSUER'S words (2026-10-27). The feed types some debt
+            # `CS` — ADAMK, TMUSI, XELLL among 58 lines of its 2026-10-17 pull — so Axis 2 admits
+            # it. The issuer's latest cover page registers every 12(b) security by symbol and
+            # title; a line it registers as debt leaves here, at the same stage as a correctly
+            # typed non-equity line. Only an explicit debt title excludes: an unread cover, an
+            # absent symbol or any other title changes nothing (`EntityResolver.registered_line`).
+            # Read for `CS` only, the one type the feed has been seen to mis-assign.
+            if ptype == "CS" and (reg := resolver.registered_line(
+                    ident.cik, ident.ticker, reference_date)) is not None and reg.is_debt:
+                _drop(ident.eod_symbol, "non_common_equity",
+                      f"the issuer's {reg.form} cover page registers {reg.symbol} as "
+                      f"\"{reg.title}\" — a debt security, though the reference feed types it CS",
+                      StampedInput(value=reg.title, as_of=reg.filed,
+                                   source=f"SEC {reg.form} {reg.accession} cover page "
+                                          f"(dei:Security12bTitle)"))
                 continue
             # ADMISSION IS DEFERRED, not decided here — one issuer contributes ONE line, and which
             # line survives cannot be known until every sibling has cleared the same gates.
