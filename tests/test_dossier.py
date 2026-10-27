@@ -1253,6 +1253,11 @@ class _FakeHttp:
     def get_json(self, url: str, ttl_seconds: int | None = None) -> dict[str, typing.Any]:
         return self._index
 
+    def get_text(self, url: str, ttl_seconds: int | None = None) -> str:
+        # it serves indexes only: a filing's text is a failed fetch (the maturity check reads one)
+        from vinci.netcache import HttpError
+        raise HttpError(f"not served: {url}")
+
 
 class _FakeIndexHttp:
     """A fake SEC http mapping an accession (no dashes) → its index.json — so a per-accession

@@ -1696,6 +1696,133 @@ def ciq_currency_transform(doc: dict[str, Any], *, refused: list[str],
     return _apply
 
 
+def maturity_check_transform(doc: dict[str, Any], *, edgar: Any, http: Any,
+                             refused: list[str]) -> Transform:
+    """A `refresh_dossier` transform writing `capital_structure.maturity_check` — each panel
+    maturity against the newest filing that states it (`mechanical.maturity_check`, the assembler's
+    own composition) — onto a committed page, under a KEPT synthesis, and putting in place every
+    maturity a filing GOVERNS: the instrument's date, the calendar's maturity rows and the flat
+    liquidity line. Its caveats are written by `maturity_caveat_transform`.
+
+    NO CIQ WORKBOOK IS READ: the panel's instruments and pointers are on the page; the filings are
+    EDGAR's, none filed after the page's reference date. Each governed reader is rebuilt only
+    BEHIND A REPRODUCTION, by the assembler's own builder:
+
+    * the liquidity line — `ciq_sheets.liquidity_line` must rebuild the stored line from the panel's
+      own instruments, byte for byte (`mechanical.governed_liquidity_line`);
+    * the calendar's maturity rows — `mechanical.maturity_rows` on the panel's own dates must give
+      back the stored rows, in their order (print row, maturities, then the rest, as assembly
+      appends them before its sort).
+
+    TWO READERS ARE NOT REBUILT, AND A PAGE THEY WOULD MOVE IS REFUSED, NAMED: the trailing-12m
+    8-K line (`_maturity_8ks`), when the governed dates change its set of maturities, and the
+    wall line, unless it is the panel-independent `WALL_NOT_STATED`. A page that does not
+    reproduce, or that already holds a different check, is left as it is and named in
+    ``refused`` — absent reads as not run, never as a pass."""
+    from vinci.dossier import mechanical as dm
+    from vinci.dossier.ciq_sheets import liquidity_line
+    from vinci.dossier.schemas import CapitalStructure, CatalystCalendar, Sourced
+    from vinci.edgar.primary_source import WALL_NOT_STATED
+
+    ticker = str(doc.get("ticker"))
+    cik = str(doc.get("cik") or "")
+    ref = date.fromisoformat(str(doc["reference_date"]))
+
+    def _trailing(insts: list[Any]) -> set[str]:
+        lo = ref.toordinal() - 365
+        return {i.maturity_date for i in insts if i.maturity_date
+                and lo <= date.fromisoformat(i.maturity_date).toordinal() <= ref.toordinal()}
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        raw = out.get("capital_structure")
+        if not isinstance(raw, dict):
+            refused.append(f"{ticker}: no capital_structure block")
+            return out
+        cs = CapitalStructure.model_validate(raw)
+        insts = cs.instruments.value or []
+        if not insts or not cik:
+            refused.append(f"{ticker}: no panel instruments, or no CIK — nothing to check")
+            return out
+        check = dm.maturity_check(edgar, http, cik, insts, cs.covenant_pointer_rows,
+                                  cs.detail_as_of, ref)
+        new = json.loads(check.model_dump_json())
+        if raw.get("maturity_check") not in (None, new):
+            refused.append(f"{ticker}: maturity_check on the page differs from the rebuild — kept, "
+                           "never overwritten")
+            return out
+        panel = cs.instruments.model_copy(update={"value": [
+            i.model_copy(update={"maturity_date": i.ciq_maturity_date, "ciq_maturity_date": None,
+                                 "maturity_source": None}) if i.maturity_source else i
+            for i in insts]})
+        governed = dm.govern_instruments(panel, check)
+        g_insts = governed.value or []
+        gcs = cs.model_copy(update={"instruments": governed, "maturity_check": check})
+        if g_insts != insts:
+            if _trailing(panel.value or []) != _trailing(g_insts):
+                refused.append(f"{ticker}: a governed maturity moves the trailing-12m 8-K line, "
+                               "which needs EDGAR's 8-Ks re-read — assembly writes it")
+                return out
+            wall = ((out.get("primary_source") or {}).get("wall_coherence") or {}).get("value")
+            if wall is not None and wall != WALL_NOT_STATED:
+                refused.append(f"{ticker}: the wall line reads the panel's dates and a governed "
+                               "maturity may move it — assembly writes it")
+                return out
+            # the liquidity line, behind its proof
+            q = out.get("quality") or {}
+            line = Sourced[str].model_validate(q.get("liquidity_covenant_flags"))
+            if line.value is not None and liquidity_line(panel.value or []) != line.value:
+                refused.append(f"{ticker}: the liquidity line does not reproduce from the panel's "
+                               "instruments — not rebuilt")
+                return out
+            g_line = dm.governed_liquidity_line(line, gcs)
+            # the calendar's maturity rows, behind theirs
+            cal_raw = out.get("catalyst_calendar")
+            if isinstance(cal_raw, dict):
+                cal = CatalystCalendar.model_validate(cal_raw)
+                old_rows, _ = dm.maturity_rows(cs.model_copy(update={"instruments": panel}), ref)
+                new_rows, _ = dm.maturity_rows(gcs, ref)
+                head = [r for r in cal.rows if r.event == "Next results print"]
+                rest = [r for r in cal.rows if r.event != "Next results print"
+                        and r.tests_what != dm.MATURITY_TESTS]
+                rebuilt = sorted([*head, *old_rows, *rest], key=lambda r: r.expected_date)
+                if rebuilt != cal.rows:
+                    refused.append(f"{ticker}: the calendar's maturity rows do not reproduce from "
+                                   "the panel's dates — not rebuilt")
+                    return out
+                out["catalyst_calendar"]["rows"] = [
+                    json.loads(r.model_dump_json()) for r in
+                    sorted([*head, *new_rows, *rest], key=lambda r: r.expected_date)]
+            if isinstance(q, dict) and g_line != line:
+                q["liquidity_covenant_flags"] = json.loads(g_line.model_dump_json())
+        raw["instruments"] = json.loads(gcs.instruments.model_dump_json())
+        raw["maturity_check"] = new
+        return out
+
+    return _apply
+
+
+def maturity_caveat_transform() -> TopLevelTransform:
+    """A top-level step writing the maturity check's caveats (`mechanical.maturity_caveats`, the
+    assembler's own) from the check the page now stores — replacing exactly the caveats that open
+    with `MATURITY_CAVEAT`, and no other."""
+    from vinci.dossier import mechanical as dm
+    from vinci.dossier.schemas import CapitalStructure
+
+    def _apply(doc: dict[str, Any]) -> dict[str, Any]:
+        raw = (doc.get("mechanical") or {}).get("capital_structure")
+        if not isinstance(raw, dict) or raw.get("maturity_check") is None:
+            return {}
+        fresh = dm.maturity_caveats(CapitalStructure.model_validate(raw))
+        cav = [c for c in doc.get("caveats") or []
+               if not (isinstance(c, str) and c.startswith(dm.MATURITY_CAVEAT))]
+        if cav + fresh == list(doc.get("caveats") or []):
+            return {}
+        return {"caveats": cav + fresh}
+
+    return _apply
+
+
 #: The lines the anchor writes into `data_quality_detail` for each band guard (`compute_anchor`).
 _DA_TRIP_LEAD = "Multiples sheet implies D&A of "
 _RECON_TRIP_LEAD = "market-implied EBITDA "
@@ -1949,6 +2076,7 @@ def mirror_to_frontend() -> None:
 
 def refresh_fleet(
     root: Path | None = None, *, transform_for: Callable[[str], Transform] | None = None,
+    top_level_for: Callable[[str], TopLevelTransform] | None = None,
 ) -> dict[str, list[str]]:
     """Refresh every committed dossier, then mirror to the frontend ONCE. The pass orchestrator.
 
@@ -1973,7 +2101,8 @@ def refresh_fleet(
             continue
         try:
             changed = refresh_dossier(
-                path, transform=transform_for(folder.name) if transform_for else None)
+                path, transform=transform_for(folder.name) if transform_for else None,
+                top_level=top_level_for(folder.name) if top_level_for else None)
         except RefreshRefusedError:
             out["refused"].append(folder.name)
             continue
