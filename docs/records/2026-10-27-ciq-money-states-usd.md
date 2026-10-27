@@ -2,12 +2,12 @@
 id:
 status: shipped
 date: 2026-10-27
-prs: []
+prs: [819]
 supersedes:
 superseded-by:
 ---
 
-# A CIQ export's money must STATE USD: each money panel's stated currency is read, a stated other currency is refused before assembly, and the scorecard scores it; the checks that still store no outcome are measured
+# A CIQ export's money must STATE USD: each money panel's stated currency is read, a stated other currency is refused before assembly, and the scorecard scores it; the anchor stores the band guards' outcomes, and the checks still unchecked are measured
 
 **WHAT.** Integrity wave 1, lane L1: the operator's pending items 9 and 10.
 
@@ -55,24 +55,34 @@ superseded-by:
 
 **Item 10: checks that give no structured outcome, re-measured.**
 
-- **The two band guards and `ciq_balance`'s scale check still store no outcome.** STOPPED by file
-  ownership: all three run only inside `anchor.compute_anchor` / `cli._machine_anchor`, so storing
-  agree / differ / not_run needs `vinci/dossier/anchor.py`, which is lane L2's this wave. Measured
-  instead, from each committed page's own stored inputs through the producer's own functions
-  (`r1_multiple_band`, `_band_read`, `band_guards.*`):
+- **The two band guards store their outcome on the anchor** (`anchor.band_checks`). Each guard
+  sets a flag only when it trips, so a pass and a guard that never ran read the same.
+  - `band_guards.recorded_d_and_a_outcome` / `reconciliation_outcome` give agree / differ /
+    not_run from the flag's own gate (`_d_and_a_runs`, now shared by the check).
+  - **`anchor.py`, additive only** (its own commit, agreed with the wave's coordinator so L2 can
+    rebase around it): one optional field, one kwarg in `compute_anchor`'s R1 return, one entry in
+    `anchor_absent_fields`. An anchor that returns before the guards (no own-history multiple, R2,
+    R4) carries no block.
+  - **Back-fill** (`refresh.band_checks_backfill`): no workbook and no EDGAR. Each guard re-runs on
+    the page's stored inputs, and the outcome is written only where three things reproduce: the
+    re-selected band is the one the anchor priced, the ex-lease line sits exactly on ex-lease
+    pages, and the re-run's trip lines equal the page's.
+  - **Scored:** `recorded_d_and_a_vs_edgar` (independent: EDGAR's D&A) and
+    `market_reconciliation` (internal: CIQ on both sides, with EDGAR legs). The TEV-history
+    family's UNSCORED entry for `anchor.data_quality` is gone.
 
-| guard | passed | tripped | never ran | of which: ex-lease history, no implied D&A margin | of which: guards not reached on the recipe path |
-|---|--:|--:|--:|--:|--:|
-| recorded D&A vs the sheet's implied D&A | 6 | 1 (VITL) | 20 | 14 | 6 (FUBO ORKA TECX: no own-history multiple; MVST NCNO: R2; UBER: R4) |
-| market reconciliation | 20 | 1 (VITL) | 6 | 0 | 6 (the same six) |
+| guard (21 anchors reach it) | agree | differ | not run | the not-runs |
+|---|--:|--:|--:|---|
+| recorded D&A vs the sheet's implied D&A | 6 | 1 (VITL) | 14 | the ex-lease history carries no implied D&A margin |
+| market reconciliation | 20 | 1 (VITL) | 0 | — |
 
-  Every stored trip re-runs from its page's inputs, and no pass re-runs as a trip (0 mismatches).
-  So a page with no recorded-D&A flag passed on 6 pages and never ran on 20, and the page cannot
-  tell which. The reproduction also shows that a deterministic back-fill can write the outcomes
-  once the anchor stores them.
-
-  The scale check, run on the real workbooks: 25 of the 27 page names pass, 2 never run (ORKA and
-  TECX carry no revenue to scale against), 0 fail. None of it reaches a page.
+  Six anchors never reach the guards and carry no block: FUBO, ORKA and TECX (no own-history
+  multiple), MVST and NCNO (R2), UBER (R4). Before this build, a page with no recorded-D&A flag had
+  passed on 6 pages and never run on 20, and could not say which.
+- **`ciq_balance`'s scale check still stores no outcome: STOPPED.** It runs only in
+  `cli._machine_anchor` on the raw workbooks, and its natural home is wherever assembly keeps the
+  CIQ bridge — L2's lane this wave. Run on the real workbooks: 25 of the 27 page names pass, 2
+  never run (ORKA and TECX carry no revenue to scale against), 0 fail. None of it reaches a page.
 - **`guide_vs_release`, unchecked on 19 of the 26 pages it runs on (MVST carries no outcome).**
   By the decision branch, re-run from each page's stored inputs (the reads
   `refresh.cross_check_transform` proved):
@@ -127,6 +137,13 @@ sure such a workbook is refused rather than misread.
   - checked page by page against HEAD: each JSON gained only `mechanical.ciq_currency` and one
     `layer_refreshes` record, each `dossier.md` only its refresh line, and the frontend mirror
     followed.
+- **The band-check back-fill, for real:**
+  - 21 of the 21 anchors that reach the guards reproduced and were written; 6 were named
+    unreached; none was refused;
+  - checked page by page against HEAD: each JSON gained only `anchor.band_checks` and one
+    `layer_refreshes` record (layer `anchor`), each `dossier.md` its refresh line;
+  - its counts equal the measurement taken before any code, re-running the producer's functions
+    on the stored inputs.
 - **Every proof held on every page it could test.** The Estimates sha matches 27 of 27; the
   quarterly Financials sha 25 of the 25 that stamp one; the annual table reproduces 27 of 27; the
   comps peer grid reproduces 27 of 27.
@@ -146,10 +163,19 @@ sure such a workbook is refused rather than misread.
   each a tripwire; the stored read and the flag pinned on the function's AST), each back-fill
   proof refusing on its own, an end-to-end invariant over the committed blocks, and the scorecard
   mapping. A core pin covers the fallback-based split.
-- **Mutation:** 27 mutants of the new production code, run in a scratch copy of the tree whose
-  unmutated baseline passes: 13 in `ciq_sheets`, 3 in the assembly call site, 6 in the back-fill,
-  4 in the CIQ source's check, and 1 in the core (the derived-class split restored, which three
-  pins kill). 27 of 27 were killed.
+- **The band-check pins** (`tests/test_band_checks.py`, 10 tests):
+  - through `compute_anchor`'s synthetic facts: agree/agree on a coherent band; each guard that
+    trips differs alone; a band with no implied D&A margin, or no market cap, reads not_run —
+    never agree; an anchor that never reaches the guards writes no key;
+  - every committed page without the block loads, serializes unchanged and renders (old JSON);
+  - END TO END, every committed block is exactly what the back-fill rebuilds from its page;
+  - each back-fill proof refuses on its own, each case asserted to exist on the corpus first.
+- **Mutation:** 42 mutants of the new production code, each run in a scratch copy of the tree
+  whose unmutated baseline passes, all killed:
+  - currency: 13 in `ciq_sheets`, 3 in the assembly call site, 6 in the back-fill, 4 in the CIQ
+    source's check;
+  - core: 1 (the derived-class split restored, which three pins kill);
+  - band checks: 5 in `band_guards`, 2 in `anchor.py`, 6 in the back-fill, 2 in the scorecard.
 - **The scorecard, by the real command:** `vinci audit quality --source ciq --write` on the
   back-filled pages wrote `data/snapshots/data_quality/ciq/2026-10-27.json`.
 
@@ -158,18 +184,31 @@ or per panel for the new check):
 
 | | BEFORE | AFTER |
 |---|---|---|
-| measured at | 47d8ca27 (main), page-set sha256 `e6e09ad9…` | 33a13b33, inputs matching it, page-set sha256 `e6cdc291…` |
-| checks | 15 | 16 |
+| measured at | 47d8ca27 (main), page-set sha256 `e6e09ad9…` | 86764316, inputs matching it, page-set sha256 `b660504a…` |
+| checks | 15 | 18 |
 | `currency_stated_usd` | — | 449 of 449 panels confirmed on 25 pages; FUBO, TECX not run |
-| coverage, 25 families (ind / int / single / unchecked) | 8 / 4 / 10 / 3 | 8 / 7 / 9 / 1 |
-| wrong unit (ind / int only / none, a second source exists / none, single-source) | 8 / 3 / 4 / 10 | 8 / 7 / 1 / 9 |
-| the other four failure classes | — | unchanged |
-| UNSCORED entries | 2 (the scale check, `anchor.data_quality`) | the same 2 — item 10's STOPPED half |
+| `recorded_d_and_a_vs_edgar` | — | 6 confirmed, 1 unexplained (VITL), 14 unchecked on 21 pages; 6 not run |
+| `market_reconciliation` | — | 20 confirmed, 1 unexplained (VITL) on 21 pages; 6 not run |
+| coverage, 25 families (ind / int / single / unchecked) | 8 / 4 / 10 / 3 | 9 / 6 / 9 / 1 |
+| UNSCORED entries | 2 (the scale check, `anchor.data_quality`) | 1 (the scale check — item 10's STOPPED part) |
 
-The three families that move class do so ON THE CURRENCY CHECK ALONE, and their notes say so:
-consensus (single-source → internal), segments and surprise (unchecked → internal). Nothing about
-their VALUES gained a second source. Every other check's counts are unchanged between the two
-points.
+By failure class (independent / internal only / none, a second source exists / none,
+single-source):
+
+| class | BEFORE | AFTER |
+|---|---|---|
+| wrong file | 7 / 1 / 7 / 10 | 8 / 1 / 6 / 10 |
+| wrong cell | 7 / 3 / 5 / 10 | 8 / 2 / 5 / 10 |
+| wrong unit | 8 / 3 / 4 / 10 | 9 / 6 / 1 / 9 |
+| wrong period | 7 / 3 / 5 / 10 | unchanged |
+| different definition | 4 / 1 / 10 / 10 | 5 / 0 / 10 / 10 |
+
+- **The TEV-history family** moves internal → independent, on the recorded-D&A check against
+  EDGAR.
+- **Three families move on the currency check alone**, and their notes say so: consensus
+  (single-source → internal), segments and surprise (unchecked → internal). Nothing about their
+  VALUES gained a second source.
+- **Every other check's counts** are unchanged between the two points.
 
 **BOUNDARY.**
 
@@ -179,22 +218,20 @@ points.
   pages at 5a2fe9e1.
 - **Item 10's guide and wall causes:** the 27 committed pages at 47d8ca27, one unit per page, read
   off each page's stored inputs (no EDGAR read).
-- **Band guards:** the same 27 pages, inputs re-run through the producer's functions at 47d8ca27.
+- **Band guards:** the same 27 pages. Measured at 47d8ca27 by re-running the producer's
+  functions on the stored inputs; back-filled at 6a03aa39; scored at 86764316.
 - **Scale check:** `ciq_balance.extract` on the 27 page names' folders in the assembler's copy,
   2026-10-27.
-- **Mutation counts:** over the 27 listed mutants; `tests/test_ciq_currency.py` for the 26, and
-  `tests/test_quality_core.py` + `tests/test_quality_ciq.py` for the core's one.
+- **Mutation counts:** over the 42 listed mutants, against `tests/test_ciq_currency.py` (the
+  currency 26), `tests/test_quality_core.py` + `tests/test_quality_ciq.py` (the core's one), and
+  `tests/test_band_checks.py` + `tests/test_band_guards.py` (the band checks' 15).
 
 **FOUND, NOT FIXED (out of scope; reported).**
 
-- **The anchor-time outcomes need `anchor.py`** (item 10, STOPPED above). The spec, for whoever
-  owns that file:
-  - an optional outcome per guard on `Anchor`, set in `compute_anchor`'s R1 return;
-  - one entry in `anchor_absent_fields`;
-  - `not_run` on the ex-lease branch and wherever an input is missing;
-  - then a back-fill, which the 0-mismatch reproduction above shows is possible.
-
-  The scale check's outcome belongs wherever assembly keeps the CIQ bridge (L2's lane).
+- **The scale check's outcome** belongs wherever assembly keeps the CIQ bridge (L2's lane).
+- **The six anchors that never reach the guards carry no block**, so the scorecard reads them as
+  not run. It cannot tell "never reached" from "predates the field" off the page; its reason names
+  both.
 - **The SCALE statement is not read.** Financials sheets state `In Millions of the reported
   currency`, and Capital Structure Summary states ` Units: Millions`; Estimates state only
   `Units: Capital IQ (Default)`, and comps state none. The `wrong_unit` class's scale half rests on
@@ -207,8 +244,12 @@ points.
 
 - **A foreign filer cannot be assembled at all now** — refused, not misread. That is the intended
   trade until FPI5 builds the reading.
-- **FUBO's and TECX's blocks stay absent** until each is re-assembled (assembly writes it from the
-  workbook); the card counts them not run, never a pass.
+- **FUBO's and TECX's currency blocks stay absent** until each is re-assembled (assembly writes it
+  from the workbook); the card counts them not run, never a pass.
+- **A band-check outcome back-filled as `agree` is the guard's outcome on the page's CURRENT
+  inputs.** The reproduction proves the priced band and every trip line, but a PASS leaves no line
+  to compare. The guards are order-of-magnitude screens (8x and 2.5x), so an input drift since
+  assembly that flips a pass would itself be a trip-sized change.
 - **The reported-currency resolution trusts that a sheet's `Reported Currency` and the same
   export's Company Level sections mean one currency.** True by CIQ's own definition on every export
   read. Falsifier: a filer that changed reporting currency, whose older guidance years would be in
