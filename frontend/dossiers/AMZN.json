@@ -7656,6 +7656,8 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "offset_by": "2025-12-31",
+            "ciq_unusual": -7694.0,
             "note": null
           },
           {
@@ -7671,6 +7673,8 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "offset_by": "2025-09-30",
+            "ciq_unusual": -3774.0,
             "note": null
           },
           {
@@ -7686,6 +7690,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": -15520.0,
             "note": null
           },
           {
@@ -7701,6 +7706,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": -53235.0,
             "note": null
           }
         ],
@@ -7708,7 +7714,7 @@
         "filing_ltm": 168912.0,
         "ltm_gap": 0.0,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM matches the filings ($168,912M against $168,912M), but not every quarter does; the quarter to 2025-09-30: CIQ $36,718M against $34,218M (+$2,500M); the quarter to 2025-12-31: CIQ $41,948M against $44,448M (−$2,500M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM matches the filings ($168,912M against $168,912M), but not every quarter does; the quarter to 2025-09-30: CIQ $36,718M against $34,218M (+$2,500M) — the quarter to 2025-12-31 differs by the same amount the other way: one item, in another quarter at CIQ; the quarter to 2025-12-31: CIQ $41,948M against $44,448M (−$2,500M) — the quarter to 2025-09-30 differs by the same amount the other way: one item, in another quarter at CIQ (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -18096,6 +18102,22 @@
       "layers": [
         "mechanical.capital_structure"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
+      ]
     }
   ],
   "anchor": {
@@ -18199,6 +18221,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

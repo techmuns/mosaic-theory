@@ -552,11 +552,11 @@
         "rent_ebitda": 4929.0,
         "rent_to_ebitda": 0.232502,
         "rent_fiscal_year": "2026-05-31",
-        "edgar_lease_cost": 693.0,
-        "edgar_lease_cost_tag": "OperatingLeaseCost",
+        "edgar_lease_cost": 1146.0,
+        "edgar_lease_cost_tag": "OperatingLeaseCost + VariableLeaseCost",
         "threshold": 0.05,
         "material": true,
-        "materiality": "rent 23.3% of EBITDA (FY ending 2026-05-31: $1,146M of $4,929M) — material (≥5%); R1 uses the ex-lease history; EDGAR OperatingLeaseCost that year: $693M — CIQ's rent and EDGAR's lease cost DISAGREE; read both",
+        "materiality": "rent 23.3% of EBITDA (FY ending 2026-05-31: $1,146M of $4,929M) — material (≥5%); R1 uses the ex-lease history; EDGAR OperatingLeaseCost + VariableLeaseCost that year: $1,146M",
         "ex_lease_band": {
           "metric": "EV/EBITDA ex-lease (TEV less operating leases / LTM EBITDA)",
           "current": 12.847423,
@@ -7385,8 +7385,9 @@
             ],
             "gap": 23.0,
             "different": true,
-            "matching_amount": null,
-            "matching_source": null,
+            "matching_amount": "OtherNonoperatingIncomeExpense -23,000,000 USD for the quarter to 2025-08-31",
+            "matching_source": "10-Q 0000320187-26-000193 XBRL",
+            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -7403,6 +7404,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -7419,6 +7421,7 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 230.0,
             "note": null
           },
           {
@@ -7435,6 +7438,7 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 81.0,
             "note": null
           }
         ],
@@ -7442,7 +7446,7 @@
         "filing_ltm": 4597.0,
         "ltm_gap": 258.0,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $4,855M against $4,597M rebuilt from the filings (+$258M); the quarter to 2025-08-31: CIQ $1,117M against $1,094M (+$23M); the quarter to 2026-02-28: CIQ $968M against $820M (+$148M); the quarter to 2026-05-31: CIQ $1,585M against $1,514M (+$71M) (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $4,855M against $4,597M rebuilt from the filings (+$258M); the quarter to 2025-08-31: CIQ $1,117M against $1,094M (+$23M) — its filing tags a matching amount: OtherNonoperatingIncomeExpense -23,000,000 USD for the quarter to 2025-08-31; the quarter to 2026-02-28: CIQ $968M against $820M (+$148M); the quarter to 2026-05-31: CIQ $1,585M against $1,514M (+$71M) (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14950,6 +14954,23 @@
       "layers": [
         "mechanical.capital_structure"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary",
+        "mechanical.valuation"
+      ]
     }
   ],
   "anchor": {
@@ -15030,6 +15051,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

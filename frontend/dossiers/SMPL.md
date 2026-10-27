@@ -119,7 +119,7 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 6 earlier years are in the Appendix_
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $216M against $-213M rebuilt from the filings (+$429M); the quarter to 2025-08-30: CIQ $64M against $-6M (+$70M); the quarter to 2025-11-29: CIQ $50M against $44M (+$6M); the quarter to 2026-02-28: CIQ $51M against $-207M (+$258M); the quarter to 2026-05-30: CIQ $52M against $-44M (+$96M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $216M against $-213M rebuilt from the filings (+$429M); the quarter to 2025-08-30: CIQ $64M against $-6M (+$70M) — CIQ's own export itemises unusual items of $69.680M for the quarter, which it leaves out; the quarter to 2025-11-29: CIQ $50M against $44M (+$6M) — its release states a matching amount: “thirteen weeks ended November 29, 2025, and November 30, 2024: (In thousands) Thirteen Weeks Ended November 29, 2025 November 30, 2024 … Integration expense 5,918”; the quarter to 2026-02-28: CIQ $51M against $-207M (+$258M) — CIQ's own export itemises unusual items of $258.206M for the quarter, which it leaves out; the quarter to 2026-05-30: CIQ $52M against $-44M (+$96M) — CIQ's own export itemises unusual items of $95.465M for the quarter, which it leaves out (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -685,6 +685,8 @@ _Source §: 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm · amended by 0001
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · caveats, mechanical.capital_structure — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 7d old — 2026-08-11 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 28d old (2026-07-21, valuation.implied_expectations.multiples_as_of) — within the ceiling
