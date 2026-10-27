@@ -512,17 +512,20 @@ def build_universe(
                                    source="Polygon security reference"))
                 continue
             # Axis 3 — what the line IS in the ISSUER'S words (2026-10-27). The feed types some debt
-            # `CS` — ADAMK, TMUSI, XELLL among 58 lines of its 2026-10-17 pull — so Axis 2 admits
-            # it. The issuer's latest cover page registers every 12(b) security by symbol and
-            # title; a line it registers as debt leaves here, at the same stage as a correctly
-            # typed non-equity line. Only an explicit debt title excludes: an unread cover, an
-            # absent symbol or any other title changes nothing (`EntityResolver.registered_line`).
-            # Read for `CS` only, the one type the feed has been seen to mis-assign.
-            if ptype == "CS" and (reg := resolver.registered_line(
-                    ident.cik, ident.ticker, reference_date)) is not None and reg.is_debt:
+            # and preferred `CS` — ADAMK and TMUSI among 58 debt lines of its 2026-10-17 pull, and
+            # MCHPP, a preferred depositary that sat in this population on 2026-08-24 and 09-22 — so
+            # Axis 2 admits them. The issuer's latest cover page registers every 12(b) security by
+            # symbol and title; a line it registers as debt, or as preferred beside a common traded
+            # under another symbol, leaves here, at the same stage as a correctly typed non-equity
+            # line (the allowlist already excludes `PFD`). An unread cover, an absent symbol or any
+            # other title changes nothing (`EntityResolver.registered_line`). Read for `CS` only,
+            # the one type the feed has been seen to mis-assign.
+            if (ptype == "CS" and (reg := resolver.registered_line(
+                    ident.cik, ident.ticker, reference_date)) is not None
+                    and (cls := reg.excluded_class) is not None):
                 _drop(ident.eod_symbol, "non_common_equity",
                       f"the issuer's {reg.form} cover page registers {reg.symbol} as "
-                      f"\"{reg.title}\" — a debt security, though the reference feed types it CS",
+                      f"\"{reg.title}\" — a {cls} security, though the reference feed types it CS",
                       StampedInput(value=reg.title, as_of=reg.filed,
                                    source=f"SEC {reg.form} {reg.accession} cover page "
                                           f"(dei:Security12bTitle)"))

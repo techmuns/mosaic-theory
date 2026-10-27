@@ -1,5 +1,5 @@
 {
- "_about": "Verbatim inline-XBRL cover-page tags (dei:TradingSymbol / dei:Security12bTitle / dei:SecurityExchangeName) of each issuer's latest periodic report filed on or before 2026-10-16, read from SEC EDGAR on 2026-10-27. Nothing else of the filing is kept. Frozen for tests/test_registered_debt.py.",
+ "_about": "Verbatim inline-XBRL cover-page tags (dei:TradingSymbol / dei:Security12bTitle / dei:SecurityExchangeName) of each issuer's latest periodic report filed on or before 2026-10-16, read from SEC EDGAR on 2026-10-27. Nothing else of the filing is kept. Frozen for tests/test_registered_debt.py. `polygon_reference_2026_10_17` is the feed's own record for three lines, verbatim from Polygon's /v3/reference/tickers pull of 2026-10-17.",
  "covers": {
   "Adamas Trust": {
    "cik": "0001273685",
@@ -178,6 +178,19 @@
     "<ix:nonNumeric contextRef=\"c-3\" name=\"dei:TradingSymbol\" id=\"f-19\">MCHPP</ix:nonNumeric>",
     "<ix:nonNumeric contextRef=\"c-3\" name=\"dei:SecurityExchangeName\" format=\"ixt-sec:exchnameen\" id=\"f-20\">NASDAQ Stock Market LLC</ix:nonNumeric>"
    ]
+  },
+  "Mission Produce": {
+   "cik": "0001802974",
+   "form": "10-Q",
+   "filed": "2026-09-08",
+   "accession": "0001802974-26-000043",
+   "url": "https://www.sec.gov/Archives/edgar/data/1802974/000180297426000043/avo-20260731.htm",
+   "ix": [
+    "<ix:nonNumeric contextRef=\"c-2\" name=\"dei:Security12bTitle\" id=\"f-15\">Common Stock, par value $0.001 per share</ix:nonNumeric>",
+    "<ix:nonNumeric contextRef=\"c-3\" name=\"dei:TradingSymbol\" id=\"f-16\"><ix:nonNumeric contextRef=\"c-2\" name=\"dei:TradingSymbol\" id=\"f-17\">AVO</ix:nonNumeric>",
+    "<ix:nonNumeric contextRef=\"c-2\" name=\"dei:SecurityExchangeName\" format=\"ixt-sec:exchnameen\" id=\"f-18\"><ix:nonNumeric contextRef=\"c-3\" name=\"dei:SecurityExchangeName\" format=\"ixt-sec:exchnameen\" id=\"f-19\">NASDAQ Global Select Market</ix:nonNumeric>",
+    "<ix:nonNumeric contextRef=\"c-3\" name=\"dei:Security12bTitle\" id=\"f-20\">Series A Junior Participating Preferred Stock, par value $0.001 per share</ix:nonNumeric>"
+   ]
   }
  },
  "adamas_recent_filings": {
@@ -289,5 +302,47 @@
    "nymt-20260611.htm",
    "adam-20260331.htm"
   ]
+ },
+ "polygon_reference_2026_10_17": {
+  "MCHP": {
+   "ticker": "MCHP",
+   "name": "Microchip Technology Inc",
+   "market": "stocks",
+   "locale": "us",
+   "primary_exchange": "XNAS",
+   "type": "CS",
+   "active": true,
+   "currency_name": "usd",
+   "cik": "0000827054",
+   "composite_figi": "BBG000BHCP19",
+   "share_class_figi": "BBG001S787B5",
+   "last_updated_utc": "2026-10-17T06:12:41.781451636Z"
+  },
+  "MCHPP": {
+   "ticker": "MCHPP",
+   "name": "Microchip Technology Incorporated Depositary Shares Each Representing a 1/20th Interest in a Share of 7.50% Series A Mandatory Convertible Preferred Stock",
+   "market": "stocks",
+   "locale": "us",
+   "primary_exchange": "XNAS",
+   "type": "CS",
+   "active": true,
+   "currency_name": "usd",
+   "cik": "0000827054",
+   "last_updated_utc": "2026-10-17T06:12:41.781451757Z"
+  },
+  "AVO": {
+   "ticker": "AVO",
+   "name": "Mission Produce, Inc. Common Stock",
+   "market": "stocks",
+   "locale": "us",
+   "primary_exchange": "XNAS",
+   "type": "CS",
+   "active": true,
+   "currency_name": "usd",
+   "cik": "0001802974",
+   "composite_figi": "BBG005C9W679",
+   "share_class_figi": "BBG005C9W688",
+   "last_updated_utc": "2026-10-17T06:12:41.780291544Z"
+  }
  }
 }

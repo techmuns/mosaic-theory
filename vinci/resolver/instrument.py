@@ -12,12 +12,22 @@ IT CANNOT SEE A LINE LISTED SINCE THAT COVER. ADAMK itself is the case: its 8-A1
 2026-08-14 and Adamas's latest 10-Q 2026-07-31, so until the next periodic report the cover says
 nothing about it and nothing here excludes it.
 
-ONLY DEBT IS READ OUT OF IT. A title is debt when it names notes, debentures or bonds — every one of
-the 21 debt titles on the eight frozen covers does, and none of the 2,461 titles on the covers of
-the 2026-10-16 population's 2,065 members names one alongside common shares or names only a
-maturity, so no rule is carried for either. Nothing else is inferred: LP units ("Depositary Units
-… Representing Limited Partner Interests"), ADSs of units and preferred lines stay what the rest of
-the builder says they are.
+TWO CLASSES ARE READ OUT OF IT, AND NOTHING ELSE.
+- DEBT: a title that names notes, debentures or bonds. Every one of the 21 debt titles on the
+  frozen covers does, and none of the 2,461 titles on the covers of the 2026-10-16 population's
+  2,065 members names one alongside common shares or names only a maturity, so no rule is carried
+  for either.
+- PREFERRED: a title that names preferred (or preference) stock, ONLY when the same cover registers
+  the issuer's common under ANOTHER symbol. The feed types MCHPP — Microchip's "Depositary Shares,
+  each representing a 1/20th interest in a share of 7.50% Series A Mandatory Convertible Preferred
+  Stock" — ``CS``, and it sat in the primary population on 2026-08-24 and 2026-09-22; the
+  allowlist already excludes a line the feed types ``PFD`` (operator ruling 2026-10-27: enforcing
+  that intent, not a new policy). The second condition is not decoration: Mission Produce's real
+  cover tags AVO, its common, to "Series A Junior Participating Preferred Stock" (its rights plan)
+  and leaves its common's title without a symbol. A preferred title alone would delete a common
+  stock; a cover that shows the common trading under another symbol cannot.
+LP units ("Depositary Units … Representing Limited Partner Interests"), ADSs of units and anything
+untitled stay what the rest of the builder says they are.
 
 A TWIN, ON PURPOSE. ``vinci.theme_intelligence.securities.parse_cover`` reads the same tags, but
 the isolation boundary forbids the fund importing that package and lets it import only shared
@@ -41,6 +51,8 @@ PERIODIC_FORMS = frozenset({"10-K", "10-Q", "20-F", "40-F", "10-K/A", "10-Q/A", 
 _IX = re.compile(r"<ix:nonnumeric\b([^>]*)>(.*?)</ix:nonnumeric>", re.I | re.S)
 _COVER_TAGS = ("dei:TradingSymbol", "dei:Security12bTitle")
 _DEBT = re.compile(r"\bnotes?\b|\bdebentures?\b|\bbonds?\b", re.I)
+_PREFERRED = re.compile(r"\bpreferred\b|\bpreference\b", re.I)
+_COMMON = re.compile(r"\bcommon\b|\bordinary\s+shares?\b", re.I)
 
 
 @dataclass(frozen=True)
@@ -52,16 +64,35 @@ class RegisteredLine:
     form: str
     filed: date
     accession: str
+    #: the same cover registers a common class under ANOTHER symbol
+    common_elsewhere: bool = False
 
     @property
     def is_debt(self) -> bool:
         return is_debt_title(self.title)
+
+    @property
+    def excluded_class(self) -> str | None:
+        """``"debt"`` or ``"preferred"`` when the issuer's own title says the line is not its
+        common equity, else None. Preferred needs the common to be registered elsewhere on the
+        cover (see the module docstring: AVO)."""
+        if self.is_debt:
+            return "debt"
+        if self.common_elsewhere and bool(self.title and _PREFERRED.search(self.title)):
+            return "preferred"
+        return None
 
 
 def is_debt_title(title: str | None) -> bool:
     """A registered title that names a debt security — never an absent one (an untitled line is
     not evidence of anything)."""
     return bool(title and _DEBT.search(title))
+
+
+def is_common_title(title: str | None) -> bool:
+    """A registered title of common or ordinary equity (no title on the 2026-10-16 population's
+    covers names both common and preferred, so none is carved out)."""
+    return bool(title and _COMMON.search(title))
 
 
 def symbol_key(symbol: str) -> str:
@@ -120,10 +151,12 @@ def registered_line(doc_html: str, ticker: str, *, form: str, filed: date,
 
 def match_line(lines: list[tuple[str | None, str | None]], ticker: str, *, form: str,
                filed: date, accession: str) -> RegisteredLine | None:
-    """``ticker``'s entry among a cover's ``lines``. A cover can tag one symbol in two contexts
-    (Mission Produce tags AVO to its rights-plan preferred), so a symbol is read as debt only when
-    EVERY context carrying it says so: any other title wins."""
+    """``ticker``'s entry among a cover's ``lines``. A cover can tag one symbol in two contexts, so
+    a symbol is excluded only when EVERY context carrying it says so: any other title wins."""
     key = symbol_key(ticker)
-    found = [RegisteredLine(symbol=sym, title=title, form=form, filed=filed, accession=accession)
+    elsewhere = any(sym and symbol_key(sym) != key and is_common_title(title)
+                    for sym, title in lines)
+    found = [RegisteredLine(symbol=sym, title=title, form=form, filed=filed, accession=accession,
+                            common_elsewhere=elsewhere)
              for sym, title in lines if sym and symbol_key(sym) == key]
-    return next((r for r in found if not r.is_debt), found[0] if found else None)
+    return next((r for r in found if r.excluded_class is None), found[0] if found else None)

@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# An issuer's line in the population no longer changes on a 90-day volume crossing, and a line its issuer registers as debt leaves the universe whatever the feed types it
+# An issuer's line in the population no longer changes on a 90-day volume crossing, and a line its issuer registers as debt or preferred leaves the universe whatever the feed types it
 
 **WHAT.** Data-integrity wave 2, lane L8, item 21: the two defects the 2,113 sign-off left open
 inside the population (`docs/records/2026-09-01-population-signoff-2113.md`). Both are closed in
@@ -25,18 +25,26 @@ code. The 2026-10-16 population does not change.
    - When the incumbent wins against a more-traded sibling, the loser's `duplicate_class` row
      names the incumbent and the snapshot date. Its source is
      `universe_snapshot.jsonl (the incumbent line)`, not `Polygon ADV`.
-2. **A line its issuer registers as debt leaves at `non_common_equity`**
+2. **A line its issuer registers as debt or preferred leaves at `non_common_equity`**
    (`vinci/resolver/instrument.py`, `EntityResolver.registered_line`, universe Axis 3).
    - The input is the cover page of the issuer's newest periodic report filed on or before the
      reference date that tags its symbols. A Part III 10-K/A tags none, so up to three reports
      are opened, newest first. Its inline-XBRL `dei:TradingSymbol` / `dei:Security12bTitle` pair
      is a structured SEC field, keyed by the symbol, in the issuer's own words.
-   - A title that names notes, debentures or bonds excludes the line, but only when EVERY context
-     that tags the symbol says so: covers mis-tag (Mission Produce tags AVO to its rights-plan
-     preferred). The deciding input is the title, stamped with the filing's date and accession.
+   - A title that names notes, debentures or bonds excludes the line as DEBT.
+   - A title that names preferred (or preference) stock excludes it as PREFERRED, but only when
+     the same cover registers the issuer's common under ANOTHER symbol. The common is never
+     touched. This is the operator's ruling of 2026-10-27, relayed by the lane owner: it enforces
+     the allowlist's existing exclusion of `PFD` on a line the feed mistypes. It is not a new
+     policy.
+   - The condition on the common is what keeps a real common in: Mission Produce's cover tags
+     AVO, its common, to "Series A Junior Participating Preferred Stock" (its rights plan) and
+     leaves "Common Stock" without a symbol.
+   - A symbol is excluded only when EVERY context that tags it says so.
+   - The deciding input is the title, stamped with the filing's date and accession.
    - The cover is read only for lines the feed types `CS` that clear every other gate.
-   - Nothing else on a cover excludes anything: an unread cover, an absent symbol, a preferred
-     line, LP units or an ADS of units changes nothing.
+   - Nothing else on a cover excludes anything: an unread cover, an absent symbol, LP units or
+     an ADS of units changes nothing.
    - No drop stage was added, and no gate threshold changed.
 
 **WHY.**
@@ -97,6 +105,39 @@ code. The 2026-10-16 population does not change.
   report on or before 2026-10-16 is a 20-F or 40-F: 78 typed `ADRC` and 177 typed `CS`
   (direct-listed Canadian, Israeli, Greek-shipping and other FPIs).
 
+**EACH DATED POPULATION, under this branch's cover rule.** Every member of each committed primary
+`universe_snapshot.jsonl` is classified at the population's own date, from the latest periodic
+report filed by then (covers read 2026-10-27). The rule is applied to every member here, whatever
+its type; the gate itself reads `CS` lines only.
+
+| population (commit) | members | preferred | debt | no cover read / symbol absent |
+|---|---:|---|---:|---:|
+| 2026-08-24 pre-dedup (1f4bb8aa, #547) | 2,125 | MCHPP (`CS`), CIG (`ADRC`) | 0 | 18 (ADAMK among them) |
+| 2026-08-24 signed off (6a10761b, #553) | 2,113 | MCHPP (`CS`), CIG (`ADRC`) | 0 | 17 |
+| 2026-09-22 (475b8750) | 2,126 | MCHPP (`CS`), CIG (`ADRC`) | 0 | 17 |
+| 2026-10-16 (987d2b4e) | 2,065 | CIG (`ADRC`) | 0 | 17 |
+
+- **MCHPP** is typed `CS` in both the 2026-09-22 and 2026-10-17 reference pulls.
+  - It was a $1,743.9M (08-24) / $1,746.9M (09-22) line on its own 27,000,000 depositary
+    shares. The gate would have removed it from both populations.
+  - On 2026-10-16 it was gone only because the per-class count no longer resolved and it was
+    sized on Microchip's whole share count ($34.6B, out of band).
+- **CIG** is Cemig's "Preferred Shares, R$5.00 par value" ADR (the Brazilian PN class). It is
+  typed `ADRC`, the gate never reads it, and it is part of the ADR question below.
+- **Debt by cover: 0 in every population.** ADAMK, a member of the pre-dedup 2026-08-24 population,
+  is in the last column: its symbol is not on Adamas's 2026-07-31 cover.
+
+**DID AN EXCLUDED LINE REACH THE QUEUE, A DOSSIER OR THE LEDGER?** Searched across every commit on
+every branch (`git log --all -S`), for MCHPP, ADAMK, GOOGM, GOOGN and CIG:
+
+- **`ranked_queue.jsonl`, `candidate_records.jsonl`, `decision_ledger.jsonl`, `data/dossiers/`:**
+  none of the five, ever.
+- **MCHPP WAS SCREENED.** It has a candidate-grain retention row in run 2026-09-22-01: NOT_EVALUATED,
+  "only 41d history".
+- **MCHPP sits in the cohort pool.** It is an SIC 3674 industry peer in 5 runs (07-29-03,
+  08-12-01, 08-14-01, 08-24-01, 10-16-01), one of 54–61 semiconductor rows each. CIG appears in 3
+  commits of the pool.
+
 **ADRs: WHAT THE CODE AND STATE INTEND.**
 
 - **The code admits ADRs on purpose.**
@@ -127,7 +168,7 @@ code. The 2026-10-16 population does not change.
     by stage.
   - Every `CS` line reaching Axis 3 had its cover read: 8 documents fetched live, none
     unreadable. 6 of the 8 were older reports opened because 3 members' covers tag no symbols
-    (TAC, PBT, CIK 878518). None is titled debt.
+    (TAC, PBT, CIK 878518). None is excluded as debt or preferred.
 - **The U-Haul case on real data.** Same inputs, but the incumbent is the 2026-08-24 population
   (#553), the record U-Haul entered as UHAL. The ONLY difference is UHAL kept, UHAL.B dropped,
   0 caps differing. The UHAL.B row reads: "the incumbent line UHAL — admitted in the 2026-08-24
@@ -142,10 +183,16 @@ code. The 2026-10-16 population does not change.
       reads as an ADV win; an incumbent that fails a gate loses the slot (UHAL.B at its real
       08-24 close); a later-dated snapshot is ignored; bands don't cross; out-of-population rows
       are not incumbents.
-  - `tests/test_registered_debt.py`, 11 pins over EIGHT REAL COVERS frozen verbatim
+  - `tests/test_registered_debt.py`, 16 pins over NINE REAL COVERS frozen verbatim
     (`tests/fixtures/cover_page_12b_titles.json`: Adamas, Brunswick, T-Mobile, Brown-Forman,
-    Icahn, Coca-Cola FEMSA, U-Haul, Microchip) and Adamas's real filing index:
-    - all 21 note titles read as debt; none of the 18 equity titles does;
+    Icahn, Coca-Cola FEMSA, U-Haul, Microchip, Mission Produce), the feed's own record for MCHP /
+    MCHPP / AVO, and Adamas's real filing index:
+    - all 21 note titles read as debt; none of the 20 equity titles does;
+    - PREFERRED: MCHPP and Adamas's four preferred series are excluded beside their common; MCHP,
+      ADAM, UHAL, UHAL.B, BF.A and BF.B never are; AVO (the observed failure shape) is not;
+    - through the real builder at MCHPP's real 2026-09-22 state, MCHPP leaves at
+      `non_common_equity` while MCHP leaves the primary band only on its size, and is admitted in
+      the theme band;
     - BFB / UHAL.B / UHAL-B match;
     - ADAMK, absent from its cover, is not evidence;
     - the cover is the latest periodic report by the reference date;
@@ -156,11 +203,16 @@ code. The 2026-10-16 population does not change.
     - a symbol tagged into two contexts is debt only if both say so;
     - through the real builder, a registered note that out-trades its common is not admitted
       while the common on the same cover is.
-- **Mutations: 13 of 13 red on the intended pin.** Incumbent dropped from the rank key; no as-of
-  bound on the incumbent; out-of-population rows read; cover gate disabled; symbols unfolded; no
-  as-of bound on the cover; an absent title read as debt; "notes" dropped from the rule; a TTL on
-  the filed document; the incumbent's row crediting ADV; and, for the three review fixes, only
-  the newest report opened, the first context deciding, a cover parsed per line.
+- **Mutations: 16 of 17 red on the intended pin; 1 equivalent.**
+  - Red, the incumbent: dropped from the rank key; no as-of bound on it; out-of-population rows
+    read; its row crediting ADV.
+  - Red, the cover gate: disabled; symbols unfolded; no as-of bound on the cover; an absent
+    title read as debt; "notes" dropped from the rule; a TTL on the filed document.
+  - Red, the three review fixes: only the newest report opened; the first context deciding; a
+    cover parsed per line.
+  - Red, the preferred rule: its branch disabled; the common-elsewhere guard removed (the AVO
+    pin); the builder ignoring the preferred class.
+  - Equivalent (see costs): the line's own symbol counted as "elsewhere".
 - **No paid model call.** The run used SEC and the frozen Polygon cache only.
 
 **BOUNDARY.**
@@ -196,15 +248,24 @@ code. The 2026-10-16 population does not change.
    - The lever if it bites: read covers only for issuers listing more than one SEC ticker. That
      gives up issuers whose only listing is a note.
 3. **A cover can tag a symbol to the wrong title.** Mission Produce tags AVO to its rights-plan
-   preferred. Only a debt title excludes, and 0 of 2,065 members' own lines carry one.
-4. **A cover title is a text field.** It is classified by three words (notes / debentures /
-   bonds), and the 2,461 member-cover titles carry no counter-example.
+   preferred. A preferred title excludes only beside a common registered under another symbol,
+   and the run over all 2,065 members' covers excludes none of their own `CS` lines.
+   - One equivalent mutant is recorded: counting the line's OWN symbol as "elsewhere". It survives
+     because a symbol tagged to both a common and a preferred context is already kept by the
+     every-context rule.
+4. **A cover title is a text field.** It is classified by five words (notes / debentures / bonds
+   / preferred / preference), and the 2,461 member-cover titles carry no counter-example. No title
+   names both common and preferred, or a maturity without a debt word.
 5. **The parser is a twin of `theme_intelligence.securities.parse_cover`.** The isolation
    boundary forbids sharing it.
 6. **NOT FIXED here, reported:**
-   - **Preferred typed `CS` (MCHPP) stays admissible.** The brief scoped exclusion to bonds and
-     notes. Whether the allowlist's explicit PFD exclusion should extend to a cover-registered
-     preferred is an open question, asked of the lane owner.
+   - **A preferred line whose issuer's common is not on the 12(b) table** (common traded OTC under
+     12(g)) is not excluded: no common is registered elsewhere on the cover. 0 such lines in the
+     2026-10-16 population.
+   - **The cohort pool still carries MCHPP.** It sits as an SIC 3674 industry peer in 5 runs:
+     2026-07-29-03, 08-12-01, 08-14-01, 08-24-01 and 10-16-01, one of 54–61 semiconductor rows
+     each. `scripts/build_cohort_pool.py` pools `out_of_band` rows through the type allowlist only,
+     and MCHPP leaves at the band before this gate runs.
    - **A ticker rename mints a new internal id**, splitting one issuer's record. Measured: HLX→HOS
      and BRR→SVIA moved a population line. 5 members' latest cover still names the old symbol
      (HOS/HLX, SVIA/BRR, IA/ISSC, PLGO/FIHL, SKYD/PSKY).

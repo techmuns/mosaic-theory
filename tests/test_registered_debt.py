@@ -66,11 +66,11 @@ def test_every_note_on_a_real_cover_reads_as_debt() -> None:
 
 
 def test_equity_titles_on_real_covers_never_read_as_debt() -> None:
-    """NEGATIVE: common in five spellings, LP units, an ADS of units, cumulative preferred and a
-    mandatory-convertible preferred depositary. None is debt; the rule infers nothing else."""
+    """NEGATIVE: common in five spellings, LP units, an ADS of units, cumulative preferred, a
+    mandatory-convertible preferred depositary and a rights-plan preferred. None is debt."""
     titles = [t for issuer in _COVERS for _s, t in cover_lines(_html(issuer))
               if t and "Notes" not in t]
-    assert len(titles) == 18, titles
+    assert len(titles) == 20, titles
     assert not [t for t in titles if is_debt_title(t)]
     assert not is_debt_title(None)
 
@@ -146,7 +146,7 @@ def test_the_resolver_reads_the_cover_its_filing_index_names() -> None:
     reg = resolver.registered_line(_ADAMAS, "ADAMG", date(2026, 10, 16))
     assert reg == RegisteredLine(symbol="ADAMG", title="9.125% Senior Notes due 2030",
                                  form="10-Q", filed=date(2026, 7, 31),
-                                 accession="0001273685-26-000069")
+                                 accession="0001273685-26-000069", common_elsewhere=True)
     reg = resolver.registered_line(_ADAMAS, "ADAM", date(2026, 10, 16))
     assert reg is not None and not reg.is_debt
     # one issuer's lines share one cover: the document is read and parsed once
@@ -199,19 +199,23 @@ def _adamas(ticker: str) -> Identity:
                     eod_symbol=ticker, name="Adamas Trust, Inc.")
 
 
-def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, adv: dict[str, float],
-         types: dict[str, str] | None = None) -> tuple[dict, set[str], list[dict]]:
-    idents = [_adamas("ADAM"), _adamas("ADAMG")]
-    ref = date(2026, 10, 16)
+def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, cover: str, idents: list[Identity],
+           ref: date, closes: dict[str, float], adv: dict[str, float],
+           class_counts: dict[str, float], filed_count: float, types: dict[str, str],
+           sic: tuple[str, str], band_name: str = "primary",
+           ) -> tuple[dict, set[str], list[dict]]:
+    """The REAL builder over one issuer's lines, its cover read from the frozen fixture."""
+    cik = idents[0].cik
+    run_id = f"{ref.isoformat()}-01"
 
     class _R:
         @classmethod
         def from_config(cls, cfg: object) -> _R: return cls()
         def iter_universe(self, exchanges: object) -> Iterator[Identity]: yield from idents
-        def sic_for(self, cik: str) -> tuple[str, str]: return ("6798", "Real Estate Inv Trusts")
+        def sic_for(self, cik: str) -> tuple[str, str]: return sic
         def registered_line(self, cik: str, ticker: str, as_of: date) -> RegisteredLine | None:
             assert as_of == ref
-            return _line("Adamas Trust", ticker)
+            return _line(cover, ticker)
 
     class _E:
         @classmethod
@@ -219,11 +223,12 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, adv: dict[str, floa
         def grouped_daily(self, day: date) -> dict[str, RawBar]:
             if day != ref:
                 return {}
+            # one bar, so ADV = close x volume = the measured 90-day ADV
             return {t: RawBar(ticker=t, open=p, high=p, low=p, close=p, volume=adv[t] / p)
-                    for t, p in _CLOSE.items()}
-        def security_types(self) -> dict[str, str]: return types or {"ADAM": "CS", "ADAMG": "CS"}
+                    for t, p in closes.items()}
+        def security_types(self) -> dict[str, str]: return types
         def share_class_counts(self, tickers: object) -> dict[str, float]:
-            return {"ADAM": _COUNT} if "ADAM" in tickers else {}  # type: ignore[operator]
+            return {t: class_counts[t] for t in tickers if t in class_counts}  # type: ignore[attr-defined]
 
     class _Ed:
         @classmethod
@@ -231,21 +236,30 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, adv: dict[str, floa
         def shares_outstanding_with_provenance(
             self, periods: object, *, include_period_average: bool = False
         ) -> tuple[dict[str, float], dict[str, str]]:
-            return {_ADAMAS: _COUNT}, {_ADAMAS: "dei:EntityCommonStockSharesOutstanding"}
+            return {cik: filed_count}, {cik: "dei:EntityCommonStockSharesOutstanding"}
 
     monkeypatch.setattr(uni, "EntityResolver", _R)
     monkeypatch.setattr(uni, "PolygonEodClient", _E)
     monkeypatch.setattr(uni, "EdgarClient", _Ed)
     stats = build_universe(Config(data_dir=tmp_path), reference_date=ref,
-                           share_periods=["CY2026Q2I"], retain_run_id="2026-10-16-01",
-                           retain_dir=tmp_path / "retain")
-    snap = tmp_path / "snapshots" / "universe_snapshot.jsonl"
+                           share_periods=["CY2026Q2I"], band_name=band_name,
+                           retain_run_id=run_id, retain_dir=tmp_path / "retain")
+    table = "universe_snapshot" if band_name == "primary" else "theme_universe_snapshot"
+    snap = tmp_path / "snapshots" / f"{table}.jsonl"
     admitted = {json.loads(x)["internal_id"].split("-", 2)[2]
                 for x in snap.read_text().splitlines() if x.strip()}
     from vinci.screens.retention import run_path
-    rows = [json.loads(x) for x in run_path("2026-10-16-01", tmp_path / "retain").read_text()
+    rows = [json.loads(x) for x in run_path(run_id, tmp_path / "retain").read_text()
             .splitlines() if x.strip()]
     return stats, admitted, rows
+
+
+def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *,
+         adv: dict[str, float]) -> tuple[dict, set[str], list[dict]]:
+    return _build(monkeypatch, tmp_path, cover="Adamas Trust",
+                  idents=[_adamas("ADAM"), _adamas("ADAMG")], ref=date(2026, 10, 16),
+                  closes=_CLOSE, adv=adv, class_counts={"ADAM": _COUNT}, filed_count=_COUNT,
+                  types={"ADAM": "CS", "ADAMG": "CS"}, sic=("6798", "Real Estate Inv Trusts"))
 
 
 def test_a_registered_note_that_out_trades_its_common_is_not_admitted(
@@ -278,3 +292,90 @@ def test_the_common_on_the_same_cover_is_admitted(
     assert "ADAM" in admitted
     assert stats["in_universe"] == 1
 
+
+
+# --- preferred: excluded only beside a common the same cover registers under another symbol -------
+
+_MCHP = "0000827054"
+_FEED = _FIX["polygon_reference_2026_10_17"]
+
+
+def test_a_preferred_depositary_beside_its_common_is_excluded() -> None:
+    """POSITIVE — MCHPP, on Microchip's real 10-Q cover (filed 2026-08-06): "Depositary Shares, each
+    representing a 1/20th interest in a share of 7.50% Series A Mandatory Convertible Preferred
+    Stock", beside "Common Stock" registered as MCHP. The feed's own record types it CS."""
+    assert _FEED["MCHPP"]["type"] == "CS"
+    reg = _line("Microchip Technology", "MCHPP")
+    assert reg is not None and reg.common_elsewhere and reg.excluded_class == "preferred"
+    # ...and every preferred series Adamas registers beside ADAM
+    for sym in ("ADAMN", "ADAMM", "ADAML", "ADAMZ"):
+        assert _line("Adamas Trust", sym).excluded_class == "preferred"  # type: ignore[union-attr]
+
+
+def test_the_issuers_common_is_never_excluded() -> None:
+    """NEGATIVE, same issuers: MCHP, ADAM, UHAL / UHAL.B and Brown-Forman's two common classes."""
+    for cover, sym in (("Microchip Technology", "MCHP"), ("Adamas Trust", "ADAM"),
+                       ("U-Haul Holding", "UHAL"), ("U-Haul Holding", "UHAL-B"),
+                       ("Brown-Forman", "BF-A"), ("Brown-Forman", "BF-B")):
+        reg = _line(cover, sym)
+        assert reg is not None and reg.excluded_class is None, (cover, sym, reg)
+
+
+def test_a_preferred_title_without_a_common_elsewhere_excludes_nothing() -> None:
+    """THE OBSERVED FAILURE SHAPE — Mission Produce's real cover (10-Q filed 2026-09-08) tags AVO,
+    its COMMON stock ("Mission Produce, Inc. Common Stock" in the feed's own record), to "Series A
+    Junior Participating Preferred Stock" — its rights plan — and leaves "Common Stock" with no
+    symbol. A preferred title alone would delete a common stock from the population."""
+    assert _FEED["AVO"]["type"] == "CS"
+    reg = _line("Mission Produce", "AVO")
+    assert reg is not None and "Preferred" in (reg.title or "")
+    assert not reg.common_elsewhere and reg.excluded_class is None
+
+
+#: Microchip on 2026-09-22, the second weekly MCHPP sat in the primary population: closes and
+#: 90-day ADVs from the grouped-daily bars; per-class counts from Polygon (MCHPP's 27,000,000 is its
+#: committed $1,746.9M cap at $64.70; MCHP's 543,008,370 its share_class_shares_outstanding).
+_MCHP_CLOSE = {"MCHP": 75.82, "MCHPP": 64.70}
+_MCHP_ADV = {"MCHP": 821_380_364.9841999, "MCHPP": 15_899_610.073576568}
+_MCHP_COUNT = {"MCHP": 543_008_370.0, "MCHPP": 27_000_000.0}
+
+
+def _microchip(ticker: str) -> Identity:
+    return Identity(internal_id=f"SEC-{_MCHP}-{ticker}", issuer_id=f"ISS-{_MCHP}", cik=_MCHP,
+                    ticker=ticker, mic="XNAS", exchange="Nasdaq", eod_symbol=ticker,
+                    name="MICROCHIP TECHNOLOGY INC")
+
+
+def _run_microchip(monkeypatch: pytest.MonkeyPatch, tmp_path: Path,
+                   band_name: str) -> tuple[dict, set[str], list[dict]]:
+    return _build(monkeypatch, tmp_path, cover="Microchip Technology",
+                  idents=[_microchip("MCHP"), _microchip("MCHPP")], ref=date(2026, 9, 22),
+                  closes=_MCHP_CLOSE, adv=_MCHP_ADV, class_counts=_MCHP_COUNT,
+                  filed_count=_MCHP_COUNT["MCHP"],
+                  types={t: _FEED[t]["type"] for t in ("MCHP", "MCHPP")},
+                  sic=("3674", "Semiconductors & Related Devices"), band_name=band_name)
+
+
+def test_mchpp_leaves_the_population_it_sat_in(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """THE REAL CASE. On 2026-09-22 MCHPP was a $1.75B line in the $300M-$10B primary band and was
+    screened; MCHP, $41.2B, was out of band. Now the preferred leaves on its own title."""
+    stats, admitted, rows = _run_microchip(monkeypatch, tmp_path, "primary")
+    assert "MCHPP" not in admitted, "a preferred depositary was admitted as Microchip's equity"
+    [drop] = [r for r in rows if r["ticker"] == "MCHPP"]
+    assert drop["stage"] == "non_common_equity"
+    assert "a preferred security" in drop["reason"]
+    assert drop["deciding_input"]["source"] == (
+        "SEC 10-Q 0000827054-26-000038 cover page (dei:Security12bTitle)")
+    [common] = [r for r in rows if r["ticker"] == "MCHP"]
+    assert common["stage"] == "out_of_band", "the common leaves on its size, never its title"
+
+
+def test_mchp_is_kept_where_its_size_belongs(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """NEGATIVE through the builder: in the theme band ($10B-$10T) Microchip's common is admitted;
+    the cover rule takes only the preferred."""
+    _, admitted, _ = _run_microchip(monkeypatch, tmp_path, "theme")
+    assert admitted == {"MCHP"}
