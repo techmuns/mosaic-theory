@@ -13955,6 +13955,14 @@
       "layers": [
         "mechanical.ciq_currency"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -14038,6 +14046,10 @@
       "source_ref": "docs/records/2026-10-07-four-recipe-re-tags-restored.md (#671) — the re-tag was written 2026-07-21 in feca6b93, pending the analyst; the operator's instruction of 2026-10-07 restored it"
     },
     "machine_recipe_hint": "R1_midcycle_margin_evebitda",
+    "band_checks": {
+      "recorded_d_and_a": "not_run",
+      "market_reconciliation": "agree"
+    },
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

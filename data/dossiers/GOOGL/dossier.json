@@ -15276,6 +15276,14 @@
       "layers": [
         "mechanical.ciq_currency"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -15373,6 +15381,10 @@
       "machine_recipe_at_decision": "R1_midcycle_margin_evebitda"
     },
     "machine_recipe_hint": "R1_midcycle_margin_evebitda",
+    "band_checks": {
+      "recorded_d_and_a": "agree",
+      "market_reconciliation": "agree"
+    },
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [
