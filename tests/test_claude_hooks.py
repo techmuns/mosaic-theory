@@ -680,3 +680,138 @@ def test_the_hooks_share_one_reading_of_a_created_pr() -> None:
     """The gate counts a PR opened exactly when codex_request.py asks Codex to review it."""
     codex = _load("codex_request.py")
     assert codex.created_pr is codex.review_gate.created_pr
+
+
+# ── every way this project has opened a PR is a PR opened (2026-10-27) ───────────────────────────
+# Found live: #812 was opened with `env -u GH_TOKEN … gh pr create`, which the detector did not read
+# as a create — so the review gate never checked it and codex_request.py asked Codex for nothing.
+# Replayed over this project's transcripts (531 real creates), two more forms ran unseen: a VAR
+# whose value holds a space (`GH_TOKEN=$(cat ~/.mosaic_gh_token)`, 60 creates) and `gh api` POSTing
+# to the pulls endpoint (62 — the route a memory note recommended). Every command below is a real
+# one from those transcripts, its title or body path shortened and its branch renamed `code`.
+
+#: The command that opened #812.
+ENV_UNSET = ("env -u GH_TOKEN -u GITHUB_TOKEN gh pr create --base main --head code "
+             "--title \"A later exhibit's refused covenant term withholds the value in force\" "
+             "--body-file /tmp/pr.md")
+SPACED_VALUE = ('GH_TOKEN=$(cat ~/.mosaic_gh_token) gh pr create --base main --head code \\\n'
+                '  --title "R2 EV/Revenue basis — capability only" \\\n  --body-file /tmp/pr187.md')
+#: The memory note's route, verbatim but for the placeholders.
+API_CREATE = ("env -u GH_TOKEN -u GITHUB_TOKEN gh api repos/techmuns/mosaic-theory/pulls -X POST "
+              "-f title=t -f head=code -f base=main -F body=@/tmp/pr.md")
+API_CREATES = (
+    API_CREATE,
+    # the method implied by the fields, inside a command substitution, before a later `cd`
+    'N=$(GH_TOKEN="$(cat ~/.mosaic_gh_token)" gh api --method POST repos/techmuns/mosaic-theory/'
+    'pulls -f base=main -f head=code -f title="A failed price fetch stops vinci monitor" '
+    "-F body=@$SP/pr_body_mon.md --jq '.number'); echo \"PR #$N\"; cd $SP/wt-mon && git push",
+    # the fields on continuation lines
+    "GH_TOKEN=$(cat ~/.mosaic_gh_token) gh api -X POST repos/techmuns/mosaic-theory/pulls \\\n"
+    '  -f title="fix(extractors): SMPL audit triage" \\\n  -f head="code" -f base="main" \\\n'
+    "  -F body=@$SCRATCH/pr_body.md 2>&1 | python -c 'import json,sys; print(sys.stdin.read())'",
+)
+#: Real `gh api` calls on a pull request that open none — merge, reviews, a reply, a reopen, reads.
+API_NOT_CREATES = (
+    "gh api --method PUT repos/techmuns/mosaic-theory/pulls/203/merge \\\n  -f merge_method=squash",
+    "gh api repos/techmuns/mosaic-theory/pulls/333/reviews --jq '.[].state'",
+    'gh api repos/techmuns/mosaic-theory/pulls/811/comments/4381711703/replies -f body="DEFERRED"',
+    "gh api -X PATCH repos/techmuns/mosaic-theory/pulls/377 -f state=open -f base=main",
+    "gh api repos/techmuns/mosaic-theory/pulls/198",
+    "gh api 'repos/techmuns/mosaic-theory/pulls?state=open&per_page=50'",
+    "gh api repos/techmuns/mosaic-theory/pulls",
+    "gh api -X GET repos/techmuns/mosaic-theory/pulls -f state=open",
+)
+
+
+def test_a_pr_create_behind_env_options_or_a_spaced_value_is_read_as_one() -> None:
+    gate = _load("review_gate.py")
+    for command in (ENV_UNSET, SPACED_VALUE, "env -i PATH=$PATH gh pr create --head code",
+                    "env --unset=GH_TOKEN gh pr create --head code", "env -- gh pr new --head code",
+                    'GH_TOKEN=$(cat "$HOME/.mosaic_gh_token") gh pr create --head code'):
+        assert gate.opens_a_pr(command), command
+        assert gate.pr_target(command, str(ROOT)).head == "code", command
+    # what was read before still is, and a mention is still not a create
+    for command in ("env GH_HOST=github.com gh pr create", "GH_TOKEN= gh pr create --fill"):
+        assert gate.opens_a_pr(command), command
+    for command in (f"bin/commit -m {json.dumps(ENV_UNSET)}", f"echo {ENV_UNSET!r}",
+                    f"cat > t.sh <<'EOF'\n{ENV_UNSET}\nEOF", "env -u GH_TOKEN gh pr view 812"):
+        assert not gate.opens_a_pr(command), command
+
+
+def test_a_gh_api_post_to_the_pulls_endpoint_is_a_pr_create() -> None:
+    gate = _load("review_gate.py")
+    for command in API_CREATES:
+        assert gate.opens_a_pr(command), command
+        assert gate.pr_target(command, str(ROOT))[1:] == ("code", "main"), command
+    assert gate.pr_target("gh api /repos/o/r/pulls --input pr.json", str(ROOT)).head is None
+    assert gate.opens_a_pr("gh api /repos/o/r/pulls --input pr.json")
+    assert gate.pr_target("gh api repos/o/r/pulls -f head=o:code -f base=dev", "/").head == "code"
+    for command in API_NOT_CREATES:
+        assert not gate.opens_a_pr(command), command
+    for command in (f"bin/commit -m {json.dumps(API_CREATE)}",
+                    f"cat > t.sh <<'EOF'\n{API_CREATE}\nEOF"):
+        assert not gate.opens_a_pr(command), command
+
+
+def test_review_gate_refuses_every_unreviewed_route_and_judges_its_head(
+        tmp_path: pathlib.Path) -> None:
+    """End to end through the hook: each route is refused unreviewed and passes after a review,
+    and the branch it names — not the checkout it runs in — decides whether it is code."""
+    repo = _two_branch_repo(tmp_path)              # `main` checked out, nothing changed
+    for command in (ENV_UNSET, SPACED_VALUE, *API_CREATES):
+        out = _create(repo, [], command=command)
+        assert out.returncode == 2 and "branch code" in out.stderr, command
+        assert _create(repo, [_review("toolu_r")], command=command).returncode == 0, command
+        docs = command.replace("head=code", "head=docs").replace('head="code"', 'head="docs"')
+        assert _create(repo, [], command=docs.replace("--head code", "--head docs")).returncode == 0
+    for command in API_NOT_CREATES:
+        assert _create(repo, [], command=command).returncode == 0, command
+
+
+def test_review_gate_counts_a_pr_opened_through_gh_api(tmp_path: pathlib.Path) -> None:
+    """The transcript reads the same way: a PR opened through `gh api` uses up the review before
+    it, whether gh printed the URL (`--jq .html_url`) or the whole JSON record."""
+    repo = _branch_checkout(tmp_path, "vinci/probe.py")
+    for printed in ({"stdout": f"999\n{URL}\n", "stderr": ""},
+                    {"stdout": json.dumps(API_RECORD), "stderr": ""}):
+        opened = [_review("toolu_r"), _tool("toolu_api", "Bash", {"command": API_CREATE}),
+                  _result("toolu_api", printed)]
+        assert _create(repo, opened).returncode == 2, printed
+    # a create the API refused (piped, so it exited 0) opened nothing and voids no review
+    refused = {"stdout": '{"message":"Validation Failed","status":"422"}', "stderr": ""}
+    failed = [_review("toolu_r"), _tool("toolu_api", "Bash", {"command": API_CREATE}),
+              _result("toolu_api", refused)]
+    assert _create(repo, failed).returncode == 0
+
+
+#: What `gh api` prints for a created PR: the record for #812 (GET of the same object 2026-10-27),
+#: cut to the keys that carry a URL, in GitHub's order, with the number swapped for the stand-in's.
+#: The body cites another PR, as bodies here do — the PR's own URL must still be the one read.
+API_RECORD = {
+    "url": "https://api.github.com/repos/techmuns/mosaic-theory/pulls/999", "id": 5028538316,
+    "html_url": URL, "diff_url": f"{URL}.diff", "patch_url": f"{URL}.patch",
+    "issue_url": "https://api.github.com/repos/techmuns/mosaic-theory/issues/999", "number": 999,
+    "state": "open", "title": "t",
+    "user": {"login": "nogods404", "html_url": "https://github.com/nogods404"},
+    "body": "Follows https://github.com/techmuns/mosaic-theory/pull/803.",
+    "head": {"ref": "code", "repo": {"html_url": "https://github.com/techmuns/mosaic-theory"}},
+    "base": {"ref": "main", "repo": {"html_url": "https://github.com/techmuns/mosaic-theory"}},
+    "_links": {"self": {"href": "https://api.github.com/repos/techmuns/mosaic-theory/pulls/999"},
+               "html": {"href": URL}},
+    "merged": False, "merged_by": None,
+}
+
+
+def test_codex_request_asks_for_a_review_of_a_pr_opened_any_of_these_ways(
+        tmp_path: pathlib.Path) -> None:
+    """codex_request.py reads the command through the same detector, and finds the PR in what
+    `gh api` prints — Claude Code records no `gitOperation` for that route."""
+    repo = _codex_repo(tmp_path)
+    api_printed = {"stdout": json.dumps(API_RECORD), "stderr": ""}
+    for command, response in ((ENV_UNSET, None), (SPACED_VALUE, None),
+                              *((c, api_printed) for c in API_CREATES)):
+        assert REQUEST in _opened(repo, command, response=response)[1], command
+    # on a checkout that DOES change code, only the not-a-create reading keeps these quiet
+    subprocess.run(["git", "-C", str(repo), "switch", "-q", "code"], check=True)
+    for command in API_NOT_CREATES:
+        assert _opened(repo, command, response=api_printed)[1] == [], command

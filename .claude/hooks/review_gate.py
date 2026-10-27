@@ -25,6 +25,12 @@ result reaches the transcript (measured 2026-10-26), several results in one entr
 record, and a create that printed nothing (`> out.txt`) leaves none — so an unread outcome may be
 a PR just opened.
 
+WHAT OPENS A PR (2026-10-27). `gh pr create` or its alias `gh pr new`, behind any VAR=value,
+wrapper word or `env` option; or `gh api` POSTing to `repos/{owner}/{repo}/pulls`. #812 opened with
+`env -u GH_TOKEN … gh pr create`, which the reading missed — so this gate never checked it and no
+Codex review was asked for — and a memory note recommended the `gh api` route, which neither hook
+saw at all. A GET of `…/pulls`, a merge, a review or a comment opens nothing.
+
 WHAT IS NOT GATED. A branch that changes no code against `origin/main` — records, STATE.md,
 committed data, artifact passes — opens freely: reviewing a 266k-line artifact diff buys nothing.
 
@@ -51,16 +57,24 @@ import sys
 from pathlib import Path
 from typing import NamedTuple
 
-#: `gh pr create` at a COMMAND position (start, or after ; & | ( or a newline, optionally behind
-#: VAR=value prefixes and wrapper words like `time`/`env`) — never inside a quoted commit message
-#: that merely mentions it.
-PR_CREATE = re.compile(r"(?:^|[;&|(\n])\s*(?:(?:[A-Za-z_]\w*=\S*|time|env|command|exec|nice|nohup)"
-                       r"\s+)*gh\s+pr\s+create\b")
+#: Words before a command that only set up how it runs: VAR=value, a wrapper word like `time`,
+#: or `env` with its own options. Two real forms ran unseen until 2026-10-27: `env -u GH_TOKEN gh
+#: pr create` (#812) and `GH_TOKEN=$(cat ~/.mosaic_gh_token) gh pr create`, a value holding a
+#: space (60 creates in this project's transcripts).
+_PREFIX = (r"(?:[A-Za-z_]\w*=(?:\$\([^()]*\)|\S)*|time|command|exec|nice|nohup"
+           r"|env(?:\s+(?:-u\s+\S+|--unset\s+\S+|-\S*))*)")
+#: `gh pr create` (or its alias `gh pr new`) at a COMMAND position (start, or after ; & | ( or a
+#: newline, optionally behind _PREFIX words) — never inside a quoted commit message that merely
+#: mentions it.
+PR_CREATE = re.compile(rf"(?:^|[;&|(\n])\s*(?:{_PREFIX}\s+)*gh\s+pr\s+(?:create|new)\b")
 #: Heredoc bodies and quoted strings are DATA, not commands: a test file written with
 #: `cat <<'EOF'` that contains `cd x && gh pr create` opened no PR (found on this gate's own live
 #: transcript, 2026-10-22). They are removed before the command-position match.
 HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1[^\n]*\n.*?^\s*\2\s*$", re.S | re.M)
 QUOTED = re.compile(r"'[^']*'|\"(?:\\.|[^\"\\])*\"")
+#: A backslash-newline joins two lines into one command: read as a break, it cut the `head=` field
+#: off 11 of the 62 real `gh api` creates in this project's transcripts (2026-10-27).
+CONTINUATION = re.compile(r"\\\n")
 #: An operator-typed `/code-review <args>` is recorded as a user command message.
 TYPED_REVIEW = re.compile(r"<command-name>/?(?:[\w-]+:)?code-review</command-name>")
 TYPED_ARGS = re.compile(r"<command-args>([^<]*)</command-args>")
@@ -117,7 +131,7 @@ def code_files_changed(root: Path, head: str | None = None, base: str = "main") 
 
 class Target(NamedTuple):
     """Where the PR comes from: the directory its command runs in (None = could not tell), the
-    ``--head`` branch if given, and the ``--base`` branch."""
+    head branch if named (``--head``, or a `gh api` ``head=`` field), and the base branch."""
 
     directory: str | None
     head: str | None
@@ -128,6 +142,14 @@ class Target(NamedTuple):
 _OPERATOR = re.compile(r"[;&|()<>]+")
 #: Words that run the command after them, so the command position carries through them.
 _WRAPPERS = {"time", "env", "command", "exec", "nice", "nohup"}
+#: `env` options whose value is the next word (`env -u GH_TOKEN gh pr create`).
+_ENV_VALUED = {"-u", "--unset"}
+#: The REST endpoint a POST to which opens a pull request: /repos/{owner}/{repo}/pulls.
+PULLS = re.compile(r"(?:https://api\.github\.com)?/?repos/[^/\s?]+/[^/\s?]+/pulls/?(?:\?\S*)?")
+#: `gh api` options whose value is the next word, so that word is not the endpoint.
+_API_VALUED = {"-X", "--method", "-f", "--raw-field", "-F", "--field", "-H", "--header",
+               "--input", "-q", "--jq", "-t", "--template", "--hostname", "-p", "--preview",
+               "--cache"}
 
 
 def _flag(args: list[str], *names: str) -> str | None:
@@ -148,22 +170,75 @@ def _cd(current: str | None, arg: str) -> str | None:
     return str(path if path.is_absolute() else Path(current) / path)
 
 
-def pr_target(command: str, cwd: str) -> Target:
-    """Read the shell text the way the shell will run it, up to the `gh pr create` it contains."""
-    text = HEREDOC.sub("", command).replace("\n", " ; ")
+def _api_fields(args: list[str]) -> dict[str, str] | None:
+    """The fields of the pull request a `gh api` call with ``args`` opens — None when it opens
+    none. gh sends ``--method`` when given, else POST when a field or ``--input`` is passed, else
+    GET: so a GET of `…/pulls`, a merge, a review or a comment never counts as a create."""
+    endpoint: str | None = None
+    method = ""
+    fields: dict[str, str] = {}
+    has_input = False
+    i = 0
+    while i < len(args):
+        arg = args[i]
+        name, eq, value = arg.partition("=") if arg.startswith("--") else (arg, "", "")
+        if name in _API_VALUED:
+            if not eq:
+                value = args[i + 1] if i + 1 < len(args) else ""
+                i += 1
+            if name in ("-X", "--method"):
+                method = value
+            elif name == "--input":
+                has_input = True
+            elif name in ("-f", "--raw-field", "-F", "--field"):
+                key, _, val = value.partition("=")
+                fields[key] = val
+        elif re.fullmatch(r"-X\w+", arg):
+            method = arg[2:]                # `-XPOST`
+        elif not arg.startswith("-") and endpoint is None:
+            endpoint = arg
+        i += 1
+    posts = (method or ("POST" if fields or has_input else "GET")).upper() == "POST"
+    return fields if posts and endpoint is not None and PULLS.fullmatch(endpoint) else None
+
+
+def _created(words: list[str]) -> tuple[str | None, str] | None:
+    """The ``(head, base)`` of the pull request the command ``words`` opens — None when it opens
+    none: `gh pr create|new [--head H] [--base B]`, or `gh api` POSTing `head=H base=B` to the
+    pulls endpoint (the route a memory note recommended until 2026-10-27, unseen by both hooks)."""
+    if words[:3] in (["gh", "pr", "create"], ["gh", "pr", "new"]):
+        head, base = _flag(words[3:], "--head", "-H"), _flag(words[3:], "--base", "-B")
+    elif words[:2] == ["gh", "api"] and (fields := _api_fields(words[2:])) is not None:
+        head, base = fields.get("head"), fields.get("base")
+    else:
+        return None
+    if head is not None and any(c in head for c in "$`"):
+        head = None                         # a computed branch name the hook cannot evaluate
+    elif head is not None:
+        head = head.split(":", 1)[-1]       # GitHub's cross-fork `owner:branch` form
+    return head, base or "main"
+
+
+def _walk(command: str, cwd: str | None) -> tuple[Target, bool]:
+    """Read the shell text the way the shell will run it, up to the first PR create it contains:
+    where that PR comes from, and whether a create was found at all."""
+    text = CONTINUATION.sub("", HEREDOC.sub("", command)).replace("\n", " ; ")
     lexer = shlex.shlex(text, posix=True, punctuation_chars=True)
     lexer.whitespace_split = True
     try:
         tokens = list(lexer)
     except ValueError:                      # unbalanced quotes: the shell's reading is unknowable
-        return Target(None, None, "main")
+        return Target(None, None, "main"), False
     directory: str | None = cwd
     at_start = True
+    in_env = False                          # reading `env`'s own options
     i = 0
     while i < len(tokens):
         token = tokens[i]
         if _OPERATOR.fullmatch(token):
             at_start = True
+        elif at_start and in_env and token.startswith("-"):
+            i += 1 if token in _ENV_VALUED else 0   # `-u NAME`: NAME is the option's, no command
         elif at_start and (re.fullmatch(r"[A-Za-z_]\w*=.*", token) or token in _WRAPPERS):
             pass                            # VAR=value or a wrapper word before the command
         elif at_start and token == "cd":
@@ -171,27 +246,36 @@ def pr_target(command: str, cwd: str) -> Target:
             directory = _cd(directory, "~" if _OPERATOR.fullmatch(nxt) else nxt)
             i += 0 if _OPERATOR.fullmatch(nxt) else 1
             at_start = False
-        elif at_start and token == "gh" and tokens[i + 1:i + 3] == ["pr", "create"]:
-            args = []
-            for arg in tokens[i + 3:]:
-                if _OPERATOR.fullmatch(arg):
+        elif at_start and token == "gh":
+            words = [token]
+            for word in tokens[i + 1:]:
+                if _OPERATOR.fullmatch(word):
                     break
-                args.append(arg)
-            head = _flag(args, "--head", "-H")
-            if head is not None and any(c in head for c in "$`"):
-                head = None                 # a computed branch name the hook cannot evaluate
-            elif head is not None:
-                head = head.split(":", 1)[-1]   # GitHub's cross-fork `owner:branch` form
-            return Target(directory, head, _flag(args, "--base", "-B") or "main")
+                words.append(word)
+            created = _created(words)
+            if created is not None:
+                return Target(directory, created[0], created[1]), True
+            at_start = False
         else:
             at_start = False
+        in_env = at_start and (token == "env" or (in_env and token.startswith("-")))
         i += 1
-    return Target(directory, None, "main")
+    return Target(directory, None, "main"), False
+
+
+def pr_target(command: str, cwd: str) -> Target:
+    """Where the PR the shell text opens comes from (``_walk``)."""
+    return _walk(command, cwd)[0]
 
 
 def opens_a_pr(command: str) -> bool:
-    """True when the shell text RUNS `gh pr create`, not when it merely contains the words."""
-    return bool(PR_CREATE.search(QUOTED.sub("''", HEREDOC.sub("", command))))
+    """True when the shell text RUNS a PR create — `gh pr create`, or a POST to the pulls endpoint
+    through `gh api` — not when it merely contains the words."""
+    if PR_CREATE.search(QUOTED.sub("''", HEREDOC.sub("", command))):
+        return True
+    # A POST's method, endpoint and fields sit in any order among its words, so only the word-by-
+    # word reading can see one; the `pulls` test keeps that reading off every other command.
+    return "pulls" in command and _walk(command, None)[1]
 
 
 def _skill_review(item: dict[str, object]) -> bool:
