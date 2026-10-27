@@ -414,7 +414,7 @@ _4 undated / later aggregate line item(s) in the appendix panel_
   - **Maturity:** 6.250% Senior Secured Notes due 2025 — per an 8-K filed 2020-04-16
   - **Events of default:** “Event of Default” shall mean, collectively, any “Event of Default” as defined in the Indenture or as defined in any Ad… — per an 8-K filed 2020-04-16
 - **Covenants — SECOND AMENDED AND RESTATED CREDIT AGREEMENT** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Ap… — per an 8-K filed 2018-07-02, amended 2021-12-22
+  - **Interest / coupon:** UNKNOWN — not verified since 2021-12-22: a later exhibit (filed 2025-07-29) states this term, but its quote could not be matched to the filing, so its value is withheld. Last verified: Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Ap…
   - **Maturity:** July 25, 2030 · July 25, 2030 (amended from December 22, 2026) — per an 8-K filed 2018-07-02, amended 2025-07-29
   - **Financial maintenance:** Springing Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00, tested only during the continuance of a… — per an 8-K filed 2018-07-02, amended 2025-07-29
   - **Events of default:** Mandatory prepayment required if Total Outstandings cause Availability to be less than zero (prepay to eliminate defici… — per an 8-K filed 2018-07-02, amended 2025-07-29
@@ -549,7 +549,7 @@ _Source §: 8-K 0001193125-20-109457 · d883886dex101.htm_
 |---|---|---|
 | Conversion price / mechanics | UNKNOWN | not stated in 8-K 0001193125-25-168007 · d946952dex101.htm |
 | Principal / commitment amount | Commitment Increase of $100,000,000; Total Commitments after giving effect to the Commitment Increase = $1,000,000,000 | amended by 0001193125-21-364998, 0001193125-25-168007 |
-| Interest / coupon rate | Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Applicable Margin for LIBOR Rate Loans. Applicable Margin pricing grid: Level I (A… — full verbatim in JSON | amended by 0001193125-21-364998 |
+| Interest / coupon rate | UNKNOWN — not verified since 2021-12-22: a later exhibit (filed 2025-07-29) states this term, but its quote could not be matched to the filing, so its value is withheld — (E5) refused: the model's quote is not in 8-K 0001193125-25-168007 · d946952dex101.htm. Last verified: Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Applicable Margin for LIBOR Rate Loans. Applicable Margin pricing grid: Level I (A… — full verbatim in JSON | last verified: amended by 0001193125-21-364998 |
 | Maturity date | July 25, 2030 · July 25, 2030 (amended from December 22, 2026) | amended by 0001193125-21-364998, 0001193125-25-168007 |
 | Financial-maintenance covenants | Springing Consolidated Fixed Charge Coverage Ratio of not less than 1.00:1.00, tested only during the continuance of a Covenant Compliance Event (Specified Availability less than the greater of $70,0… — full verbatim in JSON | amended by 0001193125-21-364998, 0001193125-25-168007 |
 | Security / collateral / guarantors | Secured by security interest in all Collateral (ABL Priority Collateral) granted to Bank of America, N.A. as Collateral Agent; guaranteed by the Facility Guarantors (entities listed on Schedule II, i… — full verbatim in JSON | 8-K 0001193125-21-364998 · d275638dex101.htm |
