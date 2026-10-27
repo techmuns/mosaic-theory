@@ -461,6 +461,7 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-10-18; (R) = Reclas
 - **Extraction:** 2026-10-09.3 — the active recipe's basis beside the page (`valuation_basis`: bases, today's multiple and the snapshot it is struck at, bridge, exit claims, the basic share count, non-operating policy, conflicts — the template's share guard among them) and its dates named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the forward history's latest close is `latest_observed_close`, never `current`; every writer saves through one write
 - **Refreshed since assembly** (oldest first):
   - 2026-10-26 · anchor — anchor-backfill at 2026-10-09.3
+  - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 3d old — 2026-10-23 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 8d old (2026-10-18, valuation.implied_expectations.multiples_as_of) — within the ceiling

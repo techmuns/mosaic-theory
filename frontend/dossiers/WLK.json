@@ -9730,6 +9730,155 @@
         "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
         "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution"
       ]
+    },
+    "ciq_currency": {
+      "panels": [
+        {
+          "panel": "Financials (annual)→Income Statement",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (annual)→Balance Sheet",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (annual)→Cash Flow",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (annual)→Segments",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (annual)→Capital Structure Summary",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (annual)→Capital Structure Details",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Principal Due (…)' header of each fiscal-year block",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (quarterly)→Income Statement",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (quarterly)→Balance Sheet",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (quarterly)→Cash Flow",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (quarterly)→Historical Capitalization",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (quarterly)→Capital Structure Summary",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Currency' row under each period header",
+          "check": "agree"
+        },
+        {
+          "panel": "Financials (quarterly)→Capital Structure Details",
+          "stated": [
+            "USD"
+          ],
+          "where": "the 'Principal Due (…)' header of each fiscal-year block",
+          "check": "agree"
+        },
+        {
+          "panel": "Estimates→Consensus",
+          "stated": [
+            "USD"
+          ],
+          "where": "the section headers a page reads: Company Level and the name's own listing",
+          "check": "agree"
+        },
+        {
+          "panel": "Estimates→Trends",
+          "stated": [
+            "USD"
+          ],
+          "where": "the section headers a page reads: Company Level and the name's own listing",
+          "check": "agree"
+        },
+        {
+          "panel": "Estimates→Guidance",
+          "stated": [
+            "USD"
+          ],
+          "where": "the section headers a page reads: Company Level and the name's own listing",
+          "check": "agree"
+        },
+        {
+          "panel": "Estimates→Surprise",
+          "stated": [
+            "USD"
+          ],
+          "where": "the section headers a page reads: Company Level and the name's own listing",
+          "check": "agree"
+        },
+        {
+          "panel": "Comps→Financial Data",
+          "stated": [
+            "US Dollar"
+          ],
+          "where": "the 'Currency:' label",
+          "check": "agree"
+        },
+        {
+          "panel": "Comps→Implied Valuation",
+          "stated": [
+            "US Dollar"
+          ],
+          "where": "the 'Currency:' label",
+          "check": "agree"
+        }
+      ],
+      "check": "agree"
     }
   },
   "synthesis": {
@@ -14484,6 +14633,16 @@
     "valuation_snapshot_as_of": "2026-09-16",
     "price_days_after_valuation_snapshot": 37
   },
+  "layer_refreshes": [
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.ciq_currency"
+      ]
+    }
+  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
