@@ -236,7 +236,14 @@ def test_the_split_changes_exactly_one_name_and_loosens_nothing_else() -> None:
     # `assembled_at` — 2026-09-02 to 2026-09-28 in the covenant-identity fleet pass — taking the
     # merged age from 24d to 50d while the export age went 2d to 28d. A consensus panel aged past
     # the ceiling while the export panel stayed fresh: the distinction the split draws.
-    assert set(moved) <= {"MVST", "AORT", "TECX"}, (
+    # BRBR ADMITTED 2026-10-26, RE-MEASURED AS THIS ASSERTION DEMANDS — the same mechanism a
+    # third time. Merged 61d is driven entirely by the 2026-08-26 ESTIMATES export
+    # (`catalyst_path.as_of` / `financial_summary.as_of` / `multiples_as_of` / `consensus_as_of`,
+    # all consensus panels); its export age is 35d (`tev_as_of`, the 2026-09-21 comps), inside the
+    # ceiling. What moved was `assembled_at`, to 2026-10-26 in that day's artifact pass. AORT
+    # left the moved set in the same pass (its comps were re-exported), which the subset allows.
+    assert set(moved) <= {"MVST", "AORT", "TECX", "BRBR"}, (
         f"the split moves {sorted(moved)}; measured it moves MVST (2026-07-30), AORT\n"
-        "(2026-08-18) and TECX (2026-09-29). A name not on that list means the classification\n"
-        "widened — re-measure its merged vs export age before adding it, as all three were.")
+        "(2026-08-18), TECX (2026-09-29) and BRBR (2026-10-26). A name not on that list means the\n"
+        "classification widened — re-measure its merged vs export age before adding it, as all\n"
+        "four were.")

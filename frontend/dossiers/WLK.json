@@ -2,8 +2,8 @@
   "ticker": "WLK",
   "name": "WESTLAKE CORP",
   "cik": "0001262823",
-  "reference_date": "2026-09-22",
-  "rank": 141,
+  "reference_date": "2026-10-16",
+  "rank": 206,
   "sleeve": "ultra_short_term",
   "mechanical": {
     "valuation": {
@@ -41,13 +41,13 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "adjusted figure not in the 99.1 revised guidance"
+        "note": "no revised guidance at the drawdown to read an adjusted figure from"
       },
       "adjusted_eps": {
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "adjusted figure not in the 99.1 revised guidance"
+        "note": "no revised guidance at the drawdown to read an adjusted figure from; the newest EX-99.1 release, 8-K 0001262823-26-000026 EX-99.1 (filed 2026-08-04), states no annual adjusted-EPS guide the parser reads"
       },
       "range_position": {
         "value": "EV/EBITDA (TEV/LTM) 10.7x as-of 2026-09-16 — trailing range 3.1–19.4x (median 7.7x) over 38 closes → 82%ile → near-ceiling; P/LTM EPS NM (no meaningful trailing P/E at this close)",
@@ -238,6 +238,49 @@
           }
         ],
         "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
+        "status": "present",
+        "note": null
+      },
+      "forward_multiples": {
+        "value": [
+          {
+            "label": "P/FY26E (normalized)",
+            "column": "FY26E",
+            "eps_basis": "EPS (Normalized)",
+            "eps": 3.19,
+            "multiple": 20.2382,
+            "price": 64.56,
+            "price_as_of": "2026-10-23"
+          },
+          {
+            "label": "P/FY26E (GAAP)",
+            "column": "FY26E",
+            "eps_basis": "EPS (GAAP, dil.)",
+            "eps": 3.1,
+            "multiple": 20.8258,
+            "price": 64.56,
+            "price_as_of": "2026-10-23"
+          },
+          {
+            "label": "P/FY27E (normalized)",
+            "column": "FY27E",
+            "eps_basis": "EPS (Normalized)",
+            "eps": 3.23,
+            "multiple": 19.9876,
+            "price": 64.56,
+            "price_as_of": "2026-10-23"
+          },
+          {
+            "label": "P/FY27E (GAAP)",
+            "column": "FY27E",
+            "eps_basis": "EPS (GAAP, dil.)",
+            "eps": 3.62,
+            "multiple": 17.8343,
+            "price": 64.56,
+            "price_as_of": "2026-10-23"
+          }
+        ],
+        "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
         "status": "present",
         "note": null
       },
@@ -942,17 +985,17 @@
         "line": "CIQ's 10.7x divides TEV $13,054M (comps, 2026-09-16) by $1,220M: reported LTM EBITDA $1,125M + rent $128M (FY ending 2025-12-31) = $1,253M (2.6% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($1,125M, 7.8% below the denominator)."
       },
       "ev_ebitda_ex_lease_at_price": {
-        "value": 11.349152,
-        "price": 68.8,
-        "price_as_of": "2026-09-22",
+        "value": 10.836999,
+        "price": 64.56,
+        "price_as_of": "2026-10-23",
         "shares": 127796548.0,
         "shares_basis": "shares outstanding",
         "net_debt": 3215.0,
         "net_debt_source": "EDGAR: total debt 5,067 + finance leases 0 − cash 1,643 − short-term investments 209 (AvailableForSaleSecuritiesDebtSecuritiesCurrent, 2026-06-30) ($M); operating leases 809 EXCLUDED — the multiple is struck on TEV less operating leases",
-        "ev": 12007.403,
+        "ev": 11465.545,
         "ltm_ebitda": 1058.0,
         "ltm_through": "2026-06-30",
-        "line": "at the page's $68.80 close (2026-09-22): ($68.80 × 127,796,548 shares outstanding + net debt $3,215M excluding operating leases) ÷ LTM EBITDA $1,058M (four quarters to 2026-06-30) = 11.3x"
+        "line": "at the page's $64.56 close (2026-10-23): ($64.56 × 127,796,548 shares outstanding + net debt $3,215M excluding operating leases) ÷ LTM EBITDA $1,058M (four quarters to 2026-06-30) = 10.8x"
       }
     },
     "quality": {
@@ -990,7 +1033,7 @@
         "value": null,
         "source_ref": null,
         "status": "unknown",
-        "note": "adjusted figure not in the 99.1 revised guidance"
+        "note": "no revised guidance at the drawdown to read an adjusted figure from"
       },
       "survival_capacity": {
         "value": "net-debt/EBITDA 3.6x (CIQ) | FCF-negative → burning cash (cash not derived — a risk)",
@@ -1015,6 +1058,12 @@
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30",
         "status": "present",
         "note": null
+      },
+      "nonoperating_quarters": {
+        "material": 0,
+        "window": 4,
+        "window_end": "2026-06-30",
+        "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30"
       },
       "liquidity_covenant_flags": {
         "value": "1.625% 700 Million Senior Notes Due 2029 (Bonds and Notes) 822 @ 1.625% Due 2029; 2.875% Senior Notes Due 2041 (Bonds and Notes) 350 @ 2.875% Due 2041; 3.125% Senior Notes Due 2051 (Bonds and Notes) 600 @ 3.125% Due 2051; 3.375% Senior Notes Due 2030 (Bonds and Notes) 300 @ 3.375% Due 2030; 3.375% Senior Notes Due 2061 (Bonds and Notes) 450 @ 3.375% Due 2061; 3.50% Senior Notes Due 2032 (Bonds and Notes) 250 @ 3.500% Due 2032; 3.60% Senior Notes Due 2026 (Bonds and Notes) 496 @ 3.600% Due 2026; 4.375% Senior Notes Due 2047 (Bonds and Notes) 500 @ 4.375% Due 2047; 5.00% Senior Notes Due 2046 (Bonds and Notes) 700 @ 5.000% Due 2046; 5.550% Senior Notes Due November 2035 (Bonds and Notes) 600 @ 5.550% Due 2035; 6.375% Senior Notes Due November 2055 (Bonds and Notes) 600 @ 6.375% Due 2055",
@@ -1404,20 +1453,20 @@
     },
     "idiosyncratic_vs_shared": {
       "name_180d_return": {
-        "value": -0.39361889652741056,
-        "source_ref": "EOD WLK 180d to 2026-09-22",
+        "value": -0.4376165527040228,
+        "source_ref": "EOD WLK 180d to 2026-10-16",
         "status": "present",
         "note": null
       },
       "market_180d_return": {
-        "value": 0.08490151033774862,
-        "source_ref": "EOD MDY 180d to 2026-09-22 (cap-band: $9.0B @ 2026-09-22 → mid ($4–25B) → MDY)",
+        "value": -0.008355499451482395,
+        "source_ref": "EOD MDY 180d to 2026-10-16 (cap-band: $9.0B @ 2026-10-16 → mid ($4–25B) → MDY)",
         "status": "present",
         "note": null
       },
       "rel_vs_market": {
-        "value": -0.4785204068651592,
-        "source_ref": "EOD WLK−MDY 180d to 2026-09-22 (assembly, cap-band)",
+        "value": -0.4292610532525404,
+        "source_ref": "EOD WLK−MDY 180d to 2026-10-16 (assembly, cap-band)",
         "status": "present",
         "note": null
       },
@@ -1426,13 +1475,13 @@
           {
             "ticker": "ATKR",
             "hops": 1,
-            "ret_180d": 0.5614672835426304,
+            "ret_180d": 0.3671875,
             "via": "ATKR —supplier→ Westlake [\"our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls\"]"
           },
           {
             "ticker": "CLF",
             "hops": 2,
-            "ret_180d": 0.47585394581860996,
+            "ret_180d": 0.26056338028169024,
             "via": "ATKR —supplier→ Westlake [\"our primary suppliers of PVC resin are Westlake, Formosa and Oxy Vinyls\"] · ATKR —supplier→ Cleveland-Cliffs [\"Our primary suppliers of steel are Cleveland-Cliffs, Steel Dyn"
           },
           {
@@ -1465,13 +1514,13 @@
         "note": null
       },
       "read": {
-        "value": "moved ALONE (idiosyncratic): name -39% vs cohort median 52%",
+        "value": "moved ALONE (idiosyncratic): name -44% vs cohort median 31%",
         "source_ref": "derived from 2 cohort names; face-validity",
         "status": "present",
         "note": null
       },
       "benchmark_symbol": "MDY",
-      "benchmark_basis": "cap-band: $9.0B @ 2026-09-22 → mid ($4–25B) → MDY"
+      "benchmark_basis": "cap-band: $9.0B @ 2026-10-16 → mid ($4–25B) → MDY"
     },
     "consensus_context": {
       "consensus_levels": {
@@ -1611,7 +1660,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "Effective Tax Rate %: latest guide 17.0 for FY 2026 (dated 2026-02-24) (stale — 210d old); spend ≤ guided ceiling 6/13 resolved; most recent guidance outcome: FY 2024 MISSED; Capital Expenditure: latest guide -900.0 for FY 2026 (dated 2026-08-04) (stale — 49d old); spend ≤ guided ceiling 5/15 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MISSED; Interest Expense: latest guide -215.0 for FY 2026 (dated 2026-08-04) (stale — 49d old); spend ≤ guided ceiling 7/12 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MET; Depreciation & Amortization: latest guide 1,000.0 for FY 2022 (dated 2022-11-03) (stale — 1419d old); Net Income (GAAP): latest guide '106.00 - 123.00' for FQ2 2019 (dated 2019-07-01) (stale — 2640d old); actual ≥ guided floor 1/2 resolved; most recent guidance outcome: FQ2 2019 MET; Revenue: latest guide '2,100.00 - 2,200.00' for FQ2 2019 (dated 2019-07-01) (stale — 2640d old); actual ≥ guided floor 2/2 resolved; most recent guidance outcome: FQ2 2019 MET; EBITDA: latest guide 3,300.0 for FY 2021 (dated 2021-08-04) (stale — 1875d old); actual ≥ guided floor 3/3 resolved; most recent guidance outcome: FY 2021 MET; EPS Normalized: latest guide '0.50 - 0.52' for FQ1 2006 (dated 2006-04-20) (stale — 7460d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FQ1 2006 MET; EPS (GAAP): latest guide '0.73 - 0.87' for FQ2 2019 (dated 2019-07-01) (stale — 2640d old); actual ≥ guided floor 3/3 resolved; most recent guidance outcome: FQ2 2019 MET; DPS: latest guide 0.53 for FQ3 2026 (dated 2026-08-14); actual ≥ guided floor 0/3 resolved · 4 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated)  [data ≥ 2026-09-14 · export date unverified]",
+        "value": "Effective Tax Rate %: latest guide 17.0 for FY 2026 (dated 2026-02-24) (stale — 234d old); spend ≤ guided ceiling 6/13 resolved; most recent guidance outcome: FY 2024 MISSED; Capital Expenditure: latest guide -900.0 for FY 2026 (dated 2026-08-04) (stale — 73d old); spend ≤ guided ceiling 5/15 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MISSED; Interest Expense: latest guide -215.0 for FY 2026 (dated 2026-08-04) (stale — 73d old); spend ≤ guided ceiling 7/12 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FY 2025 MET; Depreciation & Amortization: latest guide 1,000.0 for FY 2022 (dated 2022-11-03) (stale — 1443d old); Net Income (GAAP): latest guide '106.00 - 123.00' for FQ2 2019 (dated 2019-07-01) (stale — 2664d old); actual ≥ guided floor 1/2 resolved; most recent guidance outcome: FQ2 2019 MET; Revenue: latest guide '2,100.00 - 2,200.00' for FQ2 2019 (dated 2019-07-01) (stale — 2664d old); actual ≥ guided floor 2/2 resolved; most recent guidance outcome: FQ2 2019 MET; EBITDA: latest guide 3,300.0 for FY 2021 (dated 2021-08-04) (stale — 1899d old); actual ≥ guided floor 3/3 resolved; most recent guidance outcome: FY 2021 MET; EPS Normalized: latest guide '0.50 - 0.52' for FQ1 2006 (dated 2006-04-20) (stale — 7484d old); actual ≥ guided floor 1/1 resolved; most recent guidance outcome: FQ1 2006 MET; EPS (GAAP): latest guide '0.73 - 0.87' for FQ2 2019 (dated 2019-07-01) (stale — 2664d old); actual ≥ guided floor 3/3 resolved; most recent guidance outcome: FQ2 2019 MET; DPS: latest guide 0.53 for FQ3 2026 (dated 2026-08-14) (stale — 63d old); actual ≥ guided floor 0/3 resolved · 4 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2026 AT GUIDE (±0.5% of a point — not adjudicated)  [data ≥ 2026-09-14 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1623,7 +1672,7 @@
             "latest_guide": "17.0",
             "period": "FY 2026",
             "dated": "2026-02-24",
-            "age": "210d (stale)",
+            "age": "234d (stale)",
             "record": "spend ≤ ceiling 6/13",
             "most_recent": "FY 2024 MISSED"
           },
@@ -1632,7 +1681,7 @@
             "latest_guide": "-900.0",
             "period": "FY 2026",
             "dated": "2026-08-04",
-            "age": "49d (stale)",
+            "age": "73d (stale)",
             "record": "spend ≤ ceiling 5/15 · 1 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FY 2025 MISSED"
           },
@@ -1641,7 +1690,7 @@
             "latest_guide": "-215.0",
             "period": "FY 2026",
             "dated": "2026-08-04",
-            "age": "49d (stale)",
+            "age": "73d (stale)",
             "record": "spend ≤ ceiling 7/12 · 1 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FY 2025 MET"
           },
@@ -1650,7 +1699,7 @@
             "latest_guide": "1,000.0",
             "period": "FY 2022",
             "dated": "2022-11-03",
-            "age": "1419d (stale)",
+            "age": "1443d (stale)",
             "record": "—",
             "most_recent": "—"
           },
@@ -1659,7 +1708,7 @@
             "latest_guide": "'106.00 - 123.00'",
             "period": "FQ2 2019",
             "dated": "2019-07-01",
-            "age": "2640d (stale)",
+            "age": "2664d (stale)",
             "record": "actual ≥ floor 1/2",
             "most_recent": "FQ2 2019 MET"
           },
@@ -1668,7 +1717,7 @@
             "latest_guide": "'2,100.00 - 2,200.00'",
             "period": "FQ2 2019",
             "dated": "2019-07-01",
-            "age": "2640d (stale)",
+            "age": "2664d (stale)",
             "record": "actual ≥ floor 2/2",
             "most_recent": "FQ2 2019 MET"
           },
@@ -1677,7 +1726,7 @@
             "latest_guide": "3,300.0",
             "period": "FY 2021",
             "dated": "2021-08-04",
-            "age": "1875d (stale)",
+            "age": "1899d (stale)",
             "record": "actual ≥ floor 3/3",
             "most_recent": "FY 2021 MET"
           },
@@ -1686,7 +1735,7 @@
             "latest_guide": "'0.50 - 0.52'",
             "period": "FQ1 2006",
             "dated": "2006-04-20",
-            "age": "7460d (stale)",
+            "age": "7484d (stale)",
             "record": "actual ≥ floor 1/1",
             "most_recent": "FQ1 2006 MET"
           },
@@ -1695,7 +1744,7 @@
             "latest_guide": "'0.73 - 0.87'",
             "period": "FQ2 2019",
             "dated": "2019-07-01",
-            "age": "2640d (stale)",
+            "age": "2664d (stale)",
             "record": "actual ≥ floor 3/3",
             "most_recent": "FQ2 2019 MET"
           },
@@ -1704,7 +1753,7 @@
             "latest_guide": "0.53",
             "period": "FQ3 2026",
             "dated": "2026-08-14",
-            "age": "fresh",
+            "age": "63d (stale)",
             "record": "actual ≥ floor 0/3 · 4 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ2 2026 AT GUIDE (±0.5% of a point)"
           }
@@ -4477,14 +4526,14 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 4 (3 insiders, $5.43M) — in the last 182 days · last purchase $0.01M, EVP, PEM Segment Head, 2025-04-22 (~17mo ago) · last sale $0.60M, Executive Chairman, 2026-08-11 (~1mo ago) · largest sale $2.52M, Executive Chairman, 2026-08-11 (~1mo ago) · grants 23 · last filing 2026-09-01 · other D×10/F×64/G×3/M×79",
+        "value": "Open-market buys 0 · sells 2 (1 insider, $3.12M) — in the last 182 days · last purchase $0.01M, EVP, PEM Segment Head, 2025-04-22 (~18mo ago) · last sale $0.60M, Executive Chairman, 2026-08-11 (~2mo ago) · largest sale $2.52M, Executive Chairman, 2026-08-11 (~2mo ago) · grants 23 · last filing 2026-09-01 · other D×10/F×64/G×3/M×79",
         "source_ref": "EDGAR Form 4 (latest 0001193125-26-377500; 131 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-09-15): 5.7M → 5.3M sh (-6.5%, falling) · 4.2% of shares out (EDGAR XBRL) · DTC 5.3d · recent: 2026-09-15 5.3M · 2026-08-31 5.7M · 2026-08-14 4.9M · 2026-07-31 4.8M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-09-15); DTC = 5,309,547 short ÷ 1,000,339 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-09-30): 5.3M → 4.9M sh (-8.3%, falling) · 3.8% of shares out (EDGAR XBRL) · DTC 5.2d · recent: 2026-09-30 4.9M · 2026-09-15 5.3M · 2026-08-31 5.7M · 2026-08-14 4.9M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-09-30); DTC = 4,867,702 short ÷ 937,268 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -4545,6 +4594,26 @@
         "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-16",
         "status": "present",
         "note": null
+      },
+      "credit_health_panels": {
+        "value": [
+          {
+            "population_kind": "comps",
+            "population": "comp set (CIQ comps template)",
+            "n": 11,
+            "overall": 2,
+            "operational": 4,
+            "solvency": 3,
+            "liquidity": 1,
+            "primary": false,
+            "scale_basis": "verified from the comp set: investment-grade peers score at or below sub-IG peers",
+            "sp_long_term_issuer": "BBB",
+            "data_through": null
+          }
+        ],
+        "source_ref": "CIQ Comparable Analysis→Credit Health Panel · as-of 2026-09-16",
+        "status": "present",
+        "note": "industry panel not on file — request the standalone CIQ Credit Health Panel export"
       }
     },
     "implied_valuation": {
@@ -4945,7 +5014,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[AMENDED AND RESTATED LOAN AGREEMENT · 0001193125-10-155766]\n  Principal / commitment amount: $100,000,000 (aggregate principal amount of the Bonds); initial Drawing $5,000,000,…\n  Interest / coupon rate: Bonds bear interest at the Term Rate (converted from the Weekly Rate on the…\n  Maturity date: \"Maturity Date\" means the stated maturity or such earlier date as the Bonds shall be…\n[CREDIT AGREEMENT · 0001193125-16-689964]\n  Principal / commitment amount: $1,000,000,000 (initial aggregate Commitments); Alternate Currency Sublimit…\n  Interest / coupon rate: ABR Loans: Alternate Base Rate plus Applicable Rate; Eurodollar Loans: Adjusted LIBO…\n  Maturity date: the fifth anniversary of the Effective Date (or, if such date is not a Business Day,…\n  Financial-maintenance covenants: Total Leverage Ratio not to exceed: (a) Effective Date to Changeover Date: 3.00 to…\n[Term Loans Due 2026 · 0001193125-10-276447]\n  Principal / commitment amount: $89,000,000 (aggregate principal amount of the Bonds)\n  Interest / coupon rate: The Loan Agreement does not state a numeric rate for the Bonds directly; interest is…\n  Maturity date: \"Maturity Date\" means the stated maturity or such earlier date as the Bonds shall be…\n  Interest Payment Dates: each May 1 and November 1, commencing May 1, 2011\n… (+5 lower-priority terms in the table)",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[AMENDED AND RESTATED LOAN AGREEMENT · 0001193125-10-155766]\n  Principal / commitment amount: $100,000,000\n  Interest Payment Date: each February 1 and August 1, commencing August 1, 2010\n[CREDIT AGREEMENT · 0001193125-16-689964]\n  Principal / commitment amount: $1,000,000,000 (initial aggregate Commitments); Alternate Currency Sublimit…\n  Interest / coupon rate: Eurodollar Revolving Loans: Adjusted LIBO Rate plus Applicable Rate (100.0 bps to…\n  Maturity date: The fifth anniversary of the Effective Date (or, if not a Business Day, the…\n  Financial-maintenance covenants: Total Leverage Ratio not to exceed: (a) Effective Date to Changeover Date 3.00 to…\n  Default interest rate: 2% per annum plus otherwise applicable rate\n[Term Loans Due 2026 · 0001193125-10-276447]\n  Principal / commitment amount: $89,000,000\n  Interest / coupon rate: The Note bears interest at an interest rate at all times equal to the interest rate…\n  Maturity date: the stated maturity or such earlier date as the Bonds shall be redeemed (Loan…\n  Interest Payment Dates: each May 1 and November 1, commencing May 1, 2011\n[Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027 · 0001193125-07-267027]\n  Principal / commitment amount: $250,000,000 (aggregate principal amount of the Bonds)\n… (+2 lower-priority terms in the table)",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -4971,10 +5040,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$100,000,000 (aggregate principal amount of the Bonds); initial Drawing $5,000,000, subsequent Drawing of $95,000,000 on the Final Drawing Date",
+              "value": "$100,000,000",
               "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “To provide funds for the Projects, the Authority agrees that it will sell, issue and deliver the Bonds in the aggregate principal amount of $100,000,000 and make the proceeds of sale of the Bonds available to the Borrower pursuant to this Agreement ... The aggregate principal amount of the Bonds issued under the Indenture shall not exceed $100,000,000.”"
+              "note": "verbatim: “To provide funds for the Projects, the Authority agrees that it will sell, issue and deliver the Bonds in the aggregate principal amount of $100,000,000 and make the proceeds of sale of the Bonds available to the Borrower pursuant to this Agreement... The aggregate principal amount of the Bonds issued under the Indenture shall not exceed $100,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -4987,10 +5056,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Bonds bear interest at the Term Rate (converted from the Weekly Rate on the Conversion Date, July 1, 2010); specific rate not stated in this Agreement. Notes bear interest 'at an interest rate at all times equal to the interest rate borne by the Bonds.' Interest Payment Dates each February 1 and August 1, commencing August 1, 2010.",
-              "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
-              "status": "present",
-              "note": "verbatim: “the Authority has requested the draw-down of the remaining $95,000,000 of Bonds and the conversion of all Bonds, including the Initial Bonds, to a Term Rate to the Maturity Date; and ... in connection with the conversion of the Interest Rate on the Initial Bonds from a Weekly Rate to a Term Rate”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001193125-10-155766 · dex101.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5003,10 +5072,10 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "\"Maturity Date\" means the stated maturity or such earlier date as the Bonds shall be redeemed. (specific calendar date not stated in this Agreement)",
-              "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
-              "status": "present",
-              "note": "verbatim: “\"Maturity Date\" means the stated maturity or such earlier date as the Bonds shall be redeemed.”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "not stated in 8-K 0001193125-10-155766 · dex101.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5035,10 +5104,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Obligations under this Agreement are 'unsecured, general obligations of the Borrower.' Payment obligation secured by Notes issued under the Senior Notes Indenture (dated January 1, 2006, as supplemented by Third Supplemental Indenture dated July 2, 2010, among the Borrower, the Subsidiary Guarantors and the trustee). Original Initial Credit Facility (Bank of America, N.A. letter of credit) has been terminated.",
+              "value": "The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.",
               "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “In order to secure, on behalf of the Authority, the obligation of the Borrower to make Payments, concurrently with the reoffering of the Bonds, the Borrower shall issue and deliver to the Trustee a series of its notes (the \"Notes\") under the Senior Notes Indenture ... The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
+              "note": "verbatim: “The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5051,10 +5120,58 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Sec. 7.1): (a) Agreement void/unenforceable by law; (b) Determination of Taxability; (c) Bond proceeds remaining after completion — prepay within 180 days (or 90 days for (c)). Also Change of Control Payment (Sec. 4.2(e)) and Asset Sale Payment (Sec. 4.2(f)). Events of Default (Sec. 10.1): (a) EoD under Indenture, Notes or Senior Notes Indenture; (b) payment default (30-day grace for Term Rate interest); (c) other covenant default with 30-day notice/cure; (d) bankruptcy decree unstayed 90 days; (e) voluntary bankruptcy/insolvency. Remedies (Sec. 10.2): acceleration of Payments, etc.",
+              "value": "Section 7.1 Obligation to Prepay Installments (void/unenforceable Agreement; Determination of Taxability; proceeds remaining after completion). Section 10.1 Events of Default: (a) Event of Default under the Indenture, the Notes or the Senior Notes Indenture; (b) default in timely payment of any Payment (interest default on Term Rate Bond upon 30 days continuance); (c) failure to perform any other covenant for 30 days after notice; (d) bankruptcy/insolvency decree unstayed 90 days; (e) voluntary bankruptcy/insolvency proceedings.",
               "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “SECTION 7.1 Obligation to Prepay Installments. The Borrower shall have the obligation to prepay installments payable hereunder in whole ... if any of the following shall have occurred: (a) ... this Agreement shall have become void or unenforceable ...; or (b) A Determination of Taxability shall have occurred; or (c) Proceeds of the Bonds ... shall remain after completion of the Projects ... SECTION 10.1 Events of Default Defined. The terms \"Event of Default\" and \"Default\" shall mean any one or more of the following events: (a) An Event of Default shall exist under the Indenture, the Notes or the Senior Notes Indenture; (b) The Borrower shall default in the timely payment of any Payment ... (c) The Borrower shall fail duly to perform ... any other covenant ...; (d) ... adjudging the Borrower a bankrupt or insolvent ...; and (e) The institution by the Borrower of proceedings to be adjudicated a bankrupt or insolvent ...”"
+              "note": "verbatim: “SECTION 7.1 Obligation to Prepay Installments. The Borrower shall have the obligation to prepay installments payable hereunder in whole (or in the case of the events stated in (b) or (c) of this Section 7.1 in whole or in part), if any of the following shall have occurred: (a) ... this Agreement shall have become void or unenforceable...; or (b) A Determination of Taxability shall have occurred; or (c) Proceeds of the Bonds... shall remain after completion of the Projects...”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Interest Payment Date",
+            "value": {
+              "value": "each February 1 and August 1, commencing August 1, 2010",
+              "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+              "status": "present",
+              "note": "verbatim: ““Interest Payment Date”... when used with respect to the Bonds, means each February 1 and August 1, commencing August 1, 2010; provided however, with respect to the Company Bonds (Series 2009A-1) held on the Final Drawing Date only, Interest Payment Date shall mean July 2, 2010.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Notes (security for Payments)",
+            "value": {
+              "value": "Borrower shall issue and deliver to the Trustee Notes under the Senior Notes Indenture, maturing on the same date and in the same principal amount as the Bonds, bearing interest at a rate equal to the interest rate borne by the Bonds.",
+              "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+              "status": "present",
+              "note": "verbatim: “In order to secure, on behalf of the Authority, the obligation of the Borrower to make Payments, concurrently with the reoffering of the Bonds, the Borrower shall issue and deliver to the Trustee a series of its notes (the “Notes”) under the Senior Notes Indenture (i) maturing on the same date and in the same principal amount as the Bonds, (ii) bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds...”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "AMENDED AND RESTATED LOAN AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Remedies / acceleration",
+            "value": {
+              "value": "Upon Event of Default, Authority or Trustee may declare all Payments under Section 4.2 immediately due and payable.",
+              "source_ref": "8-K 0001193125-10-155766 · dex101.htm",
+              "status": "present",
+              "note": "verbatim: “SECTION 10.2 Remedies. Whenever any Event of Default under Section 10.1 hereof shall have happened and be continuing... (a) The Authority or the Trustee may declare all Payments under Section 4.2 hereof to be immediately due and payable, whereupon the same shall become immediately due and payable;”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5083,7 +5200,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$1,000,000,000 (initial aggregate Commitments); Alternate Currency Sublimit $250,000,000; Letter of Credit Commitments aggregate $150,000,000; Swingline Commitment $50,000,000; Increased Commitments cap $500,000,000",
+              "value": "$1,000,000,000 (initial aggregate Commitments); Alternate Currency Sublimit $250,000,000; aggregate Letter of Credit Commitments $150,000,000; Swingline Commitment $50,000,000; Increased Commitments cap $500,000,000",
               "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
               "status": "present",
               "note": "verbatim: “The initial aggregate amount of the Lenders' Commitments is $1,000,000,000.”"
@@ -5099,7 +5216,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "ABR Loans: Alternate Base Rate plus Applicable Rate; Eurodollar Loans: Adjusted LIBO Rate plus Applicable Rate. Applicable Rate for Eurodollar Revolving Loans ranges 100.0 bps to 175.0 bps and for ABR Loans 0.0 bps to 75.0 bps depending on Public Debt Rating (Pricing Level III in effect as of the date hereof: 125.0 bps Eurodollar / 25.0 bps ABR). Default rate: 2% per annum plus otherwise applicable rate.",
+              "value": "Eurodollar Revolving Loans: Adjusted LIBO Rate plus Applicable Rate (100.0 bps to 175.0 bps by Pricing Level; 125.0 bps at Pricing Level III in effect on date hereof). ABR Loans: Alternate Base Rate plus Applicable Rate (0.0 bps to 75.0 bps). Default rate: 2% per annum plus otherwise applicable rate.",
               "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
               "status": "present",
               "note": "verbatim: “(a) The Loans comprising each ABR Borrowing (including each Swingline Loan) shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Loans comprising each Eurodollar Borrowing (including all Alternate Currency Loans) shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”"
@@ -5107,7 +5224,7 @@
             "base_rate_label": "Adjusted LIBO Rate",
             "margin_pct": null,
             "margin_bps": 125.0,
-            "floor_pct": null,
+            "floor_pct": 0.0,
             "pik_pct": null,
             "agreement_title": "CREDIT AGREEMENT",
             "agreement_is_amendment": false
@@ -5115,7 +5232,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "the fifth anniversary of the Effective Date (or, if such date is not a Business Day, the immediately preceding date that is a Business Day)",
+              "value": "The fifth anniversary of the Effective Date (or, if not a Business Day, the immediately preceding Business Day)",
               "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Maturity Date ” means the fifth anniversary of the Effective Date (or, if such date is not a Business Day, the immediately preceding date that is a Business Day).”"
@@ -5131,10 +5248,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Total Leverage Ratio not to exceed: (a) Effective Date to Changeover Date: 3.00 to 1.00 (determined without netting unrestricted cash and cash equivalents); (b) Changeover Date to December 31, 2017: 3.50 to 1.00; (c) thereafter: 3.00 to 1.00",
+              "value": "Total Leverage Ratio not to exceed: (a) Effective Date to Changeover Date 3.00 to 1.00; (b) Changeover Date to December 31, 2017, 3.50 to 1.00; (c) thereafter 3.00 to 1.00",
               "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
               "status": "present",
-              "note": "verbatim: “SECTION 6.09. Financial Covenant . The Company will not permit the Total Leverage Ratio as of the last day of any fiscal quarter of the Company to exceed: (a) from the Effective Date to the [Changeover Date], 3.00 to 1.00 ...; (b) from the Changeover Date to December 31, 2017, 3.50 to 1.00; and (c) thereafter, 3.00 to 1.00.”"
+              "note": "verbatim: “SECTION 6.09. Financial Covenant . The Company will not permit the Total Leverage Ratio as of the last day of any fiscal quarter of the Company to exceed: (a) from the Effective Date to the date the Company delivers a certificate to the Administrative Agent certifying that the commitments under the Bridge Facility have been terminated in full (the “ Changeover Date ”), 3.00 to 1.00 ...; (b) from the Changeover Date to December 31, 2017, 3.50 to 1.00; and (c) thereafter, 3.00 to 1.00.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5147,10 +5264,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Guarantors = the Company and each Subsidiary Guarantor (each Subsidiary that is not an Excluded Subsidiary). Guaranty under Article XI. Facility is unsecured (opinions cover 'customary legal matters for an unsecured bank loan financing'; Increased Commitments condition references 'an unsecured bank loan financing'); no collateral/security interest granted. Release of Subsidiary Guarantors per Section 11.06.",
-              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
-              "status": "present",
-              "note": "verbatim: ““ Guarantors ” means the Company and each Subsidiary Guarantor. ... SECTION 11.01. The Guaranty . (a) The Company hereby unconditionally guarantees ... (b) Each Subsidiary Guarantor hereby unconditionally guarantees to the Administrative Agent, for the benefit of the Lenders, the full and punctual payment ...”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0001193125-16-689964 · d247458dex101.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5163,10 +5280,90 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.09(d)): if Total Revolving Credit Exposure exceeds aggregate Commitments or Total Alternate Currency Revolving Credit Exposure exceeds the Alternate Currency Sublimit, Borrowers must within five Business Days prepay or eliminate the excess. Events of Default (Section 7.01) include: (a) failure to pay principal/LC reimbursement; (b) failure to pay interest/fees (5 Business Day grace); (c) incorrect representation/warranty; (d) breach of specified covenants (5.02, 5.03 existence, 5.08, Article VI); (e) other covenant breach (30-day cure); (f) failure to pay Material Indebtedness; (g) cross-acceleration of Material Indebtedness; (h) involuntary bankruptcy (60 days); (i) voluntary bankruptcy; (j) inability to pay debts; (k) judgments exceeding Threshold Amount ($75,000,000); (l) ERISA Event with Material Adverse Effect; (m) Change in Control; (n) guarantee termination. Threshold Amount = $75,000,000.",
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0001193125-16-689964 · d247458dex101.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Default interest rate",
+            "value": {
+              "value": "2% per annum plus otherwise applicable rate",
               "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
               "status": "present",
-              "note": "verbatim: “If after giving effect to any such determination of a Dollar Amount, (1) the Total Revolving Credit Exposure exceeds the aggregate amount of the Commitments or (2) the Total Alternate Currency Revolving Credit Exposure exceeds the Alternate Currency Sublimit, the Borrowers shall in each case, within five Business Days, prepay outstanding Loans ... or take other action to the extent necessary to eliminate any such excess. ... SECTION 7.01. Events of Default .”"
+              "note": "verbatim: “such overdue amount shall bear interest, after as well as before judgment, at a rate per annum equal to (i) in the case of overdue principal of any Loan, 2% per annum plus the rate otherwise applicable to such Loan ... or (ii) in the case of any other amount, 2% per annum plus the rate applicable to ABR Loans”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Unused commitment fee",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0001193125-16-689964 · d247458dex101.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Letter of credit fronting fee",
+            "value": {
+              "value": "0.125% per annum",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: “to each Issuing Bank with respect to Letters of Credit issued by it a fronting fee, which shall accrue at a rate per annum of 0.125% on the average daily amount of the LC Exposure”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Change in Control definition",
+            "value": {
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0001193125-16-689964 · d247458dex101.htm"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Use of proceeds",
+            "value": {
+              "value": "Axiall Acquisition consideration and related fees/expenses; and general corporate purposes including working capital, LC issuance, permitted acquisitions",
+              "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The proceeds of the Loans will be used only for (i) the financing of the consideration and related fees and expenses in connection with the Axiall Acquisition and (ii) general corporate purposes, including for working capital, the issuance of Letters of Credit, and permitted acquisitions.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5195,10 +5392,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$89,000,000 (aggregate principal amount of the Bonds)",
+              "value": "$89,000,000",
               "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “To provide funds for paying the Costs of the Projects, the Authority agrees, as soon as practicable after the execution of this Agreement, that it will issue, sell and deliver the Bonds in the aggregate principal amount of $89,000,000”"
+              "note": "verbatim: “the Authority agrees, as soon as practicable after the execution of this Agreement, that it will issue, sell and deliver the Bonds in the aggregate principal amount of $89,000,000”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5211,13 +5408,13 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "The Loan Agreement does not state a numeric rate for the Bonds directly; interest is defined as “an amount sufficient for the payment in full of the total interest due and payable ... on the Bonds.” The correlative Note (in the Continuing Disclosure Agreement definitions) is stated as the “6.50% Senior Notes due 2035.”",
+              "value": "The Note bears interest at an interest rate at all times equal to the interest rate borne by the Bonds; the Notes are the 6.50% Senior Notes due 2035",
               "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Notes” means the 6.50% Senior Notes due 2035 issued by the Company to the Trustee under the Company’s Senior Notes Indenture.”"
             },
-            "base_rate_label": "6.50% Senior Notes due 2035 (fixed rate stated for the Notes)",
-            "margin_pct": null,
+            "base_rate_label": null,
+            "margin_pct": 6.5,
             "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null,
@@ -5227,7 +5424,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "\"Maturity Date\" means the stated maturity or such earlier date as the Bonds shall be redeemed. (Loan Agreement states no calendar date; the correlative Note is defined as the \"6.50% Senior Notes due 2035.\")",
+              "value": "the stated maturity or such earlier date as the Bonds shall be redeemed (Loan Agreement does not state a specific calendar maturity date; the corresponding Notes are the 6.50% Senior Notes due 2035)",
               "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Maturity Date” means the stated maturity or such earlier date as the Bonds shall be redeemed.”"
@@ -5259,10 +5456,10 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Borrower's obligations under this Agreement are \"unsecured, general obligations of the Borrower\" (Section 10.11). Payment obligation is secured by delivery of a correlative Note issued under the Senior Notes Indenture, pledged/assigned to the Trustee (Section 4.6). Senior Notes Indenture references Potential/Subsidiary Guarantors.",
+              "value": "The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower. To secure the obligation to make Payments, the Borrower shall issue and deliver to the Trustee a note (the “Note”) under the Senior Notes Indenture maturing on the same date and in the same principal amount as the Bonds and bearing interest at the rate borne by the Bonds.",
               "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “In order to secure, on behalf of the Authority, the obligation of the Borrower to make the Payments, concurrently with the issuance and delivery by the Authority of the Bonds, the Borrower shall issue and deliver to the Trustee a note (the “Note”) under the Senior Notes Indenture ... The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
+              "note": "verbatim: “The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5275,10 +5472,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: Section 4.5 requires prepayment to accomplish extraordinary mandatory redemption of the Bonds; Special Payments include Change of Control Payment and Asset Sale Payment (Section 4.2(b)). Events of Default: Section 9.1(a)-(e), including cross-default to Indenture/Note/Senior Notes Indenture, payment default (30-day grace on Interest Payment), covenant default (30-day cure), and bankruptcy/insolvency events (90-day period).",
-              "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Borrower hereby agrees that it shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extraordinary mandatory redemption of the Bonds as set forth in the Indenture and in the Bonds. ... SECTION 9.1 Events of Default Defined. The terms “Event of Default” and “Default” shall mean any one or more of the following events: (a) An Event of Default shall exist under the Indenture, the Note or the Senior Notes Indenture; (b) The Borrower shall default in the timely payment of any Payment pursuant to Article IV of this Agreement; provided that such default with respect to an Interest Payment shall be deemed to occur upon the continuance of any such failure of payment for a period of 30 days after the applicable Interest Payment Date;”"
+              "value": null,
+              "source_ref": null,
+              "status": "unknown",
+              "note": "(E5) refused: the model's quote is not in 8-K 0001193125-10-276447 · dex101.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5307,7 +5504,7 @@
           {
             "name": "Change of Control Payment",
             "value": {
-              "value": "An amount sufficient for payment in full in satisfaction of a Change of Control Offer (as defined in the Indenture), payable on the Change of Control Payment Date.",
+              "value": "amount sufficient for the payment in full in satisfaction of a Change of Control Offer (as defined in the Indenture), payable on the Change of Control Payment Date",
               "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Change of Control Payment” being the an amount sufficient for the payment in full in satisfaction of a Change of Control Offer (as defined in the Indenture).”"
@@ -5323,7 +5520,7 @@
           {
             "name": "Asset Sale Payment",
             "value": {
-              "value": "An amount sufficient for payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture), payable on completion of the Asset Sale Offer.",
+              "value": "amount sufficient for the payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture), payable on the completion of the Asset Sale Offer",
               "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Asset Sale Payment” being an amount sufficient for the payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture).”"
@@ -5353,6 +5550,22 @@
             "agreement_is_amendment": false
           },
           {
+            "name": "Optional prepayment / redemption",
+            "value": {
+              "value": "Borrower has the option to prepay at the times and amounts necessary to cause the Bonds to be redeemed as set forth in the Indenture and the Bonds",
+              "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
+              "status": "present",
+              "note": "verbatim: “The Borrower shall have the option to prepay its obligations hereunder at the times and in the amounts as necessary to exercise its option to cause the Bonds to be redeemed as set forth in the Indenture and in the Bonds.”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "LOAN AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
             "name": "Conversion price / mechanics",
             "value": {
               "value": null,
@@ -5371,7 +5584,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "$250,000,000 aggregate principal amount",
+              "value": "$250,000,000 (aggregate principal amount of the Bonds)",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Bonds” means the Louisiana Local Government Environmental Facilities and Community Development Authority Revenue Bonds (Westlake Chemical Corporation Projects), Series 2007, authorized to be issued by the Authority in the aggregate principal amount of $250,000,000”"
@@ -5387,10 +5600,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Notes bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds; “Interest Payments” being an amount sufficient for the payment in full of the total interest due and payable on the Bonds (no numeric rate stated)",
+              "value": "Interest Payments being an amount sufficient for the payment in full of the total interest due and payable on the Bonds; Notes bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds (no numeric rate stated)",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
-              "note": "verbatim: “the Borrower shall issue and deliver to the Trustee a series of its notes (the “Notes”) under the Senior Notes Indenture ... (ii) bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds, payable on the dates on which interest is payable on the Bonds”"
+              "note": "verbatim: ““Interest Payments” being an amount sufficient for the payment in full of the total interest due and payable to the date of payment thereof on the Bonds from time to time issued under the Indenture and then outstanding. ... (ii) bearing interest at an interest rate at all times equal to the interest rate borne by the Bonds, payable on the dates on which interest is payable on the Bonds”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5403,7 +5616,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "Maturity Date = the stated maturity or such earlier date as the Bonds shall be redeemed (no calendar date stated)",
+              "value": "“Maturity Date” means the stated maturity or such earlier date as the Bonds shall be redeemed. (no calendar date stated); Interest Payment Dates each May 1 and November 1, commencing May 1, 2008",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Maturity Date” means the stated maturity or such earlier date as the Bonds shall be redeemed.”"
@@ -5435,7 +5648,7 @@
           {
             "name": "Security / collateral / guarantors",
             "value": {
-              "value": "Obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower; the Loan is secured on behalf of the Authority by the Borrower's Notes issued under the Senior Notes Indenture",
+              "value": "The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower. Payment obligations secured by delivery of Notes issued under the Senior Notes Indenture.",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
               "note": "verbatim: “The obligations of the Borrower under this Agreement constitute unsecured, general obligations of the Borrower.”"
@@ -5451,7 +5664,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment: Borrower shall prepay as necessary to accomplish extraordinary mandatory redemption of the Bonds. Events of Default (Section 9.1): (a) Event of Default under the Indenture, the Notes or the Senior Notes Indenture; (b) default in timely payment of any Payment (Interest Payment default deemed to occur after 30 days after Interest Payment Date); (c) failure to perform any other covenant continuing 30 days after written notice; (d) bankruptcy/insolvency decree unstayed 90 consecutive days; (e) voluntary bankruptcy/insolvency proceedings",
+              "value": "The Borrower hereby agrees that it shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extraordinary mandatory redemption of the Bonds as set forth in the Indenture and in the Bonds. Events of Default: (a) Event of Default under the Indenture, the Notes or the Senior Notes Indenture; (b) default in timely payment of any Payment (30-day cure for Interest Payment); (c) failure to perform any other covenant for 30 days after notice; (d)/(e) bankruptcy/insolvency events.",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
               "note": "verbatim: “The Borrower hereby agrees that it shall prepay its obligations hereunder at the times and in the amounts as necessary to accomplish the extraordinary mandatory redemption of the Bonds as set forth in the Indenture and in the Bonds.”"
@@ -5465,12 +5678,12 @@
             "agreement_is_amendment": false
           },
           {
-            "name": "Interest Payment Date",
+            "name": "Security / collateral / guarantors (Notes security)",
             "value": {
-              "value": "Each May 1 and November 1, commencing May 1, 2008",
+              "value": "In order to secure, on behalf of the Authority, the obligation of the Borrower to make the Payments, concurrently with the issuance and delivery by the Authority of the Bonds, the Borrower shall issue and deliver to the Trustee a series of its notes (the “Notes”) under the Senior Notes Indenture",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
-              "note": "verbatim: ““Interest Payment Date” or “interest payment date”, when used with respect to the Bonds, means each May 1 and November 1, commencing May 1, 2008.”"
+              "note": "verbatim: “In order to secure, on behalf of the Authority, the obligation of the Borrower to make the Payments, concurrently with the issuance and delivery by the Authority of the Bonds, the Borrower shall issue and deliver to the Trustee a series of its notes (the “Notes”) under the Senior Notes Indenture (i) maturing on the same date and in the same principal amount as the Bonds”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5483,7 +5696,7 @@
           {
             "name": "Special Payments (Change of Control / Asset Sale)",
             "value": {
-              "value": "Change of Control Payment (satisfaction of a Change of Control Offer as defined in the Indenture); Asset Sale Payment (satisfaction of an Asset Sale Offer as defined in the Senior Notes Indenture)",
+              "value": "“Change of Control Payment” ... an amount sufficient for the payment in full in satisfaction of a Change of Control Offer; “Asset Sale Payment” ... an amount sufficient for the payment in full in satisfaction of an Asset Sale Offer",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
               "note": "verbatim: ““Change of Control Payment” being the an amount sufficient for the payment in full in satisfaction of a Change of Control Offer (as defined in the Indenture). ... “Asset Sale Payment” being an amount sufficient for the payment in full in satisfaction of an Asset Sale Offer (as defined in the Senior Notes Indenture).”"
@@ -5499,42 +5712,10 @@
           {
             "name": "Optional prepayment",
             "value": {
-              "value": "Borrower has option to prepay as necessary to cause optional redemption of the Bonds per the Indenture and the Bonds",
+              "value": "The Borrower shall have the option to prepay its obligations hereunder at the times and in the amounts as necessary to exercise its option to cause the Bonds to be redeemed as set forth in the Indenture and in the Bonds.",
               "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
               "status": "present",
               "note": "verbatim: “The Borrower shall have the option to prepay its obligations hereunder at the times and in the amounts as necessary to exercise its option to cause the Bonds to be redeemed as set forth in the Indenture and in the Bonds.”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null,
-            "agreement_title": "LOAN AGREEMENT",
-            "agreement_is_amendment": false
-          },
-          {
-            "name": "Acceleration on default",
-            "value": {
-              "value": "Upon a continuing Event of Default, Authority or Trustee may declare all Payments immediately due and payable",
-              "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
-              "status": "present",
-              "note": "verbatim: “The Authority or the Trustee may declare all Payments under Section 4.2 hereof to be immediately due and payable, whereupon the same shall become immediately due and payable”"
-            },
-            "base_rate_label": null,
-            "margin_pct": null,
-            "margin_bps": null,
-            "floor_pct": null,
-            "pik_pct": null,
-            "agreement_title": "LOAN AGREEMENT",
-            "agreement_is_amendment": false
-          },
-          {
-            "name": "Governing law",
-            "value": {
-              "value": "State of Louisiana",
-              "source_ref": "8-K 0001193125-07-267027 · dex101.htm",
-              "status": "present",
-              "note": "verbatim: “This Agreement shall be deemed to be a contract made under the laws of the State of Louisiana and for all purposes shall be governed exclusively by and construed in accordance with the laws of the State of Louisiana.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5556,7 +5737,7 @@
         "note": "(P3) 8-K body at 8-K 0001262823-26-000008 (2026-02-24) states no maturity-resolution event"
       },
       "panel_vintage": {
-        "value": "the debt schedule is 208d old (source filed 2026-02-26) AND an Item 1.02 — termination of a material definitive agreement — was filed 2026-04-06, accession 0001193125-26-142822. The panel predates it and cannot reflect it: an instrument listed below may already have been terminated. Verify before relying on this schedule.",
+        "value": "the debt schedule is 232d old (source filed 2026-02-26) AND an Item 1.02 — termination of a material definitive agreement — was filed 2026-04-06, accession 0001193125-26-142822. The panel predates it and cannot reflect it: an instrument listed below may already have been terminated. Verify before relying on this schedule.",
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
         "status": "present",
         "note": null
@@ -5637,8 +5818,8 @@
         }
       ],
       "line": {
-        "value": "shelf registrations 1 (S-3ASR, last 2025-10-31); prospectus supplements 2 (424B5, last 2025-11-05) — 3y window to 2026-09-22",
-        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-09-23→2026-09-22 · latest 0001193125-25-267197",
+        "value": "shelf registrations 1 (S-3ASR, last 2025-10-31); prospectus supplements 2 (424B5, last 2025-11-05) — 3y window to 2026-10-16",
+        "source_ref": "EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-10-17→2026-10-16 · latest 0001193125-25-267197",
         "status": "present",
         "note": null
       },
@@ -5653,8 +5834,8 @@
         }
       ],
       "line": {
-        "value": "no 13D on file · Schedule 13G filings 1 (SC 13G/A, last 2024-02-14) — 3y window to 2026-09-22",
-        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-09-23→2026-09-22 · latest 0000895345-24-000065",
+        "value": "no 13D on file · Schedule 13G filings 1 (SC 13G/A, last 2024-02-14) — 3y window to 2026-10-16",
+        "source_ref": "EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-10-17→2026-10-16 · latest 0000895345-24-000065",
         "status": "present",
         "note": null
       },
@@ -5714,20 +5895,20 @@
           "ticker": "DOW",
           "is_subject": false,
           "market_cap": 21728.0,
-          "acquired": 9373.0,
-          "total_assets": 59780.0,
-          "pct_assets": 0.15679156908665107,
-          "pct_market_cap": 0.43137886597938147,
+          "acquired": 9263.0,
+          "total_assets": 60953.0,
+          "pct_assets": 0.15196955030925466,
+          "pct_market_cap": 0.4263162739322533,
           "note": null,
           "impairment": {
             "state": "charged",
             "state_label": "wrote down",
-            "window_start": "2021-03-31",
-            "window_end": "2026-03-31",
+            "window_start": "2021-09-30",
+            "window_end": "2026-09-30",
             "observations": 1,
             "charged_years": 1,
             "total": 690.0,
-            "pct_acquired": 0.07361570468366585,
+            "pct_acquired": 0.0744899060779445,
             "last_charge_end": "2025-12-31",
             "last_charge_amount": 690.0,
             "pending": null,
@@ -5792,20 +5973,20 @@
           "ticker": "RPM",
           "is_subject": false,
           "market_cap": 12746.0,
-          "acquired": 2512.802,
-          "total_assets": 8344.605,
-          "pct_assets": 0.30112893300521715,
-          "pct_market_cap": 0.19714435901459282,
+          "acquired": 2500.12,
+          "total_assets": 8230.638,
+          "pct_assets": 0.3037577402869619,
+          "pct_market_cap": 0.19614938019770908,
           "note": null,
           "impairment": {
             "state": "charged",
             "state_label": "wrote down",
-            "window_start": "2021-05-31",
-            "window_end": "2026-05-31",
-            "observations": 6,
+            "window_start": "2021-08-31",
+            "window_end": "2026-08-31",
+            "observations": 5,
             "charged_years": 2,
             "total": 48.097,
-            "pct_acquired": 0.019140783873938336,
+            "pct_acquired": 0.01923787658192407,
             "last_charge_end": "2025-05-31",
             "last_charge_amount": 11.352,
             "pending": null,
@@ -5953,7 +6134,7 @@
       "imp_window_years": 5,
       "imp_n_large_assessed": 8,
       "imp_n_large_charged": 6,
-      "imp_median_large_pct": 0.068231316449463,
+      "imp_median_large_pct": 0.06866841714660232,
       "imp_subject_pct": 0.40967896502156204,
       "imp_subject_state": "charged"
     },
@@ -7381,7 +7562,7 @@
             "note": null
           }
         ],
-        "as_filed_by": "2026-09-28",
+        "as_filed_by": "2026-10-26",
         "source_ref": "CIQ Financials (Annual)→Income Statement 'Total Revenue' and →Cash Flow 'Cash from Ops.' against EDGAR XBRL (the first revenue / operating-cash-flow alias reporting the period)"
       }
     },
@@ -7478,12 +7659,12 @@
         ]
       },
       "self_funding": {
-        "value": "self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund)",
-        "source_ref": "EDGAR latest-Q OCF sign + CIQ LTM FCF sign",
+        "value": "self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0",
+        "source_ref": "EDGAR OCF sign, quarter to 2026-06-30 + CIQ LTM FCF sign",
         "status": "present",
         "note": null
       },
-      "self_funding_check": "differ",
+      "self_funding_check": "agree",
       "wall_coherence": {
         "value": "wall coherence: UNKNOWN — filing states no ≤12m figure",
         "source_ref": "10-Q maturity wall vs CIQ capital panel (same window)",
@@ -7698,7 +7879,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 68.8,
+        "value": 64.56,
         "source_ref": "EOD WLK last close",
         "status": "present",
         "note": null
@@ -7707,13 +7888,13 @@
         "value": 124.23,
         "source_ref": "EOD WLK 52-week high",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
+        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
       },
       "low_52w": {
         "value": 56.33,
         "source_ref": "EOD WLK 52-week low",
         "status": "present",
-        "note": "52-week window 2025-09-22→2026-09-22: spans 365d over 252 bars"
+        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
       },
       "shares_out": {
         "value": 127796548.0,
@@ -7733,1274 +7914,1274 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-09-22",
+      "as_of": "2026-10-23",
       "market_cap_as_of": "2026-09-16"
     },
     "stock_performance": {
       "points": [
         {
-          "date": "2025-09-23",
+          "date": "2025-10-17",
           "name": 100.0,
           "benchmark": 100.0
         },
         {
-          "date": "2025-09-24",
-          "name": 98.97,
-          "benchmark": 99.23
-        },
-        {
-          "date": "2025-09-25",
-          "name": 95.36,
-          "benchmark": 98.68
-        },
-        {
-          "date": "2025-09-26",
-          "name": 97.43,
-          "benchmark": 99.68
-        },
-        {
-          "date": "2025-09-29",
-          "name": 96.64,
-          "benchmark": 99.45
-        },
-        {
-          "date": "2025-09-30",
-          "name": 96.69,
-          "benchmark": 99.57
-        },
-        {
-          "date": "2025-10-01",
-          "name": 96.31,
-          "benchmark": 99.89
-        },
-        {
-          "date": "2025-10-02",
-          "name": 100.21,
-          "benchmark": 100.02
-        },
-        {
-          "date": "2025-10-03",
-          "name": 103.27,
-          "benchmark": 100.34
-        },
-        {
-          "date": "2025-10-06",
-          "name": 102.51,
-          "benchmark": 100.49
-        },
-        {
-          "date": "2025-10-07",
-          "name": 100.83,
-          "benchmark": 99.41
-        },
-        {
-          "date": "2025-10-08",
-          "name": 103.35,
-          "benchmark": 100.39
-        },
-        {
-          "date": "2025-10-09",
-          "name": 101.28,
-          "benchmark": 99.3
-        },
-        {
-          "date": "2025-10-10",
-          "name": 94.91,
-          "benchmark": 96.52
-        },
-        {
-          "date": "2025-10-13",
-          "name": 97.53,
-          "benchmark": 98.38
-        },
-        {
-          "date": "2025-10-14",
-          "name": 97.6,
-          "benchmark": 99.29
-        },
-        {
-          "date": "2025-10-15",
-          "name": 97.03,
-          "benchmark": 99.38
-        },
-        {
-          "date": "2025-10-16",
-          "name": 95.42,
-          "benchmark": 98.16
-        },
-        {
-          "date": "2025-10-17",
-          "name": 94.42,
-          "benchmark": 98.37
-        },
-        {
           "date": "2025-10-20",
-          "name": 94.59,
-          "benchmark": 99.55
+          "name": 100.19,
+          "benchmark": 101.2
         },
         {
           "date": "2025-10-21",
-          "name": 96.49,
-          "benchmark": 99.9
+          "name": 102.19,
+          "benchmark": 101.56
         },
         {
           "date": "2025-10-22",
-          "name": 94.54,
-          "benchmark": 98.77
+          "name": 100.13,
+          "benchmark": 100.41
         },
         {
           "date": "2025-10-23",
-          "name": 98.86,
-          "benchmark": 100.11
+          "name": 104.7,
+          "benchmark": 101.77
         },
         {
           "date": "2025-10-24",
-          "name": 99.4,
-          "benchmark": 100.64
+          "name": 105.28,
+          "benchmark": 102.31
         },
         {
           "date": "2025-10-27",
-          "name": 100.04,
-          "benchmark": 101.03
+          "name": 105.95,
+          "benchmark": 102.7
         },
         {
           "date": "2025-10-28",
-          "name": 95.91,
-          "benchmark": 100.14
+          "name": 101.58,
+          "benchmark": 101.8
         },
         {
           "date": "2025-10-29",
-          "name": 92.18,
-          "benchmark": 99.51
-        },
-        {
-          "date": "2025-10-30",
-          "name": 85.68,
-          "benchmark": 98.46
-        },
-        {
-          "date": "2025-10-31",
-          "name": 86.34,
-          "benchmark": 99.06
-        },
-        {
-          "date": "2025-11-03",
-          "name": 85.67,
-          "benchmark": 99.01
-        },
-        {
-          "date": "2025-11-04",
-          "name": 83.79,
-          "benchmark": 98.16
-        },
-        {
-          "date": "2025-11-05",
-          "name": 82.63,
-          "benchmark": 98.8
-        },
-        {
-          "date": "2025-11-06",
-          "name": 80.88,
-          "benchmark": 97.89
-        },
-        {
-          "date": "2025-11-07",
-          "name": 81.49,
-          "benchmark": 99.02
-        },
-        {
-          "date": "2025-11-10",
-          "name": 81.78,
-          "benchmark": 99.66
-        },
-        {
-          "date": "2025-11-11",
-          "name": 79.61,
-          "benchmark": 99.65
-        },
-        {
-          "date": "2025-11-12",
-          "name": 78.81,
-          "benchmark": 100.0
-        },
-        {
-          "date": "2025-11-13",
-          "name": 81.44,
-          "benchmark": 98.12
-        },
-        {
-          "date": "2025-11-14",
-          "name": 78.49,
-          "benchmark": 97.92
-        },
-        {
-          "date": "2025-11-17",
-          "name": 74.09,
-          "benchmark": 96.1
-        },
-        {
-          "date": "2025-11-18",
-          "name": 73.59,
-          "benchmark": 96.42
-        },
-        {
-          "date": "2025-11-19",
-          "name": 72.15,
-          "benchmark": 96.54
-        },
-        {
-          "date": "2025-11-20",
-          "name": 70.74,
-          "benchmark": 94.99
-        },
-        {
-          "date": "2025-11-21",
-          "name": 74.07,
-          "benchmark": 97.28
-        },
-        {
-          "date": "2025-11-24",
-          "name": 76.06,
-          "benchmark": 98.19
-        },
-        {
-          "date": "2025-11-25",
-          "name": 78.88,
-          "benchmark": 100.04
-        },
-        {
-          "date": "2025-11-26",
-          "name": 81.2,
-          "benchmark": 100.65
-        },
-        {
-          "date": "2025-11-28",
-          "name": 83.83,
+          "name": 97.63,
           "benchmark": 101.15
         },
         {
+          "date": "2025-10-30",
+          "name": 90.75,
+          "benchmark": 100.09
+        },
+        {
+          "date": "2025-10-31",
+          "name": 91.44,
+          "benchmark": 100.7
+        },
+        {
+          "date": "2025-11-03",
+          "name": 90.74,
+          "benchmark": 100.65
+        },
+        {
+          "date": "2025-11-04",
+          "name": 88.74,
+          "benchmark": 99.78
+        },
+        {
+          "date": "2025-11-05",
+          "name": 87.52,
+          "benchmark": 100.44
+        },
+        {
+          "date": "2025-11-06",
+          "name": 85.66,
+          "benchmark": 99.52
+        },
+        {
+          "date": "2025-11-07",
+          "name": 86.31,
+          "benchmark": 100.67
+        },
+        {
+          "date": "2025-11-10",
+          "name": 86.62,
+          "benchmark": 101.31
+        },
+        {
+          "date": "2025-11-11",
+          "name": 84.32,
+          "benchmark": 101.3
+        },
+        {
+          "date": "2025-11-12",
+          "name": 83.47,
+          "benchmark": 101.66
+        },
+        {
+          "date": "2025-11-13",
+          "name": 86.26,
+          "benchmark": 99.75
+        },
+        {
+          "date": "2025-11-14",
+          "name": 83.14,
+          "benchmark": 99.54
+        },
+        {
+          "date": "2025-11-17",
+          "name": 78.47,
+          "benchmark": 97.7
+        },
+        {
+          "date": "2025-11-18",
+          "name": 77.94,
+          "benchmark": 98.02
+        },
+        {
+          "date": "2025-11-19",
+          "name": 76.41,
+          "benchmark": 98.14
+        },
+        {
+          "date": "2025-11-20",
+          "name": 74.92,
+          "benchmark": 96.56
+        },
+        {
+          "date": "2025-11-21",
+          "name": 78.45,
+          "benchmark": 98.89
+        },
+        {
+          "date": "2025-11-24",
+          "name": 80.56,
+          "benchmark": 99.82
+        },
+        {
+          "date": "2025-11-25",
+          "name": 83.55,
+          "benchmark": 101.7
+        },
+        {
+          "date": "2025-11-26",
+          "name": 86.01,
+          "benchmark": 102.32
+        },
+        {
+          "date": "2025-11-28",
+          "name": 88.78,
+          "benchmark": 102.82
+        },
+        {
           "date": "2025-12-01",
-          "name": 84.81,
-          "benchmark": 100.6
+          "name": 89.82,
+          "benchmark": 102.27
         },
         {
           "date": "2025-12-02",
-          "name": 83.56,
-          "benchmark": 100.23
+          "name": 88.5,
+          "benchmark": 101.9
         },
         {
           "date": "2025-12-03",
-          "name": 86.21,
-          "benchmark": 100.93
+          "name": 91.31,
+          "benchmark": 102.6
         },
         {
           "date": "2025-12-04",
-          "name": 85.28,
-          "benchmark": 101.42
+          "name": 90.33,
+          "benchmark": 103.11
         },
         {
           "date": "2025-12-05",
-          "name": 85.35,
-          "benchmark": 101.46
+          "name": 90.39,
+          "benchmark": 103.15
         },
         {
           "date": "2025-12-08",
-          "name": 84.84,
-          "benchmark": 100.96
+          "name": 89.86,
+          "benchmark": 102.63
         },
         {
           "date": "2025-12-09",
-          "name": 85.87,
-          "benchmark": 100.88
+          "name": 90.95,
+          "benchmark": 102.55
         },
         {
           "date": "2025-12-10",
-          "name": 91.25,
-          "benchmark": 102.8
+          "name": 96.65,
+          "benchmark": 104.5
         },
         {
           "date": "2025-12-11",
-          "name": 94.0,
-          "benchmark": 103.78
+          "name": 99.56,
+          "benchmark": 105.5
         },
         {
           "date": "2025-12-12",
-          "name": 93.35,
-          "benchmark": 102.42
+          "name": 98.87,
+          "benchmark": 104.12
         },
         {
           "date": "2025-12-15",
-          "name": 92.38,
-          "benchmark": 102.23
+          "name": 97.85,
+          "benchmark": 103.92
         },
         {
           "date": "2025-12-16",
-          "name": 92.02,
-          "benchmark": 101.59
+          "name": 97.46,
+          "benchmark": 103.28
         },
         {
           "date": "2025-12-17",
-          "name": 92.82,
-          "benchmark": 101.13
+          "name": 98.31,
+          "benchmark": 102.81
         },
         {
           "date": "2025-12-18",
-          "name": 93.83,
-          "benchmark": 101.58
+          "name": 99.38,
+          "benchmark": 103.26
         },
         {
           "date": "2025-12-19",
-          "name": 90.95,
-          "benchmark": 102.16
+          "name": 96.33,
+          "benchmark": 103.86
         },
         {
           "date": "2025-12-22",
-          "name": 93.34,
-          "benchmark": 102.92
+          "name": 98.86,
+          "benchmark": 104.62
         },
         {
           "date": "2025-12-23",
-          "name": 91.96,
-          "benchmark": 102.62
+          "name": 97.4,
+          "benchmark": 104.32
         },
         {
           "date": "2025-12-24",
-          "name": 92.45,
-          "benchmark": 102.77
+          "name": 97.91,
+          "benchmark": 104.47
         },
         {
           "date": "2025-12-26",
-          "name": 92.53,
-          "benchmark": 102.79
+          "name": 98.01,
+          "benchmark": 104.5
         },
         {
           "date": "2025-12-29",
-          "name": 93.32,
-          "benchmark": 102.16
+          "name": 98.84,
+          "benchmark": 103.85
         },
         {
           "date": "2025-12-30",
-          "name": 93.95,
-          "benchmark": 101.81
+          "name": 99.51,
+          "benchmark": 103.5
         },
         {
           "date": "2025-12-31",
-          "name": 92.77,
-          "benchmark": 100.78
+          "name": 98.26,
+          "benchmark": 102.45
         },
         {
           "date": "2026-01-02",
-          "name": 93.04,
-          "benchmark": 102.12
+          "name": 98.54,
+          "benchmark": 103.81
         },
         {
           "date": "2026-01-05",
-          "name": 94.08,
-          "benchmark": 103.46
+          "name": 99.64,
+          "benchmark": 105.18
         },
         {
           "date": "2026-01-06",
-          "name": 97.15,
-          "benchmark": 104.95
+          "name": 102.9,
+          "benchmark": 106.69
         },
         {
           "date": "2026-01-07",
-          "name": 93.44,
-          "benchmark": 104.19
+          "name": 98.96,
+          "benchmark": 105.92
         },
         {
           "date": "2026-01-08",
-          "name": 99.79,
-          "benchmark": 104.58
+          "name": 105.69,
+          "benchmark": 106.31
         },
         {
           "date": "2026-01-09",
-          "name": 104.39,
-          "benchmark": 105.47
+          "name": 110.56,
+          "benchmark": 107.22
         },
         {
           "date": "2026-01-12",
-          "name": 106.57,
-          "benchmark": 105.63
+          "name": 112.88,
+          "benchmark": 107.38
         },
         {
           "date": "2026-01-13",
-          "name": 106.65,
-          "benchmark": 105.86
+          "name": 112.96,
+          "benchmark": 107.61
         },
         {
           "date": "2026-01-14",
-          "name": 112.74,
-          "benchmark": 105.96
+          "name": 119.4,
+          "benchmark": 107.72
         },
         {
           "date": "2026-01-15",
-          "name": 110.79,
-          "benchmark": 107.21
+          "name": 117.34,
+          "benchmark": 108.99
         },
         {
           "date": "2026-01-16",
-          "name": 110.25,
-          "benchmark": 106.89
+          "name": 116.77,
+          "benchmark": 108.66
         },
         {
           "date": "2026-01-20",
-          "name": 105.29,
-          "benchmark": 105.44
+          "name": 111.52,
+          "benchmark": 107.19
         },
         {
           "date": "2026-01-21",
-          "name": 108.76,
-          "benchmark": 107.32
+          "name": 115.19,
+          "benchmark": 109.1
         },
         {
           "date": "2026-01-22",
-          "name": 108.85,
-          "benchmark": 107.35
+          "name": 115.28,
+          "benchmark": 109.13
         },
         {
           "date": "2026-01-23",
-          "name": 106.93,
-          "benchmark": 106.27
+          "name": 113.25,
+          "benchmark": 108.03
         },
         {
           "date": "2026-01-26",
-          "name": 105.6,
-          "benchmark": 106.22
+          "name": 111.84,
+          "benchmark": 107.98
         },
         {
           "date": "2026-01-27",
-          "name": 102.48,
-          "benchmark": 106.21
+          "name": 108.54,
+          "benchmark": 107.97
         },
         {
           "date": "2026-01-28",
-          "name": 102.74,
-          "benchmark": 105.96
+          "name": 108.81,
+          "benchmark": 107.72
         },
         {
           "date": "2026-01-29",
-          "name": 102.33,
-          "benchmark": 105.77
+          "name": 108.39,
+          "benchmark": 107.52
         },
         {
           "date": "2026-01-30",
-          "name": 99.52,
-          "benchmark": 104.84
+          "name": 105.41,
+          "benchmark": 106.57
         },
         {
           "date": "2026-02-02",
-          "name": 105.11,
-          "benchmark": 105.69
+          "name": 111.32,
+          "benchmark": 107.44
         },
         {
           "date": "2026-02-03",
-          "name": 114.05,
-          "benchmark": 105.89
+          "name": 120.8,
+          "benchmark": 107.65
         },
         {
           "date": "2026-02-04",
-          "name": 120.45,
-          "benchmark": 106.63
+          "name": 127.57,
+          "benchmark": 108.4
         },
         {
           "date": "2026-02-05",
-          "name": 115.65,
-          "benchmark": 106.07
+          "name": 122.49,
+          "benchmark": 107.83
         },
         {
           "date": "2026-02-06",
-          "name": 120.36,
-          "benchmark": 109.47
+          "name": 127.48,
+          "benchmark": 111.29
         },
         {
           "date": "2026-02-09",
-          "name": 121.05,
-          "benchmark": 109.53
+          "name": 128.21,
+          "benchmark": 111.35
         },
         {
           "date": "2026-02-10",
-          "name": 124.37,
-          "benchmark": 109.48
+          "name": 131.72,
+          "benchmark": 111.29
         },
         {
           "date": "2026-02-11",
-          "name": 125.92,
-          "benchmark": 109.2
+          "name": 133.37,
+          "benchmark": 111.01
         },
         {
           "date": "2026-02-12",
-          "name": 123.88,
-          "benchmark": 107.66
+          "name": 131.2,
+          "benchmark": 109.45
         },
         {
           "date": "2026-02-13",
-          "name": 125.57,
-          "benchmark": 108.69
+          "name": 133.0,
+          "benchmark": 110.49
         },
         {
           "date": "2026-02-17",
-          "name": 122.74,
-          "benchmark": 108.88
+          "name": 129.99,
+          "benchmark": 110.68
         },
         {
           "date": "2026-02-18",
-          "name": 124.88,
-          "benchmark": 109.36
+          "name": 132.27,
+          "benchmark": 111.17
         },
         {
           "date": "2026-02-19",
-          "name": 119.27,
-          "benchmark": 109.33
+          "name": 126.33,
+          "benchmark": 111.15
         },
         {
           "date": "2026-02-20",
-          "name": 118.44,
-          "benchmark": 110.02
+          "name": 125.45,
+          "benchmark": 111.84
         },
         {
           "date": "2026-02-23",
-          "name": 116.71,
-          "benchmark": 108.1
+          "name": 123.61,
+          "benchmark": 109.89
         },
         {
           "date": "2026-02-24",
-          "name": 130.7,
-          "benchmark": 109.12
+          "name": 138.43,
+          "benchmark": 110.93
         },
         {
           "date": "2026-02-25",
-          "name": 129.35,
-          "benchmark": 109.53
+          "name": 137.0,
+          "benchmark": 111.34
         },
         {
           "date": "2026-02-26",
-          "name": 125.9,
-          "benchmark": 109.94
-        },
-        {
-          "date": "2026-02-27",
-          "name": 132.22,
-          "benchmark": 109.05
-        },
-        {
-          "date": "2026-03-02",
-          "name": 133.99,
-          "benchmark": 109.98
-        },
-        {
-          "date": "2026-03-03",
-          "name": 129.13,
-          "benchmark": 108.08
-        },
-        {
-          "date": "2026-03-04",
-          "name": 133.16,
-          "benchmark": 108.07
-        },
-        {
-          "date": "2026-03-05",
-          "name": 132.38,
-          "benchmark": 106.58
-        },
-        {
-          "date": "2026-03-06",
-          "name": 129.47,
-          "benchmark": 104.09
-        },
-        {
-          "date": "2026-03-09",
-          "name": 133.43,
-          "benchmark": 105.12
-        },
-        {
-          "date": "2026-03-10",
-          "name": 131.79,
-          "benchmark": 104.65
-        },
-        {
-          "date": "2026-03-11",
-          "name": 134.29,
-          "benchmark": 104.33
-        },
-        {
-          "date": "2026-03-12",
-          "name": 143.31,
-          "benchmark": 102.2
-        },
-        {
-          "date": "2026-03-13",
-          "name": 140.58,
-          "benchmark": 102.07
-        },
-        {
-          "date": "2026-03-16",
-          "name": 139.01,
-          "benchmark": 102.8
-        },
-        {
-          "date": "2026-03-17",
-          "name": 139.82,
-          "benchmark": 103.74
-        },
-        {
-          "date": "2026-03-18",
-          "name": 141.28,
-          "benchmark": 102.77
-        },
-        {
-          "date": "2026-03-19",
-          "name": 139.56,
-          "benchmark": 103.03
-        },
-        {
-          "date": "2026-03-20",
-          "name": 133.15,
-          "benchmark": 100.48
-        },
-        {
-          "date": "2026-03-23",
-          "name": 136.14,
-          "benchmark": 102.35
-        },
-        {
-          "date": "2026-03-24",
-          "name": 143.15,
-          "benchmark": 103.2
-        },
-        {
-          "date": "2026-03-25",
-          "name": 143.31,
-          "benchmark": 104.07
-        },
-        {
-          "date": "2026-03-26",
-          "name": 142.36,
-          "benchmark": 102.53
-        },
-        {
-          "date": "2026-03-27",
-          "name": 142.15,
-          "benchmark": 100.87
-        },
-        {
-          "date": "2026-03-30",
-          "name": 145.55,
-          "benchmark": 100.07
-        },
-        {
-          "date": "2026-03-31",
-          "name": 146.57,
-          "benchmark": 103.03
-        },
-        {
-          "date": "2026-04-01",
-          "name": 146.27,
-          "benchmark": 103.87
-        },
-        {
-          "date": "2026-04-02",
-          "name": 149.81,
-          "benchmark": 103.97
-        },
-        {
-          "date": "2026-04-06",
-          "name": 149.97,
-          "benchmark": 104.44
-        },
-        {
-          "date": "2026-04-07",
-          "name": 154.82,
-          "benchmark": 104.56
-        },
-        {
-          "date": "2026-04-08",
-          "name": 151.58,
-          "benchmark": 107.53
-        },
-        {
-          "date": "2026-04-09",
-          "name": 147.06,
-          "benchmark": 107.77
-        },
-        {
-          "date": "2026-04-10",
-          "name": 148.52,
-          "benchmark": 107.43
-        },
-        {
-          "date": "2026-04-13",
-          "name": 150.75,
-          "benchmark": 108.6
-        },
-        {
-          "date": "2026-04-14",
-          "name": 147.97,
-          "benchmark": 109.15
-        },
-        {
-          "date": "2026-04-15",
-          "name": 144.6,
-          "benchmark": 108.82
-        },
-        {
-          "date": "2026-04-16",
-          "name": 149.31,
-          "benchmark": 109.04
-        },
-        {
-          "date": "2026-04-17",
-          "name": 141.29,
-          "benchmark": 111.16
-        },
-        {
-          "date": "2026-04-20",
-          "name": 142.89,
-          "benchmark": 111.85
-        },
-        {
-          "date": "2026-04-21",
-          "name": 145.11,
-          "benchmark": 111.19
-        },
-        {
-          "date": "2026-04-22",
-          "name": 143.39,
-          "benchmark": 110.77
-        },
-        {
-          "date": "2026-04-23",
-          "name": 140.84,
-          "benchmark": 110.76
-        },
-        {
-          "date": "2026-04-24",
-          "name": 138.82,
-          "benchmark": 111.0
-        },
-        {
-          "date": "2026-04-27",
-          "name": 139.51,
-          "benchmark": 111.06
-        },
-        {
-          "date": "2026-04-28",
-          "name": 138.46,
-          "benchmark": 109.94
-        },
-        {
-          "date": "2026-04-29",
-          "name": 139.79,
-          "benchmark": 109.14
-        },
-        {
-          "date": "2026-04-30",
-          "name": 144.64,
-          "benchmark": 110.95
-        },
-        {
-          "date": "2026-05-01",
-          "name": 144.28,
-          "benchmark": 110.98
-        },
-        {
-          "date": "2026-05-04",
-          "name": 144.13,
-          "benchmark": 110.31
-        },
-        {
-          "date": "2026-05-05",
-          "name": 131.47,
-          "benchmark": 111.73
-        },
-        {
-          "date": "2026-05-06",
-          "name": 125.37,
-          "benchmark": 113.74
-        },
-        {
-          "date": "2026-05-07",
-          "name": 122.18,
-          "benchmark": 112.32
-        },
-        {
-          "date": "2026-05-08",
-          "name": 117.75,
-          "benchmark": 112.8
-        },
-        {
-          "date": "2026-05-11",
-          "name": 122.41,
-          "benchmark": 112.53
-        },
-        {
-          "date": "2026-05-12",
-          "name": 121.13,
+          "name": 133.34,
           "benchmark": 111.77
         },
         {
+          "date": "2026-02-27",
+          "name": 140.04,
+          "benchmark": 110.86
+        },
+        {
+          "date": "2026-03-02",
+          "name": 141.91,
+          "benchmark": 111.8
+        },
+        {
+          "date": "2026-03-03",
+          "name": 136.77,
+          "benchmark": 109.88
+        },
+        {
+          "date": "2026-03-04",
+          "name": 141.04,
+          "benchmark": 109.86
+        },
+        {
+          "date": "2026-03-05",
+          "name": 140.21,
+          "benchmark": 108.34
+        },
+        {
+          "date": "2026-03-06",
+          "name": 137.13,
+          "benchmark": 105.81
+        },
+        {
+          "date": "2026-03-09",
+          "name": 141.32,
+          "benchmark": 106.86
+        },
+        {
+          "date": "2026-03-10",
+          "name": 139.59,
+          "benchmark": 106.38
+        },
+        {
+          "date": "2026-03-11",
+          "name": 142.23,
+          "benchmark": 106.06
+        },
+        {
+          "date": "2026-03-12",
+          "name": 151.79,
+          "benchmark": 103.89
+        },
+        {
+          "date": "2026-03-13",
+          "name": 148.89,
+          "benchmark": 103.76
+        },
+        {
+          "date": "2026-03-16",
+          "name": 147.23,
+          "benchmark": 104.51
+        },
+        {
+          "date": "2026-03-17",
+          "name": 148.09,
+          "benchmark": 105.46
+        },
+        {
+          "date": "2026-03-18",
+          "name": 149.63,
+          "benchmark": 104.48
+        },
+        {
+          "date": "2026-03-19",
+          "name": 147.81,
+          "benchmark": 104.74
+        },
+        {
+          "date": "2026-03-20",
+          "name": 141.02,
+          "benchmark": 102.14
+        },
+        {
+          "date": "2026-03-23",
+          "name": 144.19,
+          "benchmark": 104.04
+        },
+        {
+          "date": "2026-03-24",
+          "name": 151.61,
+          "benchmark": 104.91
+        },
+        {
+          "date": "2026-03-25",
+          "name": 151.79,
+          "benchmark": 105.8
+        },
+        {
+          "date": "2026-03-26",
+          "name": 150.78,
+          "benchmark": 104.23
+        },
+        {
+          "date": "2026-03-27",
+          "name": 150.55,
+          "benchmark": 102.54
+        },
+        {
+          "date": "2026-03-30",
+          "name": 154.15,
+          "benchmark": 101.73
+        },
+        {
+          "date": "2026-03-31",
+          "name": 155.24,
+          "benchmark": 104.74
+        },
+        {
+          "date": "2026-04-01",
+          "name": 154.92,
+          "benchmark": 105.59
+        },
+        {
+          "date": "2026-04-02",
+          "name": 158.67,
+          "benchmark": 105.7
+        },
+        {
+          "date": "2026-04-06",
+          "name": 158.84,
+          "benchmark": 106.17
+        },
+        {
+          "date": "2026-04-07",
+          "name": 163.97,
+          "benchmark": 106.29
+        },
+        {
+          "date": "2026-04-08",
+          "name": 160.54,
+          "benchmark": 109.31
+        },
+        {
+          "date": "2026-04-09",
+          "name": 155.76,
+          "benchmark": 109.56
+        },
+        {
+          "date": "2026-04-10",
+          "name": 157.3,
+          "benchmark": 109.21
+        },
+        {
+          "date": "2026-04-13",
+          "name": 159.67,
+          "benchmark": 110.4
+        },
+        {
+          "date": "2026-04-14",
+          "name": 156.72,
+          "benchmark": 110.96
+        },
+        {
+          "date": "2026-04-15",
+          "name": 153.16,
+          "benchmark": 110.62
+        },
+        {
+          "date": "2026-04-16",
+          "name": 158.14,
+          "benchmark": 110.84
+        },
+        {
+          "date": "2026-04-17",
+          "name": 149.65,
+          "benchmark": 113.0
+        },
+        {
+          "date": "2026-04-20",
+          "name": 151.34,
+          "benchmark": 113.71
+        },
+        {
+          "date": "2026-04-21",
+          "name": 153.69,
+          "benchmark": 113.04
+        },
+        {
+          "date": "2026-04-22",
+          "name": 151.87,
+          "benchmark": 112.61
+        },
+        {
+          "date": "2026-04-23",
+          "name": 149.17,
+          "benchmark": 112.59
+        },
+        {
+          "date": "2026-04-24",
+          "name": 147.03,
+          "benchmark": 112.84
+        },
+        {
+          "date": "2026-04-27",
+          "name": 147.76,
+          "benchmark": 112.9
+        },
+        {
+          "date": "2026-04-28",
+          "name": 146.64,
+          "benchmark": 111.77
+        },
+        {
+          "date": "2026-04-29",
+          "name": 148.05,
+          "benchmark": 110.95
+        },
+        {
+          "date": "2026-04-30",
+          "name": 153.2,
+          "benchmark": 112.79
+        },
+        {
+          "date": "2026-05-01",
+          "name": 152.81,
+          "benchmark": 112.82
+        },
+        {
+          "date": "2026-05-04",
+          "name": 152.65,
+          "benchmark": 112.14
+        },
+        {
+          "date": "2026-05-05",
+          "name": 139.24,
+          "benchmark": 113.58
+        },
+        {
+          "date": "2026-05-06",
+          "name": 132.78,
+          "benchmark": 115.63
+        },
+        {
+          "date": "2026-05-07",
+          "name": 129.41,
+          "benchmark": 114.18
+        },
+        {
+          "date": "2026-05-08",
+          "name": 124.72,
+          "benchmark": 114.67
+        },
+        {
+          "date": "2026-05-11",
+          "name": 129.65,
+          "benchmark": 114.4
+        },
+        {
+          "date": "2026-05-12",
+          "name": 128.29,
+          "benchmark": 113.62
+        },
+        {
           "date": "2026-05-13",
-          "name": 115.77,
-          "benchmark": 111.49
+          "name": 122.62,
+          "benchmark": 113.34
         },
         {
           "date": "2026-05-14",
-          "name": 114.84,
-          "benchmark": 111.96
+          "name": 121.63,
+          "benchmark": 113.81
         },
         {
           "date": "2026-05-15",
-          "name": 111.15,
-          "benchmark": 110.13
+          "name": 117.73,
+          "benchmark": 111.96
         },
         {
           "date": "2026-05-18",
-          "name": 114.76,
-          "benchmark": 109.98
+          "name": 121.54,
+          "benchmark": 111.81
         },
         {
           "date": "2026-05-19",
-          "name": 111.24,
-          "benchmark": 108.94
+          "name": 117.82,
+          "benchmark": 110.74
         },
         {
           "date": "2026-05-20",
-          "name": 111.04,
-          "benchmark": 110.99
+          "name": 117.61,
+          "benchmark": 112.83
         },
         {
           "date": "2026-05-21",
-          "name": 110.54,
-          "benchmark": 111.13
-        },
-        {
-          "date": "2026-05-22",
-          "name": 111.17,
-          "benchmark": 112.03
-        },
-        {
-          "date": "2026-05-26",
-          "name": 111.38,
-          "benchmark": 113.77
-        },
-        {
-          "date": "2026-05-27",
-          "name": 110.18,
-          "benchmark": 113.35
-        },
-        {
-          "date": "2026-05-28",
-          "name": 110.0,
-          "benchmark": 113.47
-        },
-        {
-          "date": "2026-05-29",
-          "name": 108.95,
-          "benchmark": 113.7
-        },
-        {
-          "date": "2026-06-01",
-          "name": 108.38,
-          "benchmark": 113.6
-        },
-        {
-          "date": "2026-06-02",
-          "name": 108.95,
-          "benchmark": 114.62
-        },
-        {
-          "date": "2026-06-03",
-          "name": 108.39,
-          "benchmark": 114.51
-        },
-        {
-          "date": "2026-06-04",
-          "name": 106.96,
-          "benchmark": 114.93
-        },
-        {
-          "date": "2026-06-05",
-          "name": 106.2,
-          "benchmark": 112.69
-        },
-        {
-          "date": "2026-06-08",
-          "name": 106.98,
+          "name": 117.08,
           "benchmark": 112.97
         },
         {
+          "date": "2026-05-22",
+          "name": 117.74,
+          "benchmark": 113.89
+        },
+        {
+          "date": "2026-05-26",
+          "name": 117.97,
+          "benchmark": 115.66
+        },
+        {
+          "date": "2026-05-27",
+          "name": 116.69,
+          "benchmark": 115.23
+        },
+        {
+          "date": "2026-05-28",
+          "name": 116.5,
+          "benchmark": 115.35
+        },
+        {
+          "date": "2026-05-29",
+          "name": 115.39,
+          "benchmark": 115.58
+        },
+        {
+          "date": "2026-06-01",
+          "name": 114.79,
+          "benchmark": 115.48
+        },
+        {
+          "date": "2026-06-02",
+          "name": 115.39,
+          "benchmark": 116.52
+        },
+        {
+          "date": "2026-06-03",
+          "name": 114.8,
+          "benchmark": 116.41
+        },
+        {
+          "date": "2026-06-04",
+          "name": 113.29,
+          "benchmark": 116.83
+        },
+        {
+          "date": "2026-06-05",
+          "name": 112.48,
+          "benchmark": 114.56
+        },
+        {
+          "date": "2026-06-08",
+          "name": 113.3,
+          "benchmark": 114.84
+        },
+        {
           "date": "2026-06-09",
-          "name": 108.04,
-          "benchmark": 113.88
+          "name": 114.43,
+          "benchmark": 115.76
         },
         {
           "date": "2026-06-10",
-          "name": 109.31,
-          "benchmark": 112.23
+          "name": 115.77,
+          "benchmark": 114.09
         },
         {
           "date": "2026-06-11",
-          "name": 109.5,
-          "benchmark": 115.07
+          "name": 115.97,
+          "benchmark": 116.98
         },
         {
           "date": "2026-06-12",
-          "name": 111.04,
-          "benchmark": 115.89
+          "name": 117.61,
+          "benchmark": 117.81
         },
         {
           "date": "2026-06-15",
-          "name": 109.72,
-          "benchmark": 116.34
+          "name": 116.21,
+          "benchmark": 118.26
         },
         {
           "date": "2026-06-16",
-          "name": 105.81,
-          "benchmark": 115.99
+          "name": 112.07,
+          "benchmark": 117.91
         },
         {
           "date": "2026-06-17",
-          "name": 104.74,
-          "benchmark": 114.58
+          "name": 110.94,
+          "benchmark": 116.47
         },
         {
           "date": "2026-06-18",
-          "name": 100.73,
-          "benchmark": 115.43
-        },
-        {
-          "date": "2026-06-22",
-          "name": 97.8,
-          "benchmark": 115.9
-        },
-        {
-          "date": "2026-06-23",
-          "name": 95.96,
-          "benchmark": 114.73
-        },
-        {
-          "date": "2026-06-24",
-          "name": 95.19,
-          "benchmark": 115.44
-        },
-        {
-          "date": "2026-06-25",
-          "name": 96.04,
-          "benchmark": 116.5
-        },
-        {
-          "date": "2026-06-26",
-          "name": 96.14,
-          "benchmark": 116.15
-        },
-        {
-          "date": "2026-06-29",
-          "name": 93.75,
-          "benchmark": 116.59
-        },
-        {
-          "date": "2026-06-30",
-          "name": 91.59,
-          "benchmark": 117.49
-        },
-        {
-          "date": "2026-07-01",
-          "name": 91.37,
-          "benchmark": 116.45
-        },
-        {
-          "date": "2026-07-02",
-          "name": 93.81,
-          "benchmark": 115.88
-        },
-        {
-          "date": "2026-07-06",
-          "name": 93.85,
-          "benchmark": 116.38
-        },
-        {
-          "date": "2026-07-07",
-          "name": 95.7,
-          "benchmark": 114.95
-        },
-        {
-          "date": "2026-07-08",
-          "name": 95.11,
-          "benchmark": 113.84
-        },
-        {
-          "date": "2026-07-09",
-          "name": 93.45,
-          "benchmark": 115.3
-        },
-        {
-          "date": "2026-07-10",
-          "name": 94.72,
-          "benchmark": 115.24
-        },
-        {
-          "date": "2026-07-13",
-          "name": 95.45,
-          "benchmark": 114.59
-        },
-        {
-          "date": "2026-07-14",
-          "name": 96.66,
-          "benchmark": 115.13
-        },
-        {
-          "date": "2026-07-15",
-          "name": 96.68,
-          "benchmark": 115.18
-        },
-        {
-          "date": "2026-07-16",
-          "name": 96.71,
-          "benchmark": 115.76
-        },
-        {
-          "date": "2026-07-17",
-          "name": 97.4,
-          "benchmark": 115.06
-        },
-        {
-          "date": "2026-07-20",
-          "name": 96.5,
-          "benchmark": 114.15
-        },
-        {
-          "date": "2026-07-21",
-          "name": 95.63,
-          "benchmark": 115.34
-        },
-        {
-          "date": "2026-07-22",
-          "name": 96.69,
-          "benchmark": 115.29
-        },
-        {
-          "date": "2026-07-23",
-          "name": 94.39,
-          "benchmark": 114.92
-        },
-        {
-          "date": "2026-07-24",
-          "name": 92.62,
-          "benchmark": 115.38
-        },
-        {
-          "date": "2026-07-27",
-          "name": 90.75,
-          "benchmark": 115.74
-        },
-        {
-          "date": "2026-07-28",
-          "name": 90.54,
-          "benchmark": 115.76
-        },
-        {
-          "date": "2026-07-29",
-          "name": 90.65,
-          "benchmark": 113.79
-        },
-        {
-          "date": "2026-07-30",
-          "name": 89.99,
-          "benchmark": 114.8
-        },
-        {
-          "date": "2026-07-31",
-          "name": 88.46,
-          "benchmark": 114.65
-        },
-        {
-          "date": "2026-08-03",
-          "name": 87.69,
-          "benchmark": 115.95
-        },
-        {
-          "date": "2026-08-04",
-          "name": 101.17,
-          "benchmark": 118.02
-        },
-        {
-          "date": "2026-08-05",
-          "name": 98.8,
-          "benchmark": 117.27
-        },
-        {
-          "date": "2026-08-06",
-          "name": 97.2,
-          "benchmark": 116.86
-        },
-        {
-          "date": "2026-08-07",
-          "name": 97.2,
-          "benchmark": 118.47
-        },
-        {
-          "date": "2026-08-10",
-          "name": 99.23,
-          "benchmark": 118.1
-        },
-        {
-          "date": "2026-08-11",
-          "name": 101.43,
-          "benchmark": 118.45
-        },
-        {
-          "date": "2026-08-12",
-          "name": 99.34,
-          "benchmark": 118.89
-        },
-        {
-          "date": "2026-08-13",
-          "name": 100.61,
-          "benchmark": 119.37
-        },
-        {
-          "date": "2026-08-14",
-          "name": 99.81,
-          "benchmark": 119.76
-        },
-        {
-          "date": "2026-08-17",
-          "name": 98.13,
-          "benchmark": 119.5
-        },
-        {
-          "date": "2026-08-18",
-          "name": 97.26,
-          "benchmark": 117.63
-        },
-        {
-          "date": "2026-08-19",
-          "name": 99.69,
+          "name": 106.68,
           "benchmark": 117.35
         },
         {
-          "date": "2026-08-20",
-          "name": 98.93,
-          "benchmark": 116.31
+          "date": "2026-06-22",
+          "name": 103.59,
+          "benchmark": 117.83
         },
         {
-          "date": "2026-08-21",
-          "name": 99.03,
-          "benchmark": 116.87
+          "date": "2026-06-23",
+          "name": 101.63,
+          "benchmark": 116.64
         },
         {
-          "date": "2026-08-24",
-          "name": 95.97,
-          "benchmark": 116.01
+          "date": "2026-06-24",
+          "name": 100.82,
+          "benchmark": 117.35
         },
         {
-          "date": "2026-08-25",
-          "name": 93.85,
-          "benchmark": 115.93
+          "date": "2026-06-25",
+          "name": 101.71,
+          "benchmark": 118.43
         },
         {
-          "date": "2026-08-26",
-          "name": 93.61,
-          "benchmark": 116.67
+          "date": "2026-06-26",
+          "name": 101.82,
+          "benchmark": 118.07
         },
         {
-          "date": "2026-08-27",
-          "name": 92.76,
+          "date": "2026-06-29",
+          "name": 99.3,
+          "benchmark": 118.52
+        },
+        {
+          "date": "2026-06-30",
+          "name": 97.01,
+          "benchmark": 119.44
+        },
+        {
+          "date": "2026-07-01",
+          "name": 96.77,
+          "benchmark": 118.38
+        },
+        {
+          "date": "2026-07-02",
+          "name": 99.36,
+          "benchmark": 117.8
+        },
+        {
+          "date": "2026-07-06",
+          "name": 99.4,
+          "benchmark": 118.31
+        },
+        {
+          "date": "2026-07-07",
+          "name": 101.36,
+          "benchmark": 116.86
+        },
+        {
+          "date": "2026-07-08",
+          "name": 100.73,
+          "benchmark": 115.73
+        },
+        {
+          "date": "2026-07-09",
+          "name": 98.98,
+          "benchmark": 117.21
+        },
+        {
+          "date": "2026-07-10",
+          "name": 100.32,
+          "benchmark": 117.14
+        },
+        {
+          "date": "2026-07-13",
+          "name": 101.09,
+          "benchmark": 116.49
+        },
+        {
+          "date": "2026-07-14",
+          "name": 102.38,
+          "benchmark": 117.04
+        },
+        {
+          "date": "2026-07-15",
+          "name": 102.39,
+          "benchmark": 117.09
+        },
+        {
+          "date": "2026-07-16",
+          "name": 102.43,
+          "benchmark": 117.68
+        },
+        {
+          "date": "2026-07-17",
+          "name": 103.16,
+          "benchmark": 116.96
+        },
+        {
+          "date": "2026-07-20",
+          "name": 102.21,
+          "benchmark": 116.04
+        },
+        {
+          "date": "2026-07-21",
+          "name": 101.29,
+          "benchmark": 117.25
+        },
+        {
+          "date": "2026-07-22",
+          "name": 102.41,
+          "benchmark": 117.2
+        },
+        {
+          "date": "2026-07-23",
+          "name": 99.97,
+          "benchmark": 116.82
+        },
+        {
+          "date": "2026-07-24",
+          "name": 98.1,
+          "benchmark": 117.3
+        },
+        {
+          "date": "2026-07-27",
+          "name": 96.12,
+          "benchmark": 117.66
+        },
+        {
+          "date": "2026-07-28",
+          "name": 95.89,
+          "benchmark": 117.68
+        },
+        {
+          "date": "2026-07-29",
+          "name": 96.01,
+          "benchmark": 115.67
+        },
+        {
+          "date": "2026-07-30",
+          "name": 95.31,
           "benchmark": 116.7
         },
         {
+          "date": "2026-07-31",
+          "name": 93.69,
+          "benchmark": 116.55
+        },
+        {
+          "date": "2026-08-03",
+          "name": 92.88,
+          "benchmark": 117.87
+        },
+        {
+          "date": "2026-08-04",
+          "name": 107.15,
+          "benchmark": 119.97
+        },
+        {
+          "date": "2026-08-05",
+          "name": 104.64,
+          "benchmark": 119.21
+        },
+        {
+          "date": "2026-08-06",
+          "name": 102.95,
+          "benchmark": 118.8
+        },
+        {
+          "date": "2026-08-07",
+          "name": 102.95,
+          "benchmark": 120.43
+        },
+        {
+          "date": "2026-08-10",
+          "name": 105.1,
+          "benchmark": 120.06
+        },
+        {
+          "date": "2026-08-11",
+          "name": 107.43,
+          "benchmark": 120.41
+        },
+        {
+          "date": "2026-08-12",
+          "name": 105.21,
+          "benchmark": 120.86
+        },
+        {
+          "date": "2026-08-13",
+          "name": 106.56,
+          "benchmark": 121.35
+        },
+        {
+          "date": "2026-08-14",
+          "name": 105.71,
+          "benchmark": 121.75
+        },
+        {
+          "date": "2026-08-17",
+          "name": 103.93,
+          "benchmark": 121.48
+        },
+        {
+          "date": "2026-08-18",
+          "name": 103.02,
+          "benchmark": 119.58
+        },
+        {
+          "date": "2026-08-19",
+          "name": 105.58,
+          "benchmark": 119.3
+        },
+        {
+          "date": "2026-08-20",
+          "name": 104.78,
+          "benchmark": 118.24
+        },
+        {
+          "date": "2026-08-21",
+          "name": 104.89,
+          "benchmark": 118.81
+        },
+        {
+          "date": "2026-08-24",
+          "name": 101.65,
+          "benchmark": 117.93
+        },
+        {
+          "date": "2026-08-25",
+          "name": 99.4,
+          "benchmark": 117.85
+        },
+        {
+          "date": "2026-08-26",
+          "name": 99.15,
+          "benchmark": 118.6
+        },
+        {
+          "date": "2026-08-27",
+          "name": 98.25,
+          "benchmark": 118.64
+        },
+        {
           "date": "2026-08-28",
-          "name": 94.99,
-          "benchmark": 115.36
+          "name": 100.61,
+          "benchmark": 117.27
         },
         {
           "date": "2026-08-31",
-          "name": 94.19,
-          "benchmark": 114.79
+          "name": 99.76,
+          "benchmark": 116.69
         },
         {
           "date": "2026-09-01",
-          "name": 93.14,
-          "benchmark": 113.59
+          "name": 98.64,
+          "benchmark": 115.47
         },
         {
           "date": "2026-09-02",
-          "name": 95.7,
-          "benchmark": 114.42
+          "name": 101.36,
+          "benchmark": 116.31
         },
         {
           "date": "2026-09-03",
-          "name": 93.6,
-          "benchmark": 115.37
+          "name": 99.14,
+          "benchmark": 117.28
         },
         {
           "date": "2026-09-04",
-          "name": 93.84,
-          "benchmark": 115.52
+          "name": 99.39,
+          "benchmark": 117.43
         },
         {
           "date": "2026-09-08",
-          "name": 93.79,
-          "benchmark": 114.76
+          "name": 99.34,
+          "benchmark": 116.66
         },
         {
           "date": "2026-09-09",
-          "name": 90.06,
-          "benchmark": 113.54
+          "name": 95.39,
+          "benchmark": 115.42
         },
         {
           "date": "2026-09-10",
-          "name": 89.86,
-          "benchmark": 112.47
+          "name": 95.18,
+          "benchmark": 114.33
         },
         {
           "date": "2026-09-11",
-          "name": 88.85,
-          "benchmark": 113.37
+          "name": 94.1,
+          "benchmark": 115.25
         },
         {
           "date": "2026-09-14",
-          "name": 86.52,
-          "benchmark": 112.36
+          "name": 91.64,
+          "benchmark": 114.22
         },
         {
           "date": "2026-09-15",
-          "name": 87.85,
-          "benchmark": 111.9
+          "name": 93.05,
+          "benchmark": 113.75
         },
         {
           "date": "2026-09-16",
-          "name": 88.66,
-          "benchmark": 111.24
+          "name": 93.9,
+          "benchmark": 113.08
         },
         {
           "date": "2026-09-17",
-          "name": 88.54,
-          "benchmark": 111.24
+          "name": 93.78,
+          "benchmark": 113.68
         },
         {
           "date": "2026-09-18",
-          "name": 86.66,
-          "benchmark": 111.24
+          "name": 91.79,
+          "benchmark": 113.22
         },
         {
           "date": "2026-09-21",
-          "name": 85.03,
-          "benchmark": 111.24
+          "name": 90.06,
+          "benchmark": 113.5
         },
         {
           "date": "2026-09-22",
-          "name": 86.32,
-          "benchmark": 111.24
+          "name": 91.43,
+          "benchmark": 113.86
+        },
+        {
+          "date": "2026-09-23",
+          "name": 90.92,
+          "benchmark": 113.16
+        },
+        {
+          "date": "2026-09-24",
+          "name": 88.72,
+          "benchmark": 112.72
+        },
+        {
+          "date": "2026-09-25",
+          "name": 89.98,
+          "benchmark": 113.08
+        },
+        {
+          "date": "2026-09-28",
+          "name": 88.82,
+          "benchmark": 112.26
+        },
+        {
+          "date": "2026-09-29",
+          "name": 84.24,
+          "benchmark": 112.12
+        },
+        {
+          "date": "2026-09-30",
+          "name": 82.8,
+          "benchmark": 111.52
+        },
+        {
+          "date": "2026-10-01",
+          "name": 83.02,
+          "benchmark": 112.65
+        },
+        {
+          "date": "2026-10-02",
+          "name": 84.39,
+          "benchmark": 113.72
+        },
+        {
+          "date": "2026-10-05",
+          "name": 85.86,
+          "benchmark": 114.16
+        },
+        {
+          "date": "2026-10-06",
+          "name": 84.24,
+          "benchmark": 114.63
+        },
+        {
+          "date": "2026-10-07",
+          "name": 81.75,
+          "benchmark": 112.75
+        },
+        {
+          "date": "2026-10-08",
+          "name": 82.8,
+          "benchmark": 113.14
+        },
+        {
+          "date": "2026-10-09",
+          "name": 82.78,
+          "benchmark": 113.76
+        },
+        {
+          "date": "2026-10-12",
+          "name": 82.19,
+          "benchmark": 113.32
+        },
+        {
+          "date": "2026-10-13",
+          "name": 82.21,
+          "benchmark": 113.46
+        },
+        {
+          "date": "2026-10-14",
+          "name": 82.67,
+          "benchmark": 112.0
+        },
+        {
+          "date": "2026-10-15",
+          "name": 84.53,
+          "benchmark": 113.12
+        },
+        {
+          "date": "2026-10-16",
+          "name": 84.16,
+          "benchmark": 112.06
         }
       ],
       "name_symbol": "WLK",
       "benchmark_symbol": "MDY",
-      "as_of": "2026-09-22",
+      "as_of": "2026-10-16",
       "window_days": 364,
-      "name_return": -0.13676286072772903,
-      "benchmark_return": 0.11235842437606491,
-      "source_ref": "EOD WLK vs MDY rebased to 100, 2025-09-23..2026-09-22"
+      "name_return": -0.15840531561461801,
+      "benchmark_return": 0.12058893455150632,
+      "source_ref": "EOD WLK vs MDY rebased to 100, 2025-10-17..2026-10-16"
     },
     "operating_drivers": {
       "rows": [
@@ -9306,9 +9487,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "global polyethylene supply disrupted by Middle East conflict",
+          "metric": "global polyethylene supply disrupted",
           "period": "Q1 2026",
-          "value": "approximately 10% to 15%",
+          "value": "approximately 10% to 15% of global polyethylene supply",
           "value_num": null,
           "unit": null,
           "verbatim": "Industry consultants estimate that this conflict has disrupted approximately 10% to 15% of global polyethylene supply and approximately 5% of global PVC resin supply.",
@@ -9318,9 +9499,9 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "global PVC resin supply disrupted by Middle East conflict",
+          "metric": "global PVC resin supply disrupted",
           "period": "Q1 2026",
-          "value": "approximately 5%",
+          "value": "approximately 5% of global PVC resin supply",
           "value_num": null,
           "unit": null,
           "verbatim": "Industry consultants estimate that this conflict has disrupted approximately 10% to 15% of global polyethylene supply and approximately 5% of global PVC resin supply.",
@@ -9332,7 +9513,7 @@
           "kind": "competitive_position",
           "metric": "global oil supply disrupted",
           "period": "Q1 2026",
-          "value": "up to 20%",
+          "value": "up to 20% of global oil supply is disrupted",
           "value_num": null,
           "unit": null,
           "verbatim": "Furthermore, up to 20% of global oil supply is disrupted, which has reduced the availability of chemical feedstocks such as naphtha for much of the global chemical industry, creating further declines in the global supply of polyethylene and PVC.",
@@ -9342,9 +9523,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "PEM sequential sales volume growth (excluding 2025 plant shutdowns)",
+          "metric": "PEM sequential volume growth",
           "period": "Q1 2026",
-          "value": "3% sequential volume growth",
+          "value": "3% sequential volume growth, excluding the impact to volumes from our 2025 plant shutdowns",
           "value_num": null,
           "unit": null,
           "verbatim": "PEM delivered net sales of $1.7 billion and EBITDA of $36 million on 3% sequential volume growth, excluding the impact to volumes from our 2025 plant shutdowns.",
@@ -9354,7 +9535,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "HIP sequential sales volume growth (excluding SCA acquisition)",
+          "metric": "HIP sequential sales volume growth (ex-SCA acquisition)",
           "period": "Q1 2026",
           "value": "10% sequential sales volume growth",
           "value_num": null,
@@ -9365,106 +9546,10 @@
           "tier": "llm-fenced"
         },
         {
-          "kind": "leading_indicator",
-          "metric": "EBITDA uplift from footprint optimization and cost savings actions",
-          "period": "Q1 2026",
-          "value": "approximately $150 million of EBITDA uplift",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "our first quarter results benefited from our 3-pillar profitability improvement plan, including delivering approximately $150 million of EBITDA uplift from footprint optimization and cost savings actions.",
-          "following_context": "While we still have some work to do to get our plant reliability all the way to where I would like it, I'm pleased with the progress that we have made to date and the trajectory of our reliability initiatives. Overall, we remain confident that our 3-pillar profitability improvement plan will deliver the targeted $600 million EBITDA uplift in 2026.",
-          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "HIP average sales price change year-over-year (excluding acquisition)",
-          "period": "Q1 2026 vs Q1 2025",
-          "value": "2% decline in average sales price",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "which were in line with the first quarter of 2025 as the January acquisition of ACI offset a 2% decline in average sales price and a 2% decline in sales volume, excluding the acquisition.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "HIP sales volume change year-over-year (excluding acquisition)",
-          "period": "Q1 2026 vs Q1 2025",
-          "value": "2% decline in sales volume",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "which were in line with the first quarter of 2025 as the January acquisition of ACI offset a 2% decline in average sales price and a 2% decline in sales volume, excluding the acquisition.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "HIP sequential sales volume growth (including ACI acquisition)",
-          "period": "Q1 2026 vs Q4 2025",
-          "value": "15% sequential increase in sales volume",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "When compared to the fourth quarter of 2025, HIP segment sales of $1 billion rose 10% by a 15% sequential increase in sales volume, including the ACI acquisition that more than offset a 5% decrease in average sales prices.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "HIP sequential average sales price change",
-          "period": "Q1 2026 vs Q4 2025",
-          "value": "5% decrease in average sales prices",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "When compared to the fourth quarter of 2025, HIP segment sales of $1 billion rose 10% by a 15% sequential increase in sales volume, including the ACI acquisition that more than offset a 5% decrease in average sales prices.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "PEM natural gas price increase (sequential)",
-          "period": "Q1 2026 vs Q4 2025",
-          "value": "34% higher natural gas price",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "First quarter EBITDA of $36 million decreased by $9 million from the fourth quarter of 2025, largely as a result of a 34% higher natural gas price due to the impact of cold weather early in the quarter.",
-          "following_context": "Compared to the fourth quarter of 2025, PEM average sales price increased 3%, reflecting improved price realization for olefins, polyethylene and caustic soda toward the end of the quarter, while sales volumes increased 3%, excluding volumes associated with the 2025 plant shutdowns.",
-          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "PEM average sales price change (sequential)",
-          "period": "Q1 2026 vs Q4 2025",
-          "value": "increased 3%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Compared to the fourth quarter of 2025, PEM average sales price increased 3%, reflecting improved price realization for olefins, polyethylene and caustic soda toward the end of the quarter, while sales volumes increased 3%, excluding volumes associated with the 2025 plant shutdowns.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "PEM sales volume change (sequential, excluding 2025 plant shutdowns)",
-          "period": "Q1 2026 vs Q4 2025",
-          "value": "sales volumes increased 3%",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Compared to the fourth quarter of 2025, PEM average sales price increased 3%, reflecting improved price realization for olefins, polyethylene and caustic soda toward the end of the quarter, while sales volumes increased 3%, excluding volumes associated with the 2025 plant shutdowns.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
           "kind": "competitive_position",
           "metric": "share of products manufactured in North America",
           "period": "Q1 2026",
-          "value": "approximately 85%",
+          "value": "approximately 85% of our products are manufactured",
           "value_num": null,
           "unit": null,
           "verbatim": "our globally advantaged feedstock and energy position in North America, where approximately 85% of our products are manufactured.",
@@ -9473,8 +9558,92 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "pricing_action",
+          "metric": "HIP average sales price (year-over-year)",
+          "period": "Q1 2026",
+          "value": "a 2% decline in average sales price",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "as the January acquisition of ACI offset a 2% decline in average sales price and a 2% decline in sales volume, excluding the acquisition.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "HIP sales volume (year-over-year, ex-acquisition)",
+          "period": "Q1 2026",
+          "value": "a 2% decline in sales volume, excluding the acquisition",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "as the January acquisition of ACI offset a 2% decline in average sales price and a 2% decline in sales volume, excluding the acquisition.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "HIP sequential sales volume increase (incl. ACI)",
+          "period": "Q1 2026",
+          "value": "15% sequential increase in sales volume, including the ACI acquisition",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "When compared to the fourth quarter of 2025, HIP segment sales of $1 billion rose 10% by a 15% sequential increase in sales volume, including the ACI acquisition that more than offset a 5% decrease in average sales prices.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "pricing_action",
+          "metric": "HIP average sales prices (sequential)",
+          "period": "Q1 2026 vs Q4 2025",
+          "value": "a 5% decrease in average sales prices",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "When compared to the fourth quarter of 2025, HIP segment sales of $1 billion rose 10% by a 15% sequential increase in sales volume, including the ACI acquisition that more than offset a 5% decrease in average sales prices.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "pricing_action",
+          "metric": "PEM average sales price (sequential)",
+          "period": "Q1 2026 vs Q4 2025",
+          "value": "PEM average sales price increased 3%",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Compared to the fourth quarter of 2025, PEM average sales price increased 3%, reflecting improved price realization for olefins, polyethylene and caustic soda toward the end of the quarter, while sales volumes increased 3%, excluding volumes associated with the 2025 plant shutdowns.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "PEM sales volume (sequential)",
+          "period": "Q1 2026 vs Q4 2025",
+          "value": "sales volumes increased 3%, excluding volumes associated with the 2025 plant shutdowns",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Compared to the fourth quarter of 2025, PEM average sales price increased 3%, reflecting improved price realization for olefins, polyethylene and caustic soda toward the end of the quarter, while sales volumes increased 3%, excluding volumes associated with the 2025 plant shutdowns.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "pass_through_structure",
-          "metric": "pass-through of transportation and raw material cost increases in HIP",
+          "metric": "PEM natural gas price impact (sequential)",
+          "period": "Q1 2026 vs Q4 2025",
+          "value": "34% higher natural gas price due to the impact of cold weather early in the quarter",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "First quarter EBITDA of $36 million decreased by $9 million from the fourth quarter of 2025, largely as a result of a 34% higher natural gas price due to the impact of cold weather early in the quarter.",
+          "following_context": "Compared to the fourth quarter of 2025, PEM average sales price increased 3%, reflecting improved price realization for olefins, polyethylene and caustic soda toward the end of the quarter, while sales volumes increased 3%, excluding volumes associated with the 2025 plant shutdowns.",
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "pass_through_structure",
+          "metric": "HIP cost pass-through of transportation and raw material costs",
           "period": "2026",
           "value": "we expect to pass these cost increases through",
           "value_num": null,
@@ -9485,10 +9654,34 @@
           "tier": "llm-fenced"
         },
         {
+          "kind": "pricing_action",
+          "metric": "PEM average sales price (sequential)",
+          "period": "Q2 2026 vs Q1 2026",
+          "value": "a 21% sequential increase in PEM's average sales price",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "which along with tighter global supply-demand conditions contributed to a 21% sequential increase in PEM's average sales price.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "PEM sales volume (sequential)",
+          "period": "Q2 2026 vs Q1 2026",
+          "value": "a 2% sequential increase in sales volume, driven by improved North American demand",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "PEM also benefited from a 2% sequential increase in sales volume, driven by improved North American demand.",
+          "following_context": "Taken together, we believe that PEM's second quarter performance demonstrates the value of PEM's globally advantaged feedstock and energy position and the substantial earnings leverage that PEM has to a better global supply-demand balance for its products, particularly polyethylene, caustic soda and PVC resin.",
+          "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
           "kind": "competitive_position",
           "metric": "share of production capacity in North America",
           "period": "Q2 2026",
-          "value": "over 85%",
+          "value": "over 85% of our production capacity resides",
           "value_num": null,
           "unit": null,
           "verbatim": "PEMs feedstock and energy cost advantage in North America, where over 85% of our production capacity resides, was an important factor in PEM's second quarter earnings improvement.",
@@ -9498,19 +9691,7 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "3-pillar profitability improvement plan contribution to year-over-year EBITDA improvement",
-          "period": "Q2 2026",
-          "value": "approximately $150 million",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "Second, our 3-pillar profitability improvement plan contributed approximately $150 million to the year-over-year EBITDA improvement.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "HIP year-over-year organic sales volume growth",
+          "metric": "HIP organic sales volume growth (year-over-year)",
           "period": "Q2 2026",
           "value": "6% year-over-year organic sales volume growth",
           "value_num": null,
@@ -9522,33 +9703,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "PEM average sales price change (sequential)",
+          "metric": "HIP revenue growth (year-over-year)",
           "period": "Q2 2026",
-          "value": "21% sequential increase in PEM's average sales price",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "which along with tighter global supply-demand conditions contributed to a 21% sequential increase in PEM's average sales price.",
-          "following_context": null,
-          "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "PEM sales volume change (sequential)",
-          "period": "Q2 2026",
-          "value": "2% sequential increase in sales volume",
-          "value_num": null,
-          "unit": null,
-          "verbatim": "PEM also benefited from a 2% sequential increase in sales volume, driven by improved North American demand.",
-          "following_context": "Taken together, we believe that PEM's second quarter performance demonstrates the value of PEM's globally advantaged feedstock and energy position and the substantial earnings leverage that PEM has to a better global supply-demand balance for its products, particularly polyethylene, caustic soda and PVC resin.",
-          "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
-          "tier": "llm-fenced"
-        },
-        {
-          "kind": "leading_indicator",
-          "metric": "HIP revenue growth year-over-year",
-          "period": "Q2 2026",
-          "value": "grew 8% year-over-year",
+          "value": "HIP second quarter revenue grew 8% year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "HIP second quarter revenue grew 8% year-over-year, driven by solid 6% organic sales volume growth, which translated into stable EBITDA despite cost inflation and a lower average sales price.",
@@ -9558,9 +9715,9 @@
         },
         {
           "kind": "leading_indicator",
-          "metric": "pipe and fittings sales volume growth year-over-year",
+          "metric": "pipe and fittings sales volume growth (year-over-year)",
           "period": "Q2 2026",
-          "value": "grew roughly 20% year-over-year",
+          "value": "pipe and fittings sales volume grew roughly 20% year-over-year",
           "value_num": null,
           "unit": null,
           "verbatim": "In fact, pipe and fittings sales volume grew roughly 20% year-over-year as a result of continued North American infrastructure investments, including the growth in data center projects.",
@@ -9576,142 +9733,158 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "mixed — a real Q2 earnings step-change and self-help lever offset by a conflict-dependent pricing tailwind, a loss-making core segment and elevated leverage.",
+    "evidence_balance": "mixed — a genuine Q2 EBITDA/PEM-margin recovery into the print is offset by a trough-denominator multiple near its ceiling and a disruption-dependent, loss-making core segment.",
     "bull_points": [
       {
-        "claim": "Q2 2026 delivered a step-change EBITDA of $679M (adjusted), versus $340M in Q2 2025 and $235M in Q1 2026 — a substantial sequential and year-over-year improvement heading into the next print.",
+        "claim": "The next results print is dated 2026-11-03, a near-term catalyst the price does not yet reflect, testing whether the Q2 EBITDA recovery momentum carries.",
+        "source_ref": "cadence: EDGAR submissions (median 91d gap over 49 results 8-Ks; last print 2026-08-04)",
+        "cited": true
+      },
+      {
+        "claim": "Q2 2026 adjusted EBITDA of $679M was a substantial sequential and year-over-year improvement (vs Q1 2026 $235M and Q2 2025 $340M), showing the earnings trough may be behind it entering the print.",
         "source_ref": "8-K 0001262823-26-000026 EX-99.1",
         "cited": true
       },
       {
-        "claim": "PEM's 21% sequential jump in average sales price in Q2 2026 — driven by a global oil spike that raised competitors' costs while WLK's North American gas-based feedstock stayed cheap — converted directly into margin and is a live, event-driven earnings mechanism.",
+        "claim": "PEM's average sales price rose 21% sequentially in Q2 2026 as a cost-advantaged North American producer captured higher global prices while its gas/ethane costs fell — a live margin-expansion driver into the print.",
         "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The 3-pillar profitability improvement plan contributed roughly $150M to year-over-year EBITDA in Q2 2026 and management reaffirmed a targeted $600M EBITDA uplift for 2026, a self-help lever independent of chemical-cycle pricing.",
+        "claim": "HIP delivered 6% year-over-year organic sales volume growth in Q2 2026 with pipe & fittings up roughly 20% on North American infrastructure and data-center demand, a durable volume driver.",
         "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "HIP posted 6% year-over-year organic sales volume growth in Q2 2026 with pipe and fittings up roughly 20% on North American infrastructure and data-center demand, a durable volume driver visible ahead of the next print.",
+        "claim": "Management targets $600M of EBITDA uplift in 2026 from its three-pillar profitability plan, with footprint optimization and cost savings both tracking ahead of plan in H1.",
         "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "FY26E consensus EBITDA has been revised up over the trailing year (net +7%, $1,792M 12m-ago to $1,914M latest) and FY26 GAAP net income has risen +27%, a positive revision trajectory into the November print.",
+        "claim": "Consensus FY26 EPS Normalized has risen net +17% (12m→latest) and FY26 EBITDA +7%, with FQ3/FQ4 GAAP net income revisions leaning upward in the last month — estimates are being raised, not cut, into the catalyst.",
         "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
         "cited": true
       },
       {
-        "claim": "On a forward basis WLK trades at NTM TEV/EBITDA 6.78x versus the peer NTM median 7.63x — a signal the human must decompose as earned-vs-residual, given the peer set is flagged HETEROGENEOUS.",
-        "source_ref": "CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)",
+        "claim": "Two inputs both read cash-generative: latest-quarter OCF is positive and LTM FCF is positive, giving a self-funding read against the FCF-negative survival flag.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "The trailing EV/EBITDA of 10.7x sits at the 82nd percentile of its own 9.2-year range (median 7.7x) and screens +27% above the peer LTM median 8.4x — but this is the OPTICAL/trailing read: it reflects a depressed LTM EBITDA denominator ($1,125M) rather than a rich price, and the paired forward NTM multiple of 6.78x is BELOW the peer NTM median, so the trailing premium is the consensus misread of a cyclical trough, not the real signal.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
+        "claim": "The 10.7x EV/EBITDA sits at the 82nd percentile of its own 9.2-year range (median 7.7x) — on the trailing basis the stock is near its own ceiling, not cheap, because the denominator (depressed LTM EBITDA $1,125M) is collapsed; this is the REAL signal of a cyclically-trough multiple, not an optical misread.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 38 quarters spanning 2017-03-31..2026-06-30 (9.2y) (partial last column excluded from the distribution)",
         "cited": true
       },
       {
-        "claim": "FY2025 segment operating income shows Performance & Essential Materials at −$2,100M (−29.9% margin) against Housing & Infrastructure Products' +$587M — the core materials segment was deeply loss-making, and the 2026 recovery leans on an oil-price-shock pricing tailwind management itself calls fluid.",
+        "claim": "EBITDA margin collapsed from 16% (FY24) to 7% (FY25) with absolute EBITDA falling 834 (FY25) from 1,927 (FY24) — read together, the % fall is confirmed by absolute EBITDA cratering, so the margin decline is the REAL signal of deep cyclical/structural deterioration, not a mix optical.",
+        "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+        "cited": true
+      },
+      {
+        "claim": "The FY25 segment split shows Performance and Essential Materials (66% of revenue) at −$2,100M operating loss (−29.9% margin) — the dominant segment is loss-making, a structural, not optical, drag.",
         "source_ref": "EDGAR 10-K 0001262823-26-000016 XBRL instance wlk-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31",
         "cited": true
       },
       {
-        "claim": "Leverage is elevated at net-debt/EBITDA 3.6x (total-debt/EBITDA 4.7x vs peer median 3.8x) on a still-depressed LTM EBITDA base, and the company took a $727M goodwill impairment in FY2025 — the balance sheet carries the trough, not the recovery.",
-        "source_ref": "CIQ Net Debt $4,024M [Q2 Jun-30-2026] ÷ CIQ EBITDA $1,125M [LTM 12 months Jun-30-2026]",
+        "claim": "The stock moved ALONE: −44% over 180d versus a cohort median +31%, a deeply idiosyncratic de-rating rather than a sector-wide move.",
+        "source_ref": "derived from 2 cohort names; face-validity",
         "cited": true
       },
       {
-        "claim": "The stock has moved alone to the downside — down 39% over 180 days versus a +8.5% market benchmark (rel −48%) and a cohort median of +52% — an idiosyncratic gradual bleed, not a shared-sector move, suggesting a name-specific concern.",
-        "source_ref": "EOD WLK−MDY 180d to 2026-09-22 (assembly, cap-band)",
+        "claim": "The three-pillar EBITDA recovery leans on a Middle East oil-supply disruption management itself calls fluid (10–15% of global polyethylene, ~5% of PVC resin, up to 20% of oil disrupted) — the Q2 margin tailwind may fade before the exit if the conflict resolves.",
+        "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
         "cited": true
       },
       {
-        "claim": "The self-help pricing recovery may already be reflected: FY26E consensus EBITDA revisions net only +7% over twelve months, the mean analyst target is $92.81 versus a $68.80 close (Hold, 3.00), and the KeyBanc upgrade came with a target CUT from $115 to $92 — the catalyst case is partly in the estimates.",
+        "claim": "On the same LTM period, CFO $631M minus capex $896M equals −$265M — by the CFO-less-capex basis the business consumed cash, directly contradicting the levered-FCF-positive read.",
+        "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]",
+        "cited": true
+      },
+      {
+        "claim": "Consensus target is a Hold (3.00) with price $64.56 already far below the $91 median target set by sell-side still rating Hold-heavy (10 Holds), and the stock is near its 52-week low of $56.33.",
         "source_ref": "CIQ Estimates→Consensus",
         "cited": true
       }
     ],
     "twin_reference_cases": [
       {
-        "name": "LyondellBasell Industries N.V.",
-        "outcome": "moved on the catalyst",
-        "distinguishing_fact": "North American gas-advantaged commodity-chemical peer whose earnings swing with the global oil-vs-gas feedstock spread — the same trough-to-recovery pricing dynamic driving WLK's PEM segment.",
-        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
-      },
-      {
         "name": "Olin Corporation",
         "outcome": "was already priced or faded before the exit",
-        "distinguishing_fact": "Chlor-alkali/PVC-adjacent producer whose commodity-price bounces have repeatedly faded when the supply-shock premium normalised before it reached earnings.",
+        "distinguishing_fact": "A cost-advantaged North American chlorvinyls/commodity-chemicals peer whose trough-cycle earnings left the multiple optically elevated on collapsed EBITDA, with a cyclically-driven de-rating.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Celanese Corporation",
         "outcome": "was already priced or faded before the exit",
-        "distinguishing_fact": "Levered chemical peer (debt/EBITDA 6.9x) whose optical trough multiple masked a value-trap balance sheet rather than an overshoot — the earned-vs-residual caution.",
+        "distinguishing_fact": "An acetyl/commodity-chemicals peer carrying heavy leverage and goodwill-impairment history through a demand trough, where cheap-vs-history did not mark a bottom.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
-        "name": "Dow Inc.",
-        "outcome": "was already priced or faded before the exit",
-        "distinguishing_fact": "Large-cap commodity chemical name that also took a goodwill write-down in the same trough and where the cyclical recovery arrived slower than the multiple implied.",
+        "name": "LyondellBasell Industries N.V.",
+        "outcome": "moved on the catalyst",
+        "distinguishing_fact": "A North-American-advantaged polyolefins peer with substantial operating leverage to a tightening global supply-demand balance, where improving spreads drove a quarter-on-quarter earnings re-rate.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Eastman Chemical Company",
+        "outcome": "was already priced or faded before the exit",
+        "distinguishing_fact": "A specialty/commodity chemicals peer with negative EBITDA growth into a soft-demand print, where a single improving quarter did not reverse the structural de-rating.",
+        "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Dow Inc.",
         "outcome": "moved on the catalyst",
-        "distinguishing_fact": "Specialty/commodity chemical name of comparable scale where a positive quarterly volume-and-price inflection lifted the stock off a trough multiple.",
+        "distinguishing_fact": "A large commodity-materials peer whose earnings swing on global polyethylene supply-demand, where a cyclical inflection in spreads was the share-moving event rather than the valuation level.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       }
     ],
     "decisive_question": {
-      "question": "Is the Q2 2026 earnings step-change (PEM margin expansion from the oil-price shock + the $150M/quarter self-help) durable enough to carry the November 3 print, or was it a supply-disruption spike that fades as the Middle East premium normalises — leaving a still-loss-making core materials segment and elevated leverage?",
+      "question": "At the 2026-11-03 print, will the Q2 PEM margin surge and HIP volume growth prove durable enough to confirm the consensus EBITDA recovery, or was Q2 a Middle-East-disruption-driven peak that fades as the conflict and FIFO/price-reset effects normalize?",
       "evidence_for": [
         {
-          "claim": "PEM's 21% sequential price gain in Q2 2026 rested on WLK's structural North American cost advantage (over 85% of capacity gas-based), which management frames as durable earnings leverage rather than a one-off.",
+          "claim": "Q2 2026 PEM average sales price rose 21% sequentially while North American gas/ethane costs fell, directly expanding integrated margins — the load-bearing driver of the EBITDA jump.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "The $150M/quarter 3-pillar cost benefit and the $600M full-year target are self-help levers tracking ahead of plan and independent of the pricing spike.",
+          "claim": "HIP's 6% year-over-year organic volume growth with pipe & fittings up ~20% on infrastructure/data-center demand is a structural (non-weather) demand driver that produced stable segment EBITDA.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "HIP's 6% organic volume growth with pipe-and-fittings up ~20% is an infrastructure/data-center demand driver not tied to the oil shock.",
-          "source_ref": "CIQ transcript: Westlake Corporation, Q2 2026 Earnings Call, Aug 04, 2026.rtf",
+          "claim": "Consensus FY26 EBITDA has been revised net +7% (12m→latest) and FQ3 GAAP net income was revised upward in the last month, suggesting the recovery is being priced into estimates ahead of the print.",
+          "source_ref": "CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Management explicitly calls the Middle East supply disruption 'fluid' and only 'could persist throughout 2026' — the pricing tailwind behind PEM's Q2 margin is conditional on a conflict outside its control.",
+          "claim": "The 21% PEM price gain is explicitly tied to a Middle East oil/feedstock supply disruption management calls fluid — a resolution would remove the tailwind the recovery rests on.",
           "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "FY2025 PEM segment operating income of −$2,100M shows how deep the core hole is; a fading price premium would re-expose the loss.",
+          "claim": "The dominant PEM segment ran a −$2,100M FY25 operating loss (−29.9% margin) — the structural starting point is deeply negative, so a single strong quarter may not confirm a durable turn.",
           "source_ref": "EDGAR 10-K 0001262823-26-000016 XBRL instance wlk-20251231_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2025-12-31",
           "cited": true
         },
         {
-          "claim": "Next-two-quarter revision breadth is heavily negative (EPS Normalized FQ3 2026 3m 0↑/11↓; Revenue FQ3 2026 3m 0↑/12↓), signalling brokers expect the recent quarter's strength to moderate.",
-          "source_ref": "CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)",
+          "claim": "Management flagged that HIP's pass-through of transportation and raw-material cost increases could create a near-term headwind on the timing of cost vs price changes.",
+          "source_ref": "CIQ transcript: Westlake Corporation, Q1 2026 Earnings Call, May 05, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "Company-adjusted LTM EBITDA and covenant-basis leverage are UNKNOWN (not in the 99.1 revised guidance) — the covenant headroom against the 3.00x revolver Total Leverage Ratio cannot be verified, a bearish opacity risk.",
-      "No forward/adjusted EV/EBITDA or adjusted EPS is disclosed in the revised guidance, so a temporarily-depressed vs permanently-impaired trailing multiple cannot be cleanly separated — the overshoot-vs-terminal question stays open.",
-      "Segment EBITDA is not disclosed (only segment operating income and revenue); the profit split by segment inside 2026 cannot be tracked, obscuring how much of the recovery is PEM pricing vs HIP volume.",
-      "Self-funding is MIXED: latest-quarter OCF is negative while LTM 'Levered FCF' is +$23.1M and CFO−capex is −$265M on the same period — whether the business is generating or consuming cash depends on the basis and is unresolved.",
-      "The capital-structure panel is 208 days old and predates an Item 1.02 termination filed 2026-04-06; an instrument listed may already be terminated — the maturity/refinance picture needs verification.",
-      "Whether the November 3 print date is confirmed (it is a cadence-estimate, not a stated date) and whether the oil-price premium persists into FQ3 results."
+      "No forward EV/EBITDA on an adjusted basis and no revised annual adjusted-EPS guide in the newest EX-99.1 — the forward valuation cannot be struck; a missing forward guide is a bearish opacity, not neutral.",
+      "No segment EBITDA disclosed (only segment revenue and FY operating income) — the quarterly PEM-vs-HIP profit mix into the print is opaque, a bearish disclosure gap.",
+      "Whether the Middle East supply disruption persists through the FQ3/FQ4 prints — the single variable the PEM margin recovery depends on, and management calls it fluid.",
+      "The FCF sign is basis-dependent and conflicting: levered-FCF positive $23.1M vs CFO−capex −$265M on the same LTM period — which basis governs the self-funding read is unresolved.",
+      "P/E is NM and the trailing EV/EBITDA is trailing-only (no forward basis) — whether 10.7x reflects a temporarily depressed denominator or a permanent impairment is explicitly unresolved.",
+      "Covenant leverage basis and company-adjusted LTM EBITDA leverage are UNKNOWN; capital-structure panel is 232d old and predates a 2026-04-06 Item 1.02 termination — the true current leverage and any terminated instrument are unverified.",
+      "The peer set is HETEROGENEOUS (market caps $1.6B–$21.7B, 13x span) — whether WLK's EV/EBITDA premium to the 8.4x peer median is EARNED (worse margin 10% vs 12%, worse EBITDA growth −13% vs +1%, higher leverage 4.7x vs 3.8x) or a trough-denominator artifact is for the human to judge, not computed here."
     ],
     "draw_agreement": {
       "attempted": 5,
@@ -9723,27 +9896,31 @@
     }
   },
   "caveats": [
-    "ALSO A CURRENT SCREEN CANDIDATE at rank 141 — judged under the 'ultra_short_term' book, not 'overshoot', by operator ruling: operator decision 2026-09-17 — judged as a short-dated trade rather than an overshoot. Follow reason: Westlake Corp (Performance and Essential Materials; Housing and Infrastructure Products), followed under the ULTRA-SHORT-TERM TRADE book by operator decision 2026-09-17 — judged as a short-dated trade, not as a de-rating to underwrite.",
+    "ALSO A CURRENT SCREEN CANDIDATE at rank 206 — judged under the 'ultra_short_term' book, not 'overshoot', by operator ruling: operator decision 2026-09-17 — judged as a short-dated trade rather than an overshoot. Follow reason: Westlake Corp (Performance and Essential Materials; Housing and Infrastructure Products), followed under the ULTRA-SHORT-TERM TRADE book by operator decision 2026-09-17 — judged as a short-dated trade, not as a de-rating to underwrite.",
     "primary-source: 8-K 0001193125-26-324110 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001193125-26-153703 carries 8.01 but no EX-99.1 exhibit was found",
-    "primary-source: 2 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)",
+    "primary-source: 2 EX-99.1 release(s) + 1 10-Q parsed (+2.8s fetch)",
     "Net debt/EBITDA (3.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.6x as the covenant-basis leverage.",
     "former registrant name: this CIK filed as \"WESTLAKE CHEMICAL CORP\" (2003-09-22 → 2022-02-01) — multi-year series on this page may span a different underlying business; verify continuity across the change (SEC submissions formerNames, CIK 0001262823)"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Security / collateral / guarantors · 8-K 0001193125-16-689964 · d247458dex101.htm",
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Mandatory prepayment / events of default · 8-K 0001193125-16-689964 · d247458dex101.htm",
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Unused commitment fee · 8-K 0001193125-16-689964 · d247458dex101.htm",
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Change in Control definition · 8-K 0001193125-16-689964 · d247458dex101.htm",
+    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Mandatory prepayment / events of default · 8-K 0001193125-10-276447 · dex101.htm",
     "(E5) exhibit not extracted (cost bound): Revolving Credit Facility·dex101.htm",
-    "(E5) exhibit not extracted (cost bound): Term Loans Due 2026·d211826dex101.htm",
-    "TWIN 'Celanese Corporation' has numbers ['6.9'] — must be non-numeric"
+    "(E5) exhibit not extracted (cost bound): Term Loans Due 2026·d211826dex101.htm"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-09-28T16:39:55.580860Z",
-  "extraction_version": "2026-08-16.1",
+  "assembled_at": "2026-10-26T14:49:40.467324Z",
+  "extraction_version": "2026-10-09.3",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory/6e6fc109-9711-43a3-8538-0ac4704a1c72/scratchpad/wt-fl2/data/vinci.db",
+    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory--claude-worktrees-ai-agent-team-practices-e005c8/a08ef917-84bf-4d59-9bc3-5b40b1f95038/scratchpad/wt-pass/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-09-22"
+    "frontier": "2026-10-23"
   },
   "sector": "Materials",
   "industry": {
@@ -13113,7 +13290,7 @@
     "estimate_type": "final consensus before each result — CIQ Estimates→Surprise 'Estimate', Fiscal Years, company level",
     "usable_as_forecast_error_cross_check": true,
     "usable_as_revision_distribution": false,
-    "eligibility_note": "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has been. It is NOT a distribution of how far consensus moves over a holding period; that needs point-in-time consensus snapshots, which no Estimates Report carries.",
+    "eligibility_note": "Each observation is the consensus on the eve of the result — lead time ~0 — so it measures last-mile surprise: a cross-check on scenario severity and on how wrong late consensus has been. It is NOT a distribution of how far consensus moves over a holding period; that needs point-in-time consensus snapshots, which no Estimates Report carries. Each 'actual' is the figure CIQ's Estimates set against its own consensus, which is often NOT the line the financial statements report; `accounting_basis` names the filer's accounting STANDARD (US GAAP, IFRS), never the basis of that actual.",
     "usage_note": "EBIT- or EBITDA-level shock today: error_per_forecast_revenue × today's revenue consensus. Revenue × margin scenario: the SAME year's Revenue pct_error and ratio_error, kept together. ratio_error alone answers how wrong the margin (or capex-intensity) forecast was, and multiplied by revenue it drops the revenue miss's effect. Exact identity: error_per_forecast_revenue = ratio_error + (actual ÷ actual revenue) × (actual revenue ÷ forecast revenue − 1).",
     "series": [
       {
@@ -14221,10 +14398,10 @@
       "snapshot_market_cap": null,
       "snapshot_tev": null,
       "snapshot_reconciles": null,
-      "page_price": 68.8,
-      "page_price_as_of": "2026-09-22",
+      "page_price": 64.56,
+      "page_price_as_of": "2026-10-23",
       "days_price_after_snapshot": null,
-      "value_at_page_price": 11.349152,
+      "value_at_page_price": 10.836999,
       "value_at_page_price_basis": "(page price × point-in-time shares + net debt excluding operating leases) ÷ the history's latest LTM EBITDA — mechanical.valuation.ev_ebitda_ex_lease_at_price"
     },
     "history_series": "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV less operating leases / LTM EBITDA)",
@@ -14291,149 +14468,27 @@
     "conflicts": []
   },
   "date_semantics": {
-    "screen_reference_date": "2026-09-22",
+    "screen_reference_date": "2026-10-16",
     "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
-    "analysis_as_of": "2026-09-22",
+    "analysis_as_of": "2026-10-23",
     "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
-    "price_as_of": "2026-09-22",
+    "price_as_of": "2026-10-23",
     "market_cap_as_of": "2026-09-16",
     "tev_as_of": "2026-09-16",
     "consensus_as_of": "≥2026-09-14",
     "balance_sheet_date": "2026-06-30",
     "historical_multiple_latest_observation": "2026-09-16",
     "historical_multiple_history_through": "2026-06-30",
-    "stock_performance_as_of": "2026-09-22",
-    "assembled_at": "2026-09-28T16:39:55.580860Z",
+    "stock_performance_as_of": "2026-10-16",
+    "assembled_at": "2026-10-26T14:49:40.467324Z",
     "valuation_snapshot_as_of": "2026-09-16",
-    "price_days_after_valuation_snapshot": 6
+    "price_days_after_valuation_snapshot": 37
   },
-  "layer_refreshes": [
-    {
-      "date": "2026-10-07",
-      "extraction_version": "2026-08-16.1",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus",
-        "mechanical.catalyst_path"
-      ]
-    },
-    {
-      "date": "2026-10-07",
-      "extraction_version": "2026-08-16.1",
-      "writer": "refresh",
-      "layers": [
-        "forward_multiple_history"
-      ]
-    },
-    {
-      "date": "2026-10-08",
-      "extraction_version": "2026-10-08.2",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus",
-        "forward_multiple_history",
-        "historical_forecast_error"
-      ]
-    },
-    {
-      "date": "2026-10-08",
-      "extraction_version": "2026-10-08.2",
-      "writer": "anchor-backfill",
-      "layers": [
-        "anchor"
-      ]
-    },
-    {
-      "date": "2026-10-08",
-      "extraction_version": "2026-10-08.3",
-      "writer": "refresh",
-      "layers": [
-        "forward_consensus"
-      ]
-    },
-    {
-      "date": "2026-10-09",
-      "extraction_version": "2026-10-08.4",
-      "writer": "refresh",
-      "layers": [
-        "ev_bridge"
-      ]
-    },
-    {
-      "date": "2026-10-10",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "date_semantics",
-        "forward_multiple_history",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-20",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.valuation",
-        "qa_flags",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-20",
-      "extraction_version": "2026-10-09.3",
-      "writer": "anchor-backfill",
-      "layers": [
-        "anchor",
-        "qa_flags",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-21",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor",
-        "caveats",
-        "mechanical.financial_summary",
-        "mechanical.primary_source",
-        "mechanical.valuation",
-        "valuation_basis"
-      ]
-    },
-    {
-      "date": "2026-10-21",
-      "extraction_version": "2026-10-09.3",
-      "writer": "anchor-backfill",
-      "layers": [
-        "anchor"
-      ]
-    },
-    {
-      "date": "2026-10-23",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.primary_source",
-        "mechanical.valuation"
-      ]
-    },
-    {
-      "date": "2026-10-26",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.financial_summary"
-      ]
-    }
-  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-21T11:18:49.090655Z",
+    "computed_at": "2026-10-26T14:56:37.898936Z",
     "reason": null,
     "data_quality": "revenue_tag_conflict",
     "data_quality_detail": [

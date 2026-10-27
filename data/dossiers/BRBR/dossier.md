@@ -1,6 +1,6 @@
 # Dossier — BELLRING BRANDS, INC. (NYSE: BRBR)
 
-_September 28, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
+_October 26, 2026 · extraction 2026-10-09.3_
 
 # Brief — first cut
 
@@ -33,18 +33,18 @@ Analysed and not buying at any price near today's. The operating case is alive �
 BellRing Brands, Inc., together with its subsidiaries, provides various nutrition products in the United States.
 - **Segments:** Protein-Based Consumer Goods — single segment [1]
 - **Geography:** United States 88%; Other Foreign 8%; Canada 4% [2]
-- **Snapshot:** NYSE · CMP $8.99 (2026-09-22) · cap $1.0B (2026-09-21) · 52-wk $7.82–$37.27 · shares 116.3M · book value/sh $-4.02 [3]
+- **Snapshot:** NYSE · CMP $9.55 (2026-10-23) · cap $1.0B (2026-09-21) ⚠ implies $8.95/sh vs CMP (-6.3%) · 52-wk $7.33–$34.88 · shares 116.3M · book value/sh $-4.02 [3]
 
 **The crux — what decides this, and what would change our mind**
-**Will the announced double-digit Premier price increase (effective Q1 FY27) restore the pre-shock margin structure at acceptable volume elasticity, or is the promotional/competitive intensity now a permanent feature of the category that keeps EBITDA structurally depressed?**
-_7 key unknowns + the evidence for/against — in Analysis_
-**Next catalyst:** and departed the Company effective as of September 1, 2026. ~2026-09 `[stated]` — calendar in Analysis
+**Is the margin collapse transitory (inventory charge + freight + promo intensity that the announced FY27 pricing reverses) or a structural reset in which input-cost inflation and insurgent competition permanently compress the economics — i.e., is the low multiple an overshoot or earned?**
+_8 key unknowns + the evidence for/against — in Analysis_
+**Next catalyst:** Next results print ~2026-11-03 `[cadence-estimate]` — calendar in Analysis
 
 ## What happened — and can it survive?
 - **Shape:** discrete gap-downs — 2026-05-05 earnings [4]
-- **Price (180d):** -40.6% [5]
-- **Market (IWM) 180d:** 16.1% [6]
-- **vs market (180d):** -56.7% [7]
+- **Price (180d):** -41.6% [5]
+- **Market (IWM) 180d:** -1.9% [6]
+- **vs market (180d):** -39.6% [7]
 - **Net debt / EBITDA:** 3.4x [8]
 - **Free cash flow:** positive [9]
 
@@ -89,13 +89,13 @@ _A mechanical re-rate to the median multiple of this name's own trading history,
 _(top points; the full argument is in Analysis)_
 
 _Bull case — the decline is overdone:_
-- Management has committed a specific margin-repair mechanism on a timetable: a double-digit price increase on Premier shakes plus additional powder pricing, both effective Q1 fiscal 2027, with expected elasticity only slightly greater than 1 — the direct lever against the input-cost/margin cause of the drawdown. [10]
-- Premier volume demand is genuinely strong beneath the price/mix hit — Q2 Premier shake volumes rose 12% (with an unfavourable 9% price/mix) and household penetration reached ~23% with the highest shake repeat rate in the category, a demand base the margin damage has not eroded. [11]
-- The underlying category driver remains intact: management states the RTD shake category was up 8% and remains among the fastest-growing in CPG, well ahead of the broader food/beverage industry, framing the collapse as competitive/margin pressure rather than a category-demand failure. [11]
+- Underlying demand metrics remain healthy — Premier household penetration has reached almost 23% with the highest shake repeat rate in the category — supporting the overshoot-vs-terminal reading on volume. [10]
+- Q3 FY26 net sales grew 4% with both brands ahead of plan, indicating the top line was stabilizing into the latest print rather than deteriorating further. [10]
+- Management has already enacted a mechanism to restore margin: a double-digit Premier shake price increase plus powder pricing effective Q1 FY27, which they frame as necessary to offset input inflation and rebuild the margin profile. [10]
 _Bear case — the decline is real:_
-- Leverage is elevated versus the peer set and rising in relative terms — net-debt/EBITDA 3.4x (total-debt/EBITDA 3.5x vs peer median 2.4x) with interest coverage only 4.2x, on a falling EBITDA base and negative book equity (-$467M). [8]
-- Management identifies the cause as structural competitive intensity: 27% of RTD category volumes sold on promotion in Q2 (up 8pts YoY) and the first decline in RTD shake buy-rate per household in 5 years — rising cost to defend share, not a one-quarter blip. [11]
-- Guidance itself has been serially cut through the year — FY26 net-sales guide walked from $2.41–$2.49B (Nov) to $2.325–$2.365B (May) to $2.335–$2.375B (Aug), i.e. from +4–8% growth to ~1–3%, confirming a deteriorating rather than stabilising trajectory. [12]
+- Leverage is elevated versus the group — net-debt/EBITDA 3.4x and total-debt/EBITDA 3.5x vs peer median 2.4x — so a prolonged earnings depression carries real balance-sheet strain, with interest coverage only 4.2x. [11]
+- Competitive intensity is pressuring the core: 27% of RTD shake category volume sold on promotion in Q2 (up 8 pts YoY) and 70% in Q3, with the first decline in RTD buy rate in 5 years — the moat may be eroding as insurgent brands invest aggressively. [12]
+- The announced FY27 price increase carries elasticity risk management itself flags as slightly greater than 1, meaning volume could fall more than price rises — the margin-repair lever may not translate cleanly to EBITDA. [10]
 
 ## Financial snapshot
 - **Financial snapshot** — [13]  <!-- ds-table -->
@@ -129,8 +129,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 - **Buyback — average cost/share:** $29.18 — **fiscal-period average over 2025-10-01→2026-03-31, 181d; NOT a purchase price** and not evidence of when they bought [18]
   - ⚠ **PERIOD MISMATCH** — this average covers 2025-10-01→2026-03-31, 181d while the repurchase cash beside it covers 2025-10-01→2026-06-30, 272d; they are not two views of one window and must not be divided into each other
 - **Acquisition consideration:** _UNKNOWN_ — no acquisition consideration under any of BusinessCombinationConsiderationTransferred1, BusinessCombinationConsiderationTransferred, PaymentsToAcquireBusinessesNetOfCashAcquired — EDGAR XBRL companyfacts
-- **Registered offering pipeline (equity/debt not distinguished):** no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2024-09-12) — routine — 3y window to 2026-09-22 [19]
-- **Schedule 13D/G filing activity:** no 13D on file · Schedule 13G filings 17 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-09-03) — 3y window to 2026-09-22 [20]
+- **Registered offering pipeline (equity/debt not distinguished):** no shelf/supplement/fresh registration · employee-plan (S-8) 1 (S-8, last 2024-09-12) — routine — 3y window to 2026-10-16 [19]
+- **Schedule 13D/G filing activity:** no 13D on file · Schedule 13G filings 16 (SC 13G/SC 13G/A/SCHEDULE 13G/SCHEDULE 13G/A, last 2026-09-03) — 3y window to 2026-10-16 [20]
 - **Stock-based compensation:** stock-based compensation $22.1M = 1.0% of revenue ($2,316.6M, FY 2024-10-01→2025-09-30) [21]
 - **Per-brand split:** _NOT AVAILABLE FROM XBRL_ — goodwill and intangible impairment separate by TAG, but the per-BRAND split (e.g. SMPL's $391.9M across Atkins and OWYN) is footnote prose with no XBRL axis. Read the 10-K impairment note; the aggregate above is complete only at the goodwill/intangible level
 - **Peer acquired-asset intensity — goodwill + intangibles** — [22]  <!-- ds-table -->
@@ -141,7 +141,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 | KVUE | 33,940 | 17,671 | 26,735 | 66% | 52% |
 | HSY | 33,735 | 5,411 | 13,973 | 39% | 16% |
 | SJM | 12,806 | 10,825 | 16,203 | 67% | 85% |
-| CAG | 7,112 | 9,950 | 17,274 | 58% | 140% |
+| CAG | 7,112 | 9,939 | 17,702 | 56% | 140% |
 | ELF | 5,770 | 1,395 | 2,461 | 57% | 24% |
 | HLF | 1,249 | 459 | 2,858 | 16% | 37% |
 | SMPL | 881 | 1,509 | 2,062 | 73% | 171% |
@@ -149,8 +149,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 | NATR | 229 | 0 | 260 | 0% | 0% |
 | NUS | 228 | 43 | 1,122 | 4% | 19% |
 
-- **Median — all peers (n=10):** 48% of assets · 44% of market cap
-- **Median — peers ≥ $1,000M market cap (n=6):** 57% of assets · 44% of market cap
+- **Median — all peers (n=10):** 47% of assets · 44% of market cap
+- **Median — peers ≥ $1,000M market cap (n=6):** 56% of assets · 44% of market cap
 - _Read the ASSETS column for the peer judgement — it measures how acquisitive the balance sheet is. The market-cap column sizes the exposure but moves with the price, so a de-rated name shows a high ratio on unchanged accounting._
 - **Peer write-down history — did they MARK DOWN what they carry? (trailing 5 fiscal years)** — [23]  <!-- ds-table -->
 
@@ -174,8 +174,9 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 ## Valuation — first cut
 - **vs own trading history:** EV/EBITDA (TEV/LTM) 6.4x as-of 2026-09-21 — trailing range 4.3–27.9x (median 19.8x) over 27 closes → 4%ile → near-floor; P/LTM EPS 6.3x [24]
 - **vs peers:** EV/EBITDA 6.4x vs peer median 6.3x (+2%); P/E 6.3x vs peer median 21.9x (-71%) [25]
-- **Comparability:** market caps span $228M–$33.9B (149x); the name is $1.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [26]
-- **The street, for contrast (target · ratings):** Target price: mean $14.71, median $14.50, high/low 20.00/10.00, N 12/12; Ratings: Buy 6, Outperform 2, Hold 5, Underperform 1, Sell 0, No Opinion 1, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-08-26 · export date unverified] [27]
+- **Forward multiples:** P/FY26E (normalized) 9.2x (EPS $1.04); P/FY26E (GAAP) 8.1x (EPS $1.18); P/FY27E (normalized) 7.2x (EPS $1.32); P/FY27E (GAAP) 7.1x (EPS $1.34) — at $9.55 as-of 2026-10-23 [26]
+- **Comparability:** market caps span $228M–$33.9B (149x); the name is $1.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [27]
+- **The street, for contrast (target · ratings):** Target price: mean $14.71, median $14.50, high/low 20.00/10.00, N 12/12; Ratings: Buy 6, Outperform 2, Hold 5, Underperform 1, Sell 0, No Opinion 1, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-08-26 · export date unverified] [28]
 
 # Analysis — full dossier
 
@@ -184,89 +185,88 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
   - 2026-05-05 **-38.8%** → earnings
 
 _Company-specific or market-wide?_
-- **Name 180d return:** -40.6% [5]
-- **Market (IWM) 180d return:** 16.1% [6]
-- **Relative vs market:** -56.7% [7]
+- **Name 180d return:** -41.6% [5]
+- **Market (IWM) 180d return:** -1.9% [6]
+- **Relative vs market:** -39.6% [7]
 _no supplier/customer cohort mapped for this name — the comparison is vs the market only_
 - **Gap-downs — what the results showed (parsed EX-99.1) + the 8-K:**
   - gap-down 2026-05-05 → filed 2026-05-05 [`0001628280-26-030115`](https://www.sec.gov/Archives/edgar/data/1772016/000162828026030115/brbr-20260505.htm)
     - items: 2.02 Results of Operations and Financial Condition
-    - **what the results showed:** adj EBITDA Q2 2026 $53.8M; $11.3M inventory-related charge; 2026 net sales outlook: $2,325.0–$2,365.0M [28]
+    - **what the results showed:** adj EBITDA Q2 2026 $53.8M; $11.3M inventory-related charge; 2026 net sales outlook: $2,325.0–$2,365.0M [29]
 
 ## Business quality
 - **Segments (revenue share):** Protein-Based Consumer Goods — single segment [1]
 - **Segments (EBITDA share — where profit sits):** _UNKNOWN_ — single-segment reporting (Protein-Based Consumer Goods) — no segment EBITDA to break out; the consolidated EBITDA is the whole business
-- **Customers:** 5 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [29]
+- **Customers:** 5 mapped client relationship(s) — roster in JSON; concentration %, when disclosed, is the 10-Q read above [30]
 - **Geographic:** United States 88%; Other Foreign 8%; Canada 4% [2]
 
 ## The argument
 
-**Evidence balance:** mixed — a genuine near-floor multiple and intact category demand sit against a real, cause-identified margin collapse and steep forward-estimate cuts.
+**Evidence balance:** mixed — genuine transitory/turnaround levers (pricing, category growth, self-funding) are offset by a real, mechanism-backed margin collapse, elevated leverage and leadership transition.
 
-**Reproducibility: the draws DISAGREED** — 5 of 5 draws gave 4x mixed, 1x strongly-bearish. The read below is the first draw carrying the majority lean, and the machine proposal is withheld. A tally of this build, not a rate.
+**Reproducibility: the draws DISAGREED** — 5 of 5 draws gave 3x mixed, 2x strongly-bearish. The read below is the first draw carrying the majority lean, and the machine proposal is withheld. A tally of this build, not a rate.
 
 ### Bull case — the decline is overdone
-- Management has committed a specific margin-repair mechanism on a timetable: a double-digit price increase on Premier shakes plus additional powder pricing, both effective Q1 fiscal 2027, with expected elasticity only slightly greater than 1 — the direct lever against the input-cost/margin cause of the drawdown. [10]
-- Premier volume demand is genuinely strong beneath the price/mix hit — Q2 Premier shake volumes rose 12% (with an unfavourable 9% price/mix) and household penetration reached ~23% with the highest shake repeat rate in the category, a demand base the margin damage has not eroded. [11]
-- The underlying category driver remains intact: management states the RTD shake category was up 8% and remains among the fastest-growing in CPG, well ahead of the broader food/beverage industry, framing the collapse as competitive/margin pressure rather than a category-demand failure. [11]
-- The consensus P/E discount to peers (6.3x vs median 21.9x, -71%) sits against a HETEROGENEOUS peer set spanning $228M–$33.9B caps (149x) anchored by far larger, higher-margin names, so the gap is a confidence-gated input, not a clean benchmark — the human must judge whether it is EARNED or RESIDUAL. [25]
-- Absolute EBITDA history shows a scaling franchise not a structurally broken one — EBITDA rose $117M (FY17) → $445M (FY25) even as the margin % fell, so the trailing margin compression is not the whole story and must be read against the absolute line. [30]
-- The business is self-funding on an LTM basis with FCF positive at $201.1M and it is actively returning capital — shares out fell 9.7% over ~1.7y under a $600M buyback authorization. [31]
-- The stock has fallen 75% over the trailing year and now trades at the very floor of its own history — EV/EBITDA 6.4x sits at the 4th percentile of a 27-quarter range (median 19.8x), a de-rate steep enough to demand the value-trap-vs-overshoot question be posed. [24]
+- Underlying demand metrics remain healthy — Premier household penetration has reached almost 23% with the highest shake repeat rate in the category — supporting the overshoot-vs-terminal reading on volume. [10]
+- Q3 FY26 net sales grew 4% with both brands ahead of plan, indicating the top line was stabilizing into the latest print rather than deteriorating further. [10]
+- Management has already enacted a mechanism to restore margin: a double-digit Premier shake price increase plus powder pricing effective Q1 FY27, which they frame as necessary to offset input inflation and rebuild the margin profile. [10]
+- The business is self-funding and solvent: LTM levered FCF of $201.1M and FCF-positive sign support the overshoot case against a terminal read. [31]
+- The decline is idiosyncratic and driven by a cited, identifiable set of transitory pressures (inventory charge, freight, price/mix) rather than a demand collapse — the RTD shake category itself grew ~8% in Q2, well ahead of the broader food/beverage industry. [12]
+- Absolute EBITDA has compounded strongly through FY25 ($117M FY17 → $445M FY25) even as the LTM figure fell to $332M, so the business franchise that generated the cash is intact and the recent drop is from an elevated base, not a structural zero. [32]
+- Capital allocation signals conviction: a $600M buyback was authorized Nov-2025 and the share count fell ~9.7% over ~1.7 years, shrinking the base that the recovering earnings accrue to. [33]
+- On a forward basis the de-rating looks less extreme than the trailing P/E of 6.3x suggests — P/FY27E normalized is ~7.2x and P/FY26E normalized ~9.2x, so the headline trailing multiple overstates cheapness only if forward earnings recover as consensus models. [26]
 
 ### Bear case — the decline is real
-- Leverage is elevated versus the peer set and rising in relative terms — net-debt/EBITDA 3.4x (total-debt/EBITDA 3.5x vs peer median 2.4x) with interest coverage only 4.2x, on a falling EBITDA base and negative book equity (-$467M). [8]
-- Management identifies the cause as structural competitive intensity: 27% of RTD category volumes sold on promotion in Q2 (up 8pts YoY) and the first decline in RTD shake buy-rate per household in 5 years — rising cost to defend share, not a one-quarter blip. [11]
-- Guidance itself has been serially cut through the year — FY26 net-sales guide walked from $2.41–$2.49B (Nov) to $2.325–$2.365B (May) to $2.335–$2.375B (Aug), i.e. from +4–8% growth to ~1–3%, confirming a deteriorating rather than stabilising trajectory. [12]
-- The fundamental deltas show the discount is at least partly EARNED, not pure overshoot — EBITDA growth -27% vs peer median +1%, LT EPS growth -12% vs peer median +12%, and higher leverage (3.5x vs 2.4x), materially worse fundamentals than the median peer. [32]
-- Insider conviction and the Street both lean cautious — consensus is Hold (3.00) with LT growth pegged at -12.4%, and short interest is rising (+11.7% to 13.0M sh, 11.1% of float), against a token $0.06M of insider buys. [33]
-- The margin collapse is the REAL signal, not an optical %: EBITDA margin fell to 14% LTM (from 19–21% prior) AND absolute EBITDA fell in tandem to $332M LTM from $445M FY25 — the % and the absolute line moved down together, confirming genuine profit destruction. [30]
-- The forward earnings path has been gutted, not stabilised — FY26 consensus EBITDA was cut -43% (505.3→288.1) and EPS Normalized -56% over 12m→latest, with FQ4 2026 EBITDA revisions running 0 up / 11 down, a broad and one-directional downgrade. [34]
-- The drawdown is idiosyncratic and severe, not a market move — BRBR returned -40.6% over 180d against IWM +16.1% (-56.7% relative), a discrete gap-down on the 2026-05-05 earnings print, signalling a company-specific re-rating. [7]
+- Leverage is elevated versus the group — net-debt/EBITDA 3.4x and total-debt/EBITDA 3.5x vs peer median 2.4x — so a prolonged earnings depression carries real balance-sheet strain, with interest coverage only 4.2x. [11]
+- Competitive intensity is pressuring the core: 27% of RTD shake category volume sold on promotion in Q2 (up 8 pts YoY) and 70% in Q3, with the first decline in RTD buy rate in 5 years — the moat may be eroding as insurgent brands invest aggressively. [12]
+- The announced FY27 price increase carries elasticity risk management itself flags as slightly greater than 1, meaning volume could fall more than price rises — the margin-repair lever may not translate cleanly to EBITDA. [10]
+- Leadership is in transition at the worst moment: the CEO/President retired and a new CEO started with seven days' tenure at the Q3 call, and the Chief Growth Officer departed — execution risk is heightened precisely when a turnaround must be delivered. [34]
+- The gross-margin collapse is mechanism-backed and severe: adjusted gross margin fell to 22.7% from 34.5% a year earlier on input-cost inflation, tariffs, unfavorable price/mix and freight — a structural cost problem, not a one-quarter blip. [12]
+- The EBITDA margin fall is partly REAL signal, not just optics: LTM EBITDA margin dropped to 14% from 19-21% while absolute LTM EBITDA also FELL to $332M from $445M FY25 — here the % decline is corroborated by an absolute decline, so this is a genuine profit contraction, not a denominator illusion. [32]
+- Consensus has violently cut forward estimates: FY26 EBITDA consensus fell ~43% (505.3 → 288.1) and FY26 normalized EPS ~56% over 12 months, so the trailing multiple is dividing a price into earnings that are themselves still being revised down. [35]
+- The stock's decline is overwhelmingly idiosyncratic: BRBR fell ~41.6% over 180d while the small-cap benchmark was roughly flat (-1.9%), a ~-39.6% relative move signalling a name-specific re-rating rather than a market swoon. [7]
 
 ### Decisive question
-**Will the announced double-digit Premier price increase (effective Q1 FY27) restore the pre-shock margin structure at acceptable volume elasticity, or is the promotional/competitive intensity now a permanent feature of the category that keeps EBITDA structurally depressed?**
+**Is the margin collapse transitory (inventory charge + freight + promo intensity that the announced FY27 pricing reverses) or a structural reset in which input-cost inflation and insurgent competition permanently compress the economics — i.e., is the low multiple an overshoot or earned?**
 
 ### …evidence for
-- Management has committed a concrete double-digit shake price increase plus powder pricing effective Q1 FY27 with expected elasticity only slightly greater than 1, the direct lever to rebuild margin. [10]
-- Underlying demand is intact — Premier household penetration ~23% with the highest shake repeat rate in the category, supporting the ability to take price without losing the franchise. [10]
-- The guide-delivery track record is credible — EBITDA actual ≥ guided floor 7/7 resolved and FY2025 MET, so the committed FY27 margin-repair path has a delivery precedent. [35]
+- Management frames the pressures as transitory and has a concrete margin-repair mechanism: a double-digit Premier shake price increase plus powder pricing effective Q1 FY27 to offset input inflation. [10]
+- Category demand and brand metrics remain healthy — RTD shake category up ~8% and Premier penetration ~23% with highest repeat rate — supporting a volume-driven recovery if pricing sticks. [10]
 
 ### …evidence against
-- The promotional intensity looks structural, not transient — 27% of category volume on promotion in Q2 (up 8pts YoY) and the first buy-rate decline in 5 years, driven by aggressive insurgent competitors. [11]
-- Prior inflation-driven price increases already produced volume declines — Dymatize sales fell 2% on elasticities from earlier pricing, evidence that price does cost volume in this category. [11]
-- Protein-driven commodity inflation is running above management's own initial assumptions and worsening into Q4, a moving cost target the price increase must chase. [11]
+- Adjusted gross margin fell to 22.7% from 34.5% YoY on input inflation, tariffs, price/mix and freight — the magnitude points to a structural cost reset, not a one-off. [12]
+- The pricing lever carries elasticity slightly greater than 1 by management's own admission, plus the first RTD buy-rate decline in 5 years — price hikes may shed volume and not restore EBITDA. [10]
 
 ### Key unknowns
-- Adjusted / forward EV/EBITDA and adjusted EPS are UNKNOWN (not in the 99.1 revised guidance) — so the 6.4x trailing multiple cannot be distinguished from a temporarily depressed vs permanently impaired level; the forward basis needed to judge overshoot-vs-terminal is missing.
-- Whether the Q1 FY27 double-digit price increase holds at the assumed ~1 elasticity is unresolved — the 2026-11-03 print and FY27 guide (promised on the Q4 call) are the checkpoints and post-date this data.
-- Segment-level EBITDA is UNKNOWN — single-segment reporting (Protein-Based Consumer Goods) means no breakout to isolate whether Premier vs Dymatize margin damage is concentrated or broad; the opacity is a bearish gap, not neutral.
-- The EBITDA-basis boundary is UNRESOLVED — implied D&A is 23 in actuals vs 41 in estimates (1.82x, inside the band where GAAP-vs-adjusted basis changes have gone unflagged on this fleet); the estimate row must be reconciled to the company's own guidance basis before any cross-boundary multiple comparison.
-- Self-funding is MIXED, not clean — latest-quarter OCF is negative while LTM FCF is positive; the two-input read does not confirm quarter-level self-funding, and FY26 consensus FCF was cut hard (one broker to $19.3M).
-- New CEO (Michael Axelrod, effective July 29 2026, seventh day at the Q3 call) plus CGO departure and CEO retirement — execution/strategy under a brand-new leadership team is unproven; FY27 strategic priorities are not yet disclosed.
-- Covenant headroom / credit health is UNKNOWN (Credit Health Panel not rendered; debt schedule 308d old) against negative book equity and 3.4x leverage on a falling EBITDA base.
+- No forward adjusted EBITDA or adjusted EPS in the revised FY26 guidance — the adjusted-basis forward earnings power is undisclosed, an opacity risk given the EBITDA-basis estimate/actual check is UNRESOLVED (GAAP actuals vs possibly adjusted estimates in the 1.5-2.0x band).
+- Whether the announced FY27 double-digit price increase holds net of >1 elasticity and competitive promotion — the actual volume response is unknown until the next prints.
+- CIQ's EBITDA is vendor-normalised and runs $69M above the filing-rebuilt LTM figure ($401M vs $332M) due to a legal-settlement add-back; which EBITDA each multiple divides must be confirmed before trusting any leverage or EV/EBITDA read.
+- Peer set is HETEROGENEOUS (market caps $228M–$33.9B, 149x span); the peer median is not a clean benchmark and every peer-relative stat is confidence-gated.
+- No forward basis for the 6.4x EV/EBITDA (trailing only) — cannot distinguish a temporarily depressed level from a permanently impaired one; this near-floor multiple is a neutral fact, not directional.
+- New CEO's strategic priorities and FY27 guidance are not yet disclosed (promised for the Q4 call) — the turnaround plan's substance is unknown.
+- Single-segment reporting (Protein-Based Consumer Goods) means no brand-level or Premier-vs-Dymatize EBITDA split to isolate where the margin damage sits.
+- Whether protein-driven commodity inflation that management says worsens into Q4 continues into FY27, and at what level, is unquantified.
 
 ### Twin reference cases
-- **The Simply Good Foods Company** — went terminal
-  - distinguished by: Closest in-roster analogue: a similarly-sized nutrition/protein-snack single-category CPG name in the same peer set, facing the same value-seeking-consumer and promotional-intensity pressure with declining EBITDA growth — the pattern of a small focused wellness brand hit by category competition.
+- **The Simply Good Foods Company** — recovered
+  - distinguished by: A same-roster peer in the same snacks/nutrition niche also hit by soft volumes and a goodwill/intangible impairment, trading at a low EBITDA multiple — the closest comparable on business model and category dynamics.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Conagra Brands** — went terminal
-  - distinguished by: In-roster analogue of a levered packaged-food name (highest peer leverage) carrying repeated goodwill/intangible write-downs — the pattern of a debt-laden CPG whose earnings power kept re-rating down rather than mean-reverting.
-  - source: CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)
-- **e.l.f. Beauty** — recovered
-  - distinguished by: In-roster analogue of a high-growth small/mid consumer brand that sustained a premium multiple through category leadership and volume momentum — the pattern where a brand's demand strength kept the franchise re-rating up rather than trapping it.
+  - distinguished by: A branded packaged-food peer carrying elevated leverage and repeated large impairments with negative EBITDA growth — the pattern of a value-trap where a low multiple reflected earned, persistent deterioration.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 - **Herbalife Ltd.** — went terminal
-  - distinguished by: In-roster analogue of a levered wellness/nutrition name trading at a rock-bottom multiple where the low multiple reflected earned skepticism about durable earnings, not a temporary overshoot — the value-trap pattern.
+  - distinguished by: A levered wellness-products name trading at a mid-single-digit EBITDA multiple and low P/E where the cheapness persisted alongside stagnant growth — a caution that a low multiple can be earned leverage, not overshoot.
   - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
-- **Central Garden & Pet** — recovered (LLM-claimed — verify)
-  - distinguished by: [Analogue pattern] a single-category consumer brand that absorbed a sharp input-cost/margin shock, pushed through list-price increases the following year, and saw margins normalise without the category demand ever breaking.
+- **Medifast** — went terminal (LLM-claimed — verify)
+  - distinguished by: A single-brand protein/weight-management consumer name whose category growth reversed as competitive dynamics shifted, with earnings halving and no durable recovery despite an optically cheap multiple.
   - source: [LLM-suggested, unverified]
+- **Nu Skin Enterprises** — went terminal
+  - distinguished by: A wellness peer with declining revenue and the lowest multiples in the set, illustrating how a demand-eroding category can keep a name cheap for years.
+  - source: CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)
 
 ## Catalyst calendar — what tests the thesis, and when
 
-- **and departed the Company effective as of September 1, 2026.** — ~2026-09 `[stated]` — a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result [36]
-- **Next results print** — ~2026-11-03 `[cadence-estimate]` — the committed revised outlook (see Revised guidance — the print is the checkpoint that confirms or refutes it) [37]
+- **Next results print** — ~2026-11-03 `[cadence-estimate]` — the committed revised outlook (see Revised guidance — the print is the checkpoint that confirms or refutes it) [36]
 
 _Dates assembled from sources or the analyst's own triggers; no probabilities, no weighting, no direction — weighing catalysts is the verdict's job._
 
@@ -274,7 +274,7 @@ _Dates assembled from sources or the analyst's own triggers; no probabilities, n
 - **Cross-sectional (vs peers — the edge):** EV/EBITDA 6.4x vs peer median 6.3x (+2%); P/E 6.3x vs peer median 21.9x (-71%) [25]
 - **What the current price implies (at stated multiples)** — comparability: HETEROGENEOUS (see Peer comps gate)
   - _TEV as-of 2026-09-21 · multiples as-of 2026-08-26 · † at the name's own multiple the implied level is consensus by identity_
-- **Price-implied levels (at each stated multiple)** — [38]  <!-- ds-table -->
+- **Price-implied levels (at each stated multiple)** — [37]  <!-- ds-table -->
 
 |  | Multiple (× used) | Implied level |
 |---|---|---|
@@ -318,7 +318,7 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 - **Own-history range position:** EV/EBITDA (TEV/LTM) 6.4x as-of 2026-09-21 — trailing range 4.3–27.9x (median 19.8x) over 27 closes → 4%ile → near-floor; P/LTM EPS 6.3x [24]
 
 ## Peer comps
-- **Peer set (roster · caps · business)** — [39]  <!-- ds-table -->
+- **Peer set (roster · caps · business)** — [38]  <!-- ds-table -->
 
 |  | Mkt cap | Business |
 |---|---|---|
@@ -335,8 +335,8 @@ _the three ratios multiply to the gap by IDENTITY — this is a decomposition, n
 
 _the name: $1.0B_
 
-- **Comparability (confidence gate):** market caps span $228M–$33.9B (149x); the name is $1.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [26]
-- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [40]  <!-- ds-table -->
+- **Comparability (confidence gate):** market caps span $228M–$33.9B (149x); the name is $1.0B → HETEROGENEOUS — low comparability: the peer median is anchored by businesses of differing scale/model; scrutinise comparability before reading any peer stat as a clean benchmark. [27]
+- **Forward multiples (name vs peer Low/Median/Mean/High · NTM)** — [39]  <!-- ds-table -->
 
 |  | Name | Low | Median | Mean | High |
 |---|---|---|---|---|---|
@@ -346,7 +346,7 @@ _the name: $1.0B_
 
 _NM = a real state (negative base), not missing_
 
-- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [41]  <!-- ds-table -->
+- **Per-peer grid (cap · valuation · margin · growth · leverage — name vs peers)** — [40]  <!-- ds-table -->
 
 |  | Cap | TEV/EBITDA | TEV/Rev | P/E | EBITDA margin | Rev growth (1y) | Total debt/EBITDA | Net debt ($M) |
 |---|---|---|---|---|---|---|---|---|
@@ -365,7 +365,7 @@ _NM = a real state (negative base), not missing_
 
 
 ## Operating trajectory
-- **Trajectory ($M · % — per period)** — [30]  <!-- ds-table -->
+- **Trajectory ($M · % — per period)** — [32]  <!-- ds-table -->
 
 |  | Sep-2017 (R) | Sep-2018 | Sep-2019 | Sep-2020 | Sep-2021 | Sep-2022 (R) | Sep-2023 (R) | Sep-2024 | Sep-2025 | Jun-2026 (LTM) |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -373,9 +373,9 @@ _NM = a real state (negative base), not missing_
 
 _R reclassified; margin % can fall while absolute EBITDA RISES — read them together; per-period values, never YoY'd across a basis_
 
-- **Share-count trend:** buying back (trailing ~1.7y): 128,782,398 (2024-11-12) → 116,278,194 (2026-07-28), -9.7% [31]
-- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-06-30 — in the latest, $-20M against $46M pre-tax [42]
-- **Return ratios — per fiscal period** — [43]  <!-- ds-table -->
+- **Share-count trend:** buying back (trailing ~1.7y): 128,782,398 (2024-11-12) → 116,278,194 (2026-07-28), -9.7% [33]
+- **Non-operating earnings:** no material non-operating item in the four quarters to 2026-06-30 — in the latest, $-20M against $46M pre-tax [41]
+- **Return ratios — per fiscal period** — [42]  <!-- ds-table -->
 
 |  | FY17 | FY18 | FY19 | FY20 | FY21 | FY22 | FY23 | FY24 | FY25 | LTM |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -388,7 +388,7 @@ _R reclassified; margin % can fall while absolute EBITDA RISES — read them tog
 
 ## The street — estimates & guidance
 _export date unverified (data ≥ 2026-08-26)_
-- **Horizon read (FQ — next-2Q revision breadth)** — [44]:
+- **Horizon read (FQ — next-2Q revision breadth)** — [43]:
   - EPS Normalized FQ4 2026: 1m 0↑/0↓, 2m 0↑/13↓, 3m 0↑/13↓
   - EPS Normalized FQ1 2027: 1m 0↑/0↓, 2m 6↑/3↓, 3m 6↑/3↓
   - EPS (GAAP) FQ4 2026: 1m 0↑/0↓, 2m 0↑/4↓, 3m 0↑/4↓
@@ -400,29 +400,29 @@ _export date unverified (data ≥ 2026-08-26)_
   - EBIT FQ4 2026: 1m 0↑/0↓, 2m 0↑/11↓, 3m 0↑/11↓
   - EBIT FQ1 2027: 1m 0↑/0↓, 2m 4↑/3↓, 3m 4↑/3↓
   - _+8 non-headline metric rows in JSON_
-- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 2.34 (12m) → 1.94 (9m) → 1.91 (6m) → 1.25 (3m) → 1.25 (2m) → 1.04 (1m) → 1.04 (latest); net -56% (12m→latest) | FY 2026 EPS (GAAP): 2.30 (12m) → 1.97 (9m) → 1.93 (6m) → 1.40 (3m) → 1.38 (2m) → 1.18 (1m) → 1.18 (latest); net -49% (12m→latest) | FY 2026 Revenue: 2,525.9 (12m) → 2,430.3 (9m) → 2,415.5 (6m) → 2,333.5 (3m) → 2,337.0 (2m) → 2,356.2 (1m) → 2,358.3 (latest); net -7% (12m→latest) | FY 2026 EBITDA: 505.3 (12m) → 434.5 (9m) → 424.9 (6m) → 318.6 (3m) → 317.9 (2m) → 288.1 (1m) → 288.1 (latest); net -43% (12m→latest) | FY 2026 EBIT: 462.7 (12m) → 392.6 (9m) → 383.8 (6m) → 278.8 (3m) → 278.1 (2m) → 246.3 (1m) → 246.3 (latest); net -47% (12m→latest) | FY 2026 Interest Expense: -65.7 (12m) → -73.0 (9m) → -79.9 (6m) → -79.9 (3m) → -80.2 (2m) → -79.7 (1m) → -79.7 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 383.7 (12m) → 326.1 (9m) → 315.2 (6m) → 223.0 (3m) → 218.3 (2m) → 184.7 (1m) → 184.7 (latest); net -52% (12m→latest) | FY 2026 Net Income (Excl. Excep): 298.1 (12m) → 245.1 (9m) → 227.9 (6m) → 148.4 (3m) → 147.7 (2m) → 123.0 (1m) → 123.0 (latest); net -59% (12m→latest) | FY 2026 Net Income (GAAP): 288.8 (12m) → 245.2 (9m) → 232.0 (6m) → 164.8 (3m) → 163.4 (2m) → 138.2 (1m) → 138.2 (latest); net -52% (12m→latest)  [data ≥ 2026-08-26 · export date unverified] [34]
-- **Cross-name anchor (NTM forward-multiple ladder)** — [45]:
+- **Acceleration read (monthly consensus path):** FY 2026 EPS Normalized: 2.34 (12m) → 1.94 (9m) → 1.91 (6m) → 1.25 (3m) → 1.25 (2m) → 1.04 (1m) → 1.04 (latest); net -56% (12m→latest) | FY 2026 EPS (GAAP): 2.30 (12m) → 1.97 (9m) → 1.93 (6m) → 1.40 (3m) → 1.38 (2m) → 1.18 (1m) → 1.18 (latest); net -49% (12m→latest) | FY 2026 Revenue: 2,525.9 (12m) → 2,430.3 (9m) → 2,415.5 (6m) → 2,333.5 (3m) → 2,337.0 (2m) → 2,356.2 (1m) → 2,358.3 (latest); net -7% (12m→latest) | FY 2026 EBITDA: 505.3 (12m) → 434.5 (9m) → 424.9 (6m) → 318.6 (3m) → 317.9 (2m) → 288.1 (1m) → 288.1 (latest); net -43% (12m→latest) | FY 2026 EBIT: 462.7 (12m) → 392.6 (9m) → 383.8 (6m) → 278.8 (3m) → 278.1 (2m) → 246.3 (1m) → 246.3 (latest); net -47% (12m→latest) | FY 2026 Interest Expense: -65.7 (12m) → -73.0 (9m) → -79.9 (6m) → -79.9 (3m) → -80.2 (2m) → -79.7 (1m) → -79.7 (latest); worsening (magnitude away from zero) (12m→latest) | FY 2026 EBT (GAAP): 383.7 (12m) → 326.1 (9m) → 315.2 (6m) → 223.0 (3m) → 218.3 (2m) → 184.7 (1m) → 184.7 (latest); net -52% (12m→latest) | FY 2026 Net Income (Excl. Excep): 298.1 (12m) → 245.1 (9m) → 227.9 (6m) → 148.4 (3m) → 147.7 (2m) → 123.0 (1m) → 123.0 (latest); net -59% (12m→latest) | FY 2026 Net Income (GAAP): 288.8 (12m) → 245.2 (9m) → 232.0 (6m) → 164.8 (3m) → 163.4 (2m) → 138.2 (1m) → 138.2 (latest); net -52% (12m→latest)  [data ≥ 2026-08-26 · export date unverified] [35]
+- **Cross-name anchor (NTM forward-multiple ladder)** — [44]:
   - NTM: TEV/REV 0.91 · TEV/EBITDA 7.01 · TEV/EBIT 8.12 · Price/Earnings 7.31 · PEG – · P/BV –
   - FY 2026: TEV/REV 0.92 · TEV/EBITDA 7.51 · TEV/EBIT 8.78 · Price/Earnings 8.57 · PEG – · P/BV –
   - FY 2027: TEV/REV 0.91 · TEV/EBITDA 6.70 · TEV/EBIT 7.66 · Price/Earnings 6.77 · PEG – · P/BV –
   - FY 2028: TEV/REV 0.87 · TEV/EBITDA 6.27 · TEV/EBIT 7.12 · Price/Earnings 5.85 · PEG – · P/BV –
   - _+2 later fiscal years in JSON_
-- **Guidance at the drawdown (8-K 99.1):** Updates Fiscal Year 2026 Outlook St. Louis - May 5, 2026 - BellRing Brands, Inc. (NYSE:BRBR) (“BellRing”), a holding company operating in the global proactive wellness category, today reported results for the second fiscal quarter ended March 31, 2026. Highlights: • Second quarter net sales of $598.7 million, up 2% year-over-year • Operating profit of $66.0 million, net earnings of $33.9 million and Adjusted EBITDA* of $53.8 million, each of which were impacted by a pre-tax $11 million inventory-related charge • Updated fiscal year 2026 net sales outlook of $2.325-$2.365 billion and Adjusted EBITDA* outlook of $315-$335 million *Adjusted EBITDA is a non-GAAP measure. For additional information regarding non-GAAP measures, see the related explanations presented under “Use of Non-GAAP Measur [46]
-- **Current guide (latest results filing):** net sales 2026: 2,335.0–2,375.0 $M [47]
-- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [48]  <!-- ds-table -->
+- **Guidance at the drawdown (8-K 99.1):** Updates Fiscal Year 2026 Outlook St. Louis - May 5, 2026 - BellRing Brands, Inc. (NYSE:BRBR) (“BellRing”), a holding company operating in the global proactive wellness category, today reported results for the second fiscal quarter ended March 31, 2026. Highlights: • Second quarter net sales of $598.7 million, up 2% year-over-year • Operating profit of $66.0 million, net earnings of $33.9 million and Adjusted EBITDA* of $53.8 million, each of which were impacted by a pre-tax $11 million inventory-related charge • Updated fiscal year 2026 net sales outlook of $2.325-$2.365 billion and Adjusted EBITDA* outlook of $315-$335 million *Adjusted EBITDA is a non-GAAP measure. For additional information regarding non-GAAP measures, see the related explanations presented under “Use of Non-GAAP Measur [45]
+- **Current guide (latest results filing):** net sales 2026: 2,335.0–2,375.0 $M [46]
+- **Guidance bridge (latest guide + sign-aware delivery track-record)** — [47]  <!-- ds-table -->
 
 |  | Latest guide | For | Dated | Age | Record (met/resolved) | Most recent |
 |---|---|---|---|---|---|---|
-| Revenue | '2,335.00 - 2,375.00' | FY 2026 | 2026-08-04 | 49d (stale) | actual ≥ floor 9/11 | FY 2025 MET |
-| EBITDA | '275.00 - 295.00' | FY 2026 | 2026-08-04 | 49d (stale) | actual ≥ floor 7/7 | FY 2025 MET |
-| Capital Expenditure | -10.0 | FY 2026 | 2026-08-04 | 49d (stale) | spend ≤ ceiling 6/6 | FY 2025 MET |
-| Gross Margin % | none current (last: '28.20 - 32.40') | FQ4 2022 | 2022-08-05 | 1509d (stale) | actual ≥ floor 1/1 | FQ4 2022 MET |
-| Interest Expense | none current (last: -47.0) | FY 2020 | 2020-02-07 | 2419d (stale) | spend ≤ ceiling 0/1 | FY 2020 MISSED |
+| Revenue | '2,335.00 - 2,375.00' | FY 2026 | 2026-08-04 | 73d (stale) | actual ≥ floor 9/11 | FY 2025 MET |
+| EBITDA | '275.00 - 295.00' | FY 2026 | 2026-08-04 | 73d (stale) | actual ≥ floor 7/7 | FY 2025 MET |
+| Capital Expenditure | -10.0 | FY 2026 | 2026-08-04 | 73d (stale) | spend ≤ ceiling 6/6 | FY 2025 MET |
+| Gross Margin % | none current (last: '28.20 - 32.40') | FQ4 2022 | 2022-08-05 | 1533d (stale) | actual ≥ floor 1/1 | FQ4 2022 MET |
+| Interest Expense | none current (last: -47.0) | FY 2020 | 2020-02-07 | 2443d (stale) | spend ≤ ceiling 0/1 | FY 2020 MISSED |
 
 _CIQ states every guide as a LEVEL in the metric's own units. Where management guided a RATE, the level is CIQ's arithmetic on its own base, not a figure the company published — check the release before quoting one as guidance._
 
-- **Consensus stats (target + ratings):** Target price: mean $14.71, median $14.50, high/low 20.00/10.00, N 12/12; Ratings: Buy 6, Outperform 2, Hold 5, Underperform 1, Sell 0, No Opinion 1, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-08-26 · export date unverified] [27]
-- **Revision-event log (250 events · 6 broker-days)** — [49]  <!-- ds-table -->
+- **Consensus stats (target + ratings):** Target price: mean $14.71, median $14.50, high/low 20.00/10.00, N 12/12; Ratings: Buy 6, Outperform 2, Hold 5, Underperform 1, Sell 0, No Opinion 1, Buy 0, Outperform 0, Hold 1, Underperform 0, Sell 0  [data ≥ 2026-08-26 · export date unverified] [28]
+- **Revision-event log (250 events · 6 broker-days)** — [48]  <!-- ds-table -->
 
 |  | Broker | Revisions | ↑ | ↓ | Withheld | Largest revision | Prior | Current | Δ |
 |---|---|---:|---:|---:|---:|---|---:|---:|---:|
@@ -433,33 +433,43 @@ _CIQ states every guide as a LEVEL in the metric's own units. Where management g
 | 2026-08-04 | William Blair & Company L.L.C. | 16 | 2 | 14 | — | EBITDA FQ4 2026 | 88.7 | 61.6 | −27.1 |
 | 2026-08-04 | broker undisclosed | 135 | 34 | 99 | 2 | EBITDA FQ4 2026 | 91.0 | 66.0 | −25.0 |
 
-- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2019 +259%, FY2020 +13%, FY2021 +0%, FY2022 -20%, FY2023 -5%, FY2024 -1%, FY2025 -8%; Revenue surprise: FY2019 -0%, FY2020 +2%, FY2021 -2%, FY2022 -2%, FY2023 +1%, FY2024 +1%, FY2025 +1% (GAAP-EPS basis; +beat / −miss) [50]
+- **Surprise history (annual beat/miss):** GAAP-EPS surprise: FY2019 +259%, FY2020 +13%, FY2021 +0%, FY2022 -20%, FY2023 -5%, FY2024 -1%, FY2025 -8%; Revenue surprise: FY2019 -0%, FY2020 +2%, FY2021 -2%, FY2022 -2%, FY2023 +1%, FY2024 +1%, FY2025 +1% (GAAP-EPS basis; +beat / −miss) [49]
 
 ## Leverage & survival
 - **Net debt / EBITDA [NET]:** 3.4x [8]
-- **Total debt / EBITDA vs peers:** name 3.5x vs peer median 2.4x (comps TOTAL-debt/EBITDA basis) [51]
-- **Net debt / OCF:** 4.8x [52]
-- **Interest coverage:** 4.2x [53]
-- **Self-funding:** self-funding: MIXED — latest-Q OCF < 0, LTM FCF > 0 (both must be positive to self-fund) [54]
-- **Credit health:** _UNKNOWN_ — credit-health panel scale is ambiguous in the export
+- **Total debt / EBITDA vs peers:** name 3.5x vs peer median 2.4x (comps TOTAL-debt/EBITDA basis) [11]
+- **Net debt / OCF:** 4.8x [50]
+- **Interest coverage:** 4.2x [51]
+- **Self-funding:** self-funding: YES — latest-Q OCF > 0 AND LTM FCF > 0 [52]
+- **Credit health — relative to each peer group** — [53]  <!-- ds-table -->
+
+|  | Industry (38) |
+|---|---:|
+| Overall | 3 |
+| Operational | 1 |
+| Solvency | 4 |
+| Liquidity | 2 |
+
+_industry = 38 Personal Care Products companies (GICS industry), the primary panel · S&P-MI relative score: 1 = top … 4 = bottom WITHIN each peer group — a rank among those companies, not an absolute measure · S&P issuer rating B+ · industry panel reflects financials updated through 2026-09-21 — the export stamps no date of its own · comps panel: Credit Health Panel: scale direction ambiguous — not rendered_
+
 
 - **FCF sign:** positive [9]
-- **Free cash flow ($M):** 201.1 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $234.1M − capex $9.1M = $225.0M — 0.89x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [55]
-- **Debt schedule vintage:** the debt schedule is 308d old (source filed 2025-11-18); no Item 1.02 (termination of a material agreement) has been filed since [56]
-- **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [57]
-- **Maturity wall** · vs the 2026-09-22 reference:
+- **Free cash flow ($M):** 201.1 — basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Jun-30-2026], CFO $234.1M − capex $9.1M = $225.0M — 0.89x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used. [31]
+- **Debt schedule vintage:** the debt schedule is 332d old (source filed 2025-11-18); no Item 1.02 (termination of a material agreement) has been filed since [54]
+- **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [55]
+- **Maturity wall** · vs the 2026-10-16 reference:
   - due 2030: $1,090.0M
   - undated (floor — no panel maturity): $29.5M — Operating Lease Liabilities $29.5M
   - _reconciliation: itemized $1,119.5M (panel A 2025 filed Nov-18-2025) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
-- **Capital-structure aggregates:** senior bonds 840.0; total principal 1,177.8; total debt 1,173.1 (3 months FQ3/CQ2 Jun-30-2026) ($M) [58]
+- **Capital-structure aggregates:** senior bonds 840.0; total principal 1,177.8; total debt 1,173.1 (3 months FQ3/CQ2 Jun-30-2026) ($M) [56]
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans — per an 8-K filed 2021-02-26
-  - **Events of default:** Repricing Event premium of 1.00% if a repricing occurs on or before the date that is 6 months after the Amendment No. 2… — per an 8-K filed 2021-02-26
+  - **Events of default:** Repricing Event (Section 2.05(b)(ix)): if within 6 months after Amendment No. 2 Effective Date a repricing/refinancing… — per an 8-K filed 2021-02-26
 
 ### Filing cross-checks — going concern · leverage basis
 
-- **Going-concern language:** none in latest 10-Q — checked, absent [59]
-- **EBITDA-basis triangulation (each leverage basis-labeled):** [60]
+- **Going-concern language:** none in latest 10-Q — checked, absent [57]
+- **EBITDA-basis triangulation (each leverage basis-labeled):** [58]
   - net debt / EBITDA (CIQ's EBITDA, vendor-normalised): 3.4x
   - total debt / EBITDA (CIQ comps EBITDA, vendor-normalised): 3.5x
   - net debt / company-adjusted LTM EBITDA (LTM unavailable): UNKNOWN
@@ -467,7 +477,7 @@ _CIQ states every guide as a LEVEL in the metric's own units. Where management g
 
 ## ⚠ Analyst caveats — verify before the verdict
 
-_7 to verify._
+_9 to verify._
 
 - Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: "Updated fiscal year 2026 net sales outlook of $2.335-$2.375 billion and Adjusted EBITDA* outlook of $275-$295 million" (8-K 0001628280-26-052137 EX-99.1)
 - Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: "Updated fiscal year 2026 net sales outlook of $2.325-$2.365 billion and Adjusted EBITDA* outlook of $315-$335 million" (8-K 0001628280-26-030115 EX-99.1)
@@ -475,7 +485,14 @@ _7 to verify._
 - Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: "Fiscal year 2026 net sales and Adjusted EBITDA* expected to range between $2.41-$2.49 billion" (8-K 0001628280-25-052773 EX-99.1)
 - Guidance stated but not attributable — one range is shared by 2 metrics (adjusted ebitda, net sales), so which it governs cannot be read from the sentence; verify against the filing: "Adjusted EBITDA as a percentage of net sales of 18% to 20%" (8-K 0001628280-25-052773 EX-99.1)
 - Net debt/EBITDA (3.4x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 3.4x as the covenant-basis leverage.
-- synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 4, 'strongly-bearish': 1}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)
+- Estimates data up to 51d stale (beyond the 45d tolerance) — freshness UNVERIFIABLE: the CIQ Estimates export has no as-of stamp, and its data is on/after 2026-08-26 (its latest embedded revision event — a worst-case floor on the true export date). Re-pull CIQ Estimates, or attest the export date (AS_OF sidecar).
+- **Unreconciled margin-compression** (2 points)
+  - The gross-margin collapse is mechanism-backed and severe: adjusted gross margin fell to 22.7% from 34.5% a year earlier on input-cost inflation, tariffs, unfavorable price/mix and freight — a structural cost problem, not a one-quarter blip.
+    - _where:_ a bear point
+  - Adjusted gross margin fell to 22.7% from 34.5% YoY on input inflation, tariffs, price/mix and freight — the magnitude points to a structural cost reset, not a one-off.
+    - _where:_ a decisive-against point
+  - _why it matters:_ cites margin compression without the absolute-EBITDA reconciliation (margin % can fall while EBITDA rises)
+- synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bearish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)
 
 # Appendix — data & audit
 
@@ -496,9 +513,9 @@ All three legs are read off the street's forecast distribution AT THIS RECORD'S 
 
 | reference | value |
 | --- | ---: |
-| _FY2025 reported revenue — excluded: this figure is Simply Good Foods', not BellRing's — the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500._ | _$1,450.9M_ [61] |
-| _LTM revenue — excluded: this figure is Simply Good Foods', not BellRing's — the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500._ | _$1,416.208M_ [62] |
-| _consensus FY26E revenue `base` — excluded: this figure is Simply Good Foods', not BellRing's — the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500._ | _$1,334M_ [63] |
+| _FY2025 reported revenue — excluded: this figure is Simply Good Foods', not BellRing's — the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500._ | _$1,450.9M_ [59] |
+| _LTM revenue — excluded: this figure is Simply Good Foods', not BellRing's — the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500._ | _$1,416.208M_ [60] |
+| _consensus FY26E revenue `base` — excluded: this figure is Simply Good Foods', not BellRing's — the whole revenue axis was copied from SMPL. BellRing's own FY2025 revenue is 2,316.6 and its LTM is 2,354.6, against the 1,450.9 / 1,416.2 shown here. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull revenue legs themselves are BellRing's and unchanged at 2,250 / 2,385 / 2,500._ | _$1,334M_ [61] |
 
 ### Margin · ratified 2026-08-05
 
@@ -506,11 +523,11 @@ Base 15.5% matches the median operating margin of the last eight fiscal years, 1
 
 | reference | value |
 | --- | ---: |
-| _screening median (naive, 8 FY) — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _15.45%_ [64] |
-| _7yr clean median (FY2025 adjusted) `base` — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _15.51%_ [65] |
-| _FY2020 worst clean year `bear` — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _9.58%_ [66] |
-| _FY2022 best clean year `bull` — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _17.35%_ [67] |
-| _FY2025 adjusted ex $60.9M impairment — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _15.01%_ [68] |
+| _screening median (naive, 8 FY) — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _15.45%_ [62] |
+| _7yr clean median (FY2025 adjusted) `base` — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _15.51%_ [63] |
+| _FY2020 worst clean year `bear` — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _9.58%_ [64] |
+| _FY2022 best clean year `bull` — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _17.35%_ [65] |
+| _FY2025 adjusted ex $60.9M impairment — excluded: this figure is Simply Good Foods', not BellRing's — the whole margin axis was copied from SMPL. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull margin legs themselves are BellRing's and unchanged._ | _15.01%_ [66] |
 
 ### Multiple · ratified 2026-08-05
 
@@ -518,15 +535,15 @@ Base 9.0x is roughly half the 17.85x median close of the company's own eight-and
 
 | reference | value |
 | --- | ---: |
-| _this company's trading-range low `bear` — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _6.11x_ [69] |
-| _this company's trailing 25th percentile — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _15.2x_ [69] |
-| _this company's trailing median `base` — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _17.85x_ [69] |
-| _this company's trailing 75th percentile — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _20.88x_ [69] |
-| _current multiple (0th pctile) — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _5.65x_ [69] |
-| _entry-boundary cell A (1,100 × 8% × 6.0x) — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _1.96:1_ [70] |
-| _entry-boundary cell B (1,050 × 7% × 6.0x) — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _1.73:1_ [70] |
+| _this company's trading-range low `bear` — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _6.11x_ [67] |
+| _this company's trailing 25th percentile — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _15.2x_ [67] |
+| _this company's trailing median `base` — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _17.85x_ [67] |
+| _this company's trailing 75th percentile — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _20.88x_ [67] |
+| _current multiple (0th pctile) — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _5.65x_ [67] |
+| _entry-boundary cell A (1,100 × 8% × 6.0x) — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _1.96:1_ [68] |
+| _entry-boundary cell B (1,050 × 7% × 6.0x) — excluded: this figure is Simply Good Foods', not BellRing's — the whole multiple-axis block was copied from SMPL. BellRing's own trading range is low 4.29 / median 19.76 / current 9.18. Withdrawn 2026-08-18 pending analyst re-derivation; the bear/base/bull multiples themselves are BellRing's and unchanged._ | _1.73:1_ [68] |
 
-_2026-07-26 — entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells._ [70]
+_2026-07-26 — entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7% × 6.0x → $2.62 (from the sealed entry rationale, preserved in the ledger payload). At the verification price ($10.53, 2026-07-22 close) both clear on the entry-vintage 15.5% normal (≈2.34 / ≈2.07); on the re-set 14% normal they read ≈1.96 / ≈1.73 — below the bar. The boundary tightened with the cut: the 2:1 line now sits between the recorded 10% bear and these stress cells._ [68]
 
 
 ## Financial statements (actuals + consensus estimates) — export date unverified (data ≥ 2026-08-26)
@@ -558,7 +575,7 @@ _2026-07-26 — entry-boundary cells: 1,100 × 8% × 6.0x → $3.54; 1,050 × 7%
 _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-26; (R) = Reclassified basis · FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 ### Quarterly — every exported quarter
-- **Quarterly financials** — [71]  <!-- ds-table -->
+- **Quarterly financials** — [69]  <!-- ds-table -->
 
 |  | FY17 | FY18 | FY18 | FY18 | FY18 | FY19 | FY19 | FY19 | FY19 | FY20 (R) | FY20 (R) | FY20 (R) | FY20 (R) | FY21 (R) | FY21 (R) | FY21 (R) | FY21 | FY22 | FY22 | FY22 | FY22 (R) | FY23 (R) | FY23 (R) | FY23 | FY23 | FY24 | FY24 | FY24 | FY24 | FY25 (R) | FY25 (R) | FY25 | FY25 | FY26 | FY26 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -572,12 +589,12 @@ _E = consensus (Estimates→Trends 'Current'), as-of ≥2026-08-26; (R) = Reclas
 _QoQ/YoY same-basis only; (R) = Reclassified_
 
 ### Balance-sheet posture
-- **Posture:** as of FY26 ($M): cash & ST inv 50; total debt 1,173; net debt 1,123; equity -467; net working capital 434; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [72]
-- **Coherence — BS vs implied-valuation bridge:** cash BS $50M / bridge $50M; debt BS $1,173M / bridge $1,173M — reconcile with the implied-valuation bridge. [73]
+- **Posture:** as of FY26 ($M): cash & ST inv 50; total debt 1,173; net debt 1,123; equity -467; net working capital 434; net-debt/EBITDA → see the Leverage & survival block (not recomputed) [70]
+- **Coherence — BS vs implied-valuation bridge:** cash BS $50M / bridge $50M; debt BS $1,173M / bridge $1,173M — reconcile with the implied-valuation bridge. [71]
 
 
 ### Capital structure & debt terms — instruments · pointers · covenants
-- **Capital structure — full instrument panel A 2025 filed Nov-18-2025** — [57]  <!-- ds-table -->
+- **Capital structure — full instrument panel A 2025 filed Nov-18-2025** — [55]  <!-- ds-table -->
 
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
@@ -586,7 +603,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Revolving Credit Facility | Revolving Credit | $250.0M | 5.620% | Various Benchmarks | 2030-08-22 | Y | N |  |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
-- **Covenant / contract pointers (CIK-verified execution filings)** — [74]  <!-- ds-table -->
+- **Covenant / contract pointers (CIK-verified execution filings)** — [72]  <!-- ds-table -->
 
 |  | Filing | Date | Accession / exhibit (or note) |
 |---|---|---|---|
@@ -595,20 +612,17 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | 7.00% Senior Notes Maturing in March 2030 | — | — | no contract-level filing expected (aggregate line item) |
 | Operating Lease Liabilities | — | — | no contract-level filing expected (aggregate line item) |
 
-- **Covenant terms — CREDIT AGREEMENT (governing agreement)** — [75]  <!-- ds-table -->
+- **Covenant terms — CREDIT AGREEMENT (governing agreement)** — [73]  <!-- ds-table -->
 
 |  | Governing value (lead · clause ≤200c) | Source § |
 |---|---|---|
 | Conversion price / mechanics | UNKNOWN | not stated in 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm |
-| Principal / commitment amount | $636,200,000 | base (footer) |
+| Principal / commitment amount | aggregate principal amount up to $636,200,000 (2021 Refinancing Term Loans); Schedule I: Credit Suisse AG, Cayman Islands Branch $636,200,000; Total $636,200,000 | base (footer) |
 | Interest / coupon rate | in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans — ⚠ QA: rate component 0.75 not stated in the clause — lead suppressed | base (footer) |
 | Maturity date | UNKNOWN | not stated in 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm |
 | Financial-maintenance covenants | UNKNOWN | not stated in 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm |
-| Security / collateral / guarantors | 2021 Refinancing Term Loans are secured by the Collateral Documents and guaranteed pursuant to the Loan Documents; Guarantors include Dymatize Enterprises, LLC, Premier Nutrition Company, LLC, Suprem… — full verbatim in JSON | base (footer) |
-| Mandatory prepayment / events of default | Repricing Event premium of 1.00% if a repricing occurs on or before the date that is 6 months after the Amendment No. 2 Effective Date; 100% of proceeds applied to repay outstanding Existing Term Loa… — full verbatim in JSON | base (footer) |
-| Revolving Credit Loans Eurodollar Rate floor | less than 1.00% per annum (Revolving Credit Loans); less than 0.75% per annum (Term Loans) | base (footer) |
-| Amendment No. 2 Effective Date | February 26, 2021 | base (footer) |
-| Governing law | State of New York | base (footer) |
+| Security / collateral / guarantors | Each Loan Party reaffirms all pledges, grants of security interests and Liens under the Collateral Agreement; each Lien granted to the Administrative Agent for the benefit of the Secured Parties and… — full verbatim in JSON | base (footer) |
+| Mandatory prepayment / events of default | Repricing Event (Section 2.05(b)(ix)): if within 6 months after Amendment No. 2 Effective Date a repricing/refinancing or amendment reduces the effective interest rate on Term B Loans, Borrower pays… — full verbatim in JSON | base (footer) |
 
 _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 
@@ -617,9 +631,9 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 ### Implied equity at peer multiples
 > **Comparability gate:** comparability: HETEROGENEOUS (see Peer comps gate)
 > _Reference only — the human judges earned vs residual (not a machine upside); the full Low/Mean/High and all bases are in the JSON._
-- **Name market cap ($M) — the ADJACENT fact to compare against:** 1040.7 [76]
-- **Bridge (TEV → equity):** TEV→equity bridge: + cash $50.40M, − total debt $1,173.10M [77]
-- **Implied equity at peer-median ($M, CIQ)** — [78]  <!-- ds-table -->
+- **Name market cap ($M) — the ADJACENT fact to compare against:** 1040.7 [74]
+- **Bridge (TEV → equity):** TEV→equity bridge: + cash $50.40M, − total debt $1,173.10M [75]
+- **Implied equity at peer-median ($M, CIQ)** — [76]  <!-- ds-table -->
 
 |  | Implied equity (median) |
 |---|---:|
@@ -629,37 +643,25 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 
 
 ### Management commentary
-- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf; BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [79]
+- **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf; BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [77]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 2 (2 insiders, $0.06M) · sells 0 — in the last 182 days · last purchase $0.02M, director, 2026-09-08 (~0mo ago) · largest purchase $65.82M, director, 2025-08-14 (~13mo ago) · last sale $0.12M, CHIEF GROWTH OFFICER, 2025-12-01 (~10mo ago) · largest sale $5.90M, director, 2025-02-14 (~19mo ago) · grants 51 · last filing 2026-09-09 · other filings 41 [80]
-- **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-15): 11.6M → 13.0M sh (+11.7%, rising) · 11.1% of shares out (EDGAR XBRL) · DTC 3.1d · recent: 2026-09-15 13.0M · 2026-08-31 11.6M · 2026-08-14 11.6M · 2026-07-31 14.3M [81]
+- **Insider activity (Form 4):** Open-market buys 2 (2 insiders, $0.06M) · sells 0 — in the last 182 days · last purchase $0.02M, director, 2026-09-08 (~1mo ago) · largest purchase $65.82M, director, 2025-08-14 (~14mo ago) · last sale $0.12M, CHIEF GROWTH OFFICER, 2025-12-01 (~10mo ago) · largest sale $5.90M, director, 2025-02-14 (~20mo ago) · grants 51 · last filing 2026-10-02 · other filings 41 [78]
+- **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-30): 13.0M → 12.2M sh (-5.5%, falling) · 10.5% of shares out (EDGAR XBRL) · DTC 3.2d · recent: 2026-09-30 12.2M · 2026-09-15 13.0M · 2026-08-31 11.6M · 2026-08-14 11.6M [79]
 
 ### Assembly verification — filing vs panel
-- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [82]
-- **Guide verification — CIQ guide vs release:** revenue: CIQ 2335.0–2375.0 vs release 2335.0–2375.0 → cross-source VERIFIED [83]
+- **Wall coherence — filing ≤12m vs CIQ panel (same window):** wall coherence: UNKNOWN — filing states no ≤12m figure [80]
+- **Guide verification — CIQ guide vs release:** revenue: CIQ 2335.0–2375.0 vs release 2335.0–2375.0 → cross-source VERIFIED [81]
 
 ## Record & reproduce
-- **Data window:** screened as of 2026-09-22 · assembled 2026-09-28 15:02 UTC
-- **Extraction:** 2026-08-16.1 — every Multiples reader selects the latest close BY DATE, never by column position, and refuses on an NM or undated one rather than reaching back a quarter (#459)
-- **Refreshed since assembly** (oldest first):
-  - 2026-10-07 · forward_consensus, mechanical.catalyst_path — refresh at 2026-08-16.1
-  - 2026-10-07 · forward_multiple_history — refresh at 2026-08-16.1
-  - 2026-10-08 · forward_consensus, forward_multiple_history, historical_forecast_error — refresh at 2026-10-08.2
-  - 2026-10-08 · forward_consensus — refresh at 2026-10-08.3
-  - 2026-10-09 · ev_bridge — refresh at 2026-10-08.4
-  - 2026-10-10 · anchor, date_semantics, forward_multiple_history, valuation_basis — refresh at 2026-10-09.3
-  - 2026-10-20 · mechanical.valuation — refresh at 2026-10-09.3
-  - 2026-10-21 · anchor, caveats, mechanical.financial_summary, mechanical.primary_source, mechanical.valuation, valuation_basis — refresh at 2026-10-09.3
-  - 2026-10-21 · anchor — anchor-backfill at 2026-10-09.3
-  - 2026-10-23 · mechanical.primary_source, mechanical.valuation — refresh at 2026-10-09.3
-  - 2026-10-26 · mechanical.financial_summary — refresh at 2026-10-09.3
-- **Price store:** `wt-fl2 → mosaic-theory-ta` · reaching 2026-09-22
-- **Panel age:** oldest panel 7d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-09-28 build
-- **Consensus age:** consensus 33d old (2026-08-26, valuation.implied_expectations.multiples_as_of) — within the ceiling
+- **Data window:** screened as of 2026-10-16 · assembled 2026-10-26 14:56 UTC
+- **Extraction:** 2026-10-09.3 — the active recipe's basis beside the page (`valuation_basis`: bases, today's multiple and the snapshot it is struck at, bridge, exit claims, the basic share count, non-operating policy, conflicts — the template's share guard among them) and its dates named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the forward history's latest close is `latest_observed_close`, never `current`; every writer saves through one write
+- **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
+- **Panel age:** oldest panel 35d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
+- **Consensus age:** consensus is 61d old (2026-08-26, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.
 - **Synthesis:** model `claude-opus-4-8` — facts assembled mechanically; the synthesis frames, the analyst decides
 - **Identifiers:** CIK `0001772016` · NYSE : BRBR
-- **Assembly log:** primary-source: 8-K 0001628280-26-045287 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+3.0s fetch)
+- **Assembly log:** primary-source: 8-K 0001628280-26-045287 carries 8.01 but no EX-99.1 exhibit was found; primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+3.1s fetch)
 - **Re-run:** `python -m vinci dossier --ticker BRBR` — regenerates every assembled fact from the same sources; committed values change only when the sources have.
 - **Verdict record:** logged via the CLI to the append-only decision ledger (entry price frozen at the screen date); this document displays state, never records it.
 
@@ -670,82 +672,80 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 [2] `CIQ Financials→Segments (Geographic Segment → Revenues, latest annual column, Sep-30-2025)`
 [3] `exchange · EOD · EDGAR shares · CIQ book value + cap`
 [4] `EDGAR 8-K item codes at the gap-down dates (not blanket-labelled earnings)`
-[5] `EOD BRBR 180d to 2026-09-22`
-[6] `EOD IWM 180d to 2026-09-22 (cap-band: $1.0B @ 2026-09-22 → small (<$4B) → IWM)`
-[7] `EOD BRBR−IWM 180d to 2026-09-22 (assembly, cap-band)`
+[5] `EOD BRBR 180d to 2026-10-16`
+[6] `EOD IWM 180d to 2026-10-16 (cap-band: $1.0B @ 2026-10-16 → small (<$4B) → IWM)`
+[7] `EOD BRBR−IWM 180d to 2026-10-16 (assembly, cap-band)`
 [8] `CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ EBITDA $332M [LTM 12 months Jun-30-2026]`
 [9] `EDGAR XBRL FCF sign (screen data-record)`
 [10] `CIQ transcript: BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf`
-[11] `CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
-[12] `CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Aug-04-2026`
+[11] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-21`
+[12] `CIQ transcript: BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf`
 [13] `CIQ Financials→Income Statement + Cash Flow (annual) + Estimates→Trends (FY E)`
 [14] `EDGAR companyfacts Goodwill (as at 2026-06-30)`
 [15] `EDGAR companyfacts FiniteLivedIntangibleAssetsNet (as at 2026-06-30)`
 [16] `EDGAR companyfacts PaymentsForRepurchaseOfCommonStock (2025-10-01→2026-06-30, 272d)`
 [17] `EDGAR companyfacts TreasuryStockSharesAcquired (2025-10-01→2026-06-30, 272d)`
 [18] `EDGAR companyfacts TreasuryStockAcquiredAverageCostPerShare (2025-10-01→2026-03-31, 181d)`
-[19] `EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-09-23→2026-09-22 · latest 0001193125-24-217983`
-[20] `EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-09-23→2026-09-22 · latest 0002100121-26-001019`
+[19] `EDGAR filing index (S-3/F-3 · 424B · S-1/F-1 · S-4 · S-8), window 2023-10-17→2026-10-16 · latest 0001193125-24-217983`
+[20] `EDGAR filing index (SC 13D/G + SCHEDULE 13D/G — both vocabularies), window 2023-10-17→2026-10-16 · latest 0002100121-26-001019`
 [21] `EDGAR XBRL ShareBasedCompensation (10-K, 2024-10-01→2025-09-30)`
 [22] `EDGAR companyfacts (Goodwill, intangibles, Assets) · peer set + market caps from the CIQ comps grid`
 [23] `EDGAR companyfacts, ANNUAL durations only (goodwill + intangible impairment families) · each row's window ends at that filer's own balance date`
 [24] `CIQ Financials→Multiples (Close; last col = current, excluded from history)`
 [25] `CIQ Comparable Analysis→Trading Multiples (name vs peer Median)`
-[26] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
-[27] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
-[28] `8-K 0001628280-26-030115 EX-99.1`
-[29] `CIQ Customers&Suppliers BellRing Brands Inc NYSE BRBR Customers.rtf`
-[30] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
-[31] `EDGAR XBRL shares, trailing 2024-11-12..2026-07-28`
-[32] `CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)`
-[33] `CIQ Estimates→Consensus`
-[34] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
-[35] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record)`
-[36] `CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jun-24-2026`
-[37] `cadence: EDGAR submissions (median 91d gap over 28 results 8-Ks; last print 2026-08-04) · guide: EDGAR 8-K 0001628280-26-030115 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1772016/000162828026030115/brbrexh991-q22026earningsr.htm`
-[38] `TEV = mcap 1040.7 + net debt 1122.7 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-09-21, exported 2026-09-22) — simple-TEV basis`
-[39] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
-[40] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
-[41] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21`
-[42] `EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30`
-[43] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
-[44] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
-[45] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
-[46] `EDGAR 8-K 0001628280-26-030115 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1772016/000162828026030115/brbrexh991-q22026earningsr.htm`
-[47] `8-K 0001628280-26-052137 EX-99.1 (filed 2026-08-04)`
-[48] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
-[49] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-26 · export date unverified]`
-[50] `CIQ Estimates→Surprise (annual)`
-[51] `CIQ Comparable Analysis→Operating Statistics (LTM Total Debt/EBITDA) · as-of 2026-09-21`
-[52] `CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ OCF $234M [LTM 12 months Jun-30-2026]`
-[53] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`
-[54] `EDGAR latest-Q OCF sign + CIQ LTM FCF sign`
-[55] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
-[56] `CIQ Capital Structure Details — A 2025 filed Nov-18-2025`
-[57] `CIQ Financials→Capital Structure Details (A 2025 filed Nov-18-2025)`
-[58] `CIQ Financials→Capital Structure Summary`
-[59] `10-Q 0001772016-26-000022`
-[60] `CIQ leverage bases + release LTM adj-EBITDA/margins`
-[61] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)`
-[62] `committed dossier anchor block (#158/#160/#162-verified)`
-[63] `committed dossier financial_summary (E cols = consensus)`
-[64] `committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value`
-[65] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment`
-[66] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)`
-[67] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)`
-[68] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)`
-[69] `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)`
-[70] `entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)`
-[71] `CIQ Financials→Income Statement (quarterly, full exported history)`
-[72] `CIQ Financials→Balance Sheet (quarterly, FY26)`
-[73] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
-[74] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
-[75] `fenced Tier-2 extraction (verbatim, source-bound)`
-[76] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-21`
-[77] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-21`
-[78] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-21`
-[79] `CIQ transcript(s): BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf; BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf`
-[80] `EDGAR Form 4 (latest 0001628280-26-061167; 162 filings in the 1095d scanned; counts over 182d)`
-[81] `FINRA consolidated short interest (settle 2026-09-15); DTC = 12,956,703 short ÷ 4,144,944 screen 90d ADV`
-[82] `10-Q maturity wall vs CIQ capital panel (same window)`
-[83] `CIQ revenue guide vs release actual/outlook`
+[26] `price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary`
+[27] `CIQ Comparable Analysis→Financial Data (market-cap dispersion) + Business Description`
+[28] `CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)`
+[29] `8-K 0001628280-26-030115 EX-99.1`
+[30] `CIQ Customers&Suppliers BellRing Brands Inc NYSE BRBR Customers.rtf`
+[31] `CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Jun-30-2026]`
+[32] `CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)`
+[33] `EDGAR XBRL shares, trailing 2024-11-12..2026-07-28`
+[34] `CIQ Key Developments: BellRing Brands Inc NYSE BRBR Key Developments.rtf · Jul-08-2026`
+[35] `CIQ Estimates→Trends (current-FY consensus path; ragged, absent lookbacks n/a)`
+[36] `cadence: EDGAR submissions (median 91d gap over 28 results 8-Ks; last print 2026-08-04) · guide: EDGAR 8-K 0001628280-26-030115 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1772016/000162828026030115/brbrexh991-q22026earningsr.htm`
+[37] `TEV = mcap 1040.7 + net debt 1122.7 (CIQ Comparable Analysis→Financial Data, Latest, data 2026-09-21, exported 2026-09-22) — simple-TEV basis`
+[38] `CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)`
+[39] `CIQ Comparable Analysis→Trading Multiples (name row + Summary Statistics Low/Median/Mean/High)`
+[40] `CIQ Comparable Analysis→Financial Data + Operating Statistics (per-peer grid) · as-of 2026-09-21`
+[41] `EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30`
+[42] `CIQ Financials→Ratios (RoE / RoCE / RoA + leverage, multi-year columns)`
+[43] `CIQ Estimates→Revisions (next-2-FQ breadth; 1m/2m/3m Upward/Downward)`
+[44] `CIQ Estimates→Multiples (forward-multiple ladder: NTM + FY26→FY33)`
+[45] `EDGAR 8-K 0001628280-26-030115 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1772016/000162828026030115/brbrexh991-q22026earningsr.htm`
+[46] `8-K 0001628280-26-052137 EX-99.1 (filed 2026-08-04)`
+[47] `CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure`
+[48] `CIQ Estimates→Recent Changes (250 broker revision events)  [data ≥ 2026-08-26 · export date unverified]`
+[49] `CIQ Estimates→Surprise (annual)`
+[50] `CIQ Net Debt $1,123M [FQ3/CQ2 Jun-30-2026] ÷ CIQ OCF $234M [LTM 12 months Jun-30-2026]`
+[51] `CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Jun-30-2026]`
+[52] `EDGAR OCF sign, quarter to 2026-06-30 + CIQ LTM FCF sign`
+[53] `CIQ Credit Health Panel export→Summary (industry peers; export date not stamped)`
+[54] `CIQ Capital Structure Details — A 2025 filed Nov-18-2025`
+[55] `CIQ Financials→Capital Structure Details (A 2025 filed Nov-18-2025)`
+[56] `CIQ Financials→Capital Structure Summary`
+[57] `10-Q 0001772016-26-000022`
+[58] `CIQ leverage bases + release LTM adj-EBITDA/margins`
+[59] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025)`
+[60] `committed dossier anchor block (#158/#160/#162-verified)`
+[61] `committed dossier financial_summary (E cols = consensus)`
+[62] `committed dossier anchor block (#158/#160/#162-verified) anchor.margin.value`
+[63] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax FY2019-FY2025, FY2025 ex the $60.9M impairment`
+[64] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2020)`
+[65] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2022)`
+[66] `EDGAR companyfacts OperatingIncomeLoss / RevenueFromContractWithCustomerExcludingAssessedTax (FY2025) + 10-K 0001702744-25-000046 (FY2025, Note 5 Goodwill and Intangibles)`
+[67] `committed dossier valuation.own_history (CIQ Financials→Multiples 'TEV/LTM EBITDA' Close, 35 closes, 8.55y span, as-of 2026-07-17, sha 7bd83a1103)`
+[68] `entry rationale cells preserved in the ledger payload; re-verified 2026-07-26 at the 2026-07-22 close ($10.53)`
+[69] `CIQ Financials→Income Statement (quarterly, full exported history)`
+[70] `CIQ Financials→Balance Sheet (quarterly, FY26)`
+[71] `CIQ Financials→Balance Sheet vs Comparable Analysis→Implied Valuation`
+[72] `EDGAR 10-K exhibit index + CIK-scoped efts (agreement-class, exhibit-bearing)`
+[73] `fenced Tier-2 extraction (verbatim, source-bound)`
+[74] `CIQ Comparable Analysis→Financial Data (name Market Capitalization Latest) · as-of 2026-09-21`
+[75] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-21`
+[76] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-21`
+[77] `CIQ transcript(s): BellRing Brands, Inc., Q2 2026 Earnings Call, May 05, 2026.rtf; BellRing Brands, Inc., Q3 2026 Earnings Call, Aug 04, 2026.rtf`
+[78] `EDGAR Form 4 (latest 0001628280-26-064621; 165 filings in the 1095d scanned; counts over 182d)`
+[79] `FINRA consolidated short interest (settle 2026-09-30); DTC = 12,249,723 short ÷ 3,783,299 screen 90d ADV`
+[80] `10-Q maturity wall vs CIQ capital panel (same window)`
+[81] `CIQ revenue guide vs release actual/outlook`
