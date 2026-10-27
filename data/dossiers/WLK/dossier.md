@@ -687,6 +687,7 @@ _Source §: 8-K 0001193125-07-267027 · dex101.htm_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.quality — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 40d old — 2026-09-16 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 42d old (2026-09-14, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -1237,7 +1237,7 @@
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30"
       },
       "liquidity_covenant_flags": {
-        "value": "25 Notes Issuance of $15.0 Billion (Bonds and Notes) 15,000 @ 3.900% - 5.550%; Euro Commercial Paper Programs (Commercial Paper) undrawn/– @ NA; Finance Leases (Capital Lease) 12,286 @ 3.600%; Financing Obligations (Other Borrowings) 8,158 @ 3.200%; Operating Leases (Capital Lease) 89,252 @ 3.900%; Other Long-Term Debt (Other Borrowings) 836 @ NA; Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2028; Short-Term Credit Facilities (Revolving Credit) 455 @ NA Due 2027; U.S. Dollar Commercial Paper Programs (Commercial Paper) undrawn/– @ NA; Unsecured 364-Day Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2026; Unsecured Senior Notes (Bonds and Notes) 7,750 @ 1.200% - 2.700%",
+        "value": "25 Notes Issuance of $15.0 Billion (Bonds and Notes) 15,000 @ 3.900% - 5.550%; Euro Commercial Paper Programs (Commercial Paper) undrawn/– @ NA; Finance Leases (Capital Lease) 12,286 @ 3.600%; Financing Obligations (Other Borrowings) 8,158 @ 3.200%; Operating Leases (Capital Lease) 89,252 @ 3.900%; Other Long-Term Debt (Other Borrowings) 836 @ NA; Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2028; Short-Term Credit Facilities (Revolving Credit) 455 @ NA Due 2027; U.S. Dollar Commercial Paper Programs (Commercial Paper) undrawn/– @ NA; Unsecured 364-Day Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2026; Unsecured Senior Notes (Bonds and Notes) 7,750 @ 1.200% - 2.700% — showing 11 of 16 instruments",
         "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-06-2026)",
         "status": "present",
         "note": null
@@ -18095,6 +18095,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.capital_structure"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.quality"
       ]
     }
   ],

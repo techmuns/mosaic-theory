@@ -1309,7 +1309,7 @@
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-08-02..2026-08-01"
       },
       "liquidity_covenant_flags": {
-        "value": "364-Day Unsecured Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2026; 4.5% Unsecured Fixed Rate Debt - Note * (Bonds and Notes) 750 @ 4.500% Due 2034; Commercial Paper (Commercial Paper) undrawn/– @ 4.800%; Debt Issuances - Note (Bonds and Notes) 1,000 @ 5.000% Due 2035; Debt Issuances - Note (Bonds and Notes) 500 @ 4.350% Due 2028; Debt Issuances - Note (Bonds and Notes) 500 @ 5.250% Due 2036; Finance Lease Liabilities (Capital Lease) 2,113 @ 4.000%; Long-Term Debt and Other Borrowings - Note * (Bonds and Notes) 9,375 @ NA; Operating Lease (Capital Lease) 3,834 @ 4.610%; Unsecured Fixed Rate - Note * (Bonds and Notes) 1,000 @ 4.500% Due 2032; Unsecured Fixed Rate - Note * (Bonds and Notes) 1,000 @ 1.950% Due 2027",
+        "value": "364-Day Unsecured Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2026; 4.5% Unsecured Fixed Rate Debt - Note * (Bonds and Notes) 750 @ 4.500% Due 2034; Commercial Paper (Commercial Paper) undrawn/– @ 4.800%; Debt Issuances - Note (Bonds and Notes) 1,000 @ 5.000% Due 2035; Debt Issuances - Note (Bonds and Notes) 500 @ 4.350% Due 2028; Debt Issuances - Note (Bonds and Notes) 500 @ 5.250% Due 2036; Finance Lease Liabilities (Capital Lease) 2,113 @ 4.000%; Long-Term Debt and Other Borrowings - Note * (Bonds and Notes) 9,375 @ NA; Operating Lease (Capital Lease) 3,834 @ 4.610%; Unsecured Fixed Rate - Note * (Bonds and Notes) 1,000 @ 4.500% Due 2032; Unsecured Fixed Rate - Note * (Bonds and Notes) 1,000 @ 1.950% Due 2027 — showing 11 of 15 instruments",
         "source_ref": "CIQ Financials→Capital Structure Details (A 2026 filed Mar-11-2026)",
         "status": "present",
         "note": null
@@ -15883,6 +15883,14 @@
       "layers": [
         "caveats",
         "mechanical.capital_structure"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.quality"
       ]
     }
   ],

@@ -806,7 +806,7 @@
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30"
       },
       "liquidity_covenant_flags": {
-        "value": "2025 Convertible Notes (Bonds and Notes) undrawn/– @ 0.000% Due 2025; 2027 Senior Note (Bonds and Notes) undrawn/– @ 7.500% Due 2027; 2028 Convertible Notes (Bonds and Notes) 1,725 @ 0.875% Due 2028; 2028 Exchangeable Senior Notes (Bonds and Notes) 1,125 @ 0.000% Due 2028; 2028 Senior Note (Bonds and Notes) undrawn/– @ 6.250% Due 2028; 2029 Senior Note (Bonds and Notes) 1,500 @ 4.500% Due 2029; 2030 Senior Note (Bonds and Notes) 1,250 @ 4.300% Due 2030; 2031 Senior Notes (Bonds and Notes) 1,000 @ 4.150% Due 2031; 2034 Senior Note (Bonds and Notes) 1,500 @ 4.800% Due 2034; 2035 Senior Notes (Bonds and Notes) 1,250 @ 4.800% Due 2035; 2054 Senior Note (Bonds and Notes) 1,250 @ 5.350% Due 2054",
+        "value": "2025 Convertible Notes (Bonds and Notes) undrawn/– @ 0.000% Due 2025; 2027 Senior Note (Bonds and Notes) undrawn/– @ 7.500% Due 2027; 2028 Convertible Notes (Bonds and Notes) 1,725 @ 0.875% Due 2028; 2028 Exchangeable Senior Notes (Bonds and Notes) 1,125 @ 0.000% Due 2028; 2028 Senior Note (Bonds and Notes) undrawn/– @ 6.250% Due 2028; 2029 Senior Note (Bonds and Notes) 1,500 @ 4.500% Due 2029; 2030 Senior Note (Bonds and Notes) 1,250 @ 4.300% Due 2030; 2031 Senior Notes (Bonds and Notes) 1,000 @ 4.150% Due 2031; 2034 Senior Note (Bonds and Notes) 1,500 @ 4.800% Due 2034; 2035 Senior Notes (Bonds and Notes) 1,250 @ 4.800% Due 2035; 2054 Senior Note (Bonds and Notes) 1,250 @ 5.350% Due 2054 — showing 11 of 15 instruments",
         "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-13-2026)",
         "status": "present",
         "note": null
@@ -15341,6 +15341,14 @@
       "layers": [
         "caveats",
         "mechanical.capital_structure"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.quality"
       ]
     }
   ],

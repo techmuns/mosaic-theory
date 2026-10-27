@@ -578,6 +578,7 @@ _Source §: 8-K 0000027419-26-000032 · five-yearcreditagreementex.htm_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · caveats, mechanical.capital_structure — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.quality — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 31d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 39d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling
