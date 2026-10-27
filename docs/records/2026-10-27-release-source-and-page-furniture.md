@@ -163,9 +163,11 @@ non-GAAP EPS has none.
 - One existing pin asserted the held vocabulary
   (`test_guidance_gaap_eps.py::test_a_non_gaap_diluted_eps_is_never_read_as_gaap`, "`== []`"). It
   now asserts the row is `adjusted eps`, never GAAP — its own stated intent.
-- Full offline suite on the final code (rebased on main 23a6b855): 7,328 passed, 528 skipped,
-  0 failed; ruff and `mypy --strict vinci` clean. The snapshot is
-  `data/snapshots/data_quality/release/2026-10-27.json`, written at f0d144cc.
+- Full offline suite on the reviewed code (rebased on main 23a6b855): 7,328 passed, 528 skipped,
+  0 failed; ruff and `mypy --strict vinci` clean. After the rebases onto #825 and #826 the
+  scorecard, verbatim, release-parser, records and STATE tests were re-run green; CI's `gate` runs
+  the full suite on the PR. The snapshot is `data/snapshots/data_quality/release/2026-10-27.json`,
+  rewritten at the rebased head with its counts unchanged.
 
 **DIFFERS-UNEXPLAINED ROWS — gold-corpus candidates, not built:**
 - `guide_scale_vs_xbrl`: NCNO ×5 — quarterly revenue guides $142–160M labelled 2025 / 2026,
