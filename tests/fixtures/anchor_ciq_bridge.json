@@ -1,5 +1,5 @@
 {
- "_about": "STATE row 27 (7): a fresh assembly's anchor equals the backfilled one. Cut 2026-10-27 at main 47d8ca27 from the real inputs: `page` is the committed dossier's subset the anchor chain reads (mechanical valuation / financial_summary / stock_info / implied_valuation / quality.nonoperating_quarters, forward_consensus current_multiples / pe_eps_basis); `anchor` is the committed block anchor-backfill wrote on 2026-10-26; `ciq` is the four facts the bridge reads (d_and_a, net_debt, ocf, capex, $M) through vinci.dossier.ciq_balance.extract from the git-ignored Financials workbooks named there - DERIVED values only, the workbooks are never committed; `companyfacts` is tests/fixtures/companyfacts/<T>.json at the same commit, trimmed to the tags whose removal changes the chain's output with or without CIQ. The cut was checked to reproduce the committed anchor (every field but computed_at) and the full page's read. Refreeze all four together, never one alone.",
+ "_about": "STATE row 27 (7): a fresh assembly's anchor equals the backfilled one. Cut 2026-10-27 at main 47d8ca27 from the real inputs: `page` is the committed dossier's subset the anchor chain reads (mechanical valuation / financial_summary / stock_info / implied_valuation / quality.nonoperating_quarters, forward_consensus current_multiples / pe_eps_basis); `anchor` is the committed block anchor-backfill wrote on 2026-10-26; `ciq` is the four facts the bridge reads (d_and_a, net_debt, ocf, capex, $M) through vinci.dossier.ciq_balance.extract from the git-ignored Financials workbooks named there - DERIVED values only, the workbooks are never committed; `companyfacts` is tests/fixtures/companyfacts/<T>.json at the same commit, trimmed to the tags whose removal changes the chain's output with or without CIQ. The cut was checked to reproduce the committed anchor (every field but computed_at) and the full page's read. Refreeze all four together, never one alone. UPDATED 2026-10-27 (#819, on rebase): GOOGL's `anchor` also carries `band_checks`, the band guards' outcomes, set to the value `refresh.band_checks_backfill` wrote on GOOGL's committed page, `d_and_a_source` 'ciq' included (its D&A is the CIQ bridge's); the 2026-10-26 block predates the field. A fresh assembly computes the same, so the comparison keeps it. ORKA's anchor never reaches the guards and carries none.",
  "names": {
   "GOOGL": {
    "page": {
@@ -2419,6 +2419,11 @@
       "anchor_ev_ebit"
      ],
      "reason": "the active recipe is R3_forward_pe; these are R1's screen arithmetic, kept for audit and never an input to a R3_forward_pe valuation — the active basis is `valuation_basis`"
+    },
+    "band_checks": {
+     "recorded_d_and_a": "agree",
+     "market_reconciliation": "agree",
+     "d_and_a_source": "ciq"
     }
    },
    "ciq": {

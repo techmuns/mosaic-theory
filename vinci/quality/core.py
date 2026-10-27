@@ -257,7 +257,13 @@ def scorecard(src: Source, corpus: Corpus, *, measured_on: str, git_head: str | 
             entry["counted"] = f.counted(corpus.items)
         coverage.append(entry)
     guard = {fc: Counter(e["failure_guard"][fc] for e in coverage) for fc in FAILURE_CLASSES}
-    single = sum(1 for e in coverage if e["classification"] == SINGLE_SOURCE)
+    # 'none' is split by whether a second source EXISTS for the family — its declared `fallback` —
+    # never by its derived class. They agreed while no single-source family carried a check; once
+    # one carries a check on ONE class (consensus's stated currency, 2026-10-27), its derived class
+    # is internal and the derived split counted its other classes as "a second source exists".
+    single = {fc: sum(1 for f, e in zip(src.families, coverage, strict=True)
+                      if f.fallback == SINGLE_SOURCE and e["failure_guard"][fc] == "none")
+              for fc in FAILURE_CLASSES}
     return {
         "schema": SCHEMA,
         "source": {"id": src.id, "title": src.title},
@@ -276,8 +282,8 @@ def scorecard(src: Source, corpus: Corpus, *, measured_on: str, git_head: str | 
         # which is a different fact from one whose second source exists and goes unused
         "failure_class_summary": {
             fc: {INDEPENDENT: guard[fc].get(INDEPENDENT, 0), INTERNAL: guard[fc].get(INTERNAL, 0),
-                 "none": guard[fc].get("none", 0) - single,
-                 "none_single_source": single}
+                 "none": guard[fc].get("none", 0) - single[fc],
+                 "none_single_source": single[fc]}
             for fc in FAILURE_CLASSES},
     }
 

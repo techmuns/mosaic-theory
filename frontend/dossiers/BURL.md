@@ -1,6 +1,6 @@
 # Dossier — Burlington Stores, Inc. (NYSE: BURL)
 
-_October 26, 2026 · extraction 2026-10-09.3_
+_October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-10-09.3_
 
 # Brief — first cut
 
@@ -587,6 +587,10 @@ _Source §: 8-K 0001564590-18-016500 · burl-ex101_6.htm · amended by 000119312
 ## Record & reproduce
 - **Data window:** screened as of 2026-10-16 · assembled 2026-10-26 15:23 UTC
 - **Extraction:** 2026-10-09.3 — the active recipe's basis beside the page (`valuation_basis`: bases, today's multiple and the snapshot it is struck at, bridge, exit claims, the basic share count, non-operating policy, conflicts — the template's share guard among them) and its dates named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the forward history's latest close is `latest_observed_close`, never `current`; every writer saves through one write
+- **Refreshed since assembly** (oldest first):
+  - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 31d old — 2026-09-25 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 34d old (2026-09-22, valuation.implied_expectations.multiples_as_of) — within the ceiling

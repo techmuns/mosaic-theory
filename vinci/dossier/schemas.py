@@ -2330,6 +2330,34 @@ class PeerCapitalIntensity(BaseModel):
     model_config = {"frozen": True}
 
 
+class PanelCurrency(BaseModel, frozen=True):
+    """What ONE CIQ money panel STATES its currency to be (2026-10-27) — read off the export, never
+    assumed. ``stated`` holds every currency the panel names where the page reads it, verbatim, in
+    sheet order and without repeats (a code — 'USD', 'CHF' — or the comps book's name — 'US
+    Dollar'); EMPTY when the panel states none. ``where`` says which cells were read."""
+
+    panel: str                     # 'Financials (quarterly)→Income Statement'
+    stated: list[str]
+    where: str
+    # agree: every stated currency is USD; differ: one is not; not_run: the panel states none
+    check: CrossCheck
+
+
+class CiqCurrency(BaseModel, frozen=True):
+    """THE STATED CURRENCY OF EVERY CIQ MONEY PANEL THE PAGE READS (`ciq_sheets.stated_currency`).
+
+    Every CIQ money figure on a page is read as USD ($M), and nothing checked that the export says
+    so until 2026-10-27: a CIQ chart export (MSCI World Net) had already arrived in EUR, unlabelled,
+    and ONON's workbooks state CHF on every Financials and Estimates panel while its comps state US
+    Dollar. ``check`` is the page's: ``differ`` when any panel states another currency, else
+    ``not_run`` when any states none, else ``agree``. A STATED non-USD panel is refused before
+    assembly (`ciq_sheets.require_usd`), so on a built page ``differ`` means a back-fill found it.
+    ABSENT until built (`DROP_WHEN_NONE`) — absent is never a pass."""
+
+    panels: list[PanelCurrency]
+    check: CrossCheck
+
+
 class MechanicalLayer(BaseModel):
     """The deterministic, source-bound facts — the ONLY input the synthesis LLM is given."""
 
@@ -2422,6 +2450,9 @@ class MechanicalLayer(BaseModel):
     # transcript LLM-fenced). Optional-with-default for back-compat: old JSON round-trips; a fresh
     # assembly builds it (empty rows + a qa_flag when every source misses — fail-honest).
     operating_drivers: OperatingDriversExtract | None = None
+    # (2026-10-27) the currency each CIQ money panel states — read off the export, never assumed
+    # to be USD. ABSENT until built (`DROP_WHEN_NONE`).
+    ciq_currency: CiqCurrency | None = None
 
     model_config = {"frozen": True}
 
@@ -2728,6 +2759,8 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("primary_source", "guide_verification_check"),
     ("valuation.implied_expectations", "vintage_check"),
     ("valuation.implied_expectations", "net_debt_check"),
+    # the currency each CIQ money panel states (`CiqCurrency`, 2026-10-27)
+    ("", "ciq_currency"),
 )
 
 

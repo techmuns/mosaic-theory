@@ -4777,6 +4777,11 @@ def assemble_mechanical(
     """Assemble the source-bound mechanical layer (no LLM) + any flags for human review (e.g. a
     distorted-P/E-basis warning). No conclusions. ``screen_cap_usd`` is the ranker's frozen
     screen-time cap — the benchmark-band fallback when the CIQ cap is absent (see below)."""
+    # (2026-10-27) THE CURRENCY EVERY CIQ MONEY PANEL STATES, read before anything is fetched. A
+    # panel stating another currency is refused here, so no page prints its figures as dollars
+    # (`ciq_sheets.require_usd`); one stating none is stored not_run and flagged below
+    currency = ciq_sheets.stated_currency(bundle)
+    ciq_sheets.require_usd(currency, record.identity.ticker)
     # every "at the current price" reading below — P/E, its percentile, the adjusted and forward
     # multiples, the conflict caveat — reads the latest stored close, the one the price box shows
     record = _at_latest_close(record, store, edgar)
@@ -4888,6 +4893,7 @@ def assemble_mechanical(
         # (Brief) 52-week rebased price path — name vs the cap-band benchmark (the idio closes).
         stock_performance=_stock_performance(
             record.identity, store, reference_date, bench=bench),
+        ciq_currency=currency,
     )
     # (RC-1 C) primary-source layer — fetch 8-K EX-99.1 releases + the latest 10-Q, parse, and run
     # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse
@@ -4922,6 +4928,8 @@ def assemble_mechanical(
     calendar = _catalyst_calendar(edgar, record.identity.cik, reference_date, mech)
     mech = mech.model_copy(update={"catalyst_calendar": calendar})
     flags: list[str] = list(primary.qa_flags)
+    if (cur_flag := ciq_sheets.currency_flag(currency)) is not None:
+        flags.append(cur_flag)
     flags += guidance_refusal_flags(primary.releases)
     flags += op_drivers.qa_flags  # (PR-B) operating-driver per-source honest-miss flags → QA
     flags += calendar.qa_flags  # (catalyst calendar) cadence/maturity honest-miss flags → QA

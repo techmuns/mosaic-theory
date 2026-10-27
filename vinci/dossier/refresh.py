@@ -1541,14 +1541,19 @@ def cross_check_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str]
     return _apply
 
 
-def _export_figures(ticker: str) -> list[Any]:
-    """The annual Revenue and CFO figures of the name's CIQ export, each with its period end."""
-    from vinci.dossier import statement_recon as sr
+def _page_bundle(ticker: str) -> Any:
+    """The name's CIQ exports, as assembly loads them."""
     from vinci.dossier.ciq import CiqBundle
     from vinci.dossier.manual_store import LocalFolderStore
 
-    files = LocalFolderStore.from_config().files(ticker)
-    return sr.ciq_figures(CiqBundle.from_files(ticker, files))
+    return CiqBundle.from_files(ticker, LocalFolderStore.from_config().files(ticker))
+
+
+def _export_figures(ticker: str) -> list[Any]:
+    """The annual Revenue and CFO figures of the name's CIQ export, each with its period end."""
+    from vinci.dossier import statement_recon as sr
+
+    return sr.ciq_figures(_page_bundle(ticker))
 
 
 def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[str],
@@ -1609,6 +1614,202 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
         return out
 
     return _apply
+
+
+def ciq_currency_transform(doc: dict[str, Any], *, refused: list[str],
+                           bundle_for: Callable[[str], Any] = _page_bundle) -> Transform:
+    """A `refresh_dossier` transform writing `mechanical.ciq_currency` — the currency every CIQ
+    money panel STATES (`ciq_sheets.stated_currency`, the assembler's own read) — onto a committed
+    page, under a KEPT synthesis.
+
+    THE CURRENCY IS NOT ON THE PAGE, so the exports are read, and only behind proof that each money
+    workbook the folder holds is the one the page was built from: the quarterly Financials and the
+    Estimates by the sha256 the page stamps (`ev_bridge.source_sha256`,
+    `forward_consensus.source_sha256`); the annual Financials by its revenue and operating cash
+    flow reproducing the page's annual table (`statement_recon.table_figures`, #805's proof); the
+    comps book by its peer grid reproducing the page's, row for row. A page whose workbook does not
+    prove, whose folder will not load, or that already holds a different block is left as it is
+    and named in ``refused`` — absent reads as not run, never as a pass."""
+    from vinci.dossier import ciq_sheets as cs
+    from vinci.dossier import statement_recon as sr
+    from vinci.dossier.ciq import CiqAmbiguousError, CiqParseError, CiqUnavailableError
+
+    ticker = str(doc.get("ticker"))
+    fin_q = (doc.get("ev_bridge") or {}).get("source_sha256")
+    est = (doc.get("forward_consensus") or {}).get("source_sha256")
+
+    def _sha(wb: Any) -> str | None:
+        return cs.file_provenance(wb.path)[0]
+
+    def _unproved(bundle: Any, mech: dict[str, Any]) -> list[str]:
+        out: list[str] = []
+        q = bundle.workbook("financials", freq="quarterly")
+        if q is not None and (fin_q is None or _sha(q) != fin_q):
+            out.append("the quarterly Financials is not the export the page stamps"
+                       if fin_q else "the page stamps no quarterly Financials export")
+        e = bundle.workbook("estimates")
+        if e is not None and (est is None or _sha(e) != est):
+            out.append("the Estimates is not the export the page stamps"
+                       if est else "the page stamps no Estimates export")
+        # A STAMPED EXPORT THE FOLDER NO LONGER HOLDS (Codex, #819): the block built from what is
+        # left would leave that export's panels unreported
+        for held, stamp, what in ((q, fin_q, "quarterly Financials"), (e, est, "Estimates")):
+            if held is None and stamp is not None:
+                out.append(f"the page stamps a {what} export the folder does not hold")
+        if bundle.workbook("financials", freq="annual") is not None:
+            table = ((mech.get("financial_summary") or {}).get("annual") or {}).get("value")
+            got = {(f.line, f.column): f.value for f in sr.ciq_figures(bundle)}
+            if not isinstance(table, dict) or got != sr.table_figures(table):
+                out.append("the annual Financials does not reproduce the page's annual table")
+        if bundle.workbook("comps") is not None:
+            fresh = cs.peer_comps(bundle).peer_grid
+            page = ((mech.get("peer_comps") or {}).get("peer_grid") or {}).get("value")
+            if (page is None or fresh is None
+                    or json.loads(fresh.model_dump_json())["value"] != page):
+                out.append("the comps book does not reproduce the page's peer grid")
+        return out
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        try:
+            bundle = bundle_for(ticker)
+            bad = _unproved(bundle, out)
+            cur = cs.stated_currency(bundle)
+        except (FileNotFoundError, CiqUnavailableError, CiqAmbiguousError, CiqParseError) as exc:
+            # one name's unreadable folder is that name's refusal, never the whole pass's crash
+            refused.append(f"{ticker}: no CIQ export to read the currencies from ({exc})")
+            return out
+        if bad:
+            refused.append(f"{ticker}: {'; '.join(bad)} — not the page's own export")
+            return out
+        if cur is None:
+            refused.append(f"{ticker}: the folder holds no CIQ money panel")
+            return out
+        new = json.loads(cur.model_dump_json())
+        if out.get("ciq_currency") not in (None, new):
+            refused.append(f"{ticker}: ciq_currency on the page differs from the rebuild — kept, "
+                           "never overwritten")
+            return out
+        out["ciq_currency"] = new
+        return out
+
+    return _apply
+
+
+#: The lines the anchor writes into `data_quality_detail` for each band guard (`compute_anchor`).
+_DA_TRIP_LEAD = "Multiples sheet implies D&A of "
+_RECON_TRIP_LEAD = "market-implied EBITDA "
+#: The anchor's vendor-bridge line (`compute_anchor`): the inputs the CIQ workbook filled, by key.
+_VENDOR_LEAD = "vendor bridge: "
+_VENDOR_TAIL = " supplied by the CIQ workbook because EDGAR had no usable tag"
+_DA_EX_LEASE_LINE = ("recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, which the "
+                     "ex-lease history does not use")
+
+
+def band_checks_backfill(path: Path, *, refused: list[str], unreached: list[str]) -> bool:
+    """Write `anchor.band_checks` — the two band guards' outcomes — onto ONE committed page, under
+    a KEPT synthesis and every other anchor value as committed. True when the page moved.
+
+    NO WORKBOOK, NO EDGAR: each guard is re-run through its own function on the inputs the page
+    stores (the band R1 priced, the anchor's revenue, D&A and net debt, the page's EBIT and market
+    cap), and the outcome is written ONLY BEHIND A REPRODUCTION:
+
+    * the band re-selected (`r1_multiple_band`) is the one the anchor priced — its median, close
+      count and source equal the stored multiple's;
+    * the ex-lease line ('recorded-D&A check not run …') is on the page exactly when the band is
+      the ex-lease history;
+    * each guard's re-run trip lines are on the page, and the page holds no trip line the re-run
+      does not give back — a trip line carries its numbers, so equal lines mean equal inputs.
+
+    An anchor that never reached the guards (no own-history multiple, an R2 or R4 recipe: no
+    margin block) is named in ``unreached`` and keeps no block — absent reads as not run. A page
+    that does not reproduce, or already holds a different block, is named in ``refused``."""
+    from vinci.dossier import band_guards as bg
+    from vinci.dossier import layer_refresh
+    from vinci.dossier.anchor import (
+        DQ_VENDOR_BRIDGE,
+        _band_read,
+        _ltm_ebit_from_fs,
+        _market_cap_from_mechanical,
+        r1_multiple_band,
+    )
+    from vinci.dossier.assemble import _read_scenario_card
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import write_dossier
+
+    original = path.read_text()
+    doc = json.loads(original)
+    t = str(doc.get("ticker"))
+    a, mech = doc.get("anchor"), doc.get("mechanical") or {}
+    if (path.parent / "known_wrong.json").exists():
+        refused.append(f"{t}: SEALED by its own known_wrong.json")
+        return False
+    if not isinstance(a, dict) or a.get("margin") is None:
+        unreached.append(t)
+        return False
+
+    def _v(key: str) -> float | None:
+        node = a.get(key)
+        return node.get("value") if isinstance(node, dict) else None
+
+    sel = r1_multiple_band(mech)
+    mult = _band_read(sel.band) or {}
+    held = a.get("multiple") or {}
+    if (mult.get("median") != held.get("value") or mult.get("n_closes") != held.get(
+            "history_quarters") or sel.source != held.get("source")):
+        refused.append(f"{t}: the band the page holds is not the one its anchor priced")
+        return False
+    detail = list(a.get("data_quality_detail") or [])
+    if (_DA_EX_LEASE_LINE in detail) != sel.ex_lease:
+        refused.append(f"{t}: the ex-lease line does not match the band the anchor priced")
+        return False
+    da, rev, nd = _v("d_and_a"), _v("ltm_revenue"), _v("net_debt")
+    ltm_ebit = _ltm_ebit_from_fs(mech)
+    _da_flag, da_lines = bg.recorded_d_and_a_check(
+        implied_d_and_a_margin=mult.get("implied_d_and_a_margin"), revenue=rev,
+        recorded_d_and_a=da)
+    recon = bg.market_reconciliation(
+        market_cap=_market_cap_from_mechanical(mech), net_debt=nd,
+        current_multiple=mult.get("current"),
+        recorded_ebitda=(ltm_ebit + da) if (ltm_ebit is not None and da) else None)
+    for lead, lines, what in ((_DA_TRIP_LEAD, da_lines, "recorded-D&A"),
+                              (_RECON_TRIP_LEAD, recon.detail if recon else [],
+                               "market-reconciliation")):
+        if sorted(lines) != sorted(x for x in detail if x.startswith(lead)):
+            refused.append(f"{t}: the {what} check's trip lines do not reproduce from the page")
+            return False
+    # WHOSE D&A (Codex, #819): the inputs the vendor bridge filled, off the anchor's own line, which
+    # must sit on the page exactly when its `vendor_bridge` flag does
+    vendor = [x for x in detail if x.startswith(_VENDOR_LEAD) and x.endswith(_VENDOR_TAIL)]
+    if len(vendor) > 1 or bool(vendor) != (DQ_VENDOR_BRIDGE in (a.get("data_quality") or "")
+                                           .split("+")):
+        refused.append(f"{t}: the vendor-bridge line does not match the anchor's flag")
+        return False
+    filled = vendor[0][len(_VENDOR_LEAD):-len(_VENDOR_TAIL)].split(", ") if vendor else []
+    new = bg.BandChecks(
+        recorded_d_and_a=bg.recorded_d_and_a_outcome(
+            implied_d_and_a_margin=mult.get("implied_d_and_a_margin"), revenue=rev,
+            recorded_d_and_a=da),
+        market_reconciliation=bg.reconciliation_outcome(recon),
+        d_and_a_source=(("ciq" if "d_and_a" in filled else "edgar") if da else None),
+    ).model_dump(mode="json")
+    held_bc = a.get("band_checks")
+    if held_bc is not None:
+        # a block written before `d_and_a_source` gains it; any other difference is kept
+        predates = ("d_and_a_source" not in held_bc
+                    and held_bc == {k: v for k, v in new.items() if k != "d_and_a_source"})
+        if held_bc == new or not predates:
+            if held_bc != new:
+                refused.append(f"{t}: band_checks on the page differs from the rebuild — kept")
+            return False
+    a["band_checks"] = new
+    model = Dossier.model_validate(doc)
+    if moved := layer_refresh.moved_layers(json.loads(original), json.loads(dossier_json(model))):
+        model = layer_refresh.append(model, layer_refresh.entry("refresh", moved))
+    write_dossier(path, model)       # the one writer: the operator's decision is guarded there
+    path.with_name("dossier.md").write_text(render_markdown(
+        model, card=_read_scenario_card(model.ticker), dossiers_root=path.parent.parent))
+    return True
 
 
 def _base_leg(ticker: str) -> dict[str, Any] | None:
