@@ -779,6 +779,9 @@ def ciq_da_basis(ciq: Any) -> str:
                 f"vendor basis)")
     if end is not None and period == "FY":
         return f"consolidated fiscal year to {end.isoformat()} (CIQ workbook, vendor basis)"
+    if period is not None:   # the header names the period but its date did not read
+        kind = "trailing twelve months" if period == "LTM" else "fiscal year"
+        return f"consolidated {kind}, end date not read (CIQ workbook, vendor basis)"
     return "consolidated, period not stated in the CIQ workbook's column header (vendor basis)"
 
 

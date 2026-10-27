@@ -148,3 +148,9 @@ def test_a_bridged_d_and_a_is_stored_with_its_trailing_period() -> None:
         "consolidated fiscal year to 2026-05-31 (CIQ workbook, vendor basis)")
     blank = _bridge_inputs({}, _facts("CNXC"), _ciq(1.0))["d_and_a"].basis or ""
     assert "period not stated" in blank and "latest FY" not in blank
+    # a header naming LTM whose date did not read keeps the period it did state
+    undated = cb.CiqFacts(ticker="X", as_of=None, source_file="wb.xls", source_sha256="sha",
+                          facts={"d_and_a": cb.CiqFact(value=1.0, unit="$M", basis="b",
+                                                       source="s", period="LTM")})
+    assert _bridge_inputs({}, _facts("CNXC"), undated)["d_and_a"].basis == (
+        "consolidated trailing twelve months, end date not read (CIQ workbook, vendor basis)")
