@@ -5,6 +5,8 @@ _August 18, 2026 · extraction 2026-08-16.1 · layers refreshed to 2026-10-09.3_
 # Brief — first cut
 
 ## At a glance
+> ⚠ **Verify before the verdict:** Debt maturity: the filing governs 'JPMorgan Credit Facility'; Debt maturity: 'JPMorgan Credit Facility' matures earlier on a condition — full caveats in Analysis.
+
 Vital Farms, Inc., a food company, packages, markets, and distributes shell eggs, butter, and other products in the United States.
 **Mixed** — an identifiable, arguably reversible egg-pricing shock with an intact loyal base and near-zero leverage set against a ~97% FY26 EBITDA collapse and cash burn, with recovery still only modelled.
 - **Segments:** Eggs and Butter — single segment [1]
@@ -430,9 +432,11 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
-_1 to verify._
+_3 to verify._
 
 - Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-06, EDGAR 8-K item 2.02), the oldest by 16d: valuation multiples as-of 2026-07-21; implied-TEV inputs as-of 2026-07-29. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it.
+- Debt maturity: the filing governs 'JPMorgan Credit Facility' — CIQ's capital-structure panel (A 2025 filed Feb-26-2026) dates it 2029-04-09, the 8-K 0001193125-26-336692 (filed 2026-08-06) states 2029-08-04. This page prints 2029-08-04; prose written before this check may still cite the panel's date.
+- Debt maturity: 'JPMorgan Credit Facility' matures earlier on a condition — it matures 2029-08-04, and the filing says “will instead mature on the date that is 90 days prior to the then-scheduled maturity date of the Term Loan Credit Facility.” [8-K 0001193125-26-336692 (filed 2026-08-06)].
 
 # Appendix — data & audit
 
@@ -499,7 +503,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 |  | Type | Principal | Coupon | Floating | Maturity | Sec | Conv | Cur |
 |---|---|---:|---|---|---|---|---|---|
 | Finance Lease Liabilities | Capital Lease | $10.8M | 6.730% | NA | undated | Y | N | USD |
-| JPMorgan Credit Facility | Revolving Credit | – | NA | Benchmark | 2029-04-09 | Y | N | USD |
+| JPMorgan Credit Facility | Revolving Credit | – | NA | Benchmark | 2029-08-04 | Y | N | USD |
 | Operating Lease Liabilities | Capital Lease | $42.7M | 4.770% | NA | undated | Y | N | USD |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no trailing-12m instrument maturity to anchor an 8-K
@@ -570,6 +574,7 @@ _Source §: fenced Tier-2 extraction (verbatim, source-bound)_
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · caveats, mechanical.capital_structure — refresh at 2026-10-09.3
 - **Price store:** `mosaic-theory-pg → mosaic-theory-wb` · reaching 2026-08-17
 - **Panel age:** oldest panel 20d old — 2026-07-29 (valuation.implied_expectations.tev_as_of), against a 2026-08-18 build
 - **Consensus age:** consensus 28d old (2026-07-21, valuation.implied_expectations.multiples_as_of) — within the ceiling

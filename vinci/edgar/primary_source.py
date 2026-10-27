@@ -27,6 +27,9 @@ BOUNDARY_DAYS = 7
 #: Every QA flag the wall check writes opens with this — the refresh that rebuilds the check
 #: selects the page's stored wall flags by it (`refresh.cross_check_transform`).
 WALL_FLAG = "wall coherence:"
+#: The wall line when the 10-Q states no ≤12m figure — returned before the panel is read, so no
+#: panel maturity can move it (`refresh.maturity_check_transform` relies on that).
+WALL_NOT_STATED = "wall coherence: UNKNOWN — filing states no ≤12m figure"
 
 
 # --- (surface 1) self-funding — two inputs, both must be positive -------------------------------
@@ -125,7 +128,7 @@ def wall_coherence_read(
     A divergence with an instrument maturing within ±7d of the boundary is flagged a possible
     window-convention artifact — never a false-fire on convention."""
     if filing_within_12m is None:
-        return WallCoherence("wall coherence: UNKNOWN — filing states no ≤12m figure", [],
+        return WallCoherence(WALL_NOT_STATED, [],
                              CHECK_NOT_RUN, None)
     # NO DATED PRINCIPAL, NO SECOND FIGURE (Codex, #793): with no instrument carrying both a
     # principal and a maturity the panel's same-window total cannot be established, and summing

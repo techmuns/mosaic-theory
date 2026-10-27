@@ -17,6 +17,7 @@ import time
 import unicodedata
 import xml.etree.ElementTree as ET
 from collections.abc import Callable, Sequence
+from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 from typing import Any, NamedTuple, TypeVar
 
@@ -60,6 +61,7 @@ from vinci.dossier.schemas import (
     ImpliedExpectations,
     ImpliedValuation,
     LeverageSurvival,
+    MaturityCheck,
     MechanicalLayer,
     NonOperatingQuarters,
     OperatingDriver,
@@ -82,6 +84,7 @@ from vinci.dossier.schemas import (
     StockPerformance,
     Valuation,
 )
+from vinci.edgar import debt_maturities as dmx
 from vinci.edgar import filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar.client import EdgarClient, Filing
 from vinci.edgar.concepts import (
@@ -3252,35 +3255,54 @@ def _catalyst_calendar(
                 tests = "the next reported quarter against the committed trajectory"
                 src = f"cadence: EDGAR submissions ({basis})"
             rows.append(CatalystRow(
-                event="Next results print", expected_date=est_date.isoformat(),
+                event=PRINT_EVENT, expected_date=est_date.isoformat(),
                 date_basis="cadence-estimate", tests_what=tests, source_ref=src))
-    # C — in-horizon maturities (stated dates from the capital-structure panel). ``instruments``
-    # is Sourced[list[...]] — read the value only when PRESENT (absent panel = no rows, no guess).
-    cs = mech.capital_structure
-    if (cs is not None and cs.instruments.status is SourceStatus.PRESENT
-            and cs.instruments.value):
-        horizon = reference_date + timedelta(days=_CAL_MATURITY_HORIZON_DAYS)
-        for inst in cs.instruments.value:
-            if not inst.maturity_date:
-                continue
-            try:
-                mat = date.fromisoformat(inst.maturity_date)
-            except ValueError:
-                qa.append(f"catalyst: unparseable maturity {inst.maturity_date!r} "
-                          f"on {inst.description!r} — row skipped")
-                continue
-            if reference_date < mat <= horizon:
-                amt = (f"${inst.principal_musd:,.1f}M " if inst.principal_musd is not None else "")
-                rows.append(CatalystRow(
-                    event=f"{inst.description} {amt}matures".replace("  ", " "),
-                    expected_date=mat.isoformat(), date_basis="stated",
-                    tests_what="refinance / repay / convert before the wall — the survival read",
-                    source_ref="CIQ capital-structure panel (maturity_date)"))
+    # C — in-horizon maturities (stated dates from the capital-structure panel)
+    maturities, mat_qa = maturity_rows(mech.capital_structure, reference_date)
+    rows += maturities
+    qa += mat_qa
     # D — management-stated dated operating events from the driver verbatims (source D,
     # ratified 2026-07-24; surfaced by SMPL's September price increase)
     rows.extend(_dated_operating_events(mech.operating_drivers, reference_date))
     rows.sort(key=lambda r: r.expected_date)
     return CatalystCalendar(rows=rows, qa_flags=qa)
+
+
+#: The calendar's print row, and what a maturity row tests — how the back-fill tells the rows apart.
+PRINT_EVENT = "Next results print"
+MATURITY_TESTS = "refinance / repay / convert before the wall — the survival read"
+_PANEL_MATURITY_REF = "CIQ capital-structure panel (maturity_date)"
+
+
+def maturity_rows(cs: CapitalStructure | None,
+                  reference_date: date) -> tuple[list[CatalystRow], list[str]]:
+    """The calendar's in-horizon maturity rows (source C), and their misses. ``instruments`` is
+    Sourced[list[...]] — read the value only when PRESENT (absent panel = no rows, no guess). A
+    date a FILING governs (`maturity_check`) is cited to that filing. One builder, shared with
+    `refresh.maturity_check_transform`."""
+    rows: list[CatalystRow] = []
+    qa: list[str] = []
+    if cs is None or cs.instruments.status is not SourceStatus.PRESENT or not cs.instruments.value:
+        return rows, qa
+    horizon = reference_date + timedelta(days=_CAL_MATURITY_HORIZON_DAYS)
+    for inst in cs.instruments.value:
+        if not inst.maturity_date:
+            continue
+        try:
+            mat = date.fromisoformat(inst.maturity_date)
+        except ValueError:
+            qa.append(f"catalyst: unparseable maturity {inst.maturity_date!r} "
+                      f"on {inst.description!r} — row skipped")
+            continue
+        if reference_date < mat <= horizon:
+            amt = (f"${inst.principal_musd:,.1f}M " if inst.principal_musd is not None else "")
+            rows.append(CatalystRow(
+                event=f"{inst.description} {amt}matures".replace("  ", " "),
+                expected_date=mat.isoformat(), date_basis="stated", tests_what=MATURITY_TESTS,
+                source_ref=(f"{inst.maturity_source} — governs the CIQ panel's "
+                            f"{inst.ciq_maturity_date}" if inst.maturity_source
+                            else _PANEL_MATURITY_REF)))
+    return rows, qa
 
 
 def _catalyst_stale_flag(catalyst: CatalystPath, reference_date: date) -> str | None:
@@ -3377,19 +3399,26 @@ def _panel_freshness_flag(
 
 
 # --- E1/E3/E4: structured capital structure + maturity-anchored 8-Ks + covenant pointers -----
-def _maturity_8ks(
-    edgar: EdgarClient, cik: str, instruments: list[CapitalInstrument], reference_date: date
-) -> Sourced[str]:
-    """(E3) 8-Ks filed within ±10d of any instrument maturity in the TRAILING 12m — where a
-    recently-matured facility's resolution would be disclosed. POINTERS only ('read for
-    resolution'); never an assumption of repayment or default."""
-    mats = sorted({
+def trailing_maturities(instruments: list[CapitalInstrument], reference_date: date) -> list[date]:
+    """The instrument maturities in the trailing 12m, ``[reference − 365d, reference]`` — the
+    dates `_maturity_8ks` anchors its 8-Ks on, shared with the back-fill's guard
+    (`refresh.maturity_check_transform`)."""
+    return sorted({
         date.fromisoformat(i.maturity_date)
         for i in instruments
         if i.maturity_date
         and reference_date - timedelta(days=365)
         <= date.fromisoformat(i.maturity_date) <= reference_date
     })
+
+
+def _maturity_8ks(
+    edgar: EdgarClient, cik: str, instruments: list[CapitalInstrument], reference_date: date
+) -> Sourced[str]:
+    """(E3) 8-Ks filed within ±10d of any instrument maturity in the TRAILING 12m — where a
+    recently-matured facility's resolution would be disclosed. POINTERS only ('read for
+    resolution'); never an assumption of repayment or default."""
+    mats = trailing_maturities(instruments, reference_date)
     if not mats or not cik:
         return Sourced.unknown(note="no trailing-12m instrument maturity to anchor an 8-K")
     try:
@@ -3682,6 +3711,14 @@ def _capital_structure(
     pointer_rows = _covenant_pointers(edgar, http, cik or "", insts, reference_date)
     vintage = (_capital_structure_vintage(edgar, cik, detail_as_of, reference_date)
                if cik else Sourced.unknown(note="no CIK"))
+    # (2026-10-27) each maturity against the filings, BEFORE anything reads a date: a date a newer
+    # filing states governs the instrument table, the calendar, the wall, the liquidity line and
+    # the trailing-12m 8-Ks below — and the synthesis, which reads this layer
+    mcheck = (maturity_check(edgar, http, cik, insts, pointer_rows, detail_as_of, reference_date)
+              if cik and insts else None)
+    if mcheck is not None:
+        instruments = govern_instruments(instruments, mcheck)
+        insts = instruments.value or []
     located = (pointer_rows.status is SourceStatus.PRESENT
                and any(r.accession for r in (pointer_rows.value or [])))
     summary_str = _covenant_summary(pointer_rows)
@@ -3701,7 +3738,187 @@ def _capital_structure(
         covenant_pointers=pointers_str, covenant_pointer_rows=pointer_rows,
         covenant_terms=Sourced.unknown(note=terms_note),
         panel_vintage=vintage,
+        maturity_check=mcheck,
     )
+
+
+# --- (2026-10-27) every panel maturity against the newest filing that states it ---------------
+#: The 8-K items that carry a debt agreement: entry into a material agreement, a direct obligation.
+_MATURITY_ITEMS = frozenset({"1.01", "2.03"})
+_EIGHT_K = ("8-K", "8-K/A")
+#: Every caveat the maturity check writes opens with this — the back-fill replaces exactly these.
+MATURITY_CAVEAT = "Debt maturity"
+
+
+def _panel_lines(insts: list[CapitalInstrument]) -> list[dmx.PanelLine]:
+    """The panel's OWN instruments as the check reads them — the CIQ date even on a page whose
+    instrument a filing already governs (`ciq_maturity_date`)."""
+    out: list[dmx.PanelLine] = []
+    for i, x in enumerate(insts):
+        raw = x.ciq_maturity_date or x.maturity_date
+        try:
+            mat = date.fromisoformat(raw) if raw else None
+        except ValueError:
+            mat = None
+        out.append(dmx.PanelLine(i, x.description, x.type, x.coupon, x.principal_musd, mat))
+    return out
+
+
+def _maturity_sources(
+    edgar: EdgarClient, http: CachedHttp, cik: str,
+    pointer_rows: Sourced[list[CovenantPointer]] | None, panel_filed: date | None,
+    reference_date: date,
+) -> list[dmx.Source]:
+    """The filings the check reads, none filed after ``reference_date``: the latest 10-Q/10-K, every
+    8-K with Item 1.01/2.03 filed after the panel's own source filing, and the 8-Ks the page's
+    covenant pointers link (VRRM's linked the refinancing 8-K; its date was never read). Each text
+    is read whole by the anchored grammar (`debt_maturities.read`); a fetch that fails is a source
+    with an ``error``, never a silent skip. Raises HttpError when the submissions index cannot be
+    read at all."""
+    # an 8-K/A counts as an 8-K: WERN's pointer links its credit-agreement amendment as one
+    filings = edgar.recent_filings(cik, forms=("10-Q", "10-K", "8-K", "8-K/A"))
+    periodic = sorted((f for f in filings if f.form in ("10-Q", "10-K")
+                       and f.filing_date <= reference_date),
+                      key=lambda f: f.filing_date, reverse=True)[:1]
+    linked = {r.accession for r in (pointer_rows.value or [] if pointer_rows is not None else [])
+              if r.filing == "8-K" and r.accession}
+    picks: list[tuple[Filing, str]] = [(f, dmx.READ_PERIODIC) for f in periodic]
+    for f in filings:
+        if f.form not in _EIGHT_K or f.filing_date > reference_date:
+            continue
+        if f.accession in linked:
+            picks.append((f, dmx.READ_LINKED))
+        elif (panel_filed is not None and f.filing_date > panel_filed
+              and set(f.items) & _MATURITY_ITEMS):
+            picks.append((f, dmx.READ_AFTER_PANEL))
+    out: list[dmx.Source] = []
+    for f, why in picks:
+        base = dmx.Source(f.form, f.accession, f.filing_date, why,
+                          f.report_date if f.form not in _EIGHT_K else None)
+        if not f.primary_doc:
+            out.append(replace(base, error="the submissions index names no primary document"))
+            continue
+        try:
+            url = filing_sections.filing_url(cik, f.accession, f.primary_doc)
+            text = normalize_text(html_to_text(http.get_text(url, ttl_seconds=None)))
+        except (HttpError, ValueError) as exc:
+            out.append(replace(base, error=f"fetch failed ({type(exc).__name__})"))
+            continue
+        out.append(replace(base, stated=tuple(dmx.read(text))))
+    return out
+
+
+def maturity_check(
+    edgar: EdgarClient, http: CachedHttp, cik: str, insts: list[CapitalInstrument],
+    pointer_rows: Sourced[list[CovenantPointer]] | None, detail_as_of: str, reference_date: date,
+) -> MaturityCheck:
+    """Each panel maturity against the newest filing that states it (`debt_maturities.check`). The
+    one composition, shared by assembly (`_capital_structure`) and the back-fill
+    (`refresh.maturity_check_transform`)."""
+    panel_filed = _cs_panel_filed(detail_as_of)
+    lines = _panel_lines(insts)
+    try:
+        sources = _maturity_sources(edgar, http, cik, pointer_rows, panel_filed, reference_date)
+    except (HttpError, KeyError, ValueError) as exc:
+        return dmx.check(lines, [], panel_filed=panel_filed, bound=reference_date,
+                         unread=f"EDGAR's submissions index was unreachable ({type(exc).__name__})"
+                                " — no filing was read")
+    return dmx.check(lines, sources, panel_filed=panel_filed, bound=reference_date)
+
+
+def govern_instruments(instruments: Sourced[list[CapitalInstrument]],
+                       check: MaturityCheck) -> Sourced[list[CapitalInstrument]]:
+    """The panel's instruments with every maturity a filing GOVERNS put in place — the filing's
+    date in ``maturity_date``, the panel's kept beside it in ``ciq_maturity_date``, the filing named
+    in ``maturity_source``. An instrument nothing governs is returned as the panel gave it."""
+    if instruments.value is None:
+        return instruments
+    gov = {r.instrument: r for r in check.rows if r.governs and r.filing_maturity}
+    if not gov:
+        return instruments
+    value = [i.model_copy(update={
+        "maturity_date": gov[n].filing_maturity,
+        "ciq_maturity_date": i.ciq_maturity_date or i.maturity_date,
+        "maturity_source": gov[n].source}) if n in gov else i
+        for n, i in enumerate(instruments.value)]
+    return instruments.model_copy(update={"value": value})
+
+
+def governed_liquidity_line(line: Sourced[str], cs: CapitalStructure | None) -> Sourced[str]:
+    """The flat liquidity line with each maturity year a filing governs.
+
+    Rebuilt from the structured instruments (`ciq_sheets.liquidity_line`), never string-edited, and
+    ONLY behind proof: the panel's own instruments must rebuild the stored line byte for byte.
+    One that does not is returned unchanged — still CIQ's year; the caveat names the filing's."""
+    if (cs is None or cs.instruments.value is None or line.value is None
+            or not any(i.maturity_source for i in cs.instruments.value)):
+        return line
+    panel = [i.model_copy(update={"maturity_date": i.ciq_maturity_date, "ciq_maturity_date": None,
+                                  "maturity_source": None}) if i.maturity_source else i
+             for i in cs.instruments.value]
+    if ciq_sheets.liquidity_line(panel) != line.value:
+        return line
+    governed = ciq_sheets.liquidity_line(cs.instruments.value)
+    if governed == line.value:
+        return line
+    return line.model_copy(update={
+        "value": governed,
+        "source_ref": f"{line.source_ref} — maturity years a filing governs: "
+                      "capital_structure.maturity_check"})
+
+
+def _ungoverned_line_flag(stored: Sourced[str], governed: Sourced[str],
+                          cs: CapitalStructure | None) -> str | None:
+    """Fail loud when a governed year should reach the liquidity line and its proof refused it: the
+    line still prints CIQ's year, and says so."""
+    if cs is None or cs.instruments.value is None or governed != stored:
+        return None
+    panel = [i.model_copy(update={"maturity_date": i.ciq_maturity_date}) if i.maturity_source
+             else i for i in cs.instruments.value]
+    if ciq_sheets.liquidity_line(panel) == ciq_sheets.liquidity_line(cs.instruments.value):
+        return None  # no governed year within the line's rows
+    return (f"{MATURITY_CAVEAT}: the liquidity line does not rebuild from the panel's instruments, "
+            "so it still prints CIQ's maturity year where a filing governs the table's date.")
+
+
+def maturity_caveats(cs: CapitalStructure | None) -> list[str]:
+    """The decision caveats the maturity check raises — one per difference, one per instrument
+    whose filings state a springing maturity, one per filing the check could not read. Each names
+    both dates and the accession. The decision LEADS, before the first " — ": the Brief's warning
+    strip prints only that lead (`render._brief_verify_first`)."""
+    check = cs.maturity_check if cs is not None else None
+    if cs is None or check is None:
+        return []
+    out: list[str] = []
+    panel = f"CIQ's capital-structure panel ({cs.detail_as_of})"
+    for r in check.rows:
+        if r.check == CHECK_DIFFER:
+            also = (f", also stated by {', '.join(r.also_stated_by)}" if r.also_stated_by else "")
+            day = f" ({r.note})" if r.governs and r.note else ""
+            if r.governs:
+                out.append(
+                    f"{MATURITY_CAVEAT}: the filing governs '{r.description}' — {panel} dates it "
+                    f"{r.ciq_maturity_date}, the {r.source} states {r.filing_maturity}{day}{also}. "
+                    f"This page prints {r.filing_maturity}; prose written before this check may "
+                    "still cite the panel's date.")
+            else:
+                out.append(
+                    f"{MATURITY_CAVEAT}: CIQ and the filing differ on '{r.description}' — {panel} "
+                    f"dates it {r.ciq_maturity_date}, the {r.source} states "
+                    f"{r.filing_maturity}{also}. The page keeps CIQ's date: {r.note}. Verify.")
+        if r.springing:
+            dated = sorted({sp.springs_to for sp in r.springing if sp.springs_to})
+            when = (f"springs to {', '.join(dated)}" if dated
+                    else "matures earlier on a condition")
+            said = "; ".join(f"“{sp.clause}” [{sp.source}]" for sp in r.springing)
+            out.append(
+                f"{MATURITY_CAVEAT}: '{r.description}' {when} — it matures "
+                f"{r.filing_maturity or r.ciq_maturity_date}, and the filing says {said}.")
+    for src in check.sources:
+        if src.error:
+            out.append(f"{MATURITY_CAVEAT}: the {src.form} {src.accession} (filed {src.filed}) "
+                       f"could not be read — {src.error}; a maturity it states is unchecked.")
+    return out
 
 
 # --- (G) implied expectations: price-inverted, multiples-space ----------------------------------
@@ -4895,6 +5112,12 @@ def assemble_mechanical(
             record.identity, store, reference_date, bench=bench),
         ciq_currency=currency,
     )
+    # (2026-10-27) the flat liquidity line prints the year a filing governs, as the table does
+    stored_line = mech.quality.liquidity_covenant_flags
+    governed_line = governed_liquidity_line(stored_line, mech.capital_structure)
+    mech = mech.model_copy(update={"quality": mech.quality.model_copy(update={
+        "liquidity_covenant_flags": governed_line})})
+    line_flag = _ungoverned_line_flag(stored_line, governed_line, mech.capital_structure)
     # (RC-1 C) primary-source layer — fetch 8-K EX-99.1 releases + the latest 10-Q, parse, and run
     # the four cross-source derivations over them + this mechanical layer. Resilient: a fetch/parse
     # miss becomes an UNKNOWN line + QA flag, never an abort. Attached via model_copy (frozen).
@@ -4974,4 +5197,7 @@ def assemble_mechanical(
     # verification; it never asserts a mechanism (a bare rename — AAPL 2019 — is not a predecessor).
     flags += _former_name_flags(edgar, record.identity.cik, reference_date)
     flags += drawdown_flags  # degraded-feed twin of the UNKNOWN drawdown-cause note
+    flags += maturity_caveats(mech.capital_structure)  # each governed / springing maturity
+    if line_flag is not None:
+        flags.append(line_flag)
     return mech, flags

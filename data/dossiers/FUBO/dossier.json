@@ -4109,6 +4109,98 @@
         "source_ref": "CIQ Capital Structure Details — Q3 2026 filed Aug-05-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-08-05",
+        "bound": "2026-08-14",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001628280-26-053535",
+            "filed": "2026-08-05",
+            "read_as": "the latest periodic report",
+            "statements": 1,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001493152-25-020163",
+            "filed": "2025-10-30",
+            "read_as": "an 8-K the page links",
+            "statements": 1,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001493152-24-000126",
+            "filed": "2024-01-02",
+            "read_as": "an 8-K the page links",
+            "statements": 1,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "2029 Convertible Notes",
+            "ciq_maturity_date": "2029-02-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "Disney Note",
+            "ciq_maturity_date": "2031-01-05",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 3,
+            "description": "Other Notes",
+            "ciq_maturity_date": "2027-06-30",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -9657,6 +9749,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.financial_summary"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_structure"
       ]
     }
   ],
