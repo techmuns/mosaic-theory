@@ -2612,12 +2612,14 @@ function clipTrim(s, n) {
 // Due 2030, and nothing on the page said which filing it came from. A dated source makes a stale
 // read obvious beside the panel without the reader knowing the pointer set is mis-ordered.
 // An unmatched accession yields NOTHING rather than a guessed date.
+// `g` is a governingTerms() entry, so its fields are camelCase: until 2026-10-27 this read the
+// Python names (base_ref / amended_by), found nothing, and the web printed no date from #482 on.
 const _ACC_IN_REF = /(\d{10}-\d{2}-\d{6})/;
 
 function covenantSourceSuffix(g, dates) {
-  const m = _ACC_IN_REF.exec(String(g.base_ref || ""));
+  const m = _ACC_IN_REF.exec(String(g.baseRef || ""));
   const base = m ? dates[m[1]] : null;
-  const amended = (g.amended_by || []).map((a) => dates[a]).filter(Boolean).sort();
+  const amended = (g.amendedBy || []).map((a) => dates[a]).filter(Boolean).sort();
   if (!base && !amended.length) return "";
   const newest = amended.length ? amended[amended.length - 1] : null;
   if (!base) return ` — per an 8-K filed ${newest}`;
