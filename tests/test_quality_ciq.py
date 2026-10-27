@@ -587,10 +587,16 @@ def test_failure_guards_follow_the_checks_declared_classes() -> None:
     consensus = core.failure_guard(ciq.SOURCE, fam["estimates.consensus"])
     assert consensus.pop("wrong_unit") == core.INTERNAL and set(consensus.values()) == {"none"}
     card = _card()
-    single = sum(1 for f in ciq.FAMILIES if core.classify(ciq.SOURCE, f) == core.SINGLE_SOURCE)
     for fc, row in card["failure_class_summary"].items():
         assert sum(row.values()) == len(ciq.FAMILIES), fc
+        # split by the DECLARED fallback (does a second source exist?), never the derived class
+        single = sum(1 for f in ciq.FAMILIES if f.fallback == core.SINGLE_SOURCE
+                     and core.failure_guard(ciq.SOURCE, f)[fc] == "none")
         assert row["none_single_source"] == single, fc
+    # consensus has no second source: its unguarded classes count single-source, its currency not
+    summary = card["failure_class_summary"]
+    assert summary["wrong_file"]["none_single_source"] == (
+        summary["wrong_unit"]["none_single_source"] + 1)
 
     # one read: the hash `load` stamps is the hash of exactly the pages it returns
     assert ciq.load(ROOT).sha256 == ciq.dossier_set_sha256(ROOT)

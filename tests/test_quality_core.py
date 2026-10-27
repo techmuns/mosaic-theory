@@ -89,6 +89,25 @@ def test_a_source_the_core_has_never_seen_is_scored_in_full() -> None:
         "data_quality", "toy", "2026-10-23.json")
 
 
+def test_an_unguarded_class_counts_single_source_by_the_familys_fallback_not_its_class() -> None:
+    """(+/−) A single-source family that gains an internal check on ONE class (CIQ consensus's
+    stated currency, 2026-10-27) derives as internal, yet still has no second source for the rest:
+    those classes count 'nothing, single-source'. A family whose fallback says a second source
+    exists counts its unguarded classes as 'nothing' — as toy.a's wrong file does."""
+    labelled = replace(_FAMILIES[1], checks=("a_sign",))   # toy.c, single-source, one check
+    src = replace(TOY, families=(_FAMILIES[0], labelled))
+    corpus = core.Corpus(items=ITEMS, reads="toy.json", item_noun="item", sha256="t" * 8)
+    card = core.scorecard(src, corpus, measured_on="2026-10-27", git_head=None,
+                          inputs_match_head=None)
+    cov = {e["family"]: e for e in card["coverage"]}
+    assert cov["toy.c"]["classification"] == core.INTERNAL
+    s = card["failure_class_summary"]
+    assert s["wrong_cell"] == {core.INDEPENDENT: 1, core.INTERNAL: 1, "none": 0,
+                               "none_single_source": 0}
+    assert s["wrong_file"] == {core.INDEPENDENT: 0, core.INTERNAL: 0, "none": 1,
+                               "none_single_source": 1}
+
+
 def _vinci_imports(text: str) -> list[str]:
     tree = ast.parse(text)
     mods = [n.module or "" for n in ast.walk(tree) if isinstance(n, ast.ImportFrom)]
