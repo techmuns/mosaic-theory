@@ -32,7 +32,7 @@ from pathlib import Path
 import pytest
 
 from vinci import universe as uni
-from vinci.config import Config
+from vinci.config import Config, UniverseConfig
 from vinci.eod import RawBar
 from vinci.schemas.data_record import Identity
 from vinci.universe import build_universe
@@ -57,7 +57,8 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *,
          xbrl_tag: str = "dei:EntityCommonStockSharesOutstanding",
          volumes: dict[str, float] | None = None,
          retain: bool = False,
-         sec_types: dict[str, str] | None = None) -> tuple[dict, dict[str, dict]]:
+         sec_types: dict[str, str] | None = None,
+         exclude_foreign: bool = True) -> tuple[dict, dict[str, dict]]:
     """Run the REAL builder over several fake lines; return (stats, {ticker: exported row})."""
     idents = [_ident(t, c) for t, c in lines]
     consulted: list[tuple[str, ...]] = []
@@ -69,6 +70,7 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *,
         def iter_universe(self, exchanges: object) -> Iterator[Identity]: yield from idents
         def sic_for(self, cik: str) -> tuple[str, str]: return ("7372", "Software")
         def registered_line(self, *_: object) -> None: return None     # no cover read
+        def latest_report(self, *_: object) -> None: return None       # no periodic report
 
     class _E:
         @classmethod
@@ -98,7 +100,9 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *,
     monkeypatch.setattr(uni, "EntityResolver", _R)
     monkeypatch.setattr(uni, "PolygonEodClient", _E)
     monkeypatch.setattr(uni, "EdgarClient", _Ed)
-    stats = build_universe(Config(data_dir=tmp_path), reference_date=_REF,
+    cfg = Config(data_dir=tmp_path,
+                 universe=UniverseConfig(exclude_foreign_private_issuers=exclude_foreign))
+    stats = build_universe(cfg, reference_date=_REF,
                            share_periods=["CY2026Q1I"],
                            retain_run_id=("2026-06-12-01" if retain else None),
                            retain_dir=(tmp_path / "retain" if retain else None))
@@ -226,7 +230,8 @@ def test_a_depositary_line_of_a_multi_class_issuer_still_takes_the_ads_path(
                        class_counts={"AAA": 20_000_000.0, "AAD": 10_000_000.0},
                        xbrl_shares={_CIK: 30_000_000.0},
                        volumes={"AAA": 1_000_000.0, "AAD": 50_000_000.0},
-                       sec_types={"AAA": "CS", "AAD": "ADRC"})
+                       sec_types={"AAA": "CS", "AAD": "ADRC"},
+                       exclude_foreign=False)   # the ADR is re-admitted: sizing is under test
     # each line took its OWN branch — counted at sizing, before de-duplication keeps one
     assert stats["ads_count_used"] == 1 and stats["dual_class_count_used"] == 1
     # the ADR wins on ADV here, so the surviving row must carry the ADS stamp, not the per-class one

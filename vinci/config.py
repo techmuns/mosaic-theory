@@ -66,6 +66,15 @@ class UniverseConfig(BaseModel, frozen=True):
     # → Bank of Montreal: ticker→CIK is correct, just not equity). An allowlist, not a denylist: a
     # new structured-product type defaults to excluded, not admitted.
     allowed_security_types: tuple[str, ...] = ("CS", "ADRC", "OS", "GDR")
+    # FOREIGN PRIVATE ISSUERS ARE OUT OF THE PRIMARY POPULATION until STATE row 4's FPI readiness
+    # lands (operator ruling 2026-10-27, closing row 33): the dossier altitude cannot yet underwrite
+    # one (IFRS, 6-K, Section 16, foreign-currency workbooks), and they were 255 of the 2,065
+    # names the 2026-10-16 screen judged. A line is one when the feed types it a depositary receipt
+    # or foreign ordinary (`ADRC`/`GDR`/`OS`), OR its issuer's latest periodic report filed by the
+    # reference date is a 20-F or 40-F — never by country of incorporation alone, so a
+    # foreign-domiciled 10-K filer stays. They drop at the named stage `foreign_private_issuer`,
+    # each with its evidence. THIS IS THE ONE SWITCH: False re-admits every one of them.
+    exclude_foreign_private_issuers: bool = True
     country: str = "US"
     currency: str = "USD"
     # Optional cap on universe size for the thin Loop 1 slice (None = no cap).
@@ -138,8 +147,11 @@ class Config(BaseModel, frozen=True):
     # The ceiling is a stated number rather than "infinity" so an out-of-band drop is still LOGGED
     # with its reason: it sits above the largest listed company, and a name exceeding it should
     # re-open this knob, not vanish. Face-validity, never tuned on forward returns.
+    # The theme altitude keeps its foreign megacaps (TSM, NVO …): the ruling is about the
+    # population the forward spread accumulates against, not about what a theme scan can see.
     theme_universe: UniverseConfig = UniverseConfig(
-        market_cap_min_usd=10_000_000_000.0, market_cap_max_usd=1.0e13)
+        market_cap_min_usd=10_000_000_000.0, market_cap_max_usd=1.0e13,
+        exclude_foreign_private_issuers=False)
     # BUILT PER CONFIG, NOT ONCE AT IMPORT. A bare `PacingConfig()` default is evaluated
     # when this class is defined, so an env-driven pace would be frozen to whatever the
     # environment held at import time — and a pace set after that (a CLI that loads `.env`

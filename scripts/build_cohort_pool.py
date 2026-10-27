@@ -60,7 +60,13 @@ OUT = SNAP / "cohort_pool.jsonl"
 #:
 #: `no_price` stays out: no price, no return. The SIC denylist and the security-type allowlist are
 #: applied below, for the same reasons the screen applies them.
-POOLABLE = ("out_of_band", "below_adv_floor", "no_shares")
+#:
+#: `foreign_private_issuer` JOINED 2026-10-27, so the 2026-08-26 ruling above still holds. The
+#: operator then took foreign private issuers out of the screened population (until FPI
+#: readiness), not out of their industries: an industry's move is the industry's wherever the
+#: issuer files, and without this stage the 255 names the 2026-10-16 screen judged would leave the
+#: medians as well as the queue.
+POOLABLE = ("out_of_band", "below_adv_floor", "no_shares", "foreign_private_issuer")
 
 #: How many EDGAR resolver failures are tolerated before the run is abandoned. A few dead CIKs are
 #: normal; a wave is an outage, and an outage that only thins the pool is invisible in the output.

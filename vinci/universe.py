@@ -24,6 +24,7 @@ from vinci.edgar import EdgarClient
 from vinci.edgar.client import SHARES_TAG_WAVG
 from vinci.eod import EodClient, PolygonEodClient
 from vinci.resolver import EntityResolver
+from vinci.resolver.instrument import FOREIGN_PRIVATE_ISSUER_FORMS
 from vinci.schemas.data_record import Identity
 from vinci.schemas.envelope import DataField, SourceTier
 from vinci.store import NO_ROW_DROP_TABLES, Store
@@ -136,12 +137,17 @@ BUILD_UNIVERSE_SEED_TABLES: tuple[str, ...] = tuple(
 #: share. The share count used for market cap must be denominated in the same unit as the price.
 DEPOSITARY_TYPES: tuple[str, ...] = ("ADRC", "GDR")
 
+#: The instrument types that are a foreign issuer's line by the feed's own record: a depositary
+#: receipt, or a foreign ordinary share. See `UniverseConfig.exclude_foreign_private_issuers`.
+FOREIGN_LINE_TYPES: tuple[str, ...] = (*DEPOSITARY_TYPES, "OS")
+
 #: EVERY drop this builder can make, in funnel order. Enumerated rather than described, because a
 #: stage missing from the thin grain is a stage with no evidence trail — which just MOVES the blind
 #: spot instead of closing it. Each is emitted with the one input that decided it.
 DROP_STAGES: tuple[str, ...] = (
     "no_price", "no_shares", "ads_count_unresolved", "out_of_band", "below_adv_floor",
-    "unknown_sic", "non_operating", "unknown_type", "non_common_equity", "duplicate_class",
+    "unknown_sic", "non_operating", "unknown_type", "non_common_equity", "foreign_private_issuer",
+    "duplicate_class",
 )
 
 
@@ -511,6 +517,30 @@ def build_universe(
                       StampedInput(value=(ptype if ptype else None), as_of=reference_date,
                                    source="Polygon security reference"))
                 continue
+            # FOREIGN PRIVATE ISSUERS (operator ruling 2026-10-27; the one switch is
+            # `exclude_foreign_private_issuers`). The feed's type decides a depositary receipt or a
+            # foreign ordinary without a call; otherwise the issuer's latest periodic report — the
+            # submissions index `sic_for` has just read — decides.
+            if band.exclude_foreign_private_issuers:
+                if ptype in FOREIGN_LINE_TYPES:
+                    _drop(ident.eod_symbol, "foreign_private_issuer",
+                          f"the feed types this line {ptype}, a foreign issuer's line — foreign "
+                          f"private issuers are out of the primary population until FPI "
+                          f"readiness lands (operator ruling 2026-10-27)",
+                          StampedInput(value=ptype, as_of=reference_date,
+                                       source="Polygon security reference"))
+                    continue
+                report = resolver.latest_report(ident.cik, reference_date)
+                if report is not None and report[0] in FOREIGN_PRIVATE_ISSUER_FORMS:
+                    _drop(ident.eod_symbol, "foreign_private_issuer",
+                          f"the issuer's latest periodic report is a {report[0]} (filed "
+                          f"{report[1].isoformat()}), so it files as a foreign private issuer — "
+                          f"out of the primary population until FPI readiness lands (operator "
+                          f"ruling 2026-10-27)",
+                          StampedInput(value=report[0], as_of=report[1],
+                                       source=f"SEC {report[0]} {report[2]} (latest periodic "
+                                              f"report)"))
+                    continue
             # Axis 3 — what the line IS in the ISSUER'S words (2026-10-27). The feed types some debt
             # and preferred `CS` — ADAMK and TMUSI among 58 debt lines of its 2026-10-17 pull, and
             # MCHPP, a preferred depositary that sat in this population on 2026-08-24 and 09-22 — so

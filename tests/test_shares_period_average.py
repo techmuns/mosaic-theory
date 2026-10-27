@@ -126,6 +126,7 @@ def _build_with(monkeypatch, tmp_path, *, tag: str, shares: float, sic: str = "7
         def iter_universe(self, exchanges: object) -> Iterator[Identity]: yield ident
         def sic_for(self, cik: str) -> tuple[str, str]: return (sic, "Software")
         def registered_line(self, *_: object) -> None: return None     # no cover read
+        def latest_report(self, *_: object) -> None: return None       # no periodic report
 
     class _E:
         @classmethod

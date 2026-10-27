@@ -136,6 +136,20 @@ def periodic_filings(submissions: dict[str, Any],
     return [(form, filed, acc, doc) for filed, form, acc, doc in periodic]
 
 
+#: the annual reports only a foreign private issuer files
+FOREIGN_PRIVATE_ISSUER_FORMS = frozenset({"20-F", "40-F"})
+
+
+def latest_report(submissions: dict[str, Any], as_of: date) -> tuple[str, date, str] | None:
+    """``(form, filed, accession)`` of the issuer's latest periodic report filed on or before
+    ``as_of`` — never an amendment, which restates an earlier period and so says nothing about how
+    the issuer files NOW (Enbridge filed 40-F to 2017 and 10-K since). None when there is none."""
+    for form, filed, acc, _doc in periodic_filings(submissions, as_of):
+        if not form.endswith("/A"):
+            return form, filed, acc
+    return None
+
+
 def latest_periodic(submissions: dict[str, Any],
                     as_of: date) -> tuple[str, date, str, str] | None:
     """The newest of :func:`periodic_filings`, or None when there is none."""

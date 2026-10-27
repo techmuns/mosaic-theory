@@ -35,7 +35,13 @@ from vinci.resolver.index import (
     share_class_of,
     to_eod_symbol,
 )
-from vinci.resolver.instrument import RegisteredLine, cover_lines, match_line, periodic_filings
+from vinci.resolver.instrument import (
+    RegisteredLine,
+    cover_lines,
+    latest_report,
+    match_line,
+    periodic_filings,
+)
 from vinci.schemas.data_record import Identity
 
 _CT_URL = "https://www.sec.gov/files/company_tickers.json"
@@ -203,6 +209,11 @@ class EntityResolver:
         d = self.submissions(cik)
         sic = str(d["sic"]) if d.get("sic") else None
         return sic, (d.get("sicDescription") or None)
+
+    def latest_report(self, cik: int | str, as_of: date) -> tuple[str, date, str] | None:
+        """``(form, filed, accession)`` of the issuer's latest periodic report filed by ``as_of`` —
+        a 20-F or 40-F marks a foreign private issuer (:func:`instrument.latest_report`)."""
+        return latest_report(self.submissions(pad_cik(cik)), as_of)
 
     def registered_line(self, cik: int | str, ticker: str, as_of: date) -> RegisteredLine | None:
         """How the issuer's latest cover page filed on or before ``as_of`` registers ``ticker`` —

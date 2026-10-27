@@ -26,7 +26,7 @@ from pathlib import Path
 import pytest
 
 from vinci import universe as uni
-from vinci.config import Config
+from vinci.config import Config, UniverseConfig
 from vinci.eod import RawBar
 from vinci.schemas.data_record import Identity
 from vinci.universe import DEPOSITARY_TYPES, DROP_STAGES, build_universe
@@ -55,6 +55,7 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, ticker: str, sec_ty
         def iter_universe(self, exchanges: object) -> Iterator[Identity]: yield ident
         def sic_for(self, cik: str) -> tuple[str, str]: return ("7372", "Software")
         def registered_line(self, *_: object) -> None: return None     # no cover read
+        def latest_report(self, *_: object) -> None: return None       # no periodic report
 
     class _E:
         @classmethod
@@ -83,7 +84,11 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, ticker: str, sec_ty
     monkeypatch.setattr(uni, "EntityResolver", _R)
     monkeypatch.setattr(uni, "PolygonEodClient", _E)
     monkeypatch.setattr(uni, "EdgarClient", _Ed)
-    cfg = Config(data_dir=tmp_path)
+    # THE SWITCH OFF: since 2026-10-27 the primary band excludes foreign private issuers, an ADR
+    # among them. ADS sizing still decides the theme band and a re-admitted primary band, so the
+    # sizing pins run with the one switch that re-admits them.
+    cfg = Config(data_dir=tmp_path,
+                 universe=UniverseConfig(exclude_foreign_private_issuers=False))
     stats = build_universe(cfg, reference_date=_REF, share_periods=["CY2026Q1I"])
     snap = tmp_path / "snapshots" / "universe_snapshot.jsonl"
     rows = [json.loads(x) for x in snap.read_text().splitlines() if x.strip()] if snap.exists() \

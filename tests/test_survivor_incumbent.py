@@ -70,6 +70,7 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, reference_date: dat
         def iter_universe(self, exchanges: object) -> Iterator[Identity]: yield from idents
         def sic_for(self, cik: str) -> tuple[str, str]: return ("7510", "Services-Auto Rental")
         def registered_line(self, *_: object) -> None: return None     # both lines are common
+        def latest_report(self, *_: object) -> None: return None       # U-Haul files 10-Q
 
     class _E:
         @classmethod

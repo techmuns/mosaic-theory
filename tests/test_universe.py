@@ -115,6 +115,9 @@ def test_build_universe_persists_fetched_sic_onto_identity(
         def registered_line(self, cik: str, ticker: str, as_of: date) -> None:
             return None  # no cover read: the line keeps what the type allowlist decided
 
+        def latest_report(self, cik: str, as_of: date) -> None:
+            return None  # no periodic report read: not shown to be a foreign private issuer
+
     class _FakeEod:
         @classmethod
         def from_config(cls, cfg: object) -> _FakeEod:

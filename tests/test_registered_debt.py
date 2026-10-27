@@ -216,6 +216,7 @@ def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, cover: str, ident
         def registered_line(self, cik: str, ticker: str, as_of: date) -> RegisteredLine | None:
             assert as_of == ref
             return _line(cover, ticker)
+        def latest_report(self, *_: object) -> None: return None       # domestic 10-Q filers
 
     class _E:
         @classmethod

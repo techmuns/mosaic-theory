@@ -402,7 +402,10 @@ def test_no_universe_drop_increments_a_stat_without_emitting_a_row() -> None:
     # rest; the count is asserted so ADDING a stage stays a deliberate act. Per-class sizing
     # (2026-09-01) deliberately added NO stage: a line whose class count will not resolve keeps
     # the sizing it already had rather than being dropped — see `_per_class_count`.
-    assert len(DROP_STAGES) == 10, DROP_STAGES
+    # 11 since 2026-10-27: `foreign_private_issuer` joined the funnel by operator ruling (STATE row
+    # 33) — a line the feed types ADRC/GDR/OS, or whose issuer's latest periodic report is a 20-F
+    # or 40-F, leaves the primary band with its evidence. A real drop stage, emitting its row.
+    assert len(DROP_STAGES) == 11, DROP_STAGES
     tree = ast.parse(inspect.getsource(build_universe).lstrip())
     fn = next(n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)
               and n.name == "build_universe")
