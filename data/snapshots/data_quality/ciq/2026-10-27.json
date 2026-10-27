@@ -6,7 +6,7 @@
  },
  "boundary": {
   "measured_on": "2026-10-27",
-  "git_head": "86764316",
+  "git_head": "d65d4f50",
   "inputs_match_head": true,
   "reads": "data/dossiers/*/dossier.json",
   "item_noun": "page",

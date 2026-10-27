@@ -186,7 +186,7 @@ or per panel for the new check):
 
 | | BEFORE | AFTER |
 |---|---|---|
-| measured at | 47d8ca27 (main), page-set sha256 `e6e09ad9…` | 86764316, inputs matching it, page-set sha256 `b660504a…` |
+| measured at | 47d8ca27 (main), page-set sha256 `e6e09ad9…` | d65d4f50, inputs matching it, page-set sha256 `b660504a…` |
 | checks | 15 | 18 |
 | `currency_stated_usd` | — | 449 of 449 panels confirmed on 25 pages; FUBO, TECX not run |
 | `recorded_d_and_a_vs_edgar` | — | 6 confirmed, 1 unexplained (VITL), 14 unchecked on 21 pages; 6 not run |
@@ -217,11 +217,11 @@ single-source):
 - **Reader census and back-fill:** the assembler's workbook copy
   (`mosaic-theory-ta/data/manual/ciq`, read-only), read 2026-10-27. The census covers 35 folders,
   one unit per money panel the folder holds (18 possible). The back-fill covers the 27 committed
-  pages at 5a2fe9e1.
+  pages at 6ec47e9c.
 - **Item 10's guide and wall causes:** the 27 committed pages at 47d8ca27, one unit per page, read
   off each page's stored inputs (no EDGAR read).
 - **Band guards:** the same 27 pages. Measured at 47d8ca27 by re-running the producer's
-  functions on the stored inputs; back-filled at 6a03aa39; scored at 86764316.
+  functions on the stored inputs; back-filled at a2d2186f; scored at d65d4f50.
 - **Scale check:** `ciq_balance.extract` on the 27 page names' folders in the assembler's copy,
   2026-10-27.
 - **Mutation counts:** over the 42 listed mutants, against `tests/test_ciq_currency.py` (the
