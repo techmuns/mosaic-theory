@@ -218,10 +218,14 @@ def carry_forward(client: EodClient, store: Any, *, predecessor_id: str, predece
     unbroken series. The old id keeps its own bars untouched — it is never re-keyed.
 
     The source's own bars for the OLD ticker win over the store's copies (they are on the source's
-    current split basis), and the store's copies fill what the plan no longer serves. Bars already
-    held under the new id are never overwritten. Each carried bar names its origin
-    (``polygon-alias:<old id>``). Runs once per rename: a new id that already holds a bar before
-    ``listed`` has been carried. Returns the bars written."""
+    current split basis), and the store's copies fill what the plan no longer serves. THOSE COPIES
+    ARE SET BESIDE A FRESH BAR FIRST (L7's caution): on the earliest session both hold, a held bar
+    the source has since restated (`restatement_factor`) means every copy older than the source's
+    window is put on the current basis — prices × factor, volume ÷ factor, `+restated` on its
+    source, as `Store.restate_bars` does. Bars already held under the new id are never
+    overwritten. Each carried bar names its origin (``polygon-alias:<old id>``). Runs once per
+    rename: a new id that already holds a bar before ``listed`` has been carried. Returns the bars
+    written."""
     own = store.get_price_history(successor_id)
     if any(b.bar_date < listed for b in own):
         return 0
@@ -230,9 +234,16 @@ def carry_forward(client: EodClient, store: Any, *, predecessor_id: str, predece
     fresh = {d: b for d, b in client.daily_bars(predecessor_symbol,
                                                 end - timedelta(days=CARRY_DAYS),
                                                 listed - timedelta(days=1)) if d < listed}
-    rows = [PriceBar(internal_id=successor_id, bar_date=d, open=b.open, high=b.high, low=b.low,
-                     close=b.close, volume=b.volume, source=f"polygon-alias:{predecessor_id}")
-            for d, b in sorted({**held, **fresh}.items()) if d not in taken]
+    both = sorted(set(held) & set(fresh))
+    factor = (restatement_factor(held[both[0]], fresh[both[0]]) if both else None) or 1.0
+    tag = f"polygon-alias:{predecessor_id}"
+    rows = [PriceBar(internal_id=successor_id, bar_date=d, open=b.open * f, high=b.high * f,
+                     low=b.low * f, close=b.close * f, volume=b.volume / f,
+                     source=tag + ("+restated" if f != 1.0 else ""))
+            for d, b, f in sorted([(d, b, factor) for d, b in held.items() if d not in fresh]
+                                  + [(d, b, 1.0) for d, b in fresh.items()],
+                                  key=lambda x: x[0])
+            if d not in taken]
     return int(store.write_prices(rows))
 
 
