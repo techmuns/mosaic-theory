@@ -86,7 +86,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 > **EBITDA basis — the actual and estimate rows differ.** the estimate columns imply 119,837 of D&A against 38,177 in the actuals (3.14x) — the consensus EBITDA row adds back MORE than depreciation, so it is NOT the same basis as the actual row (which is EBIT + D&A). Read growth across the boundary as part definitional; do not compare a trailing multiple struck off the actual row with a forward multiple struck off the estimate row.
 
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM matches the filings ($168,912M against $168,912M), but not every quarter does; the quarter to 2025-09-30: CIQ $36,718M against $34,218M (+$2,500M); the quarter to 2025-12-31: CIQ $41,948M against $44,448M (−$2,500M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM matches the filings ($168,912M against $168,912M), but not every quarter does; the quarter to 2025-09-30: CIQ $36,718M against $34,218M (+$2,500M) — the quarter to 2025-12-31 differs by the same amount the other way: one item, in another quarter at CIQ; the quarter to 2025-12-31: CIQ $41,948M against $44,448M (−$2,500M) — the quarter to 2025-09-30 differs by the same amount the other way: one item, in another quarter at CIQ (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -680,7 +680,8 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
-  - 2026-10-27 · mechanical.quality — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 20d old — 2026-10-06 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 20d old (2026-10-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

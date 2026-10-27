@@ -649,7 +649,7 @@
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-03-31..2026-03-31"
       },
       "liquidity_covenant_flags": {
-        "value": "0.75% Senior Notes Due August 2027 (Bonds and Notes) 500 @ 0.750% Due 2027; 1.10% Senior Notes Due February 2031 (Bonds and Notes) 1,000 @ 1.100% Due 2031; 1.50% Senior Notes Due June 2026 - EUR (Bonds and Notes) 1,587 @ 1.500% Due 2026; 1.90% Senior Notes Due April 2027 (Bonds and Notes) 1,500 @ 1.900% Due 2027; 2.00% Senior Notes Due August 2050 (Bonds and Notes) 1,750 @ 2.000% Due 2050; 2.00% Senior Notes Due June 2029 - EUR (Bonds and Notes) 1,176 @ 2.000% Due 2029; 2.05% Senior Notes Due April 2030 (Bonds and Notes) 1,500 @ 2.050% Due 2030; 2.25% Senior Notes Due May 2028 - EUR (Bonds and Notes) 1,470 @ 2.250% Due 2028; 2.375% Senior Notes Due June 2034 - EUR (Bonds and Notes) 764 @ 2.375% Due 2034; 2.70% Senior Notes Due April 2040 (Bonds and Notes) 1,000 @ 2.700% Due 2040; 2.75% Senior Notes Due September 2027 (Bonds and Notes) 750 @ 2.750% Due 2027 — showing 11 of 21 instruments",
+        "value": "0.75% Senior Notes Due August 2027 (Bonds and Notes) 500 @ 0.750% Due 2027; 1.10% Senior Notes Due February 2031 (Bonds and Notes) 1,000 @ 1.100% Due 2031; 1.50% Senior Notes Due June 2026 - EUR (Bonds and Notes) 1,587 @ 1.500% Due 2026; 1.90% Senior Notes Due April 2027 (Bonds and Notes) 1,500 @ 1.900% Due 2027; 2.00% Senior Notes Due August 2050 (Bonds and Notes) 1,750 @ 2.000% Due 2050; 2.00% Senior Notes Due June 2029 - EUR (Bonds and Notes) 1,176 @ 2.000% Due 2029; 2.05% Senior Notes Due April 2030 (Bonds and Notes) 1,500 @ 2.050% Due 2030; 2.25% Senior Notes Due May 2028 - EUR (Bonds and Notes) 1,470 @ 2.250% Due 2028; 2.375% Senior Notes Due June 2034 - EUR (Bonds and Notes) 764 @ 2.375% Due 2034; 2.70% Senior Notes Due April 2040 (Bonds and Notes) 1,000 @ 2.700% Due 2040; 2.75% Senior Notes Due September 2027 (Bonds and Notes) 750 @ 2.750% Due 2027",
         "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Nov-06-2025)",
         "status": "present",
         "note": null
@@ -6528,8 +6528,9 @@
             ],
             "gap": 903.0,
             "different": true,
-            "matching_amount": null,
-            "matching_source": null,
+            "matching_amount": "LossContingencyLossInPeriod 903,000,000 USD for the quarter to 2025-09-30",
+            "matching_source": "10-K 0001403161-25-000089 XBRL",
+            "ciq_unusual": 821.0,
             "note": null
           },
           {
@@ -6543,8 +6544,9 @@
             ],
             "gap": 708.0,
             "different": true,
-            "matching_amount": null,
-            "matching_source": null,
+            "matching_amount": "LossContingencyLossInPeriod 708,000,000 USD for the quarter to 2025-12-31",
+            "matching_source": "10-Q 0001403161-26-000045 XBRL",
+            "ciq_unusual": 715.0,
             "note": null
           },
           {
@@ -6558,8 +6560,9 @@
             ],
             "gap": 329.0,
             "different": true,
-            "matching_amount": null,
-            "matching_source": null,
+            "matching_amount": "LossContingencyLossInPeriod 329,000,000 USD for the quarter to 2026-03-31",
+            "matching_source": "10-Q 0001403161-26-000079 XBRL",
+            "ciq_unusual": 344.0,
             "note": null
           },
           {
@@ -6572,14 +6575,14 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A tag for this quarter"
+            "note": "EDGAR reports nothing for this quarter yet — no D&A, operating-income or pre-tax fact ends on it"
           }
         ],
         "ciq_ltm": 31094.0,
         "filing_ltm": null,
         "ltm_gap": null,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's; the quarter to 2025-09-30: CIQ $7,367M against $6,464M (+$903M); the quarter to 2025-12-31: CIQ $7,771M against $7,063M (+$708M); the quarter to 2026-03-31: CIQ $7,896M against $7,567M (+$329M) (rebuilt as operating income + D&A) (1 of the four quarters could not be rebuilt). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's; the quarter to 2025-09-30: CIQ $7,367M against $6,464M (+$903M) — its filing tags a matching amount: LossContingencyLossInPeriod 903,000,000 USD for the quarter to 2025-09-30; the quarter to 2025-12-31: CIQ $7,771M against $7,063M (+$708M) — its filing tags a matching amount: LossContingencyLossInPeriod 708,000,000 USD for the quarter to 2025-12-31; the quarter to 2026-03-31: CIQ $7,896M against $7,567M (+$329M) — its filing tags a matching amount: LossContingencyLossInPeriod 329,000,000 USD for the quarter to 2026-03-31 (rebuilt as operating income + D&A) (1 of the four quarters could not be rebuilt). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14875,7 +14878,15 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.quality"
+        "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
       ]
     }
   ],
@@ -14953,6 +14964,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

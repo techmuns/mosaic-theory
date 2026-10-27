@@ -38,7 +38,13 @@ from typing import Any
 
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
-from vinci.dossier.schemas import SourceStatus
+from vinci.dossier.schemas import (
+    CHECK_AGREE,
+    CHECK_DIFFER,
+    CHECK_NOT_RUN,
+    CrossCheck,
+    SourceStatus,
+)
 
 # --- tolerances (face-validity, never outcome-tuned) -------------------------------------------
 # The two sheets are the same filer's own disclosure of the same year, so they should agree closely;
@@ -81,6 +87,11 @@ class CiqFacts:
     facts: dict[str, CiqFact] = field(default_factory=dict)
     checks: list[str] = field(default_factory=list)
     failures: list[str] = field(default_factory=list)
+    #: (2026-10-27) the UNIT check's outcome as a structured value, beside its lines: agree when
+    #: every monetary figure sits in range, differ when one does not, not_run when there is no
+    #: revenue to measure against or no figure to measure (ORKA and TECX report no revenue). The
+    #: lines said only "checks passed", so a scale check that never ran read the same as a pass.
+    scale_check: CrossCheck = CHECK_NOT_RUN
 
     @property
     def ok(self) -> bool:
@@ -214,13 +225,19 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     failures: list[str] = []
 
     # (3) UNIT scale, first — a scale error would make the other two checks meaningless
-    for key in ("cash", "total_debt", "d_and_a", "ocf", "capex"):
+    scaled = ("cash", "total_debt", "d_and_a", "ocf", "capex")
+    for key in scaled:
         bad = _assert_scale(key, facts[key].value if key in facts else None, revenue)
         if bad:
             failures.append(f"SCALE: {bad}")
     if not failures and revenue:
         checks.append(f"scale: every monetary figure within [{_SCALE_LO:g}, {_SCALE_HI:g}]x "
                       f"revenue {revenue:,.1f} ($M) — consistent with a $M sheet")
+    measured = bool(revenue and revenue > 0
+                    and any(key in facts and facts[key].value != 0 for key in scaled))
+    scale_check: CrossCheck = (CHECK_NOT_RUN if not measured
+                               else CHECK_DIFFER if any(f.startswith("SCALE:") for f in failures)
+                               else CHECK_AGREE)
 
     # (1) D&A: the CONTAINMENT invariant, not an equality.
     #
@@ -262,7 +279,25 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
                       f"cross-read needs a market cap the workbook does not carry — deferred to "
                       f"the anchor, which holds one")
     return CiqFacts(ticker=ticker, as_of=None, source_file=src_file, source_sha256=sha,
-                    facts=facts, checks=checks, failures=failures)
+                    facts=facts, checks=checks, failures=failures, scale_check=scale_check)
+
+
+def scale_outcome(bundle: CiqBundle, ticker: str) -> CrossCheck:
+    """The scale check's outcome for a name's CIQ exports — `extract`'s, which runs it first. A
+    folder with no Financials workbook has nothing to measure: not run. A workbook `extract` cannot
+    read is not run either — `anchor.ciq_bridge` reads that as "no bridge" and assembly goes on, so
+    the outcome must not raise where the bridge did not; two exports of one kind still raise."""
+    from vinci.dossier.ciq import CiqAmbiguousError
+
+    if (bundle.workbook("financials", freq="quarterly") is None
+            and bundle.workbook("financials", freq="annual") is None):
+        return CHECK_NOT_RUN
+    try:
+        return extract(bundle, ticker).scale_check
+    except CiqAmbiguousError:
+        raise
+    except Exception:  # noqa: BLE001 — the bridge's own rule: an unreadable workbook is no read
+        return CHECK_NOT_RUN
 
 
 def net_debt_cross_read(facts: CiqFacts, *, market_cap: float | None,
@@ -283,3 +318,4 @@ def net_debt_cross_read(facts: CiqFacts, *, market_cap: float | None,
     return (f"NET DEBT: balance sheet {nd:,.1f} vs multiple-implied {implied:,.1f} "
             f"(TEV {current_multiple:,.2f}x x EBITDA {ltm_ebitda:,.1f} - market cap "
             f"{market_cap:,.1f}) — {gap:.1%} apart, tolerance {_ND_TOLERANCE:.0%}")
+

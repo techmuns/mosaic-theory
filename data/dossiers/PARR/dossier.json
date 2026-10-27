@@ -7026,6 +7026,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 1.996,
             "note": null
           },
           {
@@ -7041,6 +7042,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 4.686,
             "note": null
           },
           {
@@ -7054,8 +7056,9 @@
             ],
             "gap": -5.765,
             "different": true,
-            "matching_amount": null,
-            "matching_source": null,
+            "matching_amount": "CostOfGoodsAndServicesSoldDepreciationAndAmortization 5,766,000 USD for the quarter to 2026-03-31",
+            "matching_source": "10-Q 0000821483-26-000010 XBRL",
+            "ciq_unusual": 0.126,
             "note": null
           },
           {
@@ -7071,6 +7074,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 11.461,
             "note": null
           }
         ],
@@ -7078,7 +7082,7 @@
         "filing_ltm": 1301.59,
         "ltm_gap": -18.709,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM matches the filings ($1,283M against $1,302M), but not every quarter does; the quarter to 2026-03-31: CIQ $94M against $100M (−$6M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM matches the filings ($1,283M against $1,302M), but not every quarter does; the quarter to 2026-03-31: CIQ $94M against $100M (−$6M) — its filing tags a matching amount: CostOfGoodsAndServicesSoldDepreciationAndAmortization 5,766,000 USD for the quarter to 2026-03-31 (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14273,6 +14277,22 @@
         "mechanical.catalyst_calendar",
         "mechanical.quality"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
+      ]
     }
   ],
   "anchor": {
@@ -14366,6 +14386,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

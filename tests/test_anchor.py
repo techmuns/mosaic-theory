@@ -62,6 +62,8 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
         "operator_decision", "machine_recipe_hint",
         # (2026-10-27) the two band guards' outcomes beside the flag — absent where not reached
         "band_checks",
+        # (2026-10-27) the CIQ bridge's scale-check outcome — absent where the bridge was not read
+        "ciq_scale_check",
     }
     assert set(AnchorMargin.model_fields) == {"value", "unit", "basis", "source", "anchor_years",
                                               "confidence"}

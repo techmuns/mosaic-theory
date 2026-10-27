@@ -84,7 +84,7 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $1,058M against $-75M rebuilt from the filings (+$1,133M); the quarter to 2025-09-30: CIQ $281M against $-463M (+$744M); the quarter to 2025-12-31: CIQ $-6M against $-374M (+$368M); the quarter to 2026-03-31: CIQ $130M against $112M (+$18M) — its release states a matching amount: “Identified Items $ 36 $ 45 $ 80 EBITDA margin (2) 2% 3% 4% i ______________________________ (1) For the three months ended March 31, 2026, Identified Items include a $67 million charge to settle certain litigation involving direct purchasers of PVC pipe and fittings and $18 million of charges related to previously announced facility shutdowns.” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $1,058M against $-75M rebuilt from the filings (+$1,133M); the quarter to 2025-09-30: CIQ $281M against $-463M (+$744M) — CIQ's own export itemises unusual items of $744.000M for the quarter, which it leaves out; the quarter to 2025-12-31: CIQ $-6M against $-374M (+$368M); the quarter to 2026-03-31: CIQ $130M against $112M (+$18M) — its release states a matching amount: “Identified Items $ 36 $ 45 $ 80 EBITDA margin (2) 2% 3% 4% i ______________________________ (1) For the three months ended March 31, 2026, Identified Items include a $67 million charge to settle certain litigation involving direct purchasers of PVC pipe and fittings and $18 million of charges related to previously announced facility shutdowns.” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -687,7 +687,8 @@ _Source §: 8-K 0001193125-07-267027 · dex101.htm_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
-  - 2026-10-27 · mechanical.quality — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.financial_summary, mechanical.valuation — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 40d old — 2026-09-16 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 42d old (2026-09-14, valuation.implied_expectations.multiples_as_of) — within the ceiling

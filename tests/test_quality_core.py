@@ -161,10 +161,10 @@ def test_discovery_finds_every_module_exposing_a_source(
         core.discover("qsrc_probe")
 
 
-def test_the_registered_sources_are_ciq_and_prices() -> None:
-    """Two sources: CIQ (#792) and Polygon EOD prices (2026-10-24). The 8-K release parser is the
-    named next one, not a stub (operator, 2026-10-23)."""
-    assert list(core.discover()) == ["ciq", "prices"]
+def test_the_registered_sources_are_ciq_prices_and_release() -> None:
+    """Three sources: CIQ (#792), Polygon EOD prices (2026-10-24) and the 8-K release parser
+    (2026-10-27) — the one the operator named next on 2026-10-23."""
+    assert list(core.discover()) == ["ciq", "prices", "release"]
 
 
 def test_the_command_scores_whatever_is_registered(

@@ -1,0 +1,1147 @@
+{
+ "schema": "data_quality/1",
+ "source": {
+  "id": "release",
+  "title": "8-K text (release parser, quoted terms)"
+ },
+ "boundary": {
+  "measured_on": "2026-10-27",
+  "git_head": "ef371658",
+  "inputs_match_head": true,
+  "reads": "data/dossiers/*/dossier.json + data/cache/sec companyfacts (cache only): 119 releases; companyfacts fetched 2026-10-27 → 2026-10-27",
+  "item_noun": "page",
+  "items": 27,
+  "names": [
+   "AMZN",
+   "AORT",
+   "BRBR",
+   "BURL",
+   "CNXC",
+   "EPAM",
+   "FUBO",
+   "GOOGL",
+   "IT",
+   "LLY",
+   "MVST",
+   "NCNO",
+   "NFLX",
+   "NKE",
+   "ORKA",
+   "PARR",
+   "ROST",
+   "SMPL",
+   "TECX",
+   "TGT",
+   "TJX",
+   "UBER",
+   "V",
+   "VITL",
+   "VRRM",
+   "WERN",
+   "WLK"
+  ],
+  "inputs_sha256": "6bdfc11df1331f743c2cebb4295d3a5655296ac0f8bf17f31484c424be32007d",
+  "note": "reads the committed pages and the SEC cache, never the network; the sha256 names exactly what was read"
+ },
+ "statuses": {
+  "confirmed": "a second figure agrees within the check's own tolerance",
+  "differs_stated": "they differ, and the input states a reason for that unit",
+  "differs_unexplained": "they differ, and nothing says why",
+  "unchecked": "the unit exists but has no second figure to compare"
+ },
+ "coverage_classes": {
+  "independent": "a figure from outside the source is compared and a verdict stored",
+  "internal": "compared only against the source's own other output — coherence, not correctness",
+  "single_source": "no second source exists among this repo's inputs",
+  "unchecked": "a second source exists in principle; no structured verdict is stored"
+ },
+ "failure_classes": {
+  "wrong_file": "another company's export, or another pull of it",
+  "wrong_cell": "the right file, the wrong row or column",
+  "wrong_unit": "the right cell, the wrong scale or currency",
+  "wrong_period": "the right figure for another period, or another vintage of it",
+  "different_definition": "the same name on a figure built another way"
+ },
+ "checks": [
+  {
+   "id": "revenue_vs_xbrl",
+   "title": "A release's reported revenue vs the same fiscal period in XBRL",
+   "subject": "8-K EX-99.1 revenue actual (primary_source.releases[].reconciliation, metric revenue)",
+   "second_source": "EDGAR XBRL from the filer's 10-Q/10-K (`companyfacts`, the SEC cache) for the fiscal period the row's label names in the filer's own calendar: the first revenue alias reporting it (CONCEPT_ALIASES['revenue']) — the discrete fact, else year-to-date less the prior year-to-date (a fourth quarter is its year less nine months); the filing on or after the release governs",
+   "independence": "independent",
+   "unit": "row",
+   "tolerance": "differs beyond 0.5% of the XBRL figure AND by at least $1M (statement_recon.DIFFERENT_SHARE / DIFFERENT_FLOOR), the share widened to half a unit of the release's own stated figure ('$1.5 billion' ±$50M)",
+   "population": "every revenue actual on a committed page whose filer's facts are cached; a label the filer's calendar cannot place, or a period no 10-Q/10-K has reported yet, is unchecked",
+   "stated_reason": "another revenue alias or another filing carries the release's figure for the period (a recast)",
+   "excluded_rule": null,
+   "catches": [
+    "wrong_cell",
+    "wrong_unit",
+    "wrong_period",
+    "different_definition"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 7,
+    "units": 25,
+    "confirmed": 23,
+    "differs_stated": 0,
+    "differs_unexplained": 0,
+    "unchecked": 2,
+    "excluded": 0,
+    "items_not_run": 0,
+    "items_not_applicable": 20
+   },
+   "not_run": [],
+   "not_applicable": [
+    {
+     "reason": "no revenue actual on the page",
+     "names": [
+      "AMZN",
+      "BRBR",
+      "BURL",
+      "EPAM",
+      "GOOGL",
+      "IT",
+      "LLY",
+      "NCNO",
+      "NFLX",
+      "NKE",
+      "ORKA",
+      "PARR",
+      "ROST",
+      "SMPL",
+      "TECX",
+      "TGT",
+      "TJX",
+      "UBER",
+      "WERN",
+      "WLK"
+     ]
+    }
+   ],
+   "by_name": {
+    "AMZN": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "AORT": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "BRBR": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "BURL": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "CNXC": {
+     "confirmed": 6,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "EPAM": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "FUBO": {
+     "confirmed": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "GOOGL": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "IT": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "LLY": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "MVST": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "NCNO": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "NFLX": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "NKE": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "ORKA": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "PARR": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "ROST": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "SMPL": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "TECX": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "TGT": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "TJX": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "UBER": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "V": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "VITL": {
+     "confirmed": 3,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VRRM": {
+     "confirmed": 3,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "WERN": {
+     "not_applicable": "no revenue actual on the page"
+    },
+    "WLK": {
+     "not_applicable": "no revenue actual on the page"
+    }
+   }
+  },
+  {
+   "id": "gross_margin_vs_xbrl",
+   "title": "A release's gross margin vs XBRL gross profit ÷ revenue",
+   "subject": "8-K EX-99.1 gross-margin actual, percent (reconciliation, metric gross margin)",
+   "second_source": "EDGAR XBRL from the filer's 10-Q/10-K (`companyfacts`, the SEC cache) for the fiscal period the row's label names in the filer's own calendar: GrossProfit ÷ revenue, both on the governing filing",
+   "independence": "independent",
+   "unit": "row",
+   "tolerance": "within 0.1 percentage point (release.MARGIN_TOL_PTS)",
+   "population": "every gross-margin actual on a committed page; a filer that tags no GrossProfit is unchecked — and a release's 'gross margin' can be its own, non-GAAP measure",
+   "stated_reason": null,
+   "excluded_rule": null,
+   "catches": [
+    "wrong_cell",
+    "wrong_period",
+    "different_definition"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 4,
+    "units": 15,
+    "confirmed": 15,
+    "differs_stated": 0,
+    "differs_unexplained": 0,
+    "unchecked": 0,
+    "excluded": 0,
+    "items_not_run": 0,
+    "items_not_applicable": 23
+   },
+   "not_run": [],
+   "not_applicable": [
+    {
+     "reason": "no gross-margin actual on the page",
+     "names": [
+      "AMZN",
+      "AORT",
+      "BRBR",
+      "BURL",
+      "CNXC",
+      "EPAM",
+      "FUBO",
+      "GOOGL",
+      "IT",
+      "LLY",
+      "NCNO",
+      "NFLX",
+      "ORKA",
+      "PARR",
+      "ROST",
+      "TECX",
+      "TGT",
+      "TJX",
+      "UBER",
+      "V",
+      "VRRM",
+      "WERN",
+      "WLK"
+     ]
+    }
+   ],
+   "by_name": {
+    "AMZN": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "AORT": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "BRBR": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "BURL": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "CNXC": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "EPAM": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "FUBO": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "GOOGL": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "IT": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "LLY": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "MVST": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "NCNO": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "NFLX": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "NKE": {
+     "confirmed": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "ORKA": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "PARR": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "ROST": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "SMPL": {
+     "confirmed": 5,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "TECX": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "TGT": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "TJX": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "UBER": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "V": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "VITL": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VRRM": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "WERN": {
+     "not_applicable": "no gross-margin actual on the page"
+    },
+    "WLK": {
+     "not_applicable": "no gross-margin actual on the page"
+    }
+   }
+  },
+  {
+   "id": "guide_scale_vs_xbrl",
+   "title": "A revenue guide's level vs the filer's revenue for the same scope a year earlier",
+   "subject": "8-K EX-99.1 revenue level guide ($M), its midpoint, at the scope its label states (period_scope: a quarter, or annual — `next-fy` reads annual)",
+   "second_source": "EDGAR XBRL revenue for the latest period of that scope (the same quarter, or the fiscal year) ending before the release was filed, as filed by then",
+   "independence": "independent",
+   "unit": "guide",
+   "tolerance": "the midpoint within 2x either way (release.SCALE_BAND): a quarterly guide filed as a year reads ~0.25 and billions read as millions ~0.001",
+   "population": "every revenue level guide on a committed page; a name more than doubling or halving its revenue differs here for a true reason",
+   "stated_reason": null,
+   "excluded_rule": null,
+   "catches": [
+    "wrong_unit",
+    "wrong_period"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 11,
+    "units": 34,
+    "confirmed": 26,
+    "differs_stated": 0,
+    "differs_unexplained": 5,
+    "unchecked": 3,
+    "excluded": 0,
+    "items_not_run": 0,
+    "items_not_applicable": 16
+   },
+   "not_run": [],
+   "not_applicable": [
+    {
+     "reason": "no revenue level guide on the page",
+     "names": [
+      "BURL",
+      "FUBO",
+      "GOOGL",
+      "IT",
+      "MVST",
+      "NKE",
+      "ORKA",
+      "PARR",
+      "ROST",
+      "TECX",
+      "TGT",
+      "TJX",
+      "UBER",
+      "V",
+      "WERN",
+      "WLK"
+     ]
+    }
+   ],
+   "by_name": {
+    "AMZN": {
+     "confirmed": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "AORT": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "BRBR": {
+     "confirmed": 3,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "BURL": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "CNXC": {
+     "confirmed": 6,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "EPAM": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "FUBO": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "GOOGL": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "IT": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "LLY": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "MVST": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "NCNO": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 5,
+     "unchecked": 0
+    },
+    "NFLX": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "NKE": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "ORKA": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "PARR": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "ROST": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "SMPL": {
+     "confirmed": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "TECX": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "TGT": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "TJX": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "UBER": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "V": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "VITL": {
+     "confirmed": 3,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VRRM": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "WERN": {
+     "not_applicable": "no revenue level guide on the page"
+    },
+    "WLK": {
+     "not_applicable": "no revenue level guide on the page"
+    }
+   }
+  },
+  {
+   "id": "guide_period_forward",
+   "title": "A guide's labelled period ends after its release was filed",
+   "subject": "every numeric guide's period label (primary_source.releases[].guidance)",
+   "second_source": "EDGAR: the release's filing date, and where the filer's own 10-Q/10-K calendar places the label (a period not yet reported a year after the same period before)",
+   "independence": "independent",
+   "unit": "guide",
+   "tolerance": "exact: the labelled period ends after the filing date — a guide wearing a period the filer had already closed differs",
+   "population": "every numeric guide on a committed page; a label with no year (`next-fy`, 'Q2', 'FY') or one the calendar cannot place is unchecked",
+   "stated_reason": null,
+   "excluded_rule": null,
+   "catches": [
+    "wrong_period"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 16,
+    "units": 99,
+    "confirmed": 53,
+    "differs_stated": 0,
+    "differs_unexplained": 8,
+    "unchecked": 38,
+    "excluded": 0,
+    "items_not_run": 0,
+    "items_not_applicable": 11
+   },
+   "not_run": [],
+   "not_applicable": [
+    {
+     "reason": "no numeric guide on the page",
+     "names": [
+      "GOOGL",
+      "IT",
+      "MVST",
+      "NKE",
+      "ORKA",
+      "PARR",
+      "ROST",
+      "TECX",
+      "V",
+      "WERN",
+      "WLK"
+     ]
+    }
+   ],
+   "by_name": {
+    "AMZN": {
+     "confirmed": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "AORT": {
+     "confirmed": 5,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 4
+    },
+    "BRBR": {
+     "confirmed": 3,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "BURL": {
+     "confirmed": 6,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 2
+    },
+    "CNXC": {
+     "confirmed": 3,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 3
+    },
+    "EPAM": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 3
+    },
+    "FUBO": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "GOOGL": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "IT": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "LLY": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "MVST": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "NCNO": {
+     "confirmed": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 4,
+     "unchecked": 2
+    },
+    "NFLX": {
+     "confirmed": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "NKE": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "ORKA": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "PARR": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "ROST": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "SMPL": {
+     "confirmed": 5,
+     "differs_stated": 0,
+     "differs_unexplained": 2,
+     "unchecked": 8
+    },
+    "TECX": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "TGT": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 1
+    },
+    "TJX": {
+     "confirmed": 14,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "UBER": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 3
+    },
+    "V": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "VITL": {
+     "confirmed": 3,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 2
+    },
+    "VRRM": {
+     "confirmed": 7,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 9
+    },
+    "WERN": {
+     "not_applicable": "no numeric guide on the page"
+    },
+    "WLK": {
+     "not_applicable": "no numeric guide on the page"
+    }
+   }
+  },
+  {
+   "id": "figure_in_own_quote",
+   "title": "Each stored figure is stated in its own quote, at its scale",
+   "subject": "every structured figure stored beside a quote: release actuals (value), guide bounds (low, high), one-offs (amount), event impacts (low, high), and covenant rate components (margin_pct, margin_bps, floor_pct, pik_pct)",
+   "second_source": "the figure's own stored quote (`verbatim`; a covenant row's note), read through release_parse.quoted_figures",
+   "independence": "internal",
+   "unit": "figure",
+   "tolerance": "exact at the quote's stated scale: the value is one figure the quote states — $M where the quote states a scale word, a bare dollar figure per share, %, basis points (a range's unit-less low side takes the high side's unit; 'zero' is 0). A quote PROVES presence (vinci.verbatim); this asks whether it SUPPORTS the value",
+   "population": "every committed page",
+   "stated_reason": "the release quote is cut at its 200-character cap (release_parse._verbatim) before the figure",
+   "excluded_rule": null,
+   "catches": [
+    "wrong_cell",
+    "wrong_unit"
+   ],
+   "fleet": {
+    "items": 27,
+    "items_run": 23,
+    "units": 440,
+    "confirmed": 406,
+    "differs_stated": 5,
+    "differs_unexplained": 29,
+    "unchecked": 0,
+    "excluded": 0,
+    "items_not_run": 0,
+    "items_not_applicable": 4
+   },
+   "not_run": [],
+   "not_applicable": [
+    {
+     "reason": "no figure stored beside a quote on the page",
+     "names": [
+      "GOOGL",
+      "ORKA",
+      "ROST",
+      "TECX"
+     ]
+    }
+   ],
+   "by_name": {
+    "AMZN": {
+     "confirmed": 6,
+     "differs_stated": 0,
+     "differs_unexplained": 3,
+     "unchecked": 0
+    },
+    "AORT": {
+     "confirmed": 39,
+     "differs_stated": 0,
+     "differs_unexplained": 2,
+     "unchecked": 0
+    },
+    "BRBR": {
+     "confirmed": 16,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "BURL": {
+     "confirmed": 26,
+     "differs_stated": 0,
+     "differs_unexplained": 2,
+     "unchecked": 0
+    },
+    "CNXC": {
+     "confirmed": 27,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "EPAM": {
+     "confirmed": 17,
+     "differs_stated": 1,
+     "differs_unexplained": 2,
+     "unchecked": 0
+    },
+    "FUBO": {
+     "confirmed": 7,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "GOOGL": {
+     "not_applicable": "no figure stored beside a quote on the page"
+    },
+    "IT": {
+     "confirmed": 10,
+     "differs_stated": 0,
+     "differs_unexplained": 2,
+     "unchecked": 0
+    },
+    "LLY": {
+     "confirmed": 3,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "MVST": {
+     "confirmed": 35,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "NCNO": {
+     "confirmed": 14,
+     "differs_stated": 0,
+     "differs_unexplained": 2,
+     "unchecked": 0
+    },
+    "NFLX": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 5,
+     "unchecked": 0
+    },
+    "NKE": {
+     "confirmed": 3,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "ORKA": {
+     "not_applicable": "no figure stored beside a quote on the page"
+    },
+    "PARR": {
+     "confirmed": 6,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "ROST": {
+     "not_applicable": "no figure stored beside a quote on the page"
+    },
+    "SMPL": {
+     "confirmed": 55,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "TECX": {
+     "not_applicable": "no figure stored beside a quote on the page"
+    },
+    "TGT": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "TJX": {
+     "confirmed": 29,
+     "differs_stated": 2,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "UBER": {
+     "confirmed": 14,
+     "differs_stated": 0,
+     "differs_unexplained": 3,
+     "unchecked": 0
+    },
+    "V": {
+     "confirmed": 4,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VITL": {
+     "confirmed": 27,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "VRRM": {
+     "confirmed": 44,
+     "differs_stated": 2,
+     "differs_unexplained": 0,
+     "unchecked": 0
+    },
+    "WERN": {
+     "confirmed": 9,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
+     "unchecked": 0
+    },
+    "WLK": {
+     "confirmed": 7,
+     "differs_stated": 0,
+     "differs_unexplained": 2,
+     "unchecked": 0
+    }
+   }
+  }
+ ],
+ "coverage": [
+  {
+   "family": "release.revenue",
+   "origin": "8-K EX-99.1",
+   "cited_as": [
+    "8-K <accession> EX-99.1"
+   ],
+   "carries": "the revenue a release reports, per period",
+   "classification": "independent",
+   "failure_guard": {
+    "wrong_file": "none",
+    "wrong_cell": "independent",
+    "wrong_unit": "independent",
+    "wrong_period": "independent",
+    "different_definition": "independent"
+   },
+   "checks": [
+    {
+     "id": "revenue_vs_xbrl",
+     "independence": "independent",
+     "items_run": 7,
+     "units": 25,
+     "confirmed": 23
+    },
+    {
+     "id": "figure_in_own_quote",
+     "independence": "internal",
+     "items_run": 23,
+     "units": 440,
+     "confirmed": 406
+    }
+   ],
+   "unscored": [],
+   "note": null
+  },
+  {
+   "family": "release.gross_margin",
+   "origin": "8-K EX-99.1",
+   "cited_as": [
+    "8-K <accession> EX-99.1"
+   ],
+   "carries": "the gross margin a release reports",
+   "classification": "independent",
+   "failure_guard": {
+    "wrong_file": "none",
+    "wrong_cell": "independent",
+    "wrong_unit": "internal",
+    "wrong_period": "independent",
+    "different_definition": "independent"
+   },
+   "checks": [
+    {
+     "id": "gross_margin_vs_xbrl",
+     "independence": "independent",
+     "items_run": 4,
+     "units": 15,
+     "confirmed": 15
+    },
+    {
+     "id": "figure_in_own_quote",
+     "independence": "internal",
+     "items_run": 23,
+     "units": 440,
+     "confirmed": 406
+    }
+   ],
+   "unscored": [],
+   "note": null
+  },
+  {
+   "family": "release.non_gaap_actuals",
+   "origin": "8-K EX-99.1",
+   "cited_as": [
+    "8-K <accession> EX-99.1"
+   ],
+   "carries": "adjusted EBITDA, adjusted EPS, adjusted net and operating income",
+   "classification": "internal",
+   "failure_guard": {
+    "wrong_file": "none",
+    "wrong_cell": "internal",
+    "wrong_unit": "internal",
+    "wrong_period": "none",
+    "different_definition": "none"
+   },
+   "checks": [
+    {
+     "id": "figure_in_own_quote",
+     "independence": "internal",
+     "items_run": 23,
+     "units": 440,
+     "confirmed": 406
+    }
+   ],
+   "unscored": [],
+   "note": "internal on the quote alone: a non-GAAP figure is the filer's own and no XBRL tag carries it; CIQ's EBITDA is CIQ's normalisation, not the filer's. GAAP DILUTED EPS is not read as an actual by the parser (no row on any page), so the XBRL EPS figure has nothing to be set against"
+  },
+  {
+   "family": "release.guidance",
+   "origin": "8-K EX-99.1",
+   "cited_as": [
+    "8-K <accession> EX-99.1"
+   ],
+   "carries": "guidance ranges: level and change, every metric",
+   "classification": "independent",
+   "failure_guard": {
+    "wrong_file": "none",
+    "wrong_cell": "internal",
+    "wrong_unit": "independent",
+    "wrong_period": "independent",
+    "different_definition": "none"
+   },
+   "checks": [
+    {
+     "id": "guide_scale_vs_xbrl",
+     "independence": "independent",
+     "items_run": 11,
+     "units": 34,
+     "confirmed": 26
+    },
+    {
+     "id": "guide_period_forward",
+     "independence": "independent",
+     "items_run": 16,
+     "units": 99,
+     "confirmed": 53
+    },
+    {
+     "id": "figure_in_own_quote",
+     "independence": "internal",
+     "items_run": 23,
+     "units": 440,
+     "confirmed": 406
+    }
+   ],
+   "unscored": [
+    "ciq.guide_vs_release — CIQ's revenue guide against the release's, scored in the ciq source"
+   ],
+   "note": "the level check runs on revenue guides only; a guide of another metric has its period and its quote checked, not its size"
+  },
+  {
+   "family": "release.one_offs_and_impacts",
+   "origin": "8-K EX-99.1",
+   "cited_as": [
+    "8-K <accession> EX-99.1"
+   ],
+   "carries": "one-off charges and event-impact ranges",
+   "classification": "internal",
+   "failure_guard": {
+    "wrong_file": "none",
+    "wrong_cell": "internal",
+    "wrong_unit": "internal",
+    "wrong_period": "none",
+    "different_definition": "none"
+   },
+   "checks": [
+    {
+     "id": "figure_in_own_quote",
+     "independence": "internal",
+     "items_run": 23,
+     "units": 440,
+     "confirmed": 406
+    }
+   ],
+   "unscored": [],
+   "note": null
+  },
+  {
+   "family": "filings.covenant_rates",
+   "origin": "8-K EX-10.x",
+   "cited_as": [
+    "8-K <accession> · <exhibit>"
+   ],
+   "carries": "a credit agreement's rate components (margin, floor, PIK)",
+   "classification": "internal",
+   "failure_guard": {
+    "wrong_file": "none",
+    "wrong_cell": "internal",
+    "wrong_unit": "internal",
+    "wrong_period": "none",
+    "different_definition": "none"
+   },
+   "checks": [
+    {
+     "id": "figure_in_own_quote",
+     "independence": "internal",
+     "items_run": 23,
+     "units": 440,
+     "confirmed": 406
+    }
+   ],
+   "unscored": [],
+   "note": "internal on the quote alone; the quote's presence in the exhibit is checked at assembly (vinci.verbatim). CIQ's capital-structure panel carries coupons and is not set against these"
+  }
+ ],
+ "failure_class_summary": {
+  "wrong_file": {
+   "independent": 0,
+   "internal": 0,
+   "none": 4,
+   "none_single_source": 2
+  },
+  "wrong_cell": {
+   "independent": 2,
+   "internal": 4,
+   "none": 0,
+   "none_single_source": 0
+  },
+  "wrong_unit": {
+   "independent": 2,
+   "internal": 4,
+   "none": 0,
+   "none_single_source": 0
+  },
+  "wrong_period": {
+   "independent": 3,
+   "internal": 0,
+   "none": 1,
+   "none_single_source": 2
+  },
+  "different_definition": {
+   "independent": 2,
+   "internal": 0,
+   "none": 2,
+   "none_single_source": 2
+  }
+ }
+}

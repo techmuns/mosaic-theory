@@ -5734,8 +5734,9 @@
             ],
             "gap": 1.067,
             "different": true,
-            "matching_amount": null,
-            "matching_source": null,
+            "matching_amount": "FinanceLeaseRightOfUseAssetAmortization 1,067,000 USD for the quarter to 2025-06-29",
+            "matching_source": "10-Q 0001193125-26-336753 XBRL",
+            "ciq_unusual": -0.013,
             "note": null
           },
           {
@@ -5749,8 +5750,9 @@
             ],
             "gap": 1.193,
             "different": true,
-            "matching_amount": null,
-            "matching_source": null,
+            "matching_amount": "FinanceLeaseRightOfUseAssetAmortization 1,193,000 USD for the quarter to 2025-09-28",
+            "matching_source": "10-Q 0001193125-25-263590 XBRL",
+            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -5766,6 +5768,7 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -5779,8 +5782,9 @@
             ],
             "gap": 1.359,
             "different": true,
-            "matching_amount": null,
-            "matching_source": null,
+            "matching_amount": "FinanceLeaseRightOfUseAssetAmortization 1,360,000 USD for the quarter to 2026-03-29",
+            "matching_source": "10-Q 0001193125-26-210356 XBRL",
+            "ciq_unusual": 0.0,
             "note": null
           }
         ],
@@ -5788,7 +5792,7 @@
         "filing_ltm": 73.907,
         "ltm_gap": 5.577,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $79M against $74M rebuilt from the filings (+$6M); the quarter to 2025-06-29: CIQ $27M against $26M (+$1M); the quarter to 2025-09-28: CIQ $25M against $23M (+$1M); the quarter to 2025-12-28: CIQ $26M against $24M (+$2M); the quarter to 2026-03-29: CIQ $2M against $0M (+$1M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $79M against $74M rebuilt from the filings (+$6M); the quarter to 2025-06-29: CIQ $27M against $26M (+$1M) — its filing tags a matching amount: FinanceLeaseRightOfUseAssetAmortization 1,067,000 USD for the quarter to 2025-06-29; the quarter to 2025-09-28: CIQ $25M against $23M (+$1M) — its filing tags a matching amount: FinanceLeaseRightOfUseAssetAmortization 1,193,000 USD for the quarter to 2025-09-28; the quarter to 2025-12-28: CIQ $26M against $24M (+$2M); the quarter to 2026-03-29: CIQ $2M against $0M (+$1M) — its filing tags a matching amount: FinanceLeaseRightOfUseAssetAmortization 1,360,000 USD for the quarter to 2026-03-29 (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -12013,6 +12017,22 @@
         "caveats",
         "mechanical.capital_structure"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
+      ]
     }
   ],
   "anchor": {
@@ -12091,6 +12111,7 @@
       "market_reconciliation": "differ",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

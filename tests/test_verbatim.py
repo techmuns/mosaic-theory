@@ -127,11 +127,15 @@ def test_page_furniture_is_not_forgiven() -> None:
     """(-) TJX: the quote is the clause without the page number '- 31 -' the exhibit prints inside
     it. Most likely read correctly; refused anyway. A gap of digits is the one gap a span check must
     never forgive — it is where a figure would hide. Removing the page number from the window
-    shows the rest of the quote is the document's own text."""
+    shows the rest of the quote is the document's own text. Since 2026-10-27 `html_to_text` drops
+    the page number, so the document as read now (`window`) carries the quote whole; the text as the
+    extractor read it at 545403de (`window_with_furniture`) is still refused."""
     c = _case("tjx-page-furniture")
-    assert "- 31 -" in c["window"]
-    assert SourceText(c["window"]).match(c["quote"]) is SpanMatch.NOT_FOUND
-    assert SourceText(c["window"].replace("- 31 - ", "")).match(c["quote"]) is SpanMatch.VERBATIM
+    before = c["window_with_furniture"]
+    assert "- 31 -" in before and "- 31 -" not in c["window"]
+    assert SourceText(before).match(c["quote"]) is SpanMatch.NOT_FOUND
+    assert SourceText(before.replace("- 31 - ", "")).match(c["quote"]) is SpanMatch.VERBATIM
+    assert SourceText(c["window"]).match(c["quote"]) is SpanMatch.VERBATIM
 
 
 # --- end to end: covenant terms ------------------------------------------------------------------
@@ -186,7 +190,9 @@ def test_covenant_terms_keep_a_span_and_refuse_the_rest_end_to_end() -> None:
     governing collapse — what the synthesis digest is built from — never revives a refused
     value."""
     c = _case("tjx-page-furniture")
-    exhibit = f"{c['document_head']} … {c['window']}"
+    # the exhibit as the extractor read it at 545403de: '- 31 -' inside the clause (a plain-text
+    # exhibit carries no CSS page break, so html_to_text keeps it)
+    exhibit = f"{c['document_head']} … {c['window_with_furniture']}"
     first_piece = c["quote"].split("; and (ii)")[0] + "; and"
     payload = {"terms": [
         {"name": "Interest / coupon rate", "present": True,
