@@ -3,8 +3,9 @@
 For each verdict it computes the name's return from the **frozen entry price** to the scoring date
 (the thesis horizon once it has passed, else an interim mark) and the benchmark's return over the
 same window, then aggregates the resolved verdicts into the report (see ``vinci.scoring.metrics``).
-Verdicts whose horizon hasn't passed — or that lack a forward price — are counted as *pending*, not
-scored: the BUY−AVOID spread is computed only over **resolved** verdicts.
+Verdicts whose horizon hasn't passed — or whose horizon session's close is not in the store yet, or
+that lack a forward price — are counted as *pending*, not scored: the BUY−AVOID spread is computed
+only over **resolved** verdicts.
 """
 
 from __future__ import annotations
@@ -51,6 +52,17 @@ class BenchmarkMismatchError(RuntimeError):
     row. See the guard in ``score_ledger`` for why honouring it per row is a caller change.
     """
 
+class StaleExitError(RuntimeError):
+    """A RESOLVED row whose name stopped trading before its horizon session.
+
+    The benchmark has a session on or before the horizon that is later than the name's last bar,
+    so the exit `bar_on_or_before` would pick is a stale close. Raised rather than scored on it:
+    a halted or delisted name would silently exit at its last trade — for an AVOID_TERMINAL row,
+    the very event the call predicts. No delisting-return rule exists; the exit for such a row is
+    the operator's ruling. Gated on ``resolved`` like the guards above: an interim mark feeds no
+    number, so it carries a note instead."""
+
+
 _DEFAULT_COST_BPS = 25.0  # coarse small-cap one-way cost estimate (round-trip applied in metrics)
 _DEFAULT_BENCHMARK_ID = "IDX-IWM"
 
@@ -87,9 +99,23 @@ def score_ledger(
     followed name's identity before ``log_verdict`` sees it. Absent → every sleeve's baseline
     reports "not supplied" rather than silently reading zero, and both production paths are pinned
     to supply it (``tests/test_quality_baseline.py``).
+
+    A ROW IS SCORED ON ITS HORIZON SESSION'S CLOSE (2026-10-27). It resolves only once the store
+    holds a benchmark bar dated on or after its horizon (and on or before ``as_of``); until then it
+    is pending and ``ScoreReport.row_notes`` says so. Its exit is the name's last bar on or before
+    the horizon, and a resolved row whose name stopped trading before the benchmark's last session
+    raises `StaleExitError` (``tests/test_scoring_horizon_close.py``).
     """
     bench_bars = store.get_price_history(benchmark_internal_id)
     bench_daily = dict(_daily_returns(bench_bars, date.min, as_of))
+    # THE NEWEST SESSION THE BOOK BEING SCORED HAS SEEN. A row whose horizon has passed resolves
+    # only once this reaches it: `ingest_prices` reads the empty grouped-daily of a session that has
+    # not closed yet as a holiday, so a run dated 2026-12-14 in India, before the US close, held
+    # only Friday's bars and resolved VRRM on the 12-11 close (record
+    # 2026-10-27-vrrm-inputs-before-maturity, FOUND 2). The benchmark is the calendar because it
+    # trades every session; the name may not. BOUNDED BY `as_of`: a bar stored after the scoring
+    # date has not landed in the book being scored, so a re-cut says what a run that day said.
+    bench_last = bar_on_or_before(bench_bars, as_of)
     # WHICH DECISIONS HAVE BEEN CLOSED, as of the scoring date. The rows keep accruing to their
     # horizons either way (the 2026-08-12 ruling — a close is a capital decision, not a retraction),
     # so this changes no number the report already printed; it lets the report SAY how much of the
@@ -124,6 +150,9 @@ def score_ledger(
     pending = 0
     book_rets: list[float] = []
     bench_rets: list[float] = []
+    # EVERY ROW HELD BACK OR MARKED ON A SHORT WINDOW, BY NAME — rendered under the pending count,
+    # because both callers discard the per-row scores and print only the report.
+    notes: list[str] = []
 
     for entry in ledger:
         # A CLOSE IS NOT A DECISION. A close row is appended (never an edit) and carries the
@@ -138,7 +167,24 @@ def score_ledger(
             continue
         entry_date = entry.entry_price_as_of
         horizon_date = entry_date + timedelta(days=entry.horizon_days)
-        resolved = as_of >= horizon_date
+        # RESOLVED ON THE HORIZON SESSION'S CLOSE, never before it lands (see `bench_last`). A
+        # weekend horizon resolves when Monday's bar lands; its exit is still Friday's close.
+        past_horizon = as_of >= horizon_date
+        resolved = (past_horizon and bench_last is not None
+                    and bench_last.bar_date >= horizon_date)
+        first_note = len(notes)  # this row's notes are notes[first_note:]
+        # THE PENDING COUNT IS SCREEN-ORIGIN ONLY, so a followed row named under it says so —
+        # otherwise the reader audits the count against one named row too many.
+        who = (f"{entry.entry_id} ({entry.ticker})" if origin_of(entry) == ORIGIN_SCREEN
+               else f"{entry.entry_id} ({entry.ticker}, {origin_of(entry)}-origin — outside "
+                    f"the screen-origin counts)")
+        if past_horizon and not resolved:
+            seen = (f"the benchmark's last bar on or before {as_of} is {bench_last.bar_date}"
+                    if bench_last is not None
+                    else f"the store holds no benchmark bar on or before {as_of}")
+            notes.append(
+                f"{who} is PENDING, not resolved: its horizon "
+                f"{horizon_date} has passed, but {seen} — awaiting the horizon session's close.")
 
         # THE SEALED BENCHMARK IS NOT HONOURED HERE, AND SILENCE WOULD HIDE IT (review of #512).
         # This harness applies ONE series to every row (`benchmark_internal_id`, IWM by default),
@@ -182,6 +228,25 @@ def score_ledger(
             if origin_of(entry) == ORIGIN_SCREEN:
                 pending += 1
             continue
+
+        # THE NAME STOPPED TRADING. The exit is the name's last bar on or before the scoring date,
+        # however old: a halted or delisted name would exit at its last trade, which for an
+        # AVOID_TERMINAL row is the very event the call predicts. The benchmark's later session
+        # in the same window is the proof the market traded on without it.
+        if exit_bar.bar_date < bench_out.bar_date:
+            gap = (f"{who}: its last bar on or before {scoring_date} "
+                   f"is {exit_bar.bar_date}, but the benchmark has a session on "
+                   f"{bench_out.bar_date}")
+            if resolved:
+                raise StaleExitError(
+                    f"{gap} — the name stopped trading before its horizon {horizon_date}, and the "
+                    f"row has RESOLVED. It is not scored on the stale close: the exit for a halted "
+                    f"or delisted name is the operator's ruling, and no delisting-return rule "
+                    f"exists.")
+            notes.append(
+                f"{gap} — this interim mark is on that stale close, and feeds no number. If the "
+                f"gap is still there when the row resolves (its horizon is {horizon_date}), "
+                f"scoring stops.")
 
         # THE DIVIDENDS, each leg over its OWN window — the sealed entry session to the exit bar's
         # session for the name, the benchmark's own bars for the benchmark. Read through the
@@ -244,6 +309,7 @@ def score_ledger(
             sleeve=sleeve_of(entry),
             # Is the POSITION still held? Distinct from `resolved`, which is about the CALL's clock.
             closed=entry.entry_id in closed_ids,
+            note=" ".join(notes[first_note:]) or None,
         )
         scores.append(score)
         # pool daily returns of resolved BUYs vs the benchmark for the beta/alpha regression.
@@ -273,5 +339,6 @@ def score_ledger(
         book_daily=book_rets or None,
         bench_daily=bench_rets or None,
         basket_labels={k: b.label for k, b in (baskets or {}).items()},
+        row_notes=tuple(notes),
     )
     return scores, report
