@@ -1,8 +1,8 @@
 ---
 id: 2026-10-27-codex-rereviews-the-fix
-status: open
+status: shipped
 date: 2026-10-27
-prs: []
+prs: [815]
 supersedes:
 superseded-by:
 ---
