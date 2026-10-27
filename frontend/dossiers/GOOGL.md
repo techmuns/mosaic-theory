@@ -614,6 +614,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-26 · anchor — anchor-backfill at 2026-10-09.3
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 35d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 39d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling

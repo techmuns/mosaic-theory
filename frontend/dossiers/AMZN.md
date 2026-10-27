@@ -678,6 +678,7 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 - **Refreshed since assembly** (oldest first):
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 20d old — 2026-10-06 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 20d old (2026-10-06, valuation.implied_expectations.multiples_as_of) — within the ceiling

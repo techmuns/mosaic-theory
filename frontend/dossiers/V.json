@@ -14494,6 +14494,14 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -14567,7 +14575,8 @@
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
     "band_checks": {
       "recorded_d_and_a": "agree",
-      "market_reconciliation": "agree"
+      "market_reconciliation": "agree",
+      "d_and_a_source": "edgar"
     },
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,

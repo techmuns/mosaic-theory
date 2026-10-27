@@ -659,6 +659,7 @@ _Source §: 8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm_
 - **Refreshed since assembly** (oldest first):
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 35d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus is 61d old (2026-08-26, valuation.implied_expectations.multiples_as_of) — beyond the 45d ceiling. No analyst has revised this name in that window; a re-export will NOT move it. Treat as a neglect signal, not a stale pull.

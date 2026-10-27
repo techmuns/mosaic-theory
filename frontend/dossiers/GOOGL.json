@@ -15284,6 +15284,14 @@
       "layers": [
         "anchor"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
     }
   ],
   "anchor": {
@@ -15383,7 +15391,8 @@
     "machine_recipe_hint": "R1_midcycle_margin_evebitda",
     "band_checks": {
       "recorded_d_and_a": "agree",
-      "market_reconciliation": "agree"
+      "market_reconciliation": "agree",
+      "d_and_a_source": "ciq"
     },
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
