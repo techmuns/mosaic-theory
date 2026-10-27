@@ -6,7 +6,7 @@
  },
  "boundary": {
   "measured_on": "2026-10-27",
-  "git_head": "f0d144cc",
+  "git_head": "ef371658",
   "inputs_match_head": true,
   "reads": "data/dossiers/*/dossier.json + data/cache/sec companyfacts (cache only): 119 releases; companyfacts fetched 2026-10-27 → 2026-10-27",
   "item_noun": "page",
@@ -40,7 +40,7 @@
    "WERN",
    "WLK"
   ],
-  "inputs_sha256": "517f223dc2129e2401694276f22d749e12aaa5b594b4a23786aacce7ac22d959",
+  "inputs_sha256": "6bdfc11df1331f743c2cebb4295d3a5655296ac0f8bf17f31484c424be32007d",
   "note": "reads the committed pages and the SEC cache, never the network; the sha256 names exactly what was read"
  },
  "statuses": {
