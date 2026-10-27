@@ -210,6 +210,23 @@
    "read_as": "an 8-K the page links",
    "url": "https://www.sec.gov/Archives/edgar/data/27419/000002741926000032/",
    "text": "The Credit Agreement will expire on August 14, 2031, which may be extended pursuant to two extension options of one year each under the terms of the Credit Agreement. The Prior Five-Year Credit Agreement was scheduled to expire on October 18, 2028. The 364-Day Credit Agreement was scheduled to expire on October 8, 2026 and did not have an option to extend the term."
+  },
+  {
+   "ticker": "TJX",
+   "form": "8-K",
+   "accession": "0001193125-21-202939",
+   "filed": "2021-06-29",
+   "items": [
+    "1.01",
+    "1.02",
+    "2.03",
+    "9.01"
+   ],
+   "primary_doc": "d169110d8k.htm",
+   "period_end": null,
+   "read_as": "an 8-K the page links",
+   "url": "https://www.sec.gov/Archives/edgar/data/109198/000119312521202939/",
+   "text": "Bank National Association, as administrative agent, HSBC Bank USA, National Association and Wells Fargo Bank, National Association, as co-syndication agents, and Bank of America, N.A., JPMorgan Chase Bank, N.A. and Deutsche Bank Securities, Inc., as co-documentation agents, providing for a $1.0 billion senior unsecured revolving credit facility maturing on June 25, 2026 (the “2026 Revolving Credit Facility”). The 2026 Revolving Credit Facility replaces the Company’s revolving credit facility maturing in March 2022 and 364-day revolving credit facility maturing in August 2021. On June 25, 2021, in connection with the closing of the 2026 Revolving Credit Facility described in Item 1.01 above, the Company terminated its existing revolving credit agreement maturing in March 2022 with certain financial institutions, as lenders, and U.S. Bank National Association, as administrative agent, and its existing 364-day revolving credit agreement maturing in August 2021 with certain financial institutions, as lenders, and U.S."
   }
  ]
 }

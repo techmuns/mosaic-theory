@@ -118,12 +118,18 @@ _REFINANCE = re.compile(
 _EARLIER_OF = re.compile(
     r"\(i\)\s*(?P<a>[^()]{1,200}?)\s*,?\s*and\s+\(ii\)\s*(?P<b>[^().;]{1,200})", re.I)
 #: A statement about a facility that has since been replaced: its dates are superseded. Read in the
-#: `_PRIOR_BACK` characters before the statement, outside any springing clause. The defined terms
-#: are CASE-SENSITIVE — a case-blind "prior" read VRRM's springing "91 days prior to" as a prior
-#: facility and retired the ABL's current 2030-10-17.
+#: `_PRIOR_BACK` characters before the statement. The defined terms are CASE-SENSITIVE, as filers
+#: capitalise them ("the Prior 364-Day Credit Agreement", "the Existing ABL Credit Agreement") — a
+#: case-blind "prior" read VRRM's springing "91 days prior to" as a prior facility and retired the
+#: ABL's current 2030-10-17 — and a case-blind one reads PARR's "the prior ABL Credit Facility was
+#: amended and restated … by the … (“ABL Credit Facility due 2031”" as superseding the NEW name. A
+#: termination or a replacement is read in plain words, as TJX's 2021 8-K states both: "terminated
+#: its existing revolving credit agreement maturing in March 2022", "replaces the Company's
+#: revolving credit facility maturing in March 2022".
 _PRIOR = re.compile(
     r"\b(?:Existing|Prior|Previous)\b|\b(?:[Pp]reviously|[Pp]redecessor|[Ff]ormer(?:ly)?|"
-    r"amends\s+and\s+restates|which\s+provided\s+for|would\s+have)\b")
+    r"amends\s+and\s+restates|which\s+provided\s+for|would\s+have|"
+    r"terminated\s+(?:its|the|our)|replac(?:es|ed|ing)\s+(?:the|its|our))\b")
 _PRIOR_BACK = 250
 #: Where a springing clause starts. The clause runs to its closing parenthesis or the sentence end.
 _SPRING = re.compile(
@@ -349,8 +355,7 @@ def _loans(sentence: str) -> list[Stated]:
             if (od := _date(old.group("date"))) is not None:
                 out.append(Stated(cls, key, od[0], od[1], False, quote))
     def _prior(at: int) -> bool:
-        return any(not _inside(x.start(), springs)
-                   for x in _PRIOR.finditer(sentence, max(0, at - _PRIOR_BACK), at))
+        return _PRIOR.search(sentence, max(0, at - _PRIOR_BACK), at) is not None
 
     for m in _STATEMENT.finditer(sentence):
         if _inside(m.start(), taken):

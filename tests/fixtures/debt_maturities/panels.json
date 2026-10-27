@@ -1936,6 +1936,195 @@
      "currency": "USD"
     }
    ]
+  },
+  "TJX": {
+   "cik": "0000109198",
+   "reference_date": "2026-10-16",
+   "detail_as_of": "A 2026 filed Mar-31-2026",
+   "pointers": [
+    {
+     "family": "material contracts (10-K exhibit index)",
+     "filing": "latest 10-K",
+     "filing_date": "2026-03-31",
+     "accession": "0000109198-26-000008",
+     "exhibits": [
+      "tjx-20260131xexhibit1024.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2029",
+     "filing": "8-K",
+     "filing_date": "2020-05-21",
+     "accession": "0001157523-20-000793",
+     "exhibits": [
+      "a52222014ex10_1.htm",
+      "a52222014ex10_2.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2029",
+     "filing": "8-K",
+     "filing_date": "2021-06-29",
+     "accession": "0001193125-21-202939",
+     "exhibits": [
+      "d169110dex101.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2030",
+     "filing": "8-K",
+     "filing_date": "2020-08-11",
+     "accession": "0000109198-20-000015",
+     "exhibits": [
+      "exhibit101364dayrevolv.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2030",
+     "filing": "8-K",
+     "filing_date": "2025-05-09",
+     "accession": "0000109198-25-000033",
+     "exhibits": [
+      "exhibit101-firstamendmentt.htm",
+      "exhibit102-secondamendment.htm"
+     ],
+     "note": ""
+    },
+    {
+     "family": "1.150% Senior Unsecured Notes, Maturing May 15, 2028",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "1.600% Senior Unsecured Notes, Maturing May 15, 2031",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "2.250% Senior Unsecured Notes, Maturing September 15, 2026",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    },
+    {
+     "family": "3.875% Senior Unsecured Notes, Maturing April 15, 2030",
+     "filing": "—",
+     "filing_date": "",
+     "accession": "",
+     "exhibits": [],
+     "note": "no contract-level filing expected (aggregate line item)"
+    }
+   ],
+   "instruments": [
+    {
+     "description": "1.150% Senior Unsecured Notes, Maturing May 15, 2028",
+     "type": "Bonds and Notes",
+     "principal_musd": 500.0,
+     "coupon": "1.150%",
+     "floating_rate": "NA",
+     "maturity_date": "2028-05-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "1.600% Senior Unsecured Notes, Maturing May 15, 2031",
+     "type": "Bonds and Notes",
+     "principal_musd": 500.0,
+     "coupon": "1.600%",
+     "floating_rate": "NA",
+     "maturity_date": "2031-05-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "2.250% Senior Unsecured Notes, Maturing September 15, 2026",
+     "type": "Bonds and Notes",
+     "principal_musd": 999.0,
+     "coupon": "2.250%",
+     "floating_rate": "NA",
+     "maturity_date": "2026-09-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "3.875% Senior Unsecured Notes, Maturing April 15, 2030",
+     "type": "Bonds and Notes",
+     "principal_musd": 496.0,
+     "coupon": "3.875%",
+     "floating_rate": "NA",
+     "maturity_date": "2030-04-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "4.500% Senior Unsecured Notes, Maturing April 15, 2050",
+     "type": "Bonds and Notes",
+     "principal_musd": 383.0,
+     "coupon": "4.500%",
+     "floating_rate": "NA",
+     "maturity_date": "2050-04-15",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Operating Lease Liabilities",
+     "type": "Capital Lease",
+     "principal_musd": 10620.0,
+     "coupon": "3.900%",
+     "floating_rate": "NA",
+     "maturity_date": null,
+     "seniority": "Senior",
+     "secured": true,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Senior Unsecured Revolving Credit Facility Maturing in May 2029",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "SOFR + 0.875%",
+     "maturity_date": "2029-05-09",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    },
+    {
+     "description": "Senior Unsecured Revolving Credit Facility Maturing in May 2030",
+     "type": "Revolving Credit",
+     "principal_musd": null,
+     "coupon": "NA",
+     "floating_rate": "SOFR + 0.875%",
+     "maturity_date": "2030-05-09",
+     "seniority": "Senior",
+     "secured": false,
+     "convertible": false,
+     "currency": "USD"
+    }
+   ]
   }
  }
 }

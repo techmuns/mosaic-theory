@@ -107,6 +107,21 @@ def test_a_springing_clause_saying_prior_is_not_a_prior_facility() -> None:
     assert "prior to" in abl[0].springing[0].clause
 
 
+def test_the_prior_facility_marker_is_a_defined_term_or_a_termination() -> None:
+    """PARR: "the prior ABL Credit Facility was amended and restated … by the … (“ABL Credit
+    Facility due 2031" — the lowercase "prior" is the OLD facility; the name-year after it is the
+    new one's, and stays current. TJX's 2021 8-K: "terminated its existing revolving credit
+    agreement maturing in March 2022", "replaces the Company's revolving credit facility maturing
+    in March 2022 and 364-day revolving credit facility maturing in August 2021" — superseded, in
+    plain words."""
+    parr = [s for s in _source("0000821483-26-000014").stated or ()
+            if s.precision == dmx.YEAR and "Revolving Credit Agreement (“ABL Credit" in s.quote]
+    assert parr and all(s.current for s in parr)
+    tjx = [s for s in _source("0001193125-21-202939").stated or ()
+           if s.cls == dmx.REVOLVER and ("replaces the" in s.quote or "terminated its" in s.quote)]
+    assert len(tjx) == 3 and not any(s.current for s in tjx)
+
+
 def test_vrrm_10q_states_the_old_date_as_history_and_the_refinancing_retires_it() -> None:
     """THE TRAP. The 10-Q states "The 2021 Term Loan … maturing on March 24, 2028" — CIQ's exact
     date — and the refinancing into 2032-10-15. The refinancing retires the one earlier date."""
@@ -114,6 +129,43 @@ def test_vrrm_10q_states_the_old_date_as_history_and_the_refinancing_retires_it(
     history = [s for s in st if s.cls == dmx.TERM_LOAN and s.when == date(2028, 3, 24)]
     assert history and not any(s.current for s in history)
     assert _current(VRRM_10Q, dmx.TERM_LOAN) == ["2032-10-15"]
+
+
+def _combined(*accs: str) -> list[dmx.Stated]:
+    """Two real filings' statements read as one filing — the shape no single committed filing
+    holds, built from real sentences rather than invented ones."""
+    return dmx.read(" ".join(str(_filing(a)["text"]) for a in accs))
+
+
+def test_a_refinancing_retires_nothing_when_two_other_dates_stand() -> None:
+    """With VRRM's refinancing beside SMPL's term facility, the class has TWO other current dates
+    (2028-03-24, 2030-03-17); which one was refinanced is not identifiable, so neither retires."""
+    tl = sorted(dmx.iso(s.when, s.precision)
+                for s in dmx.current_dates(_combined(VRRM_10Q, "0001702744-26-000023"),
+                                           dmx.TERM_LOAN, ""))
+    assert {"2028-03-24", "2030-03-17", "2032-10-15"} <= set(tl)
+
+
+def test_two_open_pairs_are_not_forced() -> None:
+    """Two term loans on a page, two current term-loan dates stated (VRRM's 2032-10-15, SMPL's
+    2030-03-17), neither matching: which is which is not determined, so neither differs."""
+    st = [s for s in _combined(VRRM_10Q, "0001702744-26-000023")
+          if not (s.cls == dmx.TERM_LOAN and s.when == date(2028, 3, 24))]
+    lines = [dmx.PanelLine(0, "A", "Term Loans", "NA", 10.0, date(2027, 1, 1)),
+             dmx.PanelLine(1, "B", "Term Loans", "NA", 10.0, date(2026, 12, 1))]
+    assert {d.check for d in dmx.decide(lines, st, None).values()} == {CHECK_NOT_RUN}
+
+
+def test_an_earlier_of_with_two_dates_reads_neither() -> None:
+    """SMPL's real sentence with its (i) leg replaced by a date (no filing in the corpus states two
+    dates there): the leg that is the maturity is not identifiable from position, so nothing is
+    read from it — never the first leg by default."""
+    text = str(_filing("0001702744-26-000023")["text"]).replace(
+        "(i) 91 days prior to the then-effective maturity date of the Term Facility",
+        "(i) September 17, 2029")
+    assert "(i) September 17, 2029" in text
+    assert not [s for s in dmx.read(text) if s.cls == dmx.REVOLVER and s.current
+                and s.when in (date(2029, 9, 17), date(2029, 12, 16))]
 
 
 def test_an_agreement_needs_the_whole_set_not_a_shared_date() -> None:
@@ -375,6 +427,11 @@ class _Edgar:
         out.append(Filing(cik=cik, form="10-Q", filing_date=date(2030, 1, 4),
                           accession="9999999999-26-999999", items=[], primary_doc="late.htm",
                           report_date=date(2026, 9, 30)))
+        # an 8-K with a debt item, filed after the page's reference date
+        if "8-K" in forms:
+            out.append(Filing(cik=cik, form="8-K", filing_date=date(2030, 1, 5),
+                              accession="9999999999-30-000001", items=["1.01", "2.03"],
+                              primary_doc="late8k.htm"))
         # VRRM's real earnings 8-K: after the panel, inside the bound, and no debt item to read
         if "8-K" in forms:
             out.append(Filing(cik=cik, form="8-K", filing_date=date(2026, 5, 6),
@@ -411,7 +468,8 @@ def test_the_sources_are_the_periodic_report_the_linked_8ks_and_none_after_the_r
                            date.fromisoformat(page["reference_date"]))
     assert [(s.form, s.accession, s.read_as) for s in mc.sources] == [
         ("10-Q", VRRM_10Q, dmx.READ_PERIODIC), ("8-K", VRRM_8K, dmx.READ_LINKED)]
-    assert "9999999999-26-999999" not in http.read and "0001193125-26-209031" not in http.read
+    assert not {"9999999999-26-999999", "9999999999-30-000001", "0001193125-26-209031"} & set(
+        http.read)
     assert _row(mc, "2021 Term Loan Due 2028").governs
     # an 8-K with Item 1.01 after the panel is read even when no pointer links it
     after = dm.maturity_check(_Edgar("VRRM"), _Http(), page["cik"], _insts("VRRM"),  # type: ignore[arg-type]
