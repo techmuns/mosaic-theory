@@ -1691,6 +1691,103 @@ def ciq_currency_transform(doc: dict[str, Any], *, refused: list[str],
     return _apply
 
 
+#: The lines the anchor writes into `data_quality_detail` for each band guard (`compute_anchor`).
+_DA_TRIP_LEAD = "Multiples sheet implies D&A of "
+_RECON_TRIP_LEAD = "market-implied EBITDA "
+_DA_EX_LEASE_LINE = ("recorded-D&A check not run: it tests CIQ's Multiples-sheet ratios, which the "
+                     "ex-lease history does not use")
+
+
+def band_checks_backfill(path: Path, *, refused: list[str], unreached: list[str]) -> bool:
+    """Write `anchor.band_checks` — the two band guards' outcomes — onto ONE committed page, under
+    a KEPT synthesis and every other anchor value as committed. True when the page moved.
+
+    NO WORKBOOK, NO EDGAR: each guard is re-run through its own function on the inputs the page
+    stores (the band R1 priced, the anchor's revenue, D&A and net debt, the page's EBIT and market
+    cap), and the outcome is written ONLY BEHIND A REPRODUCTION:
+
+    * the band re-selected (`r1_multiple_band`) is the one the anchor priced — its median, close
+      count and source equal the stored multiple's;
+    * the ex-lease line ('recorded-D&A check not run …') is on the page exactly when the band is
+      the ex-lease history;
+    * each guard's re-run trip lines are on the page, and the page holds no trip line the re-run
+      does not give back — a trip line carries its numbers, so equal lines mean equal inputs.
+
+    An anchor that never reached the guards (no own-history multiple, an R2 or R4 recipe: no
+    margin block) is named in ``unreached`` and keeps no block — absent reads as not run. A page
+    that does not reproduce, or already holds a different block, is named in ``refused``."""
+    from vinci.dossier import band_guards as bg
+    from vinci.dossier import layer_refresh
+    from vinci.dossier.anchor import (
+        _band_read,
+        _ltm_ebit_from_fs,
+        _market_cap_from_mechanical,
+        r1_multiple_band,
+    )
+    from vinci.dossier.assemble import _read_scenario_card
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import write_dossier
+
+    original = path.read_text()
+    doc = json.loads(original)
+    t = str(doc.get("ticker"))
+    a, mech = doc.get("anchor"), doc.get("mechanical") or {}
+    if (path.parent / "known_wrong.json").exists():
+        refused.append(f"{t}: SEALED by its own known_wrong.json")
+        return False
+    if not isinstance(a, dict) or a.get("margin") is None:
+        unreached.append(t)
+        return False
+
+    def _v(key: str) -> float | None:
+        node = a.get(key)
+        return node.get("value") if isinstance(node, dict) else None
+
+    sel = r1_multiple_band(mech)
+    mult = _band_read(sel.band) or {}
+    held = a.get("multiple") or {}
+    if (mult.get("median") != held.get("value") or mult.get("n_closes") != held.get(
+            "history_quarters") or sel.source != held.get("source")):
+        refused.append(f"{t}: the band the page holds is not the one its anchor priced")
+        return False
+    detail = list(a.get("data_quality_detail") or [])
+    if (_DA_EX_LEASE_LINE in detail) != sel.ex_lease:
+        refused.append(f"{t}: the ex-lease line does not match the band the anchor priced")
+        return False
+    da, rev, nd = _v("d_and_a"), _v("ltm_revenue"), _v("net_debt")
+    ltm_ebit = _ltm_ebit_from_fs(mech)
+    _da_flag, da_lines = bg.recorded_d_and_a_check(
+        implied_d_and_a_margin=mult.get("implied_d_and_a_margin"), revenue=rev,
+        recorded_d_and_a=da)
+    recon = bg.market_reconciliation(
+        market_cap=_market_cap_from_mechanical(mech), net_debt=nd,
+        current_multiple=mult.get("current"),
+        recorded_ebitda=(ltm_ebit + da) if (ltm_ebit is not None and da) else None)
+    for lead, lines, what in ((_DA_TRIP_LEAD, da_lines, "recorded-D&A"),
+                              (_RECON_TRIP_LEAD, recon.detail if recon else [],
+                               "market-reconciliation")):
+        if sorted(lines) != sorted(x for x in detail if x.startswith(lead)):
+            refused.append(f"{t}: the {what} check's trip lines do not reproduce from the page")
+            return False
+    new = bg.BandChecks(
+        recorded_d_and_a=bg.recorded_d_and_a_outcome(
+            implied_d_and_a_margin=mult.get("implied_d_and_a_margin"), revenue=rev,
+            recorded_d_and_a=da),
+        market_reconciliation=bg.reconciliation_outcome(recon)).model_dump(mode="json")
+    if a.get("band_checks") is not None:
+        if a["band_checks"] != new:
+            refused.append(f"{t}: band_checks on the page differs from the rebuild — kept")
+        return False
+    a["band_checks"] = new
+    model = Dossier.model_validate(doc)
+    if moved := layer_refresh.moved_layers(json.loads(original), json.loads(dossier_json(model))):
+        model = layer_refresh.append(model, layer_refresh.entry("refresh", moved))
+    write_dossier(path, model)       # the one writer: the operator's decision is guarded there
+    path.with_name("dossier.md").write_text(render_markdown(
+        model, card=_read_scenario_card(model.ticker), dossiers_root=path.parent.parent))
+    return True
+
+
 def _base_leg(ticker: str) -> dict[str, Any] | None:
     """The `base` scenario leg plus the facts the decomposition needs, or None.
 

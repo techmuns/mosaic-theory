@@ -31,7 +31,12 @@ from pathlib import Path
 from typing import Any
 
 from vinci.dossier.anchor import BASIS_AGREE_PTS, MIDCYCLE_GAP_PTS
-from vinci.dossier.band_guards import _MAX_IMPLIED_DA_MARGIN, BAND_INCOHERENT
+from vinci.dossier.band_guards import (
+    _MAX_DA_RATIO,
+    _MAX_IMPLIED_DA_MARGIN,
+    _MAX_MARKET_RATIO,
+    BAND_INCOHERENT,
+)
 from vinci.dossier.ciq_sheets import _NETTED_LABEL, EV_BRIDGE_CIQ_TOL, USD_STATED
 from vinci.dossier.ebitda_recon import DIFFERENT_SHARE
 from vinci.dossier.freshness import _INTEGER_TOLERANCE, reconcile_cap
@@ -325,6 +330,28 @@ def _snapshot_multiple(page: dict[str, Any]) -> ItemResult:
     return one(CONFIRMED if v else DIFFERS_UNEXPLAINED)
 
 
+def _band_check(page: dict[str, Any], key: str) -> ItemResult:
+    a = page.get("anchor")
+    if not isinstance(a, dict):
+        return ItemResult(not_run="no anchor block on the page")
+    bc = a.get("band_checks")
+    if not isinstance(bc, dict):
+        # an anchor writes the block only where it reaches the guards (`compute_anchor`'s R1 path)
+        return ItemResult(not_run="no anchor.band_checks — the anchor never reached the band "
+                                  "guards (no own-history multiple, an R2 or R4 recipe), or it "
+                                  "predates the field and did not reproduce "
+                                  "(refresh.band_checks_backfill)")
+    return _cross_check(page, bc, key)
+
+
+def _recorded_d_and_a_vs_edgar(page: dict[str, Any]) -> ItemResult:
+    return _band_check(page, "recorded_d_and_a")
+
+
+def _market_reconciliation(page: dict[str, Any]) -> ItemResult:
+    return _band_check(page, "market_reconciliation")
+
+
 def _currency_stated_usd(page: dict[str, Any]) -> ItemResult:
     cur = _get(page, "mechanical", "ciq_currency")
     if not isinstance(cur, dict):
@@ -507,6 +534,29 @@ CHECKS: tuple[Check, ...] = (
           "cannot run it", None, None,
           ("wrong_file", "wrong_unit", "wrong_period"),
           _forward_multiple_vintage),
+    Check("recorded_d_and_a_vs_edgar",
+          "The D&A CIQ's Multiples sheet implies vs the D&A the filer recorded",
+          "CIQ Financials→Multiples: the implied D&A margin of one column (TEV/LTM EBITDA against "
+          "TEV/LTM EBIT and TEV/LTM Total Revenue) × the anchor's LTM revenue",
+          "EDGAR XBRL depreciation and amortisation, latest fiscal year (the anchor's d_and_a)",
+          INDEPENDENT, "page",
+          f"within {_MAX_DA_RATIO:g}x either way (band_guards.recorded_d_and_a_check) — an "
+          "order-of-magnitude screen, the anchor's band_checks. Not run on the ex-lease history, "
+          "which carries no implied D&A margin",
+          "pages whose anchor reached the band guards (anchor.band_checks)", None, None,
+          ("wrong_file", "wrong_cell", "wrong_unit", "different_definition"),
+          _recorded_d_and_a_vs_edgar),
+    Check("market_reconciliation",
+          "The EBITDA the multiple R1 prices implies vs the EBITDA recorded",
+          "the current EV/EBITDA multiple of the band R1 prices (CIQ's, or the ex-lease rebuild)",
+          "(CIQ comps market cap + the anchor's EDGAR net debt) ÷ that multiple, against CIQ's "
+          "LTM EBIT + EDGAR D&A", INTERNAL, "page",
+          f"within {_MAX_MARKET_RATIO:g}x either way (band_guards.market_reconciliation) — an "
+          "order-of-magnitude screen, the anchor's band_checks. INTERNAL: CIQ figures sit on "
+          "both sides, with EDGAR's net debt and D&A in the legs",
+          "pages whose anchor reached the band guards (anchor.band_checks)", None, None,
+          ("wrong_cell", "wrong_unit", "different_definition"),
+          _market_reconciliation),
     Check("currency_stated_usd",
           "The currency each CIQ money panel states vs the USD the page reads it in",
           "the currency each CIQ money panel states where the page reads it: the Financials' "
@@ -565,10 +615,8 @@ FAMILIES: tuple[Family, ...] = (
     Family("financials.tev_history", "financials",
            ("Financials→Historical Capitalization", "Financials→Multiples"),
            "TEV by quarter and the trailing multiple bands",
-           checks=("multiples_sheet_coherence", "currency_stated_usd"),
-           unscored=("anchor.data_quality — the recorded-D&A check and the market reconciliation "
-                     "(band_guards) leave a flag only when they trip, so a pass and a check that "
-                     "could not run read the same",),
+           checks=("multiples_sheet_coherence", "recorded_d_and_a_vs_edgar",
+                   "market_reconciliation", "currency_stated_usd"),
            note="the lease component is lease_rows_vs_edgar; TEV and the band's closes are not "
                 "rebuilt from another source"),
     Family("financials.cash_flow", "financials", ("Financials→Cash Flow",),

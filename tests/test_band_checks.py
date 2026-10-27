@@ -114,3 +114,118 @@ def test_a_page_built_before_the_field_round_trips_and_renders() -> None:
         assert model.anchor is None or model.anchor.band_checks is None
         assert json.loads(dossier_json(model)) == page, f.parent.name
         assert render_markdown(model)
+
+
+# --- the back-fill (`refresh.band_checks_backfill`) ----------------------------------------------
+
+
+def _pages_where(pred: typing.Callable[[dict[str, typing.Any]], bool]) -> list[Path]:
+    return [f for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
+            if pred(json.loads(f.read_text()))]
+
+
+def _bare_copy(src: Path, tmp: Path, edit: typing.Callable[[dict[str, typing.Any]], None]
+               | None = None) -> Path:
+    """A committed page in its own folder with its band_checks taken out (as before the field),
+    optionally perturbed, written through the one serializer."""
+    page = json.loads(src.read_text())
+    if isinstance(page.get("anchor"), dict):
+        page["anchor"].pop("band_checks", None)
+    if edit is not None:
+        edit(page)
+    dst = tmp / src.parent.name / "dossier.json"
+    dst.parent.mkdir(parents=True)
+    dst.write_text(dossier_json(Dossier.model_validate(page)))
+    return dst
+
+
+def _detail(page: dict[str, typing.Any]) -> list[str]:
+    return list((page.get("anchor") or {}).get("data_quality_detail") or [])
+
+
+def test_the_backfill_rebuilds_every_committed_block_exactly(tmp_path: Path) -> None:
+    """END TO END, value-free: every committed page, its block taken out, gets back exactly the
+    block it carries — and a page with none is one whose anchor never reached the guards."""
+    from vinci.dossier.refresh import band_checks_backfill
+
+    for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json")):
+        held = (json.loads(f.read_text()).get("anchor") or {}).get("band_checks")
+        dst = _bare_copy(f, tmp_path)
+        refused: list[str] = []
+        unreached: list[str] = []
+        moved = band_checks_backfill(dst, refused=refused, unreached=unreached)
+        assert refused == [], refused
+        got = (json.loads(dst.read_text()).get("anchor") or {}).get("band_checks")
+        assert got == held and moved == (held is not None), f.parent.name
+        assert (unreached != []) == (held is None), f.parent.name
+
+
+def test_each_backfill_proof_refuses_on_its_own(tmp_path: Path) -> None:
+    """(−) A band moved since the anchor priced it; the ex-lease line taken off an ex-lease page;
+    a trip line taken off, or one added the re-run does not give back; a different block already
+    on the page. Each is refused, named, and the page is left as it was. Each case is asserted to
+    exist on the committed corpus before it is used."""
+    from vinci.dossier import refresh
+
+    priced = _pages_where(lambda p: (p.get("anchor") or {}).get("band_checks") is not None)
+    ex_lease = _pages_where(lambda p: refresh._DA_EX_LEASE_LINE in _detail(p))
+    tripped = _pages_where(lambda p: any(x.startswith(refresh._DA_TRIP_LEAD) for x in _detail(p)))
+    passing = [f for f in priced if f not in tripped and f not in ex_lease]
+    assert priced and ex_lease and tripped and passing
+
+    def band(p: dict[str, typing.Any]) -> None:
+        p["anchor"]["multiple"]["value"] = (p["anchor"]["multiple"]["value"] or 0) + 1.0
+
+    def no_ex_line(p: dict[str, typing.Any]) -> None:
+        p["anchor"]["data_quality_detail"].remove(refresh._DA_EX_LEASE_LINE)
+
+    def no_trip(p: dict[str, typing.Any]) -> None:
+        p["anchor"]["data_quality_detail"] = [x for x in _detail(p)
+                                              if not x.startswith(refresh._DA_TRIP_LEAD)]
+
+    def fake_trip(p: dict[str, typing.Any]) -> None:
+        p["anchor"]["data_quality_detail"] = [*_detail(p), refresh._RECON_TRIP_LEAD + "999 vs 1"]
+
+    def held(p: dict[str, typing.Any]) -> None:
+        p["anchor"]["band_checks"] = {"recorded_d_and_a": "differ",
+                                      "market_reconciliation": "differ"}
+
+    cases = [(passing[0], band, "not the one its anchor priced"),
+             (ex_lease[0], no_ex_line, "ex-lease line"),
+             (tripped[0], no_trip, "recorded-D&A check's trip lines"),
+             (passing[0], fake_trip, "market-reconciliation check's trip lines"),
+             (passing[0], held, "differs from the rebuild")]
+    for i, (src, edit, why) in enumerate(cases):
+        dst = _bare_copy(src, tmp_path / str(i), edit)
+        before = dst.read_text()
+        refused: list[str] = []
+        assert not refresh.band_checks_backfill(dst, refused=refused, unreached=[])
+        assert len(refused) == 1 and why in refused[0], (why, refused)
+        assert dst.read_text() == before, why
+
+
+# --- the scorecard -------------------------------------------------------------------------------
+
+
+def test_the_scorecard_reads_the_block_and_absent_is_not_run() -> None:
+    """(+/−) agree confirms, differ is unexplained, not_run is unchecked; no block is not run —
+    never a pass. The checks guard the TEV-history family, whose UNSCORED entry is gone."""
+    from vinci.quality import core
+    from vinci.quality.sources import ciq as qciq
+
+    def page(bc: dict[str, str] | None) -> dict[str, typing.Any]:
+        return {"ticker": "T", "anchor": {} if bc is None else {"band_checks": bc}}
+
+    r = qciq._recorded_d_and_a_vs_edgar(page({"recorded_d_and_a": "not_run",
+                                              "market_reconciliation": "differ"}))
+    m = qciq._market_reconciliation(page({"recorded_d_and_a": "not_run",
+                                          "market_reconciliation": "differ"}))
+    assert r.counts == {core.UNCHECKED: 1} and m.counts == {core.DIFFERS_UNEXPLAINED: 1}
+    assert qciq._recorded_d_and_a_vs_edgar(page({"recorded_d_and_a": "agree",
+                                                 "market_reconciliation": "agree"})).counts == {
+        core.CONFIRMED: 1}
+    assert qciq._market_reconciliation(page(None)).not_run is not None
+    assert qciq._market_reconciliation({"ticker": "T"}).not_run is not None
+    fam = next(f for f in qciq.FAMILIES if f.id == "financials.tev_history")
+    assert {"recorded_d_and_a_vs_edgar", "market_reconciliation"} <= set(fam.checks)
+    assert fam.unscored == ()
