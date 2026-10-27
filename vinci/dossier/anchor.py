@@ -1078,6 +1078,33 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
         same_source=median_from_ciq, basis=basis_txt, read=read)
 
 
+def ciq_bridge(bundle: Any, ticker: str) -> tuple[Any, str | None]:
+    """The CIQ facts the bridge may fill a hole from, and a line saying what was read — ONE read
+    for BOTH write paths (STATE row 27 (7), 2026-10-27).
+
+    `anchor-backfill` handed `compute_anchor` the workbook's cross-checked facts and assembly
+    handed it none, so a fresh assembly wrote UNKNOWN for every input only CIQ supplies: GOOGL's
+    D&A and ORKA's net debt on the 2026-10-26 pass until a backfill restored them, and FUBO's net
+    debt, LLY's FCF and MVST's D&A and net debt left on the EDGAR-only read since (7 of the 27
+    pages at `47d8ca27`). A sheet that failed a coherence check is handed on as None, never its
+    surviving facts (`ciq_balance` refuses rather than degrades); two exports of one kind raise,
+    because that is not "no workbook" and the operator clears it first."""
+    from vinci.dossier.ciq import CiqAmbiguousError
+    from vinci.dossier.ciq_balance import extract
+
+    try:
+        ciq = extract(bundle, ticker)
+    except CiqAmbiguousError:
+        raise
+    except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
+        return None, f"no CIQ bridge ({type(exc).__name__})"
+    if not ciq.ok:
+        return None, f"CIQ extraction REFUSED — {'; '.join(ciq.failures)}"
+    if not ciq.facts:
+        return ciq, None
+    return ciq, f"CIQ bridge available ({len(ciq.facts)} facts, {len(ciq.checks)} checks passed)"
+
+
 def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
                    computed_at: datetime, ciq: Any = None) -> Anchor:
     """The R1 anchor from SOURCE-BOUND inputs. ``mechanical`` is the mechanical layer as a dict

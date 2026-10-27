@@ -877,7 +877,7 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     writes and `anchor-retag` records beside an operator's decision, in ONE place (2026-10-22), so
     the two cannot read different machines. None when EDGAR will not fetch (skipped, never
     guessed)."""
-    from vinci.dossier.anchor import compute_anchor
+    from vinci.dossier.anchor import ciq_bridge, compute_anchor
     from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
 
     try:
@@ -885,21 +885,15 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
     except Exception as exc:  # noqa: BLE001 — a name that won't fetch is skipped, never guessed
         print(f"  {t}: EDGAR fetch failed ({type(exc).__name__}) — skip, not written")
         return None
-    # DEPTH-STAGE FALLBACK: the CIQ workbook fills a hole EDGAR left, never overrides it.
-    # Extraction is cross-checked before it is offered; a sheet that failed a coherence check
-    # is not handed on at all (ciq_balance refuses rather than degrades).
+    # DEPTH-STAGE FALLBACK: the CIQ workbook fills a hole EDGAR left, never overrides it — read
+    # through `ciq_bridge`, the one read assembly takes too (row 27 (7)).
     ciq = None
     try:
-        from vinci.dossier.ciq_balance import extract as _ciq_extract
         from vinci.dossier.manual_store import LocalFolderStore as _Store
         bundle = CiqBundle.from_files(t, _Store.from_config(cfg).files(t))
-        ciq = _ciq_extract(bundle, t)
-        if not ciq.ok:
-            print(f"  {t}: CIQ extraction REFUSED — {'; '.join(ciq.failures)}")
-            ciq = None
-        elif ciq.facts:
-            print(f"  {t}: CIQ bridge available ({len(ciq.facts)} facts, "
-                  f"{len(ciq.checks)} checks passed)")
+        ciq, note = ciq_bridge(bundle, t)
+        if note:
+            print(f"  {t}: {note}")
     except CiqAmbiguousError:
         raise   # two exports of one kind is not "no workbook" — the operator clears it first
     except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
