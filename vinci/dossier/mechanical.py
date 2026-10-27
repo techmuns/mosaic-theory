@@ -54,6 +54,7 @@ from vinci.dossier.schemas import (
     FilingRef,
     FilingSectionExtract,
     FinancialSummary,
+    GuidanceItem,
     IdiosyncraticVsShared,
     ImpliedExpectationRow,
     ImpliedExpectations,
@@ -4157,7 +4158,7 @@ def _release_lines(releases: list[ReleaseExtract], *, bundle: CiqBundle,
 
     Triangulation: each leverage row basis-labelled; the FY margins, the impairment and the LTM
     adjusted EBITDA from the releases. Guide: CIQ's revenue guide (point OR range) against the
-    release guide and the prior-FY actual."""
+    release guide of its own date and the prior-FY actual (:func:`_guide_verification`)."""
     tde = ciq_sheets.comps_total_debt_ebitda_value(bundle)
     net_debt = ciq_sheets.net_debt(bundle)
     fy = _fy_reconciliation(releases)
@@ -4168,15 +4169,51 @@ def _release_lines(releases: list[ReleaseExtract], *, bundle: CiqBundle,
         _ltm_adj_ebitda(releases),
         gaap_gross_margin=fy.get("gross margin"), impairment=_fy_impairment(releases),
         revenue=fy.get("revenue"), covenant_basis=_covenant_basis(card))
-    ciq_lo, ciq_hi, ciq_period = ciq_sheets.revenue_guide_lohi(
+    ciq_lo, ciq_hi, ciq_period, ciq_dated = ciq_sheets.revenue_guide_lohi(
         bundle, reference_date=reference_date)
-    rel_lo, rel_hi, rel_qual, rel_basis, rel_period = _release_revenue_guide(releases)
-    guide = primary_source.guide_verification_read(
-        "revenue", ciq_lo, ciq_hi,
-        prior_fy_actual=fy.get("revenue"), release_qualitative=rel_qual,
-        release_low=rel_lo, release_high=rel_hi, release_basis=rel_basis,
-        ciq_period=ciq_period, release_period=rel_period)
+    guide = _guide_verification(releases, ciq_lo=ciq_lo, ciq_hi=ciq_hi, ciq_period=ciq_period,
+                                ciq_dated=ciq_dated)
     return tri, guide
+
+
+#: How many days after CIQ's guide date a release still counts as that guide's vintage. An 8-K
+#: accepted after EDGAR's 5:30 pm cutoff is dated the next business day, so a Friday-evening
+#: release is filed Monday. Measured 2026-10-27: on the 16 committed pages with both dates, every
+#: CIQ guide date equals a release's filing date to the day.
+_GUIDE_FILING_LAG_DAYS = 3
+
+
+def _guide_verification(releases: list[ReleaseExtract], *, ciq_lo: float | None,
+                        ciq_hi: float | None, ciq_period: str | None, ciq_dated: date | None,
+                        ) -> primary_source.GuideVerification:
+    """The guide check whole — CIQ's revenue guide against the release guide IN FORCE ON CIQ'S
+    DATE — composed in ONE place: assembly (`_release_lines`) and the refresh that rebuilds it
+    from the page (`refresh.cross_check_transform`) both call it, so the two cannot print
+    different lines.
+
+    THE VINTAGE (2026-10-27). CIQ dates each guide; the check took the NEWEST release's whatever
+    either was dated. VRRM's guide (985–995, dated 2026-05-26 — the release of that day) was set
+    against the 2026-08-05 release that cut it to 945–965, and the page printed MISMATCH on two
+    sources that agree. A guide checked against a release filed after it tests nothing: management
+    moved, not the vendor. So the release compared is the newest guide-bearing one filed by CIQ's
+    date (plus `_GUIDE_FILING_LAG_DAYS`), and a later release guiding something else is NAMED in
+    the line — CIQ's guide predates it — never silently preferred. An undated guide keeps the
+    newest release, as before."""
+    rel_lo, rel_hi, rel_qual, rel_basis, rel_period = _release_revenue_guide(
+        releases, as_of=ciq_dated)
+    later = None
+    newest = _revenue_guide_release(releases)
+    if ciq_dated is not None and newest is not None:
+        filed, g = newest
+        if (filed is not None and filed > ciq_dated + timedelta(days=_GUIDE_FILING_LAG_DAYS)
+                and (g.low, g.high, g.period) != (rel_lo, rel_hi, rel_period)):
+            later = (filed, g.low, g.high, g.period)
+    return primary_source.guide_verification_read(
+        "revenue", ciq_lo, ciq_hi,
+        prior_fy_actual=_fy_reconciliation(releases).get("revenue"),
+        release_qualitative=rel_qual, release_low=rel_lo, release_high=rel_hi,
+        release_basis=rel_basis, ciq_period=ciq_period, release_period=rel_period,
+        later_release=later)
 
 
 def _fy_reconciliation(releases: list[ReleaseExtract]) -> dict[str, float]:
@@ -4220,7 +4257,7 @@ _REVENUE_LINE_METRICS: frozenset[str] = frozenset({"revenue", "net sales"})
 
 
 def _release_revenue_guide(
-    releases: list[ReleaseExtract],
+    releases: list[ReleaseExtract], *, as_of: date | None = None,
 ) -> tuple[float | None, float | None, bool, str, str | None]:
     """The most-recent release's revenue guide as (low, high, qualitative, BASIS, PERIOD) — the
     cross-source comparison for guide verification. Releases are most-recent first; the first with
@@ -4232,13 +4269,30 @@ def _release_revenue_guide(
 
     THE PERIOD RIDES WITH THEM TOO (2026-08-12), for the same reason and after the same failure:
     the release can guide a YEAR while CIQ guides a QUARTER, and two numbers covering different
-    spans cannot agree no matter how well each is parsed."""
+    spans cannot agree no matter how well each is parsed.
+
+    ``as_of`` (2026-10-27): only releases filed by then (plus `_GUIDE_FILING_LAG_DAYS`) — the
+    guide in force on CIQ's guide date (:func:`_guide_verification`)."""
+    got = _revenue_guide_release(releases, as_of=as_of)
+    if got is None:
+        return (None, None, False, "level", None)
+    g = got[1]
+    return (g.low, g.high, g.qualitative, getattr(g, "basis", "level"), getattr(g, "period", None))
+
+
+def _revenue_guide_release(releases: list[ReleaseExtract], *, as_of: date | None = None,
+                           ) -> tuple[date | None, GuidanceItem] | None:
+    """(filed, the revenue guide) of the first release, most recent first, that carries one — of
+    those filed by ``as_of`` plus `_GUIDE_FILING_LAG_DAYS` when it is given. A release with no
+    filing date cannot be placed before a date, so an ``as_of`` excludes it."""
+    cut = as_of + timedelta(days=_GUIDE_FILING_LAG_DAYS) if as_of is not None else None
     for r in releases:
+        if cut is not None and (r.filed is None or r.filed > cut):
+            continue
         for g in r.guidance:
             if g.metric in _REVENUE_LINE_METRICS:
-                return (g.low, g.high, g.qualitative, getattr(g, "basis", "level"),
-                        getattr(g, "period", None))
-    return (None, None, False, "level", None)
+                return r.filed, g
+    return None
 
 
 #: Display cap for a qualitative guide's verbatim in the MAIN BODY. The stored text is a 200-char

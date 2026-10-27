@@ -1623,7 +1623,8 @@ class EbitdaReconQuarter(BaseModel, frozen=True):
     tags: list[str] = Field(default_factory=list)
     gap: float | None = None                  # $M, ciq − filing
     different: bool = False                   # |gap| beyond `DIFFERENT_SHARE` of the filing figure
-    # the quarter's own release, when it STATES an amount matching |gap|: the sentence, verbatim
+    # the quarter's own release, when it STATES an amount matching |gap|: the sentence (or the
+    # table row with its header, `ebitda_recon._matching_row`), verbatim
     matching_amount: str | None = None
     matching_source: str | None = None
     note: str | None = None                   # why no filing figure

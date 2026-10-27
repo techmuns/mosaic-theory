@@ -311,6 +311,7 @@ def guide_verification_read(
     release_basis: str = "level",
     ciq_period: str | None = None,
     release_period: str | None = None,
+    later_release: tuple[date, float | None, float | None, str | None] | None = None,
 ) -> GuideVerification:
     """Cross-check the CIQ guide against the release-parsed guide. VENDOR-ECHO requires BOTH: CIQ
     guide ≈ prior-FY actual (0.1% relative, source-rounding) AND the release gives NO corroborating
@@ -319,7 +320,22 @@ def guide_verification_read(
 
     THE OUTCOME: VERIFIED agrees and MISMATCH differs; every other branch is a check that did NOT
     run — a refusal (cross-basis, cross-period), a missing side, and the vendor-echo and
-    plausibility flags alike, because none of them sets CIQ's guide against a release number."""
+    plausibility flags alike, because none of them sets CIQ's guide against a release number.
+
+    ``later_release`` (filed, low, high, period) — a release filed after CIQ's guide that guides
+    something else (`mechanical._guide_verification`, 2026-10-27). It moves no outcome: the release
+    above is the one of CIQ's date. It is NAMED, so a guide the company has since moved never
+    reads as the guide in force."""
+    if later_release is not None and ciq_low is not None:
+        base = guide_verification_read(
+            metric, ciq_low, ciq_high, prior_fy_actual=prior_fy_actual,
+            release_qualitative=release_qualitative, release_low=release_low,
+            release_high=release_high, release_basis=release_basis, ciq_period=ciq_period,
+            release_period=release_period)
+        filed, lo, hi, period = later_release
+        return GuideVerification(
+            f"{base.line}; a later release (filed {filed.isoformat()}, {period}) guides "
+            f"{lo}–{hi} — CIQ's guide predates it", base.check)
     if ciq_low is None:
         return GuideVerification(
             f"guide verification ({metric}): CIQ guide UNKNOWN — not cross-checked", CHECK_NOT_RUN)

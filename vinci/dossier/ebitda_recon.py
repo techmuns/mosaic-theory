@@ -22,6 +22,17 @@ or, failing that, the year-to-date less the prior quarter's year-to-date from th
 WHAT THE RELEASE STATES IS QUOTED, NEVER INFERRED: where a quarter differs, the release filed for it
 is searched for a stated dollar amount within :data:`MATCH_TOL` of the gap, and the sentence is
 carried verbatim. A match is evidence for the reader to weigh, not an attribution this code makes.
+
+A TABLE STATES AMOUNTS TOO (2026-10-27, VRRM). Verra Mobility's quarter to 2025-12-31 is +$9.352M,
+the "Impairment of long-lived assets and right of use assets 9,352" row of the quarter's own
+cash-flow table "($ in thousands)" — to the thousand, and in no sentence, so the prose reader quoted
+nothing and the gap read as unexplained. Where no sentence matches, a table row's FIRST figure (the
+current period's column) under the nearest preceding thousands header is read at its own precision,
+$1K; the quote is that header and that row, verbatim, so it re-matches on its own. Shifting every
+differing quarter's gap on the corpus by ±3 to ±307 units (544 trials) found one coincidence when
+any figure could match — a prior-year column with no label of its own, which a first figure cannot
+be — and one with the rule: VITL's $1.359M shifted to $1.382M meets a finance-lease line of 1,381.
+Small gaps are where a $1K figure coincides; a table quote is evidence to weigh, as a sentence is.
 """
 from __future__ import annotations
 
@@ -52,6 +63,15 @@ _QUARTER_DAYS = (80, 100)
 _NET_INTEREST_INCOME = ("InterestRevenueExpenseNet", "InterestIncomeExpenseNet",
                         "InterestIncomeExpenseNonoperatingNet")
 _AMOUNT = re.compile(r"\$\s?([\d,]+(?:\.\d+)?)\s*(million|billion)\b", re.I)
+#: A release table states its scale once, in its header — "($ in thousands)", "(In thousands,
+#: except per share data)", "(Dollars in millions)". A header opening with a word must be read
+#: too: missed, the rows under it would inherit an earlier thousands header, 1,000x off.
+_TABLE_SCALE = re.compile(r"\(\s*(?:\$\s*|[A-Za-z.]+\s+)?in\s+(thousands|millions|billions)\b"
+                          r"[^()]{0,60}\)", re.I)
+#: A table row as `html_to_text` flattens it: its label, then its FIRST figure — the current
+#: period's column. A figure with no label before it is a later column of the row it follows.
+_TABLE_ROW = re.compile(r"[A-Za-z][A-Za-z ,'’&/()\-]{0,150}?[A-Za-z)]\s+(?:\$\s*)?\(?\s*"
+                        r"(\d{1,3}(?:,\d{3})+)(?![\d,]|\.\d)")
 _OPERATING = "operating income + D&A"
 _PRETAX = "pre-tax income − net interest income + D&A (other non-operating items stay inside)"
 SOURCE_REF = ("CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL "
@@ -111,10 +131,15 @@ def _ciq_quarters(bundle: CiqBundle) -> dict[date, float]:
 
 def _matching_sentence(text: str, gap: float) -> str | None:
     """The first sentence stating a dollar amount within `MATCH_TOL` of |gap| AND within one unit of
-    the amount's own stated precision, verbatim, or None."""
+    the amount's own stated precision, verbatim — else the first such table row (`_matching_row`)
+    — or None."""
     want = abs(gap)
     if want <= 0:
         return None
+    return _matching_prose(text, want) or _matching_row(text, want)
+
+
+def _matching_prose(text: str, want: float) -> str | None:
     for m in _AMOUNT.finditer(text):
         digits = m.group(1).replace(",", "")
         try:
@@ -130,6 +155,25 @@ def _matching_sentence(text: str, gap: float) -> str | None:
             hi = text.find(". ", m.end())
             hi = m.end() + 200 if hi == -1 else min(hi + 1, m.end() + 200)
             return " ".join(text[lo:hi].split())
+    return None
+
+
+def _matching_row(text: str, want: float) -> str | None:
+    """The first table row whose first figure, under the nearest preceding header, is in thousands
+    and sits within `MATCH_TOL` of ``want`` AND within one unit ($1K): the header and the row,
+    verbatim, joined by an ellipsis — or None. A row in millions, or under no header, has no
+    stated scale here and is never read."""
+    heads = list(_TABLE_SCALE.finditer(text))
+    # a header is never part of a row's label: masked to the same length, so positions hold
+    masked = _TABLE_SCALE.sub(lambda h: "|" * len(h.group(0)), text)
+    for m in _TABLE_ROW.finditer(masked):
+        head = next((h for h in reversed(heads) if h.end() <= m.start()), None)
+        if head is None or head.group(1).lower() != "thousands":
+            continue
+        off = abs(int(m.group(1).replace(",", "")) / 1000.0 - want)
+        if off <= MATCH_TOL * want and off <= 0.001 + 1e-9:
+            row = " ".join(text[m.start():m.end()].split())
+            return f"{' '.join(head.group(0).split())} … {row}"
     return None
 
 
