@@ -8,8 +8,9 @@ description: Triage review feedback on a PR this session opened — Codex, a fai
 ROUND CAP: 2
 
 The PR's own session is the ONLY writer. When `gh pr create` opens a code PR (draft or not),
-`.claude/hooks/codex_request.py` posts its one `@codex review` comment; Codex then reviews and only
-comments. Do not post that request yourself. Gemini Code Assist is NOT installed (operator decision 2026-10-23: $19/mo); its
+`.claude/hooks/codex_request.py` posts its `@codex review` comment, and posts ONE more after the
+push that fixes what Codex found (§4); Codex reviews and only comments. Do not post either request
+yourself. Gemini Code Assist is NOT installed (operator decision 2026-10-23: $19/mo); its
 `.gemini/` config is inert, so never wait for or request a Gemini review. This skill turns review
 comments into at most two rounds of fixes, then stops, so that review → fix → re-review cannot run
 on forever or pile up defensive code.
@@ -47,13 +48,18 @@ it stands: it was written without this repo's tests or scope.
 ## 3. Apply — one commit per round
 
 All FIXes of the round go in ONE commit through `bin/commit` (the Stop-time fast gate runs
-first), then ONE push. Each FIX's test goes in the same commit.
+first), then ONE push. Each FIX's test goes in the same commit. The push is what asks Codex to
+re-review (§4), so a round's fixes land together: an earlier code push would spend the re-review
+before the fixes it should see.
 
-## 4. Re-review — at most once per PR
+## 4. Re-review — once per PR, posted by the hook
 
-Only when a FIX changed behaviour beyond the lines the comment named, post `@codex review` once.
-The hook's request when the PR opened does not count; this is the one re-review. That reply, if
-it comes, is round 2. Gemini is not asked to re-review.
+A fix written to answer Codex is code Codex never saw (operator, 2026-10-27). When Codex's review
+FOUND something and you push a commit that changes code since the commit it reviewed,
+`codex_request.py` posts the second `@codex review` itself and says so. Do not post it; post it by
+hand once only when the hook says it could NOT, or could not see the push land on the PR. Two
+requests are the cap — the opener's and this one, however either was posted — and that reply is
+round 2. Codex finding nothing gets no re-review. Gemini is not asked to re-review.
 
 ## 5. Record — the PR body is the ledger
 
@@ -76,5 +82,7 @@ rows. The operator merges when `gate` is green and the table has no finding with
 
 ## 6. Stop
 
-End the turn. Do not poll for new comments: the app wakes this session when they arrive. Never
-merge.
+End the turn. Do not poll for new comments: the app wakes this session when they arrive — once
+Auto-fix is on for the PR. Switch it on right after the PR opens (`mcp__ccd_pr__set_monitor`,
+`auto_fix` and `address_comments` true; the operator allowed it without a prompt on 2026-10-27),
+or Codex's comments never reach you. Never merge.
