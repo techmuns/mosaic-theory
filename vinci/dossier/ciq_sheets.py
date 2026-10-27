@@ -31,7 +31,11 @@ from vinci.dossier.ciq import (
 )
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import (
+    CHECK_AGREE,
+    CHECK_DIFFER,
+    CHECK_NOT_RUN,
     CapitalInstrument,
+    CiqCurrency,
     ClaimLine,
     ConsensusNetDebtCheck,
     ConsensusPath,
@@ -62,6 +66,7 @@ from vinci.dossier.schemas import (
     MultipleHistorySeries,
     OperatingDriver,
     OwnHistoryBand,
+    PanelCurrency,
     PeEpsBasis,
     PeerComps,
     PeerRow,
@@ -6033,3 +6038,211 @@ def balance_sheet_posture(bundle: CiqBundle) -> Sourced[str]:
         return Sourced.unknown(note=_no_data_note("Balance Sheet"))
     return _miss_or_unknown(
         bundle, "financials", unavailable or CiqUnavailableError("Balance Sheet"))
+
+
+# --- (2026-10-27) THE STATED CURRENCY of every money panel a page reads ------------------------
+#
+# Every CIQ money figure on a page is read as USD ($M), and until 2026-10-27 nothing checked that
+# the export says so. A CIQ chart export (MSCI World Net) had already arrived in EUR, unlabelled.
+# The workbooks DO state it, in three shapes, and the reader takes each where the page reads:
+#
+# * Financials — a per-column 'Currency' row under each period header ('USD', 'CHF'), and on
+#   Capital Structure Details the 'Principal Due (USD)' header. The sheet's 'Currency: Reported
+#   Currency' cell names a MODE, not a currency, and is never read as one;
+# * Estimates — each section header names its currency ('Company Level (USD)', 'NYSE:ONON
+#   (IFRS|CHF)'). Only the sections a page reads count: Company Level and the name's own listing.
+#   AMZN's export also carries BOVESPA (BRL) and SET (THB) depositary-receipt sections, which no
+#   page reads;
+# * Comps — a 'Currency:' label naming it ('US Dollar'; CIQ converts every peer at spot).
+#
+# NOT READ, because their values reach no page as a money figure: Financials Multiples and Ratios,
+# Estimates Multiples (ratios), Revisions (counts), Recent Changes (a revision log printed as plain
+# numbers and ranked on % change; it states only 'Reported Currency'), Comps Trading Multiples and
+# Operating Statistics (ratios and rates), Business Description, and the credit-health scores
+# (CIQ converts them to USD itself). A CIQ CHART export is theme work, read by no page.
+#
+# A capital-structure instrument's 'Repayment Currency' (AMZN's euro notes) is the INSTRUMENT'S
+# currency; its principal is still stated in the panel's — the 'Principal Due (USD)' header.
+
+#: What a panel may state for its money to be read as USD ($M): the code the Financials and
+#: Estimates sheets print and the name the comps book prints. Anything else differs — an unfamiliar
+#: spelling of the dollar is refused loudly rather than passed on a guess.
+USD_STATED = frozenset({"USD", "US Dollar"})
+#: An Estimates section header: its label, then the currency after any accounting standard.
+_SECTION_CURRENCY = re.compile(r"^(?P<label>\S.*?) \((?:[^|()]*\|)?(?P<code>[A-Z]{3})\)$")
+_PRINCIPAL_DUE = re.compile(r"^Principal Due \((?P<code>[A-Z]{3})\)$")
+_COMPANY_LEVEL = "Company Level"
+
+
+class CiqCurrencyError(ValueError):
+    """A CIQ money panel STATES a currency other than USD. Every CIQ figure on a page is read as
+    USD ($M), so a page built from it would print another currency's figures as dollars — refused
+    before assembly spends anything. Reading a foreign-currency workbook is STATE §5.0 row 4's
+    FPI5, gated on a non-US filer entering the book."""
+
+
+def _first_seen(cells: list[str]) -> list[str]:
+    return list(dict.fromkeys(c for c in cells if c))
+
+
+def _currency_rows(rows: Rows) -> list[str]:
+    """Every code in every Financials 'Currency' row — one cell per period column."""
+    return _first_seen([str(c).strip() for r in rows if r and str(r[0]).strip() == "Currency"
+                        for c in r[1:]])
+
+
+def _principal_due(rows: Rows) -> list[str]:
+    """Capital Structure Details: the currency each 'Principal Due (…)' header names."""
+    return _first_seen([m["code"] for r in rows for c in r
+                        if (m := _PRINCIPAL_DUE.match(str(c).strip()))])
+
+
+def _section_codes(rows: Rows, ticker: str, *, company_only: bool = False) -> list[str]:
+    """An Estimates sheet's section currencies, where a page reads them: Company Level and the
+    name's own listing ('NasdaqGS:AMZN') — or Company Level alone, the REPORTED currency."""
+    own = f":{ticker.upper()}"
+    return _first_seen([m["code"] for r in rows for c in r
+                        if (m := _SECTION_CURRENCY.match(str(c).strip()))
+                        and (m["label"] == _COMPANY_LEVEL
+                             or (not company_only and m["label"].endswith(own)))])
+
+
+def _sheet_mode(rows: Rows) -> str | None:
+    """An Estimates sheet's own 'Currency: …' header — 'Reported Currency' on every export read."""
+    for r in rows[:15]:
+        cell = str(r[0]).strip() if r else ""
+        if cell.startswith("Currency:"):
+            return cell[len("Currency:"):].strip() or None
+    return None
+
+
+def _comps_label(rows: Rows) -> list[str]:
+    """The comps book's 'Currency:' label — the cell beside it, verbatim."""
+    for r in rows[:20]:
+        if r and str(r[0]).strip() == "Currency:":
+            return _first_seen([str(r[1]).strip()] if len(r) > 1 else [])
+    return []
+
+
+#: (panel, how it states its currency, the read). Every address is a STRING LITERAL, so the
+#: CIQ-manifest drift guard sees each one (`requirements.CIQ_MODULES`).
+_MONEY_PANELS: tuple[tuple[str, str, Callable[[CiqBundle], Rows]], ...] = (
+    ("Financials (annual)→Income Statement", "row",
+     lambda bundle: bundle.sheet("financials", "Income Statement", freq="annual")),
+    ("Financials (annual)→Balance Sheet", "row",
+     lambda bundle: bundle.sheet("financials", "Balance Sheet", freq="annual")),
+    ("Financials (annual)→Cash Flow", "row",
+     lambda bundle: bundle.sheet("financials", "Cash Flow", freq="annual")),
+    ("Financials (annual)→Segments", "row",
+     lambda bundle: bundle.sheet("financials", "Segments", freq="annual")),
+    ("Financials (annual)→Capital Structure Summary", "row",
+     lambda bundle: bundle.sheet("financials", "Capital Structure Summary", freq="annual")),
+    ("Financials (annual)→Capital Structure Details", "principal",
+     lambda bundle: bundle.sheet("financials", "Capital Structure Details", freq="annual")),
+    ("Financials (quarterly)→Income Statement", "row",
+     lambda bundle: bundle.sheet("financials", "Income Statement", freq="quarterly")),
+    ("Financials (quarterly)→Balance Sheet", "row",
+     lambda bundle: bundle.sheet("financials", "Balance Sheet", freq="quarterly")),
+    ("Financials (quarterly)→Cash Flow", "row",
+     lambda bundle: bundle.sheet("financials", "Cash Flow", freq="quarterly")),
+    ("Financials (quarterly)→Historical Capitalization", "row",
+     lambda bundle: bundle.sheet("financials", "Historical Capitalization", freq="quarterly")),
+    ("Financials (quarterly)→Capital Structure Summary", "row",
+     lambda bundle: bundle.sheet("financials", "Capital Structure Summary", freq="quarterly")),
+    ("Financials (quarterly)→Capital Structure Details", "principal",
+     lambda bundle: bundle.sheet("financials", "Capital Structure Details", freq="quarterly")),
+    ("Estimates→Consensus", "section", lambda bundle: bundle.sheet("estimates", "Consensus")),
+    ("Estimates→Trends", "section", lambda bundle: bundle.sheet("estimates", "Trends")),
+    ("Estimates→Guidance", "section", lambda bundle: bundle.sheet("estimates", "Guidance")),
+    ("Estimates→Surprise", "section", lambda bundle: bundle.sheet("estimates", "Surprise")),
+    ("Comps→Financial Data", "label", lambda bundle: bundle.sheet("comps", "Financial Data")),
+    ("Comps→Implied Valuation", "label",
+     lambda bundle: bundle.sheet("comps", "Implied Valuation")),
+)
+_WHERE = {
+    "row": "the 'Currency' row under each period header",
+    "principal": "the 'Principal Due (…)' header of each fiscal-year block",
+    "section": "the section headers a page reads: Company Level and the name's own listing",
+    "label": "the 'Currency:' label",
+}
+
+
+def _panel_check(stated: list[str]) -> Literal["agree", "differ", "not_run"]:
+    if not stated:
+        return CHECK_NOT_RUN
+    return CHECK_AGREE if set(stated) <= USD_STATED else CHECK_DIFFER
+
+
+def stated_currency(bundle: CiqBundle) -> CiqCurrency | None:
+    """The currency each CIQ money panel STATES, for every one the bundle carries — None when it
+    carries none. A panel the export lacks (ORKA's and TECX's have no Guidance sheet), or a
+    header-only 'No Data Available' shell, carries no money and is not listed. A panel that states
+    NO currency is listed, ``not_run`` — never read as USD on a guess."""
+    panels: list[PanelCurrency] = []
+    reported: list[str] | None = None        # the Company Level currencies, read once if needed
+    for panel, how, read in _MONEY_PANELS:
+        try:
+            rows = read(bundle)
+        except CiqUnavailableError:
+            continue
+        if _no_data_available(rows):
+            continue
+        where = _WHERE[how]
+        if how == "row":
+            stated = _currency_rows(rows)
+        elif how == "principal":
+            stated = _principal_due(rows)
+        elif how == "section":
+            stated = _section_codes(rows, bundle.ticker)
+            # A BLOCK WITH NO CURRENCY-LABELLED HEADER: BRBR's and VITL's revenue guidance sits
+            # under a blank one. The sheet still states 'Currency: Reported Currency', and the same
+            # export's Company Level sections state which currency that is — read through them,
+            # and said so; any other header is taken verbatim
+            if not stated and (mode := _sheet_mode(rows)) is not None:
+                if mode == "Reported Currency":
+                    if reported is None:
+                        try:
+                            reported = _section_codes(bundle.sheet("estimates", "Consensus"),
+                                                      bundle.ticker, company_only=True)
+                        except CiqUnavailableError:
+                            reported = []
+                    stated = reported
+                    where = ("the sheet's 'Currency: Reported Currency', resolved through the "
+                             "Consensus sheet's Company Level sections (its blocks carry no "
+                             "currency-labelled header)")
+                else:
+                    stated, where = [mode], "the sheet's 'Currency:' header"
+        else:
+            stated = _comps_label(rows)
+        panels.append(PanelCurrency(panel=panel, stated=stated, where=where,
+                                    check=_panel_check(stated)))
+    if not panels:
+        return None
+    checks = {p.check for p in panels}
+    page = (CHECK_DIFFER if CHECK_DIFFER in checks
+            else CHECK_NOT_RUN if CHECK_NOT_RUN in checks else CHECK_AGREE)
+    return CiqCurrency(panels=panels, check=page)
+
+
+def require_usd(currency: CiqCurrency | None, ticker: str) -> None:
+    """Raise :class:`CiqCurrencyError` when any money panel STATES another currency. A panel that
+    states none is not refused: it is stored ``not_run`` and flagged (:func:`currency_flag`)."""
+    if currency is None or currency.check != CHECK_DIFFER:
+        return
+    bad = [p for p in currency.panels if p.check == CHECK_DIFFER]
+    raise CiqCurrencyError(
+        f"{ticker}: {len(bad)} CIQ money panel(s) state a currency other than USD — "
+        + "; ".join(f"{p.panel}: {', '.join(p.stated)}" for p in bad)
+        + ". Every CIQ figure on a page is read as USD ($M); refusing rather than print these as "
+        "dollars. Reading a foreign-currency workbook is STATE §5.0 row 4's FPI5.")
+
+
+def currency_flag(currency: CiqCurrency | None) -> str | None:
+    """The QA flag for money panels that state NO currency: their figures are read as USD with
+    nothing in the export saying so. Every such panel is named — none is cut."""
+    unstated = [p.panel for p in (currency.panels if currency is not None else [])
+                if p.check == CHECK_NOT_RUN]
+    if not unstated:
+        return None
+    return (f"ciq-currency: {len(unstated)} CIQ money panel(s) state no currency, so reading them "
+            f"as USD is UNVERIFIED — {'; '.join(unstated)}")

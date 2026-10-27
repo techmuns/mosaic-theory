@@ -1611,6 +1611,89 @@ def statement_recon_transform(doc: dict[str, Any], *, edgar: Any, refused: list[
     return _apply
 
 
+def _page_bundle(ticker: str) -> Any:
+    """The name's CIQ exports, as assembly loads them."""
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    return CiqBundle.from_files(ticker, LocalFolderStore.from_config().files(ticker))
+
+
+def ciq_currency_transform(doc: dict[str, Any], *, refused: list[str],
+                           bundle_for: Callable[[str], Any] = _page_bundle) -> Transform:
+    """A `refresh_dossier` transform writing `mechanical.ciq_currency` — the currency every CIQ
+    money panel STATES (`ciq_sheets.stated_currency`, the assembler's own read) — onto a committed
+    page, under a KEPT synthesis.
+
+    THE CURRENCY IS NOT ON THE PAGE, so the exports are read, and only behind proof that each money
+    workbook the folder holds is the one the page was built from: the quarterly Financials and the
+    Estimates by the sha256 the page stamps (`ev_bridge.source_sha256`,
+    `forward_consensus.source_sha256`); the annual Financials by its revenue and operating cash
+    flow reproducing the page's annual table (`statement_recon.table_figures`, #805's proof); the
+    comps book by its peer grid reproducing the page's, row for row. A page whose workbook does not
+    prove, whose folder will not load, or that already holds a different block is left as it is
+    and named in ``refused`` — absent reads as not run, never as a pass."""
+    from vinci.dossier import ciq_sheets as cs
+    from vinci.dossier import statement_recon as sr
+    from vinci.dossier.ciq import CiqAmbiguousError, CiqParseError, CiqUnavailableError
+
+    ticker = str(doc.get("ticker"))
+    fin_q = (doc.get("ev_bridge") or {}).get("source_sha256")
+    est = (doc.get("forward_consensus") or {}).get("source_sha256")
+
+    def _sha(wb: Any) -> str | None:
+        return cs.file_provenance(wb.path)[0]
+
+    def _unproved(bundle: Any, mech: dict[str, Any]) -> list[str]:
+        out: list[str] = []
+        q = bundle.workbook("financials", freq="quarterly")
+        if q is not None and (fin_q is None or _sha(q) != fin_q):
+            out.append("the quarterly Financials is not the export the page stamps"
+                       if fin_q else "the page stamps no quarterly Financials export")
+        e = bundle.workbook("estimates")
+        if e is not None and (est is None or _sha(e) != est):
+            out.append("the Estimates is not the export the page stamps"
+                       if est else "the page stamps no Estimates export")
+        if bundle.workbook("financials", freq="annual") is not None:
+            table = ((mech.get("financial_summary") or {}).get("annual") or {}).get("value")
+            got = {(f.line, f.column): f.value for f in sr.ciq_figures(bundle)}
+            if not isinstance(table, dict) or got != sr.table_figures(table):
+                out.append("the annual Financials does not reproduce the page's annual table")
+        if bundle.workbook("comps") is not None:
+            fresh = cs.peer_comps(bundle).peer_grid
+            page = ((mech.get("peer_comps") or {}).get("peer_grid") or {}).get("value")
+            if (page is None or fresh is None
+                    or json.loads(fresh.model_dump_json())["value"] != page):
+                out.append("the comps book does not reproduce the page's peer grid")
+        return out
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        try:
+            bundle = bundle_for(ticker)
+            bad = _unproved(bundle, out)
+            cur = cs.stated_currency(bundle)
+        except (FileNotFoundError, CiqUnavailableError, CiqAmbiguousError, CiqParseError) as exc:
+            # one name's unreadable folder is that name's refusal, never the whole pass's crash
+            refused.append(f"{ticker}: no CIQ export to read the currencies from ({exc})")
+            return out
+        if bad:
+            refused.append(f"{ticker}: {'; '.join(bad)} — not the page's own export")
+            return out
+        if cur is None:
+            refused.append(f"{ticker}: the folder holds no CIQ money panel")
+            return out
+        new = json.loads(cur.model_dump_json())
+        if out.get("ciq_currency") not in (None, new):
+            refused.append(f"{ticker}: ciq_currency on the page differs from the rebuild — kept, "
+                           "never overwritten")
+            return out
+        out["ciq_currency"] = new
+        return out
+
+    return _apply
+
+
 def _base_leg(ticker: str) -> dict[str, Any] | None:
     """The `base` scenario leg plus the facts the decomposition needs, or None.
 

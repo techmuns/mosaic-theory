@@ -32,7 +32,7 @@ from typing import Any
 
 from vinci.dossier.anchor import BASIS_AGREE_PTS, MIDCYCLE_GAP_PTS
 from vinci.dossier.band_guards import _MAX_IMPLIED_DA_MARGIN, BAND_INCOHERENT
-from vinci.dossier.ciq_sheets import _NETTED_LABEL, EV_BRIDGE_CIQ_TOL
+from vinci.dossier.ciq_sheets import _NETTED_LABEL, EV_BRIDGE_CIQ_TOL, USD_STATED
 from vinci.dossier.ebitda_recon import DIFFERENT_SHARE
 from vinci.dossier.freshness import _INTEGER_TOLERANCE, reconcile_cap
 from vinci.dossier.lease_basis import (
@@ -325,6 +325,30 @@ def _snapshot_multiple(page: dict[str, Any]) -> ItemResult:
     return one(CONFIRMED if v else DIFFERS_UNEXPLAINED)
 
 
+def _currency_stated_usd(page: dict[str, Any]) -> ItemResult:
+    cur = _get(page, "mechanical", "ciq_currency")
+    if not isinstance(cur, dict):
+        return ItemResult(not_run="no ciq_currency on the page — it predates the field, or the "
+                                  "back-fill could not prove the folder's exports the page's own "
+                                  "(refresh.ciq_currency_transform); assembly writes it")
+    c: Counter[str] = Counter()
+    for panel in cur.get("panels") or []:
+        v = panel.get("check") if isinstance(panel, dict) else None
+        if v == CHECK_AGREE:
+            c[CONFIRMED] += 1
+        elif v == CHECK_DIFFER:
+            c[DIFFERS_UNEXPLAINED] += 1
+        elif v == CHECK_NOT_RUN:
+            c[UNCHECKED] += 1
+        else:
+            raise ValueError(f"{page.get('ticker')}: a ciq_currency panel's check is {v!r}, not "
+                             "an outcome this scorecard knows "
+                             f"({[CHECK_AGREE, CHECK_DIFFER, CHECK_NOT_RUN]})")
+    if not c:
+        return ItemResult(not_run="ciq_currency lists no panel")
+    return ItemResult(counts=dict(c))
+
+
 CHECKS: tuple[Check, ...] = (
     Check("ebitda_vs_xbrl", "CIQ quarterly EBITDA vs the same quarter rebuilt from the filings",
           "CIQ Financials (quarterly) Income Statement 'EBITDA', the four quarters of its LTM",
@@ -483,6 +507,20 @@ CHECKS: tuple[Check, ...] = (
           "cannot run it", None, None,
           ("wrong_file", "wrong_unit", "wrong_period"),
           _forward_multiple_vintage),
+    Check("currency_stated_usd",
+          "The currency each CIQ money panel states vs the USD the page reads it in",
+          "the currency each CIQ money panel states where the page reads it: the Financials' "
+          "per-column 'Currency' row and 'Principal Due (…)' header, the Estimates' section "
+          "headers (Company Level and the name's own listing), the comps book's 'Currency:' label",
+          "the page's own unit — every CIQ money figure is read as USD ($M); a convention, not a "
+          "figure from another source", INTERNAL, "panel",
+          f"exact: every currency the panel states is one of {sorted(USD_STATED)} "
+          "(ciq_sheets.USD_STATED); one stating another differs, one stating none is unchecked. "
+          "CURRENCY ONLY — the scale ('In Millions of …') is not read. A panel stating another "
+          "currency is refused before assembly (ciq_sheets.require_usd), so a built page differs "
+          "only where a back-fill found one",
+          "pages carrying mechanical.ciq_currency — one unit per money panel the folder holds",
+          None, None, ("wrong_unit",), _currency_stated_usd),
 )
 CHECK_IDS = tuple(c.id for c in CHECKS)
 
@@ -499,21 +537,21 @@ def _consensus_identities(pages: dict[str, dict[str, Any]]) -> dict[str, int]:
 FAMILIES: tuple[Family, ...] = (
     Family("financials.quarterly_ebitda", "financials",
            ("Financials→Income Statement",), "quarterly EBITDA — the LTM every EV/EBITDA divides",
-           checks=("ebitda_vs_xbrl",),
+           checks=("ebitda_vs_xbrl", "currency_stated_usd"),
            note="a difference is mostly CIQ's normalisation by design (it leaves out items it "
                 "treats as unusual — ebitda_recon), so 'differs' is not by itself a CIQ error"),
     Family("financials.annual_income_statement", "financials",
            ("Financials→Income Statement",), "revenue, EBIT, EPS in the Financial Summary",
-           checks=("revenue_vs_xbrl", "ebit_margin_vs_gaap"),
+           checks=("revenue_vs_xbrl", "ebit_margin_vs_gaap", "currency_stated_usd"),
            note="revenue is set against the filings per fiscal year and the LTM; the EBIT margin "
                 "only on the conditional sample its check names; EBIT and EPS themselves are not "
                 "set against the filings"),
     Family("financials.rent", "financials", ("Financials→Income Statement",),
            "'Net Rental Exp.' — the lease-materiality reading",
-           checks=("rent_vs_edgar_lease_cost",)),
+           checks=("rent_vs_edgar_lease_cost", "currency_stated_usd")),
     Family("financials.balance_sheet_claims", "financials", ("Financials→Balance Sheet",),
            "Net Debt, Total Debt, cash, preferred, minority — the EV bridge",
-           checks=("ev_bridge_vs_ciq_tev",),
+           checks=("ev_bridge_vs_ciq_tev", "currency_stated_usd"),
            unscored=("ciq_balance.extract — the UNIT (scale) check against revenue, D&A "
                      "containment and the net-debt cross-read; runs only in anchor-backfill / "
                      "anchor-retag on the raw workbooks, and its result is printed, never stored "
@@ -522,11 +560,12 @@ FAMILIES: tuple[Family, ...] = (
                 "basis and is never compared — no tolerance is defined across the two"),
     Family("financials.lease_rows", "financials",
            ("Financials→Balance Sheet", "Financials→Historical Capitalization"),
-           "the operating leases inside CIQ's TEV", checks=("lease_rows_vs_edgar",)),
+           "the operating leases inside CIQ's TEV",
+           checks=("lease_rows_vs_edgar", "currency_stated_usd")),
     Family("financials.tev_history", "financials",
            ("Financials→Historical Capitalization", "Financials→Multiples"),
            "TEV by quarter and the trailing multiple bands",
-           checks=("multiples_sheet_coherence",),
+           checks=("multiples_sheet_coherence", "currency_stated_usd"),
            unscored=("anchor.data_quality — the recorded-D&A check and the market reconciliation "
                      "(band_guards) leave a flag only when they trip, so a pass and a check that "
                      "could not run read the same",),
@@ -534,45 +573,51 @@ FAMILIES: tuple[Family, ...] = (
                 "rebuilt from another source"),
     Family("financials.cash_flow", "financials", ("Financials→Cash Flow",),
            "operating cash flow, capex, free cash flow",
-           checks=("ocf_vs_xbrl", "fcf_sign_vs_edgar_ocf"),
+           checks=("ocf_vs_xbrl", "fcf_sign_vs_edgar_ocf", "currency_stated_usd"),
            note="operating cash flow is set against the filings per fiscal year and the LTM; "
                 "capex and the levered FCF figure are not — the FCF reaches the filings only as a "
                 "SIGN against a different measure, and a quarter's OCF and a year's levered FCF "
                 "differ in sign for ordinary reasons (capex, seasonality)"),
     Family("financials.capital_structure", "financials",
            ("Financials→Capital Structure Details", "Financials→Capital Structure Summary"),
-           "debt instruments and maturities", checks=("wall_vs_10q",),
+           "debt instruments and maturities", checks=("wall_vs_10q", "currency_stated_usd"),
            note="run only where the 10-Q states a 12-month maturity figure; the rest of the panel "
                 "(coupons, the later maturities) is not set against the filings"),
     Family("financials.segments", "financials", ("Financials→Segments",), "segment revenue",
-           note="segment profit on the filer's measure comes from XBRL separately "
+           checks=("currency_stated_usd",),
+           note="internal on the currency the panel states, and nothing else; segment profit on "
+                "the filer's measure comes from XBRL separately "
                 "(mechanical.concentration.segment_profit) and is not set against CIQ's segments"),
     Family("financials.ratios", "financials", ("Financials→Ratios",), "CIQ's computed ratios"),
     Family("estimates.consensus", "estimates",
            ("Estimates→Consensus", "Estimates→Trends", "Estimates→Revisions",
             "Estimates→Recent Changes"), "forward consensus paths, spreads and revisions",
-           fallback=SINGLE_SOURCE,
-           note="no second consensus source; forward_consensus.reconciliations sets identities "
-                "(CFO − CapEx vs FCF, EBIT + D&A vs EBITDA) against the same means — information, "
+           checks=("currency_stated_usd",), fallback=SINGLE_SOURCE,
+           note="internal on the currency the Consensus and Trends panels state, and nothing "
+                "else: no second consensus source; forward_consensus.reconciliations sets "
+                "identities (CFO − CapEx vs FCF, EBIT + D&A vs EBITDA) against the same means — "
+                "information, "
                 "not a pass/fail, by the schema's own rule, so they are counted, not scored",
            counted=_consensus_identities),
     Family("estimates.forward_multiples", "estimates", ("Estimates→Multiples",),
            "the NTM multiples a recipe prices",
            checks=("snapshot_multiple", "forward_multiple_vintage")),
     Family("estimates.guidance", "estimates", ("Estimates→Guidance",), "CIQ's record of guidance",
-           checks=("guide_vs_release",),
+           checks=("guide_vs_release", "currency_stated_usd"),
            note="the revenue guide only; CIQ's other guided metrics are not set against the "
                 "releases"),
     Family("estimates.surprise", "estimates", ("Estimates→Surprise",),
            "final consensus against CIQ's actual, per completed year",
-           note="the actuals are CIQ's own; they are not set against the filings"),
+           checks=("currency_stated_usd",),
+           note="internal on the currency the panel states, and nothing else: the actuals are "
+                "CIQ's own and are not set against the filings"),
     Family("comps.market_cap", "comps", ("Comparable Analysis→Financial Data",),
-           "market capitalization", checks=("market_cap_share_basis",),
+           "market capitalization", checks=("market_cap_share_basis", "currency_stated_usd"),
            note="share basis only — see the check's tolerance"),
     Family("comps.tev_net_debt", "comps",
            ("Comparable Analysis→Financial Data", "Comparable Analysis→Implied Valuation"),
            "TEV, net debt and the cash/debt bridge",
-           checks=("ev_bridge_vs_ciq_tev", "net_debt_vs_implied_bridge")),
+           checks=("ev_bridge_vs_ciq_tev", "net_debt_vs_implied_bridge", "currency_stated_usd")),
     Family("comps.peer_grid", "comps",
            ("Comparable Analysis→Trading Multiples", "Comparable Analysis→Operating Statistics"),
            "the peer multiples and operating statistics", fallback=SINGLE_SOURCE),

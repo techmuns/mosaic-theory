@@ -562,9 +562,13 @@ def test_classification_is_derived_from_the_scored_checks() -> None:
     fam = {f.id: f for f in ciq.FAMILIES}
     assert core.classify(ciq.SOURCE, fam["financials.quarterly_ebitda"]) == core.INDEPENDENT
     assert core.classify(ciq.SOURCE, fam["financials.balance_sheet_claims"]) == core.INTERNAL
-    assert core.classify(ciq.SOURCE, fam["estimates.consensus"]) == core.SINGLE_SOURCE
+    # consensus and segments are INTERNAL on the currency their panels state, and nothing else
+    # (`currency_stated_usd`, 2026-10-27); the peer grid, which it does not read, stays single
+    assert core.classify(ciq.SOURCE, fam["estimates.consensus"]) == core.INTERNAL
+    assert core.classify(ciq.SOURCE, fam["comps.peer_grid"]) == core.SINGLE_SOURCE
     assert core.classify(ciq.SOURCE, fam["estimates.guidance"]) == core.INDEPENDENT
-    assert core.classify(ciq.SOURCE, fam["financials.segments"]) == core.UNVERIFIED
+    assert core.classify(ciq.SOURCE, fam["financials.segments"]) == core.INTERNAL
+    assert core.classify(ciq.SOURCE, fam["financials.ratios"]) == core.UNVERIFIED
     # a family with an internal AND an independent check is independent; internal alone is not
     mixed = core.Family("x", "comps", (), "x", checks=("ev_bridge_vs_ciq_tev", "ebitda_vs_xbrl"))
     assert core.classify(ciq.SOURCE, mixed) == core.INDEPENDENT
@@ -580,7 +584,8 @@ def test_failure_guards_follow_the_checks_declared_classes() -> None:
     assert set(ebitda.values()) == {core.INDEPENDENT}
     claims = core.failure_guard(ciq.SOURCE, fam["financials.balance_sheet_claims"])
     assert claims["wrong_cell"] == core.INTERNAL and claims["different_definition"] == "none"
-    assert set(core.failure_guard(ciq.SOURCE, fam["estimates.consensus"]).values()) == {"none"}
+    consensus = core.failure_guard(ciq.SOURCE, fam["estimates.consensus"])
+    assert consensus.pop("wrong_unit") == core.INTERNAL and set(consensus.values()) == {"none"}
     card = _card()
     single = sum(1 for f in ciq.FAMILIES if core.classify(ciq.SOURCE, f) == core.SINGLE_SOURCE)
     for fc, row in card["failure_class_summary"].items():
