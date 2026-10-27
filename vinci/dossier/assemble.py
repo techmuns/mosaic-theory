@@ -886,9 +886,15 @@ def _assembly_anchor(mech: dict[str, Any], *, facts: dict[str, Any], bundle: Ciq
 
     It takes the CIQ facts `anchor-backfill` takes, through the same `ciq_bridge` (row 27 (7)).
     Called with none, every input only the workbook supplies went UNKNOWN on each re-assembly and
-    each pass had to backfill it back. A refused extraction is handed on as nothing, as there."""
+    each pass had to backfill it back. A refused extraction is handed on as nothing, as there.
+    The bridge's UNIT check outcome rides beside it (`anchor.ciq_scale_check`, 2026-10-27)."""
+    from vinci.dossier.ciq_balance import scale_outcome
+
     ciq, _note = ciq_bridge(bundle, ticker)
-    return compute_anchor(mech, facts=facts, computed_at=computed_at, ciq=ciq)
+    anchor = compute_anchor(mech, facts=facts, computed_at=computed_at, ciq=ciq)
+    # the bridge's own read carries the outcome; only a refused one (None) is read again
+    scale = ciq.scale_check if ciq is not None else scale_outcome(bundle, ticker)
+    return anchor.model_copy(update={"ciq_scale_check": scale})
 
 
 def assemble_one(

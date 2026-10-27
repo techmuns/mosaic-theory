@@ -315,6 +315,12 @@ class Anchor(BaseModel, frozen=True):
     # set, which reads the same on a pass and when a guard could not run. Absent, never null,
     # where the guards were not reached (`band_guards.BandChecks`).
     band_checks: bg.BandChecks | None = None
+    # (2026-10-27) the CIQ bridge's UNIT check outcome (`ciq_balance.scale_outcome`): every money
+    # figure of the Financials workbook against its revenue — set beside the bridge by the callers
+    # that read it (assembly, anchor-backfill). Absent, never null, where it was not read. The
+    # type is `band_guards.BandOutcome`, the same three states, because `schemas` imports this
+    # module and its `CrossCheck` cannot be imported here.
+    ciq_scale_check: bg.BandOutcome | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -1104,13 +1110,19 @@ def ciq_bridge(bundle: Any, ticker: str) -> tuple[CiqFacts | None, str | None]:
     `docs/records/2026-10-27-assembly-anchor-reads-the-ciq-bridge.md`). A sheet that failed a
     coherence check is handed on as None, never its surviving facts (`ciq_balance` refuses rather
     than degrades); two exports of one kind raise, because that is not "no workbook" and the
-    operator clears it first."""
+    operator clears it first.
+
+    A MONEY PANEL STATING ANOTHER CURRENCY RAISES `CiqCurrencyError` here too (2026-10-27, #819
+    review finding 1): assembly refused it before any fetch (`ciq_sheets.require_usd`) while
+    `anchor-backfill` read the same workbook's facts as dollars. One refusal on both paths."""
     from vinci.dossier.ciq import CiqAmbiguousError
     from vinci.dossier.ciq_balance import extract
+    from vinci.dossier.ciq_sheets import CiqCurrencyError, require_usd, stated_currency
 
     try:
+        require_usd(stated_currency(bundle), ticker)
         ciq = extract(bundle, ticker)
-    except CiqAmbiguousError:
+    except (CiqAmbiguousError, CiqCurrencyError):
         raise
     except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
         return None, f"no CIQ bridge ({type(exc).__name__})"
@@ -1326,7 +1338,7 @@ def anchor_absent_fields(anchor: Anchor) -> dict[str, Any]:
     decision only where a record says what it was). A pydantic `exclude` mapping."""
     out: dict[str, Any] = {k: True for k in ("midcycle_gap", "anchor_base_value_per_share_diluted",
                                              "operator_decision", "machine_recipe_hint",
-                                             "band_checks")
+                                             "band_checks", "ciq_scale_check")
                            if getattr(anchor, k) is None}
     if anchor.operator_decision is not None \
             and anchor.operator_decision.machine_recipe_at_decision is None:

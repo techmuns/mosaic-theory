@@ -7394,6 +7394,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -7410,6 +7411,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -7426,6 +7428,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -7442,6 +7445,7 @@
             "different": true,
             "matching_amount": "3 IEEPA Tariff Refunds and Related Expense Accruals During the second quarter of Fiscal 2027, the Company received aggregate refunds of $331 million for a portion of the IEEPA tariffs it previously paid.",
             "matching_source": "8-K 0000109198-26-000045 EX-99.1",
+            "ciq_unusual": -331.0,
             "note": null
           }
         ],
@@ -15175,6 +15179,22 @@
       "layers": [
         "mechanical.capital_structure"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
+      ]
     }
   ],
   "anchor": {
@@ -15255,6 +15275,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

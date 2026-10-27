@@ -114,7 +114,7 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $729M against $689M rebuilt from the filings (+$40M); the quarter to 2025-09-30: CIQ $180M against $176M (+$4M); the quarter to 2025-12-31: CIQ $197M against $180M (+$17M); the quarter to 2026-03-31: CIQ $165M against $148M (+$16M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $729M against $689M rebuilt from the filings (+$40M); the quarter to 2025-09-30: CIQ $180M against $176M (+$4M) — CIQ's own export itemises unusual items of $4.000M for the quarter, which it leaves out; the quarter to 2025-12-31: CIQ $197M against $180M (+$17M); the quarter to 2026-03-31: CIQ $165M against $148M (+$16M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -664,6 +664,8 @@ _Source §: latest 10-K 0001352010-26-000015 · exhibit1017-epamnonxempl.htm_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
+  - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 41d old — 2026-08-07 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus 39d old (2026-08-09, valuation.implied_expectations.multiples_as_of) — within the ceiling

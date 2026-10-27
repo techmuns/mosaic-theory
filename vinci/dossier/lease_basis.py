@@ -33,6 +33,8 @@ Every threshold here is set by face validity, never by what any name's anchor wo
 """
 from __future__ import annotations
 
+import json
+from collections.abc import Callable
 from datetime import date, timedelta
 from typing import Any, NamedTuple
 
@@ -187,8 +189,17 @@ def _complete_first_filed(facts: dict[str, Any], total: str, cur: str,
 
 
 def _near(series: dict[date, float], at: date, days: int) -> float | None:
+    got = _near_dated(series, at, days)
+    return got[1] if got is not None else None
+
+
+def _near_dated(series: dict[date, float], at: date, days: int) -> tuple[date, float] | None:
+    """(date, value) — the figure nearest ``at`` within ``days``, with the date it is FOR."""
     close = [d for d in series if abs((d - at).days) <= days]
-    return series[min(close, key=lambda d: abs((d - at).days))] if close else None
+    if not close:
+        return None
+    d = min(close, key=lambda k: abs((k - at).days))
+    return d, series[d]
 
 
 def _first_operating(facts: dict[str, Any]) -> date | None:
@@ -198,16 +209,34 @@ def _first_operating(facts: dict[str, Any]) -> date | None:
     return min(dates) if dates else None
 
 
+def _finance_dated(fin_edgar: dict[date, float], d: date) -> bool:
+    """Whether the finance-lease figure used at ``d`` is ``d``'s own. A filer that tags no finance
+    lease anywhere has none to carry — 0 is its figure; one that tags them, but not within a week
+    of ``d``, has only another date's (UBER: complete at year-end alone)."""
+    if not fin_edgar:
+        return True
+    got = _near_dated(fin_edgar, d, _FINANCE_NEAR_DAYS)
+    return got is not None and abs((got[0] - d).days) <= _OPERATING_NEAR_DAYS
+
+
 class _Split(NamedTuple):
     operating: float
     status: str
     finance_inside: bool | None   # which decomposition reconciled (None: not checked)
 
 
-def _reconciles(rows_sum: float, fin: float, op_edgar: float) -> bool | None:
+def _reconciles(rows_sum: float, fin: float, op_edgar: float, *,
+                fin_dated: bool = True) -> bool | None:
     """Whether CIQ's lease rows decompose as EDGAR's operating leases plus its finance leases
-    (True), or ARE the operating leases with finance filed elsewhere (False); None: neither."""
-    for fin_in in (True, False):
+    (True), or ARE the operating leases with finance filed elsewhere (False); None: neither.
+
+    LIKE WITH LIKE (2026-10-27): the first decomposition SUBTRACTS a finance-lease figure, so it is
+    tried only where that figure is for the balance-sheet date itself (``fin_dated``). UBER tags its
+    finance leases at year-end only; carried onto 2019-09-30, 2020-09-30 and 2021-03-31 the
+    year-end figure missed by 2.0–2.1%, and 2019-03-31 had none within reach — four
+    'unreconciled' quarters that compared one date's operating leases with another date's finance
+    leases (and five more 'reconciled' the same way)."""
+    for fin_in in ((True, False) if fin_dated else (False,)):
         if abs(max(rows_sum - (fin if fin_in else 0.0), 0.0) - op_edgar) <= (
                 RECONCILE_TOL * op_edgar):
             return fin_in
@@ -215,7 +244,7 @@ def _reconciles(rows_sum: float, fin: float, op_edgar: float) -> bool | None:
 
 
 def _split(rows_sum: float, fin: float, op_edgar: float | None, *, adopted: bool,
-           comparative: bool, nearest: bool | None) -> _Split:
+           comparative: bool, nearest: bool | None, fin_dated: bool = True) -> _Split:
     """How much of CIQ's lease rows is OPERATING on one date, and how sure we are.
 
     ``comparative``: EDGAR's operating figure for the date was first filed AFTER the period's own
@@ -225,17 +254,25 @@ def _split(rows_sum: float, fin: float, op_edgar: float | None, *, adopted: bool
     short row is a data gap and the quarter is unreconciled — wherever it sits in the history
     (review of #750: a position-based rule let any early short quarter pass as pre-adoption).
     ``nearest``: the split the nearest reconciled quarter (either side) proved, for a quarter
-    EDGAR gives no complete figure to check; None when no quarter reconciled at all."""
+    EDGAR gives no complete figure to check; None when no quarter reconciled at all.
+    ``fin_dated``: the finance-lease figure is for this date — where it is another date's, the rows
+    are checked only as the operating leases alone, and a miss is UNCHECKED (the decomposition with
+    finance leases cannot be tested like with like), never unreconciled."""
     if not adopted or (op_edgar is not None and op_edgar <= 0):
         return _Split(0.0, "pre-adoption", None)
     if op_edgar is None:
         inside = nearest if nearest is not None else True
         return _Split(max(rows_sum - (fin if inside else 0.0), 0.0), "unchecked", None)
-    proved = _reconciles(rows_sum, fin, op_edgar)
+    proved = _reconciles(rows_sum, fin, op_edgar, fin_dated=fin_dated)
     if proved is not None:
         return _Split(max(rows_sum - (fin if proved else 0.0), 0.0), "reconciled", proved)
     if comparative and rows_sum < _PRE_ADOPTION_SHARE * op_edgar:
         return _Split(0.0, "pre-adoption", None)
+    # ...but only where the rows EXCEED EDGAR's operating figure: an excess is what finance leases
+    # could explain; rows SHORT of it no finance figure can (WERN's 2019-12-31: none against $11.7M)
+    if not fin_dated and rows_sum > op_edgar * (1 + RECONCILE_TOL):
+        inside = nearest if nearest is not None else True
+        return _Split(max(rows_sum - (fin if inside else 0.0), 0.0), "unchecked", None)
     return _Split(max(rows_sum - fin, 0.0), "unreconciled", None)
 
 
@@ -280,8 +317,9 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
                         _near(op_edgar, d, _OPERATING_NEAR_DAYS)))
     fin_at = {d: (_near(fin_edgar, d, _FINANCE_NEAR_DAYS) or 0.0) if fin_edgar else 0.0
               for d, *_ in rows_in}
+    fin_dated = {d: _finance_dated(fin_edgar, d) for d, *_ in rows_in}
     proved = {d: fi for d, _t, _l, rs, oe in rows_in if oe is not None and oe > 0
-              and (fi := _reconciles(rs, fin_at[d], oe)) is not None}
+              and (fi := _reconciles(rs, fin_at[d], oe, fin_dated=fin_dated[d])) is not None}
 
     def _comparative(d: date) -> bool:
         near = [k for k in op_filed if abs((k - d).days) <= _OPERATING_NEAR_DAYS]
@@ -296,7 +334,7 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
         nearest = (proved[min(proved, key=lambda p: (abs((p - d).days), p))]
                    if proved else None)
         sp = _split(rows_sum, fin, op_e, adopted=adopted, comparative=_comparative(d),
-                    nearest=nearest)
+                    nearest=nearest, fin_dated=fin_dated[d])
         pd = priced.get(d)
         usable = sp.status != "unreconciled" and ltm > 0
         out.append(LeaseObservation(
@@ -311,28 +349,69 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
     return out
 
 
-#: EDGAR's own lease-cost tags, in preference order, read beside CIQ's rent as a cross-check.
+#: EDGAR's own lease cost is read beside CIQ's rent as a cross-check — `LeaseCost`, else its parts.
 #: Measured 2026-10-19: CIQ's 'Net Rental Exp.' IS the filer's `LeaseCost` to the dollar on most
 #: committed names (TJX 3,814, ROST 1,104.7, CNXC 444, NFLX 711.0, SMPL 13.186) — so VITL's $288M
 #: beside its own $293.0M is the company's disclosed total lease cost, not a vendor defect.
-_LEASE_COST_TAGS = ("LeaseCost", "OperatingLeaseCost")
+#: THE PARTS OF `LeaseCost` (ASC 842-20-50-4), signed: the total where a filer tags only its
+#: parts. NKE tags no `LeaseCost`, and CIQ's $1,146M rent was set against its operating lease cost
+#: alone ($693M) — 1.65x, 'disagree' — when its operating and variable lease cost sum to $1,146M
+#: to the dollar (2026-10-27). One filer's parts are one total; one part is not.
+_LEASE_COST_PARTS: tuple[tuple[str, float], ...] = (
+    ("OperatingLeaseCost", 1.0), ("VariableLeaseCost", 1.0), ("ShortTermLeaseCost", 1.0),
+    ("FinanceLeaseRightOfUseAssetAmortization", 1.0), ("FinanceLeaseInterestExpense", 1.0),
+    ("SubleaseIncome", -1.0))
+#: CIQ's rent EQUALS one part of the total, within this share of the part: it is that part, a
+#: narrower cost, not the total. WLK: CIQ $128M = `ShortTermLeaseCost` $128M against `LeaseCost`
+#: $306M. One lease note's parts sit far further apart than this (WLK 128 / 178 / 306).
+_PART_MATCH = 0.01
 #: Beyond this factor either way the two rent figures are named as disagreeing on the page.
 _RENT_DISAGREE = 1.5
 
 
+def _annual(facts: dict[str, Any], tag: str, fy: date) -> float | None:
+    """$M — the tag's fiscal year ending within a week of ``fy``, the latest filing winning."""
+    best: tuple[date, float] | None = None
+    for p in points_for_tag(facts, tag):
+        if p.is_annual and abs((p.period_end - fy).days) <= _OPERATING_NEAR_DAYS and (
+                best is None or p.filed >= best[0]):
+            best = (p.filed, p.value / 1e6)
+    return best[1] if best is not None else None
+
+
 def edgar_lease_cost(facts: dict[str, Any] | None, fy: date | None) -> tuple[float, str] | None:
-    """($M, tag) — EDGAR's annual lease cost for the fiscal year ending within a week of ``fy``,
-    under the first tag in :data:`_LEASE_COST_TAGS` that reports it; None when none does."""
+    """($M, tag) — EDGAR's annual TOTAL lease cost for the fiscal year ending within a week of
+    ``fy``: `LeaseCost`, else the parts the filer tags that year summed (:data:`_LEASE_COST_PARTS`,
+    the tag naming each — "OperatingLeaseCost + VariableLeaseCost"); None when it tags neither."""
     if facts is None or fy is None:
         return None
-    for tag in _LEASE_COST_TAGS:
-        best: tuple[date, float] | None = None
-        for p in points_for_tag(facts, tag):
-            if p.is_annual and abs((p.period_end - fy).days) <= _OPERATING_NEAR_DAYS and (
-                    best is None or p.filed >= best[0]):
-                best = (p.filed, p.value / 1e6)
-        if best is not None:
-            return best[1], tag
+    total = _annual(facts, "LeaseCost", fy)
+    if total is not None:
+        return total, "LeaseCost"
+    parts = [(tag, sign, v) for tag, sign in _LEASE_COST_PARTS
+             if (v := _annual(facts, tag, fy)) is not None]
+    if not any(s > 0 for _t, s, _v in parts):
+        return None             # a sublease income alone is no lease cost
+    name = " + ".join(t for t, s, _v in parts if s > 0)
+    name += "".join(f" − {t}" for t, s, _v in parts if s < 0)
+    return sum(s * v for _t, s, v in parts), name
+
+
+def rent_component(facts: dict[str, Any] | None, fy: date | None, rent: float | None,
+                   lease_cost: float | None) -> str | None:
+    """The ONE part of the filer's total lease cost CIQ's rent equals (:data:`_PART_MATCH`), where
+    the rent and the total disagree (`rent_disagrees`) — CIQ's rent is then that narrower cost, a
+    different definition from the total, and the two are not compared. None otherwise."""
+    if facts is None or fy is None or rent is None or lease_cost is None:
+        return None
+    if rent_disagrees(rent, lease_cost) is not True:
+        return None
+    for tag, sign in _LEASE_COST_PARTS:
+        if sign < 0:
+            continue            # a sublease income is netted out of the cost, never a part of it
+        v = _annual(facts, tag, fy)
+        if v is not None and v > 0 and abs(rent - v) <= _PART_MATCH * v:
+            return tag
     return None
 
 
@@ -345,11 +424,15 @@ def rent_disagrees(rent: float, lease_cost: float) -> bool | None:
     return max(rent, lease_cost) / min(rent, lease_cost) > _RENT_DISAGREE
 
 
-def _cross_check(r: Rent, edgar: tuple[float, str] | None) -> str:
-    """The sentence naming EDGAR's lease cost beside CIQ's rent — and saying so when they differ."""
+def _cross_check(r: Rent, edgar: tuple[float, str] | None, part: str | None = None) -> str:
+    """The sentence naming EDGAR's lease cost beside CIQ's rent — and saying so when they differ,
+    or when CIQ's rent is one part of that cost rather than the whole."""
     if edgar is None or r.rent is None:
         return ""
     v, tag = edgar
+    if part is not None:
+        return (f"; EDGAR {tag} that year: ${v:,.0f}M — CIQ's rent is the filer's {part}, a "
+                "narrower cost than its total lease cost; the two are not compared")
     far = rent_disagrees(r.rent, v) is True
     return (f"; EDGAR {tag} that year: ${v:,.0f}M"
             + (" — CIQ's rent and EDGAR's lease cost DISAGREE; read both" if far else ""))
@@ -381,10 +464,12 @@ def lease_basis(bundle: CiqBundle, facts: dict[str, Any] | None) -> LeaseBasis |
     r = rent_share(bundle)
     material, why = _materiality(r)
     edgar = edgar_lease_cost(facts, r.fiscal_year)
-    why += _cross_check(r, edgar)
+    part = rent_component(facts, r.fiscal_year, r.rent, edgar[0] if edgar else None)
+    why += _cross_check(r, edgar, part)
     base: dict[str, Any] = {
         "edgar_lease_cost": round(edgar[0], 3) if edgar else None,
         "edgar_lease_cost_tag": edgar[1] if edgar else None,
+        "rent_component": part,
         "rent_expense": r.rent, "rent_ebitda": r.ebitda,
         "rent_to_ebitda": (round(r.rent / r.ebitda, 6)
                            if r.rent is not None and r.ebitda else None),
@@ -449,3 +534,56 @@ def history(obs: list[LeaseObservation], *, source_file: str | None = None,
         n = band.n_closes if band is not None else sum(1 for _d, v in pairs if v is not None)
         return None, f"only {n} ex-lease quarter(s) of history (≥{_MIN_CONFIDENT_CLOSES} needed)"
     return band, None
+
+
+# --- the back-fill (2026-10-27): the rent fields onto committed pages, behind a reproduction ------
+
+#: The keys wave 2 moves on a committed block — the rent's total, its name, the part CIQ's rent is,
+#: and the materiality sentence that names them. Every other key must reproduce.
+_RENT_KEYS = frozenset({"edgar_lease_cost", "edgar_lease_cost_tag", "rent_component",
+                        "materiality"})
+
+
+def own_quarterly_export(mech: dict[str, Any], bundle: CiqBundle) -> bool:
+    """Whether ``bundle``'s quarterly Financials is the export the page's history bands were built
+    from — ONE stamp across the bands, and it is this file's (`refresh.valuation_bases_transform`'s
+    rule). Anything else is another pull, and nothing is written from it."""
+    wb = bundle.workbook("financials", freq="quarterly")
+    bands = ((mech.get("valuation") or {}).get("own_history") or {}).get("value") or []
+    stamps = {b.get("source_sha256") for b in bands if isinstance(b, dict)}
+    return (wb is not None and len(stamps) == 1 and None not in stamps
+            and file_provenance(wb.path)[0] in stamps)
+
+
+def backfill_transform(ticker: str, *, facts: dict[str, Any] | None, bundle: CiqBundle | None,
+                       refused: list[str]) -> Callable[[dict[str, Any]], dict[str, Any]]:
+    """A `refresh.refresh_dossier` transform writing the rent fields (:data:`_RENT_KEYS`) onto a
+    committed page's `valuation.lease_basis`, under a KEPT synthesis — ONLY where the block
+    rebuilt from the page's own export and EDGAR reproduces every OTHER key as committed: the
+    observations, their statuses, the band, the counts, the refusal. A page whose rebuild moves any
+    of those (UBER, whose like-with-like statuses lift its band's refusal) is a re-assembly, not a
+    back-fill: it is named in ``refused`` and left as it is."""
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        held = (out.get("valuation") or {}).get("lease_basis")
+        if not isinstance(held, dict):
+            return out
+        if bundle is None or not own_quarterly_export(out, bundle):
+            refused.append(f"{ticker}: lease_basis — the quarterly export is not the page's own")
+            return out
+        built = lease_basis(bundle, facts)
+        new = json.loads(built.model_dump_json()) if built is not None else None
+        if new is None:
+            refused.append(f"{ticker}: lease_basis — the rebuild wrote no block")
+            return out
+        moved = sorted(k for k in set(held) | set(new)
+                       if k not in _RENT_KEYS and held.get(k) != new.get(k))
+        if moved:
+            refused.append(f"{ticker}: lease_basis — the rebuild moves {', '.join(moved)}, not "
+                           "only the rent fields: a re-assembly, not a back-fill")
+            return out
+        out["valuation"]["lease_basis"] = new
+        return out
+
+    return _apply

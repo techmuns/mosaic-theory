@@ -280,7 +280,10 @@ def test_ebitda_statuses_follow_the_pages_own_flags() -> None:
     card = _card()
     assert _row(card, "ebitda_vs_xbrl", "AAA") == _counts(1, 1, 1, 1)
     assert _row(card, "ebitda_vs_xbrl", "BBB") == {"not_run": "no ebitda_reconciliation block on "
-                                                              "the page"}
+                                                              "the page — no quarterly CIQ export, "
+                                                              "no EDGAR facts, or the export's "
+                                                              "four latest columns are not four "
+                                                              "consecutive quarters"}
     # a block with no quarters is not a page the check ran on
     empty = _page("EEE", quarters=[])
     assert "not_run" in _row(_card({"EEE": empty}), "ebitda_vs_xbrl", "EEE")

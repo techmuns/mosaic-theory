@@ -202,11 +202,11 @@
         "rent_ebitda": 73.621,
         "rent_to_ebitda": 0.053748,
         "rent_fiscal_year": "2025-12-31",
-        "edgar_lease_cost": 3.394,
-        "edgar_lease_cost_tag": "OperatingLeaseCost",
+        "edgar_lease_cost": 3.575,
+        "edgar_lease_cost_tag": "OperatingLeaseCost + ShortTermLeaseCost",
         "threshold": 0.05,
         "material": true,
-        "materiality": "rent 5.4% of EBITDA (FY ending 2025-12-31: $4M of $74M) — material (≥5%); R1 uses the ex-lease history; EDGAR OperatingLeaseCost that year: $3M",
+        "materiality": "rent 5.4% of EBITDA (FY ending 2025-12-31: $4M of $74M) — material (≥5%); R1 uses the ex-lease history; EDGAR OperatingLeaseCost + ShortTermLeaseCost that year: $4M",
         "ex_lease_band": null,
         "refusal": "only 6 ex-lease quarter(s) of history (≥8 needed)",
         "reconciled_dates": 18,
@@ -3855,7 +3855,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A tag for this quarter"
+            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
           },
           {
             "period_end": "2025-12-31",
@@ -3867,7 +3867,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A tag for this quarter"
+            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
           },
           {
             "period_end": "2026-03-31",
@@ -3879,7 +3879,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A tag for this quarter"
+            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
           },
           {
             "period_end": "2026-06-30",
@@ -3891,14 +3891,14 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A tag for this quarter"
+            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
           }
         ],
         "ciq_ltm": 40.415,
         "filing_ltm": null,
         "ltm_gap": null,
         "any_different": false,
-        "line": "CIQ's quarterly EBITDA could not be set against the filings — no quarterly D&A tag for this quarter.",
+        "line": "CIQ's quarterly EBITDA could not be set against the filings — no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -9244,6 +9244,23 @@
       "layers": [
         "mechanical.capital_structure"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary",
+        "mechanical.valuation"
+      ]
     }
   ],
   "anchor": {
@@ -9302,6 +9319,7 @@
     "anchor_ev_ebit": null,
     "overall_confidence": null,
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

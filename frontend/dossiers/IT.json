@@ -6396,6 +6396,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -6411,6 +6412,7 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 154.1,
             "note": null
           },
           {
@@ -6426,6 +6428,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": 0.064,
             "note": null
           },
           {
@@ -6441,6 +6444,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
+            "ciq_unusual": -6.138,
             "note": null
           }
         ],
@@ -6448,7 +6452,7 @@
         "filing_ltm": 1258.751,
         "ltm_gap": 146.053,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $1,405M against $1,259M rebuilt from the filings (+$146M); the quarter to 2025-09-30: CIQ $291M against $137M (+$154M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $1,405M against $1,259M rebuilt from the filings (+$146M); the quarter to 2025-09-30: CIQ $291M against $137M (+$154M) — CIQ's own export itemises unusual items of $154.100M for the quarter, which it leaves out (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14145,6 +14149,22 @@
       "layers": [
         "mechanical.capital_structure"
       ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.financial_summary"
+      ]
     }
   ],
   "anchor": {
@@ -14224,6 +14244,7 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
+    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [
