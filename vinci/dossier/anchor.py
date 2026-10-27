@@ -17,7 +17,7 @@ import re
 import statistics as st
 from datetime import datetime
 from pathlib import Path
-from typing import Any, NamedTuple
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 from pydantic import BaseModel, ValidationError, computed_field
 
@@ -31,6 +31,9 @@ from vinci.edgar.concepts import (
     points_for_tag,
 )
 from vinci.edgar.net_debt import Basis, net_debt
+
+if TYPE_CHECKING:  # ciq_balance imports schemas, which imports this module
+    from vinci.dossier.ciq_balance import CiqFacts
 
 # --- tunable constants (named, not magic) -----------------------------------------------------
 ANCHOR_FIRM_MIN_YEARS = 7            # a margin spanning >=7 FYs plausibly covers a cycle -> "firm"
@@ -1076,6 +1079,33 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
         basis_gaap_margin=(round(g_m, 6) if g_m is not None else None),
         basis_ciq_margin=(round(c_m, 6) if c_m is not None else None),
         same_source=median_from_ciq, basis=basis_txt, read=read)
+
+
+def ciq_bridge(bundle: Any, ticker: str) -> tuple[CiqFacts | None, str | None]:
+    """The CIQ facts the bridge may fill a hole from, and a line saying what was read — ONE read
+    for BOTH write paths (STATE row 27 (7), 2026-10-27).
+
+    `anchor-backfill` handed `compute_anchor` the workbook's cross-checked facts and assembly
+    handed it none, so a fresh assembly wrote UNKNOWN for every input only CIQ supplies, and each
+    pass had to backfill it back (GOOGL's D&A and ORKA's net debt on the 2026-10-26 pass;
+    `docs/records/2026-10-27-assembly-anchor-reads-the-ciq-bridge.md`). A sheet that failed a
+    coherence check is handed on as None, never its surviving facts (`ciq_balance` refuses rather
+    than degrades); two exports of one kind raise, because that is not "no workbook" and the
+    operator clears it first."""
+    from vinci.dossier.ciq import CiqAmbiguousError
+    from vinci.dossier.ciq_balance import extract
+
+    try:
+        ciq = extract(bundle, ticker)
+    except CiqAmbiguousError:
+        raise
+    except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
+        return None, f"no CIQ bridge ({type(exc).__name__})"
+    if not ciq.ok:
+        return None, f"CIQ extraction REFUSED — {'; '.join(ciq.failures)}"
+    if not ciq.facts:
+        return ciq, None
+    return ciq, f"CIQ bridge available ({len(ciq.facts)} facts, {len(ciq.checks)} checks passed)"
 
 
 def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],

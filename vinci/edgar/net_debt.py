@@ -27,6 +27,11 @@ HOW THE DEBT LINE IS READ, each rule measured on the corpus:
   maturing senior notes under ``SeniorNotesCurrent``); noncurrent + current is complete where a
   filer uses the bare tag for the noncurrent part (ANDE, CIFR). Beside a current tag at the same
   date and no noncurrent tag, the bare tag IS the noncurrent line (AAL), and the two are summed.
+  A filer that tags its notes' FACE value as the bare tag is read at face: AMZN's $132,995M against
+  the $132,224M carrying value CIQ reads ($771M of unamortized discount, 0.6%). Principal rather
+  than book value is a definition difference, not a misread, so the rule stands. Telling the two
+  apart would mean matching the excess to an unread current-debt tag (OC's is
+  `SeniorNotesCurrent`; AMZN has none), which is not built.
 * **Short-term borrowings** (commercial paper, revolver draws) sit outside long-term debt. Where the
   filer reports its own current-debt total (``DebtCurrent``), the borrowings are that total less
   the current maturities. Otherwise ONE of the three borrowing tags is read, the largest, because
@@ -53,6 +58,17 @@ TWO NAMED BASES, because the two consumers divide by different things:
   operating leases (PARR: EDGAR + leases = CIQ's $949M to the dollar), so a bridge to CIQ's own
   multiple history carries them too (the operator's 2026-07-22 convention). The anchor reads it
   where rent is immaterial, and the EV bridge's cross-check beside CIQ's claims always does.
+
+WHERE CIQ'S TOTAL DEBT DIFFERS, BY DEFINITION (§5.0 row 27 (2), itemized 2026-10-27 at each
+name's 2026-06-30 balance sheet). The two debt-side gaps to CIQ are definitions, not misreads:
+
+* **AMZN, −$8,544M.** CIQ counts Amazon's financing obligations as debt: $415M inside its current
+  portion of long-term debt and $8.9bn inside long-term debt. Amazon carries them in "Accrued
+  expenses and other" and "Other long-term liabilities" and states them only in a commitments
+  footnote, so companyfacts has no value for them to read (at 2025-12-31 too: $358M and $7.8bn).
+  The face-value reading above offsets $771M. Leases, cash and borrowings equal CIQ's to the dollar.
+* **UBER, +$222M.** Its finance leases ($138M + $84M, the 10-K note at 2025-12-31), which CIQ's
+  total debt leaves out. Every other leg equals CIQ's to the dollar.
 
 FAIL LOUD. A debt line absent at ``at`` from a filer that used the standard tags before is
 REFUSED, never read as zero: of 195 such names, about 110 still show debt elsewhere (another tag at

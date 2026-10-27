@@ -26,6 +26,7 @@ from vinci.dossier import flags as dossier_flags
 from vinci.dossier.anchor import (
     RECIPE_UNKNOWN,
     Anchor,
+    ciq_bridge,
     compute_anchor,
     lease_inclusive_net_debt,
     preserve_operator_tag,
@@ -879,6 +880,17 @@ def _price_store_stamp(cfg: Config) -> PriceStoreStamp:
                            frontier=frontier)
 
 
+def _assembly_anchor(mech: dict[str, Any], *, facts: dict[str, Any], bundle: CiqBundle,
+                     ticker: str, computed_at: datetime) -> Anchor:
+    """The anchor a fresh assembly writes — the deterministic part of assembly that builds it.
+
+    It takes the CIQ facts `anchor-backfill` takes, through the same `ciq_bridge` (row 27 (7)).
+    Called with none, every input only the workbook supplies went UNKNOWN on each re-assembly and
+    each pass had to backfill it back. A refused extraction is handed on as nothing, as there."""
+    ciq, _note = ciq_bridge(bundle, ticker)
+    return compute_anchor(mech, facts=facts, computed_at=computed_at, ciq=ciq)
+
+
 def assemble_one(
     fin: Finalist,
     *,
@@ -1116,8 +1128,8 @@ def assemble_one(
     try:
         anchor_facts = EdgarClient.from_config(cfg).companyfacts(rec.identity.cik)
         edgar_nd = lease_inclusive_net_debt(anchor_facts)
-        anchor = compute_anchor(mech.model_dump(mode="json"), facts=anchor_facts,
-                                computed_at=datetime.now(UTC))
+        anchor = _assembly_anchor(mech.model_dump(mode="json"), facts=anchor_facts, bundle=bundle,
+                                  ticker=ticker, computed_at=datetime.now(UTC))
     except Exception as exc:  # noqa: BLE001 — anchor is best-effort; it never blocks the dossier
         anchor = Anchor(recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=datetime.now(UTC),
                         reason=f"anchor computation failed: {type(exc).__name__}")
