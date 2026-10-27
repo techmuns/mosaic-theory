@@ -1241,7 +1241,7 @@
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-09-30..2026-09-30"
       },
       "liquidity_covenant_flags": {
-        "value": "3.000% Senior Notes (Bonds and Notes) undrawn/– @ 3.000% Due 2025; 3.625% Senior Notes (Bonds and Notes) 1,526 @ 3.625% Due 2027; 3.625% Senior Notes (Bonds and Notes) 1,292 @ 3.625% Due 2030; 3.625% Senior Notes (Bonds and Notes) undrawn/– @ 3.625% Due 2025; 3.875% Senior Notes (Bonds and Notes) 1,409 @ 3.875% Due 2029; 4.375% Senior Notes (Bonds and Notes) 1,000 @ 4.375% Due 2026; 4.625% Senior Notes (Bonds and Notes) 1,292 @ 4.625% Due 2029; 4.875% Senior Notes (Bonds and Notes) 1,600 @ 4.875% Due 2028; 4.875% Senior Notes (Bonds and Notes) 1,000 @ 4.875% Due 2030; 4.900% Senior Notes (Bonds and Notes) 1,000 @ 4.900% Due 2034; 5.375% Senior Notes (Bonds and Notes) 900 @ 5.375% Due 2029",
+        "value": "3.000% Senior Notes (Bonds and Notes) undrawn/– @ 3.000% Due 2025; 3.625% Senior Notes (Bonds and Notes) 1,526 @ 3.625% Due 2027; 3.625% Senior Notes (Bonds and Notes) 1,292 @ 3.625% Due 2030; 3.625% Senior Notes (Bonds and Notes) undrawn/– @ 3.625% Due 2025; 3.875% Senior Notes (Bonds and Notes) 1,409 @ 3.875% Due 2029; 4.375% Senior Notes (Bonds and Notes) 1,000 @ 4.375% Due 2026; 4.625% Senior Notes (Bonds and Notes) 1,292 @ 4.625% Due 2029; 4.875% Senior Notes (Bonds and Notes) 1,600 @ 4.875% Due 2028; 4.875% Senior Notes (Bonds and Notes) 1,000 @ 4.875% Due 2030; 4.900% Senior Notes (Bonds and Notes) 1,000 @ 4.900% Due 2034; 5.375% Senior Notes (Bonds and Notes) 900 @ 5.375% Due 2029 — showing 11 of 22 instruments",
         "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Jan-23-2026)",
         "status": "present",
         "note": null
@@ -15264,6 +15264,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.financial_summary"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.quality"
       ]
     }
   ],

@@ -649,7 +649,7 @@
         "source_ref": "EDGAR XBRL pre-tax − operating, quarters 2025-06-30..2026-06-30"
       },
       "liquidity_covenant_flags": {
-        "value": "1.25 Billion of 4.50% Notes Due 2035 * (Bonds and Notes) 1,250 @ 4.500% Due 2035; 1.25billion of 3.38% Notes Due 2037 - Euro * (Bonds and Notes) 1,467 @ 3.375% Due 2037; 1.25billion of 3.88% Notes Due 2045- Euro * (Bonds and Notes) 1,467 @ 3.875% Due 2045; 1.25billion of 4.00% Notes Due 2054- Euro * (Bonds and Notes) 1,467 @ 4.000% Due 2054; 1.5 Billion of 5.25% Notes Due 2055 * (Bonds and Notes) 1,500 @ 5.250% Due 2055; 1.5billion of 2.50% Notes Due 2029 - Euro * (Bonds and Notes) 1,760 @ 2.500% Due 2029; 1.5billion of 3.00% Notes Due 2033 - Euro * (Bonds and Notes) 1,760 @ 3.000% Due 2033; 1.5billion of 5.30% Notes Due 2065 * (Bonds and Notes) 1,500 @ 5.300% Due 2065; 16 US Dollar Notes (Bonds and Notes) 2,000 @ 2.000% Due 2026; 20 US Dollar Notes (Bonds and Notes) 9,000 @ 0.800% - 2.250%; 750 Million of 4.00% Notes Due 2030 * (Bonds and Notes) 750 @ 4.000% Due 2030",
+        "value": "1.25 Billion of 4.50% Notes Due 2035 * (Bonds and Notes) 1,250 @ 4.500% Due 2035; 1.25billion of 3.38% Notes Due 2037 - Euro * (Bonds and Notes) 1,467 @ 3.375% Due 2037; 1.25billion of 3.88% Notes Due 2045- Euro * (Bonds and Notes) 1,467 @ 3.875% Due 2045; 1.25billion of 4.00% Notes Due 2054- Euro * (Bonds and Notes) 1,467 @ 4.000% Due 2054; 1.5 Billion of 5.25% Notes Due 2055 * (Bonds and Notes) 1,500 @ 5.250% Due 2055; 1.5billion of 2.50% Notes Due 2029 - Euro * (Bonds and Notes) 1,760 @ 2.500% Due 2029; 1.5billion of 3.00% Notes Due 2033 - Euro * (Bonds and Notes) 1,760 @ 3.000% Due 2033; 1.5billion of 5.30% Notes Due 2065 * (Bonds and Notes) 1,500 @ 5.300% Due 2065; 16 US Dollar Notes (Bonds and Notes) 2,000 @ 2.000% Due 2026; 20 US Dollar Notes (Bonds and Notes) 9,000 @ 0.800% - 2.250%; 750 Million of 4.00% Notes Due 2030 * (Bonds and Notes) 750 @ 4.000% Due 2030 — showing 11 of 19 instruments",
         "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-05-2026)",
         "status": "present",
         "note": null
@@ -15654,6 +15654,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.financial_summary"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.quality"
       ]
     }
   ],

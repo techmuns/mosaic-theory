@@ -1798,6 +1798,41 @@ def maturity_check_transform(doc: dict[str, Any], *, edgar: Any, http: Any,
     return _apply
 
 
+def liquidity_line_transform(doc: dict[str, Any], *, refused: list[str]) -> Transform:
+    """A `refresh_dossier` transform writing the flat liquidity line's truncation mark
+    (`ciq_sheets.liquidity_cut`, "— showing 11 of N instruments") onto a committed page whose panel
+    lists more instruments than the line prints, under a KEPT synthesis. No workbook is read.
+
+    WRITTEN ONLY BEHIND A REPRODUCTION: the stored line must be exactly the unmarked line the
+    page's own instruments rebuild (`ciq_sheets.liquidity_segments`, the builder both readers
+    share) — then the marked line is that line plus its mark, and nothing else moves. A page whose
+    line does not reproduce is left as it is and named in ``refused``; a line already marked, or
+    one that prints every instrument, is left untouched."""
+    from vinci.dossier.ciq_sheets import liquidity_line, liquidity_segments
+    from vinci.dossier.schemas import CapitalInstrument
+
+    ticker = str(doc.get("ticker"))
+
+    def _apply(mech: dict[str, Any]) -> dict[str, Any]:
+        out: dict[str, Any] = json.loads(json.dumps(mech))
+        line = ((out.get("quality") or {}).get("liquidity_covenant_flags") or {})
+        raw = ((out.get("capital_structure") or {}).get("instruments") or {}).get("value")
+        if not isinstance(line, dict) or line.get("value") is None or not raw:
+            return out
+        insts = [CapitalInstrument.model_validate(i) for i in raw]
+        marked = liquidity_line(insts)
+        if line["value"] == marked:
+            return out
+        if line["value"] != "; ".join(liquidity_segments(insts)):
+            refused.append(f"{ticker}: the liquidity line does not reproduce from the page's "
+                           "instruments — not marked")
+            return out
+        line["value"] = marked
+        return out
+
+    return _apply
+
+
 def maturity_caveat_transform() -> TopLevelTransform:
     """A top-level step writing the maturity check's caveats (`mechanical.maturity_caveats`, the
     assembler's own) from the check the page now stores — replacing exactly the caveats that open
