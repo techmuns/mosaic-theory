@@ -527,8 +527,8 @@ def _vrrm_page() -> dict[str, Any]:
     q["source_ref"] = "CIQ Financials→Capital Structure Details (A 2025 filed Feb-24-2026)"
     cal = doc["mechanical"]["catalyst_calendar"]
     ciq_cs = CapitalStructure.model_validate(cs)
-    head = [r for r in cal["rows"] if r["event"] == "Next results print"]
-    rest = [r for r in cal["rows"] if r["event"] != "Next results print"
+    head = [r for r in cal["rows"] if r["event"] == dm.PRINT_EVENT]
+    rest = [r for r in cal["rows"] if r["event"] != dm.PRINT_EVENT
             and r["tests_what"] != dm.MATURITY_TESTS]
     rows, _ = dm.maturity_rows(ciq_cs, date.fromisoformat(doc["reference_date"]))
     cal["rows"] = sorted([*head, *(json.loads(r.model_dump_json()) for r in rows), *rest],
@@ -668,3 +668,29 @@ def test_the_rendered_page_prints_the_governing_date() -> None:
             assert not stray, (d["ticker"], stray)
             seen += 1
     assert seen, "no committed page carries a governed maturity"
+
+
+def test_an_amended_8k_the_page_links_is_read() -> None:
+    """WERN's pointer links its credit-agreement amendment, filed as an 8-K/A; the 8-K-only index
+    read left it unread and unnamed. Served as an 8-K/A, VRRM's refinancing 8-K is still read."""
+    page = _PAGES["VRRM"]
+
+    class _Amended(_Edgar):
+        def recent_filings(self, cik: str, *, forms: tuple[str, ...] = ("8-K",),
+                           since: date | None = None) -> list[Filing]:
+            return [f.model_copy(update={"form": "8-K/A"}) if f.accession == VRRM_8K else f
+                    for f in super().recent_filings(cik, forms=forms, since=since)]
+
+    mc = dm.maturity_check(_Amended("VRRM"), _Http(), page["cik"], _insts("VRRM"),  # type: ignore[arg-type]
+                           _pointers("VRRM"), page["detail_as_of"], date(2026, 8, 14))
+    assert ("8-K/A", VRRM_8K, dmx.READ_LINKED) in [(s.form, s.accession, s.read_as)
+                                                   for s in mc.sources]
+
+
+def test_a_liquidity_line_that_cannot_be_governed_says_so() -> None:
+    cs = _vrrm_cs()
+    good = Sourced.present(liquidity_line(_insts("VRRM")), source_ref="CIQ panel")
+    assert dm._ungoverned_line_flag(good, dm.governed_liquidity_line(good, cs), cs) is None
+    odd = good.model_copy(update={"value": (good.value or "") + " "})
+    flag = dm._ungoverned_line_flag(odd, dm.governed_liquidity_line(odd, cs), cs)
+    assert flag is not None and flag.startswith(dm.MATURITY_CAVEAT)

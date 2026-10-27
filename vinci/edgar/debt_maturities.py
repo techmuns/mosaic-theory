@@ -430,11 +430,12 @@ def _refinanced(stated: list[Stated]) -> list[Stated]:
 
 def read(text: str) -> list[Stated]:
     """Every maturity the filing text states, current and superseded."""
+    flat = " ".join(text.split())
     stated: list[Stated] = []
-    for sentence in _SENTENCE.split(" ".join(text.split())):
+    for sentence in _SENTENCE.split(flat):
         if _NOUN.search(sentence):
             stated += _loans(sentence)
-    stated += _notes(" ".join(text.split()))
+    stated += _notes(flat)
     return _refinanced(stated)
 
 

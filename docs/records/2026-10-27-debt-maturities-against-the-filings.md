@@ -39,7 +39,8 @@ superseded-by:
 - **The sources** (`mechanical.maturity_check`, none filed after the page's reference date):
   - the latest 10-Q/10-K;
   - every 8-K with Item 1.01/2.03 filed after the panel's own source filing;
-  - the 8-Ks the page's covenant pointers link.
+  - the 8-Ks the page's covenant pointers link. An 8-K/A counts as an 8-K: WERN's pointer links its
+    credit-agreement amendment as one, and the first cut left it unread and unnamed (review).
   - The newest filing that decides an instrument governs it; an older one never overrides it.
 - **"The CIQ export's date" is read as the panel's stated source filing** (`detail_as_of`, "A 2025
   filed Feb-24-2026"). The workbook's download date is not on the page, and the panel names the
@@ -95,8 +96,8 @@ superseded-by:
     two do not pair one-to-one.
   - **3:** a disagreement the check refuses to call: UBER's 7.5% notes (two series share the
     coupon), GOOGL's 4.5% notes (the same), WLK's term loan against a generic "Credit Agreement".
-- **Sources read: 107 filings.** 27 periodic reports, 67 8-Ks the pages link, 13 8-Ks after the
-  panel; 0 failed reads.
+- **Sources read: 108 filings.** 27 periodic reports, 68 8-Ks the pages link (one an 8-K/A,
+  WERN's credit-agreement amendment, added in review), 13 8-Ks after the panel; 0 failed reads.
 
 **The five the filings govern** (each page now prints the filing's date):
 
@@ -154,7 +155,7 @@ false read:
   liquidity line only where a filing governs; springing caveats on BRBR and SMPL.
 - **Then the real back-fill, through `refresh_fleet`:** 27 moved, 0 refused, the same counts.
   Re-run on the final code: 27 unchanged, 0 refused, so every committed check reproduces.
-- **Pins:** `tests/test_debt_maturities.py`, 40 tests, on frozen real text.
+- **Pins:** `tests/test_debt_maturities.py`, 42 tests, on frozen real text.
   - `tests/fixtures/debt_maturities/filings.json`: 16 filings of 11 names, cut to the sentences the
     reader takes a statement from. The builder proved each excerpt reads the same as its whole
     filing.
@@ -168,9 +169,9 @@ false read:
     assembly call site, each back-fill proof refusing alone, and the scorecard mapping.
   - **End to end:** JSON invariants over every committed page, and the rendered Markdown's own
     rows. That render pin finds the old defect on 56500bb1's VRRM page.
-- **Mutation:** 44 mutants, each run in a scratch copy of the tree whose unmutated baseline passes;
-  **44 of 44 killed.**
-  - By area: 25 in the reader and pairing, 10 in the composition and the call site, 6 in the
+- **Mutation:** 46 mutants, each run in a scratch copy of the tree whose unmutated baseline passes;
+  **46 of 46 killed.**
+  - By area: 25 in the reader and pairing, 12 in the composition and the call site, 6 in the
     back-fill, 2 in the scorecard, 1 in the serializer.
   - The first run left 6 alive. Two were a redundant rule (a springing-clause skip that the
     case-sensitive defined terms already covered), now removed. Four were guards with no pin, now
@@ -215,6 +216,11 @@ false read:
 - **The large filers' debt tables are unread.** NFLX's "3.625 % Senior Notes … May 2017 May 2027",
   LLY's and AMZN's tables carry the maturity in a column the sentence grammar does not reach. These
   are 108 of the 126 not run; a table reader is its own build.
+- **20 linked 8-Ks on 7 pages are not read, and not named on the page** (AMZN 3, AORT 2, IT 2,
+  NFLX 5, PARR 3, V 1, WLK 4; 2007–2021). They are older than EDGAR's recent submissions window, so
+  the index the check reads does not list them. Each is older than its page's latest periodic
+  report, so it cannot override that report; reading one could only decide an instrument the newer
+  filings leave unstated. Naming them (or reading them by accession) is the fix.
 - **A prior-facility marker is read within 250 characters of the statement.** TJX's 2021 8-K, "and
   its existing 364-day revolving credit agreement maturing in August 2021", sits ~260 characters
   past "terminated its" and reads current. It is harmless there: the 2026 10-Q decides TJX.

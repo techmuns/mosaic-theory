@@ -1728,11 +1728,6 @@ def maturity_check_transform(doc: dict[str, Any], *, edgar: Any, http: Any,
     cik = str(doc.get("cik") or "")
     ref = date.fromisoformat(str(doc["reference_date"]))
 
-    def _trailing(insts: list[Any]) -> set[str]:
-        lo = ref.toordinal() - 365
-        return {i.maturity_date for i in insts if i.maturity_date
-                and lo <= date.fromisoformat(i.maturity_date).toordinal() <= ref.toordinal()}
-
     def _apply(mech: dict[str, Any]) -> dict[str, Any]:
         out: dict[str, Any] = json.loads(json.dumps(mech))
         raw = out.get("capital_structure")
@@ -1759,7 +1754,8 @@ def maturity_check_transform(doc: dict[str, Any], *, edgar: Any, http: Any,
         g_insts = governed.value or []
         gcs = cs.model_copy(update={"instruments": governed, "maturity_check": check})
         if g_insts != insts:
-            if _trailing(panel.value or []) != _trailing(g_insts):
+            if (dm.trailing_maturities(panel.value or [], ref)
+                    != dm.trailing_maturities(g_insts, ref)):
                 refused.append(f"{ticker}: a governed maturity moves the trailing-12m 8-K line, "
                                "which needs EDGAR's 8-Ks re-read — assembly writes it")
                 return out
@@ -1782,8 +1778,8 @@ def maturity_check_transform(doc: dict[str, Any], *, edgar: Any, http: Any,
                 cal = CatalystCalendar.model_validate(cal_raw)
                 old_rows, _ = dm.maturity_rows(cs.model_copy(update={"instruments": panel}), ref)
                 new_rows, _ = dm.maturity_rows(gcs, ref)
-                head = [r for r in cal.rows if r.event == "Next results print"]
-                rest = [r for r in cal.rows if r.event != "Next results print"
+                head = [r for r in cal.rows if r.event == dm.PRINT_EVENT]
+                rest = [r for r in cal.rows if r.event != dm.PRINT_EVENT
                         and r.tests_what != dm.MATURITY_TESTS]
                 rebuilt = sorted([*head, *old_rows, *rest], key=lambda r: r.expected_date)
                 if rebuilt != cal.rows:
