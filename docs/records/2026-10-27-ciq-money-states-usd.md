@@ -78,6 +78,10 @@ superseded-by:
 | recorded D&A vs the sheet's implied D&A | 6 | 1 (VITL) | 14 | the ex-lease history carries no implied D&A margin |
 | market reconciliation | 20 | 1 (VITL) | 0 | — |
 
+  **One of the six D&A agreements is CIQ against CIQ** (Codex, #819, deferred — see below). GOOGL
+  tags no EDGAR D&A, so its anchor's D&A comes from CIQ's Cash Flow through the #816 bridge. The
+  check counts it as independent anyway, which makes 5 genuinely independent confirmations, not 6.
+
   Six anchors never reach the guards and carry no block: FUBO, ORKA and TECX (no own-history
   multiple), MVST and NCNO (R2), UBER (R4). Before this build, a page with no recorded-D&A flag had
   passed on 6 pages and never run on 20, and could not say which.
@@ -231,6 +235,16 @@ single-source):
 **FOUND, NOT FIXED (out of scope; reported).**
 
 - **The scale check's outcome** belongs wherever assembly keeps the CIQ bridge (L2's lane).
+- **DEFERRED after the review cap (Codex, #819 round 3, both P2):**
+  - **`recorded_d_and_a_vs_edgar` counts a vendor-filled D&A as independent.** Where EDGAR has no
+    D&A tag, `_bridge_inputs` fills `anchor.d_and_a` from CIQ. On the committed corpus that is
+    GOOGL: its `agree` is CIQ against CIQ, so the independent count is overstated by 1 (5 real of
+    the 6 shown). The fix: score a page whose `anchor.d_and_a.source` is CIQ's as internal or
+    unchecked, or carry the D&A's provenance into `band_checks`.
+  - **The currency back-fill does not refuse a page whose comps export has left the folder.** If
+    the page carries a comps-derived peer grid but the comps workbook is gone, the comps proof is
+    skipped and the block omits both comps panels. This is round 1's fix for the comps book. No
+    committed page is affected: all 27 folders hold their comps export.
 - **The six anchors that never reach the guards carry no block**, so the scorecard reads them as
   not run. It cannot tell "never reached" from "predates the field" off the page; its reason names
   both.
