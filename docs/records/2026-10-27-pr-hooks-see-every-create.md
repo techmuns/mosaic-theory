@@ -35,6 +35,12 @@ directory it runs in. It changed in three ways:
 - It joins a backslash-newline into one command. Before, a `\`-continued `gh api` call lost every
   field on its later lines.
 
+Each piece of the prefix grammar matches only one way. A `$` opens a `$(…)` only where a `(`
+follows it, and an `env -u`/`--unset` name never starts with `-`. This branch's first draft let
+both match two ways, so a long run of either, ending in no create, backtracked exponentially:
+22 `$(a)` segments took 1.2 s, and each one more doubled it. `main`'s grammar had neither
+ambiguity. A hook runs on every Bash call, so a pin now holds the reading to linear time.
+
 Quoted strings and heredoc bodies are still data. A commit message or a test file that mentions
 any of these forms opens nothing. Commands after `;`, `&`, `|`, `(` or a newline still count.
 
@@ -109,7 +115,7 @@ cites another PR.
   | this branch | #812's form | `pr comment …/pull/812 --body "@codex review"` |
   | this branch | `gh api` route, #812's real API record as the output | `pr comment …/pull/812 --body "@codex review"` |
 
-- **Pins.** `tests/test_claude_hooks.py` has 5 new tests (51 pass in the file). Their commands are
+- **Pins.** `tests/test_claude_hooks.py` has 6 new tests (52 pass in the file). Their commands are
   real ones from the transcripts, with titles, body paths and branch names shortened:
   - the `env`-option and spaced-value forms are read as creates, and their `--head` is read. The
     forms read before still are; mentions and `env -u … gh pr view` are not creates.
@@ -122,6 +128,8 @@ cites another PR.
     or the whole JSON record. A 422 that a pipe hid from the exit code voids nothing.
   - `codex_request.py` asks for one review on each route, with the URL read from the API record.
     On a checkout that changes code, the 8 non-creates post nothing.
+  - the reading stays linear: 25 `$(a)` segments, 37 `-u` and 36 `--unset` with no create after
+    them each finish in under 1 s.
 - **Mutants.** 11 of 11 killed, against the 5 new tests, restored byte for byte, run with
   `PYTHONDONTWRITEBYTECODE=1`:
   - `main`'s own `review_gate.py` (5 of 5 red);
@@ -131,6 +139,10 @@ cites another PR.
   - any method counts; an implied POST ignored; any `…/pulls…` path counts;
   - no `gh api` route in `opens_a_pr`;
   - the `head=` field not read.
+
+  The timing pin was run separately against four grammars: commit 1's, and each of its three
+  ambiguities alone. 4 of 4 are killed, each by a run that takes seconds where the fix takes
+  microseconds.
 
 **BOUNDARY.**
 

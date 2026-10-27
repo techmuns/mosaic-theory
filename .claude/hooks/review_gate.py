@@ -60,9 +60,11 @@ from typing import NamedTuple
 #: Words before a command that only set up how it runs: VAR=value, a wrapper word like `time`,
 #: or `env` with its own options. Two real forms ran unseen until 2026-10-27: `env -u GH_TOKEN gh
 #: pr create` (#812) and `GH_TOKEN=$(cat ~/.mosaic_gh_token) gh pr create`, a value holding a
-#: space (60 creates in this project's transcripts).
-_PREFIX = (r"(?:[A-Za-z_]\w*=(?:\$\([^()]*\)|\S)*|time|command|exec|nice|nohup"
-           r"|env(?:\s+(?:-u\s+\S+|--unset\s+\S+|-\S*))*)")
+#: space (60 creates in this project's transcripts). Each piece matches ONE way — a `$` opens a
+#: `$(…)` only where one follows, an option's NAME never starts with `-` — or a long run of them
+#: ending in no create backtracks exponentially (22 `$(a)` segments took 1.2 s, doubling each).
+_PREFIX = (r"(?:[A-Za-z_]\w*=(?:\$\([^()]*\)|[^\s$]|\$(?!\())*|time|command|exec|nice|nohup"
+           r"|env(?:\s+(?:-u\s+[^\s-]\S*|--unset\s+[^\s-]\S*|-\S*))*)")
 #: `gh pr create` (or its alias `gh pr new`) at a COMMAND position (start, or after ; & | ( or a
 #: newline, optionally behind _PREFIX words) — never inside a quoted commit message that merely
 #: mentions it.

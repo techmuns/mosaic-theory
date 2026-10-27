@@ -22,6 +22,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import time
 import uuid
 from types import ModuleType
 
@@ -815,3 +816,15 @@ def test_codex_request_asks_for_a_review_of_a_pr_opened_any_of_these_ways(
     subprocess.run(["git", "-C", str(repo), "switch", "-q", "code"], check=True)
     for command in API_NOT_CREATES:
         assert _opened(repo, command, response=api_printed)[1] == [], command
+
+
+def test_the_create_reading_stays_linear_on_a_long_prefix() -> None:
+    """Found by this change's own check: a `$(…)` value and `-u NAME` could each be matched two
+    ways, so a long run of either that ends in no create backtracked exponentially — 22 `$(a)`
+    segments took 1.2 s, each one more doubling it — and a hook runs on every Bash call."""
+    gate = _load("review_gate.py")
+    for command in ("A=" + "$(a)" * 25 + " echo", "env" + " -u" * 37 + " echo",
+                    "env" + " --unset" * 36 + " echo"):
+        started = time.perf_counter()
+        assert not gate.opens_a_pr(command)
+        assert time.perf_counter() - started < 1.0, command[:24]
