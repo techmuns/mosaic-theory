@@ -60,6 +60,8 @@ def test_anchor_schema_shape_and_dossier_field() -> None:
         # (2026-10-22) the operator's recipe decision in its own block, and the machine's own
         # recipe beside it — absent on a page no operator has decided.
         "operator_decision", "machine_recipe_hint",
+        # (2026-10-27) the two band guards' outcomes beside the flag — absent where not reached
+        "band_checks",
     }
     assert set(AnchorMargin.model_fields) == {"value", "unit", "basis", "source", "anchor_years",
                                               "confidence"}

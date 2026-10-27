@@ -311,6 +311,10 @@ class Anchor(BaseModel, frozen=True):
     # SHOWN, never auto-resolved). Both are absent, never null, where no decision exists.
     operator_decision: OperatorDecision | None = None
     machine_recipe_hint: str | None = None
+    # (2026-10-27) the two band guards' OUTCOMES — agree / differ / not_run — beside the flag they
+    # set, which reads the same on a pass and when a guard could not run. Absent, never null,
+    # where the guards were not reached (`band_guards.BandChecks`).
+    band_checks: bg.BandChecks | None = None
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -1291,6 +1295,11 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
         anchor_base_value_per_share=base, anchor_base_value_per_share_diluted=base_diluted,
         anchor_ev_ebit=ev_ebit, overall_confidence=overall,
         data_quality=dq, data_quality_detail=detail,
+        band_checks=bg.BandChecks(
+            recorded_d_and_a=bg.recorded_d_and_a_outcome(
+                implied_d_and_a_margin=mult["implied_d_and_a_margin"], revenue=ltm_rev,
+                recorded_d_and_a=(da[0] / _USD_M if da else None)),
+            market_reconciliation=bg.reconciliation_outcome(recon)),
         midcycle_gap=midcycle_gap(margin_val, margin_years, ltm_ebit=ltm_ebit,
                                   ltm_revenue=ltm_rev, median_source=margin_source,
                                   basis=(None if median_from_ciq
@@ -1305,7 +1314,8 @@ def anchor_absent_fields(anchor: Anchor) -> dict[str, Any]:
     beside it, only where an operator has decided — and inside a decision, the machine's read at
     decision only where a record says what it was). A pydantic `exclude` mapping."""
     out: dict[str, Any] = {k: True for k in ("midcycle_gap", "anchor_base_value_per_share_diluted",
-                                             "operator_decision", "machine_recipe_hint")
+                                             "operator_decision", "machine_recipe_hint",
+                                             "band_checks")
                            if getattr(anchor, k) is None}
     if anchor.operator_decision is not None \
             and anchor.operator_decision.machine_recipe_at_decision is None:
