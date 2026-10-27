@@ -212,15 +212,23 @@ false read:
   generically, and CIQ shows it repaid, so it decides nothing.
 - **The liquidity line prints 11 instruments and does not say so** (`liquidity_covenant_flags`,
   `ciq_sheets.LIQUIDITY_LINE_ROWS`). 9 of the 27 pages hold more (LLY 56, GOOGL 19, NFLX 22). A
-  truncated output that does not print its own truncation.
+  truncated output that does not print its own truncation. **Ruled FIX (coordinator, 2026-10-27),
+  as its own PR after this one merges:** print "11 of N", count the pages that cut, and refresh
+  them behind a fresh proof.
 - **The large filers' debt tables are unread.** NFLX's "3.625 % Senior Notes … May 2017 May 2027",
   LLY's and AMZN's tables carry the maturity in a column the sentence grammar does not reach. These
-  are 108 of the 126 not run; a table reader is its own build.
+  are 108 of the 126 not run; a table reader is its own build. **Ruled DEFER (coordinator,
+  2026-10-27), not accepted.** A note's maturity is fixed at issue, and the check's real target,
+  refinanced bank debt, is covered. A table reader is the coverage path. Falsifier: a page's note
+  maturity that differs from its filing.
 - **20 linked 8-Ks on 7 pages are not read, and not named on the page** (AMZN 3, AORT 2, IT 2,
   NFLX 5, PARR 3, V 1, WLK 4; 2007–2021). They are older than EDGAR's recent submissions window, so
   the index the check reads does not list them. Each is older than its page's latest periodic
   report, so it cannot override that report; reading one could only decide an instrument the newer
-  filings leave unstated. Naming them (or reading them by accession) is the fix.
+  filings leave unstated. **Ruled NO FIX (coordinator, 2026-10-27).** Every one is also older than
+  its page's panel source filing: the newest of the 20 is from 2021, and the earliest panel source
+  on those pages is V's, 2025-11-06. Under this check's own rule none can govern. Reading one could add only an agreement, or a difference the page
+  reports and does not print.
 - **A prior-facility marker is read within 250 characters of the statement.** TJX's 2021 8-K, "and
   its existing 364-day revolving credit agreement maturing in August 2021", sits ~260 characters
   past "terminated its" and reads current. It is harmless there: the 2026 10-Q decides TJX.
