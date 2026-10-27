@@ -209,6 +209,16 @@ def _first_operating(facts: dict[str, Any]) -> date | None:
     return min(dates) if dates else None
 
 
+def _finance_dated(fin_edgar: dict[date, float], d: date) -> bool:
+    """Whether the finance-lease figure used at ``d`` is ``d``'s own. A filer that tags no finance
+    lease anywhere has none to carry — 0 is its figure; one that tags them, but not within a week
+    of ``d``, has only another date's (UBER: complete at year-end alone)."""
+    if not fin_edgar:
+        return True
+    got = _near_dated(fin_edgar, d, _FINANCE_NEAR_DAYS)
+    return got is not None and abs((got[0] - d).days) <= _OPERATING_NEAR_DAYS
+
+
 class _Split(NamedTuple):
     operating: float
     status: str
@@ -307,11 +317,7 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
                         _near(op_edgar, d, _OPERATING_NEAR_DAYS)))
     fin_at = {d: (_near(fin_edgar, d, _FINANCE_NEAR_DAYS) or 0.0) if fin_edgar else 0.0
               for d, *_ in rows_in}
-    # WHETHER THAT FIGURE IS THIS DATE'S: a filer that tags no finance lease anywhere has none to
-    # carry (0 is its figure); one that tags them, but not on this date, has another date's
-    fin_dated = {d: not fin_edgar or (
-        (got := _near_dated(fin_edgar, d, _FINANCE_NEAR_DAYS)) is not None
-        and abs((got[0] - d).days) <= _OPERATING_NEAR_DAYS) for d, *_ in rows_in}
+    fin_dated = {d: _finance_dated(fin_edgar, d) for d, *_ in rows_in}
     proved = {d: fi for d, _t, _l, rs, oe in rows_in if oe is not None and oe > 0
               and (fi := _reconciles(rs, fin_at[d], oe, fin_dated=fin_dated[d])) is not None}
 

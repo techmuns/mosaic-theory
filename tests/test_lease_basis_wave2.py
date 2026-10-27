@@ -72,6 +72,10 @@ def test_a_rent_matching_no_part_still_disagrees() -> None:
     equals no part ($200M: 1.53x, and no part is $200M) stays a difference."""
     f = _facts(_WLK)
     assert lbm.rent_component(f, date(2025, 12, 31), 300.0, 306.0) is None
+    # a filer whose total IS its one part: a rent equal to both agrees, and is not a narrower cost
+    one = _facts({"LeaseCost": [("2025-01-01", "2025-12-31", 178.0, "2026-02-26")],
+                  "OperatingLeaseCost": [("2025-01-01", "2025-12-31", 178.0, "2026-02-26")]})
+    assert lbm.rent_component(one, date(2025, 12, 31), 178.0, 178.0) is None
     assert lbm.rent_component(f, date(2025, 12, 31), 200.0, 306.0) is None
     assert lbm.rent_disagrees(200.0, 306.0) is True
 
@@ -94,6 +98,16 @@ def test_uber_has_a_complete_finance_figure_only_at_year_end() -> None:
     assert fin == {date(2019, 12, 31): pytest.approx(308.0)}
     near = lbm._near_dated(fin, date(2019, 9, 30), lbm._FINANCE_NEAR_DAYS)
     assert near is not None and near[0] == date(2019, 12, 31)
+
+
+def test_only_a_figure_within_a_week_is_the_dates_own() -> None:
+    """UBER's complete series: the year-end is its own date's figure, the quarter before is not —
+    and a filer tagging no finance lease anywhere has 0 as its figure on every date."""
+    fin = lbm._complete(_facts(_UBER_FIN), *lbm._FINANCE_TAGS)
+    assert lbm._finance_dated(fin, date(2019, 12, 31)) is True
+    assert lbm._finance_dated(fin, date(2019, 9, 30)) is False
+    assert lbm._finance_dated(fin, date(2019, 3, 31)) is False   # nothing within reach at all
+    assert lbm._finance_dated({}, date(2019, 9, 30)) is True
 
 
 def test_uber_carried_finance_figure_is_unchecked_not_unreconciled() -> None:
