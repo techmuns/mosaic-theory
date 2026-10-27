@@ -5848,6 +5848,234 @@
         "source_ref": "CIQ Capital Structure Details — A 2026 filed Jul-15-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-07-15",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0000320187-26-000193",
+            "filed": "2026-10-02",
+            "read_as": "the latest periodic report",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000320187-26-000020",
+            "filed": "2026-03-09",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000320187-25-000008",
+            "filed": "2025-03-10",
+            "read_as": "an 8-K the page links",
+            "statements": 4,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000320187-24-000009",
+            "filed": "2024-03-11",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000320187-23-000006",
+            "filed": "2023-03-13",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "2.375% Corporate Term Notes - November 1, 2026",
+            "ciq_maturity_date": "2026-11-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "2.75% Corporate Term Note March 27, 2027",
+            "ciq_maturity_date": "2027-03-27",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "2.85% Corporate Term Note March 27, 2030",
+            "ciq_maturity_date": "2030-03-27",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "3.25% Corporate Term Note March 27, 2040",
+            "ciq_maturity_date": "2040-03-27",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "3.375% Corporate Term Notes March 27, 2050",
+            "ciq_maturity_date": "2050-03-27",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "3.375% Corporate Term Notes November 1, 2046",
+            "ciq_maturity_date": "2046-11-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "3.625% Corporate Term Note May 1, 2043",
+            "ciq_maturity_date": "2043-05-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 7,
+            "description": "3.875% Corporate Term Notes - November 1, 2045",
+            "ciq_maturity_date": "2045-11-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 8,
+            "description": "364-day Committed Credit Facility",
+            "ciq_maturity_date": "2027-03-05",
+            "check": "agree",
+            "filing_maturity": "2027-03-05",
+            "source": "8-K 0000320187-26-000020 (filed 2026-03-09)",
+            "source_filed": "2026-03-09",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "The 364-Day Credit Facility matures on March 5, 2027",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 9,
+            "description": "Commercial Paper Program",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 10,
+            "description": "Committed Credit Facilities",
+            "ciq_maturity_date": "2030-03-07",
+            "check": "agree",
+            "filing_maturity": "2030-03-07",
+            "source": "8-K 0000320187-25-000008 (filed 2025-03-10)",
+            "source_filed": "2025-03-10",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "The Five Year Credit Facility matures on March 7, 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 11,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -14713,6 +14941,14 @@
       "writer": "refresh",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_structure"
       ]
     }
   ],

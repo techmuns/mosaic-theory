@@ -24,6 +24,7 @@ from vinci.edgar import EdgarClient
 from vinci.edgar.client import SHARES_TAG_WAVG
 from vinci.eod import EodClient, PolygonEodClient
 from vinci.eod.client import CARRY_DAYS, carry_forward
+from vinci.netcache import HttpError
 from vinci.resolver import EntityResolver
 from vinci.resolver.aliases import detect_renames, load_aliases, write_aliases
 from vinci.resolver.instrument import FOREIGN_PRIVATE_ISSUER_FORMS
@@ -149,7 +150,7 @@ FOREIGN_LINE_TYPES: tuple[str, ...] = (*DEPOSITARY_TYPES, "OS")
 DROP_STAGES: tuple[str, ...] = (
     "no_price", "no_shares", "ads_count_unresolved", "out_of_band", "below_adv_floor",
     "unknown_sic", "non_operating", "unknown_type", "non_common_equity", "foreign_private_issuer",
-    "duplicate_class",
+    "fpi_status_unread", "duplicate_class",
 )
 
 
@@ -532,7 +533,17 @@ def build_universe(
                           StampedInput(value=ptype, as_of=reference_date,
                                        source="Polygon security reference"))
                     continue
-                report = resolver.latest_report(ident.cik, reference_date)
+                try:
+                    report = resolver.latest_report(ident.cik, reference_date)
+                except HttpError as exc:
+                    # AN UNREAD INDEX IS NOT A DOMESTIC FILER (#828, round 1): the line is held
+                    # out under its own reason and counted, never admitted by default.
+                    _drop(ident.eod_symbol, "fpi_status_unread",
+                          f"the issuer's filing index could not be read, so whether it files as a "
+                          f"foreign private issuer is unknown — held out, never admitted by "
+                          f"default ({exc})",
+                          StampedInput(value=None, source="SEC submissions index"))
+                    continue
                 if report is not None and report[0] in FOREIGN_PRIVATE_ISSUER_FORMS:
                     _drop(ident.eod_symbol, "foreign_private_issuer",
                           f"the issuer's latest periodic report is a {report[0]} (filed "

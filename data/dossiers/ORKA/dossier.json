@@ -3499,6 +3499,37 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Mar-12-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-03-12",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001213900-26-087231",
+            "filed": "2026-08-10",
+            "read_as": "the latest periodic report",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "Operating Lease Liability",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -9186,6 +9217,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.ciq_currency"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_structure"
       ]
     }
   ],

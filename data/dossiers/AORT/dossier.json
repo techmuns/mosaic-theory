@@ -5253,6 +5253,206 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-18-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-02-18",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001628280-26-054746",
+            "filed": "2026-08-07",
+            "read_as": "the latest periodic report",
+            "statements": 6,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001628280-26-035798",
+            "filed": "2026-05-18",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001628280-26-032097",
+            "filed": "2026-05-07",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001628280-25-043099",
+            "filed": "2025-09-29",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000784199-25-000145",
+            "filed": "2025-09-15",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000950157-24-000061",
+            "filed": "2024-01-18",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-20-176533",
+            "filed": "2020-06-23",
+            "read_as": "an 8-K the page links",
+            "statements": 1,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001398344-17-015456",
+            "filed": "2017-12-01",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "1.40% Sparkasse Zollernalb KFW Loan 2 with Kreditanstalt fur Wiederaufbau Bank",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          },
+          {
+            "instrument": 1,
+            "description": "Convertible Senior Notes",
+            "ciq_maturity_date": "2025-07-01",
+            "check": "agree",
+            "filing_maturity": "2025-07-01",
+            "source": "8-K 0000950157-24-000061 (filed 2024-01-18)",
+            "source_filed": "2024-01-18",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-20-176533 (filed 2020-06-23)"
+            ],
+            "quote": "4.250% convertible senior notes due July 1, 2025",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "Finance Lease Obligation",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 3,
+            "description": "New Delayed Draw Term Loan Facility",
+            "ciq_maturity_date": "2031-01-18",
+            "check": "agree",
+            "filing_maturity": "2031-01-18",
+            "source": "10-Q 0001628280-26-054746 (filed 2026-08-07)",
+            "source_filed": "2026-08-07",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0000784199-25-000145 (filed 2025-09-15)"
+            ],
+            "quote": "extension of the maturity date of the existing term loans (the “Existing Term Loan Facility”) and the existing revolving credit facility (the “Existing Revolving Credit Facility”) under the Credit Agreement by one year to January 18, 2031",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "Notes Payable",
+            "ciq_maturity_date": "2026-04-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 6,
+            "description": "Secured Revolving Credit Facility",
+            "ciq_maturity_date": "2031-01-18",
+            "check": "agree",
+            "filing_maturity": "2031-01-18",
+            "source": "10-Q 0001628280-26-054746 (filed 2026-08-07)",
+            "source_filed": "2026-08-07",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0000784199-25-000145 (filed 2025-09-15)"
+            ],
+            "quote": "extension of the maturity date of the existing term loans (the “Existing Term Loan Facility”) and the existing revolving credit facility (the “Existing Revolving Credit Facility”) under the Credit Agreement by one year to January 18, 2031",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 7,
+            "description": "Secured Term Loan Facility",
+            "ciq_maturity_date": "2031-01-18",
+            "check": "agree",
+            "filing_maturity": "2031-01-18",
+            "source": "10-Q 0001628280-26-054746 (filed 2026-08-07)",
+            "source_filed": "2026-08-07",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0000784199-25-000145 (filed 2025-09-15)"
+            ],
+            "quote": "extension of the maturity date of the existing term loans (the “Existing Term Loan Facility”) and the existing revolving credit facility (the “Existing Revolving Credit Facility”) under the Credit Agreement by one year to January 18, 2031",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -13970,6 +14170,14 @@
       "writer": "refresh",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_structure"
       ]
     }
   ],

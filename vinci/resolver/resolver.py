@@ -47,6 +47,7 @@ from vinci.schemas.data_record import Identity
 _CT_URL = "https://www.sec.gov/files/company_tickers.json"
 _CTE_URL = "https://www.sec.gov/files/company_tickers_exchange.json"
 _SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik}.json"
+_SUBMISSIONS_PAGE = "https://data.sec.gov/submissions/{name}"
 _ARCHIVE_DOC = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 _ONE_DAY = 86_400.0
 #: how many periodic reports, newest first, may be opened to find one whose cover tags its symbols
@@ -212,8 +213,26 @@ class EntityResolver:
 
     def latest_report(self, cik: int | str, as_of: date) -> tuple[str, date, str] | None:
         """``(form, filed, accession)`` of the issuer's latest periodic report filed by ``as_of`` —
-        a 20-F or 40-F marks a foreign private issuer (:func:`instrument.latest_report`)."""
-        return latest_report(self.submissions(pad_cik(cik)), as_of)
+        a 20-F or 40-F marks a foreign private issuer (:func:`instrument.latest_report`).
+
+        THE WHOLE INDEX, NOT ONLY ITS RECENT BLOCK (Codex, #828). A heavy 6-K filer's recent block
+        can run out before its 20-F, and reading only that block took "no report there" for "not a
+        foreign private issuer". When the recent block holds none, the older pages are read, newest
+        first, skipping any that begins after ``as_of``. A page the SEC will not serve RAISES: an
+        issuer that could not be classified is never admitted as a domestic one. None means the
+        whole index holds no periodic report by ``as_of`` (a new registrant)."""
+        sub = self.submissions(pad_cik(cik))
+        found = latest_report(sub, as_of)
+        if found is not None or self._http is None:
+            return found
+        for page in sub.get("filings", {}).get("files", []):
+            if page.get("filingFrom") and date.fromisoformat(page["filingFrom"]) > as_of:
+                continue
+            rows = cast(dict[str, Any], self._http.get_json(
+                _SUBMISSIONS_PAGE.format(name=page["name"]), ttl_seconds=30 * _ONE_DAY))
+            if (found := latest_report({"filings": {"recent": rows}}, as_of)) is not None:
+                return found
+        return None
 
     def registered_line(self, cik: int | str, ticker: str, as_of: date) -> RegisteredLine | None:
         """How the issuer's latest cover page filed on or before ``as_of`` registers ``ticker`` —

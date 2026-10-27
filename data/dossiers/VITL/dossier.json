@@ -4013,11 +4013,13 @@
             "principal_musd": null,
             "coupon": "NA",
             "floating_rate": "Benchmark",
-            "maturity_date": "2029-04-09",
+            "maturity_date": "2029-08-04",
             "seniority": "Senior",
             "secured": true,
             "convertible": false,
-            "currency": "USD"
+            "currency": "USD",
+            "ciq_maturity_date": "2029-04-09",
+            "maturity_source": "8-K 0001193125-26-336692 (filed 2026-08-06)"
           },
           {
             "description": "Operating Lease Liabilities",
@@ -4205,6 +4207,81 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-02-26",
+        "bound": "2026-08-14",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001193125-26-336753",
+            "filed": "2026-08-06",
+            "read_as": "the latest periodic report",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-26-336692",
+            "filed": "2026-08-06",
+            "read_as": "an 8-K after the panel",
+            "statements": 1,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "Finance Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 1,
+            "description": "JPMorgan Credit Facility",
+            "ciq_maturity_date": "2029-04-09",
+            "check": "differ",
+            "filing_maturity": "2029-08-04",
+            "source": "8-K 0001193125-26-336692 (filed 2026-08-06)",
+            "source_filed": "2026-08-06",
+            "governs": true,
+            "also_stated_by": [],
+            "quote": "The Revolving Credit Facility is scheduled to mature on August 4, 2029",
+            "springing": [
+              {
+                "clause": "will instead mature on the date that is 90 days prior to the then-scheduled maturity date of the Term Loan Credit Facility.",
+                "springs_to": null,
+                "source": "8-K 0001193125-26-336692 (filed 2026-08-06)"
+              }
+            ],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -8591,7 +8668,9 @@
   },
   "caveats": [
     "primary-source: 5 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)",
-    "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-06, EDGAR 8-K item 2.02), the oldest by 16d: valuation multiples as-of 2026-07-21; implied-TEV inputs as-of 2026-07-29. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it."
+    "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-06, EDGAR 8-K item 2.02), the oldest by 16d: valuation multiples as-of 2026-07-21; implied-TEV inputs as-of 2026-07-29. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it.",
+    "Debt maturity: the filing governs 'JPMorgan Credit Facility' — CIQ's capital-structure panel (A 2025 filed Feb-26-2026) dates it 2029-04-09, the 8-K 0001193125-26-336692 (filed 2026-08-06) states 2029-08-04. This page prints 2029-08-04; prose written before this check may still cite the panel's date.",
+    "Debt maturity: 'JPMorgan Credit Facility' matures earlier on a condition — it matures 2029-08-04, and the filing says “will instead mature on the date that is 90 days prior to the then-scheduled maturity date of the Term Loan Credit Facility.” [8-K 0001193125-26-336692 (filed 2026-08-06)]."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
@@ -11924,6 +12003,15 @@
       "writer": "refresh",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "caveats",
+        "mechanical.capital_structure"
       ]
     }
   ],

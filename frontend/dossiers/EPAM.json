@@ -5190,6 +5190,91 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-02-26",
+        "bound": "2026-08-24",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001352010-26-000046",
+            "filed": "2026-08-06",
+            "read_as": "the latest periodic report",
+            "statements": 1,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001352010-26-000019",
+            "filed": "2026-03-05",
+            "read_as": "an 8-K after the panel",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001352010-21-000039",
+            "filed": "2021-10-25",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001352010-17-000022",
+            "filed": "2017-05-26",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "Long Term Debt - Other",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Other Borrowings line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 1,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 2,
+            "description": "Revolving Credit Facility",
+            "ciq_maturity_date": "2030-10-03",
+            "check": "agree",
+            "filing_maturity": "2030-10-03",
+            "source": "10-Q 0001352010-26-000046 (filed 2026-08-06)",
+            "source_filed": "2026-08-06",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "The 2025 Credit Agreement matures on October 3, 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -14002,6 +14087,14 @@
       "writer": "refresh",
       "layers": [
         "anchor"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_structure"
       ]
     }
   ],

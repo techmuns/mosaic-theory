@@ -2552,6 +2552,190 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Mar-16-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-03-16",
+        "bound": "2026-08-24",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001628280-26-055372",
+            "filed": "2026-08-10",
+            "read_as": "the latest periodic report",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000947871-25-000313",
+            "filed": "2025-03-17",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001760689-24-000021",
+            "filed": "2024-06-04",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001760689-22-000094",
+            "filed": "2022-09-29",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001213900-21-039093",
+            "filed": "2021-07-28",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001213900-21-007125",
+            "filed": "2021-02-05",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001213900-19-003702",
+            "filed": "2019-03-07",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "Convertible Bond - CNY",
+            "ciq_maturity_date": "2027-01-31",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 1,
+            "description": "Convertible Loan With Shareholder - Delayed Draw Term Loan",
+            "ciq_maturity_date": "2026-05-28",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "Convertible Loan With Shareholder - Initial Term Loan",
+            "ciq_maturity_date": "2026-05-28",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "Loan Facilities Agreement With a Group of Lenders Led by a Bank in China",
+            "ciq_maturity_date": "2026-12-10",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "Long-term Loan Agreement With a Chinese Bank",
+            "ciq_maturity_date": "2027-06-19",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "Notes Payable",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 6,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 7,
+            "description": "Short-term Loan Agreements and Bank Facilities With Chinese Banks",
+            "ciq_maturity_date": "2027-06-30",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -9051,6 +9235,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.ciq_currency"
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.capital_structure"
       ]
     }
   ],

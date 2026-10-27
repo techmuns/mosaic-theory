@@ -384,6 +384,35 @@ def _currency_stated_usd(page: dict[str, Any]) -> ItemResult:
     return ItemResult(counts=dict(c))
 
 
+def _maturity_vs_filing(page: dict[str, Any]) -> ItemResult:
+    mc = _get(page, "mechanical", "capital_structure", "maturity_check")
+    if not isinstance(mc, dict):
+        return ItemResult(not_run="no maturity_check on the page — it predates the field, or the "
+                                  "back-fill refused it (refresh.maturity_check_transform); "
+                                  "assembly writes it")
+    c: Counter[str] = Counter()
+    excluded = 0
+    for r in mc.get("rows") or []:
+        v = r.get("check") if isinstance(r, dict) else None
+        if v == CHECK_AGREE:
+            c[CONFIRMED] += 1
+        elif v == CHECK_DIFFER:
+            # a filing filed on or after the panel's own source governs: the page states the lag
+            c[DIFFERS_STATED if r.get("governs") is True else DIFFERS_UNEXPLAINED] += 1
+        elif v == CHECK_NOT_RUN:
+            if r.get("excluded") is True:
+                excluded += 1
+            else:
+                c[UNCHECKED] += 1
+        else:
+            raise ValueError(f"{page.get('ticker')}: a maturity_check row's check is {v!r}, not "
+                             "an outcome this scorecard knows "
+                             f"({[CHECK_AGREE, CHECK_DIFFER, CHECK_NOT_RUN]})")
+    if not c and not excluded:
+        return ItemResult(not_run="maturity_check lists no instrument")
+    return ItemResult(counts=dict(c), excluded=excluded)
+
+
 CHECKS: tuple[Check, ...] = (
     Check("ebitda_vs_xbrl", "CIQ quarterly EBITDA vs the same quarter rebuilt from the filings",
           "CIQ Financials (quarterly) Income Statement 'EBITDA', the four quarters of its LTM",
@@ -581,6 +610,22 @@ CHECKS: tuple[Check, ...] = (
           "only where a back-fill found one",
           "pages carrying mechanical.ciq_currency — one unit per money panel the folder holds",
           None, None, ("wrong_unit",), _currency_stated_usd),
+    Check("maturity_vs_filing",
+          "Each CIQ panel maturity vs the newest filing that states it",
+          "CIQ Financials→Capital Structure Details: each instrument's 'Maturity'",
+          "the latest 10-Q/10-K, the 8-Ks with Item 1.01/2.03 filed after the panel's source "
+          "filing and the 8-Ks the page's covenant pointers link, none after the reference date — "
+          "read by an anchored sentence grammar (edgar.debt_maturities)", INDEPENDENT, "instrument",
+          "exact, at the precision the filing states (a day, a month or a year). Agreement needs "
+          "the filing's set of current maturities for the class to equal the page's; a difference "
+          "only where the pairing is forced (one instrument, one date) — and never for a note or "
+          "a generic 'Credit Agreement', which can confirm a date but not move one",
+          "pages carrying capital_structure.maturity_check — one unit per instrument",
+          "the filing was filed on or after the panel's own source filing, so the panel lags it "
+          "and the filing's date governs the page (maturity_check row `governs`)",
+          "a lease, commercial-paper or other-borrowings line, a note with no single coupon, or "
+          "an instrument the panel gives no maturity — no filing statement names one",
+          ("wrong_file", "wrong_period"), _maturity_vs_filing),
 )
 CHECK_IDS = tuple(c.id for c in CHECKS)
 
@@ -638,9 +683,11 @@ FAMILIES: tuple[Family, ...] = (
                 "differ in sign for ordinary reasons (capex, seasonality)"),
     Family("financials.capital_structure", "financials",
            ("Financials→Capital Structure Details", "Financials→Capital Structure Summary"),
-           "debt instruments and maturities", checks=("wall_vs_10q", "currency_stated_usd"),
-           note="run only where the 10-Q states a 12-month maturity figure; the rest of the panel "
-                "(coupons, the later maturities) is not set against the filings"),
+           "debt instruments and maturities",
+           checks=("wall_vs_10q", "maturity_vs_filing", "currency_stated_usd"),
+           note="each maturity is set against the newest filing that states it "
+                "(maturity_vs_filing); the 12-month wall only where the 10-Q states that figure; "
+                "coupons and principal are not set against the filings"),
     Family("financials.segments", "financials", ("Financials→Segments",), "segment revenue",
            checks=("currency_stated_usd",),
            note="internal on the currency the panel states, and nothing else; segment profit on "
