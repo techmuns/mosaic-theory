@@ -78,9 +78,15 @@ superseded-by:
 | recorded D&A vs the sheet's implied D&A | 6 | 1 (VITL) | 14 | the ex-lease history carries no implied D&A margin |
 | market reconciliation | 20 | 1 (VITL) | 0 | — |
 
-  **One of the six D&A agreements is CIQ against CIQ** (Codex, #819, deferred — see below). GOOGL
-  tags no EDGAR D&A, so its anchor's D&A comes from CIQ's Cash Flow through the #816 bridge. The
-  check counts it as independent anyway, which makes 5 genuinely independent confirmations, not 6.
+  **One of the six D&A agreements is CIQ against CIQ, and is not scored as independent** (Codex,
+  #819 round 3; fixed on the operator's instruction after the review cap). GOOGL tags no EDGAR
+  D&A, so its anchor's D&A comes from CIQ's Cash Flow through the #816 bridge.
+  - `band_checks.d_and_a_source` records whose D&A it is: `ciq` on GOOGL, `edgar` on the other 20.
+    The anchor sets it from its own `vendor_filled`; the back-fill reads it off the anchor's
+    vendor-bridge line, which must match its `vendor_bridge` flag.
+  - The scorecard confirms only an EDGAR agreement. A CIQ-filled one is unchecked: two CIQ
+    figures agreeing confirm nothing about CIQ. A difference stays one either way.
+  - So 5 independent confirmations, not 6.
 
   Six anchors never reach the guards and carry no block: FUBO, ORKA and TECX (no own-history
   multiple), MVST and NCNO (R2), UBER (R4). Before this build, a page with no recorded-D&A flag had
@@ -169,19 +175,24 @@ sure such a workbook is refused rather than misread.
   each a tripwire; the stored read and the flag pinned on the function's AST), each back-fill
   proof refusing on its own, an end-to-end invariant over the committed blocks, and the scorecard
   mapping. A core pin covers the fallback-based split.
-- **The band-check pins** (`tests/test_band_checks.py`, 10 tests):
+- **The band-check pins** (`tests/test_band_checks.py`, 13 tests):
   - through `compute_anchor`'s synthetic facts: agree/agree on a coherent band; each guard that
     trips differs alone; a band with no implied D&A margin, or no market cap, reads not_run —
     never agree; an anchor that never reaches the guards writes no key;
   - every committed page without the block loads, serializes unchanged and renders (old JSON);
   - END TO END, every committed block is exactly what the back-fill rebuilds from its page;
-  - each back-fill proof refuses on its own, each case asserted to exist on the corpus first.
-- **Mutation:** 42 mutants of the new production code, each run in a scratch copy of the tree
+  - each back-fill proof refuses on its own, each case asserted to exist on the corpus first;
+  - the D&A's provenance: EDGAR's → `edgar`, a CIQ-filled one → `ciq`; a CIQ agreement is not an
+    independent confirmation while a CIQ difference still counts; the back-fill upgrades a block
+    written before the field and refuses a vendor-bridge line its flag does not match.
+- **Mutation:** 51 mutants of the new production code, each run in a scratch copy of the tree
   whose unmutated baseline passes, all killed:
   - currency: 13 in `ciq_sheets`, 3 in the assembly call site, 6 in the back-fill, 4 in the CIQ
     source's check;
   - core: 1 (the derived-class split restored, which three pins kill);
-  - band checks: 5 in `band_guards`, 2 in `anchor.py`, 6 in the back-fill, 2 in the scorecard.
+  - band checks: 5 in `band_guards`, 2 in `anchor.py`, 6 in the back-fill, 2 in the scorecard;
+  - the D&A provenance (round 3): 1 in the serializer, 1 in `anchor.py`, 4 in the back-fill, 3 in
+    the scorecard — 9.
 - **The scorecard, by the real command:** `vinci audit quality --source ciq --write` on the
   back-filled pages wrote `data/snapshots/data_quality/ciq/2026-10-27.json`.
 
@@ -190,10 +201,10 @@ or per panel for the new check):
 
 | | BEFORE | AFTER |
 |---|---|---|
-| measured at | 47d8ca27 (main), page-set sha256 `e6e09ad9…` | d65d4f50, inputs matching it, page-set sha256 `b660504a…` |
+| measured at | 47d8ca27 (main), page-set sha256 `e6e09ad9…` | 820f414a, inputs matching it, page-set sha256 `4dedc3df…` |
 | checks | 15 | 18 |
 | `currency_stated_usd` | — | 449 of 449 panels confirmed on 25 pages; FUBO, TECX not run |
-| `recorded_d_and_a_vs_edgar` | — | 6 confirmed, 1 unexplained (VITL), 14 unchecked on 21 pages; 6 not run |
+| `recorded_d_and_a_vs_edgar` | — | 5 confirmed, 1 unexplained (VITL), 15 unchecked (14 ex-lease, GOOGL's CIQ-filled D&A) on 21 pages; 6 not run |
 | `market_reconciliation` | — | 20 confirmed, 1 unexplained (VITL) on 21 pages; 6 not run |
 | coverage, 25 families (ind / int / single / unchecked) | 8 / 4 / 10 / 3 | 9 / 6 / 9 / 1 |
 | UNSCORED entries | 2 (the scale check, `anchor.data_quality`) | 1 (the scale check — item 10's STOPPED part) |
@@ -225,7 +236,7 @@ single-source):
 - **Item 10's guide and wall causes:** the 27 committed pages at 47d8ca27, one unit per page, read
   off each page's stored inputs (no EDGAR read).
 - **Band guards:** the same 27 pages. Measured at 47d8ca27 by re-running the producer's
-  functions on the stored inputs; back-filled at a2d2186f; scored at d65d4f50.
+  functions on the stored inputs; back-filled at a2d2186f, provenance added at 4d179d4a; scored at 820f414a.
 - **Scale check:** `ciq_balance.extract` on the 27 page names' folders in the assembler's copy,
   2026-10-27.
 - **Mutation counts:** over the 42 listed mutants, against `tests/test_ciq_currency.py` (the
@@ -235,12 +246,8 @@ single-source):
 **FOUND, NOT FIXED (out of scope; reported).**
 
 - **The scale check's outcome** belongs wherever assembly keeps the CIQ bridge (L2's lane).
-- **DEFERRED after the review cap (Codex, #819 round 3, both P2):**
-  - **`recorded_d_and_a_vs_edgar` counts a vendor-filled D&A as independent.** Where EDGAR has no
-    D&A tag, `_bridge_inputs` fills `anchor.d_and_a` from CIQ. On the committed corpus that is
-    GOOGL: its `agree` is CIQ against CIQ, so the independent count is overstated by 1 (5 real of
-    the 6 shown). The fix: score a page whose `anchor.d_and_a.source` is CIQ's as internal or
-    unchecked, or carry the D&A's provenance into `band_checks`.
+- **DEFERRED after the review cap (Codex, #819 round 3, P2):** (its other round-3 finding, a CIQ-filled
+  D&A scored as independent, was FIXED on the operator's instruction — above)
   - **The currency back-fill does not refuse a page whose comps export has left the folder.** If
     the page carries a comps-derived peer grid but the comps workbook is gone, the comps proof is
     skipped and the block omits both comps panels. This is round 1's fix for the comps book. No

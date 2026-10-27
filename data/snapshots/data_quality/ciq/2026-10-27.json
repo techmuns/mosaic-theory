@@ -6,7 +6,7 @@
  },
  "boundary": {
   "measured_on": "2026-10-27",
-  "git_head": "d65d4f50",
+  "git_head": "820f414a",
   "inputs_match_head": true,
   "reads": "data/dossiers/*/dossier.json",
   "item_noun": "page",
@@ -40,7 +40,7 @@
    "WERN",
    "WLK"
   ],
-  "inputs_sha256": "b660504a4c6c2658f4970268ce5af9734c4a163172d3bf85365c83a02a025954",
+  "inputs_sha256": "4dedc3df90b46aa41e7d7e89699a837ef3a1c8a5314de6b4b6c4588b317663bd",
   "note": "reads the committed pages only, never the licensed workbooks"
  },
  "statuses": {
@@ -2944,7 +2944,7 @@
    "second_source": "EDGAR XBRL depreciation and amortisation, latest fiscal year (the anchor's d_and_a)",
    "independence": "independent",
    "unit": "page",
-   "tolerance": "within 8x either way (band_guards.recorded_d_and_a_check) — an order-of-magnitude screen, the anchor's band_checks. Not run on the ex-lease history, which carries no implied D&A margin",
+   "tolerance": "within 8x either way (band_guards.recorded_d_and_a_check) — an order-of-magnitude screen, the anchor's band_checks. Not run on the ex-lease history, which carries no implied D&A margin. An agreement counts only where the recorded D&A is EDGAR's (band_checks.d_and_a_source): one the CIQ workbook filled is CIQ against CIQ, unchecked; a difference counts either way",
    "population": "pages whose anchor reached the band guards (anchor.band_checks)",
    "stated_reason": null,
    "excluded_rule": null,
@@ -2958,10 +2958,10 @@
     "items": 27,
     "items_run": 21,
     "units": 21,
-    "confirmed": 6,
+    "confirmed": 5,
     "differs_stated": 0,
     "differs_unexplained": 1,
-    "unchecked": 14,
+    "unchecked": 15,
     "excluded": 0,
     "items_not_run": 6,
     "items_not_applicable": 0
@@ -3021,10 +3021,10 @@
      "not_run": "no anchor.band_checks — the anchor never reached the band guards (no own-history multiple, an R2 or R4 recipe), or it predates the field and did not reproduce (refresh.band_checks_backfill)"
     },
     "GOOGL": {
-     "confirmed": 1,
+     "confirmed": 0,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 1
     },
     "IT": {
      "confirmed": 1,
@@ -3722,7 +3722,7 @@
      "independence": "independent",
      "items_run": 21,
      "units": 21,
-     "confirmed": 6
+     "confirmed": 5
     },
     {
      "id": "market_reconciliation",
