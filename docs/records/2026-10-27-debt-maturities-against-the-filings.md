@@ -178,7 +178,7 @@ false read:
     pinned. The case-sensitivity rule's own pin is PARR's "the prior ABL Credit Facility … (“ABL
     Credit Facility due 2031”", where a case-blind marker would supersede the NEW name.
 - **The scorecard, by the real command:** `vinci audit quality --source ciq --write` on the
-  committed back-filled pages (`inputs_match_head` true, git head 324ad0b9). It REPLACED this date's
+  committed back-filled pages (`inputs_match_head` true, git head dcf02a5f). It REPLACED this date's
   snapshot, which #819 wrote at 820f414a and which stays in history.
   - `maturity_vs_filing`: 208 instruments on 27 of 27 pages — 77 confirmed, 5 differ (stated),
     0 unexplained, 126 unchecked, 75 excluded.
