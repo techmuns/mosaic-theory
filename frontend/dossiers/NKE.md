@@ -419,7 +419,7 @@ _9 undated / later aggregate line item(s) in the appendix panel_
   - **Events of default:** acceleration · Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes,… — per an 8-K filed 2025-03-10, amended 2026-03-09
   - **Interest / coupon:** Base Rate plus Applicable Margin plus 2% per annum (for Term SOFR / Alternative Currency Advances, otherwise applicable… — per an 8-K filed 2025-03-10
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
-  - **Interest / coupon:** Term SOFR plus the Applicable Margin (Applicable Margin in basis points based on Applicable Rating Level: Level I 35.75… — per an 8-K filed 2023-03-13
+  - **Interest / coupon:** UNKNOWN — not verified since 2023-03-13: a later exhibit (filed 2024-03-11) states this term, but its quote could not be matched to the filing, so its value is withheld. Last verified: Term SOFR plus the Applicable Margin (Applicable Margin in basis points based on Applicable Rating Level: Level I 35.75…
   - **Maturity:** March 7, 2025 · March 7, 2025 (Termination Date), subject to 364-day extension per Section 2.6 and Term Out Option under Section 2.10 (… — per an 8-K filed 2023-03-13, amended 2024-03-11
   - **Events of default:** acceleration · Mandatory prepayment (Section 2.5.3(b)): if Total Outstandings exceed 105% of Aggregate Commitments due to FX changes,… — per an 8-K filed 2023-03-13, amended 2024-03-11
   - **Interest / coupon:** applicable rate (including Applicable Margin) plus 2% per annum — per an 8-K filed 2023-03-13
@@ -553,7 +553,7 @@ _Source §: 8-K 0000320187-25-000008 · nike-364xdaycreditagreemen.htm · amende
 |---|---|---|
 | Conversion price / mechanics | UNKNOWN | not stated in 8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm |
 | Principal / commitment amount | $1,000,000,000 (aggregate Commitments on the Effective Date); increase option up to $500,000,000 additional per Section 2.7.1 (minimum $50,000,000 per request) | amended by 0000320187-24-000009 |
-| Interest / coupon rate | Term SOFR plus the Applicable Margin (Applicable Margin in basis points based on Applicable Rating Level: Level I 35.75, Level II 48.0, Level III 58.5, Level IV 69.0); Term SOFR Adjustment 0.10% (10… — full verbatim in JSON | base (footer) |
+| Interest / coupon rate | UNKNOWN — not verified since 2023-03-13: a later exhibit (filed 2024-03-11) states this term, but its quote could not be matched to the filing, so its value is withheld — (E5) refused: the model's quote is not in 8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm. Last verified: Term SOFR plus the Applicable Margin (Applicable Margin in basis points based on Applicable Rating Level: Level I 35.75, Level II 48.0, Level III 58.5, Level IV 69.0); Term SOFR Adjustment 0.10% (10… — full verbatim in JSON | last verified: base (footer) |
 | Maturity date | March 7, 2025 · March 7, 2025 (Termination Date), subject to 364-day extension per Section 2.6 and Term Out Option under Section 2.10 (one year after Termination Date) | amended by 0000320187-24-000009 |
 | Financial-maintenance covenants | UNKNOWN | not stated in 8-K 0000320187-24-000009 · nike-364xdaycreditagreemen.htm |
 | Security / collateral / guarantors | Unsecured facility (no collateral stated); Company guarantees obligations of each Designated Borrower pursuant to Company Guaranty Agreement (Exhibit M). Ratings reference Company's long-term, senior… — full verbatim in JSON | amended by 0000320187-24-000009 |
