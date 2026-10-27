@@ -1,0 +1,31 @@
+{
+ "epam_credit_agreement": {
+  "url": "https://www.sec.gov/Archives/edgar/data/1352010/000135201021000039/exhibit101-arcreditagreeme.htm",
+  "quote": "5.3 Mandatory Prepayments . (a) [Reserved]. (b) [Reserved]. ... (d) Alternative Currencies . If the Administrative Agent notifies the Borrower at any time that the aggregate amount of all Loans and Letter of Credit Obligations denominated in Alternative Currencies at such time exceeds an amount equal to 105% of the Alternative Currency Sublimit then in effect, then, within five (5) Business Days after receipt of such notice, the Borrower shall prepay Loans and/or Cash Collateralize Letters of Credit in an aggregate amount sufficient to reduce such amount as of such date of payment to an amount not to exceed 100% of the Alternative Currency Sublimit then in effect.",
+  "term": "Mandatory prepayment / events of default",
+  "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
+  "piece": "(d) Alternative Currencies . If the Administrative Agent notifies the Borrower at any time that the aggregate amount of all Loans and Letter of Credit Obligations denominated in Alternative Currencies at such time exceeds an amount equal to 105% of the Alternative Currency Sublimit then in effect, then, within five (5) Business Days after receipt of such notice, the Borrower shall prepay Loans and/or Cash Collateralize Letters of Credit in an aggregate amount sufficient to reduce such amount as of such date of payment to an amount not to exceed 100% of the Alternative Currency Sublimit then in effect"
+ },
+ "tjx_credit_agreement": {
+  "url": "https://www.sec.gov/Archives/edgar/data/109198/000119312521202939/d169110dex101.htm",
+  "quote": "“ Cash Collateralize ” means to pledge and deposit with or deliver to the Administrative Agent, for the benefit of the Administrative Agent, L/C Issuers or Swing Line Lender (as applicable) and the Lenders, as collateral for L/C Obligations... The Borrower, and to the extent provided by any Lender, such Lender, hereby grants to (and subjects to the control of) the Administrative Agent... a first priority security interest in all such cash, deposit accounts and all balances therein",
+  "term": "Security / collateral / guarantors",
+  "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
+  "piece": "a first priority security interest in all such cash, deposit accounts and all balances therein"
+ },
+ "v_credit_agreement": {
+  "url": "https://www.sec.gov/Archives/edgar/data/1403161/000119312513032823/d476341dex101.htm",
+  "quote": "Each Base Rate Advance shall bear interest ... at a rate per annum equal to (x) the Base Rate for such day plus (y) the Applicable Margin in effect from time to time. ... Each Eurocurrency Advance shall bear interest ... at a rate per annum equal to (x) the Eurocurrency Rate plus (y) the Applicable Margin in effect from time to time",
+  "term": "Interest / coupon rate",
+  "source_ref": "8-K 0001193125-13-032823 · d476341dex101.htm",
+  "piece": "at a rate per annum equal to (x) the Base Rate for such day plus (y) the Applicable Margin in effect from time to time"
+ },
+ "tjx_q1_fy27_release": {
+  "url": "https://www.sec.gov/Archives/edgar/data/109198/000010919826000023/tjxq1fy27earningspressrele.htm",
+  "note": "style, class and id attributes stripped except the page-break styles; text and tags as filed (both conversions verified identical)"
+ },
+ "wern_q2_2026_release": {
+  "url": "https://www.sec.gov/Archives/edgar/data/793074/000079307426000129/wern-2026x630xex991.htm",
+  "note": "style, class and id attributes stripped except the page-break styles; text and tags as filed (both conversions verified identical)"
+ }
+}

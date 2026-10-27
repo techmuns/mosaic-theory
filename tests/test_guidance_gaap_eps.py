@@ -49,9 +49,11 @@ def test_the_gaap_range_beside_a_non_gaap_one_is_the_gaap_one() -> None:
 
 def test_a_non_gaap_diluted_eps_is_never_read_as_gaap() -> None:
     """Concentrix 8-K, verbatim: "Non-GAAP diluted EPS of $2.65 to $2.77" — both the `non-` and the
-    `non-GAAP ` lookbehinds, on the real sentence."""
-    assert _guidance("• Non-GAAP diluted EPS of $2.65 to $2.77, assuming approximately 62.4 "
-                     "million diluted common shares outstanding", "x") == []
+    `non-GAAP ` lookbehinds, on the real sentence. Since 2026-10-27 (§5.0 row 30) the range IS read,
+    as ADJUSTED EPS; it was unread before, which is what this pin first asserted."""
+    got = _by(_guidance("• Non-GAAP diluted EPS of $2.65 to $2.77, assuming approximately 62.4 "
+                        "million diluted common shares outstanding", "x"))
+    assert [(g[0], g[2], g[3]) for g in got] == [("adjusted eps", 2.65, 2.77)], got
 
 
 def test_continues_to_plan_opens_a_run_and_a_plan_noun_does_not() -> None:
