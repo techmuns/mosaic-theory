@@ -1,8 +1,8 @@
 ---
 id: 2026-10-27-price-flags-checked-against-tiingo
-status: open
+status: shipped
 date: 2026-10-27
-prs: []
+prs: [835]
 supersedes:
 superseded-by:
 ---
