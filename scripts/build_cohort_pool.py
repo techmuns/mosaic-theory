@@ -64,8 +64,8 @@ OUT = SNAP / "cohort_pool.jsonl"
 #: `foreign_private_issuer` JOINED 2026-10-27, so the 2026-08-26 ruling above still holds. The
 #: operator then took foreign private issuers out of the screened population (until FPI
 #: readiness), not out of their industries: an industry's move is the industry's wherever the
-#: issuer files, and without this stage the 255 names the 2026-10-16 screen judged would leave the
-#: medians as well as the queue.
+#: issuer files, and without this stage the 262 lines it removes from the 2026-10-16 build (85 typed
+#: ADRC, 114 on a 20-F, 63 on a 40-F) would leave the medians as well as the queue.
 POOLABLE = ("out_of_band", "below_adv_floor", "no_shares", "foreign_private_issuer")
 
 #: How many EDGAR resolver failures are tolerated before the run is abandoned. A few dead CIKs are

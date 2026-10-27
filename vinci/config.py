@@ -68,8 +68,9 @@ class UniverseConfig(BaseModel, frozen=True):
     allowed_security_types: tuple[str, ...] = ("CS", "ADRC", "OS", "GDR")
     # FOREIGN PRIVATE ISSUERS ARE OUT OF THE PRIMARY POPULATION until STATE row 4's FPI readiness
     # lands (operator ruling 2026-10-27, closing row 33): the dossier altitude cannot yet underwrite
-    # one (IFRS, 6-K, Section 16, foreign-currency workbooks), and they were 255 of the 2,065
-    # names the 2026-10-16 screen judged. A line is one when the feed types it a depositary receipt
+    # one (IFRS, 6-K, Section 16, foreign-currency workbooks), and they were 262 of the 2,065
+    # names the 2026-10-16 screen judged (85 typed ADRC, 114 on a 20-F, 63 on a 40-F). A line is
+    # one when the feed types it a depositary receipt
     # or foreign ordinary (`ADRC`/`GDR`/`OS`), OR its issuer's latest periodic report filed by the
     # reference date is a 20-F or 40-F — never by country of incorporation alone, so a
     # foreign-domiciled 10-K filer stays. They drop at the named stage `foreign_private_issuer`,
