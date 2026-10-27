@@ -30,6 +30,7 @@ from vinci.resolver.instrument import (
     cover_lines,
     is_debt_title,
     latest_periodic,
+    match_line,
     registered_line,
     symbol_key,
 )
@@ -104,20 +105,35 @@ def test_the_cover_is_the_latest_periodic_report_filed_by_the_reference_date() -
     assert latest_periodic({"filings": {"recent": {}}}, date(2026, 10, 16)) is None
 
 
+#: a Part III 10-K/A filed after the 10-Q — the shape of a periodic report whose cover tags no
+#: trading symbol (its accession and document are invented; its form is the real case's)
+_UNTAGGED = ("10-K/A", "2026-09-30", "0001273685-26-000080", "adam-20251231x10ka.htm")
+_UNTAGGED_URL = ("https://www.sec.gov/Archives/edgar/data/1273685/000127368526000080/"
+                 "adam-20251231x10ka.htm")
+
+
 class _Http:
     """Serves the frozen submissions block and the frozen cover — and records what was asked."""
 
-    def __init__(self) -> None:
+    def __init__(self, *, with_untagged_amendment: bool = False) -> None:
         self.asked: list[tuple[str, float | None]] = []
+        recent = {k: list(v) for k, v in _FIX["adamas_recent_filings"].items()}
+        if with_untagged_amendment:
+            for k, v in zip(("form", "filingDate", "accessionNumber", "primaryDocument"),
+                            _UNTAGGED, strict=True):
+                recent[k].insert(0, v)
+        self._recent = recent
 
     def get_json(self, url: str, *, ttl_seconds: float | None = None,
                  params: object = None) -> Any:
         assert url.endswith(f"CIK{_ADAMAS}.json"), url
-        return {"filings": {"recent": _FIX["adamas_recent_filings"]}}
+        return {"filings": {"recent": self._recent}}
 
     def get_text(self, url: str, *, ttl_seconds: float | None = None,
                  params: object = None) -> str:
         self.asked.append((url, ttl_seconds))
+        if url == _UNTAGGED_URL:
+            return "<html><body>Amendment No. 1 — Part III only</body></html>"
         assert url == _COVERS["Adamas Trust"]["url"], url
         return _html("Adamas Trust")
 
@@ -131,8 +147,41 @@ def test_the_resolver_reads_the_cover_its_filing_index_names() -> None:
     assert reg == RegisteredLine(symbol="ADAMG", title="9.125% Senior Notes due 2030",
                                  form="10-Q", filed=date(2026, 7, 31),
                                  accession="0001273685-26-000069")
+    reg = resolver.registered_line(_ADAMAS, "ADAM", date(2026, 10, 16))
+    assert reg is not None and not reg.is_debt
+    # one issuer's lines share one cover: the document is read and parsed once
     assert http.asked == [(_COVERS["Adamas Trust"]["url"], None)]
-    assert resolver.registered_line(_ADAMAS, "ADAM", date(2026, 10, 16)).is_debt is False  # type: ignore[union-attr]
+
+
+def test_a_cover_that_tags_no_symbol_defers_to_the_report_before_it() -> None:
+    """A Part III 10-K/A tags no trading symbol. Taken as "the cover" it would hide the 10-Q's —
+    ADAMG's notes title among them — until the next quarter. The newest cover that DOES tag its
+    symbols is read instead."""
+    http = _Http(with_untagged_amendment=True)
+    reg = EntityResolver(http=http).registered_line(  # type: ignore[arg-type]
+        _ADAMAS, "ADAMG", date(2026, 10, 16))
+    assert reg is not None and reg.is_debt and reg.accession == "0001273685-26-000069"
+    assert [u for u, _ in http.asked] == [_UNTAGGED_URL, _COVERS["Adamas Trust"]["url"]]
+    # the negative: a report filed after the reference date is not read at all
+    http = _Http(with_untagged_amendment=True)
+    EntityResolver(http=http).registered_line(  # type: ignore[arg-type]
+        _ADAMAS, "ADAMG", date(2026, 9, 29))
+    assert [u for u, _ in http.asked] == [_COVERS["Adamas Trust"]["url"]]
+
+
+def test_a_symbol_tagged_twice_is_debt_only_if_every_context_says_so() -> None:
+    """Mission Produce's real cover tags AVO to its rights-plan preferred, not its common. A cover
+    that tagged a common's symbol into a notes context too must not exclude the common; a symbol
+    whose only context is a note still reads as debt."""
+    c = _COVERS["Brown-Forman"]
+    meta = {"form": c["form"], "filed": date.fromisoformat(c["filed"]), "accession": c["accession"]}
+    lines = cover_lines(_html("Brown-Forman"))
+    note = next(t for s, t in lines if s == "BF28")
+    common = next(t for s, t in lines if s == "BFB")
+    twice = match_line([("BFB", note), ("BFB", common)], "BF-B", **meta)
+    assert twice is not None and not twice.is_debt and twice.title == common
+    only = match_line([("BFB", note)], "BF-B", **meta)
+    assert only is not None and only.is_debt
 
 
 # --- the gate, through the REAL builder -----------------------------------------------------------

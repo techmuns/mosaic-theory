@@ -90,29 +90,40 @@ def cover_lines(doc_html: str) -> list[tuple[str | None, str | None]]:
     return out
 
 
-def latest_periodic(submissions: dict[str, Any],
-                    as_of: date) -> tuple[str, date, str, str] | None:
-    """``(form, filed, accession, primary document)`` of the issuer's latest periodic report filed
-    on or before ``as_of``, from the submissions index's RECENT block — or None when it holds none.
-    The older pages are not walked: a filer still trading has a periodic report in its recent
-    block, and one that has none has no current cover to read."""
+def periodic_filings(submissions: dict[str, Any],
+                     as_of: date) -> list[tuple[str, date, str, str]]:
+    """``(form, filed, accession, primary document)`` of the issuer's periodic reports filed on or
+    before ``as_of``, newest first, from the submissions index's RECENT block. The older pages are
+    not walked: a filer still trading has a periodic report in its recent block, and one that has
+    none has no current cover to read."""
     recent = submissions.get("filings", {}).get("recent", {})
     rows = zip(recent.get("form", []), recent.get("filingDate", []),
                recent.get("accessionNumber", []), recent.get("primaryDocument", []), strict=False)
-    periodic = [(date.fromisoformat(d), f, a, p) for f, d, a, p in rows
-                if f in PERIODIC_FORMS and p and date.fromisoformat(d) <= as_of]
-    if not periodic:
-        return None
-    filed, form, acc, doc = max(periodic)
-    return form, filed, acc, doc
+    periodic = sorted(((date.fromisoformat(d), f, a, p) for f, d, a, p in rows
+                       if f in PERIODIC_FORMS and p and date.fromisoformat(d) <= as_of),
+                      reverse=True)
+    return [(form, filed, acc, doc) for filed, form, acc, doc in periodic]
+
+
+def latest_periodic(submissions: dict[str, Any],
+                    as_of: date) -> tuple[str, date, str, str] | None:
+    """The newest of :func:`periodic_filings`, or None when there is none."""
+    filings = periodic_filings(submissions, as_of)
+    return filings[0] if filings else None
 
 
 def registered_line(doc_html: str, ticker: str, *, form: str, filed: date,
                     accession: str) -> RegisteredLine | None:
     """How the cover in ``doc_html`` registers ``ticker``, or None when the symbol is not on it."""
+    return match_line(cover_lines(doc_html), ticker, form=form, filed=filed, accession=accession)
+
+
+def match_line(lines: list[tuple[str | None, str | None]], ticker: str, *, form: str,
+               filed: date, accession: str) -> RegisteredLine | None:
+    """``ticker``'s entry among a cover's ``lines``. A cover can tag one symbol in two contexts
+    (Mission Produce tags AVO to its rights-plan preferred), so a symbol is read as debt only when
+    EVERY context carrying it says so: any other title wins."""
     key = symbol_key(ticker)
-    for sym, title in cover_lines(doc_html):
-        if sym and symbol_key(sym) == key:
-            return RegisteredLine(symbol=sym, title=title, form=form, filed=filed,
-                                  accession=accession)
-    return None
+    found = [RegisteredLine(symbol=sym, title=title, form=form, filed=filed, accession=accession)
+             for sym, title in lines if sym and symbol_key(sym) == key]
+    return next((r for r in found if not r.is_debt), found[0] if found else None)

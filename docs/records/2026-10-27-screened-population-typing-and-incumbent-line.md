@@ -27,11 +27,13 @@ code. The 2026-10-16 population does not change.
      `universe_snapshot.jsonl (the incumbent line)`, not `Polygon ADV`.
 2. **A line its issuer registers as debt leaves at `non_common_equity`**
    (`vinci/resolver/instrument.py`, `EntityResolver.registered_line`, universe Axis 3).
-   - The input is the cover page of the issuer's latest periodic report filed on or before the
-     reference date. Its inline-XBRL `dei:TradingSymbol` / `dei:Security12bTitle` pair is a
-     structured SEC field, keyed by the symbol, in the issuer's own words.
-   - A title that names notes, debentures or bonds excludes the line. The deciding input is the
-     title, stamped with the filing's date and accession.
+   - The input is the cover page of the issuer's newest periodic report filed on or before the
+     reference date that tags its symbols. A Part III 10-K/A tags none, so up to three reports
+     are opened, newest first. Its inline-XBRL `dei:TradingSymbol` / `dei:Security12bTitle` pair
+     is a structured SEC field, keyed by the symbol, in the issuer's own words.
+   - A title that names notes, debentures or bonds excludes the line, but only when EVERY context
+     that tags the symbol says so: covers mis-tag (Mission Produce tags AVO to its rights-plan
+     preferred). The deciding input is the title, stamped with the filing's date and accession.
    - The cover is read only for lines the feed types `CS` that clear every other gate.
    - Nothing else on a cover excludes anything: an unread cover, an absent symbol, a preferred
      line, LP units or an ADS of units changes nothing.
@@ -123,8 +125,9 @@ code. The 2026-10-16 population does not change.
   (what the next weekly will read):
   - **2,065 → 2,065. 0 names leave, 0 enter, 0 caps differ**, and the stats are identical stage
     by stage.
-  - Every `CS` line reaching Axis 3 had its cover read: 2 documents fetched live, none
-    unreadable. None is titled debt.
+  - Every `CS` line reaching Axis 3 had its cover read: 8 documents fetched live, none
+    unreadable. 6 of the 8 were older reports opened because 3 members' covers tag no symbols
+    (TAC, PBT, CIK 878518). None is titled debt.
 - **The U-Haul case on real data.** Same inputs, but the incumbent is the 2026-08-24 population
   (#553), the record U-Haul entered as UHAL. The ONLY difference is UHAL kept, UHAL.B dropped,
   0 caps differing. The UHAL.B row reads: "the incumbent line UHAL — admitted in the 2026-08-24
@@ -139,20 +142,25 @@ code. The 2026-10-16 population does not change.
       reads as an ADV win; an incumbent that fails a gate loses the slot (UHAL.B at its real
       08-24 close); a later-dated snapshot is ignored; bands don't cross; out-of-population rows
       are not incumbents.
-  - `tests/test_registered_debt.py`, 9 pins over EIGHT REAL COVERS frozen verbatim
+  - `tests/test_registered_debt.py`, 11 pins over EIGHT REAL COVERS frozen verbatim
     (`tests/fixtures/cover_page_12b_titles.json`: Adamas, Brunswick, T-Mobile, Brown-Forman,
     Icahn, Coca-Cola FEMSA, U-Haul, Microchip) and Adamas's real filing index:
     - all 21 note titles read as debt; none of the 18 equity titles does;
     - BFB / UHAL.B / UHAL-B match;
     - ADAMK, absent from its cover, is not evidence;
     - the cover is the latest periodic report by the reference date;
-    - the resolver reads the document its filing index names, cached forever;
+    - the resolver reads the document its filing index names, cached forever and parsed once
+      per document;
+    - a cover with no tagged symbol defers to the report before it, and a report filed after the
+      reference date is never opened;
+    - a symbol tagged into two contexts is debt only if both say so;
     - through the real builder, a registered note that out-trades its common is not admitted
       while the common on the same cover is.
-- **Mutations: 10 of 10 red on the intended pin.** Incumbent dropped from the rank key; no as-of
+- **Mutations: 13 of 13 red on the intended pin.** Incumbent dropped from the rank key; no as-of
   bound on the incumbent; out-of-population rows read; cover gate disabled; symbols unfolded; no
   as-of bound on the cover; an absent title read as debt; "notes" dropped from the rule; a TTL on
-  the filed document; the incumbent's row crediting ADV.
+  the filed document; the incumbent's row crediting ADV; and, for the three review fixes, only
+  the newest report opened, the first context deciding, a cover parsed per line.
 - **No paid model call.** The run used SEC and the frozen Polygon cache only.
 
 **BOUNDARY.**
