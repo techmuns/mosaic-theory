@@ -286,11 +286,20 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
 
 def scale_outcome(bundle: CiqBundle, ticker: str) -> CrossCheck:
     """The scale check's outcome for a name's CIQ exports — `extract`'s, which runs it first. A
-    folder with no Financials workbook has nothing to measure: not run."""
+    folder with no Financials workbook has nothing to measure: not run. A workbook `extract` cannot
+    read is not run either — `anchor.ciq_bridge` reads that as "no bridge" and assembly goes on, so
+    the outcome must not raise where the bridge did not; two exports of one kind still raise."""
+    from vinci.dossier.ciq import CiqAmbiguousError
+
     if (bundle.workbook("financials", freq="quarterly") is None
             and bundle.workbook("financials", freq="annual") is None):
         return CHECK_NOT_RUN
-    return extract(bundle, ticker).scale_check
+    try:
+        return extract(bundle, ticker).scale_check
+    except CiqAmbiguousError:
+        raise
+    except Exception:  # noqa: BLE001 — the bridge's own rule: an unreadable workbook is no read
+        return CHECK_NOT_RUN
 
 
 def net_debt_cross_read(facts: CiqFacts, *, market_cap: float | None,

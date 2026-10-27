@@ -54,3 +54,17 @@ def test_revenue_and_no_figure_is_not_run(monkeypatch: pytest.MonkeyPatch) -> No
 
 def test_a_folder_without_financials_is_not_run() -> None:
     assert cb.scale_outcome(_NoWorkbook(), "X") == CHECK_NOT_RUN  # type: ignore[arg-type]
+
+
+def test_an_unreadable_workbook_is_not_run_not_a_crash(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The bridge reads an unreadable workbook as no bridge and assembly goes on; the outcome must
+    not raise where the bridge did not."""
+    class _Held:
+        def workbook(self, kind: str, freq: str | None = None) -> object:
+            return object()
+
+    def boom(_b: Any, _t: str) -> Any:
+        raise ValueError("sheet unreadable")
+
+    monkeypatch.setattr(cb, "extract", boom)
+    assert cb.scale_outcome(_Held(), "X") == CHECK_NOT_RUN  # type: ignore[arg-type]

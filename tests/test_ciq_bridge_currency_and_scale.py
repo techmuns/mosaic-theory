@@ -83,7 +83,9 @@ def test_the_backfill_path_does_not_swallow_the_refusal(
 def test_assembly_stores_the_scale_outcome_on_the_anchor(
         outcome: str, monkeypatch: pytest.MonkeyPatch) -> None:
     """Every outcome reaches the anchor as computed, a differ included — the bridge itself is then
-    refused, and the anchor says why in a structured field rather than a dropped note."""
+    refused (handed on as None), so the outcome is read again, and the anchor says why in a
+    structured field rather than a dropped note."""
+    monkeypatch.setattr(asm, "ciq_bridge", lambda _b, _t: (None, "CIQ extraction REFUSED"))
     monkeypatch.setattr(ciq_balance, "scale_outcome", lambda _b, _t: outcome)
     page = CUT["GOOGL"]["page"]
     got = asm._assembly_anchor(page["mechanical"], facts=CUT["GOOGL"]["companyfacts"],
@@ -97,3 +99,22 @@ def test_an_anchor_without_the_outcome_writes_no_key() -> None:
     a = an.Anchor.model_validate(CUT["GOOGL"]["anchor"])
     assert a.ciq_scale_check is None
     assert "ciq_scale_check" not in a.model_dump_json(exclude=an.anchor_absent_fields(a))
+
+
+def test_a_bridged_read_carries_its_own_outcome(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Where the bridge handed facts on, their own outcome is stored — the workbook is not read
+    twice (code review)."""
+    import dataclasses
+
+    facts = dataclasses.replace(_FACTS, scale_check="agree")
+    monkeypatch.setattr(asm, "ciq_bridge", lambda _b, _t: (facts, None))
+
+    def never(_b: Any, _t: str) -> Any:
+        raise AssertionError("read again")
+
+    monkeypatch.setattr(ciq_balance, "scale_outcome", never)
+    page = CUT["GOOGL"]["page"]
+    got = asm._assembly_anchor(page["mechanical"], facts=CUT["GOOGL"]["companyfacts"],
+                               bundle=CiqBundle.from_files("GOOGL", []), ticker="GOOGL",
+                               computed_at=T0)
+    assert got.ciq_scale_check == "agree"

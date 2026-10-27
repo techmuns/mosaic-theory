@@ -892,7 +892,9 @@ def _assembly_anchor(mech: dict[str, Any], *, facts: dict[str, Any], bundle: Ciq
 
     ciq, _note = ciq_bridge(bundle, ticker)
     anchor = compute_anchor(mech, facts=facts, computed_at=computed_at, ciq=ciq)
-    return anchor.model_copy(update={"ciq_scale_check": scale_outcome(bundle, ticker)})
+    # the bridge's own read carries the outcome; only a refused one (None) is read again
+    scale = ciq.scale_check if ciq is not None else scale_outcome(bundle, ticker)
+    return anchor.model_copy(update={"ciq_scale_check": scale})
 
 
 def assemble_one(

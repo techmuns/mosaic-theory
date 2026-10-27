@@ -894,7 +894,7 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
         from vinci.dossier.manual_store import LocalFolderStore as _Store
         bundle = CiqBundle.from_files(t, _Store.from_config(cfg).files(t))
         ciq, note = ciq_bridge(bundle, t)
-        scale = scale_outcome(bundle, t)
+        scale = ciq.scale_check if ciq is not None else scale_outcome(bundle, t)
         if note:
             print(f"  {t}: {note}")
     except (CiqAmbiguousError, CiqCurrencyError):

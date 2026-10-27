@@ -390,8 +390,8 @@ def edgar_lease_cost(facts: dict[str, Any] | None, fy: date | None) -> tuple[flo
         return total, "LeaseCost"
     parts = [(tag, sign, v) for tag, sign in _LEASE_COST_PARTS
              if (v := _annual(facts, tag, fy)) is not None]
-    if not parts:
-        return None
+    if not any(s > 0 for _t, s, _v in parts):
+        return None             # a sublease income alone is no lease cost
     name = " + ".join(t for t, s, _v in parts if s > 0)
     name += "".join(f" − {t}" for t, s, _v in parts if s < 0)
     return sum(s * v for _t, s, v in parts), name
@@ -406,7 +406,9 @@ def rent_component(facts: dict[str, Any] | None, fy: date | None, rent: float | 
         return None
     if rent_disagrees(rent, lease_cost) is not True:
         return None
-    for tag, _sign in _LEASE_COST_PARTS:
+    for tag, sign in _LEASE_COST_PARTS:
+        if sign < 0:
+            continue            # a sublease income is netted out of the cost, never a part of it
         v = _annual(facts, tag, fy)
         if v is not None and v > 0 and abs(rent - v) <= _PART_MATCH * v:
             return tag

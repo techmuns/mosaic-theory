@@ -76,6 +76,11 @@ def test_a_rent_matching_no_part_still_disagrees() -> None:
     one = _facts({"LeaseCost": [("2025-01-01", "2025-12-31", 178.0, "2026-02-26")],
                   "OperatingLeaseCost": [("2025-01-01", "2025-12-31", 178.0, "2026-02-26")]})
     assert lbm.rent_component(one, date(2025, 12, 31), 178.0, 178.0) is None
+    # a sublease income is netted out of the cost — never a part a rent can equal, nor a total alone
+    sub = _facts({**_WLK, "SubleaseIncome": [("2025-01-01", "2025-12-31", 50.0, "2026-02-26")]})
+    assert lbm.rent_component(sub, date(2025, 12, 31), 50.0, 306.0) is None
+    only = _facts({"SubleaseIncome": [("2025-01-01", "2025-12-31", 5.0, "2026-02-26")]})
+    assert lbm.edgar_lease_cost(only, date(2025, 12, 31)) is None
     assert lbm.rent_component(f, date(2025, 12, 31), 200.0, 306.0) is None
     assert lbm.rent_disagrees(200.0, 306.0) is True
 
