@@ -334,6 +334,97 @@ def latest_annual(points: list[ConceptPoint]) -> ConceptPoint | None:
     return max(annual, key=lambda p: (p.period_end, p.filed))
 
 
+#: An annual is NOT CURRENT once its own concept carries a period ending at least this long after
+#: it: a whole fiscal year (the shortest one :attr:`ConceptPoint.is_annual` admits) has then closed
+#: past it AND been reported, so the annual describes the year before last. MEASURED 2026-10-27 on
+#: 2,161 cached companyfacts: 14,791 of 14,918 served annuals trail their concept's newest period
+#: by at most 280d (a third-quarter 10-Q in a 53-week year), the next are KalVista's seven at 335d
+#: (an eight-month transition period, after which its newest annual IS its last full year), and
+#: then 120 at 365d or more. Set by that gap — never by what a reading would have paid.
+ANNUAL_STALE_DAYS = ANNUAL_MIN_DAYS
+
+
+class StaleAnnual(NamedTuple):
+    """The latest annual of a concept, withheld because the concept has been reported past it.
+
+    Both ends travel with the refusal, so a reader can go and check it: the annual that was served
+    and the newer period that proves it is not the current year."""
+
+    concept: str
+    tag: str  # the alias whose annual was served
+    period_end: date  # that annual's period end
+    newer_tag: str  # the alias carrying the concept's newest period
+    newer_end: date  # that period's end
+    lag_days: int
+
+    @property
+    def note(self) -> str:
+        return (f"stale annual {self.concept}: {self.tag} for the year to "
+                f"{self.period_end.isoformat()}, {self.lag_days}d behind {self.newer_tag} to "
+                f"{self.newer_end.isoformat()} — not the current year")
+
+
+def concept_frontier(facts: dict[str, Any], concept: str) -> ConceptPoint | None:
+    """The point with the newest period end ANY alias of ``concept`` carries, of any duration.
+
+    Every alias, not the one :func:`extract_points` serves: the served alias is the one this is
+    measured against. A tie goes to the alias first in priority order.
+
+    A point whose period ends AFTER the day it was filed is skipped: it is a forward-dated
+    context, not a period the filer has reported. Measured 2026-10-27 on the 2,161 cached
+    companyfacts: 61 such points in 18 filers across the eight flow concepts' aliases."""
+    newest: ConceptPoint | None = None
+    for tag in CONCEPT_ALIASES[concept]:
+        for p in points_for_tag(facts, tag, concept=concept):
+            if p.period_end > p.filed:
+                continue
+            if newest is None or p.period_end > newest.period_end:
+                newest = p
+    return newest
+
+
+def stale_against(annual: ConceptPoint, newest: ConceptPoint | None) -> StaleAnnual | None:
+    """``annual`` judged against its concept's newest point — a :class:`StaleAnnual` when it is
+    :data:`ANNUAL_STALE_DAYS` or more behind, else ``None``."""
+    if newest is None:
+        return None
+    lag = (newest.period_end - annual.period_end).days
+    if lag < ANNUAL_STALE_DAYS:
+        return None
+    return StaleAnnual(concept=annual.concept, tag=annual.tag, period_end=annual.period_end,
+                       newer_tag=newest.tag, newer_end=newest.period_end, lag_days=lag)
+
+
+def current_annual(
+    facts: dict[str, Any], concept: str
+) -> tuple[ConceptPoint | None, StaleAnnual | None]:
+    """The latest annual an annual reader may serve AS CURRENT: ``(point, None)``; ``(None, why)``
+    when it is stale; ``(None, None)`` when the concept has no annual at all.
+
+    THE ANNUAL-GRAIN LAG CHECK (STATE.md §5.0 row 11). :func:`extract_points` picks an alias by how
+    far its ANNUAL series reaches against its siblings', and that is right for choosing an alias.
+    It cannot see that the annual it serves is old: a filer that moves to another tag, or stops
+    tagging the annual while still tagging quarters, leaves the walk serving a year that closed
+    long ago. Measured 2026-10-26: Climb Global's capex for FY2019, served beside FY2025 operating
+    cash flow; AbCellera's D&A for FY2023, added to FY2025 operating income.
+
+    ``stale_served`` cannot catch this and is not the check. It measures the served tag's newest
+    point of ANY duration against the filer's frontier, so a tag still carrying fresh quarters
+    passes with a years-old annual (AbCellera's lags 307d, under its 550d), and the filer's
+    frontier is any tag at all, including future-dated contexts (Innodata's reaches 2034).
+    This measures the served ANNUAL against the newest period of its OWN concept.
+
+    A concept that has stopped on EVERY alias is not caught: its newest period IS the served
+    annual's. That family is recorded, not handled
+    (``docs/records/2026-10-27-annual-readers-withhold-a-stale-annual.md``).
+    """
+    served = latest_annual(extract_points(facts, concept))
+    if served is None:
+        return None, None
+    stale = stale_against(served, concept_frontier(facts, concept))
+    return (None, stale) if stale else (served, None)
+
+
 def latest_instant(points: list[ConceptPoint]) -> ConceptPoint | None:
     """Latest balance-sheet value (most recent period_end, then most recent filing)."""
     instants = [p for p in points if p.is_instant] or points
