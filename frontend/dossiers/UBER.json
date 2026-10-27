@@ -4639,11 +4639,13 @@
             "principal_musd": null,
             "coupon": "NA",
             "floating_rate": "Benchmark",
-            "maturity_date": "2029-09-26",
+            "maturity_date": "2031-08-06",
             "seniority": "Senior",
             "secured": false,
             "convertible": false,
-            "currency": "USD"
+            "currency": "USD",
+            "ciq_maturity_date": "2029-09-26",
+            "maturity_source": "8-K 0001552781-26-000414 (filed 2026-08-07)"
           }
         ],
         "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-13-2026)",
@@ -5385,6 +5387,305 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-13-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-02-13",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "8-K",
+            "accession": "0001552781-26-000414",
+            "filed": "2026-08-07",
+            "read_as": "an 8-K after the panel",
+            "statements": 1,
+            "error": null
+          },
+          {
+            "form": "10-Q",
+            "accession": "0001543151-26-000032",
+            "filed": "2026-08-05",
+            "read_as": "the latest periodic report",
+            "statements": 4,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001552781-26-000382",
+            "filed": "2026-07-16",
+            "read_as": "an 8-K after the panel",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001552781-23-000469",
+            "filed": "2023-11-24",
+            "read_as": "an 8-K the page links",
+            "statements": 5,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001552781-23-000109",
+            "filed": "2023-03-14",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001552781-23-000080",
+            "filed": "2023-03-03",
+            "read_as": "an 8-K the page links",
+            "statements": 4,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001552781-22-000307",
+            "filed": "2022-04-05",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001552781-21-000058",
+            "filed": "2021-03-01",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "2025 Convertible Notes",
+            "ciq_maturity_date": "2025-12-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "8-K 0001552781-23-000469 (filed 2023-11-24)",
+            "source_filed": "2023-11-24",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 1 current 0% notes maturity and the page lists 2",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "2027 Senior Note",
+            "ciq_maturity_date": "2027-09-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "8-K 0001552781-23-000469 (filed 2023-11-24)",
+            "source_filed": "2023-11-24",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 1 current 7.5% notes maturity and the page lists 1, and a 7.5% notes statement can confirm a date, never move one",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "2028 Convertible Notes",
+            "ciq_maturity_date": "2028-12-01",
+            "check": "agree",
+            "filing_maturity": "2028",
+            "source": "10-Q 0001543151-26-000032 (filed 2026-08-05)",
+            "source_filed": "2026-08-05",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001552781-23-000469 (filed 2023-11-24)"
+            ],
+            "quote": "0.875 % convertible senior notes due in 2028",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "2028 Exchangeable Senior Notes",
+            "ciq_maturity_date": "2028-05-15",
+            "check": "agree",
+            "filing_maturity": "2028",
+            "source": "10-Q 0001543151-26-000032 (filed 2026-08-05)",
+            "source_filed": "2026-08-05",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "0.00 % exchangeable senior notes due in 2028",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "2028 Senior Note",
+            "ciq_maturity_date": "2028-01-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "2029 Senior Note",
+            "ciq_maturity_date": "2029-08-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "2030 Senior Note",
+            "ciq_maturity_date": "2030-01-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 7,
+            "description": "2031 Senior Notes",
+            "ciq_maturity_date": "2031-01-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 8,
+            "description": "2034 Senior Note",
+            "ciq_maturity_date": "2034-09-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 9,
+            "description": "2035 Senior Notes",
+            "ciq_maturity_date": "2035-09-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 10,
+            "description": "2054 Senior Note",
+            "ciq_maturity_date": "2054-09-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 11,
+            "description": "Commercial Paper Program",
+            "ciq_maturity_date": "2026-07-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 12,
+            "description": "Finance Leases",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 13,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 14,
+            "description": "Senior Unsecured Revolving Loans",
+            "ciq_maturity_date": "2029-09-26",
+            "check": "differ",
+            "filing_maturity": "2031-08-06",
+            "source": "8-K 0001552781-26-000414 (filed 2026-08-07)",
+            "source_filed": "2026-08-07",
+            "governs": true,
+            "also_stated_by": [],
+            "quote": "edit Agreement provides for $7.7 billion in aggregate amount of commitments for senior unsecured revolving loans, which will mature on August 6, 2031",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -6807,7 +7108,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": -1471.0,
             "note": null
           },
           {
@@ -6823,7 +7123,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 1602.0,
             "note": null
           },
           {
@@ -6839,7 +7138,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 1474.0,
             "note": null
           },
           {
@@ -6855,7 +7153,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": -1612.0,
             "note": null
           }
         ],
@@ -11024,7 +11321,8 @@
     "primary-source: 8-K 0001552781-26-000486 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 8-K 0001543151-26-000005 carries 8.01 but no EX-99.1 exhibit was found",
     "primary-source: 3 EX-99.1 release(s) + 1 10-Q parsed (+3.2s fetch)",
-    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bullish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
+    "synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bullish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)",
+    "Debt maturity: the filing governs 'Senior Unsecured Revolving Loans' — CIQ's capital-structure panel (A 2025 filed Feb-13-2026) dates it 2029-09-26, the 8-K 0001552781-26-000414 (filed 2026-08-07) states 2031-08-06. This page prints 2031-08-06; prose written before this check may still cite the panel's date."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
@@ -15041,15 +15339,8 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "caveats",
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -15118,7 +15409,6 @@
       "machine_recipe_at_decision": "R4_forward_ev_ebit"
     },
     "machine_recipe_hint": "R4_forward_ev_ebit",
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

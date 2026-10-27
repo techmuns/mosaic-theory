@@ -6,7 +6,7 @@
  },
  "boundary": {
   "measured_on": "2026-10-27",
-  "git_head": "89f3d9e1",
+  "git_head": "dcf02a5f",
   "inputs_match_head": true,
   "reads": "data/dossiers/*/dossier.json",
   "item_noun": "page",
@@ -40,7 +40,7 @@
    "WERN",
    "WLK"
   ],
-  "inputs_sha256": "4e9e6f0f64af97c1a42b58019552e15cd4b7f0cc0b9cb88cb927d9a75d148865",
+  "inputs_sha256": "cf48f5a64f8a4455a3f505325fbac07ff27da7edba6a2a8d6760b5ee970ed28e",
   "note": "reads the committed pages only, never the licensed workbooks"
  },
  "statuses": {
@@ -72,7 +72,7 @@
    "unit": "quarter",
    "tolerance": "differs beyond 2% of the rebuilt figure AND by at least $1M (ebitda_recon.DIFFERENT_SHARE) — the page's own `different` flag",
    "population": "pages carrying mechanical.financial_summary.ebitda_reconciliation",
-   "stated_reason": "the quarter's own release states an amount matching the gap, or its filing TAGS one (XBRL, a family of unusual-item and D&A-component tags, matched to $1K) — quoted, not attributed; or CIQ's own export itemises unusual items equal to the gap (ebitda_recon.unusual_explains — CIQ's normalisation, by its own account); or another quarter of the LTM differs by the same amount the other way (a period mismatch, offset_by)",
+   "stated_reason": "the quarter's own release states an amount matching the gap (quoted, not attributed)",
    "excluded_rule": null,
    "catches": [
     "wrong_file",
@@ -83,22 +83,21 @@
    ],
    "fleet": {
     "items": 27,
-    "items_run": 24,
-    "units": 96,
-    "confirmed": 40,
-    "differs_stated": 26,
-    "differs_unexplained": 15,
-    "unchecked": 15,
+    "items_run": 25,
+    "units": 100,
+    "confirmed": 37,
+    "differs_stated": 4,
+    "differs_unexplained": 30,
+    "unchecked": 29,
     "excluded": 0,
-    "items_not_run": 3,
+    "items_not_run": 2,
     "items_not_applicable": 0
    },
    "not_run": [
     {
-     "reason": "no ebitda_reconciliation block on the page — no quarterly CIQ export, no EDGAR facts, or the export's four latest columns are not four consecutive quarters",
+     "reason": "no ebitda_reconciliation block on the page",
      "names": [
       "FUBO",
-      "LLY",
       "TECX"
      ]
     }
@@ -107,8 +106,8 @@
    "by_name": {
     "AMZN": {
      "confirmed": 2,
-     "differs_stated": 2,
-     "differs_unexplained": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 2,
      "unchecked": 0
     },
     "AORT": {
@@ -124,40 +123,43 @@
      "unchecked": 0
     },
     "BURL": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 4
+    },
+    "CNXC": {
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 4
+    },
+    "EPAM": {
      "confirmed": 1,
      "differs_stated": 0,
      "differs_unexplained": 3,
      "unchecked": 0
     },
-    "CNXC": {
-     "confirmed": 0,
-     "differs_stated": 2,
-     "differs_unexplained": 2,
-     "unchecked": 0
-    },
-    "EPAM": {
-     "confirmed": 1,
-     "differs_stated": 1,
-     "differs_unexplained": 2,
-     "unchecked": 0
-    },
     "FUBO": {
-     "not_run": "no ebitda_reconciliation block on the page — no quarterly CIQ export, no EDGAR facts, or the export's four latest columns are not four consecutive quarters"
+     "not_run": "no ebitda_reconciliation block on the page"
     },
     "GOOGL": {
-     "confirmed": 2,
+     "confirmed": 0,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 2
+     "unchecked": 4
     },
     "IT": {
      "confirmed": 3,
-     "differs_stated": 1,
-     "differs_unexplained": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
      "unchecked": 0
     },
     "LLY": {
-     "not_run": "no ebitda_reconciliation block on the page — no quarterly CIQ export, no EDGAR facts, or the export's four latest columns are not four consecutive quarters"
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 4
     },
     "MVST": {
      "confirmed": 0,
@@ -167,8 +169,8 @@
     },
     "NCNO": {
      "confirmed": 3,
-     "differs_stated": 1,
-     "differs_unexplained": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
      "unchecked": 0
     },
     "NFLX": {
@@ -179,8 +181,8 @@
     },
     "NKE": {
      "confirmed": 1,
-     "differs_stated": 1,
-     "differs_unexplained": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 3,
      "unchecked": 0
     },
     "ORKA": {
@@ -191,8 +193,8 @@
     },
     "PARR": {
      "confirmed": 3,
-     "differs_stated": 1,
-     "differs_unexplained": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
      "unchecked": 0
     },
     "ROST": {
@@ -203,17 +205,17 @@
     },
     "SMPL": {
      "confirmed": 0,
-     "differs_stated": 4,
-     "differs_unexplained": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 4,
      "unchecked": 0
     },
     "TECX": {
-     "not_run": "no ebitda_reconciliation block on the page — no quarterly CIQ export, no EDGAR facts, or the export's four latest columns are not four consecutive quarters"
+     "not_run": "no ebitda_reconciliation block on the page"
     },
     "TGT": {
      "confirmed": 1,
-     "differs_stated": 1,
-     "differs_unexplained": 2,
+     "differs_stated": 0,
+     "differs_unexplained": 3,
      "unchecked": 0
     },
     "TJX": {
@@ -230,20 +232,20 @@
     },
     "V": {
      "confirmed": 0,
-     "differs_stated": 3,
-     "differs_unexplained": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 3,
      "unchecked": 1
     },
     "VITL": {
      "confirmed": 0,
-     "differs_stated": 3,
-     "differs_unexplained": 1,
+     "differs_stated": 0,
+     "differs_unexplained": 4,
      "unchecked": 0
     },
     "VRRM": {
      "confirmed": 3,
-     "differs_stated": 1,
-     "differs_unexplained": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 1,
      "unchecked": 0
     },
     "WERN": {
@@ -254,8 +256,8 @@
     },
     "WLK": {
      "confirmed": 1,
-     "differs_stated": 2,
-     "differs_unexplained": 1,
+     "differs_stated": 1,
+     "differs_unexplained": 2,
      "unchecked": 0
     }
    }
@@ -663,7 +665,7 @@
    "second_source": "EDGAR operating-lease liability on the same date (finance leases either side)",
    "independence": "independent",
    "unit": "balance-sheet date",
-   "tolerance": "within 2% of EDGAR's figure (lease_basis.RECONCILE_TOL). LIKE WITH LIKE: CIQ's rows less EDGAR's finance leases only where that finance figure is the date's own; rows above the operating figure on a date EDGAR tags no finance lease for are unchecked (lease_basis._split), never a difference",
+   "tolerance": "within 2% of EDGAR's figure (lease_basis.RECONCILE_TOL)",
    "population": "pages whose rent is material (≥5% of EBITDA, lease_basis.MATERIALITY)",
    "stated_reason": "CIQ's balance sheet as originally filed predates ASC 842; EDGAR's figure is a later comparative",
    "excluded_rule": "dates before ASC 842 on both sides — no operating lease to compare",
@@ -866,10 +868,10 @@
    "id": "rent_vs_edgar_lease_cost",
    "title": "CIQ's rent vs EDGAR's lease cost, one fiscal year",
    "subject": "CIQ annual Income Statement 'Net Rental Exp.'",
-   "second_source": "EDGAR's total lease cost the same fiscal year: LeaseCost, else the parts the filer tags, summed (lease_basis.edgar_lease_cost)",
+   "second_source": "EDGAR LeaseCost (else OperatingLeaseCost), the same fiscal year",
    "independence": "independent",
    "unit": "page",
-   "tolerance": "within 1.5x either way (lease_basis.rent_disagrees) — a loose band. Where CIQ's rent equals ONE part of that total (lease_basis.rent_component — WLK's short-term lease cost), it is a narrower cost: unchecked, never a difference",
+   "tolerance": "within 1.5x either way (lease_basis.rent_disagrees) — a loose band",
    "population": "pages carrying mechanical.valuation.lease_basis",
    "stated_reason": null,
    "excluded_rule": null,
@@ -882,10 +884,10 @@
     "items": 27,
     "items_run": 24,
     "units": 24,
-    "confirmed": 22,
+    "confirmed": 21,
     "differs_stated": 0,
-    "differs_unexplained": 0,
-    "unchecked": 2,
+    "differs_unexplained": 2,
+    "unchecked": 1,
     "excluded": 0,
     "items_not_run": 3,
     "items_not_applicable": 0
@@ -978,9 +980,9 @@
      "unchecked": 0
     },
     "NKE": {
-     "confirmed": 1,
+     "confirmed": 0,
      "differs_stated": 0,
-     "differs_unexplained": 0,
+     "differs_unexplained": 1,
      "unchecked": 0
     },
     "ORKA": {
@@ -1052,8 +1054,8 @@
     "WLK": {
      "confirmed": 0,
      "differs_stated": 0,
-     "differs_unexplained": 0,
-     "unchecked": 1
+     "differs_unexplained": 1,
+     "unchecked": 0
     }
    }
   },
@@ -3510,197 +3512,223 @@
    }
   },
   {
-   "id": "ciq_scale_vs_revenue",
-   "title": "The magnitude of each CIQ money figure the bridge reads vs CIQ's own revenue",
-   "subject": "CIQ Financials: cash, total debt, D&A, operating cash flow and capex — the figures the anchor's CIQ bridge may fill a hole from (ciq_balance.extract)",
-   "second_source": "CIQ Financials 'Total Revenue', the same workbook — a scale reference, not a second figure for the same thing",
-   "independence": "internal",
-   "unit": "page",
-   "tolerance": "each figure within [0.0001, 1000]x revenue (ciq_balance._assert_scale) — a UNIT screen by magnitude: whole dollars or billions read as $M land 1,000x outside it. Not run where the workbook reports no revenue or no such figure",
-   "population": "pages carrying anchor.ciq_scale_check",
-   "stated_reason": null,
-   "excluded_rule": null,
+   "id": "maturity_vs_filing",
+   "title": "Each CIQ panel maturity vs the newest filing that states it",
+   "subject": "CIQ Financials→Capital Structure Details: each instrument's 'Maturity'",
+   "second_source": "the latest 10-Q/10-K, the 8-Ks with Item 1.01/2.03 filed after the panel's source filing and the 8-Ks the page's covenant pointers link, none after the reference date — read by an anchored sentence grammar (edgar.debt_maturities)",
+   "independence": "independent",
+   "unit": "instrument",
+   "tolerance": "exact, at the precision the filing states (a day, a month or a year). Agreement needs the filing's set of current maturities for the class to equal the page's; a difference only where the pairing is forced (one instrument, one date) — and never for a note or a generic 'Credit Agreement', which can confirm a date but not move one",
+   "population": "pages carrying capital_structure.maturity_check — one unit per instrument",
+   "stated_reason": "the filing was filed on or after the panel's own source filing, so the panel lags it and the filing's date governs the page (maturity_check row `governs`)",
+   "excluded_rule": "a lease, commercial-paper or other-borrowings line, a note with no single coupon, or an instrument the panel gives no maturity — no filing statement names one",
    "catches": [
-    "wrong_unit"
+    "wrong_file",
+    "wrong_period"
    ],
    "fleet": {
     "items": 27,
-    "items_run": 25,
-    "units": 25,
-    "confirmed": 24,
-    "differs_stated": 0,
+    "items_run": 27,
+    "units": 208,
+    "confirmed": 77,
+    "differs_stated": 5,
     "differs_unexplained": 0,
-    "unchecked": 1,
-    "excluded": 0,
-    "items_not_run": 2,
+    "unchecked": 126,
+    "excluded": 75,
+    "items_not_run": 0,
     "items_not_applicable": 0
    },
-   "not_run": [
-    {
-     "reason": "no anchor.ciq_scale_check — it predates the field, or the back-fill could not prove the folder's Financials export the page's own (ciq_scale_backfill.scale_check_backfill); assembly writes it",
-     "names": [
-      "FUBO",
-      "TECX"
-     ]
-    }
-   ],
+   "not_run": [],
    "not_applicable": [],
    "by_name": {
     "AMZN": {
-     "confirmed": 1,
+     "confirmed": 0,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 3,
+     "excluded": 13
     },
     "AORT": {
-     "confirmed": 1,
+     "confirmed": 4,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 1,
+     "excluded": 3
     },
     "BRBR": {
-     "confirmed": 1,
+     "confirmed": 2,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 0,
+     "excluded": 1
     },
     "BURL": {
-     "confirmed": 1,
+     "confirmed": 4,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 1,
+     "excluded": 2
     },
     "CNXC": {
      "confirmed": 1,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 1,
+     "excluded": 7
     },
     "EPAM": {
      "confirmed": 1,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 0,
+     "excluded": 2
     },
     "FUBO": {
-     "not_run": "no anchor.ciq_scale_check — it predates the field, or the back-fill could not prove the folder's Financials export the page's own (ciq_scale_backfill.scale_check_backfill); assembly writes it"
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 3,
+     "excluded": 1
     },
     "GOOGL": {
-     "confirmed": 1,
+     "confirmed": 4,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 8,
+     "excluded": 7
     },
     "IT": {
-     "confirmed": 1,
+     "confirmed": 5,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 1,
+     "excluded": 2
     },
     "LLY": {
-     "confirmed": 1,
+     "confirmed": 7,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 45,
+     "excluded": 4
     },
     "MVST": {
-     "confirmed": 1,
+     "confirmed": 0,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 5,
+     "excluded": 3
     },
     "NCNO": {
      "confirmed": 1,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 0,
+     "excluded": 2
     },
     "NFLX": {
-     "confirmed": 1,
+     "confirmed": 0,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 19,
+     "excluded": 3
     },
     "NKE": {
-     "confirmed": 1,
+     "confirmed": 2,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 8,
+     "excluded": 2
     },
     "ORKA": {
      "confirmed": 0,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 1
+     "unchecked": 0,
+     "excluded": 1
     },
     "PARR": {
      "confirmed": 1,
-     "differs_stated": 0,
+     "differs_stated": 1,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 2,
+     "excluded": 2
     },
     "ROST": {
-     "confirmed": 1,
+     "confirmed": 6,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 1,
+     "excluded": 1
     },
     "SMPL": {
-     "confirmed": 1,
+     "confirmed": 2,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 0,
+     "excluded": 1
     },
     "TECX": {
-     "not_run": "no anchor.ciq_scale_check — it predates the field, or the back-fill could not prove the folder's Financials export the page's own (ciq_scale_backfill.scale_check_backfill); assembly writes it"
+     "confirmed": 0,
+     "differs_stated": 0,
+     "differs_unexplained": 0,
+     "unchecked": 0,
+     "excluded": 2
     },
     "TGT": {
-     "confirmed": 1,
-     "differs_stated": 0,
+     "confirmed": 0,
+     "differs_stated": 1,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 10,
+     "excluded": 4
     },
     "TJX": {
-     "confirmed": 1,
+     "confirmed": 7,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 0,
+     "excluded": 1
     },
     "UBER": {
-     "confirmed": 1,
-     "differs_stated": 0,
+     "confirmed": 2,
+     "differs_stated": 1,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 9,
+     "excluded": 3
     },
     "V": {
-     "confirmed": 1,
+     "confirmed": 18,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 1,
+     "excluded": 2
     },
     "VITL": {
-     "confirmed": 1,
-     "differs_stated": 0,
+     "confirmed": 0,
+     "differs_stated": 1,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 0,
+     "excluded": 2
     },
     "VRRM": {
-     "confirmed": 1,
-     "differs_stated": 0,
+     "confirmed": 2,
+     "differs_stated": 1,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 0,
+     "excluded": 1
     },
     "WERN": {
-     "confirmed": 1,
+     "confirmed": 0,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 2,
+     "excluded": 1
     },
     "WLK": {
-     "confirmed": 1,
+     "confirmed": 8,
      "differs_stated": 0,
      "differs_unexplained": 0,
-     "unchecked": 0
+     "unchecked": 6,
+     "excluded": 2
     }
    }
   }
@@ -3725,9 +3753,9 @@
     {
      "id": "ebitda_vs_xbrl",
      "independence": "independent",
-     "items_run": 24,
-     "units": 96,
-     "confirmed": 40
+     "items_run": 25,
+     "units": 100,
+     "confirmed": 37
     },
     {
      "id": "currency_stated_usd",
@@ -3802,7 +3830,7 @@
      "independence": "independent",
      "items_run": 24,
      "units": 24,
-     "confirmed": 22
+     "confirmed": 21
     },
     {
      "id": "currency_stated_usd",
@@ -3844,17 +3872,10 @@
      "items_run": 25,
      "units": 449,
      "confirmed": 449
-    },
-    {
-     "id": "ciq_scale_vs_revenue",
-     "independence": "internal",
-     "items_run": 25,
-     "units": 25,
-     "confirmed": 24
     }
    ],
    "unscored": [
-    "ciq_balance.extract — D&A containment and the net-debt cross-read; they run where the anchor reads the CIQ bridge, and their result is a line, never stored on the page (its UNIT check is: ciq_scale_vs_revenue)"
+    "ciq_balance.extract — the UNIT (scale) check against revenue, D&A containment and the net-debt cross-read; runs only in anchor-backfill / anchor-retag on the raw workbooks, and its result is printed, never stored on the page"
    ],
    "note": "EDGAR's net debt sits beside the bridge (ev_bridge.edgar_net_debt) on another basis and is never compared — no tolerance is defined across the two"
   },
@@ -4008,6 +4029,13 @@
      "confirmed": 0
     },
     {
+     "id": "maturity_vs_filing",
+     "independence": "independent",
+     "items_run": 27,
+     "units": 208,
+     "confirmed": 77
+    },
+    {
      "id": "currency_stated_usd",
      "independence": "internal",
      "items_run": 25,
@@ -4016,7 +4044,7 @@
     }
    ],
    "unscored": [],
-   "note": "run only where the 10-Q states a 12-month maturity figure; the rest of the panel (coupons, the later maturities) is not set against the filings"
+   "note": "each maturity is set against the newest filing that states it (maturity_vs_filing); the 12-month wall only where the 10-Q states that figure; coupons and principal are not set against the filings"
   },
   {
    "family": "financials.segments",

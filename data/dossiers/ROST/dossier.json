@@ -5017,6 +5017,142 @@
         "source_ref": "CIQ Capital Structure Details — A 2026 filed Mar-31-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-03-31",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0000745732-26-000041",
+            "filed": "2026-09-01",
+            "read_as": "the latest periodic report",
+            "statements": 6,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "0.875% Unsecured Senior Notes Due 2026",
+            "ciq_maturity_date": "2026-04-15",
+            "check": "agree",
+            "filing_maturity": "2026",
+            "source": "10-Q 0000745732-26-000041 (filed 2026-09-01)",
+            "source_filed": "2026-09-01",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "0.875 % Senior Notes due 2026",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "1.875% Unsecured Senior Notes Due 2031",
+            "ciq_maturity_date": "2031-04-15",
+            "check": "agree",
+            "filing_maturity": "2031",
+            "source": "10-Q 0000745732-26-000041 (filed 2026-09-01)",
+            "source_filed": "2026-09-01",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "1.875 % Senior Notes due 2031",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "4.600% Unsecured Senior Notes Due 2025",
+            "ciq_maturity_date": "2025-04-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "4.700% Unsecured Senior Notes Due 2027",
+            "ciq_maturity_date": "2027-04-15",
+            "check": "agree",
+            "filing_maturity": "2027",
+            "source": "10-Q 0000745732-26-000041 (filed 2026-09-01)",
+            "source_filed": "2026-09-01",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "4.700 % Senior Notes due 2027",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "4.800% Unsecured Senior Notes Due 2030",
+            "ciq_maturity_date": "2030-04-15",
+            "check": "agree",
+            "filing_maturity": "2030",
+            "source": "10-Q 0000745732-26-000041 (filed 2026-09-01)",
+            "source_filed": "2026-09-01",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "4.800 % Senior Notes due 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "5.450% Unsecured Senior Notes Due 2050",
+            "ciq_maturity_date": "2050-04-15",
+            "check": "agree",
+            "filing_maturity": "2050",
+            "source": "10-Q 0000745732-26-000041 (filed 2026-09-01)",
+            "source_filed": "2026-09-01",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "5.450 % Senior Notes due 2050",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 7,
+            "description": "Senior Unsecured Revolving Credit Facility",
+            "ciq_maturity_date": "2030-06-27",
+            "check": "agree",
+            "filing_maturity": "2030-06",
+            "source": "10-Q 0000745732-26-000041 (filed 2026-09-01)",
+            "source_filed": "2026-09-01",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "The Company’s $ 1.3 billion senior unsecured revolving credit facility (“Credit Facility”) expires in June 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -6385,7 +6521,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -6401,7 +6536,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -6417,7 +6551,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -6433,7 +6566,6 @@
             "different": true,
             "matching_amount": "• Second quarter operating profits were $1.1 billion, which includes approximately $253 million from IEEPA tariff refunds.",
             "matching_source": "8-K 0000745732-26-000038 EX-99.1",
-            "ciq_unusual": -253.0,
             "note": null
           }
         ],
@@ -14052,15 +14184,7 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -14142,7 +14266,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

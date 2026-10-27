@@ -4591,6 +4591,335 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-05-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-02-05",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001652044-26-000071",
+            "filed": "2026-07-23",
+            "read_as": "the latest periodic report",
+            "statements": 38,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-26-259830",
+            "filed": "2026-06-05",
+            "read_as": "an 8-K after the panel",
+            "statements": 21,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-26-257724",
+            "filed": "2026-06-04",
+            "read_as": "an 8-K after the panel",
+            "statements": 21,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "1.25 Billion of 4.50% Notes Due 2035 *",
+            "ciq_maturity_date": "2035-05-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "10-Q 0001652044-26-000071 (filed 2026-07-23)",
+            "source_filed": "2026-07-23",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 1 current 4.5% notes maturity and the page lists 1, and a 4.5% notes statement can confirm a date, never move one",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "1.25billion of 3.38% Notes Due 2037 - Euro *",
+            "ciq_maturity_date": "2037-05-06",
+            "check": "agree",
+            "filing_maturity": "2037",
+            "source": "10-Q 0001652044-26-000071 (filed 2026-07-23)",
+            "source_filed": "2026-07-23",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-259830 (filed 2026-06-05)",
+              "8-K 0001193125-26-257724 (filed 2026-06-04)"
+            ],
+            "quote": "3.375% Senior Notes due 2037",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "1.25billion of 3.88% Notes Due 2045- Euro *",
+            "ciq_maturity_date": "2045-05-06",
+            "check": "agree",
+            "filing_maturity": "2045",
+            "source": "10-Q 0001652044-26-000071 (filed 2026-07-23)",
+            "source_filed": "2026-07-23",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-259830 (filed 2026-06-05)",
+              "8-K 0001193125-26-257724 (filed 2026-06-04)"
+            ],
+            "quote": "3.875% Senior Notes due 2045",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "1.25billion of 4.00% Notes Due 2054- Euro *",
+            "ciq_maturity_date": "2054-05-06",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "10-Q 0001652044-26-000071 (filed 2026-07-23)",
+            "source_filed": "2026-07-23",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 3 current 4% notes maturities and the page lists 2",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "1.5 Billion of 5.25% Notes Due 2055 *",
+            "ciq_maturity_date": "2055-05-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "1.5billion of 2.50% Notes Due 2029 - Euro *",
+            "ciq_maturity_date": "2029-05-06",
+            "check": "agree",
+            "filing_maturity": "2029",
+            "source": "10-Q 0001652044-26-000071 (filed 2026-07-23)",
+            "source_filed": "2026-07-23",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-259830 (filed 2026-06-05)",
+              "8-K 0001193125-26-257724 (filed 2026-06-04)"
+            ],
+            "quote": "2.500% Senior Notes due 2029",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "1.5billion of 3.00% Notes Due 2033 - Euro *",
+            "ciq_maturity_date": "2033-05-06",
+            "check": "agree",
+            "filing_maturity": "2033",
+            "source": "10-Q 0001652044-26-000071 (filed 2026-07-23)",
+            "source_filed": "2026-07-23",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-259830 (filed 2026-06-05)",
+              "8-K 0001193125-26-257724 (filed 2026-06-04)"
+            ],
+            "quote": "3.000% Senior Notes due 2033",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 7,
+            "description": "1.5billion of 5.30% Notes Due 2065 *",
+            "ciq_maturity_date": "2065-05-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 8,
+            "description": "16 US Dollar Notes",
+            "ciq_maturity_date": "2026-08-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 9,
+            "description": "20 US Dollar Notes",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 10,
+            "description": "750 Million of 4.00% Notes Due 2030 *",
+            "ciq_maturity_date": "2030-05-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "10-Q 0001652044-26-000071 (filed 2026-07-23)",
+            "source_filed": "2026-07-23",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 3 current 4% notes maturities and the page lists 2",
+            "excluded": false
+          },
+          {
+            "instrument": 11,
+            "description": "Commercial Paper Program",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 12,
+            "description": "Euro Denominated Fixed Rate Senior Unsecured Notes",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          },
+          {
+            "instrument": 13,
+            "description": "Finance Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 14,
+            "description": "Floating-rate Notes Due in 2028",
+            "ciq_maturity_date": "2028-11-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 15,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 16,
+            "description": "Revolving Credit Facilities",
+            "ciq_maturity_date": "2030-04-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 17,
+            "description": "Revolving Credit Facilities",
+            "ciq_maturity_date": "2026-04-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 18,
+            "description": "US Dollar Denominated Fixed Rate Senior Unsecured Notes",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -6101,7 +6430,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
+            "note": "no quarterly D&A tag for this quarter"
           },
           {
             "period_end": "2025-12-31",
@@ -6113,48 +6442,38 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
+            "note": "no quarterly D&A tag for this quarter"
           },
           {
             "period_end": "2026-03-31",
             "ciq_ebitda": 46356.0,
-            "filing_ebitda": 46356.0,
-            "construction": "operating income + D&A",
-            "tags": [
-              "OperatingIncomeLoss",
-              "Depreciation",
-              "AmortizationOfIntangibleAssets"
-            ],
-            "gap": 0.0,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": -36804.0,
-            "note": null
+            "note": "no quarterly D&A tag for this quarter"
           },
           {
             "period_end": "2026-06-30",
             "ciq_ebitda": 48241.0,
-            "filing_ebitda": 48241.0,
-            "construction": "operating income + D&A",
-            "tags": [
-              "OperatingIncomeLoss",
-              "Depreciation",
-              "AmortizationOfIntangibleAssets"
-            ],
-            "gap": 0.0,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": -98999.0,
-            "note": null
+            "note": "no quarterly D&A tag for this quarter"
           }
         ],
         "ciq_ltm": 173410.0,
         "filing_ltm": null,
         "ltm_gap": null,
         "any_different": false,
-        "line": "CIQ's EBITDA matches the filings in each quarter set against them (rebuilt as operating income + D&A) (2 of the four quarters could not be rebuilt) — the LTM the multiples divide is the reported figure.",
+        "line": "CIQ's quarterly EBITDA could not be set against the filings — no quarterly D&A tag for this quarter.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -15308,15 +15627,7 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -15420,7 +15731,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "ciq"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

@@ -5131,6 +5131,91 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-26-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-02-26",
+        "bound": "2026-08-24",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0000793074-26-000140",
+            "filed": "2026-08-07",
+            "read_as": "the latest periodic report",
+            "statements": 1,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000793074-26-000120",
+            "filed": "2026-06-10",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K/A",
+            "accession": "0000793074-26-000090",
+            "filed": "2026-04-14",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000793074-25-000019",
+            "filed": "2025-04-02",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "22 Unsecured Credit Agreement",
+            "ciq_maturity_date": "2027-12-20",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "10-Q 0000793074-26-000140 (filed 2026-08-07)",
+            "source_filed": "2026-08-07",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 1 current credit-facility maturity and the page lists 2",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "Loan Security Agreement Facility",
+            "ciq_maturity_date": "2027-09-21",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "10-Q 0000793074-26-000140 (filed 2026-08-07)",
+            "source_filed": "2026-08-07",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 1 current credit-facility maturity and the page lists 2",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -6658,7 +6743,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
+            "note": "no quarterly D&A tag for this quarter"
           },
           {
             "period_end": "2025-12-31",
@@ -6670,7 +6755,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
+            "note": "no quarterly D&A tag for this quarter"
           },
           {
             "period_end": "2026-03-31",
@@ -6682,7 +6767,7 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
+            "note": "no quarterly D&A tag for this quarter"
           },
           {
             "period_end": "2026-06-30",
@@ -6694,14 +6779,14 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter"
+            "note": "no quarterly D&A tag for this quarter"
           }
         ],
         "ciq_ltm": 341.167,
         "filing_ltm": null,
         "ltm_gap": null,
         "any_different": false,
-        "line": "CIQ's quarterly EBITDA could not be set against the filings — no quarterly D&A — neither a combined D&A tag nor both of Depreciation and AmortizationOfIntangibleAssets for this quarter.",
+        "line": "CIQ's quarterly EBITDA could not be set against the filings — no quarterly D&A tag for this quarter.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14007,15 +14092,7 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -14097,7 +14174,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

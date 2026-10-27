@@ -349,11 +349,11 @@
         "rent_ebitda": 361.846,
         "rent_to_ebitda": 0.028465,
         "rent_fiscal_year": "2025-12-31",
-        "edgar_lease_cost": 14.0,
-        "edgar_lease_cost_tag": "OperatingLeaseCost + VariableLeaseCost",
+        "edgar_lease_cost": 10.3,
+        "edgar_lease_cost_tag": "OperatingLeaseCost",
         "threshold": 0.05,
         "material": false,
-        "materiality": "rent 2.8% of EBITDA (FY ending 2025-12-31: $10M of $362M) — immaterial (<5%); R1 keeps CIQ's TEV/LTM EBITDA history; EDGAR OperatingLeaseCost + VariableLeaseCost that year: $14M",
+        "materiality": "rent 2.8% of EBITDA (FY ending 2025-12-31: $10M of $362M) — immaterial (<5%); R1 keeps CIQ's TEV/LTM EBITDA history; EDGAR OperatingLeaseCost that year: $10M",
         "ex_lease_band": null,
         "refusal": null,
         "reconciled_dates": 0,
@@ -440,8 +440,8 @@
         "note": null
       },
       "liquidity_covenant_flags": {
-        "value": "2021 Term Loan Due 2028 (Term Loans) 687 @ 5.700% Due 2028; Operating Lease (Capital Lease) 38 @ 6.500% Due 2037; Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2030; Senior Notes Due 2029 (Bonds and Notes) 350 @ 5.500% Due 2029",
-        "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-24-2026)",
+        "value": "2021 Term Loan Due 2028 (Term Loans) 687 @ 5.700% Due 2032; Operating Lease (Capital Lease) 38 @ 6.500% Due 2037; Revolving Credit Facility (Revolving Credit) undrawn/– @ NA Due 2030; Senior Notes Due 2029 (Bonds and Notes) 350 @ 5.500% Due 2029",
+        "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-24-2026) — maturity years a filing governs: capital_structure.maturity_check",
         "status": "present",
         "note": null
       },
@@ -3890,13 +3890,6 @@
           "date_basis": "stated",
           "tests_what": "a management-stated dated operating action — the thesis mechanism on a timetable; the following print reads its result",
           "source_ref": "CIQ Key Developments: Verra Mobility Corporation NasdaqCM VRRM Key Developments.rtf · Jun-01-2026"
-        },
-        {
-          "event": "2021 Term Loan Due 2028 $687.1M matures",
-          "expected_date": "2028-03-24",
-          "date_basis": "stated",
-          "tests_what": "refinance / repay / convert before the wall — the survival read",
-          "source_ref": "CIQ capital-structure panel (maturity_date)"
         }
       ],
       "qa_flags": []
@@ -4020,11 +4013,13 @@
             "principal_musd": 687.1,
             "coupon": "5.700%",
             "floating_rate": "Benchmark",
-            "maturity_date": "2028-03-24",
+            "maturity_date": "2032-10-15",
             "seniority": "Senior",
             "secured": true,
             "convertible": false,
-            "currency": "USD"
+            "currency": "USD",
+            "ciq_maturity_date": "2028-03-24",
+            "maturity_source": "10-Q 0001193125-26-335490 (filed 2026-08-05)"
           },
           {
             "description": "Operating Lease",
@@ -4310,6 +4305,131 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-24-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-02-24",
+        "bound": "2026-08-14",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001193125-26-335490",
+            "filed": "2026-08-05",
+            "read_as": "the latest periodic report",
+            "statements": 8,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-25-242530",
+            "filed": "2025-10-17",
+            "read_as": "an 8-K the page links",
+            "statements": 6,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000950170-25-072679",
+            "filed": "2025-05-15",
+            "read_as": "an 8-K the page links",
+            "statements": 1,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001564590-21-015880",
+            "filed": "2021-03-29",
+            "read_as": "an 8-K the page links",
+            "statements": 3,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001104659-18-041476",
+            "filed": "2018-06-21",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "2021 Term Loan Due 2028",
+            "ciq_maturity_date": "2028-03-24",
+            "check": "differ",
+            "filing_maturity": "2032-10-15",
+            "source": "10-Q 0001193125-26-335490 (filed 2026-08-05)",
+            "source_filed": "2026-08-05",
+            "governs": true,
+            "also_stated_by": [
+              "8-K 0001193125-25-242530 (filed 2025-10-17)"
+            ],
+            "quote": "refinance the existing senior secured term loans in an aggregate outstanding principal amount of approximately $ 688.8 million with a new senior secured term loan of the same principal amount maturing on October 15, 2032",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "Operating Lease",
+            "ciq_maturity_date": "2037-01-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 2,
+            "description": "Revolving Credit Facility",
+            "ciq_maturity_date": "2030-10-17",
+            "check": "agree",
+            "filing_maturity": "2030-10-17",
+            "source": "10-Q 0001193125-26-335490 (filed 2026-08-05)",
+            "source_filed": "2026-08-05",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-25-242530 (filed 2025-10-17)"
+            ],
+            "quote": "secured asset-based revolving credit facility with a $ 35.0 million sublimit for the issuance of letters of credit, and matures on October 17, 2030",
+            "springing": [
+              {
+                "clause": "subject to an earlier maturity date in certain circumstances",
+                "springs_to": null,
+                "source": "10-Q 0001193125-26-335490 (filed 2026-08-05)"
+              },
+              {
+                "clause": "subject to an earlier maturity date of 91 days prior to the April 15, 2029 maturity date of VM Consolidated’s $350 million 5.50% Senior Notes due 2029 in the event that such senior notes remain outstanding as of such earlier maturity date",
+                "springs_to": "2029-01-14",
+                "source": "8-K 0001193125-25-242530 (filed 2025-10-17)"
+              }
+            ],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "Senior Notes Due 2029",
+            "ciq_maturity_date": "2029-04-15",
+            "check": "agree",
+            "filing_maturity": "2029-04-15",
+            "source": "8-K 0001193125-25-242530 (filed 2025-10-17)",
+            "source_filed": "2025-10-17",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001564590-21-015880 (filed 2021-03-29)"
+            ],
+            "quote": "April 15, 2029 maturity date of VM Consolidated’s $350 million 5.50% Senior Notes",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -5398,7 +5518,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.023,
             "note": null
           },
           {
@@ -5414,7 +5533,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.021,
             "note": null
           },
           {
@@ -5428,9 +5546,8 @@
             ],
             "gap": 9.352,
             "different": true,
-            "matching_amount": "Three Months Ended December 31, ($ in thousands) 2025 2024 … Impairment of long-lived assets and right of use assets 9,352",
-            "matching_source": "8-K 0001193125-26-067015 EX-99.1",
-            "ciq_unusual": 10.618,
+            "matching_amount": null,
+            "matching_source": null,
             "note": null
           },
           {
@@ -5446,7 +5563,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.0,
             "note": null
           }
         ],
@@ -5454,7 +5570,7 @@
         "filing_ltm": 348.644,
         "ltm_gap": 9.352,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $358M against $349M rebuilt from the filings (+$9M); the quarter to 2025-12-31: CIQ $81M against $72M (+$9M) — its release states a matching amount: “Three Months Ended December 31, ($ in thousands) 2025 2024 … Impairment of long-lived assets and right of use assets 9,352” (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $358M against $349M rebuilt from the filings (+$9M); the quarter to 2025-12-31: CIQ $81M against $72M (+$9M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -8343,7 +8459,9 @@
     "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+0.8s fetch)",
     "RESOLVED (P/E basis) — trailing GAAP P/E 5.6x is one-time-distorted: latest GAAP EPS 0.85 is ~3.1× the recent median 0.28, so 5.6x is not a meaningful 'cheap' read. Clean read: forward adjusted guide $1.19–$1.25 → ~3.9x at the current price; CIQ P/LTM 16.8x uses a different (lower) trailing EPS basis.",
     "EV/EBITDA stale-price caveat — CIQ's Financials→Multiples current TEV/LTM 8.5x is priced at its last Close 2026-03-31, 136d before the 2026-08-14 reference; for a since-re-rated name this 'current' multiple AND the own-history range/percentile built on it are stale. The Comparable-Analysis sheet reads 4.6x on a current price — prefer that figure and re-pull the Financials multiple.",
-    "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-05, EDGAR 8-K item 2.02), the oldest by 23d: valuation multiples as-of 2026-07-13; implied-TEV inputs as-of 2026-07-28. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it."
+    "Panel-freshness caveat — 2 CIQ valuation panel(s) predate the latest earnings print (2026-08-05, EDGAR 8-K item 2.02), the oldest by 23d: valuation multiples as-of 2026-07-13; implied-TEV inputs as-of 2026-07-28. The valuation read may rest on a pre-print P&L — re-pull CIQ after the print before relying on it.",
+    "Debt maturity: the filing governs '2021 Term Loan Due 2028' — CIQ's capital-structure panel (A 2025 filed Feb-24-2026) dates it 2028-03-24, the 10-Q 0001193125-26-335490 (filed 2026-08-05) states 2032-10-15, also stated by 8-K 0001193125-25-242530 (filed 2025-10-17). This page prints 2032-10-15; prose written before this check may still cite the panel's date.",
+    "Debt maturity: 'Revolving Credit Facility' springs to 2029-01-14 — it matures 2030-10-17, and the filing says “subject to an earlier maturity date in certain circumstances” [10-Q 0001193125-26-335490 (filed 2026-08-05)]; “subject to an earlier maturity date of 91 days prior to the April 15, 2029 maturity date of VM Consolidated’s $350 million 5.50% Senior Notes due 2029 in the event that such senior notes remain outstanding as of such earlier maturity date” [8-K 0001193125-25-242530 (filed 2025-10-17)]."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
@@ -11955,16 +12073,10 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary",
-        "mechanical.valuation"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "caveats",
+        "mechanical.capital_structure",
+        "mechanical.catalyst_calendar",
+        "mechanical.quality"
       ]
     }
   ],
@@ -12050,7 +12162,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

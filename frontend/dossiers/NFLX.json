@@ -5792,6 +5792,376 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Jan-23-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-01-23",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001065280-26-000212",
+            "filed": "2026-07-17",
+            "read_as": "the latest periodic report",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-26-015951",
+            "filed": "2026-01-20",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-25-327462",
+            "filed": "2025-12-22",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-25-308651",
+            "filed": "2025-12-05",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "3.000% Senior Notes",
+            "ciq_maturity_date": "2025-06-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "3.625% Senior Notes",
+            "ciq_maturity_date": "2027-05-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "3.625% Senior Notes",
+            "ciq_maturity_date": "2030-06-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "3.625% Senior Notes",
+            "ciq_maturity_date": "2025-06-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "3.875% Senior Notes",
+            "ciq_maturity_date": "2029-11-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "4.375% Senior Notes",
+            "ciq_maturity_date": "2026-11-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "4.625% Senior Notes",
+            "ciq_maturity_date": "2029-05-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 7,
+            "description": "4.875% Senior Notes",
+            "ciq_maturity_date": "2028-04-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 8,
+            "description": "4.875% Senior Notes",
+            "ciq_maturity_date": "2030-06-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 9,
+            "description": "4.900% Senior Notes",
+            "ciq_maturity_date": "2034-08-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 10,
+            "description": "5.375% Senior Notes",
+            "ciq_maturity_date": "2029-11-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 11,
+            "description": "5.400% Senior Notes",
+            "ciq_maturity_date": "2054-08-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 12,
+            "description": "5.875% Senior Notes",
+            "ciq_maturity_date": "2025-02-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 13,
+            "description": "5.875% Senior Notes",
+            "ciq_maturity_date": "2028-11-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 14,
+            "description": "6.375% Senior Notes",
+            "ciq_maturity_date": "2029-05-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 15,
+            "description": "Commercial Paper",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 16,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 17,
+            "description": "Senior Unsecured Bridge Term Loan Facility",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          },
+          {
+            "instrument": 18,
+            "description": "Senior Unsecured Revolving Credit Facility",
+            "ciq_maturity_date": "2030-12-19",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "10-Q 0001065280-26-000212 (filed 2026-07-17)",
+            "source_filed": "2026-07-17",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 1 current revolver maturity and the page lists 2",
+            "excluded": false
+          },
+          {
+            "instrument": 19,
+            "description": "Unsecured Delayed Draw Term Loan Credit Facility - 2Y DDTL Facility",
+            "ciq_maturity_date": "2027-12-19",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 20,
+            "description": "Unsecured Delayed Draw Term Loan Credit Facility - 3Y DDTL Facility",
+            "ciq_maturity_date": "2028-12-19",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 21,
+            "description": "Unsecured Revolving Credit Facility",
+            "ciq_maturity_date": "2029-04-12",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "10-Q 0001065280-26-000212 (filed 2026-07-17)",
+            "source_filed": "2026-07-17",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 1 current revolver maturity and the page lists 2",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -7057,7 +7427,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -7073,7 +7442,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -7089,7 +7457,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": -2800.0,
             "note": null
           },
           {
@@ -7105,7 +7472,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.0,
             "note": null
           }
         ],
@@ -14877,15 +15243,7 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -14981,7 +15339,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

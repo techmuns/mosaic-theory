@@ -4727,6 +4727,365 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Nov-06-2025",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2025-11-06",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001403161-26-000104",
+            "filed": "2026-07-29",
+            "read_as": "the latest periodic report",
+            "statements": 28,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-26-219432",
+            "filed": "2026-05-12",
+            "read_as": "an 8-K after the panel",
+            "statements": 7,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001403161-16-000027",
+            "filed": "2016-05-10",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "0.75% Senior Notes Due August 2027",
+            "ciq_maturity_date": "2027-08-15",
+            "check": "agree",
+            "filing_maturity": "2027-08",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "0.75 % Senior Notes due August 2027",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "1.10% Senior Notes Due February 2031",
+            "ciq_maturity_date": "2031-02-15",
+            "check": "agree",
+            "filing_maturity": "2031-02",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "1.10 % Senior Notes due February 2031",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "1.50% Senior Notes Due June 2026 - EUR",
+            "ciq_maturity_date": "2026-06-15",
+            "check": "agree",
+            "filing_maturity": "2026-06",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-219432 (filed 2026-05-12)"
+            ],
+            "quote": "1.50 % Senior Notes due June 2026",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "1.90% Senior Notes Due April 2027",
+            "ciq_maturity_date": "2027-04-15",
+            "check": "agree",
+            "filing_maturity": "2027-04",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "1.90 % Senior Notes due April 2027",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "2.00% Senior Notes Due August 2050",
+            "ciq_maturity_date": "2050-08-15",
+            "check": "agree",
+            "filing_maturity": "2050-08",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "2.00 % Senior Notes due August 2050",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "2.00% Senior Notes Due June 2029 - EUR",
+            "ciq_maturity_date": "2029-06-15",
+            "check": "agree",
+            "filing_maturity": "2029-06",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "2.00 % Senior Notes due June 2029",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "2.05% Senior Notes Due April 2030",
+            "ciq_maturity_date": "2030-04-15",
+            "check": "agree",
+            "filing_maturity": "2030-04",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "2.05 % Senior Notes due April 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 7,
+            "description": "2.25% Senior Notes Due May 2028 - EUR",
+            "ciq_maturity_date": "2028-05-15",
+            "check": "agree",
+            "filing_maturity": "2028-05",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-219432 (filed 2026-05-12)"
+            ],
+            "quote": "2.25 % Senior Notes due May 2028",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 8,
+            "description": "2.375% Senior Notes Due June 2034 - EUR",
+            "ciq_maturity_date": "2034-06-15",
+            "check": "agree",
+            "filing_maturity": "2034-06",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-219432 (filed 2026-05-12)"
+            ],
+            "quote": "2.375 % Senior Notes due June 2034",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 9,
+            "description": "2.70% Senior Notes Due April 2040",
+            "ciq_maturity_date": "2040-04-15",
+            "check": "agree",
+            "filing_maturity": "2040-04",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "2.70 % Senior Notes due April 2040",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 10,
+            "description": "2.75% Senior Notes Due September 2027",
+            "ciq_maturity_date": "2027-09-15",
+            "check": "agree",
+            "filing_maturity": "2027-09",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "2.75 % Senior Notes due September 2027",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 11,
+            "description": "3.125% Senior Notes Due May 2033 - EUR",
+            "ciq_maturity_date": "2033-05-15",
+            "check": "agree",
+            "filing_maturity": "2033-05",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-219432 (filed 2026-05-12)"
+            ],
+            "quote": "3.125 % Senior Notes due May 2033",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 12,
+            "description": "3.15% Senior Notes Due December 2025",
+            "ciq_maturity_date": "2025-12-14",
+            "check": "agree",
+            "filing_maturity": "2025-12",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "3.15 % Senior Notes due December 2025",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 13,
+            "description": "3.50% Senior Notes Due May 2037 - EUR",
+            "ciq_maturity_date": "2037-05-15",
+            "check": "agree",
+            "filing_maturity": "2037-05",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-219432 (filed 2026-05-12)"
+            ],
+            "quote": "3.50 % Senior Notes due May 2037",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 14,
+            "description": "3.65% Senior Notes Due September 2047",
+            "ciq_maturity_date": "2047-09-15",
+            "check": "agree",
+            "filing_maturity": "2047-09",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "3.65 % Senior Notes due September 2047",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 15,
+            "description": "3.875% Senior Notes Due May 2044 - EUR",
+            "ciq_maturity_date": "2044-05-15",
+            "check": "agree",
+            "filing_maturity": "2044-05",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001193125-26-219432 (filed 2026-05-12)"
+            ],
+            "quote": "3.875 % Senior Notes due May 2044",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 16,
+            "description": "4.15% Senior Notes Due December 2035",
+            "ciq_maturity_date": "2035-12-14",
+            "check": "agree",
+            "filing_maturity": "2035-12",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "4.15 % Senior Notes due December 2035",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 17,
+            "description": "4.30% Senior Notes Due December 2045",
+            "ciq_maturity_date": "2045-12-14",
+            "check": "agree",
+            "filing_maturity": "2045-12",
+            "source": "10-Q 0001403161-26-000104 (filed 2026-07-29)",
+            "source_filed": "2026-07-29",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "4.30 % Senior Notes due December 2045",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 18,
+            "description": "Commercial Paper",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 19,
+            "description": "Operating Leases",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 20,
+            "description": "Unsecured Revolving Credit Facility",
+            "ciq_maturity_date": "2028-05-31",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -6169,9 +6528,8 @@
             ],
             "gap": 903.0,
             "different": true,
-            "matching_amount": "LossContingencyLossInPeriod 903,000,000 USD for the quarter to 2025-09-30",
-            "matching_source": "10-K 0001403161-25-000089 XBRL",
-            "ciq_unusual": 821.0,
+            "matching_amount": null,
+            "matching_source": null,
             "note": null
           },
           {
@@ -6185,9 +6543,8 @@
             ],
             "gap": 708.0,
             "different": true,
-            "matching_amount": "LossContingencyLossInPeriod 708,000,000 USD for the quarter to 2025-12-31",
-            "matching_source": "10-Q 0001403161-26-000045 XBRL",
-            "ciq_unusual": 715.0,
+            "matching_amount": null,
+            "matching_source": null,
             "note": null
           },
           {
@@ -6201,9 +6558,8 @@
             ],
             "gap": 329.0,
             "different": true,
-            "matching_amount": "LossContingencyLossInPeriod 329,000,000 USD for the quarter to 2026-03-31",
-            "matching_source": "10-Q 0001403161-26-000079 XBRL",
-            "ciq_unusual": 344.0,
+            "matching_amount": null,
+            "matching_source": null,
             "note": null
           },
           {
@@ -6216,14 +6572,14 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "note": "EDGAR reports nothing for this quarter yet — no D&A, operating-income or pre-tax fact ends on it"
+            "note": "no quarterly D&A tag for this quarter"
           }
         ],
         "ciq_ltm": 31094.0,
         "filing_ltm": null,
         "ltm_gap": null,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's; the quarter to 2025-09-30: CIQ $7,367M against $6,464M (+$903M) — its filing tags a matching amount: LossContingencyLossInPeriod 903,000,000 USD for the quarter to 2025-09-30; the quarter to 2025-12-31: CIQ $7,771M against $7,063M (+$708M) — its filing tags a matching amount: LossContingencyLossInPeriod 708,000,000 USD for the quarter to 2025-12-31; the quarter to 2026-03-31: CIQ $7,896M against $7,567M (+$329M) — its filing tags a matching amount: LossContingencyLossInPeriod 329,000,000 USD for the quarter to 2026-03-31 (rebuilt as operating income + D&A) (1 of the four quarters could not be rebuilt). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's; the quarter to 2025-09-30: CIQ $7,367M against $6,464M (+$903M); the quarter to 2025-12-31: CIQ $7,771M against $7,063M (+$708M); the quarter to 2026-03-31: CIQ $7,896M against $7,567M (+$329M) (rebuilt as operating income + D&A) (1 of the four quarters could not be rebuilt). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14511,15 +14867,7 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -14597,7 +14945,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

@@ -70,7 +70,7 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 
 _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 
-> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's; the quarter to 2025-09-30: CIQ $7,367M against $6,464M (+$903M) — its filing tags a matching amount: LossContingencyLossInPeriod 903,000,000 USD for the quarter to 2025-09-30; the quarter to 2025-12-31: CIQ $7,771M against $7,063M (+$708M) — its filing tags a matching amount: LossContingencyLossInPeriod 708,000,000 USD for the quarter to 2025-12-31; the quarter to 2026-03-31: CIQ $7,896M against $7,567M (+$329M) — its filing tags a matching amount: LossContingencyLossInPeriod 329,000,000 USD for the quarter to 2026-03-31 (rebuilt as operating income + D&A) (1 of the four quarters could not be rebuilt). Every EV/EBITDA on this page divides CIQ's figure.
+> **CIQ's EBITDA against the filings.** CIQ's EBITDA is CIQ's own normalised figure, not the filing's; the quarter to 2025-09-30: CIQ $7,367M against $6,464M (+$903M); the quarter to 2025-12-31: CIQ $7,771M against $7,063M (+$708M); the quarter to 2026-03-31: CIQ $7,896M against $7,567M (+$329M) (rebuilt as operating income + D&A) (1 of the four quarters could not be rebuilt). Every EV/EBITDA on this page divides CIQ's figure.
 
 
 **Capital allocation — created or destroyed**
@@ -586,8 +586,7 @@ _Source §: 8-K 0001193125-13-032823 · d476341dex101.htm_
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
-  - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
-  - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 17d old — 2026-10-09 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 17d old (2026-10-09, valuation.implied_expectations.multiples_as_of) — within the ceiling

@@ -3968,6 +3968,223 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Jan-28-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-01-28",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001803599-26-000155",
+            "filed": "2026-10-07",
+            "read_as": "the latest periodic report",
+            "statements": 26,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001803599-26-000080",
+            "filed": "2026-03-23",
+            "read_as": "an 8-K after the panel",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001803599-26-000074",
+            "filed": "2026-02-24",
+            "read_as": "an 8-K after the panel",
+            "statements": 3,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001803599-25-000111",
+            "filed": "2025-04-11",
+            "read_as": "an 8-K the page links",
+            "statements": 4,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001803599-25-000014",
+            "filed": "2025-01-21",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001803599-24-000117",
+            "filed": "2024-04-26",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001803599-23-000107",
+            "filed": "2023-04-26",
+            "read_as": "an 8-K the page links",
+            "statements": 1,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001803599-23-000091",
+            "filed": "2023-03-31",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001803599-21-000215",
+            "filed": "2021-12-30",
+            "read_as": "an 8-K the page links",
+            "statements": 1,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "6.600% Senior Notes Due 2028",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          },
+          {
+            "instrument": 1,
+            "description": "6.650% Senior Notes Due 2026",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          },
+          {
+            "instrument": 2,
+            "description": "6.850% Senior Notes Due 2033",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          },
+          {
+            "instrument": 3,
+            "description": "Credit Facility - Term Loan Component",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          },
+          {
+            "instrument": 4,
+            "description": "Operating Lease",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 5,
+            "description": "Other Loans",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the panel states no maturity",
+            "excluded": true
+          },
+          {
+            "instrument": 6,
+            "description": "Securitization Facility",
+            "ciq_maturity_date": "2028-03-20",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Other Borrowings line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 7,
+            "description": "Sellers Note",
+            "ciq_maturity_date": "2025-09-25",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 8,
+            "description": "Senior Unsecured Revolving Credit Facility",
+            "ciq_maturity_date": "2030-04-11",
+            "check": "agree",
+            "filing_maturity": "2030-04-11",
+            "source": "10-Q 0001803599-26-000155 (filed 2026-10-07)",
+            "source_filed": "2026-10-07",
+            "governs": false,
+            "also_stated_by": [
+              "8-K 0001803599-25-000111 (filed 2025-04-11)"
+            ],
+            "quote": "The maturity date of the 5-Year DD Term Loan Facility and the Revolving Credit Facility is April 11, 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -5465,77 +5682,57 @@
           {
             "period_end": "2025-11-30",
             "ciq_ebitda": 252.185,
-            "filing_ebitda": -1216.528,
-            "construction": "operating income + D&A",
-            "tags": [
-              "OperatingIncomeLoss",
-              "Depreciation",
-              "AmortizationOfIntangibleAssets"
-            ],
-            "gap": 1468.713,
-            "different": true,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
+            "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 1468.088,
-            "note": null
+            "note": "no quarterly D&A tag for this quarter"
           },
           {
             "period_end": "2026-02-28",
             "ciq_ebitda": 314.661,
-            "filing_ebitda": 277.928,
-            "construction": "operating income + D&A",
-            "tags": [
-              "OperatingIncomeLoss",
-              "Depreciation",
-              "AmortizationOfIntangibleAssets"
-            ],
-            "gap": 36.733,
-            "different": true,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
+            "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 40.721,
-            "note": null
+            "note": "no quarterly D&A tag for this quarter"
           },
           {
             "period_end": "2026-05-31",
             "ciq_ebitda": 290.975,
-            "filing_ebitda": 255.54,
-            "construction": "operating income + D&A",
-            "tags": [
-              "OperatingIncomeLoss",
-              "Depreciation",
-              "AmortizationOfIntangibleAssets"
-            ],
-            "gap": 35.435,
-            "different": true,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
+            "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 31.715,
-            "note": null
+            "note": "no quarterly D&A tag for this quarter"
           },
           {
             "period_end": "2026-08-31",
             "ciq_ebitda": 333.635,
-            "filing_ebitda": -752.824,
-            "construction": "operating income + D&A",
-            "tags": [
-              "OperatingIncomeLoss",
-              "Depreciation",
-              "AmortizationOfIntangibleAssets"
-            ],
-            "gap": 1086.459,
-            "different": true,
+            "filing_ebitda": null,
+            "construction": null,
+            "tags": [],
+            "gap": null,
+            "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 1085.118,
-            "note": null
+            "note": "no quarterly D&A tag for this quarter"
           }
         ],
         "ciq_ltm": 1191.456,
-        "filing_ltm": -1435.884,
-        "ltm_gap": 2627.34,
-        "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $1,191M against $-1,436M rebuilt from the filings (+$2,627M); the quarter to 2025-11-30: CIQ $252M against $-1,217M (+$1,469M) — CIQ's own export itemises unusual items of $1,468.088M for the quarter, which it leaves out; the quarter to 2026-02-28: CIQ $315M against $278M (+$37M); the quarter to 2026-05-31: CIQ $291M against $256M (+$35M); the quarter to 2026-08-31: CIQ $334M against $-753M (+$1,086M) — CIQ's own export itemises unusual items of $1,085.118M for the quarter, which it leaves out (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "filing_ltm": null,
+        "ltm_gap": null,
+        "any_different": false,
+        "line": "CIQ's quarterly EBITDA could not be set against the filings — no quarterly D&A tag for this quarter.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -10903,15 +11100,7 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -11001,7 +11190,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

@@ -5960,6 +5960,294 @@
         "source_ref": "CIQ Capital Structure Details — A 2025 filed Feb-06-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-02-06",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0001018724-26-000026",
+            "filed": "2026-07-31",
+            "read_as": "the latest periodic report",
+            "statements": 13,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001104659-26-072140",
+            "filed": "2026-06-10",
+            "read_as": "an 8-K the page links",
+            "statements": 7,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001104659-26-021050",
+            "filed": "2026-02-27",
+            "read_as": "an 8-K after the panel",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001104659-23-113444",
+            "filed": "2023-11-01",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0001193125-22-289041",
+            "filed": "2022-11-18",
+            "read_as": "an 8-K the page links",
+            "statements": 0,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "25 Notes Issuance of $15.0 Billion",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 1,
+            "description": "Euro Commercial Paper Programs",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 2,
+            "description": "Finance Leases",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 3,
+            "description": "Financing Obligations",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Other Borrowings line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 4,
+            "description": "Operating Leases",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 5,
+            "description": "Other Long-Term Debt",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Other Borrowings line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 6,
+            "description": "Revolving Credit Facility",
+            "ciq_maturity_date": "2028-11-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "10-Q 0001018724-26-000026 (filed 2026-07-31)",
+            "source_filed": "2026-07-31",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 1 current credit-facility maturity and the page lists 2",
+            "excluded": false
+          },
+          {
+            "instrument": 7,
+            "description": "Short-Term Credit Facilities",
+            "ciq_maturity_date": "2027-06-30",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": "10-Q 0001018724-26-000026 (filed 2026-07-31)",
+            "source_filed": "2026-07-31",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "the filing states 1 current credit-facility maturity and the page lists 2",
+            "excluded": false
+          },
+          {
+            "instrument": 8,
+            "description": "U.S. Dollar Commercial Paper Programs",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 9,
+            "description": "Unsecured 364-Day Revolving Credit Facility",
+            "ciq_maturity_date": "2026-10-28",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 10,
+            "description": "Unsecured Senior Notes",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 11,
+            "description": "Unsecured Senior Notes",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 12,
+            "description": "Unsecured Senior Notes",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 13,
+            "description": "Unsecured Senior Notes",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 14,
+            "description": "Unsecured Senior Notes",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 15,
+            "description": "Unsecured Senior Notes",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -7368,8 +7656,6 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
-            "offset_by": "2025-12-31",
-            "ciq_unusual": -7694.0,
             "note": null
           },
           {
@@ -7385,8 +7671,6 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
-            "offset_by": "2025-09-30",
-            "ciq_unusual": -3774.0,
             "note": null
           },
           {
@@ -7402,7 +7686,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": -15520.0,
             "note": null
           },
           {
@@ -7418,7 +7701,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": -53235.0,
             "note": null
           }
         ],
@@ -7426,7 +7708,7 @@
         "filing_ltm": 168912.0,
         "ltm_gap": 0.0,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM matches the filings ($168,912M against $168,912M), but not every quarter does; the quarter to 2025-09-30: CIQ $36,718M against $34,218M (+$2,500M) — the quarter to 2025-12-31 differs by the same amount the other way: one item, in another quarter at CIQ; the quarter to 2025-12-31: CIQ $41,948M against $44,448M (−$2,500M) — the quarter to 2025-09-30 differs by the same amount the other way: one item, in another quarter at CIQ (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM matches the filings ($168,912M against $168,912M), but not every quarter does; the quarter to 2025-09-30: CIQ $36,718M against $34,218M (+$2,500M); the quarter to 2025-12-31: CIQ $41,948M against $44,448M (−$2,500M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -17812,15 +18094,7 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -17925,7 +18199,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": false,
       "fields": [

@@ -68,6 +68,7 @@ def _run(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *,
         def from_config(cls, cfg: object) -> _R: return cls()
         def iter_universe(self, exchanges: object) -> Iterator[Identity]: yield from idents
         def sic_for(self, cik: str) -> tuple[str, str]: return ("7372", "Software")
+        def registered_line(self, *_: object) -> None: return None     # no cover read
 
     class _E:
         @classmethod

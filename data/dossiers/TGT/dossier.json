@@ -5162,11 +5162,13 @@
             "principal_musd": null,
             "coupon": "NA",
             "floating_rate": "NA",
-            "maturity_date": "2026-08-14",
+            "maturity_date": "2031-08-14",
             "seniority": "Senior",
             "secured": false,
             "convertible": false,
-            "currency": "USD"
+            "currency": "USD",
+            "ciq_maturity_date": "2026-08-14",
+            "maturity_source": "10-Q 0000027419-26-000042 (filed 2026-08-28)"
           }
         ],
         "source_ref": "CIQ Financials→Capital Structure Details (A 2026 filed Mar-11-2026)",
@@ -5399,6 +5401,263 @@
         "source_ref": "CIQ Capital Structure Details — A 2026 filed Mar-11-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-03-11",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0000027419-26-000042",
+            "filed": "2026-08-28",
+            "read_as": "the latest periodic report",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000027419-26-000032",
+            "filed": "2026-08-14",
+            "read_as": "an 8-K the page links",
+            "statements": 3,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000027419-16-000060",
+            "filed": "2016-10-05",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "364-Day Unsecured Revolving Credit Facility",
+            "ciq_maturity_date": "2026-08-14",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "4.5% Unsecured Fixed Rate Debt - Note *",
+            "ciq_maturity_date": "2034-09-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "Commercial Paper",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 3,
+            "description": "Debt Issuances - Note",
+            "ciq_maturity_date": "2035-04-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "Debt Issuances - Note",
+            "ciq_maturity_date": "2028-06-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "Debt Issuances - Note",
+            "ciq_maturity_date": "2036-02-15",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "Finance Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 7,
+            "description": "Long-Term Debt and Other Borrowings - Note *",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no single coupon to key the notes on",
+            "excluded": true
+          },
+          {
+            "instrument": 8,
+            "description": "Operating Lease",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 9,
+            "description": "Unsecured Fixed Rate - Note *",
+            "ciq_maturity_date": "2032-09-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 10,
+            "description": "Unsecured Fixed Rate - Note *",
+            "ciq_maturity_date": "2027-01-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 11,
+            "description": "Unsecured Fixed Rate - Note *",
+            "ciq_maturity_date": "2052-01-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 12,
+            "description": "Unsecured Fixed Rate Debt - Note *",
+            "ciq_maturity_date": "2053-01-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 13,
+            "description": "Unsecured Fixed Rate Debt - Note *",
+            "ciq_maturity_date": "2033-01-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 14,
+            "description": "Unsecured Revolving Credit Facility",
+            "ciq_maturity_date": "2026-08-14",
+            "check": "differ",
+            "filing_maturity": "2031-08-14",
+            "source": "10-Q 0000027419-26-000042 (filed 2026-08-28)",
+            "source_filed": "2026-08-28",
+            "governs": true,
+            "also_stated_by": [],
+            "quote": "pril 2026 $ 1,000 2.50 % In August 2026, we obtained a committed $ 4.0 billion unsecured revolving credit facility that will expire in August 2031",
+            "springing": [],
+            "note": "it states the month; the day is from the 8-K 0000027419-26-000032 (filed 2026-08-14)",
+            "excluded": false
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -6954,7 +7213,6 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 196.0,
             "note": null
           },
           {
@@ -6970,7 +7228,6 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 89.0,
             "note": null
           },
           {
@@ -6986,7 +7243,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -7002,7 +7258,6 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": -961.0,
             "note": null
           }
         ],
@@ -7010,7 +7265,7 @@
         "filing_ltm": 9196.0,
         "ltm_gap": -605.0,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $8,591M against $9,196M rebuilt from the filings (−$605M); the quarter to 2025-11-01: CIQ $1,942M against $1,721M (+$221M); the quarter to 2026-01-31: CIQ $2,298M against $2,183M (+$115M); the quarter to 2026-08-01: CIQ $2,388M against $3,344M (−$956M) — CIQ's own export itemises unusual items of $-961.000M for the quarter, which it leaves out (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $8,591M against $9,196M rebuilt from the filings (−$605M); the quarter to 2025-11-01: CIQ $1,942M against $1,721M (+$221M); the quarter to 2026-01-31: CIQ $2,298M against $2,183M (+$115M); the quarter to 2026-08-01: CIQ $2,388M against $3,344M (−$956M) (rebuilt as operating income + D&A). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -10786,7 +11041,8 @@
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Target, the US general-merchandise retailer, followed under the QUALITY book by operator decision 2026-09-28. At $159.02 on 2026-09-22 it is 6.4% below its 52-week closing high of $169.89 (2026-08-24) and 90.0% above the low of $83.68 (2025-11-20), ahead of IWM by 66.2 points over the window — the strongest of the three, and NOT a de-rated name whatever the earlier framing assumed. It is booked as quality because the question is durability of the recovery, not whether a fall overshot. EV/EBITDA 9.2x against an 8.4x own-history median (38 closes, 9.5 years), and R1 anchors at $138 on a 10-year median operating margin of 5.6% — the only one of the three whose margin leg reads FIRM. The $300M-$10B band answers where the fund HUNTS, not what it may hold or follow; covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
     "primary-source: 4 EX-99.1 release(s) + 1 10-Q parsed (+4.8s fetch)",
-    "Net debt/EBITDA (1.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage."
+    "Net debt/EBITDA (1.6x) is on CIQ's EBITDA (vendor-normalised, not the reported GAAP figure), not the covenant basis; management and credit covenants typically define leverage on adjusted EBITDA (a larger denominator → a lower ratio), reconciled in the earnings release/transcript (currently UNAVAILABLE) — do not read 1.6x as the covenant-basis leverage.",
+    "Debt maturity: the filing governs 'Unsecured Revolving Credit Facility' — CIQ's capital-structure panel (A 2026 filed Mar-11-2026) dates it 2026-08-14, the 10-Q 0000027419-26-000042 (filed 2026-08-28) states 2031-08-14 (it states the month; the day is from the 8-K 0000027419-26-000032 (filed 2026-08-14)). This page prints 2031-08-14; prose written before this check may still cite the panel's date."
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
@@ -15625,15 +15881,8 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "caveats",
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -15715,7 +15964,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

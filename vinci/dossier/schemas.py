@@ -1410,8 +1410,24 @@ class CapitalInstrument(BaseModel):
     secured: bool
     convertible: bool
     currency: str
+    #: (2026-10-27) Set only where a FILING's maturity governs ``maturity_date``
+    #: (`capital_structure.maturity_check`): the panel's own date, kept beside it, and the filing
+    #: that states the one printed. Absent on every other instrument.
+    ciq_maturity_date: str | None = None
+    maturity_source: str | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _omit_ungoverned(self, nxt: Any) -> Any:
+        """Drop the two governing fields when unset, so a page no filing governs stays
+        byte-identical (``refresh_dossier`` compares text)."""
+        d = nxt(self)
+        if self.ciq_maturity_date is None:
+            d.pop("ciq_maturity_date", None)
+        if self.maturity_source is None:
+            d.pop("maturity_source", None)
+        return d
 
 
 class CovenantPointer(BaseModel):
@@ -1481,6 +1497,68 @@ class CovenantTerm(BaseModel):
         return d
 
 
+class SpringingMaturity(BaseModel):
+    """A maturity that moves EARLIER on a condition, as a filing states it — verbatim, and dated
+    only where the filing fixes the date ("91 days prior to the April 15, 2029 maturity date …")."""
+
+    clause: str  # verbatim, single-spaced, ≤400 chars, ending "…" when cut
+    springs_to: str | None = None  # ISO date, only where the filing fixes it
+    source: str  # "8-K 0001193125-25-242530 (filed 2025-10-17)"
+
+    model_config = {"frozen": True}
+
+
+class MaturitySource(BaseModel):
+    """One filing the maturity check read (or tried to)."""
+
+    form: str  # "10-Q" | "10-K" | "8-K"
+    accession: str
+    filed: str  # ISO
+    #: "the latest periodic report" | "an 8-K after the panel" | "an 8-K the page links"
+    read_as: str
+    statements: int = 0  # maturity statements read from it (0: read, and it states none)
+    error: str | None = None  # why it was not read (a fetch failure) — never a pass
+
+    model_config = {"frozen": True}
+
+
+class MaturityCheckRow(BaseModel):
+    """One panel instrument's maturity against the newest filing that states it."""
+
+    instrument: int  # index into `capital_structure.instruments`
+    description: str  # CIQ's label, verbatim
+    ciq_maturity_date: str | None  # the panel's date
+    check: CrossCheck
+    filing_maturity: str | None = None  # at the precision stated: YYYY-MM-DD | YYYY-MM | YYYY
+    source: str | None = None  # the newest filing that states it: "10-Q <accession> (filed …)"
+    source_filed: str | None = None  # ISO
+    #: True when the page PRINTS the filing's date: the two differ, the filing was filed on or after
+    #: the panel's own source filing, and it states the day
+    governs: bool = False
+    also_stated_by: list[str] = Field(default_factory=list)  # older filings stating the same date
+    quote: str | None = None  # verbatim, ≤240 chars
+    springing: list[SpringingMaturity] = Field(default_factory=list)
+    note: str = ""  # why it was not run, or why a difference does not govern
+    #: the check's own rule leaves it out — a lease, commercial-paper or other-borrowings line, a
+    #: note with no single coupon, an undated line: no filing statement names one
+    excluded: bool = False
+
+    model_config = {"frozen": True}
+
+
+class MaturityCheck(BaseModel):
+    """(2026-10-27) Every panel maturity set against the newest filing that states it — the latest
+    10-Q/10-K, the 8-Ks with Item 1.01/2.03 filed after the panel's source filing, and the 8-Ks
+    the page's covenant pointers link, none filed after ``bound`` (`edgar.debt_maturities`)."""
+
+    panel_filed: str | None  # the panel's own source filing date, ISO
+    bound: str  # ISO — the reference date; no later filing is read
+    sources: list[MaturitySource]
+    rows: list[MaturityCheckRow]
+
+    model_config = {"frozen": True}
+
+
 class CapitalStructure(BaseModel):
     """(E1–E5) The structured capital structure — per-instrument detail + summary aggregates + the
     survival reads that hang off it (the maturity wall's 8-Ks, covenant exhibit pointers, and the
@@ -1510,6 +1588,8 @@ class CapitalStructure(BaseModel):
     # routed into `check_freshness`, whose ceiling is 45d: all fourteen are past it, so that gate
     # would refuse the whole fleet. Optional-with-default so pre-field JSON round-trips.
     panel_vintage: Sourced[str] | None = None
+    # (2026-10-27) each maturity against the filings; ABSENT until built (`DROP_WHEN_NONE`)
+    maturity_check: MaturityCheck | None = None
 
     model_config = {"frozen": True}
 
@@ -2794,6 +2874,8 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("valuation.implied_expectations", "net_debt_check"),
     # the currency each CIQ money panel states (`CiqCurrency`, 2026-10-27)
     ("", "ciq_currency"),
+    # each panel maturity against the filings (`MaturityCheck`, 2026-10-27)
+    ("capital_structure", "maturity_check"),
 )
 
 

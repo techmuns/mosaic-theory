@@ -552,11 +552,11 @@
         "rent_ebitda": 4929.0,
         "rent_to_ebitda": 0.232502,
         "rent_fiscal_year": "2026-05-31",
-        "edgar_lease_cost": 1146.0,
-        "edgar_lease_cost_tag": "OperatingLeaseCost + VariableLeaseCost",
+        "edgar_lease_cost": 693.0,
+        "edgar_lease_cost_tag": "OperatingLeaseCost",
         "threshold": 0.05,
         "material": true,
-        "materiality": "rent 23.3% of EBITDA (FY ending 2026-05-31: $1,146M of $4,929M) — material (≥5%); R1 uses the ex-lease history; EDGAR OperatingLeaseCost + VariableLeaseCost that year: $1,146M",
+        "materiality": "rent 23.3% of EBITDA (FY ending 2026-05-31: $1,146M of $4,929M) — material (≥5%); R1 uses the ex-lease history; EDGAR OperatingLeaseCost that year: $693M — CIQ's rent and EDGAR's lease cost DISAGREE; read both",
         "ex_lease_band": {
           "metric": "EV/EBITDA ex-lease (TEV less operating leases / LTM EBITDA)",
           "current": 12.847423,
@@ -5848,6 +5848,234 @@
         "source_ref": "CIQ Capital Structure Details — A 2026 filed Jul-15-2026",
         "status": "present",
         "note": null
+      },
+      "maturity_check": {
+        "panel_filed": "2026-07-15",
+        "bound": "2026-10-16",
+        "sources": [
+          {
+            "form": "10-Q",
+            "accession": "0000320187-26-000193",
+            "filed": "2026-10-02",
+            "read_as": "the latest periodic report",
+            "statements": 0,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000320187-26-000020",
+            "filed": "2026-03-09",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000320187-25-000008",
+            "filed": "2025-03-10",
+            "read_as": "an 8-K the page links",
+            "statements": 4,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000320187-24-000009",
+            "filed": "2024-03-11",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          },
+          {
+            "form": "8-K",
+            "accession": "0000320187-23-000006",
+            "filed": "2023-03-13",
+            "read_as": "an 8-K the page links",
+            "statements": 2,
+            "error": null
+          }
+        ],
+        "rows": [
+          {
+            "instrument": 0,
+            "description": "2.375% Corporate Term Notes - November 1, 2026",
+            "ciq_maturity_date": "2026-11-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 1,
+            "description": "2.75% Corporate Term Note March 27, 2027",
+            "ciq_maturity_date": "2027-03-27",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 2,
+            "description": "2.85% Corporate Term Note March 27, 2030",
+            "ciq_maturity_date": "2030-03-27",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 3,
+            "description": "3.25% Corporate Term Note March 27, 2040",
+            "ciq_maturity_date": "2040-03-27",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 4,
+            "description": "3.375% Corporate Term Notes March 27, 2050",
+            "ciq_maturity_date": "2050-03-27",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 5,
+            "description": "3.375% Corporate Term Notes November 1, 2046",
+            "ciq_maturity_date": "2046-11-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 6,
+            "description": "3.625% Corporate Term Note May 1, 2043",
+            "ciq_maturity_date": "2043-05-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 7,
+            "description": "3.875% Corporate Term Notes - November 1, 2045",
+            "ciq_maturity_date": "2045-11-01",
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "no filing read states a maturity for it",
+            "excluded": false
+          },
+          {
+            "instrument": 8,
+            "description": "364-day Committed Credit Facility",
+            "ciq_maturity_date": "2027-03-05",
+            "check": "agree",
+            "filing_maturity": "2027-03-05",
+            "source": "8-K 0000320187-26-000020 (filed 2026-03-09)",
+            "source_filed": "2026-03-09",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "The 364-Day Credit Facility matures on March 5, 2027",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 9,
+            "description": "Commercial Paper Program",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Commercial Paper line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          },
+          {
+            "instrument": 10,
+            "description": "Committed Credit Facilities",
+            "ciq_maturity_date": "2030-03-07",
+            "check": "agree",
+            "filing_maturity": "2030-03-07",
+            "source": "8-K 0000320187-25-000008 (filed 2025-03-10)",
+            "source_filed": "2025-03-10",
+            "governs": false,
+            "also_stated_by": [],
+            "quote": "The Five Year Credit Facility matures on March 7, 2030",
+            "springing": [],
+            "note": "",
+            "excluded": false
+          },
+          {
+            "instrument": 11,
+            "description": "Operating Lease Liabilities",
+            "ciq_maturity_date": null,
+            "check": "not_run",
+            "filing_maturity": null,
+            "source": null,
+            "source_filed": null,
+            "governs": false,
+            "also_stated_by": [],
+            "quote": null,
+            "springing": [],
+            "note": "a Capital Lease line — not a term loan, revolver or note a filing statement names",
+            "excluded": true
+          }
+        ]
       }
     },
     "capital_allocation": {
@@ -7157,9 +7385,8 @@
             ],
             "gap": 23.0,
             "different": true,
-            "matching_amount": "OtherNonoperatingIncomeExpense -23,000,000 USD for the quarter to 2025-08-31",
-            "matching_source": "10-Q 0000320187-26-000193 XBRL",
-            "ciq_unusual": 0.0,
+            "matching_amount": null,
+            "matching_source": null,
             "note": null
           },
           {
@@ -7176,7 +7403,6 @@
             "different": false,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 0.0,
             "note": null
           },
           {
@@ -7193,7 +7419,6 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 230.0,
             "note": null
           },
           {
@@ -7210,7 +7435,6 @@
             "different": true,
             "matching_amount": null,
             "matching_source": null,
-            "ciq_unusual": 81.0,
             "note": null
           }
         ],
@@ -7218,7 +7442,7 @@
         "filing_ltm": 4597.0,
         "ltm_gap": 258.0,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $4,855M against $4,597M rebuilt from the filings (+$258M); the quarter to 2025-08-31: CIQ $1,117M against $1,094M (+$23M) — its filing tags a matching amount: OtherNonoperatingIncomeExpense -23,000,000 USD for the quarter to 2025-08-31; the quarter to 2026-02-28: CIQ $968M against $820M (+$148M); the quarter to 2026-05-31: CIQ $1,585M against $1,514M (+$71M) (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $4,855M against $4,597M rebuilt from the filings (+$258M); the quarter to 2025-08-31: CIQ $1,117M against $1,094M (+$23M); the quarter to 2026-02-28: CIQ $968M against $820M (+$148M); the quarter to 2026-05-31: CIQ $1,585M against $1,514M (+$71M) (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -14724,16 +14948,7 @@
       "extraction_version": "2026-10-09.3",
       "writer": "refresh",
       "layers": [
-        "mechanical.financial_summary",
-        "mechanical.valuation"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
+        "mechanical.capital_structure"
       ]
     }
   ],
@@ -14815,7 +15030,6 @@
       "market_reconciliation": "agree",
       "d_and_a_source": "edgar"
     },
-    "ciq_scale_check": "agree",
     "scenario_eligibility": {
       "eligible_for_scenario_valuation": true,
       "fields": [

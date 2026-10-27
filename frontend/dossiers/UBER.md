@@ -5,6 +5,8 @@ _October 26, 2026 · extraction 2026-10-09.3 · layers refreshed to 2026-10-09.3
 # Brief — first cut
 
 ## At a glance
+> ⚠ **Verify before the verdict:** Debt maturity: the filing governs 'Senior Unsecured Revolving Loans' — full caveats in Analysis.
+
 Uber Technologies, Inc. develops and operates proprietary technology applications in the United States, Canada, Latin America, Europe, the Middle East, Africa, and the Asia Pacific.
 **Mixed** — a still-compounding platform (rising absolute EBITDA, 20%+ bookings, ROIC) against falling forward EPS revisions and a trailing-only, unresolvable multiple.
 - **Segments:** Mobility 57%; Delivery 33%; Freight 10% [1]
@@ -433,10 +435,11 @@ _12 undated / later aggregate line item(s) in the appendix panel_
 
 ## ⚠ Analyst caveats — verify before the verdict
 
-_2 to verify._
+_3 to verify._
 
 - NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — Large-cap mobility/delivery marketplace followed for cross-read and comp value against the fund's hunting band; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.
 - synthesis draws DISAGREED — 5 draw(s) of 5 gave {'mixed': 3, 'strongly-bullish': 2}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)
+- Debt maturity: the filing governs 'Senior Unsecured Revolving Loans' — CIQ's capital-structure panel (A 2025 filed Feb-13-2026) dates it 2029-09-26, the 8-K 0001552781-26-000414 (filed 2026-08-07) states 2031-08-06. This page prints 2031-08-06; prose written before this check may still cite the panel's date.
 
 # Appendix — data & audit
 
@@ -518,7 +521,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 | Commercial Paper Program | Commercial Paper | – | NA | NA | 2026-07-01 | N | N | USD |
 | Finance Leases | Capital Lease | $222.0M | 6.000% | NA | undated | Y | N | USD |
 | Operating Lease Liabilities | Capital Lease | $1,559.0M | 6.600% | NA | undated | Y | N | USD |
-| Senior Unsecured Revolving Loans | Revolving Credit | – | NA | Benchmark | 2029-09-26 | N | N | USD |
+| Senior Unsecured Revolving Loans | Revolving Credit | – | NA | Benchmark | 2031-08-06 | N | N | USD |
 
 - **8-Ks at instrument maturities:** _UNKNOWN_ — no 8-K within ±10d of a trailing-12m maturity (2025-12-15, 2026-07-01)
 - **Covenant / contract pointers (CIK-verified execution filings)** — [68]  <!-- ds-table -->
@@ -603,8 +606,7 @@ _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
 - **Extraction:** 2026-10-09.3 — the active recipe's basis beside the page (`valuation_basis`: bases, today's multiple and the snapshot it is struck at, bridge, exit claims, the basic share count, non-operating policy, conflicts — the template's share guard among them) and its dates named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the forward history's latest close is `latest_observed_close`, never `current`; every writer saves through one write
 - **Refreshed since assembly** (oldest first):
   - 2026-10-27 · mechanical.ciq_currency — refresh at 2026-10-09.3
-  - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
-  - 2026-10-27 · anchor — refresh at 2026-10-09.3
+  - 2026-10-27 · caveats, mechanical.capital_structure — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 17d old — 2026-10-09 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 18d old (2026-10-08, valuation.implied_expectations.multiples_as_of) — within the ceiling
