@@ -1,0 +1,15 @@
+{
+"ticker": "SLI",
+"cik": "1537137",
+"reference_date": "2026-10-28",
+"origin_main": {
+"value": null,
+"source_ref": null,
+"status": "unknown",
+"note": "no Form 4 filings in the 3y scanned"
+},
+"frozen": "2026-10-28 from sec.gov; submissions trimmed to annual-report and Form 3/4/5 rows (the only rows the insider block reads)",
+"pages": {
+"https://data.sec.gov/submissions/CIK0001537137.json": "{\"cik\":\"0001537137\",\"name\":\"STANDARD LITHIUM LTD.\",\"tickers\":[\"SLI\"],\"exchanges\":[\"NYSE\"],\"stateOfIncorporation\":\"A1\",\"stateOfIncorporationDescription\":\"British Columbia, Canada\",\"filings\":{\"recent\":{\"accessionNumber\":[\"0001193125-26-130448\",\"0000950170-25-043495\",\"0001410578-24-001622\",\"0001104659-23-103034\",\"0001104659-22-102665\",\"0001171843-21-007284\"],\"filingDate\":[\"2026-03-30\",\"2025-03-24\",\"2024-09-24\",\"2023-09-22\",\"2022-09-23\",\"2021-10-28\"],\"reportDate\":[\"2025-12-31\",\"2024-12-31\",\"2024-06-30\",\"2023-06-30\",\"2022-06-30\",\"2021-06-30\"],\"form\":[\"40-F\",\"40-F\",\"40-F\",\"40-F\",\"40-F\",\"40-F\"],\"items\":[\"\",\"\",\"\",\"\",\"\",\"\"],\"primaryDocument\":[\"ck0001537137-20251231.htm\",\"ck0001537137-20241231.htm\",\"sli-20240630x40f.htm\",\"sli-20230630x40f.htm\",\"sli-20220630x40f.htm\",\"f40f_102821.htm\"]},\"files\":[]}}"
+}
+}
