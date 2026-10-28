@@ -10,6 +10,7 @@ a fabricated number. This layer is the ONLY input the synthesis LLM is later giv
 
 from __future__ import annotations
 
+import html as htmllib
 import math
 import re
 import statistics
@@ -2265,6 +2266,90 @@ _INSIDER_WINDOW_DAYS = 182
 #: back) with margin, at ~2 HTTP calls per filing against a cached, paced client.
 _INSIDER_SCAN_DAYS = 1095
 
+#: (FPI3) THE DAY SECTION 16(a) FIRST REACHED A FOREIGN PRIVATE ISSUER'S INSIDERS. The Holding
+#: Foreign Insiders Accountable Act (Pub. L. 119-60 §8103, enacted 2025-12-18) put every director
+#: and officer of an FPI under Section 16(a) from this date; 10% holders stay outside it. Before it
+#: the law asked an FPI's insiders for no Forms 3/4/5, so an FPI's window starts here and an
+#: absence before it is never read: "no sale in the 3y scanned" would be padded with nineteen months
+#: in which no sale could have been reported.
+HFIAA_EFFECTIVE = date(2026, 3, 18)
+#: An issuer is a foreign private issuer when its latest ANNUAL report on or before the reference
+#: date is one of these — #837's rule. An amendment restates an earlier period, so it never decides.
+_FPI_ANNUAL_FORMS = ("20-F", "40-F")
+_ANNUAL_REPORT_FORMS = ("10-K", "10-KT", *_FPI_ANNUAL_FORMS)
+#: What an FPI's window reads. Form 3 (initial holdings) and Form 5 carry no Form 4 transaction, so
+#: they are COUNTED, not parsed: a Form 3 says an insider is registered under Section 16(a) here,
+#: which is what separates "registered, no trades" from "files abroad". Transactions are read from
+#: Form 4 alone, exactly as for a domestic filer, so the two lines stay comparable.
+_SECTION16_FORMS = ("3", "3/A", "4", "4/A", "5", "5/A")
+
+
+class ExemptiveOrder(NamedTuple):
+    """An SEC order under Exchange Act §16(a)(5) exempting an FPI's insiders from Forms 3/4/5."""
+
+    release: str
+    issued: date
+
+
+#: Both orders read at sec.gov on 2026-10-28 (the Division's HFIAA page, last updated 2026-05-20,
+#: lists these two and no other). Each exempts the directors and officers of an FPI that is
+#: (i) INCORPORATED OR ORGANIZED in a qualifying jurisdiction and (ii) subject to a qualifying
+#: regulation, provided they report under it — any insider outside that regulation's category
+#: still files Section 16(a) reports (March order fn. 10; May order fn. 4).
+ORDER_2026_03 = ExemptiveOrder("34-104931", date(2026, 3, 5))
+ORDER_2026_05 = ExemptiveOrder("34-105517", date(2026, 5, 20))
+
+
+class Regime(NamedTuple):
+    """A qualifying jurisdiction: the regulation its insiders may report under instead, the order
+    that says so, and WHICH insiders that regulation covers — the rest still file Forms 3/4."""
+
+    jurisdiction: str
+    regulation: str
+    order: ExemptiveOrder
+    covers: str
+
+
+_DIRECTORS_AND_OFFICERS = "directors and officers"
+#: The European Economic Area as the March order defines it (fn. 8): the 27 EU member states plus
+#: Iceland, Liechtenstein and Norway. Keys are EDGAR state-and-country codes, checked against
+#: EDGAR's own table (frozen at tests/fixtures/sec_reference/edgar_state_country_codes.json).
+_EEA_CODES = {
+    "C4": "Austria", "C9": "Belgium", "E0": "Bulgaria", "1M": "Croatia", "G4": "Cyprus",
+    "2N": "Czech Republic", "G7": "Denmark", "1H": "Estonia", "H9": "Finland", "I0": "France",
+    "2M": "Germany", "J3": "Greece", "K5": "Hungary", "L2": "Ireland", "L6": "Italy",
+    "1R": "Latvia", "1Q": "Lithuania", "N4": "Luxembourg", "O1": "Malta", "P7": "Netherlands",
+    "R9": "Poland", "S1": "Portugal", "S5": "Romania", "2B": "Slovakia", "2A": "Slovenia",
+    "U3": "Spain", "V7": "Sweden", "K6": "Iceland", "N2": "Liechtenstein", "Q8": "Norway",
+}
+#: Every province's code and the federal one. MJDS (Form 40-F) requires Canadian incorporation, so
+#: a 40-F filer lands here through its incorporation like any other issuer — no form shortcut.
+_CANADA_CODES = ("A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "B0", "Z4")
+
+#: THE RULE, by EDGAR incorporation code. Incorporation is condition (i) of each order and the
+#: only one SEC data shows: whether the issuer is SUBJECT to the regulation (condition ii — for
+#: EU/UK MAR, a listing on an EEA/UK venue) is not recorded anywhere in EDGAR. So a code here never
+#: by itself says the insiders report abroad; the filings decide (`_fpi_insider_activity`). Crown
+#: dependencies (Jersey Y9, Guernsey Y7, Isle of Man Y8) and Gibraltar are NOT the United Kingdom
+#: and are absent.
+REGIMES: dict[str, Regime] = {
+    **{c: Regime("Canada", "NI 55-104", ORDER_2026_03, _DIRECTORS_AND_OFFICERS)
+       for c in _CANADA_CODES},
+    "F3": Regime("Chile", "the Chilean Securities Market Law", ORDER_2026_03,
+                 _DIRECTORS_AND_OFFICERS),
+    **{c: Regime(f"{name}, in the EEA", "EU MAR", ORDER_2026_03, _DIRECTORS_AND_OFFICERS)
+       for c, name in _EEA_CODES.items()},
+    "M5": Regime("Korea", "the FSCMA", ORDER_2026_03, _DIRECTORS_AND_OFFICERS),
+    "V8": Regime("Switzerland", "the SIX Listing Rules", ORDER_2026_03, _DIRECTORS_AND_OFFICERS),
+    "X0": Regime("the United Kingdom", "UK MAR", ORDER_2026_03, _DIRECTORS_AND_OFFICERS),
+    # The May order's regulations are narrower: Australia's s205G / ASX LR 3.19 covers directors
+    # only, Singapore's SFA Part 7 directors and the chief executive.
+    "C3": Regime("Australia", "Corporations Act s205G", ORDER_2026_05, "directors"),
+    "K7": Regime("India", "the SEBI insider-trading regulations", ORDER_2026_05,
+                 _DIRECTORS_AND_OFFICERS),
+    "U0": Regime("Singapore", "SFA Part 7", ORDER_2026_05, "directors and the chief executive"),
+}
+
 #: The dilution-pipeline scan. 3y because an S-3 shelf is effective for three years — a shelf
 #: older than the window could not be drawn on today, so the window IS the relevance test, not a
 #: budget choice. Shares one bounded, cached submissions read with the Form-4 scan above.
@@ -2800,6 +2885,12 @@ def _insider_activity(
     if not cik:
         return Sourced.unknown(note="no CIK for Form 4 lookup")
     try:
+        # A FOREIGN PRIVATE ISSUER IS READ ON ITS OWN WINDOW (FPI3). Same cached submissions
+        # document as the Form 4 read below, so a domestic name pays no new fetch and reaches
+        # the unchanged path with the same failure note it always had.
+        reach = _section16_reach(edgar, http, cik, reference_date)
+        if reach is not None:
+            return _fpi_insider_activity(edgar, http, cik, reference_date, reach)
         filings = edgar.recent_filings(
             cik, forms=("4",), since=reference_date - timedelta(days=_INSIDER_SCAN_DAYS))
     except HttpError as exc:
@@ -2817,8 +2908,289 @@ def _insider_activity(
                     f"the {_INSIDER_SCAN_DAYS}d scanned; counts over {_INSIDER_WINDOW_DAYS}d)"))
 
 
+class Section16Reach(NamedTuple):
+    """How Section 16(a) reaches ONE foreign private issuer on the reference date.
+
+    `regime` is set only when the incorporation code is on an order IN FORCE on the reference date;
+    `pending` holds one issued after it (the May order's three jurisdictions before 2026-05-20), so
+    the page can say the order comes later rather than that none exists. `place` and
+    `place_source` are for the page: where the incorporation was read, so a reader can check it.
+    """
+
+    annual: Filing
+    code: str | None
+    place: str
+    place_source: str
+    regime: Regime | None
+    pending: Regime | None = None
+
+
+#: The cover-page tag a 20-F/40-F carries for "Jurisdiction of incorporation or organization".
+_IX_INCORPORATION = re.compile(
+    r'<ix:nonnumeric\b[^>]*\bname="dei:EntityIncorporationStateCountryCode"[^>]*>(.*?)'
+    r"</ix:nonnumeric>", re.I | re.S)
+#: The names a cover may write for each code on an order. A cover rarely shows the CODE: it shows
+#: a NAME under the `ixt-sec:edgarprovcountryen` transform, which EDGAR converts on filing —
+#: measured 2026-10-28 on the six queue names EDGAR leaves blank (AGRO, ASM, BLDP, CYD, STN,
+#: TATT), all six covers carry a name and none a code, and AGRO's is "Grand Duchy of Luxembourg",
+#: which is not EDGAR's table name. So these are the transform's OWN alternatives, transcribed for
+#: the qualifying codes from the grammar EDGAR's renderer applies (Arelle/EDGAR,
+#: transform/__init__.py, `edgarProvCountryNamePattern`, read 2026-10-28). A cover that passed
+#: EDGAR validation names its place in that grammar, so a name matching none of these is a place
+#: on no order. NOT substring matching: "Northern Ireland" would read as Ireland, and "Netherlands
+#: Antilles" as the Netherlands.
+_COVER_NAMES = {
+    "A0": r"alberta(,?\s+canada)?", "A1": r"british\s+columbia(,?\s+canada)?",
+    "A2": r"manitoba(,?\s+canada)?", "A3": r"new\s+brunswick(,?\s+canada)?",
+    "A4": r"newfoundland(\s+and\s+labrador)?(,?\s+canada)?",
+    "A5": r"nova\s+scotia(,?\s+canada)?", "A6": r"ontario(,?\s+canada)?",
+    "A7": r"prince\s+edward\s+island(,?\s+canada)?", "A8": r"qu[eé]bec(,?\s+canada)?",
+    "A9": r"saskatchewan(,?\s+canada)?", "B0": r"yukon(,?\s+canada)?", "Z4": r"canada",
+    "F3": r"chile", "M5": r"(south|republic\s+of)\s+korea", "V8": r"switzerland",
+    "X0": (r"u\.?k\.?|britain|great\s+britain|england(\s+and\s+wales)?"
+           r"|united\s+kingdom(\s+of\s+great\s+britain\s+and\s+northern\s+ireland)?"),
+    "C3": r"australia", "K7": r"india", "U0": r"singapore",
+    "2N": r"czechia|czech\s+republic", "G7": r"(the\s+)?(kingdom\s+of\s+)?denmark",
+    "N4": r"((the\s+)?(grand\s+)?duchy\s+of\s+)?luxembourg",
+    "U3": r"(the\s+)?(kingdom\s+of\s+)?spain|espa[ñn]a",
+    **{c: name.lower() for c, name in _EEA_CODES.items()
+       if c not in ("2N", "G7", "N4", "U3")},
+}
+_COVER_NAME_RE = {c: re.compile(rf"(?:{pat})", re.I) for c, pat in _COVER_NAMES.items()}
+#: EDGAR's codes for the US states, DC and "United States". A foreign private issuer is by
+#: definition not incorporated in a US state (Rule 3b-4), so a cover tagging one of these has
+#: written an ISO country code into an EDGAR field — AAUC's "CA" is Canada, not California, and
+#: ALLT's, MNDY's and ZIM's "IL" is Israel, not Illinois (measured 2026-10-28). It is not read.
+_US_CODES = frozenset({
+    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN",
+    "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH",
+    "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT",
+    "VT", "VA", "WA", "WV", "WI", "WY", "X1"
+})
+
+
+def _cover_code(name: str) -> str | None:
+    """The order code a cover's place NAME stands for, or None for a place on no order."""
+    return next((c for c, rx in _COVER_NAME_RE.items() if rx.fullmatch(name)), None)
+
+
+def _cover_incorporation(
+    http: CachedHttp, cik: str, annual: Filing
+) -> tuple[str | None, str] | None:
+    """(EDGAR code, the place as the cover states it) from the annual report's own cover tag, or
+    None when it carries no usable one. The code is None when the cover names a place on NO order —
+    it is then shown, never matched further.
+
+    NEVER THE BUSINESS ADDRESS: #837 measured that proxy wrong on CYD and JOYY (Singapore
+    addresses; Bermuda and Cayman covers), which would have put both under the May order."""
+    if not annual.primary_doc:
+        return None
+    url = _ARCHIVE.format(cik=int(pad_cik(cik)), acc=annual.accession.replace("-", ""),
+                          doc=annual.primary_doc)
+    try:
+        doc = http.get_text(url, ttl_seconds=None)
+    except HttpError:
+        return None
+    m = _IX_INCORPORATION.search(doc)
+    text = " ".join(htmllib.unescape(re.sub(r"<[^>]+>", " ", m.group(1))).split()) if m else ""
+    if not text:
+        return None
+    # THE GRAMMAR FIRST: "UK" is a NAME the transform accepts, and read as a raw code it would
+    # match no order. Only what the grammar does not know is tried as a code a filer tagged itself.
+    if (code := _cover_code(text)) is not None:
+        return code, text
+    if re.fullmatch(r"[A-Z0-9]{2}", text):
+        return None if text in _US_CODES else (text, "")
+    return None, text
+
+
+def _section16_reach(
+    edgar: EdgarClient, http: CachedHttp, cik: str, reference_date: date
+) -> Section16Reach | None:
+    """None when the issuer is NOT a foreign private issuer on the reference date — its latest
+    annual report on or before that date is a 10-K/10-KT, or its recent index holds none — and is
+    read exactly as before. Otherwise the reach: which annual report made it an FPI, where it is
+    incorporated, and the order that covers it, if any.
+
+    THE COVER FIRST, EDGAR SECOND (Codex, #841 round 1). The annual report's cover is the
+    issuer's own statement as of a filing on or before the reference date; EDGAR's
+    `stateOfIncorporation` is today's company record. Measured 2026-10-28 over the 207 primary
+    FPIs whose EDGAR code is populated: on 6 the two put the issuer under DIFFERENT regimes, and
+    the cover is the right one each time — DOX is a Guernsey company (EDGAR: United Kingdom),
+    TEN Bermudian (EDGAR: Greece), BBUC British Columbian (EDGAR: Bermuda), HAFN Singaporean
+    (EDGAR: Bermuda), MRX and RNW English (EDGAR: Bermuda, India). EDGAR is read only where the
+    cover carries no usable tag."""
+    annuals = [f for f in edgar.recent_filings(cik, forms=_ANNUAL_REPORT_FORMS)
+               if f.filing_date <= reference_date]
+    if not annuals:
+        return None
+    annual = max(annuals, key=lambda f: f.filing_date)
+    if annual.form not in _FPI_ANNUAL_FORMS:
+        return None
+    if reference_date < HFIAA_EFFECTIVE:
+        # No Form 3/4/5 was owed yet, so the line never names a jurisdiction: none is read.
+        return Section16Reach(annual, None, "", "", None)
+    cover = _cover_incorporation(http, cik, annual)
+    edgar_inc = None if cover is not None else edgar.state_of_incorporation(cik)
+    code: str | None = None
+    place, source = "", ""
+    if cover is not None:
+        (code, place), source = cover, f"{annual.form} cover, {annual.accession}"
+    elif edgar_inc is not None:
+        (code, place), source = edgar_inc, "EDGAR state of incorporation"
+    known = REGIMES.get(code) if code else None
+    if known is not None:
+        place = known.jurisdiction
+    elif code and not place:
+        place = f"EDGAR code {code}"
+    in_force = known is not None and known.order.issued <= reference_date
+    return Section16Reach(annual, code, place, source,
+                          known if in_force else None, None if in_force else known)
+
+
+def _fpi_insider_activity(
+    edgar: EdgarClient, http: CachedHttp, cik: str, reference_date: date, reach: Section16Reach
+) -> Sourced[str]:
+    """(FPI3) The insider line for a foreign private issuer: Forms 3/4/5 read only from
+    2026-03-18, the window stated, and an issuer whose insiders file nothing here labelled by what
+    that absence means.
+
+    THE FILINGS DECIDE, NOT THE INCORPORATION. Incorporation in an order's jurisdiction is
+    necessary for the exemption but not sufficient — the issuer must also be subject to the
+    regulation, which EDGAR does not record — and #837 measured 23 primary issuers in a March-order
+    jurisdiction whose insiders file Forms 3/4 anyway (BRSL, DOX, GLOB, IMTX, JMIA, TTAM among
+    them). So an FPI with filings since 2026-03-18 is READ, with the order named beside the counts
+    as a reason they can be partial; only one with NO filings, in an order's jurisdiction, reads
+    "may report abroad". Never "no insider activity", and never a bare UNKNOWN.
+    """
+    kind = f"foreign private issuer ({reach.annual.form} filed {reach.annual.filing_date})"
+    if reference_date < HFIAA_EFFECTIVE:
+        return Sourced.unknown(
+            note=(f"{kind}: Section 16(a) reached its insiders only from {HFIAA_EFFECTIVE} "
+                  f"(HFIAA), after this reference date, so no Form 3/4/5 was required"))
+    try:
+        # BOUNDED AT THE REFERENCE DATE, because the line states its window as "since 2026-03-18"
+        # up to that date and a later filing would make that statement false.
+        filings = [f for f in edgar.recent_filings(cik, forms=_SECTION16_FORMS,
+                                                    since=HFIAA_EFFECTIVE)
+                   if f.filing_date <= reference_date]
+    except HttpError as exc:
+        return Sourced.unknown(note=f"EDGAR Form 3/4/5 fetch failed: {exc}")
+    span = (reference_date - HFIAA_EFFECTIVE).days
+    if not filings:
+        looked = (f"EDGAR submissions CIK{pad_cik(cik)}: no Form 3/4/5 filed since "
+                  f"{HFIAA_EFFECTIVE}")
+        if reach.regime is not None:
+            return Sourced.present(
+                _reports_abroad_line(reach, span),
+                source_ref=(f"SEC Release {reach.regime.order.release} "
+                            f"({reach.regime.order.issued}); {reach.place_source} "
+                            f"{reach.code}; {looked}"))
+        orders = ", ".join(sorted({r.order.release for r in REGIMES.values()}))
+        where = _incorporated_in(reach) if reach.place else _jurisdiction_unread(reach)
+        if reach.pending is not None:
+            why = (f"whose SEC exemptive order ({reach.pending.order.release}) takes effect only "
+                   f"{reach.pending.order.issued}, after this reference date")
+        elif reach.place:
+            why = f"which no SEC exemptive order covers ({orders})"
+        else:
+            why = f"so whether an SEC exemptive order ({orders}) covers it is unread"
+        return Sourced.unknown(
+            note=(f"{kind}: no Form 3/4/5 filed in the last {span} days, since {HFIAA_EFFECTIVE} "
+                  f"when Section 16(a) reached its insiders (HFIAA) — {where}, {why}"),
+            source_ref=looked)
+    lines: list[Form4Line] = []
+    for f in filings:
+        if f.form == "4":
+            lines.extend(_form4_codes(http, cik, f.accession, f.filing_date))
+    by_form: dict[str, int] = {}
+    for f in filings:
+        base = f.form.removesuffix("/A")
+        by_form[base] = by_form.get(base, 0) + 1
+    filed = ", ".join(f"{n} Form {k}" for k, n in sorted(by_form.items()))
+    scope = (f"{kind}: Section 16(a) reached its insiders {HFIAA_EFFECTIVE} (HFIAA) and nothing "
+             f"earlier is read; filed since: {filed}")
+    if reach.regime is not None:
+        scope += "; " + _may_report_abroad(reach)
+    elif not reach.place:
+        # SAID ON A READ LINE TOO: an order could make these counts partial, and an unread
+        # jurisdiction is the one case where the line cannot tell. IBN (India, May order) is it.
+        scope += (f"; {_jurisdiction_unread(reach)}, so whether an SEC exemptive order lets its "
+                  f"insiders report abroad is unread")
+    win = min(_INSIDER_WINDOW_DAYS, span)
+    return Sourced.present(
+        compose_insider_line(lines, reference_date=reference_date,
+                             last_filing=max(f.filing_date for f in filings),
+                             since=HFIAA_EFFECTIVE, scope=scope),
+        source_ref=(f"EDGAR Forms 3/4/5 (latest {filings[0].accession}; {len(filings)} filings "
+                    f"since {HFIAA_EFFECTIVE}, the HFIAA effective date; counts over {win}d)"))
+
+
+def _order_terms(reach: Section16Reach) -> tuple[Regime, str, str]:
+    """The regime in force, the date it began if later than the HFIAA's, and who still files —
+    shared by both order clauses so the two can never disagree about it."""
+    r = reach.regime
+    assert r is not None
+    since = str(r.order.issued) if r.order.issued > HFIAA_EFFECTIVE else ""
+    rest = ("" if r.covers == _DIRECTORS_AND_OFFICERS
+            else "; its other officers still file Forms 3/4")
+    return r, since, rest
+
+
+def _may_report_abroad(reach: Section16Reach) -> str:
+    """The order clause beside an FPI's counts: who may report abroad instead, from when, and who
+    still files here. Stated whenever the issuer sits in an order's jurisdiction, because then the
+    Forms on file can be a PART of its insiders' trading."""
+    r, began, rest = _order_terms(reach)
+    since = f" from {began}" if began else ""
+    return (f"{_incorporated_in(reach)}: its {r.covers} may report under {_named_regulation(r)} "
+            f"instead{since} (SEC order {r.order.release}), so these counts can be partial{rest}")
+
+
+def _named_regulation(r: Regime) -> str:
+    """'a regulation the order names (Canada's: NI 55-104)'. The incorporation jurisdiction's
+    regulation is an EXAMPLE, never THE one: the order also accepts a qualifying regulation of
+    another listed jurisdiction (LAR is incorporated in Switzerland and listed in Toronto, not on
+    SIX), and which one applies is not in SEC data (Codex, #841 round 1)."""
+    owner = r.jurisdiction.removeprefix("the ").split(",")[0]
+    return f"a regulation the order names ({owner}'s: {r.regulation.removeprefix('the ')})"
+
+
+def _jurisdiction_unread(reach: Section16Reach) -> str:
+    """The jurisdiction is UNTAGGED, not unstated: IBN's 20-F is not inline XBRL and its cover
+    prints "India" under a label the reader cannot parse without reading rendered text."""
+    return (f"its jurisdiction of incorporation is neither recorded in EDGAR nor tagged on its "
+            f"{reach.annual.form} cover")
+
+
+def _incorporated_in(reach: Section16Reach) -> str:
+    """'incorporated in Canada (EDGAR state of incorporation)' — the jurisdiction and where it was
+    read, so the reader can check the one fact the order clause rests on."""
+    return f"incorporated in {reach.place} ({reach.place_source})"
+
+
+def _reports_abroad_line(reach: Section16Reach, span: int) -> str:
+    """The value for an FPI in an order's jurisdiction whose insiders filed NOTHING here since
+    2026-03-18. It leads with "May report abroad (SEC order N)" and states its window — "in the
+    last N days", which is also what the renderer reads to drop the stale "6m" from the label — and
+    the one condition SEC data cannot show."""
+    r, began, rest = _order_terms(reach)
+    since = f", from {began}" if began else ""
+    # A POSSIBILITY, NOT A STATUS (Codex, #841 round 1): incorporation is the order's condition
+    # (i); condition (ii), that the issuer is subject to a qualifying regulation, is not in SEC
+    # data, so the headline is "May report abroad" and the line ends on what is not established.
+    return (f"May report abroad (SEC order {r.order.release}{since}) — "
+            f"{_incorporated_in(reach)}, so its {r.covers} may report under "
+            f"{_named_regulation(r)} instead of Forms 3/4/5{rest} · none filed with the SEC in "
+            f"the last {span} days, since {HFIAA_EFFECTIVE} when Section 16(a) reached this "
+            f"foreign private issuer's insiders (HFIAA) · not established: the order also "
+            f"requires the issuer to be subject to such a regulation, which SEC data does not "
+            f"show")
+
+
 def compose_insider_line(
-    lines: list[Form4Line], *, reference_date: date, last_filing: date
+    lines: list[Form4Line], *, reference_date: date, last_filing: date,
+    since: date | None = None, scope: str | None = None,
 ) -> str:
     """The insider line, as a PURE function of parsed Form 4 rows.
 
@@ -2827,8 +3199,19 @@ def compose_insider_line(
     are built from the REAL type) or no pin at all. Every rule this line encodes — the window is
     stated, the sides are never netted, absence carries its horizon, the largest is reported when
     it is not the last — is a behaviour a reader depends on, so each gets a red.
+
+    `since` (FPI3) is the first day the law required these filings — a foreign private issuer's
+    2026-03-18. A window reaching back past it is CUT there and says so ("in the last 155 days,
+    since 2026-03-18"), and an absence reads "no sale since 2026-03-18", never "in the 3y scanned":
+    the shorter window says it is shorter and is never padded with time in which nothing could be
+    filed. `scope` is the FPI clause, placed before 'other'. Both None ⇒ the domestic line, byte
+    for byte.
     """
     win_start = reference_date - timedelta(days=_INSIDER_WINDOW_DAYS)
+    window = f"in the last {_INSIDER_WINDOW_DAYS} days"
+    if since is not None and since > win_start:
+        win_start = since
+        window = f"in the last {(reference_date - since).days} days, since {since}"
     win = [ln for ln in lines if ln.on is not None and ln.on >= win_start]
 
     def side(code: str) -> str:
@@ -2868,6 +3251,8 @@ def compose_insider_line(
         the visible-absence rule broken by the fix written to honour it."""
         rows = [ln for ln in lines if ln.code == code and ln.on is not None]
         if not rows:
+            if since is not None:
+                return f"no {label} since {since}"
             return f"no {label} in the {_INSIDER_SCAN_DAYS // 365}y scanned"
         latest = max(rows, key=lambda r: r.on or date.min)
         out = _event(latest, f"last {label}")
@@ -2889,9 +3274,11 @@ def compose_insider_line(
     # REMAIN LAST — `render._fmt_insider` matches it with a `$`-anchored regex and silently leaves
     # raw machine dialect on the page if anything follows it.
     line = (f"Open-market buys {side('P')} · sells {side('S')} "
-            f"— in the last {_INSIDER_WINDOW_DAYS} days · "
+            f"— {window} · "
             f"{occurrences('P', 'purchase')} · {occurrences('S', 'sale')} · "
             f"grants {counts.get('A', 0)} · last filing {last_filing}")
+    if scope:
+        line += f" · {scope}"
     other = "/".join(
         f"{c}×{n}" for c, n in sorted(counts.items())
         if c not in _OPEN_MARKET_CODES and c != "A" and n

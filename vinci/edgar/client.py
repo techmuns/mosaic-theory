@@ -539,6 +539,21 @@ class EdgarClient:
         filing scan this is a cache hit rather than a second fetch."""
         return parse_registrant_history(self._submissions(cik))
 
+    def state_of_incorporation(self, cik: int | str) -> tuple[str, str] | None:
+        """EDGAR's state-or-country-of-incorporation CODE for this CIK (``"A6"``, ``"E9"``,
+        ``"X0"``) with EDGAR's own description of it, or None when EDGAR leaves it blank (it does
+        for about a quarter of foreign filers). The code is the structured value; the description
+        is for display only.
+
+        CURRENT, NOT POINT-IN-TIME: the submissions document carries today's value, so a
+        registrant that re-domiciled reads as it is now. Same cached document as
+        :meth:`recent_filings`."""
+        sub = self._submissions(cik)
+        code = str(sub.get("stateOfIncorporation") or "").strip().upper()
+        if not code:
+            return None
+        return code, str(sub.get("stateOfIncorporationDescription") or "").strip()
+
     # --- recent filings (8-K detection via submissions) ---------------------------------------
     def recent_filings(
         self, cik: int | str, *, forms: tuple[str, ...] = ("8-K",), since: date | None = None
