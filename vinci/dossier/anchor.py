@@ -815,6 +815,17 @@ def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
     return max(pts, key=lambda p: (p.period_end, -span(p), p.filed))
 
 
+def _no_diluted_quarter(facts: dict[str, Any]) -> str:
+    """Why `_latest_point` found no diluted weighted average: no tag at all, or a tag over spans
+    longer than a quarter only (an annual filer; a first 10-K before any 10-Q)."""
+    longest = max((p for p in points_for_tag(facts, _DILUTED_TAG) if p.period_start),
+                  key=lambda p: p.period_end, default=None)
+    if longest is None:
+        return "UNKNOWN — no diluted WA tag"
+    return (f"UNKNOWN — {_DILUTED_TAG} is tagged only over spans longer than a quarter (latest "
+            f"{_span(longest)}); no 10-Q quarter is on file to read")
+
+
 def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: bool = False,
                               ) -> tuple[float | None, str] | None:
     """Lease-inclusive net debt ($): total debt + finance leases + operating leases − cash −
@@ -996,7 +1007,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                                             + counts.per_ads_basis,
                                       source=(f"EDGAR {_DILUTED_TAG}" + counts.per_ads_source
                                               if dil else counts.refused
-                                              or "UNKNOWN — no diluted WA tag")),
+                                              or _no_diluted_quarter(facts))),
         "shares_outstanding": AnchorInput(
             value=out, unit="shares",
             basis="point-in-time shares outstanding — the per-share denominator (item 24)",

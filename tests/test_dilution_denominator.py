@@ -140,6 +140,17 @@ def test_a_filer_that_tags_no_quarter_gets_no_weighted_average_rather_than_its_y
         (DILUTED_WA_TAG, "2025-01-01", "2025-12-31", 104_000_000, "2026-02-20"),
     ])
     assert _latest_point(year_only, _DILUTED_TAG) is None
+    # and the anchor block says WHY, not that the tag is missing — the filer does tag it
+    from datetime import UTC, datetime
+
+    from vinci.dossier.anchor import compute_anchor
+
+    page = json.loads((FY_END / "SMPL.page.json").read_text())
+    a = compute_anchor(page["mechanical"], facts=year_only,
+                       computed_at=datetime(2026, 10, 28, tzinfo=UTC), ciq=None)
+    assert a.diluted_shares.value is None
+    assert "longer than a quarter (latest 2025-01-01..2025-12-31)" in a.diluted_shares.source
+    assert a.shares_outstanding.value is None, "a count was corroborated against nothing"
 
 
 def test_both_legs_come_from_the_same_period_even_when_only_one_tag_has_the_quarter() -> None:

@@ -221,9 +221,14 @@ def _synth_facts() -> dict:
         node[tag] = {"units": {"USD": [                       # INSTANT: no "start" key
             {"end": "2025-12-31", "val": val, "filed": "2026-02-01", "fy": 2025, "fp": "Q4",
              "form": "10-Q", "accn": "x"}]}}
+    # THE QUARTER BESIDE THE YEAR, as a real 10-K filer's companyfacts carries it: the anchor reads
+    # the last 10-Q's quarter and never the 10-K's year (`anchor._latest_point`, 2026-10-29), so a
+    # year-only fixture left this pin with no denominator — a fixture shape no 10-K filer has.
     node["WeightedAverageNumberOfDilutedSharesOutstanding"] = {"units": {"shares": [
         {"start": "2024-12-31", "end": "2025-12-31", "val": 50e6, "filed": "2026-02-01",
-         "fy": 2025, "fp": "FY", "form": "10-K", "accn": "x"}]}}
+         "fy": 2025, "fp": "FY", "form": "10-K", "accn": "x"},
+        {"start": "2025-07-01", "end": "2025-09-30", "val": 50e6, "filed": "2025-11-01",
+         "fy": 2025, "fp": "Q3", "form": "10-Q", "accn": "y"}]}}
     return {"facts": {"us-gaap": node}}
 
 
