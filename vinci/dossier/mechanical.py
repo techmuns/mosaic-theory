@@ -3063,9 +3063,7 @@ def _fpi_insider_activity(
                             f"({reach.regime.order.issued}); {reach.place_source} "
                             f"{reach.code}; {looked}"))
         orders = ", ".join(sorted({r.order.release for r in REGIMES.values()}))
-        where = (_incorporated_in(reach) if reach.place
-                 else f"its jurisdiction of incorporation is stated neither in EDGAR nor on its "
-                      f"{reach.annual.form} cover")
+        where = _incorporated_in(reach) if reach.place else _jurisdiction_unread(reach)
         if reach.pending is not None:
             why = (f"whose SEC exemptive order ({reach.pending.order.release}) takes effect only "
                    f"{reach.pending.order.issued}, after this reference date")
@@ -3090,6 +3088,11 @@ def _fpi_insider_activity(
              f"earlier is read; filed since: {filed}")
     if reach.regime is not None:
         scope += "; " + _may_report_abroad(reach)
+    elif not reach.place:
+        # SAID ON A READ LINE TOO: an order could make these counts partial, and an unread
+        # jurisdiction is the one case where the line cannot tell. IBN (India, May order) is it.
+        scope += (f"; {_jurisdiction_unread(reach)}, so whether an SEC exemptive order lets its "
+                  f"insiders report abroad is unread")
     win = min(_INSIDER_WINDOW_DAYS, span)
     return Sourced.present(
         compose_insider_line(lines, reference_date=reference_date,
@@ -3118,6 +3121,13 @@ def _may_report_abroad(reach: Section16Reach) -> str:
     since = f" from {began}" if began else ""
     return (f"{_incorporated_in(reach)}: its {r.covers} may report under {r.regulation} instead"
             f"{since} (SEC order {r.order.release}), so these counts can be partial{rest}")
+
+
+def _jurisdiction_unread(reach: Section16Reach) -> str:
+    """The jurisdiction is UNTAGGED, not unstated: IBN's 20-F is not inline XBRL and its cover
+    prints "India" under a label the reader cannot parse without reading rendered text."""
+    return (f"its jurisdiction of incorporation is neither recorded in EDGAR nor tagged on its "
+            f"{reach.annual.form} cover")
 
 
 def _incorporated_in(reach: Section16Reach) -> str:

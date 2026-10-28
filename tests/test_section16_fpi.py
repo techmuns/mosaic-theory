@@ -306,3 +306,18 @@ def test_the_rendered_row_states_the_horizon_and_collapses_other() -> None:
         assert row.startswith("- **Insider activity (Form 4):**"), row
         assert "6m" not in row.split(":**")[0]
     assert row.split("\n")[0].endswith("its other officers still file Forms 3/4 · other filings 1")
+
+
+def test_an_unread_jurisdiction_is_said_on_a_read_line_too() -> None:
+    """IBN (20-F; incorporated in India, a May-order jurisdiction) as of 2026-04-01. EDGAR leaves
+    its incorporation blank and its 20-F is not inline XBRL — the cover PRINTS "India" but tags
+    nothing — so the jurisdiction is unread. Its insiders file here (13 Forms 3), so the line is
+    read; it must still say the order question is open, or counts that an order could make partial
+    read as complete. And the jurisdiction is not "stated nowhere": it is untagged."""
+    got = _run("IBN")
+    assert got.status is SourceStatus.PRESENT and got.value is not None
+    assert "filed since: 13 Form 3" in got.value
+    assert ("its jurisdiction of incorporation is neither recorded in EDGAR nor tagged on its "
+            "20-F cover, so whether an SEC exemptive order lets its insiders report abroad is "
+            "unread") in got.value
+    assert "stated neither" not in got.value

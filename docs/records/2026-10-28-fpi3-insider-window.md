@@ -32,6 +32,9 @@ which is #837's rule.
 - **No order, no filings.** An FPI in such a jurisdiction is UNKNOWN with its window and the
   reason, for example "incorporated in Cayman Islands …, which no SEC exemptive order covers".
   It is never "no insider activity".
+- **Files here, jurisdiction unread.** An FPI whose jurisdiction is neither recorded in EDGAR
+  nor tagged on its cover is read, and the line says "whether an SEC exemptive order lets its
+  insiders report abroad is unread", because an order could make its counts partial (IBN).
 - **Files here and on an order.** An FPI in an order's jurisdiction whose insiders do file here
   is READ. The order is named beside the counts: "its directors and officers may report under
   EU MAR instead (SEC order 34-104931), so these counts can be partial".
@@ -148,7 +151,7 @@ queue):*
   incorporation), which no SEC exemptive order covers (34-104931, 34-105517)".
 
 **HOW VERIFIED.**
-- **Frozen real fixtures.** `tests/fixtures/section16/` holds six cases. Each is every SEC
+- **Frozen real fixtures.** `tests/fixtures/section16/` holds seven cases. Each is every SEC
   document the block reads for one issuer at 2026-10-28, with the submissions index trimmed to
   the annual-report and Form 3/4/5 rows it reads. Each fixture was replayed through both versions
   and had to reproduce the live output before it was written.
@@ -157,6 +160,9 @@ queue):*
   - **SLI:** 40-F, British Columbia; labelled "Reports abroad".
   - **BLDP:** blank EDGAR code, read from the cover.
   - **DQ:** on no order; the negative pin.
+  - **IBN** (as of 2026-04-01): India, the May order. Blank EDGAR code, and a 20-F that is not
+    inline XBRL, so the jurisdiction is unread. Its 6.3 MB cover is cut to the first 100,000
+    bytes, which holds the cover page.
   - **DBVT:** a French company that files 10-K; domestic. Its whole `Sourced` must equal what
     origin/main produced from the same documents.
 - **Code table.** `tests/fixtures/sec_reference/edgar_state_country_codes.json` is EDGAR's code
@@ -164,7 +170,7 @@ queue):*
 - **End to end.** A committed dossier (WERN) carries the real FPI values through
   `render._positioning_lines`. The label is "Insider activity (Form 4)", and IPX's trailing
   `other M×1` still collapses to "other filings 1".
-- **Mutation, one per rule: 9 of 9 killed.**
+- **Mutation, one per rule: 10 of 10 killed.**
   - window floor dropped from the FPI line;
   - count window never cut;
   - FPI read not bounded at the reference date (this survived the first pass, and the IPX
@@ -174,8 +180,22 @@ queue):*
   - an order-jurisdiction issuer with no filings stays UNKNOWN;
   - a 10-K filer read as an FPI;
   - cover fallback never read;
-  - cover names matched by substring.
+  - cover names matched by substring;
+  - an unread jurisdiction left silent on a read line.
   - The source was restored byte-identical and `__pycache__` cleared after each mutation.
+- **The cover fallback, measured on the whole primary population.** A peer session reported the
+  dei tag absent on CYD's and JOYY's covers and eight issuers unresolved. Measured over #837's
+  255 primary FPI lines:
+  - 48 have a blank EDGAR code, and **all 48 covers carry the tag**. 20 map to an order's
+    jurisdiction and 28 name a place on no order. **0 of the 255 end with their jurisdiction
+    unread.**
+  - CYD reads "Bermuda" and JOYY "Cayman Islands". ASR, BLDP, MGA, PAAS, SB, STVN, TAK and TSM
+    all resolve; STVN reads "Italy", in the EEA.
+  - Of the 255, 109 sit in a jurisdiction on an order in force at 2026-10-28. #837 counted 107;
+    the difference is exactly BLDP and STVN, the two it could not place.
+  - **The one miss among the 11 names checked is IBN** (theme band, not primary). Its 20-F
+    carries no inline XBRL at all; the cover prints "India" as text. Printed text is not parsed
+    (CLAUDE.md: parsers consume structured values), so IBN reads "unread" and says so.
 - **Gates (item 4): no screen or ranker reads insider activity.** Searches tried:
   - `insider`, `Form 4`, `forms=("4"`, `16(a)`, `beneficial own`, `Form4`, `catalyst_path`,
     `insider_activity` and `dossier.mechanical` across `vinci/rank`, `vinci/screens`,
@@ -209,6 +229,9 @@ queue):*
   - SEC documents fetched 2026-10-28, read through to the primary checkout's SEC cache read-only;
   - the two orders and EDGAR's code table read at sec.gov 2026-10-28;
   - Arelle/EDGAR `transform/__init__.py` read 2026-10-28.
+- **Cover-tag coverage:** #837's 255 primary FPI lines, as listed by tier in its record, plus
+  JOYY, IBN, MGA, PAAS, TAK and TSM. Each issuer's latest annual report on or before
+  2026-10-28; the tag is read from that report's primary document.
 - **Other-issuer measurement** (FOLLOW-UPS, item 1): Form 4s filed 2023-10-29 to 2026-10-28 in
   each of the 27 dossier issuers' `recent` indexes, 5,407 in all; each one's XML was read.
 - **Code:** `1114490b` before; this branch after. The branch was rebased onto `1341c021`
@@ -228,7 +251,10 @@ queue):*
    - Measured on Form 4: none of the queue FPIs' Form 4s since 2026-03-18 names another issuer.
      This is the same defect as FOLLOW-UPS item 1, and that item's fix covers both paths.
    - FALSIFIER: an FPI read "from 2026-03-18" whose only filings since are about another issuer.
-4. **No annual report in the `recent` block reads as domestic** (today's behaviour). This covers
+4. **A cover that is not inline XBRL leaves the jurisdiction unread** (IBN), and the line says
+   so. Printed text is not parsed. FALSIFIER: a primary-population FPI with a blank EDGAR code
+   and an untagged cover; on 2026-10-28 there are 0 of 255.
+5. **No annual report in the `recent` block reads as domestic** (today's behaviour). This covers
    an issuer with no periodic report yet (#837 lists OGC, GORO, AYA and MDA) and a late filer
    whose last annual has rolled out of `recent`. None of the 83 names is either.
 
@@ -248,6 +274,8 @@ build must not).**
    first pass.
 3. **The domestic read is not bounded at the reference date.** `recent_filings` has no upper bound
    and `compose_insider_line` counts every row from the window start, so a re-dated read counts
-   later filings while stating "in the last 182 days". The FPI path is bounded.
+   later filings while stating "in the last 182 days". The FPI path is bounded. Shown on IBN:
+   origin/main read as of 2026-04-01 prints "last sale $0.63M, director, 2026-04-24 (~-1mo ago)",
+   a sale three weeks after its reference date (the fixture's `origin_main`).
 4. **An UNKNOWN insider value keeps the label "(Form 4, 6m)"** while its note states another
    horizon. This is `render.py`/`dossier.js`'s label derivation, domestic and FPI alike.
