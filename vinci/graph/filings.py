@@ -12,6 +12,7 @@ import re
 from bs4 import BeautifulSoup
 
 from vinci.edgar.client import EdgarClient
+from vinci.edgar.concepts import ANNUAL_REPORT_FORMS
 from vinci.netcache import CachedHttp
 from vinci.resolver.index import pad_cik
 from vinci.sec import build_sec_http
@@ -158,8 +159,10 @@ def relevant_excerpts(text: str, *, max_chars: int = 24_000) -> str:
 def latest_10k_excerpts(
     edgar: EdgarClient, cik: int | str, *, http: CachedHttp | None = None
 ) -> tuple[str, str] | None:
-    """(accession, relevant-excerpt text) for the issuer's latest 10-K, or None if none on file."""
-    filings = edgar.recent_filings(cik, forms=("10-K",))
+    """(accession, relevant-excerpt text) for the issuer's latest annual report — a 10-K, or a
+    foreign filer's 20-F / 40-F (FPI1a) — or None if none on file. A 40-F's primary document is
+    its cover, so its excerpts are thin: its business description is an exhibit."""
+    filings = edgar.recent_filings(cik, forms=ANNUAL_REPORT_FORMS)
     if not filings:
         return None
     latest = max(filings, key=lambda f: f.filing_date)

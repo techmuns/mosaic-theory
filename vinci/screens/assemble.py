@@ -12,7 +12,14 @@ from __future__ import annotations
 from datetime import date, timedelta
 
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import ConceptPoint, extract_points, share_count_change
+from vinci.edgar.concepts import (
+    REPORTING,
+    ConceptPoint,
+    currency_withheld,
+    extract_points,
+    share_count_change,
+    unit_currency,
+)
 from vinci.edgar.net_debt import not_applicable
 from vinci.eod.features import _close_on_or_before, compute_price_features, relative_return
 from vinci.schemas.data_record import (
@@ -283,10 +290,22 @@ def pe_current_and_percentile(
     does not state leaves the level UNKNOWN with the refusal's reason. THE PERCENTILE IS
     RATIO-FREE: every observation in the line's own range divides by the same constant, so it ranks
     identically with or without the ratio and is kept either way — refusing it would refuse a
-    reading the ratio cannot move. (The CURRENCY of the EPS is not this argument's business: a
-    CNY EPS against a USD price is FPI1a's unit guard.)"""
+    reading the ratio cannot move.
+
+    AN EPS NOT IN DOLLARS NEVER MAKES A LEVEL (FPI1a). The price is USD, so an EPS in another
+    currency leaves the level UNKNOWN, naming the currency: QFIN's read 5.67 ÷ CNY 22.01. The
+    PERCENTILE IS KEPT for the same reason the ratio's is: one series in one currency ranks the
+    same in any, so callers read EPS in the filer's own currency (``REPORTING``) and only the level
+    is refused. What a constant currency does not cancel is FX drift across the window."""
     pe, pct = _pe_pair_per_reported_share(price_bars, annual_eps, reference_date=reference_date,
                                           min_points=min_points)
+    foreign = sorted({c for p in annual_eps
+                      if (c := unit_currency(p.unit)) is not None and c != "USD"})
+    if foreign and pe.value is not None:
+        return DataField.unknown(
+            source="EDGAR", tier=SourceTier.DERIVED,
+            note=(f"P/E level withheld — annual EPS is in {', '.join(foreign)} and the price in "
+                  f"USD; {currency_withheld(foreign[0])}")), pct
     if ads is None or pe.value is None:
         return pe, pct
     if not ads.known or ads.ordinary_per_ads is None:
@@ -474,7 +493,11 @@ def enrich_with_fundamentals(
     cik = rec.identity.cik
     snap = edgar.fundamental_snapshot(cik)
     facts = edgar.companyfacts(cik) if cik else {}
-    annual_eps = [p for p in extract_points(facts, "eps_diluted") if p.is_annual] if facts else []
+    # the filer's own currency as of the reference date: the percentile is currency-free and the
+    # level is withheld when it is not USD (pe_current_and_percentile)
+    annual_eps = ([p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
+                                             as_of=reference_date)
+                   if p.is_annual] if facts else [])
     pe, pe_pctile = pe_current_and_percentile(price_bars, annual_eps, reference_date=reference_date,
                                               ads=rec.ads)
     # EV/EBITDA — the multiple and its trailing-range percentile are both DEFERRED (need net-debt).

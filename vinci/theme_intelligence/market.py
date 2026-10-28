@@ -200,18 +200,22 @@ def deep_history(ticker: str, recent: Closes, as_of: date,
                           f"{held[0][0].isoformat()}")
 
 
-def edgar_eps() -> EpsSource:
+def edgar_eps(as_of: date | None = None) -> EpsSource:
     """Annual diluted EPS from SEC XBRL companyfacts (the fund's client and concept reader), with
     the cover-page share counts from the same response (concept "shares") — the per-share basis
-    check reads them."""
+    check reads them. ``as_of`` is the run's date: the EPS is read in the currency the filer
+    reported in on it (`concepts.reporting_currency`)."""
     from vinci.edgar.client import EdgarClient
-    from vinci.edgar.concepts import extract_points
+    from vinci.edgar.concepts import REPORTING, extract_points
 
     edgar = EdgarClient.from_config()
 
     def get(cik: str) -> list[ConceptPoint]:
         facts = edgar.companyfacts(cik)
-        return ([p for p in extract_points(facts, "eps_diluted") if p.is_annual]
+        # the filer's own currency as of the run's date: the P/E level is withheld unless it is
+        # USD, and the percentile ranks one series in one currency (pe_current_and_percentile)
+        return ([p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
+                                           as_of=as_of) if p.is_annual]
                 + extract_points(facts, "shares"))
     return get
 

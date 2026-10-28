@@ -157,8 +157,9 @@ def test_pointer_discovery_cannot_reach_past_the_records_own_as_of() -> None:
     ref = _d(2026, 7, 6)
 
     class _F:
+        # `form` as the real `Filing` carries it: the step names the annual report it read
         def __init__(self, d: _d, acc: str) -> None:
-            self.filing_date, self.accession = d, acc
+            self.filing_date, self.accession, self.form = d, acc, "10-K"
 
     class _Hit:
         def __init__(self, d: _d, acc: str) -> None:

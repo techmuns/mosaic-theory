@@ -1439,7 +1439,7 @@ class CovenantPointer(BaseModel):
     discrete contract (Notes Payable, a lease) carries the honest ``note`` (no accession)."""
 
     family: str  # the instrument family / class this pointer serves
-    filing: str  # "8-K" | "latest 10-K" | "—"
+    filing: str  # "8-K" | "latest 10-K" | "latest 20-F" | "—"
     filing_date: str  # ISO, or ""
     accession: str  # the accession the exhibit lives in, or "" (absent)
     exhibits: list[str]  # located agreement-class exhibit filenames (feed the fenced E5 extract)
