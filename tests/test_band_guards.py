@@ -236,9 +236,14 @@ def _synth_mech(*, da_margin: float | None, current: float) -> dict:
             "window_span_years": 9.0, "periodicity": "quarterly", "data_quality": None,
             "implied_d_and_a_margin": da_margin}]}},
         "financial_summary": {"annual": {"value": {
-            "is_estimate": [False],
+            "columns": ["FY25"], "is_estimate": [False],
             "rows": [{"label": "Revenue ($M)", "values": [1000.0]},
-                     {"label": "EBIT ($M)", "values": [120.0]}]}}},
+                     {"label": "EBIT ($M)", "values": [120.0]}]}},
+            # the window the column covers, as every committed page states it — the anchor's D&A
+            # must cover the same twelve months (`anchor._page_window`)
+            "statement_reconciliation": {"rows": [
+                {"line": "revenue", "column": "FY25", "period_end": "2025-12-31",
+                 "is_ltm": False}]}},
         # TEV = 1000 + 300 net debt; at the coherent 8.0x that implies $162.5M EBITDA against
         # $130M recorded (1.25x) — inside the 2.5x band, and only because net debt is scaled to $M.
         "implied_valuation": {"market_cap": {"value": 1000.0}},

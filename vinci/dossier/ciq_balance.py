@@ -237,8 +237,12 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
 
     da_cell = (_cf_cell(bundle, "Depreciation & Amort., Total", True)
                or _cf_cell(bundle, "Depreciation & Amort.", True))
-    ocf = _sourced(bundle, cs.ltm_ocf)
-    capex = _cf_row(bundle, "Capital Expenditure", True)
+    # OCF and capex read the annual Cash Flow sheet's rightmost valued column, as `ltm_ocf` does,
+    # each WITH that column's period: the FCF fill pairs them only when it is one (#830's follow-up)
+    ocf_cell = _cf_cell(bundle, "Cash from Ops.", True)
+    capex_cell = _cf_cell(bundle, "Capital Expenditure", True)
+    ocf = round(ocf_cell[0], 1) if ocf_cell else None   # `ltm_ocf`'s rounding, so no value moves
+    capex = capex_cell[0] if capex_cell else None
     diluted = _cf_row(bundle, "Weighted Avg. Diluted Shares Out.", False) or \
         _cf_row(bundle, "Weighted Avg. Diluted Shares Out.", True)
 
@@ -259,9 +263,11 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     put("d_and_a", da_cell[0] if da_cell else None, "$M",
         "depreciation and amortisation, the annual sheet's latest column (cash-flow statement)",
         stamp, (da_cell[1], da_cell[2]) if da_cell else (None, None))
-    put("ocf", ocf, "$M", "cash from operations, trailing twelve months", stamp)
+    put("ocf", ocf, "$M", "cash from operations, the annual sheet's latest column", stamp,
+        (ocf_cell[1], ocf_cell[2]) if ocf_cell else (None, None))
     put("capex", (abs(capex) if capex is not None else None), "$M",
-        "capital expenditure, latest full year (magnitude)", stamp)
+        "capital expenditure, the annual sheet's latest column (magnitude)", stamp,
+        (capex_cell[1], capex_cell[2]) if capex_cell else (None, None))
     put("diluted_shares", diluted, "millions", "weighted-average diluted shares, latest period",
         stamp)
     put("revenue", revenue, "$M", "total revenue, latest full year", stamp)
