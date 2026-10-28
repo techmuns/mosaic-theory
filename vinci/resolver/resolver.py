@@ -22,6 +22,7 @@ from pydantic import BaseModel
 from vinci.config import Config, get_config
 from vinci.edgar.submissions import parse_former_names
 from vinci.netcache import CachedHttp, HttpError
+from vinci.resolver.ads_ratio import read_ratio
 from vinci.resolver.errors import (
     AmbiguousResolutionError,
     ResolutionError,
@@ -37,6 +38,7 @@ from vinci.resolver.index import (
 )
 from vinci.resolver.instrument import RegisteredLine, cover_lines, match_line, periodic_filings
 from vinci.schemas.data_record import Identity
+from vinci.schemas.listing import AdsRatio
 
 _CT_URL = "https://www.sec.gov/files/company_tickers.json"
 _CTE_URL = "https://www.sec.gov/files/company_tickers_exchange.json"
@@ -233,6 +235,37 @@ class EntityResolver:
             if any(sym for sym, _t in lines):
                 return match_line(lines, ticker, form=form, filed=filed, accession=acc)
         return None
+
+    def ads_ratio(self, cik: int | str, as_of: date) -> AdsRatio:
+        """How many ordinary shares one of the issuer's depositary shares represents, as its
+        latest periodic report filed on or before ``as_of`` states it (:mod:`vinci.resolver.
+        ads_ratio`) — or the refusal, with its reason. Never a default.
+
+        THE SAME COVER `registered_line` READS: the newest report whose cover tags its symbols,
+        up to `_COVER_WALK` back; with none tagged, the newest report's own text. A document the
+        SEC will not serve is a refusal that says so — an unread filing states no ratio."""
+        cik10 = pad_cik(cik)
+        if self._http is None:
+            raise RuntimeError("reading an ADS ratio requires an HTTP client")
+        reports = periodic_filings(self.submissions(cik10), as_of)[:_COVER_WALK]
+        if not reports:
+            return AdsRatio(status="refused", reason=(
+                f"no periodic report filed on or before {as_of.isoformat()} in the issuer's "
+                f"recent submissions — no cover to read a ratio from"))
+        chosen = reports[0]
+        docs: dict[str, str] = {}
+        for form, filed, acc, doc in reports:
+            url = _ARCHIVE_DOC.format(cik=int(cik10), acc=acc.replace("-", ""), doc=doc)
+            try:   # a filed document never changes, so it is cached for good
+                docs[acc] = self._http.get_text(url, ttl_seconds=None)
+            except HttpError as exc:
+                return AdsRatio(status="refused", form=form, filed=filed, accession=acc,
+                                reason=f"the periodic report could not be read ({exc})")
+            if any(sym for sym, _t in cover_lines(docs[acc])):
+                chosen = (form, filed, acc, doc)
+                break
+        form, filed, acc, _doc = chosen
+        return read_ratio(docs[acc], form=form, filed=filed, accession=acc)
 
     # --- internals ----------------------------------------------------------------------------
     def _exchange_for(self, norm_ticker: str) -> str | None:

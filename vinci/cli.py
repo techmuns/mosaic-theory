@@ -61,6 +61,7 @@ from vinci.schemas.ledger import (
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
+from vinci.screens.run import listing_basis
 from vinci.sleeves import DEFAULT_SLEEVE
 from vinci.store import Store
 from vinci.themes.assay import PriceCloseFn
@@ -356,6 +357,7 @@ def _cmd_screen(args: argparse.Namespace) -> int:
             store, eod, edgar, reference_date=ref, lookback_days=args.lookback_days,
             staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
             progress=stderr_reporter, first_sessions=load_first_sessions(cfg.snapshots_dir),
+            listing=listing_basis(eod.security_types(), EntityResolver.from_config(cfg), ref),
         )
         store.export_snapshots(cfg.snapshots_dir)
     print(f"=== Screen 2 · {stats['universe']} names · ref {ref} · benchmark {args.benchmark} ===")

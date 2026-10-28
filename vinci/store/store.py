@@ -618,7 +618,11 @@ class Store:
                 rec.screen_run_at.isoformat(),
                 rec.triage_band.value,
                 rec.twin_to_rule_out,
-                rec.model_dump_json(),
+                # a line that is not a depositary receipt carries no `ads` key at all (FPI4,
+                # 2026-10-28): ABSENT, never null, so every committed candidate row written before
+                # the field still round-trips byte-identically
+                rec.model_dump_json(exclude=({"data_record": {"ads"}}
+                                             if rec.data_record.ads is None else None)),
             ),
         )
         self._conn.commit()

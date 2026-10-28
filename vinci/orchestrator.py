@@ -37,6 +37,7 @@ from vinci.rank import (
     render_queue_markdown,
     scan_structural,
 )
+from vinci.resolver import EntityResolver
 from vinci.resolver.aliases import load_first_sessions
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
@@ -50,6 +51,7 @@ from vinci.screens.retention import (
     next_run_id,
     write_manifest,
 )
+from vinci.screens.run import listing_basis
 from vinci.screens.screen2 import Screen2Thresholds
 from vinci.sec import build_sec_http
 from vinci.store import Store
@@ -403,6 +405,9 @@ def run_weekly(
             staleness_days=cfg.price_staleness_days, benchmark=benchmark, progress=progress,
             retain_run_id=run_id, retain_dir=cfg.snapshots_dir,
             first_sessions=load_first_sessions(cfg.snapshots_dir),
+            # a depositary line's EPS is read per ADS (FPI4) — the same type list the universe
+            # just sized on, cached for the day
+            listing=listing_basis(eod.security_types(), EntityResolver.from_config(cfg), end),
         )
         store.export_snapshots(cfg.snapshots_dir)
     # 3. RANK + the structural scan, from the snapshot the screen just exported, through the same

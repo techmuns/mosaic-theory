@@ -18,6 +18,7 @@ from datetime import date
 from pydantic import BaseModel, Field
 
 from vinci.schemas.envelope import DataField, SourceTier
+from vinci.schemas.listing import AdsRatio
 
 
 class Identity(BaseModel, frozen=True):
@@ -135,3 +136,8 @@ class DataRecord(BaseModel, frozen=True):
     overall_coverage_tier: CoverageTier = CoverageTier.US_FULL
     # When this record was assembled (point-in-time stamp for the whole record).
     as_of: date | None = None
+    # THE LISTING BASIS OF A DEPOSITARY LINE (FPI4): ordinary shares per ADS as the issuer's own
+    # filing states it, or the refusal with its reason. None means the line is NOT a depositary
+    # receipt — its price and its per-share figures share one unit. Defaulted so a record written
+    # before 2026-10-28 still loads; such a record never carried a depositary line's ratio.
+    ads: AdsRatio | None = None
