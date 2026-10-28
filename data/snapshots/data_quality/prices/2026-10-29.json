@@ -2,10 +2,10 @@
  "schema": "data_quality/1+exceptions",
  "rows": {
   "form": "exceptions",
-  "statement": "EXCEPTIONS ONLY (operator ruling C1, 2026-10-29). Each check lists in full every name it did not confirm in full — a unit not confirmed, a unit its own rule leaves out, or the check not run on it — exactly as the full card holds it. The names whose every unit is confirmed, and those a check does not apply to, are COUNTED, NOT LISTED: each check's `listing` and `not_listed` say how many. The boundary, the fleet counts and the not-run reasons are the full card's. The full card, every name for every check, was written to `full.path`: git-ignored, it exists only in the checkout that ran the scorecard, and `full.sha256` is the hash of its bytes.",
+  "statement": "EXCEPTIONS ONLY (operator ruling C1, 2026-10-29). Each check lists in full every name it did not confirm in full — a unit not confirmed, a unit its own rule leaves out, no unit judged, or the check not run on it — exactly as the full card holds it. The names whose every unit is confirmed, and those a check does not apply to, are COUNTED, NOT LISTED: each check's `listing` and `not_listed` say how many. The boundary, the fleet counts and the not-run reasons are the full card's. The full card, every name for every check, was written to `full.path`: git-ignored, it exists only in the checkout that ran the scorecard, and `full.sha256` is the hash of its bytes.",
   "full": {
    "path": "data/data_quality_full/prices/2026-10-29.json",
-   "sha256": "f64778f93c96f551a11a515adf59b6dd079648d8602a4250c8f872baabe56ab5"
+   "sha256": "5c4024c23a68b14135809e158b08f627bfce7eccd54aa3f2d472acf8a97c8acc"
   }
  },
  "source": {
@@ -14,9 +14,9 @@
  },
  "boundary": {
   "measured_on": "2026-10-29",
-  "git_head": "bbd563cb",
+  "git_head": "63d80e94",
   "inputs_match_head": null,
-  "reads": "data/vinci.db, read-only: 2,572,227 bars; 1,236 market sessions 2021-09-01 → 2026-08-05 (+43 partial); latest bar 2026-08-05. Tiingo sample: the 18 names with a committed page (9 more have no bars here); and the 100 names an internal check flags (step_vs_tiingo, zero_volume_vs_tiingo). Tiingo budget 2026-10 (UTC month; 500 distinct symbols a key): 110 looked up this month through this checkout's cache — a floor, since CI, theme intelligence and other checkouts share the key unseen; scoring and the monitor reserve 21 symbols (3 benchmark, 15 followed, 4 ledger), 21 of them held this month; this run asked for 18 the count did not hold (amzn, aort, brbr, cnxc, epam, fubo, it, mvst, ncno, nke, orka, parr, smpl, tecx, vitl, vrrm, wern, wlk); left for the checks: 0 — Tiingo refused a new symbol this run: the key's cap is met, and nothing new is asked until 2026-11-01",
+  "reads": "data/vinci.db, read-only: 2,572,227 bars; 1,236 market sessions 2021-09-01 → 2026-08-05 (+43 partial); latest bar 2026-08-05. Tiingo sample: the 18 names with a committed page (9 more have no bars here); and the 100 names an internal check flags (step_vs_tiingo, zero_volume_vs_tiingo). Tiingo budget 2026-10 (UTC month; 500 distinct symbols a key): 110 looked up this month through this checkout's cache — a floor, since CI, theme intelligence and other checkouts share the key unseen; scoring and the monitor reserve 21 symbols (3 benchmark, 15 followed, 4 ledger), 21 of them held this month; this run asked for 0 the count did not hold; left for the checks: 0 — Tiingo refused a new symbol this run: the key's cap is met, and nothing new is asked until 2026-11-01",
   "item_noun": "name",
   "items": 2440,
   "names": [
