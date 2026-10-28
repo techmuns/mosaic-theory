@@ -36,11 +36,17 @@ from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
+from vinci.dossier.covenant_extract import RATE_COMPONENTS
 from vinci.dossier.mechanical import _period_key
 from vinci.dossier.statement_recon import DIFFERENT_FLOOR, DIFFERENT_SHARE
-from vinci.edgar.concepts import CONCEPT_ALIASES, ConceptPoint, points_for_tag
+from vinci.edgar.concepts import (
+    CONCEPT_ALIASES,
+    ConceptPoint,
+    fiscal_calendar,
+    points_for_tag,
+)
 from vinci.edgar.primary_source import period_scope
-from vinci.edgar.release_parse import VERBATIM_CAP, quoted_figures
+from vinci.edgar.release_parse import VERBATIM_CAP, figure_stated
 from vinci.netcache import CachedHttp
 from vinci.quality.core import (
     CONFIRMED,
@@ -72,8 +78,6 @@ _QUARTER_DAYS = (80, 100)
 #: The covenant note the extractor writes (`covenant_extract._extract_from_exhibit`, `f"verbatim:
 #: “{quote}”"`) — the quote, as stored.
 _NOTE_OPEN, _NOTE_CLOSE = "verbatim: “", "”"
-#: The structured rate components a covenant row carries, and the unit each is stated in.
-_RATE_UNITS = {"margin_pct": "%", "margin_bps": "bps", "floor_pct": "%", "pik_pct": "%"}
 _REVENUE_GUIDES = frozenset({"revenue", "net sales", "total revenue", "total revenues"})
 READS = "data/dossiers/*/dossier.json + data/cache/sec companyfacts (cache only)"
 
@@ -91,32 +95,10 @@ class Page:
     @functools.cached_property
     def calendar(self) -> dict[tuple[str, int], date]:
         """The filer's fiscal calendar, built ONCE per page for every check that places a label."""
-        return _calendar(self.facts) if isinstance(self.facts, dict) else {}
+        return fiscal_calendar(self.facts) if isinstance(self.facts, dict) else {}
 
 
-# --- the filer's XBRL: its fiscal calendar and its figures ---------------------------------------
-
-
-def _calendar(facts: dict[str, Any]) -> dict[tuple[str, int], date]:
-    """(fiscal period, fiscal year) → the period's end, as each 10-Q/10-K states its OWN period: the
-    latest period end it carries, under the fiscal year and period its XBRL names. A fourth quarter
-    ends with its fiscal year, so ``("FY", y)`` serves both."""
-    by_acc: dict[str, tuple[str, int, date, date]] = {}
-    for tag in (*CONCEPT_ALIASES["revenue"], *CONCEPT_ALIASES["net_income"],
-                *CONCEPT_ALIASES["eps_diluted"]):
-        for p in points_for_tag(facts, tag):
-            form = (p.form or "").upper()
-            if (p.period_start is None or not p.accession or p.fy is None or not p.fp
-                    or not form.startswith(("10-Q", "10-K"))):
-                continue
-            seen = by_acc.get(p.accession)
-            if seen is None or p.period_end > seen[2]:
-                by_acc[p.accession] = (p.fp.upper(), int(p.fy), p.period_end, p.filed)
-    cal: dict[tuple[str, int], tuple[date, date]] = {}
-    for fp, fy, end, filed in by_acc.values():
-        if fp in ("Q1", "Q2", "Q3", "FY") and ((fp, fy) not in cal or filed < cal[(fp, fy)][1]):
-            cal[(fp, fy)] = (end, filed)            # the ORIGINAL filing names the period
-    return {k: v[0] for k, v in cal.items()}
+# --- the filer's XBRL: its fiscal calendar (`concepts.fiscal_calendar`) and its figures -----------
 
 
 def _label(period: str) -> tuple[str, int | None] | None:
@@ -243,10 +225,8 @@ def _place(cal: dict[tuple[str, int], date], period: str,
 
 def _quote_value(value: float, units: tuple[str, ...], quote: str) -> float | None:
     """The half-unit of the figure in ``quote`` that IS ``value`` in one of ``units``, or None."""
-    for f in quoted_figures(quote):
-        if f.unit in units and abs(f.value - abs(value)) <= _SAME * max(1.0, abs(value)):
-            return f.half_unit
-    return None
+    f = figure_stated(quote, value, units)
+    return f.half_unit if f is not None else None
 
 
 def _actual_unit(metric: str) -> str:
@@ -405,15 +385,22 @@ def _stored_figures(page: Page) -> list[tuple[float, tuple[str, ...], str, bool]
         if not (note.startswith(_NOTE_OPEN) and note.endswith(_NOTE_CLOSE)):
             continue
         quote = note[len(_NOTE_OPEN):-len(_NOTE_CLOSE)]
-        for k, unit in _RATE_UNITS.items():
-            if row.get(k) is not None:
-                out.append((float(row[k]), (unit,), quote, False))
+        own = row.get("component_quotes") or {}
+        for k, unit in RATE_COMPONENTS.items():
+            if row.get(k) is not None:       # a component kept by a clause of its own is read there
+                out.append((float(row[k]), (unit,), str(own.get(k) or quote), False))
     return out
 
 
+def _withheld(page: Page) -> int:
+    """Rate components the extractor WITHHELD because no quote states them — not stored as values,
+    so there is no figure to check; counted so the population still adds up."""
+    return sum(len(row.get("withheld_components") or {}) for row in page.covenants)
+
+
 def _figure_in_own_quote(page: Page) -> ItemResult:
-    figs = _stored_figures(page)
-    if not figs:
+    figs, withheld = _stored_figures(page), _withheld(page)
+    if not figs and not withheld:
         return ItemResult(not_applicable="no figure stored beside a quote on the page")
     c: Counter[str] = Counter()
     for value, units, quote, release in figs:
@@ -423,7 +410,7 @@ def _figure_in_own_quote(page: Page) -> ItemResult:
             c[DIFFERS_STATED] += 1       # the quote is cut at its cap before the figure
         else:
             c[DIFFERS_UNEXPLAINED] += 1
-    return ItemResult(counts=dict(c))
+    return ItemResult(counts=dict(c), excluded=withheld)
 
 
 _XBRL_SECOND = ("EDGAR XBRL from the filer's 10-Q/10-K (`companyfacts`, the SEC cache) for the "
@@ -477,15 +464,18 @@ CHECKS: tuple[Check, ...] = (
           "every structured figure stored beside a quote: release actuals (value), guide bounds "
           "(low, high), one-offs (amount), event impacts (low, high), and covenant rate "
           "components (margin_pct, margin_bps, floor_pct, pik_pct)",
-          "the figure's own stored quote (`verbatim`; a covenant row's note), read through "
-          "release_parse.quoted_figures", INTERNAL, "figure",
+          "the figure's own stored quote (`verbatim`; a covenant row's note, or the component's "
+          "own clause in `component_quotes`), read through release_parse.figure_stated",
+          INTERNAL, "figure",
           "exact at the quote's stated scale: the value is one figure the quote states — $M where "
           "the quote states a scale word, a bare dollar figure per share, %, basis points (a "
           "range's unit-less low side takes the high side's unit; 'zero' is 0). A quote PROVES "
           "presence (vinci.verbatim); this asks whether it SUPPORTS the value",
           "every committed page", f"the release quote is cut at its {VERBATIM_CAP}-character cap "
-          "(release_parse._verbatim) before the figure", None, ("wrong_cell", "wrong_unit"),
-          _figure_in_own_quote),
+          "(release_parse._verbatim) before the figure",
+          "a covenant rate component the extractor WITHHELD because no quote states it "
+          "(`withheld_components` on the row names the figure and why): it is stored as no value, "
+          "so there is no figure to check", ("wrong_cell", "wrong_unit"), _figure_in_own_quote),
 )
 CHECK_IDS = tuple(c.id for c in CHECKS)
 

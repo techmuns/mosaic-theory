@@ -27,7 +27,14 @@ from datetime import date
 from typing import Any
 
 from vinci.dossier.schemas import PeerComps, Sourced, SourceStatus
-from vinci.edgar.concepts import ConceptPoint, annual_by_period, current_pair, extract_points
+from vinci.edgar.concepts import (
+    ConceptPoint,
+    annual_by_period,
+    current_pair,
+    extract_points,
+    fiscal_year_ends,
+    fiscal_year_of,
+)
 
 _USD_M = 1e6  # EDGAR companyfacts report in dollars; the dossier/CIQ convention is $M
 
@@ -41,16 +48,21 @@ CROSS_SOURCE_DELTA_FLAG = (
 )
 
 
-def _period_label(p: ConceptPoint) -> str:
-    return f"FY{p.fy}" if p.fy else p.period_end.isoformat()
+def _period_label(p: ConceptPoint, year_ends: dict[int, tuple[date, ...]]) -> str:
+    """The period's OWN fiscal year in the filer's calendar (:func:`fiscal_year_of`), or its end
+    date where the calendar places none — never companyfacts' ``fy``, the year of the FILING that
+    carried the point (Climb Global's FCF for the year to 2019-12-31 read "[FY2020]")."""
+    fy = fiscal_year_of(year_ends, p)
+    return f"FY{fy}" if fy is not None else p.period_end.isoformat()
 
 
-def _span(points: dict[date, ConceptPoint]) -> str:
+def _span(points: dict[date, ConceptPoint], year_ends: dict[int, tuple[date, ...]]) -> str:
     """A compact 'FY2021–FY2025' span over the periods present (for the source_ref)."""
     keys = sorted(points)
     if not keys:
         return "no period"
-    lo, hi = _period_label(points[keys[0]]), _period_label(points[keys[-1]])
+    lo, hi = (_period_label(points[keys[0]], year_ends),
+              _period_label(points[keys[-1]], year_ends))
     return lo if lo == hi else f"{lo}–{hi}"
 
 
@@ -80,6 +92,10 @@ class EdgarFundamentals:
             if self._ocf[pe].period_start == self._capex[pe].period_start
         }
         self._facts = facts
+        self._year_ends = fiscal_year_ends(facts)  # which fiscal year each period IS
+
+    def _label(self, p: ConceptPoint) -> str:
+        return _period_label(p, self._year_ends)
 
     # --- the three CIQ-sourced fundamentals fields, mirrored on a raw-GAAP basis -----------------
 
@@ -102,7 +118,7 @@ class EdgarFundamentals:
         ocf, capex = legs
         ref = (
             f"EDGAR XBRL companyfacts {ocf.tag} − {capex.tag} "
-            f"[{_period_label(ocf)}] ($M)"
+            f"[{self._label(ocf)}] ($M)"
         )
         return Sourced.present(round((ocf.value - capex.value) / _USD_M, 1), source_ref=ref)
 
@@ -118,7 +134,7 @@ class EdgarFundamentals:
                 "D&A absent/misaligned or revenue absent"
             )
         bits = ["EBITDA margin: " + " → ".join(
-            f"{_period_label(self._rev[pe])} {margin[pe]:.0%}" for pe in sorted(margin))]
+            f"{self._label(self._rev[pe])} {margin[pe]:.0%}" for pe in sorted(margin))]
         abs_eb = self._series_m(self._ebitda, self._op)
         abs_rev = self._series_m({pe: p.value for pe, p in self._rev.items()}, self._rev)
         if abs_eb:
@@ -129,7 +145,7 @@ class EdgarFundamentals:
             "; ".join(bits) + "  [EDGAR GAAP basis, $M; margin % can fall while absolute EBITDA "
             "RISES — read them together]",
             source_ref=f"EDGAR XBRL companyfacts {self._op[max(self._op)].tag}+D&A ÷ "
-            f"{self._rev[max(self._rev)].tag} [{_span(self._rev)}]",
+            f"{self._rev[max(self._rev)].tag} [{_span(self._rev, self._year_ends)}]",
         )
 
     def multi_year_trajectory(self) -> Sourced[str]:
@@ -159,7 +175,7 @@ class EdgarFundamentals:
         if len(periods) < 2:
             return None
         return " → ".join(
-            f"{_period_label(label_src[pe]) if pe in label_src else pe.isoformat()} "
+            f"{self._label(label_src[pe]) if pe in label_src else pe.isoformat()} "
             f"{by_period[pe] / _USD_M:,.0f}"
             for pe in periods
         )

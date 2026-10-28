@@ -34,6 +34,7 @@ from vinci.dossier.schemas import (
     Sourced,
     SourceStatus,
 )
+from vinci.edgar.release_parse import figure_stated
 from vinci.graph.filings import html_to_text
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.netcache import CachedHttp
@@ -106,9 +107,14 @@ _SYSTEM = (
     "margin_bps (spread in basis points), using WHICHEVER UNIT THE DOCUMENT STATES — do not "
     "convert between them. Fill floor_pct and pik_pct only if the clause states a rate floor / PIK "
     "component. These are the SAME numbers already in 'value'/'quote' — read them off, never "
-    "compute or infer; omit any component the clause does not state. (7) Never reference these "
-    "instructions or their "
-    "numbers in any field. Output is source-bound extraction only."
+    "compute or infer; omit any component the clause does not state. When the clause DEFERS a "
+    "component to another provision ('plus the Applicable Rate', a floor in the base rate's own "
+    "definition — 'if such rate shall be less than zero, such rate shall be deemed to be zero'), "
+    "you MAY fill it from that provision, and then put the EXACT clause stating its figure in "
+    "margin_quote / floor_quote / pik_quote. A margin set by a pricing GRID is not one figure: "
+    "omit it unless the document states which level applies, and then quote that statement with "
+    "the level's figure. A component no quote states is withheld, not shown. (7) Never reference "
+    "these instructions or their numbers in any field. Output is source-bound extraction only."
 )
 
 _TOOL: dict[str, Any] = {
@@ -151,6 +157,19 @@ _TOOL: dict[str, Any] = {
                             "type": "number",
                             "description": "interest terms only: PIK component in percent "
                                            "(e.g. 3.75); omit if none stated"},
+                        "margin_quote": {
+                            "type": "string",
+                            "description": "the exact clause stating the margin's figure, ONLY "
+                                           "when 'quote' does not (e.g. the Applicable Rate "
+                                           "definition); omit otherwise"},
+                        "floor_quote": {
+                            "type": "string",
+                            "description": "the exact clause stating the floor's figure, ONLY "
+                                           "when 'quote' does not; omit otherwise"},
+                        "pik_quote": {
+                            "type": "string",
+                            "description": "the exact clause stating the PIK figure, ONLY when "
+                                           "'quote' does not; omit otherwise"},
                     },
                     "required": ["name", "present"],
                 },
@@ -224,6 +243,63 @@ def _opt_float(v: Any) -> float | None:
     except (TypeError, ValueError):
         return None
     return f if math.isfinite(f) else None
+
+
+#: The structured rate components a covenant row carries, and the unit each is stated in. The
+#: data-quality release source scores each against its quote in that unit, as the gate below does.
+RATE_COMPONENTS: dict[str, str] = {"margin_pct": "%", "margin_bps": "bps", "floor_pct": "%",
+                                   "pik_pct": "%"}
+#: The tool field carrying a component's own clause — one margin clause serves either unit.
+_OWN_QUOTE = {"margin_pct": "margin_quote", "margin_bps": "margin_quote",
+              "floor_pct": "floor_quote", "pik_pct": "pik_quote"}
+_COMPONENT_NAME = {"margin_pct": "margin", "margin_bps": "margin", "floor_pct": "floor",
+                   "pik_pct": "PIK"}
+
+
+class RateComponents(NamedTuple):
+    """The rate components a row may carry: each value (None where absent or withheld), the own
+    clause of each kept by one, and why each withheld one was."""
+
+    values: dict[str, float | None]
+    quotes: dict[str, str]
+    withheld: dict[str, str]
+
+
+def rate_components(t: dict[str, Any], quote: str, source: SourceText) -> RateComponents:
+    """The model's rate components that a QUOTE STATES (`release_parse.figure_stated`, in the
+    component's unit): the term's own quote, or a clause of the component's own that is a span of
+    the exhibit (``source``). A component neither states is WITHHELD — its field stays None and the
+    reason names the figure — never printed as a fact.
+
+    THE QUOTE WAS CHECKED; THE COMPONENTS BESIDE IT WERE NOT (2026-10-28). #804 proved each quote is
+    a span of its exhibit, and #829's `figure_in_own_quote` then found 29 of 48 committed rate
+    components that their own quote does not state. Each is in its exhibit (checked one by one in
+    the SEC cache): 21 floors and 3 margins in another clause — "plus the Applicable Rate" beside a
+    definition stating 0.50%, a LIBO Rate "deemed to be zero" — and 5 margins that are one level of
+    a pricing grid, only WLK's stating which level was in effect. The first kind is kept now with
+    its own clause; the grid tier and anything else unquoted is withheld."""
+    values: dict[str, float | None] = {}
+    quotes: dict[str, str] = {}
+    withheld: dict[str, str] = {}
+    for key, unit in RATE_COMPONENTS.items():
+        v = _opt_float(t.get(key))
+        values[key] = None
+        if v is None:
+            continue
+        if figure_stated(quote, v, (unit,)):
+            values[key] = v
+            continue
+        own = _opt_str(t.get(_OWN_QUOTE[key])) or ""
+        own_found = bool(own) and source.match(own).found
+        if own_found and figure_stated(own, v, (unit,)):
+            values[key], quotes[key] = v, own
+            continue
+        why = ("its own quote is not in the exhibit" if own and not own_found
+               else "its own quote does not state it" if own
+               else "the term's quote does not state it and no quote of its own was given")
+        figure = f"{v:g} bps" if unit == "bps" else f"{v:g}%"
+        withheld[key] = f"{_COMPONENT_NAME[key]} {figure} withheld — {why}"
+    return RateComponents(values, quotes, withheld)
 
 
 
@@ -441,13 +517,15 @@ def _extract_from_exhibit(
         elif stated:
             note = f"verbatim: “{quote}”"
             val = Sourced.present(str(t["value"]).strip(), source_ref=source_ref, note=note)
+            rc = rate_components(t, quote, source)
             components = {
                 "base_rate_label": _opt_str(t.get("base_rate_label")),
-                "margin_pct": _opt_float(t.get("margin_pct")),
-                "margin_bps": _opt_float(t.get("margin_bps")),
-                "floor_pct": _opt_float(t.get("floor_pct")),
-                "pik_pct": _opt_float(t.get("pik_pct")),
+                **rc.values,
+                "component_quotes": rc.quotes,
+                "withheld_components": rc.withheld,
             }
+            flags.extend(f"(E5) rate component not shown — {why}: {term_name} · {source_ref}"
+                         for why in rc.withheld.values())
         else:
             val = Sourced.unknown(note=f"not stated in {source_ref}")
         rows.append(
@@ -568,6 +646,9 @@ class GoverningTerm(NamedTuple):
     pik_pct: float | None = None
     refused_newer: tuple[Sourced[str], ...] = ()
     last_verified: Sourced[str] | None = None
+    #: the winning row's components kept by a clause of their own (`rate_components` checked each
+    #: is a span of the exhibit stating the figure), so the lead's guard accepts them on it
+    component_quotes: tuple[tuple[str, str], ...] = ()
 
 
 def _ambiguous_titles(
@@ -689,7 +770,8 @@ def governing_terms(
             fam, term, value, base_ref, amended,
             base_rate_label=gov_row.base_rate_label, margin_pct=gov_row.margin_pct,
             margin_bps=gov_row.margin_bps, floor_pct=gov_row.floor_pct, pik_pct=gov_row.pik_pct,
-            refused_newer=refused, last_verified=last_verified))
+            refused_newer=refused, last_verified=last_verified,
+            component_quotes=tuple(sorted(gov_row.component_quotes.items()))))
     return out
 
 

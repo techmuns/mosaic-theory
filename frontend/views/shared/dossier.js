@@ -2533,7 +2533,8 @@ function fmtPctExact(v) {
 // "Term SOFR + 9.75% (Floor 3.00%, +3.75% PIK)") or "" when components are absent/incomplete, plus a
 // QA note when the consistency guard tripped (else ""). REQUIRED: baseRateLabel + exactly one of
 // marginPct/marginBps; floorPct/pikPct optional. GUARD: each numeric's digits must appear in the
-// parent clause; a mismatch OR both margins present ⇒ no lead + QA (a slip must never headline the
+// parent clause, or the component was kept by a clause of its own (componentQuotes, checked at
+// extraction); a mismatch OR both margins present ⇒ no lead + QA (a slip must never headline the
 // row). Units render AS DISCLOSED (bps stays bps). term == null (pre-RC-1.5d JSON) ⇒ no lead, no crash.
 function composeInterestLead(term, raw) {
   if (!term) return ["", ""];
@@ -2543,11 +2544,14 @@ function composeInterestLead(term, raw) {
   if (mPct != null && mBps != null)
     return ["", "both a percent and a bps margin given — ambiguous, lead suppressed"];
   const nums = clauseNumbers(raw);
-  for (const comp of [mPct, mBps, term.floorPct, term.pikPct]) {
+  // a component kept by a clause of its own was checked there at extraction (2026-10-28)
+  const own = term.componentQuotes || {};
+  for (const [key, comp] of [["margin_pct", mPct], ["margin_bps", mBps], ["floor_pct", term.floorPct],
+                             ["pik_pct", term.pikPct]]) {
     if (comp == null) continue;
     if (!Number.isFinite(comp))  // defence-in-depth: a non-finite never headlines, never crashes
       return ["", "a rate component is not a finite number — lead suppressed"];
-    if (!numInClause(comp, nums))
+    if (!own[key] && !numInClause(comp, nums))
       return ["", `rate component ${fmtBps(comp)} not stated in the clause — lead suppressed`];
   }
   const margin = mPct != null ? `${fmtPctExact(mPct)}%` : `${fmtBps(mBps)} bps`;
@@ -2843,7 +2847,8 @@ function governingTerms(rows, pointers) {
     return { fam, term, value, baseRef, amendedBy,
       baseRateLabel: govRow.base_rate_label ?? null, marginPct: govRow.margin_pct ?? null,
       marginBps: govRow.margin_bps ?? null, floorPct: govRow.floor_pct ?? null,
-      pikPct: govRow.pik_pct ?? null, refusedNewer, lastVerified };
+      pikPct: govRow.pik_pct ?? null, refusedNewer, lastVerified,
+      componentQuotes: govRow.component_quotes ?? {} };
   });
 }
 
