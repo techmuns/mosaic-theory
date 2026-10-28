@@ -135,6 +135,14 @@ def test_a_fund_on_both_sides_is_not_proven_by_type() -> None:
     assert detect_reuse([_ident(WLTH)], _holes(WLTH), details) == []
 
 
+def test_a_line_whose_own_type_is_unknown_is_not_proven_by_type() -> None:
+    """CODEX, #839 round 1. The type rule needs the LINE's type stated and not a fund: a line
+    record Polygon cannot serve after the hole, or one with no type, is unknown, never 'not a
+    fund' — else a fund's own history would leave it."""
+    for after in ({"WLTH@2025-12-12": None}, {"WLTH@2025-12-12+": {"type": None}}):
+        assert detect_reuse([_ident(WLTH)], _holes(WLTH), _details(after)[1]) == [], after
+
+
 def test_a_record_polygon_cannot_serve_proves_nothing() -> None:
     _, details = _details({"CALY@2024-10-09": None})
     assert detect_reuse([_ident(CALY)], _holes(CALY), details) == []

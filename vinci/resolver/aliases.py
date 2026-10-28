@@ -213,8 +213,9 @@ def another_security(before: Mapping[str, Any], line_cik: str,
     for key in _IDENTITY:
         if before.get(key) and now.get(key) and before[key] != now[key]:
             return f"{key} {before[key]}, not {now[key]}"
-    if before.get("type") in FUND_TYPES and now.get("type") not in FUND_TYPES:
-        return f"type {before['type']}, not {now.get('type')}"
+    # the line's own type must be STATED and not a fund: no record, or no type, is unknown
+    if before.get("type") in FUND_TYPES and now.get("type") and now["type"] not in FUND_TYPES:
+        return f"type {before['type']}, not {now['type']}"
     return None
 
 

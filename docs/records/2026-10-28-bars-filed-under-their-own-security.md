@@ -228,6 +228,14 @@ holders (the same bars, put on) and the 2 successors (bars carried).
   definition) → `eod.dividends`. `GAP_SESSIONS`, `market_sessions` and `missed_sessions` now live
   in `eod.client`, and the scorecard and the repair both import that one definition
   (`tests/test_outcome_import_fences.py`, green).
+- **Review, round 1 (Codex P2, #839): the fund-type proof needs the line's type STATED.**
+  - The first cut read a line record Polygon could not serve after the hole, or one with no
+    `type`, as "not a fund". A fund-type record before the hole then "proved" another security,
+    and a fund's own history would have left it.
+  - The type must now be present and not a fund. Pinned by
+    `test_a_line_whose_own_type_is_unknown_is_not_proven_by_type`, red on the PR head.
+  - The real run is unchanged: re-run from the backup, the same 30 + 2 rows and identical tables.
+    WLTH's and LUXE's own records state CS and ADRC.
 - **Incident → invariant (shipped Y, twice):**
   - a bar filed under today's holder of its ticker → `holders()` plus the committed tenure and
     alias tables, pinned by `test_a_reused_tickers_former_bars_are_never_filed_under_the_current_id`
