@@ -168,7 +168,9 @@ def test_dep_amort_split_requires_the_same_fiscal_period() -> None:
     aligned = _latest_dep_amort(_da_facts("2025-11-30", "2025-11-30"))   # positive pin
     assert isinstance(aligned, tuple)
     value, source, _basis = aligned
-    assert value == pytest.approx(670e6) and "split, FY2025" in source
+    # no annual report in these minimal facts states a fiscal year, so the label is the period's
+    # end date, never the rows' `fy` stamp (`concepts.fiscal_year_of`)
+    assert value == pytest.approx(670e6) and "split, year to 2025-11-30" in source
     # ⊖ misaligned: never summed — the combined line's FY2024 is what is read
     misaligned = _latest_dep_amort(_da_facts("2025-11-30", "2024-11-30"))
     assert isinstance(misaligned, tuple) and misaligned[0] == pytest.approx(660e6)
@@ -549,12 +551,17 @@ def test_a_trailing_10q_window_is_labelled_by_its_period_not_its_filing_year() -
     assert "12m to 2026-06-30" in da_source and "FY2026" not in da_source
     assert da_basis == "consolidated trailing twelve months (the filer's own 10-Q column)"
 
-    # ⊖ a filer with no trailing column keeps exactly the label it had
+    # ⊖ a filer with no trailing column keeps exactly the label it had. The year is the one the
+    # 10-K states as its own (`concepts.fiscal_year_of`), read off its net income: Amazon's real
+    # FY2025 row, from the same 10-K.
     fy_only = {"facts": {"us-gaap": {
         "NetCashProvidedByUsedInOperatingActivities": {"units": {"USD": [_ttm_facts(
             "", 139_514e6, 0)["units"]["USD"][0]]}},                # type: ignore[index]
         "PaymentsToAcquirePropertyPlantAndEquipment": {"units": {"USD": [_ttm_facts(
-            "", 131_819e6, 0)["units"]["USD"][0]]}}}}}              # type: ignore[index]
+            "", 131_819e6, 0)["units"]["USD"][0]]}},                # type: ignore[index]
+        "NetIncomeLoss": {"units": {"USD": [
+            {"start": "2025-01-01", "end": "2025-12-31", "val": 77_670e6, "filed": "2026-02-06",
+             "fy": 2025, "fp": "FY", "form": "10-K", "accn": "0001018724-26-000004"}]}}}}}
     fy = anc._latest_fcf(fy_only)
     assert isinstance(fy, tuple) and fy[1] == "latest FY2025 (not LTM)"
 

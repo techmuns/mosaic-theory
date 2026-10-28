@@ -478,6 +478,33 @@ class Store:
         self._conn.commit()
         return int(cur.rowcount)
 
+    def refile_bars(self, internal_id: str, to_id: str, *, before: date) -> int:
+        """Move one name's bars dated before ``before`` to ``to_id``: they were filed under the
+        wrong security (a reused ticker's former holder, `eod.identity`). Nothing is rescaled and
+        nothing is lost — each bar keeps its prices and gains ``+refiled:<from id>`` on its
+        source. A bar ``to_id`` already holds for the same session is kept, and the misfiled copy
+        dropped. A bar an alias CARRIED to this id (``polygon-alias:<old id>``) is its own line's
+        history, never another security's, and stays. Returns the bars taken off ``internal_id``."""
+        args = (internal_id, _iso(before))
+        own = "internal_id = ? AND bar_date < ? AND source NOT LIKE 'polygon-alias:%'"
+        n = self._conn.execute(f"SELECT COUNT(*) FROM prices WHERE {own}", args).fetchone()[0]
+        self._conn.execute(f"UPDATE OR IGNORE prices SET internal_id = ?, source = source || ? "
+                           f"WHERE {own}", (to_id, f"+refiled:{internal_id}", *args))
+        self._conn.execute(f"DELETE FROM prices WHERE {own}", args)
+        self._conn.commit()
+        return int(n)
+
+    def bar_dates(self, internal_id: str) -> list[date]:
+        """One name's bar dates, oldest first — the dates alone, for a scan over many names."""
+        return [date.fromisoformat(r[0]) for r in self._conn.execute(
+            "SELECT bar_date FROM prices WHERE internal_id = ? ORDER BY bar_date", (internal_id,))]
+
+    def bars_per_session(self) -> dict[str, int]:
+        """``{bar_date: bars}`` over EVERY row in prices — the count the price scorecard reads its
+        market calendar from (`quality.sources.prices.read_store`), ids with no securities row
+        included."""
+        return dict(self._conn.execute("SELECT bar_date, COUNT(*) FROM prices GROUP BY bar_date"))
+
     def price_frontier(self) -> date | None:
         """The newest bar date in the store, across every name — or None when there are no bars.
 

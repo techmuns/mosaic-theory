@@ -36,15 +36,30 @@ from array import array
 from bisect import bisect_left, bisect_right
 from collections import Counter, defaultdict
 from collections.abc import Callable
-from dataclasses import dataclass
-from datetime import date, timedelta
+from dataclasses import dataclass, field
+from datetime import UTC, date, datetime, timedelta
 from math import prod
 from pathlib import Path
 from typing import Any
 
 from vinci.dossier.freshness import _INTEGER_TOLERANCE, whole_number_ratio
-from vinci.eod.client import _SESSION_PRESENT_FRACTION
-from vinci.eod.tiingo import _ONE_DAY, TiingoEodClient, TiingoRefusedError
+
+# one definition of a hole, shared with the identity repair (`eod.identity`) that mends it
+from vinci.eod.client import (
+    _SESSION_PRESENT_FRACTION,
+    GAP_SESSIONS,
+    market_sessions,
+    missed_sessions,
+)
+from vinci.eod.dividends import reserved_symbols
+from vinci.eod.tiingo import (
+    _ONE_DAY,
+    MONTHLY_SYMBOL_CAP,
+    TiingoEodClient,
+    TiingoRefusedError,
+    month_of,
+    tiingo_symbol,
+)
 from vinci.netcache import HttpError
 from vinci.quality.core import (
     CONFIRMED,
@@ -60,11 +75,7 @@ from vinci.quality.core import (
     Source,
     one,
 )
-
-#: A series hole longer than this many market sessions is longer than any trading suspension the
-#: SEC may order (Exchange Act §12(k)(1)(A): up to 10 business days). Past it the name left the
-#: market, and the bars either side may belong to two securities under one ticker.
-GAP_SESSIONS = 10
+from vinci.resolver.aliases import load_aliases, load_tenures
 
 #: A close unchanged to the cent for this many consecutive stored bars — two trading weeks — is not
 #: a traded price. The longest run on the store measured 2026-10-24 was 8 bars, CCO, pinned at a
@@ -118,6 +129,9 @@ class Series:
     # the fewest market sessions between this security's bars and those of another security
     # carrying the same ticker (-1 when they overlap); None when no other carries it
     shared_ticker: int | None = None
+    # the same, to a security the alias table says this one continues or is continued by
+    # (`aliases.ShareClassAlias`: a rename or a re-domicile); None when none carries the ticker
+    succeeded: int | None = None
 
 
 def _tally(units: int, differs: int, excluded: int = 0) -> ItemResult:
@@ -266,9 +280,13 @@ def _zero_volume_vs_tiingo(s: Series) -> ItemResult:
 
 
 def _history_across_ids(s: Series) -> ItemResult:
-    if s.shared_ticker is None:
+    if s.shared_ticker is None and s.succeeded is None:
         return ItemResult(not_applicable="no other security in the store carries its ticker")
-    return one(DIFFERS_UNEXPLAINED if s.shared_ticker <= GAP_SESSIONS else CONFIRMED)
+    if s.shared_ticker is not None and s.shared_ticker <= GAP_SESSIONS:
+        return one(DIFFERS_UNEXPLAINED)
+    # one line across two ids, and the alias table says so: the successor carries the history
+    return one(DIFFERS_STATED if s.succeeded is not None and s.succeeded <= GAP_SESSIONS
+               else CONFIRMED)
 
 
 _NOT_SAMPLED = "not in the Tiingo sample — Tiingo is fetched per name, for the names with a page"
@@ -365,8 +383,13 @@ CHECKS: tuple[Check, ...] = (
           f"two securities in turn, more than {GAP_SESSIONS} market sessions apart "
           "(prices.GAP_SESSIONS), are kept apart. Spans that abut or overlap differ: one "
           "history broken across two ids (a re-domicile under a new filer), or two series at once",
-          "every security whose ticker another security with bars also carries", None, None,
-          ("wrong_file",), _history_across_ids),
+          "every security whose ticker another security with bars also carries — a former "
+          "holder whose bars were re-filed off a reused ticker (data/snapshots/ticker_tenure.jsonl)"
+          " counts as carrying it",
+          "the two ids are one line by a recorded rename or re-domicile "
+          "(data/snapshots/share_class_aliases.jsonl): the successor holds the predecessor's bars "
+          "before its first session, tagged polygon-alias:<old id>, and the old id is never "
+          "re-keyed", None, ("wrong_file",), _history_across_ids),
 )
 CHECK_IDS = tuple(c.id for c in CHECKS)
 
@@ -440,9 +463,75 @@ def raw_rows(rows: list[dict[str, Any]]) -> dict[int, tuple[float, float, float]
     return out
 
 
-def _default_fetch() -> Fetch | None:
-    """Tiingo's daily rows where a key is set — else None, and the comparison is not run. A window
-    that ended `CLOSED_WINDOW_DAYS` ago is read once and kept; any other is re-read after a day.
+#: how far back a reserve symbol's holding request reaches: one short window, so it costs one
+#: lookup and a few rows
+_HOLD_DAYS = 7
+
+
+@dataclass
+class TiingoBudget:
+    """THE MONTH'S TIINGO LOOKUPS, SPENT WITH SCORING'S RESERVE HELD BACK (2026-10-28).
+
+    WHY. The key's 500 distinct symbols a month are shared by this scorecard, scoring, the
+    monitor, theme intelligence and CI. #835's first cold pass asked 157 and the key met its cap
+    on 2026-10-27 at 20:01 IST; after that every symbol NEW to the month is refused until the 1st.
+    Scoring and the monitor read Tiingo's dividends for every ledger name, benchmark and followed
+    name, and a refusal stops them by design (`TotalReturnUnknownError`). So the checks must never
+    spend the lookups those symbols need.
+
+    TWO RULES, BECAUSE THE COUNT IS ONLY A FLOOR. ``asked`` is what THIS checkout's cache shows
+    looked up this month (`TiingoEodClient.symbols_asked`); the key's other users are not seen,
+    and on 2026-10-28 they were most of it (112 seen against 500 met). A count alone would let the
+    checks run on into a cap they cannot see.
+    1. HOLD THE RESERVE FIRST. Before the checks ask any symbol new to the month that is not in
+       the reserve, every reserve symbol not yet looked up this month is asked once (`hold`). A
+       symbol looked up in the month is served for the rest of it, the cap notwithstanding, so a
+       held reserve cannot be eaten by anyone, seen or not.
+    2. STOP ON THE COUNT. A new non-reserve symbol is asked only while ``left`` — the cap less the
+       month's count less the reserve not yet held — is at least 1."""
+
+    month: str                                   # YYYY-MM, UTC (`tiingo.month_of`)
+    asked: set[str]                              # Tiingo symbols looked up this month, as seen
+    reserve: dict[str, tuple[str, ...]]          # symbol → why (`dividends.reserved_symbols`)
+    unheld: dict[str, str] = field(default_factory=dict)   # reserve symbol → why it is not held
+    new: set[str] = field(default_factory=set)   # looked up by this run
+    refused: bool = False                        # Tiingo refused a new symbol: the cap is met
+
+    def left(self) -> int:
+        """New non-reserve symbols the checks may still ask this month, by this count."""
+        if self.refused:
+            return 0
+        return MONTHLY_SYMBOL_CAP - len(self.asked) - len(set(self.reserve) - self.asked)
+
+    def line(self) -> str:
+        """The budget, as the scorecard prints it beside what it read."""
+        kinds = Counter(k for why in self.reserve.values() for k in why)
+        held = len(set(self.reserve) & self.asked)
+        y, m = (int(x) for x in self.month.split("-"))
+        turns = date(y + m // 12, m % 12 + 1, 1)
+        out = (f"Tiingo budget {self.month} (UTC month; {MONTHLY_SYMBOL_CAP} distinct symbols a "
+               f"key): {len(self.asked)} looked up this month through this checkout's cache — a "
+               "floor, since CI, theme intelligence and other checkouts share the key unseen; "
+               f"scoring and the monitor reserve {len(self.reserve)} symbols ("
+               + ", ".join(f"{kinds[k]} {k}" for k in sorted(kinds))
+               + f"), {held} of them held this month")
+        if self.unheld:
+            out += (f", NOT HELD {len(self.unheld)}: "
+                    + "; ".join(f"{s} ({why})" for s, why in sorted(self.unheld.items())))
+        out += (f"; this run asked for {len(self.new)} the count did not hold"
+                + (f" ({', '.join(sorted(self.new))})" if self.new else "")
+                + f"; left for the checks: {self.left()}")
+        if self.refused:
+            out += (" — Tiingo refused a new symbol this run: the key's cap is met, and nothing "
+                    f"new is asked until {turns}")
+        return out
+
+
+class _TiingoFetch:
+    """Tiingo's daily rows under the month's budget (`TiingoBudget`). A window that ended
+    `CLOSED_WINDOW_DAYS` ago is read once and kept; any other is re-read after a day.
+
+    A KEPT ANSWER IS ALWAYS READ FIRST: it costs no lookup, so no budget rule refuses it.
 
     ONCE TIINGO REFUSES ON A PLAN LIMIT, NOTHING MORE IS ASKED THIS RUN. A cold cache needs one
     request per sampled and flagged name — 157 on the 2026-10-27 store — against 50 an hour and
@@ -450,47 +539,73 @@ def _default_fetch() -> Fetch | None:
     `netcache`'s four 61-second retries before reading not_run: hours. Past the monthly one every
     new symbol is refused (`TiingoRefusedError`). Either way the names left read not_run by name
     and a later run asks for them; what was answered is kept."""
-    if not os.environ.get("TIINGO_API_KEY"):
-        return None
-    client = TiingoEodClient.from_config()
-    closed = date.today() - timedelta(days=CLOSED_WINDOW_DAYS)
-    stopped: list[str] = []
 
-    def fetch(symbol: str, start: date, end: date) -> list[dict[str, Any]]:
-        ttl = None if end <= closed else _ONE_DAY
-        if stopped:
-            # a kept answer is still read; only a new request is refused
-            if (kept := client.cached_rows(symbol, start=start, end=end,
-                                           ttl_seconds=ttl)) is not None:
-                return kept
+    def __init__(self, client: TiingoEodClient, budget: TiingoBudget, today: date) -> None:
+        self.client, self.budget, self.today = client, budget, today
+        self.closed = today - timedelta(days=CLOSED_WINDOW_DAYS)
+        self.stopped: list[str] = []
+
+    def __call__(self, symbol: str, start: date, end: date) -> list[dict[str, Any]]:
+        ttl = None if end <= self.closed else _ONE_DAY
+        if (kept := self.client.cached_rows(symbol, start=start, end=end,
+                                            ttl_seconds=ttl)) is not None:
+            return kept
+        sym = tiingo_symbol(symbol)
+        if not self.stopped and sym not in self.budget.asked and sym not in self.budget.reserve:
+            self.hold()
+            if not self.stopped and self.budget.left() < 1:
+                self.stopped.append("scoring's Tiingo reserve")
+        if self.stopped:
             # short enough that `_why` never cuts it; the refused name reads its own refusal
-            raise HttpError(f"not asked: {stopped[0]}")
+            raise HttpError(f"not asked: {self.stopped[0]}")
+        rows = self._ask(symbol, start, end, ttl)
+        self.budget.asked.add(sym)
+        self.budget.new.add(sym)
+        return rows
+
+    def hold(self) -> None:
+        """Look up, once, each reserve symbol this month has not: from then on Tiingo serves it
+        all month whoever spends the rest of the cap. A copy kept from before the month does not
+        hold it, so it is asked again. One that cannot be held is named in the budget."""
+        start = self.today - timedelta(days=_HOLD_DAYS)
+        month_began = datetime.now(UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        for sym in sorted(set(self.budget.reserve) - self.budget.asked - set(self.budget.unheld)):
+            if self.stopped:
+                self.budget.unheld[sym] = f"not asked: {self.stopped[0]}"
+                continue
+            try:
+                self._ask(sym, start, self.today,
+                          (datetime.now(UTC) - month_began).total_seconds())
+            except HttpError as exc:
+                self.budget.unheld[sym] = _status(exc)
+                continue
+            self.budget.asked.add(sym)
+            self.budget.new.add(sym)
+
+    def _ask(self, symbol: str, start: date, end: date,
+             ttl: float | None) -> list[dict[str, Any]]:
         try:
-            return client.daily_rows(symbol, start=start, end=end, ttl_seconds=ttl)
+            return self.client.daily_rows(symbol, start=start, end=end, ttl_seconds=ttl)
         except TiingoRefusedError as exc:
             if exc.monthly_cap:               # every new symbol is refused until the month turns
-                stopped.append("monthly symbol limit")
+                self.stopped.append("monthly symbol limit")
+                self.budget.refused = True
             raise
         except HttpError as exc:
             if "429" in str(exc.__cause__):
-                stopped.append("hourly rate limit")
+                self.stopped.append("hourly rate limit")
             raise
 
-    return fetch
 
-
-def market_sessions(per_day: dict[str, int]) -> list[int]:
-    """The store's market sessions, as day ordinals: the days holding bars for at least
-    `_SESSION_PRESENT_FRACTION` of the most names any one day holds. Others are partial days."""
-    top = max(per_day.values())
-    return sorted(date.fromisoformat(d).toordinal() for d, n in per_day.items()
-                  if n >= _SESSION_PRESENT_FRACTION * top)
-
-
-def missed_sessions(market: list[int], days: array[int]) -> array[int]:
-    """Per step between consecutive bars: the market sessions strictly between them."""
-    return array("i", (bisect_left(market, days[i]) - bisect_right(market, days[i - 1])
-                       for i in range(1, len(days))))
+def _default_fetch() -> Fetch | None:
+    """Tiingo's daily rows where a key is set, under the month's budget (`TiingoBudget`; the
+    reader hands it the reserve) — else None, and the comparison is not run."""
+    if not os.environ.get("TIINGO_API_KEY"):
+        return None
+    client = TiingoEodClient.from_config()
+    month = month_of(datetime.now(UTC))
+    return _TiingoFetch(client, TiingoBudget(month, client.symbols_asked(month), {}),
+                        date.today())
 
 
 def sessions_apart(market: list[int], span: tuple[int, int],
@@ -514,10 +629,13 @@ def _empty(why: str) -> Corpus:
 
 
 def read_store(root: Path, *,
-               tiingo: Callable[[], Fetch | None] = _default_fetch) -> Corpus:
+               tiingo: Callable[[], Fetch | None] = _default_fetch,
+               reserve: dict[str, tuple[str, ...]] | None = None) -> Corpus:
     """Every security with bars in ``root/data/vinci.db``, read once and read-only, plus Tiingo
     for the sampled names and the flagged ones — one request a name either way. ``tiingo`` is
-    called only when a sampled or flagged name has bars."""
+    called only when a sampled or flagged name has bars. ``reserve`` names the symbols scoring
+    and the monitor need (`dividends.reserved_symbols`): those page names are asked first, so the
+    month's other lookups wait behind them."""
     db = root / "data" / "vinci.db"
     if not db.is_file():
         return _empty("absent — the working store is git-ignored, so CI and a fresh worktree "
@@ -545,31 +663,50 @@ def read_store(root: Path, *,
     finally:
         con.close()
     held = Counter(secs[iid][0] for iid in cols if iid in secs)
+    # a reused ticker's former holder carries the ticker its re-filed bars traded under, though
+    # it has no securities row; a recorded alias links two carriers into one line
+    snaps = root / "data" / "snapshots"
+    former = {t.prior_id: secs[t.internal_id][0] for t in load_tenures(snaps)
+              if t.internal_id in secs}
+    linked = {frozenset((a.predecessor_id, a.successor_id)) for a in load_aliases(snaps)}
     carriers: defaultdict[str, list[tuple[str, tuple[int, int]]]] = defaultdict(list)
     for iid, cs in cols.items():
-        if iid in secs:
-            carriers[secs[iid][0]].append((iid, (cs[0][0], cs[0][-1])))
+        if (as_ticker := secs[iid][0] if iid in secs else former.get(iid)) is not None:
+            carriers[as_ticker].append((iid, (cs[0][0], cs[0][-1])))
     sample = {p.parent.name.upper() for p in (root / "data" / "dossiers").glob("*/dossier.json")}
     fetch: Fetch | None = None
     asked = False
     flagged_names = 0
     items: dict[str, Series] = {}
     # the page names are asked first: a plan limit met later in the run leaves the flagged names
-    # not_run, never the closes every page reads (the card sorts names itself)
-    for iid in sorted(cols, key=lambda i: (secs.get(i, (None,))[0] not in sample, i)):
+    # not_run, never the closes every page reads (the card sorts names itself) — and of them the
+    # ones scoring reserves, so holding the reserve (`TiingoBudget`) re-asks none of them
+    held_back = set(reserve or ())
+
+    def order(iid: str) -> tuple[bool, bool, str]:
+        ticker, symbol = secs.get(iid, (None, None))
+        return (ticker not in sample,
+                symbol is None or tiingo_symbol(symbol) not in held_back, iid)
+
+    for iid in sorted(cols, key=order):
         days, o, h, lo, c, v = cols[iid]
         ticker, symbol = secs.get(iid, (None, None))
         name = ticker if ticker is not None and held[ticker] == 1 else iid
-        shared = None if ticker is None else sessions_apart(
-            market, (days[0], days[-1]), [sp for other, sp in carriers[ticker] if other != iid])
+        others = [(o_id, sp) for o_id, sp in carriers[ticker or former.get(iid, "")]
+                  if o_id != iid]
+        shared, succeeded = (sessions_apart(market, (days[0], days[-1]), [
+            sp for o_id, sp in others if (frozenset((iid, o_id)) in linked) is link])
+            for link in (False, True))
         s = Series(iid, days, o, h, lo, c, v, missed_sessions(market, days),
-                   shared_ticker=shared)
+                   shared_ticker=shared, succeeded=succeeded)
         window = flagged_window(s) if symbol is not None else None
         sampled = ticker in sample and symbol is not None
         if window is not None:
             flagged_names += 1
         if (sampled or window is not None) and not asked:
             fetch, asked = tiingo(), True
+            if isinstance(fetch, _TiingoFetch):
+                fetch.budget.reserve = dict(reserve or {})
         closes: dict[int, float] | str | None = None
         flagged: dict[int, tuple[float, float, float]] | str | None = None
         if sampled and symbol is not None:
@@ -581,7 +718,8 @@ def read_store(root: Path, *,
             flagged = None if window is None else _read(raw_rows, rows, symbol)
         elif window is not None and symbol is not None:
             flagged = _read(raw_rows, _ask(fetch, symbol, *window), symbol)
-        items[name] = Series(iid, days, o, h, lo, c, v, s.missed, closes, flagged, shared)
+        items[name] = Series(iid, days, o, h, lo, c, v, s.missed, closes, flagged, shared,
+                             succeeded)
     if len(items) != len(cols):     # a ticker equal to another security's internal id
         raise ValueError(f"{db}: two securities resolve to one item name")
     digest = hashlib.sha256()
@@ -593,7 +731,7 @@ def read_store(root: Path, *,
         for got in (s.tiingo, s.flagged):
             digest.update(json.dumps(sorted(got.items()) if isinstance(got, dict)
                                      else got).encode() + b"\n")
-        digest.update(f"{s.shared_ticker}\n".encode())
+        digest.update(f"{s.shared_ticker}\n{s.succeeded}\n".encode())
     partial = len(per_day) - len(market)
     unpriced = len(sample - set(held))
     reads = (f"{READS}, read-only: {sum(len(s.days) for s in items.values()):,} bars; "
@@ -605,6 +743,8 @@ def read_store(root: Path, *,
                 if unpriced else "")
              + f"; and the {flagged_names} names an internal check flags (step_vs_tiingo, "
                "zero_volume_vs_tiingo)")
+    if isinstance(fetch, _TiingoFetch):
+        reads += ". " + fetch.budget.line()
     return Corpus(items=items, reads=reads, item_noun="name", sha256=digest.hexdigest())
 
 
@@ -630,14 +770,18 @@ def _read(parse: Callable[[list[dict[str, Any]]], Any], rows: list[dict[str, Any
         return _why(symbol, exc)
 
 
-def _why(symbol: str, exc: Exception) -> str:
+def _status(exc: Exception) -> str:
     # the status, never the URL or the body: "Non-retryable 404" or "Exhausted retries"
     what = str(exc).split(" from ")[0].split(" for ")[0][:40]
-    return f"Tiingo {symbol}: {type(exc).__name__} ({what}) — no comparison"
+    return f"{type(exc).__name__} ({what})"
+
+
+def _why(symbol: str, exc: Exception) -> str:
+    return f"Tiingo {symbol}: {_status(exc)} — no comparison"
 
 
 def load(root: Path) -> Corpus:
-    return read_store(root, tiingo=_default_fetch)
+    return read_store(root, tiingo=_default_fetch, reserve=reserved_symbols(root / "data"))
 
 
 SOURCE = Source(

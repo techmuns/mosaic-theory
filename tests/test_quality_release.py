@@ -101,7 +101,7 @@ def test_a_figure_another_filing_carries_is_a_stated_difference() -> None:
 def test_a_fiscal_calendar_that_does_not_tile_places_nothing() -> None:
     """fuboTV moved its fiscal year: its fiscal 2025 and first quarter of 2026 both end 2025-12-31.
     A zero-day quarter once read a revenue of $0 — it is unchecked, never a difference."""
-    cal = src._calendar(FACTS["FUBO"])
+    cal = src.fiscal_calendar(FACTS["FUBO"])
     assert src._place(cal, "Q1 2026") is None
 
 
@@ -124,7 +124,7 @@ def test_the_margin_tolerance_is_a_tenth_of_a_point() -> None:
     rel = next(r for r in p.releases if any(x["metric"] == "gross margin"
                                             for x in r["reconciliation"]))
     row = next(x for x in rel["reconciliation"] if x["metric"] == "gross margin")
-    cal = src._calendar(p.facts)
+    cal = src.fiscal_calendar(p.facts)
     _fp, _y, start, end = src._place(cal, row["period"])
     gp = src._governing(src._by_tag(p.facts, ("GrossProfit",), start, end)[0], src._filed(rel))
     rev = src._governing(src._by_tag(p.facts, src.CONCEPT_ALIASES["revenue"], start, end)[0],
@@ -163,7 +163,7 @@ def test_the_scale_band_is_a_factor_of_two_either_way() -> None:
     agrees, 2.01x and 1/2.01x differ (release.SCALE_BAND)."""
     p = _page("AMZN@56500bb1")
     rel = next(r for r in p.releases if r["filed"] == "2026-07-30")
-    cal = src._calendar(p.facts)
+    cal = src.fiscal_calendar(p.facts)
     _fp, _y, start, end = src._place(cal, "Q3 2025")
     base = max(src._by_tag(p.facts, src.CONCEPT_ALIASES["revenue"], start, end)[0])[1]
     g = next(g for g in rel["guidance"] if g["metric"] == "net sales")

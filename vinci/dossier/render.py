@@ -1352,9 +1352,10 @@ def _compose_interest_lead(term: GoverningTerm | None, raw: str) -> tuple[str, s
     or '' when the components are absent/incomplete, plus a QA note when the consistency guard
     tripped (else ''). REQUIRED: ``base_rate_label`` + exactly one of ``margin_pct``/``margin_bps``;
     ``floor_pct``/``pik_pct`` optional. COMPONENT-CONSISTENCY GUARD: each numeric component's digits
-    must appear in the parent clause; a mismatch OR both margins present ⇒ no lead + QA (a slip must
-    never headline the row). Units render AS DISCLOSED (bps stays bps). A ``term`` of None (a
-    pre-RC-1.5d JSON, no components) ⇒ no lead — the clause carries it, no crash."""
+    must appear in the parent clause, or the component was kept by a clause of its own
+    (``component_quotes``, checked at extraction); a mismatch OR both margins present ⇒ no lead +
+    QA (a slip must never headline the row). Units render AS DISCLOSED (bps stays bps). A ``term``
+    of None (a pre-RC-1.5d JSON, no components) ⇒ no lead — the clause carries it, no crash."""
     if term is None:
         return "", ""
     base = (term.base_rate_label or "").strip()
@@ -1364,12 +1365,16 @@ def _compose_interest_lead(term: GoverningTerm | None, raw: str) -> tuple[str, s
     if m_pct is not None and m_bps is not None:
         return "", "both a percent and a bps margin given — ambiguous, lead suppressed"
     nums = _clause_numbers(raw)
-    for comp in (m_pct, m_bps, term.floor_pct, term.pik_pct):
+    # a component kept by a clause of its own was checked there at extraction — a span of the
+    # exhibit that states its figure — so the parent clause need not repeat it (2026-10-28)
+    own = {key for key, _quote in term.component_quotes}
+    for key, comp in (("margin_pct", m_pct), ("margin_bps", m_bps), ("floor_pct", term.floor_pct),
+                      ("pik_pct", term.pik_pct)):
         if comp is None:
             continue
         if not math.isfinite(comp):  # defence-in-depth: a non-finite never headlines, never crashes
             return "", "a rate component is not a finite number — lead suppressed"
-        if not _num_in_clause(comp, nums):
+        if key not in own and not _num_in_clause(comp, nums):
             return "", f"rate component {_fmt_bps(comp)} not stated in the clause — lead suppressed"
     if m_pct is not None:
         margin = f"{_fmt_pct(m_pct)}%"

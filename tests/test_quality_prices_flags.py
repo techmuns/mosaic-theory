@@ -351,6 +351,13 @@ def test_a_window_that_closed_a_month_ago_is_kept_and_a_recent_one_rereads_daily
             seen.append((end, ttl_seconds))
             return []
 
+        def cached_rows(self, symbol: str, *, start: date, end: date,
+                        ttl_seconds: float | None) -> list[dict[str, Any]] | None:
+            return None                           # nothing kept: every window is asked
+
+        def symbols_asked(self, month: str) -> set[str]:
+            return set()                          # the month's budget (2026-10-28): none spent
+
     monkeypatch.setenv("TIINGO_API_KEY", "synthetic-not-a-key")
     monkeypatch.setattr(TiingoEodClient, "from_config", classmethod(lambda cls: Client()))
     fetch = prices._default_fetch()
@@ -394,6 +401,9 @@ def test_after_a_tiingo_plan_limit_nothing_more_is_asked_this_run(
                         ttl_seconds: float | None) -> list[dict[str, Any]] | None:
             # UNADJ's answer is already kept: read after the stop, never asked for
             return FakeTiingo()(symbol, start, end) if symbol == "UNADJ" else None
+
+        def symbols_asked(self, month: str) -> set[str]:
+            return set()                          # the month's budget (2026-10-28): none spent
 
     monkeypatch.setenv("TIINGO_API_KEY", "synthetic-not-a-key")
     monkeypatch.setattr(TiingoEodClient, "from_config", classmethod(lambda cls: Client()))
