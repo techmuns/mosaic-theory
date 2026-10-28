@@ -202,13 +202,29 @@ def test_an_order_jurisdiction_issuer_that_files_nothing_here_reports_abroad() -
     got = _run("SLI")
     assert got.status is SourceStatus.PRESENT and got.value is not None
     assert got.value.startswith(
-        "Reports abroad (SEC order 34-104931) — incorporated in Canada (EDGAR state of "
-        "incorporation), so its directors and officers may report under NI 55-104")
+        "May report abroad (SEC order 34-104931) — incorporated in Canada (40-F cover, "
+        "0001193125-26-130448), so its directors and officers may report under a regulation the "
+        "order names (Canada's: NI 55-104) instead of Forms 3/4/5")
     assert "none filed with the SEC in the last 224 days, since 2026-03-18" in got.value
-    assert "subject to NI 55-104, which SEC data does not show" in got.value
+    assert ("not established: the order also requires the issuer to be subject to such a "
+            "regulation, which SEC data does not show") in got.value
     assert "no insider activity" not in got.value
-    assert "SEC Release 34-104931 (2026-03-05); EDGAR state of incorporation A1" in str(
+    assert "SEC Release 34-104931 (2026-03-05); 40-F cover, 0001193125-26-130448 Z4" in str(
         got.source_ref)
+
+
+def test_report_abroad_is_stated_as_a_possibility_never_as_established() -> None:
+    """CODEX ROUND 1 (P2). Incorporation is condition (i) of the order; condition (ii) — that the
+    issuer is SUBJECT to a qualifying regulation — is not in SEC data, and it may be a regulation
+    of ANOTHER listed jurisdiction (LAR is incorporated in Switzerland and listed in Toronto, not
+    on SIX). So the headline is a possibility ("May report abroad"), and the regulation named is
+    the incorporation jurisdiction's as an example of what the order accepts, never THE one."""
+    for name in ("SLI", "BLDP"):
+        got = _run(name)
+        assert got.value is not None
+        assert not got.value.startswith("Reports abroad"), name
+        assert "may report under a regulation the order names (" in got.value
+        assert got.value.rstrip().endswith("which SEC data does not show")
 
 
 def test_an_issuer_on_no_order_that_files_nothing_stays_unknown_with_its_window() -> None:
@@ -216,11 +232,11 @@ def test_an_issuer_on_no_order_that_files_nothing_stays_unknown_with_its_window(
     it, so it does NOT read "reports abroad": an absence with its window and the reason."""
     got = _run("DQ")
     assert got.status is SourceStatus.UNKNOWN
-    assert "Reports abroad" not in str(got.note)
+    assert "report abroad" not in str(got.note)
     assert ("no Form 3/4/5 filed in the last 224 days, since 2026-03-18 when Section 16(a) "
             "reached its insiders (HFIAA)") in str(got.note)
-    assert "incorporated in Cayman Islands (EDGAR state of incorporation), which no SEC exemptive "\
-           "order covers" in str(got.note)
+    assert ("incorporated in Cayman Islands (20-F cover, 0001104659-26-045134), which no SEC "
+            "exemptive order covers") in str(got.note)
 
 
 def test_the_may_order_reaches_ipx_on_its_date_and_only_its_directors() -> None:
@@ -229,9 +245,10 @@ def test_the_may_order_reaches_ipx_on_its_date_and_only_its_directors() -> None:
     and the order is named beside them. Read as of 2026-05-01 the order did not yet exist."""
     got = _run("IPX")
     assert got.value is not None
-    assert ("incorporated in Australia (EDGAR state of incorporation): its directors may report "
-            "under Corporations Act s205G instead from 2026-05-20 (SEC order 34-105517), so these "
-            "counts can be partial; its other officers still file Forms 3/4") in got.value
+    assert ("incorporated in Australia (20-F cover, 0001898601-26-000030): its directors may "
+            "report under a regulation the order names (Australia's: Corporations Act s205G) "
+            "instead from 2026-05-20 (SEC order 34-105517), so these counts can be partial; "
+            "its other officers still file Forms 3/4") in got.value
     early = _run("IPX", date(2026, 5, 1))
     assert early.status is SourceStatus.PRESENT and early.value is not None
     assert "34-105517" not in early.value and "may report" not in early.value
@@ -242,13 +259,47 @@ def test_the_may_order_reaches_ipx_on_its_date_and_only_its_directors() -> None:
     assert "filed since: 9 Form 3, 13 Form 4" in early.value
 
 
+def test_the_annual_cover_outranks_edgars_company_record() -> None:
+    """CODEX ROUND 1 (P2: point-in-time incorporation), and the measurement it led to. EDGAR's
+    `stateOfIncorporation` is TODAY's company record; the annual cover is the issuer's own
+    statement as of a filing on or before the reference date. On 6 of the 207 primary FPIs with
+    an EDGAR code the two put the issuer under different regimes. DOX (Amdocs) is the frozen one:
+    EDGAR says United Kingdom, under order 34-104931; its 20-F cover says Guernsey, on no order.
+    Its insiders file here, so the line is read — and must not say a UK order may make it
+    partial."""
+    got = _run("DOX")
+    assert got.status is SourceStatus.PRESENT and got.value is not None
+    assert "filed since: 14 Form 3, 2 Form 4" in got.value
+    assert "United Kingdom" not in got.value and "may report under" not in got.value
+    sub = next(json.loads(v) for k, v in _case("DOX")["pages"].items() if "/submissions/" in k)
+    assert sub["stateOfIncorporation"] == "X0"          # the record the cover overrides
+
+
+def test_a_us_state_code_on_an_fpi_cover_is_not_read() -> None:
+    """An FPI cannot be incorporated in a US state (Rule 3b-4), so a cover tagging "CA" or "IL"
+    has written an ISO code — Canada, Israel — into an EDGAR field where it means California,
+    Illinois (AAUC; ALLT, MNDY, ZIM, measured 2026-10-28). It is refused, and EDGAR is read."""
+    class _Cover:
+        def __init__(self, value: str) -> None:
+            self.value = value
+
+        def get_text(self, url: str, **_: object) -> str:
+            return ('<ix:nonNumeric name="dei:EntityIncorporationStateCountryCode" '
+                    f'contextRef="c-1">{self.value}</ix:nonNumeric>')
+    annual = Filing(cik="1", form="40-F", filing_date=date(2026, 4, 1),
+                    accession="0000000001-26-000001", items=[], primary_doc="a.htm")
+    for us in ("CA", "IL", "AR", "X1"):
+        assert mech._cover_incorporation(cast(CachedHttp, _Cover(us)), "1", annual) is None
+    assert mech._cover_incorporation(cast(CachedHttp, _Cover("A6")), "1", annual) == ("A6", "")
+
+
 def test_a_blank_edgar_incorporation_is_read_from_the_annual_cover() -> None:
     """BLDP (rank 49; 40-F): EDGAR's stateOfIncorporation is blank, and #837 left it unread. Its
     40-F cover tags "British Columbia, Canada" — a NAME, under EDGAR's transform."""
     got = _run("BLDP")
     assert got.status is SourceStatus.PRESENT and got.value is not None
-    assert got.value.startswith("Reports abroad (SEC order 34-104931) — incorporated in Canada "
-                                "(40-F cover, 0001628280-26-017045)")
+    assert got.value.startswith("May report abroad (SEC order 34-104931) — incorporated in "
+                                "Canada (40-F cover, 0001628280-26-017045)")
 
 
 @pytest.mark.parametrize(("cover", "code"), [
