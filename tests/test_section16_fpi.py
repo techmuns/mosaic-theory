@@ -33,7 +33,7 @@ from vinci.dossier.mechanical import (
     compose_insider_line,
 )
 from vinci.dossier.schemas import SourceStatus
-from vinci.edgar.client import EdgarClient
+from vinci.edgar.client import EdgarClient, Filing
 from vinci.netcache import CachedHttp
 
 FIX = Path(__file__).parent / "fixtures"
@@ -258,10 +258,22 @@ def test_a_blank_edgar_incorporation_is_read_from_the_annual_cover() -> None:
     # the grammar's other forms, and the traps substring matching would fall into
     ("England and Wales", "X0"), ("South Korea", "M5"), ("The Kingdom of Spain", "U3"),
     ("Québec", "A8"), ("Northern Ireland", None), ("Netherlands Antilles", None),
-    ("North Korea", None), ("Jersey", None),
+    ("North Korea", None), ("Jersey", None), ("UK", "X0"), ("U.K.", "X0"),
 ])
 def test_a_cover_name_maps_by_edgars_own_grammar(cover: str, code: str | None) -> None:
     assert mech._cover_code(cover) == code
+
+
+def test_a_two_letter_cover_name_is_read_as_a_name_before_a_code() -> None:
+    """REVIEW FINDING (round 0). "UK" is a name the transform accepts; read first as a raw EDGAR
+    code it matched no order, so a UK company with a blank EDGAR code read "no order covers"."""
+    class _Cover:
+        def get_text(self, url: str, **_: object) -> str:
+            return ('<ix:nonNumeric name="dei:EntityIncorporationStateCountryCode" '
+                    'format="ixt-sec:edgarprovcountryen">UK</ix:nonNumeric>')
+    annual = Filing(cik="1", form="20-F", filing_date=date(2026, 4, 1),
+                         accession="0000000001-26-000001", items=[], primary_doc="a.htm")
+    assert mech._cover_incorporation(cast(CachedHttp, _Cover()), "1", annual) == ("X0", "UK")
 
 
 def test_a_10k_filer_incorporated_in_the_eea_is_read_exactly_as_before() -> None:

@@ -2983,9 +2983,13 @@ def _cover_incorporation(
     text = " ".join(htmllib.unescape(re.sub(r"<[^>]+>", " ", m.group(1))).split()) if m else ""
     if not text:
         return None
-    if re.fullmatch(r"[A-Z0-9]{2}", text):           # a filer that tagged the code itself
+    # THE GRAMMAR FIRST: "UK" is a NAME the transform accepts, and read as a raw code it would
+    # match no order. Only what the grammar does not know is tried as a code a filer tagged itself.
+    if (code := _cover_code(text)) is not None:
+        return code, text
+    if re.fullmatch(r"[A-Z0-9]{2}", text):
         return text, ""
-    return _cover_code(text), text
+    return None, text
 
 
 def _section16_reach(
@@ -3049,9 +3053,6 @@ def _fpi_insider_activity(
     except HttpError as exc:
         return Sourced.unknown(note=f"EDGAR Form 3/4/5 fetch failed: {exc}")
     span = (reference_date - HFIAA_EFFECTIVE).days
-    where = (_incorporated_in(reach) if reach.place
-             else f"its jurisdiction of incorporation is stated neither in EDGAR nor on its "
-                  f"{reach.annual.form} cover")
     if not filings:
         looked = (f"EDGAR submissions CIK{pad_cik(cik)}: no Form 3/4/5 filed since "
                   f"{HFIAA_EFFECTIVE}")
@@ -3062,6 +3063,9 @@ def _fpi_insider_activity(
                             f"({reach.regime.order.issued}); {reach.place_source} "
                             f"{reach.code}; {looked}"))
         orders = ", ".join(sorted({r.order.release for r in REGIMES.values()}))
+        where = (_incorporated_in(reach) if reach.place
+                 else f"its jurisdiction of incorporation is stated neither in EDGAR nor on its "
+                      f"{reach.annual.form} cover")
         if reach.pending is not None:
             why = (f"whose SEC exemptive order ({reach.pending.order.release}) takes effect only "
                    f"{reach.pending.order.issued}, after this reference date")
@@ -3095,15 +3099,23 @@ def _fpi_insider_activity(
                     f"since {HFIAA_EFFECTIVE}, the HFIAA effective date; counts over {win}d)"))
 
 
+def _order_terms(reach: Section16Reach) -> tuple[Regime, str, str]:
+    """The regime in force, the date it began if later than the HFIAA's, and who still files —
+    shared by both order clauses so the two can never disagree about it."""
+    r = reach.regime
+    assert r is not None
+    since = str(r.order.issued) if r.order.issued > HFIAA_EFFECTIVE else ""
+    rest = ("" if r.covers == _DIRECTORS_AND_OFFICERS
+            else "; its other officers still file Forms 3/4")
+    return r, since, rest
+
+
 def _may_report_abroad(reach: Section16Reach) -> str:
     """The order clause beside an FPI's counts: who may report abroad instead, from when, and who
     still files here. Stated whenever the issuer sits in an order's jurisdiction, because then the
     Forms on file can be a PART of its insiders' trading."""
-    r = reach.regime
-    assert r is not None
-    since = f" from {r.order.issued}" if r.order.issued > HFIAA_EFFECTIVE else ""
-    rest = ("" if r.covers == _DIRECTORS_AND_OFFICERS
-            else "; its other officers still file Forms 3/4")
+    r, began, rest = _order_terms(reach)
+    since = f" from {began}" if began else ""
     return (f"{_incorporated_in(reach)}: its {r.covers} may report under {r.regulation} instead"
             f"{since} (SEC order {r.order.release}), so these counts can be partial{rest}")
 
@@ -3119,17 +3131,14 @@ def _reports_abroad_line(reach: Section16Reach, span: int) -> str:
     2026-03-18. It leads with "Reports abroad (SEC order N)" and states its window — "in the last N
     days", which is also what the renderer reads to drop the stale "6m" from the label — and the
     one condition SEC data cannot show."""
-    r = reach.regime
-    assert r is not None
-    since = f", from {r.order.issued}" if r.order.issued > HFIAA_EFFECTIVE else ""
-    rest = ("" if r.covers == _DIRECTORS_AND_OFFICERS
-            else "; its other officers still file Forms 3/4")
+    r, began, rest = _order_terms(reach)
+    since = f", from {began}" if began else ""
     return (f"Reports abroad (SEC order {r.order.release}{since}) — {_incorporated_in(reach)}, "
             f"so its {r.covers} may report under {r.regulation} instead of Forms 3/4/5{rest} · "
             f"none filed with the SEC in the last {span} days, since {HFIAA_EFFECTIVE} when "
             f"Section 16(a) reached this foreign private issuer's insiders (HFIAA) · the order "
-            f"also requires the "
-            f"issuer to be subject to {r.regulation}, which SEC data does not show")
+            f"also requires the issuer to be subject to {r.regulation}, which SEC data does not "
+            f"show")
 
 
 def compose_insider_line(
