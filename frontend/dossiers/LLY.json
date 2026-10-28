@@ -4119,8 +4119,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 6 (5 insiders, $34.59M) — in the last 182 days · last purchase $0.49M, EVP & CFO, 2025-08-15 (~14mo ago) · largest purchase $1.05M, President, Chair, and CEO, 2025-08-12 (~14mo ago) · last sale $7.64M, EVP & President, LLY Int'l, 2026-08-17 (~2mo ago) · largest sale $57664.29M, 10% owner, 2025-11-14 (~11mo ago) · grants 247 · last filing 2026-10-20 · other F×39/G×19/M×39",
-        "source_ref": "EDGAR Form 4 (latest 0001262388-26-000020; 396 filings in the 1095d scanned; counts over 182d)",
+        "value": "Open-market buys 0 · sells 6 (5 insiders, $34.59M) — in the last 182 days · last purchase $0.49M, EVP & CFO, 2025-08-15 (~14mo ago) · largest purchase $1.05M, President, Chair, and CEO, 2025-08-12 (~14mo ago) · last sale $7.64M, EVP & President, LLY Int'l, 2026-08-17 (~2mo ago) · largest sale $57664.29M, 10% owner, 2025-11-14 (~11mo ago) · grants 243 · last filing 2026-09-22 · other F×39/G×19/M×39",
+        "source_ref": "EDGAR Form 4 (latest 0001262388-26-000018; 392 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },
@@ -16384,6 +16384,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.quality"
+      ]
+    },
+    {
+      "date": "2026-10-28",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.catalyst_path"
       ]
     }
   ],

@@ -4273,8 +4273,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 4 (3 insiders, $35.31M) · sells 4 (2 insiders, $1135.10M) — in the last 182 days · last purchase $10.01M, Chief Executive Officer, 2026-09-10 (~1mo ago) · largest purchase $74.00M, 10% owner, 2023-07-21 (~39mo ago) · last sale $182.24M, 10% owner, 2026-09-15 (~1mo ago) · largest sale $479.25M, 10% owner, 2026-06-02 (~4mo ago) · grants 2 · last filing 2026-10-20 · other C×3/F×817/G×14/J×1/M×848",
-        "source_ref": "EDGAR Form 4 (latest 0002111867-26-000014; 351 filings in the 1095d scanned; counts over 182d)",
+        "value": "Open-market buys 3 (2 insiders, $15.31M) · sells 1 (1 insider, $2.01M) — in the last 182 days · last purchase $10.01M, Chief Executive Officer, 2026-09-10 (~1mo ago) · last sale $2.01M, insider, 2026-09-11 (~1mo ago) · largest sale $70.42M, Chief Executive Officer, 2024-06-17 (~28mo ago) · grants 2 · last filing 2026-10-14 · other F×793/G×14/J×1/M×823",
+        "source_ref": "EDGAR Form 4 (latest 0001190699-26-000005; 339 filings in the 1095d scanned; 6 more filed by this company as a holder of another issuer's stock, not counted; counts over 182d)",
         "status": "present",
         "note": null
       },
@@ -15369,6 +15369,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.quality"
+      ]
+    },
+    {
+      "date": "2026-10-28",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.catalyst_path"
       ]
     }
   ],

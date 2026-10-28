@@ -600,7 +600,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf; Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [66]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 54 (5 insiders, $19.57M) — in the last 182 days · last purchase $4.95M, 10% owner, 2025-08-01 (~14mo ago) · last sale $0.03M, director, 2026-09-30 (~1mo ago) · largest sale $33.36M, 10% owner, 2026-01-30 (~9mo ago) · grants 464 · last filing 2026-10-15 · other filings 793 [67]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 39 (4 insiders, $4.45M) — in the last 182 days · no purchase in the 3y scanned · last sale $0.03M, director, 2026-09-30 (~1mo ago) · largest sale $6.87M, director, 2024-12-10 (~22mo ago) · grants 464 · last filing 2026-10-15 · other filings 772 [67]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-30): 87.4M → 80.4M sh (-8.0%, falling) · 0.7% of shares out (EDGAR XBRL) · DTC 3.0d · recent: 2026-09-30 80.4M · 2026-09-15 87.4M · 2026-08-31 77.7M · 2026-08-14 72.7M [68]
 
 ### Assembly verification — filing vs panel
@@ -619,6 +619,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.quality — refresh at 2026-10-09.3
+  - 2026-10-28 · mechanical.catalyst_path — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 35d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 39d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -697,7 +698,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [64] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-21`
 [65] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-21`
 [66] `CIQ transcript(s): Alphabet Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf; Alphabet Inc., Q2 2026 Earnings Call, Jul 22, 2026.rtf`
-[67] `EDGAR Form 4 (latest 0001193125-26-423187; 508 filings in the 1095d scanned; counts over 182d)`
+[67] `EDGAR Form 4 (latest 0001193125-26-423187; 497 filings in the 1095d scanned; 11 more filed by this company as a holder of another issuer's stock, not counted; counts over 182d)`
 [68] `FINRA consolidated short interest (settle 2026-09-30); DTC = 80,391,960 short ÷ 26,761,236 screen 90d ADV`
 [69] `10-Q maturity wall vs CIQ capital panel (same window)`
 [70] `CIQ revenue guide vs release actual/outlook`

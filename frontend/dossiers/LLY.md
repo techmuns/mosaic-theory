@@ -616,7 +616,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf; Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [71]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 6 (5 insiders, $34.59M) — in the last 182 days · last purchase $0.49M, EVP & CFO, 2025-08-15 (~14mo ago) · largest purchase $1.05M, President, Chair, and CEO, 2025-08-12 (~14mo ago) · last sale $7.64M, EVP & President, LLY Int'l, 2026-08-17 (~2mo ago) · largest sale $57664.29M, 10% owner, 2025-11-14 (~11mo ago) · grants 247 · last filing 2026-10-20 · other filings 97 [72]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 6 (5 insiders, $34.59M) — in the last 182 days · last purchase $0.49M, EVP & CFO, 2025-08-15 (~14mo ago) · largest purchase $1.05M, President, Chair, and CEO, 2025-08-12 (~14mo ago) · last sale $7.64M, EVP & President, LLY Int'l, 2026-08-17 (~2mo ago) · largest sale $57664.29M, 10% owner, 2025-11-14 (~11mo ago) · grants 243 · last filing 2026-09-22 · other filings 97 [72]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-30): 7.5M → 7.0M sh (-6.4%, falling) · 0.7% of shares out (EDGAR XBRL) · DTC 2.8d · recent: 2026-09-30 7.0M · 2026-09-15 7.5M · 2026-08-31 7.9M · 2026-08-14 6.6M [73]
 
 ### Assembly verification — filing vs panel
@@ -634,6 +634,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.quality — refresh at 2026-10-09.3
+  - 2026-10-28 · mechanical.catalyst_path — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 35d old — 2026-09-21 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 39d old (2026-09-17, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -717,7 +718,7 @@ _QoQ/YoY same-basis only; (R) = Reclassified_
 [69] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-09-21`
 [70] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-09-21`
 [71] `CIQ transcript(s): Eli Lilly and Company, Q1 2026 Earnings Call, Apr 30, 2026.rtf; Eli Lilly and Company, Q2 2026 Earnings Call, Aug 05, 2026.rtf`
-[72] `EDGAR Form 4 (latest 0001262388-26-000020; 396 filings in the 1095d scanned; counts over 182d)`
+[72] `EDGAR Form 4 (latest 0001262388-26-000018; 392 filings in the 1095d scanned; counts over 182d)`
 [73] `FINRA consolidated short interest (settle 2026-09-30); DTC = 7,035,434 short ÷ 2,474,522 screen 90d ADV`
 [74] `10-Q maturity wall vs CIQ capital panel (same window)`
 [75] `CIQ revenue guide vs release actual/outlook`

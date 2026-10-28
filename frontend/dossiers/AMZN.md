@@ -665,7 +665,7 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf; Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [71]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 0 · sells 63 (8 insiders, $411.65M) — in the last 182 days · no purchase in the 3y scanned · last sale $0.25M, CEO Worldwide Amazon Stores, 2026-10-01 (~0mo ago) · largest sale $682.65M, Executive Chair, 2025-06-27 (~16mo ago) · grants 0 · last filing 2026-10-05 · other filings 252 [72]
+- **Insider activity (Form 4):** Open-market buys 0 · sells 63 (8 insiders, $411.65M) — in the last 182 days · no purchase in the 3y scanned · last sale $0.25M, CEO Worldwide Amazon Stores, 2026-10-01 (~0mo ago) · largest sale $682.65M, Executive Chair, 2025-06-27 (~16mo ago) · grants 0 · last filing 2026-10-05 · other filings 251 [72]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-30): 81.4M → 86.7M sh (+6.4%, rising) · 0.8% of shares out (EDGAR XBRL) · DTC 2.2d · recent: 2026-09-30 86.7M · 2026-09-15 81.4M · 2026-08-31 92.1M · 2026-08-14 95.3M [73]
 
 ### Assembly verification — filing vs panel
@@ -683,6 +683,7 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.quality — refresh at 2026-10-09.3
+  - 2026-10-28 · mechanical.catalyst_path — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 20d old — 2026-10-06 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 20d old (2026-10-06, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -766,7 +767,7 @@ _Source §: 8-K 0001018724-14-000042 · amzn2014september5-ex101.htm_
 [69] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-10-06`
 [70] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-10-06`
 [71] `CIQ transcript(s): Amazon.com, Inc., Q1 2026 Earnings Call, Apr 29, 2026.rtf; Amazon.com, Inc., Q2 2026 Earnings Call, Jul 30, 2026.rtf`
-[72] `EDGAR Form 4 (latest 0001936006-26-000026; 247 filings in the 1095d scanned; counts over 182d)`
+[72] `EDGAR Form 4 (latest 0001936006-26-000026; 245 filings in the 1095d scanned; 2 more filed by this company as a holder of another issuer's stock, not counted; counts over 182d)`
 [73] `FINRA consolidated short interest (settle 2026-09-30); DTC = 86,657,682 short ÷ 38,655,338 screen 90d ADV`
 [74] `10-Q maturity wall vs CIQ capital panel (same window)`
 [75] `CIQ revenue guide vs release actual/outlook`
