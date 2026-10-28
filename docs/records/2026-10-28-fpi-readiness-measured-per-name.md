@@ -150,8 +150,9 @@ order. No pipeline code is built here, and #828 (held by the operator) is not to
     are not covered, and 16(b) still does not apply.
   - **One exemption.** An SEC order of 2026-03-05 exempts insiders who report under the Canadian
     (SEDI, NI 55-104), Chilean, EEA, Korean, Swiss or UK regimes.
-  - **The filings show it.** Across the 419 20-F/40-F issuers measured, 215 filed their first
-    Form 3 in March 2026, 3,181 Form 3s in that month alone.
+  - **The filings show it.** Across the 419 20-F/40-F issuers measured, 208 filed their first
+    Form 3 (read over each issuer's whole filing index) in March 2026, and there were 3,181
+    Form 3s in that month alone (filings read back to 2025-01-01).
   - **Primary filers since 2026-03-18:** **170 of 192** 20-F filers and **2 of 63** 40-F
     filers (Canadian, exempt) have filed Forms 3/4/5. In the queue: 25 of 33 20-F filers and 0 of
     21 40-F filers.
@@ -173,7 +174,8 @@ order. No pipeline code is built here, and #828 (held by the operator) is not to
     in a percentile, so they distort it only through FX drift.
   - **Three histories switch unit, and their percentile is corrupt:** JOYY (primary, CNY↔USD);
     FUTU and NBIS (theme). None is in the queue.
-  - **Non-USD picks:** 14 primary lines read a CNY EPS, QFIN (1) and HSAI (175) among them.
+  - **Non-USD picks** (re-measured on the 2026-10-28 companyfacts fetches; no pick changed from
+    the first pass): 14 primary lines read a CNY EPS, QFIN (1) and HSAI (175) among them.
     17 theme lines read a CNY, JPY, CAD or EUR EPS.
 
 **GPCR, FOR #828 (reported, not acted on).**
@@ -230,8 +232,10 @@ ranked queue).
    - **Unlocks:** Tiers 2 and 3b, 95 primary names (17 in the queue). **55 of 56 queue names**
      cumulative; ASM stays unresolved.
 
-**FPI5 needs no build on this evidence.** The operator can export Tier 1–3 workbooks in USD (CIQ
-converts), and `require_usd` passes them. A native-currency reader is worth building only after
+**FPI5 may need no build, but that is UNVERIFIED.** The operator can export Tier 1–3 workbooks
+in USD (CIQ converts), and `require_usd` passes them. No foreign filer's USD export has yet been
+run through the parser, so the first one is a pilot: it must assemble on a real page before this
+is believed (off-December fiscal years are MC4's, and IFRS line labels are untested). A native-currency reader is worth building only after
 step 6's ruling, and only if native exports are wanted.
 
 **Not reached by #828's words, and not by any tier.** OGC, GORO, AYA and MDA have filed no
