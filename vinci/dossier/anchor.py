@@ -37,6 +37,7 @@ from vinci.edgar.concepts import (
     points_for_tag,
 )
 from vinci.edgar.net_debt import Basis, net_debt
+from vinci.schemas.listing import AdsRatio
 
 if TYPE_CHECKING:  # ciq_balance imports schemas, which imports this module
     from vinci.dossier.ciq_balance import CiqFacts
@@ -921,9 +922,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     da = None if isinstance(got_da, str) else got_da
     nd = _lease_inclusive_net_debt(facts, ex_operating_leases=ex_lease)
     nd_val = nd[0] if nd else None
-    dil = _latest_point(facts, _DILUTED_TAG)
-    out, out_src = _shares_outstanding(mechanical, facts, dil)
-    inc = _dilutive_increment(facts, dil) if out is not None else None
+    counts = _traded_unit_counts(mechanical, facts)
+    dil, out, out_src, inc = counts.dil, counts.out, counts.out_src, counts.inc
     ltm_rev = _ltm_revenue_from_fs(mechanical)
     got_fcf = _latest_fcf(facts)
     fcf = None if isinstance(got_fcf, str) else got_fcf
@@ -980,9 +980,11 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                                         else "UNKNOWN — no debt/cash tag" + (
                                             _NO_VENDOR_EX_LEASE if ex_lease else ""))),
         "diluted_shares": AnchorInput(value=(dil.value if dil else None), unit="shares",
-                                      basis="diluted weighted-average (latest 10-Q)",
-                                      source=(f"EDGAR {_DILUTED_TAG}" if dil
-                                              else "UNKNOWN — no diluted WA tag")),
+                                      basis="diluted weighted-average (latest 10-Q)"
+                                            + counts.per_ads_basis,
+                                      source=(f"EDGAR {_DILUTED_TAG}" + counts.per_ads_source
+                                              if dil else counts.refused
+                                              or "UNKNOWN — no diluted WA tag")),
         "shares_outstanding": AnchorInput(
             value=out, unit="shares",
             basis="point-in-time shares outstanding — the per-share denominator (item 24)",
@@ -1026,8 +1028,52 @@ def _span(p: ConceptPoint) -> str:
     return f"{p.period_start.isoformat() if p.period_start else '?'}..{p.period_end.isoformat()}"
 
 
+class _Counts(NamedTuple):
+    """The share counts a per-share figure divides by, in the unit the line TRADES in."""
+
+    dil: ConceptPoint | None
+    out: float | None
+    out_src: str
+    inc: tuple[float, str] | None
+    #: appended to the diluted count's basis / source when it was converted (FPI4)
+    per_ads_basis: str = ""
+    per_ads_source: str = ""
+    #: the reason every count is withheld — a depositary line whose ratio is not stated
+    refused: str | None = None
+
+
+def _traded_unit_counts(mechanical: dict[str, Any], facts: dict[str, Any]) -> _Counts:
+    """THE counts both per-share paths divide by (`_bridge_inputs`, `share_denominator`), in ONE
+    unit: the one the price is in.
+
+    A DEPOSITARY LINE (FPI4) is priced per ADS while its filer counts ordinary shares, so its
+    filer counts are divided by the ordinary shares per ADS its own filing states
+    (`stock_info.ads_ratio`); the page's point-in-time count already is in ADSs
+    (`mechanical.in_traded_units`). A line whose filing does not state its ratio gets NO count —
+    an ordinary count under an ADS price is wrong by exactly the factor nobody stated."""
+    dil = _latest_point(facts, _DILUTED_TAG)
+    raw = (mechanical.get("stock_info") or {}).get("ads_ratio")
+    ads = AdsRatio.model_validate(raw) if raw else None
+    if ads is None:
+        out, out_src = _shares_outstanding(mechanical, facts, dil)
+        inc = _dilutive_increment(facts, dil) if out is not None else None
+        return _Counts(dil, out, out_src, inc)
+    if not ads.known or not ads.ordinary_per_ads:
+        why = f"UNKNOWN — the line trades per ADS and {ads.describe()}"
+        return _Counts(None, None, why, None, refused=why)
+    r = ads.ordinary_per_ads
+    out, out_src = _shares_outstanding(mechanical, facts, dil, per_ads=r)
+    inc = _dilutive_increment(facts, dil) if out is not None else None
+    tail = f" ÷ {r:g} ordinary shares per ADS ({ads.source}, {ads.form} {ads.accession})"
+    return _Counts(
+        dil.model_copy(update={"value": dil.value / r}) if dil is not None else None,
+        out, out_src, (inc[0] / r, inc[1] + tail) if inc is not None else None,
+        per_ads_basis=", in ADSs", per_ads_source=tail)
+
+
 def _shares_outstanding(mechanical: dict[str, Any], facts: dict[str, Any],
-                        dil: ConceptPoint | None) -> tuple[float | None, str]:
+                        dil: ConceptPoint | None, *, per_ads: float = 1.0,
+                        ) -> tuple[float | None, str]:
     """(count, source) — the page's own POINT-IN-TIME count, `stock_info.shares_out`: the count its
     market cap is struck on. Read, never re-derived, so the anchor and the CMP cannot disagree about
     how many shares there are — and USED only where the filer's own basic weighted average over the
@@ -1040,6 +1086,10 @@ def _shares_outstanding(mechanical: dict[str, Any], facts: dict[str, Any],
         return None, f"UNKNOWN — stock_info.shares_out absent ({so.get('note') or 'no count'})"
     src = f"mechanical.stock_info.shares_out ({so.get('source_ref')})"
     b = _basic_point(facts, dil)
+    if b is not None and per_ads != 1.0:
+        # the page's count is in ADSs (FPI4) and the filer's average is in ordinary shares:
+        # compared in ONE unit, or every depositary line reads as a ratio-sized gap
+        b = b.model_copy(update={"value": b.value / per_ads})
     if b is None or b.value <= 0:
         return None, (f"{SHARES_REFUSED}the point-in-time count {v:,.0f} cannot be checked: the "
                       "filer tags no basic weighted average for its latest diluted figure's "
@@ -1082,8 +1132,8 @@ def share_denominator(mechanical: dict[str, Any], facts: dict[str, Any],
     """(count, label) — THE per-share denominator, the one rule for the anchor's base and for R1's
     ex-lease multiple at the page's price, so a price and a value are never struck on two counts:
     the corroborated point-in-time count, else the diluted weighted average, else None."""
-    dil = _latest_point(facts, _DILUTED_TAG)
-    out, _src = _shares_outstanding(mechanical, facts, dil)
+    counts = _traded_unit_counts(mechanical, facts)
+    dil, out = counts.dil, counts.out
     if out is not None:
         return out, SHARES_OUTSTANDING_LABEL
     if dil is not None and dil.value > 0:
