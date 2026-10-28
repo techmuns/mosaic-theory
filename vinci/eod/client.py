@@ -16,6 +16,8 @@ stays out of request URLs, the on-disk cache, and error messages.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from array import array
+from bisect import bisect_left, bisect_right
 from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from datetime import UTC, date, datetime, timedelta
 from typing import Any, cast
@@ -113,6 +115,27 @@ RESTATE_TOL = 0.005
 #: the securities being ingested — never on presence alone. `refresh --aggs` on one name writes a
 #: handful of rows into a session, and reading that as "ingested" would skip the whole market's day.
 _SESSION_PRESENT_FRACTION = 0.5
+
+#: A series hole longer than this many market sessions is longer than any trading suspension the
+#: SEC may order (Exchange Act §12(k)(1)(A): up to 10 business days). Past it the name left the
+#: market, and the bars either side may belong to two securities under one ticker. The price
+#: scorecard flags such a hole (`quality.sources.prices`, series_gap) and the identity repair
+#: probes it (`eod.identity`); both read this one definition.
+GAP_SESSIONS = 10
+
+
+def market_sessions(per_day: dict[str, int]) -> list[int]:
+    """A store's market sessions, as day ordinals: the days holding bars for at least
+    `_SESSION_PRESENT_FRACTION` of the most names any one day holds. Others are partial days."""
+    top = max(per_day.values())
+    return sorted(date.fromisoformat(d).toordinal() for d, n in per_day.items()
+                  if n >= _SESSION_PRESENT_FRACTION * top)
+
+
+def missed_sessions(market: list[int], days: array[int]) -> array[int]:
+    """Per step between consecutive bars: the market sessions strictly between them."""
+    return array("i", (bisect_left(market, days[i]) - bisect_right(market, days[i - 1])
+                       for i in range(1, len(days))))
 
 
 def last_completed_session(client: EodClient, *, today: date,
@@ -224,10 +247,11 @@ def carry_forward(client: EodClient, store: Any, *, predecessor_id: str, predece
     window is put on the current basis — prices × factor, volume ÷ factor, `+restated` on its
     source, as `Store.restate_bars` does. Bars already held under the new id are never
     overwritten. Each carried bar names its origin (``polygon-alias:<old id>``). Runs once per
-    rename: a new id that already holds a bar before ``listed`` has been carried. Returns the bars
-    written."""
+    alias: a new id that already holds a CARRIED bar before ``listed`` has been carried. Its own
+    bars there do not count — a re-domicile's new id can hold the ticker's last weeks before the
+    pair is known (Codex, #839 round 2). Returns the bars written."""
     own = store.get_price_history(successor_id)
-    if any(b.bar_date < listed for b in own):
+    if any(b.bar_date < listed and b.source.startswith("polygon-alias:") for b in own):
         return 0
     taken = {b.bar_date for b in own}
     held = {b.bar_date: b for b in store.get_price_history(predecessor_id) if b.bar_date < listed}
@@ -247,6 +271,29 @@ def carry_forward(client: EodClient, store: Any, *, predecessor_id: str, predece
     return int(store.write_prices(rows))
 
 
+def holders(securities: Iterable[Identity],
+            first_sessions: Mapping[str, date] | None = None) -> Callable[[date], dict[str, str]]:
+    """``on(day) -> {symbol: internal_id}``: the security that held each symbol ON THAT DAY.
+
+    WHY (2026-10-28). Ingest built ``{eod_symbol: internal_id}`` from TODAY's securities and
+    filed every fetched day by it, so a reused ticker's former holder's bars landed under the
+    current holder's id (L7: CALY held a BlackRock ETF's 2023–24 bars). An id with a first session
+    (`aliases.first_sessions`: a reused ticker's tenure, an alias's listing) holds its symbol only
+    from that day; before it the symbol is another id's, or nobody's here, and the bar is not
+    written under it. Where several ids could hold one symbol, the latest first session on or
+    before the day wins; among ids with none, the last given, as the old dict's did."""
+    starts = first_sessions or {}
+    by_sym: dict[str, list[tuple[date, int, str]]] = {}
+    for i, s in enumerate(securities):
+        by_sym.setdefault(s.eod_symbol, []).append(
+            (starts.get(s.internal_id, date.min), i, s.internal_id))
+
+    def on(day: date) -> dict[str, str]:
+        return {sym: max(c)[2] for sym, cands in by_sym.items()
+                if (c := [x for x in cands if x[0] <= day])}
+    return on
+
+
 def ingest_prices(
     client: EodClient,
     store: Any,
@@ -256,6 +303,7 @@ def ingest_prices(
     end: date,
     progress: ProgressFn | None = None,
     restate_window_days: int = RESTATE_WINDOW_DAYS,
+    first_sessions: Mapping[str, date] | None = None,
 ) -> dict[str, Any]:
     """Backfill/refresh EOD bars for ``securities`` over [start, end] into the store.
 
@@ -268,13 +316,19 @@ def ingest_prices(
     it costs. "Already holds" is a COUNT test (:data:`_SESSION_PRESENT_FRACTION`), so a single-name
     refresh's handful of rows never passes for a whole-market day. A store that cannot report what
     it holds is never trusted into a skip: it re-pulls everything, exactly as before.
+
+    A bar is filed under the id that held its symbol THAT day (`holders`, ``first_sessions``).
     """
-    sym_to_id = {s.eod_symbol: s.internal_id for s in securities}
+    secs = list(securities)
+    on = holders(secs, first_sessions)
+    id_to_sym = {s.internal_id: s.eod_symbol for s in secs}
+    all_ids = sorted(id_to_sym)
+    symbols = len(set(id_to_sym.values()))
     days = list(_trading_days(start, end))
     restate_from = end - timedelta(days=restate_window_days)
     counts = getattr(store, "session_bar_counts", None)
-    stored = dict(counts(start, end, list(sym_to_id.values()))) if callable(counts) else {}
-    present_floor = _SESSION_PRESENT_FRACTION * len(sym_to_id)
+    stored = dict(counts(start, end, all_ids)) if callable(counts) else {}
+    present_floor = _SESSION_PRESENT_FRACTION * symbols
     reporter = ProgressReporter("EOD", len(days), emit=progress)
     days_seen = 0
     days_fetched = 0
@@ -295,8 +349,8 @@ def ingest_prices(
     if anchor is not None:
         days_fetched += 1
         anchor_bars = client.grouped_daily(anchor)
-        on_anchor = set(store.bars_on(anchor, list(sym_to_id.values())))
-        restated = restate_held(store, lambda _d: anchor_bars, [anchor], sym_to_id)
+        on_anchor = set(store.bars_on(anchor, all_ids))
+        restated = restate_held(store, lambda _d: anchor_bars, [anchor], on(anchor))
     written: set[str] = set()
     for day in days:
         days_seen += 1
@@ -313,9 +367,10 @@ def ingest_prices(
             reporter.tick(days_seen, suffix=f"{bars_written:,} bars")
             continue  # non-trading day (holiday/weekend)
         trading_days += 1
+        held = on(day)
         rows = [
             PriceBar(
-                internal_id=sym_to_id[t],
+                internal_id=held[t],
                 bar_date=day,
                 open=b.open,
                 high=b.high,
@@ -325,12 +380,11 @@ def ingest_prices(
                 source="polygon-grouped",
             )
             for t, b in raw.items()
-            if t in sym_to_id
+            if t in held
         ]
         bars_written += store.write_prices(rows)
         written.update(r.internal_id for r in rows)
         reporter.tick(days_seen, suffix=f"{bars_written:,} bars")
-    id_to_sym = {iid: sym for sym, iid in sym_to_id.items()}
     # A NAME WITH NO BAR ON THE ANCHOR is not checked by it — it did not trade that day, or had
     # stopped. If this run wrote it new bars, its older held bars are set beside the source at its
     # OWN latest held session, one call per distinct date. Measured 2026-10-26: PSTV's held bars end
@@ -341,11 +395,15 @@ def ingest_prices(
     # last held bar BEFORE THE RANGE — the bars this run did not touch.
     before = anchor if anchor is not None else (days[0] if days else None)
     if before is not None and callable(getattr(store, "bars_on", None)):
-        late: dict[date, dict[str, str]] = {}
+        # keyed by date and a slot, so two ids of one symbol never share a {symbol: id} group
+        late: dict[tuple[date, int], dict[str, str]] = {}
         for iid in sorted(written - on_anchor):
             if (last := store.last_bar_before(iid, before)) is not None:
-                late.setdefault(last, {})[id_to_sym[iid]] = iid
-        for last, group in sorted(late.items()):
+                slot = 0
+                while id_to_sym[iid] in late.get((last, slot), {}):
+                    slot += 1
+                late.setdefault((last, slot), {})[id_to_sym[iid]] = iid
+        for (last, _slot), group in sorted(late.items()):
             days_fetched += 1
             restated.update(restate_held(store, client.grouped_daily, [last], group))
     return {
@@ -353,7 +411,7 @@ def ingest_prices(
         "days_skipped": days_skipped,
         "trading_days": trading_days,
         "bars_written": bars_written,
-        "universe_size": len(sym_to_id),
+        "universe_size": symbols,
         # SAID IN THE SUMMARY, NEVER SILENT: which names had held bars restated, and by what
         "anchor": anchor.isoformat() if anchor is not None else None,
         "restated": {id_to_sym[iid]: [f for _b, f in v] for iid, v in sorted(restated.items())},
@@ -368,6 +426,7 @@ def ingest_prices_per_symbol(
     start: date,
     end: date,
     progress: ProgressFn | None = None,
+    first_sessions: Mapping[str, date] | None = None,
 ) -> dict[str, int]:
     """Backfill via ONE per-symbol aggregates call each (``daily_bars``) instead of grouped-daily.
 
@@ -377,6 +436,7 @@ def ingest_prices_per_symbol(
     exhibit and 180d returns were all UNKNOWN). Polygon HAS the history; this pulls it in ONE call
     per symbol. Same store, same PriceBar shape — the efficient path for a per-name backfill."""
     secs = list(securities)
+    starts = first_sessions or {}
     reporter = ProgressReporter("EOD-aggs", len(secs), emit=progress)
     bars_written = 0
     empty: list[str] = []
@@ -386,7 +446,10 @@ def ingest_prices_per_symbol(
                 internal_id=s.internal_id, bar_date=d, open=b.open, high=b.high, low=b.low,
                 close=b.close, volume=b.volume, source="polygon-aggs",
             )
+            # a symbol's aggregates are the TICKER's, whoever held it: none before this id's own
+            # first session is filed under it (`holders`)
             for d, b in client.daily_bars(s.eod_symbol, start, end)
+            if d >= starts.get(s.internal_id, date.min)
         ]
         if not rows:
             empty.append(s.eod_symbol)  # OK-but-empty ⇒ mis-resolved symbol or out-of-window range

@@ -1,0 +1,7 @@
+{"benchmark": null, "entry_id": "C-IT-screen2-20260706", "entry_price_as_of": "2026-07-20", "internal_id": "SEC-0000749251-IT", "ticker": "IT", "verdict": "BUY"}
+{"benchmark": null, "entry_id": "C-SMPL-screen2-20260706", "entry_price_as_of": "2026-07-20", "internal_id": "SEC-0001702744-SMPL", "ticker": "SMPL", "verdict": "BUY"}
+{"benchmark": null, "entry_id": "V-GOOGL", "entry_price_as_of": "2026-08-14", "internal_id": "SEC-0001652044-GOOGL", "ticker": "GOOGL", "verdict": "BUY"}
+{"benchmark": null, "entry_id": "V-IT-screen2-20260706", "entry_price_as_of": "2026-07-20", "internal_id": "SEC-0000749251-IT", "ticker": "IT", "verdict": "BUY"}
+{"benchmark": null, "entry_id": "V-SMPL-screen2-20260706", "entry_price_as_of": "2026-07-20", "internal_id": "SEC-0001702744-SMPL", "ticker": "SMPL", "verdict": "BUY"}
+{"benchmark": null, "entry_id": "V-SMPL-screen2-20260729", "entry_price_as_of": "2026-08-04", "internal_id": "SEC-0001702744-SMPL", "ticker": "SMPL", "verdict": "BUY"}
+{"benchmark": null, "entry_id": "V-VRRM-screen2-20260617", "entry_price_as_of": "2026-06-17", "internal_id": "SEC-0001682745-VRRM", "ticker": "VRRM", "verdict": "AVOID_TERMINAL"}

@@ -8,6 +8,7 @@ cheap-gates-gate-the-expensive-ones discipline made operational.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -59,8 +60,11 @@ def screen_universe(
     retain_run_id: str | None = None,
     retain_dir: Path | None = None,
     policy: RoutingPolicy = RoutingPolicy.CARRY,
+    first_sessions: Mapping[str, date] | None = None,
 ) -> tuple[list[CandidateRecord], dict[str, int | str | None]]:
     """Refresh prices, lazily screen the universe, persist candidates; return them + stats.
+    ``first_sessions`` (`aliases.load_first_sessions`) files each refreshed bar under the id that
+    held its symbol that day (`eod.client.holders`).
 
     RETENTION (``retain_run_id`` + ``retain_dir``, both or neither). Every name the screen TOUCHES
     gets a candidate row — all ~1,800, not the ~318 that survive. The gates ran on them, so the
@@ -103,7 +107,8 @@ def screen_universe(
         universe = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
     start = reference_date - timedelta(days=lookback_days)
 
-    ingest_prices(eod, store, universe, start=start, end=reference_date, progress=progress)
+    ingest_prices(eod, store, universe, start=start, end=reference_date, progress=progress,
+                  first_sessions=first_sessions)
     bench = benchmark_identity(benchmark)
     store.upsert_security(bench)
     ingest_prices(eod, store, [bench], start=start, end=reference_date)

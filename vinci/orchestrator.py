@@ -37,6 +37,7 @@ from vinci.rank import (
     render_queue_markdown,
     scan_structural,
 )
+from vinci.resolver.aliases import load_first_sessions
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
 from vinci.screens import screen_universe
@@ -401,6 +402,7 @@ def run_weekly(
             store, eod, edgar, reference_date=end, lookback_days=lookback_days,
             staleness_days=cfg.price_staleness_days, benchmark=benchmark, progress=progress,
             retain_run_id=run_id, retain_dir=cfg.snapshots_dir,
+            first_sessions=load_first_sessions(cfg.snapshots_dir),
         )
         store.export_snapshots(cfg.snapshots_dir)
     # 3. RANK + the structural scan, from the snapshot the screen just exported, through the same
@@ -436,7 +438,10 @@ def run_monthly(
         store.rebuild_from_snapshots(cfg.snapshots_dir)
         universe = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
         if universe:
-            ingest_prices(client, store, universe, start=start, end=as_of, progress=progress)
+            # THE TWO XPRO IDS BOTH LIVE HERE (every security): each day's bar goes to the id that
+            # held the symbol that day, never to whichever the old dict kept last
+            ingest_prices(client, store, universe, start=start, end=as_of, progress=progress,
+                          first_sessions=load_first_sessions(cfg.snapshots_dir))
             store.upsert_security(bench)
             ingest_prices(client, store, [bench], start=start, end=as_of)
         _scores, report = score_ledger(

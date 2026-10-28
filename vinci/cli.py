@@ -46,6 +46,7 @@ from vinci.rank import (
     render_profile_block,
 )
 from vinci.resolver import EntityResolver, ResolutionError
+from vinci.resolver.aliases import load_first_sessions
 from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
@@ -173,12 +174,15 @@ def _cmd_refresh(args: argparse.Namespace) -> int:
             # stop. `upsert_security` COALESCEs `first_seen`, so this only ever stamps a NEW row;
             # an identity already in the store keeps the date it was really first seen.
             store.upsert_security(s, first_seen=date.today())
+        starts = load_first_sessions(cfg.snapshots_dir)
         if args.aggs:  # ONE call per symbol — for backfilling a NEW name's history (NCNO-class)
             summary = ingest_prices_per_symbol(
-                client, store, secs, start=start, end=end, progress=stderr_reporter)
+                client, store, secs, start=start, end=end, progress=stderr_reporter,
+                first_sessions=starts)
         else:  # whole-market grouped-daily — the ongoing universe refresh
             summary = ingest_prices(
-                client, store, secs, start=start, end=end, progress=stderr_reporter)
+                client, store, secs, start=start, end=end, progress=stderr_reporter,
+                first_sessions=starts)
     print(f"done: {summary}")
     if sic_failures:
         # SAID ONCE, AT THE END, AND AS A TALLY (review of #528). Per-name lines alone are not a
@@ -234,6 +238,59 @@ def _cmd_restate_prices(args: argparse.Namespace) -> int:
         print(f"  {id_to_sym.get(iid, iid):<8} " + " · ".join(
             f"through {b}: ×{f:.6g}" for b, f in factors))
     print(f"done: {len(found)} name(s) restated; every other held bar at those sessions matched")
+    return 0
+
+
+def _cmd_reattribute_prices(args: argparse.Namespace) -> int:
+    """File every stored bar under the security it belongs to (`vinci.eod.identity.reconcile`),
+    over EVERY security in the store — the weekly build runs the same over its population.
+
+    A reused ticker's former holder's bars leave the current holder's id for the former's own;
+    a re-domiciled line is given its old filer's history. Each only on Polygon's dated record or
+    the new filer's 8-K12B, recorded in the committed tables (`ticker_tenure.jsonl`,
+    `share_class_aliases.jsonl`). Polygon reference calls are kept for good once read, so a
+    second run costs nothing and moves nothing."""
+    from vinci.eod.identity import reconcile
+    from vinci.netcache import HttpError
+    from vinci.resolver.aliases import SUCCESSION_FORMS
+
+    cfg = get_config()
+    eod = PolygonEodClient.from_config(cfg)
+    edgar = EdgarClient.from_config(cfg)
+
+    def filings(cik: str) -> list[tuple[str, date, str]]:
+        try:
+            return [(f.form, f.filing_date, f.accession)
+                    for f in edgar.recent_filings(cik, forms=SUCCESSION_FORMS)]
+        except (HttpError, ValueError):
+            print(f"  CIK {cik}: its filing list could not be read — no succession proven",
+                  file=sys.stderr)
+            return []
+
+    with Store(cfg.db_path) as store:
+        frontier = store.price_frontier()
+        if frontier is None:
+            print(f"{cfg.db_path}: no price bars — nothing to re-file", file=sys.stderr)
+            return 1
+        as_of = date.fromisoformat(args.as_of) if args.as_of else frontier
+        lines = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
+        print(f"reading {len(lines):,} securities' bars as of {as_of} (Polygon ≈ 5 calls/min; "
+              f"a reference record once read is kept)…")
+        moved = reconcile(store, eod, filings, cfg.snapshots_dir, lines=lines, master=lines,
+                          as_of=as_of)
+    for t in moved["tenures"]:
+        print(f"  reused   {t.ticker:<6} {t.internal_id} from {t.first_session}: the bars "
+              f"through {t.prior_last} are {t.prior_id}'s — {t.evidence}")
+    for iid, n in sorted(moved["refiled"].items()):
+        print(f"  re-filed {n:>5} bar(s) off {iid}")
+    for a in moved["successions"]:
+        print(f"  succeeds {a.successor_symbol:<6} {a.successor_id} continues {a.predecessor_id} "
+              f"from {a.listed} — {a.evidence}")
+    for iid, n in sorted(moved["carried"].items()):
+        print(f"  carried  {n:>5} bar(s) to {iid}")
+    print(f"done: {len(moved['tenures'])} reuse(s) and {len(moved['successions'])} "
+          f"succession(s) newly recorded; {sum(moved['refiled'].values()):,} bar(s) re-filed, "
+          f"{sum(moved['carried'].values()):,} carried")
     return 0
 
 
@@ -298,7 +355,7 @@ def _cmd_screen(args: argparse.Namespace) -> int:
         cands, stats = screen_universe(
             store, eod, edgar, reference_date=ref, lookback_days=args.lookback_days,
             staleness_days=cfg.price_staleness_days, benchmark=args.benchmark,
-            progress=stderr_reporter,
+            progress=stderr_reporter, first_sessions=load_first_sessions(cfg.snapshots_dir),
         )
         store.export_snapshots(cfg.snapshots_dir)
     print(f"=== Screen 2 · {stats['universe']} names · ref {ref} · benchmark {args.benchmark} ===")
@@ -4320,6 +4377,13 @@ def build_parser() -> argparse.ArgumentParser:
                            help="the last session of one pull of the store, YYYY-MM-DD "
                                 "(repeatable; the latest market session is always added)")
     p_restate.set_defaults(func=_cmd_restate_prices)
+    p_reattr = sub.add_parser(
+        "reattribute-prices",
+        help="file each stored bar under its own security: a reused ticker's former holder's bars "
+             "leave the current id, a re-domiciled line gets its old filer's history (on proof)")
+    p_reattr.add_argument("--as-of", help="the date the successor's record is read as of, "
+                                          "YYYY-MM-DD (default: the store's latest bar)")
+    p_reattr.set_defaults(func=_cmd_reattribute_prices)
 
     p_eod = sub.add_parser("eod", help="show computed Screen-2 price features for a ticker")
     p_eod.add_argument("ticker", help="ticker (e.g. AAPL)")

@@ -20,12 +20,14 @@ caller fails loud. Nothing here returns an empty list for a window it could not 
 """
 from __future__ import annotations
 
+import json
 import os
 from collections.abc import Callable
 from datetime import date, timedelta
+from pathlib import Path
 from typing import Any
 
-from vinci.eod.tiingo import TiingoEodClient
+from vinci.eod.tiingo import TiingoEodClient, tiingo_symbol
 from vinci.netcache import HttpError
 
 #: The longest a US market regularly stays shut between two sessions: a Friday close to the Tuesday
@@ -102,6 +104,62 @@ def tiingo_dividends(client: TiingoEodClient, *, start: date, end: date) -> Divi
             raise DividendsUnknownError(f"{symbol}: {rows}")
         return ex_date_yields(rows, a, b, symbol=symbol)
     return source
+
+
+#: why a symbol is reserved, as the scorecard prints it
+LEDGER, BENCHMARK, FOLLOWED = "ledger", "benchmark", "followed"
+
+
+def reserved_symbols(data_dir: Path) -> dict[str, tuple[str, ...]]:
+    """THE SYMBOLS SCORING AND THE MONITOR MUST BE ABLE TO READ, each with why — in Tiingo's
+    spelling (`tiingo_symbol`), the key its monthly cap counts (2026-10-28).
+
+    Tiingo's plan refuses every symbol NEW to the key once 500 have been looked up in a calendar
+    month, and every reader here fails loud on a refusal: a RESOLVED ledger row stops scoring
+    (`TotalReturnUnknownError`), a basket is refused, a monitor leg stops the run. So these are
+    the symbols nothing else may spend the month's lookups ahead of:
+
+    - every ledger row's name (``snapshots/decision_ledger.jsonl``, the committed record) and the
+      benchmark a row names, when it names one;
+    - the monitor's three benchmarks (`vinci.monitor` IWM / MDY / SPY — IWM is also scoring's
+      default) and every benchmark its committed assignments name;
+    - every name ever on the follow list (``followed.json``): a sleeve's passive basket reads
+      each member's dividends, an unfollowed one too for a verdict entered while it was followed.
+
+    ``data_dir`` is a checkout's ``data/``. An absent file adds nothing; a file that cannot be
+    read raises."""
+    from vinci.followed import follow_records
+    from vinci.monitor import (
+        BENCHMARK_LARGE,
+        BENCHMARK_MID,
+        BENCHMARK_SMALL,
+        BenchmarkAssignment,
+    )
+
+    why: dict[str, set[str]] = {}
+
+    def add(symbol: str, reason: str) -> None:
+        why.setdefault(tiingo_symbol(symbol), set()).add(reason)
+
+    ledger = data_dir / "snapshots" / "decision_ledger.jsonl"
+    if ledger.exists():
+        for line in ledger.read_text().splitlines():
+            if line.strip():
+                row = json.loads(line)
+                add(str(row["ticker"]), LEDGER)
+                if row.get("benchmark"):
+                    add(str(row["benchmark"]), BENCHMARK)
+    for b in (BENCHMARK_SMALL, BENCHMARK_MID, BENCHMARK_LARGE):
+        add(b, BENCHMARK)
+    # read beside ``data_dir`` itself: `monitor.read_assignments` takes a checkout root and would
+    # read nothing, quietly, under any folder not named ``data``
+    assignments = data_dir / "monitor" / "benchmark_assignments.json"
+    if assignments.exists():
+        for raw in json.loads(assignments.read_text()).values():
+            add(BenchmarkAssignment.model_validate(raw).benchmark, BENCHMARK)
+    for r in follow_records(data_dir / "followed.json"):
+        add(r.ticker, FOLLOWED)
+    return {s: tuple(sorted(r)) for s, r in sorted(why.items())}
 
 
 def default_dividends(*, start: date, end: date) -> DividendSource:
