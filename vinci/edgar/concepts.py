@@ -696,6 +696,94 @@ def current_pair(
     return (a, b), None
 
 
+# --- the filer's fiscal calendar: which fiscal year a period IS ----------------------------------
+
+
+def _own_periods(facts: dict[str, Any], forms: tuple[str, ...] = ("10-Q", "10-K"),
+                 ) -> list[tuple[str, int, date, date]]:
+    """(fiscal period, fiscal year, end, filed) for every filing of ``forms``: the period it states
+    as its OWN — the latest end it carries — under the fiscal year and period its XBRL names."""
+    by_acc: dict[str, tuple[str, int, date, date]] = {}
+    for tag in (*CONCEPT_ALIASES["revenue"], *CONCEPT_ALIASES["net_income"],
+                *CONCEPT_ALIASES["eps_diluted"]):
+        for p in points_for_tag(facts, tag):
+            form = (p.form or "").upper()
+            if (p.period_start is None or not p.accession or p.fy is None or not p.fp
+                    or not form.startswith(forms)):
+                continue
+            seen = by_acc.get(p.accession)
+            if seen is None or p.period_end > seen[2]:
+                by_acc[p.accession] = (p.fp.upper(), int(p.fy), p.period_end, p.filed)
+    return list(by_acc.values())
+
+
+def fiscal_calendar(facts: dict[str, Any]) -> dict[tuple[str, int], date]:
+    """(fiscal period, fiscal year) → the period's end, as each 10-Q/10-K states its OWN period: the
+    latest period end it carries, under the fiscal year and period its XBRL names. A fourth quarter
+    ends with its fiscal year, so ``("FY", y)`` serves both."""
+    cal: dict[tuple[str, int], tuple[date, date]] = {}
+    for fp, fy, end, filed in _own_periods(facts):
+        if fp in ("Q1", "Q2", "Q3", "FY") and ((fp, fy) not in cal or filed < cal[(fp, fy)][1]):
+            cal[(fp, fy)] = (end, filed)            # the ORIGINAL filing names the period
+    return {k: v[0] for k, v in cal.items()}
+
+
+#: The forms a filer states its fiscal year in: the 10-K (and 10-KT), a foreign filer's 20-F / 40-F.
+_ANNUAL_REPORTS = ("10-K", "20-F", "40-F")
+#: A period is the fiscal year whose own annual report ends within this many days of it. A
+#: comparative restates the SAME period, so its end is the report's to the day; the slack is a
+#: 52/53-week calendar's, never a quarter's.
+FISCAL_YEAR_END_DAYS = 7
+
+
+def fiscal_year_ends(facts: dict[str, Any]) -> dict[int, tuple[date, ...]]:
+    """Each fiscal year → every end an annual report states as THAT year's own period: one end,
+    repeated by an amendment — or two, when the filer's stamp names two different years
+    (:func:`fiscal_year_of` refuses those). The filings :func:`fiscal_calendar` reads, every end
+    kept rather than the original filing's alone, and a foreign filer's 20-F / 40-F beside the
+    10-K: TAT Technologies' and Gilat's years are stated nowhere else."""
+    ends: dict[int, set[date]] = {}
+    for fp, fy, end, _filed in _own_periods(facts, _ANNUAL_REPORTS):
+        if fp == "FY":
+            ends.setdefault(fy, set()).add(end)
+    return {fy: tuple(sorted(e)) for fy, e in ends.items()}
+
+
+def fiscal_year_of(year_ends: dict[int, tuple[date, ...]], point: ConceptPoint) -> int | None:
+    """The fiscal year ``point``'s OWN period is (:func:`fiscal_year_ends`): the year whose annual
+    report states a period ending within :data:`FISCAL_YEAR_END_DAYS` of it. ``None`` — never a
+    guess — when the point is no fiscal year, no annual report the facts hold states its period,
+    two years claim it, its year's stamp also names another period, or the stamp is no year the
+    period could be called (more than one from the calendar year it ends in).
+
+    NEVER ``point.fy``. companyfacts stamps each fact with the fiscal year of the FILING that
+    carried it, so a comparative reads as a later year: Climb Global's FCF for the year to
+    2019-12-31 is served from its FY2020 10-K and was labelled "[FY2020]".
+
+    A STAMP THAT NAMES TWO PERIODS NAMES NEITHER. Kroger's 10-Ks for the years to 2025-02-01 and
+    2026-01-31 are both stamped 2025, and Wolverine's to 2024-12-28 and 2026-01-03 both 2024
+    (116 of 2,161 cached filers carry 123 such stamps, measured 2026-10-28). The calendar keeps the
+    earlier filing's period; a label cannot tell which of the two the stamp meant, so both are
+    named by their end date instead. Read as the filing's year, those stamps had printed BJ's
+    Restaurants' year to 2025-12-30 as "FY2023".
+
+    A STAMP IS A YEAR OR NOTHING. One cached filer (CIK 1653558) stamps its 10-Ks 43465 and 43830 —
+    the spreadsheet serials of 2018-12-31 and 2019-12-31 — and the CIQ-empty fallback printed
+    "FY43465". A fiscal year ends in the calendar year it is named for or the next (Kroger's
+    fiscal 2025 ends 2026-01-31), so a stamp further from the period's end year is refused."""
+    if not point.is_annual:
+        return None
+    years = {fy for fy, ends in year_ends.items()
+             if any(abs((e - point.period_end).days) <= FISCAL_YEAR_END_DAYS for e in ends)}
+    if len(years) != 1:
+        return None
+    fy = years.pop()
+    ends = year_ends[fy]
+    if (ends[-1] - ends[0]).days > FISCAL_YEAR_END_DAYS or abs(fy - point.period_end.year) > 1:
+        return None
+    return fy
+
+
 def latest_instant(points: list[ConceptPoint]) -> ConceptPoint | None:
     """Latest balance-sheet value (most recent period_end, then most recent filing)."""
     instants = [p for p in points if p.is_instant] or points

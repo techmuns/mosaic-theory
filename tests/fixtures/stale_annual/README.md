@@ -12,7 +12,7 @@ companyfacts shape, `sort_keys` and `indent=1` like the tracking fixtures. DRH a
 
 | file | filer (CIK) | fetched | concepts kept |
 |---|---|---|---|
-| `CLMB.json` | Climb Global Solutions (945983) | 2026-08-13 | operating cash flow, capex |
+| `CLMB.json` | Climb Global Solutions (945983) | 2026-08-13 | operating cash flow, capex; revenue, net income, diluted EPS (added 2026-10-28, same blob: the fiscal calendar's inputs, for `tests/test_period_labels.py`) |
 | `LODE.json` | Comstock Inc. (1120970) | 2026-08-13 | operating cash flow, capex |
 | `ABCL.json` | AbCellera Biologics (1703057) | 2026-08-13 | operating income, D&A, operating cash flow, capex |
 | `DRH.json` | DiamondRock Hospitality (1298946) | 2026-08-13 | operating income, D&A, net-debt lines |

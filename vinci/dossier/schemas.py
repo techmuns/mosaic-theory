@@ -1482,6 +1482,15 @@ class CovenantTerm(BaseModel):
     #: amendments (one facility) from Amazon's two 364-day revolvers (two facilities, one name).
     #: None on pre-2026-09-28 JSON.
     agreement_is_amendment: bool | None = None
+    #: (2026-10-28) A rate component's OWN verbatim clause, keyed by the component's field name,
+    #: where the term's quote does not state it — the margin in an "Applicable Rate" definition,
+    #: the floor in a base rate's "deemed to be zero" proviso. Each is a span of the exhibit and
+    #: states the figure (`covenant_extract.rate_components`). Empty where the term's quote states
+    #: every component, and on pre-2026-10-28 JSON.
+    component_quotes: dict[str, str] = {}
+    #: (2026-10-28) A component the model gave that NO quote states, keyed by field name — WITHHELD
+    #: (its field is None), the value naming the figure and why. Empty when none was withheld.
+    withheld_components: dict[str, str] = {}
 
     model_config = {"frozen": True}
 
@@ -1494,6 +1503,10 @@ class CovenantTerm(BaseModel):
             d.pop("agreement_title", None)
         if self.agreement_is_amendment is None:
             d.pop("agreement_is_amendment", None)
+        if not self.component_quotes:
+            d.pop("component_quotes", None)
+        if not self.withheld_components:
+            d.pop("withheld_components", None)
         return d
 
 

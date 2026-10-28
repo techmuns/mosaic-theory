@@ -237,6 +237,17 @@ def quoted_figures(quote: str) -> list[QuotedFigure]:
     return out
 
 
+def figure_stated(quote: str, value: float, units: tuple[str, ...]) -> QuotedFigure | None:
+    """The figure ``quote`` states (:func:`quoted_figures`) that IS ``value`` — its magnitude — in
+    one of ``units``, or None. The one test of "does this quote support this stored value": the
+    data-quality release source scores every stored figure with it, and the covenant extractor
+    keeps a rate component only when it passes."""
+    for f in quoted_figures(quote):
+        if f.unit in units and abs(f.value - abs(value)) <= 1e-6 * max(1.0, abs(value)):
+            return f
+    return None
+
+
 def _verbatim(text: str, start: int, end: int, *, cap: int = VERBATIM_CAP) -> str:
     """A ≤cap-char verbatim window, snapped back to the enclosing bullet/sentence, single-spaced."""
     lo0 = max(0, start - 170)

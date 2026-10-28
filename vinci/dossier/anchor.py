@@ -31,6 +31,8 @@ from vinci.edgar.concepts import (
     current_annual,
     current_pair,
     filer_fiscal_year,
+    fiscal_year_ends,
+    fiscal_year_of,
     latest_annual,
     points_for_tag,
 )
@@ -556,7 +558,7 @@ def _total_revenue_series(facts: dict[str, Any]) -> tuple[mc.AnnualSeries | None
 
 
 # --- EDGAR source-bound extractors (fail-loud; a gap → None, never a fabricated zero) ----------
-def _period_label(p: ConceptPoint) -> tuple[str, bool]:
+def _period_label(p: ConceptPoint, facts: dict[str, Any]) -> tuple[str, bool]:
     """(label, is_trailing) for a ~12-month flow point, read from ITS OWN PERIOD AND FORM.
 
     NEVER from ``p.fy``. companyfacts stamps each fact with the fiscal year of the FILING that
@@ -568,10 +570,16 @@ def _period_label(p: ConceptPoint) -> tuple[str, bool]:
     "FY2026" on AMZN's D&A (75,200 over those twelve months; the FY2025 10-K says 65,756).
 
     The VALUES were never wrong — a trailing window is the fresher, better-matched figure, and it
-    pairs with the anchor's LTM revenue over the same months. Only the claim about them was."""
+    pairs with the anchor's LTM revenue over the same months. Only the claim about them was.
+
+    A 10-K point is the fiscal year its OWN period is in the filer's calendar
+    (:func:`vinci.edgar.concepts.fiscal_year_of`) — the label had still read ``p.fy`` there, so a
+    comparative carried the filing's year (Bally's and Skydance's year to 2024-12-31 read "latest
+    FY2025"). A period the calendar does not place is named by its end date, never by a year."""
     if (p.form or "").upper().startswith("10-Q"):
         return f"12m to {p.period_end.isoformat()}", True
-    return f"FY{p.fy or p.period_end.year}", False
+    fy = fiscal_year_of(fiscal_year_ends(facts), p)
+    return (f"FY{fy}" if fy is not None else f"year to {p.period_end.isoformat()}"), False
 
 
 #: Why EDGAR has no D&A when no tag carries one at all: the text every committed page carries.
@@ -633,7 +641,7 @@ def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str, str] | str:
 
 def _dep_amort_reading(facts: dict[str, Any], point: ConceptPoint) -> tuple[float, str, str]:
     """A guarded D&A point → (value $, source, basis), as :func:`_latest_dep_amort` states it."""
-    lbl, trailing = _period_label(point)
+    lbl, trailing = _period_label(point, facts)
     if point.tag not in CONCEPT_ALIASES["dep_amort"]:
         # a split continuing the combined line: name the line and where it stopped
         aliased = [q for q in annual_line(facts, "dep_amort").by_period.values()
@@ -748,7 +756,7 @@ def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | str:
     if legs is None:
         return stale.note if stale else "no aligned operating-cash-flow + capex pair"
     ocf, capex = legs
-    lbl, trailing = _period_label(ocf)
+    lbl, trailing = _period_label(ocf, facts)
     basis = (f"trailing {lbl} (the filer's own 10-Q column)" if trailing
              else f"latest {lbl} (not LTM)")
     via = ("" if capex.tag in CONCEPT_ALIASES["capex"]

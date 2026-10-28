@@ -1,0 +1,2044 @@
+{
+ "AMZN": {
+  "cik": "0001018724",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001104659-23-113444",
+    "exhibits": [
+     "tm2329405d1_ex10-1.htm",
+     "tm2329405d1_ex10-2.htm"
+    ],
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2023-11-01",
+    "note": ""
+   },
+   {
+    "accession": "0001018724-14-000042",
+    "exhibits": [
+     "amzn2014september5-ex101.htm"
+    ],
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2014-09-05",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-22-289041",
+    "exhibits": [
+     "d413765dex101.htm"
+    ],
+    "family": "Short-Term Credit Facilities",
+    "filing": "8-K",
+    "filing_date": "2022-11-18",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-18-139368",
+    "exhibits": [
+     "d574720dex101.htm"
+    ],
+    "family": "Short-Term Credit Facilities",
+    "filing": "8-K",
+    "filing_date": "2018-04-27",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-20-176528",
+    "exhibits": [
+     "d948849dex101.htm"
+    ],
+    "family": "Unsecured 364-Day Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2020-06-23",
+    "note": ""
+   },
+   {
+    "accession": "0001104659-26-072140",
+    "exhibits": [
+     "tm2613616d4_ex10-1.htm"
+    ],
+    "family": "Unsecured 364-Day Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2026-06-10",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "25 Notes Issuance of $15.0 Billion",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Euro Commercial Paper Programs",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Finance Leases",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Financing Obligations",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "364-DAY REVOLVING CREDIT AGREEMENT",
+    "base_rate_label": null,
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 2.0,
+    "name": "Default Rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: ““Default Rate” means an interest rate equal to (a) the Base Rate plus (b) the Applicable Rate, if any, applicable to Base Rate Loans plus (c) 2% per annum; provided that with respect to a Term SOFR Loan, a Daily Simple SOFR Loan or, in each case, any interest thereon, the Default Rate shall be an interest rate equal to the interest rate (including any Applicable Rate) otherwise applicable to such Loan plus 2% per annum.”",
+     "source_ref": "8-K 0001193125-22-289041 · d413765dex101.htm",
+     "status": "present",
+     "value": "Base Rate plus Applicable Rate for Base Rate Loans plus 2% per annum; for Term SOFR / Daily Simple SOFR Loans, the otherwise applicable rate plus 2% per annum"
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+    "base_rate_label": "LIBO Rate",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": 0.5,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the LIBO Rate for such Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing or conversion date at a rate per annum equal to the Base Rate plus the Applicable Rate.”",
+     "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
+     "status": "present",
+     "value": "Eurocurrency Rate Loans: LIBO Rate plus the Applicable Rate; Base Rate Loans: Base Rate plus the Applicable Rate. “Applicable Rate” means (a) with respect to Base Rate Loans, 0.00% per annum, (b) with respect to Eurocurrency Rate Loans, 0.50% per annum, and (c) with respect to the commitment fee set forth in Section 2.07(a), 0.04% per annum."
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "CREDIT AGREEMENT",
+    "base_rate_label": "Eurocurrency Rate",
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 0.625,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurocurrency Rate for such Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate.”",
+     "source_ref": "8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
+     "status": "present",
+     "value": "Eurocurrency Rate Loan: Eurocurrency Rate (LIBOR) + Applicable Rate; Base Rate Loan: Base Rate + Applicable Rate. Applicable Rate (Eurocurrency Rate +): 0.625% (A+/A1 or better), 0.750% (A/A2), 1.000% (A-/A3 or worse); Base Rate + 0.000% at all levels"
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "CREDIT AGREEMENT",
+    "base_rate_label": null,
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 2.0,
+    "name": "Default Rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: ““ Default Rate ” means an interest rate equal to (a) the Base Rate plus (b) the Applicable Rate, if any, applicable to Base Rate Loans plus (c) 2% per annum; provided that with respect to a Eurocurrency Rate Loan, the Default Rate shall be an interest rate equal to the interest rate (including any Applicable Rate) otherwise applicable to such Loan plus 2% per annum.”",
+     "source_ref": "8-K 0001018724-14-000042 · amzn2014september5-ex101.htm",
+     "status": "present",
+     "value": "Base Rate + Applicable Rate (Base Rate Loans) + 2% per annum; for Eurocurrency Rate Loans, otherwise applicable rate + 2% per annum"
+    }
+   }
+  ]
+ },
+ "AORT": {
+  "cik": "0000784199",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001628280-26-009046",
+    "exhibits": [
+     "aort-20251231xexx1032.htm"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-02-18",
+    "note": ""
+   },
+   {
+    "accession": "0001628280-26-035798",
+    "exhibits": [
+     "aort-2026x8k03312026ex101.htm",
+     "aort-2026x8k03312026ex102.htm",
+     "aort-2026x8k03312026ex103.htm"
+    ],
+    "family": "1.40% Sparkasse Zollernalb KFW Loan 2 with Kreditanstalt fur Wiederaufbau Bank",
+    "filing": "8-K",
+    "filing_date": "2026-05-18",
+    "note": ""
+   },
+   {
+    "accession": "0001628280-26-032097",
+    "exhibits": [
+     "aort-2026x8k033126ex101.htm",
+     "aort-2026x8k033126ex102.htm",
+     "aort-2026x8k033126ex103.htm"
+    ],
+    "family": "1.40% Sparkasse Zollernalb KFW Loan 2 with Kreditanstalt fur Wiederaufbau Bank",
+    "filing": "8-K",
+    "filing_date": "2026-05-07",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-20-176533",
+    "exhibits": [
+     "d946474dex101.htm"
+    ],
+    "family": "Convertible Senior Notes",
+    "filing": "8-K",
+    "filing_date": "2020-06-23",
+    "note": ""
+   },
+   {
+    "accession": "0001628280-25-043099",
+    "exhibits": [
+     "ex-101.htm",
+     "ex-102.htm"
+    ],
+    "family": "Convertible Senior Notes",
+    "filing": "8-K",
+    "filing_date": "2025-09-29",
+    "note": ""
+   },
+   {
+    "accession": "0000784199-15-000171",
+    "exhibits": [
+     "c199-20151222ex101949499.htm"
+    ],
+    "family": "New Delayed Draw Term Loan Facility",
+    "filing": "8-K",
+    "filing_date": "2015-12-23",
+    "note": ""
+   },
+   {
+    "accession": "0000950157-24-000061",
+    "exhibits": [
+     "ex10-1.htm"
+    ],
+    "family": "New Delayed Draw Term Loan Facility",
+    "filing": "8-K",
+    "filing_date": "2024-01-18",
+    "note": ""
+   },
+   {
+    "accession": "0000784199-16-000175",
+    "exhibits": [
+     "c199-20160125ex101fad737.htm",
+     "c199-20160125ex1021c6f6c.htm"
+    ],
+    "family": "Secured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2016-01-25",
+    "note": ""
+   },
+   {
+    "accession": "0001398344-17-015456",
+    "exhibits": [
+     "fp0029473_ex101.htm"
+    ],
+    "family": "Secured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2017-12-01",
+    "note": ""
+   },
+   {
+    "accession": "0000784199-25-000145",
+    "exhibits": [
+     "ex101.htm"
+    ],
+    "family": "Secured Term Loan Facility",
+    "filing": "8-K",
+    "filing_date": "2025-09-15",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Finance Lease Obligation",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Notes Payable",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "CONVERTIBLE SENIOR NOTES DUE 2025 PURCHASE AGREEMENT",
+    "base_rate_label": null,
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 4.25,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “Interest Rate: 4.250% per year.”",
+     "source_ref": "8-K 0001193125-20-176533 · d946474dex101.htm",
+     "status": "present",
+     "value": "4.250% per year"
+    }
+   },
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "CREDIT AND GUARANTY AGREEMENT",
+    "base_rate_label": "Adjusted Term SOFR",
+    "floor_pct": 2.0,
+    "margin_bps": null,
+    "margin_pct": 4.75,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “with respect to Initial Term Loans on and after the Second Amendment Effective Date, a percentage per annum equal to (x) for SOFR Loans, 4.75% and (y) for Base Rate Loans, 3.75%”",
+     "source_ref": "8-K 0000784199-25-000145 · ex101.htm",
+     "status": "present",
+     "value": "Initial Term Loans (on/after Second Amendment Effective Date): SOFR Loans Adjusted Term SOFR plus 4.75%; Base Rate Loans Base Rate plus 3.75%. Revolving Loans (on/after Second Amendment Effective Date): SOFR Loans 3.50%; Base Rate Loans 2.50%. Adjusted Term SOFR floor 2.00%; Base Rate floor 3.00%"
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "CREDIT AND GUARANTY AGREEMENT",
+    "base_rate_label": "Adjusted Term SOFR",
+    "floor_pct": 2.0,
+    "margin_bps": null,
+    "margin_pct": 6.5,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: ““ Applicable Margin ” means: (a) with respect to Initial Term Loans, initially a percentage per annum equal to (i) for SOFR Loans, 6.50% and (ii) for Base Rate Loans, 5.50% ... (c) with respect to Revolving Loans, a percentage per annum equal to (x) for SOFR Loans, 4.00% and (y) for Base Rate Loans, 3.00%.”",
+     "source_ref": "8-K 0000950157-24-000061 · ex10-1.htm",
+     "status": "present",
+     "value": "Initial Term Loans: Adjusted Term SOFR plus 6.50% (SOFR Loans) / Base Rate plus 5.50% (Base Rate Loans); Revolving Loans: Adjusted Term SOFR plus 4.00% (SOFR Loans) / Base Rate plus 3.00% (Base Rate Loans)"
+    }
+   }
+  ]
+ },
+ "BRBR": {
+  "cik": "0001772016",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001772016-21-000029",
+    "exhibits": [
+     "ex10-1_amend2creditagmt.htm",
+     "ex991-termloanbrepricing02.htm"
+    ],
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2021-02-26",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-19-270862",
+    "exhibits": [
+     "d812149dex101.htm",
+     "d812149dex102.htm",
+     "d812149dex103.htm",
+     "d812149dex104.htm",
+     "d812149dex105.htm",
+     "d812149dex106.htm",
+     "d812149dex107.htm",
+     "d812149dex108.htm",
+     "d812149dex109.htm"
+    ],
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2019-10-21",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "7.00% Senior Notes Maturing in March 2030",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "CREDIT AGREEMENT",
+    "base_rate_label": "Eurodollar Rate",
+    "floor_pct": 0.75,
+    "margin_bps": null,
+    "margin_pct": 4.0,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: ““(a) in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans and””",
+     "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
+     "status": "present",
+     "value": "in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans"
+    }
+   }
+  ]
+ },
+ "BURL": {
+  "cik": "0001579298",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001193125-26-116001",
+    "exhibits": [
+     "burl-ex10_39.htm"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-03-19",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-20-109457",
+    "exhibits": [
+     "d883886dex101.htm",
+     "d883886dex102.htm",
+     "d883886dex103.htm",
+     "d883886dex104.htm",
+     "d883886dex105.htm"
+    ],
+    "family": "Convertible Senior Notes 1.25% Mature on December 15 2027",
+    "filing": "8-K",
+    "filing_date": "2020-04-16",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-21-364998",
+    "exhibits": [
+     "d275638dex101.htm"
+    ],
+    "family": "Convertible Senior Notes 1.25% Mature on December 15 2027",
+    "filing": "8-K",
+    "filing_date": "2021-12-22",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-25-168007",
+    "exhibits": [
+     "d946952dex101.htm"
+    ],
+    "family": "Convertible Senior Notes 2.25% Mature on April 15 2025",
+    "filing": "8-K",
+    "filing_date": "2025-07-29",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-22-200058",
+    "exhibits": [
+     "d393601dex101.htm"
+    ],
+    "family": "Convertible Senior Notes 2.25% Mature on April 15 2025",
+    "filing": "8-K",
+    "filing_date": "2022-07-22",
+    "note": ""
+   },
+   {
+    "accession": "0001564590-18-016500",
+    "exhibits": [
+     "burl-ex101_6.htm"
+    ],
+    "family": "Senior Secured Term Loan Facility Term B-7 Loans",
+    "filing": "8-K",
+    "filing_date": "2018-07-02",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-14-313404",
+    "exhibits": [
+     "d772516dex101.htm",
+     "d772516dex102.htm"
+    ],
+    "family": "Senior Secured Term Loan Facility Term B-7 Loans",
+    "filing": "8-K",
+    "filing_date": "2014-08-18",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Finance Lease Obligations",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Short-term Promissory Note",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "SECURITY AGREEMENT",
+    "base_rate_label": null,
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 6.25,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “the Company is issuing $300,000,000 aggregate principal amount of its 6.250% Senior Secured Notes due 2025”",
+     "source_ref": "8-K 0001193125-20-109457 · d883886dex101.htm",
+     "status": "present",
+     "value": "6.250% Senior Secured Notes due 2025"
+    }
+   },
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "SECOND AMENDED AND RESTATED CREDIT AGREEMENT",
+    "base_rate_label": "Adjusted LIBOR Rate",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": 1.5,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “each LIBOR Rate Loan shall bear interest (computed on the basis of the actual number of days elapsed over a year of 360 days) at a rate per annum equal, during each Interest Period applicable thereto, to the Adjusted  LIBOR Rate for such Interest Period, plus the Applicable Margin for LIBOR Rate Loans.”",
+     "source_ref": "8-K 0001564590-18-016500 · burl-ex101_6.htm",
+     "status": "present",
+     "value": "Prime Rate Loans: Prime Rate plus Applicable Margin for Prime Rate Loans; LIBOR Rate Loans: Adjusted LIBOR Rate plus Applicable Margin for LIBOR Rate Loans. Applicable Margin pricing grid: Level I (Availability ≥ 40% of Loan Cap): LIBOR 1.25%, Prime 0.25%; Level II (Availability < 40% of Loan Cap): LIBOR 1.50%, Prime 0.50%. Default Rate: applicable rate plus 2.00% per annum. LIBOR floor: not less than zero."
+    }
+   }
+  ]
+ },
+ "CNXC": {
+  "cik": "0001803599",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001803599-26-000027",
+    "exhibits": [
+     "exhibit1022-2025form10k.htm",
+     "exhibit1023-202510xk.htm",
+     "exhibit1024-2025form10xk.htm"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-01-28",
+    "note": ""
+   },
+   {
+    "accession": "0001803599-25-000111",
+    "exhibits": [
+     "exhibit101041125.htm",
+     "exhibit102041125.htm"
+    ],
+    "family": "Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2025-04-11",
+    "note": ""
+   },
+   {
+    "accession": "0001803599-23-000091",
+    "exhibits": [
+     "a033123exhibit101.htm",
+     "a033123exhibit102.htm",
+     "a033123exhibit103.htm"
+    ],
+    "family": "Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2023-03-31",
+    "note": ""
+   },
+   {
+    "accession": "0001803599-24-000117",
+    "exhibits": [
+     "exhibit101-thirdamendmentt.htm"
+    ],
+    "family": "Other Loans",
+    "filing": "8-K",
+    "filing_date": "2024-04-26",
+    "note": ""
+   },
+   {
+    "accession": "0001803599-25-000014",
+    "exhibits": [
+     "exhibit101-fourthamendment.htm"
+    ],
+    "family": "Other Loans",
+    "filing": "8-K",
+    "filing_date": "2025-01-21",
+    "note": ""
+   },
+   {
+    "accession": "0001803599-23-000107",
+    "exhibits": [
+     "form8-k04x26x23exhibit101.htm"
+    ],
+    "family": "Senior Unsecured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2023-04-26",
+    "note": ""
+   },
+   {
+    "accession": "0001803599-21-000215",
+    "exhibits": [
+     "exhibit101122721.htm"
+    ],
+    "family": "Senior Unsecured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2021-12-30",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "6.600% Senior Notes Due 2028",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "6.650% Senior Notes Due 2026",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "6.850% Senior Notes Due 2033",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "CREDIT AGREEMENT AND JOINDER AGREEMENT",
+    "base_rate_label": "Term SOFR",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to Term SOFR for such Interest Period plus the Applicable Rate, (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate and (iii) each Swing Line Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to Daily Simple SOFR plus the Applicable Rate for Term SOFR Loans.”",
+     "source_ref": "8-K 0001803599-21-000215 · exhibit101122721.htm",
+     "status": "present",
+     "value": "Term SOFR plus Applicable Rate (Applicable Rate for Term SOFR Loans ranges 1.25% to 2.00% per annum based on Consolidated Leverage Ratio pricing tiers); Base Rate Loans: Base Rate plus Applicable Rate (0.25% to 1.00%); Swing Line: Daily Simple SOFR plus Applicable Rate for Term SOFR Loans"
+    }
+   }
+  ]
+ },
+ "EPAM": {
+  "cik": "0001352010",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001352010-26-000015",
+    "exhibits": [
+     "exhibit1017-epamnonxempl.htm",
+     "exhibit1017-epamnonxempl001.jpg",
+     "exhibit1017-epamnonxempl002.jpg",
+     "exhibit1017-epamnonxempl003.jpg",
+     "exhibit1017-epamnonxempl004.jpg",
+     "exhibit1017-epamnonxempl005.jpg",
+     "exhibit1017-epamnonxempl006.jpg"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-02-26",
+    "note": ""
+   },
+   {
+    "accession": "0001352010-17-000022",
+    "exhibits": [
+     "exhibit10-1epamcreditagree.htm"
+    ],
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2017-05-26",
+    "note": ""
+   },
+   {
+    "accession": "0001352010-21-000039",
+    "exhibits": [
+     "exhibit101-arcreditagreeme.htm"
+    ],
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2021-10-25",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Long Term Debt",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "base_rate_label": "Euro-Rate",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(i) Revolving Credit Base Rate Option: A fluctuating rate per annum equal to the Base Rate plus the Applicable Margin, such interest rate to change automatically from time to time effective as of the effective date of each change in the Base Rate; or (ii) Revolving Credit Euro-Rate Option: A rate per annum equal to the Euro-Rate as determined for each applicable Interest Period plus the Applicable Margin.”",
+     "source_ref": "8-K 0001352010-17-000022 · exhibit10-1epamcreditagree.htm",
+     "status": "present",
+     "value": "Base Rate Option: Base Rate plus the Applicable Margin; Euro-Rate Option: Euro-Rate plus the Applicable Margin. Applicable Margin based on Leverage Ratio per pricing grid on Schedule 1.1(A). Base Rate = highest of (a) Overnight Bank Funding Rate plus 0.5%, (b) Prime Rate, and (c) Daily LIBOR Rate plus 1.00%."
+    }
+   },
+   {
+    "base_rate_label": "Adjusted Eurocurrency Rate (LIBOR Rate)",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “Revolving Credit Base Rate Option: A fluctuating rate per annum ... equal to the Base Rate plus the Applicable Margin ... Revolving Credit Eurocurrency Rate Option: A rate per annum ... equal to the Adjusted Eurocurrency Rate as determined for each applicable Interest Period plus the Applicable Margin.”",
+     "source_ref": "8-K 0001352010-21-000039 · exhibit101-arcreditagreeme.htm",
+     "status": "present",
+     "value": "Base Rate Option: Base Rate plus Applicable Margin; Eurocurrency Rate Option: Adjusted Eurocurrency Rate plus Applicable Margin. Applicable Margin (Revolving Credit Eurocurrency Rate Spread) ranges 0.875% to 2.000% and (Revolving Credit Base Rate Spread) 0.000% to 1.000% based on Consolidated Leverage Ratio (Level I–V). Base Rate = highest of (i) Overnight Bank Funding Rate plus 0.5%, (ii) Prime Rate, and (iii) Daily LIBOR Rate plus 1.00%, floored at 0.00%."
+    }
+   }
+  ]
+ },
+ "IT": {
+  "cik": "0000749251",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001193125-24-083467",
+    "exhibits": [
+     "d771496dex101.htm"
+    ],
+    "family": "24 Credit Agreement",
+    "filing": "8-K",
+    "filing_date": "2024-04-01",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-20-256749",
+    "exhibits": [
+     "d75343dex101.htm",
+     "d75343dex102.htm"
+    ],
+    "family": "24 Credit Agreement",
+    "filing": "8-K",
+    "filing_date": "2020-09-28",
+    "note": ""
+   },
+   {
+    "accession": "0000930413-17-000070",
+    "exhibits": [
+     "c86994_ex10-1.htm"
+    ],
+    "family": "State of Connecticut Economic Development Loan",
+    "filing": "8-K",
+    "filing_date": "2017-01-05",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "3.625% Senior Notes Due 2029",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "3.75% Senior Notes Due 2030",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "4.50% Senior Notes Due 2028",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "4.95% Senior Notes Due 2031",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "base_rate_label": "Adjusted Term SOFR",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(a) (i) Each Term Benchmark Loan shall bear interest for each day during each Interest Period with respect thereto at a rate per annum equal to the Adjusted Term SOFR determined for such day plus the Applicable Margin and (ii) each RFR Loan ... shall bear interest at a rate per annum equal to the Adjusted Daily Simple SOFR plus the Applicable Margin. (b) Each ABR Loan shall bear interest at a rate per annum equal to the ABR plus the Applicable Margin.”",
+     "source_ref": "8-K 0001193125-24-083467 · d771496dex101.htm",
+     "status": "present",
+     "value": "Term Benchmark Loans: Adjusted Term SOFR plus Applicable Margin; RFR Loans: Adjusted Daily Simple SOFR plus Applicable Margin; ABR Loans: ABR plus Applicable Margin. Applicable Margin for Term Benchmark Loans and RFR Loans ranges 1.125%–1.75%; for ABR Loans 0.125%–0.75%. Adjusted Term SOFR = Term SOFR Rate plus 0.10%; Adjusted Daily Simple SOFR = Daily Simple SOFR plus 0.10%. Floor = zero. Default rate: applicable rate plus 2%."
+    }
+   },
+   {
+    "base_rate_label": "Adjusted LIBO Rate",
+    "floor_pct": null,
+    "margin_bps": 275.0,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “With respect to the TLB Backstop Facility, the Borrower may elect that the loans thereunder bear interest at a rate per annum equal to (a) the Base Rate (as defined in Exhibit D) plus 175.0 basis points or (b) the Adjusted LIBO Rate (as defined in Exhibit D) plus 275.0 basis points. ... The Borrower may elect that the Term Loan B loans bear interest at a rate per annum equal to (a) the Base Rate plus 175.0 basis points or (b) the Adjusted LIBO Rate plus 275.0 basis points. ... The Borrower may elect that the 364-day Bridge Loans bear interest at a rate per annum equal to (a) the Base Rate plus 175.0 basis points or (b) the Adjusted LIBO Rate plus 275.0 basis points. ... the Borrower may elect that the HY Bridge Loans bear interest at a rate per annum equal to (a) the Base Rate (as defined in Exhibit D hereto) plus 3.50% (the “ Initial Margin ”) or (b) the Adjusted LIBO Rate (as defined in Exhibit D hereto) plus 4.50%.”",
+     "source_ref": "8-K 0000930413-17-000070 · c86994_ex10-1.htm",
+     "status": "present",
+     "value": "Term Loan B Facility / TLB Backstop Facility: Base Rate plus 175.0 basis points OR Adjusted LIBO Rate plus 275.0 basis points; 364-day Bridge Facility: Base Rate plus 175.0 bps or Adjusted LIBO Rate plus 275.0 bps (margins increase 25.0 bps 180 days after Closing and additional 25.0 bps each 90 days thereafter); HY Bridge Facility: Base Rate plus 3.50% or Adjusted LIBO Rate plus 4.50% (increasing 50.0 bps every 90 days, subject to Total Cap). RC Backstop drawn: L + 300.0 to L + 112.5 bps by leverage grid."
+    }
+   },
+   {
+    "base_rate_label": "Adjusted LIBO Rate",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(a) Each Eurodollar Loan shall bear interest for each day during each Interest Period with respect thereto at a rate per annum equal to the Adjusted LIBO Rate determined for such day plus the Applicable Margin. (b) Each ABR Loan shall bear interest at a rate per annum equal to the ABR plus the Applicable Margin.”",
+     "source_ref": "8-K 0001193125-20-256749 · d75343dex101.htm",
+     "status": "present",
+     "value": "Eurodollar Loans: Adjusted LIBO Rate plus Applicable Margin; ABR Loans: ABR plus Applicable Margin. Applicable Margin for Eurodollar Loans ranges 1.125%–2.25% and for ABR Loans 0.125%–1.25% based on Consolidated Leverage Ratio (Level III from Closing Date until first Adjustment Date). LIBO Screen Rate floored at zero."
+    }
+   }
+  ]
+ },
+ "MVST": {
+  "cik": "0001760689",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001628280-26-018264",
+    "exhibits": [
+     "mvst20251231-ex1013.htm",
+     "mvst20251231-ex1021.htm"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-03-16",
+    "note": ""
+   },
+   {
+    "accession": "0001213900-21-007125",
+    "exhibits": [
+     "ea134382ex10-1_tuscanhold.htm",
+     "ea134382ex10-2_tuscanhold.htm",
+     "ea134382ex10-3_tuscanhold.htm",
+     "ea134382ex10-4_tuscanhold.htm",
+     "ea134382ex10-5_tuscanhold.htm",
+     "ea134382ex10-6_tuscanhold.htm"
+    ],
+    "family": "Convertible Bond",
+    "filing": "8-K",
+    "filing_date": "2021-02-05",
+    "note": ""
+   },
+   {
+    "accession": "0001213900-19-003702",
+    "exhibits": [
+     "f8k030519ex10-1_tuscan.htm",
+     "f8k030519ex10-2_tuscan.htm",
+     "f8k030519ex10-3_tuscan.htm"
+    ],
+    "family": "Convertible Bond",
+    "filing": "8-K",
+    "filing_date": "2019-03-07",
+    "note": ""
+   },
+   {
+    "accession": "0000947871-25-000313",
+    "exhibits": [
+     "ss4588423_ex1001.htm"
+    ],
+    "family": "Convertible Loan",
+    "filing": "8-K",
+    "filing_date": "2025-03-17",
+    "note": ""
+   },
+   {
+    "accession": "0001760689-24-000021",
+    "exhibits": [
+     "wu_microvast-guarantyagree.htm",
+     "wu_microvast-loanandsecuri.htm",
+     "wu_microvast-pledgeagreeme.htm",
+     "wu_microvast-warrant.htm"
+    ],
+    "family": "Convertible Loan",
+    "filing": "8-K",
+    "filing_date": "2024-06-04",
+    "note": ""
+   },
+   {
+    "accession": "0001760689-22-000094",
+    "exhibits": [
+     "exhibit101-syndicatedloana.htm"
+    ],
+    "family": "Loan Facilities Agreement",
+    "filing": "8-K",
+    "filing_date": "2022-09-29",
+    "note": ""
+   },
+   {
+    "accession": "0001213900-21-039093",
+    "exhibits": [
+     "ea144448ex10-13_microvast.htm",
+     "ea144448ex10-1_microvast.htm",
+     "ea144448ex10-2_microvast.htm",
+     "ea144448ex10-3_microvast.htm",
+     "ea144448ex10-4_microvast.htm",
+     "ea144448ex10-5_microvast.htm",
+     "ea144448ex10-6_microvast.htm"
+    ],
+    "family": "Loan Facilities Agreement",
+    "filing": "8-K",
+    "filing_date": "2021-07-28",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Notes Payable",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "base_rate_label": "LPR",
+    "floor_pct": null,
+    "margin_bps": 115.0,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “A. the applicable rate for the first period (from the first actual disbursement date to the end of the first floating period) will be the latest √ one year / x 5+ year LPR published by the National Interbank Funding Center one Business Day before the first actual disbursement date  √Plus x Minus (chose one) 115 bps”",
+     "source_ref": "8-K 0001760689-22-000094 · exhibit101-syndicatedloana.htm",
+     "status": "present",
+     "value": "Floating rate: one year LPR published by the National Interbank Funding Center plus 115 bps (reset every 12 months)"
+    }
+   }
+  ]
+ },
+ "NCNO": {
+  "cik": "0001902733",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001902733-26-000022",
+    "exhibits": [
+     "exhibit1035secondamendment.htm",
+     "exhibit1036fourthamendment.htm"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-03-31",
+    "note": ""
+   },
+   {
+    "accession": "0001902733-24-000041",
+    "exhibits": [
+     "firstamendmenttocreditagre.htm"
+    ],
+    "family": "Senior Secured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2024-02-13",
+    "note": ""
+   },
+   {
+    "accession": "0001902733-24-000171",
+    "exhibits": [
+     "exhibit101creditagreementb.htm"
+    ],
+    "family": "Senior Secured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2024-10-30",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Financing Obligations",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "base_rate_label": "Term SOFR",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": 2.0,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period from the applicable Borrowing date at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate; (ii) each Base Rate Loan (other than a Swingline Loan) shall bear interest on the outstanding principal amount thereof from the applicable Borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate”",
+     "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
+     "status": "present",
+     "value": "Term SOFR Loans: Term SOFR plus Applicable Rate (2.00%–2.50% based on Consolidated Total Leverage Ratio); Base Rate Loans: Base Rate plus Applicable Rate (1.00%–1.50%). Term SOFR floor deemed zero if less than zero."
+    }
+   }
+  ]
+ },
+ "NFLX": {
+  "cik": "0001065280",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001065280-26-000034",
+    "exhibits": [
+     "ex102_q425.htm",
+     "ex103_q425.htm"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-01-23",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-18-134734",
+    "exhibits": [
+     "d567970dex101.htm"
+    ],
+    "family": "Senior Unsecured Bridge Term Loan Facility",
+    "filing": "8-K",
+    "filing_date": "2018-04-26",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-14-037000",
+    "exhibits": [
+     "d671121dex101.htm"
+    ],
+    "family": "Senior Unsecured Bridge Term Loan Facility",
+    "filing": "8-K",
+    "filing_date": "2014-02-05",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-09-194962",
+    "exhibits": [
+     "dex101.htm"
+    ],
+    "family": "Senior Unsecured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2009-09-21",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-25-327462",
+    "exhibits": [
+     "d82688dex101.htm",
+     "d82688dex102.htm"
+    ],
+    "family": "Senior Unsecured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2025-12-22",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-25-308651",
+    "exhibits": [
+     "d65144dex101.htm"
+    ],
+    "family": "Unsecured Delayed Draw Term Loan Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2025-12-05",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-19-094705",
+    "exhibits": [
+     "d721020dex101.htm"
+    ],
+    "family": "Unsecured Delayed Draw Term Loan Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2019-04-01",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-21-193187",
+    "exhibits": [
+     "d552068dex101.htm"
+    ],
+    "family": "Unsecured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2021-06-17",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-26-015951",
+    "exhibits": [
+     "d37713dex101.htm"
+    ],
+    "family": "Unsecured Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2026-01-20",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "3.000% Senior Notes",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "3.625% Senior Notes",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "3.875% Senior Notes",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "4.375% Senior Notes",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "REVOLVING CREDIT AGREEMENT",
+    "base_rate_label": "Adjusted LIBO Rate",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": 0.75,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Eurodollar Borrowing shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”",
+     "source_ref": "8-K 0001193125-21-193187 · d552068dex101.htm",
+     "status": "present",
+     "value": "ABR Borrowing: Alternate Base Rate plus Applicable Rate; Eurodollar Borrowing: Adjusted LIBO Rate plus Applicable Rate. \"Applicable Rate\" means (i) 0.75% per annum with respect to any Eurodollar Loan and (ii) 0.00% per annum with respect to any ABR Loan. Adjusted LIBO Rate floor 0.00%. Default rate: 2% plus applicable rate."
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "SENIOR UNSECURED REVOLVING CREDIT AGREEMENT",
+    "base_rate_label": "Term SOFR Rate",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(a) The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Revolving Loans comprising each Term SOFR Borrowing shall bear interest at the Term SOFR Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”",
+     "source_ref": "8-K 0001193125-25-327462 · d82688dex101.htm",
+     "status": "present",
+     "value": "ABR Borrowing: Alternate Base Rate plus the Applicable Rate; Term SOFR Borrowing: Term SOFR Rate for the Interest Period plus the Applicable Rate. Applicable Rate for SOFR Loans ranges 0.600% (Pricing Level I) to 1.10% (Pricing Level V) per annum based on Debt Rating; Applicable Rate for ABR Loans 0.00% to 0.10%. Floor = 0.00%."
+    }
+   },
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "REVOLVING CREDIT AGREEMENT",
+    "base_rate_label": "Adjusted LIBO Rate",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": 0.75,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “The Revolving Loans comprising each ABR Borrowing shall bear interest at the Alternate Base Rate plus the Applicable Rate. ... The Revolving Loans comprising each Eurodollar Borrowing shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”",
+     "source_ref": "8-K 0001193125-19-094705 · d721020dex101.htm",
+     "status": "present",
+     "value": "ABR Borrowing: Alternate Base Rate plus the Applicable Rate. Eurodollar Borrowing: Adjusted LIBO Rate plus the Applicable Rate. \"Applicable Rate\" means, for any day, (i) 0.75% per annum with respect to any Eurodollar Loan and (ii) 0.00% per annum with respect to any ABR Loan. Default interest: 2% plus the otherwise applicable rate on overdue amounts. Adjusted LIBO Rate floor: \"in no event shall the Adjusted LIBO Rate be less than 0.00%\""
+    }
+   }
+  ]
+ },
+ "NKE": {
+  "cik": "0000320187",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0000320187-26-000088",
+    "exhibits": [
+     "nke-5312026exhibit1029.htm"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-07-15",
+    "note": ""
+   },
+   {
+    "accession": "0000320187-25-000008",
+    "exhibits": [
+     "nike-364xdaycreditagreemen.htm",
+     "nikefiveyearcreditagreemen.htm"
+    ],
+    "family": "364-day Committed Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2025-03-10",
+    "note": ""
+   },
+   {
+    "accession": "0000320187-26-000020",
+    "exhibits": [
+     "a364-daycreditagreementxni.htm"
+    ],
+    "family": "364-day Committed Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2026-03-09",
+    "note": ""
+   },
+   {
+    "accession": "0000320187-24-000009",
+    "exhibits": [
+     "nike-364xdaycreditagreemen.htm"
+    ],
+    "family": "Committed Credit Facilities",
+    "filing": "8-K",
+    "filing_date": "2024-03-11",
+    "note": ""
+   },
+   {
+    "accession": "0000320187-23-000006",
+    "exhibits": [
+     "nike-364xdaycreditagreemen.htm"
+    ],
+    "family": "Committed Credit Facilities",
+    "filing": "8-K",
+    "filing_date": "2023-03-13",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "2.375% Corporate Term Notes",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "2.75% Corporate Term Note March 27, 2027",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "2.85% Corporate Term Note March 27, 2030",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "3.25% Corporate Term Note March 27, 2040",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "364-DAY CREDIT AGREEMENT",
+    "base_rate_label": "Term SOFR",
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 0.595,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “\"Applicable Margin\" means, on any date and (i) with respect to a Term SOFR Loan or Alternative Currency Loan, 0.595% (59.5 basis points) or (ii) with respect to a Base Rate Loan, 0.00% (0 basis points).”",
+     "source_ref": "8-K 0000320187-26-000020 · a364-daycreditagreementxni.htm",
+     "status": "present",
+     "value": "Term SOFR Loan / Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis points); Base Rate Loan: 0.00% (0 basis points). Rate Options: Base Rate, Term SOFR, Alternative Currency Daily Rate or Alternative Currency Term Rate (each plus Applicable Margin). Base Rate = highest of (a) Federal Funds Rate plus 1/2 of 1%, (b) BofA prime rate, (c) Term SOFR plus 1.00%."
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "CREDIT AGREEMENT",
+    "base_rate_label": "Term SOFR",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: ““ Term SOFR Advance ” means an Advance that bears interest at a rate based on clause (a) of the definition of Term SOFR plus the Applicable Margin.”",
+     "source_ref": "8-K 0000320187-23-000006 · nike-364xdaycreditagreemen.htm",
+     "status": "present",
+     "value": "Term SOFR plus the Applicable Margin (Applicable Margin in basis points based on Applicable Rating Level: Level I 35.75, Level II 48.0, Level III 58.5, Level IV 69.0); Term SOFR Adjustment 0.10% (10 basis points); Base Rate Advances at Base Rate; Alternative Currency Daily Rate / Alternative Currency Term Rate plus Applicable Margin"
+    }
+   }
+  ]
+ },
+ "PARR": {
+  "cik": "0000821483",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0000821483-26-000005",
+    "exhibits": [
+     "a20251231ex1010-formofawar.htm",
+     "a20251231ex1012-performanc.htm",
+     "a20251231ex1013-formofrest.htm",
+     "a20251231ex1015-nonxqualif.htm",
+     "a20251231ex108-incentiveco.htm"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-02-25",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-15-116573",
+    "exhibits": [
+     "d902717dex101.htm",
+     "d902717dex102.htm",
+     "d902717dex103.htm",
+     "d902717dex104.htm",
+     "d902717dex105.htm",
+     "d902717dex106.htm"
+    ],
+    "family": "ABL Credit Facility Due 2028",
+    "filing": "8-K",
+    "filing_date": "2015-04-02",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-14-392228",
+    "exhibits": [
+     "d814202dex101.htm"
+    ],
+    "family": "ABL Credit Facility Due 2028",
+    "filing": "8-K",
+    "filing_date": "2014-10-31",
+    "note": ""
+   },
+   {
+    "accession": "0000821483-17-000034",
+    "exhibits": [
+     "ex102-midpacxhiekeybankxam.htm",
+     "ex103-2017x06x28amendmentn.htm",
+     "exhibit101-5thamendmenttow.htm",
+     "form8-kxtermloanrepaymenta.htm"
+    ],
+    "family": "Term Loan Credit Agreement",
+    "filing": "8-K",
+    "filing_date": "2017-07-05",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-23-158690",
+    "exhibits": [
+     "d292719dex102.htm"
+    ],
+    "family": "Term Loan Credit Agreement",
+    "filing": "8-K",
+    "filing_date": "2023-06-01",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Finance Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Promissory Note",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Two Promissory Notes with a Third-Party Lender",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "CREDIT AGREEMENT",
+    "base_rate_label": "LIBOR Rate",
+    "floor_pct": null,
+    "margin_bps": 225.0,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “During such periods as such Revolving Loan is a Base Rate Loan, at a rate per annum equal to the Base Rate plus the Applicable Margin therefor ... During such periods as such Revolving Loan is a LIBOR Loan, at a rate per annum equal at all times during each Interest Period for such LIBOR Loan to the LIBOR Rate for such Interest Period plus the Applicable Margin therefor ... Revolving Loan Pricing Grid Leverage Ratio Applicable Margin for LIBOR Loans Applicable Margin for Base Rate Loans (basis points) (basis points) < 3.00x 175 -25 ³ 3.00x but £ 3.50x 200 0 > 3.50x 225 25 ... Term Loan Pricing Grid Leverage Ratio Applicable Margin for LIBOR Loans Applicable Margin for Base Rate Loans (basis points) (basis points) < 3.00x 200 -0- ³ 3.00x but £ 3.50x 225 25 > 3.50x 250 50”",
+     "source_ref": "8-K 0001193125-15-116573 · d902717dex101.htm",
+     "status": "present",
+     "value": "Revolving & Term Loans bear interest at Base Rate or LIBOR Rate plus Applicable Margin. Revolving Loan margins (LIBOR): <3.00x=175 bps, 3.00x-3.50x=200 bps, >3.50x=225 bps. Term Loan margins (LIBOR): <3.00x=200 bps, 3.00x-3.50x=225 bps, >3.50x=250 bps. Applicable Margin increased by 200 basis points upon Event of Default."
+    }
+   }
+  ]
+ },
+ "SMPL": {
+  "cik": "0001702744",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001213900-18-003172",
+    "exhibits": [
+     "f8k032018ex10-1_simplygood.htm"
+    ],
+    "family": "Credit Agreement",
+    "filing": "8-K",
+    "filing_date": "2018-03-20",
+    "note": ""
+   },
+   {
+    "accession": "0001104659-19-060856",
+    "exhibits": [
+     "a19-22146_1ex10d1.htm",
+     "a19-22146_1ex10d2.htm"
+    ],
+    "family": "Credit Agreement",
+    "filing": "8-K",
+    "filing_date": "2019-11-07",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "base_rate_label": "Eurodollar",
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 3.5,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(b) (i) at any date prior to the 2018 Amendment Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 3.00% per annum, and with respect to any Initial Term Loan that is a Eurodollar Loan, 4.00% per annum, and (ii) at any date on or after the 2018 Amendment Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 2.50% per annum, and with respect to any Initial Term Loan that is a Eurodollar Loan, 3.50% per annum.”",
+     "source_ref": "8-K 0001213900-18-003172 · f8k032018ex10-1_simplygood.htm",
+     "status": "present",
+     "value": "Applicable Rate (b): (i) prior to the 2018 Amendment Effective Date — ABR Loan 3.00% per annum, Eurodollar Loan 4.00% per annum; (ii) on or after the 2018 Amendment Effective Date — ABR Loan 2.50% per annum, Eurodollar Loan 3.50% per annum"
+    }
+   },
+   {
+    "base_rate_label": "LIBO Rate / ABR",
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 3.75,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “The definition of \"Applicable Rate\" is amended by replacing clause (b) of such definition with following: \"(b) ... (ii) on and after the Amendment No. 2 Effective Date, with respect to any Initial Term Loan that is an ABR Loan, 2.75% per annum, and with respect to any Initial Term Loan that is a Eurodollar Loan, 3.75% per annum”",
+     "source_ref": "8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm",
+     "status": "present",
+     "value": "On and after the Amendment No. 2 Effective Date: ABR Loan 2.75% per annum; Eurodollar Loan 3.75% per annum (prior to Amendment No. 2 Effective Date: ABR 2.50%, Eurodollar 3.50%)"
+    }
+   }
+  ]
+ },
+ "TJX": {
+  "cik": "0000109198",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0000109198-26-000008",
+    "exhibits": [
+     "tjx-20260131xexhibit1024.htm"
+    ],
+    "family": "material contracts (10-K exhibit index)",
+    "filing": "latest 10-K",
+    "filing_date": "2026-03-31",
+    "note": ""
+   },
+   {
+    "accession": "0001157523-20-000793",
+    "exhibits": [
+     "a52222014ex10_1.htm",
+     "a52222014ex10_2.htm"
+    ],
+    "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2029",
+    "filing": "8-K",
+    "filing_date": "2020-05-21",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-21-202939",
+    "exhibits": [
+     "d169110dex101.htm"
+    ],
+    "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2029",
+    "filing": "8-K",
+    "filing_date": "2021-06-29",
+    "note": ""
+   },
+   {
+    "accession": "0000109198-20-000015",
+    "exhibits": [
+     "exhibit101364dayrevolv.htm"
+    ],
+    "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2030",
+    "filing": "8-K",
+    "filing_date": "2020-08-11",
+    "note": ""
+   },
+   {
+    "accession": "0000109198-25-000033",
+    "exhibits": [
+     "exhibit101-firstamendmentt.htm",
+     "exhibit102-secondamendment.htm"
+    ],
+    "family": "Senior Unsecured Revolving Credit Facility Maturing in May 2030",
+    "filing": "8-K",
+    "filing_date": "2025-05-09",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "1.150% Senior Unsecured Notes, Maturing May 15, 2028",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "1.600% Senior Unsecured Notes, Maturing May 15, 2031",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "2.250% Senior Unsecured Notes, Maturing September 15, 2026",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "3.875% Senior Unsecured Notes, Maturing April 15, 2030",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "2022 REVOLVING CREDIT AGREEMENT",
+    "base_rate_label": "LIBOR",
+    "floor_pct": 0.75,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: ““ Eurodollar Base Rate ” means, for any Interest Period, the rate per annum equal to LIBOR as administered by ICE Benchmark Administration ... provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75% for the purposes of this Agreement.”",
+     "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
+     "status": "present",
+     "value": "Eurodollar Base Rate equal to LIBOR ...; provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75%"
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+    "base_rate_label": "Eurodollar Rate",
+    "floor_pct": 0.75,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(i) each Eurodollar Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurodollar Rate for such Interest Period plus the Applicable Margin; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin.”",
+     "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+     "status": "present",
+     "value": "Eurodollar Rate Loans: Eurodollar Rate + Applicable Margin (Eurodollar Rate + 1.10% to 1.90% per Debt Rating); Base Rate Loans: Base Rate + Applicable Margin (Base Rate + 0.10% to 0.90% per Debt Rating)"
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+    "base_rate_label": null,
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 2.0,
+    "name": "Default Rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: ““ Default Rate ” means an interest rate equal to (i) the Base Rate plus (ii) the Applicable Margin, if any, applicable to Base Rate Loans plus (iii) 2% per annum; provided , however , that with respect to a Eurodollar Rate Loan, the Default Rate shall be an interest rate equal to the interest rate (including the Applicable Margin) otherwise applicable to such Revolving Loan plus 2% per annum.”",
+     "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+     "status": "present",
+     "value": "Base Rate + Applicable Margin + 2% per annum (Eurodollar Rate Loans: otherwise applicable rate + 2% per annum)"
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+    "base_rate_label": null,
+    "floor_pct": 1.75,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Base Rate floor",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “provided that if the Base Rate shall be less than 1.75%, such rate shall be deemed to be 1.75%.”",
+     "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+     "status": "present",
+     "value": "Base Rate deemed to be 1.75% if less than 1.75%"
+    }
+   }
+  ]
+ },
+ "UBER": {
+  "cik": "0001543151",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001552781-23-000469",
+    "exhibits": [
+     "e23472_ex10-1.htm"
+    ],
+    "family": "2025 Convertible Notes",
+    "filing": "8-K",
+    "filing_date": "2023-11-24",
+    "note": ""
+   },
+   {
+    "accession": "0001552781-23-000080",
+    "exhibits": [
+     "e23085_ex10-1.htm"
+    ],
+    "family": "2025 Convertible Notes",
+    "filing": "8-K",
+    "filing_date": "2023-03-03",
+    "note": ""
+   },
+   {
+    "accession": "0001552781-21-000058",
+    "exhibits": [
+     "e21071_ex10-1.htm"
+    ],
+    "family": "2028 Convertible Notes",
+    "filing": "8-K",
+    "filing_date": "2021-03-01",
+    "note": ""
+   },
+   {
+    "accession": "0001552781-23-000109",
+    "exhibits": [
+     "e23109_ex10-1.htm"
+    ],
+    "family": "2028 Convertible Notes",
+    "filing": "8-K",
+    "filing_date": "2023-03-14",
+    "note": ""
+   },
+   {
+    "accession": "0001552781-22-000307",
+    "exhibits": [
+     "e22228_ex10-1.htm"
+    ],
+    "family": "Senior Unsecured Revolving Loans",
+    "filing": "8-K",
+    "filing_date": "2022-04-05",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "2027 Senior Note",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "2028 Exchangeable Senior Notes",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "2028 Senior Note",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "2029 Senior Note",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "TERM LOAN AGREEMENT",
+    "base_rate_label": "Adjusted LIBO Rate (Eurodollar)",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": 3.5,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “The \"Applicable Rate\" with respect to the 2021 Refinancing Term Loans shall be (x) 3.50% with respect to Eurodollar Loans and (y) 2.50% with respect to ABR Loans. ... The \"Applicable Rate\" with respect to the 2021 Incremental Term Loans shall be (x) 3.50% with respect to Eurodollar Loans and (y) 2.50% with respect to ABR Loans.”",
+     "source_ref": "8-K 0001552781-21-000058 · e21071_ex10-1.htm",
+     "status": "present",
+     "value": "2021 Refinancing Term Loans and 2021 Incremental Term Loans: Eurodollar Loans 3.50%; ABR Loans 2.50%. LIBOR Floor 0.00%; Floor as of Amendment No.2 Effectiveness Date shall be 0%."
+    }
+   },
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "TERM LOAN AGREEMENT",
+    "base_rate_label": "Adjusted Term SOFR",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": 2.75,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(e) The \"Applicable Rate\" with respect to the 2023 Refinancing Term Loans shall be (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans.”",
+     "source_ref": "8-K 0001552781-23-000080 · e23085_ex10-1.htm",
+     "status": "present",
+     "value": "The \"Applicable Rate\" with respect to the 2023 Refinancing Term Loans shall be (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans."
+    }
+   },
+   {
+    "agreement_is_amendment": true,
+    "agreement_title": "TERM LOAN AGREEMENT",
+    "base_rate_label": "Adjusted Term SOFR",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": 2.75,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(e) The \"Applicable Rate\" with respect to the 2023 Refinancing Term Loans shall be (x) 2.75% with respect to SOFR Loans and (y) 1.75% with respect to ABR Loans.”",
+     "source_ref": "8-K 0001552781-23-000109 · e23109_ex10-1.htm",
+     "status": "present",
+     "value": "Applicable Rate: 2.75% with respect to SOFR Loans and 1.75% with respect to ABR Loans (2023 Refinancing Term Loans); SOFR Loans bear interest at Adjusted Term SOFR plus the Applicable Rate; Floor 0.00%"
+    }
+   }
+  ]
+ },
+ "WERN": {
+  "cik": "0000793074",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0000793074-26-000090",
+    "exhibits": [
+     "wern-20260127ex101.htm"
+    ],
+    "family": "22 Unsecured Credit Agreement",
+    "filing": "8-K",
+    "filing_date": "2026-04-14",
+    "note": ""
+   },
+   {
+    "accession": "0000793074-26-000120",
+    "exhibits": [
+     "wern-20260605ex101.htm",
+     "wern-20260605ex102.htm"
+    ],
+    "family": "22 Unsecured Credit Agreement",
+    "filing": "8-K",
+    "filing_date": "2026-06-10",
+    "note": ""
+   },
+   {
+    "accession": "0000793074-25-000019",
+    "exhibits": [
+     "wern-2025327ex101.htm"
+    ],
+    "family": "Loan Security Agreement Facility",
+    "filing": "8-K",
+    "filing_date": "2025-04-02",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "Operating Lease Liabilities",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "base_rate_label": "Daily Adjusted Term SOFR",
+    "floor_pct": 0.0,
+    "margin_bps": null,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: ““ Interest Rate ” means, for any day in any Interest Period for any Loan (or any Portion of Capital thereof): (a) if such Loan (or such Portion of Capital thereof) is being funded by a Conduit Lender on such day through the issuance of Notes, the applicable CP Rate; or (b) subject to Section 5.04 , 5.06 and 5.08 , if such Loan (or such Portion of Capital thereof) is being funded by any Lender on such day other than through the issuance of Notes ... then Daily Adjusted Term SOFR for such day; provided , however , that the “Interest Rate” for each Loan and any day while an Event of Default has occurred and is continuing shall be an interest rate per annum equal to the sum of 2.00% per annum plus the greater of (i) the interest rate per annum determined for such Loan and such day pursuant to clause (a) or (b) above, as applicable, and (ii) the Base Rate in effect on such day”",
+     "source_ref": "8-K 0000793074-25-000019 · wern-2025327ex101.htm",
+     "status": "present",
+     "value": "CP Rate (Conduit-funded Loans) or Daily Adjusted Term SOFR (Lender-funded Loans); Default rate = 2.00% per annum plus the greater of the otherwise applicable rate and the Base Rate. Daily Adjusted Term SOFR = Term SOFR plus 0.10% (floor 0%)."
+    }
+   }
+  ]
+ },
+ "WLK": {
+  "cik": "0001262823",
+  "covenant_pointer_rows": [
+   {
+    "accession": "0001193125-10-155766",
+    "exhibits": [
+     "dex101.htm"
+    ],
+    "family": "Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027",
+    "filing": "8-K",
+    "filing_date": "2010-07-08",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-07-267027",
+    "exhibits": [
+     "dex101.htm"
+    ],
+    "family": "Loan Related to Tax-Exempt Waste Disposal Revenue Bonds Due 2027",
+    "filing": "8-K",
+    "filing_date": "2007-12-18",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-16-689964",
+    "exhibits": [
+     "d247458dex101.htm"
+    ],
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2016-08-24",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-09-021484",
+    "exhibits": [
+     "dex101.htm"
+    ],
+    "family": "Revolving Credit Facility",
+    "filing": "8-K",
+    "filing_date": "2009-02-09",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-10-276447",
+    "exhibits": [
+     "dex101.htm",
+     "dex102.htm"
+    ],
+    "family": "Term Loans Due 2026",
+    "filing": "8-K",
+    "filing_date": "2010-12-08",
+    "note": ""
+   },
+   {
+    "accession": "0001193125-16-620795",
+    "exhibits": [
+     "d211826dex101.htm"
+    ],
+    "family": "Term Loans Due 2026",
+    "filing": "8-K",
+    "filing_date": "2016-06-14",
+    "note": ""
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "1.625% 700 Million Senior Notes Due 2029",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "2.875% Senior Notes Due 2041",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "3.125% Senior Notes Due 2051",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   },
+   {
+    "accession": "",
+    "exhibits": [],
+    "family": "3.375% Senior Notes Due 2030",
+    "filing": "—",
+    "filing_date": "",
+    "note": "no contract-level filing expected (aggregate line item)"
+   }
+  ],
+  "covenant_term_rows": [
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "CREDIT AGREEMENT",
+    "base_rate_label": "Adjusted LIBO Rate",
+    "floor_pct": 0.0,
+    "margin_bps": 125.0,
+    "margin_pct": null,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: “(a) The Loans comprising each ABR Borrowing (including each Swingline Loan) shall bear interest at the Alternate Base Rate plus the Applicable Rate. (b) The Loans comprising each Eurodollar Borrowing (including all Alternate Currency Loans) shall bear interest at the Adjusted LIBO Rate for the Interest Period in effect for such Borrowing plus the Applicable Rate.”",
+     "source_ref": "8-K 0001193125-16-689964 · d247458dex101.htm",
+     "status": "present",
+     "value": "Eurodollar Revolving Loans: Adjusted LIBO Rate plus Applicable Rate (100.0 bps to 175.0 bps by Pricing Level; 125.0 bps at Pricing Level III in effect on date hereof). ABR Loans: Alternate Base Rate plus Applicable Rate (0.0 bps to 75.0 bps). Default rate: 2% per annum plus otherwise applicable rate."
+    }
+   },
+   {
+    "agreement_is_amendment": false,
+    "agreement_title": "LOAN AGREEMENT",
+    "base_rate_label": null,
+    "floor_pct": null,
+    "margin_bps": null,
+    "margin_pct": 6.5,
+    "name": "Interest / coupon rate",
+    "pik_pct": null,
+    "value": {
+     "note": "verbatim: ““Notes” means the 6.50% Senior Notes due 2035 issued by the Company to the Trustee under the Company’s Senior Notes Indenture.”",
+     "source_ref": "8-K 0001193125-10-276447 · dex101.htm",
+     "status": "present",
+     "value": "The Note bears interest at an interest rate at all times equal to the interest rate borne by the Bonds; the Notes are the 6.50% Senior Notes due 2035"
+    }
+   }
+  ]
+ }
+}
