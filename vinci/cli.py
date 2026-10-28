@@ -2795,7 +2795,10 @@ def _cmd_audit_quality(args: argparse.Namespace) -> int:
     also writes each source's dated snapshot, so the answer becomes a series. The boundary is
     stamped on both: the date, the commit, whether the inputs match it, and a hash of exactly what
     was read. A source with nothing to read is a failure, never an empty scorecard. Nothing here
-    names a source: they are discovered (`vinci.quality.core.discover`)."""
+    names a source: they are discovered (`vinci.quality.core.discover`). A source whose snapshot
+    holds its exceptions only (`core.EXCEPTIONS`) has its full card written beside the store,
+    git-ignored (`core.full_rows_path`), and the snapshot names it by path and sha256."""
+    import hashlib
     import subprocess
     from datetime import date as _date
 
@@ -2847,8 +2850,26 @@ def _cmd_audit_quality(args: argparse.Namespace) -> int:
         print(core.render(card))
         if args.write:
             out = core.snapshot_path(root, sid, as_of)
-            out.parent.mkdir(parents=True, exist_ok=True)
             body = json.dumps(card, indent=1, ensure_ascii=False) + "\n"
+            if src.committed_rows == core.EXCEPTIONS:
+                # the snapshot lists the exceptions; the full card goes beside the store, ignored
+                full = core.full_rows_path(root, sid, as_of)
+                whole = body.encode()
+                try:
+                    body = json.dumps(core.compact(
+                        card, full_path=full.relative_to(root).as_posix(),
+                        full_sha256=hashlib.sha256(whole).hexdigest()),
+                        indent=1, ensure_ascii=False) + "\n"
+                except ValueError as exc:
+                    print(f"{sid}: the exceptions snapshot does not reconcile, nothing written — "
+                          f"{exc}", file=sys.stderr)
+                    rc = 1
+                    continue
+                full.parent.mkdir(parents=True, exist_ok=True)
+                full.write_bytes(whole)
+                print(f"\nfull card written (git-ignored, this checkout only): "
+                      f"{full.relative_to(root)}")
+            out.parent.mkdir(parents=True, exist_ok=True)
             before = out.read_text() if out.exists() else None
             out.write_text(body)
             what = ("unchanged" if before == body else "written" if before is None

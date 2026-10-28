@@ -399,6 +399,15 @@ def test_command_scores_the_store_and_writes_a_dated_snapshot(
         assert name in out
     saved = json.loads((store / f"data/snapshots/data_quality/prices/{today}.json").read_text())
     assert saved["boundary"]["items"] == 13 and saved["boundary"]["inputs_match_head"] is None
+    # the snapshot lists the exceptions (operator ruling C1, 2026-10-29); the full card, every
+    # name for every check, is beside the store
+    core.reconcile(saved)
+    full = json.loads((store / saved["rows"]["full"]["path"]).read_text())
+    assert saved["rows"]["full"]["path"] == f"data/data_quality_full/prices/{today}.json"
+    assert all(set(c["by_name"]) == set(full["boundary"]["names"]) for c in full["checks"])
+    ohlc = next(c for c in saved["checks"] if c["id"] == "ohlc_ordering")
+    assert set(ohlc["by_name"]) == {"BBB"}                 # AAA, all confirmed, is counted
+    assert ohlc["not_listed"]["confirmed_names"] == 12
 
 
 @pytest.mark.parametrize("prepare, why", [
@@ -485,15 +494,24 @@ def _latest_snapshot() -> Path | None:
     return snaps[-1] if snaps else None
 
 
+#: operator ruling C1: from this day the prices snapshot lists its exceptions only
+EXCEPTIONS_FROM = "2026-10-29"
+
+
 def test_the_committed_snapshot_is_counts_and_statuses_only() -> None:
     """The store is not committed, so a snapshot cannot be re-derived here: it is held to its
     shape — counts only, every check, a coherent fleet, and a boundary that says the store is not
-    in git."""
+    in git. One measured on or after the ruling is the exceptions form, and reconciles."""
     path = _latest_snapshot()
     if path is None:
         pytest.skip("no committed prices quality snapshot yet")
     card = json.loads(path.read_text())
-    assert card["schema"] == core.SCHEMA and card["source"]["id"] == "prices"
+    if path.stem >= EXCEPTIONS_FROM:
+        assert card["schema"] == core.COMPACT_SCHEMA
+        core.reconcile(card)
+    else:
+        assert card["schema"] == core.SCHEMA
+    assert card["source"]["id"] == "prices"
     assert [c["id"] for c in card["checks"]] == list(prices.CHECK_IDS)
     assert all(isinstance(x, int) for x in _numbers(card))
     b = card["boundary"]
