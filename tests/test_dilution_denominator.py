@@ -356,7 +356,15 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: **EMPTY AGAIN** (#752, 2026-10-20): that one pass landed — BURL 183.42→322.06 (net debt
 #: 5,338→1,210 ex-lease), TGT 137.57→158.47 (14,804→9,946), WERN 30.82→32.53 (897→784), each on
 #: the builder AND the ex-lease bridge (`docs/records/2026-10-20-artifact-pass-r1-lease-basis.md`).
-ANCHORS_AWAITING_BACKFILL: set[str] = set()
+#:
+#: **14 AWAITING the November pass** (2026-10-28): the anchor's D&A now covers the window its LTM
+#: EBIT and revenue cover — the fiscal year + year-to-date − prior year-to-date, ending on the
+#: page's LTM column (`anchor._window_dep_amort`) — where it read the latest fiscal year, so R1's
+#: base moves (AORT +2.7%, the largest; `docs/records/2026-10-28-the-anchors-d-and-a-covers-its-
+#: ltm-window.md`). The pages refresh at re-assembly; none is re-assembled by that change.
+ANCHORS_AWAITING_BACKFILL: set[str] = {
+    "AORT", "BRBR", "BURL", "EPAM", "IT", "LLY", "NFLX", "PARR", "ROST", "SMPL", "TGT", "TJX",
+    "VRRM", "WLK"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than

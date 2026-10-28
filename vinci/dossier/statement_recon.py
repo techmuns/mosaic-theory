@@ -246,6 +246,21 @@ def _row(fig: CiqFigure, by_tag: dict[str, list[ConceptPoint]], filed_by: date,
         earlier_accession=earlier)
 
 
+def twelve_months(facts: dict[str, Any], concept: str, end: date, *, is_ltm: bool,
+                  filed_by: date = date.max) -> tuple[float, str, ConceptPoint, str] | None:
+    """The filer's twelve months of ``concept`` ending on ``end`` — the figure this module sets
+    against CIQ's column, built the same way: ($, construction, the point whose filing carries it,
+    tag), on the first alias that reports it (never spliced), or None.
+
+    ONE BUILDER for a filing's trailing year (#830's follow-up): the anchor's D&A must cover the
+    window its LTM EBIT and revenue cover, and this is how a period is rebuilt from XBRL here."""
+    for tag, pts in _points(facts, concept, filed_by).items():
+        if (r := _on_tag(pts, end, is_ltm)) is not None:
+            value, how, point = r
+            return value, how, point, tag
+    return None
+
+
 def reconcile(figures: list[CiqFigure], facts: dict[str, Any] | None, *,
               filed_by: date) -> StatementReconciliation | None:
     """Each figure against the filings, as filed by ``filed_by``. None with no EDGAR facts or no
