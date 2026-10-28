@@ -69,8 +69,12 @@ ruling is the operator's (step 6).
 
 **THIS REVERSES ONE EARLIER READING.** #749 (2026-10-20) had pinned LPL's and HSAI's net debt as
 read from their USD convenience translations (`test_every_leg_is_read_in_dollars`). Both now read
-no net debt, and the pin says so. If the operator rules that a convenience translation IS a dollar
-figure, it is one line, in `_served_currency`.
+no net debt, and the pin says so.
+
+**OPERATOR RULING, 2026-10-28:** "Keep #844's USD convenience translations withheld; settle them
+in the FPI1b FX ruling." So a non-USD reporter's USD convenience translation stays withheld until
+FPI1b, and whether one may be read as a dollar figure is part of that ruling. Reading them would
+be one line, in `concepts._served_currency`.
 
 **HOW VERIFIED.**
 
