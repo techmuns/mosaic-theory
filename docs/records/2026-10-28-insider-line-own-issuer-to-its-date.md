@@ -1,7 +1,7 @@
 ---
-status: open
+status: shipped
 date: 2026-10-28
-prs: []
+prs: [843]
 ---
 
 # The insider line reads only Forms 4 about its own issuer, filed by its reference date, and turns UNKNOWN (with the count) when one cannot be read; an UNKNOWN no longer claims "6m" — six committed pages carry the old line (STATE row 35)
