@@ -3647,8 +3647,8 @@ def _pc_valuation(members: list[str], bars: dict[str, dict[str, float]],
         except Exception as e:  # noqa: BLE001 — absent XBRL → UNKNOWN, disclosed
             per[t] = ("UNKNOWN", f"companyfacts: {type(e).__name__}")
             continue
-        annual_eps = [p for p in extract_points(facts, "eps_diluted", currency=REPORTING)
-                      if p.is_annual]
+        annual_eps = [p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
+                                                as_of=asof) if p.is_annual]
         pbars = [PriceBar(internal_id=t, bar_date=date.fromisoformat(iso), open=c, high=c, low=c,
                           close=c, volume=0.0, source="polygon-grouped")
                  for iso, c in series.items() if c > 0]

@@ -187,9 +187,10 @@ def test_the_screen_withholds_a_yuan_level_and_keeps_g3s_percentile() -> None:
 ])
 def test_every_reader_that_ranks_a_pe_reads_eps_in_the_filers_own_currency(
         path: str, function: str) -> None:
-    """Each caller of `pe_current_and_percentile` reads EPS with ``currency=REPORTING``. Read in
-    dollars, a yuan reporter's series would be empty and its percentile UNKNOWN, dropping a
-    G3-gated name for a currency the percentile cannot see."""
+    """Each caller of `pe_current_and_percentile` reads EPS with ``currency=REPORTING``, judged
+    ``as_of`` its own date. Read in dollars, a yuan reporter's series would be empty and its
+    percentile UNKNOWN, dropping a G3-gated name for a currency the percentile cannot see; judged
+    on today's filings, a read at an earlier date takes a translation for a dollar figure."""
     fn = next(n for n in ast.walk(ast.parse((ROOT / path).read_text()))
               if isinstance(n, ast.FunctionDef) and n.name == function)
     reads = [c for c in ast.walk(fn) if isinstance(c, ast.Call)
@@ -200,6 +201,7 @@ def test_every_reader_that_ranks_a_pe_reads_eps_in_the_filers_own_currency(
         kw = {k.arg: k.value for k in c.keywords}
         assert isinstance(kw.get("currency"), ast.Name) and kw["currency"].id == "REPORTING", (
             f"{function} reads EPS in dollars only")
+        assert "as_of" in kw, f"{function} judges the currency on today's filings"
 
 
 # --- the screen's snapshot and SBC ----------------------------------------------------------------
@@ -392,3 +394,63 @@ def test_a_filer_that_now_files_40fs_is_not_read_on_an_old_20f_for_sections() ->
     http = _Http()
     ps = _primary(_Edgar(_NAK, _cf("AQN")), http)
     assert ps.filing is None and not any("form20f.htm" in u for u in http.urls)
+
+
+# --- round 1 (independent review, 2026-10-28) ---------------------------------------------------
+
+def test_a_split_is_found_for_a_filer_reporting_in_another_currency() -> None:
+    """The share-count trend's split guard reads the filer's EPS restatement, a ratio no currency
+    moves. Read in dollars it got nothing for a CAD reporter, and Canopy Growth's 2023 10:1
+    consolidation printed as a buyback (717,196,302 → 185,192,210, as filed by 2025-06-30).
+    The fixture is Canopy's companyfacts cut to rows filed by that date."""
+    facts = _cf("CGC")
+    assert cc.reporting_currency(facts) == "CAD"
+
+    class _Facts:
+        def companyfacts(self, cik: str) -> dict[str, Any]:
+            return facts
+
+    got = mech._share_count_trend(_Facts(), "0001737927", date(2025, 6, 30))  # type: ignore[arg-type]
+    assert got.value is not None and "buying back" not in got.value, got.value
+    assert "10" in got.value, got.value
+
+
+def test_the_currency_is_judged_at_the_readers_reference_date() -> None:
+    """An as-of read judges the currency as of its own date. JOYY reported in CNY until its FY2021
+    20-F (filed 2022-04-29): read as of 2021-06-30, its SBC and its P/E level are withheld, where
+    reading the currency off today's filings served its USD convenience translations ($97.468M of
+    SBC, EPS 0.92 for CNY 6.00) as dollars."""
+    from vinci.schemas.data_record import DataRecord, Identity
+    from vinci.screens.assemble import enrich_with_fundamentals
+
+    facts, ref = _cf("JOYY"), date(2021, 6, 30)
+    sbc = mech._sbc_line(facts, ref)
+    assert sbc is not None and sbc.expense.value is None and "CNY" in str(sbc.expense.note)
+
+    class _Edgar:
+        def companyfacts(self, cik: str) -> dict[str, Any]:
+            return facts
+
+        def fundamental_snapshot(self, cik: str) -> Any:
+            return compute_fundamental_snapshot("0001530238", facts, as_of=ref)
+
+    ident = Identity(internal_id="SEC-0001530238-JOYY", issuer_id="ISS-0001530238",
+                     cik="0001530238", ticker="JOYY", mic="XNAS", exchange="Nasdaq",
+                     eod_symbol="JOYY", name="JOYY Inc.", sic="7370")
+    start = ref - timedelta(days=5 * 365)
+    bars = [PriceBar(internal_id="X", bar_date=start + timedelta(days=i), open=60.0, high=60.0,
+                     low=60.0, close=60.0, volume=0.0, source="test") for i in range(5 * 365 + 1)]
+    got = enrich_with_fundamentals(DataRecord.model_construct(identity=ident, ads=None),
+                                   edgar=_Edgar(), price_bars=bars,  # type: ignore[arg-type]
+                                   reference_date=ref).fundamentals
+    assert got.pe.value is None and "CNY" in str(got.pe.note), got.pe
+    # POSITIVE: as of today it reports in USD, and its level stands
+    assert mech._sbc_line(facts, REF) is not None
+    assert mech._sbc_line(facts, REF).expense.value is not None  # type: ignore[union-attr]
+
+
+def test_a_fiscal_year_reported_in_an_old_currency_keeps_its_label() -> None:
+    """A period's dates carry no currency. Algonquin's 40-Fs were in CAD before it moved to USD,
+    and its fiscal years 2011-2017 are stated only there: the calendar keeps them."""
+    years = cc.fiscal_year_ends(_cf("AQN"))
+    assert {2012, 2015} <= set(years), sorted(years)

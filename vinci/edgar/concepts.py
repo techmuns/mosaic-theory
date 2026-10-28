@@ -197,8 +197,8 @@ def facts_as_of(facts: dict[str, Any], as_of: date) -> dict[str, Any]:
     return {**facts, "facts": nsmap}
 
 
-def extract_points(facts: dict[str, Any], concept: str, *,
-                   currency: str = "USD") -> list[ConceptPoint]:
+def extract_points(facts: dict[str, Any], concept: str, *, currency: str = "USD",
+                   as_of: date | None = None) -> list[ConceptPoint]:
     """Extract all reported points for a logical concept, trying alias tags in priority order.
 
     MC1 — AN ABANDONED ALIAS IS SKIPPED, NOT SERVED. First-present-wins alone hands back whatever
@@ -221,10 +221,10 @@ def extract_points(facts: dict[str, Any], concept: str, *,
     back to whichever alias happened to be iterated last would silently invert that ordering when
     freshness can separate nothing — a wrong-by-meaning number in place of a merely-old one.
 
-    ``currency`` is :func:`points_for_tag`'s: dollars only, unless the caller asks for the filer's
-    own currency (``REPORTING``).
+    ``currency`` and ``as_of`` are :func:`points_for_tag`'s: dollars only, unless the caller asks
+    for the filer's own currency (``REPORTING``), judged as of the reader's date.
     """
-    return _resolve(facts, concept, filer_frontier(facts), currency)
+    return _resolve(facts, concept, filer_frontier(facts), currency, as_of)
 
 
 def _reach(points: list[ConceptPoint], *, annual_grain: bool) -> date | None:
@@ -241,7 +241,8 @@ def _reach(points: list[ConceptPoint], *, annual_grain: bool) -> date | None:
 
 
 def _resolve(
-    facts: dict[str, Any], concept: str, frontier: date | None, currency: str = "USD"
+    facts: dict[str, Any], concept: str, frontier: date | None, currency: str = "USD",
+    as_of: date | None = None,
 ) -> list[ConceptPoint]:
     """The alias walk of :func:`extract_points`, taking an already-computed frontier.
 
@@ -249,7 +250,8 @@ def _resolve(
     than three times — its own call, plus one inside the ``extract_points`` it delegates to.
     """
     present = [(tag, pts) for tag in CONCEPT_ALIASES[concept]
-               if (pts := points_for_tag(facts, tag, concept=concept, currency=currency))]
+               if (pts := points_for_tag(facts, tag, concept=concept, currency=currency,
+                                         as_of=as_of))]
     if not present:
         return []
     first_present = present[0][1]
@@ -304,8 +306,12 @@ _MONETARY_UNIT = re.compile(r"^([A-Z]{3})(?:/|$)")
 
 #: ``currency=REPORTING`` reads a filer's figures in the currency its statements are in, whatever it
 #: is. Only for a reading the currency cannot move: a ratio of two figures in one currency, a rank
-#: within one series, a period's dates.
+#: within one series.
 REPORTING = "reporting"
+#: ``currency=EVERY`` reads every unit, money in any currency included. For a period's DATES only:
+#: a fiscal year stated only in a filer's old currency is still that year (Algonquin's 2011-2017,
+#: in its CAD 40-Fs). Never for a value.
+EVERY = "every"
 
 #: The balance-sheet totals whose units name the currency of a filer's statements.
 _CURRENCY_ANCHORS = ("Assets", "Liabilities", "LiabilitiesAndStockholdersEquity",
@@ -319,7 +325,7 @@ def unit_currency(unit: str) -> str | None:
     return m.group(1) if m else None
 
 
-def reporting_currency(facts: dict[str, Any]) -> str | None:
+def reporting_currency(facts: dict[str, Any], as_of: date | None = None) -> str | None:
     """The currency the filer's statements are in: the most frequent currency among its
     balance-sheet totals (:data:`_CURRENCY_ANCHORS`) in its newest annual report, or in its newest
     filing when it has filed no annual report. Without those totals, every us-gaap monetary fact
@@ -344,11 +350,14 @@ def reporting_currency(facts: dict[str, Any]) -> str | None:
     USD, because a convenience translation is always into USD. 102 come out other than USD
     (CNY 38, CAD 14, EUR 11 …).
 
-    Reads whatever ``facts`` it is given, so a blob cut by :func:`facts_as_of` is judged as it
-    stood on that date: JOYY's statements were in CNY through its FY2020 20-F and in USD from its
-    FY2021 20-F, filed 2022-04-29."""
+    AS OF A DATE, judged on the rows filed by ``as_of`` (all of them when None), so a reader at a
+    reference date gets the currency the filer reported in then: JOYY's statements were in CNY
+    through its FY2020 20-F and in USD from its FY2021 20-F, filed 2022-04-29. Judged on today's
+    filings, a read as of 2021-06-30 served its USD convenience translations as dollars (round 1
+    of #844). A blob already cut by :func:`facts_as_of` is judged the same way."""
     gaap = (facts.get("facts") or {}).get("us-gaap") or {}
-    rows = _currency_rows(gaap, _CURRENCY_ANCHORS) or _currency_rows(gaap, tuple(gaap))
+    rows = (_currency_rows(gaap, _CURRENCY_ANCHORS, as_of)
+            or _currency_rows(gaap, tuple(gaap), as_of))
     if not rows:
         return None
     annual = [(cur, r) for cur, r in rows
@@ -361,22 +370,25 @@ def reporting_currency(facts: dict[str, Any]) -> str | None:
     return min(count, key=lambda c: (count[c] != top, c == "USD", c))
 
 
-def _currency_rows(gaap: dict[str, Any],
-                   tags: tuple[str, ...]) -> list[tuple[str, dict[str, Any]]]:
-    """(currency, row) for every row of ``tags`` in a plain currency unit (not per share)."""
+def _currency_rows(gaap: dict[str, Any], tags: tuple[str, ...],
+                   as_of: date | None = None) -> list[tuple[str, dict[str, Any]]]:
+    """(currency, row) for every row of ``tags`` in a plain currency unit (not per share), filed by
+    ``as_of`` when one is given."""
+    cut = as_of.isoformat() if as_of is not None else None
     out: list[tuple[str, dict[str, Any]]] = []
     for tag in tags:
         for unit, rows in ((gaap.get(tag) or {}).get("units") or {}).items():
             cur = unit_currency(unit)
             if cur is not None and "/" not in unit:
-                out.extend((cur, r) for r in rows)
+                out.extend((cur, r) for r in rows
+                           if cut is None or str(r.get("filed") or "9999") <= cut)
     return out
 
 
-def foreign_currency(facts: dict[str, Any]) -> str | None:
-    """The filer's reporting currency when it is not USD — the reason its money figures are
-    withheld (:func:`points_for_tag`) — else None."""
-    cur = reporting_currency(facts)
+def foreign_currency(facts: dict[str, Any], as_of: date | None = None) -> str | None:
+    """The filer's reporting currency (as of ``as_of``) when it is not USD — the reason its money
+    figures are withheld (:func:`points_for_tag`) — else None."""
+    cur = reporting_currency(facts, as_of)
     return cur if cur not in (None, "USD") else None
 
 
@@ -388,16 +400,16 @@ def currency_withheld(currency: str) -> str:
             f"as dollars — converting it is STATE §5.0 row 4's FPI1b")
 
 
-def _served_currency(facts: dict[str, Any], currency: str) -> str | None:
+def _served_currency(facts: dict[str, Any], currency: str, as_of: date | None) -> str | None:
     """The one currency :func:`points_for_tag` serves for ``currency``; None serves none."""
-    reported = reporting_currency(facts)
+    reported = reporting_currency(facts, as_of)
     if currency == REPORTING:
         return reported or "USD"
     return currency if reported in (None, currency) else None
 
 
 def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "",
-                   currency: str = "USD") -> list[ConceptPoint]:
+                   currency: str = "USD", as_of: date | None = None) -> list[ConceptPoint]:
     """All reported points under exactly ``tag`` (the first namespace that carries it, in priority
     order). Takes the tag EXPLICITLY — no ``CONCEPT_ALIASES`` lookup, so callers that need a single
     known tag never mutate the shared alias map (which extractors read from parallel assembly
@@ -411,8 +423,13 @@ def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "",
     - a filer reporting in another currency gets NO money fact, not even its USD convenience
       translation. QFIN's newest annual revenue was served as CNY 19,205,059,000 to readers that
       print dollars; a translation at one year-end rate is an FX policy, and that is FPI1b's.
-    ``currency=REPORTING`` serves the filer's own currency instead, for a reading it cannot move.
-    A unit with no currency (shares, pure) is served either way."""
+    ``currency=REPORTING`` serves the filer's own currency instead, for a reading it cannot move,
+    and ``currency=EVERY`` every unit, for a period's dates. A unit with no currency (shares,
+    pure) is served either way.
+
+    THE CURRENCY IS JUDGED AT THE READER'S DATE: ``as_of`` is a dated reader's reference date, and
+    the currency is the one the filer reported in on it (:func:`reporting_currency`). It cuts no
+    point: each reader keeps its own filed-date bound on the values it reads."""
     nsmap = facts.get("facts", {})
     node = None
     for ns in _NAMESPACES:
@@ -423,11 +440,11 @@ def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "",
         return []
     points: list[ConceptPoint] = []
     units = node.get("units", {})
-    served = (_served_currency(facts, currency)
-              if any(unit_currency(u) for u in units) else None)
+    served = (_served_currency(facts, currency, as_of)
+              if currency != EVERY and any(unit_currency(u) for u in units) else None)
     for unit, rows in units.items():
         cur = unit_currency(unit)
-        if cur is not None and cur != served:
+        if cur is not None and currency != EVERY and cur != served:
             continue
         for r in rows:
             end = _parse_date(r.get("end"))
@@ -829,11 +846,12 @@ def _own_periods(facts: dict[str, Any], forms: tuple[str, ...] = ("10-Q", "10-K"
                  ) -> list[tuple[str, int, date, date]]:
     """(fiscal period, fiscal year, end, filed) for every filing of ``forms``: the period it states
     as its OWN — the latest end it carries — under the fiscal year and period its XBRL names.
-    Read in the filer's own currency: a period's dates are the same in any."""
+    Read across every unit (``EVERY``): a period's dates carry no currency, and a fiscal year
+    stated only in a filer's old currency is still that year."""
     by_acc: dict[str, tuple[str, int, date, date]] = {}
     for tag in (*CONCEPT_ALIASES["revenue"], *CONCEPT_ALIASES["net_income"],
                 *CONCEPT_ALIASES["eps_diluted"]):
-        for p in points_for_tag(facts, tag, currency=REPORTING):
+        for p in points_for_tag(facts, tag, currency=EVERY):
             form = (p.form or "").upper()
             if (p.period_start is None or not p.accession or p.fy is None or not p.fp
                     or not form.startswith(forms)):

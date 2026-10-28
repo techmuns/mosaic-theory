@@ -217,8 +217,8 @@ def _at_latest_close(record: DataRecord, store: Store, edgar: EdgarClient) -> Da
                  f"{bar.bar_date.isoformat()} close")
         pct = pe
     else:
-        annual_eps = [p for p in extract_points(facts, "eps_diluted", currency=REPORTING)
-                      if p.is_annual]
+        annual_eps = [p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
+                                                as_of=bar.bar_date) if p.is_annual]
         pe, pct = pe_current_and_percentile(bars, annual_eps, reference_date=bar.bar_date,
                                             ads=record.ads)
     return record.model_copy(update={
@@ -1327,7 +1327,10 @@ def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> So
     # A basis change OUTSIDE the window is not this window's problem: every point in it then sits on
     # one basis and the ordinary reading is correct. Only a break INSIDE it makes the endpoints
     # incomparable — so the factor alone never suppresses a trend, its LOCATION does.
-    factor = share_basis_change(extract_points(facts, "eps_diluted"))
+    # the filer's own currency: a restatement's factor is a ratio no currency moves (Canopy's 10:1
+    # consolidation read as a buyback when the EPS was read in dollars, round 1 of #844)
+    factor = share_basis_change(extract_points(facts, "eps_diluted", currency=REPORTING,
+                                               as_of=reference_date))
     brk = _basis_break(recent, factor) if factor else None
     if brk is not None:
         return _split_straddled_trend(recent, brk, factor or 0.0)
@@ -2714,7 +2717,7 @@ def _sbc_line(facts: dict[str, Any], reference_date: date) -> SbcLine | None:
     gaap = (facts.get("facts") or {}).get("us-gaap") or {}
     if _SBC_TAG not in gaap:
         return None
-    if (cur := foreign_currency(facts)) is not None:
+    if (cur := foreign_currency(facts, reference_date)) is not None:
         why = currency_withheld(cur)
         return SbcLine(expense=Sourced[float].unknown(note=why),
                        pct_revenue=Sourced[float].unknown(note=why),
@@ -5136,7 +5139,7 @@ def _primary_source(
                   or [f for f in edgar.recent_filings(cik, forms=("20-F", "40-F"))[:1]
                       if f.form == "20-F"])
             periodic_form = qs[0].form if qs else periodic_form
-            cur = foreign_currency(facts) if facts is not None else None
+            cur = foreign_currency(facts, reference_date) if facts is not None else None
             if qs and cur is not None:
                 qa.append(f"primary-source: {periodic_form} {qs[0].accession} sections not read "
                           f"— {currency_withheld(cur)}")

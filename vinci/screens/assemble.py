@@ -493,9 +493,10 @@ def enrich_with_fundamentals(
     cik = rec.identity.cik
     snap = edgar.fundamental_snapshot(cik)
     facts = edgar.companyfacts(cik) if cik else {}
-    # the filer's own currency: the percentile is currency-free and the level is withheld when it
-    # is not USD (pe_current_and_percentile)
-    annual_eps = ([p for p in extract_points(facts, "eps_diluted", currency=REPORTING)
+    # the filer's own currency as of the reference date: the percentile is currency-free and the
+    # level is withheld when it is not USD (pe_current_and_percentile)
+    annual_eps = ([p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
+                                             as_of=reference_date)
                    if p.is_annual] if facts else [])
     pe, pe_pctile = pe_current_and_percentile(price_bars, annual_eps, reference_date=reference_date,
                                               ads=rec.ads)

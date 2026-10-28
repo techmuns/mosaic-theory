@@ -1074,7 +1074,7 @@ class Pipeline:
         done: list[tuple[str, str]] = []
         try:
             get_prices = prices or polygon_prices()
-            get_eps = eps or edgar_eps()
+            get_eps = eps or edgar_eps(as_of)
             get_deep = deep or (tiingo_deep(self.paths.http_cache)
                                 if prices is None and os.environ.get("TIINGO_API_KEY") else None)
             for tid in list(dict.fromkeys(thesis_ids or self._active_ids())):

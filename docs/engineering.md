@@ -129,9 +129,10 @@ PR (CLAUDE.md: coin-time translation).
   words: *the reporting currency is the currency a filer's statements are in, counted on its
   balance-sheet totals in its newest annual report. A convenience translation is the USD figure
   many foreign filers tag beside their own: their newest year, at one period-end rate. The shared
-  XBRL reader serves money facts in USD only, and only for a filer reporting in USD; a reader asks
-  for `currency=REPORTING` only when the currency cannot move its answer (a percentile, a period's
-  dates).* Home: `vinci/edgar/concepts.py` (`reporting_currency`, `points_for_tag`).
+  XBRL reader serves money facts in USD only, and only for a filer reporting in USD, judged as of
+  the reader's own date; a reader asks for `currency=REPORTING` only when the currency cannot move
+  its answer (a percentile, a split factor), and `currency=EVERY` for a period's dates.* Home:
+  `vinci/edgar/concepts.py` (`reporting_currency`, `points_for_tag`).
 - **Outcome layer / outcome fence** (2026-10-26). Plain words: *the outcome layer is the code that
   computes or writes forward returns — `vinci.scoring` (the spread at each horizon), `vinci.ledger`
   (verdict writes) and `vinci.monitor` (excess returns, the interim spread, realized P&L). An

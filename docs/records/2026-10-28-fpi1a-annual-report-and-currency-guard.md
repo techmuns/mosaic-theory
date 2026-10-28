@@ -19,15 +19,18 @@ FPI3 (#841). It does two things, in one PR because the first is unsafe without t
   - **`reporting_currency(facts)`**: the currency the filer's statements are in, counted on its
     balance-sheet totals (`Assets`, `Liabilities`, `LiabilitiesAndStockholdersEquity`,
     `StockholdersEquity`) in its newest annual report. It never reads the unit of one fact: QFIN's
-    newest balance sheet carries CNY twice and its USD translation once.
+    newest balance sheet carries CNY twice and its USD translation once. **It is judged as of the
+    reader's own date** (`as_of`, round 1): a read at a reference date gets the currency the filer
+    reported in then.
   - **`points_for_tag` serves a money fact only in USD, and only for a filer reporting in USD.**
     A USD reporter loses its foreign figures (AQN's CAD statements from before it moved to USD).
     A filer reporting in another currency gets NO money fact, its USD convenience translation
     included: that is its newest year at one period-end rate, an FX policy, and FPI1b's to rule
     on. A unit with no currency (shares, pure) is served either way.
   - **`currency=REPORTING`** serves the filer's own currency, for a reading the currency cannot
-    move. It is used in exactly two places: the EPS series every P/E percentile ranks, and the
-    fiscal calendar (`_own_periods`, dates only).
+    move: the EPS series every P/E percentile ranks, and the EPS restatement the share-count
+    trend's split guard reads (round 1). **`currency=EVERY`** serves every unit, for the fiscal
+    calendar's dates only (`_own_periods`, round 1).
   - **The P/E level** (`pe_current_and_percentile`, shared by the screen, the dossier, the
     peer-cohort command and the theme desk): an EPS in another currency leaves the level UNKNOWN,
     naming the currency. The percentile is kept: one series in one currency ranks the same in any.
@@ -140,7 +143,7 @@ figure, it is one line, in `_served_currency`.
    document and 106 none (their contracts are incorporated by reference); ASR's carries page
    images named inside one. 48 of 63 latest 40-Fs carry 99.x exhibits and none carries a
    material-contracts class.
-7. **Pins** (`tests/test_fpi1a_annual_report_currency.py`, 25, every one on a real filing):
+7. **Pins** (`tests/test_fpi1a_annual_report_currency.py`, 28 with round 1's three, every one on a real filing):
    - **Positive:** a USD reporter's dollars still read; QFIN's own CNY revenue is there under
      `REPORTING`; the same EPS in dollars makes a level; AQN's 40-F SBC ($13.0M); ARCO's 20-F
      segments (three divisions); ARCO's seven Exhibit 4.x contracts; a 20-F or 40-F as the
@@ -156,7 +159,7 @@ figure, it is one line, in `_served_currency`.
      - #749's LPL net debt, now withheld (above);
      - a hand-rolled `Filing` stand-in given the real type's `form`;
      - the SBC note pin, matching the new wording.
-8. **Mutations: 24 tried, 24 red.**
+8. **Mutations: 29 tried, 29 red** (24 in round 0, 5 in round 1).
    - **The reader:** every currency served; the translation served; the currency counted over
      every filing; the currency read off the newest fact's unit; the fiscal calendar in dollars.
    - **The P/E and snapshot:** a foreign EPS makes a level; the screen reads EPS in dollars; the
@@ -169,6 +172,55 @@ figure, it is one line, in `_served_currency`.
    - **Material contracts and sections, the first cut:** read on an old 20-F.
    - **Sections:** no 20-F fallback; a 20-F before a 10-Q; a yuan reporter's 20-F read.
    - **Graph:** 10-K only.
+   - **Round 1:** the split guard reads EPS in dollars; the currency judged on today's filings
+     (in `reporting_currency`, and in SBC's own check); the screen reads EPS without its date; the
+     fiscal calendar in the reporting currency.
+
+**ROUND 1** (an independent read-only review on #844 by the coordinating session, in place of
+Codex, whose first request failed on its usage limit). Three FIXes, each behind a pin that failed
+first on 98aed1a1, in one commit:
+1. **The split guard lost its input for a non-USD reporter.** `_share_count_trend` fed
+   `share_basis_change` EPS read in dollars, which is empty for a CAD reporter, so the trend
+   printed with no split guard. As of 2025-06-30 Canopy Growth printed "buying back (trailing
+   ~1.8y): 717,196,302 → 185,192,210, −74.2%" across its 10:1 consolidation. It now reads the
+   filer's own currency (a factor is a ratio) and prints "diluting over ~1.3y since a ~10.0x
+   share-basis change at 2024-02-07 … 91,114,604 → 185,192,210, +103.3%". Pin: a cut of Canopy's
+   real companyfacts, rows filed by 2025-06-30. `_pe_reconciliation` reads EPS in dollars too, and
+   is unreachable for a non-USD reporter: it returns when the P/E level is UNKNOWN, and
+   `assemble_mechanical` sets the level through `_at_latest_close` first.
+2. **The currency was judged on today's filings while values were cut at the reader's date.** As
+   of 2021-06-30, JOYY's SBC read "$97.468M (20-F, FY2020)", a USD translation of
+   CNY 635,976,000, and its P/E level divided by EPS 0.92, the translation of CNY 6.00 (60 ÷ 0.92 =
+   65.2× on a flat $60). One rule at one depth: `reporting_currency(facts, as_of)` judges the rows
+   filed by the reader's date, and every dated reader passes its own: the screen, the dossier's
+   current close, the peer-cohort command, the theme desk (`edgar_eps(as_of)`), SBC, the
+   primary-source pass and the split guard. Pins: JOYY as of 2021-06-30 withholds both, naming
+   CNY. A read as of today keeps JOYY's old USD translations in its USD series, because on that
+   date it reports in USD; reading each bar in its own date's currency would rebuild the
+   CNY/USD-mixed series this build removed.
+3. **A fiscal year stated in a filer's old currency lost its label.** `_own_periods` read only the
+   reporting currency, so Algonquin's fiscal years 2011–2017 (its CAD 40-Fs), and others such as
+   NewAmsterdam's FY2022 comparative, would be labelled by their end date. Dates carry no currency:
+   it reads every unit (`EVERY`), as it did before this build. Pin: Algonquin's 2012 and 2015.
+
+**Round 1 re-ran real run 1 on both code bases (base 68da34ae, the branch with round 1).**
+- Every count above is unchanged: 0 fields move on the 2,259 USD-or-no-currency reporters, the
+  same 14 P/E levels are withheld, and no percentile and no G3 outcome moves.
+- Its only difference from round 0's after-run is the reason's wording, on 332 notes.
+- **Labels too:** `fiscal_calendar` and `fiscal_year_ends`, which `edgar_fundamentals` and `anchor`
+  label years with, are identical to the base on all 2,349 issuers.
+- **The gate run (run 3) stands.** Round 1 judges SBC's and the sections' currency at the read's
+  date (2026-10-16) instead of on the filings fetched by 2026-10-28. On 263 primary FPI lines with
+  companyfacts, no currency differs between the two dates.
+
+**DEFER (recorded, no row: it fails loud and no committed page is a 20-F page).**
+`refresh.cross_check_transform` (`refresh.py:1520`) looks for a page's filing among 10-Q filings
+only. A page whose `primary_source.filing` is a 20-F falls back to the latest companyfacts instant,
+and the wall check then refuses.
+
+**Reported, not fixed (found reproducing item 1).** `_share_count_trend` keeps share points dated
+AFTER its reference date: on Canopy's full companyfacts at 2025-06-30, the trend runs to
+2026-06-11. That is a lookahead in the window, older than this build.
 
 **BOUNDARY.**
 - The screen-field counts are over the 2026-10-16 primary universe (2,065, in_universe=1) and the
