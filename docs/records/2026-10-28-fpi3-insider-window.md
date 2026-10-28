@@ -294,7 +294,18 @@ queue):*
 4. **A cover with no usable tag and a blank EDGAR code leaves the jurisdiction unread**, and the
    line says so. Printed text is not parsed. On 2026-10-28 that is BLX of the 255 primary FPIs
    (its "PA" is refused), and IBN in the theme band (its 20-F is not inline XBRL).
-5. **No annual report in the `recent` block reads as domestic** (today's behaviour). This covers
+5. **Section 12 registration is not checked** (Codex, #841 round 2, DEFERRED). The HFIAA reaches
+   the insiders of an FPI with a class registered under Section 12; a 20-F can also be filed
+   under Section 15(d) alone, and such an issuer owes no Forms 3/4/5.
+   - Measured over the 255 primary FPIs' latest annual covers: 251 tag a Section 12(b) security
+     (`dei:Security12bTitle`). The other 4 (TAC, TGB, AUGO, BTQ) print one: NYSE, NYSE American,
+     Nasdaq, Nasdaq. None is 15(d)-only, and none is in the queue.
+   - So no real issuer makes the defect fail, and a synthetic one would be the fixture shaped to
+     the test that CLAUDE.md forbids.
+   - FALSIFIER: an FPI with no Section-12 class, in an order's jurisdiction, labelled "May report
+     abroad". The fix then is a Section-12 check on the cover's 12(b)/12(g) tags before the
+     HFIAA window applies.
+6. **No annual report in the `recent` block reads as domestic** (today's behaviour). This covers
    an issuer with no periodic report yet (#837 lists OGC, GORO, AYA and MDA) and a late filer
    whose last annual has rolled out of `recent`. None of the 83 names is either.
 
