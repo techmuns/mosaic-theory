@@ -148,21 +148,85 @@ order. No pipeline code is built here, and #828 (held by the operator) is not to
   - **The statute changed.** The Holding Foreign Insiders Accountable Act (enacted 2025-12-18,
     effective **2026-03-18**) brought FPI directors and officers under Section 16(a). 10% holders
     are not covered, and 16(b) still does not apply.
-  - **One exemption.** An SEC order of 2026-03-05 exempts insiders who report under the Canadian
-    (SEDI, NI 55-104), Chilean, EEA, Korean, Swiss or UK regimes.
+  - **Two exemptive orders, both in force by 2026-10-16** (each read at sec.gov; the SEC's HFIAA
+    page, last updated 2026-05-20, lists these two and no other). An order exempts the directors
+    and officers of an FPI that is incorporated in a qualifying jurisdiction AND subject to a
+    qualifying regulation, provided they report under that regulation:
+    - **34-104931, 2026-03-05:** Canada (NI 55-104, SEDI), Chile, the EEA, Korea, Switzerland
+      and the UK.
+    - **34-105517, 2026-05-20:** Australia, India and Singapore. Australia's regulation covers
+      directors only, so an Australian FPI's officers still file Forms 3/4. Singapore's covers
+      directors and the chief executive, so its other officers still file.
+    - *Round 1 (Codex P2): the first cut of this record named only the March order.*
   - **The filings show it.** Across the 419 20-F/40-F issuers measured, 208 filed their first
     Form 3 (read over each issuer's whole filing index) in March 2026, and there were 3,181
     Form 3s in that month alone (filings read back to 2025-01-01).
   - **Primary filers since 2026-03-18:** **170 of 192** 20-F filers and **2 of 63** 40-F
-    filers (Canadian, exempt) have filed Forms 3/4/5. In the queue: 25 of 33 20-F filers and 0 of
-    21 40-F filers.
-  - **Theme band:** 83 of 136 20-F filers and 4 of 39 40-F filers. The 20-F filers with none are
-    mostly from exempt regimes: ASML, SAP, NVO, BP, SHEL, KB, KT, SQM, NVS, UBS.
+    filers have filed Forms 3/4/5; 62 of the 63 40-F filers sit in a March-order jurisdiction.
+    In the queue: 25 of 33 20-F filers and 0 of 21 40-F filers.
+  - **Theme band:** 83 of 136 20-F filers and 4 of 39 40-F filers.
+  - **These counts do not change with the orders.** They count filings. What the orders change
+    is what an ABSENCE means, and from which date.
+  - **By order** (issuers). Jurisdiction is read in this order:
+    - EDGAR's state of incorporation: 314 of 419 issuers;
+    - where EDGAR leaves it blank, the annual report cover's own "Jurisdiction of incorporation
+      or organization": 97;
+    - the business address, a proxy: 8. Of these, ASR, BLDP and STVN have no country at all.
+
+    Each cell reads "issuers with Forms 3/4/5 since 2026-03-18 / issuers":
+
+    | population, form | March-order jurisdiction | May-order jurisdiction | neither |
+    |---|---:|---:|---:|
+    | primary 20-F (192) | 21 / 39 | 5 / 6 | 144 / 147 |
+    | primary 40-F (63) | 2 / 62 | — | 0 / 1 |
+    | theme 20-F (136) | 18 / 70 | 8 / 8 | 57 / 58 |
+    | theme 40-F (39) | 4 / 39 | — | — |
+
+    - **The two orders account for 166 of the 171 issuers with no Forms 3/4/5 since 2026-03-18**
+      (165 March, 1 May). The five they do not account for:
+      - DQ (Cayman Islands), IMOS (Taiwan), OMAB (Mexico) and HMY (South Africa) have filed no
+        insider form at all;
+      - BLDP's jurisdiction is unread.
+    - **Incorporation alone does not decide the exemption.** 23 March-order primary issuers and
+      22 theme issuers file anyway, among them BRSL, DOX, GLOB, IMTX, JMIA, TTAM, ARM, SPOT and
+      BNTX. The likeliest reason is that they are not subject to a qualifying regulation: a UK
+      company listed only in New York, for example, is outside UK MAR. EDGAR does not record
+      which regulation an issuer is subject to.
+    - **Ranked queue (54 20-F/40-F names):**
+      - March jurisdiction: 35 names, of which 8 file and 27 do not.
+      - May jurisdiction: IPX alone, and it files.
+      - Neither: 18 names, of which 16 file and 2 (BLDP, DQ) do not.
+  - **The May order shows in the filings, on its own date and with its own carve-outs.**
+    Forms 3/4/5 filed 2026-03-18 to 05-19, against 2026-05-20 to 10-16:
+    - India: HDB 25 → 0, IBN 26 → 0, RDY 19 → 0, INFY 20 → 3, WIT 13 → 2. RNW (incorporated
+      in India, not listed there) 13 → 12.
+    - Australia, where directors are exempt and officers still file: BHP 15 → 3, WDS 18 → 1,
+      IPX 22 → 7, MESO 12 → 1, TLX 12 → 1.
+    - Singapore: GRAB 26 → 27 and KARO 4 → 12, with no exemption visible. BWLP filed none in
+      either period.
+    - **A business address is not a jurisdiction.** CYD and JOYY carry Singapore addresses,
+      but their covers state Bermuda and the Cayman Islands. The address proxy would have put
+      both under the May order. The first pass of this round did exactly that; it was replaced
+      by the cover read.
+    - **Issuers that move from "window from 2026-03-18" to "may report abroad from
+      2026-05-20":** the 14 incorporated in Australia, India or Singapore. They are BHP, BWLP,
+      GRAB, HDB, IBN, INFY, IPX, KARO, MESO, RDY, RNW, TLX, WDS and WIT. Each is subject to the
+      regulation condition and to its regime's person carve-out.
+    - **In the queue that is IPX (29) alone.** From 2026-05-20 its directors may report in
+      Australia, and its officers still file Forms 3/4.
   - **What FPI3 now is:**
     - the insider scan's 2-year window (`mechanical.py:2802`) must state that an FPI's insiders
       report only from 2026-03-18, because absence before that date is not "no activity";
-    - insiders under an exempt regime need an explicit "reports abroad" state, not "no Form 4
-      filings".
+    - an insider exempt under an order needs an explicit "reports under <regulation>" state,
+      not "no Form 4 filings". The state is TIME-VARYING: from 2026-03-05 for the March
+      jurisdictions and from 2026-05-20 for the May ones, so an Indian issuer's Forms 4 up to
+      2026-05-19 are real and their absence afterwards is not;
+    - it is PERSON-VARYING: for Australia, directors only; for Singapore, directors and the CEO;
+    - and it is NOT decidable from EDGAR alone. Incorporation is readable, but whether the
+      issuer is subject to the regulation is not. The honest default is to treat the filings
+      as the evidence: an issuer whose insiders file Forms 3/4 is read; one in an order's
+      jurisdiction that files none is labelled "may report under <regulation>", never "no
+      activity".
 - **The screen reads foreign EPS.** Measured, reported, not fixed.
   - **What the screen does.** Its G3 P/E (`screens/assemble.py:302`) divides the USD price per
     ADS by whatever annual diluted EPS `annual_eps_point_as_of` picks.
@@ -214,8 +278,12 @@ ranked queue).
      CNY 19.2bn as $19.2bn.
    - **Unlocks:** Tier 1 annual EDGAR blocks, 66 primary names (11 in the queue).
 3. **FPI3 restated: insider scan windowed and labelled.**
-   - **The build:** start an FPI's window at 2026-03-18, and give exempt-regime insiders a
-     "reports under <regime>" state.
+   - **The build:**
+     - start an FPI's window at 2026-03-18;
+     - carry both exemptive orders as data, each with its effective date (2026-03-05 and
+       2026-05-20), its jurisdictions and its person carve-outs;
+     - label an issuer in an order's jurisdiction that files no Form 3/4 "may report under
+       <regulation> from <date>", read from the filings, never "no activity".
    - **Cost:** cheap, and independent of 1–2.
 4. **FPI2, 6-K at the dossier and structural-scan altitudes.**
    - **The build:** 6-Ks as unclassified events. A 6-K carries no item code, so it is
@@ -235,8 +303,8 @@ ranked queue).
 **FPI5 may need no build, but that is UNVERIFIED.** The operator can export Tier 1–3 workbooks
 in USD (CIQ converts), and `require_usd` passes them. No foreign filer's USD export has yet been
 run through the parser, so the first one is a pilot: it must assemble on a real page before this
-is believed (off-December fiscal years are MC4's, and IFRS line labels are untested). A native-currency reader is worth building only after
-step 6's ruling, and only if native exports are wanted.
+is believed (off-December fiscal years are MC4's, and IFRS line labels are untested). A native-currency
+reader is worth building only after step 6's ruling, and only if native exports are wanted.
 
 **Not reached by #828's words, and not by any tier.** OGC, GORO, AYA and MDA have filed no
 periodic report. Each has furnished an interim-results 6-K in the window. Their first annual
@@ -269,9 +337,15 @@ report tiers them.
   income figures, but not a results release. The issuer-level answer still holds, because
   Butterfield furnishes quarterly results. **A "found" can therefore be a near-miss document; a
   "not found" means not found under this test, not that none exists.**
-- **The Section-16 statute and order** were checked against law-firm summaries of the HFIAA and
-  of the SEC's 2026-03-05 order. The order's own text was not read; its jurisdiction list should
-  be checked against it before step 3 is built.
+- **The Section-16 statute and orders.**
+  - The HFIAA was checked against law-firm summaries.
+  - Both exemptive orders were read at sec.gov in round 1: Release 34-104931 (2026-03-05) and
+    Release 34-105517 (2026-05-20), the latter cited by Codex. The SEC Division of Corporation
+    Finance's HFIAA page lists those two as the Commission-approved orders and no other ("Last
+    Reviewed or Updated: May 20, 2026").
+  - **Jurisdiction is read from the issuer's own filings.** Where EDGAR's state of
+    incorporation is blank, the annual cover's own jurisdiction is used. A business address is
+    used only for 8 issuers, and it is named as a proxy, because it was wrong for CYD and JOYY.
 - **Scripts:** session scratchpad, `stage1_populations.py` → `stage5_final.py`. Not committed;
   this PR carries only the record and the STATE row.
 
@@ -290,8 +364,10 @@ report tiers them.
 - **Windows:**
   - 6-Ks: 183 days to 2026-10-16, up to 40 per issuer.
   - 6-K XBRL interim facts: filed in the 365 days to 2026-10-16, duration 80–280 days.
-  - Section-16 filings: Forms 3/4/5 and their amendments, filed 2026-03-18 to 2026-10-16. The
-    month histogram runs from 2025-01-01.
+  - Section-16 filings: Forms 3/4/5 and their amendments, filed 2026-03-18 to 2026-10-16, split
+    at 2026-05-20 for the May-order issuers. The month histogram runs from 2025-01-01. The
+    by-order table counts ISSUERS within each population; the jurisdiction is read as of each
+    issuer's submissions and latest annual cover.
   - The screen's EPS-unit history: weekly, over 1,825 days to 2026-10-16.
 - **Units:**
   - Tier counts are LINES. The 419 in the Section-16 histogram are ISSUERS.
