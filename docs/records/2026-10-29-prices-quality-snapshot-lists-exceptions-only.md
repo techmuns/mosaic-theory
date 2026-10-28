@@ -116,12 +116,14 @@ prs: []
     2026-10-29 00:19 IST into this session's scratchpad. The primary's file was not written; its
     mtime stayed 2026-10-28 22:04. The backup was linked into the worktree, and the primary's
     `data/cache/tiingo` (192 entries) was copied beside it.
-  - **The command.** `vinci audit quality --source prices --write` at `bbd563cb`, 31 seconds.
+  - **The command.** `vinci audit quality --source prices --write`, first at `bbd563cb` (31
+    seconds), then again at `63d80e94` after the review fixes changed `rows.statement`. Every
+    count below is the same in both runs; the committed point is the second.
   - **What it read.** 2,440 names; 2,572,227 bars; 1,236 market sessions 2021-09-01 → 2026-08-05
     (+43 partial); inputs sha256 `490f24d4…`.
-  - **What it wrote.** The full card, 2,663,626 bytes, at
+  - **What it wrote.** The full card, 2,663,520 bytes, at
     `data/data_quality_full/prices/2026-10-29.json`; its sha256 equals `rows.full.sha256`. The
-    snapshot, 73,136 bytes (2.75% of the full card), equals `core.compact` of the full card as
+    snapshot, 73,046 bytes (2.74% of the full card), equals `core.compact` of the full card as
     re-read. 164 rows listed across nine checks; each equals its full-card row.
 
 | check | unit | fleet units: confirmed / unexplained / unchecked / excluded | names: run / not run / n/a | listed | counted |
@@ -144,6 +146,9 @@ prs: []
       serves a symbol at the cap only when the key has already looked it up in the month (#839's
       `TiingoBudget`), so these added no new symbol to October's count.
     - The first new symbol after them was refused, and nothing more was asked.
+    - The re-run at `63d80e94` asked Tiingo for nothing the cache held (the 18 were kept on the
+      first run), was refused once more on the first new symbol, and read the same rows: its
+      inputs sha256 is the same `490f24d4…`.
     - That leaves `not_run` by name: on `step_vs_tiingo`, 32 names "not asked: monthly symbol
       limit", 1 refused, and 4 "Tiingo was not read for this name"; on `zero_volume_vs_tiingo`, 3
       "not read".
@@ -166,6 +171,11 @@ prs: []
 | the snapshot names the full card's own bytes | one byte appended to the full card | the command pin (sha) |
 | a card that does not reconcile writes nothing | the `continue` removed | the write-nothing pin |
 
+- **Review** (`/code-review high --fix`): 6 findings. 4 fixed, each behind a pin: a same-day
+  re-run now says when it REPLACES the full card a snapshot names; `listing` is stated after
+  every count is in place; a fleet-versus-boundary mismatch names itself; `rows.statement`
+  names the no-unit-judged case. 2 skipped: a `Literal` type for `committed_rows` (validated at
+  discovery already), and the ignore pin's need for a git checkout (the suite runs in one).
 - **Gate.**
   - `ruff check .` clean, and `mypy --strict vinci` clean (216 source files with the new test).
   - `tests/test_quality_prices.py` carries three `mypy --strict` errors from before this build
@@ -178,7 +188,7 @@ prs: []
   one row per (check, name).
 - **Real-run counts:** the primary-store backup as of 2026-10-29 00:19 IST, after #842's
   re-filing and #846's restatement. Population: every security with bars, 2,440. Bars dated
-  2021-09-01 → 2026-08-05. Code at `bbd563cb`.
+  2021-09-01 → 2026-08-05. Code at `bbd563cb` and `63d80e94`, the same counts at both.
   - **A series boundary, not a quality change.** The three earlier points read a different store:
     the research-alpha copy, 2,797 names, latest bar 2026-10-16. The 2026-10-29 point's reads line
     names its own store, and the two must not be read as one series.
