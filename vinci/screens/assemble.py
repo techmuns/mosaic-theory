@@ -25,6 +25,7 @@ from vinci.schemas.data_record import (
     TypedEvent,
 )
 from vinci.schemas.envelope import DataField, SourceTier
+from vinci.schemas.listing import AdsRatio
 from vinci.schemas.market import PriceBar
 
 # PUBLIC detector params — the dossier's DrawdownCause carries them so the frontend can mark the
@@ -269,11 +270,47 @@ def pe_current_and_percentile(
     *,
     reference_date: date,
     min_points: int = _PE_MIN_POINTS,
+    ads: AdsRatio | None = None,
 ) -> tuple[DataField[float], DataField[float]]:
     """(current P/E, percentile of current P/E within its trailing range). Each may be UNKNOWN.
 
     The percentile defers to UNKNOWN unless ≥ ``min_points`` P/E observations exist in the trailing
-    window — a too-short range cannot reliably establish "at floor"."""
+    window — a too-short range cannot reliably establish "at floor".
+
+    A DEPOSITARY LINE (``ads`` set, FPI4) is priced per ADS while its filer reports EPS per
+    ordinary share, so the LEVEL is price ÷ (EPS × ordinary shares per ADS) — QFIN's screened P/E
+    read 5.67 ÷ 22.01 = 0.258x on a CNY EPS before; the ratio alone moves it ×½. A ratio the filing
+    does not state leaves the level UNKNOWN with the refusal's reason. THE PERCENTILE IS
+    RATIO-FREE: every observation in the line's own range divides by the same constant, so it ranks
+    identically with or without the ratio and is kept either way — refusing it would refuse a
+    reading the ratio cannot move. (The CURRENCY of the EPS is not this argument's business: a
+    CNY EPS against a USD price is FPI1a's unit guard.)"""
+    pe, pct = _pe_pair_per_reported_share(price_bars, annual_eps, reference_date=reference_date,
+                                          min_points=min_points)
+    if ads is None or pe.value is None:
+        return pe, pct
+    if not ads.known or ads.ordinary_per_ads is None:
+        return DataField.unknown(
+            source="EDGAR", tier=SourceTier.DERIVED,
+            note=(f"per-ADS P/E withheld — {ads.describe()}; the filer's EPS is per ordinary "
+                  f"share and the price is per ADS")), pct
+    per_ads = DataField.present(
+        pe.value / ads.ordinary_per_ads, as_of=pe.as_of or reference_date, source="EDGAR",
+        tier=SourceTier.DERIVED,
+        note=(f"{pe.note} — per ADS: EPS per ordinary share × {ads.ordinary_per_ads:g} "
+              f"({ads.source}, {ads.form} {ads.accession})"))
+    return per_ads, pct
+
+
+def _pe_pair_per_reported_share(
+    price_bars: list[PriceBar],
+    annual_eps: list[ConceptPoint],
+    *,
+    reference_date: date,
+    min_points: int,
+) -> tuple[DataField[float], DataField[float]]:
+    """The P/E pair with the price and the EPS taken as the filer reports them — one unit, as for
+    every line that is not a depositary receipt (:func:`pe_current_and_percentile`)."""
     bars = sorted(price_bars, key=lambda b: b.bar_date)
     cur_pt = annual_eps_point_as_of(annual_eps, reference_date)
     cur_price = _close_on_or_before(bars, reference_date)
@@ -438,7 +475,8 @@ def enrich_with_fundamentals(
     snap = edgar.fundamental_snapshot(cik)
     facts = edgar.companyfacts(cik) if cik else {}
     annual_eps = [p for p in extract_points(facts, "eps_diluted") if p.is_annual] if facts else []
-    pe, pe_pctile = pe_current_and_percentile(price_bars, annual_eps, reference_date=reference_date)
+    pe, pe_pctile = pe_current_and_percentile(price_bars, annual_eps, reference_date=reference_date,
+                                              ads=rec.ads)
     # EV/EBITDA — the multiple and its trailing-range percentile are both DEFERRED (need net-debt).
     # The multiple stays UNKNOWN: do NOT write EBITDA *dollars* (``snap.ebitda_annual``) into a
     # field named for a multiple — that mislabel traps any reader (the dossier sources it from CIQ).

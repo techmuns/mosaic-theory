@@ -151,7 +151,8 @@ def test_assembly_actually_writes_the_field() -> None:
         "Financial Data": [["As-Of Date:", "2026-06-25"], [], ["Ticker", "Name"]]}})
 
     record = types.SimpleNamespace(
-        identity=types.SimpleNamespace(internal_id="X", eod_symbol="X", cik=None))
+        identity=types.SimpleNamespace(internal_id="X", eod_symbol="X", cik=None),
+        ads=None)  # not a depositary line (FPI4, 2026-10-28)
     store = types.SimpleNamespace(get_price_history=lambda _iid: [])
 
     si = mech._stock_info(

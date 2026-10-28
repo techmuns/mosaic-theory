@@ -110,6 +110,7 @@ from vinci.resolver import EntityResolver, ResolutionError
 from vinci.resolver.index import pad_cik
 from vinci.schemas.data_record import DataRecord, Identity
 from vinci.schemas.envelope import CoverageStatus, DataField, SourceTier
+from vinci.schemas.listing import AdsRatio
 from vinci.schemas.market import PriceBar
 from vinci.screens.assemble import (
     DECLINE_WINDOW_DAYS,
@@ -213,7 +214,8 @@ def _at_latest_close(record: DataRecord, store: Store, edgar: EdgarClient) -> Da
         pct = pe
     else:
         annual_eps = [p for p in extract_points(facts, "eps_diluted") if p.is_annual]
-        pe, pct = pe_current_and_percentile(bars, annual_eps, reference_date=bar.bar_date)
+        pe, pct = pe_current_and_percentile(bars, annual_eps, reference_date=bar.bar_date,
+                                            ads=record.ads)
     return record.model_copy(update={
         "prices": record.prices.model_copy(update={"last": last}),
         "fundamentals": f.model_copy(update={"pe": pe, "pe_pctile_vs_history": pct})})
@@ -3402,6 +3404,21 @@ def _shares_max_age(edgar: EdgarClient, cik: str | None, as_of: date) -> int:
     return _SHARES_MAX_AGE_ANNUAL_DAYS if annual_only else _SHARES_MAX_AGE_DAYS
 
 
+def in_traded_units(count: float | None, ads: AdsRatio | None) -> tuple[float | None, str | None]:
+    """(count, refusal) — an ORDINARY-share count in the unit the line TRADES in (FPI4).
+
+    Unchanged for a line that is not a depositary receipt (``ads`` None). Divided by ordinary
+    shares per ADS for one whose filing states its ratio. None, with the refusal's reason, for one
+    whose filing does not: an ordinary count beside an ADS price is wrong by exactly the ratio
+    nobody stated, so it is withheld rather than shown."""
+    if count is None or ads is None:
+        return count, None
+    if not ads.known or not ads.ordinary_per_ads:
+        return None, (f"share count withheld: the line trades per ADS and the issuer's filing "
+                      f"does not state its ratio — {ads.describe()}")
+    return count / ads.ordinary_per_ads, None
+
+
 def _edgar_shares_outstanding(
     edgar: EdgarClient, cik: str | None, *, as_of: date | None = None
 ) -> float | None:
@@ -5202,13 +5219,22 @@ def _stock_info(
         staleness_days=get_config().price_staleness_days, market_cap=cap_val)
     sym = record.identity.eod_symbol
     shares = _edgar_shares_outstanding(edgar, record.identity.cik, as_of=reference_date)
+    shares_src = "EDGAR XBRL shares outstanding"
+    refused: str | None = None
+    if record.ads is not None:
+        # A DEPOSITARY LINE: the count every reader sets beside the price is in ADSs (FPI4). The
+        # CIQ bridge below is not taken for one — which unit its panel counts in is not stated.
+        ordinary = shares
+        shares, refused = in_traded_units(shares, record.ads)
+        if shares is not None and ordinary is not None:
+            shares_src = (f"EDGAR XBRL shares outstanding {ordinary:,.0f} ordinary ÷ "
+                          f"{record.ads.ordinary_per_ads:g} — {record.ads.describe()}")
     # THE DEPTH-STAGE BRIDGE, and only when EDGAR has nothing usable. A multi-class filer may stop
     # tagging the undimensioned cover-page count altogether (Visa: nothing since 2010, across a
     # 4-for-1 split), and the CIQ panel then carries the only current basis we have. It is taken
     # from the SAME ROW as the cap, so cap ÷ shares reproduces that panel's own close and the
     # reconciliation is coherent by construction rather than by luck.
-    shares_src = "EDGAR XBRL shares outstanding"
-    if not (shares and shares > 0):
+    if record.ads is None and not (shares and shares > 0):
         bridged = ciq_sheets.comps_shares_outstanding(bundle)
         if bridged.status is SourceStatus.PRESENT and (bridged.value or 0) > 0:
             shares = bridged.value
@@ -5225,8 +5251,12 @@ def _stock_info(
             Sourced.present(float(shares), source_ref=shares_src)
             if shares and shares > 0
             else Sourced.unknown(
-                note="no usable share count — the EDGAR cover-page tag is absent or older than "
-                     f"{_SHARES_MAX_AGE_DAYS}d, and no CIQ Financial Data panel supplies one")),
+                note=refused or (
+                    "no usable share count — the EDGAR cover-page tag is absent or older than "
+                    f"{_SHARES_MAX_AGE_DAYS}d" + (
+                        "; the CIQ panel is not read for a depositary line, whose unit it does "
+                        "not state" if record.ads is not None
+                        else ", and no CIQ Financial Data panel supplies one")))),
         book_value_ps=ciq_sheets.book_value_per_share(bundle),
         market_cap=market_cap,
         as_of=feats.last.as_of,
@@ -5234,6 +5264,7 @@ def _stock_info(
         # dates sit on the Snapshot line — a live close and a frozen panel — and until now only
         # the price's was structured, so the clause-(e) label borrowed a neighbouring panel's.
         market_cap_as_of=ciq_sheets.comps_as_of_date(bundle)[0],
+        ads_ratio=record.ads,
     )
 
 
@@ -5444,8 +5475,9 @@ def assemble_mechanical(
             # against `date.today()`, so a name whose cover-page count sits near the bound would
             # get a short-interest denominator depending on WHEN the build ran — a re-assembly
             # flipping with no data change, in a repo whose whole point is as-of discipline.
-            shares_out=_edgar_shares_outstanding(
-                edgar, record.identity.cik, as_of=reference_date)),
+            # in ADSs for a depositary line: FINRA counts the short position in the traded unit
+            shares_out=in_traded_units(_edgar_shares_outstanding(
+                edgar, record.identity.cik, as_of=reference_date), record.ads)[0]),
     )
     valuation = _valuation(
         record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None,

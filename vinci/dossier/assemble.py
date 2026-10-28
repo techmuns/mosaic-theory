@@ -898,6 +898,24 @@ def _assembly_anchor(mech: dict[str, Any], *, facts: dict[str, Any], bundle: Ciq
     return anchor.model_copy(update={"ciq_scale_check": scale})
 
 
+def _with_listing_basis(rec: DataRecord, *, resolver: Any, reference_date: date,
+                        security_types: dict[str, str | None]) -> DataRecord:
+    """The record with its LISTING BASIS (FPI4): a depositary line's ADS ratio as its own filing
+    states it, or the refusal — read through the SAME `screens.run.listing_basis` the screen uses.
+
+    BOTH DOSSIER ROUTES NEED IT (review of #840, Codex P1). A maintained name is assembled from
+    `_standalone_record`, which no screen touched, and a candidate stored before 2026-10-28 carries
+    no `ads` either — so without this a maintained ADR would publish its per-ordinary-share P/E and
+    share counts under a per-ADS price. A record that already carries a basis keeps it; a line the
+    reference feed does not type a depositary receipt stays None."""
+    if rec.ads is not None:
+        return rec
+    from vinci.screens.run import listing_basis
+
+    ads = listing_basis(security_types, resolver, reference_date)(rec.identity)
+    return rec if ads is None else rec.model_copy(update={"ads": ads})
+
+
 def assemble_one(
     fin: Finalist,
     *,
@@ -914,7 +932,13 @@ def assemble_one(
     # guard and the artifact disagree about when the build ran — a small window, but this contract
     # exists so that the number a page reports is the number its own guard applied.
     built_at = datetime.now(UTC)
-    rec = fin.data_record
+    # THE LISTING BASIS, whichever route supplied the record (FPI4): Polygon's one cached bulk
+    # type pull, the same the universe sizes on
+    from vinci.eod import PolygonEodClient
+
+    rec = _with_listing_basis(
+        fin.data_record, resolver=resolver, reference_date=fin.reference_date,
+        security_types=PolygonEodClient.from_config(cfg).security_types())
     ticker = rec.identity.ticker
     bundle = CiqBundle.from_files(ticker, manual.files(ticker))
     location = manual.location(ticker)

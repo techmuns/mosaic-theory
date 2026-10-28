@@ -119,6 +119,12 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Listing basis / ADS ratio / traded unit** (2026-10-28, FPI4). Plain words: *a depositary
+  line (an ADR/GDR) trades in ADSs, its issuer reports per ordinary share, and the ADS ratio is how
+  many ordinary shares one ADS represents, as the issuer's own filing states it (QFIN 2, KT 0.5).
+  The traded unit is what the price is quoted in; a per-share figure is set against the price only
+  in that unit. A ratio the filing does not state is refused, never assumed 1:1.* Home:
+  `vinci/resolver/ads_ratio.py`, `vinci/schemas/listing.py`, `screens.run.listing_basis`.
 - **Outcome layer / outcome fence** (2026-10-26). Plain words: *the outcome layer is the code that
   computes or writes forward returns — `vinci.scoring` (the spread at each horizon), `vinci.ledger`
   (verdict writes) and `vinci.monitor` (excess returns, the interim spread, realized P&L). An

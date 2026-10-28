@@ -32,6 +32,7 @@ from pydantic import (
 
 from vinci.dossier.anchor import Anchor, check_decision_write, committed_anchor_block
 from vinci.dossier.midcycle import MidCycle
+from vinci.schemas.listing import AdsRatio
 from vinci.sleeves import DEFAULT_SLEEVE, UnknownSleeveError, require_sleeve
 
 T = TypeVar("T")
@@ -2190,6 +2191,11 @@ class StockInfo(BaseModel):
     #: panel, wrong on 11 of 11 names. Optional because committed dossiers predate the field and
     #: must stay readable; absent → the label prints NO cap date rather than a wrong one.
     market_cap_as_of: date | None = None
+    #: A DEPOSITARY LINE'S LISTING BASIS (FPI4): ordinary shares per ADS with the filing and quote
+    #: that state it, or the refusal. When set, ``shares_out`` is in ADSs — the unit the price is
+    #: in. None for a line that is not a depositary receipt, and on every page written before
+    #: 2026-10-28.
+    ads_ratio: AdsRatio | None = None
 
     model_config = {"frozen": True}
 
@@ -2889,6 +2895,8 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("", "ciq_currency"),
     # each panel maturity against the filings (`MaturityCheck`, 2026-10-27)
     ("capital_structure", "maturity_check"),
+    # a depositary line's ADS ratio (`StockInfo.ads_ratio`, FPI4, 2026-10-28)
+    ("stock_info", "ads_ratio"),
 )
 
 

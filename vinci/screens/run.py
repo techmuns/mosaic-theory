@@ -8,7 +8,7 @@ cheap-gates-gate-the-expensive-ones discipline made operational.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
@@ -18,7 +18,9 @@ from vinci.eod import EodClient, ingest_prices
 from vinci.eod.features import YEAR_DAYS, window_facts
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.schemas.candidate import CandidateRecord, GateResult, RoutingPolicy
-from vinci.schemas.envelope import DataField
+from vinci.schemas.data_record import Identity
+from vinci.schemas.envelope import DataField, SourceTier
+from vinci.schemas.listing import AdsRatio
 from vinci.schemas.market import PriceBar
 from vinci.screens.assemble import (
     DECLINE_WINDOW_DAYS,
@@ -61,10 +63,17 @@ def screen_universe(
     retain_dir: Path | None = None,
     policy: RoutingPolicy = RoutingPolicy.CARRY,
     first_sessions: Mapping[str, date] | None = None,
+    listing: Callable[[Identity], AdsRatio | None] | None = None,
 ) -> tuple[list[CandidateRecord], dict[str, int | str | None]]:
     """Refresh prices, lazily screen the universe, persist candidates; return them + stats.
     ``first_sessions`` (`aliases.load_first_sessions`) files each refreshed bar under the id that
     held its symbol that day (`eod.client.holders`).
+
+    LISTING BASIS (``listing``, FPI4). For each name that survives the price gates, the line's
+    ADS ratio — None for a line that is not a depositary receipt — rides on its record, so G3's
+    P/E level and every reader of the stored record (the dossier) divide a per-ADS price by a
+    per-ADS EPS. The weekly run passes :func:`listing_basis`; a caller that passes nothing screens
+    every line as its own unit, which is what this function did before 2026-10-28.
 
     RETENTION (``retain_run_id`` + ``retain_dir``, both or neither). Every name the screen TOUCHES
     gets a candidate row — all ~1,800, not the ~318 that survive. The gates ran on them, so the
@@ -159,6 +168,8 @@ def screen_universe(
             _keep(s.ticker, s.internal_id, rec, gates, bars)
             continue
         g1_survivors += 1
+        if listing is not None and (ads := listing(s)) is not None:
+            rec = rec.model_copy(update={"ads": ads})
         full = enrich_with_fundamentals(
             rec, edgar=edgar, price_bars=bars, reference_date=reference_date
         )
@@ -291,7 +302,49 @@ def _gate_inputs(rec: object, bars: list[PriceBar], *, window_start: dict[str, d
         # out would be the display-string re-parse this repo bans — left absent and said so,
         # rather than reconstructed.
         out[name] = _stamped(f, default_source="EDGAR")
+    # A DEPOSITARY LINE'S RATIO IS AN INPUT TO G3's LEVEL, so the row carries it with the filing
+    # that states it — or the refusal, value None, with its reason (FPI4). Through `_stamped`,
+    # like every other input.
+    ads = getattr(rec, "ads", None)
+    if isinstance(ads, AdsRatio):
+        out["ads_ratio"] = _stamped(_ads_field(ads), default_source="EDGAR")
     return out
+
+
+def _ads_field(ads: AdsRatio) -> DataField[float]:
+    """The ratio as the envelope every gate input is stamped from: ordinary shares per ADS with
+    the filing's date, accession and quote — or UNKNOWN with the refusal's reason."""
+    if ads.known and ads.ordinary_per_ads is not None and ads.filed is not None:
+        return DataField.present(
+            ads.ordinary_per_ads, as_of=ads.filed, source=f"EDGAR {ads.form} {ads.accession} "
+            f"({ads.source})", tier=SourceTier.EDGAR,
+            note=f"ordinary shares per ADS: “{ads.quote}”")
+    return DataField.unknown(
+        source=f"EDGAR {ads.form or 'no periodic report'} {ads.accession or ''}".strip(),
+        tier=SourceTier.EDGAR, note=ads.reason)
+
+
+def listing_basis(security_types: dict[str, str | None], resolver: Any,
+                  as_of: date) -> Callable[[Identity], AdsRatio | None]:
+    """The weekly run's ``listing`` for :func:`screen_universe`: None for a line the reference feed
+    does not type a depositary receipt, else the issuer's own ratio
+    (`EntityResolver.ads_ratio`), read once per issuer and kept for the run.
+
+    THE SAME TYPE TEST THE UNIVERSE SIZES ON (`universe.DEPOSITARY_TYPES`, #541), so a line sized on
+    its ADS count is exactly a line whose per-share figures are read per ADS — one notion of
+    "depositary line", never two."""
+    from vinci.universe import DEPOSITARY_TYPES
+
+    seen: dict[str, AdsRatio] = {}
+
+    def read(ident: Identity) -> AdsRatio | None:
+        if security_types.get(ident.eod_symbol) not in DEPOSITARY_TYPES:
+            return None
+        if ident.cik not in seen:
+            seen[ident.cik] = resolver.ads_ratio(ident.cik, as_of)
+        return seen[ident.cik]
+
+    return read
 
 
 def _deciding_cap(caps: dict[str, float], internal_id: str | None,
