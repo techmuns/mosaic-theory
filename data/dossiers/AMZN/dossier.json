@@ -4828,8 +4828,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 0 · sells 63 (8 insiders, $411.65M) — in the last 182 days · no purchase in the 3y scanned · last sale $0.25M, CEO Worldwide Amazon Stores, 2026-10-01 (~0mo ago) · largest sale $682.65M, Executive Chair, 2025-06-27 (~16mo ago) · grants 0 · last filing 2026-10-05 · other G×35/J×1/M×216",
-        "source_ref": "EDGAR Form 4 (latest 0001936006-26-000026; 247 filings in the 1095d scanned; counts over 182d)",
+        "value": "Open-market buys 0 · sells 63 (8 insiders, $411.65M) — in the last 182 days · no purchase in the 3y scanned · last sale $0.25M, CEO Worldwide Amazon Stores, 2026-10-01 (~0mo ago) · largest sale $682.65M, Executive Chair, 2025-06-27 (~16mo ago) · grants 0 · last filing 2026-10-05 · other G×35/M×216",
+        "source_ref": "EDGAR Form 4 (latest 0001936006-26-000026; 245 filings in the 1095d scanned; 2 more filed by this company as a holder of another issuer's stock, not counted; counts over 182d)",
         "status": "present",
         "note": null
       },
@@ -18125,6 +18125,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.quality"
+      ]
+    },
+    {
+      "date": "2026-10-28",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.catalyst_path"
       ]
     }
   ],

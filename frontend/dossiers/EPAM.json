@@ -4614,8 +4614,8 @@
         "note": null
       },
       "insider_activity": {
-        "value": "Open-market buys 6 (6 insiders, $0.04M) · sells 0 — in the last 182 days · last purchase $0.01M, CEO, President, Director, 2026-04-30 (~4mo ago) · last sale $1.03M, SVP/Co-Head of Global Business, 2025-12-10 (~8mo ago) · largest sale $5.69M, CEO, President, Chairman, 2024-03-14 (~29mo ago) · grants 58 · last filing 2026-09-03 · other F×123/G×15/M×14",
-        "source_ref": "EDGAR Form 4 (latest 0001538408-26-000006; 117 filings in the 1095d scanned; counts over 182d)",
+        "value": "Open-market buys 6 (6 insiders, $0.04M) · sells 0 — in the last 182 days · last purchase $0.01M, CEO, President, Director, 2026-04-30 (~4mo ago) · last sale $1.03M, SVP/Co-Head of Global Business, 2025-12-10 (~8mo ago) · largest sale $5.69M, CEO, President, Chairman, 2024-03-14 (~29mo ago) · grants 58 · last filing 2026-05-22 · other F×122/G×15/M×14",
+        "source_ref": "EDGAR Form 4 (latest 0001355666-26-000002; 116 filings in the 1095d scanned; counts over 182d)",
         "status": "present",
         "note": null
       },
@@ -14115,6 +14115,14 @@
       "writer": "refresh",
       "layers": [
         "mechanical.financial_summary"
+      ]
+    },
+    {
+      "date": "2026-10-28",
+      "extraction_version": "2026-10-09.3",
+      "writer": "refresh",
+      "layers": [
+        "mechanical.catalyst_path"
       ]
     }
   ],

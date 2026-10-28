@@ -594,7 +594,7 @@ _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf; Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [73]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 4 (3 insiders, $35.31M) · sells 4 (2 insiders, $1135.10M) — in the last 182 days · last purchase $10.01M, Chief Executive Officer, 2026-09-10 (~1mo ago) · largest purchase $74.00M, 10% owner, 2023-07-21 (~39mo ago) · last sale $182.24M, 10% owner, 2026-09-15 (~1mo ago) · largest sale $479.25M, 10% owner, 2026-06-02 (~4mo ago) · grants 2 · last filing 2026-10-20 · other filings 1683 [74]
+- **Insider activity (Form 4):** Open-market buys 3 (2 insiders, $15.31M) · sells 1 (1 insider, $2.01M) — in the last 182 days · last purchase $10.01M, Chief Executive Officer, 2026-09-10 (~1mo ago) · last sale $2.01M, insider, 2026-09-11 (~1mo ago) · largest sale $70.42M, Chief Executive Officer, 2024-06-17 (~28mo ago) · grants 2 · last filing 2026-10-14 · other filings 1631 [74]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-09-30): 45.7M → 48.8M sh (+6.6%, rising) · 2.4% of shares out (EDGAR XBRL) · DTC 2.7d · recent: 2026-09-30 48.8M · 2026-09-15 45.7M · 2026-08-31 45.1M · 2026-08-14 46.4M [75]
 
 ### Assembly verification — filing vs panel
@@ -610,6 +610,7 @@ _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.quality — refresh at 2026-10-09.3
+  - 2026-10-28 · mechanical.catalyst_path — refresh at 2026-10-09.3
 - **Price store:** `wt-pass → mosaic-theory-ta` · reaching 2026-10-23
 - **Panel age:** oldest panel 17d old — 2026-10-09 (valuation.implied_expectations.tev_as_of), against a 2026-10-26 build
 - **Consensus age:** consensus 18d old (2026-10-08, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -695,7 +696,7 @@ _Source §: 8-K 0001552781-22-000307 · e22228_ex10-1.htm_
 [71] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-10-09`
 [72] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-10-09`
 [73] `CIQ transcript(s): Uber Technologies, Inc., Q1 2026 Earnings Call, May 06, 2026.rtf; Uber Technologies, Inc., Q2 2026 Earnings Call, Aug 05, 2026.rtf`
-[74] `EDGAR Form 4 (latest 0002111867-26-000014; 351 filings in the 1095d scanned; counts over 182d)`
+[74] `EDGAR Form 4 (latest 0001190699-26-000005; 339 filings in the 1095d scanned; 6 more filed by this company as a holder of another issuer's stock, not counted; counts over 182d)`
 [75] `FINRA consolidated short interest (settle 2026-09-30); DTC = 48,754,152 short ÷ 17,946,705 screen 90d ADV`
 [76] `10-Q maturity wall vs CIQ capital panel (same window)`
 [77] `CIQ revenue guide vs release actual/outlook`

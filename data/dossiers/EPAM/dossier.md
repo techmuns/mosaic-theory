@@ -636,7 +636,7 @@ _Source §: latest 10-K 0001352010-26-000015 · exhibit1017-epamnonxempl.htm_
 - **Earnings call (transcript pointer — read the file):** 2 earnings-call transcript(s) on file — read in full for management posture: EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf (pointer only; the synthesis cites them, the machine does not curate an excerpt) [80]
 
 ### Ownership & positioning
-- **Insider activity (Form 4):** Open-market buys 6 (6 insiders, $0.04M) · sells 0 — in the last 182 days · last purchase $0.01M, CEO, President, Director, 2026-04-30 (~4mo ago) · last sale $1.03M, SVP/Co-Head of Global Business, 2025-12-10 (~8mo ago) · largest sale $5.69M, CEO, President, Chairman, 2024-03-14 (~29mo ago) · grants 58 · last filing 2026-09-03 · other filings 152 [81]
+- **Insider activity (Form 4):** Open-market buys 6 (6 insiders, $0.04M) · sells 0 — in the last 182 days · last purchase $0.01M, CEO, President, Director, 2026-04-30 (~4mo ago) · last sale $1.03M, SVP/Co-Head of Global Business, 2025-12-10 (~8mo ago) · largest sale $5.69M, CEO, President, Chairman, 2024-03-14 (~29mo ago) · grants 58 · last filing 2026-05-22 · other filings 151 [81]
 - **Short interest (FINRA):** Short interest (FINRA, settle 2026-08-14): 8.2M → 7.2M sh (-11.4%, falling) · 14.0% of shares out (EDGAR XBRL) · DTC 3.8d · recent: 2026-08-14 7.2M · 2026-07-31 8.2M · 2026-07-15 9.5M · 2026-06-30 11.3M [82]
 
 ### Assembly verification — filing vs panel
@@ -666,6 +666,7 @@ _Source §: latest 10-K 0001352010-26-000015 · exhibit1017-epamnonxempl.htm_
   - 2026-10-27 · mechanical.capital_structure — refresh at 2026-10-09.3
   - 2026-10-27 · anchor — refresh at 2026-10-09.3
   - 2026-10-27 · mechanical.financial_summary — refresh at 2026-10-09.3
+  - 2026-10-28 · mechanical.catalyst_path — refresh at 2026-10-09.3
 - **Price store:** `wt-artifact → mosaic-theory-ta` · reaching 2026-09-16
 - **Panel age:** oldest panel 41d old — 2026-08-07 (valuation.implied_expectations.tev_as_of), against a 2026-09-17 build
 - **Consensus age:** consensus 39d old (2026-08-09, valuation.implied_expectations.multiples_as_of) — within the ceiling
@@ -758,7 +759,7 @@ _Source §: latest 10-K 0001352010-26-000015 · exhibit1017-epamnonxempl.htm_
 [78] `CIQ Comparable Analysis→Implied Valuation (cash/debt bridge) · as-of 2026-08-07`
 [79] `CIQ Comparable Analysis→Implied Valuation (= Implied Equity Value, basis × Low/Median/Mean/High) · as-of 2026-08-07`
 [80] `CIQ transcript(s): EPAM Systems, Inc., Q1 2026 Earnings Call, May 07, 2026.rtf; EPAM Systems, Inc., Q2 2026 Earnings Call, Aug 06, 2026.rtf`
-[81] `EDGAR Form 4 (latest 0001538408-26-000006; 117 filings in the 1095d scanned; counts over 182d)`
+[81] `EDGAR Form 4 (latest 0001355666-26-000002; 116 filings in the 1095d scanned; counts over 182d)`
 [82] `FINRA consolidated short interest (settle 2026-08-14); DTC = 7,229,931 short ÷ 1,903,550 screen 90d ADV`
 [83] `10-Q maturity wall vs CIQ capital panel (same window)`
 [84] `CIQ revenue guide vs release actual/outlook`
