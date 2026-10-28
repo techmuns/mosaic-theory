@@ -448,7 +448,13 @@ def test_a_current_debt_total_that_carries_finance_leases_does_not_count_them_tw
 def test_every_leg_is_read_in_dollars() -> None:
     """LPL files in won and HSAI in yuan, with dollar convenience figures beside them. Cash was
     read in ANY unit while debt is read in dollars, so LPL netted dollar debt against won cash
-    (3.26 trillion "dollars"). Every point the builder reads, on every fixture, is now USD."""
+    (3.26 trillion "dollars"). Every point the builder reads, on every fixture, is now USD.
+
+    AND A FILER REPORTING IN ANOTHER CURRENCY IS NOT READ AT ALL (FPI1a, 2026-10-28). #749 read
+    LPL's and HSAI's dollar convenience translations as their net debt. A translation is the
+    newest year at one period-end rate, which is an FX policy, and that is STATE §5.0 row 4's
+    FPI1b: the shared reader now serves no money fact for them (`concepts.points_for_tag`), and
+    the snapshot names the currency instead of reading "no debt/cash"."""
     for p in [*FACTS.glob("*.json"), *FROZEN.glob("*.json"), *SHAPES.glob("*.json")]:
         r = nd.net_debt(json.loads(p.read_text()))
         if r is None:
@@ -456,9 +462,14 @@ def test_every_leg_is_read_in_dollars() -> None:
         pts = [r.cash, *(r.borrowings.read if r.borrowings else ()), *r.finance_lease_points,
                *r.operating_lease_points, *([r.securities] if r.securities else [])]
         assert all(q.unit == "USD" for q in pts), (p.stem, {q.unit for q in pts})
-    lpl = _read("LPL")
-    assert lpl.cash.unit == "USD" and lpl.value(nd.Basis.LEVERAGE) is not None
-    assert abs(lpl.value(nd.Basis.LEVERAGE) or 0) / M < 10_000, "a won figure read as dollars"
+    for ticker, cur in (("LPL", "KRW"), ("HSAI", "CNY")):
+        facts = _facts(ticker)
+        assert concepts.reporting_currency(facts) == cur, ticker
+        assert nd.net_debt(facts) is None, f"{ticker}: a {cur} reporter's net debt was read"
+        snap = compute_fundamental_snapshot("0", facts)
+        assert snap.net_debt.value is None and cur in str(snap.net_debt.note), snap.net_debt.note
+    # POSITIVE: a USD reporter's fixture still reads, so the refusal is the currency's
+    assert _read("GPK").value(nd.Basis.LEVERAGE) is not None
 
 
 def test_every_snapshot_consumer_applies_the_sector_rule() -> None:

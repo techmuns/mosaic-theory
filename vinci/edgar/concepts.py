@@ -9,6 +9,8 @@ takes the most recent ``filed`` (handling restatements without mutating earlier 
 
 from __future__ import annotations
 
+import re
+from collections import Counter
 from datetime import date, timedelta
 from typing import Any, NamedTuple
 
@@ -195,7 +197,8 @@ def facts_as_of(facts: dict[str, Any], as_of: date) -> dict[str, Any]:
     return {**facts, "facts": nsmap}
 
 
-def extract_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
+def extract_points(facts: dict[str, Any], concept: str, *,
+                   currency: str = "USD") -> list[ConceptPoint]:
     """Extract all reported points for a logical concept, trying alias tags in priority order.
 
     MC1 — AN ABANDONED ALIAS IS SKIPPED, NOT SERVED. First-present-wins alone hands back whatever
@@ -217,8 +220,11 @@ def extract_points(facts: dict[str, Any], concept: str) -> list[ConceptPoint]:
     only a COMPONENT of revenue, and ``CommonStockSharesIssued`` is not shares OUTSTANDING. Falling
     back to whichever alias happened to be iterated last would silently invert that ordering when
     freshness can separate nothing — a wrong-by-meaning number in place of a merely-old one.
+
+    ``currency`` is :func:`points_for_tag`'s: dollars only, unless the caller asks for the filer's
+    own currency (``REPORTING``).
     """
-    return _resolve(facts, concept, filer_frontier(facts))
+    return _resolve(facts, concept, filer_frontier(facts), currency)
 
 
 def _reach(points: list[ConceptPoint], *, annual_grain: bool) -> date | None:
@@ -235,7 +241,7 @@ def _reach(points: list[ConceptPoint], *, annual_grain: bool) -> date | None:
 
 
 def _resolve(
-    facts: dict[str, Any], concept: str, frontier: date | None
+    facts: dict[str, Any], concept: str, frontier: date | None, currency: str = "USD"
 ) -> list[ConceptPoint]:
     """The alias walk of :func:`extract_points`, taking an already-computed frontier.
 
@@ -243,7 +249,7 @@ def _resolve(
     than three times — its own call, plus one inside the ``extract_points`` it delegates to.
     """
     present = [(tag, pts) for tag in CONCEPT_ALIASES[concept]
-               if (pts := points_for_tag(facts, tag, concept=concept))]
+               if (pts := points_for_tag(facts, tag, concept=concept, currency=currency))]
     if not present:
         return []
     first_present = present[0][1]
@@ -288,11 +294,125 @@ def stale_served(facts: dict[str, Any], concept: str) -> tuple[str, int] | None:
     return (pts[0].tag, lag) if lag > STALE_TAG_LAG_DAYS else None
 
 
-def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "") -> list[ConceptPoint]:
+# --- the currency a filer reports in (STATE §5.0 row 4, FPI1a) ---------------------------------
+
+#: A MONETARY unit as companyfacts writes it: an ISO 4217 code alone ("CNY") or over a quantity
+#: ("CNY/shares", "USD/bbl"). Every other unit ("shares", "pure", "Employees") carries no currency.
+#: Two crypto units fit the shape ("BTC", "ETH") and count as currencies here; no reader asks for
+#: one.
+_MONETARY_UNIT = re.compile(r"^([A-Z]{3})(?:/|$)")
+
+#: ``currency=REPORTING`` reads a filer's figures in the currency its statements are in, whatever it
+#: is. Only for a reading the currency cannot move: a ratio of two figures in one currency, a rank
+#: within one series, a period's dates.
+REPORTING = "reporting"
+
+#: The balance-sheet totals whose units name the currency of a filer's statements.
+_CURRENCY_ANCHORS = ("Assets", "Liabilities", "LiabilitiesAndStockholdersEquity",
+                     "StockholdersEquity")
+
+
+def unit_currency(unit: str) -> str | None:
+    """The ISO code a monetary unit is in (``"CNY/shares"`` → ``"CNY"``); None for a unit with no
+    currency (``"shares"``, ``"pure"``)."""
+    m = _MONETARY_UNIT.match(unit)
+    return m.group(1) if m else None
+
+
+def reporting_currency(facts: dict[str, Any]) -> str | None:
+    """The currency the filer's statements are in: the most frequent currency among its
+    balance-sheet totals (:data:`_CURRENCY_ANCHORS`) in its newest annual report, or in its newest
+    filing when it has filed no annual report. Without those totals, every us-gaap monetary fact
+    counts. None when no monetary fact is tagged at all.
+
+    NEVER THE UNIT OF ONE FACT. Many foreign filers also tag a USD CONVENIENCE TRANSLATION: their
+    newest year at one period-end rate. QFIN's newest balance sheet carries CNY twice (two
+    year-ends) and USD once, and the first cut of #837's measurement, which read the unit of
+    `Assets`, put it in USD. A filer reporting in USD may tag foreign figures too: its statements
+    from before it moved to USD (Algonquin's CAD 40-Fs), or a stray amount (Unum Group's diluted
+    EPS in AUD per share, in a 10-Q filed 2023-05-03). Counting the totals in one filing answers
+    every case.
+
+    MEASURED 2026-10-28 on 2,543 cached companyfacts, one per CIK (the primary checkout's, the
+    2026-10-16 replay worktree's and FPI1a's scratch fetches, newest first). 2,258 carry us-gaap
+    money facts filed with an annual report, 2,189 of them a total. On 2,257 this agrees with the
+    count over EVERY money fact of the newest annual report. The one exception is Fresenius Medical
+    Care: its totals stop at its last US GAAP 20-F (USD), and its IFRS filings since tag ten EUR
+    us-gaap facts. Its USD series are what a reader is served, and the stale-annual checks hold
+    them. 46 filings carry two currencies, never tied, and the runner-up is at most half: the
+    convenience translation's one year against two. A tie would go to the currency that is not
+    USD, because a convenience translation is always into USD. 102 come out other than USD
+    (CNY 38, CAD 14, EUR 11 …).
+
+    Reads whatever ``facts`` it is given, so a blob cut by :func:`facts_as_of` is judged as it
+    stood on that date: JOYY's statements were in CNY through its FY2020 20-F and in USD from its
+    FY2021 20-F, filed 2022-04-29."""
+    gaap = (facts.get("facts") or {}).get("us-gaap") or {}
+    rows = _currency_rows(gaap, _CURRENCY_ANCHORS) or _currency_rows(gaap, tuple(gaap))
+    if not rows:
+        return None
+    annual = [(cur, r) for cur, r in rows
+              if str(r.get("form") or "").upper().startswith(ANNUAL_REPORT_FORMS)]
+    pool = annual or rows
+    newest = max((str(r.get("filed") or ""), str(r.get("accn") or "")) for _, r in pool)
+    count = Counter(cur for cur, r in pool
+                    if (str(r.get("filed") or ""), str(r.get("accn") or "")) == newest)
+    top = max(count.values())
+    return min(count, key=lambda c: (count[c] != top, c == "USD", c))
+
+
+def _currency_rows(gaap: dict[str, Any],
+                   tags: tuple[str, ...]) -> list[tuple[str, dict[str, Any]]]:
+    """(currency, row) for every row of ``tags`` in a plain currency unit (not per share)."""
+    out: list[tuple[str, dict[str, Any]]] = []
+    for tag in tags:
+        for unit, rows in ((gaap.get(tag) or {}).get("units") or {}).items():
+            cur = unit_currency(unit)
+            if cur is not None and "/" not in unit:
+                out.extend((cur, r) for r in rows)
+    return out
+
+
+def foreign_currency(facts: dict[str, Any]) -> str | None:
+    """The filer's reporting currency when it is not USD — the reason its money figures are
+    withheld (:func:`points_for_tag`) — else None."""
+    cur = reporting_currency(facts)
+    return cur if cur not in (None, "USD") else None
+
+
+def currency_withheld(currency: str) -> str:
+    """The one sentence every reader withholding a foreign reporter's figures gives as its
+    reason. It names the US GAAP figures, the only ones these readers read: JMIA reports under IFRS
+    in USD now, and its us-gaap facts, all from before, are in EUR."""
+    return (f"the filer's US GAAP figures are in {currency}, and a {currency} figure is never read "
+            f"as dollars — converting it is STATE §5.0 row 4's FPI1b")
+
+
+def _served_currency(facts: dict[str, Any], currency: str) -> str | None:
+    """The one currency :func:`points_for_tag` serves for ``currency``; None serves none."""
+    reported = reporting_currency(facts)
+    if currency == REPORTING:
+        return reported or "USD"
+    return currency if reported in (None, currency) else None
+
+
+def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "",
+                   currency: str = "USD") -> list[ConceptPoint]:
     """All reported points under exactly ``tag`` (the first namespace that carries it, in priority
     order). Takes the tag EXPLICITLY — no ``CONCEPT_ALIASES`` lookup, so callers that need a single
     known tag never mutate the shared alias map (which extractors read from parallel assembly
-    threads). ``concept`` only labels the returned points; defaults to the tag itself."""
+    threads). ``concept`` only labels the returned points; defaults to the tag itself.
+
+    ONE CURRENCY, AND BY DEFAULT ONLY DOLLARS (FPI1a). A money fact is served only in ``currency``
+    (USD unless the caller asks otherwise), and only when that is the filer's
+    :func:`reporting_currency`:
+    - a filer reporting in USD gets its USD facts and none of its foreign ones: its statements
+      from before it moved to USD (Algonquin's CAD, SIMO's TWD 20-F/A of 2012) or a stray amount;
+    - a filer reporting in another currency gets NO money fact, not even its USD convenience
+      translation. QFIN's newest annual revenue was served as CNY 19,205,059,000 to readers that
+      print dollars; a translation at one year-end rate is an FX policy, and that is FPI1b's.
+    ``currency=REPORTING`` serves the filer's own currency instead, for a reading it cannot move.
+    A unit with no currency (shares, pure) is served either way."""
     nsmap = facts.get("facts", {})
     node = None
     for ns in _NAMESPACES:
@@ -302,7 +422,13 @@ def points_for_tag(facts: dict[str, Any], tag: str, *, concept: str = "") -> lis
     if not node:
         return []
     points: list[ConceptPoint] = []
-    for unit, rows in node.get("units", {}).items():
+    units = node.get("units", {})
+    served = (_served_currency(facts, currency)
+              if any(unit_currency(u) for u in units) else None)
+    for unit, rows in units.items():
+        cur = unit_currency(unit)
+        if cur is not None and cur != served:
+            continue
         for r in rows:
             end = _parse_date(r.get("end"))
             filed = _parse_date(r.get("filed"))
@@ -702,11 +828,12 @@ def current_pair(
 def _own_periods(facts: dict[str, Any], forms: tuple[str, ...] = ("10-Q", "10-K"),
                  ) -> list[tuple[str, int, date, date]]:
     """(fiscal period, fiscal year, end, filed) for every filing of ``forms``: the period it states
-    as its OWN — the latest end it carries — under the fiscal year and period its XBRL names."""
+    as its OWN — the latest end it carries — under the fiscal year and period its XBRL names.
+    Read in the filer's own currency: a period's dates are the same in any."""
     by_acc: dict[str, tuple[str, int, date, date]] = {}
     for tag in (*CONCEPT_ALIASES["revenue"], *CONCEPT_ALIASES["net_income"],
                 *CONCEPT_ALIASES["eps_diluted"]):
-        for p in points_for_tag(facts, tag):
+        for p in points_for_tag(facts, tag, currency=REPORTING):
             form = (p.form or "").upper()
             if (p.period_start is None or not p.accession or p.fy is None or not p.fp
                     or not form.startswith(forms)):
@@ -729,7 +856,8 @@ def fiscal_calendar(facts: dict[str, Any]) -> dict[tuple[str, int], date]:
 
 
 #: The forms a filer states its fiscal year in: the 10-K (and 10-KT), a foreign filer's 20-F / 40-F.
-_ANNUAL_REPORTS = ("10-K", "20-F", "40-F")
+#: The one list: the currency reader, the fiscal calendar and every annual-report reader (FPI1a).
+ANNUAL_REPORT_FORMS = ("10-K", "20-F", "40-F")
 #: A period is the fiscal year whose own annual report ends within this many days of it. A
 #: comparative restates the SAME period, so its end is the report's to the day; the slack is a
 #: 52/53-week calendar's, never a quarter's.
@@ -743,7 +871,7 @@ def fiscal_year_ends(facts: dict[str, Any]) -> dict[int, tuple[date, ...]]:
     kept rather than the original filing's alone, and a foreign filer's 20-F / 40-F beside the
     10-K: TAT Technologies' and Gilat's years are stated nowhere else."""
     ends: dict[int, set[date]] = {}
-    for fp, fy, end, _filed in _own_periods(facts, _ANNUAL_REPORTS):
+    for fp, fy, end, _filed in _own_periods(facts, ANNUAL_REPORT_FORMS):
         if fp == "FY":
             ends.setdefault(fy, set()).add(end)
     return {fy: tuple(sorted(e)) for fy, e in ends.items()}

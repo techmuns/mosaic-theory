@@ -27,10 +27,12 @@ from pydantic import BaseModel
 from vinci.config import Config, get_config
 from vinci.edgar.concepts import (
     StaleAnnual,
+    currency_withheld,
     current_annual,
     current_pair,
     facts_as_of,
     filer_fiscal_year,
+    foreign_currency,
 )
 from vinci.edgar.net_debt import NO_DEBT_OR_CASH, Basis, net_debt
 from vinci.edgar.submissions import RegistrantHistory, parse_registrant_history
@@ -110,17 +112,18 @@ def _why(absent: str, *stale: StaleAnnual | None) -> str:
     return "; ".join(notes) if notes else absent
 
 
-def all_unknown_snapshot(cik10: str) -> FundamentalSnapshot:
-    """Snapshot for an issuer with no usable XBRL — every field UNKNOWN (graceful degradation)."""
+def all_unknown_snapshot(cik10: str, why: str = "no XBRL") -> FundamentalSnapshot:
+    """Snapshot for an issuer with no usable XBRL — every field UNKNOWN (graceful degradation) —
+    or none read in dollars, ``why`` naming its currency."""
     return FundamentalSnapshot(
         cik=cik10,
-        op_income_sign=_unknown_i("no XBRL"),
-        fcf_sign=_unknown_i("no XBRL"),
-        net_leverage=_unknown_f("no XBRL"),
-        net_debt_to_ocf=_unknown_f("no XBRL"),
-        ebitda_annual=_unknown_f("no XBRL"),
-        net_debt=_unknown_f("no XBRL"),
-        eps_diluted_annual=_unknown_f("no XBRL"),
+        op_income_sign=_unknown_i(why),
+        fcf_sign=_unknown_i(why),
+        net_leverage=_unknown_f(why),
+        net_debt_to_ocf=_unknown_f(why),
+        ebitda_annual=_unknown_f(why),
+        net_debt=_unknown_f(why),
+        eps_diluted_annual=_unknown_f(why),
         as_of=None,
     )
 
@@ -136,6 +139,12 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     """
     if as_of is not None:
         facts = facts_as_of(facts, as_of)
+    # A FILER REPORTING IN ANOTHER CURRENCY (FPI1a): every leg below reads dollars only, so for it
+    # each would read "not tagged". Every field names the currency instead. Its signs and
+    # one-currency ratios could be read in its own currency; FPI1b converts them, and they return
+    # then, in dollars, through these same lines.
+    if (cur := foreign_currency(facts)) is not None:
+        return all_unknown_snapshot(cik10, currency_withheld(cur))
     # EACH LEG IS THE LATEST ANNUAL ITS CONCEPT SERVES AS CURRENT, or it is withheld and named
     # (vinci.edgar.concepts.current_annual, §5.0 row 11). The latest annual alone was served however
     # old it was: Climb Global's FY2019 capex came off its FY2025 operating cash flow, and

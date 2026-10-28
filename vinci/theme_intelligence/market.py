@@ -205,13 +205,16 @@ def edgar_eps() -> EpsSource:
     the cover-page share counts from the same response (concept "shares") — the per-share basis
     check reads them."""
     from vinci.edgar.client import EdgarClient
-    from vinci.edgar.concepts import extract_points
+    from vinci.edgar.concepts import REPORTING, extract_points
 
     edgar = EdgarClient.from_config()
 
     def get(cik: str) -> list[ConceptPoint]:
         facts = edgar.companyfacts(cik)
-        return ([p for p in extract_points(facts, "eps_diluted") if p.is_annual]
+        # the filer's own currency: the P/E level is withheld unless it is USD, and the
+        # percentile ranks one series in one currency (pe_current_and_percentile)
+        return ([p for p in extract_points(facts, "eps_diluted", currency=REPORTING)
+                 if p.is_annual]
                 + extract_points(facts, "shares"))
     return get
 

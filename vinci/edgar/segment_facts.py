@@ -1,4 +1,5 @@
-"""Per-segment PROFIT from a 10-K's own XBRL instance — the structured source, not a rendered table.
+"""Per-segment PROFIT from an annual report's own XBRL instance (a 10-K, or a foreign filer's 20-F /
+40-F) — the structured source, not a rendered table.
 
 WHY NOT THE R-FILES (`vinci/edgar/segments.py`). That route reads the SEC's RENDERED segment table,
 and the rendering is the filer's layout: segments as row headings (AMZN, GOOGL, AORT, UBER) or as
@@ -37,7 +38,9 @@ WHAT IT REFUSES. A filing naming ONE segment or none is a single-segment filer �
 answer, not a failure. A filing naming two or more segments where fewer than two carry any profit
 measure raises, because "we could not find the profit" is a different fact from "there is none".
 A non-USD figure raises: this repo reads US filers, and a currency it did not convert is a scale
-defect waiting to be printed.
+defect waiting to be printed. An IFRS instance raises too (FPI1a): its segments sit on
+``ifrs-full:SegmentsAxis``, which these rules never read, so it would look like a single-segment
+filer — an answer about a company nobody asked.
 """
 from __future__ import annotations
 
@@ -177,6 +180,15 @@ def parse_instance(xml_text: str, *, accession: str = "", instance: str = ""
         ns_prefix, ns_uri = cast(tuple[str, str], item)
         prefixes.setdefault(ns_uri, ns_prefix)
     root = ET.fromstring(xml_text)
+    # THE FACTS' TAXONOMY, NOT THE DECLARATIONS. MEASURED 2026-10-28 on the latest 20-F / 40-F
+    # instance of each primary FPI line (252 readable): 164 tag ifrs-full facts and no us-gaap
+    # fact, 86 the reverse. LPL's declares both namespaces and tags only ifrs-full.
+    used = {n.tag[1:].split("}", 1)[0] for n in root if n.tag.startswith("{")}
+    if (any("xbrl.ifrs.org" in uri for uri in used)
+            and not any("fasb.org/us-gaap" in uri for uri in used)):
+        raise SegmentFactsUnavailableError(
+            f"{accession}: the instance reports under IFRS (ifrs-full) — segment profit is read "
+            f"on US GAAP's segment axis only; reading IFRS is STATE §5.0 row 4's FPI1c")
 
     def qn(node: ET.Element) -> str:
         return _qname(node.tag, prefixes)

@@ -204,7 +204,7 @@ def test_the_unknown_note_states_which_reason_actually_applies() -> None:
     assert out.pct_revenue.status is SourceStatus.UNKNOWN
     note = str(out.pct_revenue.note)
     assert "ambiguous" in note, f"the note names the wrong cause: {note}"
-    assert "no 10-K revenue fact covers" not in note, f"the note names the wrong cause: {note}"
+    assert "revenue fact covers" not in note, f"the note names the wrong cause: {note}"
 
 
 def test_a_failed_fetch_is_unknown_not_a_deleted_block() -> None:

@@ -1,0 +1,656 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:xbrl xmlns:arco="http://www.arcosdorados.com/20251231" xmlns:dei="http://xbrl.sec.gov/dei/2025" xmlns:ns0="http://www.xbrl.org/2003/instance" xmlns:us-gaap="http://fasb.org/us-gaap/2025" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xml:lang="en-US">
+    <ns0:context id="c-1">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-5">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">us-gaap:ProductMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-6">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">us-gaap:ProductMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-7">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">us-gaap:ProductMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-8">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">us-gaap:FranchiseMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-9">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">us-gaap:FranchiseMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-10">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">us-gaap:FranchiseMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-11">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-12">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-326">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">arco:FranchiseRentalIncomeMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-327">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">arco:FranchiseRentalIncomeMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-328">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">arco:FranchiseRentalIncomeMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-329">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">arco:FranchiseInitialFeesMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-330">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">arco:FranchiseInitialFeesMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-331">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">arco:FranchiseInitialFeesMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-332">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">arco:FranchiseRoyaltyFeesMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-333">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">arco:FranchiseRoyaltyFeesMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-334">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ProductOrServiceAxis">arco:FranchiseRoyaltyFeesMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-410">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">arco:BrazilSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-411">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">arco:BrazilSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-412">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">arco:BrazilSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-413">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">arco:NorthLatinAmericaDivisionSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-414">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">arco:NorthLatinAmericaDivisionSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-415">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">arco:NorthLatinAmericaDivisionSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-416">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">arco:SouthLatinAmericaDivisionSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-417">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">arco:SouthLatinAmericaDivisionSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-418">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+                <xbrldi:explicitMember dimension="us-gaap:StatementBusinessSegmentsAxis">arco:SouthLatinAmericaDivisionSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-419">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-420">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-421">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:OperatingSegmentsMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-422">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:CorporateNonSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-423">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:CorporateNonSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-424">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:ConsolidationItemsAxis">us-gaap:CorporateNonSegmentMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-437">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:BR</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-438">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:BR</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-439">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:BR</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-440">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:AR</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-441">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:AR</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-442">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:AR</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-443">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:MX</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-444">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:MX</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-445">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">country:MX</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-446">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">arco:OtherCountriesMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2025-01-01</ns0:startDate>
+            <ns0:endDate>2025-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-447">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">arco:OtherCountriesMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2024-01-01</ns0:startDate>
+            <ns0:endDate>2024-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:context id="c-448">
+        <ns0:entity>
+            <ns0:identifier scheme="http://www.sec.gov/CIK">0001508478</ns0:identifier>
+            <ns0:segment>
+                <xbrldi:explicitMember dimension="srt:StatementGeographicalAxis">arco:OtherCountriesMember</xbrldi:explicitMember>
+            </ns0:segment>
+        </ns0:entity>
+        <ns0:period>
+            <ns0:startDate>2023-01-01</ns0:startDate>
+            <ns0:endDate>2023-12-31</ns0:endDate>
+        </ns0:period>
+    </ns0:context>
+    <ns0:unit id="shares">
+        <ns0:measure>shares</ns0:measure>
+    </ns0:unit>
+    <ns0:unit id="usd">
+        <ns0:measure>iso4217:USD</ns0:measure>
+    </ns0:unit>
+    <ns0:unit id="usdPerShare">
+        <ns0:divide>
+            <ns0:unitNumerator>
+                <ns0:measure>iso4217:USD</ns0:measure>
+            </ns0:unitNumerator>
+            <ns0:unitDenominator>
+                <ns0:measure>shares</ns0:measure>
+            </ns0:unitDenominator>
+        </ns0:divide>
+    </ns0:unit>
+    <ns0:unit id="number">
+        <ns0:measure>pure</ns0:measure>
+    </ns0:unit>
+    <ns0:unit id="agreement">
+        <ns0:measure>arco:agreement</ns0:measure>
+    </ns0:unit>
+    <ns0:unit id="territory">
+        <ns0:measure>arco:territory</ns0:measure>
+    </ns0:unit>
+    <ns0:unit id="period">
+        <ns0:measure>arco:period</ns0:measure>
+    </ns0:unit>
+    <ns0:unit id="segment">
+        <ns0:measure>arco:segment</ns0:measure>
+    </ns0:unit>
+    <ns0:unit id="source">
+        <ns0:measure>arco:source</ns0:measure>
+    </ns0:unit>
+    <ns0:unit id="votepershare">
+        <ns0:measure>arco:votePerShare</ns0:measure>
+    </ns0:unit>
+    <dei:DocumentPeriodEndDate contextRef="c-1" id="f-4">2025-12-31</dei:DocumentPeriodEndDate>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-5" decimals="-3" id="f-61" unitRef="usd">4465177000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-6" decimals="-3" id="f-62" unitRef="usd">4266748000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-7" decimals="-3" id="f-63" unitRef="usd">4137675000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-8" decimals="-3" id="f-64" unitRef="usd">213082000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-9" decimals="-3" id="f-65" unitRef="usd">203414000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-10" decimals="-3" id="f-66" unitRef="usd">194203000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-1" decimals="-3" id="f-67" unitRef="usd">4678259000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-11" decimals="-3" id="f-68" unitRef="usd">4470162000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-12" decimals="-3" id="f-69" unitRef="usd">4331878000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:OperatingIncomeLoss contextRef="c-1" decimals="-3" id="f-94" unitRef="usd">364393000</us-gaap:OperatingIncomeLoss>
+    <us-gaap:OperatingIncomeLoss contextRef="c-11" decimals="-3" id="f-95" unitRef="usd">324515000</us-gaap:OperatingIncomeLoss>
+    <us-gaap:OperatingIncomeLoss contextRef="c-12" decimals="-3" id="f-96" unitRef="usd">314039000</us-gaap:OperatingIncomeLoss>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-326" decimals="-3" id="f-1235" unitRef="usd">212425000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-327" decimals="-3" id="f-1236" unitRef="usd">202779000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-328" decimals="-3" id="f-1237" unitRef="usd">193518000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-329" decimals="-3" id="f-1238" unitRef="usd">469000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-330" decimals="-3" id="f-1239" unitRef="usd">380000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-331" decimals="-3" id="f-1240" unitRef="usd">417000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-332" decimals="-3" id="f-1241" unitRef="usd">188000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-333" decimals="-3" id="f-1242" unitRef="usd">255000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-334" decimals="-3" id="f-1243" unitRef="usd">268000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-8" decimals="-3" id="f-1244" unitRef="usd">213082000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-9" decimals="-3" id="f-1245" unitRef="usd">203414000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-10" decimals="-3" id="f-1246" unitRef="usd">194203000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-410" decimals="-3" id="f-1656" unitRef="usd">1770301000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-411" decimals="-3" id="f-1657" unitRef="usd">1768311000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-412" decimals="-3" id="f-1658" unitRef="usd">1701547000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-413" decimals="-3" id="f-1659" unitRef="usd">1266129000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-414" decimals="-3" id="f-1660" unitRef="usd">1225751000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-415" decimals="-3" id="f-1661" unitRef="usd">1132912000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-416" decimals="-3" id="f-1662" unitRef="usd">1641829000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-417" decimals="-3" id="f-1663" unitRef="usd">1476100000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-418" decimals="-3" id="f-1664" unitRef="usd">1497419000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-419" decimals="-3" id="f-1665" unitRef="usd">4678259000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-420" decimals="-3" id="f-1666" unitRef="usd">4470162000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-421" decimals="-3" id="f-1667" unitRef="usd">4331878000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-410" decimals="-3" id="f-1728" unitRef="usd">358774000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-411" decimals="-3" id="f-1729" unitRef="usd">340002000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-412" decimals="-3" id="f-1730" unitRef="usd">300177000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-413" decimals="-3" id="f-1731" unitRef="usd">130860000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-414" decimals="-3" id="f-1732" unitRef="usd">116256000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-415" decimals="-3" id="f-1733" unitRef="usd">115364000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-416" decimals="-3" id="f-1734" unitRef="usd">180097000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-417" decimals="-3" id="f-1735" unitRef="usd">133692000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-418" decimals="-3" id="f-1736" unitRef="usd">160380000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-419" decimals="-3" id="f-1737" unitRef="usd">669731000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-420" decimals="-3" id="f-1738" unitRef="usd">589950000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-421" decimals="-3" id="f-1739" unitRef="usd">575921000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-422" decimals="-3" id="f-1740" unitRef="usd">-94522000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-423" decimals="-3" id="f-1741" unitRef="usd">-89850000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-424" decimals="-3" id="f-1742" unitRef="usd">-103617000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-1" decimals="-3" id="f-1743" unitRef="usd">575209000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-11" decimals="-3" id="f-1744" unitRef="usd">500100000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-12" decimals="-3" id="f-1745" unitRef="usd">472304000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-1" decimals="-3" id="f-1746" unitRef="usd">575209000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-11" decimals="-3" id="f-1747" unitRef="usd">500100000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <arco:AdjustedEarningsBeforeInterestTaxAndDepreciation contextRef="c-12" decimals="-3" id="f-1748" unitRef="usd">472304000</arco:AdjustedEarningsBeforeInterestTaxAndDepreciation>
+    <us-gaap:OperatingIncomeLoss contextRef="c-1" decimals="-3" id="f-1764" unitRef="usd">364393000</us-gaap:OperatingIncomeLoss>
+    <us-gaap:OperatingIncomeLoss contextRef="c-11" decimals="-3" id="f-1765" unitRef="usd">324515000</us-gaap:OperatingIncomeLoss>
+    <us-gaap:OperatingIncomeLoss contextRef="c-12" decimals="-3" id="f-1766" unitRef="usd">314039000</us-gaap:OperatingIncomeLoss>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-437" decimals="-3" id="f-1837" unitRef="usd">1770301000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-438" decimals="-3" id="f-1838" unitRef="usd">1768311000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-439" decimals="-3" id="f-1839" unitRef="usd">1701547000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-440" decimals="-3" id="f-1840" unitRef="usd">697834000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-441" decimals="-3" id="f-1841" unitRef="usd">600298000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-442" decimals="-3" id="f-1842" unitRef="usd">683231000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-443" decimals="-3" id="f-1843" unitRef="usd">481170000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-444" decimals="-3" id="f-1844" unitRef="usd">447388000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-445" decimals="-3" id="f-1845" unitRef="usd">394528000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-446" decimals="-3" id="f-1846" unitRef="usd">1728954000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-447" decimals="-3" id="f-1847" unitRef="usd">1654165000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-448" decimals="-3" id="f-1848" unitRef="usd">1552572000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-1" decimals="-3" id="f-1849" unitRef="usd">4678259000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-11" decimals="-3" id="f-1850" unitRef="usd">4470162000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    <us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax contextRef="c-12" decimals="-3" id="f-1851" unitRef="usd">4331878000</us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax>
+    </ns0:xbrl>
