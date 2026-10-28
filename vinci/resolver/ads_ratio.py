@@ -204,7 +204,9 @@ def _decide(got: Statements, source: Literal["12(b) title", "filing text"],
         return None
     values = sorted({round(v, 6) for v, _q in got.ratios})
     if len(values) == 1:
-        return AdsRatio(status="known", ordinary_per_ads=values[0], source=source,
+        # the filing's own value, not its 6-place rounding (2/3, not 0.666667); the rounding only
+        # decides whether several statements agree
+        return AdsRatio(status="known", ordinary_per_ads=got.ratios[0][0], source=source,
                         quote=got.ratios[0][1], **where)
     listed = ", ".join(f"{v:g}" for v in values)
     if source == "12(b) title":

@@ -4866,7 +4866,10 @@ def _stock_info(
             else Sourced.unknown(
                 note=refused or (
                     "no usable share count — the EDGAR cover-page tag is absent or older than "
-                    f"{_SHARES_MAX_AGE_DAYS}d, and no CIQ Financial Data panel supplies one"))),
+                    f"{_SHARES_MAX_AGE_DAYS}d" + (
+                        "; the CIQ panel is not read for a depositary line, whose unit it does "
+                        "not state" if record.ads is not None
+                        else ", and no CIQ Financial Data panel supplies one")))),
         book_value_ps=ciq_sheets.book_value_per_share(bundle),
         market_cap=market_cap,
         as_of=feats.last.as_of,

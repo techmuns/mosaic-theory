@@ -993,7 +993,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
             value=(inc[0] if inc else None), unit="shares",
             basis="diluted less basic weighted average over the latest 10-Q quarter — the "
                   "dilution test",
-            source=(inc[1] if inc else
+            source=(inc[1] if inc else counts.refused if counts.refused else
                     "UNKNOWN — the 10-Q tags no basic weighted average for the diluted figure's "
                     "own period" if out is not None else
                     "not tested — the base divides the diluted weighted average, which already "
