@@ -11,6 +11,7 @@ import pathlib
 
 import pytest
 
+from vinci.dossier.anchor import RECIPE_R1
 from vinci.dossier.propose import (
     ANCHORED,
     AXES,
@@ -209,17 +210,27 @@ def test_a_zero_anchor_does_not_silently_accept_everything() -> None:
                 if p.startswith("base.margin")]
 
 
-def test_applicable_false_is_a_disagreement_and_vitl_is_the_second_live_case() -> None:
-    """VITL, MISSED BY THE FIRST CUT. Its dossier declines R1 for this name (EBITDA dispersion
-    263.7%, so it routes two-ratio), and checking only the hint STRING waved an R1 record through.
+def test_applicable_false_is_a_disagreement_on_every_live_case() -> None:
+    """VITL, MISSED BY THE FIRST CUT. Its dossier declined R1 for this name (EBITDA dispersion
+    263.7%, so it routed two-ratio), and checking only the hint STRING waved an R1 record through.
 
-    THE CORPUS HALF ASKS WHAT HOLDS EITHER WAY (#670). VITL read `R1` + `applicable: False` only
-    because the 07-22 re-assembly erased its hand `R2_NEEDED` re-tag; restored, the refusal comes
-    from the recipe instead. An R1 record on VITL is refused in both states, so that is the corpus
-    pin, and the `applicable=False` branch is pinned on its own shape."""
-    if (DOSS / "VITL").is_dir():
-        with pytest.raises(ProposalRefusedError):
-            check_tier_agreement(_doc("VITL"), "R1_midcycle_margin_evebitda")
+    THE CORPUS HALF READS EVERY LIVE PAGE OF THE SHAPE. VITL left it on 2026-10-29: the operator
+    withdrew its re-tag and R1 applies on the ex-lease history (STATE row 32 (11)), so an R1 record
+    on VITL is no longer refused. Every committed page reading R1 with `applicable: False` (V
+    today) refuses one, and so does every page whose recipe is `R2_NEEDED` (AORT, MVST, NCNO
+    today) — the other state VITL's old pin covered. The branch is also pinned on its own shape."""
+    hints = {p.parent.name: _doc(p.parent.name).get("anchor") or {}
+             for p in sorted(DOSS.glob("*/dossier.json"))}
+    live = [t for t, a in hints.items()
+            if a.get("recipe_hint") == RECIPE_R1 and a.get("applicable") is False]
+    r2 = [t for t, a in hints.items() if a.get("recipe_hint") == "R2_NEEDED"]
+    assert live and r2, "no committed page of the shape — the corpus half is vacuous"
+    for t in live:
+        with pytest.raises(ProposalRefusedError, match="applicable=False"):
+            check_tier_agreement(_doc(t), RECIPE_R1)
+    for t in r2:
+        with pytest.raises(ProposalRefusedError, match="R2_NEEDED"):
+            check_tier_agreement(_doc(t), RECIPE_R1)
     with pytest.raises(ProposalRefusedError, match="applicable=False"):
         check_tier_agreement({"anchor": {"recipe_hint": "R1_midcycle_margin_evebitda",
                                          "applicable": False}}, "R1_midcycle_margin_evebitda")
