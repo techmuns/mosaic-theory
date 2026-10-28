@@ -2790,30 +2790,56 @@ class Form4Line(NamedTuple):
         return self.shares * self.price if self.price else None
 
 
+class OwnershipUnreadableError(Exception):
+    """An ownership filing (Form 3/4/5) whose documents could not be fetched or parsed.
+
+    RAISED, NEVER AN EMPTY LIST (STATE row 35). The reader used to return [] here, so a document
+    that failed to fetch left every count smaller with no mark on the line — GOOGL read 462 grants
+    against 464 over the same 511 filings on a loaded first pass. A missing filing can hide a sale
+    as easily as a grant, so the caller turns any one of these into an UNKNOWN that says how
+    many."""
+
+
+class OwnershipDoc(NamedTuple):
+    """One ownership filing as read: the issuer it is ABOUT, and its non-derivative rows.
+
+    `issuer_cik` is the filing's own `issuer/issuerCik` — a structured field, never a name. A
+    company's EDGAR index lists the Forms 4 it files as a HOLDER of another issuer's stock beside
+    its own insiders' (UBER's lists its sales of Aurora Innovation stock), and only this field
+    tells the two apart."""
+
+    issuer_cik: int
+    lines: list[Form4Line]
+
+
 def _form4_codes(
     http: CachedHttp, cik: str, accession: str, filed: date | None = None
-) -> list[Form4Line]:
-    """Every non-derivative transaction in ONE Form 4 — parsed from the raw ownership XML (never
-    the xsl-styled view). Returns [] when the filing has no non-deriv table or its doc can't be
-    fetched (fail-soft per filing; the block still assembles from the rest)."""
+) -> OwnershipDoc:
+    """ONE ownership filing — the issuer it is about and every non-derivative transaction in it,
+    parsed from the raw ownership XML (never the xsl-styled view). A filing with no non-deriv
+    table has no rows; one whose documents cannot be fetched or parsed raises
+    `OwnershipUnreadableError`."""
     accn = accession.replace("-", "")
     try:
         idx = http.get_json(_INDEX.format(cik=int(pad_cik(cik)), acc=accn), ttl_seconds=None)
-    except (HttpError, ValueError):
-        return []
+    except (HttpError, ValueError) as exc:
+        raise OwnershipUnreadableError(f"{accession}: filing index fetch failed: {exc}") from exc
     names = [str(it.get("name", "")) for it in idx.get("directory", {}).get("item", [])]
     xmlname = next(
         (n for n in names if n.lower().endswith(".xml") and "ownership" in n.lower()),
         next((n for n in names if n.lower().endswith(".xml")), None),
     )
     if not xmlname:
-        return []
+        raise OwnershipUnreadableError(f"{accession}: no ownership XML in the filing index")
     try:
         raw = http.get_text(
             _ARCHIVE.format(cik=int(pad_cik(cik)), acc=accn, doc=xmlname), ttl_seconds=None)
         root = ET.fromstring(raw)
-    except (HttpError, ET.ParseError, ValueError):
-        return []
+    except (HttpError, ET.ParseError, ValueError) as exc:
+        raise OwnershipUnreadableError(f"{accession}: ownership XML unreadable: {exc}") from exc
+    issuer = (root.findtext("issuer/issuerCik") or "").strip()
+    if not issuer.isdigit():
+        raise OwnershipUnreadableError(f"{accession}: the ownership XML names no issuerCik")
     owner = root.find(".//reportingOwner")
     rel = owner.find("reportingOwnerRelationship") if owner is not None else None
 
@@ -2854,7 +2880,67 @@ def _form4_codes(
         if code:
             out.append(Form4Line(code, float(sh) if sh else 0.0, float(px) if px else 0.0,
                                  on, who or accession, role))
-    return out
+    return OwnershipDoc(int(issuer), out)
+
+
+class OwnRead(NamedTuple):
+    """An issuer's ownership filings, each read for the issuer it is ABOUT (STATE row 35).
+
+    `own` keeps the index's order (newest first); `lines` are the Form 4 rows of `own` only;
+    `holder` counts the filings the company made as a holder of ANOTHER issuer's stock; `failed`
+    names each filing that could not be read, for an UNKNOWN that states how many."""
+
+    own: list[Filing]
+    lines: list[Form4Line]
+    holder: int
+    failed: list[str]
+
+
+def _read_own_filings(http: CachedHttp, cik: str, filings: list[Filing]) -> OwnRead:
+    """Read each filing and keep only those ABOUT this issuer, keyed on the XML's `issuerCik`.
+
+    A FILING ABOUT ANOTHER ISSUER IS NOT THIS ISSUER'S INSIDER ACTIVITY. EDGAR files a Form 4
+    under both its issuer's and its reporting owner's CIK, so a company that holds another
+    company's stock lists its own trades in that stock beside its insiders'. Measured 2026-10-28:
+    19 of 5,407 Form 4s in the 27 committed dossiers' 3-year scans — and UBER's line read "sells 4
+    (2 insiders, $1135.10M)" where $1,133.09M of it was Uber selling Aurora Innovation."""
+    own: list[Filing] = []
+    lines: list[Form4Line] = []
+    holder = 0
+    failed: list[str] = []
+    issuer = int(pad_cik(cik))
+    for f in filings:
+        try:
+            doc = _form4_codes(http, cik, f.accession, f.filing_date)
+        except OwnershipUnreadableError as exc:
+            failed.append(str(exc))
+            continue
+        if doc.issuer_cik != issuer:
+            holder += 1
+            continue
+        own.append(f)
+        if f.form == "4":
+            lines.extend(doc.lines)
+    return OwnRead(own, lines, holder, failed)
+
+
+def _unreadable(read: OwnRead, scanned: int, kind: str, where: str) -> Sourced[str]:
+    """FAIL LOUD on any filing that could not be read: a count without it is quietly smaller, in a
+    direction nobody can see. States how many of how many, and the first failure verbatim."""
+    more = len(read.failed) - 1
+    return Sourced.unknown(
+        note=(f"{len(read.failed)} of {scanned} {kind} filings {where} could not be read, so any "
+              f"count would be short by them — first: {read.failed[0]}"
+              + (f" (and {more} more)" if more else "")))
+
+
+def _holder_clause(read: OwnRead) -> str:
+    """'; 6 more filed by this company as a holder of another issuer's stock, not counted' — the
+    filings left out, stated beside the count they were left out of."""
+    if not read.holder:
+        return ""
+    return (f"; {read.holder} more filed by this company as a holder of another issuer's stock, "
+            f"not counted")
 
 
 def _insider_activity(
@@ -2891,21 +2977,31 @@ def _insider_activity(
         reach = _section16_reach(edgar, http, cik, reference_date)
         if reach is not None:
             return _fpi_insider_activity(edgar, http, cik, reference_date, reach)
-        filings = edgar.recent_filings(
+        # BOUNDED AT THE REFERENCE DATE, as the FPI path is (STATE row 35). EDGAR's index runs to
+        # today, so a re-dated read counted later filings while stating "in the last 182 days":
+        # IBN read as of 2026-04-01 printed a sale on 2026-04-24, "~-1mo ago".
+        filings = [f for f in edgar.recent_filings(
             cik, forms=("4",), since=reference_date - timedelta(days=_INSIDER_SCAN_DAYS))
+            if f.filing_date <= reference_date]
     except HttpError as exc:
         return Sourced.unknown(note=f"EDGAR Form 4 fetch failed: {exc}")
     if not filings:
         return Sourced.unknown(
             note=f"no Form 4 filings in the {_INSIDER_SCAN_DAYS // 365}y scanned")
-    lines: list[Form4Line] = []
-    for f in filings:
-        lines.extend(_form4_codes(http, cik, f.accession, f.filing_date))
+    read = _read_own_filings(http, cik, filings)
+    if read.failed:
+        return _unreadable(read, len(filings), "Form 4", f"in the {_INSIDER_SCAN_DAYS}d scanned")
+    if not read.own:
+        return Sourced.unknown(
+            note=(f"no Form 4 filings about this issuer in the {_INSIDER_SCAN_DAYS // 365}y "
+                  f"scanned — the {read.holder} on file were filed by this company as a holder of "
+                  f"another issuer's stock"))
     return Sourced.present(
-        compose_insider_line(lines, reference_date=reference_date,
-                             last_filing=max(f.filing_date for f in filings)),
-        source_ref=(f"EDGAR Form 4 (latest {filings[0].accession}; {len(filings)} filings in "
-                    f"the {_INSIDER_SCAN_DAYS}d scanned; counts over {_INSIDER_WINDOW_DAYS}d)"))
+        compose_insider_line(read.lines, reference_date=reference_date,
+                             last_filing=max(f.filing_date for f in read.own)),
+        source_ref=(f"EDGAR Form 4 (latest {read.own[0].accession}; {len(read.own)} filings in "
+                    f"the {_INSIDER_SCAN_DAYS}d scanned{_holder_clause(read)}; counts over "
+                    f"{_INSIDER_WINDOW_DAYS}d)"))
 
 
 class Section16Reach(NamedTuple):
@@ -3076,10 +3172,19 @@ def _fpi_insider_activity(
                    if f.filing_date <= reference_date]
     except HttpError as exc:
         return Sourced.unknown(note=f"EDGAR Form 3/4/5 fetch failed: {exc}")
+    # EACH FILING READ FOR THE ISSUER IT IS ABOUT, Forms 3 and 5 too (STATE row 35): a filing the
+    # FPI made as a holder of another issuer is not its insiders filing, and counted as one it
+    # would turn "may report abroad" into a read line.
+    read = _read_own_filings(http, cik, filings)
+    if read.failed:
+        return _unreadable(read, len(filings), "Form 3/4/5", f"since {HFIAA_EFFECTIVE}")
+    filings = read.own
     span = (reference_date - HFIAA_EFFECTIVE).days
     if not filings:
         looked = (f"EDGAR submissions CIK{pad_cik(cik)}: no Form 3/4/5 filed since "
-                  f"{HFIAA_EFFECTIVE}")
+                  f"{HFIAA_EFFECTIVE}" + (f" about this issuer (the {read.holder} on file were "
+                                          f"filed by it as a holder of another issuer's stock)"
+                                          if read.holder else ""))
         if reach.regime is not None:
             return Sourced.present(
                 _reports_abroad_line(reach, span),
@@ -3099,10 +3204,7 @@ def _fpi_insider_activity(
             note=(f"{kind}: no Form 3/4/5 filed in the last {span} days, since {HFIAA_EFFECTIVE} "
                   f"when Section 16(a) reached its insiders (HFIAA) — {where}, {why}"),
             source_ref=looked)
-    lines: list[Form4Line] = []
-    for f in filings:
-        if f.form == "4":
-            lines.extend(_form4_codes(http, cik, f.accession, f.filing_date))
+    lines = read.lines
     by_form: dict[str, int] = {}
     for f in filings:
         base = f.form.removesuffix("/A")
@@ -3123,7 +3225,8 @@ def _fpi_insider_activity(
                              last_filing=max(f.filing_date for f in filings),
                              since=HFIAA_EFFECTIVE, scope=scope),
         source_ref=(f"EDGAR Forms 3/4/5 (latest {filings[0].accession}; {len(filings)} filings "
-                    f"since {HFIAA_EFFECTIVE}, the HFIAA effective date; counts over {win}d)"))
+                    f"since {HFIAA_EFFECTIVE}, the HFIAA effective date{_holder_clause(read)}; "
+                    f"counts over {win}d)"))
 
 
 def _order_terms(reach: Section16Reach) -> tuple[Regime, str, str]:
