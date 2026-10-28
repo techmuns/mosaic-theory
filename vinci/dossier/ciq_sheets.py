@@ -1003,10 +1003,14 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
     # (ciq_extraction_notes rule #4), so a hardcoded index could read a coupon/price as a date.
     mat_col = next((j for j, c in enumerate(rows[hdr]) if str(c).strip() == "Maturity"), None)
     insts: list[str] = []
-    for i in range(hdr + 1, min(hdr + 12, len(rows))):
+    total = 0  # every instrument the panel lists, so a cut line can say what it left out
+    for i in range(hdr + 1, len(rows)):
         desc = str(rows[i][0]).strip()
         if not desc or desc.startswith("FY ") or desc == "Description":
             break
+        total += 1
+        if total > LIQUIDITY_LINE_ROWS:
+            continue
         typ = str(rows[i][1]).strip() if len(rows[i]) > 1 else ""
         principal = clean_num(rows[i][2]) if len(rows[i]) > 2 else None
         coupon = str(rows[i][3]).strip() if len(rows[i]) > 3 else ""
@@ -1023,13 +1027,22 @@ def liquidity_covenant_flags(bundle: CiqBundle) -> Sourced[str]:
         return Sourced.unknown(note="no debt instruments parsed")
     as_of = _cs_detail_asof(rows)
     return Sourced.present(
-        "; ".join(insts),
+        "; ".join(insts) + liquidity_cut(len(insts), total),
         source_ref=("CIQ Financials→Capital Structure Details"
                     + (f" ({as_of})" if as_of else "")))
 
 
 #: How many instruments the flat line prints — the panel rows `liquidity_covenant_flags` reads.
 LIQUIDITY_LINE_ROWS = 11
+
+
+def liquidity_cut(shown: int, total: int) -> str:
+    """The flat line's own truncation mark, or nothing when it prints every instrument.
+
+    A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION (CLAUDE.md). The line printed 11 instruments
+    with no mark on 9 of the 27 committed pages (LLY's 56, measured 2026-10-27), and the synthesis
+    reads it as the whole schedule. Shared by both builders, so the twin stays one format."""
+    return "" if total <= shown else f" — showing {shown} of {total} instruments"
 
 
 def liquidity_line(instruments: list[CapitalInstrument]) -> str:
@@ -1040,14 +1053,20 @@ def liquidity_line(instruments: list[CapitalInstrument]) -> str:
     without re-reading the workbook and without editing the display string: the caller first
     proves that this function rebuilds the stored line from the panel's own instruments, byte for
     byte (it does on 27 of 27 committed pages, measured 2026-10-27), and only then rebuilds it
-    from the governed ones."""
+    from the governed ones. A cut line ends with its mark (`liquidity_cut`)."""
+    out = liquidity_segments(instruments)
+    return "; ".join(out) + liquidity_cut(len(out), len(instruments))
+
+
+def liquidity_segments(instruments: list[CapitalInstrument]) -> list[str]:
+    """The line's printed instruments, one segment each — at most `LIQUIDITY_LINE_ROWS`."""
     out: list[str] = []
     for i in instruments[:LIQUIDITY_LINE_ROWS]:
         amt = f"{i.principal_musd:,.0f}" if i.principal_musd is not None else "undrawn/–"
         year = date.fromisoformat(i.maturity_date).year if i.maturity_date else None
         due = f" Due {year}" if year is not None and 2000 <= year <= 2100 else ""
         out.append(f"{i.description} ({i.type}) {amt} @ {i.coupon}{due}")
-    return "; ".join(out)
+    return out
 
 
 # --- E1: STRUCTURED capital structure (instruments + summary aggregates) -----------------------

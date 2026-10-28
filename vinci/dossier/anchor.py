@@ -15,7 +15,7 @@ from __future__ import annotations
 import json
 import re
 import statistics as st
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, NamedTuple
 
@@ -582,6 +582,25 @@ NO_COMBINED_DEP_AMORT = ("no combined D&A line, so the split (Depreciation + "
                          "AmortizationOfIntangibleAssets) has no year to be checked against")
 
 
+def _dep_amort_point(facts: dict[str, Any]) -> ConceptPoint | str:
+    """The guarded annual :func:`_latest_dep_amort` reads, as the point itself — or why there is
+    none."""
+    fy = filer_fiscal_year(facts)
+    point, stale = current_annual(facts, "dep_amort", fy)
+    if point is None:
+        if stale:
+            return stale.note
+        if all(latest_annual(points_for_tag(facts, t)) for t in SPLIT_DEP_AMORT):
+            return NO_COMBINED_DEP_AMORT
+        return NO_DEP_AMORT
+    if fy is not None and (lag := (fy.period_end - point.period_end).days) >= ANNUAL_STALE_DAYS:
+        return (f"newest D&A is {point.tag} for the year to {point.period_end.isoformat()}, "
+                f"{lag}d behind the filer's newest fiscal year ({fy.tag} to "
+                f"{fy.period_end.isoformat()}) — the anchor adds D&A to LTM EBIT, so it must be "
+                f"the newest year")
+    return point
+
+
 def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str, str] | str:
     """Latest consolidated D&A ($) → (value, source, basis), or why EDGAR has none. The basis says
     what the twelve months ARE (`_period_label`): a fiscal year, or a filer's own trailing column.
@@ -606,19 +625,14 @@ def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str, str] | str:
     A refusal is the reason, never the stale combined figure: the CIQ bridge then supplies the
     workbook's D&A, stamped `vendor_bridge` (:func:`_bridge_inputs`). A filer that never tagged a
     combined line (CNXC, WERN) has nothing for a split to continue, so EDGAR has no D&A for it."""
-    fy = filer_fiscal_year(facts)
-    point, stale = current_annual(facts, "dep_amort", fy)
-    if point is None:
-        if stale:
-            return stale.note
-        if all(latest_annual(points_for_tag(facts, t)) for t in SPLIT_DEP_AMORT):
-            return NO_COMBINED_DEP_AMORT
-        return NO_DEP_AMORT
-    if fy is not None and (lag := (fy.period_end - point.period_end).days) >= ANNUAL_STALE_DAYS:
-        return (f"newest D&A is {point.tag} for the year to {point.period_end.isoformat()}, "
-                f"{lag}d behind the filer's newest fiscal year ({fy.tag} to "
-                f"{fy.period_end.isoformat()}) — the anchor adds D&A to LTM EBIT, so it must be "
-                f"the newest year")
+    point = _dep_amort_point(facts)
+    if isinstance(point, str):
+        return point
+    return _dep_amort_reading(facts, point)
+
+
+def _dep_amort_reading(facts: dict[str, Any], point: ConceptPoint) -> tuple[float, str, str]:
+    """A guarded D&A point → (value $, source, basis), as :func:`_latest_dep_amort` states it."""
     lbl, trailing = _period_label(point)
     if point.tag not in CONCEPT_ALIASES["dep_amort"]:
         # a split continuing the combined line: name the line and where it stopped
@@ -642,6 +656,78 @@ def _latest_dep_amort(facts: dict[str, Any]) -> tuple[float, str, str] | str:
     basis = ("consolidated trailing twelve months (the filer's own 10-Q column)" if trailing
              else "consolidated latest FY")
     return point.value, source, basis
+
+
+class Window(NamedTuple):
+    """The twelve months the anchor's LTM EBIT and LTM revenue cover: the page's last actual
+    annual column, as `financial_summary.statement_reconciliation` states its end."""
+
+    end: date
+    is_ltm: bool  # False when that column is a fiscal year (the year just closed, no LTM yet)
+
+    def describe(self) -> str:
+        return (f"the trailing twelve months to {self.end.isoformat()}" if self.is_ltm
+                else f"the fiscal year to {self.end.isoformat()}")
+
+
+def _page_window(mechanical: dict[str, Any]) -> Window | None:
+    """The window of the page's LTM EBIT / revenue column, or None when the page does not state
+    it. Read off the column the two come from (`_last_actual_index`), never off its label."""
+    ann = _fs_annual(mechanical)
+    cols = [str(c) for c in ann.get("columns") or []]
+    if not cols:
+        return None
+    label = cols[_last_actual_index(ann, len(cols))]
+    rows = ((((mechanical.get("financial_summary") or {}).get("statement_reconciliation"))
+             or {}).get("rows")) or []
+    ends = {(r.get("period_end"), bool(r.get("is_ltm"))) for r in rows
+            if isinstance(r, dict) and r.get("column") == label and r.get("period_end")}
+    if len(ends) != 1:
+        return None
+    end, is_ltm = ends.pop()
+    return Window(date.fromisoformat(str(end)), is_ltm)
+
+
+#: How far a filing's period end may sit from CIQ's column date and still be the same period: a
+#: 52/53-week filer's year ends on a weekday CIQ may date a few days off (`statement_recon`'s rule).
+WINDOW_SLACK_DAYS = 7
+
+
+def _window_dep_amort(facts: dict[str, Any], window: Window | None) -> tuple[float, str, str] | str:
+    """EDGAR's D&A over the window the anchor's LTM EBIT and revenue cover → (value $, source,
+    basis), or why there is none.
+
+    THE SAME TWELVE MONTHS OR NOTHING (2026-10-28). The anchor adds D&A to LTM EBIT (the market
+    reconciliation's recorded EBITDA), divides it by LTM revenue (the recorded-D&A check), and adds
+    it to LTM revenue × margin (R1's base). A fiscal-year D&A beside those is a figure whose legs
+    cover two windows, which never existed — 24 of the 27 committed anchors read one.
+    - the guarded annual (`_latest_dep_amort`, #830) when it ends on the window's end: a fiscal-year
+      window, or a filer's own 10-Q trailing column (AMZN);
+    - else, for a trailing window, the fiscal year + year-to-date − prior year-to-date on one tag
+      (`statement_recon.twelve_months`, the builder that sets CIQ's columns against the filings);
+    - else none: the CIQ bridge may fill it only with a figure over the same window."""
+    from vinci.dossier.statement_recon import twelve_months
+
+    if window is None:
+        return ("the page states no window for its LTM EBIT and revenue "
+                "(financial_summary.statement_reconciliation)")
+    point = _dep_amort_point(facts)
+    if (not isinstance(point, str)
+            and abs((point.period_end - window.end).days) <= WINDOW_SLACK_DAYS):
+        return _dep_amort_reading(facts, point)
+    if window.is_ltm:
+        built = twelve_months(facts, "dep_amort", window.end, is_ltm=True)
+        if built is not None:
+            value, how, point, tag = built
+            if abs((point.period_end - window.end).days) <= WINDOW_SLACK_DAYS:
+                return (value, f"EDGAR companyfacts {tag} ({how}, to "
+                               f"{point.period_end.isoformat()})",
+                        f"consolidated trailing twelve months to {window.end.isoformat()} "
+                        f"(EDGAR: {how})")
+    reason = (point if isinstance(point, str) else
+              f"its newest current D&A ends {point.period_end.isoformat()}, and no fiscal year "
+              f"plus year-to-date reaches the window on one tag")
+    return f"no EDGAR D&A over {window.describe()} — {reason}"
 
 
 def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | str:
@@ -762,14 +848,51 @@ def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: boo
 
 
 DQ_VENDOR_BRIDGE = "vendor_bridge"
-
-#: What the bridged D&A's twelve months ARE. `ciq_balance` reads the annual sheet's LAST column,
-#: which is `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27; NKE's is a fiscal year,
-#: MCK's carries no header) — it was labelled "consolidated latest FY" (review of #830).
-CIQ_DA_BASIS = ("consolidated, the CIQ workbook's latest annual column — LTM where the workbook "
-                "carries one, else its latest fiscal year (vendor basis)")
 _NO_VENDOR_EX_LEASE = ("; CIQ's net debt is not substituted, because it carries the operating "
                        "leases this bridge excludes")
+
+
+def _ciq_on_window(fact: Any, window: Window | None) -> bool:
+    """A CIQ fact covers exactly ``window``: the same kind of twelve months, ending the same day."""
+    return (window is not None and fact.period_end is not None
+            and fact.period == ("LTM" if window.is_ltm else "FY")
+            and abs((fact.period_end - window.end).days) <= WINDOW_SLACK_DAYS)
+
+
+def _fact_period(fact: Any) -> str:
+    """A CIQ fact's period in words: 'trailing twelve months to D', 'fiscal year to D', or why
+    not."""
+    if fact.period_end is None or fact.period not in ("LTM", "FY"):
+        return "period not stated in the column header"
+    kind = "trailing twelve months" if fact.period == "LTM" else "fiscal year"
+    return f"{kind} to {fact.period_end.isoformat()}"
+
+
+def _one_period(a: Any, b: Any) -> str | None:
+    """The period two CIQ facts share, in words, or None when they do not share one."""
+    if (a.period_end is None or a.period not in ("LTM", "FY")
+            or (a.period, a.period_end) != (b.period, b.period_end)):
+        return None
+    return _fact_period(a)
+
+
+def ciq_da_basis(ciq: Any) -> str:
+    """What the bridged D&A's twelve months ARE, from the fact's STRUCTURED period
+    (`ciq_balance.header_period`, read off the column's own header). `ciq_balance` reads the annual
+    sheet's LAST column, which is `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27;
+    NKE's is a fiscal year, MCK's carries no header) — it was labelled "consolidated latest FY"
+    whatever it was (review of #830)."""
+    fact = ciq.facts.get("d_and_a") if ciq is not None else None
+    period, end = (fact.period, fact.period_end) if fact is not None else (None, None)
+    if end is not None and period == "LTM":
+        return (f"consolidated trailing twelve months to {end.isoformat()} (CIQ workbook, "
+                f"vendor basis)")
+    if end is not None and period == "FY":
+        return f"consolidated fiscal year to {end.isoformat()} (CIQ workbook, vendor basis)"
+    if period is not None:   # the header names the period but its date did not read
+        kind = "trailing twelve months" if period == "LTM" else "fiscal year"
+        return f"consolidated {kind}, end date not read (CIQ workbook, vendor basis)"
+    return "consolidated, period not stated in the CIQ workbook's column header (vendor basis)"
 
 
 def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
@@ -785,7 +908,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     ``ex_lease`` (2026-10-19): the multiple is the ex-lease history (`lease_basis`), so net debt
     leaves the operating leases out — and the CIQ workbook may NOT fill a missing net debt, because
     CIQ's net debt carries those leases. A hole stays a hole rather than a mixed bridge."""
-    got_da = _latest_dep_amort(facts)
+    window = _page_window(mechanical)
+    got_da = _window_dep_amort(facts, window)
     da = None if isinstance(got_da, str) else got_da
     nd = _lease_inclusive_net_debt(facts, ex_operating_leases=ex_lease)
     nd_val = nd[0] if nd else None
@@ -802,12 +926,17 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     vendor: list[str] = []
     if ciq is not None and ciq.ok:
         if da is None and (v := ciq.value("d_and_a")) is not None:
-            why = ("no EDGAR D&A tag" if got_da == NO_DEP_AMORT
-                   else f"EDGAR D&A withheld — {got_da}")
-            da = (v * _USD_M, f"CIQ Financials->Cash Flow (vendor basis; {why}) "
-                              f"[{ciq.source_file} sha {ciq.source_sha256}]",
-                  CIQ_DA_BASIS)
-            vendor.append("d_and_a")
+            if _ciq_on_window(ciq.facts["d_and_a"], window):
+                why = ("no EDGAR D&A tag"
+                       if isinstance(got_da, str) and got_da.endswith(NO_DEP_AMORT)
+                       else f"EDGAR D&A withheld — {got_da}")
+                da = (v * _USD_M, f"CIQ Financials->Cash Flow (vendor basis; {why}) "
+                                  f"[{ciq.source_file} sha {ciq.source_sha256}]",
+                      ciq_da_basis(ciq))
+                vendor.append("d_and_a")
+            else:
+                got_da = (f"{got_da}; CIQ's D&A is not over that window either "
+                          f"({ciq_da_basis(ciq)})")
         if nd_val is None and not ex_lease and (v := ciq.value("net_debt")) is not None:
             nd_val = v * _USD_M
             nd = (nd_val, f"CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or "
@@ -815,10 +944,18 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
             vendor.append("net_debt")
         o, c = ciq.value("ocf"), ciq.value("capex")
         if fcf is None and o is not None and c is not None:
-            fcf = ((o - abs(c)) * _USD_M, "trailing twelve months (vendor basis)",
-                   f"CIQ Financials->Cash Flow operating cash flow less capital expenditure "
-                   f"[{ciq.source_file} sha {ciq.source_sha256}]")
-            vendor.append("ltm_fcf")
+            # ONE PERIOD OR NOTHING (#830's follow-up): both legs are the sheet's rightmost valued
+            # column, which can differ by row — an LTM OCF less a fiscal-year capex never existed
+            span = _one_period(ciq.facts["ocf"], ciq.facts["capex"])
+            if span is not None:
+                fcf = ((o - abs(c)) * _USD_M, f"{span} (vendor basis)",
+                       f"CIQ Financials->Cash Flow operating cash flow less capital expenditure "
+                       f"[{ciq.source_file} sha {ciq.source_sha256}]")
+                vendor.append("ltm_fcf")
+            else:
+                got_fcf = (f"{got_fcf}; CIQ's operating cash flow and capex are not one period "
+                           f"({_fact_period(ciq.facts['ocf'])} vs "
+                           f"{_fact_period(ciq.facts['capex'])})")
     return {
         "vendor_filled": vendor,
         "da": da, "nd_val": nd_val, "dil": dil, "ltm_rev": ltm_rev, "out": out,

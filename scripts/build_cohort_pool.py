@@ -223,7 +223,7 @@ def main(argv: list[str]) -> int:
     print(f"  {len(sec_types)} security types (allowlist {'/'.join(band.allowed_security_types)})")
 
     resolver = EntityResolver.from_config(cfg)
-    written = skipped_sic = skipped_px = skipped_type = errors = 0
+    written = skipped_sic = skipped_px = skipped_type = skipped_registered = errors = 0
     with OUT.open("a") as fh:
         for i, ticker in enumerate(wanted, 1):
             if ticker not in bars_end or ticker not in bars_start or not bars_start[ticker].close:
@@ -236,7 +236,14 @@ def main(argv: list[str]) -> int:
                 skipped_type += 1
                 continue
             try:
-                sic, _ = resolver.sic_for(resolver.resolve_ticker(ticker).cik)
+                ident = resolver.resolve_ticker(ticker)
+                sic, _ = resolver.sic_for(ident.cik)
+                # WHAT THE ISSUER CALLS THE LINE, read as the universe reads it (2026-10-27): the
+                # feed types MCHPP — Microchip's mandatory-convertible preferred depositary — CS,
+                # so the type gate above passed it and it sat in five runs' semiconductor medians.
+                # Read for `CS` only, exactly as `universe.build_universe`'s Axis 3.
+                reg = (resolver.registered_line(ident.cik, ident.ticker, end)
+                       if sec_types.get(ticker) == "CS" else None)
             except Exception as exc:  # noqa: BLE001 - counted and re-raised in aggregate below
                 # NEVER SILENT (review, #509). This swallowed every exception into `sic = None`,
                 # which lands in `skipped_sic` — indistinguishable from a name that genuinely has
@@ -256,6 +263,9 @@ def main(argv: list[str]) -> int:
             if not sic or sic in band.excluded_sic_codes:
                 skipped_sic += 1
                 continue
+            if reg is not None and reg.excluded_class is not None:
+                skipped_registered += 1
+                continue
             rel = (bars_end[ticker].close / bars_start[ticker].close - 1) - bench
             record = {"run_id": run_id, "ticker": ticker, "sic": sic,
                       "rel_ret_vs_market": rel, "as_of": end.isoformat(),
@@ -269,6 +279,7 @@ def main(argv: list[str]) -> int:
                 print(f"    {i}/{len(wanted)} · written {written}", flush=True)
     print(f"\n  WROTE {written} pool rows · skipped {skipped_sic} (no/denylisted SIC), "
           f"{skipped_type} (not operating-company equity), "
+          f"{skipped_registered} (registered as debt or preferred on the issuer's cover), "
           f"{skipped_px} (no price at a window endpoint), {errors} resolver failures")
     return 0
 

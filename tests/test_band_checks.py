@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import typing
+from datetime import date
 from pathlib import Path
 
 from tests.test_band_guards import _now, _synth_facts, _synth_mech
@@ -250,8 +251,11 @@ def _ciq_da(value: float) -> typing.Any:
 
     return CiqFacts(ticker="T", as_of=None, source_file="T Financials_Quarterly.xls",
                     source_sha256="0123456789", checks=[], failures=[],
+                    # over the synthetic page's window (FY to 2025-12-31): the bridge fills the
+                    # anchor's D&A only with a figure over the twelve months its EBIT covers
                     facts={"d_and_a": CiqFact(value=value, unit="$M", basis="latest FY",
-                                              source="CIQ")})
+                                              source="CIQ", period="FY",
+                                              period_end=date(2025, 12, 31))})
 
 
 def test_the_anchor_records_where_its_recorded_d_and_a_came_from() -> None:

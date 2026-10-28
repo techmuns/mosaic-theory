@@ -34,10 +34,11 @@ DERIVED scalars with a source stamp. The workbooks themselves are never committe
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Any
 
 from vinci.dossier import ciq_sheets as cs
-from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, excel_date
 from vinci.dossier.schemas import (
     CHECK_AGREE,
     CHECK_DIFFER,
@@ -70,6 +71,11 @@ class CiqFact:
     unit: str
     basis: str
     source: str
+    # (2026-10-27) the twelve months a flow figure covers, read from its column's own header cell
+    # (:func:`header_period`): "LTM" or "FY", and the period's end. None where the header does not
+    # state it — the reader then says so, never a guess (review of #830).
+    period: str | None = None
+    period_end: date | None = None
 
 
 @dataclass(frozen=True)
@@ -120,28 +126,59 @@ def _bs(bundle: CiqBundle, label: str) -> tuple[float | None, str | None]:
     return float(s.value), s.source_ref
 
 
-def _pick(rows: list[list[Any]], label: str) -> float | None:
+def header_period(cell: Any) -> tuple[str | None, date | None]:
+    """A period-header cell → ("LTM" | "FY" | None, its end date | None).
+
+    CIQ writes ``LTM\n12 months\nAug-31-2026`` over a trailing column and ``12 months\nMay-31-2026``
+    over a fiscal year; the date is the cell's last line. Read off the header the value came from,
+    through the shared helpers (`ciq_sheets._is_ltm`, `ciq.excel_date`) — never off a label built
+    for display."""
+    text = str(cell or "").strip()
+    if not text:
+        return None, None
+    end = excel_date(text.splitlines()[-1].strip())
+    if cs._is_ltm(text):
+        return "LTM", end
+    if "12 months" in text:
+        return "FY", end
+    return None, end
+
+
+def pick_with_period(rows: list[list[Any]],
+                     label: str) -> tuple[float, str | None, date | None] | None:
+    """A row's latest value and the period its column covers (:func:`header_period`)."""
     ri = cs._find_row(rows, label)
     if ri is None:
         return None
-    got = cs._latest_col(rows, ri, cs._period_header(rows))
-    return float(got[1]) if got is not None else None
+    hdr = cs._period_header(rows)
+    got = cs._latest_col(rows, ri, hdr)
+    if got is None:
+        return None
+    cell = rows[hdr][got[0]] if hdr is not None and got[0] < len(rows[hdr]) else None
+    return (float(got[1]), *header_period(cell))
 
 
-def _cf_row(bundle: CiqBundle, label: str, annual: bool) -> float | None:
-    """Latest column of a Cash Flow / Income Statement row, cash flow first.
+def _pick(rows: list[list[Any]], label: str) -> float | None:
+    got = pick_with_period(rows, label)
+    return got[0] if got is not None else None
+
+
+def _cf_cell(bundle: CiqBundle, label: str,
+             annual: bool) -> tuple[float, str | None, date | None] | None:
+    """Latest column of a Cash Flow / Income Statement row, cash flow first, with the period that
+    column covers (:func:`pick_with_period`).
 
     Every (kind, sheet, freq) address below is a STRING LITERAL, fully unrolled. The CIQ-manifest
     drift guard reads these call sites statically and rejects a computed argument — a loop over
     sheet names or a freq parameter is invisible to it, so the manifest could silently stop
     covering an address this module depends on. Four explicit branches is the price of that guard
     seeing the truth, and it said so loudly the first two times this function was written."""
-    def one(rows_fn: Any) -> float | None:
+    def one(rows_fn: Any) -> tuple[float, str | None, date | None] | None:
         try:
             rows = rows_fn()
         except CiqUnavailableError:
             return None
-        return _pick(rows, label)
+        return pick_with_period(rows, label)
 
     if annual:
         got = one(lambda: bundle.sheet("financials", "Cash Flow", freq="annual"))
@@ -152,6 +189,12 @@ def _cf_row(bundle: CiqBundle, label: str, annual: bool) -> float | None:
     if got is None:
         got = one(lambda: bundle.sheet("financials", "Income Statement", freq="quarterly"))
     return got
+
+
+def _cf_row(bundle: CiqBundle, label: str, annual: bool) -> float | None:
+    """:func:`_cf_cell`'s value alone."""
+    got = _cf_cell(bundle, label, annual)
+    return got[0] if got is not None else None
 
 
 def _assert_scale(name: str, value: float | None, revenue: float | None) -> str | None:
@@ -192,31 +235,39 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     # first and independently: annual where the workbook carries it, else the quarterly sheet.
     revenue = _cf_row(bundle, "Total Revenue", True) or _cf_row(bundle, "Total Revenue", False)
 
-    da_cf = _cf_row(bundle, "Depreciation & Amort., Total", True)
-    da_cf_plain = _cf_row(bundle, "Depreciation & Amort.", True)
-    ocf = _sourced(bundle, cs.ltm_ocf)
-    capex = _cf_row(bundle, "Capital Expenditure", True)
+    da_cell = (_cf_cell(bundle, "Depreciation & Amort., Total", True)
+               or _cf_cell(bundle, "Depreciation & Amort.", True))
+    # OCF and capex read the annual Cash Flow sheet's rightmost valued column, as `ltm_ocf` does,
+    # each WITH that column's period: the FCF fill pairs them only when it is one (#830's follow-up)
+    ocf_cell = _cf_cell(bundle, "Cash from Ops.", True)
+    capex_cell = _cf_cell(bundle, "Capital Expenditure", True)
+    ocf = round(ocf_cell[0], 1) if ocf_cell else None   # `ltm_ocf`'s rounding, so no value moves
+    capex = capex_cell[0] if capex_cell else None
     diluted = _cf_row(bundle, "Weighted Avg. Diluted Shares Out.", False) or \
         _cf_row(bundle, "Weighted Avg. Diluted Shares Out.", True)
 
     stamp = f"CIQ Financials workbook {src_file or '?'} (sha {sha or '?'})"
     facts: dict[str, CiqFact] = {}
 
-    def put(key: str, val: float | None, unit: str, basis: str, ref: str | None) -> None:
+    def put(key: str, val: float | None, unit: str, basis: str, ref: str | None,
+            period: tuple[str | None, date | None] = (None, None)) -> None:
         if val is not None:
             facts[key] = CiqFact(value=round(val, 4), unit=unit, basis=basis,
-                                 source=ref or stamp)
+                                 source=ref or stamp, period=period[0], period_end=period[1])
 
     put("cash", cash, "$M", "total cash and short-term investments, latest balance sheet", cash_ref)
     put("total_debt", debt, "$M", "CIQ classified total debt, latest balance sheet", debt_ref)
     put("finance_leases", fin_lease, "$M", "capital/finance leases, latest balance sheet", fin_ref)
     put("operating_leases", op_lease, "$M", "operating lease liabilities, latest balance sheet",
         op_ref)
-    put("d_and_a", da_cf if da_cf is not None else da_cf_plain, "$M",
-        "depreciation and amortisation, latest full year (cash-flow statement)", stamp)
-    put("ocf", ocf, "$M", "cash from operations, trailing twelve months", stamp)
+    put("d_and_a", da_cell[0] if da_cell else None, "$M",
+        "depreciation and amortisation, the annual sheet's latest column (cash-flow statement)",
+        stamp, (da_cell[1], da_cell[2]) if da_cell else (None, None))
+    put("ocf", ocf, "$M", "cash from operations, the annual sheet's latest column", stamp,
+        (ocf_cell[1], ocf_cell[2]) if ocf_cell else (None, None))
     put("capex", (abs(capex) if capex is not None else None), "$M",
-        "capital expenditure, latest full year (magnitude)", stamp)
+        "capital expenditure, the annual sheet's latest column (magnitude)", stamp,
+        (capex_cell[1], capex_cell[2]) if capex_cell else (None, None))
     put("diluted_shares", diluted, "millions", "weighted-average diluted shares, latest period",
         stamp)
     put("revenue", revenue, "$M", "total revenue, latest full year", stamp)
