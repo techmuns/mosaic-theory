@@ -408,3 +408,50 @@ report tiers them.
    JOYY, FUTU and NBIS, and none is in the queue. Step 2's unit guard is where the level gets its
    fix; the screen's series should take one unit per issuer, which is a decision-path change
    owing its own shown run.
+## Amendments
+
+### 2026-10-28 — an FPI's jurisdiction comes from its own annual cover, not EDGAR's company field (#841)
+
+**What changed.** The Section-16 sort above read jurisdiction from EDGAR's `stateOfIncorporation`
+first. That field is today's company record, and for six primary issuers it names the wrong
+place. Each one's own latest annual-report cover (`dei:EntityIncorporationStateCountryCode`)
+names another:
+
+| issuer | EDGAR says | its cover says | order, by the cover |
+|---|---|---|---|
+| DOX | United Kingdom | Guernsey | none (was March) |
+| TEN | Greece | Bermuda | none (was March) |
+| BBUC | Bermuda | British Columbia | March (was none) |
+| HAFN | Bermuda | Singapore | May (was none) |
+| MRX | Bermuda | England | March (was none) |
+| RNW | India | England | March (was May) |
+
+- **RNW is not "incorporated in India".** Its 20-F cover says England, so the India line above
+  ("RNW … 13 → 12") is not evidence about the May order.
+- **The cover also places the two primary issuers this record left without a country:**
+  BLDP (British Columbia, March order) and STVN (Italy, March order, in the EEA).
+
+**The primary rows of the by-order table, corrected.** Cells are "issuers with Forms 3/4/5
+since 2026-03-18 / issuers", at this record's own boundary: the latest annual report and the
+filings on or before 2026-10-16.
+- primary 20-F (192): March 23/41 (was 21/39); May 5/6 (unchanged in total: RNW leaves, HAFN
+  joins); neither 142/145 (was 144/147).
+- primary 40-F (63): March 2/63 (was 2/62); neither 0/0 (was 0/1).
+- **All six re-sorted issuers file Forms 3/4/5,** so none is among the 171 non-filers. The one
+  non-filer that moves is BLDP: placed, it is accounted for by the March order. On the primary
+  correction alone, **"166 of 171" becomes 167 of 171**.
+- **Not re-measured:** the theme-band rows and the theme-band names in the 14-issuer
+  May-order list. HAFN (primary, Singapore) belongs in that list; RNW does not.
+
+**Where the jurisdiction count stands.** At 2026-10-28, with the cover first and EDGAR second:
+- 110 of the 255 primary FPIs sit under an order in force (this record's rule gave 107);
+- the cover gives the jurisdiction for 247, EDGAR for 7, and 1 is unread (BLX: its cover writes
+  "PA", which is refused as a US-state code).
+
+**Why this record's own probe missed it.** This record's dei probe matched a bare code value.
+Covers write a NAME under the `ixt-sec:edgarprovcountryen` transform, often inside ix:header,
+so the probe read "absent" where the tag was present. All 48 blank-EDGAR primary covers carry
+it.
+
+**Evidence:** `docs/records/2026-10-28-fpi3-insider-window.md` (#841), "THE RULE THAT PICKS THE
+STATE" and HOW VERIFIED.
