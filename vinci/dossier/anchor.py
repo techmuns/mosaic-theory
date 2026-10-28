@@ -818,12 +818,12 @@ def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
 def _no_diluted_quarter(facts: dict[str, Any]) -> str:
     """Why `_latest_point` found no diluted weighted average: no tag at all, or a tag over spans
     longer than a quarter only (an annual filer; a first 10-K before any 10-Q)."""
-    longest = max((p for p in points_for_tag(facts, _DILUTED_TAG) if p.period_start),
-                  key=lambda p: p.period_end, default=None)
-    if longest is None:
+    latest = max((p for p in points_for_tag(facts, _DILUTED_TAG) if p.period_start),
+                 key=lambda p: p.period_end, default=None)
+    if latest is None:
         return "UNKNOWN — no diluted WA tag"
     return (f"UNKNOWN — {_DILUTED_TAG} is tagged only over spans longer than a quarter (latest "
-            f"{_span(longest)}); no 10-Q quarter is on file to read")
+            f"{_span(latest)}); no 10-Q quarter is on file to read")
 
 
 def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: bool = False,
