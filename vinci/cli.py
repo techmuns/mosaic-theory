@@ -2866,8 +2866,12 @@ def _cmd_audit_quality(args: argparse.Namespace) -> int:
                     rc = 1
                     continue
                 full.parent.mkdir(parents=True, exist_ok=True)
+                prior = full.read_bytes() if full.exists() else None
                 full.write_bytes(whole)
-                print(f"\nfull card written (git-ignored, this checkout only): "
+                what = ("unchanged" if prior == whole else "written" if prior is None
+                        else "REPLACED — this date's earlier full card differed, and a snapshot "
+                             "naming its sha256 no longer has it")
+                print(f"\nfull card {what} (git-ignored, this checkout only): "
                       f"{full.relative_to(root)}")
             out.parent.mkdir(parents=True, exist_ok=True)
             before = out.read_text() if out.exists() else None

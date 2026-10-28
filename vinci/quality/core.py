@@ -448,18 +448,20 @@ def compact(card: dict[str, Any], *, full_path: str, full_sha256: str) -> dict[s
             elif k == "by_name":
                 out["not_listed"] = {"confirmed_names": len(confirmed),
                                      "confirmed_units": sum(r[CONFIRMED] for r in confirmed)}
-                not_run = sum(1 for r in rows.values() if "not_run" in r)
-                out["listing"] = _listing(out, noun, len(rows) - not_run, not_run)
+                out["listing"] = ""        # placed here; stated once every count is in `out`
                 out[k] = rows
             else:
                 out[k] = v
+        not_run = sum(1 for r in rows.values() if "not_run" in r)
+        out["listing"] = _listing(out, noun, len(rows) - not_run, not_run)
         checks.append(out)
     head = {"schema": COMPACT_SCHEMA, "rows": {
         "form": EXCEPTIONS,
         "statement": (
             f"EXCEPTIONS ONLY (operator ruling C1, 2026-10-29). Each check lists in full every "
             f"{noun} it did not confirm in full — a unit not confirmed, a unit its own rule leaves "
-            f"out, or the check not run on it — exactly as the full card holds it. The {noun}s "
+            f"out, no unit judged, or the check not run on it — exactly as the full card holds "
+            f"it. The {noun}s "
             f"whose every unit is confirmed, and those a check does not apply to, are COUNTED, NOT "
             f"LISTED: each check's `listing` and `not_listed` say how many. The boundary, the "
             f"fleet counts and the not-run reasons are the full card's. The full card, every "
@@ -511,8 +513,9 @@ def reconcile(card: dict[str, Any]) -> None:
                CONFIRMED: sum(r[CONFIRMED] for r in ran) + kept["confirmed_units"],
                **{s: sum(r[s] for r in ran) for s in _NOT_CONFIRMED},
                "excluded": sum(r.get("excluded", 0) for r in ran)}
-        want = {k: f[k] for k in got} | {"items": b["items"]}
-        if got != want or f["items"] != b["items"]:
+        got["fleet items"] = f["items"]
+        want = {k: f[k] for k in got if k in f} | {"items": b["items"], "fleet items": b["items"]}
+        if got != want:
             raise ValueError(f"{where}: counts do not reconcile — " + "; ".join(
                 f"{k} {got[k]} against {want[k]}" for k in got if got[k] != want[k]))
         if c["listing"] != _listing(c, b["item_noun"], len(ran), len(not_run)):

@@ -186,6 +186,7 @@ def _set(cid: str, *path: str, value: Any) -> Callable[[dict[str, Any]], None]:
     (_set("a_vs_b", "listing", value="every item listed"), "listing"),
     (lambda card: _check(card, "a_vs_b").pop("listing"), "no statement"),
     (lambda card: card["rows"].pop("statement"), "state its form"),
+    (_set("a_vs_b", "fleet", "items", value=5), "fleet items 5 against 4"),
     (lambda card: card["rows"]["full"].pop("sha256"), "name its full card"),
 ])
 def test_a_card_whose_counts_do_not_reconcile_is_refused(
@@ -245,6 +246,13 @@ def test_the_full_card_goes_beside_the_store_and_the_snapshot_lists_the_exceptio
                                     "sha256": hashlib.sha256(whole).hexdigest()}
     assert snap == core.compact(full, full_path=rel_full,
                                 full_sha256=hashlib.sha256(whole).hexdigest())
+    # a same-day re-run says so when it replaces the full card an earlier snapshot names
+    assert main(["audit", "quality", "--write"]) == 0
+    assert "full card unchanged" in capsys.readouterr().out
+    (tmp_path / "toy.json").write_text(json.dumps({**ITEMS, "V": {"a": 5, "b": 5}}))
+    assert main(["audit", "quality", "--write"]) == 0
+    assert "full card REPLACED" in capsys.readouterr().out
+    (tmp_path / "toy.json").write_text(json.dumps(ITEMS))
     # the full card is ignored by this repo's rules, the snapshot beside it is not
     assert _git_ignored(rel_full.replace("toy", "prices"))
     assert not _git_ignored(rel_snap.replace("toy", "prices"))
