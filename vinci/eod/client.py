@@ -247,10 +247,11 @@ def carry_forward(client: EodClient, store: Any, *, predecessor_id: str, predece
     window is put on the current basis — prices × factor, volume ÷ factor, `+restated` on its
     source, as `Store.restate_bars` does. Bars already held under the new id are never
     overwritten. Each carried bar names its origin (``polygon-alias:<old id>``). Runs once per
-    rename: a new id that already holds a bar before ``listed`` has been carried. Returns the bars
-    written."""
+    alias: a new id that already holds a CARRIED bar before ``listed`` has been carried. Its own
+    bars there do not count — a re-domicile's new id can hold the ticker's last weeks before the
+    pair is known (Codex, #839 round 2). Returns the bars written."""
     own = store.get_price_history(successor_id)
-    if any(b.bar_date < listed for b in own):
+    if any(b.bar_date < listed and b.source.startswith("polygon-alias:") for b in own):
         return 0
     taken = {b.bar_date for b in own}
     held = {b.bar_date: b for b in store.get_price_history(predecessor_id) if b.bar_date < listed}

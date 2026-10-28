@@ -56,12 +56,12 @@ TENURES = "ticker_tenure.jsonl"
 #: (XPRO 2026-07-13, CLBK 2026-07-21). 8-K12G3, the 12(g) form, is not read: no measured case.
 SUCCESSION_FORMS = ("8-K12B", "8-K12B/A")
 
-#: A succession filing is read as THIS line's only within a year before the successor's first
-#: session, and only where the old filer's bars end within two weeks of it (about the
-#: `GAP_SESSIONS` an SEC suspension may run). Face validity, not measured: the two real ones were
-#: filed 24 and 16 days before the successor's first stored bar, and each old id's last bar is
-#: the session before it. A filing older than that, or a history that ended long before, is
-#: another event — a reuse, not a succession.
+#: A succession filing is read as THIS line's only within a year before the boundary (the session
+#: after the old filer's last stored bar), and only where the successor's first stored bar comes
+#: within two weeks of the old filer's last (about the `GAP_SESSIONS` an SEC suspension may run).
+#: Face validity, not measured: the two real ones were filed 24 and 16 days before the boundary,
+#: and each successor's first stored bar is the session after it. A filing older than that, or a
+#: successor that began long after the old history ended, is another event — a reuse.
 SUCCESSION_FILED_WITHIN = timedelta(days=365)
 SUCCESSION_ABUTS = timedelta(days=14)
 
@@ -270,9 +270,13 @@ def detect_successions(lines: Iterable[Identity], master: Iterable[Identity],
                        spans: Callable[[str], tuple[date, date] | None], *, as_of: date,
                        known: Iterable[ShareClassAlias] = ()) -> list[ShareClassAlias]:
     """The re-domiciles among ``lines``: an entity-master id of the SAME ticker and share class
-    under ANOTHER CIK, whose stored bars (``spans``: first and last held bar, or None) end before
-    the line's begin. The boundary (``listed``) is the line's first held bar — its first session as
-    a line of the new filer; a line holding no bar yet is left for a later build.
+    under ANOTHER CIK, with stored bars (``spans``: first and last held bar, or None).
+
+    THE BOUNDARY (``listed``) IS THE SESSION AFTER THE OLD FILER'S LAST STORED BAR, never the
+    line's own first bar (Codex, #839 round 2). The weekly build looks for a succession before the
+    screen ingests the new id, which then holds no bar; and that ingest's restate window files the
+    ticker's last weeks under it, so its first bar can fall before the old filer's last. One
+    ticker trades one series a day, so such an overlap is the same series, not two.
 
     TWO PROOFS, AND THE TICKER IS NEITHER (brief, 2026-10-28):
     1. the same share-class FIGI — Polygon's record of the line as of ``as_of`` (the build's date,
@@ -290,15 +294,19 @@ def detect_successions(lines: Iterable[Identity], master: Iterable[Identity],
         olds = [p for p in by_ticker.get(s.eod_symbol, ())
                 if p.cik != s.cik and p.share_class == s.share_class
                 and (p.internal_id, s.internal_id) not in seen]
-        mine = spans(s.internal_id)
-        if not olds or mine is None:
+        if not olds:
             continue
-        listed = mine[0]
-        figi = (details(s.eod_symbol, as_of) or {}).get("share_class_figi")
+        mine = spans(s.internal_id)
+        # the line's FIGI only from a record naming ITS filer: the ticker's record as of the build
+        # can be the new filer's while ``s`` is the old line
+        now = details(s.eod_symbol, as_of) or {}
+        figi = now.get("share_class_figi") if now.get("cik") == s.cik else None
         for p in olds:
-            theirs = spans(p.internal_id)
-            if theirs is None or theirs[1] >= listed:
-                continue
+            if (theirs := spans(p.internal_id)) is None:
+                continue                          # no history to continue
+            if mine is not None and mine[1] <= theirs[1]:
+                continue                          # a successor's history outruns its predecessor's
+            listed = theirs[1] + timedelta(days=1)
             row = partial(ShareClassAlias, predecessor_id=p.internal_id,
                           successor_id=s.internal_id, cik=s.cik, predecessor_symbol=p.eod_symbol,
                           successor_symbol=s.eod_symbol, listed=listed, predecessor_cik=p.cik)
@@ -311,7 +319,7 @@ def detect_successions(lines: Iterable[Identity], master: Iterable[Identity],
                     f"{s.eod_symbol} as of {as_of.isoformat()} (CIK {s.cik}) carry "
                     f"share_class_figi {figi}")))
                 continue
-            if listed - theirs[1] > SUCCESSION_ABUTS:
+            if mine is not None and mine[0] - theirs[1] > SUCCESSION_ABUTS:
                 continue
             notice = [(form, filed, acc) for form, filed, acc in filings(s.cik)
                       if form in SUCCESSION_FORMS
@@ -321,7 +329,8 @@ def detect_successions(lines: Iterable[Identity], master: Iterable[Identity],
                 out.append(row(share_class_figi=None, evidence=(
                     f"SEC {form} {acc} filed {filed.isoformat()} by CIK {s.cik}, the successor "
                     f"to CIK {p.cik} under {s.eod_symbol}; {p.internal_id}'s bars end "
-                    f"{theirs[1].isoformat()}, {s.internal_id}'s begin {listed.isoformat()}")))
+                    f"{theirs[1].isoformat()}, so {s.internal_id} holds the ticker from "
+                    f"{listed.isoformat()}")))
     return out
 
 

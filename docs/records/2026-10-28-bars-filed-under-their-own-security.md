@@ -213,12 +213,14 @@ holders (the same bars, put on) and the 2 successors (bars carried).
   - `prices.load` holds the reserve and prints the budget;
   - a second checkout re-files from the committed table without asking Polygon;
   - AST pins hold every refresh call site to `first_sessions`.
-- **Mutation: 48 of 48 killed on the final code**, stale bytecode off, baseline green. The first
+- **Mutation: 52 of 52 killed on the final code**, stale bytecode off, baseline green. The first
   pass killed 45 of 47:
   - "the tenure table rewritten" and "reserve page names not first" survived, and each got a pin;
   - a third mutant had been killed by malformed SQL, not by its test; it was rewritten and
     re-run;
-  - review round 0 added the 48th: carried bars re-filed.
+  - review round 0 added the 48th (carried bars re-filed), and rounds 1–2 added four more
+    (below). Two of round 2's guards first survived, each blocking alone what the test pinned
+    jointly, so each got its own pin.
 - **The real run caught one defect the fixture had not.** The reserve read the monitor's
   assignments through `read_assignments(data_dir.parent)`, which appends `data/monitor`. Under any
   folder not named `data` it read nothing, quietly. It now reads beside `data_dir`, pinned with
@@ -236,6 +238,28 @@ holders (the same bars, put on) and the 2 successors (bars carried).
     `test_a_line_whose_own_type_is_unknown_is_not_proven_by_type`, red on the PR head.
   - The real run is unchanged: re-run from the backup, the same 30 + 2 rows and identical tables.
     WLTH's and LUXE's own records state CS and ADRC.
+- **Review, round 2 (Codex P2, #839): the succession boundary was the new id's first stored bar.**
+  - The weekly build looks for a succession before the screen ingests the new id, which then
+    holds no bar, so no pair was recorded. That ingest's restate window then files the ticker's
+    last weeks under the new id. On the next build its first bar fell before the old filer's
+    last, the overlap check refused the pair, and the history was never carried.
+  - The boundary is now the session after the old filer's last stored bar, and an overlap is
+    accepted: one ticker trades one series a day.
+  - The carry's run-once guard looked for ANY bar before the boundary; it now looks for a bar it
+    carried.
+  - Pinned by `test_the_boundary_is_the_old_filers_last_bar_not_the_new_ids_first` and
+    `test_a_successor_holding_its_own_bars_before_the_boundary_is_still_carried`, both red on
+    the PR head.
+- **Found re-running the real store under that fix, and fixed in the same round:** with the
+  overlap check gone, the OLD CLBK id read as the new one's successor. Its "FIGI" came from the
+  ticker's record as of the build, which is the NEW filer's.
+  - A successor's history must now outrun its predecessor's, and the line's FIGI is read only
+    from a record naming its own CIK.
+  - Pinned by `test_a_pair_is_never_read_backwards`, red before the guards, plus one
+    counterfactual pin per guard.
+  - The real run is then unchanged: 30 reuses and 2 successions, 11,047 bars re-filed and 2,450
+    carried, a second run moving nothing. The two alias rows' evidence now reads "holds the
+    ticker from", the boundary, where it said "begin".
 - **Incident → invariant (shipped Y, twice):**
   - a bar filed under today's holder of its ticker → `holders()` plus the committed tenure and
     alias tables, pinned by `test_a_reused_tickers_former_bars_are_never_filed_under_the_current_id`

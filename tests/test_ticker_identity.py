@@ -213,8 +213,47 @@ def test_a_stale_filing_or_a_history_that_ended_long_before_is_another_event() -
     assert _succ(NEW_XPRO, OLD_XPRO, filings=aged) == []
     assert _succ(NEW_XPRO, OLD_XPRO,
                  spans=_spans({OLD_XPRO: (D("2021-10-04"), D("2026-07-22"))})) == []
-    assert _succ(NEW_XPRO, OLD_XPRO,
-                 spans=_spans({OLD_XPRO: (D("2021-10-04"), D("2026-08-06"))})) == []
+
+
+def test_the_boundary_is_the_old_filers_last_bar_not_the_new_ids_first() -> None:
+    """CODEX, #839 round 2. The weekly build looks for a succession BEFORE the screen ingests the
+    new id, which then holds no bar; and that ingest writes the restate window under it, so the
+    next build sees its first bar before the old filer's last. The boundary is the session after
+    the old filer's last stored bar, so the pair is recorded either way — never on the ticker
+    alone (the 8-K12B still decides)."""
+    for new_span in (None, (D("2026-07-07"), _REF)):       # no bar yet; the restate window
+        [a] = _succ(NEW_XPRO, OLD_XPRO, spans=_spans({NEW_XPRO: new_span}))  # type: ignore[dict-item]
+        assert a.listed == D("2026-08-06"), new_span
+
+
+def test_a_pair_is_never_read_backwards() -> None:
+    """Found re-running the real store under round 2's fix: with the overlap check gone, the OLD
+    CLBK id read as the new one's successor, its "FIGI" taken from the ticker's record today —
+    the NEW filer's. A successor's history runs past its predecessor's, and the line's FIGI is
+    read only from a record naming its own CIK."""
+    lines = [_ident(OLD_CLBK), _ident(NEW_CLBK), _ident(OLD_XPRO), _ident(NEW_XPRO)]
+    got = detect_successions(lines, lines, _details()[1], _filings, _spans(), as_of=_REF)
+    assert {(a.predecessor_id, a.successor_id) for a in got} == {
+        (OLD_CLBK, NEW_CLBK), (OLD_XPRO, NEW_XPRO)}
+
+
+def test_a_line_whose_history_ended_first_never_succeeds() -> None:
+    """Counterfactual: the OLD filer also filed an 8-K12B within the year (some other
+    succession). Its history ends before the new id's, so it continues nothing."""
+    def both(cik: str) -> list[tuple[str, date, str]]:
+        extra = [("8-K12B", D("2026-09-01"), "fixture")] if cik == "0001723596" else []
+        return _filings(cik) + extra
+    assert _succ(OLD_CLBK, NEW_CLBK, filings=both) == []
+
+
+def test_the_lines_figi_is_read_only_from_a_record_naming_its_filer() -> None:
+    """Counterfactual: the ticker's record as of the build names ANOTHER filer, with the FIGI the
+    old filer's record carries. That FIGI is not the line's, so it proves nothing."""
+    other = {"cik": "0009999999", "share_class_figi": "BBGFIXTURE01"}
+    assert _succ(NEW_XPRO, OLD_XPRO, filings=lambda cik: [], overrides={
+        "XPRO@2026-10-16": {**_FIX["details"]["XPRO@2026-10-16"], **other},
+        "XPRO@2026-08-05": {**_FIX["details"]["XPRO@2026-06-12"],
+                            "share_class_figi": "BBGFIXTURE01"}}) == []
 
 
 def test_a_second_step_conversion_carries_another_figi_and_its_8k12b_proves_it() -> None:
@@ -477,6 +516,23 @@ def test_every_refresh_files_by_the_committed_tables() -> None:
         assert calls, f"{fn.__name__} no longer calls {callee}"
         # the benchmark's own ingest (an IDX- id, never reused) is the one call that may skip it
         assert sum("first_sessions" in k for k in calls) >= 1, (fn.__name__, callee)
+
+
+def test_a_successor_holding_its_own_bars_before_the_boundary_is_still_carried(
+        tmp_path: Path) -> None:
+    """CODEX, #839 round 2. The screen's restate window can file the ticker's last weeks under
+    the new id before the pair is known. The carry's run-once guard looked for ANY bar before the
+    boundary and so never carried; it now looks for a bar it carried, and leaves the id's own."""
+    root = _root(tmp_path)
+    with Store(root / "data" / "vinci.db") as store:
+        store.write_prices(_bar(NEW_XPRO, r) for r in _FIX["held"][OLD_XPRO][2:])  # 08-04, 08-05
+    moved = _reconcile(root, _Polygon())
+    assert moved["carried"][NEW_XPRO] == 2                    # 2024-10-25 and 2024-10-28
+    with Store(root / "data" / "vinci.db") as store:
+        xpro = {b.bar_date: b.source for b in store.get_price_history(NEW_XPRO)}
+    assert xpro[D("2024-10-25")] == f"polygon-alias:{OLD_XPRO}"
+    assert xpro[D("2026-08-04")] == "polygon-grouped"          # its own copy is never overwritten
+    assert _reconcile(root, _Polygon())["carried"] == {}
 
 
 def test_another_checkout_refiles_from_the_committed_table_without_asking(tmp_path: Path) -> None:
