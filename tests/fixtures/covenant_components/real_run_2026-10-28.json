@@ -1,0 +1,69 @@
+{
+ "AMZN": [
+  {
+   "agreement_is_amendment": false,
+   "agreement_title": "AMENDED AND RESTATED CREDIT AGREEMENT",
+   "base_rate_label": "LIBO Rate",
+   "component_quotes": {
+    "floor_pct": "provided that (a) if any Screen Rate, determined as provided above, would be less than zero, such Screen Rate shall be deemed to be zero",
+    "margin_pct": "“ Applicable Rate ” means (a) with respect to Base Rate Loans, 0.00% per annum, (b) with respect to Eurocurrency Rate Loans, 0.50% per annum, and (c) with respect to the commitment fee set forth in Section 2.07(a) , 0.04% per annum."
+   },
+   "floor_pct": 0.0,
+   "margin_bps": null,
+   "margin_pct": 0.5,
+   "name": "Interest / coupon rate",
+   "pik_pct": null,
+   "value": {
+    "note": "verbatim: “(i) each Eurocurrency Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the LIBO Rate for such Interest Period plus the Applicable Rate; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing or conversion date at a rate per annum equal to the Base Rate plus the Applicable Rate.”",
+    "source_ref": "8-K 0001193125-20-176528 · d948849dex101.htm",
+    "status": "present",
+    "value": "each Eurocurrency Rate Loan: LIBO Rate plus the Applicable Rate; each Base Rate Loan: Base Rate plus the Applicable Rate"
+   }
+  }
+ ],
+ "BRBR": [
+  {
+   "agreement_is_amendment": true,
+   "agreement_title": "CREDIT AGREEMENT",
+   "base_rate_label": "Eurodollar Rate",
+   "component_quotes": {
+    "floor_pct": "notwithstanding the foregoing, at no time will the Eurodollar Rate be deemed to be (i) in the case of Revolving Credit Loans, less than 1.00% per annum and (ii) in the case of Term Loans, less than 0.75% per annum."
+   },
+   "floor_pct": 0.75,
+   "margin_bps": null,
+   "margin_pct": 4.0,
+   "name": "Interest / coupon rate",
+   "pik_pct": null,
+   "value": {
+    "note": "verbatim: “Clause (a) of the defined term “ Applicable Rate ” in Section 1.01 of the Existing Credit Agreement is hereby amended and restated in its entirety to read as follows: “(a) in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans and””",
+    "source_ref": "8-K 0001772016-21-000029 · ex10-1_amend2creditagmt.htm",
+    "status": "present",
+    "value": "in respect of Term B Loans, 3.00% per annum for Base Rate Loans and 4.00% per annum for Eurodollar Rate Loans"
+   }
+  }
+ ],
+ "NCNO": [
+  {
+   "agreement_is_amendment": false,
+   "agreement_title": "CREDIT AGREEMENT",
+   "base_rate_label": "Term SOFR",
+   "component_quotes": {
+    "floor_pct": "provided that if the Term SOFR determined in accordance with either of the foregoing provisions (a) or (b) of this definition would otherwise be less than zero, the Term SOFR shall be deemed zero for purposes of this Agreement."
+   },
+   "floor_pct": 0.0,
+   "margin_bps": null,
+   "margin_pct": null,
+   "name": "Interest / coupon rate",
+   "pik_pct": null,
+   "value": {
+    "note": "verbatim: “(i) each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period from the applicable Borrowing date at a rate per annum equal to the Term SOFR for such Interest Period plus the Applicable Rate; (ii) each Base Rate Loan (other than a Swingline Loan) shall bear interest on the outstanding principal amount thereof from the applicable Borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate; and (iii) each Swingline Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Rate.”",
+    "source_ref": "8-K 0001902733-24-000171 · exhibit101creditagreementb.htm",
+    "status": "present",
+    "value": "Term SOFR Loans: Term SOFR plus the Applicable Rate; Base Rate Loans and Swingline Loans: Base Rate plus the Applicable Rate"
+   },
+   "withheld_components": {
+    "margin_pct": "margin 2% withheld — its own quote is not in the exhibit"
+   }
+  }
+ ]
+}

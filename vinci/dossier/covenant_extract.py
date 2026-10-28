@@ -646,6 +646,9 @@ class GoverningTerm(NamedTuple):
     pik_pct: float | None = None
     refused_newer: tuple[Sourced[str], ...] = ()
     last_verified: Sourced[str] | None = None
+    #: the winning row's components kept by a clause of their own (`rate_components` checked each
+    #: is a span of the exhibit stating the figure), so the lead's guard accepts them on it
+    component_quotes: tuple[tuple[str, str], ...] = ()
 
 
 def _ambiguous_titles(
@@ -767,7 +770,8 @@ def governing_terms(
             fam, term, value, base_ref, amended,
             base_rate_label=gov_row.base_rate_label, margin_pct=gov_row.margin_pct,
             margin_bps=gov_row.margin_bps, floor_pct=gov_row.floor_pct, pik_pct=gov_row.pik_pct,
-            refused_newer=refused, last_verified=last_verified))
+            refused_newer=refused, last_verified=last_verified,
+            component_quotes=tuple(sorted(gov_row.component_quotes.items()))))
     return out
 
 

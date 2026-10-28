@@ -242,11 +242,16 @@ pages move (`lead_census.py`, committed rows against gated rows):
   filing's period for a stamp naming two, so a release check could place a label wrong under
   such a stamp. Kroger's (FY, 2025) is the year to 2025-02-01. None of the 27 pages is among the
   116 such filers, so no committed check moves.
+- **Fixed in review round 1 (Codex P2):** the page's interest-lead guard
+  (`render._compose_interest_lead`, `dossier.js composeInterestLead`) checked every component's
+  digits against the model's `value` string. On the real run that suppressed AMZN's and BRBR's
+  leads ("rate component 0.5 not stated in the clause") although their own clauses state them.
+  The governing term now carries `component_quotes`, and the guard accepts a component kept by
+  one. Pinned in both engines on the frozen real-run rows
+  (`real_run_2026-10-28.json`): AMZN "LIBO Rate + 0.50% (Floor 0.00%)", BRBR "Eurodollar
+  Rate + 4.00% (Floor 0.75%)"; the same rows without their clauses still suppress. 3 mutants
+  killed. All 27 committed pages render byte-identical, since none carries an own clause.
 - **Found in review, not fixed:**
-  - the page's interest-lead guard (`render._compose_interest_lead` and its JS mirror) checks a
-    component's digits against the model's `value` string, not its own clause, so a component
-    kept by `component_quotes` that the string omits suppresses the lead with a QA note. It fails
-    safe (no unquoted figure prints); the fix is a render change under the PREVIEW RULE;
   - the anchor's D&A vintage note still names its oldest stale candidate `FY{end year}`, the
     calendar year, not the filer's fiscal year.
 - **Not done here:** the 5 release figures cut by the 200-character quote cap (EPAM 1, TJX 2,

@@ -236,3 +236,60 @@ def test_the_scorecard_counts_a_withheld_component_as_excluded() -> None:
     assert _scored([_amzn_2020()]) == ({"differs_unexplained": 2}, 0)        # as committed
     withheld, _ = _extract()
     assert _scored([withheld[0].model_dump(mode="json")]) == ({}, 2)
+
+
+# --- THE PAGE LEAD: a component kept by its own clause is printed (round 1, Codex P2) ------------
+
+REAL_RUN: dict[str, list[dict[str, Any]]] = json.loads(
+    (FIX / "real_run_2026-10-28.json").read_text())
+
+#: What the page leads with, from the real model's rows. The parent `value` the model wrote omits
+#: the deferred figures (AMZN's "…plus the Applicable Rate"), so a guard reading only that string
+#: suppressed every component this build keeps by its own clause.
+_REAL_LEADS = {"AMZN": ["LIBO Rate + 0.50% (Floor 0.00%)", ""],
+               "BRBR": ["Eurodollar Rate + 4.00% (Floor 0.75%)", ""],
+               "NCNO": ["", ""]}                       # its grid margin was withheld: no lead
+
+
+def _real_lead_py(row: dict[str, Any]) -> list[str]:
+    g = ce.governing_terms([CovenantTerm.model_validate(row)], [])[0]
+    return list(_compose_interest_lead(g, str(g.value.value)))
+
+
+def _real_lead_js(rows: list[dict[str, Any]]) -> list[list[str]] | None:
+    """The same rows through dossier.js's collapse and composer, or None without node."""
+    import shutil
+    import subprocess
+    if not shutil.which("node"):
+        return None
+    js = (pathlib.Path(__file__).resolve().parents[1] / "frontend" / "views" / "shared"
+          / "dossier.js").read_text()
+    collapse = js[js.index("const _accOf"):js.index("function covenantTerms")]
+    composer = js[js.index("function clauseNumbers"):js.index("function covenantValueLead")]
+    driver = ("const out=" + json.dumps(rows) + ".map((r)=>{const g=governingTerms([r],[])[0];"
+              "return composeInterestLead(g,String(g.value.value));});"
+              "console.log(JSON.stringify(out));")
+    src = (collapse + "\n" + composer + "\n" + driver).replace(chr(0), "\\u0000")
+    out = subprocess.run(["node", "-e", src], capture_output=True, text=True, check=True)
+    got: list[list[str]] = json.loads(out.stdout)
+    return got
+
+
+def test_a_component_kept_by_its_own_clause_leads_the_page_in_both_engines() -> None:
+    rows = [REAL_RUN[t][0] for t in sorted(_REAL_LEADS)]
+    want = [_REAL_LEADS[t] for t in sorted(_REAL_LEADS)]
+    assert [_real_lead_py(r) for r in rows] == want
+    js = _real_lead_js(rows)
+    assert js is None or js == want
+
+
+def test_a_component_with_no_clause_of_its_own_is_still_checked_against_the_value() -> None:
+    """The same real rows with their own clauses taken away: the guard reads the value string, as
+    before, and suppresses — a component is printed only where SOME verified clause states it."""
+    rows = [{k: v for k, v in REAL_RUN[t][0].items() if k != "component_quotes"}
+            for t in ("AMZN", "BRBR")]
+    want = [["", "rate component 0.5 not stated in the clause — lead suppressed"],
+            ["", "rate component 0.75 not stated in the clause — lead suppressed"]]
+    assert [_real_lead_py(r) for r in rows] == want
+    js = _real_lead_js(rows)
+    assert js is None or js == want

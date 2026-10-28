@@ -18,3 +18,9 @@
 | `AMZN-2020-screen-rate.txt` | 8-K 0001193125-20-176528 · d948849dex101.htm | “Screen Rate” — less than zero is deemed to be zero |
 | `AORT-2025-adjusted-term-sofr.txt` | 8-K 0000784199-25-000145 · ex101.htm | “Adjusted Term SOFR” — floored at two percent (2.00%) |
 | `NCNO-2024-pricing-grid.txt` | 8-K 0001902733-24-000171 · exhibit101creditagreementb.htm | the Applicable Rate grid — 2.00% / 2.25% / 2.50% by leverage |
+
+- `real_run_2026-10-28.json` — the interest term rows this branch's extractor wrote on 2026-10-28
+  from a REAL model call (`claude-opus-4-8`) on AMZN's, BRBR's and NCNO's exhibits above (the full
+  cached exhibits, one call each), as `CovenantTerm` JSON: AMZN's margin and floor and BRBR's and
+  NCNO's floors kept by a clause of their own, NCNO's grid margin withheld. Frozen, never re-drawn:
+  a fresh call words its `value` differently.
