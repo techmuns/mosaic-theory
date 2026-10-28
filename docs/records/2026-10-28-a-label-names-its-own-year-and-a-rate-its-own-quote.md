@@ -231,6 +231,10 @@ pages move (`lead_census.py`, committed rows against gated rows):
   the gate withheld it. A verbatim grid would pass.
   - Pinned by `test_a_grid_tier_quoted_with_its_grid_passes_and_says_so`.
   - **Falsifier:** a grid rule in the gate, and that pin then fails.
+  - Raised by Codex in review round 2 (P2) and DEFERRED, owner in §5.0 row 34. Counting a
+    clause's figures would withhold AMZN's true single-rate definition (0.00% / 0.50% / 0.04%
+    by loan type); grid words with a level-in-force phrase are a vocabulary gate this build
+    could measure on only three real rows; and a stated level proves the closing date, not today.
 - **ACCEPTED RISK: a wrong stamp that names ONE period is printed.** Only a collision or a
   non-year is detectable from companyfacts. Kroger's stamps skip 2023 (2022 → the year to
   2023-01-28, 2024 → the year to 2024-02-03), so one of them is not a name Kroger uses.
