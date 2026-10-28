@@ -368,3 +368,49 @@ def test_a_common_stocks_counts_are_untouched() -> None:
     c = an._traded_unit_counts(_gpcr_mech(None, 213_929_572), facts)
     assert c.dil is not None and c.dil.value == 217_957_000 and c.out == 213_929_572
     assert c.per_ads_source == "" and c.refused is None
+
+
+# --- the dossier's own record (#840 round 1, Codex P1) ------------------------------------------
+
+def _stored_record(ticker: str, cik: str) -> Any:
+    """A real committed candidate's data record, re-keyed to ``ticker`` — the shape both dossier
+    routes hand assembly: a candidate stored before 2026-10-28, or a maintenance standalone, neither
+    carrying ``ads``."""
+    from vinci.schemas.candidate import CandidateRecord
+    line = Path("data/snapshots/candidate_records.jsonl").read_text().splitlines()[0]
+    rec = CandidateRecord.model_validate(json.loads(json.loads(line)["payload"])).data_record
+    ident = rec.identity.model_copy(update={"ticker": ticker, "eod_symbol": ticker, "cik": cik})
+    return rec.model_copy(update={"identity": ident})
+
+
+def test_a_dossier_record_without_its_listing_basis_gets_one_at_assembly() -> None:
+    """A maintained ADR with no current candidate is assembled from `_standalone_record`, which no
+    screen touched, and a candidate stored before 2026-10-28 carries no `ads` either — so assembly
+    reads the basis itself, through the SAME `listing_basis` the screen uses: a depositary line
+    gets its ratio (QFIN 2); a common stock stays None; a record that already carries one keeps
+    it."""
+    from vinci.dossier import assemble as asm
+    res = _Resolver()
+    types = {"QFIN": "ADRC", "ZIM": "CS"}
+    got = asm._with_listing_basis(_stored_record("QFIN", "0001741530"), resolver=res,
+                                  reference_date=_REF, security_types=types)
+    assert got.ads == _QFIN_ADS
+    plain = asm._with_listing_basis(_stored_record("ZIM", "0001654126"), resolver=res,
+                                    reference_date=_REF, security_types=types)
+    assert plain.ads is None
+    carried = _stored_record("QFIN", "0001741530").model_copy(update={"ads": _gpcr(3.0)})
+    kept = asm._with_listing_basis(carried, resolver=res, reference_date=_REF,
+                                   security_types=types)
+    assert kept.ads == _gpcr(3.0) and res.calls == ["0001741530"]
+
+
+def test_assembly_applies_the_listing_basis_to_whichever_record_it_is_given() -> None:
+    """`assemble_one` passes its record — candidate or standalone — through `_with_listing_basis`
+    before anything reads it, so neither route can publish an ordinary-share figure under an ADS
+    price."""
+    from vinci.dossier import assemble as asm
+    fn = next(n for n in ast.walk(ast.parse(Path(asm.__file__).read_text()))
+              if isinstance(n, ast.FunctionDef) and n.name == "assemble_one")
+    calls = [n for n in ast.walk(fn) if isinstance(n, ast.Call)
+             and getattr(n.func, "id", None) == "_with_listing_basis"]
+    assert calls, "assemble_one does not apply the listing basis to its record"
