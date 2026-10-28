@@ -119,15 +119,27 @@ row 33 closes with it.
     TSM and ASML list only their common shares.
   - **Fallback.** Where no title states a ratio, anchored patterns over the filing's text are
     used.
-  - **Rule.** A ratio is known only when exactly one value is stated.
-  - **Primary:** **81 of 85** depositary-typed lines are known: 57 from a 12(b) title, 24 from the
+  - **Rule.** A ratio is known only when exactly one value is stated. Fractions are read as
+    fractions, and N-for-M as N-for-M. An ADS that counts UNITS or CPOs rather than shares is
+    refused, because how many shares a unit holds is not in those words.
+  - **CORRECTED BEFORE MERGE.** These figures were re-read with FPI4's reader, built on the same
+    real covers. The first cut said 81 of 85, and three of its values were wrong:
+    - RERE: "every three ADSs represent two" is 2/3, not 2;
+    - TAL: "each three representing one" is 1/3, not 1;
+    - SKM: "five-ninths of one share" is 5/9, not 5.
+  - **Primary:** **77 of 85** depositary-typed lines are known: 59 from a 12(b) title, 18 from the
     filing text.
-    - 55 have a ratio other than 1, from 0.2 to 25.
-    - Unknown: BMA, GGB and TV. Ambiguous (states 1 and 0.5): GRFS.
-  - **Theme:** 94 of 105 are known.
-    - Unknown: ASML, ASX, DEO, E, HMY, ING, PBR and WDS.
-    - Ambiguous: BIDU, FMS and TCOM. BIDU's and TCOM's filings state both their current ratios
-      and the ratios they replaced.
+    - 53 have a ratio other than 1, from 0.2 to 25.
+    - **Refused, 8:**
+      - BMA and GGB state none;
+      - GRFS and HIMX state two ratios, a change and its successor;
+      - BSBR, KOF, TV and VLRS count units or CPOs.
+  - **Theme:** 95 of 105 are known.
+    - **Refused:**
+      - ASML, DEO, ING and WDS state none;
+      - BIDU, FMS, HTHT and TCOM state several (BIDU's and TCOM's filings carry their current
+        ratios beside the ones they replaced);
+      - CX and FMX count CPOs or units.
   - **Queue:** all **16** depositary lines are known.
     - Ratios: QFIN 2, GPCR 3, JKS 4, IPX 10, DQ 5, LPL 0.5, JMIA 2, MLCO 3, DBVT 5.
     - Ratio 1: NBTX, PONY, WB, HSAI, ABVX, SID and IVA.
@@ -268,12 +280,12 @@ ranked queue).
    - **The build:** read every depositary 12(b) title on the latest periodic cover, then the
      anchored filing-text patterns. Require exactly one value, else **REFUSE**. Store the ratio
      with its accession.
-   - **Unlocks:** per-share bridges on 81 of 85 primary depositary lines and on the 2 Tier 0
+   - **Unlocks:** per-share bridges on 77 of 85 primary depositary lines and on the 2 Tier 0
      queue names (GPCR, DBVT). **2 queue names underwritable**: Tier 0 then needs nothing a
      domestic name does not.
    - **Cost:** small. The cover reader exists (`resolver/instrument.py`); the measurement code
-     shows the patterns and their two fraction traps (SMFG "3/5 of one share", KT "one-half of
-     one share").
+     shows the patterns and their traps: fractions (SMFG "3/5 of one share", KT "one-half of one
+     share", SKM "five-ninths"), N-for-M (RERE, TAL) and units (KOF, TV).
 2. **FPI1a with a unit guard: a 20-F/40-F is an annual report, and a non-USD fact is never read
    as dollars.**
    - **The build:** open the 10-K-only gates listed above. Make every `extract_points` consumer
@@ -333,9 +345,11 @@ report tiers them.
   - **The first cut read currency from the `Assets` unit.** It returned USD for QFIN, whose
     Assets carry a USD convenience translation, which would have put QFIN in Tier 1.
   - **The first ratio patterns read fractions as counts.** SMFG's "3/5 of one share" came out
-    as 3 and KT's "one-half of one share" as 1.
+    as 3 and KT's "one-half of one share" as 1. Three more were caught only when FPI4's reader was
+    built on the same covers (RERE, TAL, SKM, above), along with six ADSs of units or CPOs.
   - **Ratios checked by hand against known values:** TSM 5, BABA 8, JD 2, PDD 4, TM 10, HMC 3,
-    BP 6, SHEL 2, HSBC 5, HDB 3, UMC 5, NTES 5, MFG 2, SMFG 0.6, KT 0.5, LPL 0.5, QFIN 2, GPCR 3.
+    BP 6, SHEL 2, HSBC 5, HDB 3, UMC 5, NTES 5, MFG 2, SMFG 0.6, KT 0.5, LPL 0.5, QFIN 2, GPCR 3;
+    and RERE 2/3, TAL 1/3, SKM 5/9 against their own words.
 - **The 6-K test, sampled.** Of 8 accepted documents drawn at random, 7 are interim results or
   interim statements. One (NTB) is a bank's Pillar 3 capital disclosure: period-labelled, with
   income figures, but not a results release. The issuer-level answer still holds, because
