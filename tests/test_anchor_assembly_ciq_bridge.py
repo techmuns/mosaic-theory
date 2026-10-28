@@ -18,7 +18,7 @@ from __future__ import annotations
 import inspect
 import json
 import pathlib
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from types import SimpleNamespace
 from typing import Any
 
@@ -26,7 +26,7 @@ import pytest
 
 from vinci.dossier import assemble as asm
 from vinci.dossier import ciq_balance, recipe_proposal
-from vinci.dossier.anchor import CIQ_DA_BASIS, DQ_VENDOR_BRIDGE, Anchor, preserve_operator_tag
+from vinci.dossier.anchor import DQ_VENDOR_BRIDGE, Anchor, preserve_operator_tag
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.ciq_balance import CiqFact, CiqFacts
 
@@ -43,8 +43,9 @@ VENDOR_INPUT = {"GOOGL": "d_and_a", "ORKA": "net_debt"}
 #: guarded-line.md`). ORKA's EDGAR D&A is FY2023 ($0.015M), two years behind its FY2025, so the
 #: bridge fills it from the workbook ($0.134M) and the vendor list names it. The page refreshes in
 #: the next artifact pass; until then this is a recorded difference. GOOGL's bridged D&A keeps its
-#: value and source and changes only its BASIS text: the workbook's last column is its LTM, which
-#: was labelled "consolidated latest FY" (review of #830, `anchor.CIQ_DA_BASIS`).
+#: value and source and changes only its BASIS text: the workbook's last column is its LTM to
+#: 2026-06-30, which was labelled "consolidated latest FY" (review of #830; the period is read off
+#: the column header, `ciq_balance.header_period`, and frozen here beside the fact).
 MOVED_BY_THE_DA_GUARD = {"ORKA": ("d_and_a", "data_quality_detail"), "GOOGL": ("d_and_a",)}
 
 
@@ -56,11 +57,17 @@ def _vendor_filled(a: Anchor) -> set[str]:
     return set()
 
 
+def _fact(v: dict[str, Any]) -> CiqFact:
+    """A frozen fact; its period end (the column header's date) is stored as ISO text."""
+    end = v.get("period_end")
+    return CiqFact(**{**v, "period_end": date.fromisoformat(end) if end else None})
+
+
 def _ciq(t: str, *, drop: str | None = None, failures: list[str] | None = None) -> CiqFacts:
     c = CUT[t]["ciq"]
     return CiqFacts(ticker=t, as_of=None, source_file=c["source_file"],
                     source_sha256=c["source_sha256"],
-                    facts={k: CiqFact(**v) for k, v in c["facts"].items() if k != drop},
+                    facts={k: _fact(v) for k, v in c["facts"].items() if k != drop},
                     checks=list(c["checks"]), failures=list(failures or []))
 
 
@@ -103,7 +110,8 @@ def test_a_fresh_assembly_writes_the_backfilled_anchor(
     assert {k: v for k, v in fresh.items() if k not in moved} == {
         k: v for k, v in committed.items() if k not in moved}
     if moved:   # the recorded move, pinned rather than skipped
-        assert got.d_and_a is not None and got.d_and_a.basis == CIQ_DA_BASIS
+        assert got.d_and_a is not None and got.d_and_a.basis == (
+            "consolidated trailing twelve months to 2026-06-30 (CIQ workbook, vendor basis)")
         assert got.d_and_a.value == CUT[t]["ciq"]["facts"]["d_and_a"]["value"]
         assert got.d_and_a.source.startswith("CIQ")
     if t == "ORKA":

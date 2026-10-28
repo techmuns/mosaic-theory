@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+from datetime import date
 from typing import Any
 
 from vinci.dossier import ciq_balance as cb
@@ -102,11 +103,54 @@ def test_a_d_and_a_its_concept_has_reported_past_is_refused() -> None:
                           "2024-12-31, 546d behind")
 
 
-def test_a_bridged_d_and_a_does_not_claim_a_fiscal_year() -> None:
-    """REVIEW FINDING (Codex, #830). The bridge reads the workbook's LAST annual column, which is
-    `LTM 12 months` on 33 of the 35 workbooks on file (2026-10-27; NKE's is a fiscal year, MCK's
-    carries no header), yet the filled D&A was labelled "consolidated latest FY". The basis now
-    says what the column is: LTM where the workbook carries one, else the latest fiscal year."""
-    basis = _bridge_inputs({}, _facts("CNXC"), _ciq(CNXC_CIQ_DA))["d_and_a"].basis or ""
-    assert basis != "consolidated latest FY"
-    assert "latest annual column" in basis and "LTM" in basis
+#: The header cells over the column `ciq_balance` reads, verbatim from each workbook's annual Cash
+#: Flow sheet (2026-10-27): a trailing column on CNXC and WERN, a fiscal year on NKE.
+HEADERS = {"CNXC": "LTM\n12 months\nAug-31-2026", "WERN": "LTM\n12 months\nJun-30-2026",
+           "NKE": "12 months\nMay-31-2026"}
+#: The bridge's D&A for CNXC and WERN on those columns — the figures `anchor.ciq_bridge` returned.
+BRIDGE_DA = {"CNXC": 642.82, "WERN": 313.717}
+
+
+def test_the_ciq_period_is_read_off_the_columns_own_header() -> None:
+    """REVIEW FINDING (Codex, #830; operator ruling): the bridge reads the annual sheet's LAST
+    column, which is `LTM 12 months` on 33 of the 35 workbooks on file, and the anchor labelled
+    it "consolidated latest FY". The period is now a STRUCTURED value read from that column's own
+    header cell — never re-parsed from a display string — and a fiscal-year column says so."""
+    assert cb.header_period(HEADERS["CNXC"]) == ("LTM", date(2026, 8, 31))
+    assert cb.header_period(HEADERS["WERN"]) == ("LTM", date(2026, 6, 30))
+    assert cb.header_period(HEADERS["NKE"]) == ("FY", date(2026, 5, 31))
+    assert cb.header_period("") == (None, None)
+    rows = [["For the Fiscal Period Ending\n", "12 months\nAug-31-2025", HEADERS["CNXC"]],
+            ["Depreciation & Amort., Total", 660.433, BRIDGE_DA["CNXC"]]]
+    assert cb.pick_with_period(rows, "Depreciation & Amort., Total") == (
+        BRIDGE_DA["CNXC"], "LTM", date(2026, 8, 31))
+
+
+def test_a_bridged_d_and_a_is_stored_with_its_trailing_period() -> None:
+    """End to end on CNXC's and WERN's frozen companyfacts: EDGAR's D&A is withheld (no combined
+    line for the split to continue), the bridge fills it, and the stored basis names the trailing
+    twelve months to the column's date — CNXC's to 2026-08-31, WERN's to 2026-06-30."""
+    for t, end in (("CNXC", "2026-08-31"), ("WERN", "2026-06-30")):
+        period, period_end = cb.header_period(HEADERS[t])
+        ciq = cb.CiqFacts(ticker=t, as_of=None, source_file="wb.xls", source_sha256="sha",
+                          facts={"d_and_a": cb.CiqFact(value=BRIDGE_DA[t], unit="$M", basis="b",
+                                                       source="s", period=period,
+                                                       period_end=period_end)})
+        da = _bridge_inputs({}, _facts(t), ciq)["d_and_a"]
+        assert da.value == BRIDGE_DA[t]
+        assert da.basis == (f"consolidated trailing twelve months to {end} (CIQ workbook, "
+                            f"vendor basis)"), t
+    # ⊖ a fiscal-year column is stated as one; a header that states nothing says so
+    fy = cb.CiqFacts(ticker="NKE", as_of=None, source_file="wb.xls", source_sha256="sha",
+                     facts={"d_and_a": cb.CiqFact(value=747.0, unit="$M", basis="b", source="s",
+                                                  period="FY", period_end=date(2026, 5, 31))})
+    assert _bridge_inputs({}, _facts("CNXC"), fy)["d_and_a"].basis == (
+        "consolidated fiscal year to 2026-05-31 (CIQ workbook, vendor basis)")
+    blank = _bridge_inputs({}, _facts("CNXC"), _ciq(1.0))["d_and_a"].basis or ""
+    assert "period not stated" in blank and "latest FY" not in blank
+    # a header naming LTM whose date did not read keeps the period it did state
+    undated = cb.CiqFacts(ticker="X", as_of=None, source_file="wb.xls", source_sha256="sha",
+                          facts={"d_and_a": cb.CiqFact(value=1.0, unit="$M", basis="b",
+                                                       source="s", period="LTM")})
+    assert _bridge_inputs({}, _facts("CNXC"), undated)["d_and_a"].basis == (
+        "consolidated trailing twelve months, end date not read (CIQ workbook, vendor basis)")

@@ -2433,8 +2433,10 @@
      "d_and_a": {
       "value": 25536.0,
       "unit": "$M",
-      "basis": "depreciation and amortisation, latest full year (cash-flow statement)",
-      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls (sha 36160a403e)"
+      "basis": "depreciation and amortisation, the annual sheet's latest column (cash-flow statement)",
+      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls (sha 36160a403e)",
+      "period": "LTM",
+      "period_end": "2026-06-30"
      },
      "ocf": {
       "value": 185675.0,
@@ -13495,8 +13497,10 @@
      "d_and_a": {
       "value": 0.134,
       "unit": "$M",
-      "basis": "depreciation and amortisation, latest full year (cash-flow statement)",
-      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls (sha add437d7e3)"
+      "basis": "depreciation and amortisation, the annual sheet's latest column (cash-flow statement)",
+      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls (sha add437d7e3)",
+      "period": "LTM",
+      "period_end": "2026-06-30"
      },
      "ocf": {
       "value": -100.9,

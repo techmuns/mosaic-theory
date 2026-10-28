@@ -56,6 +56,16 @@ class EodClient(ABC):
     def grouped_daily(self, day: date) -> dict[str, RawBar]:
         """Whole-market OHLCV for one date, keyed by source ticker. Empty dict = non-trading day."""
 
+    def ticker_details(self, ticker: str, as_of: date | None = None) -> dict[str, Any] | None:
+        """The source's reference record for ``ticker`` (as of ``as_of`` when given), or None. A
+        source with no reference data answers None, and nothing is then aliased through it."""
+        return None
+
+    def daily_bars(self, symbol: str, start: date, end: date) -> list[tuple[date, RawBar]]:
+        """Per-symbol daily bars over ``[start, end]``. A source that cannot serve one symbol's
+        history answers [], and a carry then has only the bars the store already holds."""
+        return []
+
 
 def _trading_days(start: date, end: date) -> Iterator[date]:
     """Weekdays in [start, end]. Market holidays are handled downstream (they return 0 rows)."""
@@ -193,6 +203,48 @@ def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
                 store.restate_bars(iid, by_bound[b], through=b, after=prev)
             prev = b
     return {iid: sorted(v.items()) for iid, v in found.items()}
+
+
+#: How far back a rename's carry asks the source for the old ticker's bars: the two years the data
+#: plan serves (`docs/records/2026-10-26-split-restatement-and-total-return.md`). Older sessions
+#: come from the bars the store already holds under the old id.
+CARRY_DAYS = 730
+
+
+def carry_forward(client: EodClient, store: Any, *, predecessor_id: str, predecessor_symbol: str,
+                  successor_id: str, listed: date, end: date) -> int:
+    """Write a renamed line's history under its NEW id: every session before ``listed`` (the day
+    the new ticker started trading), so each reader of ``Store.get_price_history`` sees one
+    unbroken series. The old id keeps its own bars untouched — it is never re-keyed.
+
+    The source's own bars for the OLD ticker win over the store's copies (they are on the source's
+    current split basis), and the store's copies fill what the plan no longer serves. THOSE COPIES
+    ARE SET BESIDE A FRESH BAR FIRST (L7's caution): on the earliest session both hold, a held bar
+    the source has since restated (`restatement_factor`) means every copy older than the source's
+    window is put on the current basis — prices × factor, volume ÷ factor, `+restated` on its
+    source, as `Store.restate_bars` does. Bars already held under the new id are never
+    overwritten. Each carried bar names its origin (``polygon-alias:<old id>``). Runs once per
+    rename: a new id that already holds a bar before ``listed`` has been carried. Returns the bars
+    written."""
+    own = store.get_price_history(successor_id)
+    if any(b.bar_date < listed for b in own):
+        return 0
+    taken = {b.bar_date for b in own}
+    held = {b.bar_date: b for b in store.get_price_history(predecessor_id) if b.bar_date < listed}
+    fresh = {d: b for d, b in client.daily_bars(predecessor_symbol,
+                                                end - timedelta(days=CARRY_DAYS),
+                                                listed - timedelta(days=1)) if d < listed}
+    both = sorted(set(held) & set(fresh))
+    factor = (restatement_factor(held[both[0]], fresh[both[0]]) if both else None) or 1.0
+    tag = f"polygon-alias:{predecessor_id}"
+    rows = [PriceBar(internal_id=successor_id, bar_date=d, open=b.open * f, high=b.high * f,
+                     low=b.low * f, close=b.close * f, volume=b.volume / f,
+                     source=tag + ("+restated" if f != 1.0 else ""))
+            for d, b, f in sorted([(d, b, factor) for d, b in held.items() if d not in fresh]
+                                  + [(d, b, 1.0) for d, b in fresh.items()],
+                                  key=lambda x: x[0])
+            if d not in taken]
+    return int(store.write_prices(rows))
 
 
 def ingest_prices(
@@ -418,15 +470,22 @@ class PolygonEodClient(EodClient):
             # design: absent already means "drop this name loudly", so skipping a failed lookup
             # yields the same, already-counted outcome. Same idiom, same reasoning as
             # `mention_prefilter(skip_errors=True)`: a conservative gap, never a fabricated value.
-            try:
-                raw = self._http.get_json(f"{_REFERENCE}/{t}", ttl_seconds=_ONE_DAY)
-            except HttpError:
-                continue
-            res = cast(dict[str, Any], raw).get("results") or {}
-            n = res.get("share_class_shares_outstanding")
+            n = (self.ticker_details(t) or {}).get("share_class_shares_outstanding")
             if n:
                 out[t] = float(n)
         return out
+
+    def ticker_details(self, ticker: str, as_of: date | None = None) -> dict[str, Any] | None:
+        """``/v3/reference/tickers/<T>`` — today's record (cached a day), or the record AS OF a
+        date, which is how a renamed ticker's share class is read after the ticker is gone (cached
+        for good: a past date's record does not change). None on a failed lookup, never a guess."""
+        try:
+            raw = self._http.get_json(
+                f"{_REFERENCE}/{ticker}", ttl_seconds=None if as_of else _ONE_DAY,
+                params={"date": as_of.isoformat()} if as_of else None)
+        except HttpError:
+            return None
+        return cast(dict[str, Any], raw).get("results") or None
 
     def grouped_daily(self, day: date) -> dict[str, RawBar]:
         url = _GROUPED.format(day=day.isoformat())
