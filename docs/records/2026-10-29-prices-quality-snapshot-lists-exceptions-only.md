@@ -1,7 +1,7 @@
 ---
-status: open
+status: shipped
 date: 2026-10-29
-prs: []
+prs: [847]
 ---
 
 # The prices quality snapshot lists its exceptions only: every row a check did not confirm in full is committed in full, the rest are counted with the count stated, and the full card stays beside the store, git-ignored (operator ruling C1)
