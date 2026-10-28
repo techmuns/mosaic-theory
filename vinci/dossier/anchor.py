@@ -78,6 +78,10 @@ _REVENUE_TAG_PREFERENCE = (
 # there, shared).
 DQ_REVENUE_TAG_CONFLICT = "revenue_tag_conflict"
 _DILUTED_TAG = "WeightedAverageNumberOfDilutedSharesOutstanding"
+#: The longest span `_latest_point` takes as a quarter: a 14-week quarter runs 97 days end to start.
+#: Anything longer is a year-to-date or a fiscal year — the upper bound `ebitda_recon` and
+#: `quality.sources.release` already give a quarter.
+QUARTER_MAX_DAYS = 100
 #: The same 10-Q's BASIC weighted average: diluted minus basic, over the one period both tag, is the
 #: dilutive increment the filer itself counts (options and RSUs by treasury stock, convertibles
 #: if-converted) — the only dilution figure this repo reads rather than estimates.
@@ -784,6 +788,14 @@ def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
     (latest 10-Q)" over the nine-month number. A denominator whose stated basis is not what it is
     is the exact defect class the share-count work exists to close.
 
+    **AND NEVER A YEAR (2026-10-29).** Shortest-at-the-latest-end still failed at a fiscal year
+    end: a 10-K tags the weighted average over the YEAR and no fourth quarter, so the latest end
+    had one span to offer. SMPL's FY2026 10-K (filed 2026-10-27) handed back its 363-day average,
+    92,372,473, where the last 10-Q's quarter is 89,940,680 — and `scenario-propose` refused the
+    page on a 6.34% gap the year's average made. A span longer than :data:`QUARTER_MAX_DAYS` is
+    never a candidate, so between a 10-K and the next 10-Q the selector reads the last 10-Q's
+    quarter, which is the period the basis names; a filer with no quarter on file gets None.
+
     Instant facts (``period_start is None``) sort as span 0, so at a shared end date an instant
     beats any duration — it cannot BE a cumulative, which is the thing being excluded. No caller
     currently mixes the two: the sole call site reads the diluted weighted average, a duration.
@@ -791,14 +803,14 @@ def _latest_point(facts: dict[str, Any], tag: str) -> ConceptPoint | None:
     (History: until 2026-10-21 ``anchor_base_value_per_share`` was ``equity ÷`` this figure, so
     the span fix moved committed anchors — SMPL +4.16%, BRBR +1.02%, CNXC +0.35%. The base now
     divides by the point-in-time count and this figure feeds the dilution test only.)"""
-    pts = points_for_tag(facts, tag)
-    if not pts:
-        return None
 
     def span(p: ConceptPoint) -> int:
         # instants sort as span 0 — they cannot be cumulative, so nothing is preferred over them
         return (p.period_end - p.period_start).days if p.period_start else 0
 
+    pts = [p for p in points_for_tag(facts, tag) if span(p) <= QUARTER_MAX_DAYS]
+    if not pts:
+        return None
     # latest end date first, then the SHORTEST span at that end, then the latest filing
     return max(pts, key=lambda p: (p.period_end, -span(p), p.filed))
 

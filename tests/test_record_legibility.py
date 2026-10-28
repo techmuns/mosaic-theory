@@ -167,10 +167,15 @@ def test_a_retired_field_is_refused_loudly_not_dropped_quietly() -> None:
 
 
 # --- the current-state block -------------------------------------------------------------------
-def test_next_evidence_prefers_the_calendar_then_a_trigger_then_says_unknown() -> None:
-    """RESOLUTION ORDER (ratified). SMPL carries BOTH a calendar print (2026-10-08) and a dated
+def test_next_evidence_prefers_the_calendar_then_a_trigger_then_says_unknown(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """RESOLUTION ORDER (ratified). SMPL carried BOTH a calendar print (2026-10-08) and a dated
     trigger (2027-01-07); the calendar must win — leading with the trigger would misstate "next
     evidence" by a full quarter. A record with NEITHER must say UNKNOWN, never invent.
+
+    SMPL IS READ FROZEN (TEST-LAYER RULE): its 2026-08-18 page, the one whose calendar printed
+    2026-10-08 (tests/fixtures/frozen_pages/README.md). The living page moves that row each quarter.
 
     THE ABSENT CASE IS CONSTRUCTED, NOT BORROWED — and it took two relocations to learn that.
     AORT was the fixture until it gained a calendar row on 2026-07-27; WERN replaced it and gained
@@ -179,6 +184,7 @@ def test_next_evidence_prefers_the_calendar_then_a_trigger_then_says_unknown() -
     test is "no calendar on file AND no dated triggers", which a SYNTHETIC ticker has structurally
     and permanently, while a real one has it only until the fleet grows. The fallback case below
     already used a synthetic name; this one now does too."""
+    monkeypatch.setattr(_BUILD, "DOSS", ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18")
     smpl = _BUILD._next_evidence("SMPL", {"dated_triggers": [
         {"deadline": "2027-01-07", "trigger": "the analyst's falsifier"}]})
     assert smpl["date"] == "2026-10-08" and "catalyst calendar" in smpl["source"]

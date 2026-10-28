@@ -36,8 +36,16 @@ def _with(rec: dict, *trigs: dict) -> dict:
 _NDE = {"metric": "quality.net_debt_to_ebitda", "comparator": ">", "unit": "x"}
 
 
-def test_all_three_states_reach_the_row_on_the_committed_corpus() -> None:
-    rec, mech = _record_and_mech()
+#: SMPL's page as committed on 2026-08-18, frozen (tests/fixtures/frozen_pages/README.md): its net
+#: debt / EBITDA of 1.5x sits between the two thresholds below, which the living page need not.
+FROZEN_SMPL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL" / "dossier.json"
+
+
+def test_all_three_states_reach_the_row_on_a_real_page() -> None:
+    """VALUE-LEVEL, so on the frozen page (TEST-LAYER RULE): one real record and one real
+    mechanical layer, and each of the three states reaches the row with the observed figure."""
+    rec, _ = _record_and_mech()
+    mech = json.loads(FROZEN_SMPL.read_text())["mechanical"]
     rec = _with(rec,
                 {"trigger": "nde > 3.0x", "threshold": 3.0, **_NDE},
                 {"trigger": "nde > 1.0x", "threshold": 1.0, **_NDE},
