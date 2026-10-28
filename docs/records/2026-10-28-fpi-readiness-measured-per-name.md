@@ -13,6 +13,10 @@ lands". This record measures, for every foreign line in three populations, which
 stand between that line and an underwrite. It sorts the lines into tiers and proposes the build
 order. No pipeline code is built here, and #828 (held by the operator) is not touched.
 
+**OPERATOR RULING, 2026-10-28, on this record:** foreign private issuers STAY in the primary
+population. #828 is closed. The path is FPI readiness, in this record's build order. STATE §5.0
+row 33 closes with it.
+
 **THE TIERS** (each line's latest annual report, read from the filing's own XBRL instance).
 
 | tier | what it is | primary (262) | of which in the ranked queue (56) | theme band (176) |
