@@ -16,6 +16,7 @@ suite checked only that the SET of mirrored names matched, never that the bytes 
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -31,7 +32,13 @@ def states_a_horizon(line: str) -> bool:
     after a re-assembly the value does. What is not permitted is NEITHER, because a bare
     `sells 0` invites the reader to believe there were no sales — SMPL's true answer is 16 of them,
     $24.7M, just outside 182 days.
+
+    AN UNKNOWN COUNTS NOTHING, so it owes no window (STATE row 35): the label drops "6m" for it,
+    because "(Form 4, 6m)" above "UNKNOWN — 1 of 17 Form 4 filings could not be read" claims a
+    six-month read that never happened. Matched on the rendered UNKNOWN marker, never on wording.
     """
+    if re.match(r"- \*\*Insider activity \(Form 4\):\*\* _(UNKNOWN|MISSING)_ — ", line):
+        return True
     return ("Form 4, 6m" in line) or ("in the last " in line and " days" in line)
 
 
@@ -66,6 +73,12 @@ def test_a_horizonless_insider_line_is_rejected() -> None:
     # …and both legitimate forms are accepted, so the guard cannot be passed by deleting the line.
     assert states_a_horizon("- **Insider activity (Form 4, 6m):** Open-market buys 2 · sells 0")
     assert states_a_horizon("- **Insider activity (Form 4):** buys 2 — in the last 182 days")
+    # an UNKNOWN states no count, so it needs no window — but only the rendered UNKNOWN marker
+    # earns that, never a PRESENT count that merely mentions the word
+    assert states_a_horizon("- **Insider activity (Form 4):** _UNKNOWN_ — 1 of 17 Form 4 filings "
+                            "in the 1095d scanned could not be read")
+    assert not states_a_horizon("- **Insider activity (Form 4):** Open-market buys 2 · sells 0 "
+                                "(_UNKNOWN_ — )")
 
 
 def test_every_web_mirror_is_byte_identical_to_its_source() -> None:

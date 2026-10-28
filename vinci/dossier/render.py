@@ -1942,10 +1942,13 @@ def _positioning_lines(m: MechanicalLayer) -> list[str]:
         # FUBO makes a fixed answer impossible either way — its record is SEALED, so its value can
         # never be refreshed, and a hardcoded "(Form 4)" would strand exactly that page.
         # Reading the value settles all three cases and cannot drift out of step with it.
-        _horizon_in_value = "in the last " in str(cp.insider_activity.value or "")
-        rows.append(_fact("Insider activity (Form 4)" if _horizon_in_value
-                          else "Insider activity (Form 4, 6m)",
-                          cp.insider_activity, _fmt_insider))
+        # AN UNKNOWN HAS NO WINDOW (STATE row 35): it counts nothing, so "6m" above "UNKNOWN — 1 of
+        # 17 Form 4 filings … could not be read" claims a six-month read that never happened.
+        ia = cp.insider_activity
+        _six_months = (ia.status is SourceStatus.PRESENT
+                       and "in the last " not in str(ia.value or ""))
+        rows.append(_fact("Insider activity (Form 4, 6m)" if _six_months
+                          else "Insider activity (Form 4)", ia, _fmt_insider))
     if cp.short_interest is not None:
         rows.append(_fact("Short interest (FINRA)", cp.short_interest))
     return ["### Ownership & positioning", *rows, ""] if rows else []

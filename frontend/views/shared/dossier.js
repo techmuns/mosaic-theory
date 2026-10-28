@@ -4199,9 +4199,11 @@ function positioning(m) {
       // TWIN OF render.py — the label carries the horizon only when the VALUE does not. A fixed
       // answer is impossible: refreshed values state their own window, while FUBO's record is
       // SEALED and its value can never be refreshed, so a hardcoded "(Form 4)" would strand that
-      // page with no horizon at all — the #319 regression.
-      ? fact(String(cp.insider_activity.value || "").includes("in the last ")
-             ? "Insider activity (Form 4)" : "Insider activity (Form 4, 6m)",
+      // page with no horizon at all — the #319 regression. An UNKNOWN counts nothing, so it has
+      // no window and never carries "6m" (STATE row 35).
+      ? fact(cp.insider_activity.status === "present"
+             && !String(cp.insider_activity.value || "").includes("in the last ")
+             ? "Insider activity (Form 4, 6m)" : "Insider activity (Form 4)",
              cp.insider_activity, fmtInsider) : "")
     + (cp.short_interest ? fact("Short interest (FINRA)", cp.short_interest) : "");
   return rows ? sec("Ownership & positioning",

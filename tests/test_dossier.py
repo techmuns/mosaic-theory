@@ -2956,8 +2956,13 @@ def test_fresh_capital_structure_renders_table_and_wall_in_place_of_liquidity() 
 
 # One real-shaped Form 4 ownership XML with four non-derivative transactions across the code classes
 # the block partitions: open-market P (buy) / S (sell), routine grant A, and 'other' conversion C.
+# `<issuer>` is the element every real Form 4 carries (the schema requires it); the reader keys on
+# it, because a company's index also lists the Forms 4 it files as a holder of ANOTHER issuer.
 _FORM4_XML = """<?xml version="1.0"?>
 <ownershipDocument>
+  <issuer>
+    <issuerCik>0001760689</issuerCik>
+  </issuer>
   <nonDerivativeTable>
     <nonDerivativeTransaction>
       <transactionCoding><transactionCode>P</transactionCode></transactionCoding>

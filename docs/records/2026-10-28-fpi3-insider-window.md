@@ -330,3 +330,16 @@ build must not).**
    a sale three weeks after its reference date (the fixture's `origin_main`).
 4. **An UNKNOWN insider value keeps the label "(Form 4, 6m)"** while its note states another
    horizon. This is `render.py`/`dossier.js`'s label derivation, domestic and FPI alike.
+## Amendments
+
+### 2026-10-28 — FOLLOW-UPS 1–4 and accepted risk 3 are built (STATE row 35)
+
+`docs/records/2026-10-28-insider-line-own-issuer-to-its-date.md` records the build.
+- **FOLLOW-UPS 1 and accepted risk 3 (holder filings):** each Form 3/4/5 is now read for its own
+  `issuerCik`, on both paths.
+- **FOLLOW-UPS 2 (silent drops):** an unreadable filing makes the line UNKNOWN with the count.
+- **FOLLOW-UPS 3 (the bound):** the domestic read is bounded at the reference date.
+- **FOLLOW-UPS 4 (the label):** an UNKNOWN reads "(Form 4)".
+
+Six committed pages still carry the old line until they are refreshed or re-assembled (STATE row 35).
+The body above is unchanged.
