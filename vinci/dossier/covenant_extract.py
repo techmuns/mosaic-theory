@@ -289,7 +289,7 @@ def rate_components(t: dict[str, Any], quote: str, source: SourceText) -> RateCo
         if figure_stated(quote, v, (unit,)):
             values[key] = v
             continue
-        own = str(t.get(_OWN_QUOTE[key]) or "").strip()
+        own = _opt_str(t.get(_OWN_QUOTE[key])) or ""
         own_found = bool(own) and source.match(own).found
         if own_found and figure_stated(own, v, (unit,)):
             values[key], quotes[key] = v, own

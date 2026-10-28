@@ -242,6 +242,13 @@ pages move (`lead_census.py`, committed rows against gated rows):
   filing's period for a stamp naming two, so a release check could place a label wrong under
   such a stamp. Kroger's (FY, 2025) is the year to 2025-02-01. None of the 27 pages is among the
   116 such filers, so no committed check moves.
+- **Found in review, not fixed:**
+  - the page's interest-lead guard (`render._compose_interest_lead` and its JS mirror) checks a
+    component's digits against the model's `value` string, not its own clause, so a component
+    kept by `component_quotes` that the string omits suppresses the lead with a QA note. It fails
+    safe (no unquoted figure prints); the fix is a render change under the PREVIEW RULE;
+  - the anchor's D&A vintage note still names its oldest stale candidate `FY{end year}`, the
+    calendar year, not the filer's fiscal year.
 - **Not done here:** the 5 release figures cut by the 200-character quote cap (EPAM 1, TJX 2,
   VRRM 2), the root fix #829 deferred in `release_parse._verbatim`. None of the 29 is a cut
   window, so the brief's case for it did not arise.
