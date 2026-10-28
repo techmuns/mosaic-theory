@@ -744,11 +744,19 @@ today's, so a backdated point would carry later data).
   its partial days (one name's backfill) and its latest bar, and the sha256 names exactly what was
   read. Stores DIFFER by checkout (2026-10-24: the primary's ends 2026-08-05, the `-ta` copy's
   whole-market days end 2026-09-22, the research-alpha copy reaches 2026-10-16). Tiingo is fetched
-  through the fund's adapter (`eod.tiingo`, cached a day under `data/cache/tiingo`), one request a
-  name. Its plan allows 50 requests an hour (as `theme_intelligence/market.py` records): past that,
-  each refused name waits out four 61-second retries (`netcache`) and then reads `not_run`. Without
-  the key the comparison is `not_run` by name. The snapshot is large (2026-10-24: 2.1 MB for 2,797
-  names) because the core writes every name for every check.
+  through the fund's adapter (`eod.tiingo`, under `data/cache/tiingo`), one request a name: each
+  page name, and since 2026-10-27 each name an internal check FLAGS (a split-shaped step, a step
+  across a hole, a zero-volume bar). A window that ended 30 days ago is kept once read
+  (`prices.CLOSED_WINDOW_DAYS`); any other is re-read after a day. Its plan allows about 50
+  requests an hour, over a window NOT established (2026-10-27: 54 were accepted within one trailing
+  hour, 18:22–19:06 IST, and the 55th refused; then a request at 00:00 was refused 22 minutes after
+  50 others), AND 500 distinct symbols a calendar month for the whole key — theme intelligence, CI,
+  the monitor and scoring share it. Past the monthly cap Tiingo answers 200 with a `detail` body,
+  which the adapter raises as `TiingoRefusedError` and never caches. A COLD cache cannot finish in
+  one run (2026-10-27: 157 requests; the key met its monthly cap at 20:01 IST, during that pass):
+  the first refusal of either kind stops the run asking, the names left read `not_run` by name,
+  and a later run asks for them. A warm cache costs about the page names a day. Without the key those comparisons are `not_run` by name. The snapshot is large
+  (2026-10-24: 2.1 MB for 2,797 names) because the core writes every name for every check.
 
 **The tests that need the licensed workbooks run only where `data/manual/ciq/` exists.** The folder is
 git-ignored, so CI never has it and a fresh worktree does not either. Measured 2026-10-23 on
