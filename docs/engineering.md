@@ -256,6 +256,13 @@ PR (CLAUDE.md: coin-time translation).
   (`midcycle.py`); HURDLE = the 15% PV discount rate (`terminal_margin.py`).
 - **band / own-history** — a name's OWN trailing multiple range (low–median–high + percentile);
   `band_guards.py` disqualifies unusable bands.
+- **tenure / first session / re-file** (2026-10-28) — *the session from which a security's own
+  ticker is its own*: before it, another security traded under that ticker, and the bars filed
+  under the current id are moved ("re-filed") to the former holder's id. Recorded in
+  `data/snapshots/ticker_tenure.jsonl`; `vinci/eod/identity.py`, `aliases.detect_reuse`.
+- **hold the reserve** (2026-10-28) — *look up once, early in the month, each Tiingo symbol scoring
+  and the monitor need*, so Tiingo's monthly cap can no longer refuse them that month —
+  `prices.TiingoBudget`, `dividends.reserved_symbols`.
 - **seal** — append-only integrity on recorded rationale: sha-digest manifest
   (`scenarios/_seal.json`); text grows only by dated `[amended …]` tags — `vinci/seal.py`.
   "Seal-once / k=1" = the machine proposal is derived once from the committed dossier and sealed.

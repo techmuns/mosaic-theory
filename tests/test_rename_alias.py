@@ -240,6 +240,7 @@ def test_an_alias_round_trips_through_its_row(tmp_path: Path) -> None:
 
 def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, sibling: bool = False,
            overrides: dict[str, dict[str, Any]] | None = None,
+           tenures: list[dict[str, str]] | None = None,
            ) -> tuple[dict[str, int], set[str], list[tuple[str, date | None]]]:
     """The REAL builder on 2026-10-16: the entity master holds HLX (its real committed row), the
     2026-08-24 population admitted it, and the resolver now lists HOS — plus, with ``sibling``,
@@ -252,7 +253,9 @@ def _build(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, *, sibling: bool = F
     from vinci.universe import build_universe
 
     snaps = tmp_path / "snapshots"
-    snaps.mkdir()
+    snaps.mkdir(parents=True)
+    if tenures:
+        (snaps / "ticker_tenure.jsonl").write_text("".join(json.dumps(t) + "\n" for t in tenures))
     (snaps / "issuers.jsonl").write_text(json.dumps({
         "cik": _CIK, "country": "US", "first_seen": "2026-06-12", "issuer_id": f"ISS-{_CIK}",
         "name": "HORNBECK OFFSHORE SERVICES, INC.", "sic": "1389",
@@ -365,3 +368,41 @@ def test_the_new_tickers_record_is_read_as_of_the_build_not_today(
     [alias] = load_aliases(tmp_path / "snapshots")
     assert (alias.predecessor_id, alias.successor_id) == (_HLX, _HOS)
     assert ("HOS", _REF) in asked and ("HOS", None) not in asked
+
+
+# --- a reused ticker inside the window (2026-10-28, `vinci/eod/identity.py`) ---------------------
+
+def _reused_hos(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Counterfactual: another security traded as HOS inside Polygon's two-year window, so HOS's
+    aggregates (the TICKER's, whoever held it) begin with its bar on 2026-08-03."""
+    monkeypatch.setitem(_FIX["bars"], "HOS",
+                        [["2026-08-03", 5.0, 5.0, 5.0, 5.0, 100.0], *_FIX["bars"]["HOS"]])
+
+
+def test_the_listing_is_read_from_the_lines_own_tenure_not_the_tickers_first_bar(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """THROUGH THE REAL BUILDER. Without HOS's tenure the builder reads its first session as the
+    other security's 2026-08-03 bar, asks for HLX as of 2026-08-02 and misses the rename (the
+    defect: a reuse hides it). With the committed tenure row it reads 2026-09-02 and finds it."""
+    _reused_hos(monkeypatch)
+    _, _, asked = _build(monkeypatch, tmp_path / "without")
+    assert load_aliases(tmp_path / "without" / "snapshots") == []
+    assert ("HLX", date(2026, 8, 2)) in asked
+    _build(monkeypatch, tmp_path / "with", tenures=[{
+        "cik": _CIK, "evidence": "counterfactual", "first_session": "2026-09-02",
+        "internal_id": _HOS, "prior_cik": "0000000009", "prior_id": "SEC-0000000009-HOS",
+        "prior_last": "2026-08-03", "ticker": "HOS"}])
+    [alias] = load_aliases(tmp_path / "with" / "snapshots")
+    assert (alias.successor_id, alias.listed) == (_HOS, _LISTED)
+
+
+def test_the_build_reconciles_identity_before_it_reads_a_rename() -> None:
+    """ORDER IS THE CONTRACT: the reused ticker's bars leave the line and a re-domicile's history
+    is carried (`identity.reconcile`) before a rename's listing is read, which reads the tenure."""
+    import inspect
+
+    from vinci import universe
+
+    src = inspect.getsource(universe.build_universe)
+    assert src.index("identity.reconcile(") < src.index("detect_renames(")

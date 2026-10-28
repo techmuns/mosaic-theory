@@ -14,7 +14,8 @@ out of request URLs, the on-disk cache, and logs.
 from __future__ import annotations
 
 import json
-from datetime import date
+import re
+from datetime import UTC, date, datetime
 from typing import Any, cast
 
 from vinci.config import Config, get_config, require_env, sec_user_agent
@@ -39,6 +40,27 @@ class TiingoRefusedError(HttpError):
 
 #: the refusal's wording for the monthly cap, as served
 MONTHLY_SYMBOL_LIMIT = "symbol look up"
+
+#: The plan's monthly cap: distinct symbols ONE KEY may look up in a calendar month, shared by
+#: every user of it — the refusal's own figure ("500 symbol look up for this month", 2026-10-27).
+#: A symbol looked up once in the month is served for the rest of it (VRRM, 2026-10-28 00:45 IST,
+#: after the cap); only a symbol NEW to the month is refused.
+MONTHLY_SYMBOL_CAP = 500
+
+#: the symbol in a cached request's URL
+_SYMBOL_IN_URL = re.compile(r"/tiingo/daily/([^/?]+)/prices")
+
+
+def tiingo_symbol(symbol: str) -> str:
+    """A symbol as Tiingo is asked for it, and as its cap counts it: lower case, a share class
+    hyphenated (BRK.B → brk-b), the spelling every caller here sends."""
+    return symbol.replace(".", "-").lower()
+
+
+def month_of(at: datetime) -> str:
+    """``YYYY-MM`` of ``at`` in UTC — the calendar month a lookup is counted in. Tiingo does not
+    say which clock its month turns on; UTC is assumed, not measured."""
+    return at.astimezone(UTC).strftime("%Y-%m")
 
 
 def parse_tiingo_prices(rows: list[dict[str, Any]], internal_id: str) -> list[PriceBar]:
@@ -117,6 +139,27 @@ class TiingoEodClient:
             return None
         data = json.loads(text)
         return cast(list[dict[str, Any]], data) if isinstance(data, list) else None
+
+    def symbols_asked(self, month: str) -> set[str]:
+        """The distinct symbols THIS CLIENT'S CACHE shows looked up in ``month`` (``YYYY-MM``,
+        `month_of`): every kept response fetched that month, read off its URL. A refusal is never
+        kept (`daily_rows`), so it never counts.
+
+        A FLOOR on the key's use, never the key's count: CI, theme intelligence's own cache and
+        other checkouts' caches share the key and are not read here. Measured 2026-10-28: the
+        caches on the operator's machine held 112 distinct symbols looked up in October, against
+        the 500 the key had met by 2026-10-27 20:01 IST."""
+        out: set[str] = set()
+        for path in self._http._cache_dir.glob("*.json"):
+            try:
+                entry = json.loads(path.read_text())
+                at = datetime.fromtimestamp(float(entry["fetched_at"]), UTC)
+                m = _SYMBOL_IN_URL.search(str(entry["url"]))
+            except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+                continue   # an unreadable entry is no lookup this cache can name
+            if m is not None and month_of(at) == month:
+                out.add(m.group(1))
+        return out
 
     def price_history(
         self, symbol: str, internal_id: str, *, start: date, end: date

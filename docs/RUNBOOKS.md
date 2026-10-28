@@ -737,6 +737,19 @@ today's, so a backdated point would carry later data).
   boundary is where they cluster on one date (2026-08-06 in the research-alpha copy, after its
   2026-08-05 August pull; 2026-08-12 in `-ta`). See
   `docs/records/2026-10-26-split-restatement-and-total-return.md`.
+- **A bar under the wrong security is re-filed, never left (2026-10-28).** `vinci
+  reattribute-prices` runs over every security in the store: a reused ticker's former holder's
+  bars leave the current id for the former's own (proven on Polygon's dated record), and a
+  re-domiciled line is given its old filer's history (proven on the share-class FIGI or the new
+  filer's 8-K12B). Both are recorded in committed tables (`ticker_tenure.jsonl`,
+  `share_class_aliases.jsonl`) that every later ingest files by, and the weekly build runs the
+  same over its population. A second run moves nothing. See
+  `docs/records/2026-10-28-bars-filed-under-their-own-security.md`.
+- **The scorecard holds scoring's Tiingo reserve first (2026-10-28).** Before it asks any symbol
+  new to the month, it looks up each ledger name, benchmark and followed name the month has not
+  (a symbol looked up once is served all month), and it stops asking when its count leaves no
+  room. The header prints the month's count, the reserve and what is left. The count is a FLOOR:
+  CI and theme intelligence share the key unseen.
 - **The prices source needs a populated store.** `data/vinci.db` is per checkout and git-ignored:
   CI and a fresh worktree have none, so `--source prices` (and the default, every source) exits 1
   saying the store is absent — never a clean card; `--source ciq` still runs. Run it where the store
