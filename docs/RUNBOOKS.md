@@ -703,7 +703,13 @@ different definition), whether an independent check guards it, an internal one, 
 `--write` writes `data/snapshots/data_quality/<source>/<today>.json` — counts and statuses only,
 never a source's figures (the repo is public). A snapshot is dated the day it is measured:
 `--as-of` only labels a printed report, and `--write` refuses any other date (the pages read are
-today's, so a backdated point would carry later data).
+today's, so a backdated point would carry later data). A source that declares `exceptions`
+(`Source.committed_rows`; `prices` alone since 2026-10-29) commits only the rows a check did not
+confirm in full, in full, and COUNTS the rest — each check's `listing` says how many it lists and how
+many it only counts. The full card, every name for every check, goes to
+`data/data_quality_full/<source>/<today>.json`: git-ignored, in the checkout that ran it and nowhere
+else, named in the snapshot by path and sha256 (`rows.full`). A card whose listed rows and counts do
+not reconcile to its fleet writes neither file and exits 1 (`core.reconcile`).
 - **When:** after every artifact pass that moves `data/dossiers/*`, and at the monthly sweep. Commit
   the snapshot as an ARTIFACT commit, never bundled with code. `tests/test_quality_ciq.py` re-derives
   the latest CIQ snapshot byte-for-byte whenever the page set's sha256 matches the one it names.
@@ -768,8 +774,12 @@ today's, so a backdated point would carry later data).
   which the adapter raises as `TiingoRefusedError` and never caches. A COLD cache cannot finish in
   one run (2026-10-27: 157 requests; the key met its monthly cap at 20:01 IST, during that pass):
   the first refusal of either kind stops the run asking, the names left read `not_run` by name,
-  and a later run asks for them. A warm cache costs about the page names a day. Without the key those comparisons are `not_run` by name. The snapshot is large
-  (2026-10-24: 2.1 MB for 2,797 names) because the core writes every name for every check.
+  and a later run asks for them. A warm cache costs about the page names a day. Without the key those comparisons are `not_run` by name. The snapshot lists
+  the exceptions only (operator ruling C1, 2026-10-29): the full card was 2.1 MB for 2,797 names on
+  2026-10-24 and 3.0 MB on 10-28, because the core writes every name for every check. On 2026-10-29
+  the committed snapshot was 73 KB beside a 2.7 MB full card in `data/data_quality_full/prices/`
+  (primary store copy, 2,440 names). To read a confirmed name's row, open that local file — or
+  re-run on the same store, which reproduces every row while the inputs sha256 matches.
 
 **The tests that need the licensed workbooks run only where `data/manual/ciq/` exists.** The folder is
 git-ignored, so CI never has it and a fresh worktree does not either. Measured 2026-10-23 on
