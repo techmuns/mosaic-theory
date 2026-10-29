@@ -42,8 +42,12 @@ superseded-by:
   in `DROP_WHEN_NONE`, so committed pages round-trip byte-identically. `wall_coherence_read`
   takes `filing_basis=` and does not compare a non-principal figure with the panel's principal.
   A stated $0 agrees with an empty window; dividing by it had read $0 against $0 as a 100% gap.
-  `mechanical._wall_read` passes the basis: one line in a shared file, the coordinator notified
-  before the edit.
+  `mechanical._wall_read` passes the basis: one line in a shared file, approved by the
+  coordinator. The field is APPENDED LAST to `MaturityWall`, purely additive, so B5's D-D4
+  change to the same schema merges beside it. End to end, from the real 10-Q text through
+  `_wall_read` on each committed CIQ panel: NFLX reads NOT RUN, WERN AGREES (its panel's only
+  dated principal matures 2027-09-21, outside the window), and MVST's principal wall still
+  DIVERGES as its page does (the negative pin).
 - **CONCENTRATION (E2-D16).** `filing_sections._column_roles` reads a customer table's column
   roles from its HEADER:
   - the column headings after the lead-in's colon;
@@ -70,8 +74,9 @@ outside the vocabulary. Each produced a wrong or missing value on a committed pa
 fed values a reader acts on: FUBO's leverage inputs and VRRM's synthesis, which quoted the $94.3M.
 
 **HOW VERIFIED.**
-- **Failing first.** The new tests were copied into a detached worktree of `c51c286a`. There, 20
-  fail, the 6 page pins xfail and the 5 negative pins pass. On this branch all pass and the 6 xfail.
+- **Failing first.** The new and changed tests were copied into a detached worktree of `c51c286a`.
+  There, 24 fail, the 6 page pins xfail and the 6 negative pins pass. On this branch all pass and
+  the 6 xfail.
 - **Fixture fidelity.** All 13 pinned fixture figures equal what their full exhibit emits from the
   SEC cache.
 - **The real run.** A read-only, cache-first, offline replay, by the method of audit E2's verifier.
