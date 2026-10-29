@@ -447,6 +447,19 @@ def test_screening_context_reaches_every_committed_dossier_e2e() -> None:
     assert seen >= 10, f"expected the committed anchor corpus end-to-end, got {seen}"
 
 
+def test_the_maturity_wall_note_is_the_same_on_both_surfaces() -> None:
+    """(audit D-D4) The wall's note — what a missing principal is, and what it can mean on a
+    facility — is hand-copied: `render._UNSTATED_LEAD`/`_UNDRAWN` and their dossier.js twins. A
+    one-sided edit would have the PDF and the web explain the same gap two ways."""
+    from vinci.dossier.render import _UNDRAWN, _UNSTATED_LEAD
+
+    js = _src("frontend/views/shared/dossier.js")
+    for const, name in ((_UNSTATED_LEAD, "_UNSTATED_LEAD"), (_UNDRAWN, "_UNDRAWN")):
+        m = re.search(rf'const {name} = "([^"]*)";', js)
+        assert m, f"dossier.js lost its {name} copy"
+        assert m.group(1) == const, f"{name} diverges: py={const!r} js={m.group(1)!r}"
+
+
 def test_screening_context_prose_is_the_same_on_both_surfaces() -> None:
     """The two HAND-COPIED strings in the screening block, bound to their JS originals.
 
