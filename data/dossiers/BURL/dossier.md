@@ -403,14 +403,15 @@ _industry = 30 Apparel Retail companies (GICS industry), the primary panel; comp
 _4 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $50.6M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): $50.6M + 1 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2025-04-15 (549d before ref): – Convertible Senior Notes 2.25% Mat
     - 2026-02-09 (249d before ref): $50.6M Short-term Promissory Note
   - due 2027: $297.1M
-  - due 2030: $0.0M
+  - due 2030: 1 with no principal stated
   - due 2031: $1,719.4M
   - undated (floor — no panel maturity): $3,945.7M — Finance Lease Obligations $22.9M, Operating Lease Liabilities $3,922.8M
-  - _reconciliation: itemized $6,012.8M (panel A 2026 filed Mar-19-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: ABL Senior Secured Revolving… (Revolving Credit), Convertible Senior Notes 2.25%… (Bonds and Notes). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $6,012.8M + 2 with no principal stated (panel A 2026 filed Mar-19-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 1,711.7 (3 months Q1 May-02-2026 1,715.5 → 3 months Q2 Aug-01-2026 1,711.7); senior bonds 186.1; leases 4,014.3; total principal 5,912.1; total debt 5,906.1 (3 months Q2 Aug-01-2026) ($M) [56]
 - **Covenants — SECURITY AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** 6.250% Senior Secured Notes due 2025 — per an 8-K filed 2020-04-16

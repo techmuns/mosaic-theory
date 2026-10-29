@@ -403,19 +403,20 @@ _industry = 22 Movies and Entertainment companies (GICS industry), the primary p
 _16 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $0.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): 3 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2025-02-15 (608d before ref): – 5.875% Senior Notes
     - 2025-06-15 (488d before ref): – 3.000% Senior Notes
     - 2025-06-15 (488d before ref): – 3.625% Senior Notes
   - due ≤12m (through 2026): $1,000.0M — 2026-11-15 $1,000.0M
-  - due 2027: $1,526.0M
-  - due 2028: $3,500.0M
-  - due 2029: $4,401.0M
-  - due 2030: $2,292.0M
+  - due 2027: $1,526.0M + 1 with no principal stated
+  - due 2028: $3,500.0M + 1 with no principal stated
+  - due 2029: $4,401.0M + 1 with no principal stated
+  - due 2030: $2,292.0M + 1 with no principal stated
   - due 2034: $1,000.0M
   - due 2054: $800.0M
-  - undated (floor — no panel maturity): $2,513.0M — Commercial Paper –, Operating Lease Liabilities $2,513.0M, Senior Unsecured Bridge Term Loan… –
-  - _reconciliation: itemized $17,032.0M (panel A 2025 filed Jan-23-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - undated (floor — no panel maturity): $2,513.0M + 2 with no principal stated — Commercial Paper –, Operating Lease Liabilities $2,513.0M, Senior Unsecured Bridge Term Loan… –
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: 3.000% Senior Notes (Bonds and Notes), 3.625% Senior Notes (Bonds and Notes), 5.875% Senior Notes (Bonds and Notes), Commercial Paper (Commercial Paper), Senior Unsecured Bridge Term Loan… (Term Loans), Senior Unsecured Revolving Credit… (Revolving Credit), Unsecured Delayed Draw Term Loan… (Term Loans), Unsecured Delayed Draw Term Loan… (Term Loans), Unsecured Revolving Credit… (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $17,032.0M + 9 with no principal stated (panel A 2025 filed Jan-23-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 14,372.0; leases 2,330.4; total principal 16,702.4; total debt 16,654.7 (3 months Q2 Jun-30-2026) ($M) [60]
 - **Covenants — CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Base Rate plus the Applicable Margin; or LIBOR Rate for such Interest Period plus the Applicable Margin — per an 8-K filed 2009-09-21

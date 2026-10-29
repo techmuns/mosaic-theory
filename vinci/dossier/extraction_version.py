@@ -130,6 +130,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "saves through one write",
     ),
     (
+        "2026-10-29.D-D1",
+        "an unchecked quarter of the ex-lease history whose lease cell CIQ states as UNAVAILABLE "
+        "is left unpriced (`lease_basis.observations`), never priced on the cells it does state "
+        "with the missing one read as zero; the quarter names the cell (`unpriced_reason`) and "
+        "the block its date (`unpriced_dates`) (audit D-D1)",
+    ),
+    (
         "2026-10-29.D-D5",
         "the materiality guard runs on both thresholds: a summary row and an unusual line at 5% "
         "of the revenue in the column each reads are material (`revenue` was never passed), and "

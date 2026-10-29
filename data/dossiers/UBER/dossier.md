@@ -400,19 +400,20 @@ _industry = 21 Passenger Ground Transportation companies (GICS industry), the pr
 _12 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $0.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): 2 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2025-12-15 (305d before ref): – 2025 Convertible Notes
     - 2026-07-01 (107d before ref): – Commercial Paper Program
-  - due 2027: $0.0M
-  - due 2028: $2,850.0M
+  - due 2027: 1 with no principal stated
+  - due 2028: $2,850.0M + 1 with no principal stated
   - due 2029: $1,500.0M
   - due 2030: $1,250.0M
-  - due 2031: $1,000.0M
+  - due 2031: $1,000.0M + 1 with no principal stated
   - due 2034: $1,500.0M
   - due 2035: $1,250.0M
   - due 2054: $1,250.0M
   - undated (floor — no panel maturity): $1,781.0M — Finance Leases $222.0M, Operating Lease Liabilities $1,559.0M
-  - _reconciliation: itemized $12,381.0M (panel A 2025 filed Feb-13-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: 2025 Convertible Notes (Bonds and Notes), 2027 Senior Note (Bonds and Notes), 2028 Senior Note (Bonds and Notes), Commercial Paper Program (Commercial Paper), Senior Unsecured Revolving Loans (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $12,381.0M + 5 with no principal stated (panel A 2025 filed Feb-13-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 2,000.0; senior bonds 10,799.0; leases 2,008.0; total principal 14,807.0; total debt 14,731.0 (3 months Q2 Jun-30-2026) ($M) [63]
 - **Covenants — TERM LOAN AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Adjusted Term SOFR + 2.75% (Floor 0.00%) · Applicable Rate: 2.75% with respect to SOFR Loans and 1.75% with respect to ABR Loans (2023 Refinancing Term Loans); SO… — per an 8-K filed 2021-03-01, amended 2023-03-14

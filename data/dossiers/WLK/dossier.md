@@ -430,7 +430,7 @@ _comps = the 11 companies of the CIQ comps template · S&P-MI relative score: 1 
 _11 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $497.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): $497.0M + 1 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2026-03-01 (229d before ref): $1.0M Term Loans Due 2026
     - 2026-04-02 (197d before ref): – Revolving Credit Facility
     - 2026-08-15 (62d before ref): $496.0M 3.60% Senior Notes Due 2026
@@ -446,7 +446,8 @@ _11 undated / later aggregate line item(s) in the appendix panel_
   - due 2055: $600.0M
   - due 2061: $450.0M
   - undated (floor — no panel maturity): $826.0M — Operating Lease $826.0M
-  - _reconciliation: itemized $6,534.0M (panel A 2025 filed Feb-26-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: Revolving Credit Facility (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $6,534.0M + 1 with no principal stated (panel A 2025 filed Feb-26-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 0.0 (3 months Q1 Mar-31-2026 0.0 → 3 months Q2 Jun-30-2026 0.0); senior bonds 5,181.0; leases 809.0; total principal 5,990.0; total debt 5,876.0 (3 months Q2 Jun-30-2026) ($M) [60]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0001262823-26-000008 (2026-02-24) states no maturity-resolution event
 - **Covenants — AMENDED AND RESTATED LOAN AGREEMENT** (governing values; full verbatim in appendix):
