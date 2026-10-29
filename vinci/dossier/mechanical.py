@@ -5347,7 +5347,8 @@ def _wall_read(filing: FilingSectionExtract | None, panel: list[primary_source.P
     return primary_source.wall_coherence_read(
         mw.within_12m_total if mw else None, panel, balance=balance,
         filing_convertible=filing_conv,
-        panel_convertible_principal=primary_source.panel_convertible_principal(panel, balance))
+        panel_convertible_principal=primary_source.panel_convertible_principal(panel, balance),
+        filing_basis=mw.basis if mw else None)  # a non-principal figure is never compared (E2-D15)
 
 
 _ASSEMBLY_PRICE_STALE_DAYS = 7  # one weekly refresh cadence + a weekend; older ⇒ refresh was missed

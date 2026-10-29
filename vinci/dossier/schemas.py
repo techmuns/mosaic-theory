@@ -2027,6 +2027,13 @@ class MaturityWall(BaseModel):
     note: str = ""  # the value-free note when state='not_stated'
     verbatim: str
     source_ref: str
+    # WHAT `within_12m_total` COUNTS when it is NOT principal (audit E2-D15): "principal and
+    # interest" where the filing states only a combined figure (Netflix). A disclosure FORM, kept
+    # beside the number so no reader compares it with principal as if it were principal. ABSENT
+    # means principal — every wall read before the field existed — so committed pages round-trip
+    # byte-identically (`DROP_WHEN_NONE`).
+    # APPENDED LAST, purely additive: no field before it moved.
+    basis: str | None = None
 
     model_config = {"frozen": True}
 
@@ -2917,6 +2924,8 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("capital_structure", "maturity_check"),
     # a depositary line's ADS ratio (`StockInfo.ads_ratio`, FPI4, 2026-10-28)
     ("stock_info", "ads_ratio"),
+    # a ≤12m wall stated on a basis other than principal (`MaturityWall.basis`, audit E2-D15)
+    ("primary_source.filing.maturity_wall", "basis"),
 )
 
 

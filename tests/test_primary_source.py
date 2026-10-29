@@ -147,6 +147,22 @@ def test_basis_triangulation_labels_are_part_of_each_pin() -> None:
     assert "28.6 + 32.5/427.5 = 36.2%" in t
 
 
+def test_a_negative_ltm_ebitda_has_no_leverage_multiple() -> None:
+    """(audit E1-D13) The twin in `edgar.client` refuses EBITDA<=0; this line tested truthiness, so
+    a negative LTM printed "($-100.0M): ~-3.0x" — a leverage that reads as net cash. Reading stated
+    losses (audit E2-D10, Vital Farms' Q2 2026 −$26.6M) is what lets a negative LTM reach it."""
+    t = ps.basis_triangulation("1.5x", "1.6x", 300.0, -100.0,
+                               gaap_gross_margin=None, impairment=None, revenue=None)
+    assert "~-3.0x" not in t
+    assert "company-adjusted LTM EBITDA ($-100.0M): UNKNOWN — EBITDA<=0 (ratio meaningless)" in t
+    # NEGATIVE PIN — a positive LTM still computes, and an absent one is still plain UNKNOWN
+    assert "~3.0x" in ps.basis_triangulation("1.5x", "1.6x", 300.0, 100.0,
+                                             gaap_gross_margin=None, impairment=None, revenue=None)
+    absent = ps.basis_triangulation("1.5x", "1.6x", 300.0, None,
+                                    gaap_gross_margin=None, impairment=None, revenue=None)
+    assert "(LTM unavailable): UNKNOWN\n" in absent
+
+
 def test_guide_verification_vendor_echo_and_cross_source_verified() -> None:
     """MVST: CIQ FY26 revenue guide 427.516 ≈ prior-FY actual 427.516 AND the release outlook is
     QUALITATIVE → VENDOR-ECHO. VRRM: CIQ 985–995 vs release 985–995 → cross-source VERIFIED."""
