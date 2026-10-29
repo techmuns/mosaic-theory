@@ -441,11 +441,14 @@ def run_monthly(
     cfg = config or get_config()
     cfg.ensure_dirs()
     client = PolygonEodClient.from_config(cfg)
-    # EACH ROW'S OWN BENCHMARK (2026-10-29): the committed assignments choose it, as the monitor's
-    assignments = read_assignments_file(cfg.data_dir / "monitor" / "benchmark_assignments.json")
     start = as_of - timedelta(days=lookback_days)
     with Store(cfg.db_path) as store:
         store.rebuild_from_snapshots(cfg.snapshots_dir)
+        # EACH ROW'S OWN BENCHMARK (2026-10-29): the committed assignments choose it, as the
+        # monitor's — required while the ledger holds a decision
+        assignments = read_assignments_file(
+            cfg.data_dir / "monitor" / "benchmark_assignments.json",
+            required=any(e.event is None for e in store.iter_ledger()))
         universe = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
         if universe:
             # THE TWO XPRO IDS BOTH LIVE HERE (every security): each day's bar goes to the id that

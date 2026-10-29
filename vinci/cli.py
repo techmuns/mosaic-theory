@@ -3038,7 +3038,9 @@ def _cmd_score(args: argparse.Namespace) -> int:
                 end=ref, sessions=store_calendar(store)),
             splits=default_splits(cfg),
             # EACH ROW'S OWN BENCHMARK (2026-10-29) — the committed assignments, as `run_monthly`
-            assignments=mon_assignments(cfg.data_dir / "monitor" / "benchmark_assignments.json"),
+            assignments=mon_assignments(
+                cfg.data_dir / "monitor" / "benchmark_assignments.json",
+                required=any(e.event is None for e in store.iter_ledger())),
         )
     print(report.to_markdown())
     if args.json:

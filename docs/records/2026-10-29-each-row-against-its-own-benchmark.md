@@ -36,6 +36,14 @@ The changes:
   calendar is `benchmark_internal_id`, IWM): a series the store holds only in part — the primary's
   SPY ended 2026-07-22, its MDY 2026-08-05 — raises `BenchmarkMissingError` once the row resolves,
   rather than lending its last close as the exit.
+- **Scoring refuses a ledger without its committed assignments** (review round 1): read as {},
+  every assigned row would be measured against its sealed benchmark without a word — IT against
+  IWM. `vinci score` and `run-monthly` require the file while the ledger holds a decision
+  (`read_assignments_file(…, required=True)` raises `FileNotFoundError`); the monitor's own read
+  keeps {}.
+- **The report names each resolved row's benchmark** (review round 1): one line under the β —
+  "Each resolved row against its own benchmark: IWM — …; MDY — …; SPY — …" — since the hit-rates,
+  excess and β pair each row with its own. Printed only when a row has resolved.
 - **`run-monthly` ingests every benchmark a row is measured against** (IWM, MDY, SPY today), where it
   ingested the calendar alone. `vinci score` and `run-monthly` both pass the assignments.
 - `VerdictScore.benchmark` names each row's series. The β/α pool pairs each screen BUY's daily
@@ -58,7 +66,7 @@ is not the code's to pick.
 - *Fail first, on main's own code* (`c51c286a`, a scratch copy): a row sealed SPY raised
   `BenchmarkMismatchError` at resolution; IT's shape was measured against IWM (bench +0.0000 where
   MDY's move is +0.1000; main has no `assignments` parameter); `run_monthly` raised on the SPY row
-  and ingested IWM alone (IWM 50 bars, MDY 0, SPY 0). `tests/test_per_row_benchmark.py`, 10 tests,
+  and ingested IWM alone (IWM 50 bars, MDY 0, SPY 0). `tests/test_per_row_benchmark.py`, 13 tests,
   green on this branch: a SPY row against SPY; the ruled assignment against MDY with the sealed field
   unchanged; an unruled disagreement refused when resolved and pending before; a part-held series
   refused when resolved and pending before; the negative pin (an agreeing assignment and a row
@@ -66,7 +74,10 @@ is not the code's to pick.
   without a conflict; a ruling needs its date and words and governs only the decision it was made
   on; `run_monthly` end to end ingests IWM, MDY
   and SPY and measures the screen BUY against MDY (excess −10% where IWM gives 0); both production
-  callers pass the assignments.
+  callers pass the assignments; round 1: `vinci score` refuses a ledger with no assignments file
+  (red on `a0d0b0d6`: DID NOT RAISE) and an absent file still reads {} where nothing requires it;
+  the committed ledger and assignments, resolved through 2027-03-05 on synthetic bars, render
+  "MDY — V-IT-screen2-20260706", "SPY — V-GOOGL" and the two IWM rows (red on `a0d0b0d6`).
 - *Real run on the committed ledger* (sha `43d77c50…`), as of 2026-10-26, interim (no row resolves
   before 2026-12-14). Store: a clone of #820's rehearsal store with MDY and SPY topped up to
   2026-10-26 from Polygon's per-symbol aggregates (one call each; IWM, MDY and SPY then hold the same
@@ -98,9 +109,10 @@ session 2026-10-28, the HTTP cache a clone of the primary's taken 2026-10-29. Ma
 - **An assignment is keyed by ticker**, as the monitor reads it, so SMPL's re-entry (2026-08-04)
   shares the assignment derived at its first entry (both IWM; no cap-band change). A re-entry whose
   band differed would need its own assignment; none exists to date.
-- **A data dir without the assignments file** scores each row against its sealed benchmark, with
-  no note (review round 0, skipped): the file is committed in every checkout, and refusing on its
-  absence would change both callers' contract. Falsifier: a scoring report from a checkout missing
-  `data/monitor/benchmark_assignments.json`.
+- **Scoring and the monitor read the assignments under two roots** (review round 1, deferred):
+  scoring reads `cfg.data_dir/monitor`, `vinci monitor` reads `cwd/data/monitor`. `get_config()`
+  returns `Config()`, whose `data_dir` is the relative `data`, so every CLI run reads ONE file; only
+  a programmatic `Config(data_dir=…)` splits them, and moving the monitor's book root is outside
+  this change. Falsifier: a CLI path that builds a `Config` whose `data_dir` is not `./data`.
 - **The β/α regression now pools pairs against different benchmarks** (IT against MDY beside the
   small-cap rows against IWM). The pool is screen-origin resolved BUYs and holds none today.

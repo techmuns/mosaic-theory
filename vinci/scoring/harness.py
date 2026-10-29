@@ -452,8 +452,8 @@ def score_ledger(
         # ON THE SAME BASIS AS THE SPREAD: a day that is an ex-date carries its dividend in BOTH
         # series, so the regression printed beside a total-return spread is not a price-return one.
         if resolved and entry.verdict is Verdict.BUY and origin_of(entry) == ORIGIN_SCREEN:
+            row_daily = bench_daily(bench_sym)
             for d, r in _daily_returns(name_bars, entry_date, scoring_date):
-                row_daily = bench_daily(bench_sym)
                 if d in row_daily:
                     book_rets.append((1.0 + r) * (1.0 + name_ex.get(d, 0.0)) - 1.0)
                     bench_rets.append((1.0 + row_daily[d]) * (1.0 + bench_ex.get(d, 0.0)) - 1.0)

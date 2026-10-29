@@ -15,6 +15,7 @@ sessions at both ends. `run-monthly` ingests every benchmark a row needs.
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -247,3 +248,93 @@ def test_both_production_callers_supply_the_assignments() -> None:
     from vinci import cli, orchestrator
     assert "assignments=mon_assignments(" in inspect.getsource(cli._cmd_score)
     assert "assignments=assignments," in inspect.getsource(orchestrator.run_monthly)
+
+
+# --- review round 1 (coordinator /code-review high, 2026-10-29) --------------------------------
+
+
+def _score_cmd_tree(tmp_path: Path, *, with_assignments: bool) -> Config:
+    cfg = Config(data_dir=tmp_path / "data")
+    cfg.ensure_dirs()
+    _store(tmp_path).close()
+    shutil.copyfile(tmp_path / "s.db", cfg.db_path)
+    with Store(cfg.db_path) as store:
+        store.upsert_security(_ident("NAME"))
+        store.append_ledger(_row("NAME", "IWM"))
+    if with_assignments:
+        (cfg.data_dir / "monitor").mkdir()
+        (cfg.data_dir / "monitor" / "benchmark_assignments.json").write_text(json.dumps(
+            {"NAME": json.loads(_assignment("NAME", "MDY", ruled=True).model_dump_json())}))
+    return cfg
+
+
+def test_scoring_refuses_a_ledger_without_its_committed_assignments(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Finding 1. A missing assignments file read as {}, so every assigned row was measured
+    against its sealed benchmark with no word — IT against the IWM the operator ruled away from.
+    `vinci score` now refuses while the ledger holds a decision; with the file it scores MDY."""
+    import argparse
+
+    from vinci import cli
+    monkeypatch.setattr(cli, "default_dividends", lambda **_kw: no_dividends)
+    monkeypatch.setattr(cli, "default_splits", lambda *_a, **_k: no_splits)
+    args = argparse.Namespace(ref=AS_OF.isoformat(), cost_bps=25.0, benchmark="IWM", json=False)
+    (tmp_path / "a").mkdir()
+    (tmp_path / "b").mkdir()
+    bare = _score_cmd_tree(tmp_path / "a", with_assignments=False)
+    monkeypatch.setattr(cli, "get_config", lambda: bare)
+    with pytest.raises(FileNotFoundError, match="benchmark_assignments.json"):
+        cli._cmd_score(args)
+    full = _score_cmd_tree(tmp_path / "b", with_assignments=True)
+    monkeypatch.setattr(cli, "get_config", lambda: full)
+    assert cli._cmd_score(args) == 0
+
+
+def test_an_empty_ledger_needs_no_assignments(tmp_path: Path) -> None:
+    """THE NEGATIVE PIN for finding 1: the monitor's own read, and a ledger with no decision,
+    keep reading an absent file as no assignments."""
+    assert read_assignments_file(tmp_path / "absent.json") == {}
+    assert read_assignments_file(tmp_path / "absent.json", required=False) == {}
+    with pytest.raises(FileNotFoundError):
+        read_assignments_file(tmp_path / "absent.json", required=True)
+
+
+def _committed_ledger_store(path: Path) -> Store:
+    """The committed ledger and securities, with flat synthetic bars — each name at the price its
+    decision sealed, stepping at SMPL's re-entry — for every name and IWM, MDY and SPY through
+    2027-03-05, so every row with a horizon by then resolves."""
+    store = Store(path)
+    store.rebuild_from_snapshots(ROOT / "data" / "snapshots",
+                                 tables=["issuers", "securities", "decision_ledger"])
+    days = _weekdays(date(2026, 6, 1), date(2027, 3, 5))
+    rows = [e for e in store.iter_ledger() if e.event is None]
+    for iid in {e.internal_id for e in rows}:
+        sealed = sorted((e.entry_price_as_of, e.entry_price) for e in rows if e.internal_id == iid)
+        store.write_prices([PriceBar(internal_id=iid, bar_date=d, open=c, high=c, low=c, close=c,
+                                     volume=1e6, source="polygon-grouped")
+                            for d in days for c in [([p for on, p in sealed if on <= d]
+                                                     or [sealed[0][1]])[-1]]])
+    for b in ("IWM", "MDY", "SPY"):
+        store.upsert_security(benchmark_identity(b))
+        store.write_prices([PriceBar(internal_id=f"IDX-{b}", bar_date=d, open=50.0, high=50.0,
+                                     low=50.0, close=50.0, volume=1e6, source="polygon-grouped")
+                            for d in days])
+    return store
+
+
+def test_the_report_names_each_resolved_rows_benchmark(tmp_path: Path) -> None:
+    """Finding 3, end to end: the committed ledger and its committed assignments → score_ledger →
+    the markdown `scoring_report.md` is written from. The hit-rates, excess and β pair each row
+    with its own benchmark, so the report names which: on the head they blended IWM, MDY and SPY
+    pairs under one unnamed label."""
+    asg = read_assignments_file(ROOT / "data" / "monitor" / "benchmark_assignments.json")
+    with _committed_ledger_store(tmp_path / "c.db") as store:
+        scores, report = score_ledger(store, as_of=date(2027, 3, 5), dividends=no_dividends,
+                                      splits=no_splits, assignments=asg)
+    resolved = {s.entry_id: s.benchmark for s in scores if s.resolved}
+    assert resolved == {"V-VRRM-screen2-20260617": "IWM", "V-IT-screen2-20260706": "MDY",
+                        "V-SMPL-screen2-20260706": "IWM", "V-GOOGL": "SPY"}
+    md = report.to_markdown()
+    assert "Each resolved row against its own benchmark" in md
+    assert "MDY — V-IT-screen2-20260706" in md and "SPY — V-GOOGL" in md
+    assert "IWM — V-SMPL-screen2-20260706, V-VRRM-screen2-20260617" in md

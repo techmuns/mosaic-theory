@@ -267,6 +267,9 @@ class ScoreReport:
     # an interim mark on a name whose bars stop before the benchmark's is on a stale close. Each is
     # named here, beside the pending count, so the count can be audited row by row.
     row_notes: tuple[str, ...] = ()
+    # EACH RESOLVED ROW'S BENCHMARK, (benchmark, entry_id) — the hit-rates, excess and β pair
+    # each row with its own (`harness.row_benchmark`), so the report names which (review of #856).
+    benchmarks: tuple[tuple[str, str], ...] = ()
 
     def to_dict(self) -> dict[str, object]:
         d: dict[str, object] = {k: getattr(self, k) for k in self.__dataclass_fields__}
@@ -316,6 +319,10 @@ class ScoreReport:
             f"- BUY book β vs benchmark: "
             f"{'n/a' if self.beta is None else f'{self.beta:.2f}'} · "
             f"α: {pct(self.alpha)}",
+            *(["  _Each resolved row against its own benchmark: " + "; ".join(
+                f"{b} — {', '.join(i for bb, i in self.benchmarks if bb == b)}"
+                for b in sorted({bb for bb, _i in self.benchmarks})) + "._"]
+              if self.benchmarks else []),
             f"- Twin-realisation — BUYs bounced: {self.twin_buy_bounced} · "
             f"AVOIDs kept falling: {self.twin_avoid_fell}",
         ]
@@ -661,4 +668,5 @@ def aggregate(
         n_no_proposal=sum(1 for s in scores if s.disposition is Disposition.NO_PROPOSAL),
         overrides=overrides,
         row_notes=row_notes,
+        benchmarks=tuple(sorted((s.benchmark or "unnamed", s.entry_id) for s in scores)),
     )

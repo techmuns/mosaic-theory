@@ -1053,10 +1053,19 @@ def read_assignments(root: Path | None = None) -> dict[str, BenchmarkAssignment]
     return read_assignments_file(assignments_path(root))
 
 
-def read_assignments_file(path: Path) -> dict[str, BenchmarkAssignment]:
+def read_assignments_file(path: Path, *, required: bool = False
+                          ) -> dict[str, BenchmarkAssignment]:
     """The committed assignments at ``path`` (a checkout's
-    ``data/monitor/benchmark_assignments.json``), by ticker; {} when the file is absent."""
+    ``data/monitor/benchmark_assignments.json``), by ticker; {} when the file is absent — unless
+    ``required``, when an absent file raises. SCORING REQUIRES IT while the ledger holds a decision
+    (review of #856): read as {}, every assigned row would be measured against its sealed benchmark
+    without a word — IT against the IWM the operator ruled away from."""
     if not path.exists():
+        if required:
+            raise FileNotFoundError(
+                f"{path}: the committed benchmark assignments are missing, and the ledger holds "
+                f"decisions — scoring refuses rather than measure every assigned row against the "
+                f"benchmark it sealed")
         return {}
     raw = json.loads(path.read_text())
     return {k: BenchmarkAssignment.model_validate(v) for k, v in raw.items()}
