@@ -1380,6 +1380,12 @@ def synthesize(
             "the 'CIQ transcript' source_ref from the facts. ===\n"
             + transcript
         )
+    # (19c) THE FIGURES A DRAW IS REFUSED FOR OMITTING, named to the model from the guard's own
+    # selection — so it is asked for exactly what `uncited_material_figures` demands. LAST, after
+    # the transcripts, and from the facts, never from a call. No material row, no section: the
+    # prompt is then the one every earlier build sent.
+    if (material := demanded_material_figures(mech)):
+        user += "\n\n" + _material_figures_digest(material)
     # PER-BOOK FRAMING, one prompt. `sleeve` defaults to overshoot so every existing caller keeps
     # the byte-identical live prompt; the followed route passes the name's own book.
     #
@@ -1623,22 +1629,42 @@ def _synthesis_prose(synth: Synthesis) -> str:
     return " ".join(out)
 
 
-def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
-    """(item 19c) A MATERIAL financial-summary figure that the synthesis prose never states.
+@dataclass(frozen=True)
+class MaterialFigure:
+    """One figure item 19c demands the synthesis prose state: a material row's value, the actual
+    columns carrying it, and the annual table's source_ref (rows carry none of their own)."""
 
-    THE INCIDENT, and it is why this is presence-based rather than plausibility-based. SMPL's bear
-    case was CORRECT on 2026-07-29 — "$60.9M Atkins impairment (FY25) plus $391.9M LTM asset
-    writedown" — and WRONG on 2026-07-30 from identical inputs: "$60.9M ... plus a $249M
-    OWYN/Atkins brand-asset impairment". The table said -60.9 and -391.9; the prose said 60.9 and
-    249. **Synthesis correctness is stochastic**, so every figure in every run is a fresh roll and
-    no amount of prompt care removes the need for a check.
+    label: str
+    periods: tuple[str, ...]
+    value: float
+    source_ref: str | None
 
-    THE BAD RUN WAS NOT FABRICATING: $249M is a real Q2 charge, cited as though it were the total.
-    So the check cannot ask "is this figure plausible" — every number in it was. It asks the one
-    question that separates the two runs: **does the material row's own figure appear at all?**
-    """
+    @property
+    def stated(self) -> str:
+        """How the prompt asks for it: millions to one decimal, the EXACT form. Never the 1-dp
+        billions form the guard also accepts — a ±$50M bucket in which one citation could
+        satisfy two demands (`_figure_cited`); the prompt must not invite it."""
+        return f"${abs(self.value):,.1f}M"
+
+    def cited_in(self, prose: str) -> bool:
+        return _figure_cited(prose, self.value)
+
+    def __str__(self) -> str:
+        return f"{self.label} {'/'.join(self.periods)} = {self.value:,.1f}"
+
+
+def demanded_material_figures(mech: MechanicalLayer) -> list[MaterialFigure]:
+    """THE ONE SELECTION of the figures item 19c demands — read by the guard
+    (`uncited_material_figures`) and by the prompt (`synthesize`), so the model is asked for
+    exactly what a draw is refused for omitting (audit D-D5 follow-up: two 2026-10-29 rebuild
+    pages paid five draws each and were refused for a figure no line of the prompt named).
+
+    It reads the rows ALREADY marked material (`assemble._mark_material`); an unmarked table
+    demands nothing."""
     fs = getattr(mech, "financial_summary", None)
-    ann = getattr(getattr(fs, "annual", None), "value", None) if fs is not None else None
+    ann_src = getattr(fs, "annual", None) if fs is not None else None
+    ref = getattr(ann_src, "source_ref", None)
+    ann = getattr(ann_src, "value", None)
     rows = list(getattr(ann, "rows", []) or []) if ann is not None else []
     cols = list(getattr(ann, "columns", []) or []) if ann is not None else []
     # ESTIMATE COLUMNS ARE OUT OF SCOPE. The summary carries FY26E/FY27E and a per-column
@@ -1653,8 +1679,7 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
             return bool(est[i])
         return bool(i < len(cols) and str(cols[i]).rstrip(")").endswith("E"))
 
-    prose = _synthesis_prose(synth)
-    out: list[str] = []
+    out: list[MaterialFigure] = []
     for r in rows:
         if not getattr(r, "material", False):
             continue
@@ -1703,9 +1728,52 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
         # this costs nothing today and refuses exactly the case that motivated the amendment.
         biggest = max(seen, key=abs)
         for v in [biggest] if biggest == latest else [biggest, latest]:
-            if not _figure_cited(prose, v):
-                out.append(f"{r.label} {'/'.join(seen[v])} = {v:,.1f}")
+            out.append(MaterialFigure(label=r.label, periods=tuple(seen[v]), value=v,
+                                      source_ref=str(ref) if ref else None))
     return out
+
+
+def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[str]:
+    """(item 19c) A MATERIAL financial-summary figure that the synthesis prose never states.
+
+    THE INCIDENT, and it is why this is presence-based rather than plausibility-based. SMPL's bear
+    case was CORRECT on 2026-07-29 — "$60.9M Atkins impairment (FY25) plus $391.9M LTM asset
+    writedown" — and WRONG on 2026-07-30 from identical inputs: "$60.9M ... plus a $249M
+    OWYN/Atkins brand-asset impairment". The table said -60.9 and -391.9; the prose said 60.9 and
+    249. **Synthesis correctness is stochastic**, so every figure in every run is a fresh roll and
+    no amount of prompt care removes the need for a check.
+
+    THE BAD RUN WAS NOT FABRICATING: $249M is a real Q2 charge, cited as though it were the total.
+    So the check cannot ask "is this figure plausible" — every number in it was. It asks the one
+    question that separates the two runs: **does the material row's own figure appear at all?**
+    """
+    prose = _synthesis_prose(synth)
+    return [str(f) for f in demanded_material_figures(mech) if not f.cited_in(prose)]
+
+
+#: Opens the prompt section that names the figures 19c demands — present only when one is.
+MATERIAL_FIGURES_HEADER = "=== MATERIAL FIGURES — STATE EACH ONE ==="
+
+
+def _material_figures_digest(figs: list[MaterialFigure]) -> str:
+    """The prompt section: each figure the guard will demand, in a form it accepts, with the ref a
+    point stating it cites. No direction: where a figure bears is the model's to frame."""
+    lines = [
+        MATERIAL_FIGURES_HEADER,
+        "Each row below is marked material in the annual financial summary of the facts above. "
+        "State EVERY figure listed, written as shown, in at least one entry of "
+        f"{', '.join(SYNTHESIS_CLAIM_LISTS)}: wherever it bears on the argument, or in "
+        "key_unknowns where it bears on neither case. A point that states one cites the listed "
+        "source_ref. A synthesis that does not state each listed figure is REFUSED.",
+    ]
+    for f in figs:
+        # A form the guard would not accept would ask for a refusal; never offer one.
+        if not f.cited_in(f.stated):
+            raise ValueError(f"{f}: the stated form {f.stated!r} fails `_figure_cited`")
+        ref = f"; source_ref: {f.source_ref}" if f.source_ref else ""
+        lines.append(f"- {f.label}, {'/'.join(f.periods)}: {f.value:,.1f} in the table; "
+                     f'write "{f.stated}"{ref}')
+    return "\n".join(lines)
 
 
 def _located_claims(synth: Synthesis) -> list[tuple[str, str]]:
