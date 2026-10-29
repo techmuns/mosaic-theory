@@ -1,8 +1,8 @@
 ---
 id: 2026-10-29-an-unavailable-lease-cell-leaves-its-quarter-unpriced
-status: open
+status: shipped
 date: 2026-10-29
-prs: []
+prs: [857]
 ---
 
 # An unchecked quarter of the ex-lease history whose lease cell CIQ states as UNAVAILABLE is left unpriced, not priced with the missing cell read as zero (audit D-D1)
