@@ -37,6 +37,7 @@ from vinci.eod.splits import (
 )
 from vinci.ledger import LedgerError, log_verdict
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
+from vinci.monitor import read_assignments_file as mon_assignments
 from vinci.orchestrator import (
     QUEUE_ADV_FLOOR,
     QUEUE_MD_TOP,
@@ -3036,6 +3037,8 @@ def _cmd_score(args: argparse.Namespace) -> int:
                 start=min((e.entry_price_as_of for e in store.iter_ledger()), default=ref),
                 end=ref, sessions=store_calendar(store)),
             splits=default_splits(cfg),
+            # EACH ROW'S OWN BENCHMARK (2026-10-29) — the committed assignments, as `run_monthly`
+            assignments=mon_assignments(cfg.data_dir / "monitor" / "benchmark_assignments.json"),
         )
     print(report.to_markdown())
     if args.json:

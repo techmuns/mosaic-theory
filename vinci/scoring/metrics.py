@@ -80,6 +80,9 @@ class VerdictScore:
     #: the horizon session's close, or an interim mark on a name whose bars stop before the
     #: benchmark's (`vinci.scoring.harness`). None on an ordinary mark.
     note: str | None = None
+    #: The benchmark this row was measured against (`harness.row_benchmark`) — its committed
+    #: assignment's, else the one it sealed, else the run's default. None for a score built by hand.
+    benchmark: str | None = None
 
     @property
     def excess_gross(self) -> float:

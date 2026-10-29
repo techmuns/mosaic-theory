@@ -98,8 +98,22 @@ class BenchmarkAssignment(BaseModel):
     rationale: str
     assigned_at: date
     supersedes: str | None = None    # the ledger row's benchmark field this overrides
+    # THE OPERATOR'S RULING that this assignment, not the benchmark the ledger row sealed, is the
+    # one the row is SCORED against — its date and its words, verbatim. Scoring measures a row
+    # whose sealed benchmark differs from its assignment only when a ruling stands here; without
+    # one it surfaces the disagreement and chooses neither (`scoring.harness.row_benchmark`).
+    # IT's: 2026-10-29, "Use MDY" (STATE §5.0 row 39). Both or neither.
+    ruled_on: date | None = None
+    ruling: str | None = None
 
     model_config = {"frozen": True}
+
+    @model_validator(mode="after")
+    def _ruling_is_whole(self) -> BenchmarkAssignment:
+        if (self.ruled_on is None) != (not self.ruling):
+            raise ValueError(f"{self.ticker}: a ruling carries its date AND its words, or neither "
+                             f"(ruled_on={self.ruled_on!r}, ruling={self.ruling!r})")
+        return self
 
 
 class PositionRow(BaseModel):
@@ -1036,10 +1050,15 @@ def assignments_path(root: Path | None = None) -> Path:
 
 
 def read_assignments(root: Path | None = None) -> dict[str, BenchmarkAssignment]:
-    p = assignments_path(root)
-    if not p.exists():
+    return read_assignments_file(assignments_path(root))
+
+
+def read_assignments_file(path: Path) -> dict[str, BenchmarkAssignment]:
+    """The committed assignments at ``path`` (a checkout's
+    ``data/monitor/benchmark_assignments.json``), by ticker; {} when the file is absent."""
+    if not path.exists():
         return {}
-    raw = json.loads(p.read_text())
+    raw = json.loads(path.read_text())
     return {k: BenchmarkAssignment.model_validate(v) for k, v in raw.items()}
 
 
