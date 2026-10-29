@@ -27,7 +27,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.dividend_support import no_dividends
+from tests.dividend_support import no_dividends, no_splits
 from vinci.schemas.ledger import ORIGIN_FOLLOWED, LedgerEntry
 from vinci.schemas.market import PriceBar
 from vinci.scoring import score_ledger
@@ -64,7 +64,7 @@ def _score(tmp_path: Path, row: LedgerEntry, *, as_of: date, vrrm_through: date 
     with Store(tmp_path / "s.db") as store:
         store.write_prices(_bars(vrrm_through=vrrm_through))
         store.append_ledger(row)
-        scores, report = score_ledger(store, as_of=as_of, dividends=no_dividends)
+        scores, report = score_ledger(store, as_of=as_of, dividends=no_dividends, splits=no_splits)
     (score,) = scores
     return score, report
 

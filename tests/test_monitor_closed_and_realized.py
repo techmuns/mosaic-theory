@@ -22,6 +22,7 @@ from datetime import date
 
 import pytest
 
+from tests.dividend_support import no_splits
 from vinci.monitor import (
     MonitorSnapshot,
     RealizedRow,
@@ -167,7 +168,7 @@ def test_closure_state_is_read_as_of_the_snapshot_date(
     assert closed_decision_ids(raw, as_of=as_of) == expect_closed, (
         f"as of {ref} the book's closure state is wrong — a close dated after that day was "
         f"counted, which is look-ahead")
-    assert len(pair_closes(raw, as_of=as_of)) == expect_realized, (
+    assert len(pair_closes(raw, as_of=as_of, splits=no_splits)) == expect_realized, (
         f"as of {ref} the realized view reported P&L for an exit that had not happened")
 
 
@@ -239,7 +240,7 @@ def test_omitting_as_of_still_returns_the_whole_book() -> None:
 
     ledger = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
     raw = [json.loads(ln) for ln in ledger.read_text().splitlines() if ln.strip()]
-    assert len(pair_closes(raw)) == 2
+    assert len(pair_closes(raw, splits=no_splits)) == 2
     assert len(closed_decision_ids(raw)) == 2
 
 
@@ -261,7 +262,7 @@ def test_a_malformed_close_is_still_refused_even_when_dated_past_the_as_of() -> 
     orphan["payload"] = json.dumps(payload)
     orphan["entry_id"] = "C-ORPHAN"
     with pytest.raises(ValueError, match="must close something"):
-        pair_closes([*raw, orphan], as_of=date(2026, 8, 11))
+        pair_closes([*raw, orphan], as_of=date(2026, 8, 11), splits=no_splits)
 
 
 def test_the_closed_set_is_keyed_on_decisions_over_the_real_ledger() -> None:

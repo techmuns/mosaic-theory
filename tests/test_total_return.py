@@ -18,7 +18,7 @@ from typing import Any
 
 import pytest
 
-from tests.dividend_support import no_dividends
+from tests.dividend_support import no_dividends, no_splits, weekday_calendar
 from vinci.eod import dividends as divs
 from vinci.eod.dividends import DividendsUnknownError, ex_date_yields, growth
 from vinci.netcache import HttpError
@@ -60,14 +60,14 @@ EX = date(2026, 2, 11)
 
 def test_yields_are_cash_over_the_ex_dates_close_inside_the_window() -> None:
     rows = [_row(d, 50.0, 0.5 if d == EX else 0.0) for d in DAYS]
-    assert ex_date_yields(rows, A, B) == [(EX, pytest.approx(0.01))]
-    assert growth(ex_date_yields(rows, A, B)) == pytest.approx(1.01)
+    assert ex_date_yields(rows, A, B, sessions=DAYS) == [(EX, pytest.approx(0.01))]
+    assert growth(ex_date_yields(rows, A, B, sessions=DAYS)) == pytest.approx(1.01)
     # the window is (start, end]: an ex-date ON the entry session was paid before the position
-    assert ex_date_yields(rows, EX, B) == []
+    assert ex_date_yields(rows, EX, B, sessions=DAYS) == []
     # ON the exit session it is inside
-    assert ex_date_yields(rows, A, EX) == [(EX, pytest.approx(0.01))]
+    assert ex_date_yields(rows, A, EX, sessions=DAYS) == [(EX, pytest.approx(0.01))]
     # a covered window with no dividend reads [] — Tiingo said "none", which is a reading
-    assert ex_date_yields([_row(d) for d in DAYS], A, B) == []
+    assert ex_date_yields([_row(d) for d in DAYS], A, B, sessions=DAYS) == []
 
 
 @pytest.mark.parametrize("rows, why", [
@@ -82,7 +82,7 @@ def test_yields_are_cash_over_the_ex_dates_close_inside_the_window() -> None:
 def test_a_window_tiingo_does_not_cover_is_unknown_never_zero(rows: list[dict[str, Any]],
                                                              why: str) -> None:
     with pytest.raises(DividendsUnknownError, match=why):
-        ex_date_yields(rows, A, B, symbol="X")
+        ex_date_yields(rows, A, B, symbol="X", sessions=DAYS)
 
 
 def test_the_longest_market_closure_is_not_a_hole() -> None:
@@ -90,7 +90,8 @@ def test_the_longest_market_closure_is_not_a_hole() -> None:
     fri, tue = date(2026, 2, 13), date(2026, 2, 17)
     rows = [_row(d) for d in DAYS if d != date(2026, 2, 16)]
     assert (tue - fri).days == divs.MAX_SESSION_GAP_DAYS
-    assert ex_date_yields(rows, A, B) == []
+    # the market's calendar holds no session on the holiday, so no row is owed there
+    assert ex_date_yields(rows, A, B, sessions=[d for d in DAYS if d != date(2026, 2, 16)]) == []
 
 
 class _Client:
@@ -107,7 +108,8 @@ class _Client:
 def test_the_tiingo_source_reads_each_symbol_once_and_fails_loud() -> None:
     rows = [_row(d, 50.0, 0.5 if d == EX else 0.0) for d in DAYS]
     client = _Client({"PAY": rows, "BRK-B": rows})
-    src = divs.tiingo_dividends(client, start=A, end=B)  # type: ignore[arg-type]
+    src = divs.tiingo_dividends(client, start=A, end=B,  # type: ignore[arg-type]
+                                sessions=weekday_calendar)
     assert src("PAY", A, B) == [(EX, pytest.approx(0.01))]
     assert src("PAY", EX, B) == []
     assert src("BRK.B", A, B)                          # a share class is asked for hyphenated
@@ -120,7 +122,7 @@ def test_the_tiingo_source_reads_each_symbol_once_and_fails_loud() -> None:
 
 def test_without_a_key_every_window_fails_loud(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("TIINGO_API_KEY", raising=False)
-    src = divs.default_dividends(start=A, end=B)
+    src = divs.default_dividends(start=A, end=B, sessions=weekday_calendar)
     with pytest.raises(DividendsUnknownError, match="no TIINGO_API_KEY"):
         src("PAY", A, B)
 
@@ -168,7 +170,8 @@ def test_every_leg_is_a_total_return_with_price_beside_it(tmp_path: Path) -> Non
     ⊖ the spread reads the total return, never the price one."""
     with _store(tmp_path) as store:
         scores, report = score_ledger(store, as_of=HORIZON,
-                                      dividends=_yields({"PAY": 0.02, "NIL": 0.0, "IWM": 0.01}))
+                                      dividends=_yields({"PAY": 0.02, "NIL": 0.0, "IWM": 0.01}),
+                                          splits=no_splits)
     s = {x.ticker: x for x in scores}
     assert s["PAY"].name_return == pytest.approx(1.10 * 1.02 - 1)
     assert s["PAY"].name_price_return == pytest.approx(0.10)
@@ -184,10 +187,12 @@ def test_every_leg_is_a_total_return_with_price_beside_it(tmp_path: Path) -> Non
 def test_a_resolved_row_with_unknown_dividends_stops_the_score(tmp_path: Path) -> None:
     with _store(tmp_path) as store, pytest.raises(harness_mod.TotalReturnUnknownError,
                                                   match="V-PAY.*never scored on price return"):
-        score_ledger(store, as_of=HORIZON, dividends=_yields({"NIL": 0.0, "IWM": 0.0}))
+        score_ledger(store, as_of=HORIZON, dividends=_yields({"NIL": 0.0, "IWM": 0.0}),
+                     splits=no_splits)
     # the BENCHMARK's dividends are as load-bearing as the name's
     with _store(tmp_path / "b") as store, pytest.raises(harness_mod.TotalReturnUnknownError):
-        score_ledger(store, as_of=HORIZON, dividends=_yields({"PAY": 0.0, "NIL": 0.0}))
+        score_ledger(store, as_of=HORIZON, dividends=_yields({"PAY": 0.0, "NIL": 0.0}),
+                     splits=no_splits)
 
 
 def test_an_interim_row_with_unknown_dividends_is_pending_not_priced(tmp_path: Path) -> None:
@@ -196,7 +201,7 @@ def test_an_interim_row_with_unknown_dividends_is_pending_not_priced(tmp_path: P
         store.write_prices(_bars("IDX-IWM", 100.0, 105.0))
         store.write_prices(_bars("SEC-PAY", 100.0, 110.0))
         store.append_ledger(_entry("PAY", Verdict.BUY))
-        scores, report = score_ledger(store, as_of=mid, dividends=_yields({}))
+        scores, report = score_ledger(store, as_of=mid, dividends=_yields({}), splits=no_splits)
     assert scores == [] and report.n_pending == 1
 
 
@@ -216,8 +221,8 @@ def test_the_beta_regression_carries_the_dividends_too(tmp_path: Path) -> None:
         def src(symbol: str, a: date, b: date) -> list[tuple[date, float]]:
             return [(ex, 0.05)] if symbol == "PAY" else []
 
-        _s, with_div = score_ledger(store, as_of=HORIZON, dividends=src)
-        _s, none = score_ledger(store, as_of=HORIZON, dividends=no_dividends)
+        _s, with_div = score_ledger(store, as_of=HORIZON, dividends=src, splits=no_splits)
+        _s, none = score_ledger(store, as_of=HORIZON, dividends=no_dividends, splits=no_splits)
     assert with_div.beta is not None and none.beta is not None
     assert with_div.beta != pytest.approx(none.beta)
 
@@ -354,7 +359,8 @@ def test_a_name_whose_bars_stop_before_entry_is_pending_not_a_crash(tmp_path: Pa
         store.write_prices([PriceBar(internal_id="SEC-PAY", bar_date=ENTRY - timedelta(days=9),
                                      open=1, high=1, low=1, close=1, volume=1, source="t")])
         store.append_ledger(_entry("PAY", Verdict.BUY))
-        scores, report = score_ledger(store, as_of=HORIZON, dividends=no_dividends)
+        scores, report = score_ledger(store, as_of=HORIZON, dividends=no_dividends,
+                                      splits=no_splits)
     assert scores == [] and report.n_pending == 1
 
 
@@ -378,5 +384,6 @@ def test_the_dividend_window_starts_at_the_session_the_entry_resolves_to(tmp_pat
                                 for d, c in ((fri, 100.0), (HORIZON, 110.0))])
         e = _entry("PAY", Verdict.BUY).model_copy(update={"entry_price_as_of": sat})
         store.append_ledger(e)
-        scores, _r = score_ledger(store, as_of=HORIZON + timedelta(days=5), dividends=src)
+        scores, _r = score_ledger(store, as_of=HORIZON + timedelta(days=5), dividends=src,
+                                  splits=no_splits)
     assert ("PAY", fri, HORIZON) in asked and len(scores) == 1

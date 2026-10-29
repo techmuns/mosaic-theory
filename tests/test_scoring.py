@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.dividend_support import no_dividends
+from tests.dividend_support import no_dividends, no_splits
 from vinci.schemas.ledger import Confidence, Disposition, LedgerEntry, Verdict
 from vinci.schemas.market import PriceBar
 from vinci.scoring import (
@@ -165,7 +165,7 @@ def test_score_ledger_backfilled_math_only(tmp_path: Path) -> None:
                                    disposition=Disposition.CONFIRMED))
 
         scores, report = score_ledger(store, as_of=date(2025, 5, 1), cost_bps=25.0,
-        dividends=no_dividends)
+        dividends=no_dividends, splits=no_splits)
 
     assert {s.ticker: round(s.name_return, 4) for s in scores} == {"AAA": 0.30, "BBB": -0.20}
     assert all(s.resolved for s in scores)  # horizon passed by the as-of date
@@ -187,7 +187,8 @@ def test_score_ledger_pending_when_horizon_not_reached(tmp_path: Path) -> None:
         store.write_prices(_bars("SEC-A", [(entry_d, 100.0), (date(2026, 6, 10), 90.0)]))
         store.append_ledger(_entry("AAA", "SEC-A", Verdict.BUY, 100.0, entry_d))
         # as-of is well before entry+90d -> unresolved -> pending, not scored
-        _scores, report = score_ledger(store, as_of=date(2026, 6, 10), dividends=no_dividends)
+        _scores, report = score_ledger(store, as_of=date(2026, 6, 10), dividends=no_dividends,
+                                       splits=no_splits)
     assert report.n_resolved_buy == 0
     assert report.n_pending == 1
     assert report.buy_avoid_spread is None

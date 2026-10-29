@@ -10,23 +10,34 @@ THE DEFINITION. Dividends are reinvested on the ex-date, the standard holding-pe
 over a window (entry, exit], growth = ∏ (1 + divCash ÷ close) across the ex-dates inside it, and
 total return = (exit ÷ entry) × growth − 1. Both figures in each yield are Tiingo's own unadjusted
 cash and close for that day, so the yield needs no split basis and multiplies onto the fund's own
-price ratio — the sealed entry price stays the entry price.
+price ratio. That ratio is on one split basis (`eod.splits`, 2026-10-29): the sealed entry price
+stays in the ledger, and is read on the exit's basis when a recorded split has moved the series.
 
 UNKNOWN IS NEVER ZERO. Tiingo serves one row per session with ``divCash`` (0.0 when none was
-paid), so a window counts as READ only when Tiingo's rows cover it: a row ON the entry session and
-ON the exit session, and no two neighbouring rows more than `MAX_SESSION_GAP_DAYS` apart. Anything
-less — no key, a failed request, an unreadable row, a hole — raises `DividendsUnknownError`, and the
+paid), so a window counts as READ only when Tiingo's rows cover it: a row ON the entry session, ON
+the exit session and ON EVERY SESSION BETWEEN ON WHICH THE NAME TRADED, read from a calendar the
+caller supplies (`eod.client.SessionCalendar`: the name's bars in the store, or its Polygon bars),
+and no two neighbouring rows more than `MAX_SESSION_GAP_DAYS` apart. Anything less — no key, a
+failed request, an unreadable row, a missing session — raises `DividendsUnknownError`, and the
 caller fails loud. Nothing here returns an empty list for a window it could not read.
+
+WHY THE CALENDAR (audit item F-D3, 2026-10-29). Coverage was the gap rule alone, which measures
+CALENDAR days: a weekday missing from Tiingo's rows is a two-day gap, shorter than a holiday
+weekend, so a window missing its one ex-date row read as covered and returned no dividend — a zero
+where the record had a hole. Only a list of the market's own sessions can tell a missing session
+from a closed market. It is the name's own sessions (review of #855): a full-day halt is a
+market session with no trade in the name, and Tiingo serves no row for it.
 """
 from __future__ import annotations
 
 import json
 import os
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
+from vinci.eod.client import EodError, SessionCalendar
 from vinci.eod.tiingo import TiingoEodClient, tiingo_symbol
 from vinci.netcache import HttpError
 
@@ -53,9 +64,11 @@ def growth(yields: list[tuple[date, float]]) -> float:
 
 
 def ex_date_yields(rows: list[dict[str, Any]], start: date, end: date, *,
-                   symbol: str = "") -> list[tuple[date, float]]:
+                   sessions: Sequence[date], symbol: str = "") -> list[tuple[date, float]]:
     """The ex-date yields in (start, end] from Tiingo's daily rows, or `DividendsUnknownError` when
-    the rows do not cover the window (see the module note). Pure, so it is pinned offline."""
+    the rows do not cover the window (see the module note). ``sessions`` are the sessions the name
+    traded (a `SessionCalendar`'s answer); each one inside [start, end] needs a row. Pure, so it is
+    pinned offline."""
     if end < start:
         raise ValueError(f"{symbol}: window ends {end} before it starts {start}")
     days: list[tuple[date, float, float]] = []
@@ -82,13 +95,29 @@ def ex_date_yields(rows: list[dict[str, Any]], start: date, end: date, *,
         raise DividendsUnknownError(f"{symbol}: Tiingo holds no row between {a} and {b} — a hole "
                                f"longer than any market closure, so the dividends there are "
                                f"unknown")
+    have = {d for d, _c, _x in days}
+    window = [s for s in sessions if start <= s <= end]
+    if not window:
+        # a window holds at least its own entry session, so a calendar with none in it is no
+        # calendar — and an empty one would pass every window unchecked
+        raise DividendsUnknownError(f"{symbol}: the calendar holds no session in {start} → {end}, "
+                                    f"so Tiingo's coverage cannot be checked")
+    missing = [s for s in window if s not in have]
+    if missing:
+        raise DividendsUnknownError(
+            f"{symbol}: Tiingo holds no row for {len(missing)} session(s) the name traded in "
+            f"{start} → {end} (first {missing[0]}) — an ex-date there would be missed, so the "
+            f"dividends are unknown")
     return [(d, cash / close) for d, close, cash in days if d > start and cash > 0]
 
 
-def tiingo_dividends(client: TiingoEodClient, *, start: date, end: date) -> DividendSource:
+def tiingo_dividends(client: TiingoEodClient, *, start: date, end: date,
+                     sessions: SessionCalendar) -> DividendSource:
     """A `DividendSource` over Tiingo, fetching each symbol ONCE across [start, end] — the span
-    every window the caller will ask about falls inside — and slicing it per window."""
+    every window the caller will ask about falls inside — and slicing it per window. ``sessions``
+    is asked once per symbol, for the span, when its first window is read."""
     span: dict[str, list[dict[str, Any]] | str] = {}
+    calendar: dict[str, list[date]] = {}
 
     def source(symbol: str, a: date, b: date) -> list[tuple[date, float]]:
         if a < start or b > end:
@@ -102,7 +131,13 @@ def tiingo_dividends(client: TiingoEodClient, *, start: date, end: date) -> Divi
         rows = span[symbol]
         if isinstance(rows, str):
             raise DividendsUnknownError(f"{symbol}: {rows}")
-        return ex_date_yields(rows, a, b, symbol=symbol)
+        if symbol not in calendar:
+            try:
+                calendar[symbol] = sessions(symbol, start, end)
+            except (HttpError, EodError, ValueError) as exc:
+                raise DividendsUnknownError(f"{symbol}: the calendar could not be read "
+                                            f"({type(exc).__name__})") from exc
+        return ex_date_yields(rows, a, b, sessions=calendar[symbol], symbol=symbol)
     return source
 
 
@@ -162,9 +197,10 @@ def reserved_symbols(data_dir: Path) -> dict[str, tuple[str, ...]]:
     return {s: tuple(sorted(r)) for s, r in sorted(why.items())}
 
 
-def default_dividends(*, start: date, end: date) -> DividendSource:
-    """Tiingo where ``TIINGO_API_KEY`` is set. Without it, a source that raises on every window —
-    so a total return that cannot be read fails where it is used, never as a quiet price return."""
+def default_dividends(*, start: date, end: date, sessions: SessionCalendar) -> DividendSource:
+    """Tiingo where ``TIINGO_API_KEY`` is set, its coverage checked against ``sessions``. Without
+    it, a source that raises on every window — so a total return that cannot be read fails where it
+    is used, never as a quiet price return."""
     if not os.environ.get("TIINGO_API_KEY"):
         def unavailable(symbol: str, a: date, b: date) -> list[tuple[date, float]]:
             raise DividendsUnknownError(f"{symbol}: no TIINGO_API_KEY in the environment — total "
@@ -172,4 +208,4 @@ def default_dividends(*, start: date, end: date) -> DividendSource:
         return unavailable
     # a week of slack before the earliest window, so its entry session's row is always inside
     return tiingo_dividends(TiingoEodClient.from_config(), start=start - timedelta(days=7),
-                            end=end)
+                            end=end, sessions=sessions)

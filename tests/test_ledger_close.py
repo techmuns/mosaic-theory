@@ -18,6 +18,7 @@ from typing import Any
 
 import pytest
 
+from tests.dividend_support import no_splits
 from vinci import monitor as mon
 from vinci.schemas.ledger import EVENT_CLOSE, LedgerEntry, close_entry_id
 
@@ -117,7 +118,7 @@ def test_b_a_close_must_reference_an_existing_entry() -> None:
     orphan = _close_for(mon.entry_of(mon.decision_rows(rows)[0]))
     orphan["closes_entry_id"] = "V-does-not-exist"
     with pytest.raises(ValueError, match="not a decision row"):
-        mon.pair_closes([*rows, orphan])
+        mon.pair_closes([*rows, orphan], splits=no_splits)
 
 
 def test_c_a_second_close_for_one_entry_is_refused() -> None:
@@ -127,7 +128,7 @@ def test_c_a_second_close_for_one_entry_is_refused() -> None:
     first = _close_for(buy, exit_price=100.0)
     second = {**_close_for(buy, exit_price=120.0), "entry_id": "C-second"}
     with pytest.raises(ValueError, match="closed TWICE"):
-        mon.pair_closes([*rows, first, second])
+        mon.pair_closes([*rows, first, second], splits=no_splits)
 
 
 # --- (d) REALIZED RETURN IS DERIVED -------------------------------------------------------------
@@ -139,7 +140,8 @@ def test_d_realized_return_is_derived_and_never_stored() -> None:
     close = _close_for(buy, exit_price=buy["entry_price"] * 0.9)
     # the stored close row carries NO return field of any kind
     assert not any("return" in k or "realized" in k or "pnl" in k.lower() for k in close)
-    paired = [r for r in mon.pair_closes([*rows, close]) if r["ticker"] == buy["ticker"]]
+    paired = [r for r in mon.pair_closes([*rows, close], splits=no_splits)
+              if r["ticker"] == buy["ticker"]]
     assert len(paired) == 1
     assert paired[0]["realized_return"] == pytest.approx(-0.10, abs=1e-12)
     assert paired[0]["entry_price"] == buy["entry_price"]
@@ -189,7 +191,7 @@ def test_every_committed_row_loads_and_the_committed_closes_pair_cleanly() -> No
     rows = _committed()
     assert rows, "committed ledger is empty"
     assert len(mon.decision_rows(rows)) + len(mon.close_rows(rows)) == len(rows)
-    paired = mon.pair_closes(rows)                       # refuses loud on orphan/duplicate
+    paired = mon.pair_closes(rows, splits=no_splits)     # refuses loud on orphan/duplicate
     assert len(paired) == len(mon.close_rows(rows))
     for c in mon.close_rows(rows):
         e = mon.entry_of(c)

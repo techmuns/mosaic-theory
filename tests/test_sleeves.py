@@ -15,7 +15,7 @@ from typing import Any, cast
 
 import pytest
 
-from tests.dividend_support import no_dividends
+from tests.dividend_support import no_dividends, no_splits
 from vinci import sleeves as sl
 from vinci.schemas.market import PriceBar
 
@@ -632,7 +632,8 @@ def test_pending_from_the_no_price_branch_is_screen_scoped_too(tmp_path: Path) -
         # neither name has bars → both take the no-forward-price branch
         store.append_ledger(row("AAA", "SEC-A", Verdict.BUY, "screen", "overshoot"))
         store.append_ledger(row("UUU", "SEC-U", Verdict.BUY, "followed", "quality"))
-        scores, report = score_ledger(store, as_of=date(2026, 6, 10), dividends=no_dividends)
+        scores, report = score_ledger(store, as_of=date(2026, 6, 10), dividends=no_dividends,
+                                      splits=no_splits)
 
     assert scores == []  # neither row could be scored — both hit the branch
     assert report.n_pending == 1, (

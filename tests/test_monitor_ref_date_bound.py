@@ -28,7 +28,7 @@ from typing import Any
 
 import pytest
 
-from tests.dividend_support import no_dividends
+from tests.dividend_support import no_dividends, no_splits
 from vinci import monitor as mon
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -207,7 +207,16 @@ def _wire(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, records: list[dict[st
     for name, day in (prior or {}).items():
         (tmp_path / "data/monitor" / f"{name}.json").write_text(json.dumps(day))
 
-    bars = {t: SimpleNamespace(close=100.0) for t in _tickers_needing_bars()}
+    # EACH NAME AT THE PRICE ITS DECISION SEALED (audit item F-D1): the monitor sets the sealed
+    # entry beside the entry session's close and refuses a gap no recorded split explains, so the
+    # flat synthetic price is each name's sealed one, stepping at SMPL's re-entry; benchmarks 100.
+    sealed = sorted((date.fromisoformat(str(r["entry_price_as_of"])), str(r["ticker"]),
+                     float(r["entry_price"])) for r in mon.decision_rows(_ledger()))
+
+    def _close(t: str, d: date) -> float:
+        mine = [px for on, tk, px in sealed if tk == t]
+        held = [px for on, tk, px in sealed if tk == t and on <= d]
+        return held[-1] if held else mine[0] if mine else 100.0
     sec = [json.loads(ln) for ln in (ROOT / "data/snapshots/securities.jsonl").read_text()
            .splitlines() if ln.strip()]
     by_cik = {str(r["cik"]): str(r["ticker"]) for r in sec if r.get("cik")}
@@ -222,7 +231,8 @@ def _wire(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, records: list[dict[st
 
         def grouped_daily(self, d: date) -> dict[str, object]:
             calls["prices"] += 1
-            return {} if d.weekday() >= 5 or d in no_close else dict(bars)
+            return ({} if d.weekday() >= 5 or d in no_close else
+                    {t: SimpleNamespace(close=_close(t, d)) for t in _tickers_needing_bars()})
 
     class _Edgar:
         @classmethod
@@ -241,6 +251,7 @@ def _wire(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, records: list[dict[st
     monkeypatch.setattr(cli, "EdgarClient", _Edgar)
     # total return since 2026-10-26: the flat synthetic prices above pay no dividends
     monkeypatch.setattr(cli, "default_dividends", lambda **_kw: no_dividends)
+    monkeypatch.setattr(cli, "default_splits", lambda *_a, **_k: no_splits)
     return calls
 
 

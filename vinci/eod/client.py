@@ -33,6 +33,7 @@ from vinci.schemas.market import PriceBar
 _GROUPED = "https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{day}"
 _AGGS = "https://api.polygon.io/v2/aggs/ticker/{symbol}/range/1/day/{start}/{end}"
 _REFERENCE = "https://api.polygon.io/v3/reference/tickers"
+_SPLITS = "https://api.polygon.io/v3/reference/splits"
 _ONE_DAY = 86_400.0
 
 
@@ -132,6 +133,31 @@ def market_sessions(per_day: dict[str, int]) -> list[int]:
                   if n >= _SESSION_PRESENT_FRACTION * top)
 
 
+#: (symbol, start, end) → the sessions in [start, end] on which ``symbol`` TRADED, per the price
+#: source, oldest first: the calendar a per-session check reads (dividend coverage,
+#: `eod.dividends.ex_date_yields`). The name's own sessions, never the market's: a full-day halt is
+#: a market session with no trade in the name, and no Tiingo row is owed for it (review of #855).
+SessionCalendar = Callable[[str, date, date], list[date]]
+
+
+def store_calendar(store: Any) -> SessionCalendar:
+    """A store's `SessionCalendar`: the days it holds a bar for the symbol, under any id filed by
+    that symbol (as ``eod_symbol`` or ``ticker``), each symbol read once. A symbol the store does
+    not carry has no sessions."""
+    ids: dict[str, set[str]] = {}
+    for s in store.iter_securities():
+        for sym in (s.eod_symbol, s.ticker):
+            ids.setdefault(sym, set()).add(s.internal_id)
+    seen: dict[str, list[date]] = {}
+
+    def calendar(symbol: str, start: date, end: date) -> list[date]:
+        if symbol not in seen:
+            seen[symbol] = sorted({d for iid in ids.get(symbol, ()) for d in store.bar_dates(iid)})
+        days = seen[symbol]
+        return days[bisect_left(days, start):bisect_right(days, end)]
+    return calendar
+
+
 def missed_sessions(market: list[int], days: array[int]) -> array[int]:
     """Per step between consecutive bars: the market sessions strictly between them."""
     return array("i", (bisect_left(market, days[i]) - bisect_right(market, days[i - 1])
@@ -181,10 +207,10 @@ def last_completed_session(client: EodClient, *, today: date,
     )
 
 
-def restatement_factor(held: PriceBar, fresh: RawBar) -> float | None:
-    """``fresh ÷ held`` when the source has put this session's bar on a new split basis — open,
-    high, low and close all scaled by one factor that is away from 1 — else None (unchanged, or
-    changed some other way)."""
+def price_factor(held: PriceBar, fresh: RawBar) -> float | None:
+    """``fresh ÷ held`` when open, high, low and close all moved by one factor away from 1 — the
+    PRICE half of a split, read alone. A correction can pass it; `restatement_factor` adds the
+    volume half."""
     pairs = ((fresh.open, held.open), (fresh.high, held.high), (fresh.low, held.low),
              (fresh.close, held.close))
     if any(h <= 0 or f <= 0 for f, h in pairs):
@@ -195,9 +221,38 @@ def restatement_factor(held: PriceBar, fresh: RawBar) -> float | None:
     return ratios[3]
 
 
+def restatement_factor(held: PriceBar, fresh: RawBar) -> float | None:
+    """``fresh ÷ held`` when the source has put this session's bar on a new split basis — open,
+    high, low and close all scaled by one factor that is away from 1, AND volume scaled by its
+    inverse — else None (unchanged, or changed some other way).
+
+    THE VOLUME HALF (audit item F-D5, 2026-10-29). Prices alone cannot tell a split from a bar the
+    source corrected: a one-print correction that moves all four prices by 1.04 read as a split, and
+    every older held bar of the name was rescaled by it and tagged ``+restated``. A split changes
+    the share count, so volume moves the other way by the same factor — the 2026-08-05 measurement
+    in `RESTATE_TOL`'s note saw it to the cent on all ten real restatements — while a price
+    correction leaves volume where it was. A bar with no volume on either side cannot show that,
+    and restates nothing: the name's older bars keep their basis, the price scorecard's split-step
+    check flags the step, and scoring refuses a ledger name whose series a recorded split did not
+    restate (`eod.splits.entry_on_basis`). Such a bar is NAMED, never dropped in silence:
+    `restate_held` reports it as ``price_only`` (review of #855).
+
+    THE TOLERANCE IS THE PRICE'S, NOT AN ABSOLUTE SHARE COUNT. Polygon serves adjusted volume
+    unrounded (2026-08-05: AIXI 43,989.6, IMMP 7,715.36, LHSW 6,373.69 after their splits), so no
+    rounding allowance is needed; and an allowance of a share would pass a 1.04 correction on any
+    bar of 25 shares or fewer."""
+    f = price_factor(held, fresh)
+    if f is None or not (held.volume > 0 and fresh.volume > 0):
+        return None
+    if abs(held.volume / fresh.volume / f - 1.0) > RESTATE_TOL:
+        return None
+    return f
+
+
 def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
-                 boundaries: Sequence[date],
-                 sym_to_id: Mapping[str, str]) -> dict[str, list[tuple[date, float]]]:
+                 boundaries: Sequence[date], sym_to_id: Mapping[str, str], *,
+                 price_only: dict[str, list[tuple[date, float]]] | None = None,
+                 ) -> dict[str, list[tuple[date, float]]]:
     """Put held bars back on the source's CURRENT split basis, one pull at a time.
 
     Each boundary is the LAST session of one pull of the store. That session is fetched again and
@@ -209,7 +264,9 @@ def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
 
     Why a factor, not a re-pull: the plan serves two years of bars, so an older held bar cannot be
     fetched again. The factor is the source's own, read off a bar it serves today. Returns
-    ``{internal_id: [(boundary, factor), ...]}`` for each name restated."""
+    ``{internal_id: [(boundary, factor), ...]}`` for each name restated; a name whose prices moved
+    by one factor while its volume did not confirm it (`price_factor` without
+    `restatement_factor`) is restated nothing and, when ``price_only`` is given, listed there."""
     bounds = sorted(set(boundaries))
     id_to_sym = {iid: sym for sym, iid in sym_to_id.items()}
     found: dict[str, dict[date, float]] = {}
@@ -217,8 +274,12 @@ def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
         fresh = fetch(b)
         for iid, held in store.bars_on(b, list(id_to_sym)).items():
             bar = fresh.get(id_to_sym[iid])
-            if bar is not None and (r := restatement_factor(held, bar)) is not None:
+            if bar is None:
+                continue
+            if (r := restatement_factor(held, bar)) is not None:
                 found.setdefault(iid, {})[b] = r
+            elif price_only is not None and (p := price_factor(held, bar)) is not None:
+                price_only.setdefault(iid, []).append((b, p))
     for iid, by_bound in found.items():
         prev: date | None = None
         for b in bounds:
@@ -344,13 +405,15 @@ def ingest_prices(
     anchor = (max((d for d in days if d < restate_from and stored.get(d, 0) >= present_floor),
                   default=None) if callable(getattr(store, "bars_on", None)) else None)
     restated: dict[str, list[tuple[date, float]]] = {}
+    price_only: dict[str, list[tuple[date, float]]] = {}
     anchor_bars: dict[str, RawBar] = {}
     on_anchor: set[str] = set()
     if anchor is not None:
         days_fetched += 1
         anchor_bars = client.grouped_daily(anchor)
         on_anchor = set(store.bars_on(anchor, all_ids))
-        restated = restate_held(store, lambda _d: anchor_bars, [anchor], on(anchor))
+        restated = restate_held(store, lambda _d: anchor_bars, [anchor], on(anchor),
+                                price_only=price_only)
     written: set[str] = set()
     for day in days:
         days_seen += 1
@@ -405,7 +468,8 @@ def ingest_prices(
                 late.setdefault((last, slot), {})[id_to_sym[iid]] = iid
         for (last, _slot), group in sorted(late.items()):
             days_fetched += 1
-            restated.update(restate_held(store, client.grouped_daily, [last], group))
+            restated.update(restate_held(store, client.grouped_daily, [last], group,
+                                         price_only=price_only))
     return {
         "days_fetched": days_fetched,
         "days_skipped": days_skipped,
@@ -415,6 +479,9 @@ def ingest_prices(
         # SAID IN THE SUMMARY, NEVER SILENT: which names had held bars restated, and by what
         "anchor": anchor.isoformat() if anchor is not None else None,
         "restated": {id_to_sym[iid]: [f for _b, f in v] for iid, v in sorted(restated.items())},
+        # and which moved like a split in price alone, so restated nothing (`restatement_factor`)
+        "price_only": {id_to_sym[iid]: [f for _b, f in v]
+                       for iid, v in sorted(price_only.items())},
     }
 
 
@@ -577,6 +644,26 @@ class PolygonEodClient(EodClient):
             raise
         data = cast(dict[str, Any], raw)
         return parse_grouped_daily(data, day=day, min_results=self._min_results)
+
+    def splits_reference(self, symbol: str) -> list[dict[str, Any]]:
+        """Every split ``/v3/reference/splits`` records for ``symbol``, as served (`eod.splits`
+        parses them) — cached a day, so a split announced since is seen by tomorrow. Fail-loud on a
+        non-OK status; pages are followed."""
+        out: list[dict[str, Any]] = []
+        url: str | None = _SPLITS
+        params: dict[str, Any] | None = {"ticker": symbol, "limit": 1000}
+        pages = 0
+        while url:
+            if pages == 10:   # a safety stop: no ticker has a thousand splits, let alone ten pages
+                raise EodError(f"splits {symbol}: more than {pages} pages")
+            data = cast(dict[str, Any], self._http.get_json(url, ttl_seconds=_ONE_DAY,
+                                                            params=params))
+            if data.get("status") != "OK":
+                raise EodError(f"splits {symbol}: status={data.get('status')!r} "
+                               f"({data.get('error') or data})")
+            out.extend(data.get("results") or [])
+            url, params, pages = data.get("next_url"), None, pages + 1
+        return out
 
     def daily_bars(self, symbol: str, start: date, end: date) -> list[tuple[date, RawBar]]:
         """Per-symbol daily OHLCV over ``[start, end]`` (one cached call). Used for the benchmark
