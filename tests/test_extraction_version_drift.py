@@ -7,22 +7,24 @@ changed output — so the 155 layer refreshes dated 10-27 or later stamped `2026
 code that did not make them. Nothing noticed, because nothing could: a version is a declaration.
 
 THIS TEST NOTICES. Each module that can change what a dossier carries is PINNED to a hash of its
-code (`WATCHED`), taken at the version `PINNED_AT` names. A module that moved since its pin — or a
-module that joined or left the watched set — is refused WHILE `PINNED_AT` IS STILL THE LAST ROW of
-`EXTRACTION_VERSIONS`: the code moved and the declared version did not. Once a row has been
-appended after `PINNED_AT`, the moves are accepted, because the version did move.
+code (`WATCHED`), taken when `EXTRACTION_VERSIONS` held the rows `PINNED_TABLE` digests (`PINNED_AT`
+names the last of them, for a reader). A module that moved since its pin — or joined or left the
+watched set — is refused WHILE THE TABLE HOLDS NO ROW IT DID NOT HOLD THEN: the code moved and the
+declared version did not. Once any row has been added, wherever it sits, the moves are accepted.
 
 THAT RULE IS WHAT LETS PARALLEL PRS MERGE IN ANY ORDER. A sibling PR that changes a watched module
-and appends its own row never reds main, whether it merges before or after this file last re-pinned
-— the hashed set and the last row move together. Its cost: once a row is appended, a further
-unbumped move goes unseen until the next re-pin, so every PR that appends a row re-pins:
+and adds its own row never reds main or a branch merging main — before or after this file last
+re-pinned, its row last or (merged first) before another batch's — because the moves arrive with a
+row the pins have not seen. Its cost: once a row is added, a further unbumped move goes unseen until
+the next re-pin, so every PR that adds a row re-pins:
 
     python -m tests.test_extraction_version_drift --repin   # recompute WATCHED, set PINNED_AT
 
 ONE MECHANICAL STEP, NEVER A HAND-MERGE. It rewrites `WATCHED` to the tree's hashes (a new module
-joins as watched; exclude one by adding it to `NOT_EXTRACTION` with the reason) and `PINNED_AT` to
-the last row. On a merge conflict in this file, take either side and run it in the merge commit.
-A refactor that moves a watched module with no output change re-pins too, and says so in its PR.
+joins as watched; exclude one by adding it to `NOT_EXTRACTION` with the reason), `PINNED_TABLE` to
+the table's digest and `PINNED_AT` to its last row. On a merge conflict in this file, take either
+side and run it in the merge commit. A refactor that moves a watched module with no output change
+re-pins too, and says so in its PR.
 
 MERGING THE VERSION TABLE ITSELF: every row of `EXTRACTION_VERSIONS` (and of its web twin in
 `frontend/views/shared/dossier.js`) is its own `(` … `),` block; a line-wise union of two branches'
@@ -34,8 +36,8 @@ this repo writes beside its code can change freely; a changed constant, conditio
 THE DECLARED SET, NOT A COMPUTED CLOSURE (26b's spec, corrected 2026-07-28: the import closure from
 `assemble` is ~58 modules and a guard that always fires is switched off). Every module under
 vinci/dossier and vinci/edgar is classified — `WATCHED`, or `NOT_EXTRACTION` with the reason — and
-a module joining either package unclassified reds (`test_every_module_is_classified`), so the set
-cannot quietly stop covering a new extractor. Two modules outside them build page fields and are
+a module joining either package unclassified is a MOVE under the rule above, so the set cannot
+quietly stop covering a new extractor (`--repin` then pins it as watched). Two modules outside them build page fields and are
 watched too: vinci/verbatim.py (which quoted values a page keeps) and vinci/finra.py (short
 interest). Prices (vinci/eod) are market data, not extraction, and vinci/ciq feeds only the
 git-ignored graph test.
@@ -59,7 +61,9 @@ from vinci.dossier.extraction_version import EXTRACTION_VERSION, EXTRACTION_VERS
 
 ROOT = Path(__file__).resolve().parents[1]
 
-#: The version the pins below were taken at — `--repin` sets it to the last row.
+#: The table the pins below were taken against — `--repin` sets both: the digest of every row id
+#: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
+PINNED_TABLE = "eba07f3b4aa7"
 PINNED_AT = "2026-10-29.A-X1"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
@@ -170,11 +174,17 @@ def _pin_lines(hashes: dict[str, str]) -> str:
     return "\n".join(f'    "{p}": "{h}",' for p, h in hashes.items())
 
 
-def refused_moves(pins: dict[str, str], pinned_at: str, now: dict[str, str],
-                  current: str) -> dict[str, str | None]:
-    """The watched modules that moved since their pins — changed, joined or gone (None) — IF no row
-    has been appended since `pinned_at`; empty once one has, because then the version moved too."""
-    if current != pinned_at:
+def table_digest(versions: tuple[tuple[str, str], ...] | list[tuple[str, str]]) -> str:
+    """sha256[:12] of the table's row ids, sorted — the same whatever order a merge put them in."""
+    return hashlib.sha256("\n".join(sorted(v for v, _ in versions)).encode()).hexdigest()[:12]
+
+
+def refused_moves(pins: dict[str, str], pinned_table: str, now: dict[str, str],
+                  current_table: str) -> dict[str, str | None]:
+    """The watched modules that moved since their pins — changed, joined or gone (None) — IF the
+    version table holds no row it did not hold then; empty once it does, because then the
+    declared version moved too."""
+    if current_table != pinned_table:
         return {}
     moved: dict[str, str | None] = {p: h for p, h in now.items() if pins.get(p) != h}
     moved.update({p: None for p in pins if p not in now})
@@ -185,12 +195,14 @@ def test_a_watched_module_never_moves_while_the_version_stands_still() -> None:
     """THE 26b INVARIANT. A watched module that moved — or joined vinci/dossier or vinci/edgar
     unclassified, or left it — while the last row is still the one the pins were taken at."""
     gone = sorted(p for p in NOT_EXTRACTION if not (ROOT / p).exists())
-    moved = refused_moves(WATCHED, PINNED_AT, current_hashes(), EXTRACTION_VERSION)
-    moved.update({p: None for p in gone if EXTRACTION_VERSION == PINNED_AT})
+    now_table = table_digest(EXTRACTION_VERSIONS)
+    moved = refused_moves(WATCHED, PINNED_TABLE, current_hashes(), now_table)
+    moved.update({p: None for p in gone if now_table == PINNED_TABLE})
     assert not moved, (
-        f"{sorted(moved)} moved since the pins were taken at {PINNED_AT}, and no row has been "
-        "appended since. If extraction OUTPUT changed, append a row to EXTRACTION_VERSIONS "
-        "(vinci/dossier/extraction_version.py, and the same row in frontend/views/shared/"
+        f"{sorted(moved)} moved since the pins were taken (last row then {PINNED_AT}), and the "
+        "version table has gained no row since. If extraction OUTPUT changed, append a row to "
+        "EXTRACTION_VERSIONS (vinci/dossier/extraction_version.py, and the same row in "
+        "frontend/views/shared/"
         "dossier.js), each row its own `(` … `),` block; then — or for a refactor alone, saying "
         "so in the PR — run `python -m tests.test_extraction_version_drift --repin`. A module that "
         "cannot change a dossier goes in NOT_EXTRACTION with the reason.")
@@ -201,10 +213,17 @@ def test_the_pins_name_a_declared_version() -> None:
     assert PINNED_AT in {v for v, _ in EXTRACTION_VERSIONS}, PINNED_AT
 
 
+def test_the_table_digest_ignores_merge_order() -> None:
+    """Two batches' rows merged in either order are one table; a new row is a new table."""
+    a, b, c = ("v1", "x"), ("v2.A", "y"), ("v2.B", "z")
+    assert table_digest([a, b, c]) == table_digest([a, c, b])
+    assert table_digest([a, b]) != table_digest([a, b, c])
+
+
 def test_a_move_is_refused_only_while_the_version_stands_still() -> None:
-    """Both halves of the rule, on the pure function: the same move is refused at the pinned
-    version and accepted once a row is appended (a sibling PR merging with its own row), and a
-    module that joins or leaves the set is a move."""
+    """Both halves of the rule, on the pure function: the same move is refused against the pinned
+    table and accepted once the table has a new row (a sibling PR merging with its own row, in
+    either order), and a module that joins or leaves the set is a move."""
     pins = {"vinci/dossier/a.py": "aaa", "vinci/dossier/b.py": "bbb"}
     moved = {"vinci/dossier/a.py": "AAA", "vinci/dossier/b.py": "bbb", "vinci/dossier/c.py": "ccc"}
     assert refused_moves(pins, "v1", moved, "v1") == {"vinci/dossier/a.py": "AAA",
@@ -215,23 +234,25 @@ def test_a_move_is_refused_only_while_the_version_stands_still() -> None:
     assert refused_moves(pins, "v1", dict(pins), "v1") == {}
 
 
-def repinned(source: str, hashes: dict[str, str], version: str) -> str:
-    """This file's source with `WATCHED` set to ``hashes`` and `PINNED_AT` to ``version``."""
+def repinned(source: str, hashes: dict[str, str], table: str, version: str) -> str:
+    """This file's source with `WATCHED` set to ``hashes``, `PINNED_TABLE` to ``table`` and
+    `PINNED_AT` to ``version``."""
     out = re.sub(r"(?ms)^WATCHED: dict\[str, str\] = \{\n.*?^\}",
                  "WATCHED: dict[str, str] = {\n" + _pin_lines(hashes).replace("\\", "\\\\")
                  + "\n}", source, count=1)
+    out = re.sub(r'(?m)^PINNED_TABLE = "[^"]*"', f'PINNED_TABLE = "{table}"', out, count=1)
     return re.sub(r'(?m)^PINNED_AT = "[^"]*"', f'PINNED_AT = "{version}"', out, count=1)
 
 
 def test_repin_is_one_mechanical_step() -> None:
-    """`--repin` rewrites exactly the two pinned values: re-pinning this file at its own pins is a
+    """`--repin` rewrites exactly the pinned values: re-pinning this file at its own pins is a
     no-op, and a re-pin at other values changes only those lines."""
     src = Path(__file__).read_text()
-    assert repinned(src, WATCHED, PINNED_AT) == src
-    other = repinned(src, {"vinci/dossier/x.py": "0" * 12}, "2099-01-01.X")
+    assert repinned(src, WATCHED, PINNED_TABLE, PINNED_AT) == src
+    other = repinned(src, {"vinci/dossier/x.py": "0" * 12}, "f" * 12, "2099-01-01.X")
     changed = [ln for ln in other.splitlines() if ln not in src.splitlines()]
     assert sorted(changed) == ['    "vinci/dossier/x.py": "000000000000",',
-                               'PINNED_AT = "2099-01-01.X"']
+                               'PINNED_AT = "2099-01-01.X"', f'PINNED_TABLE = "{"f" * 12}"']
 
 
 # --- the hash itself: blind to prose, never to code ----------------------------------------------
@@ -269,7 +290,8 @@ def test_any_code_change_moves_the_hash(code_change: str) -> None:
 if __name__ == "__main__":
     if sys.argv[1:] == ["--repin"]:
         me = Path(__file__)
-        me.write_text(repinned(me.read_text(), current_hashes(), EXTRACTION_VERSION))
+        me.write_text(repinned(me.read_text(), current_hashes(), table_digest(EXTRACTION_VERSIONS),
+                               EXTRACTION_VERSION))
         sys.stdout.write(f"re-pinned {len(current_hashes())} modules at {EXTRACTION_VERSION}\n")
     else:
         sys.stdout.write(_pin_lines(current_hashes()) + "\n")
