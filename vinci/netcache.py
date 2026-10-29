@@ -3,8 +3,10 @@ and EOD clients so politeness/caching logic lives in exactly one place.
 
 Why this exists
 ---------------
-- **Pacing.** SEC fair-access is ~10 req/s and Polygon's free tier ~5 req/min; exceeding either
-  gets you blocked. A per-host minimum interval enforces politeness centrally.
+- **Pacing.** SEC fair-access is 10 req/s IN TOTAL per user, however many clients, threads or
+  machines send them; Polygon's plan ~5 req/min. Each client keeps its own minimum interval
+  (thread-safe), and every request to an SEC host ALSO takes a slot from ONE budget shared by
+  every client, thread and process on the machine (:class:`SharedPace`).
 - **Caching.** SEC reference files and immutable filings should not be refetched every run; an
   on-disk cache (with optional TTL) keeps reruns fast and idempotent.
 - **Fail-loud.** Auth/permanent errors raise immediately; only transient errors (429/5xx) retry
@@ -13,10 +15,15 @@ Why this exists
 
 from __future__ import annotations
 
+import email.utils
+import fcntl
 import hashlib
 import json
+import os
+import threading
 import time
 from dataclasses import dataclass
+from datetime import UTC
 from pathlib import Path
 from typing import Any
 
@@ -29,8 +36,155 @@ import httpx
 _RATE_LIMIT_WAIT_SEC = 61.0
 
 
+#: The hosts behind SEC's ONE fair-access budget. SEC states the ceiling per USER across all
+#: machines, so the three share it: a full-text search spends what a companyfacts read can't.
+SEC_HOSTS = frozenset({"www.sec.gov", "data.sec.gov", "efts.sec.gov"})
+
+#: The TOTAL every client, thread and `vinci` process on this machine may send to SEC_HOSTS.
+#: SEC's published ceiling is 10 a second per user; 8 keeps two in hand for jitter and for
+#: anything else on the machine that reads SEC (a browser, a notebook).
+SEC_MAX_REQUESTS_PER_SEC = 8.0
+
+#: How long EVERY SEC request is held off after SEC refuses one, when SEC sends no `Retry-After`.
+#: SEC's policy: access resumes once the rate has stayed below the threshold for TEN MINUTES — so
+#: anything shorter is spent inside the block, and every request sent then restarts its clock.
+#: Eleven minutes: the ten SEC names plus one, the same one-unit margin as the 61 s above.
+_SEC_REFUSAL_HOLD_SEC = 660.0
+
+#: The longest hold an unattended run sits through. A `Retry-After` beyond it fails loud AT ONCE
+#: (still silencing everyone for this long) — and anything further ahead than this in the shared
+#: pace file can only be a wall clock that stepped back, so it is discarded.
+_SEC_MAX_HOLD_SEC = 900.0
+
+
 class HttpError(RuntimeError):
     """A non-retryable HTTP failure (auth, 4xx other than 429, or retries exhausted)."""
+
+
+class HttpNotFoundError(HttpError):
+    """A 404: the resource does not exist. The ONE failure a caller may read as absence ("no
+    XBRL", "no frame for that period") — a throttle, a 5xx or a timeout is never that."""
+
+
+class SecRateLimitedError(RuntimeError):
+    """SEC refused us, and was still refusing after every SEC request on the machine had been held
+    off for its whole window. NOT an :class:`HttpError`, on purpose: callers degrade an
+    ``HttpError`` to UNKNOWN and move to the next name, which during a block means sending again
+    into it and recording a refusal as missing data. This one stops the run."""
+
+
+def _env_path(name: str, default: Path) -> Path:
+    raw = os.environ.get(name, "").strip()
+    return Path(raw) if raw else default
+
+
+def _sec_pace_path() -> Path:
+    """Where the machine-wide SEC budget lives: per USER, not per checkout — sessions run from
+    separate worktrees, each with its own ``data/cache``, and they all share one IP."""
+    cache_home = _env_path("XDG_CACHE_HOME", Path.home() / ".cache")
+    return _env_path("VINCI_SEC_PACE_FILE", cache_home / "vinci" / "sec-pace")
+
+
+class SharedPace:
+    """One request per ``interval`` across every thread of this process AND every process that
+    opens the same ``path`` — a token bucket ONE token deep, which is the only depth that holds the
+    cap in EVERY one-second window (a bucket of depth b lets b + rate through one window).
+
+    THE STATE IS TWO NUMBERS in a small file — when the next request may go, and until when every
+    request is held off after a refusal — read and written under an exclusive ``flock``. The file
+    lock orders processes; the thread lock orders threads, because ``flock`` excludes open files,
+    not threads sharing one. Wall-clock seconds, because they are the one clock two processes
+    agree on.
+
+    TAKE-AT-WAKE, not reserve-ahead. A caller sleeps until the slot looks free, then takes it under
+    the locks — or sleeps again if another got there first. So a hold-off binds at once: nothing
+    sleeps through it on a slot reserved before the refusal arrived.
+    """
+
+    def __init__(self, interval: float, path: Path) -> None:
+        self._interval = interval
+        self._path = path
+        self._lock = threading.Lock()
+        self._fd: int | None = None
+        self._pid = 0
+
+    def acquire(self) -> None:
+        """Block until this caller may send one request, and count it."""
+        while (wait := self._update(take=True)) > 0:
+            time.sleep(wait)
+
+    def hold_off(self, seconds: float) -> None:
+        """Nobody sends before ``seconds`` from now."""
+        self._update(hold=seconds)
+
+    def _open(self) -> int:
+        # a forked child must not share the parent's open file: flock would not exclude the two
+        if self._fd is None or self._pid != os.getpid():
+            try:
+                self._path.parent.mkdir(parents=True, exist_ok=True)
+                self._fd = os.open(self._path, os.O_RDWR | os.O_CREAT, 0o600)
+            except OSError as exc:
+                raise RuntimeError(
+                    f"cannot open the shared SEC pace file {self._path} ({exc.strerror}) — every "
+                    "SEC request takes its turn from it. Set VINCI_SEC_PACE_FILE to a writable "
+                    "path.") from exc
+            self._pid = os.getpid()
+        return self._fd
+
+    def _update(self, *, take: bool = False, hold: float = 0.0) -> float:
+        """Under both locks: record a hold-off, or take the slot if it is free. Returns how long
+        until the slot may be free (0.0 once taken)."""
+        with self._lock:
+            fd = self._open()
+            fcntl.flock(fd, fcntl.LOCK_EX)
+            try:
+                now = time.time()
+                try:
+                    next_at, held_until = (float(x) for x in os.pread(fd, 64, 0).split())
+                except ValueError:  # a new file, or a write cut short by a crash
+                    next_at = held_until = 0.0
+                if max(next_at, held_until) > now + _SEC_MAX_HOLD_SEC + self._interval:
+                    next_at = held_until = now  # nothing legitimate is that far ahead
+                held_until = max(held_until, now + hold)
+                wait = max(next_at, held_until) - now
+                if take and wait <= 0:
+                    next_at, wait = now + self._interval, 0.0
+                os.ftruncate(fd, 0)
+                os.pwrite(fd, f"{next_at!r} {held_until!r}".encode(), 0)
+                return wait
+            finally:
+                fcntl.flock(fd, fcntl.LOCK_UN)
+
+
+_SEC_PACE: SharedPace | None = None
+_SEC_PACE_LOCK = threading.Lock()
+
+
+def sec_pace() -> SharedPace:
+    """THE budget every request to an SEC host takes its turn from (built on first use)."""
+    global _SEC_PACE
+    with _SEC_PACE_LOCK:
+        if _SEC_PACE is None:
+            _SEC_PACE = SharedPace(1.0 / SEC_MAX_REQUESTS_PER_SEC, _sec_pace_path())
+        return _SEC_PACE
+
+
+def _retry_after_sec(resp: httpx.Response) -> float | None:
+    """A `Retry-After` header in seconds (it may be a number or an HTTP date), or None."""
+    raw = resp.headers.get("Retry-After", "").strip()
+    if not raw:
+        return None
+    try:
+        return max(0.0, float(raw))
+    except ValueError:
+        pass
+    try:
+        when = email.utils.parsedate_to_datetime(raw)
+    except (TypeError, ValueError):
+        return None
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=UTC)
+    return max(0.0, when.timestamp() - time.time())
 
 
 @dataclass(frozen=True)
@@ -41,10 +195,12 @@ class _CacheEntry:
 
 
 class CachedHttp:
-    """Synchronous cached GET with per-instance throttle and bounded retries.
+    """Synchronous cached GET with a per-instance throttle and bounded retries.
 
     One instance per upstream (SEC, Polygon), each with its own ``min_interval_sec`` and default
-    headers. Thread-safety is not required — the orchestrator is single-threaded by design.
+    headers. THREAD-SAFE PACING: the dossier assembly and the theme scans drive clients from
+    thread pools, so the per-instance interval is taken under a lock — and a request to an SEC
+    host also takes its turn from :func:`sec_pace`, whatever this instance's own interval is.
     """
 
     def __init__(
@@ -62,7 +218,8 @@ class CachedHttp:
         self._cache_dir.mkdir(parents=True, exist_ok=True)
         self._min_interval = min_interval_sec
         self._max_retries = max_retries
-        self._last_request_at = 0.0
+        self._next_at = 0.0
+        self._pace_lock = threading.Lock()
         # extra_headers carries secrets like ``Authorization: Bearer <key>`` so the key travels in a
         # header, never in the request URL — keeping it out of the on-disk cache, logs, and errors.
         headers = {"User-Agent": user_agent, "Accept-Encoding": "gzip, deflate"}
@@ -177,21 +334,29 @@ class CachedHttp:
         self._fetched[url] = entry.fetched_at
 
     def _throttle(self) -> None:
+        """This instance's own interval, reserved under a lock so threads sharing the instance
+        queue behind each other rather than all reading one "last request" and sending together."""
         if self._min_interval <= 0:
             return
-        elapsed = time.monotonic() - self._last_request_at
-        wait = self._min_interval - elapsed
-        if wait > 0:
-            time.sleep(wait)
-        self._last_request_at = time.monotonic()
+        with self._pace_lock:
+            now = time.monotonic()
+            at = max(self._next_at, now)
+            self._next_at = at + self._min_interval
+        if at > now:
+            time.sleep(at - now)
 
     def _fetch_with_retries(
         self, url: str, *, json_body: dict[str, Any] | None = None
     ) -> str:
+        sec = httpx.URL(url).host in SEC_HOSTS
         backoff = 1.0
         last_exc: Exception | None = None
-        for attempt in range(self._max_retries + 1):
+        attempt = 0
+        refused = False
+        while True:
             self._throttle()
+            if sec:
+                sec_pace().acquire()
             wait = backoff
             try:
                 resp = (
@@ -205,25 +370,48 @@ class CachedHttp:
             else:
                 if resp.status_code == 200:
                     return resp.text
+                if sec and resp.status_code in (403, 429):
+                    # SEC REFUSED THE IP, NOT THIS REQUEST (2026-10-29). SEC documents no status
+                    # for excess traffic; it answers with a 403 page, and a 429 means the same
+                    # thing. Hold off EVERY SEC request on the machine for the whole window (the
+                    # retry waits it out in `acquire` above), try once more, then stop: a request
+                    # sent inside the block restarts SEC's ten-minute clock.
+                    hold = _retry_after_sec(resp)
+                    hold = _SEC_REFUSAL_HOLD_SEC if hold is None else hold
+                    sec_pace().hold_off(min(hold, _SEC_MAX_HOLD_SEC))
+                    if refused or hold > _SEC_MAX_HOLD_SEC:
+                        raise SecRateLimitedError(
+                            f"SEC refused {url} with {resp.status_code}"
+                            + (f" after every SEC request was held off {hold:.0f}s"
+                               if refused else f" and asked for {hold:.0f}s")
+                            + " — stopping rather than sending into a fair-access block "
+                            f"(SEC_MAX_REQUESTS_PER_SEC={SEC_MAX_REQUESTS_PER_SEC:g}): "
+                            f"{resp.text[:200]}")
+                    refused = True
+                    continue
                 if resp.status_code == 429:
                     # A RATE LIMIT IS A CLOCK, NOT A QUEUE — WAIT THE WINDOW OUT (2026-09-23).
                     # 429 shared the exponential path, whose whole ladder (1+2+4+8+16) is ~31s
                     # against a limit measured PER MINUTE, so every retry landed inside the same
                     # window that refused the first call and the run died with "Exhausted
                     # retries". Polygon sends NO `Retry-After` and no rate-limit headers (checked
-                    # 2026-09-23; the body just says "wait or upgrade"), so there is nothing to
-                    # read and the only honest wait is the window itself.
+                    # 2026-09-23; the body just says "wait or upgrade"), so the window is the
+                    # honest wait — and a host that does say how long is taken at its word.
                     last_exc = HttpError(f"429 from {url}")
-                    wait = _RATE_LIMIT_WAIT_SEC
+                    after = _retry_after_sec(resp)
+                    wait = _RATE_LIMIT_WAIT_SEC if after is None else after
                 elif resp.status_code in (500, 502, 503, 504):
                     # A server error is not a clock: retry FAST, the way this always has.
                     last_exc = HttpError(f"{resp.status_code} from {url}")
                     backoff = min(backoff * 2, 30.0)
+                elif resp.status_code == 404:
+                    raise HttpNotFoundError(f"Non-retryable 404 from {url}: {resp.text[:200]}")
                 else:
-                    # 401/403/404 etc. — permanent; fail loud immediately.
+                    # 401/403 etc. — permanent; fail loud immediately.
                     raise HttpError(
                         f"Non-retryable {resp.status_code} from {url}: {resp.text[:200]}"
                     )
-            if attempt < self._max_retries:
-                time.sleep(wait)
-        raise HttpError(f"Exhausted retries for {url}") from last_exc
+            if attempt >= self._max_retries:
+                raise HttpError(f"Exhausted retries for {url}") from last_exc
+            attempt += 1
+            time.sleep(wait)

@@ -491,8 +491,10 @@ def enrich_with_fundamentals(
 ) -> DataRecord:
     """Fetch EDGAR and fill the fundamentals (G3 multiple-at-floor + non-distress signals)."""
     cik = rec.identity.cik
-    snap = edgar.fundamental_snapshot(cik)
-    facts = edgar.companyfacts(cik) if cik else {}
+    # ONE companyfacts read for the snapshot and everything below (audit item E1-D8): a second
+    # read could disagree with the first — a transient failure made the snapshot "no XBRL" while
+    # the second read succeeded, and a filer with no XBRL (a 404) raised on the second read.
+    snap, facts = edgar.fundamental_snapshot_and_facts(cik)
     # the filer's own currency as of the reference date: the percentile is currency-free and the
     # level is withheld when it is not USD (pe_current_and_percentile)
     annual_eps = ([p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
