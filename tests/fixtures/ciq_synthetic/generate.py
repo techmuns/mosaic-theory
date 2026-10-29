@@ -382,6 +382,8 @@ def build_financials(path: Path, *, freq: str, currency: str = "USD",
                      encoding: str = "biff", dates_1904: bool = False) -> None:
     """One Financials export. Public so a test can write a VARIANT (another stated currency) into
     a temporary folder — the committed set itself is only ever written by :func:`build_all`."""
+    if freq not in ("annual", "quarterly"):
+        raise ValueError(f"freq must be 'annual' or 'quarterly', not {freq!r}")
     sheets = _annual_sheets(currency) if freq == "annual" else _quarterly_sheets(currency)
     if encoding == "ooxml":
         write_ooxml(path, sheets)

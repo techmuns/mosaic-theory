@@ -2,10 +2,11 @@
 
 Every real CIQ export is licensed and git-ignored, so CI had never opened a file in any CIQ format:
 on 0fa8ce4a the 480 tests that read one skipped there, and rounding a fractional date serial in
-`ciq.excel_date` instead of truncating it left the whole offline suite green. This suite reads the SYNTHETIC exports `tests/fixtures/ciq_synthetic/generate.py` writes for an
-invented issuer (ZZFX) — BIFF `.xls`, real RTF and one `.xlsx`, laid out the way the readers address
-them — through the real decode path: bytes → `classify` → xlrd / openpyxl / striprtf →
-`CiqBundle` → the readers. It never skips; it needs nothing git-ignored.
+`ciq.excel_date` instead of truncating it left the whole offline suite green. This suite reads
+the SYNTHETIC exports `tests/fixtures/ciq_synthetic/generate.py` writes for an invented issuer
+(ZZFX) — BIFF `.xls`, real RTF and one `.xlsx`, laid out the way the readers address them — through
+the real decode path: bytes → `classify` → xlrd / openpyxl / striprtf → `CiqBundle` → the readers.
+It never skips; it needs nothing git-ignored.
 
 TODAY'S BEHAVIOUR IS PINNED AS IT IS. Where today's behaviour is a known defect, the pin is
 ``xfail(strict=True, raises=AssertionError)`` naming the defect: the fix turns it into an unexpected
@@ -84,7 +85,7 @@ def test_the_committed_exports_are_exactly_what_the_generator_writes(tmp_path: P
 
 def test_the_fixture_folder_holds_only_generator_outputs() -> None:
     held = {p.relative_to(FIX).as_posix() for p in FIX.rglob("*")
-            if p.is_file() and "__pycache__" not in p.parts}
+            if p.is_file() and "__pycache__" not in p.parts and not p.name.startswith(".")}
     assert held == {*gen.OUTPUTS, "generate.py"}
 
 
@@ -369,10 +370,10 @@ def test_a_balance_sheet_period_label_is_never_a_raw_serial() -> None:
 def test_a_right_to_left_sheet_never_serves_its_oldest_period_as_latest() -> None:
     b = _bundle(ANNUAL)
     inc = b.sheet("financials", "Income Statement", freq="annual")
-    for r, row in enumerate(inc):
-        if len(row) > 1:
-            inc[r] = [row[0], *reversed(row[1:])]
-    inc[7][5] = "Latest on Left"  # the export's own statement of its column order
+    for r in range(HEADER_ROW, len(inc)):  # the period columns only; the settings block stays put
+        inc[r] = [inc[r][0], *reversed(inc[r][1:])]
+    order = inc[7].index("Order:")
+    inc[7][order + 1] = "Latest on Left"  # the export's own statement of its column order
     got = cs.ltm_ebitda(b)
     assert got.status is not SourceStatus.PRESENT or "Aug-31-2026" in (got.source_ref or ""), (
         got.source_ref)
