@@ -20,9 +20,16 @@ prs: [857]
 - **What was wrong.** The old code read the missing cell as 0.0
   (`(cur_l.get(d) or 0.0) + (lt_l.get(d) or 0.0)`). That broke the reader's own rule that an
   UNAVAILABLE cell is never coerced to 0 (`ciq._UNAVAILABLE_CELLS`).
-- **The latest quarter.** When the latest quarter is unpriced this way, `history` names the cause:
-  "has a lease cell CIQ states as UNAVAILABLE…". Before, it was misreported as "no positive LTM
-  EBITDA".
+- **The latest quarter.** When the latest quarter is unpriced this way, `history` names the cause
+  ("is left unpriced: …"). Before, it was misreported as "no positive LTM EBITDA".
+- **The reason is stored (review round 1).**
+  - The unpriced quarter carries `unpriced_reason`, naming the cell: "'Curr. Port. of Leases' is
+    '-' (UNAVAILABLE)…", or "the export has no '…' row".
+  - The block lists the dates in `unpriced_dates`, beside `unchecked_dates`.
+  - Both fields are ABSENT when unset, so a block with nothing unpriced serializes byte for byte
+    as before.
+  - A band refused as too short names the unpriced quarters and why. Before, it said only "only n
+    ex-lease quarter(s)".
 - **Version.** Extraction version `2026-10-29.D-D1`, in both the Python and the JS tables.
 
 **WHY.**
@@ -65,6 +72,14 @@ prs: [857]
     on main's `lease_basis.py` and pass here. They use WLK's real cells and frozen companyfacts.
   - `::test_d1_pos_…` is the fence and passes on both. It covers reconciled quarters,
     pre-adoption '-' quarters, and an unchecked quarter with both cells stated.
+- **Round 1 (review of #857).**
+  - Two pins fail on the round-0 head and pass here: the reason and tally on WLK's real cells, and
+    an export with no current-lease row naming why its band is short. The second is latent: every
+    committed export carries both rows.
+  - The six captured fixtures round-trip byte-identically.
+  - The lease_basis block rebuilt on main and on this branch is byte-identical on 17 of the 18
+    pages. WLK's differs in its band, its observations and its `unpriced_dates`, which lists all
+    7 dates.
 - **Mutations.** Five, all killed:
   - the guard deleted;
   - every unchecked quarter dropped;
@@ -74,8 +89,8 @@ prs: [857]
 - **Suite.** The full offline suite is green: 7,932 passed, 534 skipped, 15 xfailed.
 
 **BOUNDARY.**
-- **Corpus:** the 18 committed pages carrying a `valuation.lease_basis` block with observations
-  at `c51c286a`. The six packs set aside under the audit were never opened. These pages hold 567
+- **Corpus:** 18 of the 19 committed pages carrying a `valuation.lease_basis` block with
+  observations at `c51c286a`, one held out under a standing operator constraint. These pages hold 567
   observations, of which 87 have an UNAVAILABLE lease cell (79 pre-adoption, 1 unreconciled, 7
   unchecked; the verification run's count).
 - **Inputs:** CIQ copies at `mosaic-theory-ta/data/manual/ciq` (and its archive, for SMPL). EDGAR

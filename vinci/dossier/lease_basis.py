@@ -81,6 +81,8 @@ SOURCE_REF = (
     "checked against EDGAR OperatingLeaseLiability. Materiality: CIQ Financials (Annual)→Income "
     "Statement 'Net Rental Exp.' / 'EBITDA'")
 
+#: CIQ's two lease rows inside Total Debt, summed as the leases inside TEV.
+_LEASE_ROWS = ("Curr. Port. of Leases", "Long-Term Leases")
 _OPERATING_TAGS = ("OperatingLeaseLiability", "OperatingLeaseLiabilityCurrent",
                    "OperatingLeaseLiabilityNoncurrent")
 _FINANCE_TAGS = ("FinanceLeaseLiability", "FinanceLeaseLiabilityCurrent",
@@ -290,8 +292,20 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
     priced = {d: excel_date(c) for d, c in _cells(
         hc_head, _row(hc, "Pricing as of", prefix=True)).items() if c not in (None, "")}
     bs_head = _row(bs, "Balance Sheet as of", prefix=True)
-    cur_l = _dated(bs_head, _row(bs, "Curr. Port. of Leases"))
-    lt_l = _dated(bs_head, _row(bs, "Long-Term Leases"))
+    lease_rows = {label: _row(bs, label) for label in _LEASE_ROWS}
+    raw = {label: _cells(bs_head, row) for label, row in lease_rows.items()}
+    cur_l = _dated(bs_head, lease_rows["Curr. Port. of Leases"])
+    lt_l = _dated(bs_head, lease_rows["Long-Term Leases"])
+
+    def unavailable(d: date) -> list[str]:
+        """The lease cells CIQ does not state for ``d`` — a marker cell, or no row at all."""
+        out = []
+        for label, row in lease_rows.items():
+            if row is None:
+                out.append(f"the export has no '{label}' row")
+            elif clean_num(cell := raw[label].get(d)) is None:
+                out.append(f"'{label}' is {str(cell if cell is not None else '')!r}")
+        return out
     ebitda_q = _dated(_row(inc, "For the Fiscal Period Ending", prefix=True), _row(inc, "EBITDA"))
 
     op_edgar = _complete(facts, *_OPERATING_TAGS)
@@ -345,9 +359,8 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
         # pricing it would take the missing cell as zero — WLK's 2025-09-30 states 'Long-Term
         # Leases' $709M and '-' for the current portion its neighbours put at $136-138M. A
         # reconciled quarter is EDGAR-vouched; a pre-adoption one removes nothing either way.
-        stated = cur_l.get(d) is not None and lt_l.get(d) is not None
-        usable = (sp.status != "unreconciled" and ltm > 0
-                  and (stated or sp.status != "unchecked"))
+        missing = unavailable(d) if sp.status == "unchecked" and ltm > 0 else []
+        usable = sp.status != "unreconciled" and ltm > 0 and not missing
         out.append(LeaseObservation(
             balance_sheet_date=d.isoformat(), pricing_date=pd.isoformat() if pd else None,
             tev=round(t, 3), leases_in_tev=round(rows_sum, 3),
@@ -356,7 +369,10 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
             edgar_operating_leases=round(op_e, 3) if op_e is not None else None,
             ltm_ebitda=round(ltm, 3),
             multiple=round((t - sp.operating) / ltm, 6) if usable else None,
-            status=sp.status))
+            status=sp.status,
+            unpriced_reason=(f"{'; '.join(missing)} (UNAVAILABLE), and EDGAR has no complete "
+                             "operating-lease figure that day to check the cells CIQ does state"
+                             if missing else None)))
     return out
 
 
@@ -503,6 +519,7 @@ def lease_basis(bundle: CiqBundle, facts: dict[str, Any] | None) -> LeaseBasis |
     tally = {"reconciled_dates": counts["reconciled"],
              "unreconciled_dates": counts["unreconciled"],
              "unchecked_dates": counts["unchecked"], "pre_adoption_dates": counts["pre-adoption"],
+             "unpriced_dates": [o.balance_sheet_date for o in obs if o.unpriced_reason] or None,
              "observations": obs}
     checked = counts["reconciled"] + counts["unreconciled"]
     refusal = None
@@ -537,15 +554,22 @@ def history(obs: list[LeaseObservation], *, source_file: str | None = None,
     if last is not None and last.multiple is None:
         why_not = ("does not reconcile" if last.status == "unreconciled"
                    else "has no positive LTM EBITDA" if last.ltm_ebitda <= 0
-                   else "has a lease cell CIQ states as UNAVAILABLE and no EDGAR figure to "
-                        "check the rest")
+                   else f"is left unpriced: {last.unpriced_reason}" if last.unpriced_reason
+                   else "has no multiple")
         return None, (f"the latest quarter ({last.balance_sheet_date}) {why_not}, so the history "
                       "has no current — an older quarter is not one")
     band = _own_history_band(METRIC, pairs, source_file=source_file,
                              source_sha256=source_sha256, source_mtime=source_mtime)
     if band is None or band.n_closes < _MIN_CONFIDENT_CLOSES:
         n = band.n_closes if band is not None else sum(1 for _d, v in pairs if v is not None)
-        return None, f"only {n} ex-lease quarter(s) of history (≥{_MIN_CONFIDENT_CLOSES} needed)"
+        # a band too short BECAUSE quarters were left unpriced names them (review of #857): a
+        # filer whose export lacks a lease row loses every unchecked quarter, and "only n" alone
+        # reads as a short history
+        gone = [o.balance_sheet_date for o in obs if o.unpriced_reason]
+        more = (f"; {len(gone)} more left unpriced because a lease cell is UNAVAILABLE "
+                f"({', '.join(gone)})" if gone else "")
+        return None, (f"only {n} ex-lease quarter(s) of history (≥{_MIN_CONFIDENT_CLOSES} "
+                      f"needed){more}")
     return band, None
 
 

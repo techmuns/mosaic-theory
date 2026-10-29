@@ -148,11 +148,12 @@ def test_an_unchecked_quarter_uses_the_split_its_neighbours_reconciled_on() -> N
 
 def _stub(quarters: list[str], ebitda: list[float], tev: dict[str, float],
           leases: dict[str, float], priced: dict[str, Any] | None = None,
-          current: dict[str, Any] | None = None) -> Any:
+          current: dict[str, Any] | None = None, current_row: bool = True) -> Any:
     """Three quarterly sheets in the REAL shape `observations` reads (header row labelled as CIQ
     labels it, stacked text headers 'Q1\\nMon-DD-YYYY'). Numbers are illustrative; the real-data
     check is the corpus pass below and the fixtures captured from production. `current` is the
-    'Curr. Port. of Leases' cell by date — CIQ's '-' where it is not given."""
+    'Curr. Port. of Leases' cell by date — CIQ's '-' where it is not given; `current_row=False`
+    leaves that row out of the export altogether."""
     def hdr(ds: list[str]) -> list[str]:
         return [date.fromisoformat(d).strftime("3 months\nQ1\n%b-%d-%Y") for d in ds]
     tev_ds = sorted(tev)
@@ -164,7 +165,8 @@ def _stub(quarters: list[str], ebitda: list[float], tev: dict[str, float],
             ["= Total Enterprise Value (TEV)", *[tev[d] for d in tev_ds]]],
         "Balance Sheet": [
             ["Balance Sheet as of:\n", *hdr(tev_ds)],
-            ["Curr. Port. of Leases", *[(current or {}).get(d, "-") for d in tev_ds]],
+            *([["Curr. Port. of Leases", *[(current or {}).get(d, "-") for d in tev_ds]]]
+              if current_row else []),
             ["Long-Term Leases", *[leases.get(d, "-") for d in tev_ds]]],
         "Income Statement": [
             ["For the Fiscal Period Ending\n", *hdr(quarters)],
@@ -301,6 +303,61 @@ def test_d1_an_unpriced_latest_quarter_names_the_unavailable_cell() -> None:
     assert "reconcile" not in why and "LTM" not in why
     loss = obs[-1].model_copy(update={"ltm_ebitda": -1.0})
     assert "no positive LTM EBITDA" in (lbm.history([*obs[:-1], loss])[1] or "")
+
+
+def test_d1_an_unpriced_quarter_names_its_missing_cell_and_the_tally_names_its_date(
+        tmp_path: pathlib.Path) -> None:
+    """(+/-) Review of #857, round 1: an unpriced quarter kept status 'unchecked' exactly like a
+    priced one, with no reason, and the tally did not say which dates the band lost. Now the
+    observation names the cell ('Curr. Port. of Leases' is '-') and the block lists its date —
+    WLK's real 2025-09-30 — while a priced quarter carries no reason at all."""
+    obs = _wlk()
+    gone = obs["2025-09-30"]
+    assert gone.unpriced_reason and "'Curr. Port. of Leases' is '-'" in gone.unpriced_reason
+    assert "UNAVAILABLE" in gone.unpriced_reason
+    for d in ("2025-06-30", "2025-12-31", "2018-06-30"):
+        assert obs[d].unpriced_reason is None, d
+        assert "unpriced_reason" not in json.loads(obs[d].model_dump_json()), d
+    b = _stub(list(_WLK_QUARTERS), list(_WLK_QUARTERS.values()),
+              {d: v for d, (v, _p) in _WLK_TEV.items()}, _WLK_LONG_TERM,
+              priced={d: p for d, (_v, p) in _WLK_TEV.items()}, current=_WLK_CURRENT)
+    (tmp_path / "q.xls").write_bytes(b"stub")
+    b.workbook = lambda _kind, *, freq=None: type("W", (), {"path": tmp_path / "q.xls"})()
+    built = lbm.lease_basis(b, _facts("WLK"))
+    assert built is not None and built.unpriced_dates == ["2025-09-30"]
+    assert built.unchecked_dates == 1
+
+
+def test_d1_a_block_with_nothing_unpriced_round_trips_byte_identically() -> None:
+    """(+) The new fields are ABSENT when unset: every captured fixture (built before them)
+    re-serialises to exactly its committed JSON, so no page without an unpriced quarter moves."""
+    for p in sorted(FIX.glob("*.json")):
+        held = json.loads(p.read_text())
+        again = json.loads(LeaseBasis.model_validate(held).model_dump_json())
+        assert again == held, p.name
+
+
+def test_d1_an_export_with_no_current_lease_row_names_why_the_band_is_short() -> None:
+    """(-) Review of #857, round 1 (latent — every committed export carries both rows): an export
+    with NO 'Curr. Port. of Leases' row leaves every unchecked post-842 quarter unpriced, and the
+    refusal read only "only 1 ex-lease quarter(s)". It now names the four quarters and why."""
+    qs = ["2024-03-31", "2024-06-30", "2024-09-30", "2024-12-31", "2025-03-31", "2025-06-30",
+          "2025-09-30", "2025-12-31"]
+    at = qs[3:]
+    b = _stub(qs, [10] * 8, dict.fromkeys(at, 500.0), dict.fromkeys(at, 100.0), current_row=False)
+    facts = _facts_of({
+        "OperatingLeaseLiabilityNoncurrent": [(None, d, 90.0, d) for d in at],
+        "OperatingLeaseLiability": [(None, "2025-12-31", 100.0, "2026-02-01")]})
+    obs = lbm.observations(b, facts)
+    gone = [o for o in obs if o.multiple is None]
+    assert [o.balance_sheet_date for o in gone] == at[:4]
+    assert all("the export has no 'Curr. Port. of Leases' row" in (o.unpriced_reason or "")
+               for o in gone)
+    assert obs[-1].status == "reconciled" and obs[-1].multiple is not None
+    band, why = lbm.history(obs)
+    assert band is None and why and why.startswith("only 1 ex-lease quarter(s)")
+    assert "4 more left unpriced because a lease cell is UNAVAILABLE" in why
+    assert all(d in why for d in at[:4])
 
 
 @pytest.mark.parametrize(("filed", "status"), [("2018-08-27", "pre-adoption"),

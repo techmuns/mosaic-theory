@@ -64,7 +64,8 @@ const EXTRACTION_VERSIONS = [
   ["2026-10-29.D-D1",
     "an unchecked quarter of the ex-lease history whose lease cell CIQ states as UNAVAILABLE " +
     "is left unpriced (`lease_basis.observations`), never priced on the cells it does state " +
-    "with the missing one read as zero (audit D-D1)"],
+    "with the missing one read as zero; the quarter names the cell (`unpriced_reason`) and " +
+    "the block its date (`unpriced_dates`) (audit D-D1)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
