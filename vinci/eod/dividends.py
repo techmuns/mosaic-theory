@@ -36,7 +36,7 @@ from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
 
-from vinci.eod.client import SessionCalendar
+from vinci.eod.client import EodError, SessionCalendar
 from vinci.eod.tiingo import TiingoEodClient, tiingo_symbol
 from vinci.netcache import HttpError
 
@@ -95,7 +95,13 @@ def ex_date_yields(rows: list[dict[str, Any]], start: date, end: date, *,
                                f"longer than any market closure, so the dividends there are "
                                f"unknown")
     have = {d for d, _c, _x in days}
-    missing = [s for s in sessions if start <= s <= end and s not in have]
+    window = [s for s in sessions if start <= s <= end]
+    if not window:
+        # a window holds at least its own entry session, so a calendar with none in it is no
+        # calendar — and an empty one would pass every window unchecked
+        raise DividendsUnknownError(f"{symbol}: the market calendar holds no session in {start} → "
+                                    f"{end}, so Tiingo's coverage cannot be checked")
+    missing = [s for s in window if s not in have]
     if missing:
         raise DividendsUnknownError(
             f"{symbol}: Tiingo holds no row for {len(missing)} market session(s) in {start} → "
@@ -125,7 +131,11 @@ def tiingo_dividends(client: TiingoEodClient, *, start: date, end: date,
         if isinstance(rows, str):
             raise DividendsUnknownError(f"{symbol}: {rows}")
         if not calendar:
-            calendar.append(sessions(start, end))
+            try:
+                calendar.append(sessions(start, end))
+            except (HttpError, EodError, ValueError) as exc:
+                raise DividendsUnknownError(f"{symbol}: the market calendar could not be read "
+                                            f"({type(exc).__name__})") from exc
         return ex_date_yields(rows, a, b, sessions=calendar[0], symbol=symbol)
     return source
 

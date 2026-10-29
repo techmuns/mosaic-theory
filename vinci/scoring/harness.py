@@ -285,6 +285,8 @@ def score_ledger(
                     f"{entry.entry_id} has RESOLVED and its splits reference cannot be read — "
                     f"{exc}. Its entry's split basis is unchecked, and it is never scored on the "
                     f"sealed price unchecked.") from exc
+            notes.append(f"{who} is PENDING: its splits reference cannot be read ({exc}), so "
+                         f"its entry's split basis is unchecked.")
             if origin_of(entry) == ORIGIN_SCREEN:
                 pending += 1
             continue

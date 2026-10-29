@@ -259,6 +259,7 @@ def test_an_unreadable_reference_stops_a_resolved_row_and_holds_an_interim_one(
     r = _scored(tmp_path / "b", before=_Feed(100.0, 1000.0), after=_Feed(100.0, 1000.0),
                 splits=_unreadable, as_of=date(2026, 5, 1))
     assert r["scores"] == [] and r["report"].n_pending == 1
+    assert any("splits reference cannot be read" in n for n in r["report"].row_notes)
 
 
 def test_the_rule_itself_on_its_edges() -> None:
@@ -612,3 +613,23 @@ def test_the_tiingo_source_reads_the_calendar_once_for_its_span() -> None:
     with pytest.raises(DividendsUnknownError, match="first 2026-02-11"):
         src("PAY", _A, _B)
     assert asked == [(_A, _B)]
+
+
+def test_an_empty_or_unreadable_calendar_is_unknown_never_a_pass() -> None:
+    """Review round 0: an empty calendar passed every window unchecked, and a calendar that could
+    not be read escaped as a transport error rather than as unknown dividends."""
+    from vinci.netcache import HttpError
+    rows = [_tiingo_row(d) for d in weekday_sessions(_A, _B) if d != _EX]
+    with pytest.raises(DividendsUnknownError, match="holds no session"):
+        ex_date_yields(rows, _A, _B, sessions=[])
+
+    def down(_a: date, _b: date) -> list[date]:
+        raise HttpError("Exhausted retries")
+
+    class _Client:
+        def daily_rows(self, symbol: str, *, start: date, end: date) -> list[dict[str, Any]]:
+            return rows
+
+    src = tiingo_dividends(_Client(), start=_A, end=_B, sessions=down)  # type: ignore[arg-type]
+    with pytest.raises(DividendsUnknownError, match="calendar could not be read"):
+        src("PAY", _A, _B)
