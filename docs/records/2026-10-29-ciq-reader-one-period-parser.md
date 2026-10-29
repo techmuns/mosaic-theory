@@ -49,7 +49,9 @@ superseded-by:
     record.
 - **The recommendation is the listing's own** (`_listing_rating`, audit A-D10). It is read from
   Trends' non-periodic block headed with this ticker. The rating counts run only from that block's
-  `Recommendation` row to the first non-category row.
+  `Recommendation` row to the first non-category row. Where the section holds no block for the ticker,
+  both lines say so and name the blocks it holds, never dropped unremarked (round 1). On the real
+  run that case occurs on 0 of the 32 readable names.
 - **A mislabelled Financials export is refused** (`CiqMislabelledError`, a `CiqAmbiguousError`;
   audit A-X1). The refusal fires when the filename's `_Annual`/`_Quarterly` token disagrees with
   the period type that ALL THREE statements state.
@@ -151,7 +153,18 @@ served one that read the other type.
   reader takes a missing record for a missed one.
 - **ACCEPTED: 26b reds a pure refactor of a watched module until it is re-pinned.** That is the
   spec's stated cost.
-- **ACCEPTED: after a row is added and before the next `--repin`, a further unbumped move goes
-  unseen.** That window is the price of letting parallel batches merge in any order. Every PR that
-  adds a row runs `--repin`. Falsifier: two output-changing merges in a row with no `--repin`
-  between them.
+- **ACCEPTED RISK: the row-set rule loosens 26b, and its procedure is part of the rule**
+  (coordinator review of #861, 2026-10-29).
+  - **What it is:** once the version table holds a row the pins do not know, any further move of a
+    watched module passes until the next `--repin`. After two batches each add a row, the pins
+    reflect neither tree, and an unrelated refactor merged in that window goes unseen.
+  - **The cheap fix is not available:** a strict pin (a move reds unless the pins are current) reds
+    main whenever a batch merges on a CI run that predates another batch's merge. `gate` is
+    required but not strict.
+  - **The procedure:**
+    - a PR that adds a version row runs `--repin` in its final commit, and again in the merge of
+      main that lands it;
+    - while the pins are stale, `test_stale_pins_are_said` warns in every CI log, naming the rows
+      the pins do not know.
+  - **Falsifier:** a watched-module change merged with no row while the pins were stale. It shows
+    as a `--repin` that moves a module no row since the last re-pin names.

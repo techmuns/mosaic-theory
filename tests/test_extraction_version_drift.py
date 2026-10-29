@@ -15,8 +15,21 @@ declared version did not. Once any row has been added, wherever it sits, the mov
 THAT RULE IS WHAT LETS PARALLEL PRS MERGE IN ANY ORDER. A sibling PR that changes a watched module
 and adds its own row never reds main or a branch merging main — before or after this file last
 re-pinned, its row last or (merged first) before another batch's — because the moves arrive with a
-row the pins have not seen. Its cost: once a row is added, a further unbumped move goes unseen until
-the next re-pin, so every PR that adds a row re-pins:
+row the pins have not seen.
+
+ITS COST IS AN ACCEPTED RISK, AND THE PROCEDURE BELOW IS PART OF THE RULE (coordinator review of
+#861, 2026-10-29). Once the table holds a row the pins do not know, any further move of a watched
+module passes until the next re-pin: after two batches each add a row, the pins reflect neither
+tree, and an unrelated refactor merged in that window goes unseen. The strict alternative — a move
+reds unless the pins are current — is not available, because it reds main whenever a batch merges
+on a CI run that predates another batch's merge (`gate` is required but not strict). So:
+
+  * A PR THAT ADDS A VERSION ROW RUNS `--repin` IN ITS FINAL COMMIT, and again in the merge of
+    main that lands it, so main lands tight.
+  * While the pins are stale, `test_stale_pins_are_said` warns, naming the rows the pins do not
+    know — the window is printed in every CI log, never silent.
+  * Falsifier: a watched-module change merged with no row while the pins were stale. It shows as a
+    re-pin moving a module that no row since the last re-pin names.
 
     python -m tests.test_extraction_version_drift --repin   # recompute WATCHED, set PINNED_AT
 
@@ -53,6 +66,7 @@ import io
 import re
 import sys
 import tokenize
+import warnings
 from pathlib import Path
 
 import pytest
@@ -63,7 +77,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "eba07f3b4aa7"
+PINNED_TABLE = "2c69d189bf33"
 PINNED_AT = "2026-10-29.A-X1"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
@@ -77,7 +91,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq_balance.py": "d5a1ffcff8a7",
     "vinci/dossier/ciq_charting.py": "e25a753aae4f",
     "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
-    "vinci/dossier/ciq_sheets.py": "5c1171e4ba13",
+    "vinci/dossier/ciq_sheets.py": "09ed07eb89f8",
     "vinci/dossier/covenant_extract.py": "36044a98ac15",
     "vinci/dossier/dilution.py": "87d81ad77c04",
     "vinci/dossier/driver_extract.py": "332fb2039a9a",
@@ -89,7 +103,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/flags.py": "1ce8a4a057ad",
     "vinci/dossier/freshness.py": "e5852b313d22",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
-    "vinci/dossier/lease_basis.py": "f249b900f0b6",
+    "vinci/dossier/lease_basis.py": "a93d880597ba",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "9a26612228a7",
     "vinci/dossier/mechanical.py": "93fb67627fb2",
@@ -97,7 +111,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "0c07bfc551a1",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "977cc8e15a10",
+    "vinci/dossier/schemas.py": "0432f95bb67b",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
     "vinci/dossier/synthesis.py": "c40f86522872",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
@@ -199,13 +213,61 @@ def test_a_watched_module_never_moves_while_the_version_stands_still() -> None:
     moved = refused_moves(WATCHED, PINNED_TABLE, current_hashes(), now_table)
     moved.update({p: None for p in gone if now_table == PINNED_TABLE})
     assert not moved, (
-        f"{sorted(moved)} moved since the pins were taken (last row then {PINNED_AT}), and the "
-        "version table has gained no row since. If extraction OUTPUT changed, append a row to "
-        "EXTRACTION_VERSIONS (vinci/dossier/extraction_version.py, and the same row in "
-        "frontend/views/shared/"
-        "dossier.js), each row its own `(` … `),` block; then — or for a refactor alone, saying "
-        "so in the PR — run `python -m tests.test_extraction_version_drift --repin`. A module that "
-        "cannot change a dossier goes in NOT_EXTRACTION with the reason.")
+        f"{sorted(moved)} moved since the pins were taken (last row then {PINNED_AT}), and "
+        "the version table has gained no row since. To clear it, in order: (1) take main "
+        "first — `git merge origin/main` — keeping every EXTRACTION_VERSIONS row its own "
+        "`(` … `),` block, in merge order (a line-wise union fuses two rows); (2) run "
+        "`python -m tests.test_extraction_version_drift` to print the hashes as they now "
+        "stand — a module two branches both touched has a merged hash that matches neither "
+        "pin, so read the printed value, never pick a side; (3) if extraction OUTPUT changed, "
+        "append your row to vinci/dossier/extraction_version.py and the same row to "
+        "frontend/views/shared/dossier.js; (4) run "
+        "`python -m tests.test_extraction_version_drift --repin`, which re-pins every moved "
+        "line and the table digest. A refactor alone skips (3) and says so in its PR. A PR "
+        "that adds a version row runs (4) in its final commit, and again in the merge of "
+        "main that lands it. A module that cannot change a dossier goes in NOT_EXTRACTION "
+        "with the reason.")
+
+
+def test_stale_pins_are_said() -> None:
+    """The accepted risk's window, printed: while the version table holds rows the pins do not
+    know, every CI log carries a warning naming them — a stale pin is never silent."""
+    if table_digest(EXTRACTION_VERSIONS) != PINNED_TABLE:
+        warnings.warn(
+            "extraction-version drift pins are STALE: the table has rows they do not know "
+            f"(pinned at {PINNED_AT}; last row now {EXTRACTION_VERSION}). A moved watched "
+            "module passes unseen until `python -m tests.test_extraction_version_drift "
+            "--repin` runs — the PR that added the row owes it.", UserWarning, stacklevel=1)
+
+
+def test_the_failure_tells_a_merger_each_step(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The red a merger meets names every step in order: take main keeping each version row whole,
+    print the hashes, append a row if output changed, re-pin — and warns that a module two branches
+    both touched has a merged hash matching neither pin (PR #861 round 1)."""
+    monkeypatch.setitem(WATCHED, "vinci/dossier/ciq.py", "0" * 12)
+    with pytest.raises(AssertionError) as red:
+        test_a_watched_module_never_moves_while_the_version_stands_still()
+    msg = str(red.value)
+    steps = ["git merge origin/main", "`(` … `),` block",
+             "python -m tests.test_extraction_version_drift`", "matches neither pin",
+             "append your row", "frontend/views/shared/dossier.js", "--repin"]
+    for step in steps:
+        assert step in msg, step
+    at = [msg.index(s) for s in steps]
+    assert at == sorted(at), "the steps are out of order"
+
+
+def test_the_stale_warning_fires_only_when_the_pins_are_stale(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """Both halves: pins taken against another table warn; pins taken against this one do not."""
+    mod = sys.modules[__name__]
+    monkeypatch.setattr(mod, "PINNED_TABLE", "0" * 12)
+    with pytest.warns(UserWarning, match="drift pins are STALE"):
+        test_stale_pins_are_said()
+    monkeypatch.setattr(mod, "PINNED_TABLE", table_digest(EXTRACTION_VERSIONS))
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        test_stale_pins_are_said()
 
 
 def test_the_pins_name_a_declared_version() -> None:

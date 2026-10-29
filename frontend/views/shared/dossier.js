@@ -61,6 +61,11 @@ const EXTRACTION_VERSIONS = [
     "named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the " +
     "forward history's latest close is `latest_observed_close`, never `current`; every writer " +
     "saves through one write"],
+  ["2026-10-29.D-D1",
+    "an unchecked quarter of the ex-lease history whose lease cell CIQ states as UNAVAILABLE " +
+    "is left unpriced (`lease_basis.observations`), never priced on the cells it does state " +
+    "with the missing one read as zero; the quarter names the cell (`unpriced_reason`) and " +
+    "the block its date (`unpriced_dates`) (audit D-D1)"],
   ["2026-10-29.A-D14",
     "the dossier-output changes merged after 2026-10-09.3 that appended no row: 45 " +
     "commits to vinci/dossier, vinci/edgar and vinci/ciq (#706 … #855, 2026-10-11 → " +

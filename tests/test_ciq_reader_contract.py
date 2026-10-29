@@ -562,6 +562,16 @@ def test_the_same_quarter_match_reads_the_fiscal_quarter_never_the_calendar_one(
     assert cs.header_period("LTM\n12 months\nAug-31-2026").kind == "LTM"
 
 
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
+    "DEFERRED (PR #861 round 1): a 52/53-week year ending Jan 1-15 — its Q4 takes the nominal "
+    "month (fiscal year N-1) while its fiscal-year column keeps the calendar year of its end (N), "
+    "the label `statement_recon`'s same-label drop rule reads; no committed page and no -ta export "
+    "has such a year end (2026-10-29)"))
+def test_an_early_january_year_ends_q4_and_fy_columns_name_one_year() -> None:
+    q4, fy = cs._fin_short("3 months\nQ4\nJan-02-2027"), cs._fin_short("12 months\nJan-02-2027")
+    assert q4[-2:] == fy[-2:], (q4, fy)
+
+
 def test_a_balance_sheet_period_label_is_never_a_raw_serial() -> None:
     """A-D11, FIXED 2026-10-29 (was a strict xfail): the annual balance sheet's serial header
     prints as the date it encodes."""
@@ -795,12 +805,18 @@ def test_each_share_class_reads_its_own_block() -> None:
     assert (cs.consensus_stats(b, as_of=None).value or "").endswith(f"Ratings: {own}")
 
 
-def test_a_ticker_with_no_block_borrows_no_rating() -> None:
+def test_a_ticker_with_no_block_borrows_no_rating_and_says_so() -> None:
     """NEGATIVE PIN: an export with no block for the name prints no recommendation and no counts,
-    rather than the first listing's or the industry's."""
+    rather than the first listing's or the industry's — and says it found no block, naming the
+    blocks it holds, instead of dropping the line unremarked (PR #861 round 1)."""
     b = _estimates("ZZFQ")
-    assert "Recommendation" not in (cs.consensus_view(b).value or "")
-    assert "Ratings" not in (cs.consensus_stats(b, as_of=None).value or "")
+    view = cs.consensus_view(b).value or ""
+    stats = cs.consensus_stats(b, as_of=None).value or ""
+    for rating in (gen.REC_OWN, gen.REC_INDUSTRY, gen.REC_SECOND):
+        assert rating not in view and rating not in stats
+    for text in (view, stats):
+        assert "no Trends block headed with ZZFQ" in text, text
+        assert f"{gen.EXCHANGE}:{gen.TICKER}" in text, text
 
 
 def test_every_guided_block_the_sheet_lays_out_is_read() -> None:

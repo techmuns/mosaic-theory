@@ -1989,9 +1989,11 @@ def consensus_view(bundle: CiqBundle) -> Sourced[str]:
     # THE LISTING'S OWN RECOMMENDATION (audit A-D10, 2026-10-29). This read Consensus's "Industry
     # Recommendation" row by prefix and printed it as the stock's own: on all 20 pages carrying
     # one it differed from the listing's (NKE printed Outperform (2.50); its own is Hold (2.73)).
-    rec = (_listing_rating(bundle) or (None, None))[0]
+    rec, _counts, missing = _listing_rating(bundle) or (None, None, None)
     if rec is not None:
         parts.append(f"Recommendation: {rec} (CIQ score, 1=buy … 5=sell)")
+    elif missing is not None:
+        parts.append(f"Recommendation: {missing}")
     if not parts:
         return Sourced.unknown(note="no Target Price/LT Growth/Recommendation rows in Consensus")
     return Sourced.present("; ".join(parts), source_ref=(
@@ -4071,10 +4073,12 @@ def _rating_category(cell: Any) -> str | None:
     return base if base in _RATING_CATEGORIES else None
 
 
-def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None] | None:
-    """(the listing's own recommendation, its rating counts) from Trends 'Non-Periodic Trends',
-    Current column, each None when its cells are empty — None when the sheet carries no block for
-    this ticker.
+def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None, str | None] | None:
+    """(the listing's own recommendation, its rating counts, a note) from Trends 'Non-Periodic
+    Trends', Current column, each value None when its cells are empty — None when the sheet has no
+    such section. Where the section holds no block for this ticker, both values are None and the
+    note says so, naming the blocks it does hold: the line is never dropped unremarked (PR #861
+    round 1).
 
     ONE BLOCK PER LISTING, AND ONLY THIS NAME'S IS READ (audit A-D10, 2026-10-29). The section
     holds a block per listing, headed '<EXCHANGE>:<TICKER> | Current | …' (GOOGL's carries
@@ -4100,7 +4104,9 @@ def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None] | None:
                 if symbol(str(rows[i][0]).strip().rsplit(":", 1)[1]) == symbol(bundle.ticker)),
                None)
     if own is None:
-        return None
+        held = ", ".join(str(rows[i][0]).strip() for i in heads) or "none"
+        return None, None, (f"not read — no Trends block headed with {bundle.ticker} "
+                            f"(blocks: {held})")
     end = next((i for i in heads if i > own), len(rows))
     rec_i = next((i for i in range(own + 1, end)
                   if rows[i] and str(rows[i][0]).strip() == "Recommendation"), None)
@@ -4114,7 +4120,7 @@ def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None] | None:
             break
         if (v := clean_num(r[1]) if len(r) > 1 else None) is not None:
             counts.append(f"{cat} {int(v)}")
-    return (None if rec in _UNAVAILABLE_CELLS else rec), (", ".join(counts) or None)
+    return (None if rec in _UNAVAILABLE_CELLS else rec), (", ".join(counts) or None), None
 
 
 def _rating_distribution(bundle: CiqBundle) -> str | None:
@@ -4123,7 +4129,7 @@ def _rating_distribution(bundle: CiqBundle) -> str | None:
     rating rows live in TRENDS, not Consensus as the module contract assumed — read here by label
     (never positionally), Current column."""
     got = _listing_rating(bundle)
-    return got[1] if got is not None else None
+    return (got[1] or got[2]) if got is not None else None
 
 
 def consensus_stats(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
