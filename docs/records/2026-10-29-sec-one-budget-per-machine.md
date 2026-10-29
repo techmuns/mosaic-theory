@@ -2,7 +2,7 @@
 id: 2026-10-29-sec-one-budget-per-machine
 status: shipped
 date: 2026-10-29
-prs: []
+prs: [854]
 supersedes:
 superseded-by:
 ---
