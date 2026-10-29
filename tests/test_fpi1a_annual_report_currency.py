@@ -161,11 +161,8 @@ def test_the_screen_withholds_a_yuan_level_and_keeps_g3s_percentile() -> None:
     facts = _cf("QFIN")
 
     class _Edgar:
-        def companyfacts(self, cik: str) -> dict[str, Any]:
-            return facts
-
-        def fundamental_snapshot(self, cik: str) -> Any:
-            return compute_fundamental_snapshot("0001741530", facts)
+        def fundamental_snapshot_and_facts(self, cik: str) -> Any:
+            return compute_fundamental_snapshot("0001741530", facts), facts
 
     # QFIN's own identity as the 2026-10-16 store holds it
     ident = Identity(internal_id="SEC-0001741530-QFIN", issuer_id="ISS-0001741530",
@@ -428,11 +425,8 @@ def test_the_currency_is_judged_at_the_readers_reference_date() -> None:
     assert sbc is not None and sbc.expense.value is None and "CNY" in str(sbc.expense.note)
 
     class _Edgar:
-        def companyfacts(self, cik: str) -> dict[str, Any]:
-            return facts
-
-        def fundamental_snapshot(self, cik: str) -> Any:
-            return compute_fundamental_snapshot("0001530238", facts, as_of=ref)
+        def fundamental_snapshot_and_facts(self, cik: str) -> Any:
+            return compute_fundamental_snapshot("0001530238", facts, as_of=ref), facts
 
     ident = Identity(internal_id="SEC-0001530238-JOYY", issuer_id="ISS-0001530238",
                      cik="0001530238", ticker="JOYY", mic="XNAS", exchange="Nasdaq",
