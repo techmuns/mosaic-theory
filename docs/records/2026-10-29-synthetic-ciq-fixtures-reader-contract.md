@@ -1,8 +1,8 @@
 ---
 id: 2026-10-29-synthetic-ciq-fixtures-reader-contract
-status: open
+status: shipped
 date: 2026-10-29
-prs: []
+prs: [853]
 supersedes:
 superseded-by:
 ---
