@@ -77,12 +77,12 @@ const EXTRACTION_VERSIONS = [
     "the annual workbook, the balance sheet the quarterly one — never the quarterly file " +
     "for all"],
   ["2026-10-29.A-D8",
-    "every guided metric the Guidance sheet lays out is read, found by the sheet's " +
-    "structure rather than a fixed list; a metric with no decided delivery direction " +
+    "every guided metric the Guidance sheet lays out is read, found by the structure of " +
+    "the sheet rather than a fixed list; a metric with no decided delivery direction " +
     "shows its guide with no MET/MISSED record"],
   ["2026-10-29.A-D10",
-    "the recommendation and the rating counts are the listing's own Trends block, never " +
-    "the industry's or another listing's"],
+    "the recommendation and the rating counts come from the block of the listing itself " +
+    "in Trends, never from the industry or another listing"],
   ["2026-10-29.A-X1",
     "a Financials export whose filename and statements state different period types is " +
     "refused, and a lone export never answers for the other period type (A-D11), so an " +

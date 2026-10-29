@@ -35,12 +35,12 @@ this repo writes beside its code can change freely; a changed constant, conditio
 
 THE DECLARED SET, NOT A COMPUTED CLOSURE (26b's spec, corrected 2026-07-28: the import closure from
 `assemble` is ~58 modules and a guard that always fires is switched off). Every module under
-vinci/dossier and vinci/edgar is classified — `WATCHED`, or `NOT_EXTRACTION` with the reason — and
-a module joining either package unclassified is a MOVE under the rule above, so the set cannot
-quietly stop covering a new extractor (`--repin` then pins it as watched). Two modules outside them build page fields and are
-watched too: vinci/verbatim.py (which quoted values a page keeps) and vinci/finra.py (short
-interest). Prices (vinci/eod) are market data, not extraction, and vinci/ciq feeds only the
-git-ignored graph test.
+vinci/dossier and vinci/edgar is classified — `WATCHED`, or `NOT_EXTRACTION` with the reason — and a
+module joining either package unclassified is a MOVE under the rule above, so the set cannot quietly
+stop covering a new extractor (`--repin` then pins it as watched). Two modules outside them build
+page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps) and
+vinci/finra.py (short interest). Prices (vinci/eod) are market data, not extraction, and vinci/ciq
+feeds only the git-ignored graph test.
 
     python -m tests.test_extraction_version_drift            # print every watched module's hash
     python -m tests.test_extraction_version_drift --repin    # re-pin this file in place
