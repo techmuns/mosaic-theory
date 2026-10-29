@@ -1,8 +1,8 @@
 ---
 id: 2026-10-29-release-and-filing-figures-read-as-stated
-status: open
+status: shipped
 date: 2026-10-29
-prs: []
+prs: [860]
 supersedes:
 superseded-by:
 ---
