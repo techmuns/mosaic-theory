@@ -106,6 +106,15 @@ def test_a_ruled_assignment_governs_the_sealed_benchmark(tmp_path: Path) -> None
     assert sealed == ["IWM"]                       # the sealed field is read, never rewritten
 
 
+def test_a_ruling_governs_only_the_decision_it_was_made_on(tmp_path: Path) -> None:
+    """Review round 0: an assignment is keyed by ticker, so a ruling made on one decision would
+    otherwise govern a later decision on the same name that nobody ruled for."""
+    asg = _assignment("NAME", "MDY", ruled=True).model_copy(update={"entry_date": date(2025, 6, 2)})
+    with _store(tmp_path) as store, pytest.raises(BenchmarkMismatchError,
+                                                  match="made on the decision entered 2025-06-02"):
+        _score(store, _row("NAME", "IWM"), assignments={"NAME": asg})
+
+
 def test_an_unruled_disagreement_is_surfaced_never_chosen(tmp_path: Path) -> None:
     asg = {"NAME": _assignment("NAME", "MDY", ruled=False)}
     (tmp_path / "r").mkdir()

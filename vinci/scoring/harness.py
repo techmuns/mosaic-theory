@@ -71,17 +71,27 @@ def row_benchmark(entry: LedgerEntry, assignment: BenchmarkAssignment | None,
     monitor reads it), so scoring and the monitor measure one row against one series. A row with
     no assignment is measured against the benchmark it SEALED, else ``default``. Where the sealed
     benchmark and the assignment disagree, the assignment governs only once the operator has ruled
-    it (``ruled_on`` + ``ruling`` on the assignment — IT, 2026-10-29: "Use MDY"); without a ruling
-    the second element names the disagreement and the caller chooses neither. The sealed field is
+    it (``ruled_on`` + ``ruling`` on the assignment — IT, 2026-10-29: "Use MDY") FOR THIS DECISION
+    (the assignment's ``entry_date`` is the row's); otherwise the second element names the
+    disagreement and the caller chooses neither. The sealed field is
     read, never rewritten."""
     sealed = entry.benchmark
     if assignment is None:
         return sealed or default, None
-    if sealed and sealed != assignment.benchmark and assignment.ruled_on is None:
+    if sealed and sealed != assignment.benchmark:
+        # A RULING IS FOR THE DECISION IT WAS MADE ON: an assignment is keyed by ticker, so a
+        # later decision on the same name would otherwise inherit a ruling nobody made for it.
+        if assignment.ruled_on is None:
+            why = "no operator ruling says which one it is measured against"
+        elif assignment.entry_date != entry.entry_price_as_of:
+            why = (f"the operator's ruling of {assignment.ruled_on} was made on the decision "
+                   f"entered {assignment.entry_date}, not this one ({entry.entry_price_as_of})")
+        else:
+            return assignment.benchmark, None
         return assignment.benchmark, (
             f"sealed benchmark {sealed!r} but its committed assignment names "
             f"{assignment.benchmark!r} ({assignment.band}, assigned {assignment.assigned_at}), and "
-            f"no operator ruling says which one it is measured against")
+            f"{why}")
     return assignment.benchmark, None
 
 class SplitsUnreadError(RuntimeError):

@@ -22,8 +22,10 @@ The changes:
   (`data/monitor/benchmark_assignments.json`, keyed by ticker, as the monitor reads it) governs.
   A row without one is measured against the benchmark it sealed. A sealed benchmark and an
   assignment that disagree are measured on the assignment only when an operator ruling stands on
-  it; otherwise the disagreement is named and neither series is chosen (`BenchmarkMismatchError`
-  once the row resolves, pending with a note before).
+  it for THAT decision (the assignment's `entry_date` is the row's — review round 0: a ticker-keyed
+  ruling would otherwise govern a later decision nobody ruled for); otherwise the disagreement is
+  named and neither series is chosen (`BenchmarkMismatchError` once the row resolves, pending with
+  a note before).
 - **The ruling's carrier is the assignment, not the ledger.** `BenchmarkAssignment` gains
   `ruled_on` and `ruling` (both or neither). IT's assignment now carries `"ruled_on": "2026-10-29",
   "ruling": "Use MDY"`. The ledger row's sealed `benchmark` (IWM) is read, never rewritten — the
@@ -56,12 +58,13 @@ is not the code's to pick.
 - *Fail first, on main's own code* (`c51c286a`, a scratch copy): a row sealed SPY raised
   `BenchmarkMismatchError` at resolution; IT's shape was measured against IWM (bench +0.0000 where
   MDY's move is +0.1000; main has no `assignments` parameter); `run_monthly` raised on the SPY row
-  and ingested IWM alone (IWM 50 bars, MDY 0, SPY 0). `tests/test_per_row_benchmark.py`, 9 tests,
+  and ingested IWM alone (IWM 50 bars, MDY 0, SPY 0). `tests/test_per_row_benchmark.py`, 10 tests,
   green on this branch: a SPY row against SPY; the ruled assignment against MDY with the sealed field
   unchanged; an unruled disagreement refused when resolved and pending before; a part-held series
   refused when resolved and pending before; the negative pin (an agreeing assignment and a row
   without one score exactly as before); the committed ledger reads its committed assignments
-  without a conflict; a ruling needs its date and words; `run_monthly` end to end ingests IWM, MDY
+  without a conflict; a ruling needs its date and words and governs only the decision it was made
+  on; `run_monthly` end to end ingests IWM, MDY
   and SPY and measures the screen BUY against MDY (excess −10% where IWM gives 0); both production
   callers pass the assignments.
 - *Real run on the committed ledger* (sha `43d77c50…`), as of 2026-10-26, interim (no row resolves
@@ -95,5 +98,9 @@ session 2026-10-28, the HTTP cache a clone of the primary's taken 2026-10-29. Ma
 - **An assignment is keyed by ticker**, as the monitor reads it, so SMPL's re-entry (2026-08-04)
   shares the assignment derived at its first entry (both IWM; no cap-band change). A re-entry whose
   band differed would need its own assignment; none exists to date.
+- **A data dir without the assignments file** scores each row against its sealed benchmark, with
+  no note (review round 0, skipped): the file is committed in every checkout, and refusing on its
+  absence would change both callers' contract. Falsifier: a scoring report from a checkout missing
+  `data/monitor/benchmark_assignments.json`.
 - **The β/α regression now pools pairs against different benchmarks** (IT against MDY beside the
   small-cap rows against IWM). The pool is screen-origin resolved BUYs and holds none today.

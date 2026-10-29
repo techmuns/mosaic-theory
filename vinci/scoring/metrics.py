@@ -138,9 +138,10 @@ def ols_beta_alpha(
 ) -> tuple[float | None, float | None]:
     """Single-factor beta/alpha of a return series vs the benchmark (β=cov/var, α=mean−β·mean).
 
-    The benchmark is a small-cap index, so β captures small-cap exposure and α is the residual
-    ("is it all beta?"). A full Fama-French 3-factor decomposition is a later enhancement. Returns
-    (None, None) when there is too little data to estimate.
+    Each daily pair is the name against ITS OWN benchmark (`harness.row_benchmark`) — the small-cap
+    index for most of the screen book, so β mostly captures small-cap exposure, and α is the
+    residual ("is it all beta?"). A full Fama-French 3-factor decomposition is a later
+    enhancement. Returns (None, None) when there is too little data to estimate.
     """
     n = len(book_returns)
     if n < 3 or len(bench_returns) != n:
