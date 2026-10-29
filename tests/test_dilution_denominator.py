@@ -442,9 +442,12 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: page's LTM column (`anchor._window_dep_amort`) — where it read the latest fiscal year, so R1's
 #: base moves (AORT +2.7%, the largest; `docs/records/2026-10-28-the-anchors-d-and-a-covers-its-
 #: ltm-window.md`). The pages refresh at re-assembly; none is re-assembled by that change.
+#:
+#: **ROST and TJX LANDED** (#865, 2026-10-29): re-assembled, their bases are the recompute's
+#: (ROST 166.1793→167.5944, TJX 131.1019→132.1391; `docs/records/2026-10-29-phase1-rebuild-four-
+#: pages-and-scope-narrowed.md`).
 ANCHORS_AWAITING_BACKFILL: set[str] = {
-    "AORT", "BRBR", "BURL", "EPAM", "IT", "LLY", "NFLX", "PARR", "ROST", "SMPL", "TGT", "TJX",
-    "VRRM", "WLK"}
+    "AORT", "BRBR", "BURL", "EPAM", "IT", "LLY", "NFLX", "PARR", "SMPL", "TGT", "VRRM", "WLK"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than
