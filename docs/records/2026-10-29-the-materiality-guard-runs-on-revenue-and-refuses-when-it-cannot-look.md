@@ -73,10 +73,18 @@ prs: [858]
   - the four can't-look refusals;
   - the marker end to end over every committed page's own table.
   The fence passes on both: cited, sub-threshold (restructuring at 4.8%) and pre-revenue cases.
+- **An independent anchor (review round 1).** The five (page, CIQ row) pairs are pinned by name on
+  frozen copies of their committed annual tables
+  (`tests/fixtures/materiality_revenue/annual_tables.json`), with WLK's restructuring at 4.8% as
+  the fence. They go through `_mark_material` itself, inside the frozen SMPL page's mechanical
+  layer.
+  - They fail on main.
+  - They kill a `table_revenue` that reads the first column or the estimate column. The end-to-end
+    pin, which derives its expectation through the same helpers, cannot catch those two.
 
 **BOUNDARY.**
-- **Population:** the 27 committed pages at `c51c286a`. 26 were run; BURL's page was not run.
-  ORKA and TECX state no revenue, so their run is the market-cap half only.
+- **Population:** 26 of the 27 committed pages at `c51c286a`, one held out under a standing
+  operator constraint. ORKA and TECX state no revenue, so their run is the market-cap half only.
 - **Inputs:** CIQ annual exports at `mosaic-theory-ta/data/manual/ciq` (SMPL from
   `ciq-archive/replaced-2026-10-28`).
 - **Column:** each page's guard column (LTM, else the latest fiscal year: NKE FY26). $M as CIQ

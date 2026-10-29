@@ -143,3 +143,39 @@ def test_d5_neg_the_marker_flags_every_line_over_five_percent_of_revenue_e2e() -
             hit += 1
             assert r.label in flagged, (page.parent.name, r.label, v, rev)
     assert hit >= 5, f"only {hit} committed rows clear 5% of revenue — the pin is not biting"
+
+
+#: The (page, CIQ row) pairs the real run found over 5% of revenue and under 10% of market cap,
+#: and one that sits below 5% — hard-coded, so a wrong revenue column or row in the code under
+#: test cannot be mirrored by the expectation (review of #858, round 1).
+_FLAGGED = {"AMZN": "Gain (Loss) On Sale Of Invest. ($M)",
+            "GOOGL": "Gain (Loss) On Sale Of Invest. ($M)",
+            "LLY": "In Process R & D Exp. ($M)", "MVST": "Asset Writedown ($M)",
+            "WLK": "Impairment of Goodwill ($M)"}
+_BELOW = ("WLK", "Restructuring Charges ($M)")        # LTM −539 of $11,294M revenue: 4.8%
+_TABLES = ROOT / "tests" / "fixtures" / "materiality_revenue" / "annual_tables.json"
+_CARRIER = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL" / "dossier.json"
+
+
+def _flagged_on_frozen(ticker: str) -> set[str]:
+    """`_mark_material` itself over a page's FROZEN annual table and market cap (c51c286a), set
+    inside the frozen SMPL page's mechanical layer so the input is the real type throughout."""
+    page = json.loads(_TABLES.read_text())[ticker]
+    m = json.loads(_CARRIER.read_text())["mechanical"]
+    m["financial_summary"]["annual"] = page["annual"]
+    m["stock_info"]["market_cap"]["value"] = page["market_cap"]
+    marked = assemble._mark_material(MechanicalLayer.model_validate(m))
+    return {r.label for r in marked.financial_summary.annual.value.rows if r.material}
+
+
+@pytest.mark.parametrize("ticker", sorted(_FLAGGED))
+def test_d5_neg_the_five_real_lines_are_flagged_on_their_frozen_tables(ticker: str) -> None:
+    """(-) The real run's five, by name: each line is over 5% of its page's LTM revenue and under
+    10% of its market cap, so on main (revenue never passed) none was flagged."""
+    assert _FLAGGED[ticker] in _flagged_on_frozen(ticker)
+
+
+def test_d5_pos_a_line_below_five_percent_of_revenue_stays_unflagged() -> None:
+    """(+) WLK's LTM restructuring is 4.8% of revenue and 6.0% of market cap: never flagged."""
+    ticker, label = _BELOW
+    assert label not in _flagged_on_frozen(ticker)
