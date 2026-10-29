@@ -45,7 +45,8 @@ FUBO, MVST, WERN, TECX and VITL. Consequences:
   - **LLY** (run `41a3c51b`, $2.91): "In Process R & D Exp. ($M) LTM = -8,070.0". It is 9.33% of
     LTM revenue ($86,462.0M) now that Q3 is in the LTM column; it was −4,544.0 on the old export.
   - In both, the brief showed the row (the P1 brief fix) and the kept draw did not state it. The
-    operator is weighing a prompt change before NFLX, LLY, GOOGL and AMZN build.
+    operator chose a prompt fix first (#865, merged before this PR): the synthesis is now asked
+    for each material row. NFLX and LLY each build once on that code, in the next artifact PR.
 - **GOOGL is held**:
   - its new EstimatesReport (2026-10-29) carries no As-Of header, and every one of its 250 Recent
     Changes rows is stamped with a time of day ("12:46 PM") rather than a date;
@@ -106,7 +107,12 @@ them. Only a re-assembly lands them on a page.
   (names with underwrite records) include none of the four pages. The panel-emit pin is in the
   suite below.
 - **CIQ scorecard** rewritten over the final page set: `data/snapshots/data_quality/ciq/2026-10-29.json`.
-- **Suite:** see the PR body.
+- **Suite, CI-like** (CIQ copy, store and caches unlinked), on the merged tree at `efad380f`:
+  8,144 passed, 0 failed, 545 skipped, 18 xfailed.
+- **Suite, linked** (before the backfill-pin edit and the merge): 12 failed. One was this pass's:
+  the backfill pin, fixed in the same PR. The other 11 fail identically on a clean `8d351bb8`
+  worktree with the same links: SMPL ×6, NCNO, NFLX, GOOGL, AORT's EV bridge and store freshness,
+  each a committed page compared with a workbook or store that has moved since.
 
 **BOUNDARY.**
 - **Pages:** 27 committed on main `8d351bb8`. 13 are kept by the narrowing (MCK has none), 13 are
