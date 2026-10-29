@@ -436,11 +436,12 @@ _industry = 21 Broadline Retail companies (GICS industry), the primary panel; co
 _14 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - due ≤12m (through 2026): $0.0M — 2026-10-28 –
+  - due ≤12m (through 2026): 1 with no principal stated — 2026-10-28 –
   - due 2027: $455.0M
-  - due 2028: $0.0M
-  - undated (floor — no panel maturity): $178,532.0M — 25 Notes Issuance of $15.0 Billion $15,000.0M, Euro Commercial Paper Programs –, Finance Leases $12,286.0M, Financing Obligations $8,158.0M, Operating Leases $89,252.0M, Other Long-Term Debt $836.0M, U.S. Dollar Commercial Paper… –, Unsecured Senior Notes $7,750.0M, Unsecured Senior Notes $15,000.0M, Unsecured Senior Notes $9,750.0M, Unsecured Senior Notes $5,750.0M, Unsecured Senior Notes $12,000.0M, Unsecured Senior Notes $2,750.0M
-  - _reconciliation: itemized $178,987.0M (panel A 2025 filed Feb-06-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - due 2028: 1 with no principal stated
+  - undated (floor — no panel maturity): $178,532.0M + 2 with no principal stated — 25 Notes Issuance of $15.0 Billion $15,000.0M, Euro Commercial Paper Programs –, Finance Leases $12,286.0M, Financing Obligations $8,158.0M, Operating Leases $89,252.0M, Other Long-Term Debt $836.0M, U.S. Dollar Commercial Paper… –, Unsecured Senior Notes $7,750.0M, Unsecured Senior Notes $15,000.0M, Unsecured Senior Notes $9,750.0M, Unsecured Senior Notes $5,750.0M, Unsecured Senior Notes $12,000.0M, Unsecured Senior Notes $2,750.0M
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: Euro Commercial Paper Programs (Commercial Paper), Revolving Credit Facility (Revolving Credit), U.S. Dollar Commercial Paper… (Commercial Paper), Unsecured 364-Day Revolving… (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $178,987.0M + 4 with no principal stated (panel A 2025 filed Feb-06-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 0.0; senior bonds 132,140.0; leases 109,771.0; total principal 252,406.0; total debt 251,635.0 (3 months Q2 Jun-30-2026) ($M) [60]
 - **Covenants — FIVE-YEAR REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Maturity:** November 1, 2028 · The later of (a) November 1, 2028 and (b) if extended pursuant to Section 2.12, such extended maturity date — per an 8-K filed 2023-11-01
