@@ -1,9 +1,10 @@
-"""The sealed per-row benchmark, and the run that does not apply it.
+"""The sealed per-row benchmark, and the guard that refuses to choose.
 
-`score_ledger` applies ONE benchmark series to every row while each row seals the one its cap band
-chose at log time. Until GOOGL — the first large-cap position — every sealed value was IWM, so the
-two could not disagree. They can now, and an excess return measured off the wrong series is worse
-than none.
+`score_ledger` applied ONE benchmark series to every row while each row seals the one its cap band
+chose at log time, and refused a resolved row that sealed another. Since 2026-10-29 each row is
+measured against its own (`scoring.harness.row_benchmark`, `tests/test_per_row_benchmark.py`), and
+the guard narrows to the one case left: a sealed benchmark and a committed assignment that disagree
+with no operator ruling on the assignment.
 """
 from __future__ import annotations
 
@@ -13,21 +14,18 @@ from vinci.scoring.harness import BenchmarkMismatchError
 
 
 def test_the_mismatch_is_gated_on_resolved_not_on_presence() -> None:
-    """A row merely SITTING in the ledger must not block the fund's own metric.
-
-    The first cut refused whenever a mismatched row was PRESENT, which would have stopped
-    `vinci score` outright over a bench_return nothing had yet consumed. The guard fires when the
-    number would actually count — the moment the row resolves.
-    """
+    """A row merely SITTING in the ledger must not block the fund's own metric: the refusal fires
+    when the number would count — the moment the row resolves — and an unresolved row is held
+    pending and named instead (pinned end to end in `tests/test_per_row_benchmark.py`)."""
     import inspect
 
     from vinci.scoring import harness
 
     src = inspect.getsource(harness.score_ledger)
-    assert "if resolved and entry.benchmark and entry.benchmark != _applied:" in src, (
+    assert "if conflict is not None:\n            if resolved:\n                raise " \
+           "BenchmarkMismatchError(" in src, (
         "the benchmark guard must be gated on `resolved` — refusing on presence blocks scoring "
         "for a number no surface reads yet")
-    assert "raise BenchmarkMismatchError(" in src, "the mismatch must refuse, not warn"
 
 
 def test_the_error_names_the_row_and_both_benchmarks() -> None:
@@ -43,10 +41,8 @@ def test_it_is_a_runtime_error_so_no_caller_swallows_it_as_a_value_error() -> No
 
 
 def test_an_unresolved_mismatch_does_not_raise_today() -> None:
-    """GOOGL is in the committed ledger with SPY sealed and 199 days to run.
-
-    Scoring must still work while it is unresolved — this is the case the gating exists for.
-    """
+    """GOOGL is in the committed ledger with SPY sealed (and assigned) and 199 days to run — a
+    non-IWM row, the case the per-row benchmark exists for."""
     import json
     import pathlib
 

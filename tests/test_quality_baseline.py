@@ -410,6 +410,11 @@ def test_the_score_command_renders_the_baseline_end_to_end(
         db_path = db
         data_dir = followed.parent
 
+    # the committed assignments `vinci score` requires while the ledger holds a decision (#856);
+    # none here, so both followed rows are measured against the IWM they sealed
+    (followed.parent / "monitor").mkdir(exist_ok=True)
+    (followed.parent / "monitor" / "benchmark_assignments.json").write_text("{}")
+
     monkeypatch.setattr(cli, "get_config", lambda: _Cfg())
     # the command reads Tiingo's dividends; this synthetic store's names pay none
     monkeypatch.setattr(cli, "default_dividends", lambda **_kw: no_dividends)
