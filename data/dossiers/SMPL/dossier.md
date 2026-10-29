@@ -473,10 +473,11 @@ _S&P issuer rating BB- · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 - **Debt schedule vintage:** the debt schedule is 290d old (source filed 2025-10-28); no Item 1.02 (termination of a material agreement) has been filed since [62]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [63]
 - **Maturity wall** · vs the 2026-08-14 reference:
-  - due 2029: $0.0M
+  - due 2029: 1 with no principal stated
   - due 2030: $249.1M
   - undated (floor — no panel maturity): $55.4M — Operating Lease $55.4M
-  - _reconciliation: itemized $304.5M (panel A 2025 filed Oct-28-2025) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: Credit Agreement With Barclays… (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $304.5M + 1 with no principal stated (panel A 2025 filed Oct-28-2025) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 397.0 (3 months FQ2/CQ1 Feb-28-2026 396.9 → 3 months FQ3/CQ2 May-30-2026 397.0); leases 51.4; total principal 448.5; total debt 448.5 (3 months FQ3/CQ2 May-30-2026) ($M) [64]
 - **Covenants — Credit Agreement** (governing values; full verbatim in appendix):
   - **Interest / coupon:** LIBO Rate / ABR + 3.75% · On and after the Amendment No. 2 Effective Date: ABR Loan 2.75% per annum; Eurodollar Loan 3.75% per annum (prior to Am… — per an 8-K filed 2018-03-20, amended 2019-11-07

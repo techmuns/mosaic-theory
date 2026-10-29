@@ -411,13 +411,13 @@ _industry = 22 Pharmaceuticals companies (GICS industry), the primary panel · S
 _49 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $1,529.1M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): $1,529.1M + 1 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2026-02-27 (231d before ref): $750.0M 5.0% Notes Due 2026
     - 2026-06-02 (136d before ref): $779.1M 1.625% Euro Denominated Notes Due 
     - 2026-08-01 (76d before ref): – 364-day Credit Facility
   - due 2027: $2,515.8M
   - due 2028: $3,191.6M
-  - due 2029: $3,076.2M
+  - due 2029: $3,076.2M + 1 with no principal stated
   - due 2030: $2,029.1M
   - due 2031: $1,373.2M
   - due 2032: $2,000.0M
@@ -443,8 +443,9 @@ _49 undated / later aggregate line item(s) in the appendix panel_
   - due 2063: $1,000.0M
   - due 2064: $2,250.0M
   - due 2065: $1,750.0M
-  - undated (floor — no panel maturity): $1,362.0M — Commercial Paper –, Operating Lease $1,362.0M
-  - _reconciliation: itemized $43,379.7M (panel A 2025 filed Feb-12-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - undated (floor — no panel maturity): $1,362.0M + 1 with no principal stated — Commercial Paper –, Operating Lease $1,362.0M
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: 364-day Credit Facility (Revolving Credit), Commercial Paper (Commercial Paper), Multi-year Credit Facility (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $43,379.7M + 3 with no principal stated (panel A 2025 filed Feb-12-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 49,488.9; total principal 54,772.9; total debt 54,908.0 (3 months Jun-30-2026) ($M) [59]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0000059478-26-000077 (2026-08-05) states no maturity-resolution event
 

@@ -8421,15 +8421,21 @@ console.log(JSON.stringify({{ html: h }}));
     inst = ((d["mechanical"].get("capital_structure") or {}).get("instruments") or {})
     if inst.get("status") == "present":
         ref = str(d["reference_date"])
-        by_yr: dict[str, float] = {}
+        # the STATED principals summed, and the count left out (audit D-D4: a '-' is not $0)
+        by_yr: dict[str, list[float | None]] = {}
         for i in inst["value"]:
             md = i.get("maturity_date")
             if md and md >= ref and md[:4] != ref[:4]:
-                by_yr[md[:4]] = by_yr.get(md[:4], 0.0) + (i.get("principal_musd") or 0.0)
+                by_yr.setdefault(md[:4], []).append(i.get("principal_musd"))
         assert by_yr, "IT carries later-year maturities"
-        for yr, tot in by_yr.items():
-            chip = f"<div class=\"wall-yr\"><span>{yr}</span><b>${tot:,.1f}M</b></div>"
-            assert chip in h, f"wall chip for {yr} must equal the instruments sum"
+        for yr, ps in by_yr.items():
+            stated = [v for v in ps if v is not None]
+            gap = len(ps) - len(stated)
+            more = (f"<span>{'+ ' if stated else ''}{gap} with no principal stated</span>"
+                    if gap else "")
+            amt = f"${sum(stated):,.1f}M" if stated else "—"
+            chip = f"<div class=\"wall-yr\"><span>{yr}</span><b>{amt}</b>{more}</div>"
+            assert chip in h, f"wall chip for {yr} must equal the stated instruments' sum"
         assert 'class="wall-foot"' in h  # reconciliation demoted to the footnote, still present
 
     # 4 — read-first on what-broke
