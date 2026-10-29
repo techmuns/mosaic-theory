@@ -443,7 +443,7 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: base moves (AORT +2.7%, the largest; `docs/records/2026-10-28-the-anchors-d-and-a-covers-its-
 #: ltm-window.md`). The pages refresh at re-assembly; none is re-assembled by that change.
 #:
-#: **ROST and TJX LANDED** (#865, 2026-10-29): re-assembled, their bases are the recompute's
+#: **ROST and TJX LANDED** (#866, 2026-10-29): re-assembled, their bases are the recompute's
 #: (ROST 166.1793→167.5944, TJX 131.1019→132.1391; `docs/records/2026-10-29-phase1-rebuild-four-
 #: pages-and-scope-narrowed.md`).
 ANCHORS_AWAITING_BACKFILL: set[str] = {
