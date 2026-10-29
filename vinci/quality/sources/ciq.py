@@ -40,7 +40,7 @@ from vinci.dossier.band_guards import (
 from vinci.dossier.ciq_balance import _SCALE_HI, _SCALE_LO
 from vinci.dossier.ciq_sheets import _NETTED_LABEL, EV_BRIDGE_CIQ_TOL, USD_STATED
 from vinci.dossier.ebitda_recon import DIFFERENT_SHARE, unusual_explains
-from vinci.dossier.freshness import _INTEGER_TOLERANCE, reconcile_cap
+from vinci.dossier.freshness import _INTEGER_TOLERANCE, RECONCILE_TOLERANCE, reconcile_cap
 from vinci.dossier.lease_basis import (
     _RENT_DISAGREE,
     MATERIALITY,
@@ -240,9 +240,23 @@ def _market_cap_share_basis(page: dict[str, Any]) -> ItemResult:
                        spot=_num(_get(si, "price", "value")))
     if rc is None:
         return one(UNCHECKED)
-    # a whole-number ratio IS the stated reason: `reconcile_cap` names it a corporate action
-    # between the panels (and `check_freshness` refuses such a build)
-    return one(DIFFERS_STATED if rc.corporate_action else CONFIRMED)
+    if rc.corporate_action:
+        # a whole-number ratio IS the stated reason — `reconcile_cap` names it a corporate action
+        # between the panels (and `check_freshness` refuses such a build) — unless it is a
+        # thousands-or-millions step, which is a UNIT error, not a split (audit BC-D9)
+        return one(DIFFERS_UNEXPLAINED if _unit_step(rc.ratio) else DIFFERS_STATED)
+    # WHAT THE CHECK CAN SUPPORT (audit BC-D9): every gap that was no whole-number ratio scored
+    # CONFIRMED — 27 of 27 pages, MVST at +57.1%. Price drift since the cap's panel and a wrong
+    # cap look the same here, so only a cap that IS the price times the shares, inside the line
+    # the page renders by (`freshness.RECONCILE_TOLERANCE`), confirms; any other gap is unchecked
+    return one(CONFIRMED if abs(rc.gap) <= RECONCILE_TOLERANCE else UNCHECKED)
+
+
+def _unit_step(ratio: float) -> bool:
+    """Is a share-basis ratio a 1,000x or 1,000,000x step, either way up — inside the same band
+    the whole-number rule uses (`freshness._INTEGER_TOLERANCE`)?"""
+    folded = max(ratio, 1.0 / ratio)
+    return any(abs(folded - step) / step <= _INTEGER_TOLERANCE for step in (1e3, 1e6))
 
 
 def _primary_source_check(page: dict[str, Any], key: str) -> ItemResult:
@@ -663,9 +677,12 @@ CHECKS: tuple[Check, ...] = (
           "the anchor's CIQ bridge may fill a hole from (ciq_balance.extract)",
           "CIQ Financials 'Total Revenue', the same workbook — a scale reference, not a second "
           "figure for the same thing", INTERNAL, "page",
-          f"each figure within [{_SCALE_LO:g}, {_SCALE_HI:g}]x revenue (ciq_balance."
-          "_assert_scale) — a UNIT screen by magnitude: whole dollars or billions read as $M land "
-          "1,000x outside it. Not run where the workbook reports no revenue or no such figure",
+          "every statement sheet read states Millions on its own unit line (ciq_balance."
+          f"_stated_units), and each figure within [{_SCALE_LO:g}, {_SCALE_HI:g}]x revenue "
+          "(ciq_balance._assert_scale) — the magnitude screen catches a figure in whole dollars "
+          "read as $M (1,000,000x) but not one in thousands or billions, nor an export wholly in "
+          "another unit; the unit line catches those. The magnitude part is not run where the "
+          "workbook reports no revenue or no such figure",
           "pages carrying anchor.ciq_scale_check", None, None, ("wrong_unit",),
           _ciq_scale_vs_revenue),
 )

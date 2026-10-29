@@ -124,6 +124,10 @@ def test_extract_carries_each_cash_flow_legs_period(monkeypatch: pytest.MonkeyPa
         def workbook(self, kind: str, freq: str | None = None) -> None:
             return None
 
+        def sheet(self, kind: str, sheet_name: str, freq: str | None = None) -> None:
+            from vinci.dossier.ciq import CiqUnavailableError
+            raise CiqUnavailableError(f"no '{kind}' CIQ workbook")  # the unit line is read too
+
     got = cb.extract(_NoWorkbook(), "X")  # type: ignore[arg-type]
     assert (got.facts["ocf"].value, got.facts["ocf"].period, got.facts["ocf"].period_end) == (
         25_000.0, "LTM", date(2026, 6, 30))

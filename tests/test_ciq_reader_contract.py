@@ -884,3 +884,84 @@ def test_a_share_class_ticker_spelt_with_a_separator_finds_its_block() -> None:
     the symbol, so the block is found rather than silently missed."""
     b = _estimates(f"{gen.TICKER}-K")
     assert f"Recommendation: {gen.REC_SECOND} (CIQ score" in (cs.consensus_view(b).value or "")
+
+
+# --- the stated unit (audit BC-D10) -------------------------------------------------------------
+
+_MILLIONS = "In Millions of the reported currency, except per share items."
+_STATEMENTS = ("Income Statement", "Balance Sheet", "Cash Flow")
+
+
+def _stated_in(sheets: dict[str, Any], unit: str | None) -> dict[str, Any]:
+    """The export's statements restated as CIQ would label another unit (None: no unit line)."""
+    for name in _STATEMENTS:
+        row = sheets[name][6]
+        assert row[0] == _MILLIONS
+        row[0] = "" if unit is None else _MILLIONS.replace("Millions", unit)
+    return sheets
+
+
+def _pair(tmp_path: Path, annual_unit: str | None, quarterly_unit: str | None) -> CiqBundle:
+    for name, sheets, unit in ((ANNUAL.name, gen._annual_sheets("USD"), annual_unit),
+                               (QUARTERLY.name, gen._quarterly_sheets("USD"), quarterly_unit)):
+        gen.write_biff(tmp_path / name, _stated_in(sheets, unit))
+    return _bundle(tmp_path / ANNUAL.name, tmp_path / QUARTERLY.name)
+
+
+def test_a_whole_export_in_thousands_is_refused(tmp_path: Path) -> None:
+    """BC-D10: every figure and the revenue it is measured against in one other unit leaves every
+    ratio unchanged, so the magnitude screen passed it. The statements' own unit line says so."""
+    got = ciq_balance.extract(_pair(tmp_path, "Thousands", "Thousands"), gen.TICKER)
+    assert not got.ok and got.scale_check == CHECK_DIFFER
+    assert any(f.startswith("UNIT:") and "Thousands" in f for f in got.failures), got.failures
+
+
+def test_two_exports_in_different_units_are_refused(tmp_path: Path) -> None:
+    """BC-D10: the balance sheet read from the quarterly export, the revenue from the annual one —
+    thousands against millions sits inside the magnitude band and passed."""
+    got = ciq_balance.extract(_pair(tmp_path, "Thousands", "Millions"), gen.TICKER)
+    assert not got.ok and got.scale_check == CHECK_DIFFER
+    assert any(f.startswith("UNIT:") for f in got.failures), got.failures
+
+
+def test_exports_stated_in_millions_pass_and_say_so(bundle: CiqBundle) -> None:
+    """NEGATIVE PIN — the shape of all 204 statement sheets in the 34 non-test folders
+    (2026-10-29): each states millions, the bridge reads $M, nothing is refused."""
+    got = ciq_balance.extract(bundle, gen.TICKER)
+    assert got.ok and got.scale_check == CHECK_AGREE
+    assert any(c.startswith("unit: every statement read states Millions") for c in got.checks)
+
+
+def test_an_export_stating_no_unit_is_left_to_the_magnitude_screen(tmp_path: Path) -> None:
+    """NEGATIVE PIN: no unit line is not a mismatch — the magnitude screen still runs, and the
+    check line says the unit was unstated."""
+    got = ciq_balance.extract(_pair(tmp_path, None, None), gen.TICKER)
+    assert got.ok and got.scale_check == CHECK_AGREE
+    assert any(c.startswith("unit: unstated") for c in got.checks), got.checks
+
+
+@pytest.mark.parametrize(("annual", "quarterly", "says_dollar_millions"), [
+    ("Thousands", "Thousands", False),
+    ("Thousands", "Millions", False),
+    ("Millions", "Millions", True),       # NEGATIVE PIN: a clean pair still says so
+])
+def test_a_unit_refusal_never_prints_beside_a_dollar_millions_pass(
+        tmp_path: Path, annual: str, quarterly: str, says_dollar_millions: bool) -> None:
+    """Review round 1: the magnitude line ("consistent with a $M sheet") printed whenever no SCALE
+    failure stood — so a refused Thousands export carried the refusal and a $M pass side by side."""
+    got = ciq_balance.extract(_pair(tmp_path, annual, quarterly), gen.TICKER)
+    assert any("consistent with a $M sheet" in c for c in got.checks) is says_dollar_millions, \
+        got.checks
+
+
+@pytest.mark.parametrize(("line", "want"), [
+    ("In Millions of the reported currency, except per share items.", "Millions"),
+    ("In Thousands of US Dollar, except per share items.", "Thousands"),   # a converted export
+    ("In Millions of Euro, except per share items.", "Millions"),
+    ("Units: S&P Capital IQ (Default)", None),
+])
+def test_the_unit_line_is_read_whatever_currency_it_names(line: str, want: str | None) -> None:
+    """Review round 0: an export converted to a stated currency names that currency, not "the
+    reported currency" — its unit must still be read, never fall back to unstated."""
+    from vinci.dossier.ciq import stated_unit
+    assert stated_unit([[], [line]]) == want
