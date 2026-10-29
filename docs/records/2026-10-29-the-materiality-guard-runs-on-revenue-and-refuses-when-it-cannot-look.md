@@ -1,8 +1,8 @@
 ---
 id: 2026-10-29-the-materiality-guard-runs-on-revenue-and-refuses-when-it-cannot-look
-status: open
+status: shipped
 date: 2026-10-29
-prs: []
+prs: [858]
 ---
 
 # The materiality guard runs on both of its thresholds, and refuses a build when it cannot look (audit D-D5)
