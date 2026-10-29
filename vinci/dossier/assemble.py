@@ -750,7 +750,7 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Dossier:
 
 def _mark_material(mech: Any) -> Any:
     """Flag summary rows over the materiality floor so the BRIEF shows them (P1 brief fix)."""
-    from vinci.dossier.materiality import mark_material_rows
+    from vinci.dossier.materiality import mark_material_rows, table_revenue
 
     fs = getattr(mech, "financial_summary", None)
     ann = getattr(fs, "annual", None) if fs else None
@@ -759,7 +759,7 @@ def _mark_material(mech: Any) -> Any:
         return mech
     si = getattr(mech, "stock_info", None)
     mcap = getattr(getattr(si, "market_cap", None), "value", None) if si else None
-    marked = mark_material_rows(tbl, market_cap=mcap, revenue=None)
+    marked = mark_material_rows(tbl, market_cap=mcap, revenue=table_revenue(tbl))
     if marked is tbl:
         return mech
     return mech.model_copy(update={
@@ -811,27 +811,41 @@ def _freshness_check(mech: Any, *, ticker: str, built_at: date) -> None:
 
 
 def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -> None:
-    """Run the materiality guard on the assembled record (P1). Skips silently ONLY when a
-    denominator or the sheet is genuinely unavailable — never when the check merely found nothing,
-    which is the distinction between "clean" and "not looked at"."""
+    """Run the materiality guard on the assembled record (P1), on BOTH thresholds: 10% of market
+    cap and 5% of the revenue the sheet states in the column the guard reads.
+
+    IT REFUSES WHEN IT CANNOT LOOK (audit D-D5). A missing annual Income Statement, period header,
+    revenue row or unusual-items block raises `MaterialityUnavailableError` — "not looked at" is
+    never reported as "clean". Revenue was never passed before, so the 5% test ran on no build,
+    and the guard's own refusal for a missing block was caught and dropped here."""
     from vinci.dossier import ciq_sheets as _cs
+    from vinci.dossier.ciq import CiqUnavailableError
     from vinci.dossier.materiality import (
+        SHEET_REVENUE_LABEL,
         MaterialityUnavailableError,
+        _num,
         check_materiality,
+        positive,
     )
 
     try:
         inc = bundle.sheet("financials", "Income Statement", freq="annual")
-    except Exception:
-        return                                   # no sheet — its own fail-loud lives upstream
+    except CiqUnavailableError as exc:
+        raise MaterialityUnavailableError(
+            f"{ticker}: no annual Income Statement to run the materiality guard on ({exc}) — "
+            "refusing to report a clean pass") from exc
     hdr = _cs._period_header(inc)
-    if hdr is None:
-        return
-    periods = _cs._fin_periods(inc[hdr])
-    if not periods:
-        return
+    periods = _cs._fin_periods(inc[hdr]) if hdr is not None else []
+    rev_i = _cs._find_row(inc, SHEET_REVENUE_LABEL)
+    if not periods or rev_i is None:
+        raise MaterialityUnavailableError(
+            f"{ticker}: the annual Income Statement has no "
+            f"{'period header' if not periods else repr(SHEET_REVENUE_LABEL) + ' row'} — the "
+            "materiality guard cannot run; refusing to report a clean pass")
     ltm = [pp for pp in periods if pp[2]]
     col, label = (ltm[0][0], ltm[0][1]) if ltm else (periods[-1][0], periods[-1][1])
+    rev_row = inc[rev_i]
+    revenue = positive(_num(rev_row[col])) if col < len(rev_row) else None
     si = getattr(mech, "stock_info", None)
     mcap = getattr(getattr(si, "market_cap", None), "value", None) if si else None
     fs = getattr(mech, "financial_summary", None)
@@ -844,14 +858,11 @@ def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -
     rows = list(getattr(ann, "rows", [])) if ann is not None else []
     labels = {r.label for r in rows
               if r.label in BRIEF_CORE_ROWS or getattr(r, "material", False)}
-    try:
-        check_materiality(
-            inc, col, market_cap=mcap, revenue=None, summary_labels=labels,
-            synthesis_text=json.dumps(synthesis.model_dump(mode="json")) if synthesis else "",
-            ticker=ticker, period=label,
-        )
-    except MaterialityUnavailableError:
-        return                                   # no unusual-items block on this sheet
+    check_materiality(
+        inc, col, market_cap=mcap, revenue=revenue, summary_labels=labels,
+        synthesis_text=json.dumps(synthesis.model_dump(mode="json")) if synthesis else "",
+        ticker=ticker, period=label,
+    )
 
 
 def _require_synthesis(synthesis: _S | None, *, ticker: str, flags: list[str]) -> _S:

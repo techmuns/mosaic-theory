@@ -129,6 +129,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "forward history's latest close is `latest_observed_close`, never `current`; every writer "
         "saves through one write",
     ),
+    (
+        "2026-10-29.D-D5",
+        "the materiality guard runs on both thresholds: a summary row and an unusual line at 5% "
+        "of the revenue in the column each reads are material (`revenue` was never passed), and "
+        "a missing annual Income Statement, revenue row or unusual-items block refuses the build "
+        "instead of passing it (audit D-D5)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
