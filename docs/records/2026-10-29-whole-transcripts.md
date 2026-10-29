@@ -1,8 +1,8 @@
 ---
 id: 2026-10-29-whole-transcripts
-status: open
+status: shipped
 date: 2026-10-29
-prs: []
+prs: [864]
 supersedes:
 superseded-by:
 ---
