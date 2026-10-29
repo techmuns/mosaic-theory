@@ -1902,6 +1902,14 @@ _ONEOFF = re.compile(
 #: beside the real $64.0M and $40.4M. The amount is the charge only when the noun names it — not
 #: when a CAUSE connects them ("$X million mainly due to the impairments"), and not when the amount
 #: is a CHANGE in something else ("… increased $94.3 million").
+#: A CAUSE WORD REFUSES ONLY AN AMOUNT NO CHARGE NOUN NAMES (review round 1). "a non-cash charge
+#: of $64.0 million reflecting the impairment" and "$40.4 million of charges due to the impairment"
+#: are charges — the noun names the amount before the cause explains it; the round-0 filter dropped
+#: both.
+_CHARGE_NOUN = re.compile(
+    r"\b(?:charges?|costs?|expenses?|loss(?:es)?|write[- ]?(?:downs?|offs?))\b", re.I)
+_NAMED_BEFORE = re.compile(
+    rf"{_CHARGE_NOUN.pattern}\s+(?:of|totaling|totalling|amounting\s+to)\s*$", re.I)
 #: "wrote down $12.0 million of …" — the verb IS the charge, never a change in something else.
 _WROTE_DOWN = re.compile(r"\b(?:wrote|written|write)\s+down\s*$", re.I)
 _ONEOFF_CAUSE = re.compile(
@@ -1917,7 +1925,11 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
         amt = _scaled(m.group(1), m.group(2))
         if amt is None:
             continue
-        if (_ONEOFF_CAUSE.search(m["gap"])
+        cause = _ONEOFF_CAUSE.search(m["gap"])
+        named = cause is not None and (
+            _CHARGE_NOUN.search(m["gap"], 0, cause.start()) is not None
+            or _NAMED_BEFORE.search(text, max(0, m.start() - 40), m.start()) is not None)
+        if ((cause is not None and not named)
                 or (_CHANGE_LEAD.search(text, max(0, m.start() - 30), m.start())
                     and not _WROTE_DOWN.search(text, max(0, m.start() - 30), m.start()))):
             continue  # a cause's effect or a change, not the charge itself (see _ONEOFF_CAUSE)

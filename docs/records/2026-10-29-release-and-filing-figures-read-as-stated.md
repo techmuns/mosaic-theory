@@ -23,8 +23,10 @@ superseded-by:
   Protective today: 26 of 26 committed pages read "LTM unavailable", and VITL's latest quarter
   is a Q2, which `_ltm_adj_ebitda` does not compose.
 - **ROLE (E2-D12).** A one-off's amount must be the charge its noun names. `_ONEOFF_CAUSE` refuses
-  a cause between amount and noun ("$94.3 million mainly due to the impairments"). `_CHANGE_LEAD`
-  refuses an amount that is a change ("…increased $94.3 million"). VRRM keeps $64.0M and $40.4M.
+  a cause between amount and noun ("$94.3 million mainly due to the impairments"), but only when
+  no charge noun names the amount first ("a non-cash charge of $64.0 million reflecting…", "$40.4
+  million of charges due to…" are kept, review round 1). `_CHANGE_LEAD` refuses an amount that is
+  a change ("…increased $94.3 million"). VRRM keeps $64.0M and $40.4M.
 - **NAME (E2-D11).** `_REVENUE` reads "revenues of". The lead-word allowlist still refuses a
   sub-line, and two refusals are new:
   - **The closing "About <company>" profile** (`_in_about_profile`). Without it, Ross Stores'
@@ -55,7 +57,8 @@ superseded-by:
 
   A receivables table is refused. A second figure is a prior only when its column is revenue.
   The "represented A% and B% of revenue and accounts receivable, respectively" prose follows the
-  same rule.
+  same rule. A row refused for its role is refused ALOUD, naming the customer and the header it
+  read (review round 1), so a revenue concentration can never vanish without a note.
 - **D3, verified.** No code change. On current code, 1 of 81 judgeable numeric guides carries a
   period closed at its release's own reported period: AORT's, the filer's own. Its
   forward-looking-statements paragraph says "$105 to $110 million in 2025", while its outlook
@@ -101,9 +104,10 @@ fed values a reader acts on: FUBO's leverage inputs and VRRM's synthesis, which 
 - **Gates.** ruff, `mypy --strict vinci` and the full offline suite. The PR body carries the run.
 
 **BOUNDARY.**
-- **Pages and releases.** 26 committed pages under `data/dossiers/` at `c51c286a`. BURL is a held
-  test pack and was not opened. They cite 113 EX-99.1 releases: the audit's 119 on 27 pages, less
-  BURL's 6 by arithmetic. One exhibit per release; 0 cache misses.
+- **Pages and releases.** 26 committed pages under `data/dossiers/` at `c51c286a`; one page is
+  held out under a standing operator constraint and was not opened. They cite 113 EX-99.1
+  releases: the audit's 119 on 27 pages, less the held-out page's 6 by arithmetic. One exhibit
+  per release; 0 cache misses.
 - **10-Qs.** One cited 10-Q per page: 26.
 - **Cache.** The primary checkout's `data/cache/sec` served 229 URLs. 23 URLs (10-Q primary
   documents and newer submissions JSON) came from another worktree's cache. Both were read-only,
@@ -138,6 +142,15 @@ fed values a reader acts on: FUBO's leverage inputs and VRRM's synthesis, which 
   its triangulation carries no margin row, so the line does not move.
 - **The rebuild owes these pages.** It must re-assemble FUBO, VITL, VRRM, EPAM, WERN, MVST, NCNO,
   NFLX and TGT (and ROST and GOOGL for flags), then remove the six xfail markers.
+- **DEFERRED, review round 1: one instrument's sentence read as the whole wall.** The widened
+  forms take "$X of the notes due within 12 months" or "the Credit Facilities … no principal …
+  within 12 months" as the ≤12m total, while another instrument could fall due inside the same
+  window. No live instance: of the 26 cited 10-Qs, 2 hit a widened form. WERN's Credit Facilities
+  are its whole debt (its Note 9 table: "Total debt $ 793,000" thousand, the sentence's $793.0M).
+  NFLX's sentence covers "our outstanding notes". **Falsifier:** a page whose filing wall comes from
+  a widened form naming one instrument, while its CIQ panel carries other principal inside
+  [balance, +12m). The coherence check then reads DIVERGES on that page, because the panel side
+  sums every in-window instrument, so the defect surfaces there rather than silently.
 - **Findings, not fixed (scope):**
   - AORT's guide takes the FLS paragraph's "in 2025" over the outlook's "for 2026".
   - `_FORWARD`'s `targets?` matches "Target Corporation". A list lead-in naming the company would

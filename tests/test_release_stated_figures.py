@@ -259,3 +259,20 @@ def test_review_round_0_role_and_span_edges() -> None:
     ttm = ("Q1 Fiscal 2026 Highlights ● Over the trailing twelve months: ○ Pro Forma Adjusted "
            "EBITDA of $77.9 million, compared to $50.0 million")
     assert not any(v in (77.9, 50.0) for _m, _p, v in _rows(ttm))
+
+
+def test_review_round_1_a_charge_named_beside_its_cause_is_kept() -> None:
+    """Review round 1 (a regression the round-0 filter introduced): a cause word refuses an amount
+    only when NO charge noun names the amount first. "a non-cash charge of $64.0 million reflecting
+    the impairment" and "$40.4 million of charges due to the impairment" are charges, and main kept
+    both; the cash-flow sentence, whose amount no charge noun names, is still refused."""
+    head = "Acme Reports Second Quarter 2026 Results. "
+    kept = ("In the quarter we recorded a non-cash charge of $64.0 million reflecting the "
+            "impairment of goodwill.",
+            "We recorded $40.4 million of charges due to the impairment of intangible assets.")
+    for sentence, amount in zip(kept, (64.0, 40.4), strict=True):
+        assert [o.amount for o in _parse(head + sentence).one_offs] == [amount], sentence
+    refused = ("The aggregate adjustments to reconcile net (loss) income to net cash provided by "
+               "operating activities increased $94.3 million mainly due to the impairments on "
+               "goodwill and intangible assets.")
+    assert _parse(head + refused).one_offs == []

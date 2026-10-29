@@ -136,7 +136,8 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "words (D10), 'Revenues of' with the closing company profile refused (D11), a one-off "
         "whose amount the charge noun names (D12), the ≤12m wall's stated zero and its "
         "principal-and-interest basis (D15, `maturity_wall.basis`), a concentration column's "
-        "role from its header (D16); a non-positive LTM EBITDA has no leverage multiple (E1-D13)",
+        "role from its header, a refused row named (D16); a non-positive LTM EBITDA has no "
+        "leverage multiple (E1-D13)",
     ),
 )
 

@@ -197,16 +197,20 @@ def _roles(words: list[str]) -> list[str]:
     return ["receivable" if w.lower().startswith("receivable") else "revenue" for w in words]
 
 
-def _column_roles(text: str, row_at: int) -> list[str] | None:
+def _table_header(text: str, row_at: int) -> str:
+    """A concentration table's header: from its lead-in sentence to the row, other rows removed."""
+    lo = text.rfind(". ", max(0, row_at - 1200), row_at)
+    lo = lo + 2 if lo != -1 else max(0, row_at - 1200)
+    return " ".join(_CUST.sub(" ", text[lo:row_at]).split())
+
+
+def _column_roles(head: str) -> list[str] | None:
     """The roles of a concentration table's columns, in order, read from its HEADER — or None when
     the header names no role. A row's figures took their roles from POSITION (audit E2-D16): Vital
     Farms' 10-Q follows its revenue table with an accounts-receivable one, and the receivable
     table's "Customer C 11 % 10 %" reached the page as an 11% REVENUE concentration with a 10%
     prior. The header is the text from the lead-in sentence to the table's first row; the column
     headings are the part after its colon, and the lead-in alone decides when they name no role."""
-    lo = text.rfind(". ", max(0, row_at - 1200), row_at)
-    lo = lo + 2 if lo != -1 else max(0, row_at - 1200)
-    head = _CUST.sub(" ", text[lo:row_at])
     colon = head.rfind(":")
     cols = _ROLE_WORD.findall(head[colon + 1:]) if colon != -1 else []
     roles = _roles(cols or _ROLE_WORD.findall(head))
@@ -215,18 +219,34 @@ def _column_roles(text: str, row_at: int) -> list[str] | None:
     return roles if cols else ([roles[0]] if len(set(roles)) == 1 else ["mixed"])
 
 
-def _concentration(text: str, src: str) -> CustomerConcentration | None:
+#: Every note `_concentration` writes for a row it refuses starts with this.
+CONCENTRATION_REFUSAL_PREFIX = "Concentration row refused"
+
+
+def _concentration(text: str, src: str,
+                   notes: list[str] | None = None) -> CustomerConcentration | None:
     custs: list[ConcentrationCustomer] = []
     seen: set[str] = set()
+    refusals: list[str] = notes if notes is not None else []
+
+    def _refuse(row: str, roles: list[str], header: str) -> None:
+        # ALOUD (review round 1): a row dropped for its role with no note let a revenue
+        # concentration vanish silently — the note names the customer and the header it read
+        why = ("the header names both revenue and receivables and no column says which"
+               if roles == ["mixed"] else "its first column is a receivable share, not revenue")
+        refusals.append(f"{CONCENTRATION_REFUSAL_PREFIX} — {why}: “{' '.join(row.split())}” under "
+                        f"“…{header[-160:]}” ({src})")
     # (1) table form — 'Customer A 52 % 31 %' → exact, its columns' roles read from the header
     for m in _CUST.finditer(text):
         name = f"Customer {m.group(1).upper()}"
         pct = _money(m.group(2))
         if name in seen or pct is None or pct > 100:
             continue
-        roles = _column_roles(text, m.start())
+        header = _table_header(text, m.start())
+        roles = _column_roles(header)
         if roles is not None and roles[0] != "revenue":
-            continue  # a receivables table (or a lead-in naming both, with no column headings)
+            _refuse(m.group(0), roles, header)  # a receivables table, or a lead-in naming both
+            continue
         # the second figure is a PRIOR revenue share only when its column is a revenue column too
         # — or when the header names one role for every column ("% of net revenue … 2026 2025")
         second_is_revenue = roles is None or len(roles) == 1 or roles[1] == "revenue"
@@ -249,6 +269,7 @@ def _concentration(text: str, src: str) -> CustomerConcentration | None:
             tail = text[m.end():stop if stop != -1 else m.end() + 160][:160]
             roles = _roles(_ROLE_WORD.findall(tail))
             if roles and roles[0] != "revenue":
+                _refuse(m.group(0), roles, tail)
                 continue
             seen.add(name)
             custs.append(ConcentrationCustomer(
@@ -472,8 +493,8 @@ def parse_filing_sections(text: str, *, source_ref: str) -> FilingSectionExtract
     """Parse a 10-Q/10-K's normalized text into a source-bound FilingSectionExtract. Each absent
     section fails loud with a qa_flag — a miss is UNKNOWN, never a fabricated value."""
     wall = _maturity_wall(text, source_ref)
-    conc = _concentration(text, source_ref)
     flags: list[str] = []
+    conc = _concentration(text, source_ref, flags)
     if wall is None:
         flags.append(f"no anchored pattern matched — maturity wall: {source_ref}")
     if conc is None:

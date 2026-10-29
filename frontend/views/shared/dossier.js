@@ -67,7 +67,8 @@ const EXTRACTION_VERSIONS = [
     "words (D10), 'Revenues of' with the closing company profile refused (D11), a one-off " +
     "whose amount the charge noun names (D12), the ≤12m wall's stated zero and its " +
     "principal-and-interest basis (D15, `maturity_wall.basis`), a concentration column's " +
-    "role from its header (D16); a non-positive LTM EBITDA has no leverage multiple (E1-D13)"],
+    "role from its header, a refused row named (D16); a non-positive LTM EBITDA has no " +
+    "leverage multiple (E1-D13)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

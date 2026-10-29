@@ -238,3 +238,17 @@ def test_e2e_a_plain_principal_wall_still_runs_the_check() -> None:
     read = _e2e_read(_MVST_WALL, "MVST", date(2026, 6, 30))
     assert read.check == CHECK_DIFFER
     assert "$104.2M" in read.line and "NOT RUN" not in read.line
+
+
+def test_review_round_1_a_concentration_row_refused_for_its_role_is_named() -> None:
+    """Review round 1: a row refused for its column role was dropped with no note, so a revenue
+    concentration could vanish silently. The refusal names the customer and the header it read."""
+    flags = fs.parse_filing_sections(_VITL_CONC, source_ref=_SRC).qa_flags
+    named = [f for f in flags if "Customer C" in f]
+    assert len(named) == 1 and "Accounts Receivable" in named[0] and "receivable" in named[0]
+    both = ("The following customers accounted for 10% or more of revenue or accounts "
+            "receivable: 2026 2025 Customer A 15 % 32 %")  # period headings name no role
+    assert any("Customer A" in f and "both" in f
+               for f in fs.parse_filing_sections(both, source_ref=_SRC).qa_flags)
+    # NEGATIVE PIN — a kept row writes no refusal
+    assert not any("Customer A" in f or "Customer B" in f for f in flags)
