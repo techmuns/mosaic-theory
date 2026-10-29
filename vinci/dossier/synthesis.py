@@ -1345,7 +1345,7 @@ def synthesize(
     transcript: str | None = None, sleeve: str = DEFAULT_SLEEVE, draws: int = 1,
 ) -> tuple[Synthesis | None, list[str], str]:
     """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates. The
-    ``transcript`` (a mechanically-bounded slice — NOT embedded in the dossier) is QUALITATIVE
+    ``transcript`` (every call on file, whole — NOT embedded in the dossier) is QUALITATIVE
     context only; no numbers are derived from it and points still bind to the mechanical facts.
 
     ``draws`` (default ONE, so every existing caller and artifact is unmoved) asks the model that

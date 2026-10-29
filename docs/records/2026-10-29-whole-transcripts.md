@@ -41,7 +41,8 @@ superseded-by:
   - The end-to-end pin reads the prompts the driver phase and the synthesis are SENT.
   - One existing pin labelled its slice `call` for a file named `c.rtf`. That is a missing call
     now, so it carries the file's name.
-  - Full offline suite: 7,948 passed.
+  - Full offline suite: 7,948 passed on the branch; after merging main at bb4ab6e5, 8,105 passed with the
+    stale-pin warning as an error.
 - **Before/after leans** (operator condition, paid). The same code ran on both sides: this branch
   merged onto #859's head, so the validator is the per-fact one. Only the slice differed (today's
   12,000-character cut vs whole calls). Each side ran the driver extraction over its slice,
