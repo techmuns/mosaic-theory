@@ -11,13 +11,16 @@ only over **resolved** verdicts.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import date, timedelta
 
 from vinci.eod.dividends import DividendSource, DividendsUnknownError, growth
 from vinci.eod.splits import SplitBasisError, SplitSource, SplitsUnknownError, entry_on_basis
+from vinci.monitor import BenchmarkAssignment
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
     ORIGIN_SCREEN,
+    LedgerEntry,
     Verdict,
     origin_of,
     sleeve_of,
@@ -42,17 +45,54 @@ class TotalReturnUnknownError(RuntimeError):
 
     Raised rather than scored on price return: the basis is total return (operator ruling
     2026-10-26), and a leg quietly measured without its dividends would sit in the spread beside
-    legs measured with them. Gated on ``resolved`` for the same reason the sealed-benchmark guard
-    below is: an interim row feeds no number."""
+    legs measured with them. Gated on ``resolved`` for the same reason the benchmark guards below
+    are: an interim row feeds no number."""
 
 
 class BenchmarkMismatchError(RuntimeError):
-    """A ledger row sealed a benchmark this scoring run does not apply.
+    """A RESOLVED row whose sealed benchmark and committed assignment disagree, with no operator
+    ruling saying which one it is measured against (`row_benchmark`).
 
-    Raised rather than silently scoring the row against the wrong series — the excess return would
-    be meaningless and the monitor, which honours the sealed value, would disagree about the same
-    row. See the guard in ``score_ledger`` for why honouring it per row is a caller change.
-    """
+    Raised rather than choosing: either choice would put an excess return in the spread off a
+    series nobody ruled for. Gated on ``resolved`` like every guard here."""
+
+
+class BenchmarkMissingError(RuntimeError):
+    """A RESOLVED row whose benchmark series has no bar on the entry or scoring session the
+    calendar holds — absent from the store, or stopped short. Raised rather than measured off a
+    stale close; `run-monthly` ingests every benchmark a row needs."""
+
+
+def row_benchmark(entry: LedgerEntry, assignment: BenchmarkAssignment | None,
+                  default: str) -> tuple[str, str | None]:
+    """The benchmark ``entry`` is scored against, and the disagreement that stops it, if any.
+
+    THE COMMITTED ASSIGNMENT GOVERNS (`monitor.BenchmarkAssignment`, keyed by ticker as the
+    monitor reads it), so scoring and the monitor measure one row against one series. A row with
+    no assignment is measured against the benchmark it SEALED, else ``default``. Where the sealed
+    benchmark and the assignment disagree, the assignment governs only once the operator has ruled
+    it (``ruled_on`` + ``ruling`` on the assignment — IT, 2026-10-29: "Use MDY") FOR THIS DECISION
+    (the assignment's ``entry_date`` is the row's); otherwise the second element names the
+    disagreement and the caller chooses neither. The sealed field is
+    read, never rewritten."""
+    sealed = entry.benchmark
+    if assignment is None:
+        return sealed or default, None
+    if sealed and sealed != assignment.benchmark:
+        # A RULING IS FOR THE DECISION IT WAS MADE ON: an assignment is keyed by ticker, so a
+        # later decision on the same name would otherwise inherit a ruling nobody made for it.
+        if assignment.ruled_on is None:
+            why = "no operator ruling says which one it is measured against"
+        elif assignment.entry_date != entry.entry_price_as_of:
+            why = (f"the operator's ruling of {assignment.ruled_on} was made on the decision "
+                   f"entered {assignment.entry_date}, not this one ({entry.entry_price_as_of})")
+        else:
+            return assignment.benchmark, None
+        return assignment.benchmark, (
+            f"sealed benchmark {sealed!r} but its committed assignment names "
+            f"{assignment.benchmark!r} ({assignment.band}, assigned {assignment.assigned_at}), and "
+            f"{why}")
+    return assignment.benchmark, None
 
 class SplitsUnreadError(RuntimeError):
     """A RESOLVED row whose name's splits reference could not be read, so its entry's split basis
@@ -93,6 +133,7 @@ def score_ledger(
     baskets: dict[str, Basket] | None = None,
     dividends: DividendSource,
     splits: SplitSource,
+    assignments: Mapping[str, BenchmarkAssignment] | None = None,
 ) -> tuple[list[VerdictScore], ScoreReport]:
     """Score every ledger verdict as of ``as_of``; return per-verdict scores and the aggregate.
 
@@ -116,6 +157,15 @@ def score_ledger(
     reports "not supplied" rather than silently reading zero, and both production paths are pinned
     to supply it (``tests/test_quality_baseline.py``).
 
+    EACH ROW AGAINST ITS OWN BENCHMARK (2026-10-29): ``assignments`` (the committed
+    `monitor.BenchmarkAssignment` by ticker, supplied by the caller as ``baskets`` is) choose each
+    row's series through `row_benchmark`; ``benchmark_internal_id`` is the CALENDAR every row
+    resolves on, and the benchmark of a row with neither an assignment nor a sealed value. A row's
+    series must hold the calendar's entry and scoring sessions: a resolved row whose series does not
+    raises `BenchmarkMissingError`, and one whose sealed benchmark and assignment disagree unruled
+    raises `BenchmarkMismatchError`; an unresolved one is pending, named in ``row_notes``. Both
+    production paths are pinned to supply ``assignments`` (``tests/test_per_row_benchmark.py``).
+
     A ROW IS SCORED ON ITS HORIZON SESSION'S CLOSE (2026-10-27). It resolves only once the store
     holds a benchmark bar dated on or after its horizon (and on or before ``as_of``); until then it
     is pending and ``ScoreReport.row_notes`` says so. Its exit is the name's last bar on or before
@@ -123,7 +173,20 @@ def score_ledger(
     raises `StaleExitError` (``tests/test_scoring_horizon_close.py``).
     """
     bench_bars = store.get_price_history(benchmark_internal_id)
-    bench_daily = dict(_daily_returns(bench_bars, date.min, as_of))
+    default_benchmark = benchmark_internal_id.removeprefix("IDX-")
+    # EACH BENCHMARK'S SERIES AND DAILY RETURNS, read once however many rows share it
+    series: dict[str, list[PriceBar]] = {default_benchmark: bench_bars}
+    dailies: dict[str, dict[date, float]] = {}
+
+    def bench_series(symbol: str) -> list[PriceBar]:
+        if symbol not in series:
+            series[symbol] = store.get_price_history(f"IDX-{symbol}")
+        return series[symbol]
+
+    def bench_daily(symbol: str) -> dict[date, float]:
+        if symbol not in dailies:
+            dailies[symbol] = dict(_daily_returns(bench_series(symbol), date.min, as_of))
+        return dailies[symbol]
     # THE NEWEST SESSION THE BOOK BEING SCORED HAS SEEN. A row whose horizon has passed resolves
     # only once this reaches it: `ingest_prices` reads the empty grouped-daily of a session that has
     # not closed yet as a holiday, so a run dated 2026-12-14 in India, before the US close, held
@@ -202,28 +265,23 @@ def score_ledger(
                 f"{who} is PENDING, not resolved: its horizon "
                 f"{horizon_date} has passed, but {seen} — awaiting the horizon session's close.")
 
-        # THE SEALED BENCHMARK IS NOT HONOURED HERE, AND SILENCE WOULD HIDE IT (review of #512).
-        # This harness applies ONE series to every row (`benchmark_internal_id`, IWM by default),
-        # while each row SEALS the benchmark its cap band chose at log time. Until GOOGL — the
-        # first large-cap position — every sealed value was IWM, so one series was right for all
-        # of them and the divergence could not appear. Scoring a $4T name against small-caps is an
-        # excess return measured off the wrong series, and the MONITOR path does honour the sealed
-        # value, so the two surfaces would disagree about the same row without saying so.
-        #
-        # GATED ON `resolved`, not on presence: an unresolved row contributes no bench_return to
-        # anything, so refusing while GOOGL merely SITS in the ledger would block the fund's own
-        # metric over a number nobody reads. This fires the moment the number would count.
-        #
-        # Honouring it per row is a CALLER change, not a local one — this package resolves neither
-        # config nor tickers (see the docstring above), so the series must be supplied the way
-        # `baskets` already is.
-        _applied = benchmark_internal_id.removeprefix("IDX-")
-        if resolved and entry.benchmark and entry.benchmark != _applied:
-            raise BenchmarkMismatchError(
-                f"{entry.entry_id} sealed benchmark {entry.benchmark!r} but this run applies "
-                f"{_applied!r}, and the row has now RESOLVED — "
-                f"its excess return would be measured off the wrong series while the monitor uses "
-                f"the sealed one. Supply the per-row benchmark series (as `baskets` is supplied).")
+        # EACH ROW AGAINST ITS OWN BENCHMARK (`row_benchmark`). Until 2026-10-29 this harness
+        # applied ONE series to every row and refused a resolved row that sealed another (#512):
+        # GOOGL, sealed SPY, would have stopped scoring at 2027-03-01, and IT, assigned MDY, would
+        # have been scored against IWM while the monitor marked it against MDY. GATED ON
+        # `resolved`, not on presence: an unresolved row contributes no bench_return to anything.
+        bench_sym, conflict = row_benchmark(entry, (assignments or {}).get(entry.ticker),
+                                            default_benchmark)
+        if conflict is not None:
+            if resolved:
+                raise BenchmarkMismatchError(
+                    f"{entry.entry_id} has RESOLVED: {conflict}. The operator rules it on the "
+                    f"assignment (`ruled_on`, `ruling`); neither series is chosen here.")
+            notes.append(f"{who}: {conflict} — PENDING; at its horizon {horizon_date} scoring "
+                         f"stops on it until the operator rules.")
+            if origin_of(entry) == ORIGIN_SCREEN:
+                pending += 1
+            continue
         scoring_date = min(horizon_date, as_of)
 
         name_bars = store.get_price_history(entry.internal_id)
@@ -231,8 +289,31 @@ def score_ledger(
         # THE SESSION THE SEALED ENTRY DATE RESOLVES TO — the dividend window starts there, so an
         # entry stamped on a non-session day is read from the close it actually is
         name_in = bar_on_or_before(name_bars, entry_date)
-        bench_in = bar_on_or_before(bench_bars, entry_date)
-        bench_out = bar_on_or_before(bench_bars, scoring_date)
+        row_bars = bench_series(bench_sym)
+        bench_in = bar_on_or_before(row_bars, entry_date)
+        bench_out = bar_on_or_before(row_bars, scoring_date)
+        # A ROW'S OWN SERIES MUST HOLD THE CALENDAR'S SESSIONS at both ends: a benchmark the store
+        # carries only in part (the primary's SPY ended 2026-07-22, its MDY 2026-08-05) would
+        # otherwise lend its last close as the exit, or an older close as the entry, silently.
+        cal_in = bar_on_or_before(bench_bars, entry_date)
+        cal_out = bar_on_or_before(bench_bars, scoring_date)
+        if (bench_sym != default_benchmark and cal_in is not None and cal_out is not None
+                and (bench_in is None or bench_out is None
+                     or bench_in.bar_date != cal_in.bar_date
+                     or bench_out.bar_date != cal_out.bar_date)):
+            held = (f"{row_bars[0].bar_date} → {row_bars[-1].bar_date}" if row_bars
+                    else "no bars")
+            gap = (f"{who}: its benchmark {bench_sym} has no bar on the session "
+                   f"{cal_in.bar_date} or {cal_out.bar_date} the calendar ({default_benchmark}) "
+                   f"holds — the store holds {bench_sym} {held}; `run-monthly` ingests every "
+                   f"row's benchmark")
+            if resolved:
+                raise BenchmarkMissingError(f"{gap}. The row has RESOLVED and is not measured "
+                                            f"off another session's close.")
+            notes.append(f"{gap} — PENDING.")
+            if origin_of(entry) == ORIGIN_SCREEN:
+                pending += 1
+            continue
         # A bar dated BEFORE the entry is no forward price: the name's bars stop short of it
         if (exit_bar is None or bench_in is None or bench_out is None
                 or exit_bar.bar_date < entry_date):
@@ -306,7 +387,7 @@ def score_ledger(
         try:
             name_div = dividends(name_sym, name_in.bar_date if name_in is not None else entry_date,
                                  exit_bar.bar_date)
-            bench_div = dividends(_applied, bench_in.bar_date, bench_out.bar_date)
+            bench_div = dividends(bench_sym, bench_in.bar_date, bench_out.bar_date)
         except DividendsUnknownError as exc:
             if resolved:
                 raise TotalReturnUnknownError(
@@ -359,6 +440,7 @@ def score_ledger(
             # Is the POSITION still held? Distinct from `resolved`, which is about the CALL's clock.
             closed=entry.entry_id in closed_ids,
             note=" ".join(notes[first_note:]) or None,
+            benchmark=bench_sym,
         )
         scores.append(score)
         # pool daily returns of resolved BUYs vs the benchmark for the beta/alpha regression.
@@ -370,10 +452,11 @@ def score_ledger(
         # ON THE SAME BASIS AS THE SPREAD: a day that is an ex-date carries its dividend in BOTH
         # series, so the regression printed beside a total-return spread is not a price-return one.
         if resolved and entry.verdict is Verdict.BUY and origin_of(entry) == ORIGIN_SCREEN:
+            row_daily = bench_daily(bench_sym)
             for d, r in _daily_returns(name_bars, entry_date, scoring_date):
-                if d in bench_daily:
+                if d in row_daily:
                     book_rets.append((1.0 + r) * (1.0 + name_ex.get(d, 0.0)) - 1.0)
-                    bench_rets.append((1.0 + bench_daily[d]) * (1.0 + bench_ex.get(d, 0.0)) - 1.0)
+                    bench_rets.append((1.0 + row_daily[d]) * (1.0 + bench_ex.get(d, 0.0)) - 1.0)
 
     resolved_scores = [s for s in scores if s.resolved]
     # PENDING IS A PRIMARY-REPORT FIGURE and is scoped the same way, for the same reason: it is
