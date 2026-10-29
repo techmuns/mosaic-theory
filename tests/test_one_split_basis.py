@@ -584,7 +584,7 @@ def test_a_missing_ex_date_row_is_unknown_not_zero() -> None:
     """On main this window returned [] — the 2-day hole is shorter than a holiday weekend, so the
     gap rule passed it, and the dividend paid on 02-11 was silently zero."""
     rows = [_tiingo_row(d) for d in weekday_sessions(_A, _B) if d != _EX]
-    with pytest.raises(DividendsUnknownError, match="no row for 1 market session"):
+    with pytest.raises(DividendsUnknownError, match="no row for 1 session"):
         ex_date_yields(rows, _A, _B, sessions=weekday_sessions(_A, _B), symbol="PAY")
 
 
@@ -597,11 +597,11 @@ def test_a_market_holiday_is_not_a_missing_session() -> None:
     assert ex_date_yields(rows, _A, _B, sessions=sessions) == [(_EX, pytest.approx(0.01))]
 
 
-def test_the_tiingo_source_reads_the_calendar_once_for_its_span() -> None:
+def test_the_tiingo_source_reads_each_symbols_calendar_once_for_its_span() -> None:
     asked: list[tuple[date, date]] = []
 
-    def calendar(a: date, b: date) -> list[date]:
-        asked.append((a, b))
+    def calendar(symbol: str, a: date, b: date) -> list[date]:
+        asked.append((symbol, a, b))
         return weekday_sessions(a, b)
 
     class _Client:
@@ -612,7 +612,7 @@ def test_the_tiingo_source_reads_the_calendar_once_for_its_span() -> None:
     assert src("PAY", _A, date(2026, 2, 10)) == []          # a window before the hole reads
     with pytest.raises(DividendsUnknownError, match="first 2026-02-11"):
         src("PAY", _A, _B)
-    assert asked == [(_A, _B)]
+    assert asked == [("PAY", _A, _B)]
 
 
 def test_an_empty_or_unreadable_calendar_is_unknown_never_a_pass() -> None:
@@ -623,7 +623,7 @@ def test_an_empty_or_unreadable_calendar_is_unknown_never_a_pass() -> None:
     with pytest.raises(DividendsUnknownError, match="holds no session"):
         ex_date_yields(rows, _A, _B, sessions=[])
 
-    def down(_a: date, _b: date) -> list[date]:
+    def down(_s: str, _a: date, _b: date) -> list[date]:
         raise HttpError("Exhausted retries")
 
     class _Client:
@@ -633,3 +633,106 @@ def test_an_empty_or_unreadable_calendar_is_unknown_never_a_pass() -> None:
     src = tiingo_dividends(_Client(), start=_A, end=_B, sessions=down)  # type: ignore[arg-type]
     with pytest.raises(DividendsUnknownError, match="calendar could not be read"):
         src("PAY", _A, _B)
+
+
+# --- review round 1 (coordinator /code-review high, 2026-10-29) --------------------------------
+
+
+class _TiingoFromStore:
+    """Tiingo's rows as served for a name: one per session the name TRADED — none on a day it
+    was halted — read off the store's own bars, with an optional hole where Tiingo lost a row."""
+
+    def __init__(self, store: Store, lost: frozenset[date] = frozenset()) -> None:
+        self.store, self.lost = store, lost
+
+    def daily_rows(self, symbol: str, *, start: date, end: date) -> list[dict[str, Any]]:
+        iid = {"SPLT": X.internal_id, "IWM": IWM.internal_id}[symbol.upper()]
+        return [_tiingo_row(d) for d in self.store.bar_dates(iid)
+                if start <= d <= end and d not in self.lost]
+
+
+_HALT = date(2026, 2, 11)                # a Wednesday SPLT did not trade; IWM did
+
+
+def _halted_store(path: Path) -> Store:
+    store = Store(path)
+    for s in (X, IWM):           # the rows a scoring store carries (`rebuild_from_snapshots`)
+        store.upsert_security(s)
+    ingest_prices(_Feed(100.0, 1000.0), store, [X, IWM], start=ENTRY, end=AS_OF)
+    store._conn.execute("DELETE FROM prices WHERE internal_id = ? AND bar_date = ?",
+                        (X.internal_id, _HALT.isoformat()))
+    store._conn.commit()
+    store.append_ledger(LedgerEntry(
+        entry_id="V-SPLT", candidate_id="SPLT-c", internal_id=X.internal_id, ticker="SPLT",
+        verdict=Verdict.BUY, twin_call="t", entry_price=100.0, entry_price_as_of=ENTRY,
+        thesis="t", kill_criteria="k", horizon_days=180, confidence=Confidence.MEDIUM,
+        decided_at=datetime(2026, 1, 5)))
+    return store
+
+
+def test_a_halt_day_owes_no_tiingo_row(tmp_path: Path) -> None:
+    """Finding 1. A session the market traded and the name did not (a full-day halt) has no
+    Tiingo row, and none is owed: coverage is checked against the NAME's own sessions. On the
+    head it was checked against the store's market calendar, and the resolved row raised
+    `TotalReturnUnknownError` — scoring stopped over a day no trade happened."""
+    from vinci.eod.client import store_calendar
+    with _halted_store(tmp_path / "halt.db") as store:
+        src = tiingo_dividends(_TiingoFromStore(store), start=ENTRY, end=AS_OF,  # type: ignore[arg-type]
+                               sessions=store_calendar(store))
+        (s,), _r = score_ledger(store, as_of=AS_OF, dividends=src, splits=no_splits)
+    assert s.resolved and s.name_return == 0.0
+
+
+def test_a_lost_row_on_a_day_the_name_traded_still_stops_scoring(tmp_path: Path) -> None:
+    """THE NEGATIVE PIN for finding 1: the name has a bar on 2026-03-04 and Tiingo has no row."""
+    from vinci.eod.client import store_calendar
+    from vinci.scoring.harness import TotalReturnUnknownError
+    with _halted_store(tmp_path / "lost.db") as store:
+        src = tiingo_dividends(  # type: ignore[arg-type]
+            _TiingoFromStore(store, lost=frozenset({date(2026, 3, 4)})), start=ENTRY, end=AS_OF,
+            sessions=store_calendar(store))
+        with pytest.raises(TotalReturnUnknownError, match="first 2026-03-04"):
+            score_ledger(store, as_of=AS_OF, dividends=src, splits=no_splits)
+
+
+def test_a_price_only_move_is_named_in_the_ingest_summary(tmp_path: Path) -> None:
+    """Finding 2. A bar whose four prices moved by one factor while its volume did not move
+    inversely restates nothing — and is now NAMED (`price_only`), never dropped in silence: the
+    store then holds two bases for that name until someone reads why."""
+    with Store(tmp_path / "po.db") as store:
+        ingest_prices(_Feed(100.0, 0.0), store, [X, IWM], start=ENTRY, end=FIRST_PULL_END)
+        summary = ingest_prices(_Feed(50.0, 0.0), store, [X, IWM], start=ENTRY, end=AS_OF)
+    assert summary["restated"] == {}
+    assert summary["price_only"] == {"SPLT": [pytest.approx(0.5)]}
+
+
+def test_a_confirmed_split_is_not_named_price_only(tmp_path: Path) -> None:
+    with Store(tmp_path / "ok.db") as store:
+        ingest_prices(_Feed(100.0, 1000.0), store, [X, IWM], start=ENTRY, end=FIRST_PULL_END)
+        summary = ingest_prices(_Feed(50.0, 2000.0), store, [X, IWM], start=ENTRY, end=AS_OF)
+    assert summary["restated"] == {"SPLT": [pytest.approx(0.5)]} and summary["price_only"] == {}
+
+
+def test_close_position_asks_the_reference_by_the_stores_symbol(
+        tree: Config, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    """Finding 4. Scoring asks the splits reference by the store's `eod_symbol`; close-position
+    asked by the LEDGER ticker, so a line renamed since its decision (#833's aliases) was checked
+    under a ticker the reference no longer files its splits under. One resolution everywhere."""
+    with Store(tree.db_path) as store:
+        sec = store.get_security("SEC-0001702744-SMPL")
+        assert sec is not None
+        store.upsert_security(sec.model_copy(update={"eod_symbol": "SMPLX"}))
+    renamed = lambda s: [_SMPL_2_FOR_1] if s == "SMPLX" else []  # noqa: E731
+    assert _close(tree, monkeypatch, renamed, 5.665) == 0
+    assert "= +0.00% realized" in capsys.readouterr().out
+
+
+def test_pair_closes_asks_the_reference_by_the_symbol_the_caller_resolves(tree: Config) -> None:
+    rows = _rows(tree)
+    seen: list[str] = []
+
+    def source(s: str) -> list[Split]:
+        seen.append(s)
+        return []
+    pair_closes(rows, splits=source, symbols={"SEC-0001702744-SMPL": "SMPLX"})
+    assert sorted(set(seen)) == ["IT", "SMPLX"]

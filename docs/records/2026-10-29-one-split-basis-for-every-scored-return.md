@@ -35,11 +35,17 @@ close across a 2-for-1 printed "−50.00% realized". No ledger window holds a sp
   that entry; the day's notes name the sealed price and the split); `pair_closes(..., splits=)`
   for the realized view; an unreadable reference stops the run, as unknown dividends do.
 - **`close-position`** reads the splits BEFORE it appends: unreadable → refused, nothing written.
+  All three paths ask the reference by the store's `eod_symbol` for the row's `internal_id`, so a
+  line renamed since its decision is asked under its current ticker (review round 1).
 - **F-D5** (`restatement_factor`): a split now also needs volume to move inversely by the same
-  factor. A bar with no volume on either side restates nothing.
-- **F-D3** (`ex_date_yields(..., sessions=)`): every market session in a window needs a Tiingo
-  row — the store's sessions (`eod.client.store_calendar`) for scoring, the small-cap benchmark's
-  Polygon bars for the monitor. The four-day gap rule stays as a second check.
+  factor. A bar with no volume on either side restates nothing; a bar that moved like a split in
+  price alone is NAMED (`price_only` in the ingest summary, printed by `restate-prices`), never
+  dropped in silence (review round 1).
+- **F-D3** (`ex_date_yields(..., sessions=)`): every session in a window on which the NAME traded
+  needs a Tiingo row — its bars in the store for scoring (`eod.client.store_calendar`), its Polygon
+  bars for the monitor, so a full-day halt owes no row (review round 1). An empty or unreadable
+  calendar is unknown dividends, never a pass (round 0). The four-day gap rule stays as a second
+  check.
 
 **WHY.** The ledger is append-only and its sealed price is a fact; the series it is divided into
 is restated by design. The fix changes how the sealed field is READ, never what is stored — the
@@ -60,6 +66,13 @@ restatements; F-D3 because a missing ex-date row read as no dividend.
   volume restated); F-D3 (the missing ex-date row DID NOT RAISE). Negative pins: no split → the sealed
   price exactly (100.20 against a store close of 100.00, inside the tolerance, scores 120/100.20);
   the committed closes' realized returns unchanged; a market holiday owes no row.
+- *Review round 1* (the coordinator's `/code-review high`). Each FIX's pin red on the head
+  `b67a2467` first: a halt day raised `TotalReturnUnknownError` (the market calendar owed a row on
+  2026-02-11); `KeyError: 'price_only'` twice; close-position on a line whose store symbol differs
+  from its ledger ticker printed "−50.00% realized"; `pair_closes` took no `symbols`. The ledger
+  names' real windows hold no halt — each name's own sessions equal the market's (VRRM 91,
+  IT 70, SMPL 70 and 59, GOOGL 51, IWM 91 in (entry, 2026-10-26]) — so the halt exemption is shown
+  only on the synthetic pin; the real scoring and monitor runs stay identical to main's.
 - *Corpus before synthetic — F-D5.* The 2026-08-05 whole market, held bars from a copy of the
   primary store before #846's `restate-prices` against Polygon's grouped-daily for that day as the
   run fetched it: 2,341 held bars, 2,331 identical, 10 changed. The price-only rule restates 10 and
@@ -104,6 +117,10 @@ restatements; F-D3 because a missing ex-date row read as no dividend.
 2. **The web's realized return divides across a split** (`frontend/lib/snapshots.js`,
    `exit_price / entry_price − 1`), outside this batch's files. No committed close spans a split.
 3. **Not examined:** scenario records' per-share figures compared with a later close.
+4. **`pair_closes` now needs a splits source** (review round 1, deferred). It was a pure view of
+   the ledger; the realized return now depends on Polygon's splits reference, which its caller
+   passes in. That coupling is why the web's stdlib twin (2) cannot follow without a source of its
+   own — the realized row a monitor day carries is the one surface that has read it.
 
 **WHICH STORE SCORES VRRM (brief item 5).** The primary checkout's `data/vinci.db`, refreshed by
 `run-monthly` itself, from a clean worktree of `main` wired to the primary's store and cache

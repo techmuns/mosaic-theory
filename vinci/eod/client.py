@@ -133,18 +133,27 @@ def market_sessions(per_day: dict[str, int]) -> list[int]:
                   if n >= _SESSION_PRESENT_FRACTION * top)
 
 
-#: (start, end) → the market's sessions in [start, end], oldest first: the calendar a per-session
-#: check reads (dividend coverage, `eod.dividends.ex_date_yields`).
-SessionCalendar = Callable[[date, date], list[date]]
+#: (symbol, start, end) → the sessions in [start, end] on which ``symbol`` TRADED, per the price
+#: source, oldest first: the calendar a per-session check reads (dividend coverage,
+#: `eod.dividends.ex_date_yields`). The name's own sessions, never the market's: a full-day halt is
+#: a market session with no trade in the name, and no Tiingo row is owed for it (review of #855).
+SessionCalendar = Callable[[str, date, date], list[date]]
 
 
 def store_calendar(store: Any) -> SessionCalendar:
-    """A store's market sessions (`market_sessions` over every bar it holds) as a
-    `SessionCalendar`, read once. A store with no bars has no sessions."""
-    per_day = store.bars_per_session()
-    days = [date.fromordinal(o) for o in market_sessions(per_day)] if per_day else []
+    """A store's `SessionCalendar`: the days it holds a bar for the symbol, under any id filed by
+    that symbol (as ``eod_symbol`` or ``ticker``), each symbol read once. A symbol the store does
+    not carry has no sessions."""
+    ids: dict[str, set[str]] = {}
+    for s in store.iter_securities():
+        for sym in (s.eod_symbol, s.ticker):
+            ids.setdefault(sym, set()).add(s.internal_id)
+    seen: dict[str, list[date]] = {}
 
-    def calendar(start: date, end: date) -> list[date]:
+    def calendar(symbol: str, start: date, end: date) -> list[date]:
+        if symbol not in seen:
+            seen[symbol] = sorted({d for iid in ids.get(symbol, ()) for d in store.bar_dates(iid)})
+        days = seen[symbol]
         return days[bisect_left(days, start):bisect_right(days, end)]
     return calendar
 
@@ -198,6 +207,20 @@ def last_completed_session(client: EodClient, *, today: date,
     )
 
 
+def price_factor(held: PriceBar, fresh: RawBar) -> float | None:
+    """``fresh ÷ held`` when open, high, low and close all moved by one factor away from 1 — the
+    PRICE half of a split, read alone. A correction can pass it; `restatement_factor` adds the
+    volume half."""
+    pairs = ((fresh.open, held.open), (fresh.high, held.high), (fresh.low, held.low),
+             (fresh.close, held.close))
+    if any(h <= 0 or f <= 0 for f, h in pairs):
+        return None
+    ratios = [f / h for f, h in pairs]
+    if abs(ratios[3] - 1.0) <= RESTATE_TOL or max(ratios) / min(ratios) - 1.0 > RESTATE_TOL:
+        return None
+    return ratios[3]
+
+
 def restatement_factor(held: PriceBar, fresh: RawBar) -> float | None:
     """``fresh ÷ held`` when the source has put this session's bar on a new split basis — open,
     high, low and close all scaled by one factor that is away from 1, AND volume scaled by its
@@ -211,24 +234,25 @@ def restatement_factor(held: PriceBar, fresh: RawBar) -> float | None:
     correction leaves volume where it was. A bar with no volume on either side cannot show that,
     and restates nothing: the name's older bars keep their basis, the price scorecard's split-step
     check flags the step, and scoring refuses a ledger name whose series a recorded split did not
-    restate (`eod.splits.entry_on_basis`)."""
-    pairs = ((fresh.open, held.open), (fresh.high, held.high), (fresh.low, held.low),
-             (fresh.close, held.close))
-    if any(h <= 0 or f <= 0 for f, h in pairs):
+    restate (`eod.splits.entry_on_basis`). Such a bar is NAMED, never dropped in silence:
+    `restate_held` reports it as ``price_only`` (review of #855).
+
+    THE TOLERANCE IS THE PRICE'S, NOT AN ABSOLUTE SHARE COUNT. Polygon serves adjusted volume
+    unrounded (2026-08-05: AIXI 43,989.6, IMMP 7,715.36, LHSW 6,373.69 after their splits), so no
+    rounding allowance is needed; and an allowance of a share would pass a 1.04 correction on any
+    bar of 25 shares or fewer."""
+    f = price_factor(held, fresh)
+    if f is None or not (held.volume > 0 and fresh.volume > 0):
         return None
-    ratios = [f / h for f, h in pairs]
-    if abs(ratios[3] - 1.0) <= RESTATE_TOL or max(ratios) / min(ratios) - 1.0 > RESTATE_TOL:
+    if abs(held.volume / fresh.volume / f - 1.0) > RESTATE_TOL:
         return None
-    if not (held.volume > 0 and fresh.volume > 0):
-        return None
-    if abs(held.volume / fresh.volume / ratios[3] - 1.0) > RESTATE_TOL:
-        return None
-    return ratios[3]
+    return f
 
 
 def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
-                 boundaries: Sequence[date],
-                 sym_to_id: Mapping[str, str]) -> dict[str, list[tuple[date, float]]]:
+                 boundaries: Sequence[date], sym_to_id: Mapping[str, str], *,
+                 price_only: dict[str, list[tuple[date, float]]] | None = None,
+                 ) -> dict[str, list[tuple[date, float]]]:
     """Put held bars back on the source's CURRENT split basis, one pull at a time.
 
     Each boundary is the LAST session of one pull of the store. That session is fetched again and
@@ -240,7 +264,9 @@ def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
 
     Why a factor, not a re-pull: the plan serves two years of bars, so an older held bar cannot be
     fetched again. The factor is the source's own, read off a bar it serves today. Returns
-    ``{internal_id: [(boundary, factor), ...]}`` for each name restated."""
+    ``{internal_id: [(boundary, factor), ...]}`` for each name restated; a name whose prices moved
+    by one factor while its volume did not confirm it (`price_factor` without
+    `restatement_factor`) is restated nothing and, when ``price_only`` is given, listed there."""
     bounds = sorted(set(boundaries))
     id_to_sym = {iid: sym for sym, iid in sym_to_id.items()}
     found: dict[str, dict[date, float]] = {}
@@ -248,8 +274,12 @@ def restate_held(store: Any, fetch: Callable[[date], dict[str, RawBar]],
         fresh = fetch(b)
         for iid, held in store.bars_on(b, list(id_to_sym)).items():
             bar = fresh.get(id_to_sym[iid])
-            if bar is not None and (r := restatement_factor(held, bar)) is not None:
+            if bar is None:
+                continue
+            if (r := restatement_factor(held, bar)) is not None:
                 found.setdefault(iid, {})[b] = r
+            elif price_only is not None and (p := price_factor(held, bar)) is not None:
+                price_only.setdefault(iid, []).append((b, p))
     for iid, by_bound in found.items():
         prev: date | None = None
         for b in bounds:
@@ -375,13 +405,15 @@ def ingest_prices(
     anchor = (max((d for d in days if d < restate_from and stored.get(d, 0) >= present_floor),
                   default=None) if callable(getattr(store, "bars_on", None)) else None)
     restated: dict[str, list[tuple[date, float]]] = {}
+    price_only: dict[str, list[tuple[date, float]]] = {}
     anchor_bars: dict[str, RawBar] = {}
     on_anchor: set[str] = set()
     if anchor is not None:
         days_fetched += 1
         anchor_bars = client.grouped_daily(anchor)
         on_anchor = set(store.bars_on(anchor, all_ids))
-        restated = restate_held(store, lambda _d: anchor_bars, [anchor], on(anchor))
+        restated = restate_held(store, lambda _d: anchor_bars, [anchor], on(anchor),
+                                price_only=price_only)
     written: set[str] = set()
     for day in days:
         days_seen += 1
@@ -436,7 +468,8 @@ def ingest_prices(
                 late.setdefault((last, slot), {})[id_to_sym[iid]] = iid
         for (last, _slot), group in sorted(late.items()):
             days_fetched += 1
-            restated.update(restate_held(store, client.grouped_daily, [last], group))
+            restated.update(restate_held(store, client.grouped_daily, [last], group,
+                                         price_only=price_only))
     return {
         "days_fetched": days_fetched,
         "days_skipped": days_skipped,
@@ -446,6 +479,9 @@ def ingest_prices(
         # SAID IN THE SUMMARY, NEVER SILENT: which names had held bars restated, and by what
         "anchor": anchor.isoformat() if anchor is not None else None,
         "restated": {id_to_sym[iid]: [f for _b, f in v] for iid, v in sorted(restated.items())},
+        # and which moved like a split in price alone, so restated nothing (`restatement_factor`)
+        "price_only": {id_to_sym[iid]: [f for _b, f in v]
+                       for iid, v in sorted(price_only.items())},
     }
 
 

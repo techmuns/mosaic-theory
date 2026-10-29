@@ -429,6 +429,7 @@ def close_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def pair_closes(
     raw: list[dict[str, Any]], *, splits: SplitSource, as_of: date | None = None,
+    symbols: Mapping[str, str] | None = None,
 ) -> list[dict[str, Any]]:
     """Pair each close to the decision row it closes, and DERIVE the realized return.
 
@@ -441,7 +442,9 @@ def pair_closes(
     − 1`` a mixed-basis number (a flat 2-for-1 read −50%). The entry is put on the exit's basis by
     the splits ``splits`` records in (entry, exit] (`eod.splits.close_on_basis`): ``entry_price``
     is then that entry, and ``split_note`` names the sealed price and the splits (None when there
-    were none). A symbol whose splits cannot be read raises `SplitsUnknownError`.
+    were none). A symbol whose splits cannot be read raises `SplitsUnknownError`. The reference is
+    asked by ``symbols[internal_id]`` — the store's symbol, the one scoring asks by, so a line
+    renamed since its decision is asked under its current ticker — else by the ledger ticker.
 
     ``as_of`` MAKES THE VIEW POINT-IN-TIME (operator review P1 on #418). Without it every close in
     the ledger counted regardless of when it happened, so `vinci monitor --ref <past date>` marked
@@ -461,7 +464,8 @@ def pair_closes(
         exit_as_of = date.fromisoformat(str(c.get("exit_price_as_of")))
         entry, split_note = close_on_basis(
             who=f"{d['ticker']} close {c.get('entry_id')}", sealed=sealed,
-            entry_as_of=entry_as_of, exit_as_of=exit_as_of, splits=splits(str(d["ticker"])))
+            entry_as_of=entry_as_of, exit_as_of=exit_as_of,
+            splits=splits((symbols or {}).get(str(d.get("internal_id")), str(d["ticker"]))))
         out.append({"ticker": d["ticker"], "entry_id": d["entry_id"],
                     "close_id": c.get("entry_id"), "verdict": d["verdict"],
                     "entry_price": entry, "entry_price_as_of": d.get("entry_price_as_of"),

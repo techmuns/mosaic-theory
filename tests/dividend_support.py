@@ -25,6 +25,11 @@ def no_splits(symbol: str) -> list[Split]:
 
 
 def weekday_sessions(start: date, end: date) -> list[date]:
-    """A market calendar of every weekday — a synthetic store's sessions (audit item F-D3)."""
+    """Every weekday in [start, end] — a synthetic name's sessions (audit item F-D3)."""
     return [start + timedelta(days=i) for i in range((end - start).days + 1)
             if (start + timedelta(days=i)).weekday() < 5]
+
+
+def weekday_calendar(symbol: str, start: date, end: date) -> list[date]:
+    """A `SessionCalendar` in which every synthetic symbol traded every weekday."""
+    return weekday_sessions(start, end)

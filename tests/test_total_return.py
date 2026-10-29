@@ -18,7 +18,7 @@ from typing import Any
 
 import pytest
 
-from tests.dividend_support import no_dividends, no_splits, weekday_sessions
+from tests.dividend_support import no_dividends, no_splits, weekday_calendar
 from vinci.eod import dividends as divs
 from vinci.eod.dividends import DividendsUnknownError, ex_date_yields, growth
 from vinci.netcache import HttpError
@@ -109,7 +109,7 @@ def test_the_tiingo_source_reads_each_symbol_once_and_fails_loud() -> None:
     rows = [_row(d, 50.0, 0.5 if d == EX else 0.0) for d in DAYS]
     client = _Client({"PAY": rows, "BRK-B": rows})
     src = divs.tiingo_dividends(client, start=A, end=B,  # type: ignore[arg-type]
-                                sessions=weekday_sessions)
+                                sessions=weekday_calendar)
     assert src("PAY", A, B) == [(EX, pytest.approx(0.01))]
     assert src("PAY", EX, B) == []
     assert src("BRK.B", A, B)                          # a share class is asked for hyphenated
@@ -122,7 +122,7 @@ def test_the_tiingo_source_reads_each_symbol_once_and_fails_loud() -> None:
 
 def test_without_a_key_every_window_fails_loud(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("TIINGO_API_KEY", raising=False)
-    src = divs.default_dividends(start=A, end=B, sessions=weekday_sessions)
+    src = divs.default_dividends(start=A, end=B, sessions=weekday_calendar)
     with pytest.raises(DividendsUnknownError, match="no TIINGO_API_KEY"):
         src("PAY", A, B)
 

@@ -240,12 +240,18 @@ def _cmd_restate_prices(args: argparse.Namespace) -> int:
         bounds = sorted({*bounds, latest})
         print(f"restating against Polygon's current basis at {', '.join(map(str, bounds))} "
               f"({len(bounds)} grouped-daily call(s))…")
-        found = restate_held(store, client.grouped_daily, bounds, sym_to_id)
+        price_only: dict[str, list[tuple[date, float]]] = {}
+        found = restate_held(store, client.grouped_daily, bounds, sym_to_id,
+                             price_only=price_only)
     id_to_sym = {iid: sym for sym, iid in sym_to_id.items()}
     for iid, factors in sorted(found.items(), key=lambda kv: id_to_sym.get(kv[0], kv[0])):
         print(f"  {id_to_sym.get(iid, iid):<8} " + " · ".join(
             f"through {b}: ×{f:.6g}" for b, f in factors))
-    print(f"done: {len(found)} name(s) restated; every other held bar at those sessions matched")
+    for iid, factors in sorted(price_only.items(), key=lambda kv: id_to_sym.get(kv[0], kv[0])):
+        print(f"  {id_to_sym.get(iid, iid):<8} PRICE ONLY, not restated (volume did not move "
+              f"inversely): " + " · ".join(f"through {b}: ×{f:.6g}" for b, f in factors))
+    print(f"done: {len(found)} name(s) restated, {len(price_only)} moved in price alone; every "
+          f"other held bar at those sessions matched")
     return 0
 
 
@@ -1604,7 +1610,11 @@ def _cmd_close_position(args: argparse.Namespace) -> int:
     splits = default_splits(cfg)
     try:
         with Store(cfg.db_path) as store:
-            read = {e.ticker: splits(e.ticker) for e in store.iter_ledger()
+            # asked by the store's symbol, as scoring asks — a line renamed since its decision
+            # files its splits under its current ticker
+            read = {e.internal_id: splits(sec.eod_symbol if (sec := store.get_security(
+                        e.internal_id)) is not None else e.ticker)
+                    for e in store.iter_ledger()
                     if e.candidate_id == args.candidate_id and e.event is None}
             close = close_position(
                 store, candidate_id=args.candidate_id, exit_price=args.exit_price,
@@ -1621,7 +1631,7 @@ def _cmd_close_position(args: argparse.Namespace) -> int:
     entry, split_note = close_on_basis(
         who=f"{close.ticker} close {close.entry_id}", sealed=close.entry_price,
         entry_as_of=close.entry_price_as_of, exit_as_of=close.exit_price_as_of,
-        splits=read[close.ticker])
+        splits=read[close.internal_id])
     realized = close.exit_price / entry - 1.0
     print(
         f"closed {close.ticker} [{close.verdict.value}] — entry {close.entry_price:.2f} "
@@ -2387,6 +2397,8 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # correction is forward-only — an append-only row is never rewritten to look better.
     sic_by_ticker: dict[str, str | None] = {}
     cik_by_ticker: dict[str, str | None] = {}
+    # the symbol the splits reference is asked by, per security — the store's, as scoring asks
+    sym_by_id: dict[str, str] = {}
     sec_path = cfg.data_dir / "snapshots" / "securities.jsonl"
     if sec_path.exists():
         for ln in sec_path.read_text().splitlines():
@@ -2394,6 +2406,8 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
                 rec = json.loads(ln)
                 sic_by_ticker[rec.get("ticker")] = rec.get("sic")
                 cik_by_ticker[rec.get("ticker")] = rec.get("cik")
+                if rec.get("internal_id") and rec.get("eod_symbol"):
+                    sym_by_id[str(rec["internal_id"])] = str(rec["eod_symbol"])
 
     eod = PolygonEodClient.from_config(cfg)
     # ONE SPLIT BASIS (audit item F-D1, 2026-10-29): Polygon's splits reference reconciles each
@@ -2415,7 +2429,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # so a historical snapshot was not reproducible — while the price path beside it was carefully
     # refusing future bars.
     try:
-        realized = mon.pair_closes(ledger_all, as_of=now_date, splits=splits)
+        realized = mon.pair_closes(ledger_all, as_of=now_date, splits=splits, symbols=sym_by_id)
     except SplitsUnknownError as exc:
         raise RuntimeError(f"splits UNKNOWN ({exc}) — refusing to derive a realized return whose "
                            f"split basis nobody checked") from exc
@@ -2434,12 +2448,12 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # TOTAL RETURN (operator ruling 2026-10-26): every leg's dividends, the position's and its
     # benchmark's, over the book's whole span — one Tiingo read per symbol. A leg whose dividends
     # cannot be read stops the run below; it is never marked on price return instead.
-    # Coverage is checked session by session (audit item F-D3) against the small-cap benchmark's
-    # own Polygon bars — this command keeps no store — read once, when the first window is.
+    # Coverage is checked session by session (audit item F-D3) against each symbol's own Polygon
+    # bars — this command keeps no store — one aggregates call per symbol, when its first window is.
     dividends = default_dividends(
         start=min((date.fromisoformat(r["entry_price_as_of"]) for r in asof_rows),
                   default=now_date), end=now_date,
-        sessions=lambda a, b: [d for d, _bar in eod.daily_bars(mon.BENCHMARK_SMALL, a, b)])
+        sessions=lambda s, a, b: [d for d, _bar in eod.daily_bars(s, a, b)])
     # THE BASIS THE BARS ARE READ ON. `adjusted=true` restates to the day of the read, so a split
     # executed after the session marked — a re-cut's `--ref` before it — is already in every bar
     # read today. The run's own day is left out: a grouped day cached (24h) before a split
@@ -2481,7 +2495,8 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
             entry_px, split_note = entry_on_basis(
                 who=f"{tkr} ({r['entry_id']})", sealed=float(r["entry_price"]),
                 session=entry_day, session_close=entry_bars[tkr].close,
-                basis_through=basis_through, splits=splits(tkr))
+                basis_through=basis_through,
+                splits=splits(sym_by_id.get(led_entry.internal_id, tkr)))
         except SplitsUnknownError as exc:
             raise RuntimeError(f"{tkr}: splits UNKNOWN ({exc}) — refusing to mark this leg on "
                                f"a split basis nobody checked") from exc
