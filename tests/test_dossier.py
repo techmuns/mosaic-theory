@@ -2446,7 +2446,7 @@ def test_transcript_fail_loud_unparsed_flag_and_routing() -> None:
     assert flag is not None and "unparseable" in flag
     caveats, qa = partition([flag])
     assert flag in qa and caveats == []  # dev/QA, never a human caveat
-    assert cs.unparsed_transcript_flag(tr, "--- call ---\nremarks") is None  # parsed → no flag
+    assert cs.unparsed_transcript_flag(tr, "--- c.rtf ---\nremarks") is None  # parsed → no flag
     assert cs.unparsed_transcript_flag(  # absent → no flag
         ciq.CiqBundle(ticker="X", workbooks=()), None) is None
 

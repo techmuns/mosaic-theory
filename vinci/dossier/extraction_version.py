@@ -129,6 +129,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "forward history's latest close is `latest_observed_close`, never `current`; every writer "
         "saves through one write",
     ),
+    (
+        "2026-10-29.G-D3",
+        "each earnings call reaches the driver extraction and the synthesis WHOLE — prepared "
+        "remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past "
+        "the 100,000-character ceiling ends in a marker and a QA flag, and a call on file that "
+        "does not read is named in a QA flag (audit G-D3, G-D4)"
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

@@ -42,6 +42,7 @@ _QA_MARKERS: tuple[str, ...] = (
     "(E5)",  # FIX-2 — Tier-2 covenant-extraction machine notes (cost bound / fetch fail) → dev, not
     "(P3)",  # a decision caveat; the human-facing summary is one line INSIDE the covenant block.
     "transcripts on file but unparseable",  # PR-B §3-now — an OPS action (install LibreOffice),
+    "transcript cut at the ceiling",  # G-D3 — a call past the 100,000-character safety ceiling
     "operating-drivers:",  # PR-B — mechanism-tier per-source honest-miss notes → dev/JSON QA, not
     # an analyst caveat; a no-driver name renders the honest empty Mechanism line, not a caveat.
     #
