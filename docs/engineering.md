@@ -582,6 +582,10 @@ PR (CLAUDE.md: coin-time translation).
 - **Stress registry** (theme intelligence, `tests/theme_intelligence_stress.py`) — plain words: *a
   SYNTHETIC multi-week registry built through the real engine on a reserved `.test` domain, for
   scale tests only — never the real registry or production state*.
+- **SEC budget / refusal hold-off** (2026-10-29, `netcache.sec_pace`, `SharedPace`) — plain words:
+  *the one limit on requests to SEC's hosts that every client, thread and `vinci` process on the
+  machine shares (8 a second, through a locked file); after SEC refuses one request, nobody on the
+  machine sends to SEC for SEC's whole window.*
 
 ## Local setup (every laptop, every contributor)
 

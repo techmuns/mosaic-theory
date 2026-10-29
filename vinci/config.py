@@ -15,6 +15,7 @@ Universe and threshold values here are *starting points calibrated by face-valid
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -97,6 +98,8 @@ class PacingConfig(BaseModel, frozen=True):
     """External-API politeness/pacing. Verified live: SEC fair-access ~10 req/s; Polygon free
     tier ~5 req/min (re-measured 2026-09-23). Conservative defaults to stay well within limits."""
 
+    # PER CLIENT. The TOTAL across every client, thread and process on the machine is
+    # `vinci.netcache.SEC_MAX_REQUESTS_PER_SEC`, which every request to an SEC host also obeys.
     sec_requests_per_sec: float = 8.0
     # efts (full-text search) is a separate, more rate-sensitive service than data.sec.gov;
     # pace it conservatively (it throttles to an error response, not a 429, under load).
@@ -223,11 +226,29 @@ def load_local_env(env_path: Path | None = None) -> None:
     load_dotenv(path)  # override=False (default) → injected CI secrets win over any file
 
 
+#: The `.env.example` value's address. Copied unedited, it declares a contact that reaches nobody.
+_SEC_UA_PLACEHOLDER_EMAIL = "your@email.com"
+_EMAIL = re.compile(r"[^@\s]+@[^@\s]+\.[A-Za-z]{2,}")
+
+
 def sec_user_agent() -> str:
     """SEC fair-access requires a declared User-Agent with a contact. Overridable via env. An
     EMPTY value is unset: a GitHub secret that does not exist reaches the job as "" — it sent an
-    empty User-Agent and broke `theme_intelligence.config` at import (2026-10-14)."""
-    return (os.environ.get("SEC_USER_AGENT") or "").strip() or "vinci-research tech@muns.io"
+    empty User-Agent and broke `theme_intelligence.config` at import (2026-10-14).
+
+    CHECKED BEFORE IT IS SENT (2026-10-29, audit item E1-D15): the `.env.example` placeholder and a
+    value with no email address in it are refused, by the variable's NAME — the value is a
+    repository secret in CI and is never printed."""
+    ua = (os.environ.get("SEC_USER_AGENT") or "").strip() or "vinci-research tech@muns.io"
+    if _SEC_UA_PLACEHOLDER_EMAIL in ua.lower():
+        raise RuntimeError(
+            "SEC_USER_AGENT is still the .env.example placeholder — set it to your name and an "
+            "email SEC can reach (SEC fair-access requires a declared contact).")
+    if not _EMAIL.search(ua):
+        raise RuntimeError(
+            "SEC_USER_AGENT carries no contact email — SEC fair-access requires a declared "
+            "contact; set it to your name and an email SEC can reach.")
+    return ua
 
 
 def require_env(name: str) -> str:
