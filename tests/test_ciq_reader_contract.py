@@ -940,6 +940,20 @@ def test_an_export_stating_no_unit_is_left_to_the_magnitude_screen(tmp_path: Pat
     assert any(c.startswith("unit: unstated") for c in got.checks), got.checks
 
 
+@pytest.mark.parametrize(("annual", "quarterly", "says_dollar_millions"), [
+    ("Thousands", "Thousands", False),
+    ("Thousands", "Millions", False),
+    ("Millions", "Millions", True),       # NEGATIVE PIN: a clean pair still says so
+])
+def test_a_unit_refusal_never_prints_beside_a_dollar_millions_pass(
+        tmp_path: Path, annual: str, quarterly: str, says_dollar_millions: bool) -> None:
+    """Review round 1: the magnitude line ("consistent with a $M sheet") printed whenever no SCALE
+    failure stood — so a refused Thousands export carried the refusal and a $M pass side by side."""
+    got = ciq_balance.extract(_pair(tmp_path, annual, quarterly), gen.TICKER)
+    assert any("consistent with a $M sheet" in c for c in got.checks) is says_dollar_millions, \
+        got.checks
+
+
 @pytest.mark.parametrize(("line", "want"), [
     ("In Millions of the reported currency, except per share items.", "Millions"),
     ("In Thousands of US Dollar, except per share items.", "Thousands"),   # a converted export

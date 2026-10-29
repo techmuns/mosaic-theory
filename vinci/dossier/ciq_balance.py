@@ -380,7 +380,8 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
         bad = _assert_scale(key, facts[key].value if key in facts else None, revenue)
         if bad:
             failures.append(f"SCALE: {bad}")
-    if not any(f.startswith("SCALE:") for f in failures) and revenue:
+    # a stated-unit refusal never prints beside a "$M sheet" pass the magnitude screen cannot back
+    if not unit_failures and not any(f.startswith("SCALE:") for f in failures) and revenue:
         checks.append(f"scale: every monetary figure within [{_SCALE_LO:g}, {_SCALE_HI:g}]x "
                       f"revenue {revenue:,.1f} ($M) — consistent with a $M sheet")
     measured = bool(revenue and revenue > 0
