@@ -403,15 +403,16 @@ _9 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
   - due ≤12m (through 2026): $1,000.0M — 2026-11-01 $1,000.0M
-  - due 2027: $1,000.0M
-  - due 2030: $1,495.0M
+  - due 2027: $1,000.0M + 1 with no principal stated
+  - due 2030: $1,495.0M + 1 with no principal stated
   - due 2040: $986.0M
   - due 2043: $497.0M
   - due 2045: $987.0M
   - due 2046: $493.0M
   - due 2050: $1,484.0M
-  - undated (floor — no panel maturity): $3,091.0M — Commercial Paper Program –, Operating Lease Liabilities $3,091.0M
-  - _reconciliation: itemized $11,033.0M (panel A 2026 filed Jul-15-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - undated (floor — no panel maturity): $3,091.0M + 1 with no principal stated — Commercial Paper Program –, Operating Lease Liabilities $3,091.0M
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: 364-day Committed Credit Facility (Revolving Credit), Commercial Paper Program (Commercial Paper), Committed Credit Facilities (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $11,033.0M + 3 with no principal stated (panel A 2026 filed Jul-15-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 7,942.0; leases 3,091.0; total principal 11,033.0; total debt 11,043.0 (3 months FQ4/CQ2 May-31-2026) ($M) [55]
 - **Covenants — 364-DAY CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Interest / coupon:** Term SOFR + 0.595% · Term SOFR Loan / Alternative Currency Loan: Applicable Margin 0.595% (59.5 basis points); Base Rate Loan: 0.00% (0 basi… — per an 8-K filed 2026-03-09

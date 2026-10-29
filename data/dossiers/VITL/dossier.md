@@ -401,9 +401,10 @@ _S&P issuer rating unrated · scale 1=strongest … 4=weakest (S&P-MI PD model)_
 - **Debt schedule vintage:** the debt schedule is 169d old (source filed 2026-02-26) AND an Item 1.02 — termination of a material definitive agreement — was filed 2026-08-06, accession 0001193125-26-336692. The panel predates it and cannot reflect it: an instrument listed below may already have been terminated. Verify before relying on this schedule. [55]
 - **Live instruments — near-dated (≤12m + 2027):** none due in the window — 3 undated / later aggregate line item(s) in the appendix panel [56]
 - **Maturity wall** · vs the 2026-08-14 reference:
-  - due 2029: $0.0M
+  - due 2029: 1 with no principal stated
   - undated (floor — no panel maturity): $53.5M — Finance Lease Liabilities $10.8M, Operating Lease Liabilities $42.7M
-  - _reconciliation: itemized $53.5M (panel A 2025 filed Feb-26-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: JPMorgan Credit Facility (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $53.5M + 1 with no principal stated (panel A 2025 filed Feb-26-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** leases 54.2; total principal 54.2; total debt 54.2 (3 months Q1 Mar-29-2026) ($M) [57]
 
 ### Filing cross-checks — going concern · leverage basis

@@ -218,6 +218,28 @@ def _latest_actual_index(table: Any) -> int | None:
     return None
 
 
+#: The assembled annual table's revenue row, and the CIQ Income Statement's — the 5%-of-revenue
+#: denominator each reads at its own observation (audit D-D5: it was never passed, so that half of
+#: the threshold pair never ran on any build).
+TABLE_REVENUE_LABEL = "Revenue ($M)"
+SHEET_REVENUE_LABEL = "Total Revenue"
+
+
+def positive(v: float | None) -> float | None:
+    """A revenue denominator, or None where there is none to divide by: a pre-revenue name's '-' or
+    0 is no turnover to measure a line against, and the market-cap threshold still runs."""
+    return v if v is not None and v > 0 else None
+
+
+def table_revenue(table: Any) -> float | None:
+    """Revenue ($M) at the column the MARKER reads (:func:`_latest_actual_index`), or None."""
+    col = _latest_actual_index(table) if table is not None else None
+    row = next((r for r in getattr(table, "rows", []) or []
+                if getattr(r, "label", "") == TABLE_REVENUE_LABEL), None)
+    vals = (getattr(row, "values", None) or []) if row is not None else []
+    return positive(vals[col]) if col is not None and col < len(vals) else None
+
+
 def mark_material_rows(table: Any, *, market_cap: float | None, revenue: float | None) -> Any:
     """Flag every summary row clearing the floor AT THE GUARD'S OWN OBSERVATION, so the BRIEF can
     show it without recomputing.

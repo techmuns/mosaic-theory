@@ -446,12 +446,12 @@ _industry = 21 Interactive Media and Services companies (GICS industry), the pri
 _17 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $2,000.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): $2,000.0M + 1 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2026-04-01 (198d before ref): – Revolving Credit Facilities
     - 2026-08-15 (62d before ref): $2,000.0M 16 US Dollar Notes
   - due 2028: $500.0M
   - due 2029: $1,759.9M
-  - due 2030: $750.0M
+  - due 2030: $750.0M + 1 with no principal stated
   - due 2033: $1,759.9M
   - due 2035: $1,250.0M
   - due 2037: $1,466.6M
@@ -459,8 +459,9 @@ _17 undated / later aggregate line item(s) in the appendix panel_
   - due 2054: $1,466.6M
   - due 2055: $1,500.0M
   - due 2065: $1,500.0M
-  - undated (floor — no panel maturity): $52,084.8M — 20 US Dollar Notes $9,000.0M, Commercial Paper Program –, Euro Denominated Fixed Rate… $7,631.8M, Finance Lease Liabilities $2,500.0M, Operating Lease Liabilities $15,953.0M, US Dollar Denominated Fixed Rate… $17,000.0M
-  - _reconciliation: itemized $67,504.4M (panel A 2025 filed Feb-05-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - undated (floor — no panel maturity): $52,084.8M + 1 with no principal stated — 20 US Dollar Notes $9,000.0M, Commercial Paper Program –, Euro Denominated Fixed Rate… $7,631.8M, Finance Lease Liabilities $2,500.0M, Operating Lease Liabilities $15,953.0M, US Dollar Denominated Fixed Rate… $17,000.0M
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: Commercial Paper Program (Commercial Paper), Revolving Credit Facilities (Revolving Credit), Revolving Credit Facilities (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $67,504.4M + 3 with no principal stated (panel A 2025 filed Feb-05-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 99,876.5; leases 20,627.0; total principal 122,189.5; total debt 120,791.0 (3 months Q2 Jun-30-2026) ($M) [55]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0001652044-26-000031 (2026-04-02) states no maturity-resolution event
 

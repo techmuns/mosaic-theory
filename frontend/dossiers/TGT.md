@@ -402,11 +402,11 @@ _industry = 23 Consumer Staples Merchandise Retail companies (GICS industry), th
 _13 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $0.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): 1 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2026-08-14 (63d before ref): – 364-Day Unsecured Revolving Credit
   - due 2027: $1,000.0M
   - due 2028: $500.0M
-  - due 2031: $0.0M
+  - due 2031: 1 with no principal stated
   - due 2032: $1,000.0M
   - due 2033: $500.0M
   - due 2034: $750.0M
@@ -414,8 +414,9 @@ _13 undated / later aggregate line item(s) in the appendix panel_
   - due 2036: $500.0M
   - due 2052: $1,000.0M
   - due 2053: $1,150.0M
-  - undated (floor — no panel maturity): $15,322.0M — Commercial Paper –, Finance Lease Liabilities $2,113.0M, Long-Term Debt and Other… $9,375.0M, Operating Lease $3,834.0M
-  - _reconciliation: itemized $22,722.0M (panel A 2026 filed Mar-11-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - undated (floor — no panel maturity): $15,322.0M + 1 with no principal stated — Commercial Paper –, Finance Lease Liabilities $2,113.0M, Long-Term Debt and Other… $9,375.0M, Operating Lease $3,834.0M
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: 364-Day Unsecured Revolving… (Revolving Credit), Commercial Paper (Commercial Paper), Unsecured Revolving Credit… (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $22,722.0M + 3 with no principal stated (panel A 2026 filed Mar-11-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 16,775.0; leases 5,846.0; total principal 22,621.0; total debt 19,196.0 (3 months Q2 Aug-01-2026) ($M) [60]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) refused: the model's verbatim is not in 8-K 0000027419-26-000032 (2026-08-14)
 - **Covenants — FIVE-YEAR CREDIT AGREEMENT** (governing values; full verbatim in appendix):
