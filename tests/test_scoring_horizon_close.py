@@ -144,7 +144,9 @@ def test_a_resolved_row_with_both_series_on_the_horizon_session_does_not_raise(
     """NEGATIVE PIN: a name trading through the horizon is not a halt, and carries no note."""
     score, report = _score(tmp_path, _vrrm_row(horizon_days=119), as_of=date(2026, 10, 16))
     assert score.resolved is True and score.note is None
-    assert _VRRM_ID not in report.to_markdown()
+    # no row note names it (the report names every resolved row's benchmark since #856, so the
+    # whole markdown is no longer the place to look for a note's absence)
+    assert not any(_VRRM_ID in n for n in report.row_notes)
 
 
 def test_an_unresolved_row_whose_name_stopped_trading_carries_a_note_and_does_not_raise(
