@@ -25,6 +25,8 @@ of 07-30 a one-off rather than a practice.
 """
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from vinci.dossier.synthesis import (
@@ -340,19 +342,15 @@ _PRE_REPAIR_PROSE = (
 )
 
 
-def test_the_guard_fires_on_the_real_committed_shape() -> None:
-    """BEHAVIOURAL COMPANION to the ordering pin. The MECHANICAL side stays LIVE — read from the
-    committed artifact and flagged by `_mark_material` itself, because a constructed row is exactly
-    what hid the defect and `_mark_material` is the function whose ordering was wrong. Only the
-    prose is frozen."""
+def _fired_on(page: Path) -> list[str]:
+    """`uncited_material_figures` against the frozen prose, over a REAL page's mechanical layer with
+    its material flags stripped and then re-applied by `_mark_material` itself."""
     import json
-    from pathlib import Path
 
     from vinci.dossier.assemble import _mark_material
     from vinci.dossier.schemas import MechanicalLayer
 
-    root = Path(__file__).resolve().parents[1]
-    doc = json.loads((root / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    doc = json.loads(page.read_text())
     stripped = json.loads(json.dumps(doc["mechanical"]))
     for r in stripped["financial_summary"]["annual"]["value"]["rows"]:
         r["material"] = False                    # the state the assembler hands over
@@ -361,10 +359,35 @@ def test_the_guard_fires_on_the_real_committed_shape() -> None:
     assert uncited_material_figures(synth, unflagged) == [], (
         "precondition: with no rows flagged the guard is blind — this is the defect, pinned so "
         "the ordering test above cannot be read as arbitrary")
-    fired = uncited_material_figures(synth, _mark_material(unflagged))
+    return uncited_material_figures(synth, _mark_material(unflagged))
+
+
+_ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_the_guard_fires_on_the_real_committed_shape() -> None:
+    """BEHAVIOURAL COMPANION to the ordering pin. The MECHANICAL side stays LIVE — read from the
+    committed artifact and flagged by `_mark_material` itself, because a constructed row is exactly
+    what hid the defect and `_mark_material` is the function whose ordering was wrong. Only the
+    prose is frozen. On the living page the pin is STRUCTURAL: the guard fires, and on a row the
+    page itself flags material."""
+    import json
+
+    page = _ROOT / "data" / "dossiers" / "SMPL" / "dossier.json"
+    fired = _fired_on(page)
     assert fired, (
         "with the flags applied the guard must see SMPL's writedown against prose that names no "
         "figure; empty here means the committed financial summary lost its material row")
+    rows = json.loads(page.read_text())["mechanical"]["financial_summary"]["annual"]["value"]
+    material = [r["label"] for r in rows["rows"] if r.get("material")]
+    assert all(any(f.startswith(lbl) for lbl in material) for f in fired), (fired, material)
+
+
+def test_the_guard_names_the_largest_figure_on_the_frozen_page() -> None:
+    """VALUE-LEVEL, so FROZEN (TEST-LAYER RULE): SMPL's 2026-08-18 page, where the writedown row's
+    largest figure is the LTM $391.9M (tests/fixtures/frozen_pages/README.md)."""
+    fired = _fired_on(_ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL"
+                      / "dossier.json")
     assert any("391.9" in f for f in fired), fired
 
 

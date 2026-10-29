@@ -360,10 +360,12 @@ def test_the_refresh_rewrites_the_page_not_only_the_record(tmp_path: pathlib.Pat
     """REVIEW FINDING, and the point of the whole path. The first cut wrote only `dossier.json`
     while the assembler writes BOTH — so a refresh that moved SMPL's cap 909.4 → 1,000.0 updated TEV
     to 1,324.6 in the record and left the page showing the old figure. Two committed artifacts
-    disagreeing, and a mechanism whose reason for existing is fixing numbers a READER sees."""
-    src = DOSS / "SMPL"
-    if not (src / "dossier.md").exists():
-        pytest.skip("no committed SMPL artifacts")
+    disagreeing, and a mechanism whose reason for existing is fixing numbers a READER sees.
+
+    READ FROZEN (TEST-LAYER RULE): SMPL's 2026-08-18 page, whose $324.6M net debt makes that TEV
+    (tests/fixtures/frozen_pages/README.md) — the living page re-draws its bridge every quarter."""
+    src = pathlib.Path(__file__).resolve().parent / "fixtures" / "frozen_pages" / "2026-08-18"
+    src = src / "SMPL"
     folder = tmp_path / "SMPL"
     folder.mkdir()
     shutil.copy(src / "dossier.json", folder / "dossier.json")

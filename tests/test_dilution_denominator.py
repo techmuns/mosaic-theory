@@ -73,6 +73,86 @@ def test_the_latest_point_selector_itself_prefers_the_shortest_span() -> None:
     assert (p.period_end - p.period_start).days == 90  # type: ignore[operator]
 
 
+# --- the fiscal year end: a 10-K tags the YEAR and no fourth quarter -----------------------------
+#
+# SMPL's FY2026 10-K (0001702744-26-000031, filed 2026-10-27) tags the weighted average over
+# 2025-08-31..2026-08-29 and nothing shorter at that end date, so "the shortest span at the latest
+# end" had ONE candidate: the 363-day year, 92,372,473, under the basis "diluted weighted-average
+# (latest 10-Q)". Measured on the 2026-10-28 re-assembly: `anchor.diluted_shares` read the year, and
+# `scenario-propose` refused SMPL on a 6.34% gap to the cover-page count that the year's average,
+# not the buyback, made. Every name re-assembled between its 10-K and its next 10-Q takes this path.
+
+FY_END = ROOT / "tests" / "fixtures" / "fiscal_year_end"
+
+
+@pytest.mark.parametrize(("facts_path", "quarter", "value", "year_value"), [
+    # SMPL, frozen at its FY2026 10-K (tests/fixtures/fiscal_year_end/README.md)
+    (FY_END / "SMPL.companyfacts.json", (dt.date(2026, 3, 1), dt.date(2026, 5, 30)),
+     89_940_680, 92_372_473),
+    # Worthington, the same shape at its FY2026 10-K (the year to 2026-05-31, 364 days)
+    (ROOT / "tests" / "fixtures" / "companyfacts" / "WOR.json",
+     (dt.date(2025, 12, 1), dt.date(2026, 2, 28)), 49_665_000, 49_716_000),
+], ids=["SMPL-FY2026-10K", "WOR-FY2026-10K"])
+def test_at_fiscal_year_end_the_selector_reads_the_last_10q_quarter_never_the_10k_year(
+    facts_path: pathlib.Path, quarter: tuple[dt.date, dt.date], value: int, year_value: int,
+) -> None:
+    """THE RED, on two real 10-Ks. The latest end date is the fiscal year, and it carries no
+    quarter, so the discrete period is the last 10-Q's — a quarter older, and still the figure the
+    basis "latest 10-Q" names. The year's average is never it."""
+    from vinci.dossier.anchor import _DILUTED_TAG, _latest_point
+
+    p = _latest_point(json.loads(facts_path.read_text()), _DILUTED_TAG)
+    assert p is not None
+    assert p.value != year_value, "the 10-K's full-year average was read as the latest 10-Q's"
+    assert (p.period_start, p.period_end) == quarter and p.value == value, p
+
+
+def test_at_fiscal_year_end_the_anchor_blocks_carry_the_quarter() -> None:
+    """THE ARTIFACT, not the helper: the three share inputs `compute_anchor` writes into the page's
+    anchor block, built from SMPL's real FY2026 page and 10-K facts. Before the fix each read the
+    year — `diluted_shares` 92,372,473, and the cover-page count corroborated against the year's
+    basic average ("6.0% below … (2025-08-31..2026-08-29)")."""
+    from datetime import UTC, datetime
+
+    from vinci.dossier.anchor import compute_anchor
+
+    page = json.loads((FY_END / "SMPL.page.json").read_text())
+    a = compute_anchor(page["mechanical"],
+                       facts=json.loads((FY_END / "SMPL.companyfacts.json").read_text()),
+                       computed_at=datetime(2026, 10, 28, tzinfo=UTC), ciq=None)
+    assert a.diluted_shares.value == 89_940_680, a.diluted_shares
+    quarter = "(2026-03-01..2026-05-30)"
+    assert a.shares_outstanding.value == 86_861_967
+    assert quarter in a.shares_outstanding.source, a.shares_outstanding.source
+    assert a.dilutive_increment.value == 0.0 and quarter in a.dilutive_increment.source
+    assert not any("2025-08-31..2026-08-29" in s for s in (
+        a.shares_outstanding.source, a.dilutive_increment.source)), "the year is still read"
+
+
+def test_a_filer_that_tags_no_quarter_gets_no_weighted_average_rather_than_its_year() -> None:
+    """(−) Only a year on file — an annual filer, or a first 10-K before any 10-Q. "The latest 10-Q"
+    names nothing, so the selector returns nothing: the year read under that basis is the defect,
+    and the anchor already words a missing diluted figure as UNKNOWN."""
+    from vinci.dossier.anchor import _DILUTED_TAG, _latest_point
+
+    year_only = _facts([
+        (BASIC_WA_TAG, "2025-01-01", "2025-12-31", 100_000_000, "2026-02-20"),
+        (DILUTED_WA_TAG, "2025-01-01", "2025-12-31", 104_000_000, "2026-02-20"),
+    ])
+    assert _latest_point(year_only, _DILUTED_TAG) is None
+    # and the anchor block says WHY, not that the tag is missing — the filer does tag it
+    from datetime import UTC, datetime
+
+    from vinci.dossier.anchor import compute_anchor
+
+    page = json.loads((FY_END / "SMPL.page.json").read_text())
+    a = compute_anchor(page["mechanical"], facts=year_only,
+                       computed_at=datetime(2026, 10, 28, tzinfo=UTC), ciq=None)
+    assert a.diluted_shares.value is None
+    assert "longer than a quarter (latest 2025-01-01..2025-12-31)" in a.diluted_shares.source
+    assert a.shares_outstanding.value is None, "a count was corroborated against nothing"
+
+
 def test_both_legs_come_from_the_same_period_even_when_only_one_tag_has_the_quarter() -> None:
     """A delta taken across two different periods is not a dilution figure. Where the tags do not
     share the quarter, the pairing must fall back to a period BOTH report, not mix them."""

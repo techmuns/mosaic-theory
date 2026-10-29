@@ -1432,7 +1432,15 @@ def _ltm_gaap_eps(fs: FinancialSummary | None) -> float | None:
     the 'EPS (GAAP, dil.)' row's ``values`` at the 'LTM' column. None when the summary, the table,
     the row, the LTM column, or the structured value is absent. Reads ``values`` (structured),
     NEVER ``cells`` (display) — the parsers-consume-structured-values rule; a display '(2.08)'/'—'
-    is never parsed here."""
+    is never parsed here.
+
+    AT A FISCAL YEAR END THE YEAR JUST CLOSED IS THE TRAILING TWELVE MONTHS (2026-10-29). CIQ
+    exports an LTM column only once a quarter is reported past the latest fiscal year, so between a
+    10-K and the next 10-Q the table has none: SMPL's FY2026 page ran FY17 … FY26, FY27E, FY28E,
+    this read None, and the (d) caveat went silent beside FY2026's −1.69. With no LTM column the
+    last ACTUAL column is read — the column the anchor takes as its window (`anchor.Window`,
+    ``is_ltm`` False: "the year just closed, no LTM yet"). Actual and estimate are told apart by
+    the structured ``is_estimate`` flags only; a table without them has no trailing EPS to read."""
     if fs is None:
         return None
     annual = fs.annual
@@ -1444,6 +1452,8 @@ def _ltm_gaap_eps(fs: FinancialSummary | None) -> float | None:
     # (render.py startswith('LTM')). Exact '== "LTM"' would return None on a reclassified twin and
     # silently reintroduce the claim-#7 blind spot for it.
     i = next((k for k, c in enumerate(tbl.columns) if str(c).upper().startswith("LTM")), None)
+    if i is None and len(tbl.is_estimate) == len(tbl.columns):
+        i = max((k for k, est in enumerate(tbl.is_estimate) if not est), default=None)
     if i is None:
         return None
     for row in tbl.rows:

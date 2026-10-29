@@ -22,10 +22,14 @@ from vinci.dossier.synthesis import _primary_source_digest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOSS = ROOT / "data" / "dossiers"
+#: SMPL's page as committed on 2026-08-18, frozen (tests/fixtures/frozen_pages/README.md) — the
+#: page the two value-level SMPL pins below were written against. The living page moves with every
+#: release; a value pin on it is the TEST-LAYER RULE's named failure.
+FROZEN = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18"
 
 
-def _digest(t: str) -> str:
-    d = Dossier.model_validate(json.loads((DOSS / t / "dossier.json").read_text()))
+def _digest(t: str, root: pathlib.Path = DOSS) -> str:
+    d = Dossier.model_validate(json.loads((root / t / "dossier.json").read_text()))
     ps = d.mechanical.primary_source
     assert ps is not None, f"{t} has no primary_source"
     return _primary_source_digest(ps)
@@ -180,14 +184,18 @@ def test_only_guidance_carries_a_vintage_mark_never_a_reported_actual() -> None:
     guidance-less release, which emits no header of its own.
 
     A per-line mark has no scope to creep and nothing to bleed into. Reconciliations, one-offs and
-    event impacts must carry NO vintage mark at all."""
+    event impacts must carry NO vintage mark at all.
+
+    The per-line rule holds on the living page AND the frozen one; the $60.9M impairment is a
+    VALUE, so it is read from the frozen 2026-08-18 page only."""
     marks = ("[CURRENT GUIDE,", "[SUPERSEDED", "VINTAGE UNDATED")
-    for line in _digest("SMPL").splitlines():
-        if any(m in line for m in marks):
-            assert line.startswith("guidance "), (
-                f"a vintage mark landed on a non-guidance line — a reported actual is not "
-                f"superseded: {line[:130]}")
-    blob = _digest("SMPL")
+    for root in (DOSS, FROZEN):
+        for line in _digest("SMPL", root).splitlines():
+            if any(m in line for m in marks):
+                assert line.startswith("guidance "), (
+                    f"a vintage mark landed on a non-guidance line — a reported actual is not "
+                    f"superseded ({root.name}): {line[:130]}")
+    blob = _digest("SMPL", FROZEN)
     imp = [x for x in blob.splitlines() if "60.9M" in x]
     assert imp, "SMPL's $60.9M impairment left the digest"
     assert not any(m in x for x in imp for m in marks), (
@@ -280,7 +288,6 @@ def test_the_analyst_template_shows_the_same_vintages_as_the_brief() -> None:
         "the old unmarked 'current guidance:' line is back")
 
 
-@pytest.mark.skipif(not (DOSS / "SMPL").is_dir(), reason="no committed SMPL")
 def test_the_drawdown_moment_guide_is_marked_too_o1() -> None:
     """THE SECOND PATH, closed. #342 marked the `primary_source` digest and the 2026-08-04 SMPL
     roll argued the FY26 guide from APRIL anyway — because the model was reading a DIFFERENT field.
@@ -292,9 +299,12 @@ def test_the_drawdown_moment_guide_is_marked_too_o1() -> None:
 
     Asserted on the DUMP the model actually receives, not on the helper: the defect was that a
     correct helper was never applied to this field, and a test that called the helper directly
-    would have passed throughout."""
+    would have passed throughout.
+
+    READ FROZEN: SMPL's 2026-08-18 page, whose `drawdown_cause` carried April's outlook verbatim.
+    The living page's drawdown has since moved to a filing that carries none."""
     from vinci.dossier.synthesis import _mark_drawdown_guidance
-    d = Dossier.model_validate(json.loads((DOSS / "SMPL" / "dossier.json").read_text()))
+    d = Dossier.model_validate(json.loads((FROZEN / "SMPL" / "dossier.json").read_text()))
     ps = d.mechanical.primary_source
     assert ps is not None
     dumped = d.mechanical.model_dump(exclude={"primary_source"})

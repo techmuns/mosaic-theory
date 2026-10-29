@@ -118,6 +118,59 @@ def test_verb_and_pronoun_agree_on_the_multiple_count(
     assert anti_verb not in c and anti_pronoun not in c, f"verb/pronoun disagree: {c}"
 
 
+# --- the fiscal year end: the year just closed is the trailing twelve months ---------------------
+
+FY_END = ROOT / "tests" / "fixtures" / "fiscal_year_end"
+FROZEN = ROOT / "tests" / "fixtures" / "frozen_pages"
+
+
+def _annual_has_ltm(fs: ds.FinancialSummary) -> bool:
+    assert fs.annual.value is not None
+    return any(str(c).upper().startswith("LTM") for c in fs.annual.value.columns)
+
+
+def test_at_fiscal_year_end_the_caveat_reads_the_year_just_closed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """THE RED, on SMPL's real FY2026 page (assembled 2026-10-28). CIQ exports no LTM column while
+    the fiscal year it reports is the latest period, so the table ran FY17 … FY26, FY27E, FY28E and
+    `_ltm_gaap_eps` read None. The (d) caveat went SILENT on a positive 9.6x P/E beside FY2026's
+    −1.69 — while the page's own P/E note still said "see the P/E-basis flag", pointing at a flag
+    that was no longer there. Production showed one multiple: CIQ's P/LTM EPS reads NM."""
+    page = json.loads((FY_END / "SMPL.page.json").read_text())
+    fs = ds.FinancialSummary.model_validate(page["mechanical"]["financial_summary"])
+    assert not _annual_has_ltm(fs), "precondition: the year-end shape has no LTM column"
+    assert "see the P/E-basis flag" in page["mechanical"]["valuation"]["pe"]["note"]
+    assert not any("GAAP trailing multiple" in c for c in page["caveats"]), (
+        "precondition: the page assembled before the fix carries no (d) caveat")
+    ltm = dm._ltm_gaap_eps(fs)
+    assert ltm == -1.69, f"the year just closed was not read as the trailing EPS: {ltm}"
+    c = _caveat(page["mechanical"]["valuation"]["pe"]["value"], ltm, None, monkeypatch)
+    assert c is not None and "does not rest on LTM GAAP earnings" in c and "(-1.69)" in c, c
+
+
+def test_an_ltm_column_is_still_read_before_any_fiscal_year() -> None:
+    """(−) The fallback is for a table WITHOUT an LTM column. SMPL's 2026-08-18 page has one, and
+    its LTM −2.08 must win over FY2025's +1.02 to its left and FY2026E's −1.70 to its right."""
+    raw = json.loads((FROZEN / "2026-08-18" / "SMPL" / "dossier.json").read_text())
+    fs = ds.FinancialSummary.model_validate(raw["mechanical"]["financial_summary"])
+    assert _annual_has_ltm(fs)
+    assert dm._ltm_gaap_eps(fs) == -2.08
+
+
+def test_an_estimate_column_is_never_the_trailing_eps() -> None:
+    """(−) Consensus is not a reported year. With every column flagged as an estimate, or with the
+    flags absent so actual and estimate cannot be told apart, there is no trailing EPS to read."""
+    page = json.loads((FY_END / "SMPL.page.json").read_text())
+    fs = ds.FinancialSummary.model_validate(page["mechanical"]["financial_summary"])
+    assert fs.annual.value is not None
+    tbl = fs.annual.value
+    for flags in ([True] * len(tbl.columns), []):
+        cut = fs.model_copy(update={"annual": fs.annual.model_copy(update={
+            "value": tbl.model_copy(update={"is_estimate": flags})})})
+        assert dm._ltm_gaap_eps(cut) is None, flags
+
+
 # --- the corpus: today's generator against every real shape that triggers it ---------------------
 
 

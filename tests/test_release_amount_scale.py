@@ -536,10 +536,18 @@ def test_no_committed_actual_is_an_unscaled_billion_e2e() -> None:
     assert not bad, bad
 
 
-def _bps_segments() -> dict[str, list[str]]:
-    """Per committed page: the card segment of every guide whose STORED unit is `bps`."""
+#: SMPL's page as committed on 2026-08-18, frozen (tests/fixtures/frozen_pages/README.md): its
+#: card printed the gross-margin guide this pin was written for. The living corpus may carry no bps
+#: guide at a given moment — SMPL's FY2026 page dropped it — so the frozen page is the witness that
+#: keeps the pin from checking nothing. It renders on the web from its own JSON, with no card.
+_FROZEN_BPS = Path("tests/fixtures/frozen_pages/2026-08-18/SMPL/dossier.json")
+
+
+def _bps_segments(pages: list[Path]) -> dict[str, list[str]]:
+    """Per page (keyed by its dossier.json path): the card segment of every guide whose STORED unit
+    is `bps`."""
     out: dict[str, list[str]] = {}
-    for p in _PAGES:
+    for p in pages:
         d = json.loads(p.read_text())
         rel_by_acc = {dm._acc_of(r["source_ref"]): r
                       for r in d["mechanical"]["primary_source"].get("releases") or []}
@@ -550,7 +558,7 @@ def _bps_segments() -> dict[str, list[str]]:
             for g in rel.get("guidance") or []:
                 if g.get("unit") == "bps" and not g.get("qualitative"):
                     head = f"{g['period']} {g['metric']} outlook: "
-                    out.setdefault(p.parent.name, []).extend(
+                    out.setdefault(str(p), []).extend(
                         seg for seg in drv.split("; ") if seg.startswith(head))
     return out
 
@@ -558,16 +566,23 @@ def _bps_segments() -> dict[str, list[str]]:
 def test_a_bps_guide_prints_in_bps_on_every_card_md_and_web_e2e() -> None:
     """INVARIANT, every committed page (TEST-LAYER RULE: a living artifact gets a structural pin,
     never a value): each card segment for a guide whose stored unit is `bps` prints in basis
-    points — never "$…M", the shape SMPL's card carried — and both renderers print that segment."""
-    segs = _bps_segments()
-    assert segs, "no committed card carries a bps guide — this pin checked nothing"
-    for t, items in segs.items():
-        md = Path(f"data/dossiers/{t}/dossier.md").read_text()
+    points — never "$…M", the shape SMPL's card carried — and both renderers print that segment.
+    SMPL's frozen 2026-08-18 page always rides along, so at least one real card is checked."""
+    segs = _bps_segments([*_PAGES, _FROZEN_BPS])
+    assert segs.get(str(_FROZEN_BPS)), (
+        "the frozen witness carries no bps guide — this pin checked nothing")
+    for page, items in segs.items():
+        md = (Path(page).parent / "dossier.md").read_text()
         for seg in items:
-            assert seg.endswith(" bps") and "$" not in seg, (t, seg)
-            assert seg in md, (t, seg)
+            assert seg.endswith(" bps") and "$" not in seg, (page, seg)
+            assert seg in md, (page, seg)
     if not shutil.which("node"):
         pytest.skip("node unavailable")
+    # what the web serves: a living page's frontend mirror and card; the frozen page's own JSON
+    web = {page: ((str(_FROZEN_BPS), None, items) if page == str(_FROZEN_BPS) else
+                  (f"frontend/dossiers/{Path(page).parent.name}.json",
+                   f"frontend/scenarios/{Path(page).parent.name}.json", items))
+           for page, items in segs.items()}
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
     driver = f"""
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
@@ -575,13 +590,12 @@ const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
 import {{ readFileSync, existsSync }} from "node:fs";
 const {{ renderDossier }} = await import("{dj}");
-const want = {json.dumps(segs)};
+const want = {json.dumps(web)};
 const out = {{}};
-for (const [t, items] of Object.entries(want)) {{
-  const d = JSON.parse(readFileSync(`frontend/dossiers/${{t}}.json`));
-  const cp = `frontend/scenarios/${{t}}.json`;
-  const h = renderDossier(d, null, existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
-  out[t] = items.filter((s) => !h.includes(s));
+for (const [page, [src, cp, items]] of Object.entries(want)) {{
+  const d = JSON.parse(readFileSync(src));
+  const h = renderDossier(d, null, cp && existsSync(cp) ? JSON.parse(readFileSync(cp)) : null);
+  out[page] = items.filter((s) => !h.includes(s));
 }}
 console.log(JSON.stringify(out));
 """
