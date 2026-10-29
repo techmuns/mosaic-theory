@@ -710,6 +710,11 @@ many it only counts. The full card, every name for every check, goes to
 `data/data_quality_full/<source>/<today>.json`: git-ignored, in the checkout that ran it and nowhere
 else, named in the snapshot by path and sha256 (`rows.full`). A card whose listed rows and counts do
 not reconcile to its fleet writes neither file and exits 1 (`core.reconcile`).
+**Run an `exceptions` source's `--write` in a checkout that lasts** — the primary checkout or
+another permanent checkout of the repo, never a session worktree. The app deletes a session's
+worktree when the session is archived, and the full card goes with it. The first card,
+2026-10-29, was written in a session worktree (`quirky-khayyam-b2ec8b`), and it survives only while
+that session is kept open (operator, 2026-10-29).
 - **When:** after every artifact pass that moves `data/dossiers/*`, and at the monthly sweep. Commit
   the snapshot as an ARTIFACT commit, never bundled with code. `tests/test_quality_ciq.py` re-derives
   the latest CIQ snapshot byte-for-byte whenever the page set's sha256 matches the one it names.
