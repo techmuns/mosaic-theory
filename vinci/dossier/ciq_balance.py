@@ -23,10 +23,11 @@ an anchor, and a failed check refuses rather than degrades:
    filer discloses one. They describe the same year and must agree.
 2. **Net-debt agreement** — the Multiples sheet implies an enterprise value; minus market cap that
    is a second, independent read of net debt. It must land near the balance sheet's own total.
-3. **UNIT scale** — every monetary figure is asserted to be $M by MAGNITUDE against revenue, not by
-   trusting a header. Three separate 1e6 defects have shipped in this repo (the anchor's net debt
-   into a $M guard, the R2 engine's equity ÷ raw share count, and the original diluted-shares trap);
-   a scale read off a label would be the fourth.
+3. **UNIT** — every monetary figure is asserted to be $M by MAGNITUDE against revenue. Three
+   separate 1e6 defects have shipped in this repo (the anchor's net debt into a $M guard, the R2
+   engine's equity ÷ raw share count, and the original diluted-shares trap). Magnitude alone is
+   blind to an export wholly in another unit and to thousands against millions between the two
+   exports (audit BC-D10), so each statement's OWN unit line is read too, and must say Millions.
 
 Licensed data never leaves the machine: this module reads the git-ignored workbooks and emits
 DERIVED scalars with a source stamp. The workbooks themselves are never committed or logged.
@@ -34,13 +35,14 @@ DERIVED scalars with a source stamp. The workbooks themselves are never committe
 from __future__ import annotations
 
 import functools
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 from typing import Any
 
 from vinci.dossier import ciq_sheets as cs
-from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, stated_unit
 from vinci.dossier.schemas import (
     CHECK_AGREE,
     CHECK_DIFFER,
@@ -233,6 +235,45 @@ def _cf_row(bundle: CiqBundle, label: str, annual: bool) -> float | None:
     return got[0] if got is not None else None
 
 
+def _stated_units(bundle: CiqBundle) -> list[tuple[str, str | None]]:
+    """("<freq> <sheet>", the unit it states) for each statement sheet the bridge reads that the
+    folder holds (:func:`ciq.stated_unit`). Every address is a LITERAL, as in :func:`_cf_cell`."""
+    reads: tuple[tuple[str, Callable[[], list[list[Any]]]], ...] = (
+        ("quarterly Balance Sheet", lambda: bundle.sheet("financials", "Balance Sheet",
+                                                         freq="quarterly")),
+        ("quarterly Income Statement", lambda: bundle.sheet("financials", "Income Statement",
+                                                            freq="quarterly")),
+        ("quarterly Cash Flow", lambda: bundle.sheet("financials", "Cash Flow",
+                                                     freq="quarterly")),
+        ("annual Balance Sheet", lambda: bundle.sheet("financials", "Balance Sheet",
+                                                      freq="annual")),
+        ("annual Income Statement", lambda: bundle.sheet("financials", "Income Statement",
+                                                         freq="annual")),
+        ("annual Cash Flow", lambda: bundle.sheet("financials", "Cash Flow", freq="annual")),
+    )
+    out: list[tuple[str, str | None]] = []
+    for where, rows_fn in reads:
+        try:
+            out.append((where, stated_unit(rows_fn())))
+        except CiqUnavailableError:
+            continue
+    return out
+
+
+def _unit_lines(units: list[tuple[str, str | None]]) -> tuple[list[str], list[str]]:
+    """(check lines, failures) for the units the read statements state: every stated unit must be
+    Millions, because every figure the bridge hands on is read as $M (audit BC-D10)."""
+    wrong = [f"{where} states {u}" for where, u in units if u is not None and u != "Millions"]
+    if wrong:
+        return [], [f"UNIT: {'; '.join(wrong)} — the bridge reads every figure as $M, so a sheet "
+                    "in another unit, or two exports in different units, is refused"]
+    stated = sum(1 for _w, u in units if u is not None)
+    if not units or not stated:
+        return ["unit: unstated on every statement read — the magnitude screen alone guards it"], []
+    note = f", {len(units) - stated} state none" if stated < len(units) else ""
+    return [f"unit: every statement read states Millions ({stated} sheets{note})"], []
+
+
 def _assert_scale(name: str, value: float | None, revenue: float | None) -> str | None:
     """A monetary figure must be $M by MAGNITUDE against revenue-in-$M. Returns a failure string,
     or None when the figure is absent (nothing to check) or in range."""
@@ -327,18 +368,27 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     checks: list[str] = []
     failures: list[str] = []
 
-    # (3) UNIT scale, first — a scale error would make the other two checks meaningless
+    # (3) UNIT, first — a unit error would make the other two checks meaningless. The STATED unit
+    # first: magnitude against revenue cannot see an export wholly in another unit (every ratio is
+    # unchanged), nor thousands against millions between the two exports (1,000x sits inside the
+    # band), so each statement's own unit line is read before the magnitude screen (BC-D10)
+    unit_checks, unit_failures = _unit_lines(_stated_units(bundle))
+    checks.extend(unit_checks)
+    failures.extend(unit_failures)
     scaled = ("cash", "total_debt", "d_and_a", "ocf", "capex")
     for key in scaled:
         bad = _assert_scale(key, facts[key].value if key in facts else None, revenue)
         if bad:
             failures.append(f"SCALE: {bad}")
-    if not failures and revenue:
+    # a stated-unit refusal never prints beside a "$M sheet" pass the magnitude screen cannot back
+    if not unit_failures and not any(f.startswith("SCALE:") for f in failures) and revenue:
         checks.append(f"scale: every monetary figure within [{_SCALE_LO:g}, {_SCALE_HI:g}]x "
                       f"revenue {revenue:,.1f} ($M) — consistent with a $M sheet")
     measured = bool(revenue and revenue > 0
                     and any(key in facts and facts[key].value != 0 for key in scaled))
-    scale_check: CrossCheck = (CHECK_NOT_RUN if not measured
+    # a stated-unit refusal is a difference whether or not the magnitude screen could run
+    scale_check: CrossCheck = (CHECK_DIFFER if unit_failures
+                               else CHECK_NOT_RUN if not measured
                                else CHECK_DIFFER if any(f.startswith("SCALE:") for f in failures)
                                else CHECK_AGREE)
 

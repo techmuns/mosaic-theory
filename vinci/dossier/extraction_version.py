@@ -210,6 +210,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "annual balance-sheet date prints as a date, never a raw serial",
     ),
     (
+        "2026-10-29.BC-D10",
+        "the anchor's CIQ bridge reads each statement's own unit line and refuses a sheet stated "
+        "in another unit, or two exports in different units — the magnitude screen against revenue "
+        "could not see either (audit BC-D10); every export on file states Millions, so no value "
+        "moves",
+    ),
+    (
         "2026-10-29.G-D3",
         "each earnings call reaches the driver extraction and the synthesis WHOLE — prepared "
         "remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past "
