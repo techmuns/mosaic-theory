@@ -362,3 +362,23 @@ def test_a_figure_of_the_cited_fact_traces_at_any_rendering() -> None:
     assert _untraceable(mech, "a -45.1% relative gap", iv.rel_vs_market.source_ref) == []
     assert _untraceable(mech, "SMPL fell -29.1% over 180d", iv.name_180d_return.source_ref) == []
     assert _untraceable(mech, "SMPL fell -29.1% over 180d", "MADE-UP-REF") != []
+
+
+def test_a_decisive_figure_cited_to_another_fact_is_not_deduped_away() -> None:
+    """The decisive-mirror dedup keyed on the figure alone, which was right while the trace read the
+    whole layer. A figure now traces or not BY ITS CITED FACT, so the same figure cited to a
+    different fact is a second finding (review of this change)."""
+    payload = {
+        "evidence_balance": "mixed — test",
+        "bull_points": [{"claim": "a 47.3 unit gap", "source_ref": "EOD FUBO 180d"}],
+        "bear_points": [],
+        "twin_reference_cases": [],
+        "decisive_question": {"question": "q?", "evidence_for": [], "evidence_against": [
+            {"claim": "a 47.3 unit gap", "source_ref": "EOD FUBO 180d"},
+            {"claim": "a 47.3 unit gap", "source_ref": "EOD IWM 180d"}]},
+        "key_unknowns": [],
+    }
+    _, flags, _ = syn.synthesize(_minimal_mech(), llm=_FakeLlm(payload), ticker="FUBO",
+                                 name="FuboTV")
+    hits = [f for f in flags if f.startswith("UNTRACEABLE figure '47.3'")]
+    assert [h.split(" in ")[1].split(":")[0] for h in hits] == ["bull_point", "decisive.against"]

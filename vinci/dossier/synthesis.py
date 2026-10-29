@@ -620,7 +620,9 @@ def _validate(
                     return True
         return False
 
-    flagged_figs: set[tuple[float, bool]] = set()  # (signed value, type) for decisive-mirror dedup
+    # (signed value, type, cited ref) for decisive-mirror dedup — the ref since a figure traces or
+    # not by the fact it cites, so the same figure cited to another fact is another finding
+    flagged_figs: set[tuple[float, bool, str]] = set()
 
     def check_point(p: SourcedPoint, where: str, *, dedup: bool = False) -> SourcedPoint:
         cited = _traces(p.source_ref, refs)
@@ -642,7 +644,7 @@ def _validate(
                 continue
             # key on SIGNED value + flag-type: don't let abs() collapse +N/-N (distinct facts) and
             # don't let a soft TRANSCRIPT-FIGURE on one point suppress a hard UNTRACEABLE elsewhere.
-            key = (round(n, 2), ref_is_transcript)
+            key = (round(n, 2), ref_is_transcript, ref_key)
             if dedup and key in flagged_figs:
                 continue  # decisive mirror of an already-flagged bull/bear figure
             flagged_figs.add(key)
