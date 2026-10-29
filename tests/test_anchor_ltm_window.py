@@ -112,9 +112,10 @@ def test_the_ciq_fcf_fill_pairs_one_period(ocf: tuple[str, date], capex: tuple[s
 def test_extract_carries_each_cash_flow_legs_period(monkeypatch: pytest.MonkeyPatch) -> None:
     """`extract` stamps OCF and capex with the period of the column each was read from, as it
     stamps D&A (#834), and keeps `ltm_ocf`'s one-decimal rounding so no value moves."""
-    cells = {"Cash from Ops.": (25_000.04, "LTM", date(2026, 6, 30)),
-             "Capital Expenditure": (-1_500.0, "FY", date(2025, 12, 31))}
-    monkeypatch.setattr(cb, "_bs", lambda b, label: (None, None))
+    wb = (("A.xls", "a"),)   # each cell's export (audit A-D6)
+    cells = {"Cash from Ops.": (25_000.04, "LTM", date(2026, 6, 30), wb),
+             "Capital Expenditure": (-1_500.0, "FY", date(2025, 12, 31), wb)}
+    monkeypatch.setattr(cb, "_bs", lambda b, label: (None, None, ()))
     monkeypatch.setattr(cb, "_cf_row", lambda b, label, annual: None)
     monkeypatch.setattr(cb, "_cf_cell", lambda b, label, annual: cells.get(label))
     monkeypatch.setattr(cb, "_sourced", lambda b, fn: None)
@@ -127,6 +128,7 @@ def test_extract_carries_each_cash_flow_legs_period(monkeypatch: pytest.MonkeyPa
     assert (got.facts["ocf"].value, got.facts["ocf"].period, got.facts["ocf"].period_end) == (
         25_000.0, "LTM", date(2026, 6, 30))
     assert (got.facts["capex"].value, got.facts["capex"].period) == (1_500.0, "FY")
+    assert got.facts["ocf"].workbooks == got.facts["capex"].workbooks == wb
 
 
 def test_the_window_is_the_last_actual_column_and_a_kind_mismatch_is_refused() -> None:
@@ -145,3 +147,21 @@ def test_the_window_is_the_last_actual_column_and_a_kind_mismatch_is_refused() -
     same_day_wrong_kind = _ciq(d_and_a=_fact(747.0, "LTM", date(2026, 5, 31)))
     assert _bridge_inputs(_page("2026-05-31", False), _facts("V"),
                           same_day_wrong_kind)["d_and_a"].value is None
+
+
+def test_a_bridged_input_names_the_export_it_was_read_from() -> None:
+    """Audit A-D6, at the anchor: the CIQ bridge stamped D&A and FCF with the QUARTERLY export
+    (GOOGL's D&A, IT's FCF), though both are read off the ANNUAL Cash Flow. Read here through the
+    real reader on the synthetic issuer's exports (`tests/fixtures/ciq_synthetic/`), whose LTM
+    column ends 2026-08-31, against V's frozen filings, which carry neither D&A nor capex to that
+    day, so the bridge fills both."""
+    from tests.fixtures.ciq_synthetic import generate as gen
+    from vinci.dossier.ciq import CiqBundle
+
+    annual, quarterly = (gen.HERE / gen.ANNUAL_XLS), (gen.HERE / gen.QUARTERLY_XLS)
+    ciq = cb.extract(CiqBundle.from_files(gen.TICKER, [annual, quarterly]), gen.TICKER)
+    got = _bridge_inputs(_page("2026-08-31", True), _facts("V"), ciq)
+    assert {"d_and_a", "ltm_fcf"} <= set(got["vendor_filled"])
+    for key in ("d_and_a", "ltm_fcf"):
+        assert annual.name in got[key].source, got[key].source
+        assert quarterly.name not in got[key].source, got[key].source

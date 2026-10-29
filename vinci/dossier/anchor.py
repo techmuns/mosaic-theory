@@ -962,7 +962,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                        if isinstance(got_da, str) and got_da.endswith(NO_DEP_AMORT)
                        else f"EDGAR D&A withheld — {got_da}")
                 da = (v * _USD_M, f"CIQ Financials->Cash Flow (vendor basis; {why}) "
-                                  f"[{ciq.source_file} sha {ciq.source_sha256}]",
+                                  f"[{ciq.stamp('d_and_a')}]",
                       ciq_da_basis(ciq))
                 vendor.append("d_and_a")
             else:
@@ -971,7 +971,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
         if nd_val is None and not ex_lease and (v := ciq.value("net_debt")) is not None:
             nd_val = v * _USD_M
             nd = (nd_val, f"CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or "
-                          f"under-captured) [{ciq.source_file} sha {ciq.source_sha256}]")
+                          f"under-captured) [{ciq.stamp('net_debt')}]")
             vendor.append("net_debt")
         o, c = ciq.value("ocf"), ciq.value("capex")
         if fcf is None and o is not None and c is not None:
@@ -981,7 +981,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
             if span is not None:
                 fcf = ((o - abs(c)) * _USD_M, f"{span} (vendor basis)",
                        f"CIQ Financials->Cash Flow operating cash flow less capital expenditure "
-                       f"[{ciq.source_file} sha {ciq.source_sha256}]")
+                       f"[{ciq.stamp('ocf', 'capex')}]")
                 vendor.append("ltm_fcf")
             else:
                 got_fcf = (f"{got_fcf}; CIQ's operating cash flow and capex are not one period "

@@ -25,12 +25,13 @@ class _NoWorkbook:
 
 def _extract(monkeypatch: pytest.MonkeyPatch, *, revenue: float | None,
              cash: float | None) -> Any:
-    monkeypatch.setattr(cb, "_bs", lambda b, label: (cash, None) if label.startswith(
-        "Total Cash") else (None, None))
-    monkeypatch.setattr(cb, "_cf_row", lambda b, label, annual: revenue if label == (
-        "Total Revenue") else None)
-    # D&A is read with its column's period since the #830 review; no D&A row here either
-    monkeypatch.setattr(cb, "_cf_cell", lambda b, label, annual: None)
+    monkeypatch.setattr(cb, "_bs", lambda b, label: (cash, None, ()) if label.startswith(
+        "Total Cash") else (None, None, ()))
+    monkeypatch.setattr(cb, "_cf_row", lambda b, label, annual: None)
+    # revenue is read as a cell with its export since audit A-D6; D&A with its column's period
+    # since the #830 review — no D&A row here either
+    monkeypatch.setattr(cb, "_cf_cell", lambda b, label, annual: (revenue, None, None, ()) if (
+        label == "Total Revenue" and revenue is not None) else None)
     monkeypatch.setattr(cb, "_sourced", lambda b, fn: None)
     return cb.extract(_NoWorkbook(), "VITL")  # type: ignore[arg-type]
 

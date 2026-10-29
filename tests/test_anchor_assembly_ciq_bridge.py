@@ -58,9 +58,11 @@ def _vendor_filled(a: Anchor) -> set[str]:
 
 
 def _fact(v: dict[str, Any]) -> CiqFact:
-    """A frozen fact; its period end (the column header's date) is stored as ISO text."""
+    """A frozen fact; its period end (the column header's date) is stored as ISO text, and the
+    export(s) it was read from (audit A-D6) as JSON lists."""
     end = v.get("period_end")
-    return CiqFact(**{**v, "period_end": date.fromisoformat(end) if end else None})
+    return CiqFact(**{**v, "period_end": date.fromisoformat(end) if end else None,
+                      "workbooks": tuple(tuple(w) for w in v.get("workbooks", []))})
 
 
 def _ciq(t: str, *, drop: str | None = None, failures: list[str] | None = None) -> CiqFacts:

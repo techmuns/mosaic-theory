@@ -158,7 +158,11 @@ def read_text(path: Path, fmt: CiqFormat | None = None) -> str:
 
 
 def read_sheets(path: Path, fmt: CiqFormat | None = None) -> dict[str, list[list[Any]]]:
-    """Read a CIQ spreadsheet into ``{sheet: rows}``. Lazy xlrd/openpyxl; fail loud if absent."""
+    """Read a CIQ spreadsheet into ``{sheet: rows}``. Lazy xlrd/openpyxl; fail loud if absent.
+
+    THE WORKBOOK IS RELEASED BEFORE THIS RETURNS (deferred from #853's review). xlrd maps the file
+    and openpyxl's read-only mode holds its zip open until the workbook is closed or collected;
+    every row is copied out first, so nothing read here needs the file afterwards."""
     fmt = fmt or classify(path)
     if fmt is CiqFormat.BIFF_XLS:
         try:
@@ -167,8 +171,8 @@ def read_sheets(path: Path, fmt: CiqFormat | None = None) -> dict[str, list[list
             raise CiqParseError(
                 f"{path.name}: legacy .xls needs `xlrd` (pip install xlrd) — not installed"
             ) from exc
-        book = xlrd.open_workbook(str(path))
-        return {s.name: [s.row_values(r) for r in range(s.nrows)] for s in book.sheets()}
+        with xlrd.open_workbook(str(path)) as book:  # `__exit__` is `release_resources`
+            return {s.name: [s.row_values(r) for r in range(s.nrows)] for s in book.sheets()}
     if fmt is CiqFormat.OOXML:
         try:
             import openpyxl  # type: ignore[import-untyped]
@@ -177,9 +181,11 @@ def read_sheets(path: Path, fmt: CiqFormat | None = None) -> dict[str, list[list
                 f"{path.name}: .xlsx needs `openpyxl` (pip install openpyxl) — not installed"
             ) from exc
         wb = openpyxl.load_workbook(str(path), read_only=True, data_only=True)
-        return {
-            ws.title: [list(row) for row in ws.iter_rows(values_only=True)] for ws in wb.worksheets
-        }
+        try:
+            return {ws.title: [list(row) for row in ws.iter_rows(values_only=True)]
+                    for ws in wb.worksheets}
+        finally:
+            wb.close()
     raise CiqParseError(f"{path.name}: format {fmt.value} is not a spreadsheet")
 
 
@@ -232,6 +238,27 @@ class CiqAmbiguousError(RuntimeError):
     NOT A `CiqUnavailableError`, ON PURPOSE. Every reader catches that one and degrades to a
     missing section; an ambiguous folder is not an absent export, and a page assembled on a guess
     between two exports is exactly what this exists to stop. It propagates and stops the name."""
+
+
+class CiqMislabelledError(CiqAmbiguousError):
+    """A Financials export whose FILENAME names one period type while its own statements state the
+    other (audit A-X1, 2026-10-29).
+
+    THE FILENAME WON, AND IT WAS WRONG ON TWO NAMES. LLY's `…Financials_Quarterly.xls` was
+    byte-identical to its `…Financials_Annual.xls`, every statement's "Period Type:" cell reading
+    Annual, and the page printed fiscal-year columns as quarters. MCK's pair is the same file the
+    other way round: both quarterly, one named Annual. Neither file is the export its name claims,
+    so neither is read as either; the operator re-exports.
+
+    A SUBCLASS OF `CiqAmbiguousError`, ON PURPOSE: every caller that lets a two-export folder stop
+    the name (rather than degrading it to a missing section) does the same here without a new
+    handler, for the same reason — a page assembled on a mislabelled export is a wrong page."""
+
+
+#: The statements whose "Period Type:" cells name an export's frequency. The other sheets do not
+#: speak for it: FUBO's Annual export carries a Capital Structure Details sheet reading Quarterly,
+#: and Key Stats / Multiples carry no such cell (census of the 34 non-test folders, 2026-10-29).
+_PERIOD_TYPE_SHEETS = ("Income Statement", "Balance Sheet", "Cash Flow")
 
 
 #: Kinds a folder LEGITIMATELY holds several of — read whole through
@@ -312,25 +339,61 @@ def period_type(income_rows: list[list[Any]]) -> str | None:
     for row in income_rows[:14]:
         for j, cell in enumerate(row):
             if isinstance(cell, str) and cell.strip() == "Period Type:" and j + 1 < len(row):
-                return str(row[j + 1]).strip().lower() or None
+                # an empty cell is None from openpyxl, '' from xlrd — never the text "none"
+                return str(row[j + 1] if row[j + 1] is not None else "").strip().lower() or None
     return None
 
 
-def _financials_freq(name: str, income_rows: list[list[Any]]) -> str | None:
-    """The period type of a financials export. The FILENAME is authoritative — CIQ names them
-    '…Financials_Quarterly' / '…Financials_Annual', so we match the '_quarterly' / '_annual' token
-    (anchored on the underscore so a company NAME with 'quarterly'/'annual' can't false-match).
-    :func:`period_type` reads the Income Statement's "Period Type:" cell, which is unreliable when
-    that sheet is EMPTY — AORT's Quarterly export has an empty Income Statement whose boilerplate
-    reads "Annual", so a content-only read mis-tagged the quarterly workbook 'annual' and a
-    freq="quarterly" request silently fell back to the Annual workbook. Fall back to the verbatim
-    cell only for an un-named export."""
+#: CIQ's header-only sentinel for an empty-export subsheet. ONE reader (:func:`is_no_data_shell`),
+#: which `ciq_sheets._no_data_available` calls too.
+CIQ_NO_DATA = "No Data Available"
+
+
+def is_no_data_shell(rows: list[list[Any]]) -> bool:
+    """True when a subsheet is CIQ's header-only 'No Data Available' shell: the export pulled the
+    tab and CIQ returned no rows for it."""
+    return any(r and str(r[0]).strip() == CIQ_NO_DATA for r in rows)
+
+
+def stated_period_type(sheets: dict[str, list[list[Any]]]) -> str | None:
+    """The period type an export's OWN statements state: the value the Income Statement, Balance
+    Sheet and Cash Flow "Period Type:" cells agree on — None when none states one, or when they
+    disagree.
+
+    UNANIMOUS OR SILENT, because one statement can misreport: AORT's quarterly export once carried
+    an empty Income Statement whose boilerplate read Annual (see `_financials_freq`) beside two
+    statements reading Quarterly. That disagreement proves nothing about the file, so it says
+    nothing and the filename stands — it is never read as a mislabel. A 'No Data Available' shell
+    states nothing either: that empty sheet's boilerplate is exactly what misreported."""
+    stated = {pt for s in _PERIOD_TYPE_SHEETS
+              if not is_no_data_shell(rows := sheets.get(s, []))
+              and (pt := period_type(rows)) is not None}
+    # only the two types a filename can name are a statement against it; anything else says nothing
+    return stated.pop() if len(stated) == 1 and stated <= {"annual", "quarterly"} else None
+
+
+def _financials_freq(name: str, sheets: dict[str, list[list[Any]]]) -> str | None:
+    """The period type of a financials export: the FILENAME's '_quarterly' / '_annual' token
+    (anchored on the underscore so a company NAME with 'quarterly'/'annual' can't false-match),
+    else what the export's own statements state (:func:`stated_period_type`).
+
+    THE FILENAME NO LONGER WINS A DISAGREEMENT (audit A-X1, 2026-10-29). It was made authoritative
+    because AORT's Quarterly export had an empty Income Statement whose boilerplate read "Annual",
+    and a content-only read of that one sheet mis-tagged the quarterly workbook — but that was one
+    sheet against two, which :func:`stated_period_type` reads as no statement at all. When every
+    statement names the OTHER period type, the file is not the export its name claims (LLY's
+    "quarterly" was its annual file), and :class:`CiqMislabelledError` refuses it."""
     low = name.lower()
-    if "_quarterly" in low:
-        return "quarterly"
-    if "_annual" in low:
-        return "annual"
-    return period_type(income_rows)
+    named = "quarterly" if "_quarterly" in low else "annual" if "_annual" in low else None
+    stated = stated_period_type(sheets)
+    if named is not None and stated is not None and named != stated:
+        raise CiqMislabelledError(
+            f"{name}: the filename names a {named} export, but its Income Statement, Balance "
+            f"Sheet and Cash Flow each state Period Type '{stated}' — a mislabelled Financials "
+            f"export is never read as either period type. Re-export the {named} Financials from "
+            "CIQ, move this file to data/manual/ciq-archive/replaced-<YYYY-MM-DD>/<TICKER>/ "
+            "and re-run")
+    return named or stated
 
 
 @dataclass(frozen=True)
@@ -392,13 +455,14 @@ class CiqBundle:
             # (no `xlrd`, a corrupt or non-spreadsheet export): an unreadable Annual + Quarterly
             # pair is two period types, not two exports, and the parse failure surfaces — as it
             # always did — when a reader opens the sheet.
-            freq = _financials_freq(name, []) if kind == "financials" else None
+            freq = _financials_freq(p.name, {}) if kind == "financials" else None
             if kind == "financials" and fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
                 try:
                     cache[p] = read_sheets(p, fmt)
-                    freq = _financials_freq(name, cache[p].get("Income Statement", []))
                 except CiqParseError:
                     pass
+                else:  # a mislabel is raised here, outside the parse guard — it stops the name
+                    freq = _financials_freq(p.name, cache[p])
             wbs.append(CiqWorkbook(kind=kind, path=p, fmt=fmt, freq=freq))
         # REFUSED AT CONSTRUCTION, before any reader runs: several readers sit inside broad
         # handlers that turn a raise into a missing section, so the one place a guess between two
@@ -416,10 +480,15 @@ class CiqBundle:
         NEVER A PICK BETWEEN SEVERAL (2026-10-11). This returned the first candidate by sort
         order, and with ``freq`` it fell back to the first of ANY period type — the shape that once
         served AORT's annual workbook to a quarterly request. Now several candidates refuse
-        (:class:`CiqAmbiguousError`). A LONE export still answers, as before — WHATEVER its period
-        type: a folder holding only an Annual export answers a quarterly request with it (kept
-        deliberately; no live folder is in that state). `MULTI_FILE_KINDS` keep their old answer
-        — they are read through :meth:`all_workbooks`."""
+        (:class:`CiqAmbiguousError`). `MULTI_FILE_KINDS` keep their old answer — they are read
+        through :meth:`all_workbooks`.
+
+        A LONE EXPORT OF ANOTHER PERIOD TYPE NO LONGER ANSWERS (audit A-D11, 2026-10-29). It did,
+        by a recorded choice scoped to an export "whose period type is unread" — but the code
+        served one whose period type READ the other value, so an annual-only folder printed its
+        fiscal years as "quarterly" columns and the annual balance sheet's raw date serial as a
+        period label. A lone export answers a request for its own period type, or for any when its
+        period type is unread; otherwise None, and :meth:`sheet` names what the folder holds."""
         cands = [w for w in self.workbooks if w.kind == kind]
         if not cands:
             return None
@@ -433,7 +502,7 @@ class CiqBundle:
             if len(match) == 1:
                 return match[0]
             if len(cands) == 1:
-                return cands[0]
+                return cands[0] if cands[0].freq is None else None
             raise CiqAmbiguousError(
                 f"{self.ticker}: {kind} ({freq}) — "
                 + (f"{len(match)} exports of that period type: {sorted(w.path.name for w in match)}"
@@ -455,6 +524,12 @@ class CiqBundle:
         """Parsed rows at a (kind, sheet) address, or fail loud :class:`CiqUnavailableError`."""
         wb = self.workbook(kind, freq=freq)
         if wb is None:
+            held = sorted({w.freq for w in self.workbooks if w.kind == kind and w.freq})
+            if freq is not None and held:
+                raise CiqUnavailableError(
+                    f"no {freq} '{kind}' CIQ workbook for {self.ticker} — the folder's "
+                    f"{kind} export is {' and '.join(held)}, and another period type is never "
+                    "read in its place")
             raise CiqUnavailableError(f"no '{kind}' CIQ workbook for {self.ticker}")
         if wb.path not in self._cache:
             try:

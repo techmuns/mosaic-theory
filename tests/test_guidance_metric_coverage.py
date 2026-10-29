@@ -16,6 +16,11 @@ THIS WIDENS WHAT CAN BE READ, NEVER WHAT MUST BE. A block absent from a workbook
 and every recovered guide still carries `GUIDANCE_BASIS_REF` (#427: CIQ states a LEVEL, and where
 management guided a RATE the level is CIQ's arithmetic) and its own `age`, so a guide that stopped
 being updated reads `3765d (stale)` rather than passing as current.
+
+THE LIST ITSELF IS GONE (audit A-D8, 2026-10-29). The fifteen names still dropped 17 guided blocks
+across 11 of the 34 non-test exports, so blocks are now found by the sheet's own structure
+(`ciq_sheets._guidance_starts`). The pins below compare that discovery against the former lists on
+the licensed workbooks; the CI-visible pins are in `tests/test_ciq_reader_contract.py`.
 """
 from __future__ import annotations
 
@@ -24,10 +29,16 @@ from datetime import date
 import pytest
 
 from vinci.dossier import ciq_sheets
-from vinci.dossier.ciq_sheets import _GUIDANCE_METRICS
 
 #: What the tuple held before, kept literal so the recovery is demonstrated rather than described.
 _ORIGINAL_FIVE = ("Revenue", "Capital Expenditure", "Gross Margin %", "EBITDA", "EPS Normalized")
+#: The fifteen-name list that replaced it, until A-D8 (2026-10-29) retired lists altogether.
+_FORMER_FIFTEEN = (
+    "Revenue", "EBITDA", "EBIT", "Gross Margin %",
+    "EPS Normalized", "EPS (GAAP)", "Net Income (GAAP)", "Net Income (Excl. Excep)",
+    "Cash From Operations", "Capital Expenditure", "Free Cash Flow",
+    "Depreciation & Amortization", "Interest Expense", "Effective Tax Rate %", "DPS",
+)
 
 
 def _bundle(ticker: str):
@@ -41,20 +52,23 @@ def _bundle(ticker: str):
     return CiqBundle.from_files(ticker, files)
 
 
-def test_the_original_five_are_all_still_covered() -> None:
-    """WIDENED, NEVER NARROWED. Dropping one while adding ten would be a silent regression wearing a
-    feature's clothes, and the five were the only metrics any committed page has ever shown."""
-    missing = [m for m in _ORIGINAL_FIVE if m not in _GUIDANCE_METRICS]
-    assert not missing, f"the widening lost {missing} — that is a regression, not a widening"
+def _reads(ticker: str, names: tuple[str, ...] | None) -> set[str]:
+    """The metrics read off a licensed workbook — by the former list ``names``, or (None) by the
+    sheet's own structure, as the readers now do."""
+    rows = _bundle(ticker).sheet("estimates", "Guidance")
+    starts = (ciq_sheets._guidance_starts(rows) if names is None
+              else ciq_sheets._metric_starts(rows, names))
+    return {r.metric for r in ciq_sheets._guidance_reads(rows, starts, date(2026, 8, 12), 45)}
 
 
-def test_the_metrics_are_unique_and_ordered_decision_first() -> None:
-    """Duplicates would double a block; the ORDER is the display order, so Revenue leads and the
-    below-the-line items a reader consults second do not push it down the table."""
-    assert len(set(_GUIDANCE_METRICS)) == len(_GUIDANCE_METRICS), "a metric is listed twice"
-    assert _GUIDANCE_METRICS[0] == "Revenue"
-    for below_the_line in ("Interest Expense", "Effective Tax Rate %", "DPS"):
-        assert _GUIDANCE_METRICS.index(below_the_line) > _GUIDANCE_METRICS.index("EBITDA")
+@pytest.mark.parametrize("ticker", ["NFLX", "V", "AORT", "CNXC", "ROST", "TJX", "TGT", "PARR"])
+def test_discovery_reads_every_guide_the_former_lists_read(ticker: str) -> None:
+    """WIDENED, NEVER NARROWED (A-D8). Every metric the fifteen-name list read — and so the five
+    before it — is still read, block for block. (The display order was always the sheet's:
+    `_metric_starts` sorted the blocks it found, so the list's order never reached a page.)"""
+    found = _reads(ticker, None)
+    for former in (_ORIGINAL_FIVE, _FORMER_FIFTEEN):
+        assert _reads(ticker, former) <= found, f"{ticker}: discovery LOST a listed guide"
 
 
 def test_nflx_free_cash_flow_guide_is_recovered() -> None:
@@ -75,22 +89,20 @@ def test_nflx_free_cash_flow_guide_is_recovered() -> None:
 @pytest.mark.parametrize("ticker", ["NFLX", "V", "AORT", "CNXC"])
 def test_widening_strictly_adds(ticker: str) -> None:
     """EVERY GUIDE THE OLD TUPLE FOUND IS STILL FOUND, and more besides. Run against the same
-    workbook with the old tuple restored, so the comparison is measured rather than asserted."""
-    bundle, ref = _bundle(ticker), date(2026, 8, 12)
-
-    def metrics() -> set[str]:
-        got = ciq_sheets.guidance_bridge_rows(bundle, reference_date=ref).value or []
-        return {r.metric for r in got}
-
-    wide = metrics()
-    original = ciq_sheets._GUIDANCE_METRICS
-    try:
-        ciq_sheets._GUIDANCE_METRICS = _ORIGINAL_FIVE
-        narrow = metrics()
-    finally:
-        ciq_sheets._GUIDANCE_METRICS = original
+    workbook with the old tuple's blocks, so the comparison is measured rather than asserted."""
+    wide, narrow = _reads(ticker, None), _reads(ticker, _ORIGINAL_FIVE)
     assert narrow <= wide, f"{ticker}: the widening LOST {sorted(narrow - wide)}"
     assert len(wide) > len(narrow), f"{ticker}: the widening recovered nothing"
+
+
+@pytest.mark.parametrize(("ticker", "metric"), [
+    ("ROST", "Same Store Sales Growth %"), ("TJX", "Same Store Sales Growth %"),
+    ("TJX", "EBT (GAAP)"), ("CNXC", "Net Debt"), ("PARR", "Maintenance Capital Expenditure"),
+])
+def test_a_block_the_former_list_never_named_is_read(ticker: str, metric: str) -> None:
+    """A-D8 on the licensed workbooks it was measured on (2026-10-29): guided blocks outside the
+    fifteen names, dated 2025-26, now read."""
+    assert metric in _reads(ticker, None) - _reads(ticker, _FORMER_FIFTEEN)
 
 
 @pytest.mark.parametrize("ticker", ["NFLX", "V"])
@@ -153,14 +165,16 @@ def test_a_metric_with_no_defined_direction_records_no_outcome() -> None:
         f"D&A reported a delivery record with no defined direction: {da[0].record!r}")
 
 
-def test_every_whitelisted_metric_is_either_directed_or_knowingly_undirected() -> None:
-    """THE COMPLETENESS GUARD, and the reason this cannot silently rot: adding a metric to
-    `_GUIDANCE_METRICS` without deciding its direction is exactly how the tax rate got in. A new
-    metric must be classified or explicitly listed as undirected — never left to a heuristic."""
+def test_every_formerly_listed_metric_is_either_directed_or_knowingly_undirected() -> None:
+    """THE COMPLETENESS GUARD, as it stood for the fifteen listed metrics: adding a metric without
+    deciding its direction is exactly how the tax rate got in. Since A-D8 a discovered metric the
+    map does not name records NO outcome (pinned on the synthetic export in
+    `test_ciq_reader_contract.py`), so a missing direction withholds a record rather than guessing
+    one; the fifteen keep their decided directions."""
     from vinci.dossier.ciq_sheets import _GUIDANCE_HIGHER_IS_DELIVERY
 
     undirected = {"Depreciation & Amortization"}   # decided, not overlooked
-    unclassified = [m for m in _GUIDANCE_METRICS
+    unclassified = [m for m in _FORMER_FIFTEEN
                     if m not in _GUIDANCE_HIGHER_IS_DELIVERY and m not in undirected]
     assert not unclassified, (
         f"{unclassified} are guided but have no delivery direction — classify them in "

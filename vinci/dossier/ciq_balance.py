@@ -33,12 +33,14 @@ DERIVED scalars with a source stamp. The workbooks themselves are never committe
 """
 from __future__ import annotations
 
+import functools
 from dataclasses import dataclass, field
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 from vinci.dossier import ciq_sheets as cs
-from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, excel_date
+from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
 from vinci.dossier.schemas import (
     CHECK_AGREE,
     CHECK_DIFFER,
@@ -76,6 +78,10 @@ class CiqFact:
     # state it — the reader then says so, never a guess (review of #830).
     period: str | None = None
     period_end: date | None = None
+    # (2026-10-29, audit A-D6) the export(s) the value was READ from, each (file name, sha256[:10])
+    # — two for a figure built from both workbooks. The bridge stamped every fact with the
+    # QUARTERLY workbook, so GOOGL's annual-sheet D&A named a file it was never read from.
+    workbooks: tuple[tuple[str, str | None], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -88,6 +94,8 @@ class CiqFacts:
 
     ticker: str
     as_of: str | None
+    # the first Financials export the bundle holds, quarterly before annual — NOT any fact's
+    # provenance: each fact names its own (`CiqFact.workbooks`, read through :meth:`stamp`)
     source_file: str | None
     source_sha256: str | None
     facts: dict[str, CiqFact] = field(default_factory=dict)
@@ -107,6 +115,15 @@ class CiqFacts:
         f = self.facts.get(key)
         return f.value if f else None
 
+    def stamp(self, *keys: str) -> str:
+        """'<file> sha <hash>' for each export the named facts were read from, in reading order,
+        ' + '-joined — the provenance a bridged anchor input prints (audit A-D6). A fact that
+        records no workbook says so; the bundle's first export is never put in its place."""
+        held = dict.fromkeys(wb for k in keys if (f := self.facts.get(k)) for wb in f.workbooks)
+        if not held:
+            return "workbook unrecorded"
+        return " + ".join(f"{name} sha {sha or '?'}" for name, sha in held)
+
 
 def _sourced(bundle: CiqBundle, fn: Any) -> float | None:
     """Run a ciq_sheets extractor and return its value, or None when it is not PRESENT."""
@@ -117,31 +134,50 @@ def _sourced(bundle: CiqBundle, fn: Any) -> float | None:
     return s.value if s.status is SourceStatus.PRESENT and s.value is not None else None
 
 
-def _bs(bundle: CiqBundle, label: str) -> tuple[float | None, str | None]:
-    """One Balance Sheet line → (value $M, source_ref). Reuses the shared row reader so the address
-    and the freshest-period-first rule are stated in exactly one place."""
-    s = cs._bs_latest(bundle, label)
+#: (file name, sha256[:10]) of the export a value was read from — `CiqFact.workbooks`' element.
+Provenance = tuple[tuple[str, str | None], ...]
+
+
+def _provenance(bundle: CiqBundle, freq: str | None) -> Provenance:
+    """The export of period type ``freq`` that answered a read, as one provenance entry — none
+    when no export answered. Both addresses are LITERALS for the CIQ-manifest drift guard."""
+    wb = (bundle.workbook("financials", freq="quarterly") if freq == "quarterly"
+          else bundle.workbook("financials", freq="annual") if freq == "annual" else None)
+    if wb is None:
+        return ()
+    try:
+        st = wb.path.stat()
+    except OSError:
+        return ((wb.path.name, None),)
+    return ((wb.path.name, _sha10(wb.path, st.st_mtime_ns, st.st_size)),)
+
+
+@functools.lru_cache(maxsize=64)
+def _sha10(path: Path, _mtime_ns: int, _size: int) -> str | None:
+    """`file_provenance`'s hash, read once per file version — `extract` stamps up to a dozen facts
+    from one export. Keyed on the file's mtime and size, so a re-export is hashed afresh."""
+    return cs.file_provenance(path)[0]
+
+
+def _bs(bundle: CiqBundle, label: str) -> tuple[float | None, str | None, Provenance]:
+    """One Balance Sheet line → (value $M, source_ref, the export it was read from). Reuses the
+    shared row reader so the address and the freshest-period-first rule are stated in exactly one
+    place."""
+    s, freq = cs._bs_latest_from(bundle, label)
     if s.status is not SourceStatus.PRESENT or s.value is None:
-        return None, None
-    return float(s.value), s.source_ref
+        return None, None, ()
+    return float(s.value), s.source_ref, _provenance(bundle, freq)
 
 
 def header_period(cell: Any) -> tuple[str | None, date | None]:
     """A period-header cell → ("LTM" | "FY" | None, its end date | None).
 
     CIQ writes ``LTM\n12 months\nAug-31-2026`` over a trailing column and ``12 months\nMay-31-2026``
-    over a fiscal year; the date is the cell's last line. Read off the header the value came from,
-    through the shared helpers (`ciq_sheets._is_ltm`, `ciq.excel_date`) — never off a label built
-    for display."""
-    text = str(cell or "").strip()
-    if not text:
-        return None, None
-    end = excel_date(text.splitlines()[-1].strip())
-    if cs._is_ltm(text):
-        return "LTM", end
-    if "12 months" in text:
-        return "FY", end
-    return None, end
+    over a fiscal year. Read off the header the value came from through the ONE header parser
+    (`ciq_sheets.header_period`, audit A-D3) — never off a label built for display. A quarter
+    column is neither, so it reads None beside its date."""
+    p = cs.header_period(cell)
+    return (p.kind if p.kind in ("LTM", "FY") else None), p.end
 
 
 def pick_with_period(rows: list[list[Any]],
@@ -164,9 +200,9 @@ def _pick(rows: list[list[Any]], label: str) -> float | None:
 
 
 def _cf_cell(bundle: CiqBundle, label: str,
-             annual: bool) -> tuple[float, str | None, date | None] | None:
+             annual: bool) -> tuple[float, str | None, date | None, Provenance] | None:
     """Latest column of a Cash Flow / Income Statement row, cash flow first, with the period that
-    column covers (:func:`pick_with_period`).
+    column covers (:func:`pick_with_period`) and the export it was read from (audit A-D6).
 
     Every (kind, sheet, freq) address below is a STRING LITERAL, fully unrolled. The CIQ-manifest
     drift guard reads these call sites statically and rejects a computed argument — a loop over
@@ -184,11 +220,11 @@ def _cf_cell(bundle: CiqBundle, label: str,
         got = one(lambda: bundle.sheet("financials", "Cash Flow", freq="annual"))
         if got is None:
             got = one(lambda: bundle.sheet("financials", "Income Statement", freq="annual"))
-        return got
+        return (*got, _provenance(bundle, "annual")) if got is not None else None
     got = one(lambda: bundle.sheet("financials", "Cash Flow", freq="quarterly"))
     if got is None:
         got = one(lambda: bundle.sheet("financials", "Income Statement", freq="quarterly"))
-    return got
+    return (*got, _provenance(bundle, "quarterly")) if got is not None else None
 
 
 def _cf_row(bundle: CiqBundle, label: str, annual: bool) -> float | None:
@@ -224,16 +260,19 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     sha, _mtime = cs.file_provenance(wb.path) if wb is not None else (None, None)
     src_file = wb.path.name if wb is not None else None
 
-    cash, cash_ref = _bs(bundle, "Total Cash & ST Investments")
+    cash, cash_ref, cash_wb = _bs(bundle, "Total Cash & ST Investments")
     if cash is None:
-        cash, cash_ref = _bs(bundle, "Cash And Equivalents")
-    debt, debt_ref = _bs(bundle, "Total Debt")
-    fin_lease, fin_ref = _bs(bundle, "Capital Leases")
-    op_lease, op_ref = _bs(bundle, "Operating Lease Liabilities")
+        cash, cash_ref, cash_wb = _bs(bundle, "Cash And Equivalents")
+    debt, debt_ref, debt_wb = _bs(bundle, "Total Debt")
+    fin_lease, fin_ref, fin_wb = _bs(bundle, "Capital Leases")
+    op_lease, op_ref, op_wb = _bs(bundle, "Operating Lease Liabilities")
 
     # revenue is the SCALE REFERENCE every other figure is magnitude-checked against, so it is read
     # first and independently: annual where the workbook carries it, else the quarterly sheet.
-    revenue = _cf_row(bundle, "Total Revenue", True) or _cf_row(bundle, "Total Revenue", False)
+    rev_cell = _cf_cell(bundle, "Total Revenue", True)
+    if not (rev_cell and rev_cell[0]):
+        rev_cell = _cf_cell(bundle, "Total Revenue", False)
+    revenue = rev_cell[0] if rev_cell else None
 
     da_cell = (_cf_cell(bundle, "Depreciation & Amort., Total", True)
                or _cf_cell(bundle, "Depreciation & Amort.", True))
@@ -243,34 +282,47 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     capex_cell = _cf_cell(bundle, "Capital Expenditure", True)
     ocf = round(ocf_cell[0], 1) if ocf_cell else None   # `ltm_ocf`'s rounding, so no value moves
     capex = capex_cell[0] if capex_cell else None
-    diluted = _cf_row(bundle, "Weighted Avg. Diluted Shares Out.", False) or \
-        _cf_row(bundle, "Weighted Avg. Diluted Shares Out.", True)
+    dil_cell = _cf_cell(bundle, "Weighted Avg. Diluted Shares Out.", False)
+    if not (dil_cell and dil_cell[0]):
+        dil_cell = _cf_cell(bundle, "Weighted Avg. Diluted Shares Out.", True)
 
-    stamp = f"CIQ Financials workbook {src_file or '?'} (sha {sha or '?'})"
     facts: dict[str, CiqFact] = {}
 
-    def put(key: str, val: float | None, unit: str, basis: str, ref: str | None,
-            period: tuple[str | None, date | None] = (None, None)) -> None:
-        if val is not None:
-            facts[key] = CiqFact(value=round(val, 4), unit=unit, basis=basis,
-                                 source=ref or stamp, period=period[0], period_end=period[1])
+    def put(key: str, cell: tuple[float, str | None, date | None, Provenance] | None,
+            unit: str, basis: str, *, value: float | None = None, ref: str | None = None,
+            period: bool = True) -> None:
+        """One fact, stamped with the export ITS value was read from (audit A-D6)."""
+        val = value if value is not None else (cell[0] if cell else None)
+        if val is None or cell is None:
+            return
+        wbs = cell[3]
+        stamp = " + ".join(f"CIQ Financials workbook {n} (sha {s or '?'})" for n, s in wbs)
+        facts[key] = CiqFact(value=round(val, 4), unit=unit, basis=basis,
+                             source=ref or stamp or "CIQ Financials workbook ? (sha ?)",
+                             period=cell[1] if period else None,
+                             period_end=cell[2] if period else None, workbooks=wbs)
 
-    put("cash", cash, "$M", "total cash and short-term investments, latest balance sheet", cash_ref)
-    put("total_debt", debt, "$M", "CIQ classified total debt, latest balance sheet", debt_ref)
-    put("finance_leases", fin_lease, "$M", "capital/finance leases, latest balance sheet", fin_ref)
-    put("operating_leases", op_lease, "$M", "operating lease liabilities, latest balance sheet",
-        op_ref)
-    put("d_and_a", da_cell[0] if da_cell else None, "$M",
-        "depreciation and amortisation, the annual sheet's latest column (cash-flow statement)",
-        stamp, (da_cell[1], da_cell[2]) if da_cell else (None, None))
-    put("ocf", ocf, "$M", "cash from operations, the annual sheet's latest column", stamp,
-        (ocf_cell[1], ocf_cell[2]) if ocf_cell else (None, None))
-    put("capex", (abs(capex) if capex is not None else None), "$M",
-        "capital expenditure, the annual sheet's latest column (magnitude)", stamp,
-        (capex_cell[1], capex_cell[2]) if capex_cell else (None, None))
-    put("diluted_shares", diluted, "millions", "weighted-average diluted shares, latest period",
-        stamp)
-    put("revenue", revenue, "$M", "total revenue, latest full year", stamp)
+    def bs(val: float | None, wbs: Provenance) -> tuple[float, None, None, Provenance] | None:
+        return (val, None, None, wbs) if val is not None else None
+
+    put("cash", bs(cash, cash_wb), "$M",
+        "total cash and short-term investments, latest balance sheet", ref=cash_ref)
+    put("total_debt", bs(debt, debt_wb), "$M", "CIQ classified total debt, latest balance sheet",
+        ref=debt_ref)
+    put("finance_leases", bs(fin_lease, fin_wb), "$M",
+        "capital/finance leases, latest balance sheet", ref=fin_ref)
+    put("operating_leases", bs(op_lease, op_wb), "$M",
+        "operating lease liabilities, latest balance sheet", ref=op_ref)
+    put("d_and_a", da_cell, "$M",
+        "depreciation and amortisation, the annual sheet's latest column (cash-flow statement)")
+    put("ocf", ocf_cell, "$M", "cash from operations, the annual sheet's latest column",
+        value=ocf)
+    put("capex", capex_cell, "$M",
+        "capital expenditure, the annual sheet's latest column (magnitude)",
+        value=(abs(capex) if capex is not None else None))
+    put("diluted_shares", dil_cell, "millions",
+        "weighted-average diluted shares, latest period", period=False)
+    put("revenue", rev_cell, "$M", "total revenue, latest full year", period=False)
 
     checks: list[str] = []
     failures: list[str] = []
@@ -321,8 +373,10 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     nd_bs = None
     if debt is not None and cash is not None:
         nd_bs = debt + (fin_lease or 0.0) + (op_lease or 0.0) - cash
-        put("net_debt", nd_bs, "$M",
-            "total debt + leases where disclosed - total cash and short-term investments", None)
+        legs = (*debt_wb, *cash_wb, *(fin_wb if fin_lease is not None else ()),
+                *(op_wb if op_lease is not None else ()))
+        put("net_debt", (nd_bs, None, None, tuple(dict.fromkeys(legs))), "$M",
+            "total debt + leases where disclosed - total cash and short-term investments")
     ev_mult = _sourced(bundle, cs.ev_ebitda_current)
     ebitda = _sourced(bundle, cs.ltm_ebitda)
     if nd_bs is not None and ev_mult and ebitda and ebitda > 0:
