@@ -77,7 +77,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "4a62eb4f4e3c"
+PINNED_TABLE = "2bba9f5b0f06"
 PINNED_AT = "2026-10-29.A-X1"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
@@ -106,12 +106,12 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/lease_basis.py": "a93d880597ba",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "93fb67627fb2",
+    "vinci/dossier/mechanical.py": "c30736637dbe",
     "vinci/dossier/midcycle.py": "dfa24e1bc15a",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "0c07bfc551a1",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "0432f95bb67b",
+    "vinci/dossier/schemas.py": "ba1235fc60f1",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
     "vinci/dossier/synthesis.py": "19ccb746b446",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
@@ -121,11 +121,11 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/commissioning.py": "dc2004432387",
     "vinci/edgar/concepts.py": "abaa46f51d9f",
     "vinci/edgar/debt_maturities.py": "a72fba167d94",
-    "vinci/edgar/filing_sections.py": "e66ac473d51f",
+    "vinci/edgar/filing_sections.py": "568c36df04a2",
     "vinci/edgar/going_concern.py": "5097f25ade31",
     "vinci/edgar/net_debt.py": "6257a0464909",
-    "vinci/edgar/primary_source.py": "b7085cdfbc31",
-    "vinci/edgar/release_parse.py": "0f4e3f5e4c90",
+    "vinci/edgar/primary_source.py": "80351248cc8a",
+    "vinci/edgar/release_parse.py": "38390113b949",
     "vinci/edgar/segment_facts.py": "9d3c07301296",
     "vinci/edgar/segments.py": "a25da92ebf20",
     "vinci/edgar/submissions.py": "6644355e5c3f",

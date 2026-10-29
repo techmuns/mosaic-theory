@@ -151,6 +151,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "citation is a ref of the layer, never a fragment, and each figure traces to the numbers "
         "the fact it cites states, never its dates or ids; an exposure fact cites one filing and "
         "is always grounded (audit G-D5, G-D6)"
+,
+    ),
+    (
+        "2026-10-29.E2",
+        "release and 10-Q figures read from what their own text states (audit E2): a footnote "
+        "digit after a measure's name and a trailing-twelve-month lead-in (D5), a loss stated in "
+        "words (D10), 'Revenues of' with the closing company profile refused (D11), a one-off "
+        "whose amount the charge noun names (D12), the ≤12m wall's stated zero and its "
+        "principal-and-interest basis (D15, `maturity_wall.basis`), a concentration column's "
+        "role from its header, a refused row named (D16); a non-positive LTM EBITDA has no "
+        "leverage multiple (E1-D13)"
     ),
     # THE STAMP STOOD STILL FOR 45 COMMITS (audit A-D14). Every commit to vinci/dossier, vinci/edgar
     # and vinci/ciq merged after 2026-10-09.3 (#706 … #855, 2026-10-11 → 10-29) appended no row,
