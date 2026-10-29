@@ -77,7 +77,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "62e4d18d5c77"
+PINNED_TABLE = "4a62eb4f4e3c"
 PINNED_AT = "2026-10-29.A-X1"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
@@ -94,7 +94,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq_sheets.py": "09ed07eb89f8",
     "vinci/dossier/covenant_extract.py": "36044a98ac15",
     "vinci/dossier/dilution.py": "87d81ad77c04",
-    "vinci/dossier/driver_extract.py": "332fb2039a9a",
+    "vinci/dossier/driver_extract.py": "28d08956a8f2",
     "vinci/dossier/ebitda_basis.py": "7f9996f712e1",
     "vinci/dossier/ebitda_recon.py": "ecb11157c1e6",
     "vinci/dossier/edgar_fundamentals.py": "c8ecafb0bcb4",
@@ -113,7 +113,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "0432f95bb67b",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "c40f86522872",
+    "vinci/dossier/synthesis.py": "19ccb746b446",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "766d2ed17c7a",
     "vinci/dossier/verdict.py": "0b43167d2044",

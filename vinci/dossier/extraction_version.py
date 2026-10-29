@@ -143,6 +143,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "a missing annual Income Statement, revenue row or unusual-items block refuses the build "
         "instead of passing it (audit D-D5)",
     ),
+    (
+        "2026-10-29.G-V1",
+        "a transcript row's call, following paragraph and period come from ONE located quote; "
+        "its period stands only where the quote states it, else none; each value figure equals "
+        "a figure of its quote in the quote's unit (audit G-V1, G-D1, G-D2) · a synthesis "
+        "citation is a ref of the layer, never a fragment, and each figure traces to the numbers "
+        "the fact it cites states, never its dates or ids; an exposure fact cites one filing and "
+        "is always grounded (audit G-D5, G-D6)"
+    ),
     # THE STAMP STOOD STILL FOR 45 COMMITS (audit A-D14). Every commit to vinci/dossier, vinci/edgar
     # and vinci/ciq merged after 2026-10-09.3 (#706 … #855, 2026-10-11 → 10-29) appended no row,
     # and at least six changed output (#819, #826, #827, #831, #834, #836), so the 155 layer

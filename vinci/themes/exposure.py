@@ -42,6 +42,7 @@ from vinci.themes.schemas import (
     ExposureConcreteness,
     ExposureFact,
 )
+from vinci.verbatim import comparison_key
 
 _EFTS = "https://efts.sec.gov/LATEST/search-index"
 _ONE_WEEK = 7 * 24 * 3600
@@ -409,10 +410,6 @@ _SYSTEM = (
 )
 
 
-def _ref_traces(ref: str, universe: set[str]) -> bool:
-    return any(ref == u or ref in u or u in ref for u in universe)
-
-
 _ACC_RE = re.compile(r"\d{10}-\d{2}-\d{6}")   # an EDGAR accession, e.g. 0001628280-26-013305
 _PROPER_RE = re.compile(r"\b[A-Z][A-Za-z0-9&.]{2,}\b")   # proper-noun-ish tokens (CoreWeave, HBM)
 # a FINANCIAL FIGURE — a $-amount, or a magnitude with a scale word. These (with company-specific
@@ -436,11 +433,22 @@ _GROUNDING_STOP = {
 }
 
 
-def _cited_filing_text(ref: str, by_accession: dict[str, str]) -> str | None:
-    """The filing text the fact cites, matched by accession (the LLM copies the '(accession ...)'
-    tag). None if the ref carries no accession or none matches the stream."""
-    m = _ACC_RE.search(ref)
-    return by_accession.get(m.group(0)) if m else None
+def _cited_filing_text(ref: str, stream: list[tuple[str, str]]) -> str | None:
+    """The ONE stream item a fact's ref names, or None — and None means UNCITED (audit G-D5).
+
+    The model is told to copy the item's '(accession ...)' tag, so a ref resolves by the single
+    accession it carries, or by being that item's whole ref (on the verbatim check's key). The cite
+    used to be a substring test either way, so ``''`` — a substring of every ref — was cited, and
+    since it carries no accession the grounding below was SKIPPED and its concreteness credited the
+    basis. A ref naming two filings resolves to neither: a fact has one source."""
+    accessions = set(_ACC_RE.findall(ref))
+    if len(accessions) == 1:
+        acc = accessions.pop()
+        return next((text for r, text in stream if acc in _ACC_RE.findall(r)), None)
+    if accessions:
+        return None
+    key = comparison_key(ref)
+    return next((text for r, text in stream if key and comparison_key(r) == key), None)
 
 
 def _driver_vocab(spec: DriverSpec) -> frozenset[str]:
@@ -539,8 +547,6 @@ def assess_exposure(
         return base.model_copy(update={
             "exposure_basis": ExposureBasis.UNASSESSED_ERROR, "flags": [f"LLM error: {exc}"]})
 
-    refs = set(stream_refs)
-    by_accession = {m.group(0): text for ref, text in stream if (m := _ACC_RE.search(ref))}
     driver_vocab = _driver_vocab(spec)   # driver's own words — excluded from grounding
     flags: list[str] = []
     facts: list[ExposureFact] = []
@@ -558,16 +564,13 @@ def assess_exposure(
             tie = DriverTie.INDIRECT  # missing/invalid tie → conservative (caps at committed)
         ref = str(item.get("source_ref", ""))
         fact_text = str(item.get("fact", ""))
-        cited = _ref_traces(ref, refs)
-        if not cited:
+        filing_text = _cited_filing_text(ref, stream)
+        if filing_text is None:
             flags.append(f"UNCITED fact (ref not in stream): '{fact_text[:60]}'")
             conc = ExposureConcreteness.NONE  # uncited fact can't credit the basis (fail-closed)
-        else:
-            filing_text = _cited_filing_text(ref, by_accession)
-            if filing_text is not None and not _fact_grounded(fact_text, filing_text, driver_vocab):
-                flags.append(
-                    f"UNGROUNDED fact-text (not found in cited filing): '{fact_text[:60]}'")
-                conc = ExposureConcreteness.NONE  # ungrounded fact can't credit the basis
+        elif not _fact_grounded(fact_text, filing_text, driver_vocab):
+            flags.append(f"UNGROUNDED fact-text (not found in cited filing): '{fact_text[:60]}'")
+            conc = ExposureConcreteness.NONE  # ungrounded fact can't credit the basis
         if _DIRECTIONAL.search(fact_text):
             flags.append(f"DIRECTIONAL language in fact: '{fact_text[:60]}'")
         facts.append(
