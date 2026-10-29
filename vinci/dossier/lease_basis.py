@@ -312,9 +312,13 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
         ltm_parts = [ebitda_q[q] for q in window]
         if any(v is None for v in ltm_parts):
             continue
+        # the rows CIQ STATES, summed for the check against EDGAR only: an UNAVAILABLE cell is
+        # not a zero (`ciq._UNAVAILABLE_CELLS`), so a quarter missing one is priced only where
+        # EDGAR vouches for the sum (`stated`, read in PASS 2)
         rows_in.append((d, t, sum(v for v in ltm_parts if v is not None),
-                        (cur_l.get(d) or 0.0) + (lt_l.get(d) or 0.0),
+                        sum((v for v in (cur_l.get(d), lt_l.get(d)) if v is not None), 0.0),
                         _near(op_edgar, d, _OPERATING_NEAR_DAYS)))
+    stated = {d for d, *_ in rows_in if cur_l.get(d) is not None and lt_l.get(d) is not None}
     fin_at = {d: (_near(fin_edgar, d, _FINANCE_NEAR_DAYS) or 0.0) if fin_edgar else 0.0
               for d, *_ in rows_in}
     fin_dated = {d: _finance_dated(fin_edgar, d) for d, *_ in rows_in}
@@ -336,7 +340,12 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
         sp = _split(rows_sum, fin, op_e, adopted=adopted, comparative=_comparative(d),
                     nearest=nearest, fin_dated=fin_dated[d])
         pd = priced.get(d)
-        usable = sp.status != "unreconciled" and ltm > 0
+        # UNCHECKED AND A LEASE CELL UNAVAILABLE (audit D-D1): nothing vouches for the sum, and
+        # pricing it would take the missing cell as zero — WLK's 2025-09-30 states 'Long-Term
+        # Leases' $709M and '-' for the current portion its neighbours put at $136-138M. A
+        # reconciled quarter is EDGAR-vouched; a pre-adoption one removes nothing either way.
+        usable = (sp.status != "unreconciled" and ltm > 0
+                  and (d in stated or sp.status != "unchecked"))
         out.append(LeaseObservation(
             balance_sheet_date=d.isoformat(), pricing_date=pd.isoformat() if pd else None,
             tev=round(t, 3), leases_in_tev=round(rows_sum, 3),
@@ -525,7 +534,9 @@ def history(obs: list[LeaseObservation], *, source_file: str | None = None,
     last = obs[-1] if obs else None
     if last is not None and last.multiple is None:
         why_not = ("does not reconcile" if last.status == "unreconciled"
-                   else "has no positive LTM EBITDA")
+                   else "has no positive LTM EBITDA" if last.ltm_ebitda <= 0
+                   else "has a lease cell CIQ states as UNAVAILABLE and no EDGAR figure to "
+                        "check the rest")
         return None, (f"the latest quarter ({last.balance_sheet_date}) {why_not}, so the history "
                       "has no current — an older quarter is not one")
     band = _own_history_band(METRIC, pairs, source_file=source_file,

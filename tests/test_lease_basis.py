@@ -147,10 +147,12 @@ def test_an_unchecked_quarter_uses_the_split_its_neighbours_reconciled_on() -> N
 # --- observations: four consecutive quarters, or no LTM -----------------------------------------
 
 def _stub(quarters: list[str], ebitda: list[float], tev: dict[str, float],
-          leases: dict[str, float], priced: dict[str, Any] | None = None) -> Any:
+          leases: dict[str, float], priced: dict[str, Any] | None = None,
+          current: dict[str, Any] | None = None) -> Any:
     """Three quarterly sheets in the REAL shape `observations` reads (header row labelled as CIQ
     labels it, stacked text headers 'Q1\\nMon-DD-YYYY'). Numbers are illustrative; the real-data
-    check is the corpus pass below and the fixtures captured from production."""
+    check is the corpus pass below and the fixtures captured from production. `current` is the
+    'Curr. Port. of Leases' cell by date — CIQ's '-' where it is not given."""
     def hdr(ds: list[str]) -> list[str]:
         return [date.fromisoformat(d).strftime("3 months\nQ1\n%b-%d-%Y") for d in ds]
     tev_ds = sorted(tev)
@@ -162,7 +164,7 @@ def _stub(quarters: list[str], ebitda: list[float], tev: dict[str, float],
             ["= Total Enterprise Value (TEV)", *[tev[d] for d in tev_ds]]],
         "Balance Sheet": [
             ["Balance Sheet as of:\n", *hdr(tev_ds)],
-            ["Curr. Port. of Leases", *["-" for _ in tev_ds]],
+            ["Curr. Port. of Leases", *[(current or {}).get(d, "-") for d in tev_ds]],
             ["Long-Term Leases", *[leases.get(d, "-") for d in tev_ds]]],
         "Income Statement": [
             ["For the Fiscal Period Ending\n", *hdr(quarters)],
@@ -231,6 +233,74 @@ def test_an_unchecked_quarter_takes_the_split_proved_after_it_too() -> None:
     assert obs["2025-03-31"].status == "reconciled"
     assert obs["2024-12-31"].status == "unchecked"
     assert obs["2024-12-31"].operating_leases == pytest.approx(100.0)
+
+
+# --- audit D-D1: an UNAVAILABLE lease cell is not a zero ------------------------------------------
+
+#: WLK, real: the committed page's values at c51c286a (`data/dossiers/WLK/dossier.json` — quarterly
+#: EBITDA from the financial summary, TEV and pricing dates from the lease observations) and the
+#: lease cells of the export that page was built from (sha256 15bec6cee3…), beside WLK's frozen
+#: companyfacts. 2017-18 is before ASC 842 ('-' in both lease rows); 2025-09-30 states 'Long-Term
+#: Leases' $709M and '-' for the current portion, while EDGAR tags only the noncurrent $709M.
+_WLK_QUARTERS = {"2017-03-31": 392, "2017-06-30": 417, "2017-09-30": 527, "2017-12-31": 483,
+                 "2018-03-31": 564, "2018-06-30": 568, "2018-09-30": 564, "2018-12-31": 351,
+                 "2024-09-30": 536, "2024-12-31": 202, "2025-03-31": 258, "2025-06-30": 301,
+                 "2025-09-30": 281, "2025-12-31": -6}
+_WLK_TEV = {"2017-12-31": (16841.755, "2018-02-21"), "2018-03-31": (16405.462, "2018-05-03"),
+            "2018-06-30": (15483.268, "2018-08-02"), "2018-09-30": (12578.107, "2018-11-06"),
+            "2018-12-31": (12673.816, "2019-02-20"), "2025-06-30": (14163.337, "2025-08-06"),
+            "2025-09-30": (12578.476, "2025-10-31"), "2025-12-31": (16819.523, "2026-02-26")}
+_WLK_LONG_TERM = {"2025-06-30": 731.0, "2025-09-30": 709.0, "2025-12-31": 688.0}
+_WLK_CURRENT = {"2025-06-30": 136.0, "2025-12-31": 138.0}
+
+
+def _wlk(drop: tuple[str, ...] = (), current: dict[str, float] | None = None) -> dict[str, Any]:
+    tev = {d: v for d, (v, _p) in _WLK_TEV.items() if d not in drop}
+    b = _stub(list(_WLK_QUARTERS), list(_WLK_QUARTERS.values()), tev, _WLK_LONG_TERM,
+              priced={d: p for d, (_v, p) in _WLK_TEV.items()},
+              current={**_WLK_CURRENT, **(current or {})})
+    return {o.balance_sheet_date: o for o in lbm.observations(b, _facts("WLK"))}
+
+
+def test_d1_neg_an_unchecked_quarter_with_an_unavailable_lease_cell_is_not_priced() -> None:
+    """(-) Audit D-D1, WLK 2025-09-30, real. EDGAR has no complete operating figure that day, so
+    nothing checks CIQ's rows — and the current cell is '-'. Taking it as zero priced the quarter
+    at 11.39x on $709M of leases its neighbours put at $867M and $826M; seven WLK quarters had this
+    shape, and the band's median moved 7.91x → 8.24x once they are left out."""
+    o = _wlk()["2025-09-30"]
+    assert o.status == "unchecked" and o.edgar_operating_leases is None
+    assert o.multiple is None, f"priced at {o.multiple} on the long-term row alone"
+    assert o.leases_in_tev == 709.0, "the cell CIQ does state is kept, never a guess at the other"
+
+
+def test_d1_pos_a_vouched_or_pre_adoption_quarter_still_prices() -> None:
+    """(+) Audit D-D1's fence, the same WLK data. A quarter with BOTH cells stated reconciles and
+    prices (2025-06-30 and -12-31, the committed multiples). A pre-842 quarter with '-' in both
+    rows takes nothing out of TEV, so it prices exactly as before: 79 of the 87 committed
+    observations with an UNAVAILABLE lease cell are these, and none of them moves."""
+    obs = _wlk()
+    for d, mult in (("2025-06-30", 10.251609), ("2025-12-31", 19.176886)):
+        assert obs[d].status == "reconciled" and obs[d].multiple == pytest.approx(mult), d
+    for d, mult in (("2017-12-31", 9.258799), ("2018-06-30", 7.228417), ("2018-12-31", 6.19141)):
+        assert obs[d].status == "pre-adoption" and obs[d].leases_in_tev == 0.0, d
+        assert obs[d].multiple == pytest.approx(mult), d
+    # and an UNCHECKED quarter is still priced when CIQ states both cells (TGT's 10-Q quarters):
+    # the refusal is the missing cell, not the missing EDGAR figure. 2025-09-30 given a current
+    # portion its neighbours carry ($136M) is unchecked, and prices on the $845M it then states.
+    o = _wlk(current={"2025-09-30": 136.0})["2025-09-30"]
+    assert o.status == "unchecked" and o.leases_in_tev == 845.0
+    assert o.multiple == pytest.approx((12578.476 - 845.0) / 1042.0)
+
+
+def test_d1_an_unpriced_latest_quarter_names_the_unavailable_cell() -> None:
+    """(+/-) With WLK's 2025-09-30 as the LATEST quarter the band has no current, and the refusal
+    says why — the lease cell, not a reconciliation or an LTM the quarter does have."""
+    obs = list(_wlk(drop=("2025-12-31",)).values())
+    band, why = lbm.history(obs)
+    assert band is None and why and "2025-09-30" in why and "UNAVAILABLE" in why
+    assert "reconcile" not in why and "LTM" not in why
+    loss = obs[-1].model_copy(update={"ltm_ebitda": -1.0})
+    assert "no positive LTM EBITDA" in (lbm.history([*obs[:-1], loss])[1] or "")
 
 
 @pytest.mark.parametrize(("filed", "status"), [("2018-08-27", "pre-adoption"),

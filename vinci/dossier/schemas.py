@@ -247,12 +247,16 @@ class LeaseObservation(BaseModel, frozen=True):
     balance_sheet_date: str
     pricing_date: str | None = None           # CIQ prices each quarter's TEV at its filing date
     tev: float
-    leases_in_tev: float                      # CIQ 'Curr. Port. of Leases' + 'Long-Term Leases'
+    # CIQ 'Curr. Port. of Leases' + 'Long-Term Leases': the cells CIQ states, an UNAVAILABLE one
+    # left out
+    leases_in_tev: float
     finance_leases: float                     # the rest of CIQ's lease rows, left inside TEV
     operating_leases: float                   # removed from TEV
     edgar_operating_leases: float | None = None
     ltm_ebitda: float                         # CIQ 'EBITDA', the four quarters ending here
-    multiple: float | None = None             # None when the date is excluded (unreconciled)
+    # None when the date is excluded: unreconciled, a non-positive LTM, or UNCHECKED with a lease
+    # cell UNAVAILABLE (nothing vouches for the rows CIQ does state — audit D-D1)
+    multiple: float | None = None
     # "pre-adoption" (no operating lease in CIQ's debt yet) | "reconciled" | "unchecked" (EDGAR
     # has no complete operating figure that day) | "unreconciled" (excluded from the band)
     status: str
