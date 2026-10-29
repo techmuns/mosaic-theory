@@ -27,6 +27,7 @@ from vinci.eod.dividends import default_dividends
 from vinci.eod.splits import default_splits
 from vinci.evidence import evidence_strip
 from vinci.labels import resolve_label
+from vinci.monitor import read_assignments_file
 from vinci.progress import ProgressFn
 from vinci.rank import (
     CauseClass,
@@ -43,6 +44,7 @@ from vinci.resolver import EntityResolver
 from vinci.resolver.aliases import load_first_sessions
 from vinci.scoring import score_ledger
 from vinci.scoring.baseline import resolve_baskets
+from vinci.scoring.harness import row_benchmark
 from vinci.screens import screen_universe
 from vinci.screens.annotations import ScreenAnnotation
 from vinci.screens.annotations import for_screen_date as annotations_for_screen_date
@@ -439,18 +441,29 @@ def run_monthly(
     cfg = config or get_config()
     cfg.ensure_dirs()
     client = PolygonEodClient.from_config(cfg)
-    bench = benchmark_identity(benchmark)
     start = as_of - timedelta(days=lookback_days)
     with Store(cfg.db_path) as store:
         store.rebuild_from_snapshots(cfg.snapshots_dir)
+        # EACH ROW'S OWN BENCHMARK (2026-10-29): the committed assignments choose it, as the
+        # monitor's — required while the ledger holds a decision
+        assignments = read_assignments_file(
+            cfg.data_dir / "monitor" / "benchmark_assignments.json",
+            required=any(e.event is None for e in store.iter_ledger()))
         universe = [s for s in store.iter_securities() if not s.internal_id.startswith("IDX-")]
         if universe:
             # THE TWO XPRO IDS BOTH LIVE HERE (every security): each day's bar goes to the id that
             # held the symbol that day, never to whichever the old dict kept last
             ingest_prices(client, store, universe, start=start, end=as_of, progress=progress,
                           first_sessions=load_first_sessions(cfg.snapshots_dir))
-            store.upsert_security(bench)
-            ingest_prices(client, store, [bench], start=start, end=as_of)
+            # EVERY BENCHMARK A ROW IS MEASURED AGAINST, beside the calendar: it used to be the
+            # calendar alone, so GOOGL's SPY and IT's MDY were never refreshed here (the primary's
+            # SPY ended 2026-07-22, its MDY 2026-08-05)
+            benches = [benchmark_identity(b) for b in sorted(
+                {benchmark} | {row_benchmark(e, assignments.get(e.ticker), benchmark)[0]
+                               for e in store.iter_ledger() if e.event is None})]
+            for b in benches:
+                store.upsert_security(b)
+            ingest_prices(client, store, benches, start=start, end=as_of)
         _scores, report = score_ledger(
             store, as_of=as_of, cost_bps=cost_bps, benchmark_internal_id=f"IDX-{benchmark}",
             # Wired here as well as in `vinci score` — see that call site's note.
@@ -461,14 +474,15 @@ def run_monthly(
             # whole span. Without TIINGO_API_KEY every window reads unknown, so a RESOLVED row
             # stops this run rather than scoring on price return (the CI secret is an operator
             # item — docs/records/2026-10-26-split-restatement-and-total-return.md).
-            # Coverage is checked session by session against the store's own market calendar
-            # (audit item F-D3).
+            # Coverage is checked session by session against each name's own sessions in the
+            # store (audit item F-D3).
             dividends=default_dividends(
                 start=min((e.entry_price_as_of for e in store.iter_ledger()), default=as_of),
                 end=as_of, sessions=store_calendar(store)),
             # ONE SPLIT BASIS (audit item F-D1): Polygon's splits reference reconciles each row's
             # sealed entry with the store's restated bars, or the run stops on a resolved row.
             splits=default_splits(cfg, client=client),
+            assignments=assignments,
         )
         store.export_snapshots(cfg.snapshots_dir)
     (cfg.snapshots_dir / "scoring_report.md").write_text(report.to_markdown())
