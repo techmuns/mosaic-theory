@@ -122,6 +122,11 @@ const EXTRACTION_VERSIONS = [
     "remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past " +
     "the 100,000-character ceiling ends in a marker and a QA flag, and a call on file that " +
     "does not read is named in a QA flag (audit G-D3, G-D4)"],
+  ["2026-10-29.D-D5-prompt",
+    "the synthesis is asked for every material figure the citation guard demands: the rows " +
+    "are marked material before the model is asked, and a section lists each figure, its " +
+    "period and the table's source_ref from the guard's own selection; a page with no " +
+    "material row is sent the prompt it was sent before (audit D-D5 follow-up)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

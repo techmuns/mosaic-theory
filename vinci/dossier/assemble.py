@@ -1092,6 +1092,12 @@ def assemble_one(
                 od = mech.operating_drivers
                 merged = od.model_copy(update={"rows": [*od.rows, *tb_rows]})
                 mech = mech.model_copy(update={"operating_drivers": merged})
+        # (P1/19c) MARK THE MATERIAL ROWS BEFORE THE SYNTHESIS IS ASKED. The prompt names each
+        # figure the citation guard below will demand, from the same marks; set after it, the
+        # model read `"material": false` on those rows and two 2026-10-29 rebuild pages were
+        # refused after five paid draws for a figure no line of the prompt named. Nothing between
+        # here and the guard touches the financial summary, so the guard reads these marks.
+        mech = _mark_material(mech)
         synthesis, synth_flags, synth_log = synthesize(
             mech, llm=llm, ticker=ticker, name=rec.identity.name, transcript=transcript,
             # THE FRAMING FOLLOWS THE BOOK. A screen candidate is overshoot by construction, so
@@ -1116,7 +1122,7 @@ def assemble_one(
         # material unusual items now surface as data). Fail-loud: SMPL's -$391.9M LTM writedown was
         # 43% of market cap, absent from every tier, while the bear case argued from a figure 5.3x
         # smaller. A warning here would have been read past on exactly the day it mattered.
-        mech = _mark_material(mech)          # flag rows over the floor BEFORE the guard reads them
+        # The rows were flagged over the floor above, before the synthesis — the guard reads them.
         # (item 19c) A MATERIAL figure the synthesis prose never states — REFUSE, do not flag.
         # SMPL's bear case was right on 07-29 and wrong on 07-30 from identical inputs, so
         # synthesis correctness is STOCHASTIC and a flag would just move the judgement to a human

@@ -223,6 +223,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "the 100,000-character ceiling ends in a marker and a QA flag, and a call on file that "
         "does not read is named in a QA flag (audit G-D3, G-D4)"
     ),
+    (
+        "2026-10-29.D-D5-prompt",
+        "the synthesis is asked for every material figure the citation guard demands: the rows "
+        "are marked material before the model is asked, and a section lists each figure, its "
+        "period and the table's source_ref from the guard's own selection; a page with no "
+        "material row is sent the prompt it was sent before (audit D-D5 follow-up)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
