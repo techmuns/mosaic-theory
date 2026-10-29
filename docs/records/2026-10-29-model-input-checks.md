@@ -2,7 +2,7 @@
 id: 2026-10-29-model-input-checks
 status: shipped
 date: 2026-10-29
-prs: []
+prs: [859]
 supersedes:
 superseded-by:
 ---
