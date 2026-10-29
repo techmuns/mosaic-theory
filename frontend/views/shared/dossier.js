@@ -71,6 +71,13 @@ const EXTRACTION_VERSIONS = [
     "of the revenue in the column each reads are material (`revenue` was never passed), and " +
     "a missing annual Income Statement, revenue row or unusual-items block refuses the build " +
     "instead of passing it (audit D-D5)"],
+  ["2026-10-29.G-V1",
+    "a transcript row's call, following paragraph and period come from ONE located quote; " +
+    "its period stands only where the quote states it, else none; each value figure equals " +
+    "a figure of its quote in the quote's unit (audit G-V1, G-D1, G-D2) · a synthesis " +
+    "citation is a ref of the layer, never a fragment, and each figure traces to the numbers " +
+    "the fact it cites states, never its dates or ids; an exposure fact cites one filing and " +
+    "is always grounded (audit G-D5, G-D6)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

@@ -302,9 +302,11 @@ class _FakeLlm(LlmClient):
 
 def test_synthesis_guardrails_flag_uncited_directional_and_numeric_twins() -> None:
     """Post-LLM guardrails: uncited point, directional language, numeric/untraceable twin all flag;
-    a percentage rendering of a stored fraction (−72.6% from −0.726) does NOT false-flag."""
+    a percentage rendering of a stored fraction (−88.2% from −0.882) does NOT false-flag. (The claim
+    read "fell -72.6% vs IWM +15.6%" against the RELATIVE-return ref until audit G-D6: those are
+    two OTHER facts' figures, and a figure now traces only to the fact its point cites.)"""
     payload = {
-        "bull_points": [{"claim": "fell -72.6% vs IWM +15.6%", "source_ref": "EOD name-IWM 180d"}],
+        "bull_points": [{"claim": "trailed IWM by -88.2%", "source_ref": "EOD name-IWM 180d"}],
         "bear_points": [{"claim": "BUY now, clearly undervalued", "source_ref": "MADE-UP-REF"}],
         "twin_reference_cases": [
             {"name": "ExampleCo", "outcome": "recovered 50%", "distinguishing_fact": "x",
@@ -324,7 +326,7 @@ def test_synthesis_guardrails_flag_uncited_directional_and_numeric_twins() -> No
     assert "UNCITED bear_point" in text
     assert "DIRECTIONAL" in text
     assert any("TWIN" in f and "non-numeric" in f for f in flags)  # "recovered 50%" is numeric
-    assert not any("UNTRACEABLE" in f for f in flags)  # -72.6 / 15.6 trace to -0.726 / 0.156
+    assert not any("UNTRACEABLE" in f for f in flags)  # -88.2 traces to the cited -0.882
     assert "fake-model-1" in log and "RAW OUTPUT" in log
 
 
