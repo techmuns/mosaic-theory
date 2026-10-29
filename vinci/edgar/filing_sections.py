@@ -88,11 +88,58 @@ _DEBT_SECTION = re.compile(
 )
 _NOT_STATED_NOTE = "no near-term wall stated in filing — composition table present; see CIQ panel"
 
+# THE OTHER WAYS A 10-Q STATES ITS ≤12m FIGURE (audit E2-D15) — tried only when `_WITHIN_12M` finds
+# nothing, so every wall it already reads is read as before. Werner's 10-Q says its Credit
+# Facilities carry "no principal amount expected to be paid within 12 months" and Netflix's that
+# "the amount of principal and interest on our outstanding notes due in the next twelve months is
+# $3,194 million"; both pages printed "no near-term wall stated in filing". The scale is CAPTURED:
+# "$1.2 billion due within the next 12 months" is 1,200, never 1.2.
+_DUE_12M = re.compile(
+    r"\$\s*([\d,.]+)\s*(million|billion)\s+(?:(?:is|are|will\s+be)\s+)?due\s+"
+    r"(?:(?:within|in)\s+(?:the\s+next\s+)?(?:12|twelve)\s+months|within\s+one\s+year)\b", re.I)
+#: A stated ZERO — a KNOWN $0 wall, not an unstated one.
+_NO_PRINCIPAL_12M = re.compile(
+    r"\bno\s+principal\s+(?:amounts?\s+|payments?\s+)?(?:(?:is|are)\s+)?"
+    r"(?:(?:expected|scheduled|required)\s+to\s+be\s+)?(?:paid|payable|due|repaid)\s+"
+    r"(?:within|in)\s+(?:the\s+next\s+)?(?:12|twelve)\s+months\b", re.I)
+#: PRINCIPAL AND INTEREST in one figure — a different basis from the panel's principal, so it is
+#: stored with its basis and never compared with principal as if it were one (`MaturityWall.basis`).
+_P_AND_I_12M = re.compile(
+    r"\bprincipal\s+and\s+interest\s+on\s+(?:our\s+)?(?:outstanding\s+)?(?:senior\s+)?"
+    r"(?:notes|debt|borrowings)\b[^.]{0,60}?\bdue\s+(?:within|in)\s+the\s+next\s+(?:12|twelve)\s+"
+    r"months\s+(?:is|was|totals?|totaled)\s+\$\s*([\d,.]+)\s*(million|billion)", re.I)
+#: A ≤12m amount in a sentence about leases, purchase obligations or commitments is not the debt
+#: wall — Werner states its finance-lease and interest payments "payable within 12 months" too.
+_NOT_DEBT = re.compile(r"\bleases?\b|\blease\s+liabilit|purchase\s+obligations?|commitments?",
+                       re.I)
+BASIS_PRINCIPAL = "principal"
+BASIS_PRINCIPAL_AND_INTEREST = "principal and interest"
+
+
+def _in_millions(num: str, scale: str) -> float | None:
+    v = _money(num)
+    return None if v is None else v * (1000.0 if scale.lower() == "billion" else 1.0)
+
+
+def _stated_12m(text: str) -> tuple[int, float | None, str] | None:
+    """(anchor, $M due within 12 months, basis) from the first widened form that states one."""
+    for m in _DUE_12M.finditer(text):
+        sent = _sentence(text, m.start())
+        if _DEBT_SECTION.search(sent) and not _NOT_DEBT.search(sent):
+            return m.start(), _in_millions(m.group(1), m.group(2)), BASIS_PRINCIPAL
+    for m in _NO_PRINCIPAL_12M.finditer(text):
+        if not _NOT_DEBT.search(_sentence(text, m.start())):
+            return m.start(), 0.0, BASIS_PRINCIPAL
+    if pm := _P_AND_I_12M.search(text):
+        return pm.start(), _in_millions(pm.group(1), pm.group(2)), BASIS_PRINCIPAL_AND_INTEREST
+    return None
+
 
 def _maturity_wall(text: str, src: str) -> MaturityWall | None:
     wm = _WITHIN_12M.search(text)
-    if wm is not None:  # state='located' — a ≤12m-wall statement was found
-        anchor = wm.start()
+    stated = (wm.start(), _money(wm.group(1)), BASIS_PRINCIPAL) if wm else _stated_12m(text)
+    if stated is not None:  # state='located' — a ≤12m-wall statement was found
+        anchor, total, basis = stated
         tranches: list[DebtTranche] = []
         for tm in _TRANCHE.finditer(text[max(0, anchor - 200):anchor + 500]):
             amt = _money(tm.group(2))
@@ -104,7 +151,8 @@ def _maturity_wall(text: str, src: str) -> MaturityWall | None:
                 verbatim=" ".join(tm.group(0).split())[:200], source_ref=src,
             ))
         return MaturityWall(
-            within_12m_total=_money(wm.group(1)), tranches=tranches, state="located", note="",
+            within_12m_total=total, tranches=tranches, state="located", note="",
+            basis=None if basis == BASIS_PRINCIPAL else basis,  # absent is principal (the schema)
             verbatim=_sentence(text, anchor), source_ref=src,
         )
     if _DEBT_SECTION.search(text):  # debt section present, but NO ≤12m wall stated — a KNOWN
@@ -137,18 +185,48 @@ _TERMS = re.compile(
 )
 
 
+#: A column's ROLE, from the words its header uses: a share of revenue, or of receivables.
+_ROLE_WORD = re.compile(r"\b(revenues?|sales|receivables?)\b", re.I)
+
+
+def _column_roles(text: str, row_at: int) -> list[str] | None:
+    """The roles of a concentration table's columns, in order, read from its HEADER — or None when
+    the header names no role. A row's figures took their roles from POSITION (audit E2-D16): Vital
+    Farms' 10-Q follows its revenue table with an accounts-receivable one, and the receivable
+    table's "Customer C 11 % 10 %" reached the page as an 11% REVENUE concentration with a 10%
+    prior. The header is the text from the lead-in sentence to the table's first row; the column
+    headings are the part after its colon, and the lead-in alone decides when they name no role."""
+    lo = text.rfind(". ", max(0, row_at - 1200), row_at)
+    lo = lo + 2 if lo != -1 else max(0, row_at - 1200)
+    head = _CUST.sub(" ", text[lo:row_at])
+    colon = head.rfind(":")
+    cols = [w.lower() for w in _ROLE_WORD.findall(head[colon + 1:])] if colon != -1 else []
+    words = cols or [w.lower() for w in _ROLE_WORD.findall(head)]
+    roles = ["receivable" if w.startswith("receivable") else "revenue" for w in words]
+    if not roles:
+        return None
+    return roles if cols else ([roles[0]] if len(set(roles)) == 1 else ["mixed"])
+
+
 def _concentration(text: str, src: str) -> CustomerConcentration | None:
     custs: list[ConcentrationCustomer] = []
     seen: set[str] = set()
-    # (1) table form — 'Customer A 52 % 31 %' → exact
+    # (1) table form — 'Customer A 52 % 31 %' → exact, its columns' roles read from the header
     for m in _CUST.finditer(text):
         name = f"Customer {m.group(1).upper()}"
         pct = _money(m.group(2))
         if name in seen or pct is None or pct > 100:
             continue
+        roles = _column_roles(text, m.start())
+        if roles is not None and roles[0] != "revenue":
+            continue  # a receivables table (or a lead-in naming both, with no column headings)
+        # the second figure is a PRIOR revenue share only when its column is a revenue column too
+        # — or when the header names one role for every column ("% of net revenue … 2026 2025")
+        second_is_revenue = roles is None or len(roles) == 1 or roles[1] == "revenue"
         seen.add(name)
         custs.append(ConcentrationCustomer(
-            name=name, pct=pct, prior_pct=_money(m.group(3)) if m.group(3) else None,
+            name=name, pct=pct,
+            prior_pct=_money(m.group(3)) if m.group(3) and second_is_revenue else None,
             value_kind="exact",
         ))
     # (2) prose EXACT — 'The {Named} represented 15.2% and 15.4%' → exact (preferred over floor)
@@ -158,9 +236,19 @@ def _concentration(text: str, src: str) -> CustomerConcentration | None:
             name = " ".join(m.group(1).split())
             if pct is None or pct > 100 or name in seen:
                 continue
+            # the roles the sentence names AFTER the figures, in order: "15.2% and 41.0% of
+            # revenue and accounts receivable, respectively" makes the second a receivable share
+            stop = text.find(". ", m.end())
+            tail = text[m.end():stop if stop != -1 else m.end() + 160][:160]
+            roles = ["receivable" if w.lower().startswith("receivable") else "revenue"
+                     for w in _ROLE_WORD.findall(tail)]
+            if roles and roles[0] != "revenue":
+                continue
             seen.add(name)
             custs.append(ConcentrationCustomer(
-                name=name, pct=pct, prior_pct=_money(m.group(3)) if m.group(3) else None,
+                name=name, pct=pct,
+                prior_pct=(_money(m.group(3)) if m.group(3)
+                           and (len(roles) < 2 or roles[1] == "revenue") else None),
                 value_kind="exact",
             ))
     # (3) prose FLOOR — 'a single {desc} customer exceeded 10%' → floor (only if no exact figure)

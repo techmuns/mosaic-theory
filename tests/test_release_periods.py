@@ -444,10 +444,15 @@ def test_quarter_and_fiscal_year_prose_each_keep_their_own_period() -> None:
 def test_a_section_heading_that_names_its_quarter_with_a_digit_is_that_quarter() -> None:
     """FuboTV heads its highlights "Q1 Fiscal 2026 Highlights", and neither figure below it states a
     period of its own. Reading heading words as letters only broke the run at "Q1" and left "Fiscal
-    2026 Highlights" — a full-year section — so both Q1 figures were filed as fiscal 2026."""
+    2026 Highlights" — a full-year section — so both Q1 figures were filed as fiscal 2026.
+
+    (audit E2-D5) The quarter's adjusted EBITDA is "Pro Forma Adjusted EBITDA 2 of $41.4 million" —
+    a footnote digit after the name. This pin asserted $77.9M, the "● Over the trailing twelve
+    months: ○ … of $77.9 million" figure that took the slot while the digit was refused."""
     rows = _rows(_FUBO_Q1_26)
     assert ("revenue", "Q1 2026", 1549.0) in rows  # "$1.549 billion", in $M since 2026-10-22
-    assert ("adjusted ebitda", "Q1 2026", 77.9) in rows
+    assert ("adjusted ebitda", "Q1 2026", 41.4) in rows
+    assert not any(v == 77.9 for _m, _p, v in rows)  # the trailing twelve months, under no period
 
 
 # --- what must not become a labelled actual ------------------------------------------------------

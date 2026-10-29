@@ -413,6 +413,12 @@ _MONTH = (r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|
 _PHRASE = re.compile(
     r"(?P<ytd>\bytd\b|year[- ]to[- ]date|\b(?:six|nine)[- ]months?\s+ended|"
     r"first\s+(?:half|six\s+months|nine\s+months)|first\s+three\s+quarters)"
+    # A TRAILING-TWELVE-MONTH figure spans four quarters and is no one quarter or fiscal year
+    # (audit E2-D5). FuboTV lists "● Over the trailing twelve months: ○ … ○ Pro Forma Adjusted
+    # EBITDA of $77.9 million" under its Q1 heading, and with no TTM word in this vocabulary the
+    # heading filed the TTM figure as Q1 2026 (the quarter's own is $41.4M). Before `yended`, so
+    # "trailing twelve months ended June 30" is the span and not a fiscal year.
+    r"|(?P<ttm>\b(?:ttm|ltm)\b|\b(?:trailing|last)[- ](?:twelve|12)[- ]months?\b)"
     rf"|(?P<qended>(?:three[- ]months?|quarter)\s+ended\s+"
     rf"{_MONTH}\s+\d{{1,2}},?\s+(?P<qey>20\d\d))"
     rf"|(?P<yended>(?:twelve[- ]months?|(?:fiscal\s+)?year)\s+ended\s+"
@@ -501,9 +507,10 @@ def _year_minus(year: str | None, n: int = 1) -> str | None:
 
 def _as_current(m: re.Match[str], frame: _ReleaseFrame) -> object:
     """What a period phrase in a CURRENT figure's own clause says that figure is. Returns a label,
-    ``None`` (a period this extractor must not label — a year-to-date figure), or ``_NO``."""
+    ``None`` (a period this extractor must not label — a year-to-date or trailing-twelve-month
+    figure), or ``_NO``."""
     g = m.groupdict()
-    if g["ytd"]:
+    if g["ytd"] or g["ttm"]:
         return None
     if g["q"]:
         year = g["qy"] or frame.year
@@ -534,7 +541,7 @@ def _as_comparison_granularity(m: re.Match[str], frame: _ReleaseFrame) -> object
     $346.7 million in the prior year fourth quarter" makes the current value a Q4; "compared to
     $44.8 million in 2024" makes it the full year after."""
     g = m.groupdict()
-    if g["ytd"]:
+    if g["ytd"] or g["ttm"]:
         return None
     if g["q"]:
         n = _QN[g["qn"].lower()]
@@ -561,7 +568,7 @@ def _as_comparison_granularity(m: re.Match[str], frame: _ReleaseFrame) -> object
 def _as_prior(m: re.Match[str], frame: _ReleaseFrame) -> object:
     """The period of a COMPARISON figure itself, from its own trailing clause."""
     g = m.groupdict()
-    if g["ytd"]:
+    if g["ytd"] or g["ttm"]:
         return None
     if g["q"]:
         return f"Q{_QN[g['qn'].lower()]} {g['qy']}" if g["qy"] else None
@@ -626,7 +633,7 @@ def _heading_period(text: str, before: int, frame: _ReleaseFrame) -> object:
         return _NO
     words = heads[-1].group(1)
     names = _phrases(words, 0, len(words))
-    if any(p.group("ytd") for p in names):
+    if any(p.group("ytd") or p.group("ttm") for p in names):
         return None  # "Year-to-Date Third Quarter Fiscal Year 2025 Summary" — a YTD section
     has_q = any(p.group("q") or p.group("qs") for p in names)
     has_fy = any(p.group("fy") for p in names)
@@ -735,6 +742,33 @@ def _figure_period(text: str, start: int, end: int, frame: _ReleaseFrame, *,
     return label
 
 
+_BULLET_GLYPHS = "•●○◦■▪·"
+
+
+def _under_trailing_lead_in(text: str, lo: int) -> bool:
+    """True when the figure is an item of a bullet run whose LEAD-IN names a trailing-twelve-month
+    span: FuboTV's "● Over the trailing twelve months: ○ Reported Revenue … ○ Pro Forma Adjusted
+    EBITDA of $77.9 million" (audit E2-D5). The span is stated once, by the parent bullet, so the
+    figure's own clause — which starts at its "○" — never sees it, and the section heading above
+    ("Q1 Fiscal 2026 Highlights") filed it as the quarter.
+
+    The run's parent is the nearest edge before the figure's bullet that is not one of the run's
+    own bullets (another glyph, or a sentence end); its text up to the run's first bullet is the
+    lead-in, and it counts only when it ends in a colon — a lead-in, not a bullet of its own.
+    Only a TTM span is read here: a year-to-date lead-in is audit E2-D4's, not built here."""
+    if lo == 0 or text[lo - 1] not in _BULLET_GLYPHS:
+        return False
+    glyph = text[lo - 1]
+    floor = max(0, lo - 1500)
+    parent = max([text.rfind(c, floor, lo - 1) for c in _BULLET_GLYPHS if c != glyph]
+                 + [text.rfind(". ", floor, lo - 1)])
+    if parent == -1:
+        return False
+    first = text.find(glyph, parent + 1, lo)
+    lead = text[parent + 1:first].strip()
+    return lead.endswith(":") and any(p.group("ttm") for p in _phrases(lead, 0, len(lead)))
+
+
 def _current_period(text: str, lo: int, hi: int, start: int, end: int,
                     frame: _ReleaseFrame) -> str | None:
     cmp_at = _CMP.search(text, end, hi)
@@ -754,6 +788,8 @@ def _current_period(text: str, lo: int, hi: int, start: int, end: int,
             r = _as_comparison_granularity(p, frame)
             if r is not _NO:
                 return r if isinstance(r, str) else None
+    if _under_trailing_lead_in(text, lo):
+        return None
     h = _heading_period(text, lo, frame)
     if h is not _NO:
         return h if isinstance(h, str) else None
@@ -787,23 +823,33 @@ _RECON = re.compile(
     # as a non-GAAP one, which is the wrong-figure-under-a-familiar-name error `_norm_metric` exists
     # to refuse. The zero-width lookahead keeps the group numbering the caller reads.
     r"(?:(?:non-gaap|adjusted)\s+|(?=ebitda\b))"
-    r"((?:diluted\s+)?(?:net\s+)?"
+    r"(?P<metric>(?:diluted\s+)?(?:net\s+)?"
     r"(?:ebitda|income\s+from\s+operations|operating\s+income|net\s+(?:income|loss|profit)|"
     r"(?:income|loss)\s+per\s+share|earnings\s+per\s+share|eps))"
+    # A FOOTNOTE DIGIT may follow the name too (audit E2-D5): FuboTV writes "Pro Forma Adjusted
+    # EBITDA 2 of $41.4 million", and refusing the "2" dropped the quarter's own figure, leaving a
+    # trailing-twelve-month one to fill the slot. One digit, and only before the connector.
+    r"\s*(?:[*†‡]|\d(?=\s*(?::|(?:of|was|totaled)\b)))?\s*"
     # CONNECTOR: a verb ("of/was/totaled") OR a bare COLON — Gartner writes "adjusted EBITDA: $436
     # million, +5%" (period stated in the section header, not inline), which the verb-only connector
     # silently dropped. The currency-evidence + no-% guards below still gate every match, so a colon
     # can't admit a ratio ("adjusted EBITDA margin: 21%") or a non-amount.
-    r"\s*[*†‡]?\s*(?::\s*|(?:of|was|totaled|of\s+approximately)\s+)"
+    #
+    # OR A STATED LOSS (audit E2-D10). Vital Farms writes "Adjusted EBITDA loss of $26.6 million"
+    # and "Adjusted EBITDA was a loss of $26.6 million"; the sign was read from the metric NAME
+    # alone, so neither matched and its Q2 2026 figure was dropped with no flag. The loss word is
+    # CAPTURED and signs the figure. Tried first, so "was a loss of" is never read as "was".
+    r"(?::\s*|(?:(?:was|were)\s+)?(?:a\s+)?(?P<lossword>loss)\s+of\s+"
+    r"(?:approximately\s+)?|(?:of|was|totaled|of\s+approximately)\s+)"
     # CURRENCY EVIDENCE IS MANDATORY — a '$' before the number, or a million/billion after it.
     # Without this the pattern reads a RATIO as an amount: EPAM writes "non-GAAP income from
     # operations was 16.3% of revenues" (a margin), which was stored as $16.3M against a true
     # ~$230M on $1.4B revenue. A fabricated magnitude in a decision figure is the exact failure
     # this codebase refuses; a metric stated only as a percentage is simply not this extractor's.
-    r"(positive\s+|negative\s+)?"
+    r"(?P<sign>positive\s+|negative\s+)?"
     # THE SHARED AMOUNT TOKEN (see `_NUM`): "$" + digits, or digits a scale word follows; the scale
     # and any range tail are CAPTURED, so the caller scales the one and refuses the other.
-    rf"(?:\$\s*({_NUM})|({_NUM})(?=\s*(?:{_SCALE})))"
+    rf"(?:\$\s*(?P<num>{_NUM})|(?P<num2>{_NUM})(?=\s*(?:{_SCALE})))"
     rf"(?:\s*(?P<scale>{_SCALE}))?+"
     rf"(?P<range>{_RANGE_TAIL})?"
     r"(?!\s*%)",
@@ -817,7 +863,11 @@ _GROSS_MARGIN = re.compile(
 # verification (a CIQ FY guide that merely echoes this prior-FY actual is a vendor artifact). The
 # (?! … to) tail rejects a guidance range ('revenue of $985 million to $995 million').
 _REVENUE = re.compile(
-    r"(?P<lead>full[- ]year|total|quarterly|net)?\s*revenue\s+of\s+(?:a\s+record\s+)?"
+    # "revenueS of" too (audit E2-D11): EPAM ("Second quarter revenues of $1.415 billion"), Werner
+    # ("Total revenues of $933.9 million") and Microvast ("Revenues of $87.3 million") state their
+    # headline that way, and the singular-only pattern left eight releases with no revenue row and
+    # no flag. The lead-word allowlist below still refuses a sub-line ("Subscription Revenues").
+    r"(?P<lead>full[- ]year|total|quarterly|net)?\s*revenues?\s+of\s+(?:a\s+record\s+)?"
     # the shared token, scale MANDATORY (a bare "$" amount after "revenue of" is not read)
     rf"\$?\s*({_NUM})\s*(?P<scale>{_SCALE})"
     rf"(?P<range>{_RANGE_TAIL})?",
@@ -858,6 +908,19 @@ def _net_product_total(text: str, at: int) -> bool:
     words = re.findall(r"[A-Za-z][A-Za-z'’-]*", text[max(0, at - 30):at])
     return ([w.lower() for w in words[-2:]] == ["net", "product"]
             and _REVENUE_COMPONENT.search(text) is None)
+
+
+#: The "About <Company>" profile a release closes with — a description, never a reported result.
+_ABOUT = re.compile(r"(?:^|[.!?”\"]\s+)About\s+[A-Z]")
+
+
+def _in_about_profile(text: str, at: int) -> bool:
+    """A figure inside the release's closing company profile. Ross Stores ends every release with
+    "About Ross Stores, Inc. Ross Stores, Inc. is an S&P 500 … company headquartered in Dublin,
+    California, with fiscal 2025 revenues of $22.8 billion" — once "revenues of" was read (audit
+    E2-D11) that sentence became a full-year revenue row, rounded to $0.1bn, in five releases whose
+    own results never state it. The profile runs a sentence or two; 400 characters spans it."""
+    return _ABOUT.search(text, max(0, at - 400), at) is not None
 
 
 def _revenue_lead(text: str, at: int) -> str:
@@ -961,11 +1024,11 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         return lead is not None and (lead[1] or "").startswith("Q")
 
     for m in _RECON.finditer(text):  # both captured, period-labeled, NEVER conflated
-        # the amount comes from EITHER currency branch: "$53.8 million" (group 3) or
-        # "53.8 million" (group 4). A bare number with neither marker no longer matches at all.
-        metric_raw, sign = m.group(1), (m.group(2) or "").lower()
-        num = m.group(3) or m.group(4)
-        metric = _norm_metric(m.group(1))
+        # the amount comes from EITHER currency branch: "$53.8 million" (num) or
+        # "53.8 million" (num2). A bare number with neither marker no longer matches at all.
+        metric_raw, sign = m["metric"], (m["sign"] or "").lower()
+        num = m["num"] or m["num2"]
+        metric = _norm_metric(metric_raw)
         if _segment(m.start()):
             continue
         if m["range"]:
@@ -986,7 +1049,7 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         if (metric == "adjusted ebitda" and not bare_ebitda_is_the_measure
                 and _RECON_PREFIXED.match(m.group(0)) is None):
             continue  # this filer states an adjusted EBITDA too — the bare one is not it
-        if "negative" in sign or "loss" in metric_raw.lower():
+        if "negative" in sign or m["lossword"] or "loss" in metric_raw.lower():
             val = -abs(val)
         lo, _ = _clause(text, m.start(), m.end())
         marker = _comparison_at(text, lo, m.start())
@@ -1016,6 +1079,10 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         if m["range"]:
             _refuse("a revenue range where an actual was read", m.start(), m.end())
             continue
+        if _in_about_profile(text, m.start()):
+            _refuse("revenue in the release's 'About' company profile — a description, not a "
+                    "reported result", m.start(), m.end())
+            continue
         # THE WORD BEFORE THE PHRASE, always — before "total"/"net" too (review of #778: "Other
         # net revenue", "International total revenue" skipped it because a total word had matched)
         lead_at = m.start("lead") if m["lead"] else m.start()
@@ -1040,6 +1107,16 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
         if marker is not None and _quarter_against_a_year(lo, marker.start(), "revenue", p):
             _refuse("a quarterly revenue compared with a bare year — the release does not say "
                     "which period the comparison is", m.start(), m.end())
+            continue
+        if p is None and marker is None and not _FORWARD.search(text, lo, m.start()):
+            # ONE NOTE PER SKIPPED HEADLINE (audit E2-D11): a current revenue figure the release
+            # states but does not place in one period is skipped, and the skip is said — EPAM's Q4
+            # "Fourth Quarter 2025 • Revenues of $1.408 billion" sits under a combined header and a
+            # sub-heading this reader does not take as one, and its page showed no revenue at all.
+            why = ("under a bullet list whose lead-in reads as an outlook"
+                   if _forward_looking(text, lo, m.start())
+                   else "the release does not place it in one period")
+            _refuse(f"a revenue figure skipped — {why}", m.start(), m.end())
             continue
         if p is None or (marker is not None and p == current) or ("revenue", p) in seen:
             continue
@@ -1506,7 +1583,8 @@ def _header_period(text: str, start: int) -> str | None:
         if _RESULTS_AFTER.match(header, p.end()):
             continue                   # what was reported is the basis, not the guided period
         g = p.groupdict()              # a date ("ending July 31, 2026") swallows its own year
-        if g["ytd"] or g["relq"] or g["relp"] or g["qended"] or g["yended"] or g["quarterly"]:
+        if (g["ytd"] or g["ttm"] or g["relq"] or g["relp"] or g["qended"] or g["yended"]
+                or g["quarterly"]):
             return None
         if g["q"] or g["qs"]:
             quarters.add(_QN[g["qn"].lower()] if g["q"] else int(g["qsn"]))
@@ -1807,7 +1885,7 @@ _ONEOFF = re.compile(
     # the shared number token, its scale CAPTURED: "$1.2 billion impairment charge" was stored as
     # 1.2 in a $M field, the actuals' unscaled-billions defect in its third reader (2026-10-22)
     rf"\$\s*({_NUM})\s*(million|billion)\s+(?:of\s+|in\s+)?"
-    r"((?:[\w'’-]+\s+){0,6}?"
+    r"((?P<gap>(?:[\w'’-]+\s+){0,6}?)"
     r"(?:impairment|write[- ]?off|write[- ]?down|"
     r"(?:restructuring|integration|one[- ]?time|transaction|acquisition[- ]related|"
     r"inventory[- ]related|impairment[- ]related|separation|transition|legal\s+settlement)"
@@ -1815,6 +1893,16 @@ _ONEOFF = re.compile(
     r"[\w\s,'’-]{0,80})",
     re.I,
 )
+#: THE AMOUNT'S ROLE (audit E2-D12). A charge noun near an amount does not make the amount the
+#: charge: Verra Mobility's "The aggregate adjustments to reconcile net (loss) income to net cash
+#: provided by operating activities increased $94.3 million mainly due to the impairments on
+#: goodwill and intangible assets" was stored as a $94.3M impairment and reached the synthesis
+#: beside the real $64.0M and $40.4M. The amount is the charge only when the noun names it — not
+#: when a CAUSE connects them ("$X million mainly due to the impairments"), and not when the amount
+#: is a CHANGE in something else ("… increased $94.3 million").
+_ONEOFF_CAUSE = re.compile(
+    r"\b(?:due\s+to|driven\s+by|as\s+a\s+result\s+of|attributable\s+to|resulting\s+from|"
+    r"because\s+of|caused\s+by|reflect(?:s|ed|ing)?|primarily\s+from|offset\s+by)\b", re.I)
 
 
 def _one_offs(text: str, src: str) -> list[OneOffItem]:
@@ -1825,6 +1913,9 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
         amt = _scaled(m.group(1), m.group(2))
         if amt is None:
             continue
+        if (_ONEOFF_CAUSE.search(m["gap"])
+                or _CHANGE_LEAD.search(text, max(0, m.start() - 30), m.start())):
+            continue  # a cause's effect or a change, not the charge itself (see _ONEOFF_CAUSE)
         raw_desc = " ".join(m.group(3).split())
         # trim at the next clause boundary AND at the first comma — a one-off's name rarely spans a
         # comma, so the comma introduces a SECOND, different item ("restructuring costs, integration

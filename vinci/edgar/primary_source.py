@@ -118,6 +118,7 @@ def wall_coherence_read(
     filing_convertible: float | None = None,
     panel_convertible_principal: float | None = None,
     tol: float = _TOL,
+    filing_basis: str | None = None,
 ) -> WallCoherence:
     """Same-window filing-vs-panel wall coherence. Panel side = sum of instrument PRINCIPAL maturing
     in [balance, balance+12m) — EXCLUSIVE upper boundary (a maturity AT +12m is not 'within 12
@@ -126,10 +127,20 @@ def wall_coherence_read(
     delta (panel principal vs filing repayment = accrued PIK) is rendered as INFORMATION.
 
     A divergence with an instrument maturing within ±7d of the boundary is flagged a possible
-    window-convention artifact — never a false-fire on convention."""
+    window-convention artifact — never a false-fire on convention.
+
+    ``filing_basis`` is the filing figure's own basis (`MaturityWall.basis`; None is principal). A
+    figure that is not principal is NOT COMPARED (audit E2-D15): Netflix states $3,194M of
+    principal AND interest, and set against the panel's $2,526M of principal it would print a 26%
+    divergence that is only the coupon. Like the unstated wall, the line is returned before the
+    panel is read."""
     if filing_within_12m is None:
         return WallCoherence(WALL_NOT_STATED, [],
                              CHECK_NOT_RUN, None)
+    if filing_basis not in (None, "principal"):
+        return WallCoherence(
+            f"wall coherence: NOT RUN — the 10-Q states ${filing_within_12m}M due ≤12m as "
+            f"{filing_basis}, and the CIQ panel counts principal only", [], CHECK_NOT_RUN, None)
     # NO DATED PRINCIPAL, NO SECOND FIGURE (Codex, #793): with no instrument carrying both a
     # principal and a maturity the panel's same-window total cannot be established, and summing
     # nothing to $0.0 would read as a divergence the panel never showed
@@ -141,7 +152,9 @@ def wall_coherence_read(
                  and balance <= i.maturity < end]
     panel_sum = round(sum(i.principal_musd for i in in_window), 1)  # type: ignore[misc]
     diff = round(abs(panel_sum - filing_within_12m), 1)
-    pct = diff / filing_within_12m if filing_within_12m else 1.0
+    # A STATED ZERO agrees with a zero (audit E2-D15): Werner's 10-Q says "no principal amount
+    # expected to be paid within 12 months", and dividing by it read $0 against $0 as a 100% gap.
+    pct = diff / filing_within_12m if filing_within_12m else (0.0 if diff == 0 else 1.0)
     agrees = pct <= tol
     qa: list[str] = []
     boundary = [i for i in panel if i.maturity is not None
@@ -203,8 +216,16 @@ def basis_triangulation(
     stays record-ignorant on purpose: it sits in ``vinci.edgar`` and must not learn what an
     underwrite record is. None keeps the historical line, which is the honest reading when there is
     no record to contradict it."""
-    adj = (f"~{round(net_debt / ltm_adjusted_ebitda, 1)}x"
-           if net_debt is not None and ltm_adjusted_ebitda else "UNKNOWN")
+    # A NON-POSITIVE EBITDA HAS NO LEVERAGE MULTIPLE (audit E1-D13) — the guard its twin in
+    # `edgar.client` has always carried ("EBITDA<=0 (ratio meaningless)"). This one tested only
+    # truthiness, so a negative LTM printed "($-100.0M): ~-3.0x", a leverage that reads as net cash.
+    # Reading stated losses (audit E2-D10) is what lets a negative LTM reach this line.
+    if net_debt is None or ltm_adjusted_ebitda is None:
+        adj = "UNKNOWN"
+    elif ltm_adjusted_ebitda <= 0:
+        adj = "UNKNOWN — EBITDA<=0 (ratio meaningless)"
+    else:
+        adj = f"~{round(net_debt / ltm_adjusted_ebitda, 1)}x"
     ltm_lbl = f"${ltm_adjusted_ebitda}M" if ltm_adjusted_ebitda is not None else "LTM unavailable"
     rows = [
         "EBITDA-basis triangulation (each leverage basis-labeled):",

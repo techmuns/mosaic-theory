@@ -129,6 +129,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "forward history's latest close is `latest_observed_close`, never `current`; every writer "
         "saves through one write",
     ),
+    (
+        "2026-10-29.E2",
+        "release and 10-Q figures read from what their own text states (audit E2): a footnote "
+        "digit after a measure's name and a trailing-twelve-month lead-in (D5), a loss stated in "
+        "words (D10), 'Revenues of' with the closing company profile refused (D11), a one-off "
+        "whose amount the charge noun names (D12), the ≤12m wall's stated zero and its "
+        "principal-and-interest basis (D15, `maturity_wall.basis`), a concentration column's "
+        "role from its header (D16); a non-positive LTM EBITDA has no leverage multiple (E1-D13)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
