@@ -132,18 +132,48 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
     # THE STAMP STOOD STILL FOR 45 COMMITS (audit A-D14). Every commit to vinci/dossier, vinci/edgar
     # and vinci/ciq merged after 2026-10-09.3 (#706 … #855, 2026-10-11 → 10-29) appended no row,
     # and at least six changed output (#819, #826, #827, #831, #834, #836), so the 155 layer
-    # refreshes dated 10-27 or later stamped 2026-10-09.3. This row names them beside its own
-    # change, the 2026-10-08.3 precedent; `tests/test_extraction_version_drift.py` (26b) now reds
-    # when a watched module moves and no row does.
+    # refreshes dated 10-27 or later stamped 2026-10-09.3. The first row below names them, the
+    # 2026-10-08.3 precedent; the rest are the CIQ reader's fixes (B4), one row per output change,
+    # ids `<date>.<audit id>` (the Phase 1 convention, 2026-10-29). MERGING: each row is its own
+    # `(` … `),` block — a line-wise union of two branches' table ends fuses two rows into one
+    # element; keep every block whole, in merge order.
     (
-        "2026-10-29.1",
-        "the CIQ reader (audit A-D3, A-X2, A-D6, A-D8, A-D10, A-X1, A-D11): one parser reads every "
-        "Financials period header, so an 'FQ4/CQ2' quarter is a quarter with its year-on-year "
-        "growth, and a quarter carries its fiscal year · a bridged anchor input names the export "
-        "it was read from · every guided metric the Guidance sheet lays out is read · the "
-        "recommendation is the listing's own, with its own counts only · a Financials export "
-        "whose name and statements disagree is refused, and a lone export never answers for the "
-        "other period type · and the output changes merged since 2026-10-09.3 without a row",
+        "2026-10-29.A-D14",
+        "the dossier-output changes merged after 2026-10-09.3 that appended no row: 45 "
+        "commits to vinci/dossier, vinci/edgar and vinci/ciq (#706 … #855, 2026-10-11 → "
+        "10-29), among them #819, #826, #827, #831, #834 and #836 — from here a watched "
+        "extraction module that moves with no row appended reds "
+        "tests/test_extraction_version_drift.py",
+    ),
+    (
+        "2026-10-29.A-D3",
+        "one parser reads every Financials period header: an 'FQ4/CQ2' quarter is a quarter, "
+        "with its year-on-year growth, and a quarter carries its fiscal year (A-X2); a "
+        "same-quarter YoY reads only the prior fiscal year's quarter, never one two to four "
+        "years back",
+    ),
+    (
+        "2026-10-29.A-D6",
+        "a bridged anchor input names the CIQ export it was read from — D&A, OCF and capex "
+        "the annual workbook, the balance sheet the quarterly one — never the quarterly file "
+        "for all",
+    ),
+    (
+        "2026-10-29.A-D8",
+        "every guided metric the Guidance sheet lays out is read, found by the sheet's "
+        "structure rather than a fixed list; a metric with no decided delivery direction "
+        "shows its guide with no MET/MISSED record",
+    ),
+    (
+        "2026-10-29.A-D10",
+        "the recommendation and the rating counts are the listing's own Trends block, never "
+        "the industry's or another listing's",
+    ),
+    (
+        "2026-10-29.A-X1",
+        "a Financials export whose filename and statements state different period types is "
+        "refused, and a lone export never answers for the other period type (A-D11), so an "
+        "annual balance-sheet date prints as a date, never a raw serial",
     ),
 )
 

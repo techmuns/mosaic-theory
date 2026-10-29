@@ -61,14 +61,32 @@ const EXTRACTION_VERSIONS = [
     "named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the " +
     "forward history's latest close is `latest_observed_close`, never `current`; every writer " +
     "saves through one write"],
-  ["2026-10-29.1",
-    "the CIQ reader (audit A-D3, A-X2, A-D6, A-D8, A-D10, A-X1, A-D11): one parser reads every " +
-    "Financials period header, so an 'FQ4/CQ2' quarter is a quarter with its year-on-year " +
-    "growth, and a quarter carries its fiscal year · a bridged anchor input names the export " +
-    "it was read from · every guided metric the Guidance sheet lays out is read · the " +
-    "recommendation is the listing's own, with its own counts only · a Financials export " +
-    "whose name and statements disagree is refused, and a lone export never answers for the " +
-    "other period type · and the output changes merged since 2026-10-09.3 without a row"],
+  ["2026-10-29.A-D14",
+    "the dossier-output changes merged after 2026-10-09.3 that appended no row: 45 " +
+    "commits to vinci/dossier, vinci/edgar and vinci/ciq (#706 … #855, 2026-10-11 → " +
+    "10-29), among them #819, #826, #827, #831, #834 and #836 — from here a watched " +
+    "extraction module that moves with no row appended reds " +
+    "tests/test_extraction_version_drift.py"],
+  ["2026-10-29.A-D3",
+    "one parser reads every Financials period header: an 'FQ4/CQ2' quarter is a quarter, " +
+    "with its year-on-year growth, and a quarter carries its fiscal year (A-X2); a " +
+    "same-quarter YoY reads only the prior fiscal year's quarter, never one two to four " +
+    "years back"],
+  ["2026-10-29.A-D6",
+    "a bridged anchor input names the CIQ export it was read from — D&A, OCF and capex " +
+    "the annual workbook, the balance sheet the quarterly one — never the quarterly file " +
+    "for all"],
+  ["2026-10-29.A-D8",
+    "every guided metric the Guidance sheet lays out is read, found by the sheet's " +
+    "structure rather than a fixed list; a metric with no decided delivery direction " +
+    "shows its guide with no MET/MISSED record"],
+  ["2026-10-29.A-D10",
+    "the recommendation and the rating counts are the listing's own Trends block, never " +
+    "the industry's or another listing's"],
+  ["2026-10-29.A-X1",
+    "a Financials export whose filename and statements state different period types is " +
+    "refused, and a lone export never answers for the other period type (A-D11), so an " +
+    "annual balance-sheet date prints as a date, never a raw serial"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

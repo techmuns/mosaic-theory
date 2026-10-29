@@ -7,15 +7,26 @@ changed output — so the 155 layer refreshes dated 10-27 or later stamped `2026
 code that did not make them. Nothing noticed, because nothing could: a version is a declaration.
 
 THIS TEST NOTICES. Each module that can change what a dossier carries is PINNED to a hash of its
-code (`WATCHED`), taken at the version `PINNED_AT` names. A PR that moves one reds here until it
-says, in this file, what the move was:
+code (`WATCHED`), taken at the version `PINNED_AT` names. A module that moved since its pin — or a
+module that joined or left the watched set — is refused WHILE `PINNED_AT` IS STILL THE LAST ROW of
+`EXTRACTION_VERSIONS`: the code moved and the declared version did not. Once a row has been
+appended after `PINNED_AT`, the moves are accepted, because the version did move.
 
-  * the output changed → append a row to `EXTRACTION_VERSIONS`, then re-pin under it (set
-    `PINNED_AT` to the new version and the moved modules' hashes to the values this test prints);
-  * the output did not (a refactor) → re-pin the moved modules' hashes alone, and say why in the PR.
+THAT RULE IS WHAT LETS PARALLEL PRS MERGE IN ANY ORDER. A sibling PR that changes a watched module
+and appends its own row never reds main, whether it merges before or after this file last re-pinned
+— the hashed set and the last row move together. Its cost: once a row is appended, a further
+unbumped move goes unseen until the next re-pin, so every PR that appends a row re-pins:
 
-Either way the call is made inside the PR, which is the point: the cost is a red build on a
-refactor, and it buys a stamp that cannot drift silently (26b's spec, operator 2026-07-28).
+    python -m tests.test_extraction_version_drift --repin   # recompute WATCHED, set PINNED_AT
+
+ONE MECHANICAL STEP, NEVER A HAND-MERGE. It rewrites `WATCHED` to the tree's hashes (a new module
+joins as watched; exclude one by adding it to `NOT_EXTRACTION` with the reason) and `PINNED_AT` to
+the last row. On a merge conflict in this file, take either side and run it in the merge commit.
+A refactor that moves a watched module with no output change re-pins too, and says so in its PR.
+
+MERGING THE VERSION TABLE ITSELF: every row of `EXTRACTION_VERSIONS` (and of its web twin in
+`frontend/views/shared/dossier.js`) is its own `(` … `),` block; a line-wise union of two branches'
+table ends fuses two rows into one element. Keep each block whole, in merge order.
 
 WHAT IS HASHED: the module's TOKENS, with comments, blank lines and docstrings dropped — the prose
 this repo writes beside its code can change freely; a changed constant, condition or call cannot.
@@ -29,13 +40,15 @@ watched too: vinci/verbatim.py (which quoted values a page keeps) and vinci/finr
 interest). Prices (vinci/eod) are market data, not extraction, and vinci/ciq feeds only the
 git-ignored graph test.
 
-    python -m tests.test_extraction_version_drift   # print every watched module's current hash
+    python -m tests.test_extraction_version_drift            # print every watched module's hash
+    python -m tests.test_extraction_version_drift --repin    # re-pin this file in place
 """
 from __future__ import annotations
 
 import ast
 import hashlib
 import io
+import re
 import sys
 import tokenize
 from pathlib import Path
@@ -46,8 +59,8 @@ from vinci.dossier.extraction_version import EXTRACTION_VERSION, EXTRACTION_VERS
 
 ROOT = Path(__file__).resolve().parents[1]
 
-#: The version the pins below were taken at. A new `EXTRACTION_VERSIONS` row moves it.
-PINNED_AT = "2026-10-29.1"
+#: The version the pins below were taken at — `--repin` sets it to the last row.
+PINNED_AT = "2026-10-29.A-X1"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -157,38 +170,68 @@ def _pin_lines(hashes: dict[str, str]) -> str:
     return "\n".join(f'    "{p}": "{h}",' for p, h in hashes.items())
 
 
-def test_every_module_is_classified() -> None:
-    """A module joining vinci/dossier or vinci/edgar must be pinned or excluded with a reason —
-    never silently outside the watched set. And no entry names a module that no longer exists."""
-    now = current_hashes()
-    unpinned = sorted(set(now) - set(WATCHED))
-    assert not unpinned, (
-        f"{unpinned} can change what a dossier carries and are not pinned — add them to WATCHED "
-        f"(or to NOT_EXTRACTION with the reason they cannot):\n{_pin_lines(now)}")
-    gone = sorted(set(WATCHED) - set(now)) + sorted(
-        p for p in NOT_EXTRACTION if not (ROOT / p).exists())
-    assert not gone, f"{gone} no longer exist — remove them from this file"
+def refused_moves(pins: dict[str, str], pinned_at: str, now: dict[str, str],
+                  current: str) -> dict[str, str | None]:
+    """The watched modules that moved since their pins — changed, joined or gone (None) — IF no row
+    has been appended since `pinned_at`; empty once one has, because then the version moved too."""
+    if current != pinned_at:
+        return {}
+    moved: dict[str, str | None] = {p: h for p, h in now.items() if pins.get(p) != h}
+    moved.update({p: None for p in pins if p not in now})
+    return moved
 
 
 def test_a_watched_module_never_moves_while_the_version_stands_still() -> None:
-    """THE 26b INVARIANT. A watched module whose code moved since its pin reds here: say whether
-    output changed (append a version row, re-pin under it) or not (re-pin alone)."""
-    now = current_hashes()
-    moved = {p: h for p, h in now.items() if WATCHED.get(p) not in (None, h)}
+    """THE 26b INVARIANT. A watched module that moved — or joined vinci/dossier or vinci/edgar
+    unclassified, or left it — while the last row is still the one the pins were taken at."""
+    gone = sorted(p for p in NOT_EXTRACTION if not (ROOT / p).exists())
+    moved = refused_moves(WATCHED, PINNED_AT, current_hashes(), EXTRACTION_VERSION)
+    moved.update({p: None for p in gone if EXTRACTION_VERSION == PINNED_AT})
     assert not moved, (
-        f"{len(moved)} watched module(s) changed since they were pinned at {PINNED_AT}: "
-        f"{sorted(moved)}. If extraction OUTPUT changed, append a row to EXTRACTION_VERSIONS "
-        "(vinci/dossier/extraction_version.py) and set PINNED_AT to it; if it did not, say why "
-        "in the PR. Either way, re-pin:\n" + _pin_lines(moved))
+        f"{sorted(moved)} moved since the pins were taken at {PINNED_AT}, and no row has been "
+        "appended since. If extraction OUTPUT changed, append a row to EXTRACTION_VERSIONS "
+        "(vinci/dossier/extraction_version.py, and the same row in frontend/views/shared/"
+        "dossier.js), each row its own `(` … `),` block; then — or for a refactor alone, saying "
+        "so in the PR — run `python -m tests.test_extraction_version_drift --repin`. A module that "
+        "cannot change a dossier goes in NOT_EXTRACTION with the reason.")
 
 
-def test_the_pins_name_the_current_version() -> None:
-    """A row appended without re-pinning reds: the pins must say which version they were taken
-    at, or a later move under the new version would be read against the old one."""
+def test_the_pins_name_a_declared_version() -> None:
+    """`PINNED_AT` names a real row — a re-pin can only take the pins at a version that exists."""
     assert PINNED_AT in {v for v, _ in EXTRACTION_VERSIONS}, PINNED_AT
-    assert PINNED_AT == EXTRACTION_VERSION, (
-        f"EXTRACTION_VERSION is {EXTRACTION_VERSION} but the pins were taken at {PINNED_AT} — "
-        "set PINNED_AT to the new version and re-pin the modules this PR moved")
+
+
+def test_a_move_is_refused_only_while_the_version_stands_still() -> None:
+    """Both halves of the rule, on the pure function: the same move is refused at the pinned
+    version and accepted once a row is appended (a sibling PR merging with its own row), and a
+    module that joins or leaves the set is a move."""
+    pins = {"vinci/dossier/a.py": "aaa", "vinci/dossier/b.py": "bbb"}
+    moved = {"vinci/dossier/a.py": "AAA", "vinci/dossier/b.py": "bbb", "vinci/dossier/c.py": "ccc"}
+    assert refused_moves(pins, "v1", moved, "v1") == {"vinci/dossier/a.py": "AAA",
+                                                      "vinci/dossier/c.py": "ccc"}
+    assert refused_moves(pins, "v1", moved, "v2") == {}
+    assert refused_moves(pins, "v1", {"vinci/dossier/a.py": "aaa"}, "v1") == {
+        "vinci/dossier/b.py": None}
+    assert refused_moves(pins, "v1", dict(pins), "v1") == {}
+
+
+def repinned(source: str, hashes: dict[str, str], version: str) -> str:
+    """This file's source with `WATCHED` set to ``hashes`` and `PINNED_AT` to ``version``."""
+    out = re.sub(r"(?ms)^WATCHED: dict\[str, str\] = \{\n.*?^\}",
+                 "WATCHED: dict[str, str] = {\n" + _pin_lines(hashes).replace("\\", "\\\\")
+                 + "\n}", source, count=1)
+    return re.sub(r'(?m)^PINNED_AT = "[^"]*"', f'PINNED_AT = "{version}"', out, count=1)
+
+
+def test_repin_is_one_mechanical_step() -> None:
+    """`--repin` rewrites exactly the two pinned values: re-pinning this file at its own pins is a
+    no-op, and a re-pin at other values changes only those lines."""
+    src = Path(__file__).read_text()
+    assert repinned(src, WATCHED, PINNED_AT) == src
+    other = repinned(src, {"vinci/dossier/x.py": "0" * 12}, "2099-01-01.X")
+    changed = [ln for ln in other.splitlines() if ln not in src.splitlines()]
+    assert sorted(changed) == ['    "vinci/dossier/x.py": "000000000000",',
+                               'PINNED_AT = "2099-01-01.X"']
 
 
 # --- the hash itself: blind to prose, never to code ----------------------------------------------
@@ -224,4 +267,9 @@ def test_any_code_change_moves_the_hash(code_change: str) -> None:
 
 
 if __name__ == "__main__":
-    sys.stdout.write(_pin_lines(current_hashes()) + "\n")
+    if sys.argv[1:] == ["--repin"]:
+        me = Path(__file__)
+        me.write_text(repinned(me.read_text(), current_hashes(), EXTRACTION_VERSION))
+        sys.stdout.write(f"re-pinned {len(current_hashes())} modules at {EXTRACTION_VERSION}\n")
+    else:
+        sys.stdout.write(_pin_lines(current_hashes()) + "\n")
