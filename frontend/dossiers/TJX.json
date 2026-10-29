@@ -14,16 +14,16 @@
         "note": null
       },
       "pe": {
-        "value": 29.786447638603697,
+        "value": 28.41683778234086,
         "source_ref": "EDGAR XBRL eps_diluted × EOD latest stored close",
         "status": "present",
-        "note": "price 2026-10-23 ÷ annual diluted EPS for the period ending 2026-01-31 (265d old, filed 2026-03-31)"
+        "note": "price 2026-10-28 ÷ annual diluted EPS for the period ending 2026-01-31 (270d old, filed 2026-03-31)"
       },
       "pe_percentile_5y": {
-        "value": 0.2123015873015873,
+        "value": 0.0631163708086785,
         "source_ref": "EDGAR/EOD P/E pctile vs ~5y, at the latest stored close",
         "status": "present",
-        "note": "504 P/E observations over 1825d; price 2026-10-23 ÷ annual diluted EPS for the period ending 2026-01-31 (265d old, filed 2026-03-31)"
+        "note": "507 P/E observations over 1825d; price 2026-10-28 ÷ annual diluted EPS for the period ending 2026-01-31 (270d old, filed 2026-03-31)"
       },
       "ev_ebitda": {
         "value": 13.3,
@@ -44,7 +44,7 @@
         "note": "no revised guidance at the drawdown to read an adjusted figure from"
       },
       "adjusted_eps": {
-        "value": "Fiscal 2027 adjusted EPS guide $5.15–$5.20; adj P/E ~28.0x at $145.06 (2026-10-23 close)",
+        "value": "Fiscal 2027 adjusted EPS guide $5.15–$5.20; adj P/E ~26.7x at $138.39 (2026-10-28 close)",
         "source_ref": "8-K 0000109198-26-000045 EX-99.1 (filed 2026-08-19)",
         "status": "present",
         "note": null
@@ -431,36 +431,36 @@
             "column": "FY27E",
             "eps_basis": "EPS (Normalized)",
             "eps": 5.25,
-            "multiple": 27.6305,
-            "price": 145.06,
-            "price_as_of": "2026-10-23"
+            "multiple": 26.36,
+            "price": 138.39,
+            "price_as_of": "2026-10-28"
           },
           {
             "label": "P/FY27E (GAAP)",
             "column": "FY27E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 5.33,
-            "multiple": 27.2158,
-            "price": 145.06,
-            "price_as_of": "2026-10-23"
+            "multiple": 25.9644,
+            "price": 138.39,
+            "price_as_of": "2026-10-28"
           },
           {
             "label": "P/FY28E (normalized)",
             "column": "FY28E",
             "eps_basis": "EPS (Normalized)",
             "eps": 5.77,
-            "multiple": 25.1404,
-            "price": 145.06,
-            "price_as_of": "2026-10-23"
+            "multiple": 23.9844,
+            "price": 138.39,
+            "price_as_of": "2026-10-28"
           },
           {
             "label": "P/FY28E (GAAP)",
             "column": "FY28E",
             "eps_basis": "EPS (GAAP, dil.)",
             "eps": 5.79,
-            "multiple": 25.0535,
-            "price": 145.06,
-            "price_as_of": "2026-10-23"
+            "multiple": 23.9016,
+            "price": 138.39,
+            "price_as_of": "2026-10-28"
           }
         ],
         "source_ref": "price ÷ CIQ consensus EPS, per estimate column of the Financials annual summary",
@@ -1232,17 +1232,17 @@
         "line": "CIQ's 13.3x divides TEV $170,372M (comps, 2026-10-16) by $12,810M: reported LTM EBITDA $8,903M + rent $3,814M (FY ending 2026-01-31) = $12,717M (0.7% apart) — TEV WITH the operating leases over EBITDA WITH rent added back, consistent on its own basis. It is NOT a multiple of reported EBITDA ($8,903M, 30.5% below the denominator)."
       },
       "ev_ebitda_ex_lease_at_price": {
-        "value": 17.570396,
-        "price": 145.06,
-        "price_as_of": "2026-10-23",
+        "value": 16.746311,
+        "price": 138.39,
+        "price_as_of": "2026-10-28",
         "shares": 1099974061.0,
         "shares_basis": "shares outstanding",
         "net_debt": -3133.0,
         "net_debt_source": "EDGAR: total debt 2,871 + finance leases 0 − cash 6,004 ($M); operating leases 11,446 EXCLUDED — the multiple is struck on TEV less operating leases",
-        "ev": 156429.237,
+        "ev": 149092.41,
         "ltm_ebitda": 8903.0,
         "ltm_through": "2026-08-01",
-        "line": "at the page's $145.06 close (2026-10-23): ($145.06 × 1,099,974,061 shares outstanding + net debt −$3,133M excluding operating leases) ÷ LTM EBITDA $8,903M (four quarters to 2026-08-01) = 17.6x"
+        "line": "at the page's $138.39 close (2026-10-28): ($138.39 × 1,099,974,061 shares outstanding + net debt −$3,133M excluding operating leases) ÷ LTM EBITDA $8,903M (four quarters to 2026-08-01) = 16.7x"
       }
     },
     "quality": {
@@ -1928,8 +1928,8 @@
         "note": null
       },
       "revision_history": {
-        "value": "Target price: mean $170.80 / median $175.00; LT growth: mean 9.9% / median 9.9%; Recommendation: Buy (1.00) (CIQ score, 1=buy … 5=sell)",
-        "source_ref": "CIQ Estimates→Consensus",
+        "value": "Target price: mean $170.80 / median $175.00; LT growth: mean 9.9% / median 9.9%; Recommendation: Outperform (1.55) (CIQ score, 1=buy … 5=sell)",
+        "source_ref": "CIQ Estimates→Consensus + Trends Non-Periodic (the listing's own recommendation)",
         "status": "present",
         "note": null
       },
@@ -1966,7 +1966,7 @@
         "note": null
       },
       "guidance_bridge": {
-        "value": "EPS Normalized: latest guide '1.30 - 1.32' for FQ3 2027 (dated 2026-08-19) (stale — 58d old); actual ≥ guided floor 72/76 resolved · 8 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; EPS (GAAP): latest guide '1.36 - 1.38' for FQ3 2027 (dated 2026-08-19) (stale — 58d old); actual ≥ guided floor 73/79 resolved · 5 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; DPS: latest guide 0.48 for FQ4 2027 (dated 2026-09-16); actual ≥ guided floor 6/16 resolved · 6 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 AT GUIDE (±0.5% of a point — not adjudicated); Gross Margin %: latest guide '32.10 - 32.20' for FQ3 2027 (dated 2026-08-19) (stale — 58d old); actual ≥ guided floor 36/43 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; Effective Tax Rate %: latest guide 24.6 for FQ3 2027 (dated 2026-08-19) (stale — 58d old); spend ≤ guided ceiling 29/38 resolved · 13 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; Revenue: latest guide '15,600.00 - 15,800.00' for FQ3 2027 (dated 2026-08-19) (stale — 58d old); actual ≥ guided floor 46/52 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; Capital Expenditure: latest guide '(2,100.00) - (2,200.00)' for FY 2026 (dated 2025-08-29) (stale — 413d old); spend ≤ guided ceiling 11/11 resolved; most recent guidance outcome: FY 2026 MET; Interest Expense: latest guide -19.0 for FQ4 2023 (dated 2022-11-16) (stale — 1430d old); spend ≤ guided ceiling 26/35 resolved; most recent guidance outcome: FQ4 2023 MET  [data ≥ 2026-10-09 · export date unverified]",
+        "value": "EPS Normalized: latest guide '1.30 - 1.32' for FQ3 2027 (dated 2026-08-19) (stale — 58d old); actual ≥ guided floor 72/76 resolved · 8 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; EPS (GAAP): latest guide '1.36 - 1.38' for FQ3 2027 (dated 2026-08-19) (stale — 58d old); actual ≥ guided floor 73/79 resolved · 5 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; DPS: latest guide 0.48 for FQ4 2027 (dated 2026-09-16); actual ≥ guided floor 6/16 resolved · 6 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 AT GUIDE (±0.5% of a point — not adjudicated); Same Store Sales Growth %: latest guide '2.00 - 3.00' for FQ3 2027 (dated 2026-08-19) (stale — 58d old); Gross Margin %: latest guide '32.10 - 32.20' for FQ3 2027 (dated 2026-08-19) (stale — 58d old); actual ≥ guided floor 36/43 resolved · 2 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; Effective Tax Rate %: latest guide 24.6 for FQ3 2027 (dated 2026-08-19) (stale — 58d old); spend ≤ guided ceiling 29/38 resolved · 13 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; Revenue: latest guide '15,600.00 - 15,800.00' for FQ3 2027 (dated 2026-08-19) (stale — 58d old); actual ≥ guided floor 46/52 resolved · 1 at guide (within ±0.5% of a point guide — not adjudicated: a point is a forecast, not a floor); most recent guidance outcome: FQ2 2027 MET; Capital Expenditure: latest guide '(2,100.00) - (2,200.00)' for FY 2026 (dated 2025-08-29) (stale — 413d old); spend ≤ guided ceiling 11/11 resolved; most recent guidance outcome: FY 2026 MET; Interest Expense: latest guide -19.0 for FQ4 2023 (dated 2022-11-16) (stale — 1430d old); spend ≤ guided ceiling 26/35 resolved; most recent guidance outcome: FQ4 2023 MET; EBT (GAAP): latest guide '1,710.00 - 1,737.00' for FQ2 2027 (dated 2026-05-20) (stale — 149d old); EBT (Excl. Excep): latest guide '1,918.80 - 1,959.20' for FQ3 2027 (dated 2026-08-19) (stale — 58d old)  [data ≥ 2026-10-09 · export date unverified]",
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
         "status": "present",
         "note": null
@@ -1999,6 +1999,15 @@
             "age": "fresh",
             "record": "actual ≥ floor 6/16 · 6 at-guide (±0.5% of a point, not adjudicated)",
             "most_recent": "FQ2 2027 AT GUIDE (±0.5% of a point)"
+          },
+          {
+            "metric": "Same Store Sales Growth %",
+            "latest_guide": "'2.00 - 3.00'",
+            "period": "FQ3 2027",
+            "dated": "2026-08-19",
+            "age": "58d (stale)",
+            "record": "—",
+            "most_recent": "—"
           },
           {
             "metric": "Gross Margin %",
@@ -2044,6 +2053,24 @@
             "age": "1430d (stale)",
             "record": "spend ≤ ceiling 26/35",
             "most_recent": "FQ4 2023 MET"
+          },
+          {
+            "metric": "EBT (GAAP)",
+            "latest_guide": "'1,710.00 - 1,737.00'",
+            "period": "FQ2 2027",
+            "dated": "2026-05-20",
+            "age": "149d (stale)",
+            "record": "—",
+            "most_recent": "—"
+          },
+          {
+            "metric": "EBT (Excl. Excep)",
+            "latest_guide": "'1,918.80 - 1,959.20'",
+            "period": "FQ3 2027",
+            "dated": "2026-08-19",
+            "age": "58d (stale)",
+            "record": "—",
+            "most_recent": "—"
           }
         ],
         "source_ref": "CIQ Estimates→Guidance (latest guide + sign-aware delivery track-record) — CIQ states every guide as a LEVEL; where management guided a RATE, the level is CIQ's arithmetic, not the company's published figure",
@@ -4808,7 +4835,7 @@
         "note": null
       },
       "consensus_stats": {
-        "value": "Target price: mean $170.80, median $175.00, high/low 198.00/136.00, N 20/20; Ratings: Buy 14, Outperform 4, Hold 4, Underperform 0, Sell 0, No Opinion 1, Buy 2, Outperform 0, Hold 0, Underperform 0, Sell 0  [data ≥ 2026-10-09 · export date unverified]",
+        "value": "Target price: mean $170.80, median $175.00, high/low 198.00/136.00, N 20/20; Ratings: Buy 14, Outperform 4, Hold 4, Underperform 0, Sell 0, No Opinion 1  [data ≥ 2026-10-09 · export date unverified]",
         "source_ref": "CIQ Estimates→Consensus (target stats) + Trends Non-Periodic (ratings)",
         "status": "present",
         "note": null
@@ -4820,8 +4847,8 @@
         "note": null
       },
       "short_interest": {
-        "value": "Short interest (FINRA, settle 2026-09-30): 18.4M → 18.2M sh (-1.2%, falling) · 1.7% of shares out (EDGAR XBRL) · DTC 2.4d · recent: 2026-09-30 18.2M · 2026-09-15 18.4M · 2026-08-31 21.7M · 2026-08-14 19.7M",
-        "source_ref": "FINRA consolidated short interest (settle 2026-09-30); DTC = 18,188,745 short ÷ 7,549,430 screen 90d ADV",
+        "value": "Short interest (FINRA, settle 2026-10-15): 18.2M → 16.4M sh (-10.0%, falling) · 1.5% of shares out (EDGAR XBRL) · DTC 2.2d · recent: 2026-10-15 16.4M · 2026-09-30 18.2M · 2026-09-15 18.4M · 2026-08-31 21.7M",
+        "source_ref": "FINRA consolidated short interest (settle 2026-10-15); DTC = 16,370,053 short ÷ 7,549,430 screen 90d ADV",
         "status": "present",
         "note": null
       }
@@ -5197,7 +5224,7 @@
         "note": null
       },
       "covenant_terms": {
-        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[2022 REVOLVING CREDIT AGREEMENT · 0001157523-20-000793]\n  Interest / coupon rate: Eurodollar Base Rate equal to LIBOR ...; provided that, if the Eurodollar Base Rate…\n  Financial-maintenance covenants: Maximum Leverage Ratio: 3.25:1.00 (through Feb 1, 2020); 5.00:1.00 (TP ending May 1,…\n  Liens covenant: Other Liens not exceeding 7.5% of Consolidated Total Assets; during Second Amendment…\n[364 DAY REVOLVING CREDIT AGREEMENT · 0000109198-20-000015]\n  Principal / commitment amount: Five Hundred Million and 00/100 Dollars ($500,000,000)\n  Interest / coupon rate: Eurodollar Rate Loans: Eurodollar Rate + Applicable Margin (Eurodollar Rate + 1.10%…\n  Maturity date: August 9, 2021\n  Financial-maintenance covenants: Maximum Leverage Ratio: ≤5.00:1.00 (Test Period ending May 1, 2021) and ≤4.50:1.00…\n[2026 REVOLVING CREDIT AGREEMENT · 0001193125-21-202939]\n  Principal / commitment amount: The initial Aggregate Commitments hereunder are One Billion and 00/100 Dollars…\n  Interest / coupon rate: Eurodollar Rate Loans: Eurodollar Rate plus the Applicable Margin; Base Rate Loans…\n  Maturity date: The later of (a) June 25, 2026 and (b) if maturity is extended pursuant to Section…\n  Financial-maintenance covenants: Maximum Leverage Ratio: (a) 4.50 to 1.00 for Test Period ending July 31, 2021, (b)…\n… (+4 lower-priority terms in the table)",
+        "value": "COVENANT & MATURITY DIGEST (governing terms; verbatim quotes omitted):\n[2022 REVOLVING CREDIT AGREEMENT · 0001157523-20-000793]\n  Interest / coupon rate: Eurodollar Base Rate means, for any Interest Period, the rate per annum equal to…\n  Financial-maintenance covenants: Maximum Leverage Ratio: not greater than 3.25 to 1.00 for Test Periods ending on or…\n  Negative covenant – Liens: other Liens securing Indebtedness or other obligations outstanding at any time not…\n[364 DAY REVOLVING CREDIT AGREEMENT · 0000109198-20-000015]\n  Principal / commitment amount: The initial Aggregate Commitments hereunder are Five Hundred Million and 00/100…\n  Interest / coupon rate: each Eurodollar Rate Loan ... Eurodollar Rate for such Interest Period plus the…\n  Maturity date: August 9, 2021\n  Financial-maintenance covenants: Maximum Leverage Ratio: not greater than 5.00 to 1.00 (Test Period ending May 1,…\n[2026 REVOLVING CREDIT AGREEMENT · 0001193125-21-202939]\n  Principal / commitment amount: The initial Aggregate Commitments hereunder are One Billion and 00/100 Dollars…\n  Interest / coupon rate: Eurodollar Rate plus the Applicable Margin; Base Rate plus the Applicable Margin\n  Maturity date: the later of (a) June 25, 2026 and (b) if maturity is extended pursuant to Section…\n  Financial-maintenance covenants: Maximum Leverage Ratio: (a) 4.50 to 1.00 for the Test Period ending July 31, 2021,…\n… (+5 lower-priority terms in the table)",
         "source_ref": "fenced Tier-2 digest (P1)",
         "status": "present",
         "note": null
@@ -5239,10 +5266,10 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Eurodollar Base Rate equal to LIBOR ...; provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75%",
+              "value": "Eurodollar Base Rate means, for any Interest Period, the rate per annum equal to LIBOR ... provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75% for the purposes of this Agreement.",
               "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
               "status": "present",
-              "note": "verbatim: ““ Eurodollar Base Rate ” means, for any Interest Period, the rate per annum equal to LIBOR as administered by ICE Benchmark Administration ... provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75% for the purposes of this Agreement.”"
+              "note": "verbatim: ““ Eurodollar Base Rate ” means, for any Interest Period, the rate per annum equal to LIBOR as administered by ICE Benchmark Administration (or any other Person that takes over the administration of such rate) appearing on the applicable Reuters Screen ... provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75% for the purposes of this Agreement.”"
             },
             "base_rate_label": "LIBOR",
             "margin_pct": null,
@@ -5271,7 +5298,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Maximum Leverage Ratio: 3.25:1.00 (through Feb 1, 2020); 5.00:1.00 (TP ending May 1, 2021); 4.50:1.00 (TP ending July 31, 2021); 4.00:1.00 (TP ending Oct 30, 2021); 3.50:1.00 thereafter. Minimum EBITDAR: not less than $650,000,000 for FQ ending Jan 30, 2021. Minimum Liquidity: not less than $1,500,000,000 from Second Amendment Effective Date through April 30, 2021.",
+              "value": "Maximum Leverage Ratio: not greater than 3.25 to 1.00 for Test Periods ending on or before Feb 1, 2020; 5.00 to 1.00 (May 1, 2021), 4.50 to 1.00 (July 31, 2021), 4.00 to 1.00 (Oct 30, 2021), 3.50 to 1.00 thereafter. Minimum EBITDAR of $650,000,000 for fiscal quarter ending Jan 30, 2021. Minimum Liquidity of $1,500,000,000 from the Second Amendment Effective Date through April 30, 2021.",
               "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
               "status": "present",
               "note": "verbatim: “7.04 . Maximum Leverage Ratio . The Borrower shall not permit its Leverage Ratio to be greater than 3.25 to 1.00 as of the last day of any Test Period ending on or before February 1, 2020, and shall not permit its Leverage Ratio to exceed (a) 5.00 to 1.00 for the Test Period ending May 1, 2021, (b) 4.50 to 1.00 for the Test Period ending July 31, 2021, (c) 4.00 to 1.00 for the Test Period ending October 30, 2021, and (d) 3.50 to 1.00 for each Test Period ending thereafter ... 7.05. Minimum EBITDAR. The Borrower shall not permit EBITDAR for the fiscal quarter ending January 30, 2021 to be less than $650,000,000 for such fiscal quarter, tested as of the last day of such fiscal quarter. 7.06. Minimum Liquidity . The Borrower shall not permit Liquidity at any time from the Second Amendment Effective Date through April 30, 2021, to be less than $1,500,000,000.”"
@@ -5303,7 +5330,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "References Default/Event of Default (defined in Credit Agreement, not restated here); as of the date hereof, no Default or Event of Default has occurred and is continuing",
+              "value": "as of the date hereof, no Default or Event of Default has occurred and is continuing",
               "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
               "status": "present",
               "note": "verbatim: “(e) as of the date hereof, no Default or Event of Default has occurred and is continuing.”"
@@ -5319,7 +5346,7 @@
           {
             "name": "Usage Fee",
             "value": {
-              "value": "(a) 12.5 bps per annum when combined Total Outstandings exceed $333,333,333.00 but less than $666,666,666.00; (b) 25.0 bps per annum when combined Total Outstandings equal or exceed $666,666,666.00",
+              "value": "(a) when the sum of Total Outstandings exceeds $333,333,333.00 but is less than $666,666,666.00, 12.5 basis points per annum on Total Outstandings; (b) when it equals or exceeds $666,666,666.00, 25.0 basis points per annum on Total Outstandings",
               "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
               "status": "present",
               "note": "verbatim: ““ Usage Fee ” means (a) for each day on which the sum of Total Outstandings under this Agreement plus Total Outstandings (as defined in the 2024 Revolving Credit Agreement) under the 2024 Revolving Credit Agreement exceeds $333,333,333.00, but is less than $666,666,666.00, a fee at a rate of 12.5 basis points per annum, to be paid on the Total Outstandings, and (b) for each day on which the sum of Total Outstandings ... equals or exceeds $666,666,666.00, a fee at a rate of 25.0 basis points per annum, to be paid on the Total Outstandings.”"
@@ -5333,9 +5360,9 @@
             "agreement_is_amendment": true
           },
           {
-            "name": "Liens covenant",
+            "name": "Negative covenant – Liens",
             "value": {
-              "value": "Other Liens not exceeding 7.5% of Consolidated Total Assets; during Second Amendment Effective Date through April 30, 2021, not to exceed $100,000,000",
+              "value": "other Liens securing Indebtedness or other obligations outstanding at any time not exceeding an amount equal to 7.5% of Consolidated Total Assets; provided, that during the period from the Second Amendment Effective Date through April 30, 2021, the aggregate amount ... shall not exceed $100,000,000",
               "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
               "status": "present",
               "note": "verbatim: “(i) other Liens securing Indebtedness or other obligations outstanding at any time not exceeding an amount equal to 7.5% of Consolidated Total Assets; provided , that during the period from the Second Amendment Effective Date through April 30, 2021, the aggregate amount of Indebtedness and other obligations outstanding at any time secured by Liens permitted under this clause (i) shall not exceed $100,000,000;”"
@@ -5351,7 +5378,7 @@
           {
             "name": "Governing law",
             "value": {
-              "value": "State of New York",
+              "value": "THE LAW OF THE STATE OF NEW YORK",
               "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
               "status": "present",
               "note": "verbatim: “THIS AMENDMENT SHALL BE GOVERNED BY, AND CONSTRUED IN ACCORDANCE WITH, THE LAW OF THE STATE OF NEW YORK.”"
@@ -5367,10 +5394,10 @@
           {
             "name": "Benchmark replacement (LIBOR transition)",
             "value": {
-              "value": "Benchmark Replacement = alternate benchmark rate selected by Administrative Agent + Benchmark Replacement Adjustment; floor of 0.75%",
+              "value": "Benchmark Replacement means the sum of: (a) an alternate benchmark rate ... and (b) the Benchmark Replacement Adjustment; provided that, if the Benchmark Replacement as so determined would be less than 0.75%, the Benchmark Replacement will be deemed to be 0.75%",
               "source_ref": "8-K 0001157523-20-000793 · a52222014ex10_1.htm",
               "status": "present",
-              "note": "verbatim: ““ Benchmark Replacement ” means the sum of: (a) an alternate benchmark rate that has been selected by the Administrative Agent in consultation with the Borrower ... and (b) the Benchmark Replacement Adjustment; provided that, if the Benchmark Replacement as so determined would be less than 0.75%, the Benchmark Replacement will be deemed to be 0.75% for the purposes of this Agreement.”"
+              "note": "verbatim: ““ Benchmark Replacement ” means the sum of: (a) an alternate benchmark rate that has been selected by the Administrative Agent in consultation with the Borrower ... as a replacement to LIBOR ... and (b) the Benchmark Replacement Adjustment; provided that, if the Benchmark Replacement as so determined would be less than 0.75%, the Benchmark Replacement will be deemed to be 0.75% for the purposes of this Agreement.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5399,7 +5426,7 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Five Hundred Million and 00/100 Dollars ($500,000,000)",
+              "value": "The initial Aggregate Commitments hereunder are Five Hundred Million and 00/100 Dollars ($500,000,000).",
               "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
               "status": "present",
               "note": "verbatim: ““ Aggregate Commitments ” means the Commitments of all the Lenders.  The initial Aggregate Commitments hereunder are Five Hundred Million and 00/100 Dollars ($500,000,000).”"
@@ -5415,7 +5442,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Eurodollar Rate Loans: Eurodollar Rate + Applicable Margin (Eurodollar Rate + 1.10% to 1.90% per Debt Rating); Base Rate Loans: Base Rate + Applicable Margin (Base Rate + 0.10% to 0.90% per Debt Rating)",
+              "value": "each Eurodollar Rate Loan ... Eurodollar Rate for such Interest Period plus the Applicable Margin; ... each Base Rate Loan ... Base Rate plus the Applicable Margin",
               "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
               "status": "present",
               "note": "verbatim: “(i) each Eurodollar Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurodollar Rate for such Interest Period plus the Applicable Margin; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin.”"
@@ -5426,7 +5453,10 @@
             "floor_pct": 0.75,
             "pik_pct": null,
             "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
-            "agreement_is_amendment": false
+            "agreement_is_amendment": false,
+            "component_quotes": {
+              "floor_pct": "provided that, if the Eurodollar Base Rate shall be less than 0.75%, such rate shall be deemed to be 0.75% for the purposes of this Agreement."
+            }
           },
           {
             "name": "Maturity date",
@@ -5447,10 +5477,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Maximum Leverage Ratio: ≤5.00:1.00 (Test Period ending May 1, 2021) and ≤4.50:1.00 (Test Period ending July 31, 2021); Minimum EBITDAR: ≥$650,000,000 (fiscal quarter ending January 30, 2021); Minimum Liquidity: ≥$1,500,000,000 (Closing Date through April 30, 2021)",
+              "value": "Maximum Leverage Ratio: not greater than 5.00 to 1.00 (Test Period ending May 1, 2021) and not greater than 4.50 to 1.00 (Test Period ending July 31, 2021); Minimum EBITDAR: not less than $650,000,000 for fiscal quarter ending January 30, 2021; Minimum Liquidity: not less than $1,500,000,000 from Closing Date through April 30, 2021",
               "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
               "status": "present",
-              "note": "verbatim: “7.04. Maximum Leverage Ratio .  The Borrower shall not permit its Leverage Ratio to be greater than 5.00 to 1.00 as of the last day of the Test Period ending May 1, 2021, and shall not permit its Leverage Ratio to be greater than 4.50 to 1.00 as of the last day of the Test Period ending July 31, 2021 ... 7.05. Minimum EBITDAR. The Borrower shall not permit EBITDAR for the fiscal quarter ending January 30, 2021 to be less than $650,000,000 for such fiscal quarter ... 7.06. Minimum Liquidity. The Borrower shall not permit Liquidity at any time from the Closing Date through April 30, 2021, to be less than $1,500,000,000.”"
+              "note": "verbatim: “7.04. Maximum Leverage Ratio .  The Borrower shall not permit its Leverage Ratio to be greater than 5.00 to 1.00 as of the last day of the Test Period ending May 1, 2021, and shall not permit its Leverage Ratio to be greater than 4.50 to 1.00 as of the last day of the Test Period ending July 31, 2021 ... 7.05. Minimum EBITDAR. The Borrower shall not permit EBITDAR for the fiscal quarter ending January 30, 2021 to be less than $650,000,000 ... 7.06. Minimum Liquidity. The Borrower shall not permit Liquidity at any time from the Closing Date through April 30, 2021, to be less than $1,500,000,000.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5479,10 +5509,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "(E5) refused: the model's quote is not in 8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm"
+              "value": "Mandatory prepayment: If Total Outstandings exceed Aggregate Commitments, Borrower shall immediately prepay Revolving Loans in an amount equal to such excess (Section 2.06(b)); Events of Default set forth in Section 8.01 (Breach of Representation or Warranty; Payment Default; Breach of Certain Covenants; Breach of Other Provisions; Default on Material Indebtedness; Voluntary/Involuntary Insolvency Proceedings; Judgments; ERISA; Change of Control; Failure of Loan Documents to Remain in Effect)",
+              "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+              "status": "present",
+              "note": "verbatim: “2.06 Prepayments ... (b) If for any reason the Total Outstandings at any time exceed the Aggregate Commitments then in effect, the Borrower shall immediately prepay Revolving Loans in an aggregate amount equal to such excess.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5495,10 +5525,10 @@
           {
             "name": "Facility Fee",
             "value": {
-              "value": "0.15% to 0.35% per annum on Commitment amount, by Debt Rating Level",
+              "value": "Facility Fee 0.15% / 0.20% / 0.25% / 0.30% / 0.35% (by Pricing Level, per Debt Rating)",
               "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
               "status": "present",
-              "note": "verbatim: ““ Applicable Facility Fee Rate ” means, as of any date, a percentage per annum determined by reference to the Debt Rating ... Facility Fee 0.15% 0.20% 0.25% 0.30% 0.35%”"
+              "note": "verbatim: ““ Applicable Facility Fee Rate ” means, as of any date, a percentage per annum determined by reference to the Debt Rating applicable on such date as set forth below: Level I Level II Level III Level IV Level V ... Facility Fee 0.15% 0.20% 0.25% 0.30% 0.35%”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5511,13 +5541,13 @@
           {
             "name": "Default Rate",
             "value": {
-              "value": "Base Rate + Applicable Margin + 2% per annum (Eurodollar Rate Loans: otherwise applicable rate + 2% per annum)",
+              "value": "Base Rate plus Applicable Margin (Base Rate Loans) plus 2% per annum; for Eurodollar Rate Loans, otherwise applicable rate plus 2% per annum",
               "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
               "status": "present",
               "note": "verbatim: ““ Default Rate ” means an interest rate equal to (i) the Base Rate plus (ii) the Applicable Margin, if any, applicable to Base Rate Loans plus (iii) 2% per annum; provided , however , that with respect to a Eurodollar Rate Loan, the Default Rate shall be an interest rate equal to the interest rate (including the Applicable Margin) otherwise applicable to such Revolving Loan plus 2% per annum.”"
             },
             "base_rate_label": null,
-            "margin_pct": 2.0,
+            "margin_pct": null,
             "margin_bps": null,
             "floor_pct": null,
             "pik_pct": null,
@@ -5527,7 +5557,7 @@
           {
             "name": "Base Rate floor",
             "value": {
-              "value": "Base Rate deemed to be 1.75% if less than 1.75%",
+              "value": "if the Base Rate shall be less than 1.75%, such rate shall be deemed to be 1.75%",
               "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
               "status": "present",
               "note": "verbatim: “provided that if the Base Rate shall be less than 1.75%, such rate shall be deemed to be 1.75%.”"
@@ -5535,7 +5565,23 @@
             "base_rate_label": null,
             "margin_pct": null,
             "margin_bps": null,
-            "floor_pct": 1.75,
+            "floor_pct": null,
+            "pik_pct": null,
+            "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
+            "agreement_is_amendment": false
+          },
+          {
+            "name": "Voluntary prepayment",
+            "value": {
+              "value": "voluntary prepayment in whole or in part without premium or penalty",
+              "source_ref": "8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
+              "status": "present",
+              "note": "verbatim: “The Borrower may, upon notice to the Administrative Agent, at any time or from time to time voluntarily prepay Revolving Loans in whole or in part without premium or penalty”"
+            },
+            "base_rate_label": null,
+            "margin_pct": null,
+            "margin_bps": null,
+            "floor_pct": null,
             "pik_pct": null,
             "agreement_title": "364 DAY REVOLVING CREDIT AGREEMENT",
             "agreement_is_amendment": false
@@ -5575,7 +5621,7 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": "Eurodollar Rate Loans: Eurodollar Rate plus the Applicable Margin; Base Rate Loans and Swing Line Loans: Base Rate plus the Applicable Margin. Applicable Margin (Eurodollar Rate +): Level I 0.575%, Level II 0.69%, Level III 0.805%, Level IV 0.91%, Level V 1.00%; Base Rate + 0% at all levels.",
+              "value": "Eurodollar Rate plus the Applicable Margin; Base Rate plus the Applicable Margin",
               "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
               "status": "present",
               "note": "verbatim: “(i) each Eurodollar Rate Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to the Eurodollar Rate for such Interest Period plus the Applicable Margin; (ii) each Base Rate Revolving Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin; and (iii) each Swing Line Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin.”"
@@ -5591,7 +5637,7 @@
           {
             "name": "Maturity date",
             "value": {
-              "value": "The later of (a) June 25, 2026 and (b) if maturity is extended pursuant to Section 2.19, such extended maturity date",
+              "value": "the later of (a) June 25, 2026 and (b) if maturity is extended pursuant to Section 2.19, such extended maturity date",
               "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
               "status": "present",
               "note": "verbatim: ““ Maturity Date ” means the later of (a) June 25, 2026 and (b) if maturity is extended pursuant to Section 2.19 , such extended maturity date as determined pursuant to such Section; provided , however , in each case, that if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
@@ -5607,7 +5653,7 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Maximum Leverage Ratio: (a) 4.50 to 1.00 for Test Period ending July 31, 2021, (b) 4.00 to 1.00 for Test Period ending October 30, 2021, and (c) 3.50 to 1.00 for Test Period ending January 29, 2022 and each Test Period ending thereafter",
+              "value": "Maximum Leverage Ratio: (a) 4.50 to 1.00 for the Test Period ending July 31, 2021, (b) 4.00 to 1.00 for the Test Period ending October 30, 2021, and (c) 3.50 to 1.00 for the Test Period ending January 29, 2022 and for each Test Period ending thereafter",
               "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
               "status": "present",
               "note": "verbatim: “7.04. Maximum Leverage Ratio . The Borrower shall not permit its Leverage Ratio to be greater than (a) 4.50 to 1.00 for the Test Period ending July 31, 2021, (b) 4.00 to 1.00 for the Test Period ending October 30, 2021, and (c) 3.50 to 1.00 for the Test Period ending January 29, 2022 and for each Test Period ending thereafter”"
@@ -5626,7 +5672,7 @@
               "value": null,
               "source_ref": null,
               "status": "unknown",
-              "note": "(E5) refused: the model's quote is not in 8-K 0001193125-21-202939 · d169110dex101.htm"
+              "note": "not stated in 8-K 0001193125-21-202939 · d169110dex101.htm"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5639,10 +5685,10 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.06(c)): if Total Outstandings exceed the Aggregate Commitments, Borrower shall immediately prepay Loans and/or Cash Collateralize L/C Obligations in the amount of such excess. Events of Default (Section 8.01): (a) breach of representation/warranty; (b) payment default (principal when due; interest/fees within 5 Business Days); (c) breach of certain covenants (6.02, 6.04, 6.03(a), 7.01, 7.02, 7.03; and 7.04 with 10-day cure); (d) breach of other provisions (30-day cure); (e) default on Material Indebtedness / 2024 Revolving Credit Agreement; (f) voluntary insolvency; (g) involuntary insolvency (60-day); (h) judgments over Threshold Amount ($175,000,000) unpaid within 30 days; (i) ERISA; (j) Change of Control; (k) failure of Loan Documents to remain in effect.",
+              "value": "Section 2.06(c): If for any reason the Total Outstandings at any time exceed the Aggregate Commitments then in effect, the Borrower shall immediately prepay Loans and/or Cash Collateralize the L/C Obligations in an aggregate amount equal to such excess; Events of Default set forth in Section 8.01 (Breach of Representation or Warranty; Payment Default; Breach of Certain Covenants; Breach of Other Provisions; Default on Material Indebtedness; Voluntary/Involuntary Insolvency Proceedings; Judgments; ERISA; Change of Control; Failure of Loan Documents to Remain in Effect)",
               "source_ref": "8-K 0001193125-21-202939 · d169110dex101.htm",
               "status": "present",
-              "note": "verbatim: “If for any reason the Total Outstandings at any time exceed the Aggregate Commitments then in effect, the Borrower shall immediately prepay Loans and/or Cash Collateralize the L/C Obligations in an aggregate amount equal to such excess ... 8.01. Events of Default . Any of the following shall constitute an Event of Default: (a) Breach of Representation or Warranty ... (b) Payment Default ... (c) Breach of Certain Covenants ... (d) Breach of Other Provisions ... (e) Default on Material Indebtedness ... (f) Voluntary Insolvency Proceedings ... (g) Involuntary Insolvency Proceedings ... (h) Judgments ... (i) ERISA ... (j) Change of Control ... (k) Failure of Loan Documents to Remain in Effect.”"
+              "note": "verbatim: “(c) If for any reason the Total Outstandings at any time exceed the Aggregate Commitments then in effect, the Borrower shall immediately prepay Loans and/or Cash Collateralize the L/C Obligations in an aggregate amount equal to such excess”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5671,10 +5717,10 @@
           {
             "name": "Principal / commitment amount",
             "value": {
-              "value": "Aggregate Commitments as of the First Amendment Effective Date are $750,000,000 (Total Commitments per Schedule 2.01 = $750,000,000.00). Accordion: \"the Aggregate Commitments hereunder at no time shall exceed $1,125,000,000\"",
+              "value": "Seven Hundred Fifty Million and 00/100 Dollars ($750,000,000)",
               "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
               "status": "present",
-              "note": "verbatim: “\"Aggregate Commitments\" means the Commitments of all the Lenders. The Aggregate Commitments hereunder as of the First Amendment Effective Date are Seven Hundred Fifty Million and 00/100 Dollars ($750,000,000).”"
+              "note": "verbatim: ““ Aggregate Commitments ” means the Commitments of all the Lenders.  The Aggregate Commitments hereunder as of the First Amendment Effective Date are Seven Hundred Fifty Million and 00/100 Dollars ($750,000,000).”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5687,26 +5733,30 @@
           {
             "name": "Interest / coupon rate",
             "value": {
-              "value": null,
-              "source_ref": null,
-              "status": "unknown",
-              "note": "(E5) refused: the model's quote is not in 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm"
+              "value": "Adjusted Term SOFR plus the Applicable Margin (Term SOFR Loans); Base Rate plus the Applicable Margin (Base Rate Loans)",
+              "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
+              "status": "present",
+              "note": "verbatim: “(i) each Term SOFR Loan shall bear interest on the outstanding principal amount thereof for each Interest Period at a rate per annum equal to Adjusted Term SOFR for such Interest Period plus the Applicable Margin; and (ii) each Base Rate Loan shall bear interest on the outstanding principal amount thereof from the applicable borrowing date at a rate per annum equal to the Base Rate plus the Applicable Margin.”"
             },
-            "base_rate_label": null,
-            "margin_pct": null,
+            "base_rate_label": "Adjusted Term SOFR",
+            "margin_pct": 0.68,
             "margin_bps": null,
-            "floor_pct": null,
+            "floor_pct": 0.0,
             "pik_pct": null,
             "agreement_title": "2029 AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT",
-            "agreement_is_amendment": true
+            "agreement_is_amendment": true,
+            "component_quotes": {
+              "margin_pct": "Adjusted Term SOFR + 0.45% 0.565% 0.68% 0.785% 0.875% ... On the First Amendment Effective Date, the Applicable Margin shall be set at Level III.",
+              "floor_pct": "“ Floor ” means 0.00%."
+            }
           },
           {
             "name": "Maturity date",
             "value": {
-              "value": "May 9, 2029 (subject to extension under Section 2.19)",
+              "value": "the later of (a) May 9, 2029 and (b) if maturity is extended pursuant to Section 2.19, such extended maturity date",
               "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
               "status": "present",
-              "note": "verbatim: “\"Maturity Date\" means the later of (a) May 9, 2029 and (b) if maturity is extended pursuant to Section 2.19, such extended maturity date as determined pursuant to such Section; provided, however, in each case, that if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
+              "note": "verbatim: ““ Maturity Date ” means the later of (a) May 9, 2029 and (b) if maturity is extended pursuant to Section 2.19 , such extended maturity date as determined pursuant to such Section; provided , however , in each case, that if such date is not a Business Day, the Maturity Date shall be the next preceding Business Day.”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5719,10 +5769,10 @@
           {
             "name": "Financial-maintenance covenants",
             "value": {
-              "value": "Maximum Leverage Ratio: not greater than 3.50 to 1.00 as of the last day of any Test Period (Leverage Ratio = Funded Debt to EBITDAR)",
+              "value": "Leverage Ratio not greater than 3.50 to 1.00 as of the last day of any Test Period",
               "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
               "status": "present",
-              "note": "verbatim: “7.04 Maximum Leverage Ratio. The Borrower shall not permit its Leverage Ratio to be greater than 3.50 to 1.00 as of the last day of any Test Period”"
+              "note": "verbatim: “7.04 Maximum Leverage Ratio .  The Borrower shall not permit its Leverage Ratio to be greater than 3.50 to 1.00 as of the last day of any Test Period”"
             },
             "base_rate_label": null,
             "margin_pct": null,
@@ -5751,7 +5801,7 @@
           {
             "name": "Mandatory prepayment / events of default",
             "value": {
-              "value": "Mandatory prepayment (Section 2.06(b)): if Total Outstandings exceed Aggregate Commitments, Borrower shall immediately prepay Revolving Loans in the amount of such excess. Events of Default (Section 8.01) include: (a) Breach of Representation or Warranty; (b) Payment Default; (c) Breach of Certain Covenants; (d) Breach of Other Provisions; (e) Default on Material Indebtedness; (f) Voluntary Insolvency Proceedings; (g) Involuntary Insolvency Proceedings; (h) Judgments; (i) ERISA; (j) Change of Control; (k) Failure of Loan Documents to Remain in Effect.",
+              "value": "Mandatory prepayment: Section 2.06(b) — if Total Outstandings exceed the Aggregate Commitments, Borrower shall immediately prepay the excess. Events of Default: Section 8.01 (including payment default, covenant breach, cross-default on 2030 Revolving Credit Agreement/Material Indebtedness, insolvency, judgments, ERISA, Change of Control).",
               "source_ref": "8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm",
               "status": "present",
               "note": "verbatim: “(b) If for any reason the Total Outstandings at any time exceed the Aggregate Commitments then in effect, the Borrower shall immediately prepay Revolving Loans in an aggregate amount equal to such excess.”"
@@ -7007,48 +7057,48 @@
       "quarterly": {
         "value": {
           "columns": [
-            "Q1-16",
-            "Q2-16",
-            "Q3-16",
-            "Q4-17",
             "Q1-17",
             "Q2-17",
             "Q3-17",
-            "Q4-18",
+            "Q4-17",
             "Q1-18",
             "Q2-18",
             "Q3-18",
-            "Q4-19",
+            "Q4-18",
             "Q1-19",
             "Q2-19",
             "Q3-19",
-            "Q4-20",
+            "Q4-19",
             "Q1-20",
             "Q2-20",
             "Q3-20",
-            "Q4-21",
+            "Q4-20",
             "Q1-21",
             "Q2-21",
             "Q3-21",
-            "Q4-22",
+            "Q4-21",
             "Q1-22",
             "Q2-22",
             "Q3-22",
-            "Q4-23",
+            "Q4-22",
             "Q1-23",
             "Q2-23",
             "Q3-23",
-            "Q4-24",
+            "Q4-23",
             "Q1-24",
             "Q2-24",
             "Q3-24",
-            "Q4-25",
+            "Q4-24",
             "Q1-25",
             "Q2-25",
             "Q3-25",
-            "Q4-26",
+            "Q4-25",
             "Q1-26",
-            "Q2-26"
+            "Q2-26",
+            "Q3-26",
+            "Q4-26",
+            "Q1-27",
+            "Q2-27"
           ],
           "rows": [
             {
@@ -7354,8 +7404,8 @@
         "note": null
       },
       "balance_sheet": {
-        "value": "as of Q2-26 ($M): cash & ST inv 6,004; total debt 14,317; net debt 8,313; equity 10,651; net working capital 1,969; net-debt/EBITDA → see the Leverage & survival block (not recomputed)",
-        "source_ref": "CIQ Financials→Balance Sheet (quarterly, Q2-26)",
+        "value": "as of Q2-27 ($M): cash & ST inv 6,004; total debt 14,317; net debt 8,313; equity 10,651; net working capital 1,969; net-debt/EBITDA → see the Leverage & survival block (not recomputed)",
+        "source_ref": "CIQ Financials→Balance Sheet (quarterly, Q2-27)",
         "status": "present",
         "note": null
       },
@@ -7443,7 +7493,7 @@
             ],
             "gap": -331.0,
             "different": true,
-            "matching_amount": "3 IEEPA Tariff Refunds and Related Expense Accruals During the second quarter of Fiscal 2027, the Company received aggregate refunds of $331 million for a portion of the IEEPA tariffs it previously paid.",
+            "matching_amount": "IEEPA Tariff Refunds and Related Expense Accruals During the second quarter of Fiscal 2027, the Company received aggregate refunds of $331 million for a portion of the IEEPA tariffs it previously paid.",
             "matching_source": "8-K 0000109198-26-000045 EX-99.1",
             "ciq_unusual": -331.0,
             "note": null
@@ -7453,7 +7503,7 @@
         "filing_ltm": 9234.0,
         "ltm_gap": -331.0,
         "any_different": true,
-        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $8,903M against $9,234M rebuilt from the filings (−$331M); the quarter to 2026-08-01: CIQ $1,996M against $2,327M (−$331M) — its release states a matching amount: “3 IEEPA Tariff Refunds and Related Expense Accruals During the second quarter of Fiscal 2027, the Company received aggregate refunds of $331 million for a portion of the IEEPA tariffs it previously paid.” (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.",
+        "line": "CIQ's EBITDA is CIQ's own normalised figure, not the filing's: its LTM $8,903M against $9,234M rebuilt from the filings (−$331M); the quarter to 2026-08-01: CIQ $1,996M against $2,327M (−$331M) — its release states a matching amount: “IEEPA Tariff Refunds and Related Expense Accruals During the second quarter of Fiscal 2027, the Company received aggregate refunds of $331 million for a portion of the IEEPA tariffs it previously paid.” (rebuilt as pre-tax income − net interest income + D&A (other non-operating items stay inside)). Every EV/EBITDA on this page divides CIQ's figure.",
         "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)"
       },
       "statement_reconciliation": {
@@ -7811,7 +7861,7 @@
             "note": null
           }
         ],
-        "as_filed_by": "2026-10-26",
+        "as_filed_by": "2026-10-29",
         "source_ref": "CIQ Financials (Annual)→Income Statement 'Total Revenue' and →Cash Flow 'Cash from Ops.' against EDGAR XBRL (the first revenue / operating-cash-flow alias reporting the period)"
       }
     },
@@ -8290,7 +8340,7 @@
     },
     "stock_info": {
       "price": {
-        "value": 145.06,
+        "value": 138.39,
         "source_ref": "EOD TJX last close",
         "status": "present",
         "note": null
@@ -8299,13 +8349,13 @@
         "value": 170.0,
         "source_ref": "EOD TJX 52-week high",
         "status": "present",
-        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
+        "note": "52-week window 2025-10-16→2026-10-28: spans 377d over 260 bars"
       },
       "low_52w": {
         "value": 122.78,
         "source_ref": "EOD TJX 52-week low",
         "status": "present",
-        "note": "52-week window 2025-10-16→2026-10-23: spans 372d over 257 bars"
+        "note": "52-week window 2025-10-16→2026-10-28: spans 377d over 260 bars"
       },
       "shares_out": {
         "value": 1099974061.0,
@@ -8325,7 +8375,7 @@
         "status": "present",
         "note": null
       },
-      "as_of": "2026-10-23",
+      "as_of": "2026-10-28",
       "market_cap_as_of": "2026-10-16"
     },
     "stock_performance": {
@@ -9767,7 +9817,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Marmaxx comp sales",
-          "period": "first quarter",
+          "period": null,
           "value": "grew an outstanding 6%",
           "value_num": null,
           "unit": null,
@@ -9779,7 +9829,7 @@
         {
           "kind": "leading_indicator",
           "metric": "HomeGoods comp sales",
-          "period": "first quarter",
+          "period": null,
           "value": "increased a remarkable 9%",
           "value_num": null,
           "unit": null,
@@ -9791,7 +9841,7 @@
         {
           "kind": "leading_indicator",
           "metric": "TJX Canada comp sales",
-          "period": "first quarter",
+          "period": null,
           "value": "up an outstanding 7%",
           "value_num": null,
           "unit": null,
@@ -9803,7 +9853,7 @@
         {
           "kind": "leading_indicator",
           "metric": "TJX International comp sales",
-          "period": "first quarter",
+          "period": null,
           "value": "increased a strong 4%",
           "value_num": null,
           "unit": null,
@@ -9862,13 +9912,25 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "store count / country footprint",
+          "metric": "countries operated in and store growth potential",
           "period": null,
-          "value": "stores in 10 countries, potential to add another 1,700 plus stores",
+          "value": "10 countries ... potential to add another 1,700 plus stores",
           "value_num": null,
           "unit": null,
           "verbatim": "We now operate stores in 10 countries, and we see the potential to add another 1,700 plus stores in these countries alone with our existing banners.",
           "following_context": "Again, we recently opened our first store in Spain and customer reaction has been outstanding. We are on track to open additional stores in Spain this year and are excited about our growth potential in that country.",
+          "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "U.S. market share for apparel and home",
+          "period": null,
+          "value": "single-digit market share",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "And I'll just add to Ernie's comments that we only have a single-digit market share for apparel and home in the U.S., and we still see opportunity to grow...",
+          "following_context": null,
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q1 2027 Earnings Call, May 20, 2026.rtf",
           "tier": "llm-fenced"
         },
@@ -9887,7 +9949,7 @@
         {
           "kind": "leading_indicator",
           "metric": "Marmaxx comp sales",
-          "period": "second quarter",
+          "period": null,
           "value": "increased 1%",
           "value_num": null,
           "unit": null,
@@ -9899,7 +9961,7 @@
         {
           "kind": "leading_indicator",
           "metric": "HomeGoods comp sales",
-          "period": "second quarter",
+          "period": null,
           "value": "outstanding 7% comp sales increase",
           "value_num": null,
           "unit": null,
@@ -9911,7 +9973,7 @@
         {
           "kind": "leading_indicator",
           "metric": "TJX Canada comp sales",
-          "period": "second quarter",
+          "period": null,
           "value": "increasing by 6%",
           "value_num": null,
           "unit": null,
@@ -9923,7 +9985,7 @@
         {
           "kind": "leading_indicator",
           "metric": "TJX International comp sales",
-          "period": "second quarter",
+          "period": null,
           "value": "increased an outstanding 7%",
           "value_num": null,
           "unit": null,
@@ -9960,7 +10022,7 @@
           "kind": "competitive_position",
           "metric": "off-price home fashion retailer position in U.S.",
           "period": null,
-          "value": "the largest off-price home fashion retailer in the U.S.",
+          "value": "largest off-price home fashion retailer in the U.S.",
           "value_num": null,
           "unit": null,
           "verbatim": "We are the largest off-price home fashion retailer in the U.S. and believe that we are set up very well to continue to capture an even larger share of the market going forward.",
@@ -9972,7 +10034,7 @@
           "kind": "competitive_position",
           "metric": "off-price retailer position in Canada",
           "period": null,
-          "value": "the leading off-price retailer in Canada",
+          "value": "leading off-price retailer in Canada",
           "value_num": null,
           "unit": null,
           "verbatim": "We are the leading off-price retailer in Canada and are very pleased with our strong brand awareness and loyal shopper base.",
@@ -9982,12 +10044,12 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "vendor network size",
+          "metric": "number of vendors",
           "period": null,
           "value": "approximately 21,000 vendors every year",
           "value_num": null,
           "unit": null,
-          "verbatim": "We work with the universe of approximately 21,000 vendors every year to curate an unmatched mix of good, better, best merchandise for our customers.",
+          "verbatim": "Second, we are a global sourcing machine. We work with the universe of approximately 21,000 vendors every year to curate an unmatched mix of good, better, best merchandise for our customers.",
           "following_context": null,
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
           "tier": "llm-fenced"
@@ -9996,7 +10058,7 @@
           "kind": "competitive_position",
           "metric": "long-term store growth potential",
           "period": null,
-          "value": "increasing by 500 stores to a total of 7,500 stores, or over 2,200 more stores",
+          "value": "increasing ... by 500 stores to a total of 7,500 stores, or over 2,200 more stores",
           "value_num": null,
           "unit": null,
           "verbatim": "Today, we are increasing our long-term store growth potential by 500 stores to a total of 7,500 stores, or over 2,200 more stores with just our existing retail banners within our current 10 countries.",
@@ -10006,13 +10068,61 @@
         },
         {
           "kind": "competitive_position",
-          "metric": "number of buyers",
+          "metric": "TJ Maxx and Marshalls store expansion potential",
           "period": null,
-          "value": "more than 1,400 buyers",
+          "value": "additional 300 stores to a combined 3,300 stores",
           "value_num": null,
           "unit": null,
-          "verbatim": "I'm convinced that our team of more than 1,400 buyers will bring shoppers the right assortments at the right values.",
+          "verbatim": "This now reflects the long-term potential for our TJ Maxx and Marshalls banners to expand an additional 300 stores to a combined 3,300 stores and for the HomeGoods division to expand an additional 200 stores to 2,000 stores.",
           "following_context": null,
+          "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "competitive_position",
+          "metric": "HomeGoods division store expansion potential",
+          "period": null,
+          "value": "additional 200 stores to 2,000 stores",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "This now reflects the long-term potential for our TJ Maxx and Marshalls banners to expand an additional 300 stores to a combined 3,300 stores and for the HomeGoods division to expand an additional 200 stores to 2,000 stores.",
+          "following_context": null,
+          "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "planned store opening growth rate",
+          "period": null,
+          "value": "accelerate our store openings to 4% starting next year",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "Further, we are planning to accelerate our store openings to 4% starting next year to take advantage of the growth opportunities we see out there.",
+          "following_context": "I want to assure you that we are extremely confident that there will be plenty of quality merchandise available to us to support our growth plans. Last, and most importantly, is our exceptional talent around the world. I truly believe that the depth of our off-price knowledge and expertise and the longevity of our talent within TJX is unmatched. Talent development has always been a priority, and we remain laser-focused on teaching and training the next generation of TJX leaders.",
+          "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "video views across social media (first half)",
+          "period": "first half of the year",
+          "value": "1.1 billion video views",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "in the first half of the year, we had 1.1 billion video views across Facebook, Instagram, TikTok, Pinterest, YouTube, which shows you -- that wouldn't have looked that way in the last couple of years, shows you how aggressive.",
+          "following_context": "By the way, we had over 300 million in HomeGoods, so 1.4 billion video views across those venues of Facebook, Instagram, Pinterest and YouTube. And that's just in the first half, which is where our customers are.",
+          "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+          "tier": "llm-fenced"
+        },
+        {
+          "kind": "leading_indicator",
+          "metric": "total video views including HomeGoods (first half)",
+          "period": null,
+          "value": "over 300 million in HomeGoods, so 1.4 billion video views",
+          "value_num": null,
+          "unit": null,
+          "verbatim": "By the way, we had over 300 million in HomeGoods, so 1.4 billion video views across those venues of Facebook, Instagram, Pinterest and YouTube.",
+          "following_context": "And that's just in the first half, which is where our customers are.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
           "tier": "llm-fenced"
         }
@@ -10173,68 +10283,73 @@
     }
   },
   "synthesis": {
-    "evidence_balance": "strongly-bullish — rising absolute EBITDA, raised guidance and richer-than-peer fundamentals outweigh a trailing premium multiple and a single-segment comp wobble.",
+    "evidence_balance": "strongly-bullish — rising absolute EBITDA, low leverage, raised guidance and broad comp strength; the Marmaxx miss is isolated and self-described fixable.",
     "bull_points": [
       {
-        "claim": "The EV/EBITDA struck at 13.3x sits beside an absolute EBITDA that has risen every year ex-pandemic — $4,508M (FY17) → $8,425M (FY26) → $8,903M LTM — so the elevated multiple rides growing, not shrinking, cash earnings.",
+        "claim": "The de-rating is a drawdown off a strong business: EV/EBITDA sits at 13.3x — the 77th percentile of TJX's own ~9.5y history (range 7.9–21.6x, median 12.0x), not a floor, so this is a come-down from a peak, not a crash.",
+        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close — 39 quarters spanning 2017-03-31..2026-09-30 (9.5y) (partial last column excluded from the distribution)",
+        "cited": true
+      },
+      {
+        "claim": "The P/E is at its own 5-year 6th percentile (28.4x, pctile 0.063) even as the EV/EBITDA percentile is high — the earnings multiple has compressed sharply versus the firm's own history.",
+        "source_ref": "EDGAR/EOD P/E pctile vs ~5y, at the latest stored close",
+        "cited": true
+      },
+      {
+        "claim": "Absolute EBITDA has risen every post-COVID year to an LTM $8,903M (FY17 $4,508M → LTM $8,903M) with EBITDA margin back to 14% — no profit erosion underlies the price fall.",
         "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
         "cited": true
       },
       {
-        "claim": "Consensus EBITDA is stepping UP, not down — FY27E $9,005.5M · FY28E $9,756.3M direct consensus — so the forward profile supports the current level rather than flagging impairment.",
-        "source_ref": "CIQ Estimates→Trends (FY27E/FY28E consensus EBITDA, latest snapshot)",
-        "cited": true
-      },
-      {
-        "claim": "Management RAISED full-year FY2027 EPS guidance to $5.31–$5.36 on Aug-19-2026, the opposite posture of a terminal decliner.",
+        "claim": "Management RAISED FY2027 EPS guidance twice in 2026 and again at Q2 (to GAAP diluted $5.31–$5.36), inconsistent with a terminal thesis.",
         "source_ref": "CIQ Key Developments: The TJX Companies Inc NYSE TJX Key Developments.rtf · Aug-19-2026",
         "cited": true
       },
       {
-        "claim": "Q2 FY2027 consolidated comp sales increased 4% above plan with HomeGoods +7%, TJX Canada +6% and TJX International +7% — the mechanism is broad live demand, not a fading franchise.",
-        "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
-        "cited": true
-      },
-      {
-        "claim": "On the fundamental_deltas the name's margin and growth are richer than the peer median (EBITDA margin 14% vs 11%; EBITDA growth 16% vs 11%; LT EPS growth 10% vs 6%) while leverage is lower (Debt/EBITDA 1.1 vs 1.9) and beta is lower (0.6 vs 1.2) — the peer discount the bears cite is better read as largely EARNED premium fundamentals, posing whether the gap to peers is residual overshoot at all; the human must judge against a HETEROGENEOUS peer set.",
-        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
-        "cited": true
-      },
-      {
-        "claim": "Return on capital is intact and rising — RoCE 20.0% (FY26) → 20.2% LTM — consistent with a durable franchise, not one losing its economics.",
-        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
-        "cited": true
-      },
-      {
-        "claim": "The business is self-funding with net-debt/EBITDA 0.9x and positive FCF, buying back stock (-2.2% shares over ~1.7y) under a fresh $3.0B authorization.",
+        "claim": "The company is self-funding and lightly levered: net-debt/EBITDA 0.9x, interest coverage 118.7x, FCF-positive — no balance-sheet pressure to force a terminal outcome.",
         "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
         "cited": true
       },
       {
-        "claim": "Sell-side posture is constructive — consensus Buy (1.00), mean target $170.80 / median $175.00 against a $145.06 close, with recent upward revisions.",
-        "source_ref": "CIQ Estimates→Consensus",
+        "claim": "Operating drivers are broadly intact: Q2 consolidated comp sales rose 4%, with HomeGoods +7%, TJX Canada +6% and TJX International +7% — only Marmaxx lagged (+1%) on self-described execution issues management says are being fixed.",
+        "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "ROIC/RoCE has rebuilt steadily to 20.2% LTM and RoE is 62.2%, indicating sustained capital-return quality, not a franchise in decay.",
+        "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+        "cited": true
+      },
+      {
+        "claim": "On the fundamental_deltas the firm is BETTER than the peer median on most axes — EBITDA margin 14% vs 11%, EBITDA growth 16% vs 11%, lower leverage (1.1 vs 1.9), higher LT EPS growth (10% vs 6%), lower beta (0.6 vs 1.2) — raising whether the P/E premium is EARNED rather than the discount; the human must judge given the HETEROGENEOUS peer set.",
+        "source_ref": "CIQ Comparable Analysis→Operating Statistics (name vs peer median: growth/margin/leverage/beta)",
+        "cited": true
+      },
+      {
+        "claim": "Consensus breadth is still constructive — rating Outperform (1.55), mean target $170.80 vs the $138.39 close, with no FY2027 EPS or revenue downgrades in the last month.",
+        "source_ref": "CIQ Estimates→Consensus + Trends Non-Periodic (the listing's own recommendation)",
         "cited": true
       }
     ],
     "bear_points": [
       {
-        "claim": "On the cross-sectional comp the name trades at a steep premium to peers — EV/EBITDA 13.3x vs peer median 6.8x (+94%) and P/E 27.3x vs 15.7x (+74%) — so the de-rating starts from a rich base, not a cheap one; this is the consensus comp read and must be weighed against the HETEROGENEOUS peer set rather than taken as a clean signal, but as a genuine counter-point it is OUTWEIGHED by the richer margin/growth/leverage fundamentals that partly earn the premium.",
+        "claim": "The headline cross-sectional multiples look rich — EV/EBITDA 13.3x vs peer median 6.8x (+94%) and P/E 27.3x vs 15.7x (+74%) — but this is the CONSENSUS comp read on a HETEROGENEOUS set (caps $3.0B–$146.9B vs the name's $162.1B), so the premium is a confidence-gated input, not a clean signal of over-valuation; the human must decide if it is EARNED by better fundamentals or RESIDUAL.",
         "source_ref": "CIQ Comparable Analysis→Trading Multiples (name vs peer Median)",
         "cited": true
       },
       {
-        "claim": "The trailing EV/EBITDA 13.3x carries no forward basis in this field, so on its own it cannot distinguish a temporarily depressed level from a permanently impaired one — a genuine blind-spot, but OUTWEIGHED by the separate direct consensus EBITDA step-up to FY27E $9,005.5M/FY28E $9,756.3M that IS a forward read.",
-        "source_ref": "CIQ Financials→Multiples 'TEV/LTM EBITDA' Close (latest) — current multiple",
-        "cited": true
-      },
-      {
-        "claim": "The headline 13.3x is NOT a multiple of reported EBITDA: it divides TEV by EBITDA WITH rent added back ($12,717M), and reported LTM EBITDA is $8,903M (30.5% below the denominator) — the optical cheapness vs a reported-EBITDA mental model is a MISREAD, reconciled on its own ebitda-plus-rent basis; a real basis subtlety for the human, OUTWEIGHED by the consistent rising-earnings trajectory.",
-        "source_ref": "CIQ Financials→Multiples (Close; last col = current, excluded from history)",
-        "cited": true
-      },
-      {
-        "claim": "Marmaxx — 61% of revenue — slowed sharply to +1% comp in Q2 FY2027 (from +6% in Q1) with a small decrease in customer transactions, a genuine deceleration in the core engine; OUTWEIGHED by strength across the other three segments and management's statement of early-Q3 sales improvement.",
+        "claim": "A genuine operating crack: Marmaxx — 61% of revenue and the largest profit pool — comped only +1% with transactions DOWN, which management attributes to self-inflicted merchandise-mix execution misses, a counter-point OUTWEIGHED by the +4% consolidated comp and the other three divisions' 6–7% growth.",
         "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
+        "cited": true
+      },
+      {
+        "claim": "The headline LTM EBITDA is flattered: CIQ's $8,903M is $331M BELOW the $9,234M rebuilt from filings because the quarter's EBITDA was lifted by one-off IEEPA tariff refunds — so Q2 gross-margin strength rested partly on tariff favorability, a counter-point OUTWEIGHED by the multi-year absolute EBITDA climb and self-funding cash generation.",
+        "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)",
+        "cited": true
+      },
+      {
+        "claim": "The stock has materially lagged: TJX returned −8.3% over 180d while SPY rose +7.5% (−15.8% relative), a sustained gradual bleed rather than a single shock — a counter-point OUTWEIGHED by raised guidance and still-rising EBITDA.",
+        "source_ref": "EOD TJX−SPY 180d to 2026-10-16 (assembly, cap-band)",
         "cited": true
       }
     ],
@@ -10242,94 +10357,130 @@
       {
         "name": "Ross Stores",
         "outcome": "recovered",
-        "distinguishing_fact": "Direct off-price peer with the same treasure-hunt, low-leverage, buyback-funded model; the closest structural analogue for how a premium off-price multiple behaves through a soft-comp patch.",
+        "distinguishing_fact": "Direct off-price peer trading at a similar premium EV/EBITDA on comparable margins; the nearest clean benchmark for whether an off-price retailer's high multiple is earned by the model.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Burlington Stores",
         "outcome": "recovered",
-        "distinguishing_fact": "Off-price peer that absorbed comp volatility while continuing store expansion; analogue for a growth-driven off-price name de-rating on a demand wobble rather than a broken model.",
+        "distinguishing_fact": "Off-price peer that carries higher leverage and a lower multiple — a contrast case for whether TJX's balance-sheet quality justifies its premium.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "Target Corporation",
         "outcome": "went terminal",
-        "distinguishing_fact": "Broadline general merchandiser whose core comp stagnation and margin compression produced a durable de-rating — the cautionary pattern if the core banner's softness proves structural rather than cyclical.",
+        "distinguishing_fact": "Large general-merchandise peer with stalling comps and far thinner margin, trading at a deep discount — the value-trap analogue for a retailer whose core U.S. engine loses momentum.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
       },
       {
         "name": "The Gap",
         "outcome": "went terminal",
-        "distinguishing_fact": "Apparel retailer whose repeated brand/traffic erosion led to a persistently low multiple; the analogue for what a de-rating looks like when customer transactions fade for real.",
+        "distinguishing_fact": "Apparel peer with flat revenue and declining EBITDA trading at the lowest multiple in the set — what a sustained execution failure in the core apparel mix looks like priced in.",
         "source": "CIQ Comparable Analysis→Financial Data + Business Description (roster + caps + business)"
+      },
+      {
+        "name": "Abercrombie & Fitch Co.",
+        "outcome": "recovered",
+        "distinguishing_fact": "Apparel retailer that re-rated after a merchandising turnaround — an analogue for a mix-execution stumble being fixed rather than becoming structural.",
+        "source": "[LLM-suggested, unverified]"
       }
     ],
     "decisive_question": {
-      "question": "Is the flagship Marmaxx segment's Q2 comp slowdown to +1% a cyclical soft patch that reverses into the holiday season, or the leading edge of a structural traffic erosion in 61% of revenue that would justify the de-rating from a premium multiple?",
+      "question": "Is the Marmaxx softness a self-inflicted, fixable merchandise-mix execution miss (overshoot), or the first evidence that TJX's largest U.S. profit pool is losing structural momentum (justifying de-rating toward peers)?",
       "evidence_for": [
         {
-          "claim": "Marmaxx comp decelerated to +1% in Q2 FY2027 (from +6% in Q1) with a small decline in customer transactions, concentrated in the segment that is 61% of revenue.",
+          "claim": "Marmaxx is 61% of revenue and the dominant operating-income pool ($5,528M, 15.1% margin), so a stall there dominates the consolidated outcome regardless of international strength.",
+          "source_ref": "EDGAR 10-K 0000109198-26-000008 XBRL instance tjx-20260131_htm.xml — us-gaap:OperatingIncomeLoss on the segment contexts, fiscal year ending 2026-01-31",
+          "cited": true
+        },
+        {
+          "claim": "Marmaxx comped only +1% with transactions down, breaking the +6% it posted the prior quarter — a sharp deceleration in the core.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Marmaxx is the dominant revenue leg at 61%, so its direction disproportionately drives the consolidated outcome.",
-          "source_ref": "CIQ Financials→Segments (Revenues, latest annual column, Jan-31-2026)",
+          "claim": "Reported profitability leaned on transitory tariff favorability — CIQ LTM EBITDA is $331M below the filing-rebuilt figure because of one-off IEEPA refunds.",
+          "source_ref": "CIQ Financials (Quarterly)→Income Statement 'EBITDA' against EDGAR XBRL (OperatingIncomeLoss, else pre-tax income less a net interest line, plus D&A)",
           "cited": true
         }
       ],
       "evidence_against": [
         {
-          "claim": "Every other division accelerated or held strong in Q2 — HomeGoods +7%, TJX Canada +6%, TJX International +7% — and consolidated comp still rose 4% above plan.",
+          "claim": "Management states the Marmaxx miss is self-inflicted and within their control, is already seeing improvement in August, and expects greater improvement by Q4 — and raised full-year EPS guidance alongside.",
+          "source_ref": "CIQ Key Developments: The TJX Companies Inc NYSE TJX Key Developments.rtf · Aug-19-2026",
+          "cited": true
+        },
+        {
+          "claim": "The other three divisions accelerated (HomeGoods +7%, TJX Canada +6%, TJX International +7%), so the softness is isolated to one banner's mix rather than a demand-wide problem.",
           "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
           "cited": true
         },
         {
-          "claim": "Management RAISED full-year FY2027 EPS guidance to $5.31–$5.36 alongside the Marmaxx softness, signalling confidence the slowdown is not structural.",
-          "source_ref": "CIQ Key Developments: The TJX Companies Inc NYSE TJX Key Developments.rtf · Aug-19-2026",
+          "claim": "Store-growth potential was RAISED (to 7,500 stores, +500) with planned opening acceleration to 4% — inconsistent with a franchise losing structural momentum.",
+          "source_ref": "CIQ transcript: The TJX Companies, Inc., Q2 2027 Earnings Call, Aug 19, 2026.rtf",
           "cited": true
         }
       ]
     },
     "key_unknowns": [
-      "EV/EBITDA is supplied trailing-only with no forward basis in that field; the overshoot-vs-terminal question cannot be resolved from the multiple itself — the human must lean on the separately-supplied forward consensus.",
-      "No segment EBITDA is disclosed (revenue is segmented, EBITDA is not); only FY2026 segment OPERATING income is available — segment-level profit cadence through the Marmaxx slowdown is partly opaque, a bearish disclosure gap.",
-      "FY2027 is being reported on an ADJUSTED basis excluding $331M of IEEPA tariff refunds and related accruals; CIQ LTM EBITDA $8,903M is $331M below the filings-rebuilt $9,234M — the human must confirm which basis each forward comparison uses before trusting the step-up.",
-      "ebitda_basis note flags the actuals-vs-estimates implied D&A ratio (1.59x) sits in the 1.5–2.0x band where a GAAP-vs-adjusted basis change has been observed unflagged on this fleet — treat cross-boundary EBITDA comparisons as unresolved.",
-      "No net-debt/EBITDA-adjusted or forward-adjusted EV/EBITDA is available (no revised guidance figure to read), so leverage on a company-adjusted basis is UNKNOWN.",
-      "Export/as-of date is a FLOOR (≥2026-10-09, unverified); a dated sibling export is weeks newer, so consensus freshness is uncertain.",
-      "Whether Marmaxx's management-cited early-Q3 sales improvement has actually materialised will only be testable at the next results print (est. 2026-11-18)."
+      "EV/EBITDA is disclosed TRAILING-ONLY with no revised-guidance forward basis (ev_ebitda_adjusted_fwd UNKNOWN), so the overshoot-vs-terminal read on the multiple cannot be resolved from the data — a neutral fact, not directional.",
+      "Segment EBITDA is not disclosed (only segment OPERATING income is in the 10-K XBRL); without segment-level EBITDA the true profit sensitivity of the Marmaxx slowdown is partly opaque — a disclosure gap to weigh as a risk.",
+      "No company-adjusted LTM EBITDA and no covenant-basis EBITDA are disclosed, so net-debt/adjusted-EBITDA and covenant headroom are UNKNOWN — though gross leverage at 0.9x is low.",
+      "The durability of Marmaxx's recovery is unverified beyond management's August-trend claim; the next print (est. 2026-11-18) is the first datapoint that tests it.",
+      "How much of Q2 margin was tariff-refund favorability vs underlying merchandise margin is not isolable from the data — the $331M adjustment is flagged but its run-rate impact on forward quarters is unknown.",
+      "Peer set is HETEROGENEOUS (caps span 49x), so every peer multiple is a confidence-gated input, not a clean benchmark; whether the premium is earned or residual is left for the human."
     ],
     "draw_agreement": {
       "attempted": 5,
-      "completed": 4,
+      "completed": 5,
       "labels": {
-        "mixed": 1,
-        "strongly-bullish": 3
+        "strongly-bullish": 5
       },
-      "unanimous": false
+      "unanimous": true
     }
   },
   "caveats": [
     "NOT A CURRENT SCREEN CANDIDATE — assembled because the name carries an operator follow decision — The TJX Companies, the off-price apparel and home retailer (T.J. Maxx, Marshalls, HomeGoods), followed under the OVERSHOOT book by operator decision 2026-10-18. At $147.33 on 2026-10-16 it is 12.5% below its 52-week closing high of $168.41 (2026-06-12) and 19.9% above the low of $122.84 (2026-09-16), trailing SPY by 12.2 points over the same window — a 27.1% fall from the June high to the September low, then a 19.9% rebound. The off-price peer of ROST and BURL, both already followed; the $300M-$10B band answers where the fund HUNTS, not what it may hold or follow, and this name is covered deliberately from outside it. The cap band decides where the fund HUNTS, not what it may hold or follow, so absence from it is not a rejection — read the verdict, not the absence: no screen run on file has evaluated it.",
-    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+3.7s fetch)",
-    "synthesis draws DISAGREED — 4 draw(s) of 5 gave {'mixed': 1, 'strongly-bullish': 3}; the machine proposal is withheld and the kept read is the first draw carrying the modal label (a tally of this build, never a rate)"
+    "primary-source: 6 EX-99.1 release(s) + 1 10-Q parsed (+1.9s fetch)",
+    "Untraceable figure 13.3 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'The de-rating is a drawdown off a strong business: EV/EBITDA sits at 13.3x — the 77th percentile of TJX's own ~9.5y history (range 7.9–21.6x, median 12.0x), not a floor, so this is a come-down from a peak, not a crash.'",
+    "Untraceable figure 7.9 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'The de-rating is a drawdown off a strong business: EV/EBITDA sits at 13.3x — the 77th percentile of TJX's own ~9.5y history (range 7.9–21.6x, median 12.0x), not a floor, so this is a come-down from a peak, not a crash.'",
+    "Untraceable figure 21.6 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'The de-rating is a drawdown off a strong business: EV/EBITDA sits at 13.3x — the 77th percentile of TJX's own ~9.5y history (range 7.9–21.6x, median 12.0x), not a floor, so this is a come-down from a peak, not a crash.'",
+    "Untraceable figure 12 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'The de-rating is a drawdown off a strong business: EV/EBITDA sits at 13.3x — the 77th percentile of TJX's own ~9.5y history (range 7.9–21.6x, median 12.0x), not a floor, so this is a come-down from a peak, not a crash.'",
+    "Untraceable figure 6 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'The P/E is at its own 5-year 6th percentile (28.4x, pctile 0.063) even as the EV/EBITDA percentile is high — the earnings multiple has compressed sharply versus the firm's own history.'",
+    "Untraceable figure 28.4 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'The P/E is at its own 5-year 6th percentile (28.4x, pctile 0.063) even as the EV/EBITDA percentile is high — the earnings multiple has compressed sharply versus the firm's own history.'",
+    "Untraceable figure 118.7 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'The company is self-funding and lightly levered: net-debt/EBITDA 0.9x, interest coverage 118.7x, FCF-positive — no balance-sheet pressure to force a terminal outcome.'",
+    "Untraceable figure 62.2 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'ROIC/RoCE has rebuilt steadily to 20.2% LTM and RoE is 62.2%, indicating sustained capital-return quality, not a franchise in decay.'",
+    "Untraceable figure 138.39 (a bull point) — cited to structured data that does not contain it; verify the source before relying on it: 'Consensus breadth is still constructive — rating Outperform (1.55), mean target $170.80 vs the $138.39 close, with no FY2027 EPS or revenue downgrades in the last month.'",
+    "Untraceable figure 3 (a bear point) — cited to structured data that does not contain it; verify the source before relying on it: 'The headline cross-sectional multiples look rich — EV/EBITDA 13.3x vs peer median 6.8x (+94%) and P/E 27.3x vs 15.7x (+74%) — but this is the CONSENSUS comp read on a HETEROGENEOUS set (caps $3.0B–$146.9B vs the name's $162.1B), so the premium is a confidence-gated input, not a clean signal of over-valuation; the human must decide if it is EARNED by better fundamentals or RESIDUAL.'",
+    "Untraceable figure 146.9 (a bear point) — cited to structured data that does not contain it; verify the source before relying on it: 'The headline cross-sectional multiples look rich — EV/EBITDA 13.3x vs peer median 6.8x (+94%) and P/E 27.3x vs 15.7x (+74%) — but this is the CONSENSUS comp read on a HETEROGENEOUS set (caps $3.0B–$146.9B vs the name's $162.1B), so the premium is a confidence-gated input, not a clean signal of over-valuation; the human must decide if it is EARNED by better fundamentals or RESIDUAL.'",
+    "Untraceable figure 162.1 (a bear point) — cited to structured data that does not contain it; verify the source before relying on it: 'The headline cross-sectional multiples look rich — EV/EBITDA 13.3x vs peer median 6.8x (+94%) and P/E 27.3x vs 15.7x (+74%) — but this is the CONSENSUS comp read on a HETEROGENEOUS set (caps $3.0B–$146.9B vs the name's $162.1B), so the premium is a confidence-gated input, not a clean signal of over-valuation; the human must decide if it is EARNED by better fundamentals or RESIDUAL.'",
+    "Untraceable figure 8.3 (a bear point) — cited to structured data that does not contain it; verify the source before relying on it: 'The stock has materially lagged: TJX returned −8.3% over 180d while SPY rose +7.5% (−15.8% relative), a sustained gradual bleed rather than a single shock — a counter-point OUTWEIGHED by raised guidance and still-rising EBITDA.'",
+    "Untraceable figure 7.5 (a bear point) — cited to structured data that does not contain it; verify the source before relying on it: 'The stock has materially lagged: TJX returned −8.3% over 180d while SPY rose +7.5% (−15.8% relative), a sustained gradual bleed rather than a single shock — a counter-point OUTWEIGHED by raised guidance and still-rising EBITDA.'",
+    "Untraceable figure 61 (a decisive-for point) — cited to structured data that does not contain it; verify the source before relying on it: 'Marmaxx is 61% of revenue and the dominant operating-income pool ($5,528M, 15.1% margin), so a stall there dominates the consolidated outcome regardless of international strength.'"
   ],
   "qa_flags": [
     "operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI",
     "operating-drivers: no anchored pattern matched — 10-Q MD&A attribution",
-    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Mandatory prepayment / events of default · 8-K 0000109198-20-000015 · exhibit101364dayrevolv.htm",
     "(E5) not a debt agreement — refused rather than extracted under the pointer's guess (material contracts (10-K exhibit index)): latest 10-K 0000109198-26-000008 · tjx-20260131xexhibit1024.htm declares itself no agreement at all",
-    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Security / collateral / guarantors · 8-K 0001193125-21-202939 · d169110dex101.htm",
-    "(E5) covenant term refused — the model's quote is not in the exhibit, so it is UNKNOWN: Interest / coupon rate · 8-K 0000109198-25-000033 · exhibit101-firstamendmentt.htm"
+    "operating-drivers: Tier-B period 'first quarter' is not stated in its quote — left empty (Marmaxx comp sales)",
+    "operating-drivers: Tier-B period 'first quarter' is not stated in its quote — left empty (HomeGoods comp sales)",
+    "operating-drivers: Tier-B period 'first quarter' is not stated in its quote — left empty (TJX Canada comp sales)",
+    "operating-drivers: Tier-B period 'first quarter' is not stated in its quote — left empty (TJX International comp sales)",
+    "operating-drivers: Tier-B period 'second quarter' is not stated in its quote — left empty (Marmaxx comp sales)",
+    "operating-drivers: Tier-B period 'second quarter' is not stated in its quote — left empty (HomeGoods comp sales)",
+    "operating-drivers: Tier-B period 'second quarter' is not stated in its quote — left empty (TJX Canada comp sales)",
+    "operating-drivers: Tier-B period 'second quarter' is not stated in its quote — left empty (TJX International comp sales)",
+    "operating-drivers: Tier-B period 'first half' is not stated in its quote — left empty (total video views including HomeGoods (first half))",
+    "TRANSCRIPT-FIGURE '61' in bear_point: 'A genuine operating crack: Marmaxx — 61% of revenue and the largest…' — from the cited earnings call, not its validated facts; verify against the call",
+    "TWIN ampersand-name 'Abercrombie & Fitch Co.' — verify it is a single entity (kept)"
   ],
   "llm_model": "claude-opus-4-8",
-  "assembled_at": "2026-10-26T16:24:16.174160Z",
-  "extraction_version": "2026-10-09.3",
+  "assembled_at": "2026-10-29T17:26:48.968163Z",
+  "extraction_version": "2026-10-29.G-D3",
   "price_store": {
-    "declared_path": "/private/tmp/claude-501/-Users-work-Documents-GitHub-mosaic-theory--claude-worktrees-ai-agent-team-practices-e005c8/a08ef917-84bf-4d59-9bc3-5b40b1f95038/scratchpad/wt-pass/data/vinci.db",
+    "declared_path": "/Users/work/Documents/GitHub/mosaic-theory/.claude/worktrees/b6-model-inputs-1e3db3/data/vinci.db",
     "resolved_path": "/Users/work/Documents/GitHub/mosaic-theory-ta/data/vinci.db",
-    "frontier": "2026-10-23"
+    "frontier": "2026-10-28"
   },
   "sector": "Consumer Discretionary",
   "industry": {
@@ -15061,10 +15212,10 @@
       "snapshot_market_cap": null,
       "snapshot_tev": null,
       "snapshot_reconciles": null,
-      "page_price": 145.06,
-      "page_price_as_of": "2026-10-23",
+      "page_price": 138.39,
+      "page_price_as_of": "2026-10-28",
       "days_price_after_snapshot": null,
-      "value_at_page_price": 17.570396,
+      "value_at_page_price": 16.746311,
       "value_at_page_price_basis": "(page price × point-in-time shares + net debt excluding operating leases) ÷ the history's latest LTM EBITDA — mechanical.valuation.ev_ebitda_ex_lease_at_price"
     },
     "history_series": "mechanical.valuation.lease_basis.ex_lease_band (trailing EV/EBITDA ex-lease: TEV less operating leases / LTM EBITDA)",
@@ -15133,9 +15284,9 @@
   "date_semantics": {
     "screen_reference_date": "2026-10-16",
     "reference_date_semantics": "the screening/reference date the page was assembled against — NOT the freshness date of its inputs; each input's own date is named in this block",
-    "analysis_as_of": "2026-10-23",
+    "analysis_as_of": "2026-10-28",
     "analysis_as_of_rule": "the latest of price_as_of, market_cap_as_of, tev_as_of, consensus_as_of (a '≥' date counts at its floor), balance_sheet_date and historical_multiple_latest_observation",
-    "price_as_of": "2026-10-23",
+    "price_as_of": "2026-10-28",
     "market_cap_as_of": "2026-10-16",
     "tev_as_of": "2026-10-16",
     "consensus_as_of": "≥2026-10-09",
@@ -15143,65 +15294,15 @@
     "historical_multiple_latest_observation": "2026-10-16",
     "historical_multiple_history_through": "2026-09-30",
     "stock_performance_as_of": "2026-10-16",
-    "assembled_at": "2026-10-26T16:24:16.174160Z",
+    "assembled_at": "2026-10-29T17:26:48.968163Z",
     "valuation_snapshot_as_of": "2026-10-16",
-    "price_days_after_valuation_snapshot": 7
+    "price_days_after_valuation_snapshot": 12
   },
-  "layer_refreshes": [
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.ciq_currency"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.capital_structure"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "anchor"
-      ]
-    },
-    {
-      "date": "2026-10-27",
-      "extraction_version": "2026-10-09.3",
-      "writer": "refresh",
-      "layers": [
-        "mechanical.financial_summary"
-      ]
-    }
-  ],
   "anchor": {
     "recipe_hint": "R1_midcycle_margin_evebitda",
     "applicable": true,
     "multiple_basis": "EV/EBITDA",
-    "computed_at": "2026-10-26T16:30:22.022905Z",
+    "computed_at": "2026-10-29T17:33:55.811254Z",
     "reason": null,
     "data_quality": null,
     "data_quality_detail": [
@@ -15224,10 +15325,10 @@
       "confidence": "firm"
     },
     "d_and_a": {
-      "value": 1247.0,
+      "value": 1319.0,
       "unit": "$M",
-      "basis": "consolidated latest FY",
-      "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (combined, FY2026)"
+      "basis": "consolidated trailing twelve months to 2026-08-01 (EDGAR: fiscal year + year-to-date − prior year-to-date)",
+      "source": "EDGAR companyfacts DepreciationDepletionAndAmortization (fiscal year + year-to-date − prior year-to-date, to 2026-08-01)"
     },
     "net_debt": {
       "value": -3133.0,
@@ -15265,9 +15366,9 @@
       "basis": "latest FY2026 (not LTM)",
       "source": "EDGAR companyfacts operating_cash_flow − capex (FY2026, same period)"
     },
-    "anchor_base_value_per_share": 131.1019,
-    "anchor_base_value_per_share_diluted": 129.5706,
-    "anchor_ev_ebit": 18.4257,
+    "anchor_base_value_per_share": 132.1391,
+    "anchor_base_value_per_share_diluted": 130.5957,
+    "anchor_ev_ebit": 18.5747,
     "overall_confidence": "weak",
     "note": "ATTENTION FILTER, not a verdict. Even a firm anchor requires a full bear/base/bull 2:1 underwrite before any BUY. Spot and reward-to-base are computed live at triage, not stored here.",
     "band_checks": {
