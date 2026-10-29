@@ -58,8 +58,10 @@ jobs:
         run: python -m ruff check vinci tests frontend
       - name: mypy --strict
         run: python -m mypy --strict vinci
+      # `-rs` prints every skip's reason in the log: the CIQ-bound tests skip here by design, and a
+      # skip count with no reasons cannot say which half of the suite this runner actually checked.
       - name: pytest (offline)
-        run: python -m pytest -m "not network" -p no:warnings --tb=short
+        run: python -m pytest -m "not network" -p no:warnings --tb=short -rs
 
       # THE MIRROR IS DERIVED, AND NOTHING WAS ENFORCING THAT. `frontend/` is rebuilt from
       # committed data by `frontend/build.py`, but the rebuild ran only when a human remembered —

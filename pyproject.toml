@@ -14,6 +14,7 @@ dependencies = [
     "anthropic>=0.112",   # graph-track extraction; top-level `cache_control` (#665) verified on 0.112.0
     "beautifulsoup4>=4.12",  # 10-K HTML → text for the graph extractor
     "xlrd>=2.0",          # legacy .xls (BIFF) CIQ Financials/Estimates workbooks (dossier)
+    "openpyxl>=3.1",      # .xlsx CIQ exports — `ciq.read_sheets` has an OOXML branch (audit H-D3)
     "pdfplumber>=0.11,<0.12",  # theme intelligence: manually supplied research PDFs (text, tables, pages)
 ]
 
@@ -30,6 +31,7 @@ dev = [
     "ruff>=0.6",
     "mypy>=1.11",
     "hypothesis>=6.100",  # as-of invariance properties (tests/test_as_of_properties.py)
+    "xlwt>=1.3",          # writes the synthetic BIFF CIQ fixtures (tests/fixtures/ciq_synthetic)
 ]
 
 [project.scripts]
