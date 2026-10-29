@@ -446,8 +446,11 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #: **ROST and TJX LANDED** (#866, 2026-10-29): re-assembled, their bases are the recompute's
 #: (ROST 166.1793→167.5944, TJX 131.1019→132.1391; `docs/records/2026-10-29-phase1-rebuild-four-
 #: pages-and-scope-narrowed.md`).
+#:
+#: **NFLX and LLY LANDED** (2026-10-30): re-assembled on #865's code, their bases are the
+#: recompute's (NFLX 53.5401→54.435, LLY 699.6511→752.2356).
 ANCHORS_AWAITING_BACKFILL: set[str] = {
-    "AORT", "BRBR", "BURL", "EPAM", "IT", "LLY", "NFLX", "PARR", "SMPL", "TGT", "VRRM", "WLK"}
+    "AORT", "BRBR", "BURL", "EPAM", "IT", "PARR", "SMPL", "TGT", "VRRM", "WLK"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than
