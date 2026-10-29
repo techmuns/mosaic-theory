@@ -123,6 +123,13 @@ def test_a_page_built_before_the_field_round_trips_and_renders() -> None:
 # --- the back-fill (`refresh.band_checks_backfill`) ----------------------------------------------
 
 
+#: THE RECORDED-D&A TRIP LEFT THE COMMITTED CORPUS on 2026-10-29. VITL was its one live page; the
+#: operator withdrew VITL's re-tag (STATE row 32 (11)), its anchor now prices the ex-lease history,
+#: and the check does not run there. Its page as committed until then (main f2c6e7aa) is kept,
+#: frozen, so the trip case is still a REAL page — never one hand-rolled to the shape.
+_TRIPPED_FROZEN = ROOT / "tests" / "fixtures" / "band_checks" / "VITL" / "dossier.json"
+
+
 def _pages_where(pred: typing.Callable[[dict[str, typing.Any]], bool]) -> list[Path]:
     return [f for f in sorted((ROOT / "data" / "dossiers").glob("*/dossier.json"))
             if pred(json.loads(f.read_text()))]
@@ -168,14 +175,18 @@ def test_each_backfill_proof_refuses_on_its_own(tmp_path: Path) -> None:
     """(−) A band moved since the anchor priced it; the ex-lease line taken off an ex-lease page;
     a trip line taken off, or one added the re-run does not give back; a different block already
     on the page. Each is refused, named, and the page is left as it was. Each case is asserted to
-    exist on the committed corpus before it is used."""
+    exist before it is used: on the committed corpus, or — the trip case, since it left the corpus
+    — on the last committed page that held it (`_TRIPPED_FROZEN`)."""
     from vinci.dossier import refresh
+
+    def trips(p: dict[str, typing.Any]) -> bool:
+        return any(x.startswith(refresh._DA_TRIP_LEAD) for x in _detail(p))
 
     priced = _pages_where(lambda p: (p.get("anchor") or {}).get("band_checks") is not None)
     ex_lease = _pages_where(lambda p: refresh._DA_EX_LEASE_LINE in _detail(p))
-    tripped = _pages_where(lambda p: any(x.startswith(refresh._DA_TRIP_LEAD) for x in _detail(p)))
+    tripped = _pages_where(trips)
     passing = [f for f in priced if f not in tripped and f not in ex_lease]
-    assert priced and ex_lease and tripped and passing
+    assert priced and ex_lease and passing and trips(json.loads(_TRIPPED_FROZEN.read_text()))
 
     def band(p: dict[str, typing.Any]) -> None:
         p["anchor"]["multiple"]["value"] = (p["anchor"]["multiple"]["value"] or 0) + 1.0
@@ -196,7 +207,7 @@ def test_each_backfill_proof_refuses_on_its_own(tmp_path: Path) -> None:
 
     cases = [(passing[0], band, "not the one its anchor priced"),
              (ex_lease[0], no_ex_line, "ex-lease line"),
-             (tripped[0], no_trip, "recorded-D&A check's trip lines"),
+             (_TRIPPED_FROZEN, no_trip, "recorded-D&A check's trip lines"),
              (passing[0], fake_trip, "market-reconciliation check's trip lines"),
              (passing[0], held, "differs from the rebuild")]
     for i, (src, edit, why) in enumerate(cases):
