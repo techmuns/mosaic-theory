@@ -181,3 +181,60 @@ def test_the_widened_wall_reads_plain_debt_words() -> None:
     w = fs._maturity_wall("Of the notes, $45.0 million is due within one year; the revolver "
                           "carries a commitment fee of 0.25%.", _SRC)
     assert w is not None and w.within_12m_total == 45.0
+
+
+# --- END TO END: real 10-Q text → parser → the assembler's wall read, on the committed panel --
+#: 10-Q 0001628280-26-055372 (Microvast, Q2 2026) — a plain principal wall, the negative pin
+_MVST_WALL = (
+    "As of June 30, 2026, the Company had outstanding borrowings of $ 118.6 million, with $ 104.2 "
+    "million due within the next 12 months, a bond payable of $ 41.7 million that matures in "
+    "January 2027 and other current liabilities of $ 197.9 million."
+)
+
+
+def _committed_panel(ticker: str) -> list[ps.PanelInstrument]:
+    """The CIQ capital panel the committed page carries, read as assembly reads it."""
+    import json
+    from pathlib import Path
+
+    from vinci.dossier.schemas import CapitalStructure
+
+    page = Path(__file__).resolve().parent.parent / "data" / "dossiers" / ticker / "dossier.json"
+    mech = json.loads(page.read_text())["mechanical"]
+    return dm._wall_panel(CapitalStructure.model_validate(mech["capital_structure"]))
+
+
+def _e2e_read(text: str, ticker: str, balance: date) -> ps.WallCoherence:
+    filing = fs.parse_filing_sections(text, source_ref=_SRC)
+    return dm._wall_read(filing, _committed_panel(ticker), balance)
+
+
+def test_e2e_netflix_principal_and_interest_reads_not_run_never_diverges() -> None:
+    """NFLX's 10-Q for the quarter ended 2026-09-30 against its committed panel, whose same window
+    holds $2,526M of principal: the $3,194M of principal AND interest is not compared."""
+    read = _e2e_read(_NFLX_WALL, "NFLX", date(2026, 9, 30))
+    assert read.check == CHECK_NOT_RUN
+    assert "DIVERGES" not in read.line and "principal and interest" in read.line
+
+
+def test_e2e_werner_stated_zero_never_diverges() -> None:
+    """WERN's 10-Q for the quarter ended 2026-06-30 states no principal due within 12 months; its
+    committed panel's only dated principal (the $325M facility) matures 2027-09-21, outside the
+    window — so the stated $0 MATCHES. On main it read as a 100% divergence."""
+    panel = _committed_panel("WERN")
+    bal = date(2026, 6, 30)
+    in_window = [i for i in panel if i.maturity is not None and i.principal_musd
+                 and bal <= i.maturity < date(2027, 6, 30)]
+    assert not in_window, f"WERN's committed panel now has principal in the window: {in_window}"
+    read = _e2e_read(_WERN_WALL, "WERN", bal)
+    assert "DIVERGES" not in read.line
+    # stated and compared — main never read the zero, so it never reached the comparison at all
+    assert read.check == CHECK_AGREE and "filing $0.0M" in read.line
+
+
+def test_e2e_a_plain_principal_wall_still_runs_the_check() -> None:
+    """NEGATIVE PIN — MVST's principal wall ($104.2M) against its committed panel ($98.5M in the
+    window) still runs the comparison and still reports the divergence the page carries."""
+    read = _e2e_read(_MVST_WALL, "MVST", date(2026, 6, 30))
+    assert read.check == CHECK_DIFFER
+    assert "$104.2M" in read.line and "NOT RUN" not in read.line
