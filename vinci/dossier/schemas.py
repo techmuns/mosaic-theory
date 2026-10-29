@@ -247,15 +247,30 @@ class LeaseObservation(BaseModel, frozen=True):
     balance_sheet_date: str
     pricing_date: str | None = None           # CIQ prices each quarter's TEV at its filing date
     tev: float
-    leases_in_tev: float                      # CIQ 'Curr. Port. of Leases' + 'Long-Term Leases'
+    # CIQ 'Curr. Port. of Leases' + 'Long-Term Leases': the cells CIQ states, an UNAVAILABLE one
+    # left out
+    leases_in_tev: float
     finance_leases: float                     # the rest of CIQ's lease rows, left inside TEV
     operating_leases: float                   # removed from TEV
     edgar_operating_leases: float | None = None
     ltm_ebitda: float                         # CIQ 'EBITDA', the four quarters ending here
-    multiple: float | None = None             # None when the date is excluded (unreconciled)
+    # None when the date is excluded: unreconciled, a non-positive LTM, or UNCHECKED with a lease
+    # cell UNAVAILABLE (nothing vouches for the rows CIQ does state — audit D-D1)
+    multiple: float | None = None
     # "pre-adoption" (no operating lease in CIQ's debt yet) | "reconciled" | "unchecked" (EDGAR
     # has no complete operating figure that day) | "unreconciled" (excluded from the band)
     status: str
+    # WHY an otherwise priceable quarter has no multiple: the lease cell(s) CIQ states as
+    # UNAVAILABLE, on an unchecked date (audit D-D1). ABSENT when unset, so every other
+    # observation round-trips byte-identically.
+    unpriced_reason: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("unpriced_reason") is None:
+            out.pop("unpriced_reason", None)
+        return out
 
 
 class LeaseBasis(BaseModel, frozen=True):
@@ -292,17 +307,22 @@ class LeaseBasis(BaseModel, frozen=True):
     reconciled_dates: int = 0
     unreconciled_dates: int = 0
     unchecked_dates: int = 0
+    # the unchecked dates left UNPRICED for an UNAVAILABLE lease cell (audit D-D1), named so the
+    # band's shrinkage is stated; ABSENT when there are none
+    unpriced_dates: list[str] | None = None
     pre_adoption_dates: int = 0
     observations: list[LeaseObservation] = Field(default_factory=list)
     source_ref: str
 
     @model_serializer(mode="wrap")
     def _absent_not_null(self, nxt: Any) -> Any:
-        """`rent_component` (2026-10-27) is ABSENT, never null, when unset — so a block built
-        before it round-trips byte-identically (the `forward_multiples` rule)."""
+        """`rent_component` (2026-10-27) and `unpriced_dates` (2026-10-29) are ABSENT, never null,
+        when unset — so a block built before them round-trips byte-identically (the
+        `forward_multiples` rule)."""
         out = nxt(self)
-        if isinstance(out, dict) and out.get("rent_component") is None:
-            out.pop("rent_component", None)
+        for key in ("rent_component", "unpriced_dates"):
+            if isinstance(out, dict) and out.get(key) is None:
+                out.pop(key, None)
         return out
 
 
