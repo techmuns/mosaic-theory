@@ -64,15 +64,27 @@ superseded-by:
   its period type is unread, which is the scope the 2026-10-11 record gave. The annual balance
   sheet's serial header prints as a date, not `[46203.0]`.
 - **`read_sheets` releases each workbook** (deferred from #853): xlrd's map and openpyxl's zip.
-- **Extraction version `2026-10-29.1`** (and its web twin in `frontend/views/shared/dossier.js`,
-  which `test_parity_pins` binds) names this change, and the 45 extraction-area commits since
-  `2026-10-09.3` that appended no row (audit A-D14). **26b ships**:
-  `tests/test_extraction_version_drift.py` pins a hash of each module that can change a dossier's
-  content and reds when one moves without a re-pin.
+- **Six extraction-version rows, one per output change** (audit A-D14; the Phase 1 id convention
+  `<date>.<audit id>`, coordinator 2026-10-29): `2026-10-29.A-D14` names the 45 extraction-area
+  commits since `2026-10-09.3` that appended no row; then `.A-D3`, `.A-D6`, `.A-D8`, `.A-D10` and
+  `.A-X1`, the last of which is the stamp. Each row also sits in the web twin in
+  `frontend/views/shared/dossier.js`, which `test_parity_pins` binds.
+- **26b ships** as `tests/test_extraction_version_drift.py`.
+  - It pins a hash of each module that can change a dossier: 48 of them, every module in
+    vinci/dossier and vinci/edgar except seven excluded with a stated reason, plus
+    vinci/verbatim.py and vinci/finra.py.
   - The hash reads code tokens only; comments, blank lines and docstrings do not count.
-  - The pins sit one per line, so two PRs merge without conflict.
-  - Every module in vinci/dossier and vinci/edgar is either pinned or excluded with a stated reason.
-    A new module that is neither reds.
+  - **The rule:** a moved, new or removed watched module is refused while the version table holds no
+    row it did not hold when the pins were taken (`PINNED_TABLE`, a digest of the sorted row ids).
+    Keying on the row SET, not the last row, is what lets parallel PRs merge in either order. A
+    batch that adds its own row with its change never reds, whether it merges before or after
+    another; this was simulated on the four sibling branches (#857–#860) in both orders, with no
+    re-pin.
+  - **Re-pinning is one command:** `python -m tests.test_extraction_version_drift --repin`
+    (`WATCHED`, `PINNED_TABLE`, `PINNED_AT`). On a conflict in that file, take either side and
+    re-run it.
+  - **Merging the table itself:** each row is its own `(` … `),` block. A line-wise union fuses two
+    rows into one element; the module's comment and the test's failure message both say so.
 
 **WHY.** All eight are wrong values on committed pages, or the provenance of them. The audit's
 classes: RC2, a period read by regex; RC4, kind from the filename; RC6, provenance; RC7, a
@@ -138,6 +150,8 @@ served one that read the other type.
   show a guide with no record. Deciding them is face-validity work, a follow-up. Falsifier: a
   reader takes a missing record for a missed one.
 - **ACCEPTED: 26b reds a pure refactor of a watched module until it is re-pinned.** That is the
-  spec's stated cost. Every Phase 1 batch that touches a watched module re-pins its own lines.
-  Falsifier: re-pins land without a version row on output-changing PRs. Review catches that; the
-  test cannot.
+  spec's stated cost.
+- **ACCEPTED: after a row is added and before the next `--repin`, a further unbumped move goes
+  unseen.** That window is the price of letting parallel batches merge in any order. Every PR that
+  adds a row runs `--repin`. Falsifier: two output-changing merges in a row with no `--repin`
+  between them.
