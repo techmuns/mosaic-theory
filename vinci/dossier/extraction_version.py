@@ -137,6 +137,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "the block its date (`unpriced_dates`) (audit D-D1)",
     ),
     (
+        "2026-10-29.D-D5",
+        "the materiality guard runs on both thresholds: a summary row and an unusual line at 5% "
+        "of the revenue in the column each reads are material (`revenue` was never passed), and "
+        "a missing annual Income Statement, revenue row or unusual-items block refuses the build "
+        "instead of passing it (audit D-D5)",
+    ),
+    (
         "2026-10-29.G-V1",
         "a transcript row's call, following paragraph and period come from ONE located quote; "
         "its period stands only where the quote states it, else none; each value figure equals "
