@@ -36,7 +36,7 @@ from vinci.edgar.concepts import (
 )
 from vinci.edgar.net_debt import NO_DEBT_OR_CASH, Basis, net_debt
 from vinci.edgar.submissions import RegistrantHistory, parse_registrant_history
-from vinci.netcache import CachedHttp, HttpError
+from vinci.netcache import CachedHttp, HttpError, HttpNotFoundError
 from vinci.resolver.index import pad_cik
 from vinci.schemas.envelope import DataField, SourceTier
 from vinci.sec import build_efts_http, build_sec_http
@@ -398,8 +398,11 @@ class EdgarClient:
                 key = period if instant else period.rstrip("I")
                 try:
                     frame = self.frame(concept, namespace=namespace, period=key)
-                except Exception:  # noqa: BLE001 — a missing/empty frame contributes nothing
+                except HttpNotFoundError:  # no frame for that period (yet) — it contributes nothing
                     continue
+                # ANYTHING ELSE RAISES (2026-10-29, audit item E1-D9). A broad `except` here
+                # skipped a refused or failing NEWEST frame, and the older period below it was
+                # then served under the same tag with nothing to say it was a quarter stale.
                 for cik, val in frame.items():
                     # a LOWER-precedence tier never displaces a value already set by a higher one
                     if cik in values and tag_by_cik[cik] != tag:
@@ -429,12 +432,25 @@ class EdgarClient:
                              as_of: date | None = None) -> FundamentalSnapshot:
         """Non-distress signals + step-5 inputs, each enveloped (UNKNOWN where XBRL is absent).
         ``as_of`` cuts at the filing date (:func:`compute_fundamental_snapshot`)."""
+        return self.fundamental_snapshot_and_facts(cik, as_of=as_of)[0]
+
+    def fundamental_snapshot_and_facts(
+            self, cik: int | str, *, as_of: date | None = None,
+    ) -> tuple[FundamentalSnapshot, dict[str, Any]]:
+        """The snapshot AND the companyfacts it was computed from, from ONE read — ``{}`` with an
+        all-UNKNOWN "no XBRL" snapshot when SEC holds no companyfacts for the CIK.
+
+        ONLY A 404 IS "NO XBRL" (2026-10-29, audit item E1-D8). A broad `except` mapped every
+        failure to it, so a 503 that outlived its retries recorded a filer as having no XBRL while
+        the next request read its data; and a caller that read companyfacts a second time (the
+        screen did) could disagree with its own snapshot. A throttle, a 5xx or a corrupt body
+        now RAISES, with its real reason."""
         cik10 = pad_cik(cik)
         try:
             facts = self.companyfacts(cik10)
-        except Exception:  # noqa: BLE001 — absent/!XBRL issuer → all UNKNOWN, never crash
-            return all_unknown_snapshot(cik10)
-        return compute_fundamental_snapshot(cik10, facts, as_of=as_of)
+        except HttpNotFoundError:  # SEC holds no companyfacts for this CIK: no XBRL
+            return all_unknown_snapshot(cik10), {}
+        return compute_fundamental_snapshot(cik10, facts, as_of=as_of), facts
 
     # --- 8-K full-text search (the de-rating trigger) -----------------------------------------
     def fulltext_search(

@@ -24,6 +24,7 @@ from vinci.edgar.client import (
     SHARES_TAG_WAVG,
     EdgarClient,
 )
+from vinci.netcache import HttpNotFoundError
 
 _PERIODS = ["CY2026Q1I", "CY2026Q2I"]
 
@@ -42,7 +43,8 @@ class _FrameStub(EdgarClient):
         try:
             return self._frames[(namespace, concept, period)]
         except KeyError:
-            raise RuntimeError("no such frame") from None   # the real API 404s; the merge skips
+            # the real API 404s (`NoSuchKey`, checked 2026-10-29) and only a 404 is skipped
+            raise HttpNotFoundError("no such frame") from None
 
 
 def _stub(**over: Any) -> _FrameStub:

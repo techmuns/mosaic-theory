@@ -305,11 +305,9 @@ def test_enrich_defers_ev_ebitda_never_writes_ebitda_dollars() -> None:
     )
 
     class _Edgar:
-        def fundamental_snapshot(self, cik: int | str) -> FundamentalSnapshot:
-            return snap
-
-        def companyfacts(self, cik: int | str) -> dict[str, Any]:
-            return {}
+        def fundamental_snapshot_and_facts(
+                self, cik: int | str) -> tuple[FundamentalSnapshot, dict[str, Any]]:
+            return snap, {}
 
     out = enrich_with_fundamentals(
         _rec(drawdown=-0.4, rel=-0.3, pe_pctile=0.1),

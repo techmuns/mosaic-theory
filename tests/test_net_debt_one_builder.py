@@ -321,11 +321,9 @@ def _snap() -> FundamentalSnapshot:
 
 
 class _Edgar:
-    def fundamental_snapshot(self, cik: int | str) -> FundamentalSnapshot:
-        return _snap()
-
-    def companyfacts(self, cik: int | str) -> dict[str, Any]:
-        return {}
+    def fundamental_snapshot_and_facts(
+            self, cik: int | str) -> tuple[FundamentalSnapshot, dict[str, Any]]:
+        return _snap(), {}
 
 
 def _enriched(sic: str | None) -> Any:
@@ -475,9 +473,12 @@ def test_every_leg_is_read_in_dollars() -> None:
 def test_every_snapshot_consumer_applies_the_sector_rule() -> None:
     """The bank/lender/insurer rule lives at the consumers of `fundamental_snapshot`, so a NEW
     consumer must apply it too: every function in `vinci/` that calls it also calls
-    `not_applicable` — a third reader cannot print a bank's "net debt" by forgetting."""
+    `not_applicable` — a third reader cannot print a bank's "net debt" by forgetting. Both entry
+    points count: the screen reads the snapshot WITH its facts (one companyfacts read,
+    2026-10-29)."""
     import ast
 
+    entry = {"fundamental_snapshot", "fundamental_snapshot_and_facts"}
     callers: list[str] = []
     for path in (ROOT / "vinci").rglob("*.py"):
         tree = ast.parse(path.read_text())
@@ -486,7 +487,7 @@ def test_every_snapshot_consumer_applies_the_sector_rule() -> None:
                 continue
             calls = {c.func.attr if isinstance(c.func, ast.Attribute) else getattr(c.func, "id", "")
                      for c in ast.walk(fn) if isinstance(c, ast.Call)}
-            if "fundamental_snapshot" in calls and fn.name != "fundamental_snapshot":
+            if calls & entry and fn.name not in entry:
                 callers.append(f"{path.relative_to(ROOT)}:{fn.name}")
                 assert "not_applicable" in calls, f"{path.name}:{fn.name} skips the sector rule"
     assert len(callers) >= 2, f"the scan found {callers} — near-vacuous"

@@ -437,11 +437,8 @@ class _Fundamentals:
     """EDGAR for the screen, with nothing to read: every fundamental UNKNOWN, so G3 defers and
     only the price gates decide. The properties here are about prices."""
 
-    def fundamental_snapshot(self, cik: str, **kw: object) -> Any:
-        return all_unknown_snapshot(pad_cik(cik))
-
-    def companyfacts(self, cik: str) -> dict[str, Any]:
-        return {}
+    def fundamental_snapshot_and_facts(self, cik: str, **kw: object) -> Any:
+        return all_unknown_snapshot(pad_cik(cik)), {}
 
 
 def _screen(name: str, bars: list[PriceBar], bench: list[PriceBar], d: date) -> str:

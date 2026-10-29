@@ -44,16 +44,13 @@ class _FakeEod:  # duck-types EodClient.grouped_daily
         return out
 
 
-class _FakeEdgar:  # duck-types the two EdgarClient methods enrich uses
+class _FakeEdgar:  # duck-types the EdgarClient method enrich uses (one companyfacts read)
     def __init__(self) -> None:
         self.fetched: list[str] = []
 
-    def fundamental_snapshot(self, cik):  # type: ignore[no-untyped-def]
+    def fundamental_snapshot_and_facts(self, cik):  # type: ignore[no-untyped-def]
         self.fetched.append(pad_cik(cik))
-        return all_unknown_snapshot(pad_cik(cik))
-
-    def companyfacts(self, cik):  # type: ignore[no-untyped-def]
-        return {}  # no EPS → G3 P/E-percentile defers (UNKNOWN)
+        return all_unknown_snapshot(pad_cik(cik)), {}  # no EPS → G3 P/E-percentile defers
 
 
 def _drop(day: date) -> float:
