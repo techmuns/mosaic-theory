@@ -398,12 +398,13 @@ _7 undated / later aggregate line item(s) in the appendix panel_
   - **matured (pre-reference): $999.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2026-09-15 (31d before ref): $999.0M 2.250% Senior Unsecured Notes, Mat
   - due 2028: $500.0M
-  - due 2029: $0.0M
-  - due 2030: $496.0M
+  - due 2029: 1 with no principal stated
+  - due 2030: $496.0M + 1 with no principal stated
   - due 2031: $500.0M
   - due 2050: $383.0M
   - undated (floor — no panel maturity): $10,620.0M — Operating Lease Liabilities $10,620.0M
-  - _reconciliation: itemized $13,498.0M (panel A 2026 filed Mar-31-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: Senior Unsecured Revolving Credit… (Revolving Credit), Senior Unsecured Revolving Credit… (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $13,498.0M + 2 with no principal stated (panel A 2026 filed Mar-31-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 2,879.0; leases 11,446.0; total principal 14,325.0; total debt 14,317.0 (3 months Q2 Aug-01-2026) ($M) [60]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0000109198-26-000051 (2026-09-17) states no maturity-resolution event
 - **Covenants — 2022 REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):

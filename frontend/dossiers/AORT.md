@@ -472,12 +472,13 @@ _comps = the 11 companies of the CIQ comps template · S&P-MI relative score: 1 
 _6 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $0.9M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): $0.9M + 1 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2025-07-01 (472d before ref): – Convertible Senior Notes
     - 2026-04-01 (198d before ref): $0.9M Notes Payable
-  - due 2031: $220.0M
-  - undated (floor — no panel maturity): $42.5M — 1.40% Sparkasse Zollernalb KFW… –, Finance Lease Obligation $3.4M, Operating Lease Liabilities $39.1M
-  - _reconciliation: itemized $263.4M (panel A 2025 filed Feb-18-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - due 2031: $220.0M + 1 with no principal stated
+  - undated (floor — no panel maturity): $42.5M + 1 with no principal stated — 1.40% Sparkasse Zollernalb KFW… –, Finance Lease Obligation $3.4M, Operating Lease Liabilities $39.1M
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: 1.40% Sparkasse Zollernalb KFW… (Term Loans), Convertible Senior Notes (Bonds and Notes), New Delayed Draw Term Loan… (Term Loans)._
+  - _reconciliation: itemized $263.4M + 3 with no principal stated (panel A 2025 filed Feb-18-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 190.0 (3 months Q4 Dec-31-2025 190.0 → 3 months Q1 Mar-31-2026 190.0); leases 42.8; total principal 262.8; total debt 258.2 (3 months Q1 Mar-31-2026) ($M) [63]
 - **Covenants — CONVERTIBLE SENIOR NOTES DUE 2025 PURCHASE AGREEMENT** (governing values; full verbatim in appendix):
   - **Conversion:** ⇒ ~$23.46/sh at 42.6203 sh per $1,000 · Initial Conversion Rate: 42.6203 shares of the Issuer's common stock per $1,000 principal amount of Notes. Initial Conv… — per an 8-K filed 2020-06-23
