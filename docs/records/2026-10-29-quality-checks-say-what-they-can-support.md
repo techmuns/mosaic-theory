@@ -1,8 +1,8 @@
 ---
 id: 2026-10-29-quality-checks-say-what-they-can-support
-status: open
+status: shipped
 date: 2026-10-29
-prs: []
+prs: [863]
 supersedes:
 superseded-by:
 ---
