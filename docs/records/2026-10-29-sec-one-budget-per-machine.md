@@ -21,6 +21,17 @@ superseded-by:
   second refusal raises `SecRateLimitedError`, deliberately not an `HttpError`. So does a
   `Retry-After` above 900 s, at once. Other hosts keep their 429 path; they now also read a
   `Retry-After` when one is sent.
+- **A refusal stops the run, not one name (PR review, round 1).**
+  - Once `SecRateLimitedError` is raised, no further SEC request leaves the process
+    (`netcache.sec_refusal()`). A later read, from any client, raises at once without sending; a
+    cached copy is still served.
+  - `assemble_cohort` skips names not yet started and raises once the running ones finish. The
+    theme exposure scan cancels and raises. The dossier anchor's broad handler re-raises.
+  - The one write path (`assemble._write`) refuses to write any page once SEC has refused the
+    process, because a page built across the refusal can carry blanks where a swallowed SEC read
+    belonged.
+  - For a 403, the error names both possible causes: a fair-access block, or a User-Agent SEC does
+    not accept.
 - **Only a 404 is absence (E1-D8, E1-D9).** A 404 raises `HttpNotFoundError`, a subclass of
   `HttpError`. `EdgarClient.fundamental_snapshot_and_facts` maps only that to "no XBRL"; any other
   failure raises with its status. The screen (`screens/assemble.enrich_with_fundamentals`) reads
@@ -77,6 +88,17 @@ superseded-by:
 - **`SecRateLimitedError` is outside `HttpError`.** Several callers degrade an `HttpError` to
   UNKNOWN and move to the next name. During a block that sends again into it, and it records a
   refusal as missing data.
+- **Why stop the whole process, and not only the three named handlers.** `vinci/` holds 75 broad
+  `except Exception` handlers. Re-raising in each is an audit, not a fix, and the next handler
+  added would reopen it. A per-process stop makes any swallowed refusal harmless to SEC: nothing
+  more is sent. The one write path then refuses whatever page was built across it. The cohort,
+  the exposure scan and the anchor re-raise so the run says so at once, rather than going through
+  every remaining name.
+- **The suite gets a budget of its own** (`tests/conftest.py`, autouse, per test). Offline tests
+  drive real clients over mock transports; a slot one took from the user's file is a slot a live
+  run waits for. A test marked `network` keeps the machine's budget, because it sends real
+  requests. The fixture is per test, not per session, because it reads each test's marker. It also
+  clears the per-process stop between tests.
 
 **HOW VERIFIED.**
 - **New pins:** `tests/test_sec_pacing.py` (6) and `tests/test_sec_refusals.py` (26). All run on
@@ -118,6 +140,29 @@ superseded-by:
   Each now serves the same snapshot and facts through `fundamental_snapshot_and_facts`. The
   sector-rule consumer scan counts both snapshot entry points, so the screen did not drop out of
   it.
+- **Round 1 (the coordinator's `/code-review high`, standing in for Codex at its usage limit).**
+  Seven new pins: six fail on the PR head before round 1 (dbbcf025), and the seventh, marked
+  `network`, passes and runs only with `-m network`:
+  - after a refusal, a second client's SEC request raises and sends nothing;
+  - a 403's error names `SEC_USER_AGENT`, and a 429's does not;
+  - a refused cohort raises after trying 1 of 4 names, where the head tried all 4 and returned
+    errors;
+  - a refused exposure scan raises, where the head graded every name UNASSESSED;
+  - `_write` refuses a page while SEC has refused the process, and writes it once it has not;
+  - an offline test's budget is the suite's own, where the head used `~/.cache/vinci/sec-pace`;
+  - a `network` test keeps the machine's budget.
+- **The suite never touches the real budget, and its pacing costs nothing measurable.** A scratch
+  pytest plugin logged every SEC slot taken in a full offline run.
+  - On the PR head (dbbcf025): 19 tests took 315 slots. One slot came from the user's real file:
+    `test_sec_reference_fixture.py::test_an_unseeded_cache_fails_loud_instead_of_fetching`. Its
+    13:12:15 write was found in the file during the PR's own suite run.
+  - After round 1: 23 tests took 323 slots, none from the user's file. The same test's one slot
+    came from the suite's own file, with 0.0 s spent waiting. The other 322 came from files the
+    SEC tests make for themselves, mostly on virtual clocks.
+  - Wall time, full offline suite on this machine: 301 s on the PR head; 290 s and 353 s on
+    two runs after round 1. The same code ranged from 295 to 457 s here while other sessions
+    ran, so the spread is load. Pacing did not slow the suite: waiting on the suite's own
+    budget totalled 0.0 s.
 - **The gate:** ruff (`vinci tests frontend`) and `mypy --strict vinci` clean. The full
   `pytest -m "not network"` result is in the PR body.
 
@@ -151,12 +196,14 @@ one-second window.
 - **The budget is per machine, not per IP.** Two machines behind one address (or a browser
   reading EDGAR on this one) are outside it. The 2-a-second margin under SEC's 10 is the only
   allowance for them. *Falsifier:* a refusal while no `vinci` process exceeds 8 a second.
-- **Broad handlers can still swallow `SecRateLimitedError`.** It escapes every `except HttpError`,
-  but not a handler that catches `Exception`. Those 75 handlers were not audited here.
-- **The CI secret is unchecked against the new rule.** The `SEC_USER_AGENT` repository secret is
-  set, but its value was never read, and `.github/scripts/validate_keys.py` sends it raw without
-  this check. If it carries no email address, the first CI job that builds an SEC client fails
-  loud, naming the variable, before any SEC request. STATE §5.0 row 37.
+- **Broad handlers can still swallow `SecRateLimitedError`, harmlessly to SEC.** Within the name
+  being built, a handler that catches `Exception` turns the refusal into an UNKNOWN. Nothing more
+  is sent, and that page is not written. A batch other than the cohort and the exposure scan that
+  catches it per item runs on with each item failing at once. Those 75 handlers were not audited.
+- **The CI secret: settled.** The operator confirmed, through the coordinating session on
+  2026-10-29, that the `SEC_USER_AGENT` repository secret carries an email. The STATE row opened
+  for it in this PR was closed before merge. `.github/scripts/validate_keys.py` still sends the
+  secret without this check.
 
 **NOT DONE HERE (outside this batch's files), for follow-up:**
 - `vinci/dossier/mechanical.py` still reads the snapshot and then companyfacts a second time; it
@@ -166,6 +213,12 @@ one-second window.
 - efts' own 1-a-second pace is per client: eight efts clients may send up to 8 a second between
   them, which is still inside the shared total.
 - The audit of the broad handlers above.
+- **A frame that fails past its retries now stops every caller (review round 1, DEFERRED).**
+  `shares_outstanding_with_provenance` raises on any non-404 failure. Its callers
+  (`universe.py:209`, the universe builder; `themes/leaders.py:96`; `themes/assay.py:790`) used
+  to receive an older period's value silently and now stop. That is the intended direction (fail
+  loud). Returning the failed periods to each caller would change a return type across three files
+  outside this batch.
 - **Redirect hops are not paced.** The SEC check reads the URL a client is asked for; a hop
   `httpx` follows on a redirect takes no slot of its own. The read paths here request final URLs.
   Pacing every hop needs an `httpx` request hook. (Code review, round 0.)

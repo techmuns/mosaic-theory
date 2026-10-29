@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import math
+import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
@@ -63,6 +64,7 @@ from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.llm import LlmClient, MeteredLlmClient
 from vinci.labels import resolve_label
+from vinci.netcache import SecRateLimitedError, sec_refusal
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
 from vinci.schemas.candidate import CandidateRecord
@@ -608,6 +610,19 @@ def _refuse_synthesis_overwrite(dossier: Dossier, folder: Path) -> None:
         "synthesis and refuses per claim when the prose cites one that moved.")
 
 
+def _refuse_after_sec_refusal(dossier: Dossier) -> None:
+    """NO PAGE IS WRITTEN ONCE SEC HAS REFUSED THIS PROCESS (2026-10-29). Every SEC read after the
+    refusal raises without sending, and `vinci/` holds dozens of broad handlers that turn a raised
+    read into an UNKNOWN block — so a page built across the refusal can carry blanks where SEC data
+    belongs, recorded as if the data were missing. The build is refused whole; re-run it later."""
+    refusal = sec_refusal()
+    if refusal is not None:
+        raise SecRateLimitedError(
+            f"{dossier.ticker}: NOT WRITTEN — SEC refused this run ({refusal}); a page built "
+            "across the refusal may read refused filings as missing ones. Re-assemble once SEC's "
+            "window has passed.") from refusal
+
+
 def _refuse_degraded_drawdown_overwrite(dossier: Dossier, folder: Path) -> None:
     """A write that would replace a COMMITTED drawdown cause with a DEGRADED-FEED one is refused.
 
@@ -712,6 +727,7 @@ def _write(dossier: Dossier, llm_log: str, out_root: Path) -> Dossier:
     """Persist one dossier and RETURN WHAT WAS WRITTEN — which can differ from what was passed in,
     because the committed recipe outranks this build's proposal (`_keep_committed_recipe`)."""
     folder = out_root / dossier.ticker
+    _refuse_after_sec_refusal(dossier)
     _refuse_synthesis_overwrite(dossier, folder)
     _refuse_degraded_drawdown_overwrite(dossier, folder)
     dossier = _keep_committed_recipe(dossier, folder)
@@ -1161,6 +1177,8 @@ def assemble_one(
         edgar_nd = lease_inclusive_net_debt(anchor_facts)
         anchor = _assembly_anchor(mech.model_dump(mode="json"), facts=anchor_facts, bundle=bundle,
                                   ticker=ticker, computed_at=datetime.now(UTC))
+    except SecRateLimitedError:
+        raise  # SEC refused this run: never a page with an "anchor failed" written over it
     except Exception as exc:  # noqa: BLE001 — anchor is best-effort; it never blocks the dossier
         anchor = Anchor(recipe_hint=RECIPE_UNKNOWN, applicable=False, computed_at=datetime.now(UTC),
                         reason=f"anchor computation failed: {type(exc).__name__}")
@@ -1220,7 +1238,11 @@ def assemble_cohort(
     max_workers: int = 8,
     run_log: run_metrics.RunLog | None = None,
 ) -> tuple[list[Dossier], list[str]]:
-    """Assemble the cohort in parallel → (dossiers, per-name errors). The batch never crashes.
+    """Assemble the cohort in parallel → (dossiers, per-name errors). One bad name never crashes
+    the batch — except SEC REFUSING the run (`SecRateLimitedError`, 2026-10-29): names not yet
+    started are skipped, and the refusal is raised once the running ones finish. Logging it as one
+    failed name let every next name wait out SEC's hold, send, and be refused again — restarting
+    SEC's ten-minute clock for hours and recording each name as failed.
 
     Every name ATTEMPTED leaves one line in ``run_log`` (default: a new file under
     ``<snapshots>/assembly_runs/``) — what its LLM calls cost and what the build produced, refused
@@ -1233,9 +1255,15 @@ def assemble_cohort(
     manual = manual or LocalFolderStore.from_config(cfg)
     out_root = cfg.data_dir / "dossiers"
     log = run_log or run_metrics.RunLog(cfg.snapshots_dir)
+    refused: list[SecRateLimitedError] = []
+    stop = threading.Event()
+    skipped: list[str] = []
 
     def task(fin: Finalist) -> tuple[Dossier | None, str | None]:
         ticker = fin.data_record.identity.ticker
+        if stop.is_set():
+            skipped.append(ticker)
+            return None, None
         meter = MeteredLlmClient(llm) if llm is not None else None
         started = datetime.now(UTC)
         dossier: Dossier | None = None
@@ -1247,6 +1275,9 @@ def assemble_cohort(
             )
         except Exception as exc:  # noqa: BLE001 — one bad name must not crash the cohort batch
             failure = exc
+            if isinstance(exc, SecRateLimitedError):
+                refused.append(exc)
+                stop.set()
         error = f"{ticker}: {type(failure).__name__}: {failure}" if failure is not None else None
         try:
             log.add(run_metrics.name_record(
@@ -1265,4 +1296,9 @@ def assemble_cohort(
                 dossiers.append(dossier)
             if error is not None:
                 errors.append(error)
+    if refused:
+        raise SecRateLimitedError(
+            f"the cohort STOPPED — {refused[0]} — {len(dossiers)} dossier(s) built, "
+            f"{len(skipped)} name(s) not attempted: {', '.join(sorted(skipped)) or 'none'}"
+        ) from refused[0]
     return dossiers, errors

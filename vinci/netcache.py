@@ -70,7 +70,20 @@ class SecRateLimitedError(RuntimeError):
     """SEC refused us, and was still refusing after every SEC request on the machine had been held
     off for its whole window. NOT an :class:`HttpError`, on purpose: callers degrade an
     ``HttpError`` to UNKNOWN and move to the next name, which during a block means sending again
-    into it and recording a refusal as missing data. This one stops the run."""
+    into it and recording a refusal as missing data. This one stops the run — and once raised, no
+    further SEC request leaves this process (:data:`_SEC_STOPPED`), so a broad ``except Exception``
+    that swallows it cannot send into the block either."""
+
+
+#: The refusal that stopped SEC traffic in this process, once one has. Every later request to an
+#: SEC host raises at once without sending (a cached copy is still served). Process-wide and never
+#: cleared: a block outlasting SEC's window is an operator's call, and the run is re-made later.
+_SEC_STOPPED: SecRateLimitedError | None = None
+
+
+def sec_refusal() -> SecRateLimitedError | None:
+    """The refusal that stopped SEC traffic in this process, or None while SEC has not."""
+    return _SEC_STOPPED
 
 
 def _env_path(name: str, default: Path) -> Path:
@@ -351,12 +364,16 @@ class CachedHttp:
     def _fetch_with_retries(
         self, url: str, *, json_body: dict[str, Any] | None = None
     ) -> str:
+        global _SEC_STOPPED
         sec = httpx.URL(url).host in SEC_HOSTS
         backoff = 1.0
         last_exc: Exception | None = None
         attempt = 0
         refused = False
         while True:
+            if sec and _SEC_STOPPED is not None:
+                raise SecRateLimitedError(
+                    f"not sent: {url} — SEC refused this process earlier ({_SEC_STOPPED})")
             self._throttle()
             if sec:
                 sec_pace().acquire()
@@ -383,13 +400,19 @@ class CachedHttp:
                     hold = _SEC_REFUSAL_HOLD_SEC if hold is None else hold
                     sec_pace().hold_off(min(hold, _SEC_MAX_HOLD_SEC))
                     if refused or hold > _SEC_MAX_HOLD_SEC:
-                        raise SecRateLimitedError(
+                        _SEC_STOPPED = SecRateLimitedError(
                             f"SEC refused {url} with {resp.status_code}"
                             + (f" after every SEC request was held off {hold:.0f}s"
                                if refused else f" and asked for {hold:.0f}s")
                             + " — stopping rather than sending into a fair-access block "
-                            f"(SEC_MAX_REQUESTS_PER_SEC={SEC_MAX_REQUESTS_PER_SEC:g}): "
-                            f"{resp.text[:200]}")
+                            f"(SEC_MAX_REQUESTS_PER_SEC={SEC_MAX_REQUESTS_PER_SEC:g})"
+                            # SEC answers both with a 403 page, and its status cannot tell them
+                            # apart: name both, so the operator is not sent only to the pacing
+                            + ("; a 403 is also how SEC answers a User-Agent it does not accept as "
+                               "a declared contact — check SEC_USER_AGENT"
+                               if resp.status_code == 403 else "")
+                            + f": {resp.text[:200]}")
+                        raise _SEC_STOPPED
                     refused = True
                     continue
                 if resp.status_code == 429:

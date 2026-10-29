@@ -181,6 +181,28 @@ def test_a_client_shared_by_threads_keeps_its_own_interval_off_sec_too(
     assert len(ts) == 32 and min(b - a for a, b in zip(ts, ts[1:], strict=False)) >= 0.25
 
 
+def test_an_offline_test_never_takes_a_slot_from_the_machine_wide_budget(
+        tmp_path_factory: pytest.TempPathFactory) -> None:
+    """⊖ the budget is a file in the user's cache, shared with every live `vinci` run on the
+    machine. A test that drives a real SEC client over a mock transport took a slot from it during
+    the PR's own suite run (2026-10-29, 13:12:15) — a live run in another session waits for that
+    slot, and a mocked refusal there would hold off every real SEC request for 660 s. Outside a
+    test marked `network`, the budget in use is the suite's own (`tests/conftest.py`)."""
+    in_use = netcache.sec_pace()._path  # noqa: SLF001
+    assert in_use.is_relative_to(tmp_path_factory.getbasetemp()), in_use
+
+
+@pytest.mark.network
+def test_a_network_test_takes_its_turn_from_the_machine_wide_budget(
+        tmp_path_factory: pytest.TempPathFactory) -> None:
+    """⊕ a test marked `network` sends REAL requests to SEC, so it shares the machine's budget
+    with every live run rather than pacing against a file of the suite's own. (Sends nothing
+    itself; runs with `-m network`.)"""
+    in_use = netcache.sec_pace()._path  # noqa: SLF001
+    assert not in_use.is_relative_to(tmp_path_factory.getbasetemp()), in_use
+    assert in_use == netcache._sec_pace_path()  # noqa: SLF001
+
+
 _CHILD = """
 import json, sys, time
 from pathlib import Path

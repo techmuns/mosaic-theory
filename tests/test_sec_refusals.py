@@ -21,8 +21,9 @@ import json
 import threading
 import time
 from collections.abc import Callable
+from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import httpx
 import pytest
@@ -362,3 +363,133 @@ def test_the_sec_factory_refuses_the_placeholder(
     monkeypatch.setenv("SEC_USER_AGENT", _example_value())
     with pytest.raises(RuntimeError, match="placeholder"):
         build_sec_http(Config(data_dir=tmp_path))
+
+
+# --- a refusal stops the RUN, not one name (PR #854 review round 1) -----------------------------
+
+def _refuse_once(tmp_path: Path, clock: _VirtualClock, sent: list[tuple[float, str]]) -> None:
+    """Provoke the refusal that stops SEC traffic in this process: two requests, then the error."""
+    http = _client(tmp_path, clock, lambda r: httpx.Response(429), sent, name="refused")
+    with pytest.raises(SecRateLimitedError):
+        http.get_text(_CF_URL)
+
+
+def test_after_a_refusal_no_sec_request_leaves_the_process(
+        tmp_path: Path, clock: _VirtualClock) -> None:
+    """⊖ dozens of broad `except Exception` handlers can swallow the refusal and go on to the next
+    read. None of them may send: every later SEC request, from ANY client, raises at once."""
+    sent: list[tuple[float, str]] = []
+    _refuse_once(tmp_path, clock, sent)
+    assert len(sent) == 2 and netcache.sec_refusal() is not None
+    other = _client(tmp_path, clock, lambda r: httpx.Response(200, text="x"), sent, name="o")
+    with pytest.raises(SecRateLimitedError, match="not sent"):
+        other.get_text("https://www.sec.gov/Archives/edgar/data/1/x.htm")
+    assert len(sent) == 2  # nothing more reached SEC
+
+
+def test_after_a_refusal_other_hosts_are_untouched(tmp_path: Path, clock: _VirtualClock) -> None:
+    """⊕ the stop is SEC's: a Polygon or FINRA read still goes."""
+    sent: list[tuple[float, str]] = []
+    _refuse_once(tmp_path, clock, sent)
+    plain = CachedHttp(cache_dir=tmp_path / "p", user_agent="t", min_interval_sec=0.0,
+                       namespace="p")
+    plain._client = httpx.Client(  # noqa: SLF001
+        transport=httpx.MockTransport(lambda r: httpx.Response(200, text="ok")))
+    assert plain.get_text("https://api.polygon.test/y") == "ok"
+
+
+def test_a_403_refusal_names_the_user_agent_as_a_possible_cause(
+        tmp_path: Path, clock: _VirtualClock) -> None:
+    """⊖ SEC answers a fair-access block AND a User-Agent it does not accept with a 403, and the
+    status cannot tell them apart — so the error names both, not only the pacing."""
+    sent: list[tuple[float, str]] = []
+    http = _client(tmp_path, clock, lambda r: httpx.Response(403, text="Forbidden"), sent)
+    with pytest.raises(SecRateLimitedError, match="SEC_USER_AGENT"):
+        http.get_text(_CF_URL)
+
+
+def test_a_429_refusal_does_not_blame_the_user_agent(tmp_path: Path, clock: _VirtualClock) -> None:
+    """⊕ a 429 is a rate limit and nothing else."""
+    sent: list[tuple[float, str]] = []
+    http = _client(tmp_path, clock, lambda r: httpx.Response(429), sent)
+    with pytest.raises(SecRateLimitedError) as err:
+        http.get_text(_CF_URL)
+    assert "SEC_USER_AGENT" not in str(err.value)
+
+
+def _finalists(n: int) -> list[Any]:
+    from vinci.dossier import assemble as asm
+    from vinci.rank import load_candidates_from_snapshot
+
+    snap = _REPO / "data" / "snapshots" / "candidate_records.jsonl"
+    if not snap.exists():
+        pytest.skip("no committed candidate records in this checkout")
+    by_ticker = {r.data_record.identity.ticker: r for r in load_candidates_from_snapshot(snap)}
+    recs = list(by_ticker.values())[:n]
+    assert len(recs) == n
+    return [asm.Finalist(r, rank=i + 1, reference_date=date(2026, 10, 1))
+            for i, r in enumerate(recs)]
+
+
+def test_a_refused_cohort_stops_at_the_first_name(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """⊖ `assemble_cohort` logged SEC's refusal as ONE failed name and went on: the next name waited
+    out the hold, sent, was refused, and re-armed it — for hours, every name recorded as failed.
+    Through the real cohort: the first name's refusal stops the batch, loud."""
+    from tests.sec_offline_support import no_network, seed_sec_cache
+    from vinci.dossier import assemble as asm
+
+    fins = _finalists(4)
+    tried: list[str] = []
+
+    def refused(fin: Any, **kw: Any) -> Any:
+        tried.append(fin.data_record.identity.ticker)
+        raise SecRateLimitedError("SEC refused (test)")
+
+    monkeypatch.setattr(asm, "assemble_one", refused)
+    cfg = Config(data_dir=tmp_path)
+    seed_sec_cache(cfg)
+    with no_network(), pytest.raises(SecRateLimitedError, match=r"3 name\(s\) not attempted"):
+        asm.assemble_cohort(fins, cfg=cfg, max_workers=1)
+    assert len(tried) == 1
+
+
+def test_a_refused_exposure_scan_stops_instead_of_grading_every_name(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """⊖ the exposure scan graded a refusal as one more UNASSESSED name and moved on to the next."""
+    import vinci.themes.exposure as ex_mod
+    from vinci.themes.drivers import AI_DATACENTER
+
+    names = [(f"T{i}", str(3000 + i)) for i in range(6)]
+    tried: list[str] = []
+
+    def stream(*a: Any, **k: Any) -> Any:
+        tried.append("x")
+        raise SecRateLimitedError("SEC refused (test)")
+
+    monkeypatch.setattr(ex_mod, "mention_prefilter", lambda *a, **k: {c for _, c in names})
+    monkeypatch.setattr(ex_mod, "recent_disclosure_stream", stream)
+    with pytest.raises(SecRateLimitedError, match="STOPPED"):
+        ex_mod.scan_driver_exposure(
+            AI_DATACENTER, names, edgar=cast(Any, None), sec_http=cast(Any, None),
+            efts_http=cast(Any, None), llm=cast(Any, None), startdt="2026-01-01",
+            enddt="2026-06-01", max_workers=1)
+    assert len(tried) <= 2  # the one refused, and at most the one a worker had already begun
+
+
+def test_no_page_is_written_once_sec_has_refused_the_process(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """⊖ a page built across a refusal can carry blanks where a swallowed SEC read belonged — so the
+    one write path refuses it; ⊕ and writes it once there is no refusal."""
+    from vinci.dossier import assemble as asm
+    from vinci.dossier.schemas import Dossier
+
+    live = sorted((_REPO / "data" / "dossiers").glob("*/dossier.json"))[0]
+    dossier = Dossier.model_validate_json(live.read_text())
+    monkeypatch.setattr(netcache, "_SEC_STOPPED", SecRateLimitedError("SEC refused (test)"))
+    with pytest.raises(SecRateLimitedError, match="NOT WRITTEN"):
+        asm._write(dossier, "(test)", tmp_path)  # noqa: SLF001
+    assert not (tmp_path / dossier.ticker).exists()
+    monkeypatch.setattr(netcache, "_SEC_STOPPED", None)
+    asm._write(dossier, "(test)", tmp_path)  # noqa: SLF001
+    assert (tmp_path / dossier.ticker / "dossier.json").exists()

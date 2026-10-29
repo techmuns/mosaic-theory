@@ -32,7 +32,7 @@ from typing import Any, cast
 
 from vinci.edgar import EdgarClient
 from vinci.graph.llm import LlmClient, LlmError
-from vinci.netcache import CachedHttp, HttpError
+from vinci.netcache import CachedHttp, HttpError, SecRateLimitedError
 from vinci.progress import ProgressFn, ProgressReporter
 from vinci.themes.schemas import (
     DriverSpec,
@@ -668,6 +668,14 @@ def scan_driver_exposure(
                 out.append(fut.result())
                 streak = 0  # a success breaks the systemic-failure streak
             except Exception as exc:  # noqa: BLE001 — fail-loud per name, never drop silently
+                if isinstance(exc, SecRateLimitedError):
+                    # SEC REFUSED THE RUN (2026-10-29): stop, never grade it as one more failed name
+                    # — the next name would wait out SEC's hold, send, and be refused again.
+                    for f in futures:
+                        f.cancel()
+                    raise SecRateLimitedError(
+                        f"the exposure scan STOPPED — {exc} — {len(out)} of {len(candidates)} "
+                        f"name(s) assessed") from exc
                 status = _client_error_status(exc)
                 if status is not None and status == last_status:
                     streak += 1
