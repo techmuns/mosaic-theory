@@ -4,8 +4,9 @@ The model is given ONLY the mechanical layer's source-bound facts (not the web, 
 and forced through a tool whose schema is the verdict-free :class:`Synthesis` shape — there is no
 field for a conclusion, so it cannot render one. Its output is then validated, not trusted:
 
-- every bull/bear point must cite a ``source_ref`` that exists in the input (uncited → flagged);
-- every number must trace to the mechanical layer (untraceable → flagged), unless cited to the
+- every bull/bear point must cite a ``source_ref`` that IS one in the input — the same text, never a
+  fragment of one, never empty (uncited → flagged);
+- every number must trace to the FACT ITS POINT CITES (untraceable → flagged), unless cited to the
   earnings-call transcript, where a prose figure earns a soft 'verify against the call' note;
 - twin analogues must be source-bound or tagged ``[LLM-suggested, unverified]``, and never numeric;
 - the whole output is linted for directional/recommendation language and flagged for human review.
@@ -21,6 +22,8 @@ import re
 import time
 import warnings
 from collections import Counter
+from dataclasses import dataclass, field
+from datetime import date
 from typing import Any, cast
 
 from vinci.dossier.schemas import (
@@ -38,6 +41,7 @@ from vinci.dossier.schemas import (
 from vinci.dossier.verdict import split_lean
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.sleeves import BY_KEY, DEFAULT_SLEEVE, Sleeve, require_sleeve
+from vinci.verbatim import comparison_key
 
 _UNVERIFIED = "[LLM-suggested, unverified]"
 # unit renderings an LLM uses for the same stored number (fraction↔%, raw↔K/M/B) — for number-trace
@@ -49,6 +53,33 @@ _NUM = re.compile(r"-?\d[\d,]*\.?\d+|-?\d+")
 # time-unit suffix. (Bare 4-digit years are NOT skipped — they collide with real $ figures.)
 _CAL_BEFORE = re.compile(r"(?:\bFY|\bfiscal\s*|\bQ)\s*$", re.IGNORECASE)
 _CAL_AFTER = re.compile(r"^\s*(?:days?|weeks?|months?|quarters?|qtrs?|years?)\b", re.IGNORECASE)
+# Digits that state no figure: an EDGAR accession, a date (ISO; CIQ's "Aug-31-2026"; "May 07,
+# 2026"; "June 1 2026"; "Aug-6"; "Nov-2025") and a period label ("Q1-26", "FY2024-25"). A claim
+# that writes one is citing or dating, not claiming a number; a fact that carries one carries its
+# YEAR as a label (traced as that year only), never as a value to rescale (round 1 of #859's
+# review: 2026-08-14 put 2026, 8 and 14 in the fact's numbers, and 2026 x 1e-2 traced a made-up
+# "20.3%").
+_MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?"
+_DATE_OR_ID = re.compile(
+    r"\b\d{10}-\d{2}-\d{6}\b"
+    r"|\b(?P<iso>(?:19|20)\d\d)-\d\d-\d\d\b"
+    rf"|\b{_MONTH}[- ]\d{{1,2}}(?:(?:,\s*|[- ])(?P<md>(?:19|20)\d\d))?(?![\d.,%])"
+    rf"|\b{_MONTH}[- ](?P<my>(?:19|20)\d\d)(?!\d)"
+    r"|\bF?Q[1-4][- ]?'?(?P<qy>(?:19|20)?\d\d)(?![\d.,%])"
+    r"|\bFY ?'?(?P<fy>(?:19|20)?\d\d)(?:[-–/]'?\d{2,4})?(?![\d.,%])")
+
+
+def _label_year(m: re.Match[str]) -> float | None:
+    """The year a `_DATE_OR_ID` match names, or None (an accession, or a date with no year)."""
+    y = next((m.group(g) for g in ("iso", "md", "my", "qy", "fy") if m.group(g)), None)
+    return None if y is None else float(y if len(y) == 4 else f"20{y}")
+
+
+# A bare year inside a fact's text ("FY2026", "2026 guidance"): a label, kept as a year only. Not
+# "2,026" or "$2026" — those are amounts.
+_BARE_YEAR = re.compile(r"(?<![\d$.,])(?:19|20)\d\d(?!\d|[.,]\d)")
+# Keys whose values identify a fact rather than state one of its numbers.
+_ID_KEYS = frozenset({"accession", "url", "cik", "id"})
 # A point's source_ref pointing at the earnings-call TRANSCRIPT (verbatim prose) rather than a
 # structured CIQ cell. A figure cited to the transcript is NOT in the mechanical layer's number
 # universe, so it earns a soft 'verify-against-the-call' note — NOT a hard UNTRACEABLE, which
@@ -486,7 +517,13 @@ def _claim_figures(text: str) -> list[float]:
     that _NUM extracts but the trace would wrongly flag. The number-trace runs over these, not
     raw _floats."""
     out: list[float] = []
+    labels = [(d.start(), d.end()) for d in _DATE_OR_ID.finditer(text)]
     for m in _NUM.finditer(text):
+        if any(lo <= m.start() < hi for lo, hi in labels):
+            continue  # 2026-11-04 / Aug-6 / Nov-2025 / Q1-26 / an accession
+        before = text[m.start() - 1] if m.start() else " "
+        if before.isalpha() or (before == "-" and m.start() >= 2 and text[m.start() - 2].isalpha()):
+            continue  # GLP-1 / B2B / low-20s — a digit fused to a word is part of a name
         if _CAL_BEFORE.search(text[max(0, m.start() - 9):m.start()]):
             continue  # FY21 / Q1 / fiscal 2025
         if _CAL_AFTER.match(text[m.end():m.end() + 10]):
@@ -516,7 +553,75 @@ def _twin_numbers(text: str) -> set[str]:
 
 
 def _traces(ref: str, universe: set[str]) -> bool:
-    return any(ref == u or ref in u or u in ref for u in universe)
+    """True iff ``ref`` IS one of the layer's refs (audit G-D5). Compared on the verbatim check's
+    key — case, whitespace and typography folded, nothing else — so the model's re-typed dash still
+    matches. NOT a substring either way: that counted ``''`` as cited (it is in every string) and a
+    bare ``'EOD'`` as citing every EOD fact at once. An empty ref cites nothing, as an empty quote
+    proves nothing (``verbatim.SourceText.match``)."""
+    key = comparison_key(ref)
+    return bool(key) and key in {comparison_key(u) for u in universe}
+
+
+@dataclass
+class _FactNumbers:
+    """The numbers one citable fact STATES: its values, traced at any unit rendering, and the years
+    of its dates and labels, traced only as those years."""
+
+    values: list[float] = field(default_factory=list)
+    years: set[float] = field(default_factory=set)
+
+
+def _stated_numbers(o: Any, into: _FactNumbers) -> None:
+    """Every number ``o`` states, read from the values themselves — never from a JSON dump, whose
+    dates and ids are digit runs like any other (`_DATE_OR_ID`, `_ID_KEYS`)."""
+    if o is None or isinstance(o, bool):
+        return
+    if isinstance(o, (int, float)):
+        into.values.append(float(o))
+    elif isinstance(o, date):
+        into.years.add(float(o.year))
+    elif isinstance(o, str):
+        def label(m: re.Match[str]) -> str:
+            if (year := _label_year(m)) is not None:
+                into.years.add(year)
+            return " "
+        rest = _DATE_OR_ID.sub(label, o)
+        into.years.update(float(y) for y in _BARE_YEAR.findall(rest))
+        into.values.extend(_floats(_BARE_YEAR.sub(" ", rest)))
+    elif isinstance(o, dict):
+        for k, v in o.items():
+            if k not in _ID_KEYS and not str(k).endswith("_id"):
+                _stated_numbers(v, into)
+    elif isinstance(o, (list, tuple, set, frozenset)):
+        for v in o:
+            _stated_numbers(v, into)
+
+
+def _values_by_ref(mech: MechanicalLayer) -> dict[str, _FactNumbers]:
+    """The numbers each citable fact states, keyed by its ref (the ``source_ref`` / accession / url
+    `_refs_in` collects, on the comparison key). A fact's numbers are its whole subtree, so a
+    filing cited by accession carries its guidance and reconciliation rows."""
+    out: dict[str, _FactNumbers] = {}
+
+    def rec(o: Any) -> None:
+        if isinstance(o, dict):
+            keys = {comparison_key(str(o[k])) for k in ("source_ref", "accession", "url")
+                    if o.get(k)}
+            if keys:
+                nums = _FactNumbers()
+                _stated_numbers(o, nums)
+                for k in keys:
+                    acc = out.setdefault(k, _FactNumbers())
+                    acc.values.extend(nums.values)
+                    acc.years |= nums.years
+            for v in o.values():
+                rec(v)
+        elif isinstance(o, (list, tuple)):
+            for v in o:
+                rec(v)
+
+    rec(mech.model_dump())
+    return out
 
 
 # Corporate scaffolding + industry nouns SHARED across peers — never a unique identifier for the
@@ -568,22 +673,30 @@ def _validate(
     flags: list[str] = []
     refs = _refs_in(mech)
     present_refs = _present_refs(mech)
-    mech_nums = _floats(json.dumps(mech.model_dump(), default=str))
+    # THE CITED FACT'S OWN NUMBERS, not the layer's (audit G-D6). The trace ran against every number
+    # in the layer — 5,615 to 11,808 of them a page — and passed 1,176 of 1,176 made-up figures on
+    # the frozen SMPL page: a universe that large contains every figure at some scale. A point
+    # cites ONE fact; its figures are checked against that fact.
+    values_by_ref = _values_by_ref(mech)
 
-    def _num_traces(n: float) -> bool:
+    def _num_traces(n: float, cited: _FactNumbers) -> bool:
         # Trace by MAGNITUDE at any standard financial unit rendering (%, thousands, millions,
         # billions): the LLM writes the stored −0.726 as "−72.6%", 29,643,500 shares as "29.6
         # million", and a stored −0.027 as "shrunk by 2.7%" (sign carried in words, not the digit).
         # Direction is the directional-lint's job; this only asks whether the figure exists.
         a = abs(n)
-        for mf in mech_nums:
+        if a in cited.years:
+            return True  # the year of a date the fact carries — as that year, never rescaled
+        for mf in cited.values:
             for s in _TRACE_SCALES:
                 target = abs(mf) * s
                 if abs(a - target) <= max(0.05, target * 0.02):
                     return True
         return False
 
-    flagged_figs: set[tuple[float, bool]] = set()  # (signed value, type) for decisive-mirror dedup
+    # (signed value, type, cited ref) for decisive-mirror dedup — the ref since a figure traces or
+    # not by the fact it cites, so the same figure cited to another fact is another finding
+    flagged_figs: set[tuple[float, bool, str]] = set()
 
     def check_point(p: SourcedPoint, where: str, *, dedup: bool = False) -> SourcedPoint:
         cited = _traces(p.source_ref, refs)
@@ -598,12 +711,14 @@ def _validate(
                 "a PRESENT field — move to key_unknowns, don't source-bind it"
             )
         ref_is_transcript = bool(_TRANSCRIPT_REF.search(p.source_ref))
+        ref_key = comparison_key(p.source_ref)
+        cited_nums = values_by_ref.get(ref_key, _FactNumbers()) if ref_key else _FactNumbers()
         for n in _claim_figures(p.claim):
-            if _num_traces(n):
+            if _num_traces(n, cited_nums):
                 continue
             # key on SIGNED value + flag-type: don't let abs() collapse +N/-N (distinct facts) and
             # don't let a soft TRANSCRIPT-FIGURE on one point suppress a hard UNTRACEABLE elsewhere.
-            key = (round(n, 2), ref_is_transcript)
+            key = (round(n, 2), ref_is_transcript, ref_key)
             if dedup and key in flagged_figs:
                 continue  # decisive mirror of an already-flagged bull/bear figure
             flagged_figs.add(key)
@@ -613,7 +728,7 @@ def _validate(
                 # high-value transcript-only point, e.g. 'the GAAP profit is a non-cash artifact').
                 flags.append(
                     f"TRANSCRIPT-FIGURE '{n:g}' in {where}: '{_snip(p.claim)}' — from the cited "
-                    "earnings call, not the structured facts; verify against the call"
+                    "earnings call, not its validated facts; verify against the call"
                 )
             else:
                 flags.append(f"UNTRACEABLE figure '{n:g}' in {where}: '{p.claim}'")  # D4 full

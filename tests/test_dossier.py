@@ -302,9 +302,11 @@ class _FakeLlm(LlmClient):
 
 def test_synthesis_guardrails_flag_uncited_directional_and_numeric_twins() -> None:
     """Post-LLM guardrails: uncited point, directional language, numeric/untraceable twin all flag;
-    a percentage rendering of a stored fraction (−72.6% from −0.726) does NOT false-flag."""
+    a percentage rendering of a stored fraction (−88.2% from −0.882) does NOT false-flag. (The claim
+    read "fell -72.6% vs IWM +15.6%" against the RELATIVE-return ref until audit G-D6: those are
+    two OTHER facts' figures, and a figure now traces only to the fact its point cites.)"""
     payload = {
-        "bull_points": [{"claim": "fell -72.6% vs IWM +15.6%", "source_ref": "EOD name-IWM 180d"}],
+        "bull_points": [{"claim": "trailed IWM by -88.2%", "source_ref": "EOD name-IWM 180d"}],
         "bear_points": [{"claim": "BUY now, clearly undervalued", "source_ref": "MADE-UP-REF"}],
         "twin_reference_cases": [
             {"name": "ExampleCo", "outcome": "recovered 50%", "distinguishing_fact": "x",
@@ -324,7 +326,7 @@ def test_synthesis_guardrails_flag_uncited_directional_and_numeric_twins() -> No
     assert "UNCITED bear_point" in text
     assert "DIRECTIONAL" in text
     assert any("TWIN" in f and "non-numeric" in f for f in flags)  # "recovered 50%" is numeric
-    assert not any("UNTRACEABLE" in f for f in flags)  # -72.6 / 15.6 trace to -0.726 / 0.156
+    assert not any("UNTRACEABLE" in f for f in flags)  # -88.2 traces to the cited -0.882
     assert "fake-model-1" in log and "RAW OUTPUT" in log
 
 
@@ -971,7 +973,7 @@ def test_cite_check_flags_missing_claim_bound_to_present_field() -> None:
 _Sheets = dict[str, list[list[typing.Any]]]
 
 
-def _fin_bundle(sheets: _Sheets, freq: str = "quarterly") -> ciq.CiqBundle:
+def _fin_bundle(sheets: _Sheets, freq: str | None = "quarterly") -> ciq.CiqBundle:
     """A CiqBundle with one Financials workbook whose sheets are pre-seeded (no .xls on disk)."""
     p = Path("/fake/Financials.xls")
     wb = ciq.CiqWorkbook(kind="financials", path=p, fmt=ciq.CiqFormat.BIFF_XLS, freq=freq)
@@ -3639,7 +3641,10 @@ def test_workbook_routing_finds_multiples_and_segments_inside_financials() -> No
         ["Government Solutions", 358.0, 390.0],
         ["  Total Revenues", 730.0, 797.0],
     ]
-    b = _fin_bundle({"Multiples": mult, "Segments": seg})
+    # period type UNREAD (no Period Type cell is seeded): since audit A-D11 a lone export answers
+    # a request for the other period type only then, and Multiples (quarterly) and Segments
+    # (annual) are both read from this one hand-seeded workbook
+    b = _fin_bundle({"Multiples": mult, "Segments": seg}, freq=None)
     pct = cs.ev_ebitda_percentile(b)
     assert pct.status is ds.SourceStatus.PRESENT
     assert pct.value == round(1 / 3, 3)  # would be 0.5 if the partial last col were NOT excluded
@@ -6911,16 +6916,19 @@ def test_financials_freq_prefers_filename_over_empty_income_statement() -> None:
     'Period Type:' boilerplate reads 'Annual', so a content-only read mis-tagged the quarterly
     workbook 'annual' — a freq='quarterly' request then silently fell back to the Annual workbook.
     The FILENAME must win so the quarterly Multiples stay reachable."""
-    misleading = [["", "Period Type:", "Annual"]]  # the empty-export boilerplate
+    # the empty-export boilerplate: a 'No Data Available' shell whose Period Type reads Annual.
+    # Since audit A-X1 the export's own statements CAN overrule its name — but a shell states
+    # nothing, so the filename still stands here (2026-10-29: `ciq.stated_period_type`).
+    misleading = {"Income Statement": [["", "Period Type:", "Annual"], ["No Data Available"]]}
     assert ciq._financials_freq("Artivion AORT Financials_Quarterly.xls", misleading) == "quarterly"
     assert ciq._financials_freq("Artivion AORT Financials_Annual.xls", misleading) == "annual"
-    qrows = [["", "Period Type:", "Quarterly"]]  # an un-named export → read the verbatim cell
+    qrows = {"Income Statement": [["", "Period Type:", "Quarterly"]]}  # un-named → read the cell
     assert ciq._financials_freq("Financials.xls", qrows) == "quarterly"
-    assert ciq._financials_freq("Financials.xls", []) is None
+    assert ciq._financials_freq("Financials.xls", {}) is None
     # a company NAME containing 'quarterly'/'annual' must NOT override the '_Quarterly'/'_Annual'
     # suffix (the match is anchored on the underscore, not a bare substring)
-    assert ciq._financials_freq("Quarterly Brands Financials_Annual.xls", []) == "annual"
-    assert ciq._financials_freq("Annual Corp Financials_Quarterly.xls", []) == "quarterly"
+    assert ciq._financials_freq("Quarterly Brands Financials_Annual.xls", {}) == "annual"
+    assert ciq._financials_freq("Annual Corp Financials_Quarterly.xls", {}) == "quarterly"
 
 
 def test_edgar_ebitda_requires_same_period_start_not_just_period_end() -> None:
@@ -8415,15 +8423,21 @@ console.log(JSON.stringify({{ html: h }}));
     inst = ((d["mechanical"].get("capital_structure") or {}).get("instruments") or {})
     if inst.get("status") == "present":
         ref = str(d["reference_date"])
-        by_yr: dict[str, float] = {}
+        # the STATED principals summed, and the count left out (audit D-D4: a '-' is not $0)
+        by_yr: dict[str, list[float | None]] = {}
         for i in inst["value"]:
             md = i.get("maturity_date")
             if md and md >= ref and md[:4] != ref[:4]:
-                by_yr[md[:4]] = by_yr.get(md[:4], 0.0) + (i.get("principal_musd") or 0.0)
+                by_yr.setdefault(md[:4], []).append(i.get("principal_musd"))
         assert by_yr, "IT carries later-year maturities"
-        for yr, tot in by_yr.items():
-            chip = f"<div class=\"wall-yr\"><span>{yr}</span><b>${tot:,.1f}M</b></div>"
-            assert chip in h, f"wall chip for {yr} must equal the instruments sum"
+        for yr, ps in by_yr.items():
+            stated = [v for v in ps if v is not None]
+            gap = len(ps) - len(stated)
+            more = (f"<span>{'+ ' if stated else ''}{gap} with no principal stated</span>"
+                    if gap else "")
+            amt = f"${sum(stated):,.1f}M" if stated else "—"
+            chip = f"<div class=\"wall-yr\"><span>{yr}</span><b>{amt}</b>{more}</div>"
+            assert chip in h, f"wall chip for {yr} must equal the stated instruments' sum"
         assert 'class="wall-foot"' in h  # reconciliation demoted to the footnote, still present
 
     # 4 — read-first on what-broke

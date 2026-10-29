@@ -32,10 +32,10 @@ free-standing string: it is the last row of an append-only table whose other col
 changed. Bumping the version without saying what it names is not expressible.
 
 WHAT THIS DOES NOT DO. Nothing here notices that extraction behaviour changed — a version is
-declared by hand, so an extractor change with no bump leaves the stamp lying. That is queue item
-26b (the drift test: hash the declared extraction module set, fail when it moves while the version
-does not). **26b's absence is not a regression** — an unbumped stamp is exactly today's state,
-minus the ambiguity 26a removes.
+declared by hand. Queue item 26b does the noticing, as a TEST (2026-10-29, audit A-D14):
+`tests/test_extraction_version_drift.py` hashes each declared extraction module and reds when one
+moved while its pin did not — the PR that moves it says, in that file, whether output changed
+(append a row here) or not. Without it the stamp stood still across 45 commits.
 """
 
 from __future__ import annotations
@@ -128,6 +128,86 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the "
         "forward history's latest close is `latest_observed_close`, never `current`; every writer "
         "saves through one write",
+    ),
+    (
+        "2026-10-29.D-D1",
+        "an unchecked quarter of the ex-lease history whose lease cell CIQ states as UNAVAILABLE "
+        "is left unpriced (`lease_basis.observations`), never priced on the cells it does state "
+        "with the missing one read as zero; the quarter names the cell (`unpriced_reason`) and "
+        "the block its date (`unpriced_dates`) (audit D-D1)",
+    ),
+    (
+        "2026-10-29.D-D5",
+        "the materiality guard runs on both thresholds: a summary row and an unusual line at 5% "
+        "of the revenue in the column each reads are material (`revenue` was never passed), and "
+        "a missing annual Income Statement, revenue row or unusual-items block refuses the build "
+        "instead of passing it (audit D-D5)",
+    ),
+    (
+        "2026-10-29.G-V1",
+        "a transcript row's call, following paragraph and period come from ONE located quote; "
+        "its period stands only where the quote states it, else none; each value figure equals "
+        "a figure of its quote in the quote's unit (audit G-V1, G-D1, G-D2) · a synthesis "
+        "citation is a ref of the layer, never a fragment, and each figure traces to the numbers "
+        "the fact it cites states, never its dates or ids; an exposure fact cites one filing and "
+        "is always grounded (audit G-D5, G-D6)"
+,
+    ),
+    (
+        "2026-10-29.E2",
+        "release and 10-Q figures read from what their own text states (audit E2): a footnote "
+        "digit after a measure's name and a trailing-twelve-month lead-in (D5), a loss stated in "
+        "words (D10), 'Revenues of' with the closing company profile refused (D11), a one-off "
+        "whose amount the charge noun names (D12), the ≤12m wall's stated zero and its "
+        "principal-and-interest basis (D15, `maturity_wall.basis`), a concentration column's "
+        "role from its header, a refused row named (D16); a non-positive LTM EBITDA has no "
+        "leverage multiple (E1-D13)"
+    ),
+    # THE STAMP STOOD STILL FOR 45 COMMITS (audit A-D14). Every commit to vinci/dossier, vinci/edgar
+    # and vinci/ciq merged after 2026-10-09.3 (#706 … #855, 2026-10-11 → 10-29) appended no row,
+    # and at least six changed output (#819, #826, #827, #831, #834, #836), so the 155 layer
+    # refreshes dated 10-27 or later stamped 2026-10-09.3. The first row below names them, the
+    # 2026-10-08.3 precedent; the rest are the CIQ reader's fixes (B4), one row per output change,
+    # ids `<date>.<audit id>` (the Phase 1 convention, 2026-10-29). MERGING: each row is its own
+    # `(` … `),` block — a line-wise union of two branches' table ends fuses two rows into one
+    # element; keep every block whole, in merge order.
+    (
+        "2026-10-29.A-D14",
+        "the dossier-output changes merged after 2026-10-09.3 that appended no row: 45 "
+        "commits to vinci/dossier, vinci/edgar and vinci/ciq (#706 … #855, 2026-10-11 → "
+        "10-29), among them #819, #826, #827, #831, #834 and #836 — from here a watched "
+        "extraction module that moves with no row appended reds "
+        "tests/test_extraction_version_drift.py",
+    ),
+    (
+        "2026-10-29.A-D3",
+        "one parser reads every Financials period header: an 'FQ4/CQ2' quarter is a quarter, "
+        "with its year-on-year growth, and a quarter carries its fiscal year (A-X2); a "
+        "same-quarter YoY reads only the prior fiscal year's quarter, never one two to four "
+        "years back",
+    ),
+    (
+        "2026-10-29.A-D6",
+        "a bridged anchor input names the CIQ export it was read from — D&A, OCF and capex "
+        "the annual workbook, the balance sheet the quarterly one — never the quarterly file "
+        "for all",
+    ),
+    (
+        "2026-10-29.A-D8",
+        "every guided metric the Guidance sheet lays out is read, found by the structure of "
+        "the sheet rather than a fixed list; a metric with no decided delivery direction "
+        "shows its guide with no MET/MISSED record",
+    ),
+    (
+        "2026-10-29.A-D10",
+        "the recommendation and the rating counts come from the block of the listing itself "
+        "in Trends, never from the industry or another listing",
+    ),
+    (
+        "2026-10-29.A-X1",
+        "a Financials export whose filename and statements state different period types is "
+        "refused, and a lone export never answers for the other period type (A-D11), so an "
+        "annual balance-sheet date prints as a date, never a raw serial",
     ),
     (
         "2026-10-29.G-D3",

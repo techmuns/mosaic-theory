@@ -19,6 +19,7 @@ from typing import Any, Literal, NamedTuple
 from vinci.dossier.band_guards import SheetCoherence, compose_flag, sheet_coherence
 from vinci.dossier.ciq import (
     _UNAVAILABLE_CELLS,
+    CIQ_NO_DATA,
     CiqBundle,
     CiqFormat,
     CiqParseError,
@@ -26,6 +27,7 @@ from vinci.dossier.ciq import (
     clean_num,
     excel_date,
     is_empty_view,
+    is_no_data_shell,
     read_sheets,
     read_text,
 )
@@ -104,7 +106,7 @@ def _period_header(rows: Rows) -> int | None:
     return next((i for i, r in enumerate(rows) if r and "Fiscal Period" in str(r[0])), None)
 
 
-_CIQ_NO_DATA = "No Data Available"  # CIQ's header-only sentinel for an empty-export subsheet
+_CIQ_NO_DATA = CIQ_NO_DATA  # CIQ's header-only sentinel for an empty-export subsheet
 
 
 def _no_data_available(rows: Rows) -> bool:
@@ -113,7 +115,7 @@ def _no_data_available(rows: Rows) -> bool:
     populated Key Stats / Multiples tabs on the SAME workbook attest — AORT, 2026-07). A DATA gap
     (re-export), NOT a parse failure — surfaced DISTINCTLY so a genuine header-parse bug on a
     POPULATED sheet is never masked by (nor misfiled as) this benign, actionable gap."""
-    return any(r and str(r[0]).strip() == _CIQ_NO_DATA for r in rows)
+    return is_no_data_shell(rows)
 
 
 def _no_data_note(sheet: str) -> str:
@@ -131,6 +133,76 @@ def _reclassified_cols(header: list[Any]) -> set[int]:
 def _is_ltm(cell: Any) -> bool:
     """A period-header cell whose label marks a trailing-twelve-month column (vs a fiscal year)."""
     return "LTM" in str(cell).upper()
+
+
+class HeaderPeriod(NamedTuple):
+    """One Financials period-header cell, read once (:func:`header_period`)."""
+
+    kind: Literal["LTM", "FY", "Q"] | None  # None: a bare balance-sheet date, or a shape unread
+    quarter: int | None  # the FISCAL quarter, 1-4 (kind "Q" only)
+    end: date | None  # the period's last day, as the header states it
+    fiscal_year: int | None  # the fiscal year the column belongs to (kinds "FY" and "Q")
+
+
+#: The FISCAL quarter of a quarterly header: 'FQ4/CQ2' → 4, never the calendar half, and the bare
+#: 'Q2' CIQ prints when the two numbers agree → 2. Census of the 34 non-test folders' Financials
+#: headers (2026-10-29): those two shapes, behind 'Reclassified' / 'Restated' / 'Press Release'.
+_FISCAL_QUARTER = re.compile(r"(?<![A-Za-z])F?Q([1-4])(?![0-9])")
+
+
+def _nominal_month(d: date) -> int:
+    """The month a period ending on ``d`` is NAMED for, as a month index (year*12 + month-1): a
+    52/53-week calendar ends a few days either side of a month end — WAT's first quarter ends
+    Apr-04-2026, TJX's year Feb-01-2025 — so a date in a month's first half belongs to the month
+    before it."""
+    idx = d.year * 12 + d.month - 1
+    return idx - 1 if d.day <= 15 else idx
+
+
+def header_period(cell: Any) -> HeaderPeriod:
+    """THE ONE PARSER OF A FINANCIALS PERIOD-HEADER CELL (audit A-D3, A-X2, 2026-10-29) — the
+    labels, the same-quarter matches and the fiscal years the Financials readers print are all
+    read from this, never from a pattern of their own.
+
+    TWO REGEXES HAD DIVERGED FROM IT. `_fin_short` and `_quarter_token` each read the quarter from
+    a bare ``\\bQ(\\d)\\b``, which cannot match CIQ's 'FQ4/CQ2' (printed when the fiscal and
+    calendar quarter numbers differ: 9 of the 34 exports), so those quarters were labelled as
+    fiscal years and their year-on-year growth dropped; and `_fin_short` paired the quarter with
+    the CALENDAR year of its end, so a January filer's first quarter (Apr-30-2025, fiscal 2026)
+    read 'Q1-25'.
+
+    THE FISCAL YEAR IS THE ONE ITS YEAR-END NAMES, as CIQ's own estimates name it (ROST's quarter
+    ending Oct-2026 is CIQ's 'FQ3 2027'): a quarter's year ends ``4 - quarter`` quarters after it,
+    counted from the month the quarter is named for (:func:`_nominal_month`)."""
+    text = str(cell if cell is not None else "").replace("\n", " ").strip()
+    end = _column_date(cell)
+    kind: Literal["LTM", "FY", "Q"] | None = None
+    quarter: int | None = None
+    if _is_ltm(text):
+        kind = "LTM"
+    elif (m := _FISCAL_QUARTER.search(text)) is not None:
+        kind, quarter = "Q", int(m.group(1))
+    elif "12 months" in text:
+        kind = "FY"
+    fiscal_year: int | None = None
+    if end is not None and kind == "FY":
+        # a fiscal year keeps the calendar year of its end, as `_fin_short` always labelled it — a
+        # 53-week year ending Jan-01 stays the year it ends in (the twin rule in `statement_recon`
+        # drops two years that share a label); the nominal month only places a QUARTER
+        fiscal_year = end.year
+    elif end is not None and quarter is not None:
+        fiscal_year = (_nominal_month(end) + 3 * (4 - quarter)) // 12
+    return HeaderPeriod(kind, quarter, end, fiscal_year)
+
+
+def _period_text(cell: Any) -> str:
+    """A period-header cell as a source_ref prints it. A bare date SERIAL — the annual balance
+    sheet's header — prints as the date it encodes, never as its float (audit A-D11: the LLY page
+    printed 'Balance Sheet [46203.0]' eight times)."""
+    if (isinstance(cell, (int, float)) and not isinstance(cell, bool)
+            and (d := excel_date(cell)) is not None):
+        return f"{d:%b-%d-%Y}"
+    return str(cell).strip().replace("\n", " ")
 
 
 def _find_row_prefix(rows: Rows, label: str) -> int | None:
@@ -178,7 +250,7 @@ def _latest_col(rows: Rows, ri: int, hdr: int | None) -> tuple[int, float, str] 
     j, v = present[-1]
     period = ""
     if hdr is not None and j < len(rows[hdr]):
-        period = str(rows[hdr][j]).strip().replace("\n", " ")
+        period = _period_text(rows[hdr][j])
     return j, v, period
 
 
@@ -798,6 +870,13 @@ def _bs_latest(bundle: CiqBundle, label: str) -> Sourced[float]:
     doesn't fall through to the EDGAR breadth figure). The Balance Sheet carries CIQ's own
     classified 'Total Debt'/'Net Debt' totals — the depth-stage authority the partial EDGAR-XBRL
     tags under-capture."""
+    return _bs_latest_from(bundle, label)[0]
+
+
+def _bs_latest_from(bundle: CiqBundle, label: str) -> tuple[Sourced[float], str | None]:
+    """:func:`_bs_latest`, with the period type of the export that answered ("quarterly" /
+    "annual", None when neither did) — so a fact can name the workbook it was read from
+    (`ciq_balance`, audit A-D6)."""
     def pick(rows: Rows) -> Sourced[float] | None:
         ri = _find_row(rows, label)
         if ri is None:
@@ -817,20 +896,20 @@ def _bs_latest(bundle: CiqBundle, label: str) -> Sourced[float]:
         rows = bundle.sheet("financials", "Balance Sheet", freq="quarterly")
         seen = True
         if (got := pick(rows)) is not None:
-            return got
+            return got, "quarterly"
     except CiqUnavailableError as exc:
         unavailable = exc
     try:
         rows = bundle.sheet("financials", "Balance Sheet", freq="annual")
         seen = True
         if (got := pick(rows)) is not None:
-            return got
+            return got, "annual"
     except CiqUnavailableError as exc:
         unavailable = exc
     if not seen:
         assert unavailable is not None  # neither sheet loaded — workbook or both sheets absent
-        return _miss_or_unknown(bundle, "financials", unavailable)
-    return Sourced.unknown(note=f"Balance Sheet has no '{label}' row (quarterly or annual)")
+        return _miss_or_unknown(bundle, "financials", unavailable), None
+    return Sourced.unknown(note=f"Balance Sheet has no '{label}' row (quarterly or annual)"), None
 
 
 def net_debt(bundle: CiqBundle) -> Sourced[float]:
@@ -886,21 +965,25 @@ def ltm_ocf(bundle: CiqBundle) -> Sourced[float]:
     )
 
 
-def _quarter_token(cell: Any) -> str | None:
-    m = re.search(r"\bQ([1-4])\b", str(cell))
-    return f"Q{m.group(1)}" if m else None
-
-
 def _short_period(cell: Any) -> str:
-    s = str(cell).replace("\n", " ").strip()
-    m = re.search(r"(Q[1-4]).*?([A-Z][a-z]{2}-[\d-]*\d{4})", s)
-    return f"{m.group(1)} {m.group(2)}" if m else s[:16]
+    """'Q1 Aug-31-2026' — a quarter column's fiscal quarter and end date (:func:`header_period`)."""
+    p = header_period(cell)
+    if p.quarter is not None and p.end is not None:
+        return f"Q{p.quarter} {p.end:%b-%d-%Y}"
+    return str(cell).replace("\n", " ").strip()[:16]
 
 
 def _quarterly_revenue_yoy(bundle: CiqBundle) -> str | None:
     """Clean same-basis revenue YoY from the QUARTERLY Income Statement: the latest quarter vs the
     same quarter a year earlier (Q1 vs the prior Q1), same period-type AND reclassified basis (notes
-    ~line 204). None when no same-quarter, same-basis prior exists — caller falls to UNAVAILABLE."""
+    ~line 204). None when no same-quarter, same-basis prior exists — caller falls to UNAVAILABLE.
+
+    A YEAR EARLIER MEANS THE PRIOR FISCAL YEAR (2026-10-29, found with audit A-D3). This took the
+    nearest earlier column of the same quarter number ON THE SAME BASIS, so where the prior year's
+    quarter was reclassified it reached back past it: six of the 34 non-test exports printed a gap
+    of two to four years under this "YoY" label (AORT +50.7% against Q1 2022), and once 'FQ/CQ'
+    quarters were read, BRBR and BDX would have joined them. The prior fiscal year's quarter on
+    another basis is now no comparison at all, which is what the contract above says."""
     try:
         rows = bundle.sheet("financials", "Income Statement", freq="quarterly")
     except CiqUnavailableError:
@@ -912,18 +995,19 @@ def _quarterly_revenue_yoy(bundle: CiqBundle) -> str | None:
     if latest is None:
         return None
     col, rev, _ = latest
-    q = _quarter_token(rows[hdr][col]) if col < len(rows[hdr]) else None
-    if q is None:
+    now = header_period(rows[hdr][col]) if col < len(rows[hdr]) else None
+    if now is None or now.quarter is None or now.fiscal_year is None:
         return None
     recl = _reclassified_cols(rows[hdr])
-    base = col in recl
-    for j in range(col - 1, 0, -1):  # nearest earlier same-quarter column on the same basis
-        if j < len(rows[hdr]) and _quarter_token(rows[hdr][j]) == q and (j in recl) == base:
-            pv = clean_num(rows[rev_i][j])
-            if not pv:
-                return None
-            cur, pri = _short_period(rows[hdr][col]), _short_period(rows[hdr][j])
-            return f"{rev / pv - 1:+.1%} ({cur} vs {pri})"
+    for j in range(col - 1, 0, -1):  # the nearest column of the same quarter a fiscal year earlier
+        p = header_period(rows[hdr][j]) if j < len(rows[hdr]) else None
+        if p is None or (p.quarter, p.fiscal_year) != (now.quarter, now.fiscal_year - 1):
+            continue
+        pv = clean_num(rows[rev_i][j])
+        if not pv or (j in recl) != (col in recl):
+            return None
+        cur, pri = _short_period(rows[hdr][col]), _short_period(rows[hdr][j])
+        return f"{rev / pv - 1:+.1%} ({cur} vs {pri})"
     return None
 
 
@@ -1902,14 +1986,19 @@ def consensus_view(bundle: CiqBundle) -> Sourced[str]:
         mean, med = clean_num(rows[lg][1]), clean_num(rows[lg][2])
         if mean is not None or med is not None:
             parts.append(f"LT growth: mean {_pct1(mean)} / median {_pct1(med)}")
-    rec = _find_row_prefix(rows, "Industry Recommend")
-    if rec is not None and len(rows[rec]) > 1:
-        v = str(rows[rec][1]).strip()
-        if v and v not in _UNAVAILABLE_CELLS:
-            parts.append(f"Recommendation: {v} (CIQ score, 1=buy … 5=sell)")
+    # THE LISTING'S OWN RECOMMENDATION (audit A-D10, 2026-10-29). This read Consensus's "Industry
+    # Recommendation" row by prefix and printed it as the stock's own: on all 20 pages carrying
+    # one it differed from the listing's (NKE printed Outperform (2.50); its own is Hold (2.73)).
+    rec, _counts, missing = _listing_rating(bundle) or (None, None, None)
+    if rec is not None:
+        parts.append(f"Recommendation: {rec} (CIQ score, 1=buy … 5=sell)")
+    elif missing is not None:
+        parts.append(f"Recommendation: {missing}")
     if not parts:
         return Sourced.unknown(note="no Target Price/LT Growth/Recommendation rows in Consensus")
-    return Sourced.present("; ".join(parts), source_ref="CIQ Estimates→Consensus")
+    return Sourced.present("; ".join(parts), source_ref=(
+        "CIQ Estimates→Consensus" + (" + Trends Non-Periodic (the listing's own recommendation)"
+                                     if rec is not None else "")))
 
 
 # --- catalyst path: the five previously-unparsed Estimates sheets (Revisions windows / Trends /
@@ -1921,22 +2010,23 @@ _METRICS: tuple[str, ...] = (
     "Revenue", "EBITDA", "EBIT", "EBT (GAAP)", "EPS Normalized", "EPS (GAAP)",
     "Net Income (GAAP)", "Net Income (Excl. Excep)", "Interest Expense",
 )
-#: EVERY metric block CIQ's Guidance sheet actually carries, not a five-item sample of it. The
-#: original tuple silently dropped whatever management guided outside it — most consequentially
-#: NFLX's own FREE CASH FLOW guide, the figure #421's basis note points a reader toward after
-#: showing the page's levered measure ran ~2x above it. Also dropped: EBIT, EPS (GAAP), Net Income,
-#: Cash From Operations, DPS, effective tax rate, interest expense, D&A.
-#: ORDERED, AND THE ORDER IS THE DISPLAY ORDER: what the business earns and converts first, the
-#: below-the-line items a reader consults second.
-#: A block absent from a workbook is simply not rendered, so this widens what CAN be read and never
-#: what must be. Every guide still carries `GUIDANCE_BASIS_REF` — CIQ states a LEVEL, and where
-#: management guided a RATE the level is CIQ's arithmetic (#427).
-_GUIDANCE_METRICS: tuple[str, ...] = (
-    "Revenue", "EBITDA", "EBIT", "Gross Margin %",
-    "EPS Normalized", "EPS (GAAP)", "Net Income (GAAP)", "Net Income (Excl. Excep)",
-    "Cash From Operations", "Capital Expenditure", "Free Cash Flow",
-    "Depreciation & Amortization", "Interest Expense", "Effective Tax Rate %", "DPS",
-)
+def _guidance_starts(rows: Rows) -> list[int]:
+    """EVERY metric block CIQ's Guidance sheet carries, found BY STRUCTURE (audit A-D8, 2026-10-29):
+    a label row whose next row is CIQ's 'As Of Guidance' sub-header. In sheet order, which is the
+    order a page shows them.
+
+    A LIST OF NAMES DROPPED WHAT IT DID NOT NAME, TWICE. The first held five metrics and silently
+    lost NFLX's own free-cash-flow guide; the fifteen that replaced it were described as every block
+    the sheet carries, and still dropped 17 guided blocks across 11 of the 34 non-test exports —
+    ROST's, TJX's and TGT's same-store sales, TJX's EBT, CNXC's and PARR's net debt, PARR's
+    maintenance capex. A block is now read because the sheet lays one out, never because its name
+    was foreseen. Every guide still carries `GUIDANCE_BASIS_REF` — CIQ states a LEVEL, and where
+    management guided a RATE the level is CIQ's arithmetic (#427) — and a metric with no entry in
+    `_GUIDANCE_HIGHER_IS_DELIVERY` shows its guide with no delivery record."""
+    return [i for i in range(len(rows) - 1)
+            if rows[i] and str(rows[i][0]).strip() and rows[i + 1]
+            and str(rows[i + 1][0]).strip() == "As Of Guidance"]
+
 
 #: Which way DELIVERY runs for each guided metric — ``True`` when a HIGHER actual is delivery,
 #: ``False`` when a LOWER one is, and ABSENT when the question has no defined answer.
@@ -1951,7 +2041,9 @@ _GUIDANCE_METRICS: tuple[str, ...] = (
 #: ABSENT MEANS UNRESOLVED, NEVER GUESSED. ``Depreciation & Amortization`` is a consequence of past
 #: capital decisions, not a target management delivers against — more of it is neither a beat nor a
 #: miss. A metric with no entry still shows its GUIDE; only the met/missed record is withheld, which
-#: is the honest half rather than a coin-flip dressed as a track record.
+#: is the honest half rather than a coin-flip dressed as a track record. Since the blocks are found
+#: by structure (`_guidance_starts`), every metric CIQ guides that this map does not name — same-
+#: store sales, EBT, net debt — takes that path until someone decides its direction here.
 _GUIDANCE_HIGHER_IS_DELIVERY: dict[str, bool] = {
     "Revenue": True, "EBITDA": True, "EBIT": True, "Gross Margin %": True,
     "EPS Normalized": True, "EPS (GAAP)": True,
@@ -3217,7 +3309,7 @@ def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float
     td, cash = _row_at(bs, "Total Debt", col), _row_at(bs, "Total Cash & ST Investments", col)
     if nd is None or td is None or cash is None:
         return None
-    period = str(bs[hdr][col]).replace("\n", " ").strip()
+    period = _period_text(bs[hdr][col])
     as_of = bs_date.isoformat() if bs_date else None
     src = f"CIQ Financials→Balance Sheet [{period}]"
     pref = _row_at(bs, "Total Pref. Equity", col) or 0.0
@@ -3727,11 +3819,20 @@ def _guidance_reads(
 ) -> list[_GuidanceRead]:
     """Per guidance-metric block: the latest guide + the sign-aware delivery record + most-recent
     resolved outcome. Counts ONLY resolved periods (range AND actual); parens are negative; a
-    present-but-empty block yields no read. Shared by the string and the table (H4)."""
+    present-but-empty block yields no read. Shared by the string and the table (H4).
+
+    A LABEL IS READ AT ITS FIRST BLOCK. CIQ repeats a per-share block under each listing (GOOGL's
+    sheet carries EPS Normalized, EPS (GAAP) and DPS under GOOGL twice and DPS under GOOG); the
+    first is the one a label search found before blocks were discovered by structure (A-D8), and
+    each block still ends where the next one, repeated or not, begins."""
     reads: list[_GuidanceRead] = []
+    seen: set[str] = set()
     for idx, bi in enumerate(starts):
         end = starts[idx + 1] if idx + 1 < len(starts) else len(rows)
         metric = str(rows[bi][0]).strip()
+        if metric in seen:
+            continue
+        seen.add(metric)
         gdate, guide, actual = _guidance_rows(rows, bi, end)
         header = _nearest_period_header(rows, bi)
         if gdate is None or guide is None or header is None:
@@ -3805,7 +3906,7 @@ def guidance_bridge(
         rows = bundle.sheet("estimates", "Guidance")
     except CiqUnavailableError as exc:
         return _miss_or_unknown(bundle, "estimates", exc)
-    starts = _metric_starts(rows, _GUIDANCE_METRICS)
+    starts = _guidance_starts(rows)
     if not starts:
         return Sourced.unknown(note="no guidance metric blocks in Estimates→Guidance")
     lines: list[str] = []
@@ -3863,8 +3964,8 @@ def revenue_guide_lohi(
         rows = bundle.sheet("estimates", "Guidance")
     except CiqUnavailableError:
         return (None, None, None, None)
-    for r in _guidance_reads(rows, _metric_starts(rows, _GUIDANCE_METRICS), reference_date, 45):
-        if "revenue" not in r.metric.lower():
+    for r in _guidance_reads(rows, _guidance_starts(rows), reference_date, 45):
+        if r.metric != "Revenue":  # exactly the block the fixed list held (A-D8 widened the rest)
             continue
         if r.guide_num is not None:
             return (r.guide_num, r.guide_num, r.period, r.dated)
@@ -3885,7 +3986,7 @@ def revenue_guide_from_rows(
     line rebuilt from them must equal the stored one byte for byte, which a rounded point fails.
     """
     for r in rows:
-        if "revenue" not in r.metric.lower():
+        if r.metric != "Revenue":  # the same selection as `revenue_guide_lohi`
             continue
         cell = r.latest_guide
         quoted = len(cell) >= 2 and cell[0] == cell[-1] == "'"
@@ -3906,7 +4007,7 @@ def guidance_bridge_rows(
     except CiqUnavailableError as exc:
         s: Sourced[str] = _miss_or_unknown(bundle, "estimates", exc)
         return Sourced.unknown(note=s.note or "Estimates→Guidance unavailable")
-    starts = _metric_starts(rows, _GUIDANCE_METRICS)
+    starts = _guidance_starts(rows)
     reads = _guidance_reads(rows, starts, reference_date, stale_after_days) if starts else []
     if not reads:
         return Sourced.unknown(note="no parseable guidance ranges in Estimates→Guidance")
@@ -3963,23 +4064,72 @@ def revision_events(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[l
     )
 
 
-def _rating_distribution(bundle: CiqBundle) -> str | None:
-    """Analyst rating counts from Trends 'Non-Periodic Trends' (Buy/Outperform/Hold/…). NOTE: in the
-    real CIQ Estimates export the rating rows live in TRENDS, not Consensus as the module contract
-    assumed — read here by label (never positionally), Current column."""
+_RATING_CATEGORIES = ("Buy", "Outperform", "Hold", "Underperform", "Sell", "No Opinion")
+
+
+def _rating_category(cell: Any) -> str | None:
+    """'Hold (3)' → 'Hold'; None for any label that is not one of CIQ's rating categories."""
+    base = re.sub(r"\s*\(\d+\)\s*$", "", str(cell).strip())
+    return base if base in _RATING_CATEGORIES else None
+
+
+def _listing_rating(bundle: CiqBundle) -> tuple[str | None, str | None, str | None] | None:
+    """(the listing's own recommendation, its rating counts, a note) from Trends 'Non-Periodic
+    Trends', Current column, each value None when its cells are empty — None when the sheet has no
+    such section. Where the section holds no block for this ticker, both values are None and the
+    note says so, naming the blocks it does hold: the line is never dropped unremarked (PR #861
+    round 1).
+
+    ONE BLOCK PER LISTING, AND ONLY THIS NAME'S IS READ (audit A-D10, 2026-10-29). The section
+    holds a block per listing, headed '<EXCHANGE>:<TICKER> | Current | …' (GOOGL's carries
+    GOOGL, a Brazilian receipt, GOOG and a Thai receipt), and each block holds the listing's
+    'Recommendation' with its counts and then an 'Ind. Recommendation' with ITS counts. The
+    distribution read every category row on the sheet, so the industry counts were appended to
+    the listing's unlabelled on the same 20 pages. The counts here run from the listing's own
+    'Recommendation' row to the first row that is not a category."""
     try:
         rows = bundle.sheet("estimates", "Trends")
     except CiqUnavailableError:
         return None
-    cats = ("Buy", "Outperform", "Hold", "Underperform", "Sell", "No Opinion")
-    out: list[str] = []
-    for r in rows:
-        base = re.sub(r"\s*\(\d+\)\s*$", "", str(r[0]).strip()) if r else ""
-        if base in cats:
-            v = clean_num(r[1]) if len(r) > 1 else None
-            if v is not None:
-                out.append(f"{base} {int(v)}")
-    return ", ".join(out) if out else None
+    sec = next((i for i, r in enumerate(rows)
+                if r and str(r[0]).strip() == "Non-Periodic Trends"), None)
+    if sec is None:
+        return None
+    heads = [i for i in range(sec + 1, len(rows)) if len(rows[i]) > 1
+             and str(rows[i][1]).strip() == "Current" and ":" in str(rows[i][0])]
+    def symbol(text: str) -> str:  # 'BRK.B' and 'BRK-B' are one share class
+        return re.sub(r"[^A-Z0-9]", "", text.upper())
+
+    own = next((i for i in heads
+                if symbol(str(rows[i][0]).strip().rsplit(":", 1)[1]) == symbol(bundle.ticker)),
+               None)
+    if own is None:
+        held = ", ".join(str(rows[i][0]).strip() for i in heads) or "none"
+        return None, None, (f"not read — no Trends block headed with {bundle.ticker} "
+                            f"(blocks: {held})")
+    end = next((i for i in heads if i > own), len(rows))
+    rec_i = next((i for i in range(own + 1, end)
+                  if rows[i] and str(rows[i][0]).strip() == "Recommendation"), None)
+    if rec_i is None:
+        return None
+    rec = str(rows[rec_i][1]).strip() if len(rows[rec_i]) > 1 else ""
+    counts: list[str] = []
+    for r in rows[rec_i + 1:end]:
+        cat = _rating_category(r[0]) if r else None
+        if cat is None:
+            break
+        if (v := clean_num(r[1]) if len(r) > 1 else None) is not None:
+            counts.append(f"{cat} {int(v)}")
+    return (None if rec in _UNAVAILABLE_CELLS else rec), (", ".join(counts) or None), None
+
+
+def _rating_distribution(bundle: CiqBundle) -> str | None:
+    """Analyst rating counts from Trends 'Non-Periodic Trends' (Buy/Outperform/Hold/…) — the
+    LISTING'S OWN block only (:func:`_listing_rating`). NOTE: in the real CIQ Estimates export the
+    rating rows live in TRENDS, not Consensus as the module contract assumed — read here by label
+    (never positionally), Current column."""
+    got = _listing_rating(bundle)
+    return (got[1] or got[2]) if got is not None else None
 
 
 def consensus_stats(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[str]:
@@ -5551,16 +5701,20 @@ def comps_shares_outstanding(bundle: CiqBundle) -> Sourced[float]:
 
 def _fin_short(cell: Any) -> str:
     """A Financials period-header cell → a compact label: '12 months Dec-31-2022' → 'FY22';
-    '3 months Q1 Mar-31-2026' → 'Q1-26'; 'LTM …' → 'LTM'; a bare serial (Balance Sheet 'as of')
-    → 'FY25' (Dec) or 'Mar-26' (interim)."""
+    '3 months Q1 Mar-31-2026' → 'Q1-26' and '3 months FQ1/CQ3 Aug-31-2026' → 'Q1-27', each quarter
+    under its FISCAL year (:func:`header_period`); 'LTM …' → 'LTM'; a bare serial (Balance Sheet
+    'as of') → 'FY25' (Dec) or 'Mar-26' (interim)."""
     c = str(cell).replace("\n", " ").strip()
-    if "LTM" in c.upper():
+    p = header_period(cell)
+    if p.kind == "LTM":
         return "LTM"
-    qm = re.search(r"\bQ(\d)\b", c)
+    if p.kind == "Q":
+        return f"Q{p.quarter}-" + (f"{p.fiscal_year % 100:02d}" if p.fiscal_year else "?")
+    if p.kind == "FY" and p.fiscal_year is not None:
+        return f"FY{p.fiscal_year % 100:02d}"
     ym = re.search(r"(\d{4})", c)
-    if "months" in c.lower() or qm:
-        yy = ym.group(1)[2:] if ym else "?"
-        return f"Q{qm.group(1)}-{yy}" if qm else f"FY{yy}"
+    if "months" in c.lower():
+        return f"FY{ym.group(1)[2:] if ym else '?'}"
     d = excel_date(cell)
     if d is not None:
         return f"FY{d.year % 100:02d}" if d.month == 12 else f"{d:%b-%y}"
@@ -6001,7 +6155,8 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
         return Sourced.unknown(note="Income Statement (quarterly): fewer than 2 quarters")
     cols = [c for c, _s, _l, _r in periods]
     recl = [r for _c, _s, _l, r in periods]
-    qtoks = [_quarter_token(rows[hdr][c]) for c in cols]  # Q1..Q4 per col, for the same-quarter YoY
+    # (fiscal quarter, fiscal year) per column, for the same-quarter YoY
+    qtoks = [(p.quarter, p.fiscal_year) for p in (header_period(rows[hdr][c]) for c in cols)]
     columns = [s + (" (R)" if r else "") for _c, s, _l, r in periods]
 
     def qrow(label: str) -> list[float | None]:
@@ -6037,9 +6192,12 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
     for i in range(len(rev)):
         cur = rev[i]
         prior = rev[i - 4] if i >= 4 else None
-        # YoY is same-quarter ONLY: col i and col i-4 must be the SAME fiscal quarter. A gap or a
-        # duplicated/restated column would otherwise put a cross-quarter number under a "YoY" label.
-        same_q = i >= 4 and qtoks[i] is not None and qtoks[i] == qtoks[i - 4]
+        # YoY is same-quarter ONLY: col i-4 must be the SAME fiscal quarter of the PRIOR fiscal
+        # year. A gap or a duplicated/restated column would otherwise put a cross-quarter (or a
+        # two-year) number under a "YoY" label.
+        q_now, fy_now = qtoks[i]
+        same_q = (i >= 4 and q_now is not None and fy_now is not None
+                  and qtoks[i - 4] == (q_now, fy_now - 1))
         if cur is None or prior is None or not prior or not same_q:
             yoy.append("—")
         elif recl[i] != recl[i - 4]:

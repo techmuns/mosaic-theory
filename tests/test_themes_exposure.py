@@ -46,9 +46,16 @@ from vinci.themes.schemas import (
     ExposureFact,
 )
 
+# Each stub filing carries the load-bearing tokens of the facts the tests below cite to it. It used
+# to read only "On January 10, 2026 ..." and passed because a ref with no EDGAR accession SKIPPED
+# grounding (audit G-D5) — every cited fact is grounded now. No AI-datacenter vocabulary here: the
+# leak tests read this text inside the TOY and defense prompts.
 _STREAM = [
-    ("8-K 2026-01-15 (acc A1)", "On January 10, 2026 ..."),
-    ("10-K 2025-11-01 (acc A2)", "Our business ..."),
+    ("8-K 2026-01-15 (acc A1)", "On January 10, 2026 the company signed a lease with AWS, a CEPA "
+                                "for fuel cells, and an agreement with its largest OEM customer "
+                                "for GPU racks."),
+    ("10-K 2025-11-01 (acc A2)", "Our business includes image-sensor ICs; we appointed an SVP to "
+                                 "lead the new unit."),
 ]
 
 # a DEMAND-shaped toy theme — deliberately NOT a value chain: no layers, non-chain prefilter terms.

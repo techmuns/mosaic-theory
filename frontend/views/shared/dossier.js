@@ -61,6 +61,57 @@ const EXTRACTION_VERSIONS = [
     "named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the " +
     "forward history's latest close is `latest_observed_close`, never `current`; every writer " +
     "saves through one write"],
+  ["2026-10-29.D-D1",
+    "an unchecked quarter of the ex-lease history whose lease cell CIQ states as UNAVAILABLE " +
+    "is left unpriced (`lease_basis.observations`), never priced on the cells it does state " +
+    "with the missing one read as zero; the quarter names the cell (`unpriced_reason`) and " +
+    "the block its date (`unpriced_dates`) (audit D-D1)"],
+  ["2026-10-29.D-D5",
+    "the materiality guard runs on both thresholds: a summary row and an unusual line at 5% " +
+    "of the revenue in the column each reads are material (`revenue` was never passed), and " +
+    "a missing annual Income Statement, revenue row or unusual-items block refuses the build " +
+    "instead of passing it (audit D-D5)"],
+  ["2026-10-29.G-V1",
+    "a transcript row's call, following paragraph and period come from ONE located quote; " +
+    "its period stands only where the quote states it, else none; each value figure equals " +
+    "a figure of its quote in the quote's unit (audit G-V1, G-D1, G-D2) · a synthesis " +
+    "citation is a ref of the layer, never a fragment, and each figure traces to the numbers " +
+    "the fact it cites states, never its dates or ids; an exposure fact cites one filing and " +
+    "is always grounded (audit G-D5, G-D6)"],
+  ["2026-10-29.E2",
+    "release and 10-Q figures read from what their own text states (audit E2): a footnote " +
+    "digit after a measure's name and a trailing-twelve-month lead-in (D5), a loss stated in " +
+    "words (D10), 'Revenues of' with the closing company profile refused (D11), a one-off " +
+    "whose amount the charge noun names (D12), the ≤12m wall's stated zero and its " +
+    "principal-and-interest basis (D15, `maturity_wall.basis`), a concentration column's " +
+    "role from its header, a refused row named (D16); a non-positive LTM EBITDA has no " +
+    "leverage multiple (E1-D13)"],
+  ["2026-10-29.A-D14",
+    "the dossier-output changes merged after 2026-10-09.3 that appended no row: 45 " +
+    "commits to vinci/dossier, vinci/edgar and vinci/ciq (#706 … #855, 2026-10-11 → " +
+    "10-29), among them #819, #826, #827, #831, #834 and #836 — from here a watched " +
+    "extraction module that moves with no row appended reds " +
+    "tests/test_extraction_version_drift.py"],
+  ["2026-10-29.A-D3",
+    "one parser reads every Financials period header: an 'FQ4/CQ2' quarter is a quarter, " +
+    "with its year-on-year growth, and a quarter carries its fiscal year (A-X2); a " +
+    "same-quarter YoY reads only the prior fiscal year's quarter, never one two to four " +
+    "years back"],
+  ["2026-10-29.A-D6",
+    "a bridged anchor input names the CIQ export it was read from — D&A, OCF and capex " +
+    "the annual workbook, the balance sheet the quarterly one — never the quarterly file " +
+    "for all"],
+  ["2026-10-29.A-D8",
+    "every guided metric the Guidance sheet lays out is read, found by the structure of " +
+    "the sheet rather than a fixed list; a metric with no decided delivery direction " +
+    "shows its guide with no MET/MISSED record"],
+  ["2026-10-29.A-D10",
+    "the recommendation and the rating counts come from the block of the listing itself " +
+    "in Trends, never from the industry or another listing"],
+  ["2026-10-29.A-X1",
+    "a Financials export whose filename and statements state different period types is " +
+    "refused, and a lone export never answers for the other period type (A-D11), so an " +
+    "annual balance-sheet date prints as a date, never a raw serial"],
   ["2026-10-29.G-D3",
     "each earnings call reaches the driver extraction and the synthesis WHOLE — prepared " +
     "remarks and the full Q&A — where it was cut at 12,000 characters unmarked; a call past " +
@@ -2430,6 +2481,41 @@ function drawdownIdio(m, refDate, sleeve) {
 // web/PDF thousands grouping matches the .md for a $1B+ bucket total (e.g. "$1,234.5M").
 const _mM = (v) => (v == null ? DASH : `$${Number(v).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}M`);
 
+// (audit D-D4) a wall total sums the STATED principals only — CIQ's '-' is no principal, never $0 —
+// and says how many it leaves out; a group with none stated prints no dollar figure (mirrors
+// render._wall_total / _unstated_note / _FACILITY_TYPES).
+const _FACILITY_TYPES = new Set(["Revolving Credit", "Commercial Paper"]);
+const _wallInst = (x) => (Array.isArray(x) ? x[1] : x);
+// [stated $M total, how many stated, how many with no principal]
+function wallSum(xs) {
+  const stated = xs.map(_wallInst).filter((i) => i.principal_musd != null);
+  return [stated.reduce((a, i) => a + i.principal_musd, 0), stated.length, xs.length - stated.length];
+}
+function wallTotal(xs) {
+  const [sum, n, gap] = wallSum(xs);
+  if (!gap) return _mM(sum);
+  const tail = `${gap} with no principal stated`;
+  return n ? `${_mM(sum)} + ${tail}` : tail;
+}
+function wallChip(label, xs) {
+  const [sum, n, gap] = wallSum(xs);
+  const more = gap ? `<span>${n ? "+ " : ""}${gap} with no principal stated</span>` : "";
+  return `<div class="wall-yr"><span>${label}</span><b>${n ? _mM(sum) : DASH}</b>${more}</div>`;
+}
+const _wallShort = (n, cap = 34) =>
+  (n.length <= cap ? n : n.slice(0, cap).split(" ").slice(0, -1).join(" ") + "…");
+// the note's two fixed sentences — copies of render._UNSTATED_LEAD / _UNDRAWN, bound by test_parity_pins
+const _UNSTATED_LEAD = "no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0";
+const _UNDRAWN = "On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which.";
+const _GAP_ALSO = ", or principal the panel does not state";
+function unstatedNote(insts) {
+  const gap = insts.filter((i) => i.principal_musd == null);
+  if (!gap.length) return "";
+  let note = `${_UNSTATED_LEAD}: ${gap.map((i) => `${escapeHtml(_wallShort(i.description))} (${escapeHtml(i.type)})`).join(", ")}.`;
+  if (gap.some((i) => _FACILITY_TYPES.has(i.type))) note += ` ${_UNDRAWN}`;
+  return `${note} `;
+}
+
 // (E2) deterministic month-precision maturity wall from the structured instruments (mirrors
 // render._maturity_wall_lines): matured-pre-reference / due this ref year / due later years / undated.
 function maturityWall(cs, refDate, { column = false } = {}) {
@@ -2446,28 +2532,24 @@ function maturityWall(cs, refDate, { column = false } = {}) {
     const m = i.maturity_date;
     (m < refDate ? matured : m.slice(0, 4) === refYear ? thisYear : later).push([m, i]);
   }
-  const sum = (xs) => xs.reduce((a, x) => a + ((Array.isArray(x) ? x[1] : x).principal_musd || 0), 0);
   const li = [];
   if (matured.length) {
-    li.push(`<li><b>matured (pre-reference): ${_mM(sum(matured))}</b> — resolution not in this data; verify each against its 8-K (never assume repaid/defaulted):<ul>` +
+    li.push(`<li><b>matured (pre-reference): ${wallTotal(matured)}</b> — resolution not in this data; verify each against its 8-K (never assume repaid/defaulted):<ul>` +
       matured.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)).map(([m, i]) => `<li>${i.maturity_date}: ${_mM(i.principal_musd)} ${escapeHtml(i.description.slice(0, 34))}</li>`).join("") + "</ul></li>");
   }
-  if (thisYear.length) li.push(`<li>due ≤12m (through ${refYear}): ${_mM(sum(thisYear))} — ${thisYear.map(([m, i]) => `${i.maturity_date} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
+  if (thisYear.length) li.push(`<li>due ≤12m (through ${refYear}): ${wallTotal(thisYear)} — ${thisYear.map(([m, i]) => `${i.maturity_date} ${_mM(i.principal_musd)}`).join(", ")}</li>`);
   // (buy-side layout) the by-year run is a same-schema series → a year→amount STRIP, not list
   // lines; matured/≤12m keep their loud list form above (they carry warnings, not just amounts).
   const byYr = {};
   for (const [m, i] of later) (byYr[m.slice(0, 4)] ||= []).push([m, i]);
-  const chips = Object.keys(byYr).sort().map((yr) =>
-    `<div class="wall-yr"><span>${yr}</span><b>${_mM(sum(byYr[yr]))}</b></div>`);
-  const shortName = (n, cap = 34) =>
-    (n.length <= cap ? n : n.slice(0, cap).split(" ").slice(0, -1).join(" ") + "…");
+  const chips = Object.keys(byYr).sort().map((yr) => wallChip(yr, byYr[yr]));
   let undatedFoot = "";
   if (undated.length) {
-    chips.push(`<div class="wall-yr"><span>undated†</span><b>${_mM(sum(undated))}</b></div>`);
-    undatedFoot = `† floor — no panel maturity: ${undated.map((i) => `${escapeHtml(shortName(i.description))} ${_mM(i.principal_musd)}`).join(", ")}. `;
+    chips.push(wallChip("undated†", undated));
+    undatedFoot = `† floor — no panel maturity: ${undated.map((i) => `${escapeHtml(_wallShort(i.description))} ${_mM(i.principal_musd)}`).join(", ")}. `;
   }
   const strip = chips.length ? `<div class="wall-strip">${chips.join("")}</div>` : "";
-  const foot = `<div class="wall-foot">${undatedFoot}reconciliation: itemized ${_mM(sum(inst.value))} (panel ${escapeHtml(cs.detail_as_of || "")}) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans.</div>`;
+  const foot = `<div class="wall-foot">${undatedFoot}${unstatedNote(inst.value)}reconciliation: itemized ${wallTotal(inst.value)} (panel ${escapeHtml(cs.detail_as_of || "")}) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans${inst.value.some((i) => i.principal_musd == null) ? _GAP_ALSO : ""}.</div>`;
   const body = `${li.length ? `<ul class="kv-list">${li.join("")}</ul>` : ""}${strip}${foot}`;
   // column mode (buy-side two-column survival card): the wall carries its own sub-head and fills
   // the right column — no label|value grid wasting the column's width

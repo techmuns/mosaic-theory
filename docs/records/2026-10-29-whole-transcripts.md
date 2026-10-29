@@ -19,7 +19,10 @@ superseded-by:
   G-D4), not only an empty slice.
 - The synthesis prompt says the calls are whole. The comment that called the old slice the
   "WHOLE transcript" is corrected.
-- Extraction version `2026-10-29.G-D3`.
+- Extraction version `2026-10-29.G-D3`, after B4's six A-rows; `tests/test_extraction_version_drift.py` re-pinned at it
+  (48 modules).
+- STATE §5.0 row 41 (the combined rebuild) carries the page note: every page's
+  transcript input grows, and AMZN's driver phase is near its output cap.
 
 **WHY.**
 - All 48 committed calls were cut, with no marker. In 37 of them the Q&A began after the cut, and
