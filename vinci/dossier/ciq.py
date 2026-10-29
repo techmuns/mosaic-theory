@@ -334,8 +334,10 @@ def excel_date(cell: Any) -> date | None:
 
 
 #: CIQ's unit line over a statement — "In Millions of the reported currency, except per share
-#: items." on all 204 statement sheets of the 34 non-test folders (2026-10-29).
-_STATED_UNIT = re.compile(r"^In (\w+) of the reported currency", re.IGNORECASE)
+#: items." on all 204 statement sheets of the 34 non-test folders (2026-10-29). An export converted
+#: to a stated currency names that currency instead ("In Thousands of US Dollar"), so the
+#: currency is not part of the match.
+_STATED_UNIT = re.compile(r"^In (Units|Thousands|Millions|Billions) of ", re.IGNORECASE)
 
 
 def stated_unit(rows: list[list[Any]]) -> str | None:

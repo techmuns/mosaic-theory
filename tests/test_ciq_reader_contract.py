@@ -938,3 +938,16 @@ def test_an_export_stating_no_unit_is_left_to_the_magnitude_screen(tmp_path: Pat
     got = ciq_balance.extract(_pair(tmp_path, None, None), gen.TICKER)
     assert got.ok and got.scale_check == CHECK_AGREE
     assert any(c.startswith("unit: unstated") for c in got.checks), got.checks
+
+
+@pytest.mark.parametrize(("line", "want"), [
+    ("In Millions of the reported currency, except per share items.", "Millions"),
+    ("In Thousands of US Dollar, except per share items.", "Thousands"),   # a converted export
+    ("In Millions of Euro, except per share items.", "Millions"),
+    ("Units: S&P Capital IQ (Default)", None),
+])
+def test_the_unit_line_is_read_whatever_currency_it_names(line: str, want: str | None) -> None:
+    """Review round 0: an export converted to a stated currency names that currency, not "the
+    reported currency" — its unit must still be read, never fall back to unstated."""
+    from vinci.dossier.ciq import stated_unit
+    assert stated_unit([[], [line]]) == want
