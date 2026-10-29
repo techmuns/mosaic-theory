@@ -109,7 +109,10 @@ superseded-by:
   file read.** The fixture's date cells are whole serials, as CIQ's are, and inventing a time of day
   to make a file-level test fire would be fabricating a shape.
 - **Toolchain:** ruff (`vinci tests frontend`) and `mypy --strict vinci` (215 files) are clean.
-  Full `pytest -m "not network"`: FULL_SUITE_TOTALS.
+  Full `pytest -m "not network"` at 09f624e2 is green: 7,847 passed, 532 skipped, 15 xfailed,
+  38 deselected, 0 failed. The 0fa8ce4a run in a fresh worktree had 534 skips. The two missing here
+  are environmental: this worktree has a built `frontend/snapshots`, which `test_run_visibility.py:170`
+  and `test_sleeves.py:1187` skip without. None of the CIQ-data skips moved.
 - **Skip reasons are now printed:** `-rs` prints `SKIPPED [n] file:line: reason` lines, so the CI
   log will show which tests skipped and why.
 
