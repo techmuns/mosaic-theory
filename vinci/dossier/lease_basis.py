@@ -21,7 +21,9 @@ WHAT IS INSIDE CIQ's TEV IS CHECKED, NOT ASSUMED. CIQ's Total Debt carries two l
 Port. of Leases', 'Long-Term Leases'). Those rows less EDGAR's finance leases must equal EDGAR's
 operating-lease liability on the same date, within :data:`RECONCILE_TOL`; where CIQ files its
 finance leases outside the lease rows, the rows alone must equal it (UBER). A date that matches
-neither is UNRECONCILED and left out of the band; too many of them and there is no band.
+neither is UNRECONCILED and left out of the band; too many of them and there is no band. An
+UNCHECKED date (EDGAR has no complete figure) with a lease cell CIQ states as UNAVAILABLE is left
+unpriced too: the missing cell is never read as zero (audit D-D1).
 
 MATERIALITY DECIDES WHETHER R1 NEEDS THIS AT ALL. Rent below :data:`MATERIALITY` of EBITDA moves
 the anchor by roughly that fraction or less, so an immaterial name keeps CIQ's history (no churn
@@ -314,11 +316,10 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
             continue
         # the rows CIQ STATES, summed for the check against EDGAR only: an UNAVAILABLE cell is
         # not a zero (`ciq._UNAVAILABLE_CELLS`), so a quarter missing one is priced only where
-        # EDGAR vouches for the sum (`stated`, read in PASS 2)
+        # EDGAR vouches for the sum (PASS 2)
         rows_in.append((d, t, sum(v for v in ltm_parts if v is not None),
                         sum((v for v in (cur_l.get(d), lt_l.get(d)) if v is not None), 0.0),
                         _near(op_edgar, d, _OPERATING_NEAR_DAYS)))
-    stated = {d for d, *_ in rows_in if cur_l.get(d) is not None and lt_l.get(d) is not None}
     fin_at = {d: (_near(fin_edgar, d, _FINANCE_NEAR_DAYS) or 0.0) if fin_edgar else 0.0
               for d, *_ in rows_in}
     fin_dated = {d: _finance_dated(fin_edgar, d) for d, *_ in rows_in}
@@ -344,8 +345,9 @@ def observations(bundle: CiqBundle, facts: dict[str, Any]) -> list[LeaseObservat
         # pricing it would take the missing cell as zero — WLK's 2025-09-30 states 'Long-Term
         # Leases' $709M and '-' for the current portion its neighbours put at $136-138M. A
         # reconciled quarter is EDGAR-vouched; a pre-adoption one removes nothing either way.
+        stated = cur_l.get(d) is not None and lt_l.get(d) is not None
         usable = (sp.status != "unreconciled" and ltm > 0
-                  and (d in stated or sp.status != "unchecked"))
+                  and (stated or sp.status != "unchecked"))
         out.append(LeaseObservation(
             balance_sheet_date=d.isoformat(), pricing_date=pd.isoformat() if pd else None,
             tev=round(t, 3), leases_in_tev=round(rows_sum, 3),
