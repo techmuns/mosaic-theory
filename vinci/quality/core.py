@@ -230,6 +230,12 @@ def _score_check(c: Check, items: dict[str, Any]) -> dict[str, Any]:
             not_applicable.setdefault(r.not_applicable, []).append(t)
             by_name[t] = {"not_applicable": r.not_applicable}
             continue
+        # A KEY OUTSIDE THE FOUR STATUSES IS REFUSED (audit BC-D11): rows are built from
+        # STATUSES, so a check returning 'confirmd' had its units dropped from the row and the
+        # fleet without a word
+        if unknown := sorted(set(r.counts) - set(STATUSES)):
+            raise ValueError(f"check {c.id!r} scored {t!r} with {unknown} — not a status "
+                             f"({list(STATUSES)})")
         row = {s: r.counts.get(s, 0) for s in STATUSES}
         if r.excluded:
             row["excluded"] = r.excluded

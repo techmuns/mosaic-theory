@@ -22,6 +22,10 @@ class _NoWorkbook:
     def workbook(self, kind: str, freq: str | None = None) -> None:
         return None
 
+    def sheet(self, kind: str, sheet_name: str, freq: str | None = None) -> None:
+        from vinci.dossier.ciq import CiqUnavailableError
+        raise CiqUnavailableError(f"no '{kind}' CIQ workbook")  # the unit line is read too
+
 
 def _extract(monkeypatch: pytest.MonkeyPatch, *, revenue: float | None,
              cash: float | None) -> Any:

@@ -209,6 +209,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "refused, and a lone export never answers for the other period type (A-D11), so an "
         "annual balance-sheet date prints as a date, never a raw serial",
     ),
+    (
+        "2026-10-29.BC-D10",
+        "the anchor's CIQ bridge reads each statement's own unit line and refuses a sheet stated "
+        "in another unit, or two exports in different units — the magnitude screen against revenue "
+        "could not see either (audit BC-D10); every export on file states Millions, so no value "
+        "moves",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

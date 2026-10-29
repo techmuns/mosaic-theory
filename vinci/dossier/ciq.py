@@ -333,6 +333,22 @@ def excel_date(cell: Any) -> date | None:
     return None
 
 
+#: CIQ's unit line over a statement — "In Millions of the reported currency, except per share
+#: items." on all 204 statement sheets of the 34 non-test folders (2026-10-29).
+_STATED_UNIT = re.compile(r"^In (\w+) of the reported currency", re.IGNORECASE)
+
+
+def stated_unit(rows: list[list[Any]]) -> str | None:
+    """The unit a statement sheet states for its money figures ('Millions', 'Thousands', …), read
+    off CIQ's own unit line in the sheet's settings block — None when the sheet states none (audit
+    BC-D10: the scale check measured magnitude only, so an export wholly in another unit passed)."""
+    for row in rows[:14]:
+        for cell in row:
+            if isinstance(cell, str) and (m := _STATED_UNIT.match(cell.strip())):
+                return m.group(1).capitalize()
+    return None
+
+
 def period_type(income_rows: list[list[Any]]) -> str | None:
     """Verbatim Period-Type read: scan for the "Period Type:" label cell, return the next cell
     (notes lines 136-138 — ground frequency on this cell, NEVER on column-count/shape inference)."""
