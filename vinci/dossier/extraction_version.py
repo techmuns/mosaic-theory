@@ -130,6 +130,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "saves through one write",
     ),
     (
+        "2026-10-29.D-D1",
+        "an unchecked quarter of the ex-lease history whose lease cell CIQ states as UNAVAILABLE "
+        "is left unpriced (`lease_basis.observations`), never priced on the cells it does state "
+        "with the missing one read as zero; the quarter names the cell (`unpriced_reason`) and "
+        "the block its date (`unpriced_dates`) (audit D-D1)",
+    ),
+    (
         "2026-10-29.G-V1",
         "a transcript row's call, following paragraph and period come from ONE located quote; "
         "its period stands only where the quote states it, else none; each value figure equals "
