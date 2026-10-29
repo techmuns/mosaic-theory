@@ -409,7 +409,10 @@ def ooxml_values(path: Path) -> dict[str, list[tuple[Any, ...]]]:
     import openpyxl
 
     book = openpyxl.load_workbook(path, read_only=True, data_only=True)
-    return {ws.title: list(ws.iter_rows(values_only=True)) for ws in book.worksheets}
+    try:  # a read-only workbook holds its zip open until closed (PR #853 review, round 1)
+        return {ws.title: list(ws.iter_rows(values_only=True)) for ws in book.worksheets}
+    finally:
+        book.close()
 
 
 def drift(committed: Path, fresh: Path) -> list[str]:

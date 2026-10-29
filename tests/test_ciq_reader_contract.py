@@ -89,6 +89,24 @@ def test_the_fixture_folder_holds_only_generator_outputs() -> None:
     assert held == {*gen.OUTPUTS, "generate.py"}
 
 
+def test_the_drift_check_closes_each_xlsx_it_opens(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A read-only openpyxl workbook holds its zip open until it is closed or collected, so the
+    drift check's reader closes it itself (PR #853 review, round 1)."""
+    import openpyxl
+
+    opened: list[Any] = []
+    real = openpyxl.load_workbook
+
+    def spy(*args: Any, **kwargs: Any) -> Any:
+        opened.append(book := real(*args, **kwargs))
+        return book
+
+    monkeypatch.setattr(openpyxl, "load_workbook", spy)
+    gen.ooxml_values(XLSX)
+    assert len(opened) == 1
+    assert opened[0]._archive.fp is None, "the .xlsx is still open after ooxml_values returned"
+
+
 @pytest.mark.parametrize(("path", "magic", "fmt"), [
     (ANNUAL, b"\xd0\xcf\x11\xe0", CiqFormat.BIFF_XLS),
     (QUARTERLY, b"\xd0\xcf\x11\xe0", CiqFormat.BIFF_XLS),
@@ -248,9 +266,27 @@ def test_a_filename_that_contradicts_the_period_type_cell_is_not_trusted(tmp_pat
     shutil.copyfile(ANNUAL, misnamed)
     try:
         got = _bundle(misnamed)
-    except RuntimeError:  # refused at construction — one acceptable fix
+    except RuntimeError as exc:
+        # Refused at construction is one acceptable fix, but only a refusal that names the
+        # disagreement. Anything else re-raises: a failure the xfail (raises=AssertionError)
+        # does not absorb, so an unrelated regression cannot pass here as the fix.
+        if not {"annual", "quarterly"} <= set(re.findall(r"[a-z]+", str(exc).lower())):
+            raise
         return
     assert [w.freq for w in got.workbooks] == ["annual"]
+
+
+def test_the_a_x1_pin_never_takes_an_unrelated_failure_for_its_fix(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The A-X1 pin accepts a refusal at construction as a fix — but only a refusal ABOUT the
+    disagreement. An unrelated loader failure must surface, not pass the pin as 'fixed' (an XPASS
+    a reviewer would read as the defect closing). PR #853 review, round 1."""
+    def unrelated(cls: type[CiqBundle], ticker: str, paths: list[Path]) -> CiqBundle:
+        raise CiqParseError("an unrelated loader failure")
+
+    monkeypatch.setattr(CiqBundle, "from_files", classmethod(unrelated))
+    with pytest.raises(CiqParseError, match="unrelated"):  # the mark leaves the function unwrapped
+        test_a_filename_that_contradicts_the_period_type_cell_is_not_trusted(tmp_path)
 
 
 # --- excel_date --------------------------------------------------------------------------------

@@ -136,6 +136,11 @@ macOS, Python 3.12, openpyxl 3.1.5, xlwt 1.3.0.
 - **xlwt is unmaintained.** It works on Python 3.12 today. If a future Python breaks it, the
   reproducibility tests fail red and do not skip. The committed BIFF files keep reading, since the
   reader is xlrd.
+- **DEFERRED (review round 1): `ciq.read_sheets` never closes an `.xlsx` it opens.** It opens the
+  workbook `read_only=True` (`ciq.py:179`), which keeps its zip open until cyclic GC runs; probed on
+  2026-10-29, the handle was still open after the call returned and closed only at `gc.collect()`,
+  with no ResourceWarning. The generator's own reader is fixed here. The reader's copy is CIQ-reader
+  code, so it belongs to audit batch B4. It is latent, because no real export is OOXML.
 - **The 480 licensed-data skips remain, by design.** Most pin values per real ticker, which no
   synthetic file can stand in for. This build adds the decode layer they never had in CI; it does
   not convert them.
