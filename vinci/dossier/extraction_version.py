@@ -136,6 +136,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "with the missing one read as zero; the quarter names the cell (`unpriced_reason`) and "
         "the block its date (`unpriced_dates`) (audit D-D1)",
     ),
+    (
+        "2026-10-29.D-D5",
+        "the materiality guard runs on both thresholds: a summary row and an unusual line at 5% "
+        "of the revenue in the column each reads are material (`revenue` was never passed), and "
+        "a missing annual Income Statement, revenue row or unusual-items block refuses the build "
+        "instead of passing it (audit D-D5)",
+    ),
     # THE STAMP STOOD STILL FOR 45 COMMITS (audit A-D14). Every commit to vinci/dossier, vinci/edgar
     # and vinci/ciq merged after 2026-10-09.3 (#706 … #855, 2026-10-11 → 10-29) appended no row,
     # and at least six changed output (#819, #826, #827, #831, #834, #836), so the 155 layer

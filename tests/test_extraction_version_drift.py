@@ -77,14 +77,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "2c69d189bf33"
+PINNED_TABLE = "62e4d18d5c77"
 PINNED_AT = "2026-10-29.A-X1"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "31ad4e6be5a2",
-    "vinci/dossier/assemble.py": "8aad5818f641",
+    "vinci/dossier/assemble.py": "5e0d0468ace8",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "77def45663a9",
     "vinci/dossier/ciq.py": "4208de3f08a1",
@@ -105,7 +105,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
-    "vinci/dossier/materiality.py": "9a26612228a7",
+    "vinci/dossier/materiality.py": "274e1447b37f",
     "vinci/dossier/mechanical.py": "93fb67627fb2",
     "vinci/dossier/midcycle.py": "dfa24e1bc15a",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",

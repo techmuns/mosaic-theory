@@ -66,6 +66,11 @@ const EXTRACTION_VERSIONS = [
     "is left unpriced (`lease_basis.observations`), never priced on the cells it does state " +
     "with the missing one read as zero; the quarter names the cell (`unpriced_reason`) and " +
     "the block its date (`unpriced_dates`) (audit D-D1)"],
+  ["2026-10-29.D-D5",
+    "the materiality guard runs on both thresholds: a summary row and an unusual line at 5% " +
+    "of the revenue in the column each reads are material (`revenue` was never passed), and " +
+    "a missing annual Income Statement, revenue row or unusual-items block refuses the build " +
+    "instead of passing it (audit D-D5)"],
   ["2026-10-29.A-D14",
     "the dossier-output changes merged after 2026-10-09.3 that appended no row: 45 " +
     "commits to vinci/dossier, vinci/edgar and vinci/ciq (#706 … #855, 2026-10-11 → " +
