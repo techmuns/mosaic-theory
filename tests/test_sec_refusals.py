@@ -16,6 +16,7 @@ Every test runs on a VIRTUAL clock over a mock transport — nothing here reache
 
 from __future__ import annotations
 
+import email.utils
 import json
 import threading
 import time
@@ -112,6 +113,16 @@ def test_a_retry_after_is_honoured(tmp_path: Path, clock: _VirtualClock) -> None
         httpx.Response(429, headers={"Retry-After": "30"}), httpx.Response(200, text="ok")), sent)
     assert http.get_text(_CF_URL) == "ok"
     assert 30.0 <= sent[1][0] - sent[0][0] < 31.0
+
+
+def test_a_retry_after_given_as_a_date_is_honoured(tmp_path: Path, clock: _VirtualClock) -> None:
+    """⊕ `Retry-After` may be an HTTP date; it is read as the seconds until then."""
+    sent: list[tuple[float, str]] = []
+    when = email.utils.formatdate(45.0, usegmt=True)  # 45 s after the virtual clock's 0
+    http = _client(tmp_path, clock, _sequence(
+        httpx.Response(429, headers={"Retry-After": when}), httpx.Response(200, text="ok")), sent)
+    assert http.get_text(_CF_URL) == "ok"
+    assert 45.0 <= sent[1][0] - sent[0][0] < 46.0
 
 
 def test_sec_fair_access_403_is_a_refusal_not_a_permanent_error(

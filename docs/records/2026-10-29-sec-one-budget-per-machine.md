@@ -166,3 +166,13 @@ one-second window.
 - efts' own 1-a-second pace is per client: eight efts clients may send up to 8 a second between
   them, which is still inside the shared total.
 - The audit of the broad handlers above.
+- **Redirect hops are not paced.** The SEC check reads the URL a client is asked for; a hop
+  `httpx` follows on a redirect takes no slot of its own. The read paths here request final URLs.
+  Pacing every hop needs an `httpx` request hook. (Code review, round 0.)
+- **One transient failure now stops the whole screen.** The weekly screen
+  (`vinci/screens/run.py`) has no per-name handler, so a companyfacts read that fails past its
+  retries now stops the run instead of recording "no XBRL". That is loud, as intended. A per-name
+  UNKNOWN that carries the real reason belongs in that file. (Code review, round 0.)
+- **The User-Agent check runs at import.** `theme_intelligence/config.py` calls `sec_user_agent()`
+  at import, so an invalid value stops every theme-intelligence command, including the
+  Tiingo-only steps. (Code review, round 0.)

@@ -143,14 +143,17 @@ class SharedPace:
                     next_at, held_until = (float(x) for x in os.pread(fd, 64, 0).split())
                 except ValueError:  # a new file, or a write cut short by a crash
                     next_at = held_until = 0.0
-                if max(next_at, held_until) > now + _SEC_MAX_HOLD_SEC + self._interval:
+                stepped_back = max(next_at, held_until) > now + _SEC_MAX_HOLD_SEC + self._interval
+                if stepped_back:
                     next_at = held_until = now  # nothing legitimate is that far ahead
                 held_until = max(held_until, now + hold)
                 wait = max(next_at, held_until) - now
-                if take and wait <= 0:
+                taken = take and wait <= 0
+                if taken:
                     next_at, wait = now + self._interval, 0.0
-                os.ftruncate(fd, 0)
-                os.pwrite(fd, f"{next_at!r} {held_until!r}".encode(), 0)
+                if taken or hold > 0 or stepped_back:  # a waiter's check changes nothing
+                    os.ftruncate(fd, 0)
+                    os.pwrite(fd, f"{next_at!r} {held_until!r}".encode(), 0)
                 return wait
             finally:
                 fcntl.flock(fd, fcntl.LOCK_UN)

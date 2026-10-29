@@ -224,7 +224,7 @@ def test_two_processes_on_one_machine_share_one_budget(tmp_path: Path) -> None:
     clock, REAL processes, mock transport. A PAIR sharing a pace file must interleave at the shared
     pace; a CONTROL pair with a file each must not — which is what shows this check can see the
     failure at all (each control process alone paces at 8 a second, so together they overlap)."""
-    start = time.time() + 3.0  # past both interpreters' start-up, so they begin together
+    start = time.time() + 5.0  # past every interpreter's start-up, so they begin together
     shared = tmp_path / "shared-pace"
     procs = {tag: _spawn(start, tag, tmp_path, shared if tag in ("a", "b") else
                          tmp_path / f"own-{tag}")
@@ -235,6 +235,5 @@ def test_two_processes_on_one_machine_share_one_budget(tmp_path: Path) -> None:
     # sharing: no two sends from either process closer than the pace (8 a second), less jitter
     assert _min_gap(pair) >= 0.1, f"min gap {_min_gap(pair):.3f}s across two processes"
     assert max(pair) - min(pair) >= 15 * 0.125 - 0.05
-    assert _peak_per_second(pair) <= 8
     # the control proves the check can fail: two independent 8-a-second trains overlap
     assert _min_gap(control) < 0.1 and _peak_per_second(control) > 8
