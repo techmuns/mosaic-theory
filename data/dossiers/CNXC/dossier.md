@@ -415,12 +415,13 @@ _industry = 22 Data Processing and Outsourced Services companies (GICS industry)
 _8 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $0.0M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): 1 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2025-09-25 (386d before ref): – Sellers Note
   - due 2028: $537.0M
-  - due 2030: $0.0M
-  - undated (floor — no panel maturity): $5,013.8M — 6.600% Senior Notes Due 2028 $800.0M, 6.650% Senior Notes Due 2026 $800.0M, 6.850% Senior Notes Due 2033 $550.0M, Credit Facility - Term Loan… $1,965.6M, Operating Lease $898.2M, Other Loans –
-  - _reconciliation: itemized $5,550.8M (panel A 2025 filed Jan-28-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - due 2030: 1 with no principal stated
+  - undated (floor — no panel maturity): $5,013.8M + 1 with no principal stated — 6.600% Senior Notes Due 2028 $800.0M, 6.650% Senior Notes Due 2026 $800.0M, 6.850% Senior Notes Due 2033 $550.0M, Credit Facility - Term Loan… $1,965.6M, Operating Lease $898.2M, Other Loans –
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: Other Loans (Term Loans), Sellers Note (Bonds and Notes), Senior Unsecured Revolving Credit… (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $5,550.8M + 3 with no principal stated (panel A 2025 filed Jan-28-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** term loans 1,818.8 (3 months Q2 May-31-2026 1,837.5 → 3 months Q3 Aug-31-2026 1,818.8); senior bonds 1,950.0; leases 905.6; total principal 5,294.9; total debt 5,281.0 (3 months Q3 Aug-31-2026) ($M) [59]
 - **Covenants — AMENDED AND RESTATED CREDIT AGREEMENT** (governing values; full verbatim in appendix):
   - **Financial maintenance:** Consolidated Leverage Ratio not greater than 3.75:1.00 (step-up to 4.25:1.00 upon a Leverage Increase Election followin… — per an 8-K filed 2025-04-11

@@ -1202,6 +1202,51 @@ def _musd(v: float | None) -> str:  # a $M principal → "$25.0M", or "–"
     return f"${v:,.1f}M" if v is not None else "–"
 
 
+#: CIQ capital-structure TYPES that are facilities or programmes — a '-' principal on one can be an
+#: undrawn line, which the panel does not tell apart from an amount it does not report (audit D-D4:
+#: 33 of the 49 committed instruments with no principal at c51c286a carry one of these types).
+_FACILITY_TYPES = frozenset({"Revolving Credit", "Commercial Paper"})
+
+
+def _wall_total(xs: list[Any]) -> str:
+    """(audit D-D4) A wall total sums the STATED principals only. An instrument CIQ's panel prints
+    '-' for has no principal, and $0 is not one: a total over it says how many it leaves out, and a
+    group with none stated prints no dollar figure at all (ten committed pages read "$0.0M")."""
+    stated = [i.principal_musd for i in xs if i.principal_musd is not None]
+    gap = len(xs) - len(stated)
+    if not gap:
+        return _musd(sum(stated))
+    tail = f"{gap} with no principal stated"
+    return f"{_musd(sum(stated))} + {tail}" if stated else tail
+
+
+def _short_name(name: str, cap: int = 34) -> str:
+    """A word-boundary cap (the old [:26] cut mid-word: "Operating Lease Liabilitie")."""
+    return name if len(name) <= cap else name[:cap].rsplit(" ", 1)[0] + "…"
+
+
+#: The note's two fixed sentences, copied in dossier.js `unstatedNote` and bound to it by
+#: `test_parity_pins` (the twins cannot share a string).
+_UNSTATED_LEAD = "no principal stated — the CIQ panel gives no amount (–), and no total in this"
+_UNSTATED_LEAD += " wall counts it as $0"
+_UNDRAWN = "On a revolving-credit or commercial-paper line no amount can mean an undrawn facility;"
+_UNDRAWN += " the panel does not say which."
+_GAP_ALSO = ", or principal the panel does not state"
+
+
+def _unstated_note(instruments: list[Any]) -> str | None:
+    """The wall's one note naming every instrument it could not total, with CIQ's type beside each
+    — so a revolver reads as a revolver — and, where one is a facility, what no amount can mean."""
+    gap = [i for i in instruments if i.principal_musd is None]
+    if not gap:
+        return None
+    names = ", ".join(f"{_short_name(i.description)} ({i.type})" for i in gap)
+    note = f"{_UNSTATED_LEAD}: {names}."
+    if any(i.type in _FACILITY_TYPES for i in gap):
+        note += f" {_UNDRAWN}"
+    return note
+
+
 def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
     """(E2) Deterministic month-precision maturity wall from the structured instruments, grouped vs
     the reference date: matured-pre-reference (resolution not in this data — verify the 8-K, NEVER
@@ -1221,8 +1266,8 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
         d = date.fromisoformat(i.maturity_date)
         (matured if d < reference_date else this_year if d.year == reference_date.year else later
          ).append((d, i))
-    def dtot(xs: list[tuple[date, Any]]) -> float:
-        return sum(i.principal_musd or 0.0 for _d, i in xs)
+    def dtot(xs: list[tuple[date, Any]]) -> str:
+        return _wall_total([i for _d, i in xs])
 
     def bykey(x: tuple[date, Any]) -> tuple[date, str]:  # sort a (date, instrument) pair stably
         return (x[0], x[1].description)
@@ -1230,7 +1275,7 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
     out = [f"- **Maturity wall** · vs the {reference_date.isoformat()} reference:"]
     if matured:
         out.append(
-            f"  - **matured (pre-reference): {_musd(dtot(matured))}** — resolution not in this "
+            f"  - **matured (pre-reference): {dtot(matured)}** — resolution not in this "
             "data; verify each against its 8-K (NEVER assume repaid or defaulted):")
         for d, i in sorted(matured, key=bykey):
             out.append(
@@ -1240,22 +1285,23 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
         detail = ", ".join(
             f"{d.isoformat()} {_musd(i.principal_musd)}" for d, i in sorted(this_year, key=bykey))
         out.append(
-            f"  - due ≤12m (through {reference_date.year}): {_musd(dtot(this_year))} — {detail}")
+            f"  - due ≤12m (through {reference_date.year}): {dtot(this_year)} — {detail}")
     for yr, grp in groupby(sorted(later, key=bykey), key=lambda x: x[0].year):
-        out.append(f"  - due {yr}: {_musd(dtot(list(grp)))}")
+        out.append(f"  - due {yr}: {dtot(list(grp))}")
     if undated:
-        # word-boundary cap (the old [:26] cut mid-word: "Operating Lease Liabilitie")
-        def _short(name: str, cap: int = 34) -> str:
-            return name if len(name) <= cap else name[:cap].rsplit(" ", 1)[0] + "…"
-        detail = ", ".join(f"{_short(i.description)} {_musd(i.principal_musd)}" for i in undated)
-        undated_tot = sum(i.principal_musd or 0.0 for i in undated)
+        detail = ", ".join(f"{_short_name(i.description)} {_musd(i.principal_musd)}"
+                           for i in undated)
         out.append(
-            f"  - undated (floor — no panel maturity): {_musd(undated_tot)} — {detail}")
-    itemized = sum(i.principal_musd or 0.0 for i in inst.value)
+            f"  - undated (floor — no panel maturity): {_wall_total(undated)} — {detail}")
+    note = _unstated_note(inst.value)
+    if note is not None:
+        out.append(f"  - _{note}_")
+    # a partial itemized total cannot pin the whole gap on unitemized loans (review of D-D4)
+    also = _GAP_ALSO if note is not None else ""
     out.append(
-        f"  - _reconciliation: itemized {_musd(itemized)} (panel {cs.detail_as_of}) vs the "
-        f"aggregates below — the gap is unitemized / newer term loans; read the term-loan movement "
-        "in the aggregates line, which names the period columns it spans._"
+        f"  - _reconciliation: itemized {_wall_total(inst.value)} (panel {cs.detail_as_of}) vs the "
+        f"aggregates below — the gap is unitemized / newer term loans{also}; read the term-loan "
+        "movement in the aggregates line, which names the period columns it spans._"
     )
     return out
 

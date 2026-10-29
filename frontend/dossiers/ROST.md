@@ -400,15 +400,16 @@ _industry = 25 Apparel Retail companies (GICS industry), the primary panel; comp
 _5 undated / later aggregate line item(s) in the appendix panel_
 
 - **Maturity wall** · vs the 2026-10-16 reference:
-  - **matured (pre-reference): $499.7M** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
+  - **matured (pre-reference): $499.7M + 1 with no principal stated** — resolution not in this data; verify each against its 8-K (NEVER assume repaid or defaulted):
     - 2025-04-15 (549d before ref): – 4.600% Unsecured Senior Notes Due 
     - 2026-04-15 (184d before ref): $499.7M 0.875% Unsecured Senior Notes Due 
   - due 2027: $241.2M
-  - due 2030: $133.1M
+  - due 2030: $133.1M + 1 with no principal stated
   - due 2031: $497.0M
   - due 2050: $146.5M
   - undated (floor — no panel maturity): $3,694.7M — Operating Lease Liabilities $3,694.7M
-  - _reconciliation: itemized $5,212.2M (panel A 2026 filed Mar-31-2026) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: 4.600% Unsecured Senior Notes Due… (Bonds and Notes), Senior Unsecured Revolving Credit… (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $5,212.2M + 2 with no principal stated (panel A 2026 filed Mar-31-2026) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 1,018.5; leases 3,720.6; total principal 4,739.2; total debt 4,739.2 (3 months Q2 Aug-01-2026) ($M) [60]
 
 ### Filing cross-checks — going concern · leverage basis

@@ -405,7 +405,7 @@ _16 undated / later aggregate line item(s) in the appendix panel_
     - 2025-12-14 (306d before ref): $4,000.0M 3.15% Senior Notes Due December 20
     - 2026-06-15 (123d before ref): $1,587.0M 1.50% Senior Notes Due June 2026 -
   - due 2027: $2,750.0M
-  - due 2028: $1,470.0M
+  - due 2028: $1,470.0M + 1 with no principal stated
   - due 2029: $1,176.0M
   - due 2030: $1,500.0M
   - due 2031: $1,000.0M
@@ -418,8 +418,9 @@ _16 undated / later aggregate line item(s) in the appendix panel_
   - due 2045: $3,500.0M
   - due 2047: $750.0M
   - due 2050: $1,750.0M
-  - undated (floor — no panel maturity): $913.0M — Commercial Paper –, Operating Leases $913.0M
-  - _reconciliation: itemized $26,305.0M (panel A 2025 filed Nov-06-2025) vs the aggregates below — the gap is unitemized / newer term loans; read the term-loan movement in the aggregates line, which names the period columns it spans._
+  - undated (floor — no panel maturity): $913.0M + 1 with no principal stated — Commercial Paper –, Operating Leases $913.0M
+  - _no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0: Commercial Paper (Commercial Paper), Unsecured Revolving Credit… (Revolving Credit). On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which._
+  - _reconciliation: itemized $26,305.0M + 2 with no principal stated (panel A 2025 filed Nov-06-2025) vs the aggregates below — the gap is unitemized / newer term loans, or principal the panel does not state; read the term-loan movement in the aggregates line, which names the period columns it spans._
 - **Capital-structure aggregates:** senior bonds 22,631.0; total principal 24,131.0; total debt 23,858.0 (3 months FQ3/CQ2 Jun-30-2026) ($M) [55]
 - **Maturity resolution (8-K verbatim):** _UNKNOWN_ — (P3) 8-K body at 8-K 0001403161-25-000134 (2025-12-23) states no maturity-resolution event
 - **Covenants — 364-DAY REVOLVING CREDIT AGREEMENT** (governing values; full verbatim in appendix):
