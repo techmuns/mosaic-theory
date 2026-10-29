@@ -971,7 +971,7 @@ def test_cite_check_flags_missing_claim_bound_to_present_field() -> None:
 _Sheets = dict[str, list[list[typing.Any]]]
 
 
-def _fin_bundle(sheets: _Sheets, freq: str = "quarterly") -> ciq.CiqBundle:
+def _fin_bundle(sheets: _Sheets, freq: str | None = "quarterly") -> ciq.CiqBundle:
     """A CiqBundle with one Financials workbook whose sheets are pre-seeded (no .xls on disk)."""
     p = Path("/fake/Financials.xls")
     wb = ciq.CiqWorkbook(kind="financials", path=p, fmt=ciq.CiqFormat.BIFF_XLS, freq=freq)
@@ -3639,7 +3639,10 @@ def test_workbook_routing_finds_multiples_and_segments_inside_financials() -> No
         ["Government Solutions", 358.0, 390.0],
         ["  Total Revenues", 730.0, 797.0],
     ]
-    b = _fin_bundle({"Multiples": mult, "Segments": seg})
+    # period type UNREAD (no Period Type cell is seeded): since audit A-D11 a lone export answers
+    # a request for the other period type only then, and Multiples (quarterly) and Segments
+    # (annual) are both read from this one hand-seeded workbook
+    b = _fin_bundle({"Multiples": mult, "Segments": seg}, freq=None)
     pct = cs.ev_ebitda_percentile(b)
     assert pct.status is ds.SourceStatus.PRESENT
     assert pct.value == round(1 / 3, 3)  # would be 0.5 if the partial last col were NOT excluded
@@ -6911,16 +6914,19 @@ def test_financials_freq_prefers_filename_over_empty_income_statement() -> None:
     'Period Type:' boilerplate reads 'Annual', so a content-only read mis-tagged the quarterly
     workbook 'annual' — a freq='quarterly' request then silently fell back to the Annual workbook.
     The FILENAME must win so the quarterly Multiples stay reachable."""
-    misleading = [["", "Period Type:", "Annual"]]  # the empty-export boilerplate
+    # the empty-export boilerplate: a 'No Data Available' shell whose Period Type reads Annual.
+    # Since audit A-X1 the export's own statements CAN overrule its name — but a shell states
+    # nothing, so the filename still stands here (2026-10-29: `ciq.stated_period_type`).
+    misleading = {"Income Statement": [["", "Period Type:", "Annual"], ["No Data Available"]]}
     assert ciq._financials_freq("Artivion AORT Financials_Quarterly.xls", misleading) == "quarterly"
     assert ciq._financials_freq("Artivion AORT Financials_Annual.xls", misleading) == "annual"
-    qrows = [["", "Period Type:", "Quarterly"]]  # an un-named export → read the verbatim cell
+    qrows = {"Income Statement": [["", "Period Type:", "Quarterly"]]}  # un-named → read the cell
     assert ciq._financials_freq("Financials.xls", qrows) == "quarterly"
-    assert ciq._financials_freq("Financials.xls", []) is None
+    assert ciq._financials_freq("Financials.xls", {}) is None
     # a company NAME containing 'quarterly'/'annual' must NOT override the '_Quarterly'/'_Annual'
     # suffix (the match is anchored on the underscore, not a bare substring)
-    assert ciq._financials_freq("Quarterly Brands Financials_Annual.xls", []) == "annual"
-    assert ciq._financials_freq("Annual Corp Financials_Quarterly.xls", []) == "quarterly"
+    assert ciq._financials_freq("Quarterly Brands Financials_Annual.xls", {}) == "annual"
+    assert ciq._financials_freq("Annual Corp Financials_Quarterly.xls", {}) == "quarterly"
 
 
 def test_edgar_ebitda_requires_same_period_start_not_just_period_end() -> None:

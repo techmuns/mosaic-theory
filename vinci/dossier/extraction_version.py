@@ -32,10 +32,10 @@ free-standing string: it is the last row of an append-only table whose other col
 changed. Bumping the version without saying what it names is not expressible.
 
 WHAT THIS DOES NOT DO. Nothing here notices that extraction behaviour changed — a version is
-declared by hand, so an extractor change with no bump leaves the stamp lying. That is queue item
-26b (the drift test: hash the declared extraction module set, fail when it moves while the version
-does not). **26b's absence is not a regression** — an unbumped stamp is exactly today's state,
-minus the ambiguity 26a removes.
+declared by hand. Queue item 26b does the noticing, as a TEST (2026-10-29, audit A-D14):
+`tests/test_extraction_version_drift.py` hashes each declared extraction module and reds when one
+moved while its pin did not — the PR that moves it says, in that file, whether output changed
+(append a row here) or not. Without it the stamp stood still across 45 commits.
 """
 
 from __future__ import annotations
@@ -128,6 +128,22 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the "
         "forward history's latest close is `latest_observed_close`, never `current`; every writer "
         "saves through one write",
+    ),
+    # THE STAMP STOOD STILL FOR 45 COMMITS (audit A-D14). Every commit to vinci/dossier, vinci/edgar
+    # and vinci/ciq merged after 2026-10-09.3 (#706 … #855, 2026-10-11 → 10-29) appended no row,
+    # and at least six changed output (#819, #826, #827, #831, #834, #836), so the 155 layer
+    # refreshes dated 10-27 or later stamped 2026-10-09.3. This row names them beside its own
+    # change, the 2026-10-08.3 precedent; `tests/test_extraction_version_drift.py` (26b) now reds
+    # when a watched module moves and no row does.
+    (
+        "2026-10-29.1",
+        "the CIQ reader (audit A-D3, A-X2, A-D6, A-D8, A-D10, A-X1, A-D11): one parser reads every "
+        "Financials period header, so an 'FQ4/CQ2' quarter is a quarter with its year-on-year "
+        "growth, and a quarter carries its fiscal year · a bridged anchor input names the export "
+        "it was read from · every guided metric the Guidance sheet lays out is read · the "
+        "recommendation is the listing's own, with its own counts only · a Financials export "
+        "whose name and statements disagree is refused, and a lone export never answers for the "
+        "other period type · and the output changes merged since 2026-10-09.3 without a row",
     ),
 )
 

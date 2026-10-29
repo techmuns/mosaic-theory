@@ -61,6 +61,14 @@ const EXTRACTION_VERSIONS = [
     "named (`date_semantics`); the anchor's R1 fields carry their scenario eligibility; the " +
     "forward history's latest close is `latest_observed_close`, never `current`; every writer " +
     "saves through one write"],
+  ["2026-10-29.1",
+    "the CIQ reader (audit A-D3, A-X2, A-D6, A-D8, A-D10, A-X1, A-D11): one parser reads every " +
+    "Financials period header, so an 'FQ4/CQ2' quarter is a quarter with its year-on-year " +
+    "growth, and a quarter carries its fiscal year · a bridged anchor input names the export " +
+    "it was read from · every guided metric the Guidance sheet lays out is read · the " +
+    "recommendation is the listing's own, with its own counts only · a Financials export " +
+    "whose name and statements disagree is refused, and a lone export never answers for the " +
+    "other period type · and the output changes merged since 2026-10-09.3 without a row"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

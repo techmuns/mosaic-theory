@@ -1,5 +1,5 @@
 {
- "_about": "STATE row 27 (7): a fresh assembly's anchor equals the backfilled one. Cut 2026-10-27 at main 47d8ca27 from the real inputs: `page` is the committed dossier's subset the anchor chain reads (mechanical valuation / financial_summary / stock_info / implied_valuation / quality.nonoperating_quarters, forward_consensus current_multiples / pe_eps_basis); `anchor` is the committed block anchor-backfill wrote on 2026-10-26; `ciq` is the four facts the bridge reads (d_and_a, net_debt, ocf, capex, $M) through vinci.dossier.ciq_balance.extract from the git-ignored Financials workbooks named there - DERIVED values only, the workbooks are never committed; `companyfacts` is tests/fixtures/companyfacts/<T>.json at the same commit, trimmed to the tags whose removal changes the chain's output with or without CIQ. The cut was checked to reproduce the committed anchor (every field but computed_at) and the full page's read. Refreeze all four together, never one alone. UPDATED 2026-10-27 (#819, on rebase): GOOGL's `anchor` also carries `band_checks`, the band guards' outcomes, set to the value `refresh.band_checks_backfill` wrote on GOOGL's committed page, `d_and_a_source` 'ciq' included (its D&A is the CIQ bridge's); the 2026-10-26 block predates the field. A fresh assembly computes the same, so the comparison keeps it. ORKA's anchor never reaches the guards and carries none. UPDATED 2026-10-28 (the period-label build): an anchor label now names its period's fiscal year from the filer's annual reports (`concepts.fiscal_year_ends`, read from revenue, net income and diluted EPS), so those tags change the chain's output and the cut carries them: GOOGL's `Revenues` and `EarningsPerShareDiluted` from tests/fixtures/companyfacts/GOOGL.json at 47d8ca27; ORKA's tracking fixture carries no such tag past FY2024, so its `NetIncomeLoss` is the shared SEC cache's blob (fetched 2026-10-26) cut as of 2026-08-10 (`concepts.facts_as_of`), the tracking fixture's newest filing, whose shared tags equal that fixture's exactly.",
+ "_about": "STATE row 27 (7): a fresh assembly's anchor equals the backfilled one. Cut 2026-10-27 at main 47d8ca27 from the real inputs: `page` is the committed dossier's subset the anchor chain reads (mechanical valuation / financial_summary / stock_info / implied_valuation / quality.nonoperating_quarters, forward_consensus current_multiples / pe_eps_basis); `anchor` is the committed block anchor-backfill wrote on 2026-10-26; `ciq` is the four facts the bridge reads (d_and_a, net_debt, ocf, capex, $M) through vinci.dossier.ciq_balance.extract from the git-ignored Financials workbooks named there - DERIVED values only, the workbooks are never committed; `companyfacts` is tests/fixtures/companyfacts/<T>.json at the same commit, trimmed to the tags whose removal changes the chain's output with or without CIQ. The cut was checked to reproduce the committed anchor (every field but computed_at) and the full page's read. Refreeze all four together, never one alone. UPDATED 2026-10-27 (#819, on rebase): GOOGL's `anchor` also carries `band_checks`, the band guards' outcomes, set to the value `refresh.band_checks_backfill` wrote on GOOGL's committed page, `d_and_a_source` 'ciq' included (its D&A is the CIQ bridge's); the 2026-10-26 block predates the field. A fresh assembly computes the same, so the comparison keeps it. ORKA's anchor never reaches the guards and carries none. UPDATED 2026-10-28 (the period-label build): an anchor label now names its period's fiscal year from the filer's annual reports (`concepts.fiscal_year_ends`, read from revenue, net income and diluted EPS), so those tags change the chain's output and the cut carries them: GOOGL's `Revenues` and `EarningsPerShareDiluted` from tests/fixtures/companyfacts/GOOGL.json at 47d8ca27; ORKA's tracking fixture carries no such tag past FY2024, so its `NetIncomeLoss` is the shared SEC cache's blob (fetched 2026-10-26) cut as of 2026-08-10 (`concepts.facts_as_of`), the tracking fixture's newest filing, whose shared tags equal that fixture's exactly. UPDATED 2026-10-29 (audit A-D6): each `ciq` fact carries `workbooks`, the export its value was read from, re-derived through ciq_balance.extract on the same workbooks (the -ta copy's GOOGL and ORKA exports hash as the cut names them; every value unchanged): D&A, OCF and capex from the ANNUAL export, net debt from the quarterly one. The cut had stamped every fact - and GOOGL's committed `anchor.d_and_a` - with the quarterly file, so that source now names the annual file the figure was read from; the committed page keeps the old stamp until its re-assembly.",
  "names": {
   "GOOGL": {
    "page": {
@@ -2334,7 +2334,7 @@
      "value": 25536.0,
      "unit": "$M",
      "basis": "consolidated latest FY",
-     "source": "CIQ Financials->Cash Flow (vendor basis; no EDGAR D&A tag) [Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls sha 36160a403e]"
+     "source": "CIQ Financials->Cash Flow (vendor basis; no EDGAR D&A tag) [Alphabet Inc NasdaqGS GOOGL Financials_Annual.xls sha b87d0b9dda]"
     },
     "net_debt": {
      "value": -121683.0,
@@ -2434,7 +2434,8 @@
       "value": 25536.0,
       "unit": "$M",
       "basis": "depreciation and amortisation, the annual sheet's latest column (cash-flow statement)",
-      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls (sha 36160a403e)",
+      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Annual.xls (sha b87d0b9dda)",
+      "workbooks": [["Alphabet Inc NasdaqGS GOOGL Financials_Annual.xls", "b87d0b9dda"]],
       "period": "LTM",
       "period_end": "2026-06-30"
      },
@@ -2442,19 +2443,22 @@
       "value": 185675.0,
       "unit": "$M",
       "basis": "cash from operations, trailing twelve months",
-      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls (sha 36160a403e)"
+      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Annual.xls (sha b87d0b9dda)",
+      "workbooks": [["Alphabet Inc NasdaqGS GOOGL Financials_Annual.xls", "b87d0b9dda"]]
      },
      "capex": {
       "value": 132402.0,
       "unit": "$M",
       "basis": "capital expenditure, latest full year (magnitude)",
-      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls (sha 36160a403e)"
+      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Annual.xls (sha b87d0b9dda)",
+      "workbooks": [["Alphabet Inc NasdaqGS GOOGL Financials_Annual.xls", "b87d0b9dda"]]
      },
      "net_debt": {
       "value": -121683.0,
       "unit": "$M",
       "basis": "total debt + leases where disclosed - total cash and short-term investments",
-      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls (sha 36160a403e)"
+      "source": "CIQ Financials workbook Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls (sha 36160a403e)",
+      "workbooks": [["Alphabet Inc NasdaqGS GOOGL Financials_Quarterly.xls", "36160a403e"]]
      }
     },
     "checks": [
@@ -15637,7 +15641,8 @@
       "value": 0.134,
       "unit": "$M",
       "basis": "depreciation and amortisation, the annual sheet's latest column (cash-flow statement)",
-      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls (sha add437d7e3)",
+      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Annual.xls (sha a527104e0d)",
+      "workbooks": [["Oruka Therapeutics Inc NasdaqGM ORKA Financials_Annual.xls", "a527104e0d"]],
       "period": "LTM",
       "period_end": "2026-06-30"
      },
@@ -15645,19 +15650,22 @@
       "value": -100.9,
       "unit": "$M",
       "basis": "cash from operations, trailing twelve months",
-      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls (sha add437d7e3)"
+      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Annual.xls (sha a527104e0d)",
+      "workbooks": [["Oruka Therapeutics Inc NasdaqGM ORKA Financials_Annual.xls", "a527104e0d"]]
      },
      "capex": {
       "value": 0.235,
       "unit": "$M",
       "basis": "capital expenditure, latest full year (magnitude)",
-      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls (sha add437d7e3)"
+      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Annual.xls (sha a527104e0d)",
+      "workbooks": [["Oruka Therapeutics Inc NasdaqGM ORKA Financials_Annual.xls", "a527104e0d"]]
      },
      "net_debt": {
       "value": -871.1,
       "unit": "$M",
       "basis": "total debt + leases where disclosed - total cash and short-term investments",
-      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls (sha add437d7e3)"
+      "source": "CIQ Financials workbook Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls (sha add437d7e3)",
+      "workbooks": [["Oruka Therapeutics Inc NasdaqGM ORKA Financials_Quarterly.xls", "add437d7e3"]]
      }
     },
     "checks": [

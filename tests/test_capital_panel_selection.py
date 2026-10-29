@@ -256,11 +256,11 @@ def test_a_missing_quarterly_workbook_cannot_pose_as_a_fresh_one() -> None:
     if quarterly_only is None:
         pytest.skip("no quarterly financials workbook on disk to build the one-sided bundle from")
 
-    # THE TRAP IS REAL — pinned so it cannot change underneath the picker unnoticed.
-    wb = quarterly_only.workbook("financials", freq="annual")
-    assert wb is not None and wb.freq == "quarterly", (
-        "workbook() stopped falling back — if it now returns None the guard can be simplified, "
-        "but the picker must be re-read before that is assumed")
+    # THE TRAP IS CLOSED AT THE SOURCE (audit A-D11, 2026-10-29): a lone quarterly export no
+    # longer answers an annual request. The picker's own guard is kept — it was re-read, and it
+    # still names the frequency this bundle has; simplifying it is a separate change.
+    assert quarterly_only.workbook("financials", freq="annual") is None, (
+        "workbook() falls back to another period type again — audit A-D11 reopened")
 
     # …and the PRODUCTION selector is not fooled by it. This is the assertion the guard owns.
     assert cs._cs_details_freq(quarterly_only) == "quarterly", (

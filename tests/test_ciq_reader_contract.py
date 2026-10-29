@@ -35,8 +35,10 @@ from vinci.dossier.ciq import (
     CiqAmbiguousError,
     CiqBundle,
     CiqFormat,
+    CiqMislabelledError,
     CiqParseError,
     CiqUnavailableError,
+    CiqWorkbook,
     classify,
     clean_num,
     excel_date,
@@ -44,6 +46,7 @@ from vinci.dossier.ciq import (
     period_type,
     read_sheets,
     read_text,
+    stated_period_type,
 )
 from vinci.dossier.schemas import CHECK_AGREE, CHECK_DIFFER, SourceStatus
 
@@ -54,6 +57,7 @@ CUSTOMERS = FIX / gen.CUSTOMERS_RTF
 SUPPLIERS = FIX / gen.SUPPLIERS_RTF
 XLSX = FIX / gen.QUARTERLY_XLSX
 XLS_1904 = FIX / gen.QUARTERLY_1904_XLS
+ESTIMATES = FIX / gen.ESTIMATES_XLS
 HEADER_ROW = 14  # the period-header row of every Financials statement sheet, as CIQ lays it out
 
 
@@ -258,10 +262,9 @@ def test_sheet_fails_loud_for_an_absent_sheet_kind_or_unreadable_format(bundle: 
         bundle.sheet("customers", "Customers")
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
-    "A-X1: the filename's `_Quarterly` token outranks the export's own 'Period Type: Annual' "
-    "cell, so an annual workbook saved under a quarterly name is served as quarterly"))
 def test_a_filename_that_contradicts_the_period_type_cell_is_not_trusted(tmp_path: Path) -> None:
+    """A-X1, FIXED 2026-10-29 (was a strict xfail): LLY's shape — its annual file saved under the
+    quarterly name — is refused at construction, naming both period types."""
     misnamed = tmp_path / QUARTERLY.name
     shutil.copyfile(ANNUAL, misnamed)
     try:
@@ -287,6 +290,102 @@ def test_the_a_x1_pin_never_takes_an_unrelated_failure_for_its_fix(
     monkeypatch.setattr(CiqBundle, "from_files", classmethod(unrelated))
     with pytest.raises(CiqParseError, match="unrelated"):  # the mark leaves the function unwrapped
         test_a_filename_that_contradicts_the_period_type_cell_is_not_trusted(tmp_path)
+
+
+@pytest.mark.parametrize(("src", "misname"), [
+    (ANNUAL, QUARTERLY.name),   # LLY's pair: its annual file under the quarterly name
+    (QUARTERLY, ANNUAL.name),   # MCK's pair: its quarterly file under the annual name
+])
+def test_a_mislabelled_export_is_refused_either_way_round(
+        tmp_path: Path, src: Path, misname: str) -> None:
+    """A-X1, both real shapes in the 34 non-test folders (2026-10-29). Refused at construction as
+    a `CiqAmbiguousError`, so every caller that stops a name on two exports of one kind stops it
+    here too, rather than degrading the page to a missing section."""
+    shutil.copyfile(src, tmp_path / misname)
+    with pytest.raises(CiqMislabelledError) as refused:
+        _bundle(tmp_path / misname)
+    assert isinstance(refused.value, CiqAmbiguousError)
+    named, stated = (("quarterly", "annual") if src == ANNUAL else ("annual", "quarterly"))
+    assert f"names a {named} export" in str(refused.value)
+    assert f"state Period Type '{stated}'" in str(refused.value)
+
+
+def test_one_statement_misreporting_its_period_type_is_not_a_mislabel(tmp_path: Path) -> None:
+    """NEGATIVE PIN — AORT's recorded shape: a quarterly export whose EMPTY Income Statement reads
+    Annual beside a Balance Sheet and Cash Flow reading Quarterly. A 'No Data Available' shell
+    states nothing, so the export states Quarterly and agrees with its name; refusing it would
+    stop a name on one empty sheet's boilerplate. With the shell the ONLY statement, nothing is
+    stated and the filename stands."""
+    sheets = gen._quarterly_sheets("USD")
+    sheets["Income Statement"] = gen._no_data_shell("Income Statement", "Annual")
+    path = tmp_path / QUARTERLY.name
+    gen.write_biff(path, sheets)
+    assert stated_period_type(read_sheets(path)) == "quarterly"
+    assert [w.freq for w in _bundle(path).workbooks] == ["quarterly"]
+    lone = tmp_path / "lone" / QUARTERLY.name
+    gen.write_biff(lone, {"Income Statement": sheets["Income Statement"]})
+    assert stated_period_type(read_sheets(lone)) is None
+    assert [w.freq for w in _bundle(lone).workbooks] == ["quarterly"]
+
+
+def test_a_side_sheet_stating_another_period_type_is_not_a_mislabel(tmp_path: Path) -> None:
+    """NEGATIVE PIN — FUBO's Annual export carries a Capital Structure Details sheet reading
+    Quarterly. Only the Income Statement, Balance Sheet and Cash Flow speak for the export."""
+    sheets = gen._annual_sheets("USD")
+    sheets["Capital Structure Details"] = [
+        ["Quarterly" if c == "Annual" else c for c in row]
+        for row in sheets["Capital Structure Details"]]
+    path = tmp_path / ANNUAL.name
+    gen.write_biff(path, sheets)
+    assert period_type(read_sheets(path)["Capital Structure Details"]) == "quarterly"
+    assert [w.freq for w in _bundle(path).workbooks] == ["annual"]
+
+
+def test_a_lone_export_never_answers_for_the_other_period_type() -> None:
+    """A-D11: an annual-only folder answered a quarterly request with its annual workbook, so its
+    fiscal years printed as 'quarterly' columns. The request now reads UNKNOWN, naming what the
+    folder holds."""
+    lone = _bundle(ANNUAL)
+    assert lone.workbook("financials", freq="quarterly") is None
+    assert lone.workbook("financials", freq="annual") is not None
+    with pytest.raises(CiqUnavailableError, match="export is annual, and another period type"):
+        lone.sheet("financials", "Income Statement", freq="quarterly")
+    got = cs.financial_summary_quarterly(lone)
+    assert got.status is SourceStatus.UNKNOWN and got.value is None
+    assert "no quarterly 'financials' CIQ workbook" in (got.note or "")
+
+
+def test_a_lone_export_whose_period_type_is_unread_still_answers() -> None:
+    """NEGATIVE PIN — the recorded choice A-D11 narrowed is kept where it was scoped: a lone
+    export whose period type is UNREAD (no filename token, no statement saying) answers either
+    request, as before."""
+    unread = CiqWorkbook(kind="financials", path=ANNUAL, fmt=CiqFormat.BIFF_XLS, freq=None)
+    b = CiqBundle(ticker=gen.TICKER, workbooks=(unread,))
+    assert b.workbook("financials", freq="quarterly") is unread
+    assert b.workbook("financials", freq="annual") is unread
+
+
+def test_read_sheets_releases_every_workbook_it_opens(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Deferred from #853's review: `read_sheets` left xlrd's mapped file and openpyxl's read-only
+    zip open until garbage collection. Every row is copied out first, so both are released before
+    it returns."""
+    import openpyxl
+    import xlrd  # type: ignore[import-untyped]
+
+    opened: list[Any] = []
+
+    def spy(real: Any) -> Any:
+        def opener(*args: Any, **kwargs: Any) -> Any:
+            opened.append(book := real(*args, **kwargs))
+            return book
+        return opener
+
+    monkeypatch.setattr(xlrd, "open_workbook", spy(xlrd.open_workbook))
+    monkeypatch.setattr(openpyxl, "load_workbook", spy(openpyxl.load_workbook))
+    assert read_sheets(QUARTERLY) and read_sheets(XLSX)
+    biff, ooxml = opened
+    assert biff._resources_released, "the .xls is still mapped after read_sheets returned"
+    assert ooxml._archive.fp is None, "the .xlsx is still open after read_sheets returned"
 
 
 # --- excel_date --------------------------------------------------------------------------------
@@ -375,29 +474,100 @@ def test_a_latest_value_is_stamped_with_its_own_period_header(bundle: CiqBundle)
     assert eb.source_ref == "CIQ Financials→Income Statement 'EBITDA' [LTM 12 months Aug-31-2026]"
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
-    "A-D3: the quarter is read only from a bare 'Q4' token, so CIQ's 'FQ4/CQ2' quarters are "
-    "labelled as fiscal years in the quarterly summary"))
 def test_fq_cq_quarters_are_not_labelled_as_fiscal_years(bundle: CiqBundle) -> None:
+    """A-D3, FIXED 2026-10-29 (was a strict xfail)."""
     table = cs.financial_summary_quarterly(bundle).value
     assert table is not None
     assert not [c for c in table.columns if c.startswith("FY")], table.columns
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
-    "A-D3: no quarter token is found in an 'FQ1/CQ3' header, so the same-quarter revenue YoY "
-    "is dropped from the multi-year trajectory"))
 def test_fq_cq_quarters_still_yield_a_same_quarter_revenue_yoy(bundle: CiqBundle) -> None:
+    """A-D3, FIXED 2026-10-29 (was a strict xfail)."""
     traj = cs.multi_year_trajectory(bundle).value
     assert traj is not None and "Revenue YoY (latest same-quarter)" in traj, traj
+    yoy = gen.Q_REVENUE[-1] / gen.Q_REVENUE[-5] - 1   # FQ1 against the FQ1 a year earlier
+    assert (f"Revenue YoY (latest same-quarter): {yoy:+.1%} (Q1 {gen._mdy(gen.Q_DATES[-1])} vs "
+            f"Q1 {gen._mdy(gen.Q_DATES[-5])})") in traj
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
-    "A-D11: a lone annual export answers a quarterly request, and the annual Balance Sheet's "
-    "serial header is printed raw as the period label"))
+def test_a_yoy_never_reaches_past_the_prior_fiscal_year(tmp_path: Path) -> None:
+    """Found with A-D3 (2026-10-29): with the prior year's quarter on another basis, the YoY took
+    the nearest same-quarter column on the reader's basis — two to four years back on six of the 34
+    non-test exports (AORT read +50.7% against Q1 2022), under a "YoY" label. Here the FQ1 a year
+    before the latest is reclassified, as AORT's was: there is no same-basis comparison, so there
+    is no YoY line — never the FQ1 two years back."""
+    sheets = gen._quarterly_sheets("USD")
+    head = sheets["Income Statement"][HEADER_ROW]
+    prior = 1 + len(gen.Q_DATES) - 5           # the FQ1 a year before the latest FQ1
+    head[prior] = f"Reclassified\n{head[prior]}"
+    path = tmp_path / QUARTERLY.name
+    gen.write_biff(path, sheets)
+    b = _bundle(path)
+    traj = cs.multi_year_trajectory(b).value or ""
+    assert "Revenue YoY" not in traj, traj
+    table = cs.financial_summary_quarterly(b).value
+    assert table is not None
+    (yoy,) = [r.cells for r in table.rows if "YoY" in r.label]
+    assert yoy[-1] == "— (basis)"
+
+
+def test_each_quarter_column_carries_its_fiscal_quarter_and_fiscal_year(bundle: CiqBundle) -> None:
+    """A-D3 and A-X2 on the real format, value-level (the fixture is frozen): the invented
+    issuer's year ends May 31, so its fiscal year is the calendar year of the end date for a
+    quarter ending by May, and the next one after — derived here from that fact, independently of
+    the reader's own rule. Its same-quarter YoY row is computed for every quarter with a prior."""
+    table = cs.financial_summary_quarterly(bundle).value
+    assert table is not None
+    assert table.columns == [f"Q{tag[2]}-{(d.year + (d.month > 5)) % 100:02d}"
+                             for tag, d in zip(gen.Q_TAGS, gen.Q_DATES, strict=True)]
+    (yoy,) = [r.cells for r in table.rows if "YoY" in r.label]
+    assert yoy[:4] == ["—"] * 4
+    assert yoy[-1] == f"{(gen.Q_REVENUE[-1] / gen.Q_REVENUE[-5] - 1) * 100:+.0f}%"
+
+
+@pytest.mark.parametrize(("cell", "want"), [
+    # 'FQx/CQy' (A-D3): the FISCAL quarter, under the fiscal year its year end names
+    ("3 months\nFQ4/CQ2\nMay-31-2026", "Q4-26"),
+    ("3 months\nFQ1/CQ3\nAug-31-2026", "Q1-27"),
+    ("Restated\n3 months\nFQ1/CQ4\nDec-31-2025", "Q1-26"),   # a September year end's first quarter
+    ("FQ4/CQ2\nMay-31-2026", "Q4-26"),                      # the quarterly balance sheet's shape
+    ("Press Release\n3 months\nFQ3/CQ1\nMay-03-2026", "Q3-26"),  # a 52/53-week July year end
+    # a bare 'Qn' under a January year end (A-X2): the calendar year of the end was printed
+    ("3 months\nQ1\nApr-30-2025", "Q1-26"),
+    ("3 months\nQ3\nNov-01-2025", "Q3-26"),
+    ("3 months\nQ4\nJan-31-2026", "Q4-26"),
+    # NEGATIVE PINS: December quarters, and a 4-4-5 quarter ending days into the next month, keep
+    # the calendar year; fiscal years and LTM read as they always did
+    ("3 months\nQ2\nJun-30-2026", "Q2-26"),
+    ("3 months\nQ1\nApr-04-2026", "Q1-26"),
+    ("Reclassified\n3 months\nQ4\nDec-28-2025", "Q4-25"),
+    ("12 months\nDec-31-2022", "FY22"),
+    ("12 months\nFeb-01-2025", "FY25"),
+    ("12 months\nOct-01-2022", "FY22"),
+    ("Reclassified\n12 months\nSep-30-2017", "FY17"),
+    ("LTM\n12 months\nJun-30-2026", "LTM"),
+])
+def test_one_parser_labels_every_financials_header_shape(cell: str, want: str) -> None:
+    """Every quarter and year shape the 34 non-test exports carry (census 2026-10-29), through the
+    one header parser. The dates are period ends; nothing here is an export's data."""
+    assert cs._fin_short(cell) == want
+
+
+def test_the_same_quarter_match_reads_the_fiscal_quarter_never_the_calendar_one() -> None:
+    """A 'FQ1/CQ3' column is fiscal quarter 1 — the 3 is the calendar quarter, which a September
+    year end's 'FQ3/CQ2' shares with no other column of that fiscal quarter."""
+    assert cs.header_period("3 months\nFQ1/CQ3\nAug-31-2026").quarter == 1
+    assert cs.header_period("3 months\nQ2\nJun-30-2026").quarter == 2
+    assert cs.header_period("12 months\nMay-31-2026").quarter is None
+    assert cs.header_period("LTM\n12 months\nAug-31-2026").kind == "LTM"
+
+
 def test_a_balance_sheet_period_label_is_never_a_raw_serial() -> None:
+    """A-D11, FIXED 2026-10-29 (was a strict xfail): the annual balance sheet's serial header
+    prints as the date it encodes."""
     ref = cs.net_debt(_bundle(ANNUAL)).source_ref or ""
     assert not re.search(r"\[\d{5}\.0\]", ref), ref
+    assert ref == f"CIQ Financials→Balance Sheet 'Net Debt' [{gen._mdy(gen.A_DATES[-1])}]"
 
 
 @pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
@@ -559,3 +729,142 @@ def test_the_xlsx_ev_bridge_matches_its_biff_twin_and_names_its_own_file() -> No
     provenance = {"source_file", "source_sha256"}
     assert xl.model_dump(exclude=provenance) == bi.model_dump(exclude=provenance)
     assert xl.source_file == XLSX.name
+
+
+# --- the anchor bridge's provenance (audit A-D6) ------------------------------------------------
+
+
+def test_each_bridged_fact_names_the_export_it_was_read_from(bundle: CiqBundle) -> None:
+    """A-D6: the bridge stamped every fact with the QUARTERLY export, so a D&A, OCF or capex read
+    off the ANNUAL Cash Flow named a file it never came from (GOOGL's D&A, IT's FCF). Each fact
+    now carries its own export's name and hash; a figure built from both names both."""
+    got = ciq_balance.extract(bundle, gen.TICKER)
+    annual = ((ANNUAL.name, cs.file_provenance(ANNUAL)[0]),)
+    quarterly = ((QUARTERLY.name, cs.file_provenance(QUARTERLY)[0]),)
+    for key in ("d_and_a", "ocf", "capex", "revenue"):
+        assert got.facts[key].workbooks == annual, key
+    for key in ("cash", "total_debt", "net_debt"):
+        assert got.facts[key].workbooks == quarterly, key
+    assert got.facts["d_and_a"].value == gen.A_DA[-1]
+    assert got.facts["capex"].value == abs(gen.A_CAPEX[-1])
+    assert got.stamp("ocf", "capex") == f"{annual[0][0]} sha {annual[0][1]}"
+    assert got.stamp("net_debt") == f"{quarterly[0][0]} sha {quarterly[0][1]}"
+
+
+def test_a_fact_recording_no_export_never_borrows_the_bundles(bundle: CiqBundle) -> None:
+    """NEGATIVE PIN: a fact with no provenance says so; the bundle's first export — the
+    quarterly, which is what every fact used to carry — is never put in its place."""
+    got = ciq_balance.extract(bundle, gen.TICKER)
+    bare = ciq_balance.CiqFacts(
+        ticker=gen.TICKER, as_of=None, source_file=got.source_file,
+        source_sha256=got.source_sha256,
+        facts={"d_and_a": ciq_balance.CiqFact(value=1.0, unit="$M", basis="b", source="s")})
+    assert bare.stamp("d_and_a") == "workbook unrecorded"
+    assert QUARTERLY.name not in bare.stamp("d_and_a")
+
+
+# --- the Estimates export: the listing's own rating (A-D10), every guided block (A-D8) ----------
+
+
+def _estimates(ticker: str = gen.TICKER) -> CiqBundle:
+    return CiqBundle.from_files(ticker, [ESTIMATES])
+
+
+def test_the_recommendation_is_the_listings_own_never_the_industrys() -> None:
+    """A-D10: Consensus's 'Industry Recommendation' row was printed as the stock's own on all 20
+    pages carrying one (NKE: Outperform (2.50) where its own is Hold (2.73))."""
+    v = cs.consensus_view(_estimates()).value or ""
+    assert f"Recommendation: {gen.REC_OWN} (CIQ score" in v
+    assert gen.REC_INDUSTRY not in v
+
+
+def test_the_rating_counts_are_the_listings_alone() -> None:
+    """A-D10: every category row on the Trends sheet was read, so the industry's counts — and
+    every other listing's — were appended to the listing's own with no label."""
+    v = cs.consensus_stats(_estimates(), as_of=None).value or ""
+    own = ", ".join(f"{c.split(' (')[0]} {int(n)}" for c, n, _ in gen.RATINGS)
+    assert v.endswith(f"Ratings: {own}"), v
+
+
+def test_each_share_class_reads_its_own_block() -> None:
+    """The block is chosen by the TICKER in its header, never by position: the second share class
+    reads its own rating and counts from the same export."""
+    b = _estimates(gen.SECOND_CLASS)
+    assert f"Recommendation: {gen.REC_SECOND} (CIQ score" in (cs.consensus_view(b).value or "")
+    own = ", ".join(f"{c.split(' (')[0]} {int(n)}" for c, n in gen.SECOND_RATINGS)
+    assert (cs.consensus_stats(b, as_of=None).value or "").endswith(f"Ratings: {own}")
+
+
+def test_a_ticker_with_no_block_borrows_no_rating() -> None:
+    """NEGATIVE PIN: an export with no block for the name prints no recommendation and no counts,
+    rather than the first listing's or the industry's."""
+    b = _estimates("ZZFQ")
+    assert "Recommendation" not in (cs.consensus_view(b).value or "")
+    assert "Ratings" not in (cs.consensus_stats(b, as_of=None).value or "")
+
+
+def test_every_guided_block_the_sheet_lays_out_is_read() -> None:
+    """A-D8: a fixed list of fifteen metrics dropped 17 guided blocks across 11 of the 34 non-test
+    exports — same-store sales among them. Blocks are found by structure, in sheet order, each
+    label once (the listing's repeated per-share block is read at its first); a section header
+    is never a block."""
+    rows = cs.guidance_bridge_rows(_estimates(), reference_date=gen.G_DATED).value or []
+    assert [r.metric for r in rows] == [
+        g[0] for g in (*gen.GUIDES, *gen.LISTING_GUIDES, *gen.SECOND_GUIDES)]
+
+
+def test_a_metric_with_no_decided_direction_shows_its_guide_and_no_record() -> None:
+    """NEGATIVE PIN: a discovered metric absent from `_GUIDANCE_HIGHER_IS_DELIVERY` keeps its guide
+    and records no MET/MISSED — the direction is decided by name, never guessed — while a
+    directed one keeps its record."""
+    rows = {r.metric: r for r in cs.guidance_bridge_rows(
+        _estimates(), reference_date=gen.G_DATED).value or []}
+    sss = rows["Same Store Sales Growth %"]
+    assert "Same Store Sales Growth %" not in cs._GUIDANCE_HIGHER_IS_DELIVERY
+    assert (sss.latest_guide, sss.period, sss.record, sss.most_recent) == ("3.50", "FQ2 2027",
+                                                                           "—", "—")
+    assert rows["Revenue"].record == "actual ≥ floor 1/1"
+
+
+def test_the_revenue_guide_is_still_the_revenue_block() -> None:
+    """The guide-verification input reads the 'Revenue' block exactly — a widened set of blocks
+    never hands it another metric's numbers."""
+    assert cs.revenue_guide_lohi(_estimates(), reference_date=gen.G_DATED) == (
+        460.0, 470.0, "FY 2027", gen.G_DATED)
+
+
+# --- review round 0 (code-review high, 2026-10-29) ----------------------------------------------
+
+
+def test_an_empty_xlsx_period_type_cell_states_nothing(tmp_path: Path) -> None:
+    """openpyxl hands an empty cell back as None, and `period_type` read it as the text 'none' —
+    which the mislabel check then took for a period type disagreeing with the filename, refusing
+    the name. An empty cell states nothing; the filename stands."""
+    sheets = gen._quarterly_sheets("USD")
+    for name in ("Income Statement", "Balance Sheet", "Cash Flow"):
+        sheets[name][7] = ["", "Period Type:", "", gen.NBSP, "Order:", "Latest on Right"]
+    path = tmp_path / XLSX.name
+    gen.write_ooxml(path, sheets)
+    assert period_type(read_sheets(path)["Income Statement"]) is None
+    assert [w.freq for w in _bundle(path).workbooks] == ["quarterly"]
+
+
+def test_extract_hashes_each_export_once(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Every fact names its export, but the export is hashed once per file version, not once per
+    fact (a dozen full reads of a 500 KB workbook on every extract)."""
+    for src in (ANNUAL, QUARTERLY):
+        shutil.copyfile(src, tmp_path / src.name)
+    calls: list[Path] = []
+    real = cs.file_provenance
+    monkeypatch.setattr(cs, "file_provenance", lambda p: calls.append(p) or real(p))
+    got = ciq_balance.extract(_bundle(*tmp_path.iterdir()), gen.TICKER)
+    assert {k for k, f in got.facts.items() if f.workbooks} >= {"d_and_a", "net_debt"}
+    assert sorted(p.name for p in calls if p.parent == tmp_path) == sorted(
+        [ANNUAL.name, QUARTERLY.name] + [QUARTERLY.name])  # the bundle-level stamp, then once each
+
+
+def test_a_share_class_ticker_spelt_with_a_separator_finds_its_block() -> None:
+    """CIQ heads a block 'NYSE:BRK.B' where the fund writes BRK-B: the separator is not part of
+    the symbol, so the block is found rather than silently missed."""
+    b = _estimates(f"{gen.TICKER}-K")
+    assert f"Recommendation: {gen.REC_SECOND} (CIQ score" in (cs.consensus_view(b).value or "")
