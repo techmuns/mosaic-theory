@@ -1204,14 +1204,14 @@ def _musd(v: float | None) -> str:  # a $M principal → "$25.0M", or "–"
 
 #: CIQ capital-structure TYPES that are facilities or programmes — a '-' principal on one can be an
 #: undrawn line, which the panel does not tell apart from an amount it does not report (audit D-D4:
-#: 32 of the 47 committed instruments with no principal at c51c286a carry one of these types).
+#: 33 of the 49 committed instruments with no principal at c51c286a carry one of these types).
 _FACILITY_TYPES = frozenset({"Revolving Credit", "Commercial Paper"})
 
 
 def _wall_total(xs: list[Any]) -> str:
     """(audit D-D4) A wall total sums the STATED principals only. An instrument CIQ's panel prints
     '-' for has no principal, and $0 is not one: a total over it says how many it leaves out, and a
-    group with none stated prints no dollar figure at all (nine committed pages read "$0.0M")."""
+    group with none stated prints no dollar figure at all (ten committed pages read "$0.0M")."""
     stated = [i.principal_musd for i in xs if i.principal_musd is not None]
     gap = len(xs) - len(stated)
     if not gap:

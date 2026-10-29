@@ -2,10 +2,10 @@
 
 THE DEFECT. `render._maturity_wall_lines` and its JS twin summed `principal_musd or 0`, so an
 instrument CIQ's capital-structure panel prints '-' for counted as $0 and a group of nothing but
-those printed a literal "$0.0M". On the committed pages at c51c286a: 47 instruments with no
-principal across 17 pages, and nine pages printing "$0.0M" as a wall total — SMPL's 2029 revolver
-read "due 2029: $0.0M". 32 of the 47 are revolving credit or commercial paper by CIQ's type, where
-'-' can be an undrawn line; the panel does not say so, so the wall must not either.
+those printed a literal "$0.0M". On the 27 committed pages at c51c286a: 49 instruments with no
+principal across 18 pages, and ten pages printing "$0.0M" as a wall total — SMPL's 2029 revolver
+read "due 2029: $0.0M". 33 of the 49 are revolving credit or commercial paper by CIQ's type, where
+no amount can mean an undrawn line; the panel does not say so, so the wall must not either.
 
 THE RULE. A total sums the principals the panel STATES and says how many it leaves out; a group
 with none stated prints no dollar figure; one note names every instrument left out, with CIQ's
@@ -126,7 +126,7 @@ def test_every_committed_wall_totals_its_stated_principals_e2e() -> None:
     """(+/-) END TO END, committed JSON → render_markdown: every year group prints the stated
     principals' sum and the count it leaves out, the reconciliation does the same over the whole
     panel, and no year line reads "$0.0M" unless the panel STATES zero. Shown to bite: on main the
-    nine pages above print "$0.0M" over unstated principals."""
+    ten pages above print "$0.0M" over unstated principals."""
     seen_gap = 0
     for p in _pages():
         d = json.loads(p.read_text())
