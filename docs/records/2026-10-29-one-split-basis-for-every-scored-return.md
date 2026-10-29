@@ -114,6 +114,16 @@ restatements; F-D3 because a missing ex-date row read as no dividend.
    benchmark needs a ruling first — the sealed field or the assignment — and the store to carry
    SPY (and MDY) through each horizon: `run-monthly` ingests IWM only, and the rehearsal store's
    SPY ends 2026-07-22. Not a small change, so recorded, not built.
+   **RULED for IT, 2026-10-29 — the operator, verbatim: "Use MDY".** IT is measured against MDY,
+   the benchmark its committed assignment names (its cap band at entry, $9.87B → mid → MDY); the
+   IWM its ledger row sealed is superseded by the ruling, never rewritten. THE BASIS IS THE
+   ASSIGNMENT'S BENCHMARK, NOT THE RETURNS: IT's interim marks were already visible when the ruling
+   was made (the 2026-10-28 monitor day marks IT at +55.37%, an excess of +57.24% over MDY;
+   scoring's 2026-10-26 interim sets it against IWM's −4.99%), so the ruling is stated on the
+   assignment alone to keep the never-tune-on-outcomes rule visibly honoured. GOOGL's half stays open: its sealed SPY and its assignment's SPY agree, so
+   the per-row build resolves it; a sealed benchmark and an assignment that disagree without a
+   ruling are surfaced to the operator, never chosen between. The build is its own PR after this
+   one (STATE §5.0 row 39).
 2. **The web's realized return divides across a split** (`frontend/lib/snapshots.js`,
    `exit_price / entry_price − 1`), outside this batch's files. No committed close spans a split.
 3. **Not examined:** scenario records' per-share figures compared with a later close.
