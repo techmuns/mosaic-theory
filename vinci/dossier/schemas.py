@@ -2085,7 +2085,8 @@ class OperatingDriver(BaseModel):
 
     kind: DriverKind
     metric: str  # e.g. "revenue", "average selling price", a KD Type
-    period: str | None = None  # as STATED ("Q1 2026", "FY26"); None when unstated
+    period: str | None = None  # as its quote STATES it ("Q1 2026", "FY26"); else, on a transcript
+    # row, the quarter of the call it is cited to; None when neither is known
     value: str  # the VERBATIM stated value ("$32.0 million, or 43.6%", "536 MWh")
     value_num: float | None = None  # STRUCTURED numeric — anchored rows only; consumers read THIS
     unit: str | None = None  # the value_num's unit ("%", "MWh", "$M"); None on verbatim-only rows

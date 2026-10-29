@@ -4,8 +4,9 @@ The model is given ONLY the mechanical layer's source-bound facts (not the web, 
 and forced through a tool whose schema is the verdict-free :class:`Synthesis` shape — there is no
 field for a conclusion, so it cannot render one. Its output is then validated, not trusted:
 
-- every bull/bear point must cite a ``source_ref`` that exists in the input (uncited → flagged);
-- every number must trace to the mechanical layer (untraceable → flagged), unless cited to the
+- every bull/bear point must cite a ``source_ref`` that IS one in the input — the same text, never a
+  fragment of one, never empty (uncited → flagged);
+- every number must trace to the FACT ITS POINT CITES (untraceable → flagged), unless cited to the
   earnings-call transcript, where a prose figure earns a soft 'verify against the call' note;
 - twin analogues must be source-bound or tagged ``[LLM-suggested, unverified]``, and never numeric;
 - the whole output is linted for directional/recommendation language and flagged for human review.
@@ -38,6 +39,7 @@ from vinci.dossier.schemas import (
 from vinci.dossier.verdict import split_lean
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.sleeves import BY_KEY, DEFAULT_SLEEVE, Sleeve, require_sleeve
+from vinci.verbatim import comparison_key
 
 _UNVERIFIED = "[LLM-suggested, unverified]"
 # unit renderings an LLM uses for the same stored number (fraction↔%, raw↔K/M/B) — for number-trace
@@ -516,7 +518,38 @@ def _twin_numbers(text: str) -> set[str]:
 
 
 def _traces(ref: str, universe: set[str]) -> bool:
-    return any(ref == u or ref in u or u in ref for u in universe)
+    """True iff ``ref`` IS one of the layer's refs (audit G-D5). Compared on the verbatim check's
+    key — case, whitespace and typography folded, nothing else — so the model's re-typed dash still
+    matches. NOT a substring either way: that counted ``''`` as cited (it is in every string) and a
+    bare ``'EOD'`` as citing every EOD fact at once. An empty ref cites nothing, as an empty quote
+    proves nothing (``verbatim.SourceText.match``)."""
+    key = comparison_key(ref)
+    return bool(key) and key in {comparison_key(u) for u in universe}
+
+
+def _values_by_ref(mech: MechanicalLayer) -> dict[str, list[float]]:
+    """Every number each citable fact carries, keyed by its ref (the ``source_ref`` / accession /
+    url `_refs_in` collects, on the comparison key). A fact's numbers are its whole subtree, so a
+    filing cited by accession carries its guidance and reconciliation rows."""
+    out: dict[str, list[float]] = {}
+
+    def rec(o: Any) -> None:
+        if isinstance(o, dict):
+            keys = {comparison_key(str(o[k])) for k in ("source_ref", "accession", "url")
+                    if o.get(k)}
+            if keys:
+                # unescaped, or a "−" in a ref reads as the number 2212 (`\u2212`)
+                nums = _floats(json.dumps(o, default=str, ensure_ascii=False))
+                for k in keys:
+                    out.setdefault(k, []).extend(nums)
+            for v in o.values():
+                rec(v)
+        elif isinstance(o, list):
+            for v in o:
+                rec(v)
+
+    rec(mech.model_dump())
+    return out
 
 
 # Corporate scaffolding + industry nouns SHARED across peers — never a unique identifier for the
@@ -568,15 +601,19 @@ def _validate(
     flags: list[str] = []
     refs = _refs_in(mech)
     present_refs = _present_refs(mech)
-    mech_nums = _floats(json.dumps(mech.model_dump(), default=str))
+    # THE CITED FACT'S OWN NUMBERS, not the layer's (audit G-D6). The trace ran against every number
+    # in the layer — 5,615 to 11,808 of them a page — and passed 1,176 of 1,176 made-up figures on
+    # the frozen SMPL page: a universe that large contains every figure at some scale. A point
+    # cites ONE fact; its figures are checked against that fact.
+    values_by_ref = _values_by_ref(mech)
 
-    def _num_traces(n: float) -> bool:
+    def _num_traces(n: float, cited_nums: list[float]) -> bool:
         # Trace by MAGNITUDE at any standard financial unit rendering (%, thousands, millions,
         # billions): the LLM writes the stored −0.726 as "−72.6%", 29,643,500 shares as "29.6
         # million", and a stored −0.027 as "shrunk by 2.7%" (sign carried in words, not the digit).
         # Direction is the directional-lint's job; this only asks whether the figure exists.
         a = abs(n)
-        for mf in mech_nums:
+        for mf in cited_nums:
             for s in _TRACE_SCALES:
                 target = abs(mf) * s
                 if abs(a - target) <= max(0.05, target * 0.02):
@@ -598,8 +635,10 @@ def _validate(
                 "a PRESENT field — move to key_unknowns, don't source-bind it"
             )
         ref_is_transcript = bool(_TRANSCRIPT_REF.search(p.source_ref))
+        ref_key = comparison_key(p.source_ref)
+        cited_nums = values_by_ref.get(ref_key, []) if ref_key else []
         for n in _claim_figures(p.claim):
-            if _num_traces(n):
+            if _num_traces(n, cited_nums):
                 continue
             # key on SIGNED value + flag-type: don't let abs() collapse +N/-N (distinct facts) and
             # don't let a soft TRANSCRIPT-FIGURE on one point suppress a hard UNTRACEABLE elsewhere.
@@ -613,7 +652,7 @@ def _validate(
                 # high-value transcript-only point, e.g. 'the GAAP profit is a non-cash artifact').
                 flags.append(
                     f"TRANSCRIPT-FIGURE '{n:g}' in {where}: '{_snip(p.claim)}' — from the cited "
-                    "earnings call, not the structured facts; verify against the call"
+                    "earnings call, not its validated facts; verify against the call"
                 )
             else:
                 flags.append(f"UNTRACEABLE figure '{n:g}' in {where}: '{p.claim}'")  # D4 full

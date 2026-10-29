@@ -129,6 +129,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "forward history's latest close is `latest_observed_close`, never `current`; every writer "
         "saves through one write",
     ),
+    (
+        "2026-10-29.G-V1",
+        "a transcript row's call, following paragraph and period come from ONE located quote; "
+        "its period stands only where the quote states it, else the cited call's; each value "
+        "figure equals a figure of its quote in the quote's unit (audit G-V1, G-D1, G-D2) · a "
+        "synthesis citation is a ref of the layer, never a fragment, and each figure traces to "
+        "the fact its point cites; an exposure fact cites one filing and is always grounded "
+        "(audit G-D5, G-D6)"
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
