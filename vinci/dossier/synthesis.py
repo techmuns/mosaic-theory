@@ -22,6 +22,8 @@ import re
 import time
 import warnings
 from collections import Counter
+from dataclasses import dataclass, field
+from datetime import date
 from typing import Any, cast
 
 from vinci.dossier.schemas import (
@@ -51,6 +53,33 @@ _NUM = re.compile(r"-?\d[\d,]*\.?\d+|-?\d+")
 # time-unit suffix. (Bare 4-digit years are NOT skipped — they collide with real $ figures.)
 _CAL_BEFORE = re.compile(r"(?:\bFY|\bfiscal\s*|\bQ)\s*$", re.IGNORECASE)
 _CAL_AFTER = re.compile(r"^\s*(?:days?|weeks?|months?|quarters?|qtrs?|years?)\b", re.IGNORECASE)
+# Digits that state no figure: an EDGAR accession, a date (ISO; CIQ's "Aug-31-2026"; "May 07,
+# 2026"; "June 1 2026"; "Aug-6"; "Nov-2025") and a period label ("Q1-26", "FY2024-25"). A claim
+# that writes one is citing or dating, not claiming a number; a fact that carries one carries its
+# YEAR as a label (traced as that year only), never as a value to rescale (round 1 of #859's
+# review: 2026-08-14 put 2026, 8 and 14 in the fact's numbers, and 2026 x 1e-2 traced a made-up
+# "20.3%").
+_MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?"
+_DATE_OR_ID = re.compile(
+    r"\b\d{10}-\d{2}-\d{6}\b"
+    r"|\b(?P<iso>(?:19|20)\d\d)-\d\d-\d\d\b"
+    rf"|\b{_MONTH}[- ]\d{{1,2}}(?:(?:,\s*|[- ])(?P<md>(?:19|20)\d\d))?(?![\d.,%])"
+    rf"|\b{_MONTH}[- ](?P<my>(?:19|20)\d\d)(?!\d)"
+    r"|\bF?Q[1-4][- ]?'?(?P<qy>(?:19|20)?\d\d)(?![\d.,%])"
+    r"|\bFY ?'?(?P<fy>(?:19|20)?\d\d)(?:[-–/]'?\d{2,4})?(?![\d.,%])")
+
+
+def _label_year(m: re.Match[str]) -> float | None:
+    """The year a `_DATE_OR_ID` match names, or None (an accession, or a date with no year)."""
+    y = next((m.group(g) for g in ("iso", "md", "my", "qy", "fy") if m.group(g)), None)
+    return None if y is None else float(y if len(y) == 4 else f"20{y}")
+
+
+# A bare year inside a fact's text ("FY2026", "2026 guidance"): a label, kept as a year only. Not
+# "2,026" or "$2026" — those are amounts.
+_BARE_YEAR = re.compile(r"(?<![\d$.,])(?:19|20)\d\d(?!\d|[.,]\d)")
+# Keys whose values identify a fact rather than state one of its numbers.
+_ID_KEYS = frozenset({"accession", "url", "cik", "id"})
 # A point's source_ref pointing at the earnings-call TRANSCRIPT (verbatim prose) rather than a
 # structured CIQ cell. A figure cited to the transcript is NOT in the mechanical layer's number
 # universe, so it earns a soft 'verify-against-the-call' note — NOT a hard UNTRACEABLE, which
@@ -488,7 +517,13 @@ def _claim_figures(text: str) -> list[float]:
     that _NUM extracts but the trace would wrongly flag. The number-trace runs over these, not
     raw _floats."""
     out: list[float] = []
+    labels = [(d.start(), d.end()) for d in _DATE_OR_ID.finditer(text)]
     for m in _NUM.finditer(text):
+        if any(lo <= m.start() < hi for lo, hi in labels):
+            continue  # 2026-11-04 / Aug-6 / Nov-2025 / Q1-26 / an accession
+        before = text[m.start() - 1] if m.start() else " "
+        if before.isalpha() or (before == "-" and m.start() >= 2 and text[m.start() - 2].isalpha()):
+            continue  # GLP-1 / B2B / low-20s — a digit fused to a word is part of a name
         if _CAL_BEFORE.search(text[max(0, m.start() - 9):m.start()]):
             continue  # FY21 / Q1 / fiscal 2025
         if _CAL_AFTER.match(text[m.end():m.end() + 10]):
@@ -527,24 +562,61 @@ def _traces(ref: str, universe: set[str]) -> bool:
     return bool(key) and key in {comparison_key(u) for u in universe}
 
 
-def _values_by_ref(mech: MechanicalLayer) -> dict[str, list[float]]:
-    """Every number each citable fact carries, keyed by its ref (the ``source_ref`` / accession /
-    url `_refs_in` collects, on the comparison key). A fact's numbers are its whole subtree, so a
+@dataclass
+class _FactNumbers:
+    """The numbers one citable fact STATES: its values, traced at any unit rendering, and the years
+    of its dates and labels, traced only as those years."""
+
+    values: list[float] = field(default_factory=list)
+    years: set[float] = field(default_factory=set)
+
+
+def _stated_numbers(o: Any, into: _FactNumbers) -> None:
+    """Every number ``o`` states, read from the values themselves — never from a JSON dump, whose
+    dates and ids are digit runs like any other (`_DATE_OR_ID`, `_ID_KEYS`)."""
+    if o is None or isinstance(o, bool):
+        return
+    if isinstance(o, (int, float)):
+        into.values.append(float(o))
+    elif isinstance(o, date):
+        into.years.add(float(o.year))
+    elif isinstance(o, str):
+        def label(m: re.Match[str]) -> str:
+            if (year := _label_year(m)) is not None:
+                into.years.add(year)
+            return " "
+        rest = _DATE_OR_ID.sub(label, o)
+        into.years.update(float(y) for y in _BARE_YEAR.findall(rest))
+        into.values.extend(_floats(_BARE_YEAR.sub(" ", rest)))
+    elif isinstance(o, dict):
+        for k, v in o.items():
+            if k not in _ID_KEYS and not str(k).endswith("_id"):
+                _stated_numbers(v, into)
+    elif isinstance(o, (list, tuple, set, frozenset)):
+        for v in o:
+            _stated_numbers(v, into)
+
+
+def _values_by_ref(mech: MechanicalLayer) -> dict[str, _FactNumbers]:
+    """The numbers each citable fact states, keyed by its ref (the ``source_ref`` / accession / url
+    `_refs_in` collects, on the comparison key). A fact's numbers are its whole subtree, so a
     filing cited by accession carries its guidance and reconciliation rows."""
-    out: dict[str, list[float]] = {}
+    out: dict[str, _FactNumbers] = {}
 
     def rec(o: Any) -> None:
         if isinstance(o, dict):
             keys = {comparison_key(str(o[k])) for k in ("source_ref", "accession", "url")
                     if o.get(k)}
             if keys:
-                # unescaped, or a "−" in a ref reads as the number 2212 (`\u2212`)
-                nums = _floats(json.dumps(o, default=str, ensure_ascii=False))
+                nums = _FactNumbers()
+                _stated_numbers(o, nums)
                 for k in keys:
-                    out.setdefault(k, []).extend(nums)
+                    acc = out.setdefault(k, _FactNumbers())
+                    acc.values.extend(nums.values)
+                    acc.years |= nums.years
             for v in o.values():
                 rec(v)
-        elif isinstance(o, list):
+        elif isinstance(o, (list, tuple)):
             for v in o:
                 rec(v)
 
@@ -607,13 +679,15 @@ def _validate(
     # cites ONE fact; its figures are checked against that fact.
     values_by_ref = _values_by_ref(mech)
 
-    def _num_traces(n: float, cited_nums: list[float]) -> bool:
+    def _num_traces(n: float, cited: _FactNumbers) -> bool:
         # Trace by MAGNITUDE at any standard financial unit rendering (%, thousands, millions,
         # billions): the LLM writes the stored −0.726 as "−72.6%", 29,643,500 shares as "29.6
         # million", and a stored −0.027 as "shrunk by 2.7%" (sign carried in words, not the digit).
         # Direction is the directional-lint's job; this only asks whether the figure exists.
         a = abs(n)
-        for mf in cited_nums:
+        if a in cited.years:
+            return True  # the year of a date the fact carries — as that year, never rescaled
+        for mf in cited.values:
             for s in _TRACE_SCALES:
                 target = abs(mf) * s
                 if abs(a - target) <= max(0.05, target * 0.02):
@@ -638,7 +712,7 @@ def _validate(
             )
         ref_is_transcript = bool(_TRANSCRIPT_REF.search(p.source_ref))
         ref_key = comparison_key(p.source_ref)
-        cited_nums = values_by_ref.get(ref_key, []) if ref_key else []
+        cited_nums = values_by_ref.get(ref_key, _FactNumbers()) if ref_key else _FactNumbers()
         for n in _claim_figures(p.claim):
             if _num_traces(n, cited_nums):
                 continue

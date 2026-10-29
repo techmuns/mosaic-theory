@@ -21,9 +21,9 @@ rows feed a decision block, so here every row is VALIDATED before it is kept:
   the quote sits in — the model never cites; it fills value + quote only. The call, the following
   paragraph and the period all come from ONE located occurrence; a quote spoken on two calls is
   resolved by the row's stated period, or cited to no call and flagged.
-- **Period.** The model's ``period`` is kept only when its quote states it; otherwise the row
-  carries the period of the call it is cited to, and a period the model gave that is neither is
-  flagged.
+- **Period.** The model's ``period`` is kept only when its quote states it; otherwise it is None
+  (the call it was said on is already the citation), and a period the model gave that is not just
+  that call's quarter is flagged.
 
 Fail loud: an LLM error or an empty extraction yields no rows + a ``qa_flag`` naming the reason —
 never a bare header, never a fabricated row. It is assemble-and-cite, never conclusion: the tool
@@ -37,7 +37,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from vinci.dossier.schemas import DriverKind, OperatingDriver
-from vinci.dossier.synthesis import _CAL_AFTER, _CAL_BEFORE, _NUM
+from vinci.dossier.synthesis import _CAL_AFTER, _CAL_BEFORE, _DATE_OR_ID, _NUM
 from vinci.graph.llm import LlmClient, LlmError
 
 # The kinds the TRANSCRIPT yields — management's spoken operating drivers. Attribution (10-Q MD&A)
@@ -250,10 +250,17 @@ class _Figure:
 
 def _figures(text: str) -> list[_Figure]:
     """The numbers ``text`` states as figures, each with its currency / scale / unit — the same
-    figure set the synthesis tracer reads (period labels such as Q1 / FY25 / "8 quarters" are not
-    figures), so the two checks never disagree about what a number is."""
+    figure set the synthesis tracer reads (period labels such as Q1 / FY25 / "8 quarters", dates,
+    and a digit fused to a word such as GLP-1, are not figures), so the two checks never disagree
+    about what a number is."""
     out: list[_Figure] = []
+    labels = [(d.start(), d.end()) for d in _DATE_OR_ID.finditer(text)]
     for m in _NUM.finditer(text):
+        if any(lo <= m.start() < hi for lo, hi in labels):
+            continue
+        before = text[m.start() - 1] if m.start() else " "
+        if before.isalpha() or (before == "-" and m.start() >= 2 and text[m.start() - 2].isalpha()):
+            continue
         if _CAL_BEFORE.search(text[max(0, m.start() - 9):m.start()]):
             continue
         if _CAL_AFTER.match(text[m.end():m.end() + 10]):
@@ -348,16 +355,17 @@ def _locate(quote_norm: str, quote: str, stated_period: str, slice_text: str) ->
 
 def _row_period(stated: str, quote: str, call_period: str | None) -> tuple[str | None, str | None]:
     """``(period, flag)`` for a row (audit G-D2). The model's period is a claim like any other
-    field: kept only when the quote states it. Otherwise the row carries the period of the call it
-    is cited to — derived from the citation, so it cannot contradict it — and a period the model
-    gave that is neither stated nor the call's is reported, never silently kept or silently lost."""
+    field: kept only when the quote states it, else None. NEVER the call's quarter: that is a period
+    read from position, and "full-year ASP growth of 4%" said on the Q1 call is not a Q1 figure
+    (round 1 of #859's review; the first cut filled it in). The call is already in ``source_ref``,
+    so a dropped period that was only the call's quarter loses nothing and is not flagged; any
+    other dropped period is."""
     if stated and _norm(stated) in _norm(quote):
         return stated, None
     if stated and (call_period is None or _norm(stated) != _norm(call_period)):
-        to = f"its call's period {call_period}" if call_period else "no period (no call period)"
-        return call_period, (f"operating-drivers: Tier-B period {stated!r} is not stated in its "
-                             f"quote — the row carries {to}")
-    return call_period, None
+        return None, (f"operating-drivers: Tier-B period {stated!r} is not stated in its quote — "
+                      f"left empty")
+    return None, None
 
 
 def extract_transcript_drivers(

@@ -191,38 +191,44 @@ def test_every_committed_transcript_row_passes_and_a_rescaled_one_does_not() -> 
 
 
 # --- G-D2: a period is kept only when its quote states it ----------------------------------------
+# A period the quote does not state is None — never the call's quarter, which is a period read from
+# POSITION ("Full-year ASP growth of 4%" said on the Q1 call is not a Q1 figure). The call is
+# already in `source_ref`. Round 1 of #859's review; the first cut filled in the call's quarter.
 
-def test_a_period_the_quote_does_not_state_is_replaced_by_the_cited_calls() -> None:
-    """FAILED on c51c286a: the model's period was copied unchecked, so FY2031 stood."""
+def test_a_period_the_quote_does_not_state_is_dropped_and_flagged() -> None:
+    """FAILED on c51c286a (FY2031 copied unchecked) and on 91e77597 (replaced by the call's
+    quarter)."""
     rows, flags = _extract(_row(_SHIPPED, "266 MWh", "FY2031"))
     (r,) = rows
-    assert r.period == "Q4 2025"
+    assert r.period is None
     assert any("'FY2031' is not stated in its quote" in f for f in flags), flags
 
 
-def test_a_row_with_no_period_carries_its_calls() -> None:
-    """FAILED on c51c286a (None): the citation names the call, so its quarter is known."""
+def test_a_row_whose_quote_states_no_period_has_none() -> None:
+    """FAILED on 91e77597, which gave it the call's quarter in silence. The quote says no period,
+    so the row says none; the call it was said on is in its citation."""
     rows, flags = _extract(_row(_SHIPPED, "266 MWh"))
-    assert rows[0].period == "Q4 2025"
+    assert rows[0].period is None
+    assert rows[0].source_ref == f"CIQ transcript: {_Q4}"
     assert not any("period" in f for f in flags)
 
 
 def test_a_period_the_quote_states_is_kept_and_the_calls_own_period_is_not_flagged() -> None:
-    """The negative half: a stated period is the quote's own; a period equal to the call's is the
-    citation's — neither is flagged."""
+    """The negative half: a stated period is the quote's own and is kept; a period that is only the
+    call's quarter is dropped without a flag — nothing is lost, the citation names the call."""
     stated, _ = _extract(_row("Turning to margins, gross margin was 64% in the first quarter.",
                               "64%", "first quarter"))
     assert stated[0].period == "first quarter"
     same, flags = _extract(_row(_SHIPPED, "266 MWh", "Q4 2025"))
-    assert same[0].period == "Q4 2025"
+    assert same[0].period is None
     assert flags == []
 
 
-def test_a_period_with_no_call_period_to_fall_back_on_is_left_empty_and_flagged() -> None:
+def test_a_period_on_a_call_whose_label_names_no_quarter_is_dropped_and_flagged() -> None:
     slice_text = "--- Acme investor day remarks.rtf ---\n" + _SHIPPED
     rows, flags = _extract(_row(_SHIPPED, "266 MWh", "FY2031"), slice_text=slice_text)
     assert rows[0].period is None
-    assert any("'FY2031'" in f and "no call period" in f for f in flags), flags
+    assert any("'FY2031' is not stated in its quote" in f for f in flags), flags
 
 
 # --- G-D5: a citation is a ref, not a fragment of one ---------------------------------------------
@@ -331,8 +337,9 @@ def _untraceable(mech: ds.MechanicalLayer, claim: str, ref: str) -> list[str]:
 def test_made_up_figures_cited_to_a_real_fact_are_untraceable_on_the_frozen_smpl_page() -> None:
     """FAILED on c51c286a: 1,176 of 1,176 made-up figures traced, because the universe was every
     number on the page (9,675) and that contains any figure at some scale. Measured here at this
-    seed: 189 of 199 flagged; the 10 that trace sit within the tolerance of a number the cited fact
-    itself carries (its value at x1e3, and the `180d` and date digits of its ref)."""
+    seed: 195 of 199 flagged; the 4 that trace sit within the tolerance of a number the cited fact
+    itself states (its value at x1e3, and the `180d` of its ref). Dates no longer count: 189 did
+    before round 1 of the review."""
     mech, _ = _frozen_smpl()
     ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
     assert ref
@@ -382,3 +389,28 @@ def test_a_decisive_figure_cited_to_another_fact_is_not_deduped_away() -> None:
                                  name="FuboTV")
     hits = [f for f in flags if f.startswith("UNTRACEABLE figure '47.3'")]
     assert [h.split(" in ")[1].split(":")[0] for h in hits] == ["bull_point", "decisive.against"]
+
+
+# --- round 1 of #859's review: a date or an id is not a number the fact states ---------------
+
+def test_a_figure_that_only_a_date_or_an_accession_scales_to_is_untraceable() -> None:
+    """FAILED on 91e77597: the fact's numbers were every digit run in its JSON dump, so 2026-08-14
+    gave 2026 (x1e-2 = 20.26, x1e-3 = 2.026), 8 and 14, and an accession gave 1702744 (x1e-6 =
+    1.70). A made-up "20.3%" or "$2.0 billion" cited to any 2026-dated fact traced."""
+    mech, _ = _frozen_smpl()
+    perf = mech.stock_performance
+    assert perf is not None and perf.source_ref
+    for claim in ("a 20.3% margin", "$2.0 billion of revenue", "a 14 point gap"):
+        assert _untraceable(mech, claim, perf.source_ref), claim
+    release = mech.primary_source.releases[0] if mech.primary_source else None
+    assert release is not None and "0001702744-26-000021" in release.source_ref
+    assert _untraceable(mech, "1.7 million units", release.source_ref)
+
+
+def test_the_facts_own_values_and_its_year_still_trace() -> None:
+    """The negative half: the returns the fact carries trace at any rendering, and the year of its
+    date traces as that year — only, never rescaled."""
+    mech, _ = _frozen_smpl()
+    ref = mech.stock_performance.source_ref if mech.stock_performance else None
+    assert ref
+    assert _untraceable(mech, "SMPL fell -60.2% while IWM rose +34.3% through 2026", ref) == []
