@@ -152,6 +152,10 @@ PR (CLAUDE.md: coin-time translation).
   figures agree — what a flag that reads True when skipped, or a verdict held in a sentence, could
   not say.* Home: `vinci/dossier/schemas.py` (`CrossCheck`); written at assembly and onto committed
   pages by `refresh.cross_check_transform`; scored by `vinci/quality/sources/ciq.py`.
+- **Exceptions form / full card** (`Source.committed_rows`, 2026-10-29) — Plain words: *a
+  data-quality snapshot that commits only the names a check did not confirm in full, and counts the
+  rest, saying how many; the **full card** lists every name for every check and stays in the
+  git-ignored `data/data_quality_full/`.* Home: `vinci/quality/core.py` (`compact`, `reconcile`).
 - **Anchor session / restated bar / return basis** (2026-10-26). Plain words:
   - the **anchor** is *the newest stored day a price refresh would otherwise skip, fetched again to
     see whether Polygon has since put that name on a new split basis*;

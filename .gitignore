@@ -109,6 +109,10 @@ data/themes/*
 data/assay/
 data/assay_cache/
 data/assay_history/
+# data-quality scorecard: an EXCEPTIONS source's full card, every name for every check — LOCAL-only
+# (already covered by data/*; explicit for fail-closed clarity). The committed snapshot under
+# data/snapshots/data_quality/ lists the exceptions and names this file by path and sha256.
+data/data_quality_full/
 
 # OS
 .DS_Store

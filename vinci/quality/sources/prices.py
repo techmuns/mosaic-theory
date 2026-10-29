@@ -65,6 +65,7 @@ from vinci.quality.core import (
     CONFIRMED,
     DIFFERS_STATED,
     DIFFERS_UNEXPLAINED,
+    EXCEPTIONS,
     INDEPENDENT,
     INTERNAL,
     UNCHECKED,
@@ -788,4 +789,7 @@ SOURCE = Source(
     id="prices", title="Polygon EOD prices",
     reads_note="reads the git-ignored working store read-only, and Tiingo for the sample; the "
                "sha256 names exactly what was read",
-    load=load, checks=CHECKS, families=FAMILIES)
+    load=load, checks=CHECKS, families=FAMILIES,
+    # every security for every check made 2.1-3.0 MB a day (2026-10-24 → 10-28) in a public repo:
+    # the snapshot lists the exceptions, the full card stays local (operator ruling C1, 2026-10-29)
+    committed_rows=EXCEPTIONS)

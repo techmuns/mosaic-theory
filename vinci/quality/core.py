@@ -29,6 +29,12 @@ INDEPENDENCE IS NAMED PER CHECK. ``independent``: the second figure comes from o
 correctness.
 
 COUNTS AND STATUSES ONLY. The repo is public (2026-10-22): no source's figures enter a snapshot.
+
+A SOURCE DECLARES WHAT ITS SNAPSHOT HOLDS (``Source.committed_rows``, operator ruling C1,
+2026-10-29). ``full``: every name for every check. ``exceptions``: every name a check did not
+confirm in full, in full; the rest counted and the count stated (`compact`); the full card written
+beside the store, git-ignored (`full_rows_path`). The prices source writes every security for every
+check, 2-3 MB a day, into a public repo's history that keeps every copy.
 """
 from __future__ import annotations
 
@@ -46,6 +52,7 @@ DIFFERS_STATED = "differs_stated"
 DIFFERS_UNEXPLAINED = "differs_unexplained"
 UNCHECKED = "unchecked"
 STATUSES: tuple[str, ...] = (CONFIRMED, DIFFERS_STATED, DIFFERS_UNEXPLAINED, UNCHECKED)
+_NOT_CONFIRMED = tuple(s for s in STATUSES if s != CONFIRMED)
 STATUS_MEANING: dict[str, str] = {
     CONFIRMED: "a second figure agrees within the check's own tolerance",
     DIFFERS_STATED: "they differ, and the input states a reason for that unit",
@@ -71,6 +78,12 @@ FAILURE_CLASSES: dict[str, str] = {
     "wrong_period": "the right figure for another period, or another vintage of it",
     "different_definition": "the same name on a figure built another way",
 }
+#: What a source's committed snapshot holds (`Source.committed_rows`).
+FULL = "full"
+EXCEPTIONS = "exceptions"
+#: An EXCEPTIONS snapshot's schema: its ``by_name`` is not the population, so a reader of the full
+#: form is refused by name rather than reading a missing name as absent.
+COMPACT_SCHEMA = f"{SCHEMA}+{EXCEPTIONS}"
 
 
 @dataclass(frozen=True)
@@ -139,10 +152,13 @@ class Source:
     load: Callable[[Path], Corpus]
     checks: tuple[Check, ...]
     families: tuple[Family, ...]
+    committed_rows: str = FULL     # FULL | EXCEPTIONS — what its committed snapshot holds
 
 
 def validate(src: Source) -> Source:
     """A source that contradicts itself is refused at discovery, never half-scored."""
+    if src.committed_rows not in (FULL, EXCEPTIONS):
+        raise ValueError(f"{src.id}: committed_rows {src.committed_rows!r}")
     ids = [c.id for c in src.checks]
     if len(set(ids)) != len(ids):
         raise ValueError(f"{src.id}: duplicate check id")
@@ -382,3 +398,125 @@ def render(card: dict[str, Any]) -> str:
 
 def snapshot_path(root: Path, source_id: str, measured_on: str) -> Path:
     return root / "data" / "snapshots" / "data_quality" / source_id / f"{measured_on}.json"
+
+
+# --- the exceptions form ------------------------------------------------------------------------
+
+
+def full_rows_path(root: Path, source_id: str, measured_on: str) -> Path:
+    """Where an EXCEPTIONS source's full card goes: under ``data/``, so git-ignored, beside the
+    store it was read from — in the checkout that ran it and nowhere else."""
+    return root / "data" / "data_quality_full" / source_id / f"{measured_on}.json"
+
+
+def _listed(row: dict[str, Any]) -> bool:
+    """A row the exceptions form lists: the check did not run on the name, judged none of its
+    units, left one out by its own rule, or found one not confirmed."""
+    if "not_applicable" in row:
+        return False
+    return ("not_run" in row or row.get("excluded", 0) > 0
+            or not sum(row[s] for s in STATUSES) or any(row[s] for s in _NOT_CONFIRMED))
+
+
+def _listing(c: dict[str, Any], noun: str, ran: int, not_run: int) -> str:
+    """A check's own statement of what it lists and what it only counts."""
+    f, kept = c["fleet"], c["not_listed"]
+    return (f"{ran + not_run:,} of {f['items']:,} {noun}s listed in full: {ran:,} the check ran on "
+            f"and did not confirm in full, {not_run:,} it did not run on. Counted, not listed: "
+            f"{kept['confirmed_names']:,} {noun}s whose every {c['unit']} is confirmed "
+            f"({kept['confirmed_units']:,} {c['unit']}(s)), and "
+            f"{sum(g['count'] for g in c['not_applicable']):,} it does not apply to")
+
+
+def compact(card: dict[str, Any], *, full_path: str, full_sha256: str) -> dict[str, Any]:
+    """The EXCEPTIONS form of a full card (operator ruling C1, 2026-10-29). Each check keeps every
+    row it did not confirm in full exactly as the full card holds it, and COUNTS the rest — the
+    names whose every unit is confirmed and the names it does not apply to — saying so in its
+    own ``listing``. The boundary, the fleet counts, the not-run reasons and the coverage map are
+    the full card's. ``full_path`` and ``full_sha256`` name the full card as written. Refused
+    unless it reconciles (`reconcile`)."""
+    noun = card["boundary"]["item_noun"]
+    checks = []
+    for c in card["checks"]:
+        rows = {t: r for t, r in c["by_name"].items() if _listed(r)}
+        confirmed = [r for t, r in c["by_name"].items()
+                     if t not in rows and "not_applicable" not in r]
+        out: dict[str, Any] = {}
+        for k, v in c.items():
+            if k == "not_applicable":
+                out[k] = [{"reason": g["reason"], "count": len(g["names"])} for g in v]
+            elif k == "by_name":
+                out["not_listed"] = {"confirmed_names": len(confirmed),
+                                     "confirmed_units": sum(r[CONFIRMED] for r in confirmed)}
+                out["listing"] = ""        # placed here; stated once every count is in `out`
+                out[k] = rows
+            else:
+                out[k] = v
+        not_run = sum(1 for r in rows.values() if "not_run" in r)
+        out["listing"] = _listing(out, noun, len(rows) - not_run, not_run)
+        checks.append(out)
+    head = {"schema": COMPACT_SCHEMA, "rows": {
+        "form": EXCEPTIONS,
+        "statement": (
+            f"EXCEPTIONS ONLY (operator ruling C1, 2026-10-29). Each check lists in full every "
+            f"{noun} it did not confirm in full — a unit not confirmed, a unit its own rule leaves "
+            f"out, no unit judged, or the check not run on it — exactly as the full card holds "
+            f"it. The {noun}s "
+            f"whose every unit is confirmed, and those a check does not apply to, are COUNTED, NOT "
+            f"LISTED: each check's `listing` and `not_listed` say how many. The boundary, the "
+            f"fleet counts and the not-run reasons are the full card's. The full card, every "
+            f"{noun} for every check, was written to `full.path`: git-ignored, it exists only in "
+            f"the checkout that ran the scorecard, and `full.sha256` is the hash of its bytes."),
+        "full": {"path": full_path, "sha256": full_sha256}}}
+    out_card = {**head, **{k: (checks if k == "checks" else v) for k, v in card.items()
+                           if k != "schema"}}
+    reconcile(out_card)
+    return out_card
+
+
+def reconcile(card: dict[str, Any]) -> None:
+    """An EXCEPTIONS card against its own rows — raises on the first thing that disagrees.
+
+    Per check: every listed row is an exception (`_listed`) of a name in the boundary; the listed
+    names it ran on plus the confirmed names it only counts are the names it ran on; its not-run
+    rows are its not-run groups, reason for reason; its not-applicable counts are its
+    not-applicable names; every status's units on the listed rows, plus the confirmed units it
+    only counts, are the fleet's; and its ``listing`` states exactly those numbers. A dropped row,
+    a moved count or a stale statement each fails here, so the form cannot lose what it says it
+    counts."""
+    rows_block = card.get("rows") or {}
+    if card.get("schema") != COMPACT_SCHEMA or rows_block.get("form") != EXCEPTIONS:
+        raise ValueError(f"not an exceptions card: schema {card.get('schema')!r}")
+    full = rows_block.get("full") or {}
+    if not (rows_block.get("statement") and full.get("path") and full.get("sha256")):
+        raise ValueError("an exceptions card must state its form and name its full card")
+    b = card["boundary"]
+    names = set(b["names"])
+    if len(names) != b["items"]:
+        raise ValueError(f"boundary: {b['items']} items, {len(names)} distinct names")
+    for c in card["checks"]:
+        where = f"{card['source']['id']}.{c['id']}"
+        f, rows, kept = c["fleet"], c["by_name"], c.get("not_listed")
+        if kept is None or "listing" not in c:
+            raise ValueError(f"{where}: no statement of what it counts and does not list")
+        if bad := sorted(t for t, r in rows.items() if t not in names or not _listed(r)):
+            raise ValueError(f"{where}: listed rows that are not exceptions in the boundary {bad}")
+        ran = [r for r in rows.values() if "not_run" not in r]
+        not_run = {t: r["not_run"] for t, r in rows.items() if "not_run" in r}
+        if not_run != {t: g["reason"] for g in c["not_run"] for t in g["names"]}:
+            raise ValueError(f"{where}: its not-run rows are not its not-run groups")
+        got = {"items": f["items_run"] + f["items_not_run"] + f["items_not_applicable"],
+               "items_run": len(ran) + kept["confirmed_names"],
+               "items_not_run": len(not_run),
+               "items_not_applicable": sum(g["count"] for g in c["not_applicable"]),
+               "units": sum(f[s] for s in STATUSES),
+               CONFIRMED: sum(r[CONFIRMED] for r in ran) + kept["confirmed_units"],
+               **{s: sum(r[s] for r in ran) for s in _NOT_CONFIRMED},
+               "excluded": sum(r.get("excluded", 0) for r in ran)}
+        got["fleet items"] = f["items"]
+        want = {k: f[k] for k in got if k in f} | {"items": b["items"], "fleet items": b["items"]}
+        if got != want:
+            raise ValueError(f"{where}: counts do not reconcile — " + "; ".join(
+                f"{k} {got[k]} against {want[k]}" for k in got if got[k] != want[k]))
+        if c["listing"] != _listing(c, b["item_noun"], len(ran), len(not_run)):
+            raise ValueError(f"{where}: its listing does not state its own counts")
