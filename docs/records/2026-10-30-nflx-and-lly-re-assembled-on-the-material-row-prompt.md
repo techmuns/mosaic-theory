@@ -31,6 +31,15 @@ What else lands:
   expected failure on WERN's half, and WERN is no longer pursued.
 - **`ANCHORS_AWAITING_BACKFILL` loses NFLX and LLY**: their re-assembled bases are the recompute's.
 - **LLY's companyfacts fixture is regenerated** for its Q3 10-Q. NFLX's regenerates byte-identical.
+- **`test_lillys_real_page_refuses_its_count_and_keeps_its_equity` is re-pointed** from the Q2 10-Q's
+  weighted averages (diluted 893,700,000 / basic 892,400,000) to the Q3 10-Q's (893,400,000 /
+  891,900,000, `0000059478-26-000108`). It reads the live page and the fixture this pass
+  regenerates. Its behaviour is unchanged on Q3: the cover count is still refused, the
+  corroborated basic count is accepted, and the equity is identical.
+- **The 2026-10-28 monitor day is re-run** (same session, RUNBOOKS §j), because LLY and NFLX both
+  carry panels in it. Rows, spread and realized marks are identical. LLY's and NFLX's panels are
+  re-emitted, and GOOGL's filing watch now lists its Q3 8-K (10-28) and 10-Q (10-29) as an unread
+  print. The store was topped up to the 10-28 close for every name the day carries (288 bars).
 
 **WHY.** These are the Phase 1 values row 41 lists, plus the two refusals the first pass left. The
 prompt fix was chosen over a re-roll because a re-roll is a fresh draw with nothing steering it to
@@ -43,8 +52,9 @@ the row.
 - **One build each, one at a time.** Both are within the coordinator's stop line (about 2× the
   estimate: NFLX $9.90, LLY $5.50). No guard refused.
 - **LLY's quarterly columns compared** on the committed page and the rebuilt page (above).
-- **The suite:** see the PR's verification section. Both suites are stated there, run on the
-  committed tree.
+- **The suite:** the full offline suite, CI-like (the CIQ copy, store and caches unlinked), on the merged tree
+  with this record and the LLY pin: 8,145 passed, 0 failed, 545 skipped, 18 xfailed. Before the
+  pin re-point and the monitor re-run, the same tree failed exactly those two pins.
 
 **BOUNDARY.**
 - **Runs:** 2 runs on 2026-10-29, 19:09–19:23 UTC, on branch `artifacts/nflx-lly-2026-10-30` (main
