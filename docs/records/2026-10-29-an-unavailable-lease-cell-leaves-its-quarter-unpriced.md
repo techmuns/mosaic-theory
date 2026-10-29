@@ -106,6 +106,18 @@ prs: [857]
   - What moves the median is leaving them out: five of the seven sit below it.
   - The repo does not impute a missing cell, so leaving them unpriced is the rule. But the R1 move
     it produces is the price of not guessing, not a better estimate of the band.
+- **UNPRICED QUARTERS ARE UNCAPPED: RULED 2026-10-29.** The operator's ruling, verbatim: "Yes,
+  uncapped".
+  - **The question it settles.** Should a quarter left unpriced for an UNAVAILABLE lease cell count
+    toward `MAX_UNRECONCILED_SHARE`, the 10% cap on excluded quarters? It does not.
+  - **The basis.** The cap tests DISAGREEMENT with EDGAR, and a missing cell is a DATA GAP, not a
+    disagreement. The excluded dates are named on the block (`unpriced_dates`), so the shrinkage is
+    stated, not hidden.
+  - **What it means for WLK.** WLK keeps its band on 27 quarters. Had the 7 counted, they would be
+    20.6% of its 34 and the band would refuse.
+  - **Falsifier, and when to revisit.** Revisit if any name loses more than about 25% of its
+    history to unpriced quarters. Revisit too if the unpriced dates cluster in one fiscal quarter
+    across names, which would make the selection effect seasonal rather than incidental.
 - **Pages wait for the rebuild.** WLK's committed page keeps the old band, anchor and observations
   until the combined Phase-1 rebuild re-assembles it. No page is written here.
 - **Not changed:**
