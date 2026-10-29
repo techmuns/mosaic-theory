@@ -1,8 +1,8 @@
 ---
 id: 2026-10-29-ciq-reader-one-period-parser
-status: open
+status: shipped
 date: 2026-10-29
-prs: []
+prs: [861]
 supersedes:
 superseded-by:
 ---
