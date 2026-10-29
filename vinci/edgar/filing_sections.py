@@ -110,8 +110,12 @@ _P_AND_I_12M = re.compile(
     r"months\s+(?:is|was|totals?|totaled)\s+\$\s*([\d,.]+)\s*(million|billion)", re.I)
 #: A ≤12m amount in a sentence about leases, purchase obligations or commitments is not the debt
 #: wall — Werner states its finance-lease and interest payments "payable within 12 months" too.
-_NOT_DEBT = re.compile(r"\bleases?\b|\blease\s+liabilit|purchase\s+obligations?|commitments?",
-                       re.I)
+_NOT_DEBT = re.compile(r"\bleases?\b|\blease\s+liabilit|purchase\s+obligations?|"
+                       r"(?:purchase|capital|inventory)\s+commitments?", re.I)
+#: The debt words a widened ≤12m sentence must carry — `_DEBT_SECTION` plus the plain ones it
+#: lacks ("Of our total debt, $1.2 billion due within …", "our notes", "the Credit Facilities").
+_DEBT_WORD = re.compile(rf"{_DEBT_SECTION.pattern}|\bdebt\b|\bnotes?\b|\bprincipal\b|"
+                        r"credit\s+facilities", re.I)
 BASIS_PRINCIPAL = "principal"
 BASIS_PRINCIPAL_AND_INTEREST = "principal and interest"
 
@@ -125,7 +129,7 @@ def _stated_12m(text: str) -> tuple[int, float | None, str] | None:
     """(anchor, $M due within 12 months, basis) from the first widened form that states one."""
     for m in _DUE_12M.finditer(text):
         sent = _sentence(text, m.start())
-        if _DEBT_SECTION.search(sent) and not _NOT_DEBT.search(sent):
+        if _DEBT_WORD.search(sent) and not _NOT_DEBT.search(sent):
             return m.start(), _in_millions(m.group(1), m.group(2)), BASIS_PRINCIPAL
     for m in _NO_PRINCIPAL_12M.finditer(text):
         if not _NOT_DEBT.search(_sentence(text, m.start())):
@@ -189,6 +193,10 @@ _TERMS = re.compile(
 _ROLE_WORD = re.compile(r"\b(revenues?|sales|receivables?)\b", re.I)
 
 
+def _roles(words: list[str]) -> list[str]:
+    return ["receivable" if w.lower().startswith("receivable") else "revenue" for w in words]
+
+
 def _column_roles(text: str, row_at: int) -> list[str] | None:
     """The roles of a concentration table's columns, in order, read from its HEADER — or None when
     the header names no role. A row's figures took their roles from POSITION (audit E2-D16): Vital
@@ -200,9 +208,8 @@ def _column_roles(text: str, row_at: int) -> list[str] | None:
     lo = lo + 2 if lo != -1 else max(0, row_at - 1200)
     head = _CUST.sub(" ", text[lo:row_at])
     colon = head.rfind(":")
-    cols = [w.lower() for w in _ROLE_WORD.findall(head[colon + 1:])] if colon != -1 else []
-    words = cols or [w.lower() for w in _ROLE_WORD.findall(head)]
-    roles = ["receivable" if w.startswith("receivable") else "revenue" for w in words]
+    cols = _ROLE_WORD.findall(head[colon + 1:]) if colon != -1 else []
+    roles = _roles(cols or _ROLE_WORD.findall(head))
     if not roles:
         return None
     return roles if cols else ([roles[0]] if len(set(roles)) == 1 else ["mixed"])
@@ -240,8 +247,7 @@ def _concentration(text: str, src: str) -> CustomerConcentration | None:
             # revenue and accounts receivable, respectively" makes the second a receivable share
             stop = text.find(". ", m.end())
             tail = text[m.end():stop if stop != -1 else m.end() + 160][:160]
-            roles = ["receivable" if w.lower().startswith("receivable") else "revenue"
-                     for w in _ROLE_WORD.findall(tail)]
+            roles = _roles(_ROLE_WORD.findall(tail))
             if roles and roles[0] != "revenue":
                 continue
             seen.add(name)

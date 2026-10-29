@@ -246,3 +246,16 @@ def test_a_headline_revenue_the_release_does_not_place_is_skipped_aloud() -> Non
     ex = _parse(text)
     assert not any(v.metric == "revenue" for v in ex.reconciliation)
     assert any("revenue figure skipped" in f and "$1.408 billion" in f for f in ex.qa_flags)
+
+
+def test_review_round_0_role_and_span_edges() -> None:
+    """Review round 0, three edges of the guards above. A write-down's verb is the charge, not a
+    change ("wrote down $12.0 million"); an "About Non-GAAP Financial Measures" heading is not the
+    company profile; a comparison inside a trailing-twelve-month run takes no quarter either."""
+    text = ("Acme Reports Second Quarter 2026 Results. In the quarter the Company wrote down $12.0 "
+            "million of goodwill impairment charges.")
+    assert [o.amount for o in _parse(text).one_offs] == [12.0]
+    assert not rp._in_about_profile("About Non-GAAP Financial Measures We present revenues", 50)
+    ttm = ("Q1 Fiscal 2026 Highlights ● Over the trailing twelve months: ○ Pro Forma Adjusted "
+           "EBITDA of $77.9 million, compared to $50.0 million")
+    assert not any(v in (77.9, 50.0) for _m, _p, v in _rows(ttm))

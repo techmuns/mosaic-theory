@@ -101,12 +101,14 @@ def wall_coherence(
     filing_convertible: float | None = None,
     panel_convertible_principal: float | None = None,
     tol: float = _TOL,
+    filing_basis: str | None = None,
 ) -> tuple[str, list[str]]:
     """(render_line, qa_flags) — :func:`wall_coherence_read`'s line and flags, for a caller that
     stores no outcome."""
     r = wall_coherence_read(filing_within_12m, panel, balance=balance,
                             filing_convertible=filing_convertible,
-                            panel_convertible_principal=panel_convertible_principal, tol=tol)
+                            panel_convertible_principal=panel_convertible_principal, tol=tol,
+                            filing_basis=filing_basis)
     return (r.line, r.qa)
 
 

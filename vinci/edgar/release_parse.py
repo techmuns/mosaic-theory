@@ -722,6 +722,8 @@ def _figure_period(text: str, start: int, end: int, frame: _ReleaseFrame, *,
     if comparison is None:
         comparison = marker is not None
     if comparison:
+        if _under_trailing_lead_in(text, lo):
+            return None  # a comparison inside a trailing-twelve-month run is a trailing figure too
         stop = min((j for j in (text.find(";", end, hi),) if j != -1), default=hi)
         spans = ([(marker.end(), start)] if marker else []) + [(end, stop)]
         for a, b in spans:
@@ -911,7 +913,7 @@ def _net_product_total(text: str, at: int) -> bool:
 
 
 #: The "About <Company>" profile a release closes with — a description, never a reported result.
-_ABOUT = re.compile(r"(?:^|[.!?”\"]\s+)About\s+[A-Z]")
+_ABOUT = re.compile(r"(?:^|[.!?”\"]\s+)About\s+(?!Non-GAAP|Forward|This\b|These\b|the\b)[A-Z]")
 
 
 def _in_about_profile(text: str, at: int) -> bool:
@@ -1900,6 +1902,8 @@ _ONEOFF = re.compile(
 #: beside the real $64.0M and $40.4M. The amount is the charge only when the noun names it — not
 #: when a CAUSE connects them ("$X million mainly due to the impairments"), and not when the amount
 #: is a CHANGE in something else ("… increased $94.3 million").
+#: "wrote down $12.0 million of …" — the verb IS the charge, never a change in something else.
+_WROTE_DOWN = re.compile(r"\b(?:wrote|written|write)\s+down\s*$", re.I)
 _ONEOFF_CAUSE = re.compile(
     r"\b(?:due\s+to|driven\s+by|as\s+a\s+result\s+of|attributable\s+to|resulting\s+from|"
     r"because\s+of|caused\s+by|reflect(?:s|ed|ing)?|primarily\s+from|offset\s+by)\b", re.I)
@@ -1914,7 +1918,8 @@ def _one_offs(text: str, src: str) -> list[OneOffItem]:
         if amt is None:
             continue
         if (_ONEOFF_CAUSE.search(m["gap"])
-                or _CHANGE_LEAD.search(text, max(0, m.start() - 30), m.start())):
+                or (_CHANGE_LEAD.search(text, max(0, m.start() - 30), m.start())
+                    and not _WROTE_DOWN.search(text, max(0, m.start() - 30), m.start()))):
             continue  # a cause's effect or a change, not the charge itself (see _ONEOFF_CAUSE)
         raw_desc = " ".join(m.group(3).split())
         # trim at the next clause boundary AND at the first comma — a one-off's name rarely spans a

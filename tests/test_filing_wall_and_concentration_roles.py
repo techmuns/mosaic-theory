@@ -169,3 +169,15 @@ def test_a_receivable_column_beside_a_revenue_one_is_not_a_prior() -> None:
     prose = ("The Department of Transportation represented 15.2% and 41.0% of revenue and accounts "
              "receivable, respectively.")
     assert _customers(prose) == [("Department of Transportation", 15.2, None)]
+
+
+def test_the_widened_wall_reads_plain_debt_words() -> None:
+    """Review round 0: the debt guard took `_DEBT_SECTION` alone, which has no bare "debt", "notes"
+    or plural "Credit Facilities" — audit E2's own probe ("Of our total debt, $1.2 billion due
+    within the next 12 months") stayed unstated. A credit-facility COMMITMENT FEE is still debt."""
+    w = fs._maturity_wall("Of our total debt, $1.2 billion due within the next 12 months is "
+                          "classified as current.", _SRC)
+    assert w is not None and (w.state, w.within_12m_total) == ("located", 1200.0)
+    w = fs._maturity_wall("Of the notes, $45.0 million is due within one year; the revolver "
+                          "carries a commitment fee of 0.25%.", _SRC)
+    assert w is not None and w.within_12m_total == 45.0
