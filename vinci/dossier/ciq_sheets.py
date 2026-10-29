@@ -4349,29 +4349,42 @@ def _transcript_prose(text: str) -> str:
     return text[min(starts) :] if starts else text
 
 
-# the synthesis LLM gets a MECHANICALLY-bounded slice (sections + a fixed char budget) — a
-# structural cut, never a topic/relevance selection. The DOSSIER embeds nothing (a pointer only).
-_SYNTHESIS_TRANSCRIPT_BUDGET = 12_000
+# EACH CALL GOES TO THE MODEL WHOLE (operator ruling 2026-10-29, audit G-D3: "Whole
+# transcripts"): prepared remarks and the full Q&A, after `_transcript_prose` strips the
+# boilerplate. There was a 12,000-character cut per call, with no marker: every one of the 48
+# committed calls was cut, 37 of them before their Q&A began, while the prompt said "Prepared
+# remarks + Q&A". The CEILING is a safety bound, not a budget — about 1.4x the longest committed
+# call (72,147 characters) — and a call past it ends in a marker the model reads and is named in
+# the QA flag (`unparsed_transcript_flag`). The DOSSIER embeds nothing (a pointer only).
+_TRANSCRIPT_CEILING = 100_000
+_CUT_MARKER = "[… CUT:"
+
+
+def _cut_marker(total: int) -> str:
+    return (f"\n{_CUT_MARKER} this call runs {total:,} characters; only the first "
+            f"{_TRANSCRIPT_CEILING:,} are shown — the rest of the call is not in this input]")
 
 
 def transcript_for_synthesis(bundle: CiqBundle) -> str | None:
-    """Mechanically-bounded transcript slices for the synthesis LLM INPUT ONLY (never embedded in
-    the dossier): boilerplate stripped (operator intro / forward-looking legalese / estimates / TOC,
-    via ``_transcript_prose``), prepared remarks + Q&A. ALL earnings-call transcripts on file are
-    included (so quarter-over-quarter posture is visible), each LABELLED by call and capped to the
-    FULL char budget independently — so adding the prior quarter never truncates the latest call's
-    Q&A (the prompt scales with the ~2 quarters the operator uploads, not a halved split). A
-    structural cut, NOT a topic selection. None when there's no transcript or none parse."""
+    """Every earnings-call transcript on file, WHOLE, for the synthesis and driver-extraction LLM
+    INPUT ONLY (never embedded in the dossier): boilerplate stripped (operator intro /
+    forward-looking legalese / estimates / TOC, via ``_transcript_prose``), then prepared remarks
+    and Q&A in full, each LABELLED by call so quarter-over-quarter posture is visible. A call longer
+    than ``_TRANSCRIPT_CEILING`` is cut there and says so in the text. A call that does not read is
+    left out here and named by ``unparsed_transcript_flag``. None when there's no transcript or
+    none read."""
     wbs = bundle.all_workbooks("transcript")
     if not wbs:
         return None
     slices: list[str] = []
     for wb in wbs:
         try:
-            prose = _transcript_prose(read_text(wb.path, wb.fmt))[:_SYNTHESIS_TRANSCRIPT_BUDGET]
+            prose = _transcript_prose(read_text(wb.path, wb.fmt))
         except CiqParseError:
             continue
         if prose.strip():
+            if len(prose) > _TRANSCRIPT_CEILING:
+                prose = prose[:_TRANSCRIPT_CEILING] + _cut_marker(len(prose))
             slices.append(f"--- {wb.path.name} ---\n{prose}")
     return "\n\n".join(slices) if slices else None
 
@@ -4534,21 +4547,46 @@ def key_development_drivers(bundle: CiqBundle) -> list[OperatingDriver]:
 
 
 _TRANSCRIPTS_UNPARSED = "transcripts on file but unparseable"
+_TRANSCRIPTS_CUT = "transcript cut at the ceiling"
+#: A call header in the slice, exactly as `transcript_for_synthesis` writes it.
+_SLICE_CALL = re.compile(r"^--- (.+) ---$", re.MULTILINE)
 
 
 def unparsed_transcript_flag(bundle: CiqBundle, transcript_slice: str | None) -> str | None:
-    """Fail-loud (PR-B §3-now): transcripts are ON FILE but NONE parsed (the OLE-disguised RTFs need
-    LibreOffice; ``transcript_for_synthesis`` swallows the per-workbook ``CiqParseError`` → a silent
-    None). Given the already-computed slice, return a QA flag so the missing call context is never
-    silently swallowed again — the 2026-07-10 cohort assembled blind to every earnings call with no
-    trace. None when no transcript is on file (absence is not failure) or the slice parsed.
+    """Fail-loud on the transcript slice the caller already computed (zero re-parse): a QA flag
+    naming every call ON FILE that is MISSING from it, and every call it CUT at the ceiling. None
+    when nothing is on file (absence is not failure) or every call is there whole.
 
-    Takes the slice the caller already computed (zero re-parse). The flag leads with a token routed
-    to the QA channel (a dev/ops action — install LibreOffice — not an analyst decision caveat)."""
-    if transcript_slice is not None or not bundle.all_workbooks("transcript"):
+    EVERY MISSING CALL, not only an empty slice (audit G-D4). The flag fired only when no call read,
+    so one failed read beside a sibling that read left the model a call short with no trace — and
+    that is not hypothetical: LibreOffice refuses a second conversion while one runs, so two
+    assemblies on one machine (measured 2026-10-29) drop a call this way. The 2026-07-10 cohort
+    assembled blind to every earnings call is the all-missing case of the same thing.
+
+    The flag leads with a token routed to the QA channel (`flags._QA_MARKERS`): a dev/ops action —
+    install LibreOffice, re-run alone — not an analyst decision caveat."""
+    wbs = bundle.all_workbooks("transcript")
+    if not wbs:
         return None
-    return (f"{_TRANSCRIPTS_UNPARSED} (LibreOffice missing?) — synthesis received no earnings-call "
-            f"text for {bundle.ticker}")
+    if transcript_slice is None:
+        return (f"{_TRANSCRIPTS_UNPARSED} (LibreOffice missing?) — synthesis received no "
+                f"earnings-call text for {bundle.ticker}")
+    heads = list(_SLICE_CALL.finditer(transcript_slice))
+    present = {h.group(1) for h in heads}
+    missing = [wb.path.name for wb in wbs if wb.path.name not in present]
+    cut = [h.group(1) for k, h in enumerate(heads)
+           if _CUT_MARKER in transcript_slice[h.end():(heads[k + 1].start() if k + 1 < len(heads)
+                                                       else len(transcript_slice))]]
+    parts: list[str] = []
+    if missing:
+        parts.append(f"{_TRANSCRIPTS_UNPARSED} — {len(missing)} of {len(wbs)} call(s) on file are "
+                     f"missing from the model's input for {bundle.ticker}: {'; '.join(missing)} "
+                     f"(a failed read; LibreOffice also fails a conversion while another runs)")
+    if cut:
+        parts.append(f"{_TRANSCRIPTS_CUT} of {_TRANSCRIPT_CEILING:,} characters for "
+                     f"{bundle.ticker}: {'; '.join(cut)} — the model reads a marker where each "
+                     f"stops")
+    return " · ".join(parts) or None
 
 
 def management_commentary(bundle: CiqBundle) -> Sourced[str]:

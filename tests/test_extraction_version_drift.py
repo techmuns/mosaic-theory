@@ -77,8 +77,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "0e7525cfaa91"
-PINNED_AT = "2026-10-29.BC-D10"
+PINNED_TABLE = "054022b1905c"
+PINNED_AT = "2026-10-29.G-D3"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -91,7 +91,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq_balance.py": "ad209af32bee",
     "vinci/dossier/ciq_charting.py": "e25a753aae4f",
     "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
-    "vinci/dossier/ciq_sheets.py": "09ed07eb89f8",
+    "vinci/dossier/ciq_sheets.py": "690b7af98c8c",
     "vinci/dossier/covenant_extract.py": "36044a98ac15",
     "vinci/dossier/dilution.py": "87d81ad77c04",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
@@ -100,7 +100,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/edgar_fundamentals.py": "c8ecafb0bcb4",
     "vinci/dossier/ev_ebitda_basis.py": "ad13b0e13ca0",
     "vinci/dossier/ev_gap.py": "6a0c9a26afac",
-    "vinci/dossier/flags.py": "1ce8a4a057ad",
+    "vinci/dossier/flags.py": "e01f2ae15b54",
     "vinci/dossier/freshness.py": "e5852b313d22",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
@@ -113,7 +113,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "ba1235fc60f1",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "19ccb746b446",
+    "vinci/dossier/synthesis.py": "cd0ac76beb32",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "766d2ed17c7a",
     "vinci/dossier/verdict.py": "0b43167d2044",

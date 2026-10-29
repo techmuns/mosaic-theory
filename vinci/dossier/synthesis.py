@@ -1014,10 +1014,11 @@ def _operating_drivers_digest(od: OperatingDriversExtract) -> str:
         # SURFACED HERE, not left to the facts dump. BRBR's quote — "70% of RTD shake category
         # volumes were sold on price promotion" — is exact and correctly cited, and the sentence
         # after it says the figure is "in line with historical norms … DOWN sequentially from the
-        # heavier promoted second quarter". The synthesis had the WHOLE transcript in its prompt
-        # and still built an escalating sequence out of the quote alone, because THIS digest is
-        # what it is told to ground in and copy refs from. Putting the qualifier beside the fact
-        # is the intervention; leaving it in the JSON would only serve the audit.
+        # heavier promoted second quarter". The synthesis had that call in its prompt (then its
+        # first 12,000 characters; whole since audit G-D3) and still built an escalating sequence
+        # out of the quote alone, because THIS digest is what it is told to ground in and copy
+        # refs from. Putting the qualifier beside the fact is the intervention; leaving it in the
+        # JSON would only serve the audit.
         if r.following_context:
             ctx = (r.following_context if len(r.following_context) <= 400
                    else r.following_context[:397].rstrip() + "…")
@@ -1344,7 +1345,7 @@ def synthesize(
     transcript: str | None = None, sleeve: str = DEFAULT_SLEEVE, draws: int = 1,
 ) -> tuple[Synthesis | None, list[str], str]:
     """Run the fenced synthesis → (synthesis|None, flags, log). Fail-loud, never fabricates. The
-    ``transcript`` (a mechanically-bounded slice — NOT embedded in the dossier) is QUALITATIVE
+    ``transcript`` (every call on file, whole — NOT embedded in the dossier) is QUALITATIVE
     context only; no numbers are derived from it and points still bind to the mechanical facts.
 
     ``draws`` (default ONE, so every existing caller and artifact is unmoved) asks the model that
@@ -1370,7 +1371,9 @@ def synthesize(
         user += (
             "\n\n=== Earnings-call transcripts, each fenced by a '--- <call> ---' label. With the "
             "latest and prior quarter both on file, COMPARE posture quarter-over-quarter where it "
-            "shifts. Prepared remarks + Q&A, mechanically bounded. QUALITATIVE management-posture "
+            "shifts. Each call is WHOLE — prepared remarks and the full Q&A — after the "
+            "boilerplate is stripped; a call past the length ceiling ends in a marker saying "
+            "where it was cut. QUALITATIVE management-posture "
             "context ONLY. Derive NO numbers FROM THIS TEXT — any transcript figure you need has "
             "already been extracted, validated, and cited as an `operating_drivers` fact above; "
             "cite THAT source_ref, never a number you read here. A point resting on posture cites "

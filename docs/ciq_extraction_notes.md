@@ -209,18 +209,21 @@ trailing, EBITDA.
 the surfaced surprise is annual; the EPS row is GAAP-EPS basis (distinct from the 99.1 adjusted guide)
 and is labelled as such; `+beat / −miss`.
 
-**Transcript: POINTED-TO in the dossier, MECHANICALLY-BOUNDED for the synthesis — never embedded
-full, never curated.** Two separate paths, by design:
+**Transcript: POINTED-TO in the dossier, WHOLE for the synthesis — never embedded, never
+curated.** Two separate paths, by design:
 - DOSSIER (`management_commentary()`): a POINTER only — the call/file identifier + "read in full for
   management posture/tone", source-bound to the file. NO machine-selected excerpt and NO full embed.
   A machine-chosen "salient extract" is the relevance judgment this project forbids (the machine
   widens/points, never decides what matters); the full embed was also a duplicate (the human holds
   the file) that bloated the synthesis prompt and truncated it.
-- SYNTHESIS LLM INPUT (`transcript_for_synthesis()`): a MECHANICALLY-bounded slice — boilerplate
-  stripped (operator intro / forward-looking-statements legalese / leading estimates table / TOC, via
-  `_transcript_prose`'s hand-off anchor) and prepared-remarks + Q&A truncated to a FIXED char budget
-  (`_SYNTHESIS_TRANSCRIPT_BUDGET`). This is a STRUCTURAL cut (sections + budget), NOT a topic/relevance
-  selection — no name-specific topics are hardcoded; it works for any ticker. The slice is passed to
+- SYNTHESIS + DRIVER-EXTRACTION LLM INPUT (`transcript_for_synthesis()`): every call on file, WHOLE
+  (operator ruling 2026-10-29, "Whole transcripts") — boilerplate stripped (operator intro /
+  forward-looking-statements legalese / leading estimates table / TOC, via `_transcript_prose`'s
+  hand-off anchor), then prepared remarks and the full Q&A. A call past `_TRANSCRIPT_CEILING`
+  (100,000 characters, a safety bound) ends in a cut marker and a QA flag, and a call on file that
+  does not read is named in a QA flag (`unparsed_transcript_flag`). Not a topic/relevance
+  selection — no name-specific topics are hardcoded; it works for any ticker. (Until 2026-10-29
+  each call was cut at a fixed 12,000-character budget with no marker.) The slice is passed to
   the synthesis as qualitative context (no numbers derived; points still bind to the mechanical
   facts' source_refs), and is NOT part of the mechanical-layer dump, so it does not enlarge the
   number-trace haystack.
