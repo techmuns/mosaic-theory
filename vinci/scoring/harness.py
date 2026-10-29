@@ -2,7 +2,8 @@
 
 For each verdict it computes the name's return from the **frozen entry price** to the scoring date
 (the thesis horizon once it has passed, else an interim mark) and the benchmark's return over the
-same window, then aggregates the resolved verdicts into the report (see ``vinci.scoring.metrics``).
+same window — the entry read on the exit's split basis (`vinci.eod.splits`) — then aggregates the
+resolved verdicts into the report (see ``vinci.scoring.metrics``).
 Verdicts whose horizon hasn't passed — or whose horizon session's close is not in the store yet, or
 that lack a forward price — are counted as *pending*, not scored: the BUY−AVOID spread is computed
 only over **resolved** verdicts.
@@ -13,6 +14,7 @@ from __future__ import annotations
 from datetime import date, timedelta
 
 from vinci.eod.dividends import DividendSource, DividendsUnknownError, growth
+from vinci.eod.splits import SplitBasisError, SplitSource, SplitsUnknownError, entry_on_basis
 from vinci.schemas.ledger import (
     EVENT_CLOSE,
     ORIGIN_SCREEN,
@@ -52,6 +54,12 @@ class BenchmarkMismatchError(RuntimeError):
     row. See the guard in ``score_ledger`` for why honouring it per row is a caller change.
     """
 
+class SplitsUnreadError(RuntimeError):
+    """A RESOLVED row whose name's splits reference could not be read, so its entry's split basis
+    is unchecked. Raised rather than scored on the sealed price, as `TotalReturnUnknownError` is
+    for dividends; gated on ``resolved`` the same way."""
+
+
 class StaleExitError(RuntimeError):
     """A RESOLVED row whose name stopped trading before its horizon session.
 
@@ -84,6 +92,7 @@ def score_ledger(
     benchmark_internal_id: str = _DEFAULT_BENCHMARK_ID,
     baskets: dict[str, Basket] | None = None,
     dividends: DividendSource,
+    splits: SplitSource,
 ) -> tuple[list[VerdictScore], ScoreReport]:
     """Score every ledger verdict as of ``as_of``; return per-verdict scores and the aggregate.
 
@@ -92,6 +101,13 @@ def score_ledger(
     ex-date; price return rides beside on each score. ``dividends`` has no default, so no caller
     can drop it by omission and land back on price return. A resolved row it cannot read raises
     `TotalReturnUnknownError`; an unresolved one is pending, like a row with no forward price.
+
+    EVERY RETURN IS ON ONE SPLIT BASIS (audit item F-D1, 2026-10-29): the sealed entry is set
+    beside the store's own entry-session close, and a split ``splits`` records since then puts the
+    entry on the store's basis, with a note (`vinci.eod.splits.entry_on_basis`). ``splits`` has no
+    default either. A resolved row whose splits cannot be read raises `SplitsUnreadError`, and one
+    whose prices disagree with the record raises `SplitBasisError`; an unresolved one is pending,
+    the disagreement named in ``row_notes``.
 
     ``baskets`` maps sleeve key → its passive comparator (see ``vinci.scoring.baseline``). Supplied
     by the caller rather than read here, because the follow list is a data-layer fact and the
@@ -248,12 +264,43 @@ def score_ledger(
                 f"gap is still there when the row resolves (its horizon is {horizon_date}), "
                 f"scoring stops.")
 
-        # THE DIVIDENDS, each leg over its OWN window — the sealed entry session to the exit bar's
-        # session for the name, the benchmark's own bars for the benchmark. Read through the
-        # store's symbol (Tiingo is asked by symbol); a name the store has no row for is asked by
-        # its ledger ticker.
+        # Read through the store's symbol (Tiingo and the splits reference are asked by symbol);
+        # a name the store has no row for is asked by its ledger ticker.
         sec = store.get_security(entry.internal_id)
         name_sym = sec.eod_symbol if sec is not None else entry.ticker
+
+        # THE ENTRY ON THE EXIT'S SPLIT BASIS. The store holds one basis — the newest its bars for
+        # this name were read on — and the sealed price holds the entry date's; `entry_on_basis`
+        # reconciles the two through the splits reference, or refuses.
+        try:
+            entry_px, split_note = entry_on_basis(
+                who=who, sealed=entry.entry_price,
+                session=name_in.bar_date if name_in is not None else entry_date,
+                session_close=name_in.close if name_in is not None else None,
+                session_source=name_in.source if name_in is not None else None,
+                basis_through=name_bars[-1].bar_date, splits=splits(name_sym))
+        except SplitsUnknownError as exc:
+            if resolved:
+                raise SplitsUnreadError(
+                    f"{entry.entry_id} has RESOLVED and its splits reference cannot be read — "
+                    f"{exc}. Its entry's split basis is unchecked, and it is never scored on the "
+                    f"sealed price unchecked.") from exc
+            if origin_of(entry) == ORIGIN_SCREEN:
+                pending += 1
+            continue
+        except SplitBasisError as exc:
+            if resolved:
+                raise
+            notes.append(f"{exc} This interim row is PENDING; at its horizon {horizon_date} "
+                         f"scoring stops on it.")
+            if origin_of(entry) == ORIGIN_SCREEN:
+                pending += 1
+            continue
+        if split_note is not None:
+            notes.append(split_note)
+
+        # THE DIVIDENDS, each leg over its OWN window — the sealed entry session to the exit bar's
+        # session for the name, the benchmark's own bars for the benchmark.
         try:
             name_div = dividends(name_sym, name_in.bar_date if name_in is not None else entry_date,
                                  exit_bar.bar_date)
@@ -292,9 +339,9 @@ def score_ledger(
             ticker=entry.ticker,
             verdict=entry.verdict,
             resolved=resolved,
-            name_return=total_return(entry.entry_price, exit_bar.close, name_growth),
+            name_return=total_return(entry_px, exit_bar.close, name_growth),
             bench_return=total_return(bench_in.close, bench_out.close, bench_growth),
-            name_price_return=price_return(entry.entry_price, exit_bar.close),
+            name_price_return=price_return(entry_px, exit_bar.close),
             bench_price_return=price_return(bench_in.close, bench_out.close),
             basket_return=b_ret,
             basket_note=b_note,

@@ -22,7 +22,9 @@ from vinci.cohort import cohort_reads, sic_by_ticker
 from vinci.config import Config, get_config
 from vinci.edgar import EdgarClient
 from vinci.eod import PolygonEodClient, ingest_prices
+from vinci.eod.client import store_calendar
 from vinci.eod.dividends import default_dividends
+from vinci.eod.splits import default_splits
 from vinci.evidence import evidence_strip
 from vinci.labels import resolve_label
 from vinci.progress import ProgressFn
@@ -459,9 +461,14 @@ def run_monthly(
             # whole span. Without TIINGO_API_KEY every window reads unknown, so a RESOLVED row
             # stops this run rather than scoring on price return (the CI secret is an operator
             # item — docs/records/2026-10-26-split-restatement-and-total-return.md).
+            # Coverage is checked session by session against the store's own market calendar
+            # (audit item F-D3).
             dividends=default_dividends(
                 start=min((e.entry_price_as_of for e in store.iter_ledger()), default=as_of),
-                end=as_of),
+                end=as_of, sessions=store_calendar(store)),
+            # ONE SPLIT BASIS (audit item F-D1): Polygon's splits reference reconciles each row's
+            # sealed entry with the store's restated bars, or the run stops on a resolved row.
+            splits=default_splits(cfg, client=client),
         )
         store.export_snapshots(cfg.snapshots_dir)
     (cfg.snapshots_dir / "scoring_report.md").write_text(report.to_markdown())

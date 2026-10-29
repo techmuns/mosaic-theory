@@ -33,6 +33,7 @@ from vinci.schemas.market import PriceBar
 _GROUPED = "https://api.polygon.io/v2/aggs/grouped/locale/us/market/stocks/{day}"
 _AGGS = "https://api.polygon.io/v2/aggs/ticker/{symbol}/range/1/day/{start}/{end}"
 _REFERENCE = "https://api.polygon.io/v3/reference/tickers"
+_SPLITS = "https://api.polygon.io/v3/reference/splits"
 _ONE_DAY = 86_400.0
 
 
@@ -132,6 +133,22 @@ def market_sessions(per_day: dict[str, int]) -> list[int]:
                   if n >= _SESSION_PRESENT_FRACTION * top)
 
 
+#: (start, end) → the market's sessions in [start, end], oldest first: the calendar a per-session
+#: check reads (dividend coverage, `eod.dividends.ex_date_yields`).
+SessionCalendar = Callable[[date, date], list[date]]
+
+
+def store_calendar(store: Any) -> SessionCalendar:
+    """A store's market sessions (`market_sessions` over every bar it holds) as a
+    `SessionCalendar`, read once. A store with no bars has no sessions."""
+    per_day = store.bars_per_session()
+    days = [date.fromordinal(o) for o in market_sessions(per_day)] if per_day else []
+
+    def calendar(start: date, end: date) -> list[date]:
+        return days[bisect_left(days, start):bisect_right(days, end)]
+    return calendar
+
+
 def missed_sessions(market: list[int], days: array[int]) -> array[int]:
     """Per step between consecutive bars: the market sessions strictly between them."""
     return array("i", (bisect_left(market, days[i]) - bisect_right(market, days[i - 1])
@@ -183,14 +200,28 @@ def last_completed_session(client: EodClient, *, today: date,
 
 def restatement_factor(held: PriceBar, fresh: RawBar) -> float | None:
     """``fresh ÷ held`` when the source has put this session's bar on a new split basis — open,
-    high, low and close all scaled by one factor that is away from 1 — else None (unchanged, or
-    changed some other way)."""
+    high, low and close all scaled by one factor that is away from 1, AND volume scaled by its
+    inverse — else None (unchanged, or changed some other way).
+
+    THE VOLUME HALF (audit item F-D5, 2026-10-29). Prices alone cannot tell a split from a bar the
+    source corrected: a one-print correction that moves all four prices by 1.04 read as a split, and
+    every older held bar of the name was rescaled by it and tagged ``+restated``. A split changes
+    the share count, so volume moves the other way by the same factor — the 2026-08-05 measurement
+    in `RESTATE_TOL`'s note saw it to the cent on all ten real restatements — while a price
+    correction leaves volume where it was. A bar with no volume on either side cannot show that,
+    and restates nothing: the name's older bars keep their basis, the price scorecard's split-step
+    check flags the step, and scoring refuses a ledger name whose series a recorded split did not
+    restate (`eod.splits.entry_on_basis`)."""
     pairs = ((fresh.open, held.open), (fresh.high, held.high), (fresh.low, held.low),
              (fresh.close, held.close))
     if any(h <= 0 or f <= 0 for f, h in pairs):
         return None
     ratios = [f / h for f, h in pairs]
     if abs(ratios[3] - 1.0) <= RESTATE_TOL or max(ratios) / min(ratios) - 1.0 > RESTATE_TOL:
+        return None
+    if not (held.volume > 0 and fresh.volume > 0):
+        return None
+    if abs(held.volume / fresh.volume / ratios[3] - 1.0) > RESTATE_TOL:
         return None
     return ratios[3]
 
@@ -577,6 +608,26 @@ class PolygonEodClient(EodClient):
             raise
         data = cast(dict[str, Any], raw)
         return parse_grouped_daily(data, day=day, min_results=self._min_results)
+
+    def splits_reference(self, symbol: str) -> list[dict[str, Any]]:
+        """Every split ``/v3/reference/splits`` records for ``symbol``, as served (`eod.splits`
+        parses them) — cached a day, so a split announced since is seen by tomorrow. Fail-loud on a
+        non-OK status; pages are followed."""
+        out: list[dict[str, Any]] = []
+        url: str | None = _SPLITS
+        params: dict[str, Any] | None = {"ticker": symbol, "limit": 1000}
+        pages = 0
+        while url:
+            if pages == 10:   # a safety stop: no ticker has a thousand splits, let alone ten pages
+                raise EodError(f"splits {symbol}: more than {pages} pages")
+            data = cast(dict[str, Any], self._http.get_json(url, ttl_seconds=_ONE_DAY,
+                                                            params=params))
+            if data.get("status") != "OK":
+                raise EodError(f"splits {symbol}: status={data.get('status')!r} "
+                               f"({data.get('error') or data})")
+            out.extend(data.get("results") or [])
+            url, params, pages = data.get("next_url"), None, pages + 1
+        return out
 
     def daily_bars(self, symbol: str, start: date, end: date) -> list[tuple[date, RawBar]]:
         """Per-symbol daily OHLCV over ``[start, end]`` (one cached call). Used for the benchmark

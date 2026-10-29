@@ -1,0 +1,49 @@
+{
+ "GOOGL": {
+  "results": [
+   {
+    "execution_date": "2022-07-18",
+    "id": "E75f0e6c8145d353f2226725ab925f972bcd3f5d050116c4318aba162466c269c",
+    "split_from": 1,
+    "split_to": 20,
+    "ticker": "GOOGL"
+   }
+  ],
+  "status": "OK"
+ },
+ "IT": {
+  "results": [
+   {
+    "execution_date": "1996-04-01",
+    "id": "Pe4ecf123a4bbc836566e5c2f409990d6ef1e3a1b551cebf065b1a572dfc4de09",
+    "split_from": 1,
+    "split_to": 2,
+    "ticker": "IT"
+   },
+   {
+    "execution_date": "1995-06-29",
+    "id": "P516805135290ea4d64a73ee0e3635c6d6c096677a98aa3aae8123de143cdb57e",
+    "split_from": 1,
+    "split_to": 2,
+    "ticker": "IT"
+   },
+   {
+    "execution_date": "1994-08-29",
+    "id": "Pbba7dee8a8f192e2860c3c3499da7e3ea9d8a18cedc905a24f52772d1ae21f94",
+    "split_from": 1,
+    "split_to": 2,
+    "ticker": "IT"
+   }
+  ],
+  "status": "OK"
+ },
+ "SMPL": {
+  "results": [],
+  "status": "OK"
+ },
+ "VRRM": {
+  "results": [],
+  "status": "OK"
+ },
+ "_read": "Polygon /v3/reference/splits?ticker=<T>&limit=1000, read 2026-10-29, one request per ledger name, no next_url on any"
+}

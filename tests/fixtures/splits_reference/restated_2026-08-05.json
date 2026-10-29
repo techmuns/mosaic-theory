@@ -1,0 +1,185 @@
+{
+ "_read": "2026-08-05 bars of the ten names restate-prices restated in the primary store on 2026-10-28: 'held' as a copy of that store held them before the run, 'fresh' as Polygon's grouped-daily (adjusted=true) served the day on 2026-10-28",
+ "pairs": [
+  {
+   "ticker": "AIXI",
+   "factor": 6.999999999999999,
+   "held": {
+    "open": 1.04,
+    "high": 1.11,
+    "low": 0.9888,
+    "close": 1.09,
+    "volume": 307927.477328
+   },
+   "fresh": {
+    "open": 7.28,
+    "high": 7.77,
+    "low": 6.9216,
+    "close": 7.63,
+    "volume": 43989.639618
+   }
+  },
+  {
+   "ticker": "BYND",
+   "factor": 30.000000000000004,
+   "held": {
+    "open": 0.6324,
+    "high": 0.644,
+    "low": 0.601,
+    "close": 0.6101,
+    "volume": 28800681.939285
+   },
+   "fresh": {
+    "open": 18.972,
+    "high": 19.32,
+    "low": 18.03,
+    "close": 18.303,
+    "volume": 960022.73131
+   }
+  },
+  {
+   "ticker": "ETHA",
+   "factor": 2.9999999999999996,
+   "held": {
+    "open": 14.09,
+    "high": 14.545,
+    "low": 13.9801,
+    "close": 14.48,
+    "volume": 28366655.360924
+   },
+   "fresh": {
+    "open": 42.27,
+    "high": 43.635,
+    "low": 41.9403,
+    "close": 43.44,
+    "volume": 9455551.786975
+   }
+  },
+  {
+   "ticker": "IESC",
+   "factor": 0.5,
+   "held": {
+    "open": 771.77,
+    "high": 797.5325,
+    "low": 762.58,
+    "close": 784.03,
+    "volume": 172798.975547
+   },
+   "fresh": {
+    "open": 385.885,
+    "high": 398.7663,
+    "low": 381.29,
+    "close": 392.015,
+    "volume": 345597.951094
+   }
+  },
+  {
+   "ticker": "IMMP",
+   "factor": 20.0,
+   "held": {
+    "open": 0.3954,
+    "high": 0.4104,
+    "low": 0.3812,
+    "close": 0.3922,
+    "volume": 154307.109037
+   },
+   "fresh": {
+    "open": 7.908,
+    "high": 8.208,
+    "low": 7.624,
+    "close": 7.844,
+    "volume": 7715.355452
+   }
+  },
+  {
+   "ticker": "LHSW",
+   "factor": 8.0,
+   "held": {
+    "open": 2.43,
+    "high": 2.66,
+    "low": 2.42,
+    "close": 2.66,
+    "volume": 50989.502705
+   },
+   "fresh": {
+    "open": 19.44,
+    "high": 21.28,
+    "low": 19.36,
+    "close": 21.28,
+    "volume": 6373.687838
+   }
+  },
+  {
+   "ticker": "NVX",
+   "factor": 10.0,
+   "held": {
+    "open": 0.4,
+    "high": 0.41,
+    "low": 0.397,
+    "close": 0.3998,
+    "volume": 79024.905553
+   },
+   "fresh": {
+    "open": 4.0,
+    "high": 4.1,
+    "low": 3.97,
+    "close": 3.998,
+    "volume": 7902.490555
+   }
+  },
+  {
+   "ticker": "REAX",
+   "factor": 10.0,
+   "held": {
+    "open": 1.72,
+    "high": 1.75,
+    "low": 1.69,
+    "close": 1.73,
+    "volume": 2892951.318281
+   },
+   "fresh": {
+    "open": 17.2,
+    "high": 17.5,
+    "low": 16.9,
+    "close": 17.3,
+    "volume": 289295.131828
+   }
+  },
+  {
+   "ticker": "SCNI",
+   "factor": 10.0,
+   "held": {
+    "open": 0.25,
+    "high": 0.25,
+    "low": 0.2383,
+    "close": 0.25,
+    "volume": 326789.195073
+   },
+   "fresh": {
+    "open": 2.5,
+    "high": 2.5,
+    "low": 2.383,
+    "close": 2.5,
+    "volume": 32678.919507
+   }
+  },
+  {
+   "ticker": "SFBS",
+   "factor": 0.5,
+   "held": {
+    "open": 90.88,
+    "high": 91.1375,
+    "low": 90.0,
+    "close": 90.45,
+    "volume": 210738.343736
+   },
+   "fresh": {
+    "open": 45.44,
+    "high": 45.5688,
+    "low": 45.0,
+    "close": 45.225,
+    "volume": 421476.687472
+   }
+  }
+ ]
+}

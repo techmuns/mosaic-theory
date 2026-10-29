@@ -27,7 +27,14 @@ from vinci.eod import (
     ingest_prices_per_symbol,
     last_completed_session,
 )
+from vinci.eod.client import store_calendar
 from vinci.eod.dividends import DividendsUnknownError, default_dividends, growth
+from vinci.eod.splits import (
+    SplitsUnknownError,
+    close_on_basis,
+    default_splits,
+    entry_on_basis,
+)
 from vinci.ledger import LedgerError, log_verdict
 from vinci.monitor import BENCHMARK_LARGE, BENCHMARK_MID, BENCHMARK_SMALL
 from vinci.orchestrator import (
@@ -1590,20 +1597,38 @@ def _cmd_close_position(args: argparse.Namespace) -> int:
         print("REFUSED: --reason is required — a position closes for a stated reason, or the "
               "record cannot be reviewed later.")
         return 1
+    # ONE SPLIT BASIS (audit item F-D1, 2026-10-29): the exit typed here is a quote on its own
+    # date and the sealed entry is on the entry date's, so the realized return puts the entry on
+    # the exit's basis by the splits Polygon records between them. They are read BEFORE the close
+    # is appended: a basis that cannot be checked refuses the close, never prints a mixed number.
+    splits = default_splits(cfg)
     try:
         with Store(cfg.db_path) as store:
+            read = {e.ticker: splits(e.ticker) for e in store.iter_ledger()
+                    if e.candidate_id == args.candidate_id and e.event is None}
             close = close_position(
                 store, candidate_id=args.candidate_id, exit_price=args.exit_price,
                 exit_price_as_of=as_of, reason=reason,
                 closed_at=datetime.now(UTC).replace(tzinfo=None))
+    except SplitsUnknownError as exc:
+        print(f"REFUSED: {exc} — the realized return cannot be put on one split basis, so no "
+              f"close was written.")
+        return 1
     except LedgerError as exc:
         print(f"could not close: {exc}")
         return 1
-    realized = close.exit_price / close.entry_price - 1.0 if close.exit_price else 0.0
+    assert close.exit_price is not None and close.exit_price_as_of is not None  # a close's schema
+    entry, split_note = close_on_basis(
+        who=f"{close.ticker} close {close.entry_id}", sealed=close.entry_price,
+        entry_as_of=close.entry_price_as_of, exit_as_of=close.exit_price_as_of,
+        splits=read[close.ticker])
+    realized = close.exit_price / entry - 1.0
     print(
         f"closed {close.ticker} [{close.verdict.value}] — entry {close.entry_price:.2f} "
         f"{close.entry_price_as_of} → exit {close.exit_price:.2f} {close.exit_price_as_of} "
         f"= {realized:+.2%} realized")
+    if split_note is not None:
+        print(f"  {split_note}")
     print(f"  {close.entry_id} closes {close.closes_entry_id}. The DECISION keeps running to its "
           f"horizon — a close is a portfolio action, not a retraction of the call.")
     _export_ledger(cfg, "close-position")
@@ -2371,6 +2396,10 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
                 cik_by_ticker[rec.get("ticker")] = rec.get("cik")
 
     eod = PolygonEodClient.from_config(cfg)
+    # ONE SPLIT BASIS (audit item F-D1, 2026-10-29): Polygon's splits reference reconciles each
+    # row's sealed entry with the bars read today. A symbol it cannot read stops the run, as an
+    # unknown dividend does.
+    splits = default_splits(cfg, client=eod)
     cache: dict[date, dict[str, Any]] = {}
 
     def bars_on_or_before(day: date) -> tuple[date, dict[str, Any]]:
@@ -2385,7 +2414,11 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # <past date>` marked positions closed and printed realized P&L for exits that had not occurred,
     # so a historical snapshot was not reproducible — while the price path beside it was carefully
     # refusing future bars.
-    realized = mon.pair_closes(ledger_all, as_of=now_date)
+    try:
+        realized = mon.pair_closes(ledger_all, as_of=now_date, splits=splits)
+    except SplitsUnknownError as exc:
+        raise RuntimeError(f"splits UNKNOWN ({exc}) — refusing to derive a realized return whose "
+                           f"split basis nobody checked") from exc
     closed_entry_ids = mon.closed_decision_ids(ledger_all, as_of=now_date)
     notes: list[str] = []
     # AND THE DECISIONS THEMSELVES ARE POINT-IN-TIME. The review flagged the CLOSE half; the same
@@ -2401,9 +2434,18 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # TOTAL RETURN (operator ruling 2026-10-26): every leg's dividends, the position's and its
     # benchmark's, over the book's whole span — one Tiingo read per symbol. A leg whose dividends
     # cannot be read stops the run below; it is never marked on price return instead.
+    # Coverage is checked session by session (audit item F-D3) against the small-cap benchmark's
+    # own Polygon bars — this command keeps no store — read once, when the first window is.
     dividends = default_dividends(
         start=min((date.fromisoformat(r["entry_price_as_of"]) for r in asof_rows),
-                  default=now_date), end=now_date)
+                  default=now_date), end=now_date,
+        sessions=lambda a, b: [d for d, _bar in eod.daily_bars(mon.BENCHMARK_SMALL, a, b)])
+    # THE BASIS THE BARS ARE READ ON. `adjusted=true` restates to the day of the read, so a split
+    # executed after the session marked — a re-cut's `--ref` before it — is already in every bar
+    # read today. The run's own day is left out: a grouped day cached (24h) before a split
+    # executed that day can still hold the old basis, and leaving it out makes that case refuse
+    # (an f no recorded split explains) rather than read as explained.
+    basis_through = max(now_date, date.today() - timedelta(days=1))
     for r in asof_rows:
         payload = json.loads(r["payload"])
         # Re-validated ONCE rather than dict-read: the absent-means-screen/overshoot fallbacks live
@@ -2432,6 +2474,19 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         except DividendsUnknownError as exc:
             raise RuntimeError(f"{tkr}: dividends UNKNOWN ({exc}) — refusing to mark this leg "
                                f"on price return in a total-return book") from exc
+        # THE ENTRY ON THE MARK'S SPLIT BASIS: the sealed price divided into a bar Polygon has
+        # restated since would mix two bases. A disagreement no recorded split explains raises
+        # `SplitBasisError` and stops the run.
+        try:
+            entry_px, split_note = entry_on_basis(
+                who=f"{tkr} ({r['entry_id']})", sealed=float(r["entry_price"]),
+                session=entry_day, session_close=entry_bars[tkr].close,
+                basis_through=basis_through, splits=splits(tkr))
+        except SplitsUnknownError as exc:
+            raise RuntimeError(f"{tkr}: splits UNKNOWN ({exc}) — refusing to mark this leg on "
+                               f"a split basis nobody checked") from exc
+        if split_note is not None:
+            notes.append(split_note)
         live_sic = sic_by_ticker.get(tkr)
         live_sector = mon.sector_for_display(live_sic)
         if (note := mon.sector_note(
@@ -2440,7 +2495,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
         rows.append(mon.position_row(
             ticker=tkr, verdict=r["verdict"], sector=live_sector,
             origin=origin_of(led_entry), sleeve=sleeve_of(led_entry),
-            entry_price=r["entry_price"], entry_date=entry_date,
+            entry_price=entry_px, entry_date=entry_date,
             current_price=mark_bars[tkr].close, current_date=mark_day, session_date=now_date,
             benchmark=asg.benchmark, benchmark_entry=entry_bars[asg.benchmark].close,
             benchmark_now=mark_bars[asg.benchmark].close, horizon_days=r["horizon_days"],
@@ -2549,6 +2604,7 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     # carrier and `RealizedRow.note()` renders them, so display cannot drift from the data.
     realized_rows = [mon.RealizedRow.model_validate(r) for r in realized]
     notes.extend(r.note() for r in realized_rows)
+    notes.extend(str(r["split_note"]) for r in realized if r.get("split_note"))
     # THEME FALSIFIER SWEEP (brief Item 2): every declared thesis card's dated triggers, flagged
     # when the deadline has passed — beside the scenario dated_triggers rows above, same doctrine
     # (the machine flags the closed window; whether it FIRED is the human's read).
@@ -2959,10 +3015,12 @@ def _cmd_score(args: argparse.Namespace) -> int:
             # reachable from only one of them is invisible to every reader of the other.
             baskets=resolve_baskets(
                 cfg.data_dir / "followed.json", store.iter_securities()),
-            # TOTAL RETURN (operator ruling 2026-10-26) — see the same argument in `run_monthly`.
+            # TOTAL RETURN (operator ruling 2026-10-26) and ONE SPLIT BASIS (audit items F-D1,
+            # F-D3) — see the same arguments in `run_monthly`.
             dividends=default_dividends(
                 start=min((e.entry_price_as_of for e in store.iter_ledger()), default=ref),
-                end=ref),
+                end=ref, sessions=store_calendar(store)),
+            splits=default_splits(cfg),
         )
     print(report.to_markdown())
     if args.json:

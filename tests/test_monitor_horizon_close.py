@@ -34,7 +34,7 @@ from typing import Any
 
 import pytest
 
-from tests.dividend_support import no_dividends
+from tests.dividend_support import no_dividends, no_splits
 from vinci import monitor as mon
 from vinci.schemas.ledger import LedgerEntry
 from vinci.schemas.market import PriceBar
@@ -108,6 +108,7 @@ def _monitor(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, *, horizon_days: i
     monkeypatch.setattr(cli, "PolygonEodClient", _Eod)
     monkeypatch.setattr(cli, "EdgarClient", _Edgar)
     monkeypatch.setattr(cli, "default_dividends", lambda **_kw: dividends)
+    monkeypatch.setattr(cli, "default_splits", lambda *_a, **_k: no_splits)
     scratch = tmp_path / "scratch"
     assert cli._cmd_monitor(argparse.Namespace(ref=ref, out=str(scratch))) == 0
     (day,) = [json.loads(p.read_text()) for p in (scratch / "data/monitor").glob("*.json")]
@@ -220,7 +221,8 @@ def test_the_monitor_and_the_scoring_report_give_the_same_resolved_return(
         store.write_prices([PriceBar.model_validate(json.loads(ln))
                             for ln in _BARS.read_text().splitlines()])
         store.append_ledger(entry)
-        (score,), _report = score_ledger(store, as_of=date(2026, 10, 16), dividends=no_dividends)
+        (score,), _report = score_ledger(store, as_of=date(2026, 10, 16), dividends=no_dividends,
+                                         splits=no_splits)
     assert score.resolved is True and row["resolved"] is True
     assert row["position_return"] == pytest.approx(score.name_return, abs=1e-12)
     assert row["benchmark_return"] == pytest.approx(score.bench_return, abs=1e-12)

@@ -34,6 +34,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, model_validator
 
+from vinci.eod.splits import SplitSource, close_on_basis
 from vinci.labels import resolve_label
 from vinci.panels_emit import PanelRow
 from vinci.schemas.ledger import EVENT_CLOSE, ORIGIN_SCREEN
@@ -112,6 +113,9 @@ class PositionRow(BaseModel):
     # existed: the screen was the only route that could reach the ledger, overshoot the only book.
     origin: str = ORIGIN_SCREEN
     sleeve: str = DEFAULT_SLEEVE
+    # THE ENTRY ON THE MARK'S SPLIT BASIS (audit item F-D1): the sealed price, unless a recorded
+    # split since the entry session restated the series — then the series' entry-session close,
+    # and the day's notes name the sealed price, the factor and the split (`eod.splits`).
     entry_price: float
     entry_date: date
     # THE SESSION MARKED, and its close. The run's own session while the row is short of its
@@ -191,7 +195,9 @@ class RealizedRow(BaseModel):
     that says what the fund actually EARNED was unreadable by anything that was not parsing
     English. ``realized_return`` is DERIVED here exactly as ``pair_closes`` derives it — from the
     two frozen prices, never stored — so there is one definition and the note text below is
-    rendered FROM this row rather than beside it."""
+    rendered FROM this row rather than beside it. ``entry_price`` is the entry ON THE EXIT'S SPLIT
+    BASIS: the sealed price, unless a recorded split fell between the two dates (the day's notes
+    then name the sealed price and the split — `pair_closes`)."""
 
     ticker: str
     entry_id: str
@@ -422,13 +428,20 @@ def close_rows(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def pair_closes(
-    raw: list[dict[str, Any]], *, as_of: date | None = None,
+    raw: list[dict[str, Any]], *, splits: SplitSource, as_of: date | None = None,
 ) -> list[dict[str, Any]]:
     """Pair each close to the decision row it closes, and DERIVE the realized return.
 
     Realized return is computed here, never stored: it is ``exit/entry − 1`` from two frozen
     prices, so persisting it would create a second source of truth able to drift from the two
     numbers it came from. The ledger stores facts; views derive.
+
+    ON ONE SPLIT BASIS (audit item F-D1, 2026-10-29). The exit price is a quote on its own date,
+    and the sealed entry is on the entry date's basis, so a split between the two made ``exit/entry
+    − 1`` a mixed-basis number (a flat 2-for-1 read −50%). The entry is put on the exit's basis by
+    the splits ``splits`` records in (entry, exit] (`eod.splits.close_on_basis`): ``entry_price``
+    is then that entry, and ``split_note`` names the sealed price and the splits (None when there
+    were none). A symbol whose splits cannot be read raises `SplitsUnknownError`.
 
     ``as_of`` MAKES THE VIEW POINT-IN-TIME (operator review P1 on #418). Without it every close in
     the ledger counted regardless of when it happened, so `vinci monitor --ref <past date>` marked
@@ -441,9 +454,31 @@ def pair_closes(
     Refuses loud on an unpairable or duplicated close — a close pointing at nothing, or two closes
     for one entry, means the realized book is wrong and must not render as though it were right.
     """
+    out: list[dict[str, Any]] = []
+    for d, c in _paired(raw, as_of=as_of):
+        sealed, exit_ = float(d["entry_price"]), float(c["exit_price"])
+        entry_as_of = date.fromisoformat(str(d.get("entry_price_as_of")))
+        exit_as_of = date.fromisoformat(str(c.get("exit_price_as_of")))
+        entry, split_note = close_on_basis(
+            who=f"{d['ticker']} close {c.get('entry_id')}", sealed=sealed,
+            entry_as_of=entry_as_of, exit_as_of=exit_as_of, splits=splits(str(d["ticker"])))
+        out.append({"ticker": d["ticker"], "entry_id": d["entry_id"],
+                    "close_id": c.get("entry_id"), "verdict": d["verdict"],
+                    "entry_price": entry, "entry_price_as_of": d.get("entry_price_as_of"),
+                    "exit_price": exit_, "exit_price_as_of": c.get("exit_price_as_of"),
+                    "realized_return": exit_ / entry - 1.0,    # DERIVED, never stored
+                    "split_note": split_note})
+    return out
+
+
+def _paired(
+    raw: list[dict[str, Any]], *, as_of: date | None = None,
+) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+    """(decision, close) for each close, as of ``as_of`` — the pairing `pair_closes` derives from
+    and `closed_decision_ids` reads alone. The refusals see the WHOLE ledger (see `pair_closes`)."""
     by_id = {entry_of(r)["entry_id"]: entry_of(r) for r in decision_rows(raw)}
     seen: set[str] = set()
-    out: list[dict[str, Any]] = []
+    out: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for row in close_rows(raw):
         c = entry_of(row)
         target = c.get("closes_entry_id")
@@ -456,16 +491,10 @@ def pair_closes(
                 f"entry_id {target!r} is closed TWICE (second close {c.get('entry_id')!r}) — a "
                 "position closes once, or the realized return is ambiguous")
         seen.add(target)
-        d = by_id[target]
-        entry, exit_ = float(d["entry_price"]), float(c["exit_price"])
-        out.append({"ticker": d["ticker"], "entry_id": target, "close_id": c.get("entry_id"),
-                    "verdict": d["verdict"], "entry_price": entry,
-                    "entry_price_as_of": d.get("entry_price_as_of"),
-                    "exit_price": exit_, "exit_price_as_of": c.get("exit_price_as_of"),
-                    "realized_return": exit_ / entry - 1.0})    # DERIVED, never stored
+        out.append((by_id[target], c))
     if as_of is None:
         return out
-    return [r for r in out if date.fromisoformat(str(r["exit_price_as_of"])) <= as_of]
+    return [(d, c) for d, c in out if date.fromisoformat(str(c["exit_price_as_of"])) <= as_of]
 
 
 # --- spread ------------------------------------------------------------------------------------
@@ -479,7 +508,7 @@ def closed_decision_ids(
     out of the still-held spread and changes the number the operator reads. This lives here rather
     than inline in the CLI so the keying is exercised against the real ledger instead of being
     re-derived correctly-or-not at each call site."""
-    return {str(r["entry_id"]) for r in pair_closes(raw, as_of=as_of)}
+    return {str(d["entry_id"]) for d, _c in _paired(raw, as_of=as_of)}
 
 
 def decisions_as_of(raw: list[dict[str, Any]], *, as_of: date) -> list[dict[str, Any]]:

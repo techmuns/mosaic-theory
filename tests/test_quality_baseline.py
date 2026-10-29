@@ -25,7 +25,7 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from tests.dividend_support import no_dividends
+from tests.dividend_support import no_dividends, no_splits
 from vinci.followed import FollowedListError, FollowRecord, followed_by_sleeve
 from vinci.schemas.data_record import Identity
 from vinci.schemas.ledger import Confidence, LedgerEntry, Verdict
@@ -138,8 +138,9 @@ def test_the_kill_test_renders_with_its_members_and_leaves_the_primary_alone(
             store.append_ledger(r)
         ids = [_FakeIdentity("AAA", "SEC-AAA"), _FakeIdentity("BBB", "SEC-BBB")]
         baskets = resolve_baskets(followed, ids)  # type: ignore[arg-type]
-        _s, with_b = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends)
-        _s, without = score_ledger(store, as_of=EXIT_D, dividends=no_dividends)
+        _s, with_b = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends,
+                                  splits=no_splits)
+        _s, without = score_ledger(store, as_of=EXIT_D, dividends=no_dividends, splits=no_splits)
 
     md = with_b.to_markdown()
     assert "vs equal-weight follow basket (AAA, BBB)" in md, (
@@ -176,7 +177,8 @@ def test_a_book_with_no_follow_basket_prints_no_baseline_line(tmp_path: pathlib.
         store.append_ledger(
             _entry("DDD", "SEC-DDD", Verdict.AVOID_TERMINAL, "overshoot", "screen"))
         baskets = resolve_baskets(followed, [_FakeIdentity("AAA", "SEC-AAA")])  # type: ignore[arg-type]
-        _s, report = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends)
+        _s, report = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends,
+                                  splits=no_splits)
 
     md = report.to_markdown()
     assert "**overshoot**" in md, "fixture broken: the overshoot row did not render"
@@ -216,7 +218,7 @@ def test_a_later_follow_addition_cannot_change_an_earlier_verdicts_basket(
                 store.append_ledger(r)
             scores, _rep = score_ledger(
                 store, as_of=EXIT_D,
-                baskets=resolve_baskets(followed, ids), dividends=no_dividends)  # type: ignore[arg-type]
+                baskets=resolve_baskets(followed, ids), dividends=no_dividends, splits=no_splits)  # type: ignore[arg-type]
         s = next(x for x in scores if x.entry_id == "V-AAA")
         return s.basket_return, s.basket_members
 
@@ -271,7 +273,8 @@ def test_a_verdict_predating_the_books_first_follow_refuses_rather_than_inventin
         store.write_prices(_bars("SEC-AAA", 100.0, 130.0))
         store.append_ledger(_entry("AAA", "SEC-AAA", Verdict.BUY, "quality", "followed"))
         baskets = resolve_baskets(followed, [_FakeIdentity("AAA", "SEC-AAA")])  # type: ignore[arg-type]
-        _s, report = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends)
+        _s, report = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends,
+                                  splits=no_splits)
 
     q = report.by_sleeve["quality"]
     assert q.basket_mean is None, "a roster was invented for a verdict predating the follow list"
@@ -298,7 +301,8 @@ def test_a_supplied_basket_with_no_resolved_long_leg_says_so_truthfully(
         store.append_ledger(_entry("BBB", "SEC-BBB", Verdict.PASS, "quality", "followed"))
         baskets = resolve_baskets(
             followed, [_FakeIdentity("AAA", "SEC-AAA"), _FakeIdentity("BBB", "SEC-BBB")])  # type: ignore[arg-type]
-        _s, report = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends)
+        _s, report = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends,
+                                  splits=no_splits)
 
     q = report.by_sleeve["quality"]
     assert q.basket_label == "AAA, BBB", "fixture broken: the basket did not resolve"
@@ -409,6 +413,7 @@ def test_the_score_command_renders_the_baseline_end_to_end(
     monkeypatch.setattr(cli, "get_config", lambda: _Cfg())
     # the command reads Tiingo's dividends; this synthetic store's names pay none
     monkeypatch.setattr(cli, "default_dividends", lambda **_kw: no_dividends)
+    monkeypatch.setattr(cli, "default_splits", lambda *_a, **_k: no_splits)
     args = argparse.Namespace(ref=EXIT_D.isoformat(), cost_bps=25.0, benchmark="IWM", json=False)
     assert cli._cmd_score(args) == 0
     out = capsys.readouterr().out
@@ -517,7 +522,8 @@ def test_the_baseline_uses_each_verdicts_own_window(tmp_path: pathlib.Path) -> N
                     "decided_at": datetime.combine(late, datetime.min.time())})
         store.append_ledger(early)
         baskets = resolve_baskets(followed, [_FakeIdentity("AAA", "SEC-AAA")])  # type: ignore[arg-type]
-        scores, _r = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends)
+        scores, _r = score_ledger(store, as_of=EXIT_D, baskets=baskets, dividends=no_dividends,
+                                  splits=no_splits)
 
     by_id = {s.entry_id: s.basket_return for s in scores}
     assert by_id["V-AAA"] == pytest.approx(0.20), by_id       # ENTRY_D 100 → HORIZON_D 120
