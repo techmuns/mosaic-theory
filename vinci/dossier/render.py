@@ -1231,6 +1231,7 @@ _UNSTATED_LEAD = "no principal stated — the CIQ panel gives no amount (–), a
 _UNSTATED_LEAD += " wall counts it as $0"
 _UNDRAWN = "On a revolving-credit or commercial-paper line no amount can mean an undrawn facility;"
 _UNDRAWN += " the panel does not say which."
+_GAP_ALSO = ", or principal the panel does not state"
 
 
 def _unstated_note(instruments: list[Any]) -> str | None:
@@ -1295,10 +1296,12 @@ def _maturity_wall_lines(cs: Any, reference_date: date) -> list[str]:
     note = _unstated_note(inst.value)
     if note is not None:
         out.append(f"  - _{note}_")
+    # a partial itemized total cannot pin the whole gap on unitemized loans (review of D-D4)
+    also = _GAP_ALSO if note is not None else ""
     out.append(
         f"  - _reconciliation: itemized {_wall_total(inst.value)} (panel {cs.detail_as_of}) vs the "
-        f"aggregates below — the gap is unitemized / newer term loans; read the term-loan movement "
-        "in the aggregates line, which names the period columns it spans._"
+        f"aggregates below — the gap is unitemized / newer term loans{also}; read the term-loan "
+        "movement in the aggregates line, which names the period columns it spans._"
     )
     return out
 

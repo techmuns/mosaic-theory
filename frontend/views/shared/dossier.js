@@ -2430,26 +2430,28 @@ const _mM = (v) => (v == null ? DASH : `$${Number(v).toLocaleString("en-US", { m
 // render._wall_total / _unstated_note / _FACILITY_TYPES).
 const _FACILITY_TYPES = new Set(["Revolving Credit", "Commercial Paper"]);
 const _wallInst = (x) => (Array.isArray(x) ? x[1] : x);
-function wallTotal(xs) {
+// [stated $M total, how many stated, how many with no principal]
+function wallSum(xs) {
   const stated = xs.map(_wallInst).filter((i) => i.principal_musd != null);
-  const gap = xs.length - stated.length;
-  const total = _mM(stated.reduce((a, i) => a + i.principal_musd, 0));
-  if (!gap) return total;
+  return [stated.reduce((a, i) => a + i.principal_musd, 0), stated.length, xs.length - stated.length];
+}
+function wallTotal(xs) {
+  const [sum, n, gap] = wallSum(xs);
+  if (!gap) return _mM(sum);
   const tail = `${gap} with no principal stated`;
-  return stated.length ? `${total} + ${tail}` : tail;
+  return n ? `${_mM(sum)} + ${tail}` : tail;
 }
 function wallChip(label, xs) {
-  const stated = xs.map(_wallInst).filter((i) => i.principal_musd != null);
-  const gap = xs.length - stated.length;
-  const amt = stated.length ? _mM(stated.reduce((a, i) => a + i.principal_musd, 0)) : DASH;
-  const more = gap ? `<span>${stated.length ? "+ " : ""}${gap} with no principal stated</span>` : "";
-  return `<div class="wall-yr"><span>${label}</span><b>${amt}</b>${more}</div>`;
+  const [sum, n, gap] = wallSum(xs);
+  const more = gap ? `<span>${n ? "+ " : ""}${gap} with no principal stated</span>` : "";
+  return `<div class="wall-yr"><span>${label}</span><b>${n ? _mM(sum) : DASH}</b>${more}</div>`;
 }
 const _wallShort = (n, cap = 34) =>
   (n.length <= cap ? n : n.slice(0, cap).split(" ").slice(0, -1).join(" ") + "…");
 // the note's two fixed sentences — copies of render._UNSTATED_LEAD / _UNDRAWN, bound by test_parity_pins
 const _UNSTATED_LEAD = "no principal stated — the CIQ panel gives no amount (–), and no total in this wall counts it as $0";
 const _UNDRAWN = "On a revolving-credit or commercial-paper line no amount can mean an undrawn facility; the panel does not say which.";
+const _GAP_ALSO = ", or principal the panel does not state";
 function unstatedNote(insts) {
   const gap = insts.filter((i) => i.principal_musd == null);
   if (!gap.length) return "";
@@ -2491,7 +2493,7 @@ function maturityWall(cs, refDate, { column = false } = {}) {
     undatedFoot = `† floor — no panel maturity: ${undated.map((i) => `${escapeHtml(_wallShort(i.description))} ${_mM(i.principal_musd)}`).join(", ")}. `;
   }
   const strip = chips.length ? `<div class="wall-strip">${chips.join("")}</div>` : "";
-  const foot = `<div class="wall-foot">${undatedFoot}${unstatedNote(inst.value)}reconciliation: itemized ${wallTotal(inst.value)} (panel ${escapeHtml(cs.detail_as_of || "")}) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans.</div>`;
+  const foot = `<div class="wall-foot">${undatedFoot}${unstatedNote(inst.value)}reconciliation: itemized ${wallTotal(inst.value)} (panel ${escapeHtml(cs.detail_as_of || "")}) vs the latest-quarter aggregates below — the gap is unitemized / newer term loans${inst.value.some((i) => i.principal_musd == null) ? _GAP_ALSO : ""}.</div>`;
   const body = `${li.length ? `<ul class="kv-list">${li.join("")}</ul>` : ""}${strip}${foot}`;
   // column mode (buy-side two-column survival card): the wall carries its own sub-head and fills
   // the right column — no label|value grid wasting the column's width

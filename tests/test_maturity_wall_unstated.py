@@ -60,6 +60,7 @@ def test_d4_neg_a_group_with_no_principal_stated_prints_no_zero() -> None:
     assert "due 2029: $0.0M" not in wall
     assert "  - due 2029: 1 with no principal stated" in wall
     assert "itemized $304.5M + 1 with no principal stated (panel A 2025 filed Oct-28-2025)" in wall
+    assert "unitemized / newer term loans, or principal the panel does not state;" in wall
     note = next(ln for ln in _frozen_wall() if _NOTE in ln)
     assert "Credit Agreement With Barclays… (Revolving Credit)" in note
     assert "can mean an undrawn facility; the panel does not say which" in note
@@ -76,6 +77,7 @@ def test_d4_pos_stated_principals_render_as_before() -> None:
     from tests.test_dossier import _mvst_capital_structure
     mvst = "\n".join(dr._maturity_wall_lines(_mvst_capital_structure(), date(2026, 7, 3)))
     assert "no principal stated" not in mvst and "itemized $268.6M (panel" in mvst
+    assert "unitemized / newer term loans; read" in mvst
 
 
 def test_a_facility_note_is_only_for_a_facility() -> None:
@@ -181,5 +183,6 @@ process.stdout.write(JSON.stringify(out));
         foot = h[h.index('class="wall-foot"'):]
         has_gap = any(i["principal_musd"] is None for i in _instruments(d))
         assert ("no principal stated — the CIQ panel" in foot) is has_gap, p.stem
+        assert ("newer term loans, or principal the panel does not state." in foot) is has_gap
         assert re.search(r"itemized \$[\d,]+\.\dM", foot), p.stem
     assert seen_gap >= 5, f"only {seen_gap} committed year chips carry an unstated principal"
