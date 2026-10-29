@@ -1,8 +1,8 @@
 ---
 id: 2026-10-29-a-wall-total-sums-stated-principals-only
-status: open
+status: shipped
 date: 2026-10-29
-prs: []
+prs: [862]
 ---
 
 # A maturity-wall total sums the principals CIQ's panel states and says how many it leaves out; a missing principal is never read as $0 (audit D-D4)
