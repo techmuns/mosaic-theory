@@ -103,12 +103,10 @@ reports validation that did not happen.
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **Nothing on a committed page moves in this PR.** Each check acts at assembly; the pages change at
   the combined Phase-1 rebuild. AORT's page keeps its mis-cited row until then.
-- **The G-D6 finding is the operator's (STATE §5.0 row 32 item 26).** Every UNTRACEABLE flag is a
+- **The G-D6 finding went to the operator, and is ruled.** Every UNTRACEABLE flag is a
   CAVEAT shown to the reader (`flags.py`), so a rebuild on this code prints ~10 a page (1–21 on
-  the committed pages) unless the
-  synthesis changes. The point schema has ONE `source_ref` and the prompt never says a point's
-  figures must all come from it, so a multi-fact point is the model doing what it was asked. The
-  options — keep the caveats, route them to QA, or let a point cite each fact it uses / tell the
-  model to — change what every page says; none is taken here.
+  the committed pages). The point schema has ONE `source_ref` and the prompt never says a
+  point's figures must all come from it, so a multi-fact point is the model doing what it was
+  asked. RULED 2026-10-29, the operator verbatim: "Show on the page" — UNTRACEABLE figure caveats stay reader-facing (`flags.py` routing unchanged); TRANSCRIPT-FIGURE notes stay QA. A true gap between a figure and the fact it cites is shown, not hidden; letting a point cite each fact it uses (the citation schema) is a later build.
 - The value check reads units from a closed map; a unit word outside it compares nothing rather
   than guessing (falsifier: a committed row whose value and quote differ in an unmapped unit).
