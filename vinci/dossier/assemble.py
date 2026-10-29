@@ -837,10 +837,11 @@ def _materiality_check(bundle: Any, mech: Any, synthesis: Any, *, ticker: str) -
     hdr = _cs._period_header(inc)
     periods = _cs._fin_periods(inc[hdr]) if hdr is not None else []
     rev_i = _cs._find_row(inc, SHEET_REVENUE_LABEL)
-    if not periods or rev_i is None:
+    lacks = [what for what, gone in (("period header", not periods),
+                                     (f"{SHEET_REVENUE_LABEL!r} row", rev_i is None)) if gone]
+    if lacks or rev_i is None:
         raise MaterialityUnavailableError(
-            f"{ticker}: the annual Income Statement has no "
-            f"{'period header' if not periods else repr(SHEET_REVENUE_LABEL) + ' row'} — the "
+            f"{ticker}: the annual Income Statement has no {' and no '.join(lacks)} — the "
             "materiality guard cannot run; refusing to report a clean pass")
     ltm = [pp for pp in periods if pp[2]]
     col, label = (ltm[0][0], ltm[0][1]) if ltm else (periods[-1][0], periods[-1][1])

@@ -89,6 +89,8 @@ def test_d5_neg_a_line_over_five_percent_of_revenue_is_refused() -> None:
     ({"Income Statement": _sheet(block=False)}, "no unusual-items block"),
     ({"Income Statement": [r for r in _sheet() if r[0] != "Total Revenue"]}, "'Total Revenue' row"),
     ({"Income Statement": _sheet()[1:]}, "period header"),
+    ({"Income Statement": [r for r in _sheet()[1:] if r[0] != "Total Revenue"]},
+     "no period header and no 'Total Revenue' row"),
     (None, "no annual Income Statement"),
 ])
 def test_d5_neg_a_guard_that_cannot_look_refuses(sheets: Any, why: str) -> None:
