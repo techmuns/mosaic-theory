@@ -10,6 +10,7 @@ a fabricated number. This layer is the ONLY input the synthesis LLM is later giv
 
 from __future__ import annotations
 
+import functools
 import html as htmllib
 import math
 import re
@@ -1267,9 +1268,16 @@ def _cover_text(edgar: EdgarClient, http: CachedHttp | None, cik: str,
         if not doc:
             return None
         url = _ARCHIVE.format(cik=int(pad_cik(cik)), acc=p.accession.replace("-", ""), doc=doc)
-        return html_to_text(cover_count.cover_head(http.get_text(url, ttl_seconds=None)))
+        return _cover_head_text(http, url)
     except (HttpError, KeyError, ValueError):
         return None
+
+
+@functools.lru_cache(maxsize=32)
+def _cover_head_text(http: CachedHttp, url: str) -> str:
+    """One filing's cover text, parsed once: five share readers on a page ask for the same covers.
+    A failed fetch raises and is not remembered."""
+    return html_to_text(cover_count.cover_head(http.get_text(url, ttl_seconds=None)))
 
 
 def _dated_shares(edgar: EdgarClient, http: CachedHttp | None, cik: str,
@@ -1372,7 +1380,9 @@ def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date, *,
     window = [c for c in counts
               if (reference_date - c.point.period_end).days <= _SHARES_WINDOW_DAYS]
     if refused := [c.refused for c in window if c.refused]:
-        return Sourced.unknown(note=f"a share count in the trailing ~2y is UNKNOWN: {refused[0]}")
+        more = f" (1 of {len(refused)} refused; each is flagged)" if len(refused) > 1 else ""
+        return Sourced.unknown(
+            note=f"a share count in the trailing ~2y is UNKNOWN: {refused[0]}{more}")
     when = {id(c.point): c.when for c in counts}
     pts = [c.point for c in counts]
     recent = [c.point for c in window]

@@ -401,7 +401,7 @@ def test_fulltext_search_finds_guidance_8ks() -> None:
     # so one page, which the result must then report as cut short
     got = client.fulltext_search("lowered guidance", forms="8-K", max_pages=1)
     hits = got.hits
-    assert len(hits) > 0 and got.capped == (got.total > len(hits))
+    assert len(hits) > 0 and got.total > len(hits) and got.capped  # thousands match, one page
     assert all(h.accession for h in hits)
     assert all(h.form == "8-K" for h in hits if h.form)
 
