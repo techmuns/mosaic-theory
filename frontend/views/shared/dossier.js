@@ -155,6 +155,13 @@ const EXTRACTION_VERSIONS = [
     "(audit X1(a)); the covenant-pointer table names the aggregate lines and agreement " +
     "families its caps leave out, and a full-text search reads every page or says it did not " +
     "(audit E1-D11)"],
+  ["2026-10-30.E2-D19",
+    "a covenant term whose value states a year or a currency figure its own quote does not " +
+    "is refused, UNKNOWN with an (E5) flag naming the figure as the value states it (audit " +
+    "E2-D19); figures compare in their own currency at any scale, a conformed amendment's " +
+    "replacement figure counts as stated, a percent or 'zero' is left to the rate-component " +
+    "check, and a later exhibit withheld this way leads its term as a value that could not " +
+    "be verified"],
   ["2026-10-30.E2-spans-frames",
     "a release figure under a six- or nine-month heading or bullet lead-in that states a span " +
     "(ended, a period, or a section noun such as Highlights or Results; singular or plural) " +
@@ -2782,9 +2789,15 @@ function refusedNewerText(g, dates) {
   const since = lv ? (dates[lv[1]] || lv[1]) : "the last verified exhibit";
   const later = (g.refusedNewer || []).map((r) => _ACC_IN_REF.exec(String(r.note || "")))
     .filter(Boolean).map((m) => dates[m[1]] || m[1]);
+  // a value refusal (audit E2-D19) found its quote; the lead must not say it failed to match
+  const byValue = (g.refusedNewer || []).some((r) => String(r.note || "").startsWith(_VALUE_REFUSED_NOTE_PREFIX));
   const tail = later.length === 1
-    ? `a later exhibit (filed ${later[0]}) states this term, but its quote could not be matched to the filing, so its value is withheld`
-    : `${later.length} later exhibits (filed ${later.join(", ")}) state this term, but their quotes could not be matched to the filings, so their values are withheld`;
+    ? (byValue
+      ? `a later exhibit (filed ${later[0]}) states this term, but its value could not be verified against the filing, so it is withheld`
+      : `a later exhibit (filed ${later[0]}) states this term, but its quote could not be matched to the filing, so its value is withheld`)
+    : `${later.length} later exhibits (filed ${later.join(", ")}) state this term, but ` + (byValue
+      ? "their values could not be verified against the filings, so they are withheld"
+      : "their quotes could not be matched to the filings, so their values are withheld");
   return `UNKNOWN — not verified since ${since}: ${tail}`;
 }
 
@@ -2912,6 +2925,7 @@ function covenantPointers(cs) {
 // LATER refused row (#804) withholds the value: it reads UNKNOWN, the older one moves to lastVerified.
 const _accOf = (s) => { const m = (s || "").match(/\b(\d{10}-\d{2}-\d{6})\b/); return m ? m[1] : ""; };
 const _REFUSED_NOTE_PREFIX = "(E5) refused:";  // mirrors covenant_extract.REFUSED_NOTE_PREFIX
+const _VALUE_REFUSED_NOTE_PREFIX = `${_REFUSED_NOTE_PREFIX} the value states`;  // ...VALUE_REFUSED_NOTE_PREFIX
 // (mirrors covenant_extract._ambiguous_titles, #653) titles that cover MORE THAN ONE BASE document
 // from DIFFERENT pointer families cannot identify one contract, so the collapse must not group by them.
 function _ambiguousTitles(rows, meta) {
@@ -2969,7 +2983,7 @@ function governingTerms(rows, pointers) {
         lastVerified = govRow.value;
         value = { value: null, source_ref: null, status: "unknown",
           note: `(E5) not verified since ${govDt}: ${refusedNewer.length} later exhibit(s) stated ` +
-            `this term and each quote was refused ` +
+            `this term and each was refused ` +
             `(${refusedNewer.map((r) => _accOf(r.note)).join("; ")}); last verified in ` +
             `${govRow.value.source_ref}` };
       }

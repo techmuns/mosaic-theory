@@ -267,6 +267,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "(audit E1-D11)",
     ),
     (
+        "2026-10-30.E2-D19",
+        "a covenant term whose value states a year or a currency figure its own quote does not "
+        "is refused, UNKNOWN with an (E5) flag naming the figure as the value states it (audit "
+        "E2-D19); figures compare in their own currency at any scale, a conformed amendment's "
+        "replacement figure counts as stated, a percent or 'zero' is left to the rate-component "
+        "check, and a later exhibit withheld this way leads its term as a value that could not "
+        "be verified",
+    ),
+    (
         "2026-10-30.E2-spans-frames",
         "a release figure under a six- or nine-month heading or bullet lead-in that states a span "
         "(ended, a period, or a section noun such as Highlights or Results; singular or plural) "
