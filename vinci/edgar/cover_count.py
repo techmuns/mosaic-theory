@@ -258,11 +258,12 @@ class ShareSeries(NamedTuple):
 
     points: list[tuple[date, float]]
     refused: list[tuple[date, str]]
-    bound: frozenset[date] = frozenset()  # read dates that are a filing day, not a count date
+    # (date, value) of each count read at a filing day, not a count date
+    bound: frozenset[tuple[date, float]] = frozenset()
 
-    def when(self, d: date) -> str:
-        """A read date as a reader prints it — a filing-day bound says so."""
-        return f"filed {d}" if d in self.bound else str(d)
+    def when(self, d: date, value: float) -> str:
+        """A count's date as a reader prints it — a filing-day bound says so."""
+        return f"filed {d}" if (d, value) in self.bound else str(d)
 
 
 def share_series(facts: dict[str, Any], *,
@@ -272,8 +273,11 @@ def share_series(facts: dict[str, Any], *,
     one name, so none may fetch a cover (operator ruling 2026-10-30): a count tagged after its own
     filing is dated at its filing day, an upper bound, and still cross-checked against its filing's
     other counts. Correctly-dated counts are read exactly as before."""
-    counts = date_counts([p for p in extract_points(facts, "shares") if p.value], facts, read=read)
+    # every count the readers saw before, zero included: a zero endpoint still reads UNKNOWN
+    counts = date_counts([p for p in extract_points(facts, "shares") if p.value is not None],
+                         facts, read=read)
     return ShareSeries(
         points=[(c.point.period_end, c.point.value) for c in counts if not c.refused],
         refused=[(c.point.period_end, c.refused) for c in counts if c.refused],
-        bound=frozenset(c.point.period_end for c in counts if c.bound and not c.refused))
+        bound=frozenset((c.point.period_end, c.point.value) for c in counts
+                        if c.bound and not c.refused))

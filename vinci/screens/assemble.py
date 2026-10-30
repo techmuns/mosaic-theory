@@ -502,8 +502,9 @@ def share_change_field(facts: dict[str, Any] | None) -> DataField[float]:
     if chg is not None:
         return DataField.present(
             chg.change, as_of=chg.to_date, source="EDGAR", tier=SourceTier.EDGAR,
-            note=(f"XBRL shares {chg.from_value:,.0f} ({series.when(chg.from_date)}) → "
-                  f"{chg.to_value:,.0f} ({series.when(chg.to_date)})"))
+            note=(f"XBRL shares {chg.from_value:,.0f} "
+                  f"({series.when(chg.from_date, chg.from_value)}) → "
+                  f"{chg.to_value:,.0f} ({series.when(chg.to_date, chg.to_value)})"))
     start = share_window_start(series.points)
     inside = [why for d, why in series.refused if start is not None and d >= start]
     return DataField.unknown(

@@ -945,8 +945,11 @@ def superseded(facts: dict[str, Any], p: ConceptPoint) -> ConceptPoint | None:
     (filed 2024-07-30, after the steel spin-off) and was first filed as 5,242 (2022-08-01)."""
     earlier = [q for q in points_for_tag(facts, p.tag, currency=EVERY)
                if q.unit == p.unit and q.period_start == p.period_start
-               and q.period_end == p.period_end and q.filed < p.filed and q.value != p.value]
-    return min(earlier, key=lambda q: q.filed) if earlier else None
+               and q.period_end == p.period_end and q.filed < p.filed]
+    # the period's FIRST filing, whatever came between: a figure restated and restated back is
+    # the figure first filed, not a restatement
+    first = min(earlier, key=lambda q: q.filed) if earlier else None
+    return first if first is not None and first.value != p.value else None
 
 
 def filed_at(p: ConceptPoint, facts: dict[str, Any] | None = None) -> str:

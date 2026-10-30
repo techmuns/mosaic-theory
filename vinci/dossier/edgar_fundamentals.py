@@ -165,7 +165,7 @@ class EdgarFundamentals:
             bits.append(f"absolute revenue: {abs_rev}")
         return Sourced.present(
             "; ".join(bits) + "  [EDGAR GAAP basis, $M; margin % can fall while absolute EBITDA "
-            "RISES — read them together]" + self._withheld_note(),
+            "RISES — read them together]" + self._withheld_note("EBITDA"),
             source_ref=f"EDGAR XBRL companyfacts {self._op[max(self._op)].tag}+D&A ÷ "
             f"{self._rev[max(self._rev)].tag} [{_span(self._rev, self._year_ends)}]",
         )
@@ -189,9 +189,11 @@ class EdgarFundamentals:
             "operating_cash_flow−capex (annual)",
         )
 
-    def _withheld_note(self) -> str:
-        """The periods a negative leg withheld, named — never a silent gap in a series."""
-        return f"  [withheld: {'; '.join(self._withheld)}]" if self._withheld else ""
+    def _withheld_note(self, only: str | None = None) -> str:
+        """The periods a negative leg withheld, named — never a silent gap in a series. ``only``
+        keeps one figure's (the margin trend reads EBITDA, never FCF)."""
+        held = [w for w in self._withheld if only is None or f" {only} (" in w]
+        return f"  [withheld: {'; '.join(held)}]" if held else ""
 
     def _restated_note(self) -> str:
         """Every printed figure a later filing restated, with the figure first filed (audit
