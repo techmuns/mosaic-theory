@@ -6299,8 +6299,10 @@ def _bs_posture_build(bs: Rows, freq: str) -> Sourced[str] | None:
         return clean_num(bs[ri][pj]) if ri is not None and pj < len(bs[ri]) else None
 
     per = _fin_short(bs[hdr][pj]) if hdr is not None and pj < len(bs[hdr]) else "latest"
-    if anchor.period is not None and anchor.period.status == "press_release":
-        per += " (press release)"   # `_fin_short` prints a bare date for either; the state shows
+    # `_fin_short` prints a bare label for either basis, so a release column's state is said in the
+    # VALUE; the source_ref keeps its words, since a synthesis citation quotes it as a join key
+    shown = (f"{per} (press release)"
+             if anchor.period is not None and anchor.period.status == "press_release" else per)
     parts = [f"cash & ST inv {_fmt_m(cash_v)}"]
     for lbl, key in (("total debt", "Total Debt"), ("net debt", "Net Debt")):
         if (v := at(key)) is not None:
@@ -6315,7 +6317,7 @@ def _bs_posture_build(bs: Rows, freq: str) -> Sourced[str] | None:
         parts.append(f"net working capital {_fmt_m(tca - tcl)}")
     parts.append("net-debt/EBITDA → see the Leverage & survival block (not recomputed)")
     return Sourced.present(
-        f"as of {per} ($M): " + "; ".join(parts),
+        f"as of {shown} ($M): " + "; ".join(parts),
         source_ref=f"CIQ Financials→Balance Sheet ({freq}, {per})",
     )
 
