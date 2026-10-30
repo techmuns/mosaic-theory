@@ -77,26 +77,26 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "e871cc6365ea"
-PINNED_AT = "2026-10-30.press-release-ltm"
+PINNED_TABLE = "aecf6b0917b0"
+PINNED_AT = "2026-10-30.latest-cell"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
-    "vinci/dossier/anchor.py": "15868ab1973d",
+    "vinci/dossier/anchor.py": "a538abb9a405",
     "vinci/dossier/assemble.py": "6b9455e98818",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "77def45663a9",
     "vinci/dossier/ciq.py": "7cbdeee7b55f",
-    "vinci/dossier/ciq_balance.py": "ad209af32bee",
+    "vinci/dossier/ciq_balance.py": "a1a1c371f356",
     "vinci/dossier/ciq_charting.py": "e25a753aae4f",
     "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
-    "vinci/dossier/ciq_sheets.py": "4a879fe5814c",
+    "vinci/dossier/ciq_sheets.py": "7e8c109c5f03",
     "vinci/dossier/covenant_extract.py": "36044a98ac15",
     "vinci/dossier/dilution.py": "87d81ad77c04",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
     "vinci/dossier/ebitda_basis.py": "7f9996f712e1",
-    "vinci/dossier/ebitda_recon.py": "ecb11157c1e6",
+    "vinci/dossier/ebitda_recon.py": "a2d815700dc4",
     "vinci/dossier/edgar_fundamentals.py": "c8ecafb0bcb4",
     "vinci/dossier/ev_ebitda_basis.py": "ad13b0e13ca0",
     "vinci/dossier/ev_gap.py": "6a0c9a26afac",
@@ -108,7 +108,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
     "vinci/dossier/mechanical.py": "6d17333aaeb7",
-    "vinci/dossier/midcycle.py": "dfa24e1bc15a",
+    "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "0c07bfc551a1",
     "vinci/dossier/requirements.py": "0d49ceadcac7",

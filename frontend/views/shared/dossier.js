@@ -134,6 +134,14 @@ const EXTRACTION_VERSIONS = [
     "restated, press release) being a parsed field; each additive annual-summary row's LTM is " +
     "checked against the four quarters ending on its date, a disagreement or a '-' quarter " +
     "is a QA flag, and a material row its quarters contradict refuses the build"],
+  ["2026-10-30.latest-cell",
+    "every CIQ Financials reader of a row's latest figure reads the column whose header " +
+    "states the latest date, never the rightmost valued one: a marker there is UNKNOWN with " +
+    "its reason, never an older period (LLY's free cash flow, OCF and vendor FCF; ORKA's " +
+    "interest coverage, both legs at that column); the EBITDA reconciliation refuses a marker " +
+    "in its four latest quarters, the own-history multiple band is unavailable at an NM " +
+    "latest close, the anchor bridge's revenue states its period, and the balance-sheet " +
+    "posture names a press-release column (audit A-D5, A-D7, A-D12, D-D2, D-D3)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

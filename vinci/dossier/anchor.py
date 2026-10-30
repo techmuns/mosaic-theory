@@ -968,15 +968,24 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
             else:
                 got_da = (f"{got_da}; CIQ's D&A is not over that window either "
                           f"({ciq_da_basis(ciq)})")
+        elif da is None and (why := ciq.unavailable.get("d_and_a")):
+            got_da = f"{got_da}; CIQ's D&A: {why}"
         if nd_val is None and not ex_lease and (v := ciq.value("net_debt")) is not None:
             nd_val = v * _USD_M
             nd = (nd_val, f"CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or "
                           f"under-captured) [{ciq.stamp('net_debt')}]")
             vendor.append("net_debt")
         o, c = ciq.value("ocf"), ciq.value("capex")
+        # A LEG AT A MARKER IS SAID (audit A-D12, 2026-10-30): LLY's press-release LTM reads '-'
+        # for both, and the fill was made from FY Dec-2025's — "fiscal year to 2025-12-31"
+        gaps = [f"CIQ's {name}: {why}" for key, name in (("ocf", "operating cash flow"),
+                                                          ("capex", "capex"))
+                if (why := ciq.unavailable.get(key))]
+        if fcf is None and gaps:
+            got_fcf = f"{got_fcf}; " + "; ".join(gaps)
         if fcf is None and o is not None and c is not None:
-            # ONE PERIOD OR NOTHING (#830's follow-up): both legs are the sheet's rightmost valued
-            # column, which can differ by row — an LTM OCF less a fiscal-year capex never existed
+            # ONE PERIOD OR NOTHING (#830's follow-up): an LTM OCF less a fiscal-year capex never
+            # existed — both legs are now the sheet's latest column, so this is the guard behind it
             span = _one_period(ciq.facts["ocf"], ciq.facts["capex"])
             if span is not None:
                 fcf = ((o - abs(c)) * _USD_M, f"{span} (vendor basis)",
