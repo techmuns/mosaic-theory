@@ -77,21 +77,21 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "1e1ea2bd789f"
-PINNED_AT = "2026-10-29.D-D5-prompt"
+PINNED_TABLE = "e871cc6365ea"
+PINNED_AT = "2026-10-30.press-release-ltm"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "31ad4e6be5a2",
-    "vinci/dossier/assemble.py": "e3d907f7e4d0",
+    "vinci/dossier/assemble.py": "6b9455e98818",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "77def45663a9",
-    "vinci/dossier/ciq.py": "5bbafc7cb2e9",
+    "vinci/dossier/ciq.py": "7cbdeee7b55f",
     "vinci/dossier/ciq_balance.py": "ad209af32bee",
     "vinci/dossier/ciq_charting.py": "e25a753aae4f",
     "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
-    "vinci/dossier/ciq_sheets.py": "690b7af98c8c",
+    "vinci/dossier/ciq_sheets.py": "baccf72e2f7d",
     "vinci/dossier/covenant_extract.py": "36044a98ac15",
     "vinci/dossier/dilution.py": "87d81ad77c04",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
@@ -100,13 +100,14 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/edgar_fundamentals.py": "c8ecafb0bcb4",
     "vinci/dossier/ev_ebitda_basis.py": "ad13b0e13ca0",
     "vinci/dossier/ev_gap.py": "6a0c9a26afac",
-    "vinci/dossier/flags.py": "e01f2ae15b54",
+    "vinci/dossier/flags.py": "0fde0b63ffba",
     "vinci/dossier/freshness.py": "e5852b313d22",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
+    "vinci/dossier/ltm_quarters.py": "ee469e9e6ab3",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "c30736637dbe",
+    "vinci/dossier/mechanical.py": "6d17333aaeb7",
     "vinci/dossier/midcycle.py": "dfa24e1bc15a",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "0c07bfc551a1",

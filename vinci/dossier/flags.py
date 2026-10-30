@@ -61,6 +61,10 @@ _QA_MARKERS: tuple[str, ...] = (
     # `test_the_outage_flag_is_hidden_because_the_block_itself_already_says_so`, which asserts BOTH
     # halves together (hidden AND the note present), so the two cannot drift apart.
     "drawdown-cause:",
+    # (2026-10-30) an annual-summary LTM against its four quarters (`ltm_quarters`): a machine
+    # check of CIQ's arithmetic. A MATERIAL row that fails it refuses the build, so what reaches a
+    # page here is a non-material disagreement or a quarter reading '-' — dev/JSON QA
+    "ciq-ltm-quarters:",
 )
 
 # The validator-speak caveats carry a `{where}:` field name (which synthesis point tripped it).

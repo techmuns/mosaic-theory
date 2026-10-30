@@ -22,7 +22,7 @@ from typing import Any, TypeVar
 from pydantic import ValidationError
 
 from vinci.config import Config, get_config
-from vinci.dossier import ciq_sheets, requirements, run_metrics
+from vinci.dossier import ciq_sheets, ltm_quarters, requirements, run_metrics
 from vinci.dossier import flags as dossier_flags
 from vinci.dossier.anchor import (
     RECIPE_UNKNOWN,
@@ -55,6 +55,7 @@ from vinci.dossier.schemas import (
 from vinci.dossier.synthesis import (
     SYNTHESIS_DRAWS,
     contradiction_flags,
+    demanded_material_figures,
     gaap_eps_momentum_flags,
     synthesize,
     uncited_material_figures,
@@ -1015,6 +1016,16 @@ def assemble_one(
             card=_read_scenario_card(ticker),
         )
     flags += mech_flags
+    # (2026-10-30) EACH ANNUAL-SUMMARY LTM AGAINST ITS FOUR QUARTERS, before anything is spent: a
+    # row they disagree with, or that carries a '-', is a QA flag; a MATERIAL one that disagrees
+    # stops the build. Material is item 19c's own selection, read off a marked COPY — the page
+    # keeps its marks for the synthesis exactly as before (`ltm_quarters`)
+    fs = mech.financial_summary
+    ltm_read = ltm_quarters.check(bundle, fs.annual.value if fs is not None else None)
+    flags += ltm_read.flags()
+    material = {f.label for f in demanded_material_figures(_mark_material(mech))}
+    if refused := ltm_read.refused(material):
+        raise DossierAssemblyError(ltm_quarters.refusal_message(ticker, refused))
     # (PR-B §3-now) transcript slice computed ONCE here so a fail-loud flag fires whether or not
     # the LLM runs — transcripts on file that don't parse (no LibreOffice) never vanish silently.
     transcript = ciq_sheets.transcript_for_synthesis(bundle)
