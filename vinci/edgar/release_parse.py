@@ -1768,8 +1768,11 @@ _NEW_OUTLOOK = re.compile(
     r"updat(?:es|ed|ing)|rais(?:es|ed|ing)|increas(?:es|ed|ing)|"
     r"lower(?:s|ed|ing)|narrow(?:s|ed|ing)|revis(?:es|ed|ing))\b", re.I)
 #: A prior outlook carried forward unchanged IS the current one: "reaffirming its prior guidance".
-_REAFFIRMED = re.compile(r"\b(?:reaffirm\w*|reiterat\w*|maintain(?:s|ed|ing)?\b)|\bunchanged\b",
-                         re.I)
+#: The verb must take the prior outlook as its object — "While maintaining margins, the Company
+#: previously expected …" reaffirms nothing (review round 1).
+_REAFFIRMED = re.compile(
+    r"\b(?:reaffirm|reiterat|maintain)\w*\s+(?:[\w-]+\s+){0,2}?"
+    r"(?:prior|previous|previously|original|originally)\b|\bunchanged\b", re.I)
 
 
 def _superseded(text: str, at: int) -> bool:
@@ -1778,10 +1781,12 @@ def _superseded(text: str, at: int) -> bool:
     it. The clause is the sentence or bullet, up to the metric."""
     lo, _ = _clause(text, at, at)
     lead = text[lo:at]
-    prior = [p.start() for p in _PRIOR_OUTLOOK.finditer(lead)]
+    # AFTER THE MARKER'S END, never its start: "Previously updated guidance called for …" carries a
+    # current word INSIDE the prior marker, which is not a later statement (review round 1)
+    prior = [p.end() for p in _PRIOR_OUTLOOK.finditer(lead)]
     if not prior or _REAFFIRMED.search(lead):
         return False
-    return not any(n.start() > prior[-1] for n in _NEW_OUTLOOK.finditer(lead))
+    return not any(n.start() >= prior[-1] for n in _NEW_OUTLOOK.finditer(lead))
 
 
 #: The preposition that makes a period phrase a range's OWN: "in the third quarter", "for the full
@@ -1835,7 +1840,11 @@ def _paired_range(text: str, first: re.Match[str]) -> _Paired | None:
     own1 = _own_period(gap, 0) if gap else None
     own2 = _own_period(text, cont.end())
     _, hi = _clause(text, cont.start("low"), cont.end())
+    # The clause must END at the second range's period, or go on only in a comma clause: "… for
+    # fiscal 2026 in capital expenditures" names another measure after it (review round 1).
+    rest = text[own2[1]:hi].strip(" .;:") if own2 is not None else ""
     if (own1 is None or own1[1] != len(gap) or own2 is None
+            or (rest and not rest.startswith(","))
             or re.search(r"\brespectively\b", text[cont.end():hi], re.I)):
         return _Paired(cont, None, None)
     return _Paired(cont, own1[0], own2[0])

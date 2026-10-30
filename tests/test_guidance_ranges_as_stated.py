@@ -274,3 +274,26 @@ def test_maintenance_revenue_is_not_a_reaffirmation() -> None:
     text = ("Previously, the Company expected maintenance revenue of $1.00 billion to $1.05 "
             "billion. The Company now expects revenue of $1.10 billion to $1.15 billion.")
     assert [g[2:4] for g in _guides(text) if g[0] == "revenue"] == [(1100.0, 1150.0)]
+
+
+# --- review round 1 (in-session `/code-review high`; Codex's review failed on its usage limit) ----
+def test_a_current_word_inside_the_prior_marker_does_not_make_it_current() -> None:
+    text = ("Previously updated guidance called for revenue of $1.00 billion to $1.05 billion. The "
+            "Company now expects revenue of $1.10 billion to $1.15 billion.")
+    assert [g[2:4] for g in _guides(text) if g[0] == "revenue"] == [(1100.0, 1150.0)]
+
+
+def test_an_unrelated_maintaining_does_not_reaffirm_a_prior_range() -> None:
+    text = ("While maintaining margins, the Company previously expected revenue of $1.00 billion "
+            "to $1.05 billion. The Company now expects revenue of $1.10 billion to $1.15 billion.")
+    assert [g[2:4] for g in _guides(text) if g[0] == "revenue"] == [(1100.0, 1150.0)]
+    kept = ("The Company is maintaining its prior guidance: revenue of $1.10 billion to $1.15 "
+            "billion.")
+    assert [g[2:4] for g in _guides(kept)] == [(1100.0, 1150.0)]
+
+
+def test_a_second_range_followed_by_another_measure_is_not_the_first_metric() -> None:
+    text = ("The Company expects revenue of $250 million to $260 million in the third quarter and "
+            "$40 million to $45 million for fiscal 2026 in capital expenditures.")
+    assert [g[2:4] for g in _guides(text)] == [(250.0, 260.0)]
+    assert len(_refusals(text)) == 1

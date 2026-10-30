@@ -25,8 +25,8 @@ unchanged.
   in all four guidance loops (level, growth rate and change), after the one-range-per-scope gate.
 - **STANDING (E2-D7).** `_superseded` finds a range whose own clause states the prior outlook
   ("Previously, the Company expected…", "compared to its prior outlook of…"), with no current
-  statement after it ("now", a present-tense forward verb, "updating", "raises"…) and no
-  "reaffirm". Such a range is skipped before it can take the metric's slot, so the range that
+  statement after the marker ends ("now", a present-tense forward verb, "updating", "raises"…)
+  and no "reaffirm"/"maintain" whose object is the prior outlook. Such a range is skipped before it can take the metric's slot, so the range that
   replaces it is the one read. The skip leaves a machine-tier note, "Superseded guidance not read
   — …". It is not a refusal: a prior outlook is not guidance.
 - **UNIT (E2-D8).** A gross margin stated in dollars (a `$`, or a scale word, and no `%`) is
@@ -38,8 +38,9 @@ unchanged.
   (`_own_period`, a bare "Q3" included). So, in reverse order, the full-year range cannot take
   its partner's quarter. The second range's quote starts at the metric, so the 200-character cap
   never ends it before its own figures.
-  A second range with no period of its own, or one paired by "respectively", is refused aloud.
-  Before, it was dropped with no note.
+  A second range with no period of its own, one paired by "respectively", or one whose clause
+  goes on to name another measure after its period, is refused aloud. Before, it was dropped with
+  no note.
 - **`EXTRACTION_VERSIONS` row `2026-10-30.E2-guidance`**, in both twins. The drift pins are
   repinned.
 - **One existing pin changed.** `tests/test_guidance_unit_suffix.py::
@@ -59,13 +60,17 @@ None of the five reaches a committed page today, and none is on the decision pat
 closed behind its audit probe.
 
 **HOW VERIFIED.**
-- **Failing first.** The 22 tests of `tests/test_guidance_ranges_as_stated.py` were copied into a
-  detached worktree of main `9503c4fa`. There, 13 fail (one or more per defect: G1–G5, G11, G13,
-  the D8 inline case, the reversed G13, and review round 0's four: the growth-rate and change
-  loops, a bare "in Q3", a long lead-in's quote, "maintenance") and the 9 negative pins pass. On
-  this branch all 22 pass. Seven negative pins quote filed sentences verbatim (Amazon, Verra Mobility, nCino, EPAM,
-  Simply Good, Artivion, Vital Farms, BellRing). The "reaffirmed or now" pin is constructed, and
-  the percent gross-margin pin pairs a constructed level with Simply Good's filed change.
+- **Failing first.** The 25 tests of `tests/test_guidance_ranges_as_stated.py` were copied into a
+  detached worktree of main `9503c4fa`. There, 16 fail and the 9 negative pins pass. The 16 cover
+  every defect (G1–G5, G11, G13, the D8 inline case, the reversed G13), review round 0's four
+  (the growth-rate and change loops, a bare "in Q3", a long lead-in's quote, "maintenance") and
+  review round 1's three. Round 1 was an in-session `/code-review high`, run because Codex's review
+  failed on its usage limit. Its three tests fail on the PR head `246c6741`: a current word inside
+  the prior marker, an unrelated "maintaining", and a measure named after the second range's
+  period. On this branch all 25 pass. Seven negative pins quote filed sentences verbatim (Amazon,
+  Verra Mobility, nCino, EPAM, Simply Good, Artivion, Vital Farms, BellRing). The "reaffirmed or
+  now" pin is constructed, and the percent gross-margin pin pairs a constructed level with Simply
+  Good's filed change.
 - **The real run.** A read-only, offline replay from the primary checkout's SEC cache, run on
   main's code and on this branch's code, compared field by field (guidance, actuals, one-offs,
   qa_flags):
