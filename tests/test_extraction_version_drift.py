@@ -77,8 +77,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "e871cc6365ea"
-PINNED_AT = "2026-10-30.press-release-ltm"
+PINNED_TABLE = "15cff35a2a3b"
+PINNED_AT = "2026-10-30.E2-guidance"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -126,7 +126,7 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/going_concern.py": "5097f25ade31",
     "vinci/edgar/net_debt.py": "6257a0464909",
     "vinci/edgar/primary_source.py": "80351248cc8a",
-    "vinci/edgar/release_parse.py": "38390113b949",
+    "vinci/edgar/release_parse.py": "1d886c4d5a7b",
     "vinci/edgar/segment_facts.py": "9d3c07301296",
     "vinci/edgar/segments.py": "a25da92ebf20",
     "vinci/edgar/submissions.py": "6644355e5c3f",
