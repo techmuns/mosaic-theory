@@ -266,6 +266,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "families its caps leave out, and a full-text search reads every page or says it did not "
         "(audit E1-D11)",
     ),
+    (
+        "2026-10-30.E2-spans-frames",
+        "a release figure under a six- or nine-month heading or bullet lead-in, with or without "
+        "'ended' and in the singular, takes no quarter label "
+        "(audit E2-D4); the release frame never comes from a comparison in its head, and a head "
+        "naming its quarter only by its end date frames by that date (E2-D6); the GAAP gross "
+        "margin is the first non-GAAP-free statement that states its period (E2-D9)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
