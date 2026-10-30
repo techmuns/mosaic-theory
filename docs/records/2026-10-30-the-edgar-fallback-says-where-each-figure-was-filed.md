@@ -26,10 +26,11 @@ superseded-by:
   net leverage says the same; the fallback leaves the period out and its trajectory and margin
   trend say "withheld". Never sign-flipped.
 - **The share readers outside the dossier read a count tagged after its own filing by #871's rule**
-  (audit X1(a), operator ruling 2026-10-30 "Yes, cross-check"), through ONE reader,
-  `cover_count.share_series`: the screen's share change (`screens.assemble.share_change_field`),
-  the rank's dilution demote (`rank/structural._shares_for`) and the theme desk's basis check
-  (`theme_intelligence.market.desk_points`, the only change in that file). None is assembling one
+  (audit X1(a), operator ruling 2026-10-30 "Yes, cross-check"), through #871's module: the
+  screen's share change (`screens.assemble.share_change_field`) and the rank's dilution demote
+  (`rank/structural._shares_for`) through `cover_count.share_series`, and the theme desk's basis
+  check (`theme_intelligence.market.desk_points`, the only change in that file) through
+  `cover_count.date_counts`, since it needs each count's filing date. None is assembling one
   name, so none fetches a cover: such a count is dated at its filing day, printed "filed <date>",
   and still cross-checked against its filing's other counts. A count its own filing contradicts
   inside the window makes the screen's change UNKNOWN (naming it) and leaves the rank no series
@@ -85,9 +86,10 @@ newest point and anchored a window with nothing else in it; THM's 2033 tag did t
 - Main: `8e6b12b1`.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **Pages gain provenance text at re-assembly.** The snapshot's notes reach a page through the
-  quality block's FCF sign and leverage (`mechanical._sourced`). Every committed page gains them
-  at its next re-assembly, since a maintained name builds its data record afresh then
+- **Pages gain provenance text at re-assembly, in their JSON.** The snapshot's notes reach a page
+  through the quality block's FCF sign and leverage (`mechanical._sourced`); a PRESENT fact
+  renders its value and citation, not its note, so the text is in `dossier.json` only. Every
+  committed page gains it at its next re-assembly, since a maintained name builds its data record afresh then
   (`assemble.build_data_record`); a new candidate takes its record from the next screen run's
   `candidate_records.jsonl`. Added to STATE row 41. No value moves on a
   committed page: the EDGAR fallback reaches none of them.

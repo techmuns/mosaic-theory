@@ -114,3 +114,20 @@ def test_the_desk_reads_no_share_count_after_its_filing() -> None:
     raw = [p for p in extract_points(facts, "shares") if p.value]
     assert any(p.period_end > p.filed for p in raw)  # the slip is in the fixture
     assert len(shares) == len(raw)  # nothing refused, nothing dropped
+
+
+def test_a_series_refused_entire_names_its_refusal() -> None:
+    """Review round 1: with every count in reach refused, the window had no kept point to open
+    from, so the note read "fewer than 2 usable XBRL share points" and named no refusal. VRRM kept
+    to its five counts tagged after their filing, each scaled 1.5x against its filing's own
+    counts."""
+    facts: dict[str, Any] = json.loads(json.dumps(_facts("VRRM")))
+    rows = facts["facts"]["dei"]["EntityCommonStockSharesOutstanding"]["units"]["shares"]
+    late = [r for r in rows if r["end"] > r["filed"]]
+    assert len(late) == 5
+    for r in late:
+        r["val"] = round(r["val"] * 1.5)
+    facts["facts"]["dei"]["EntityCommonStockSharesOutstanding"]["units"]["shares"] = late
+    f = share_change_field(facts)
+    assert f.coverage_status is CoverageStatus.UNKNOWN
+    assert "UNKNOWN" in (f.note or "") and "fewer than 2" not in (f.note or "")

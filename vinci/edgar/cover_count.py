@@ -268,11 +268,12 @@ class ShareSeries(NamedTuple):
 
 def share_series(facts: dict[str, Any], *,
                  read: Callable[[ConceptPoint], str | None] = _unread) -> ShareSeries:
-    """The ONE share series for the readers outside the dossier — the screen's share change, the
-    rank's dilution demote, the theme desk's basis check (Phase 2 C2). None of them is assembling
-    one name, so none may fetch a cover (operator ruling 2026-10-30): a count tagged after its own
-    filing is dated at its filing day, an upper bound, and still cross-checked against its filing's
-    other counts. Correctly-dated counts are read exactly as before."""
+    """The share series for the readers outside the dossier — the screen's share change and the
+    rank's dilution demote (Phase 2 C2); the theme desk's basis check calls :func:`date_counts`
+    itself, as it needs each count's filing date, which these tuples drop. None of them is
+    assembling one name, so none may fetch a cover (operator ruling 2026-10-30): a count tagged
+    after its own filing is dated at its filing day, an upper bound, and still cross-checked
+    against its filing's other counts. Correctly-dated counts are read exactly as before."""
     # every count the readers saw before, zero included: a zero endpoint still reads UNKNOWN
     counts = date_counts([p for p in extract_points(facts, "shares") if p.value is not None],
                          facts, read=read)

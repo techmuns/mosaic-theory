@@ -22,7 +22,7 @@ from typing import Any
 from vinci.dossier.edgar_fundamentals import EdgarFundamentals
 from vinci.dossier.schemas import SourceStatus
 from vinci.edgar.client import compute_fundamental_snapshot
-from vinci.edgar.concepts import current_pair
+from vinci.edgar.concepts import current_annual, current_pair
 from vinci.schemas.envelope import CoverageStatus
 
 _ROOT = Path(__file__).resolve().parent.parent
@@ -106,3 +106,21 @@ def test_positive_legs_are_read_as_before() -> None:
     """The negative pin: WOR's real legs are untouched — FCF 170.2, a PRESENT sign and EBITDA."""
     s = compute_fundamental_snapshot("0000108516", WOR)
     assert s.fcf_sign.value == 1 and s.ebitda_annual.value == 133_481_000.0
+
+
+def test_the_snapshot_names_what_a_restated_leg_restates() -> None:
+    """Review round 1: the snapshot hands `facts` to `filed_at`, so a current leg a later filing
+    restated names the figure first filed. WOR's FY2026 operating income, with an earlier filing of
+    the same year stating another figure (its real row, copied earlier at 90%)."""
+    op, _ = current_annual(WOR, "operating_income")
+    assert op is not None
+    facts: dict[str, Any] = json.loads(json.dumps(WOR))
+    for rows in facts["facts"]["us-gaap"][op.tag]["units"].values():
+        real = next(r for r in rows if r.get("accn") == op.accession
+                    and r["end"] == op.period_end.isoformat() and r.get("start"))
+        rows.append({**real, "val": round(real["val"] * 0.9), "filed": "2026-07-01",
+                     "accn": "0001193125-26-000001"})
+    note = compute_fundamental_snapshot("0000108516", facts).op_income_sign.note or ""
+    assert "restating" in note and "0001193125-26-000001" in note and "2026-07-01" in note
+    plain = compute_fundamental_snapshot("0000108516", WOR).op_income_sign.note or ""
+    assert "restating" not in plain  # the negative pin: filed once, nothing restated

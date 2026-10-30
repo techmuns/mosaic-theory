@@ -505,7 +505,9 @@ def share_change_field(facts: dict[str, Any] | None) -> DataField[float]:
             note=(f"XBRL shares {chg.from_value:,.0f} "
                   f"({series.when(chg.from_date, chg.from_value)}) → "
                   f"{chg.to_value:,.0f} ({series.when(chg.to_date, chg.to_value)})"))
-    start = share_window_start(series.points)
+    # the window opens from EVERY count's date, refused ones too: with all of them refused there
+    # is no kept point to open it from, and the refusal went unnamed (review round 1)
+    start = share_window_start(series.points + [(d, 0.0) for d, _ in series.refused])
     inside = [why for d, why in series.refused if start is not None and d >= start]
     return DataField.unknown(
         source="EDGAR", tier=SourceTier.EDGAR,
