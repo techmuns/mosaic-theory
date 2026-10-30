@@ -1200,11 +1200,13 @@ _GUIDE_METRICS = (
 #: A range's two numbers, each side's own unit, and each side's `$` — CAPTURED, because a gross
 #: margin stated in dollars is gross profit, not the rate the metric holds (audit E2-D8).
 _RANGE_BODY = (
+    # the plural too ("$500 to $550 millions", review round 2): main read it at $M by default, and
+    # an unread scale word is now a refusal, so a plural must be read, not refused
     r"(?P<cur>\$)?\s*(?P<low>[\d,.]*\d)\s*(?P<pct>%)?\s*"
-    rf"(?:(?P<lowunit>{_SCALE})(?![A-Za-z])\s*)?"
+    rf"(?:(?P<lowunit>(?:{_SCALE})s?)(?![A-Za-z])\s*)?"
     r"(?:to|and|[-–—])\s*"
     r"(?P<cur2>\$)?\s*(?P<high>[\d,.]*\d)\s*"
-    rf"(?:(?P<unitword>{_SCALE}|%)(?![A-Za-z]))?"
+    rf"(?:(?P<unitword>(?:{_SCALE})s?|%)(?![A-Za-z]))?"
 )
 _GUIDE_RANGE = re.compile(
     # Metric names as filers write them (net sales / total revenues — BellRing, Simply Good, nCino
@@ -1647,7 +1649,8 @@ def _guide_unit(metric: str, pct_marker: str | None) -> str:
     return "$M"
 
 
-def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
+def _period_for(text: str, start: int, end: int, verbatim: str, *,
+                stop: int | None = None) -> str:
     """The period a guide governs, read from the guide's OWN sentence first.
 
     Two live defects came from reading it elsewhere. FUBO's bullet says "Fiscal 2026 Pro Forma
@@ -1657,7 +1660,10 @@ def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
     full-year one on a business annualising ~$9.9bn.
 
     So the enclosing bullet/sentence governs, and a quarter named there BEATS a bare year: a
-    quarterly range mislabelled annual is a ~4x error in a decision figure."""
+    quarterly range mislabelled annual is a ~4x error in a decision figure.
+
+    ``stop`` ends the trailing scan: a range joined by "and" to a partner never reads the period
+    stated after that partner (review round 2, audit E2-D13)."""
     q = _QUARTER.search(verbatim)
     y = _PERIOD.search(verbatim)
     if q is not None:
@@ -1685,6 +1691,8 @@ def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
     lo, hi = _clause(text, start, end)
     cut = _CMP.search(text, end, hi)
     tail_hi = cut.start() if cut is not None else hi
+    if stop is not None:
+        tail_hi = min(tail_hi, stop)
     tq = next((x for x in _QUARTER.finditer(text, end, tail_hi) if _introduced(text, x)), None)
     ty = next((x for x in _PERIOD.finditer(text, end, tail_hi) if _introduced(text, x)), None)
     if tq is None and ty is None:
@@ -1728,7 +1736,20 @@ def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
 #: not the line: EPAM's "now expects the year-over-year revenue growth rate to be in the range of
 #: 3.2% to 4.2%" (all 10 growth-rate matches in the 123 cached EX-99 exhibits, 2026-10-30).
 _TOTAL_GUIDES = frozenset({"revenue", "net sales"})
-_GUIDE_LEAD_OK = _REVENUE_LEAD_OK | {"year-over-year"}
+#: …and, review round 2, the words that state the guide's PERIOD, a HEADING over it or a table's
+#: SCALE — "FY26 revenue", "annual revenue", "calendar 2026 revenue", "Full Year 2026 Outlook
+#: Revenue of", "(in millions) Revenue of": they qualify the statement, not the line, and main
+#: stores each.
+_GUIDE_LEAD_OK = _REVENUE_LEAD_OK | {
+    "year-over-year", "fy", "calendar", "annual", "half", "h", "full", "outlook", "guidance",
+    "expectations", "forecast", "millions", "billions"}
+#: The hyphenated period words: "fourth-quarter revenue", "second-half net sales"; and the verbs
+#: that state or move a guide — "The Company is raising revenue to be in the range of …" (main
+#: stores it).
+_HYPHEN_PERIOD_LEAD = re.compile(r"(?:first|second|third|fourth|back|front)-(?:quarter|half)")
+_GUIDE_VERB_LEAD = re.compile(
+    r"(?:now|rais|increas|updat|narrow|lower|revis|reaffirm|reiterat|maintain|affirm|reduc|"
+    r"tighten|adjust|issu|provid|initiat|introduc|establish|target|guid)\w*")
 
 
 def _sub_line(text: str, metric: str, at: int) -> str | None:
@@ -1739,8 +1760,11 @@ def _sub_line(text: str, metric: str, at: int) -> str | None:
     total where the release names no other line, as it is for the actuals (`_net_product_total`)."""
     if metric not in _TOTAL_GUIDES:
         return None
+    if text[max(0, at - 30):at].rstrip().endswith(","):
+        return None            # "As initially guided in February, revenue of …": a clause edge
     lead = _revenue_lead(text, at)
-    if lead in _GUIDE_LEAD_OK or _net_product_total(text, at):
+    if (lead in _GUIDE_LEAD_OK or _HYPHEN_PERIOD_LEAD.fullmatch(lead)
+            or _GUIDE_VERB_LEAD.fullmatch(lead) or _net_product_total(text, at)):
         return None
     return lead
 
@@ -1749,7 +1773,8 @@ def _sub_line(text: str, metric: str, at: int) -> str | None:
 #: revenue of $1.00 billion to $1.05 billion. The Company now expects revenue of $1.10 billion to
 #: $1.15 billion." First-wins kept the first — the superseded figure. "previously" counts only where
 #: it governs an expectation ("previously provided", "Previously, the Company expected"), never a
-#: "previously announced acquisition".
+#: "previously announced acquisition". A marker is not a verdict: `_stated_as_prior` decides, and
+#: `_guidance` drops a prior-stated range only beside a NEW one for its metric (review round 2).
 _PRIOR_OUTLOOK = re.compile(
     r"\b(?:previously|originally|initially|formerly)\b,?\s+(?:[\w-]+\s+){0,3}?"
     r"(?:expected|anticipated|projected|forecast(?:ed)?|guided|provided|issued|stated|"
@@ -1758,35 +1783,48 @@ _PRIOR_OUTLOOK = re.compile(
     r"|\b(?:prior|previous|original|earlier)\s+(?:[\w-]+\s+){0,2}?"
     r"(?:outlook|guidance|range|expectations?|forecast)\b",
     re.I)
-#: The words that make a later clause the CURRENT statement — Simply Good's "is updating its
-#: previously provided outlook" names the old outlook as the object of the update, and "… and now
-#: expects revenue of" states the new one. A PRESENT-tense forward verb counts too ("Reflecting
-#: higher than previously anticipated spending, the Company expects …"): erring toward current only
-#: falls back to the first-wins reading, while erring toward prior would drop a current guide.
+#: The words that make a clause the CURRENT statement — Simply Good's "is updating its previously
+#: provided outlook" and "The Company is raising its previously issued fiscal 2026 guidance for
+#: revenue to be in the range of …" name the old outlook as the OBJECT of the act that states the
+#: new range. A PRESENT-tense forward verb counts too ("Reflecting higher than previously
+#: anticipated spending, the Company expects …"): erring toward current only falls back to the
+#: first-wins reading, while erring toward prior would drop a current guide.
 _NEW_OUTLOOK = re.compile(
     r"\b(?:now|currently|expects?|anticipates?|projects?|forecasts?|sees|"
     r"updat(?:es|ed|ing)|rais(?:es|ed|ing)|increas(?:es|ed|ing)|"
     r"lower(?:s|ed|ing)|narrow(?:s|ed|ing)|revis(?:es|ed|ing))\b", re.I)
-#: A prior outlook carried forward unchanged IS the current one: "reaffirming its prior guidance".
-#: The verb must take the prior outlook as its object — "While maintaining margins, the Company
-#: previously expected …" reaffirms nothing (review round 1).
-_REAFFIRMED = re.compile(
-    r"\b(?:reaffirm|reiterat|maintain)\w*\s+(?:[\w-]+\s+){0,2}?"
-    r"(?:prior|previous|previously|original|originally)\b|\bunchanged\b", re.I)
+#: A prior outlook carried forward IS the current one — "reaffirming its prior guidance", "original
+#: guidance for fiscal 2026 remains in place". The words must take the OUTLOOK as their object or
+#: subject: "While maintaining margins, …" (round 1) and "With pricing unchanged, …" (round 2)
+#: reaffirm nothing.
+_KEPT_OUTLOOK = re.compile(
+    r"\b(?:reaffirm|reiterat|maintain|affirm|keep|kept)\w*\s+(?:[\w-]+\s+){0,3}?"
+    r"(?:prior|previous|previously|original|originally|initial|initially|outlook|guidance|range|"
+    r"expectations?)\b"
+    r"|\b(?:outlook|guidance|range|expectations?)\s+(?:[\w-]+\s+){0,3}?(?:remains?|is|are|stays?)"
+    r"\s+(?:unchanged|in\s+place|intact)\b"
+    r"|\bunchanged\s+(?:outlook|guidance|range|expectations?)\b", re.I)
 
 
-def _superseded(text: str, at: int) -> bool:
-    """True when the metric at ``at`` sits in a clause that states a PRIOR outlook, with no current
-    statement after it. Its range must never take the metric's slot from the range that replaces
-    it. The clause is the sentence or bullet, up to the metric."""
-    lo, _ = _clause(text, at, at)
-    lead = text[lo:at]
-    # AFTER THE MARKER'S END, never its start: "Previously updated guidance called for …" carries a
-    # current word INSIDE the prior marker, which is not a later statement (review round 1)
-    prior = [p.end() for p in _PRIOR_OUTLOOK.finditer(lead)]
-    if not prior or _REAFFIRMED.search(lead):
+def _stated_as_prior(text: str, start: int, end: int) -> bool:
+    """True when the guide matched at [start, end) is stated as the PRIOR outlook: a prior marker
+    governs it (no other amount between the marker and the metric), and nothing in its clause states
+    or keeps a current outlook — a current word inside a marker ("Previously updated guidance called
+    for …", round 1) does not count. The clause also ends at a ';': "Previously, the Company
+    expected revenue of …; revenue is now expected to be between …" is two statements (round 2)."""
+    lo, _ = _clause(text, start, start)
+    lo = max(lo, text.rfind(";", lo, start) + 1)
+    lead = text[lo:start]
+    governing = [p for p in _PRIOR_OUTLOOK.finditer(lead)
+                 if not _AMOUNT.search(lead, p.end())]
+    if not governing:
         return False
-    return not any(n.start() >= prior[-1] for n in _NEW_OUTLOOK.finditer(lead))
+    clause = text[lo:end]
+    if _KEPT_OUTLOOK.search(clause):
+        return False
+    spans = [(lo + p.start(), lo + p.end()) for p in _PRIOR_OUTLOOK.finditer(lead)]
+    return not any(not any(a <= lo + n.start() < b for a, b in spans)
+                   for n in _NEW_OUTLOOK.finditer(clause))
 
 
 #: The preposition that makes a period phrase a range's OWN: "in the third quarter", "for the full
@@ -1819,13 +1857,44 @@ def _own_period(text: str, pos: int) -> tuple[str, int] | None:
     return None
 
 
+#: A SCALE STATED ONCE OVER A TABLE — "Fiscal 2026 Outlook (in millions) Revenue of $985 to $995",
+#: "($ in millions, except per share data)". A bare dollar range beneath one states its scale there,
+#: so it is read at that scale rather than refused (review round 2; main stores the same figures).
+_TABLE_SCALE = re.compile(
+    r"\((?:\$|dollars|usd|amounts)?\s*in\s+(millions|billions|thousands)\b[^()]{0,60}\)", re.I)
+#: How far above a range its table's scale may sit — one outlook block, never the release.
+_TABLE_SCALE_REACH = 300
+
+
+def _table_scale(text: str, at: int) -> str | None:
+    """The scale word a table heading states within `_TABLE_SCALE_REACH` above ``at``, or None."""
+    found = None
+    for m in _TABLE_SCALE.finditer(text, max(0, at - _TABLE_SCALE_REACH), at):
+        found = m
+    return found.group(1).lower() if found else None
+
+
 class _Paired(NamedTuple):
-    """A range joined by "and" to the one before it (`_CONTINUED`), with each range's OWN period —
-    both None unless BOTH ranges state one beside them and no "respectively" pairs them by order."""
+    """A range joined by "and" to the one before it (`_CONTINUED`), with the period stated BESIDE
+    each — None for a side that states none. `respectively` marks a pair whose periods are assigned
+    by order, which neither range may read (review round 2)."""
 
     second: re.Match[str]
     first_period: str | None
     second_period: str | None
+    respectively: bool
+
+
+def _unit_class(r: re.Match[str]) -> str:
+    """'%' for a range stated in percent, '$' otherwise — a partner of the other class is a
+    different measure (a growth rate or a margin beside a dollar range), never a second range of
+    the first one's metric (review round 2)."""
+    return "%" if r["pct"] or r["unitword"] == "%" else "$"
+
+
+def _year_of(label: str) -> str | None:
+    m = re.search(r"(20\d\d)$", label)
+    return m.group(1) if m else None
 
 
 def _paired_range(text: str, first: re.Match[str]) -> _Paired | None:
@@ -1834,20 +1903,28 @@ def _paired_range(text: str, first: re.Match[str]) -> _Paired | None:
     of two ranges is not evidence — "$1.00 billion to $1.10 billion for the full year 2026 and $250
     million to $260 million in the third quarter" must not label the full year a quarter."""
     cont = _CONTINUED.match(text, first.end())
-    if cont is None:
+    if cont is None or _unit_class(cont) != _unit_class(first):
         return None
     gap = cont["gap"].rstrip(" ,")
     own1 = _own_period(gap, 0) if gap else None
+    first_period = own1[0] if own1 is not None and own1[1] == len(gap) else None
     own2 = _own_period(text, cont.end())
     _, hi = _clause(text, cont.start("low"), cont.end())
-    # The clause must END at the second range's period, or go on only in a comma clause: "… for
-    # fiscal 2026 in capital expenditures" names another measure after it (review round 1).
+    # The clause must END at the second range's period, or go on only in a comma clause or a
+    # comparison: "… for fiscal 2026 in capital expenditures" names another measure after it
+    # (review round 1); "… for the full year 2026 compared to $0.9 billion in 2025" does not.
     rest = text[own2[1]:hi].strip(" .;:") if own2 is not None else ""
-    if (own1 is None or own1[1] != len(gap) or own2 is None
-            or (rest and not rest.startswith(","))
-            or re.search(r"\brespectively\b", text[cont.end():hi], re.I)):
-        return _Paired(cont, None, None)
-    return _Paired(cont, own1[0], own2[0])
+    ends_here = not rest or rest.startswith(",") or _CMP.match(rest) is not None
+    second_period = own2[0] if own2 is not None and ends_here else None
+    # A YEARLESS QUARTER TAKES THE YEAR ITS PARTNER STATES (review round 2): "in the third quarter
+    # and … for fiscal 2026" is Q3 2026, the label main's sentence-wide reader gives it.
+    if first_period and second_period:
+        if re.fullmatch(r"Q[1-4]", first_period) and (y := _year_of(second_period)):
+            first_period = f"{first_period} {y}"
+        elif re.fullmatch(r"Q[1-4]", second_period) and (y := _year_of(first_period)):
+            second_period = f"{second_period} {y}"
+    return _Paired(cont, first_period, second_period,
+                   re.search(r"\brespectively\b", text[cont.end():hi], re.I) is not None)
 
 
 def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[GuidanceItem]:
@@ -1875,21 +1952,41 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         return metric in seen and (period == "next-fy" or scope is None
                                    or (metric, scope) in scoped)
 
-    def _refuse(why: str, vb: str) -> None:
+    noted: set[int] = set()   # ONE note per stated guide: two change patterns match one statement
+
+    def _refuse(why: str, vb: str, at: int | None = None) -> None:
+        if at is not None:
+            if at in noted:
+                return
+            noted.add(at)
         notes.append(f"{GUIDANCE_REFUSAL_PREFIX} — {why}; verify against the filing: "
                      f"\"{vb[:150]}\" ({src})")
 
     def _sub_line_refused(metric: str, at: int, vb: str) -> bool:
         if (lead := _sub_line(text, metric, at)) is None:
             return False
-        _refuse(f"revenue qualified by '{lead}' is a sub-line, not the company's total", vb)
+        _refuse(f"revenue qualified by '{lead}' is a sub-line, not the company's total", vb, at)
         return True
 
-    def _superseded_note(vb: str) -> None:
-        # NOT a refusal: the release states its current outlook elsewhere, and a prior one is not
-        # guidance. Said in the machine tier so the skip is never silent.
-        notes.append(f"Superseded guidance not read — its sentence states a prior outlook, not "
-                     f"the current one: \"{vb[:150]}\" ({src})")
+    # EVERY guide statement in the release and whether its sentence states it as the PRIOR outlook —
+    # what `_superseded_refused` reads to find a NEW range beside an old one (review round 2).
+    statements = [(m.start(), _guide_metric(m["metric"] if "metric" in pat.groupindex
+                                            else m.group(1)),
+                   _stated_as_prior(text, m.start(), m.end()))
+                  for pat in (_GUIDE_RANGE, _GUIDE_PCT, _GUIDE_CHANGE_SIGNED,
+                              _GUIDE_CHANGE_RANGE, _GUIDE_CHANGE_POINT)
+                  for m in pat.finditer(text)]
+
+    def _superseded_refused(metric: str, at: int, end: int, vb: str) -> bool:
+        """A range stated as the prior outlook WITH A NEW ONE for its metric later in the release
+        never takes the slot (audit E2-D7). Stated as prior with no new one beside it, it is the
+        only figure there is and is read as before — never dropped (review round 2)."""
+        if not _stated_as_prior(text, at, end) or not any(
+                s > at and mt == metric and not prior for s, mt, prior in statements):
+            return False
+        _refuse("the release states this range as its prior outlook and a current one later, so "
+                "it is not read as guidance", vb, at)
+        return True
 
     def _admit_range(r: re.Match[str], metric: str, period: str, vb: str) -> None:
         """Store ONE stated range, scaled and unit-labelled from its OWN tokens — or refuse it."""
@@ -1918,7 +2015,7 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             # PER-SIDE, with the trailing unit as the fallback for a bare side. "$2.465 to $2.49
             # billion" states one unit and it governs both (unchanged); "$500 million to $1.2
             # billion" states two and each governs its own number.
-            governing = r["unitword"] or r["lowunit"]
+            governing = r["unitword"] or r["lowunit"] or _table_scale(text, r.start())
             # A DOLLAR RANGE STATES ITS SCALE (audit E2-D1). With no unit word the bare digits were
             # stored as $M — "$500,000 to $550,000" as 500,000–550,000 $M, "$80 to $100" as a
             # guess — and "thousand" was not a unit at all. Both refused: $M is never assumed, and
@@ -1964,15 +2061,23 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             continue
         vb = _verbatim(text, m.start(), m.end())
         pair = _paired_range(text, m)
-        period = (pair.first_period if pair is not None and pair.first_period is not None
-                  else _period_for(text, m.start(), m.end(), vb))
-        second = pair.second_period if pair is not None else None
+        # Each range of a pair reads ONLY the period stated beside it; a first range stating none
+        # reads the sentence as before, but never past its partner (review round 2, item 6).
+        readable = (pair is not None and not pair.respectively
+                    and pair.first_period is not None and pair.second_period is not None)
+        if pair is not None and not pair.respectively and pair.first_period is not None:
+            period = pair.first_period
+        else:
+            # the tail ends where the partner's "and" begins — the gap's end, NOT the start of the
+            # continuation match, which is the first range's own end (review round 2)
+            period = _period_for(text, m.start(), m.end(), vb,
+                                 stop=pair.second.end("gap") if pair is not None else None)
+        second = pair.second_period if readable and pair is not None else None
         if _held(metric, period) and (second is None or _held(metric, second)):
             continue
         # A SUPERSEDED RANGE NEVER TAKES THE SLOT (audit E2-D7) — tested before `seen` is touched,
         # so the range that replaces it, later in the release, is the one read.
-        if _superseded(text, m.start()):
-            _superseded_note(vb)
+        if _superseded_refused(metric, m.start(), m.end(), vb):
             continue
         if _sub_line_refused(metric, m.start(), vb):
             continue
@@ -1989,6 +2094,16 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
                 f"{len(named)} metrics ({', '.join(sorted(named))}), so which it governs cannot be "
                 f"read from the sentence; verify against the filing: \"{vb[:150]}\" ({src})")
             continue
+        # quoted FROM THE METRIC, never snapped back to the sentence start: the 200-character cap
+        # must not end the quote before the second range's own figures
+        vb2 = (" ".join(text[m.start():pair.second.end()].split())[:VERBATIM_CAP]
+               if pair is not None else vb)
+        # "… and …, respectively" assigns both periods by ORDER: neither range states its own, and
+        # main filed the first, a quarter, under the annual default (review round 2) — refuse both.
+        if pair is not None and pair.respectively:
+            _refuse(f"two {metric} ranges joined by 'and' take their periods by 'respectively', "
+                    f"so neither range's period is stated beside it", vb2)
+            continue
         first_held = _held(metric, period)
         if not first_held:
             _admit_range(m, metric, period, vb)
@@ -1996,16 +2111,16 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             continue
         # THE SECOND RANGE OF THE SENTENCE (audit E2-D13): read when it states its own period
         # beside it, refused aloud when it does not — never dropped in silence again.
-        # quoted FROM THE METRIC, never snapped back to the sentence start: the 200-character cap
-        # must not end the quote before the second range's own figures
-        vb2 = " ".join(text[m.start():pair.second.end()].split())[:VERBATIM_CAP]
         if second is None:
             if not first_held:
-                _refuse(f"a second {metric} range joined by 'and' states no period of its own (or "
-                        f"is paired by 'respectively'), so which period it governs cannot be read",
-                        vb2)
+                _refuse(f"a second {metric} range joined by 'and' states no period of its own "
+                        f"beside both ranges, so which period it governs cannot be read", vb2)
             continue
-        if not _held(metric, second):
+        if _held(metric, second):
+            # ONE RANGE PER METRIC PER SCOPE — and the one not kept is SAID (round 2, item 5)
+            _refuse(f"a second {metric} range, for {second}, falls in a scope this release "
+                    f"already gives for {metric}; one range per metric per scope is read", vb2)
+        else:
             _admit_range(pair.second, metric, second, vb2)
     for m in _GUIDE_PCT.finditer(text):
         metric = _guide_metric(m.group(1))
@@ -2013,8 +2128,7 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         if lo is None or hi is None or metric in seen:
             continue
         vb = _verbatim(text, m.start(), m.end())
-        if _superseded(text, m.start()):
-            _superseded_note(vb)
+        if _superseded_refused(metric, m.start(), m.end(), vb):
             continue
         if _sub_line_refused(metric, m.start(1), vb):
             continue
@@ -2075,8 +2189,7 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             if lo > hi:                      # a decline range reverses: -350..-300, not -300..-350
                 lo, hi = hi, lo
             vb = _verbatim(text, m.start(), m.end())
-            if _superseded(text, m.start()):
-                _superseded_note(vb)
+            if _superseded_refused(metric, m.start(), m.end(), vb):
                 continue
             if _sub_line_refused(metric, m.start(), vb):
                 continue

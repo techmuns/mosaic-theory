@@ -24,6 +24,9 @@ those are value pins that cannot rot; the rest are marked constructed where they
 """
 from __future__ import annotations
 
+import pytest
+
+from vinci.dossier import mechanical
 from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX, parse_release
 
 _SRC = "8-K 0000000000-26-000001 EX-99.1"
@@ -63,12 +66,15 @@ def test_a_dollar_guide_with_no_scale_word_is_refused_aloud() -> None:
 
 def test_a_stated_billion_and_million_still_scale() -> None:
     """NEGATIVE PIN. Amazon, 8-K 0001018724-26-000024 EX-99.1 (2026-07-30), and Verra Mobility's
-    outlook bullet — both state their scale, both stay exactly as committed."""
+    outlook bullets (8-K 0001193125-26-239351 EX-99.1), each verbatim — both state their scale,
+    both stay exactly as committed."""
     amzn = ("Third Quarter 2026 Guidance • Net sales are expected to be between $197.0 billion "
             "and $202.0 billion, or to grow between 9% and 12% compared with third quarter 2025.")
     assert _guides(amzn) == [("net sales", "Q3 2026", 197000.0, 202000.0, "$M")]
     vrrm = ("Verra Mobility is revising its 2026 full-year financial outlook to the following: "
-            "• Total Revenue of $985 million to $995 million • Adjusted EPS of $1.19 to $1.25")
+            "• Total Revenue of $985 million to $995 million • Adjusted EBITDA of $380 million "
+            "to $385 million • Adjusted EPS of $1.19 to $1.25 • Free Cash Flow of $140 million to "
+            "$150 million")
     assert ("revenue", "2026", 985.0, 995.0, "$M") in _guides(vrrm)
     assert [g[2:] for g in _guides(vrrm) if g[0] == "adjusted eps"] == [(1.19, 1.25, "$/sh")]
 
@@ -136,7 +142,9 @@ SMPL_UPDATE = ("Fiscal Year 2026 Outlook The Company is updating its previously 
 def test_the_current_range_replaces_the_one_it_supersedes() -> None:
     r = parse_release(G11, source_ref=_SRC)
     assert [(g.metric, g.low, g.high) for g in r.guidance] == [("revenue", 1100.0, 1150.0)]
-    assert any("Superseded" in f and "1.00 billion" in f for f in r.qa_flags)
+    # said to the READER (review round 2): the note carries the refusal prefix the rollup reads
+    assert any("prior outlook" in f and "1.00 billion" in f
+               for f in mechanical.guidance_refusal_flags([r]))
 
 
 def test_previously_provided_as_the_object_of_an_update_is_not_a_prior_range() -> None:
@@ -204,7 +212,7 @@ G13 = ("Acme Reports Second Quarter 2026 Results. The Company expects revenue of
 
 
 def test_a_second_range_with_its_own_period_is_read() -> None:
-    assert _guides(G13) == [("revenue", "Q3", 250.0, 260.0, "$M"),
+    assert _guides(G13) == [("revenue", "Q3 2026", 250.0, 260.0, "$M"),
                             ("revenue", "2026", 1000.0, 1100.0, "$M")]
 
 
@@ -215,7 +223,7 @@ def test_the_first_range_never_takes_the_second_ranges_period() -> None:
             "billion to $1.10 billion for the full year 2026 and $250 million to $260 million in "
             "the third quarter.")
     assert _guides(text) == [("revenue", "2026", 1000.0, 1100.0, "$M"),
-                             ("revenue", "Q3", 250.0, 260.0, "$M")]
+                             ("revenue", "Q3 2026", 250.0, 260.0, "$M")]
 
 
 def test_a_second_range_whose_period_is_not_its_own_is_refused_aloud() -> None:
@@ -257,7 +265,7 @@ def test_a_sub_line_or_superseded_growth_or_change_guide_is_not_revenue() -> Non
 def test_a_bare_quarter_beside_its_range_is_its_own_period() -> None:
     text = ("The Company expects revenue of $250 million to $260 million in Q3 and $1.00 billion "
             "to $1.10 billion for fiscal 2026.")
-    assert _guides(text) == [("revenue", "Q3", 250.0, 260.0, "$M"),
+    assert _guides(text) == [("revenue", "Q3 2026", 250.0, 260.0, "$M"),
                              ("revenue", "Fiscal 2026", 1000.0, 1100.0, "$M")]
 
 
@@ -297,3 +305,149 @@ def test_a_second_range_followed_by_another_measure_is_not_the_first_metric() ->
             "$40 million to $45 million for fiscal 2026 in capital expenditures.")
     assert [g[2:4] for g in _guides(text)] == [(250.0, 260.0)]
     assert len(_refusals(text)) == 1
+
+
+# --- review round 2 (coordinator review of 09015d80) --------------------------------------------
+@pytest.mark.parametrize("text", [
+    "The Company is raising its previously issued fiscal 2026 guidance for revenue to be in the "
+    "range of $1.10 billion to $1.15 billion.",
+    "The Company is updating its previously provided outlook for fiscal 2026 revenue to be in the "
+    "range of $1.10 billion to $1.15 billion.",
+    "The Company's original guidance for fiscal 2026 remains in place: revenue of $1.10 billion "
+    "to $1.15 billion.",
+    "As initially guided in February, revenue of $1.10 billion to $1.15 billion.",
+    "The Company increased its revenue outlook from its prior range; revenue of $1.10 billion to "
+    "$1.15 billion is expected for fiscal 2026.",
+    "Raises Prior Full-Year Guidance. Raising prior guidance for revenue of $1.10 billion to $1.15 "
+    "billion.",
+])
+def test_a_raised_updated_or_kept_prior_outlook_is_the_current_guide(text: str) -> None:
+    """THE BLOCKER (item 1). Each sentence states the CURRENT range; main stores every one, and the
+    round-1 head dropped each as superseded, behind a note no reader saw."""
+    assert [g[2:4] for g in _guides(text) if g[0] == "revenue"] == [(1100.0, 1150.0)]
+
+
+def test_simply_good_without_its_bullet_glyphs_keeps_both_guides() -> None:
+    """`html_to_text` emits no glyph for an `<li>`: the same filed outlook, its bullets gone."""
+    text = SMPL_UPDATE.replace("• ", "")
+    got = [g[2:4] for g in _guides(text)]
+    assert (1310.0, 1350.0) in got and (217.0, 225.0) in got
+
+
+def test_an_old_range_beside_a_new_one_after_a_semicolon() -> None:
+    text = ("Previously, the Company expected revenue of $1.00 billion to $1.05 billion; revenue "
+            "is now expected to be between $1.10 billion and $1.15 billion.")
+    assert [g[2:4] for g in _guides(text) if g[0] == "revenue"] == [(1100.0, 1150.0)]
+
+
+@pytest.mark.parametrize(("text", "metric"), [
+    ("The Company expects FY26 revenue of $1.2 billion to $1.3 billion.", "revenue"),
+    ("The Company expects FY2026 revenue to be in the range of $1.2 billion to $1.3 billion.",
+     "revenue"),
+    ("The Company expects fourth-quarter revenue of $250 million to $260 million.", "revenue"),
+    ("The Company expects annual revenue of $1.2 billion to $1.3 billion for 2026.", "revenue"),
+    ("The Company expects second-half net sales of $600 million to $650 million.", "net sales"),
+    ("The Company expects calendar 2026 revenue of $1.2 billion to $1.3 billion.", "revenue"),
+    ("Acme Reports Third Quarter 2026 Results. Full Year 2026 Outlook Revenue of $1.2 billion to "
+     "$1.3 billion.", "revenue"),
+    ("Acme Reports Third Quarter 2026 Results. 2026 Guidance Revenue of $1.2 billion to $1.3 "
+     "billion.", "revenue"),
+    ("Fiscal 2026 Outlook (in millions) Revenue of $985 to $995 Adjusted EBITDA of $200 to $210",
+     "revenue"),
+])
+def test_period_heading_and_scale_words_are_not_sub_lines(text: str, metric: str) -> None:
+    """Item 2: a period, a heading or a table's stated scale before the metric qualifies the
+    statement, not the line. Main stores every one."""
+    assert [g for g in _guides(text) if g[0] == metric], text
+    assert not [n for n in _refusals(text) if "sub-line" in n], text
+
+
+def test_a_table_heading_states_the_scale_of_its_bare_ranges() -> None:
+    text = ("Fiscal 2026 Outlook (in millions) Revenue of $985 to $995 Adjusted EBITDA of $200 "
+            "to $210")
+    assert [g[2:] for g in _guides(text) if g[0] == "revenue"] == [(985.0, 995.0, "$M")]
+
+
+@pytest.mark.parametrize("text", [
+    "The Company expects revenue of $250 million to $260 million in the third quarter and 8% to "
+    "10% for fiscal 2026.",
+    "The Company expects adjusted EBITDA of $40 million to $45 million in the third quarter and "
+    "20% to 22% for fiscal 2026.",
+])
+def test_a_percent_range_after_a_dollar_range_is_not_that_metrics_level(text: str) -> None:
+    """Item 3: a partner of another unit class is a different measure (growth, margin)."""
+    got = _guides(text)
+    assert [g[4] for g in got] == ["$M"], got
+    assert got[0][1] == "Q3 2026"       # item 4: main's label, the year the sentence states
+
+
+def test_a_dollar_range_beside_a_percent_one_is_not_refused() -> None:
+    text = "• Revenue of $1.10 billion to $1.15 billion and 5% to 7% on a constant currency basis"
+    assert [g[2:4] for g in _guides(text)] == [(1100.0, 1150.0)]
+    assert _refusals(text) == []
+
+
+def test_a_yearless_quarter_takes_the_year_its_partner_states() -> None:
+    """Item 4: the gap states "the third quarter" only; main reads the year from the sentence."""
+    text = ("The Company expects revenue of $250 million to $260 million in the third quarter and "
+            "$1.00 billion to $1.10 billion for fiscal 2026.")
+    assert _guides(text) == [("revenue", "Q3 2026", 250.0, 260.0, "$M"),
+                             ("revenue", "Fiscal 2026", 1000.0, 1100.0, "$M")]
+
+
+def test_a_second_range_in_a_scope_already_read_is_refused_aloud() -> None:
+    """Item 5: one range per metric per scope, and the one not kept is SAID."""
+    text = ("The Company expects revenue of $1.10 billion to $1.15 billion for fiscal 2026 and "
+            "$1.20 billion to $1.30 billion for fiscal 2027.")
+    assert [g[2:4] for g in _guides(text)] == [(1100.0, 1150.0)]
+    notes = _refusals(text)
+    assert len(notes) == 1 and "2027" in notes[0]
+
+
+def test_an_unpaired_first_range_never_reads_its_partners_period() -> None:
+    """Item 6: main and the round-1 head both filed this full-year range as Q4."""
+    text = ("For fiscal 2026, the Company expects revenue of $1.00 billion to $1.10 billion and "
+            "$250 million to $260 million in the fourth quarter.")
+    got = _guides(text)
+    assert [g[1:4] for g in got] == [("fiscal 2026", 1000.0, 1100.0)], got
+    assert len(_refusals(text)) == 1
+    respectively = ("The Company expects revenue of $250 million to $260 million and $270 million "
+                    "to $280 million for the third and fourth quarters, respectively.")
+    assert _guides(respectively) == []          # main labelled the quarterly range annual
+    assert len(_refusals(respectively)) == 1
+
+
+def test_one_refusal_per_stated_guide() -> None:
+    """Item 7: two change patterns match one statement; the reader gets one note."""
+    text = "• Subscription revenue expected to increase 10% to 12% year-over-year"
+    assert len(_refusals(text)) == 1
+
+
+def test_unchanged_elsewhere_in_the_clause_reaffirms_nothing() -> None:
+    """Item 8, the class of round 1's "maintaining" fix."""
+    text = ("With pricing unchanged, the Company previously expected revenue of $1.00 billion to "
+            "$1.05 billion. The Company now expects revenue of $1.10 billion to $1.15 billion.")
+    assert [g[2:4] for g in _guides(text) if g[0] == "revenue"] == [(1100.0, 1150.0)]
+
+
+def test_a_verb_that_states_the_guide_is_not_a_sub_line() -> None:
+    """Item 2's class, from the coordinator's probe file: main stores it."""
+    text = ("The Company is raising revenue to be in the range of $1.2 billion to $1.3 billion for "
+            "fiscal 2026.")
+    assert [g[2:] for g in _guides(text)] == [(1200.0, 1300.0, "$M")]
+
+
+def test_a_plural_scale_word_is_a_scale() -> None:
+    """D1's refusal must not fire on "millions": main stores $500–550M."""
+    text = "For fiscal 2026, the Company expects revenue of $500 to $550 millions."
+    assert [g[2:] for g in _guides(text)] == [(500.0, 550.0, "$M")]
+
+
+def test_a_comparison_after_the_second_range_keeps_both_periods() -> None:
+    """The first range keeps the quarter beside it (never the annual default), and a comparison
+    after its partner's period does not unpair them."""
+    text = ("The Company expects revenue of $250 million to $260 million in the third quarter and "
+            "$1.00 billion to $1.10 billion for the full year 2026 compared to $0.9 billion in "
+            "2025.")
+    assert _guides(text) == [("revenue", "Q3 2026", 250.0, 260.0, "$M"),
+                             ("revenue", "2026", 1000.0, 1100.0, "$M")]
