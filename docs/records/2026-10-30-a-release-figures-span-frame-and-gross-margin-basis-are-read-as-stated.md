@@ -29,7 +29,8 @@ unchanged.
   table column header "Three Months Ended March 31, 2025 2026".
 - **BASIS (E2-D9).** The GAAP gross margin is the first `_GROSS_MARGIN` statement that meets
   three tests: it is not non-GAAP (`_NON_GAAP_LEAD`: "Non-GAAP", "adjusted" or "Non-GAAP
-  adjusted", standing right before it), it is not a segment's, and it states its period.
+  adjusted", standing right before it), it is not a segment's ("segment" in the margin's own
+  phrase, never earlier in the sentence), and it states its period.
   - Before, a 12-character "adjusted" look-back let "Non-GAAP gross margin was 47.0%" through as
     GAAP.
   - Only the first statement was ever read, so a GAAP margin stated after a non-GAAP or a
@@ -46,15 +47,19 @@ None of these moves a committed value, and none is on the decision path. Each is
 its probe.
 
 **HOW VERIFIED.**
-- **Failing first.** `tests/test_release_spans_and_frames.py` holds 15 tests. All 15 pass on this
+- **Failing first.** `tests/test_release_spans_and_frames.py` holds 16 tests. All 16 pass on this
   branch.
   - **Main `8e6b12b1`:** 9 fail (A5–A7, A9–A11, BellRing's nine-month section, the year-to-date
-    lead-in, Amazon's two heads, and the fiscal-shift pin). 6 pass: the 4 negative pins, and
-    review round 0's 2.
+    lead-in, Amazon's two heads, and the fiscal-shift pin). 7 pass: the 4 negative pins, review
+    round 0's 2 and review round 1's 1.
   - **Review round 0** (`/code-review high --fix`): its 2 pins guard regressions that the first
     draft introduced and main does not have. Each fails on the draft: "Adjusted EPS and gross
     margin was 40.0%" lost its GAAP figure, and a segment's gross margin was reached past an
     unreadable first statement.
+  - **Review round 1** (an in-session `/code-review high`, run because Codex's review failed on
+    its usage limit): its pin fails on the PR head `c08d5f73`. There, "Excluding the impact of
+    the segment divestiture, gross margin was 40.0% …" lost its consolidated margin to the
+    round-0 segment check. Main stores it.
 - **The real-text fixtures**, each verbatim (whitespace collapsed); where a test joins two
   fragments of one filing, it says so:
   - Amazon: 8-K 0001018724-26-000024 and -000012, each head at ≤600 characters, plus its

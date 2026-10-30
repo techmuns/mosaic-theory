@@ -897,6 +897,10 @@ _RECON = re.compile(
 #: margin", "Non-GAAP adjusted gross margin*" (audit E2-D9) — never another metric's ("Adjusted EPS
 #: and gross margin was 40.0%" states a GAAP margin).
 _NON_GAAP_LEAD = re.compile(r"\b(?:non-gaap|adjusted)(?:[\s-]+(?:non-gaap|adjusted))*\s*$", re.I)
+#: A SEGMENT'S gross margin — "segment" in the gross margin's own phrase, after the clause's last
+#: comma ("The Products segment gross margin was 30.0%"), never one the sentence names before it
+#: ("Excluding the impact of the segment divestiture, gross margin was 40.0%", review round 1).
+_SEGMENT_LEAD = re.compile(r"\bsegments?\b[^,;]*$", re.I)
 _GROSS_MARGIN = re.compile(
     r"gross\s+margin\s+(?:of\s+|(?:decreased|increased|declined)\s+to\s+|was\s+)?([\d.]+)\s*%",
     re.I,
@@ -1174,7 +1178,9 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
     # non-GAAP or a year-to-date one ("Gross margin was 40.0% for the nine months ended …. Gross
     # margin was 41.0% for the third quarter") was never reached.
     for gm in _GROSS_MARGIN.finditer(text):
-        if _NON_GAAP_LEAD.search(text, max(0, gm.start() - 24), gm.start()) or _segment(gm.start()):
+        clause_lo, _ = _clause(text, gm.start(), gm.start())
+        if (_NON_GAAP_LEAD.search(text, max(0, gm.start() - 24), gm.start())
+                or _SEGMENT_LEAD.search(text, clause_lo, gm.start())):
             continue
         if (v := _money(gm.group(1))) is None:
             continue

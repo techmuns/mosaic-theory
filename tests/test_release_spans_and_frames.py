@@ -193,6 +193,15 @@ def test_a_segments_gross_margin_is_never_the_companys() -> None:
     assert [a for a in _actuals(text) if a[0] == "gross margin"] == []
 
 
+
+def test_a_segment_named_earlier_in_the_sentence_is_not_the_margins_line() -> None:
+    """Review round 1 (in-session `/code-review high`; Codex's review failed on its usage limit):
+    the segment test must read the margin's own phrase. Main stores this 40.0."""
+    text = ("Acme Reports Third Quarter 2026 Results. Excluding the impact of the segment "
+            "divestiture, gross margin was 40.0% for the third quarter of 2026.")
+    assert [a for a in _actuals(text) if a[0] == "gross margin"] == [
+        ("gross margin", "Q3 2026", 40.0)]
+
 #: Microvast, 8-K 0001628280-26-055471 EX-99.1: its head and its gross-margin bullet (two verbatim
 #: fragments) — GAAP first, then the non-GAAP adjusted figure.
 MVST_HEAD = ("Microvast Reports Second Quarter 2026 Financial Results Houston, Texas, USA — "
