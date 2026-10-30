@@ -249,6 +249,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "'and' is read when it states its own period and refused aloud when it does not",
     ),
     (
+        "2026-10-30.G-D7",
+        "an LLM's quote is a span of its document only with every gap between two digits kept: "
+        "a quote reading 'Level 11.25%' is refused where the exhibit prints 'Level 1 1.25%', "
+        "where whitespace removal had joined the two figures into one (audit G-D7); every "
+        "committed quote reads as before",
+    ),
+    (
         "2026-10-30.cover-dated-shares",
         "a share count tagged after its own filing is dated from its cover sentence (an anchored "
         "parse; unread, at its filing day, printed 'filed <date>'), its value cross-checked "
