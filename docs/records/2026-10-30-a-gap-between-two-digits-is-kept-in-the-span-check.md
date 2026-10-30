@@ -50,13 +50,22 @@ The old key read each pair as one run of digits.
 - *A new real case.* UBER's committed liquidity quote, with its window, joins
   `tests/fixtures/verbatim/real_cases.json` as `uber-struck-figure-beside-its-replacement`. It
   was committed at 545403de and still is.
-- *Mutants.* All three are killed by the new pins:
+- *Mutants.* All four are killed by the new pins:
   - digit gaps dropped again (the bug);
   - invisible characters kept;
-  - invisible characters counted as a gap.
+  - invisible characters counted as a gap;
+  - invisible characters dropped AFTER the whitespace step. "Level 1 \u200b1.25%" then reduces
+    to "level11.25%". The coordinator's review found this mutant passing all 41 tests; round 2
+    added the assertion that kills it.
 - *Corpus before synthetic.* Every consumer was run on its committed corpus under the OLD key (as
-  on main) and the NEW key (`scratchpad/d1/corpus_d1.py`). Nothing was sent: the primary
-  checkout's SEC cache was read only, with 0 misses.
+  on main) and the NEW key, with `scripts/verbatim_key_flips.py`. The script was committed in
+  round 2 so the 0-flip claim re-runs from the repo:
+
+      PYTHONPATH=. python scripts/verbatim_key_flips.py --cache-dir <primary>/data/cache \
+          --exclude <each held test pack> --out <path.json>
+
+  It reads the SEC cache only and never sends a request; it exited 0 with "0 answers moved". An
+  excluded name is chosen by folder, so its page and exhibits are never opened.
 
 | consumer | population | old → new | flips | carrying a digit gap |
 |---|---|---|---|---|
@@ -87,15 +96,27 @@ grid and leverage schedule, and AORT's two leverage schedules ("Q4-2024 6.25:1.0
 - Exposure: every `disclosed_facts[].source_ref` in the 7 committed `data/scan_history/*/*.jsonl`
   files.
 
-**WHAT IT COSTS / WHAT IS ACCEPTED.**
-- A quote that types as one figure what the document prints as two, split only by whitespace,
-  is now refused. That is the fix. But `html_to_text` joins text nodes with a space. A filing
-  that splits ONE figure across two tags ("1<b>2</b>50") would read "1 2 50", and a quote typing
-  "1250" is refused.
-- Not observed: 0 of the 693 quotes above flipped. The cost is a refused term, never a wrong
-  one.
-- Falsifier: an (E5) "the model's quote is not in" refusal at re-assembly whose exhibit splits
-  the quoted figure across tags.
+**WHAT IT COSTS / WHAT IS ACCEPTED.** Two classes of correct quote are now refused. Each costs
+a refused term, never a wrong one.
+- **ONE figure the document prints with whitespace inside it. Observed, not hypothetical.**
+  - WERN's receivables agreement (8-K 0000793074-26-000120 · `wern-20260605ex101.htm`) prints
+    "$195,000,000210,000,00 0" and "$130,000,000140,000,00 0". The space is in its own text,
+    not made by `html_to_text`.
+  - A quote of "210,000,000" there is VERBATIM on main and NOT_FOUND now.
+  - No committed quote crosses either figure today. They are the only two thousands groups
+    split this way in the 58 committed covenant exhibits on the 26 non-held pages.
+  - A figure split across two HTML tags ("1<b>2</b>50" read as "1 2 50") is the same class.
+- **A vulgar fraction beside a digit.** NFKC turns "½" into "1⁄2", so "4½%" and "4 ½%" now differ.
+  - A quote of "4½% Senior Notes" against a source printing "4 ½% Senior Notes", or the reverse,
+    was VERBATIM on main and is NOT_FOUND now.
+  - Measured 0: no fraction character directly follows a digit, with or without a space, in the
+    58 covenant exhibits or the 75 reconstructed 10-K excerpts. The exhibits carry 8 "½", each
+    after a word ("plus ½ of 1%"), which no key change touches.
+  - The ASCII form is the fix working: "41/2%" against "4 1/2%" was accepted on main and is
+    refused now, because those are different figures.
+- **Falsifier.** An (E5) "the model's quote is not in" refusal, or a refused graph edge, at
+  re-assembly, where the exhibit prints the quoted figure with whitespace inside it or a fraction
+  beside a digit. WERN's two figures are the known instance.
 - No committed page moves, so none is added to STATE row 41.
 
 **DEFERRED FROM REVIEW (round 1, in-session `/code-review high`; Codex's review failed).**
@@ -107,3 +128,11 @@ grid and leverage schedule, and AORT's two leverage schedules ("Q4-2024 6.25:1.0
 - Measured at 0: no superscript digit (¹ ² ³ ⁰–⁹) directly follows a digit in the 58 committed
   covenant exhibits on the 26 non-held pages, read from the SEC cache on 2026-10-30.
 - No owner is needed until a refusal shows it.
+
+**REVIEW ROUND 2 (coordinator review of #870 at 6d0c60bd).**
+- The ordering mutant above is now pinned.
+- The two accepted-cost classes are stated with their evidence.
+- The STATE claim names its population.
+- The corpus run is committed as `scripts/verbatim_key_flips.py`.
+- `synthesis._traces`' docstring now says a gap between two digits is kept. Round 0 deferred
+  that docstring; it changed nothing else in `synthesis.py`.

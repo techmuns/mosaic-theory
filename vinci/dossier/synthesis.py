@@ -554,10 +554,11 @@ def _twin_numbers(text: str) -> set[str]:
 
 def _traces(ref: str, universe: set[str]) -> bool:
     """True iff ``ref`` IS one of the layer's refs (audit G-D5). Compared on the verbatim check's
-    key — case, whitespace and typography folded, nothing else — so the model's re-typed dash still
-    matches. NOT a substring either way: that counted ``''`` as cited (it is in every string) and a
-    bare ``'EOD'`` as citing every EOD fact at once. An empty ref cites nothing, as an empty quote
-    proves nothing (``verbatim.SourceText.match``)."""
+    key — case, typography and whitespace folded (a gap between two digits kept as one space, audit
+    G-D7), nothing else — so the model's re-typed dash still matches. NOT a substring either way:
+    that counted ``''`` as cited (it is in every string) and a bare ``'EOD'`` as citing every EOD
+    fact at once. An empty ref cites nothing, as an empty quote proves nothing
+    (``verbatim.SourceText.match``)."""
     key = comparison_key(ref)
     return bool(key) and key in {comparison_key(u) for u in universe}
 

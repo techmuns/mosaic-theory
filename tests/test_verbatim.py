@@ -178,6 +178,9 @@ def test_a_space_between_two_digit_runs_is_not_forgiven() -> None:
     assert SourceText(uber["window"]).match(joined) is SpanMatch.NOT_FOUND
     # an invisible character is not a gap: a soft hyphen inside a figure still folds away
     assert SourceText("$1\u00ad250 million").match("$1250 million") is SpanMatch.VERBATIM
+    # ...and it is dropped BEFORE the whitespace step, so one beside a space never hides the gap:
+    # dropped after it, "Level 1 \u200b1.25%" would reduce to "level11.25%" and reopen G-D7
+    assert SourceText("Level 1 \u200b1.25%").match("Level 11.25%") is SpanMatch.NOT_FOUND
 
 
 # --- end to end: covenant terms ------------------------------------------------------------------
