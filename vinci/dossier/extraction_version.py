@@ -291,6 +291,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "Statement is (operator ruling 2026-10-30)",
     ),
     (
+        "2026-10-30.E2-spans-frames",
+        "a release figure under a six- or nine-month heading or bullet lead-in that states a span "
+        "(ended, a period, or a section noun such as Highlights or Results; singular or plural) "
+        "takes no quarter label, and a twelve-month section heading none either (audit E2-D4); "
+        "the release frame never comes from the phrase a comparison in its head compares "
+        "against, and a calendar head naming its quarter only by its end date frames by that "
+        "date (E2-D6); the GAAP gross margin is the first statement that is the company's own "
+        "and states its period, never a non-GAAP, segment, sub-line, prior-period or "
+        "year-to-date one, and the reader stops at one it cannot place (E2-D9)",
+    ),
+    (
         "2026-10-30.edgar-provenance",
         "every EDGAR fallback figure says where it was filed — its tag, period, form, "
         "accession and day — and one a later filing restated names the figure it restates; a "
