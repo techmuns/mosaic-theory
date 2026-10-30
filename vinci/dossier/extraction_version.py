@@ -310,6 +310,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "rank's dilution demote and the theme desk's basis check read a share count tagged "
         "after its own filing at its filing day, cross-checked (audit X1(a))",
     ),
+    (
+        "2026-10-30.E2-D17",
+        "a going-concern statement is read as stated (audit E2-D17): a denial of the doubt (no "
+        "longer, none, not believed, alleviated by plans) and a hypothetical about it are not "
+        "doubt; the frame is the assessment question or the disclosure policy, never a citation "
+        "of ASC 205-40, so a conclusion of doubt that cites the standard is doubt, as is a plan "
+        "that cannot alleviate it",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

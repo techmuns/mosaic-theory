@@ -56,6 +56,31 @@ mention is NOT doubt. Under-flagging leaves a distressed name in the queue for a
 over-flagging removes a solvent one silently, and — as TECX proved — feeds a false premise into a
 synthesis that then reads as a confident verdict.
 
+**(3) Negation, modality and the frame, read as stated (audit E2-D17, 2026-10-30).** Grown from
+the 583 cached SEC filings that mention a going concern, each rule against a sentence it misread:
+
+  EOSE  "…management has concluded that there is NO LONGER substantial doubt…"
+                                                      → DENIED, was read as DOUBT
+  ACRS  "…the Company DOES NOT BELIEVE that substantial doubt exists…"
+                                                      → DENIED, was read as DOUBT
+  RLMD  "…management's plans ALLEVIATED substantial doubt…"
+                                                      → DENIED, was read as DOUBT
+  ZURA  "…financial condition COULD RAISE substantial doubt…"
+                                                      → a HYPOTHETICAL risk factor, read as DOUBT
+  WOLF  "…management CONSIDERS WHETHER there are conditions…"
+                                                      → the FRAME, read as DOUBT
+  WOLF  "…management has concluded that there is substantial doubt…, IN ACCORDANCE WITH the
+        requirements of ASC 205-40…"                  → DOUBT, read as None: citing the standard
+                                                        is not the frame
+  XIAO  "The management plan CANNOT ALLEVIATE the substantial doubt…"
+                                                      → DOUBT, read as None
+
+The frame is now the QUESTION ("evaluates/considers/concludes WHETHER …") or the disclosure POLICY,
+never a citation of the standard, and a frame sentence that states its own conclusion is a
+conclusion. A denial must name the doubt it denies; "alleviate" denies it only where nothing
+negates it ("cannot alleviate" is doubt). A hypothetical needs its modal ON the doubt ("could raise
+substantial doubt"): "could raise additional capital" beside a real conclusion is not one.
+
 EVERY marker below was demanded by a REAL filing quoted above. The lists stay CLOSED: grow them
 from an observed miss, never speculatively.
 """
@@ -78,12 +103,25 @@ _DOUBT = re.compile(
     re.I,
 )
 
-#: The ASU 2014-15 EVALUATION frame — a sentence saying the assessment was PERFORMED. It always
-#: contains the trigger phrase, so it must be skipped rather than matched, and the scan must
-#: CONTINUE past it: the conclusion, when there is one, is a later sentence (MVST).
+#: The ASU 2014-15 EVALUATION frame — a sentence saying the assessment is PERFORMED, the QUESTION
+#: it asks ("evaluated whether", WOLF's "considers whether", the auditor's "Conclude whether") or
+#: the disclosure POLICY (WVE). It always contains the trigger phrase, so it is skipped rather than
+#: matched, and the scan CONTINUES past it: the conclusion is a later sentence (MVST). A citation
+#: of the standard is NOT the frame (E2-D17): WOLF concludes doubt "in accordance with … ASC
+#: 205-40" in the sentence that states it.
 _EVALUATION_FRAME = re.compile(
-    r"evaluat\w*\s+whether|in\s+accordance\s+with|asu\s*2014-15|subtopic\s*205-40|"
-    r"accounting\s+standards\s+update",
+    r"(?:evaluat|assess|consider|conclud|determin)\w*\s+whether|"
+    r"required\s+to\s+make\s+certain\s+additional\s+disclosures",
+    re.I,
+)
+
+#: A conclusion OF DOUBT stated in the frame's own sentence ("evaluated whether … and concluded
+#: that these conditions raise substantial doubt"): then the sentence is a result. A conclusion of
+#: sufficiency is not one — CRVS "evaluated whether … and concluded that our existing cash … are
+#: sufficient" stays a frame.
+_CONCLUSION = re.compile(
+    r"\b(?:concluded|determined)\s+that\b[^.;]{0,200}?"
+    r"\b(?:raised?|raises|is|exists?|was)\s+(?:a\s+)?substantial\s+doubt",
     re.I,
 )
 
@@ -91,12 +129,45 @@ _EVALUATION_FRAME = re.compile(
 _VALUATION_SENSE = re.compile(r"going\s+concern\s+value", re.I)
 
 #: An explicit denial. A filer that concluded there is NO doubt says so, and the sentence still
-#: contains both the phrase and a doubt marker.
+#: contains both the phrase and a doubt marker. Each form names the doubt it denies (E2-D17):
+#: "do not raise substantial doubt", EOSE's "no longer substantial doubt", MAR's "no material
+#: uncertainty exists", ACRS's "does not believe that substantial doubt exists", and a doubt "has
+#: been alleviated" (an issuer whose 2025 offering closed). "Alleviate" as a verb is `_ALLEVIATES`.
 _NEGATED = re.compile(
-    r"(?:no|not|does\s+not|do\s+not|did\s+not|never)\s+(?:\w+\s+){0,4}"
+    r"\b(?:no|not|does\s+not|do\s+not|did\s+not|never)\s+(?:\w+\s+){0,4}"  # "casino" is no "no"
     r"(?:raise|indicate|create)\s+substantial\s+doubt|"
-    r"substantial\s+doubt\s+(?:has|have|was|were)\s+been\s+alleviated|"
-    r"alleviate[ds]?\s+the\s+substantial\s+doubt",
+    r"\bno\s+(?:longer\s+)?(?:substantial\s+doubt|material\s+uncertaint)|"
+    r"\bnot\s+believe\s+(?:that\s+)?(?:there\s+(?:is|exists)\s+)?substantial\s+doubt|"
+    r"substantial\s+doubt\b[^.;]{0,160}?\b(?:has|have|had|was|were)\s+(?:been\s+)?alleviated",
+    re.I,
+)
+
+#: "…plans alleviated substantial doubt" (RLMD) denies the doubt — unless a negator governs the
+#: verb: XIAO's "cannot alleviate the substantial doubt" says the doubt REMAINS.
+_ALLEVIATES = re.compile(r"\balleviat\w*\s+(?:the\s+)?substantial\s+doubt", re.I)
+_NEGATOR_BEFORE = re.compile(r"\b(?:not|cannot|can't|unable|insufficient|no)\b[^.;]{0,40}$",
+                             re.I)
+
+#: A HYPOTHETICAL: a modal ON the doubt itself — a risk factor saying what COULD happen (ZURA's
+#: "could raise substantial doubt", MNLK's "may conclude that there is substantial doubt",
+#: "substantial doubt could exist"). The modal must govern the doubt: "could raise additional
+#: capital" in a real conclusion is not one, and SANA's "may not be sufficient …, and there is
+#: substantial doubt" still states it.
+_HYPOTHETICAL = re.compile(
+    r"\b(?:may|might|could|would)\s+(?:also\s+)?(?:raise|create|cast)\s+(?:a\s+)?"
+    r"(?:substantial|significant)\s+doubt|"
+    r"\b(?:may|might|could|would)\s+(?:also\s+)?conclude\s+that\s+(?:there\s+is\s+)?(?:a\s+)?"
+    r"substantial\s+doubt|"
+    r"substantial\s+doubt\s+(?:may|might|could|would)\s+(?:exist|arise)|"
+    # a future auditor's report that "may also contain statements expressing substantial doubt"
+    r"\b(?:may|might|could|would)\s+(?:also\s+)?contain\s+(?:\w+\s+){0,2}"
+    r"(?:expressing|regarding|about)\s+substantial\s+doubt|"
+    # MNLK "If we seek additional financing … and there remains substantial doubt …": the doubt is
+    # the condition. A comma ends the clause, so SOCC's "…, if at all, substantial doubt exists"
+    # still states it.
+    # (a concessive "even if" states the doubt whatever the condition)
+    r"(?<!even\s)\bif\b[^,.;]{0,120}?\bthere\s+(?:is|remains|exists)\s+(?:a\s+)?"
+    r"substantial\s+doubt",
     re.I,
 )
 
@@ -135,6 +206,12 @@ def _sentence_around(text: str, pos: int) -> tuple[str, int]:
     return " ".join(text[lo:hi].split()), lo
 
 
+def _alleviated(sentence: str) -> bool:
+    """The sentence says the doubt was alleviated: an "alleviate" no negator governs."""
+    return any(not _NEGATOR_BEFORE.search(sentence[:m.start()])
+               for m in _ALLEVIATES.finditer(sentence))
+
+
 def find_going_concern_statement(text: str) -> GoingConcernStatement | None:
     """The first sentence that STATES going-concern doubt about this issuer, or ``None``.
 
@@ -147,10 +224,12 @@ def find_going_concern_statement(text: str) -> GoingConcernStatement | None:
         sentence, _ = _sentence_around(text, m.start())
         if _VALUATION_SENSE.search(sentence):
             continue                      # "going concern value" — a valuation term
-        if _EVALUATION_FRAME.search(sentence):
+        if _EVALUATION_FRAME.search(sentence) and not _CONCLUSION.search(sentence):
             continue                      # "has evaluated whether …" — an assessment, not a result
-        if _NEGATED.search(sentence):
+        if _NEGATED.search(sentence) or _alleviated(sentence):
             continue                      # the filer says the doubt does NOT exist / was alleviated
+        if _HYPOTHETICAL.search(sentence):
+            continue                      # "could raise substantial doubt" — what may happen
         if not _DOUBT.search(sentence):
             continue                      # a bare mention: M&A sense, risk list, forward-looking
         hit = GoingConcernStatement(sentence=sentence[:_SENTENCE_CAP], start=m.start())

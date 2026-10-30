@@ -19,6 +19,8 @@ said.
 
 from __future__ import annotations
 
+import pytest
+
 from vinci.edgar.going_concern import (
     find_going_concern_statement,
     states_going_concern_doubt,
@@ -199,3 +201,186 @@ def test_both_surfaces_read_the_same_detector() -> None:
             "can now disagree about what a filer said")
         assert '"going concern|substantial doubt"' not in src, (
             f"{rel} has re-introduced a bare phrase match")
+
+
+# --- audit E2-D17: negation, modality and the evaluation frame, on REAL sentences -----------------
+# Each sentence is quoted verbatim from the filing named beside it (the SEC cache, read 2026-10-30
+# through `html_to_text`). The 583 cached filings that mention a going concern are the corpus the
+# rules were grown from; every marker below answers one of these sentences.
+
+#: A filer that concluded it has NO doubt, or that its plans ALLEVIATED it — not doubt.
+DENIED = {
+    "EOSE 10-K 0001628280-26-011961":
+        "In light of the significant amount of capital raised in 2025 and our anticipated ability "
+        "to meet the covenants associated with the debt instruments held by the Company, "
+        "management has concluded that there is no longer substantial doubt about our ability to "
+        "continue as a going concern within one year after the date that the Consolidated "
+        "Financial Statements are issued.",
+    "PHAT 10-Q 0001193125-26-193946":
+        "Including our existing cash and cash equivalents, we believe that we have sufficient "
+        "working capital on hand to fund operations such that there is no substantial doubt as to "
+        "our ability to continue as a going concern at the date the unaudited interim condensed "
+        "financial statements were issued.",
+    "ACRS 10-K 0001104659-26-020540":
+        "As of the report date, the Company does not believe that substantial doubt exists about "
+        "its ability to continue as a going concern.",
+    "10-K 0001140361-26-006977":
+        "After considering the Group’s current cash position, the proceeds from the equity "
+        "financings completed subsequent to year‑end, the Group’s forecasted cash flows, and its "
+        "planned operating and investment activities, management has concluded that no "
+        "substantial doubt exists regarding the Group’s ability to continue as a going concern for "
+        "at least 12 months from the date these financial statements are issued.",
+    "MAR 10-K 0001997464-26-000018":
+        "On this basis, the Directors have concluded that no material uncertainty exists that may "
+        "cast significant doubt on the Group's ability to continue as a going concern for a period "
+        "of at least 12 months from the date these financial statements were approved and "
+        "authorized for issuance.",
+    "RLMD 10-K 0001213900-26-031862":
+        "As a result, the Company concluded that management’s plans alleviated substantial doubt "
+        "about the Company’s ability to continue as a going concern as of December 31, 2025 and "
+        "the Company has sufficient funds to maintain operations for at least 12 months from the "
+        "issuance of these audited consolidated financial statements.",
+    "10-K 0001213900-25-086227":
+        "With the successful completion of the Offering, we believe that substantial doubt about "
+        "our ability to continue as a going concern has been alleviated for at least the next "
+        "twelve months.",
+}
+
+#: A HYPOTHETICAL — a risk factor saying what COULD happen — not a statement that it has.
+MODAL = {
+    "ZURA 10-K 0001104659-26-032080":
+        "Our recurring losses from operations and financial condition could raise substantial "
+        "doubt about our ability to continue as a going concern.",
+    "MNLK 10-K 0001821586-26-000002":
+        "In our own required quarterly assessments, we may conclude that there is substantial "
+        "doubt about our ability to continue as a going concern, and future reports from our "
+        "independent registered public accounting firm may also contain statements expressing "
+        "substantial doubt about our ability to continue as a going concern.",
+}
+
+#: The ASSESSMENT or the POLICY, not a result — every one names the doubt as a question.
+FRAME = {
+    "WOLF 10-Q 0000895419-25-000071":
+        "GAAP, management considers whether there are conditions or events that raise substantial "
+        "doubt about the Company's ability to continue as a going concern for the twelve months "
+        "following the issuance date of its financial statements.",
+    "WVE 10-K 0001193125-26-073472":
+        "The Company is required to make certain additional disclosures if the Company concludes "
+        "substantial doubt exists and it is not alleviated by the Company’s plans or when the "
+        "Company’s plans alleviate substantial doubt about the Company’s ability to continue as a "
+        "going concern.",
+    "10-K 0001171843-26-000374 (the auditor's responsibilities)":
+        "• Conclude whether, in our judgment, there are conditions or events, considered in the "
+        "aggregate, that raise substantial doubt about the Company’s ability to continue as a "
+        "going concern for a reasonable period of time.",
+}
+
+#: A CONCLUSION OF DOUBT that cites the standard, or that denies its own alleviation — doubt.
+CONCLUDED = {
+    "WOLF 10-Q 0000895419-25-000071":
+        "However, due to the Company’s ongoing consideration of an in-court restructuring that "
+        "would result in an event of default during the implementation of that potential "
+        "solution, management has concluded that there is substantial doubt about the Company’s "
+        "ability to continue as a going concern as of the issuance date, in accordance with the "
+        "requirements of ASC 205-40, “Presentation of Financial Statements – Going Concern.”",
+    "10-Q 0001493152-26-024413":
+        "In connection with our assessment of going concern considerations in accordance with FASB "
+        "ASU 2014-15, “Disclosures of Uncertainties about an Entity’s Ability to Continue as a "
+        "Going Concern,” management has determined that the conditions described above raise "
+        "substantial doubt about the Company’s ability to continue as a going concern through "
+        "twelve months from the date these unaudited condensed consolidated financial statements "
+        "are available to be issued.",
+    "VSTM 10-Q 0001104659-26-057114":
+        "As a result of the assessment in accordance with the applicable accounting standards, "
+        "these conditions raise substantial doubt about the Company’s ability to continue as a "
+        "going concern for twelve months after the date the condensed consolidated financial "
+        "statements are issued.",
+    "20-F 0001213900-26-057986":
+        "The management plan cannot alleviate the substantial doubt of our ability to continue as "
+        "a going concern.",
+}
+
+#: DOUBT that must survive the new rules: an idiom "if at all", and a "may not be" beside the
+#: conclusion — neither is a hypothetical about the doubt itself.
+STILL_DOUBT = {
+    "SOCC 10-K 0001831481-26-000026":
+        "Due to the uncertainty regarding our resumption of sales of production volumes, and lack "
+        "of assurance that new financing, or refinancing of the Senior Secured Term Loan, will be "
+        "available to us on commercially acceptable terms, if at all, substantial doubt exists "
+        "about the Company’s ability to continue as a going concern.",
+    "SANA 10-Q 0001193125-26-216769":
+        "Management has determined that the Company’s current capital resources may not be "
+        "sufficient to fund its planned operations for at least one year from the date of this "
+        "Quarterly Report, and there is substantial doubt as to the Company's ability to continue "
+        "as a going concern.",
+}
+
+
+@pytest.mark.parametrize("filing", DENIED)
+def test_a_denied_or_alleviated_doubt_is_not_doubt(filing: str) -> None:
+    """(−) Audit E2-D17 GC1: "management has concluded that there is no longer substantial doubt"
+    read as DOUBT — the denial named the doubt, and only "do not RAISE substantial doubt" was
+    read as one."""
+    assert find_going_concern_statement(DENIED[filing]) is None, filing
+
+
+@pytest.mark.parametrize("filing", MODAL)
+def test_a_hypothetical_doubt_is_not_doubt(filing: str) -> None:
+    """(−) A risk factor's "could raise substantial doubt" says what may happen, not what has."""
+    assert find_going_concern_statement(MODAL[filing]) is None, filing
+
+
+@pytest.mark.parametrize("filing", FRAME)
+def test_an_assessment_or_a_policy_is_not_doubt(filing: str) -> None:
+    """(−) The question asked ("considers whether", "Conclude whether") and the disclosure policy
+    ("required to make certain additional disclosures if …") are frames, not results."""
+    assert find_going_concern_statement(FRAME[filing]) is None, filing
+
+
+@pytest.mark.parametrize("filing", CONCLUDED)
+def test_a_conclusion_that_cites_the_standard_or_cannot_alleviate_is_doubt(filing: str) -> None:
+    """(+) Audit E2-D17 GC4: "in accordance with ASC 205-40" CITES the standard; it is not the
+    evaluation frame, and a sentence that concludes doubt while citing it is doubt. "cannot
+    alleviate the substantial doubt" says the doubt remains."""
+    assert find_going_concern_statement(CONCLUDED[filing]) is not None, filing
+
+
+@pytest.mark.parametrize("filing", STILL_DOUBT)
+def test_doubt_beside_an_idiom_or_a_modal_elsewhere_still_fires(filing: str) -> None:
+    """(+) The negative pins of the new rules: "if at all" and "may not be sufficient" sit in real
+    conclusions of doubt."""
+    assert find_going_concern_statement(STILL_DOUBT[filing]) is not None, filing
+
+
+def test_the_briefs_two_sentences() -> None:
+    """(−/+) The audit's own two cases, verbatim from the brief."""
+    assert states_going_concern_doubt(
+        "Management concluded that there is no substantial doubt about the Company's ability to "
+        "continue as a going concern.") is False
+    assert states_going_concern_doubt(
+        "In accordance with ASC 205-40, management has concluded that these conditions raise "
+        "substantial doubt about the Company's ability to continue as a going concern.") is True
+
+
+def test_review_round_0_tense_and_abbreviation() -> None:
+    """(+/−) A frame that concludes in the past tense is a conclusion; "Amendment No. 2" is not a
+    negator of "alleviated"."""
+    assert states_going_concern_doubt(
+        "Management evaluated whether there are conditions and events that raise substantial doubt "
+        "about the Company's ability to continue as a going concern and determined that these "
+        "conditions raised substantial doubt about the Company's ability to continue as a going "
+        "concern.") is True
+    assert states_going_concern_doubt(
+        "Following Amendment No. 2, management's plans alleviated substantial doubt about the "
+        "Company's ability to continue as a going concern.") is False
+
+
+def test_review_round_1_a_negator_is_a_word_and_even_if_is_not_a_condition() -> None:
+    """(+) Review round 1 on #879: the "no" that ends "casino" is not a denial, and a concessive
+    "even if" states the doubt whatever the condition."""
+    assert states_going_concern_doubt(
+        "Losses in our casino operations raise substantial doubt about our ability to continue as "
+        "a going concern.") is True
+    assert states_going_concern_doubt(
+        "Even if the offering closes there is substantial doubt about our ability to continue as "
+        "a going concern.") is True
