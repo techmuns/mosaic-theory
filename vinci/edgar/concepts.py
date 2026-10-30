@@ -11,7 +11,9 @@ from __future__ import annotations
 
 import re
 from collections import Counter
+from collections.abc import Sequence
 from datetime import date, timedelta
+from decimal import ROUND_HALF_EVEN, Decimal
 from typing import Any, NamedTuple
 
 from pydantic import BaseModel
@@ -930,6 +932,88 @@ def fiscal_year_of(year_ends: dict[int, tuple[date, ...]], point: ConceptPoint) 
     return fy
 
 
+def _amount(value: float, unit: str) -> str:
+    """A figure as provenance prints it: a per-share one to the cent, any other whole."""
+    return f"{value:,.2f}" if "/" in unit else f"{value:,.0f}"
+
+
+def superseded(facts: dict[str, Any], p: ConceptPoint) -> ConceptPoint | None:
+    """The FIRST filing of ``p``'s own period, tag and unit, when it stated another value — the
+    figure a later filing restated (audit E1-D5). None when ``p`` was never stated differently.
+
+    The served point is the latest filed, which on a forward page is the value known at build; the
+    earlier one is what a reader of that first filing saw. WOR's FY2022 revenue is served as 1,309
+    (filed 2024-07-30, after the steel spin-off) and was first filed as 5,242 (2022-08-01)."""
+    earlier = [q for q in points_for_tag(facts, p.tag, currency=EVERY)
+               if q.unit == p.unit and q.period_start == p.period_start
+               and q.period_end == p.period_end and q.filed < p.filed]
+    # the period's FIRST filing, whatever came between: a figure restated and restated back is
+    # the figure first filed, not a restatement
+    first = min(earlier, key=lambda q: q.filed) if earlier else None
+    return first if first is not None and not _same_figure(first.value, p.value) else None
+
+
+def _same_figure(a: float, b: float) -> bool:
+    """Two filings of one figure state the same number when they agree at the COARSER of their
+    two precisions (review of #875): −69,100,000 re-reports −69,075,000 rounded to $100,000, it
+    does not restate it — 3 of 13 current legs in the cache differed only so. A restatement that
+    small, stated at that precision, is not told apart; one past it is."""
+    exp = max(Decimal(repr(x)).normalize().as_tuple().exponent for x in (a, b))
+    step = Decimal(1).scaleb(int(exp))
+    return (Decimal(repr(a)).quantize(step, ROUND_HALF_EVEN)
+            == Decimal(repr(b)).quantize(step, ROUND_HALF_EVEN))
+
+
+def filed_at(p: ConceptPoint, facts: dict[str, Any] | None = None) -> str:
+    """Where ``p`` was filed, as a reader can go and check it: its tag, its period, the form and
+    accession that carried it and the day — and, given ``facts``, the figure it restates (audit
+    E1-D5: the EDGAR fallback served its figures with no accession at all)."""
+    when = (f"at {p.period_end}" if p.period_start is None
+            else f"{p.period_start}..{p.period_end}")
+    out = (f"{p.tag} {when} ({p.form or 'form unstated'} "
+           f"{p.accession or 'accession unstated'}, filed {p.filed})")
+    if facts is not None and " + " in p.tag:
+        # a line the filer splits into two tags has no one tag to look a restatement up under
+        # (`annual_line`): say so, never skip it silently (review of #875)
+        out += ", restatement not checked: a sum of tags"
+    elif facts is not None and (old := superseded(facts, p)) is not None:
+        out += (f", restating {_amount(old.value, old.unit)} first filed {old.filed} "
+                f"({old.accession or 'accession unstated'})")
+    return out
+
+
+#: Aliased as D&A, but NOT a D&A figure: it nets accretion income (of discounts on investments)
+#: against depreciation and amortization. Refused as D&A at the EBITDA readers whatever its sign
+#: (review of #875: refusing it only when negative selected on SIGN — 28 of the 35 current EBITDA
+#: pairs serving it were positive and read unflagged, 7 negative and refused).
+NOT_D_AND_A = frozenset({"DepreciationAmortizationAndAccretionNet"})
+
+
+def leg_refusal(what: str, p: ConceptPoint) -> str | None:
+    """Why a combined figure refuses its ``what`` leg ``p``, or None: a D&A leg under a tag that is
+    not a D&A figure (:data:`NOT_D_AND_A`), whatever its sign, or a leg filed negative
+    (:func:`negative_leg`)."""
+    if what == "D&A" and p.tag in NOT_D_AND_A:
+        return (f"D&A served under {p.tag}, which nets accretion income against depreciation and "
+                f"amortization — not a D&A figure, so never read as one "
+                f"({p.form or 'form unstated'} {p.accession or 'accession unstated'}); refused")
+    return negative_leg(what, p)
+
+
+def negative_leg(what: str, p: ConceptPoint) -> str | None:
+    """Why a combined figure refuses ``p``, or None: a capex or D&A leg filed NEGATIVE (audit
+    E1-D12). A payment and an expense are filed positive, so a negative one is not the leg the
+    figure needs — taken as filed it raised FCF (WOR's capex negated: 170.2 → 282.0) or lowered
+    EBITDA (8 of 1,241 current EBITDA pairs in the cache, 2026-10-30, 7 of them under
+    `DepreciationAmortizationAndAccretionNet`, which nets accretion income). Refused, naming it —
+    never sign-flipped, which would be a guess at what the filer meant."""
+    if p.value >= 0:
+        return None
+    return (f"{what} filed negative: {p.tag} {_amount(p.value, p.unit)} for "
+            f"{p.period_start}..{p.period_end} ({p.form or 'form unstated'} "
+            f"{p.accession or 'accession unstated'}) — refused, never sign-flipped")
+
+
 def latest_instant(points: list[ConceptPoint]) -> ConceptPoint | None:
     """Latest balance-sheet value (most recent period_end, then most recent filing), or None.
 
@@ -966,8 +1050,31 @@ class ShareCountChange(NamedTuple):
     to_value: float
 
 
+def share_window_start(shares: Sequence[tuple[date, float]], *,
+                       window_days: int = SHARES_WINDOW_DAYS) -> date | None:
+    """Where the trailing share window opens: ``window_days`` before the LAST point, or None for an
+    empty series — the one definition :func:`share_count_change` and its callers measure from."""
+    return max(d for d, _ in shares) - timedelta(days=window_days) if shares else None
+
+
+def refused_endpoint(shares: Sequence[tuple[date, float]], refused: Sequence[date], *,
+                     window_days: int = SHARES_WINDOW_DAYS) -> date | None:
+    """The date of a refused count that would ITSELF be an endpoint of the trailing window, or
+    None. Only an endpoint can void a change — :func:`share_count_change` reads the first and last
+    counts and nothing between (review of #875: NovaGold's refused 2025-06-30 count sits between
+    two good ones, followed by 406,926,988 and 406,994,531, and its +31.1% stands)."""
+    kept = {d for d, _ in shares}
+    dates = sorted(kept | set(refused))
+    if not dates:
+        return None
+    window = [d for d in dates if d >= dates[-1] - timedelta(days=window_days)]
+    hit = [d for d in refused if d in (window[0], window[-1]) and d not in kept]
+    return max(hit) if hit else None
+
+
 def share_count_change(
-    shares: list[tuple[date, float]], *, window_days: int = SHARES_WINDOW_DAYS
+    shares: list[tuple[date, float]], *, window_days: int = SHARES_WINDOW_DAYS,
+    refused: Sequence[date] = (),
 ) -> ShareCountChange | None:
     """Fractional change in shares outstanding across the trailing window, or None if unreadable.
 
@@ -975,11 +1082,19 @@ def share_count_change(
     change" would read as a confirmed flat share count, which is the opposite of "we could not
     tell". The window is anchored on the LAST point rather than on today, so a name whose XBRL
     series ends early is measured over the span it actually has.
+
+    None, too, when a count in ``refused`` (one its own filing contradicts,
+    :mod:`vinci.edgar.cover_count`) would itself be an endpoint (:func:`refused_endpoint`): a
+    change FROM or TO an UNKNOWN count is UNKNOWN, never measured from the next one along (Phase 2
+    C2, audit X1(a)). One between the endpoints is not read either way.
     """
     if len(shares) < 2:
         return None
     series = sorted(shares)
-    anchor = series[-1][0] - timedelta(days=window_days)
+    if refused_endpoint(series, refused, window_days=window_days) is not None:
+        return None
+    anchor = share_window_start(series, window_days=window_days)
+    assert anchor is not None
     window = [s for s in series if s[0] >= anchor]
     # TWO DISTINCT DATES INSIDE THE WINDOW, or nothing (review, #440). When every other point is
     # older than the window, `window` holds only the latest tuple — and unpacking [0] and [-1] then

@@ -29,7 +29,10 @@ ALLOWED_VINCI_IMPORTS = {"vinci.config", "vinci.graph.llm", "vinci.netcache"}
 MARKET = PKG / "market.py"
 MARKET_IMPORTS = {"vinci.eod.client", "vinci.eod.features", "vinci.edgar.client",
                   "vinci.edgar.concepts", "vinci.schemas.market", "vinci.screens.assemble",
-                  "vinci.dossier.schemas"}
+                  "vinci.dossier.schemas",
+                  # the share counts' dates, read by the one rule the fund reads them by (Phase 2
+                  # C2, audit X1(a)) — SEC data like the EPS above, no price, no outcome
+                  "vinci.edgar.cover_count"}
 
 
 def _imports(path: Path) -> set[str]:

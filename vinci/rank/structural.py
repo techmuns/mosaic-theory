@@ -21,11 +21,13 @@ Its ONLY job is triage hygiene — stop wasting CIQ effort on structurally-dead 
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, field
 from datetime import date, timedelta
 
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import extract_points, share_count_change
+from vinci.edgar.concepts import refused_endpoint, share_count_change
+from vinci.edgar.cover_count import share_series
 from vinci.edgar.going_concern import find_going_concern_statement
 from vinci.graph.filings import html_to_text
 from vinci.netcache import CachedHttp, HttpError
@@ -206,12 +208,28 @@ def _shares_for(edgar: EdgarClient, cik: str) -> list[tuple[date, float]] | None
     Same `[]` vs `None` distinction as :func:`_filings_for` — `[]` is an issuer with no share points
     in XBRL, `None` is a fetch that failed. The dilution-spiral leg reads this series, so silently
     returning `[]` disabled that signal without anyone being able to tell.
+
+    A count its own filing contradicts at an END of the window raises
+    :class:`ShareCountRefusedError`: the name is NOT scanned, with that reason — never a clean
+    empty series, which the scan would
+    mark covered and the weekly replace would read as clean, erasing a prior flag (review of #875,
+    the #420 class).
     """
     try:
-        pts = extract_points(edgar.companyfacts(cik), "shares")
+        series = share_series(edgar.companyfacts(cik))
     except (HttpError, KeyError):
         return None
-    return [(p.period_end, p.value) for p in pts if p.value is not None]
+    # each count at the day it was counted (`vinci.edgar.cover_count`, Phase 2 C2): REPX's 2024
+    # count, tagged 2029, was the series' newest point
+    end = refused_endpoint(series.points, [d for d, _ in series.refused])
+    if end is not None:
+        why = next(w for d, w in series.refused if d == end)
+        raise ShareCountRefusedError(f"a share count at an end of the window is UNKNOWN: {why}")
+    return series.points
+
+
+class ShareCountRefusedError(Exception):
+    """A share count at an end of the dilution window is contradicted by its own filing."""
 
 
 @dataclass(frozen=True)
@@ -231,6 +249,8 @@ class StructuralScan:
 
     flags: dict[str, StructuralDisqualifier]
     covered: frozenset[str]
+    #: internal_id → why the name was NOT scanned, where the scan knows (a refused share count)
+    not_scanned: Mapping[str, str] = field(default_factory=dict)
 
 
 def scan_structural(
@@ -241,6 +261,7 @@ def scan_structural(
     absent from ``flags``) alongside the names actually COVERED. Cached via ``http``."""
     out: dict[str, StructuralDisqualifier] = {}
     covered: set[str] = set()
+    not_scanned: dict[str, str] = {}
     for c in cands:
         rec = c.data_record
         cik = rec.identity.cik
@@ -253,7 +274,11 @@ def scan_structural(
         try:
             since = (rec.as_of or date.today()) - timedelta(days=_FILINGS_WINDOW_DAYS)
             filings = _filings_for(edgar, http, cik, since)
-            shares = _shares_for(edgar, cik)
+            try:
+                shares = _shares_for(edgar, cik)
+            except ShareCountRefusedError as refused:
+                not_scanned[rec.identity.internal_id] = str(refused)
+                continue  # never covered: a prior flag on this name stands
             if filings is None or shares is None:
                 continue  # an input was never retrieved — classifying now would invent a verdict
             flag = classify_structural_disqualifier(filings, shares, rec.prices)
@@ -262,4 +287,4 @@ def scan_structural(
         covered.add(rec.identity.internal_id)
         if flag is not None:
             out[rec.identity.internal_id] = flag
-    return StructuralScan(flags=out, covered=frozenset(covered))
+    return StructuralScan(flags=out, covered=frozenset(covered), not_scanned=not_scanned)

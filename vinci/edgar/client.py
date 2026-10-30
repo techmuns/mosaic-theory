@@ -31,8 +31,11 @@ from vinci.edgar.concepts import (
     current_annual,
     current_pair,
     facts_as_of,
+    filed_at,
     filer_fiscal_year,
     foreign_currency,
+    leg_refusal,
+    negative_leg,
 )
 from vinci.edgar.net_debt import NO_DEBT_OR_CASH, Basis, net_debt
 from vinci.edgar.submissions import RegistrantHistory, parse_registrant_history
@@ -167,12 +170,17 @@ def _sign(x: float) -> int:
     return 1 if x > 0 else (-1 if x < 0 else 0)
 
 
-def _present_f(value: float, as_of: date) -> DataField[float]:
-    return DataField.present(value, as_of=as_of, source="EDGAR", tier=SourceTier.EDGAR)
+def _present_f(value: float, as_of: date, filed: str) -> DataField[float]:
+    """A PRESENT EDGAR figure whose SOURCE says where each leg was filed (audit E1-D5).
+
+    In the source, NEVER the note (review of #875): `mechanical._sourced` carries a field's note
+    onto the page, and the web renders any note on a present fact as a "⚠" caveat — a clean figure
+    would have read as a warning on every page's Brief."""
+    return DataField.present(value, as_of=as_of, source=f"EDGAR {filed}", tier=SourceTier.EDGAR)
 
 
-def _present_i(value: int, as_of: date) -> DataField[int]:
-    return DataField.present(value, as_of=as_of, source="EDGAR", tier=SourceTier.EDGAR)
+def _present_i(value: int, as_of: date, filed: str) -> DataField[int]:
+    return DataField.present(value, as_of=as_of, source=f"EDGAR {filed}", tier=SourceTier.EDGAR)
 
 
 def _unknown_f(note: str) -> DataField[float]:
@@ -236,20 +244,33 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     fcf_legs, fcf_stale = current_pair(facts, "operating_cash_flow", "capex", fy)
     ebitda_legs, ebitda_stale = current_pair(facts, "operating_income", "dep_amort", fy)
 
-    op_sign = (_present_i(_sign(op.value), op.filed) if op
+    # EVERY PRESENT FIGURE SAYS WHERE IT WAS FILED (audit E1-D5): each leg's tag, period, form,
+    # accession and day, and the figure it restates when a later filing restated it
+    op_sign = (_present_i(_sign(op.value), op.filed, filed_at(op, facts)) if op
                else _unknown_i(_why("no operating_income", op_stale)))
     if fcf_legs:
         fcf_ocf, fcf_capex = fcf_legs
-        fcf_sign = _present_i(_sign(fcf_ocf.value - fcf_capex.value),
-                              max(fcf_ocf.filed, fcf_capex.filed))
+        # a capex filed negative is refused, never taken as filed (audit E1-D12)
+        if (bad := negative_leg("capex", fcf_capex)) is not None:
+            fcf_sign = _unknown_i(bad)
+        else:
+            fcf_sign = _present_i(_sign(fcf_ocf.value - fcf_capex.value),
+                                  max(fcf_ocf.filed, fcf_capex.filed),
+                                  f"{filed_at(fcf_ocf, facts)} − {filed_at(fcf_capex, facts)}")
     else:
         fcf_sign = _unknown_i(fcf_stale.note if fcf_stale else "no OCF/capex")
 
     ebitda_val: float | None = None
+    ebitda_filed = ""
+    ebitda_refused: str | None = None
     if ebitda_legs:
         eb_op, eb_da = ebitda_legs
-        ebitda_val = eb_op.value + eb_da.value
-        ebitda = _present_f(ebitda_val, max(eb_op.filed, eb_da.filed))
+        if (ebitda_refused := leg_refusal("D&A", eb_da)) is not None:
+            ebitda = _unknown_f(ebitda_refused)
+        else:
+            ebitda_val = eb_op.value + eb_da.value
+            ebitda_filed = f"{filed_at(eb_op, facts)} + {filed_at(eb_da, facts)}"
+            ebitda = _present_f(ebitda_val, max(eb_op.filed, eb_da.filed), ebitda_filed)
     else:
         ebitda = _unknown_f(ebitda_stale.note if ebitda_stale else "no operating_income/D&A")
 
@@ -270,7 +291,8 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
         assert nd is not None
         net_debt_val = nd.value(Basis.LEVERAGE)
         assert net_debt_val is not None
-        net_debt_f = _present_f(net_debt_val, nd.filed)
+        net_debt_f = _present_f(net_debt_val, nd.filed,
+                                f"net debt at {nd.at}, cash {filed_at(nd.cash, facts)}")
     # the ratios name the SAME reason, so a refused reading never reads as an absent one
     no_nd = ("no net-debt — debt/cash not in XBRL" if absent or refusal is None
              else f"no net-debt — {refusal}")
@@ -282,13 +304,15 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     if net_debt_val is None:
         net_lev = _unknown_f(no_nd)
     elif ebitda_val is None:
-        net_lev = _unknown_f(ebitda_stale.note if ebitda_stale else "no EBITDA in XBRL")
+        net_lev = _unknown_f(ebitda_refused or (ebitda_stale.note if ebitda_stale
+                                                else "no EBITDA in XBRL"))
     elif ebitda_val <= 0:
         net_lev = _unknown_f("EBITDA<=0 (ratio meaningless)")
     elif not net_debt_f.as_of:
         net_lev = _unknown_f("net-debt as-of date missing")
     else:
-        net_lev = _present_f(net_debt_val / ebitda_val, net_debt_f.as_of)
+        net_lev = _present_f(net_debt_val / ebitda_val, net_debt_f.as_of,
+                             f"{net_debt_f.source.removeprefix('EDGAR ')} ÷ EBITDA {ebitda_filed}")
 
     # net debt / OCF — the leverage read that SURVIVES untaggable D&A (the MVST case): operating
     # cash flow already contains the D&A add-back EBITDA needs, and OCF is reliably tagged. Same
@@ -302,9 +326,11 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     elif not net_debt_f.as_of:
         net_ocf = _unknown_f("net-debt as-of date missing")
     else:
-        net_ocf = _present_f(net_debt_val / ocf.value, net_debt_f.as_of)
+        net_ocf = _present_f(net_debt_val / ocf.value, net_debt_f.as_of,
+                             f"{net_debt_f.source.removeprefix('EDGAR ')} ÷ "
+                             f"{filed_at(ocf, facts)}")
 
-    eps_df = (_present_f(eps.value, eps.filed) if eps
+    eps_df = (_present_f(eps.value, eps.filed, filed_at(eps, facts)) if eps
               else _unknown_f(_why("no diluted EPS", eps_stale)))
     read = [op, ocf, eps, *(fcf_legs or ()), *(ebitda_legs or ())]
     filed_dates = [p.filed for p in read if p] + ([nd.filed] if nd else [])

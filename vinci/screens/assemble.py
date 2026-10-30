@@ -10,6 +10,7 @@ to P/E. Negative/absent EPS → the percentile defers to UNKNOWN (depth's job).
 from __future__ import annotations
 
 from datetime import date, timedelta
+from typing import Any
 
 from vinci.edgar.client import EdgarClient
 from vinci.edgar.concepts import (
@@ -17,9 +18,11 @@ from vinci.edgar.concepts import (
     ConceptPoint,
     currency_withheld,
     extract_points,
+    refused_endpoint,
     share_count_change,
     unit_currency,
 )
+from vinci.edgar.cover_count import ShareSeries, share_series
 from vinci.edgar.net_debt import not_applicable
 from vinci.eod.features import _close_on_or_before, compute_price_features, relative_return
 from vinci.schemas.data_record import (
@@ -486,6 +489,32 @@ def build_price_record(
     )
 
 
+def share_change_field(facts: dict[str, Any] | None) -> DataField[float]:
+    """NET SHARE ISSUANCE over the trailing window — the evidence strip's input, INFORM-ONLY.
+
+    Read through the one shared :func:`vinci.edgar.cover_count.share_series`, so a count tagged
+    after its own filing sits at its filing day (printed "filed <date>"), never at a tagged date
+    years out: REPX's 2024 count, tagged 2029, anchored a window with nothing else in it and the
+    change read UNKNOWN (Phase 2 C2, audit X1(a)). A count its own filing contradicts makes the
+    change UNKNOWN, naming it. UNKNOWN — never 0.0 — when the series is too short."""
+    series = share_series(facts) if facts else ShareSeries(points=[], refused=[])
+    chg = share_count_change(series.points, refused=[d for d, _ in series.refused])
+    if chg is not None:
+        return DataField.present(
+            chg.change, as_of=chg.to_date, source="EDGAR", tier=SourceTier.EDGAR,
+            note=(f"XBRL shares {chg.from_value:,.0f} "
+                  f"({series.when(chg.from_date, chg.from_value)}) → "
+                  f"{chg.to_value:,.0f} ({series.when(chg.to_date, chg.to_value)})"))
+    # a refused count that would itself be an endpoint is named — with every count refused there is
+    # no kept point, and the window opens from the refused ones (review rounds 1 and 2)
+    end = refused_endpoint(series.points, [d for d, _ in series.refused])
+    why = next((w for d, w in series.refused if d == end), None)
+    return DataField.unknown(
+        source="EDGAR", tier=SourceTier.EDGAR,
+        note=(f"a share count at an end of the window is UNKNOWN: {why}" if why
+              else "fewer than 2 usable XBRL share points"))
+
+
 def enrich_with_fundamentals(
     rec: DataRecord, *, edgar: EdgarClient, price_bars: list[PriceBar], reference_date: date
 ) -> DataRecord:
@@ -513,19 +542,7 @@ def enrich_with_fundamentals(
     # displayed number is by construction the same quantity the dilution-spiral demote uses.
     # UNKNOWN — never 0.0 — when the series is too short: a fabricated "flat" reads as a confirmed
     # unchanged share count, the opposite of "we could not tell".
-    share_pts = [(p.period_end, p.value) for p in extract_points(facts, "shares")
-                 if p.value is not None] if facts else []
-    chg = share_count_change(share_pts)
-    shares_change: DataField[float] = (
-        DataField.present(
-            chg.change, as_of=chg.to_date, source="EDGAR", tier=SourceTier.EDGAR,
-            note=(f"XBRL shares {chg.from_value:,.0f} ({chg.from_date.isoformat()}) → "
-                  f"{chg.to_value:,.0f} ({chg.to_date.isoformat()})"),
-        )
-        if chg is not None
-        else DataField.unknown(source="EDGAR", tier=SourceTier.EDGAR,
-                               note="fewer than 2 usable XBRL share points")
-    )
+    shares_change = share_change_field(facts)
     # A bank, lender or insurer has no net-debt leverage to read (vinci.edgar.net_debt): its
     # borrowings fund its book. Both ratios say so, and every page reads them from this record.
     na = not_applicable(rec.identity.sic)

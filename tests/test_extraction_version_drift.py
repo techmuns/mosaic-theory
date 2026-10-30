@@ -77,8 +77,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "ca2d57112428"
-PINNED_AT = "2026-10-30.E2-spans-frames"
+PINNED_TABLE = "d790ee596f9f"
+PINNED_AT = "2026-10-30.edgar-provenance"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -97,7 +97,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
     "vinci/dossier/ebitda_basis.py": "7f9996f712e1",
     "vinci/dossier/ebitda_recon.py": "9befc99c437a",
-    "vinci/dossier/edgar_fundamentals.py": "c8ecafb0bcb4",
+    "vinci/dossier/edgar_fundamentals.py": "6054321e6ca4",
     "vinci/dossier/ev_ebitda_basis.py": "ad13b0e13ca0",
     "vinci/dossier/ev_gap.py": "6a0c9a26afac",
     "vinci/dossier/flags.py": "8466d404a234",
@@ -107,7 +107,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "f6a3904e1011",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "523b4fb2b632",
+    "vinci/dossier/mechanical.py": "302743c41d3f",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "0c07bfc551a1",
@@ -118,10 +118,10 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "766d2ed17c7a",
     "vinci/dossier/verdict.py": "0b43167d2044",
-    "vinci/edgar/client.py": "da9b649193cc",
+    "vinci/edgar/client.py": "55524bd0c672",
     "vinci/edgar/commissioning.py": "dc2004432387",
-    "vinci/edgar/concepts.py": "2aa467ddf37a",
-    "vinci/edgar/cover_count.py": "add797742e68",
+    "vinci/edgar/concepts.py": "11278504f70c",
+    "vinci/edgar/cover_count.py": "24d1e9a7d94a",
     "vinci/edgar/debt_maturities.py": "a72fba167d94",
     "vinci/edgar/filing_sections.py": "568c36df04a2",
     "vinci/edgar/going_concern.py": "5097f25ade31",

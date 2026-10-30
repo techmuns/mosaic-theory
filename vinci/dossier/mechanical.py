@@ -150,9 +150,15 @@ TRAILING_ONLY_NOTE = (
 
 
 def _sourced(field: DataField[float] | DataField[int], *, source_ref: str) -> Sourced[float]:
-    """Lift a screen data-record :class:`DataField` into a source-bound dossier fact."""
+    """Lift a screen data-record :class:`DataField` into a source-bound dossier fact.
+
+    An EDGAR field whose source says where it was filed (audit E1-D5) carries that into the
+    source_ref — the accession-bearing citation, an endnote — never into the note, which the web
+    renders as a caveat on a present fact."""
     if field.is_known and field.value is not None:
-        return Sourced.present(float(field.value), source_ref=source_ref, note=field.note)
+        where = field.source.removeprefix("EDGAR ")
+        ref = f"{source_ref}: {where}" if where != field.source else source_ref
+        return Sourced.present(float(field.value), source_ref=ref, note=field.note)
     return Sourced.unknown(note=field.note or "UNKNOWN in the screen data-record")
 
 
