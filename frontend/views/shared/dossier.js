@@ -156,9 +156,10 @@ const EXTRACTION_VERSIONS = [
     "families its caps leave out, and a full-text search reads every page or says it did not " +
     "(audit E1-D11)"],
   ["2026-10-30.E2-D19",
-    "a covenant term whose value states a year or a dollar figure its own quote does not is " +
-    "refused, UNKNOWN with an (E5) flag naming the figure (audit E2-D19); a conformed " +
-    "amendment's replacement figure counts as stated, a percent is left to the rate-component " +
+    "a covenant term whose value states a year or a currency figure its own quote does not " +
+    "is refused, UNKNOWN with an (E5) flag naming the figure as the value states it (audit " +
+    "E2-D19); figures compare in their own currency at any scale, a conformed amendment's " +
+    "replacement figure counts as stated, a percent or 'zero' is left to the rate-component " +
     "check, and a later exhibit withheld this way leads its term as a value that could not " +
     "be verified"],
 ];

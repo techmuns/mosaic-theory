@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import math
 import re
+from decimal import Decimal
 from typing import Any, NamedTuple
 
 from vinci.dossier.schemas import (
@@ -34,7 +35,7 @@ from vinci.dossier.schemas import (
     Sourced,
     SourceStatus,
 )
-from vinci.edgar.release_parse import figure_stated, quoted_figures
+from vinci.edgar.release_parse import figure_stated
 from vinci.graph.filings import html_to_text
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.netcache import CachedHttp
@@ -270,40 +271,101 @@ class RateComponents(NamedTuple):
     withheld: dict[str, str]
 
 
-#: A year as a value states one: four digits, 1900–2099, standing alone ("2031", "6/30/2029").
-_YEAR = re.compile(r"\b(?:19|20)\d{2}\b")
-#: The replacement a conformed amendment prints right after the figure it strikes — UBER's
-#: "$ 1,500,000,000 1,000,000,000", NFLX's "$ 500,000,000 . 750,000,000" and "$ 3,750,000,000,
-#: 6,000,000,000,". The replacement carries no "$" of its own, so `quoted_figures` does not read it
-#: as money; it is the struck figure's currency. A bare number anywhere else is not a dollar figure.
-_CONFORMED_REPLACEMENT = re.compile(
-    r"\$\s*\d[\d,]*(?:\.\d+)?\s*[.,]?\s+(\d{1,3}(?:,\d{3})+)(?!\d|,\d|\.\d)")
+#: A currency marker before a covenant figure's digits. Every spelling of one currency maps to
+#: ONE code (`_CURRENCY`), so like currencies compare: UBER's "$", AMZN's "US$", V's "U.S.$" and a
+#: quote's "USD" are one currency; MVST's "RMB" is another. "US$", "C$" and "A$" precede "$".
+_CUR = (r"(?<![A-Za-z])(?:U\.?\s?S\.?\s?\$|C\$|A\$)|\$|€|£|¥"
+        r"|\b(?:USD|CAD|AUD|EUR|GBP|RMB|CNY|JPY|CHF)\b")
+_CURRENCY = {"US$": "USD", "USD": "USD", "$": "USD", "C$": "CAD", "CAD": "CAD", "A$": "AUD",
+             "AUD": "AUD", "€": "EUR", "EUR": "EUR", "£": "GBP", "GBP": "GBP", "RMB": "CNY",
+             "CNY": "CNY", "¥": "JPY", "JPY": "JPY", "CHF": "CHF"}
+#: The digits, optionally bracketed as MVST's agreement prints them ("RMB [800,000,000.00]").
+_NUM = r"\[?\s*(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*\]?"
+_SCALE = r"\s*(billion|bn|million|mm|thousand|[BMK](?![A-Za-z]))"
+_SCALES = {"billion": 10**9, "bn": 10**9, "b": 10**9, "million": 10**6, "mm": 10**6, "m": 10**6,
+           "thousand": 10**3, "k": 10**3}
+#: A figure: a marker, its digits, an optional scale.
+_FIGURE = re.compile(rf"({_CUR})\s*{_NUM}(?:{_SCALE})?", re.I)
+#: A RANGE's high side after a figure: "-350 million", " and $500 million". With no marker of its
+#: own it takes the low side's currency, and a low side stating no scale takes the high side's
+#: ("$300-350 million"). A high side with neither a marker nor a scale is not a figure.
+_RANGE_HIGH = re.compile(rf"\s*(?:-|–|—|to|and|through)\s*(?:({_CUR})\s*)?{_NUM}(?:{_SCALE})?",
+                         re.I)
+#: The replacement a conformed amendment prints right after the figure it strikes, with no marker
+#: of its own: UBER's "$ 1,500,000,000 1,000,000,000", NFLX's "$ 500,000,000 . 750,000,000",
+#: WERN's fused "$325,000,000350,000,000" (as `html_to_text` reads it) and "$ 12,000,000.00
+#: 15,000,000.00". It is in the struck figure's currency. Read in a QUOTE only.
+_REPLACEMENT = re.compile(r"\s*[.,]?\s*(\d{1,3}(?:,\d{3})+(?:\.\d+)?)(?!\d|,\d)")
+#: A year: four digits, 1900–2099, with no digit, decimal point, thousands comma or "$" before and
+#: no digit, "%" or decimal part after — "2031", "6/30/2029" and "FY2031" are years; the "2000" in
+#: "0.2000%" is not.
+_YEAR = re.compile(r"(?<![\d.,$])(?:19|20)\d{2}(?![\d%]|[.,]\d)")
+
+
+class _Money(NamedTuple):
+    currency: str      # one code per currency (`_CURRENCY`)
+    amount: Decimal    # in units of that currency, its scale applied
+    stated: str        # the figure as the text writes it
+    span: tuple[int, int]
+
+
+def _amount(num: str, scale: str | None) -> Decimal:
+    return Decimal(num.replace(",", "")) * (_SCALES[scale.lower()] if scale else 1)
+
+
+def _money(text: str, *, replacements: bool = False) -> list[_Money]:
+    """Every figure ``text`` states with a currency marker, at its own scale (`_FIGURE`, a range's
+    high side `_RANGE_HIGH`). A figure with no marker — "500 million euros", "zero", a percent —
+    is not read: never checked, and never named as dollars. ``replacements`` also reads a conformed
+    amendment's replacement after each figure (`_REPLACEMENT`); a QUOTE is read with it."""
+    out: list[_Money] = []
+    read_to = 0
+    for m in _FIGURE.finditer(text):
+        if m.start() < read_to:
+            continue  # the high side of a range already read
+        cur = _CURRENCY[re.sub(r"[\s.]", "", m[1]).upper()]
+        hi = _RANGE_HIGH.match(text, m.end())
+        if hi and not (hi[1] or hi[3]):
+            hi = None  # "$500 million and 3 years": no marker, no scale — not a range
+        # a low side borrows the high side's scale only when it is a short bare number ("$300" in
+        # "$300-350 million"); "$5,000,000 and $2 million" is two whole amounts
+        borrows = bool(hi and hi[3] and not m[3] and "," not in m[2])
+        low_end = hi.end() if borrows and hi else m.end()
+        out.append(_Money(cur, _amount(m[2], m[3] or (hi[3] if borrows and hi else None)),
+                          " ".join(text[m.start():low_end].split()), (m.start(), m.end())))
+        if hi:
+            read_to = hi.end()
+            hcur = _CURRENCY[re.sub(r"[\s.]", "", hi[1]).upper()] if hi[1] else cur
+            own = hi.start(1) if hi[1] else hi.start(2)  # the high side's own words
+            out.append(_Money(hcur, _amount(hi[2], hi[3] or (m[3] if "," not in hi[2] else None)),
+                              " ".join(text[own:hi.end()].split()), (own, hi.end())))
+        if replacements and (r := _REPLACEMENT.match(text, (hi or m).end())):
+            out.append(_Money(out[-1].currency, _amount(r[1], None), r[1], (r.start(), r.end())))
+    return out
 
 
 def unstated_in_quote(value: str, quote: str) -> list[str]:
-    """Each year and each dollar figure ``value`` states that ``quote`` does not (audit E2-D19):
-    the years first, then the dollar figures, each in the value's order and once; empty when the
-    quote states them all.
+    """Each year and each money figure ``value`` states that ``quote`` does not (audit E2-D19),
+    each as the value states it: the years first, then the figures, each in the value's order and
+    once; empty when the quote states them all.
 
     THE QUOTE WAS CHECKED; THE VALUE BESIDE IT WAS NOT. #804 proves the quote is a span of the
     exhibit, but the model writes the value separately, so "June 15, 2031" stood beside a quote
     reading "June 15, 2030". Measured on the 13 in-scope committed pages at 8e6b12b1: 29 of 176
     PRESENT terms on 9 pages state a year or a dollar figure their quote does not.
 
-    A dollar figure is stated when the quote states it at any scale (`release_parse.figure_stated`:
-    "$1.5 billion" is "$1,500,000,000"), or prints it as a conformed replacement. A percent or bps
-    figure is NOT checked here: the rate components have their own check (`rate_components`)."""
+    A figure is stated when the quote states the same amount in the same currency, at any scale
+    ("$1.5 billion" is "$1,500,000,000"), or prints it as a conformed replacement. Only a figure
+    with a currency marker is read (`_money`): a percent, a bps figure and "zero" are left to the
+    rate components' own check (`rate_components`). `release_parse.quoted_figures` is not used
+    here: its figures carry no currency and no span, and it reads "zero" in every unit."""
+    in_value = _money(value)
+    years = [y for y in _YEAR.finditer(value)
+             if not any(a <= y.start() < b for a, b in (f.span for f in in_value))]
     # in the quote a year may be fused to a prefix ("FY2030"), so only digits may not touch it
-    missing = [y for y in _YEAR.findall(value) if not re.search(rf"(?<!\d){y}(?!\d)", quote)]
-    replacements = {int(m.replace(",", "")) for m in _CONFORMED_REPLACEMENT.findall(quote)}
-    for f in quoted_figures(value):
-        if f.unit not in ("$", "$M"):
-            continue
-        dollars = f.value * 1e6 if f.unit == "$M" else f.value
-        if (figure_stated(quote, dollars / 1e6, ("$M",)) or figure_stated(quote, dollars, ("$",))
-                or (dollars == int(dollars) and int(dollars) in replacements)):
-            continue
-        missing.append(f"${dollars:,.2f}".removesuffix(".00"))
+    missing = [y[0] for y in years if not re.search(rf"(?<!\d){y[0]}(?!\d)", quote)]
+    stated = {(f.currency, f.amount) for f in _money(quote, replacements=True)}
+    missing += [f.stated for f in in_value if (f.currency, f.amount) not in stated]
     return list(dict.fromkeys(missing))
 
 

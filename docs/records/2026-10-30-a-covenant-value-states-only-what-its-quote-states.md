@@ -14,24 +14,24 @@ superseded-by:
   writes beside it was never compared with that quote. The audit's stub stored "June 15, 2031"
   PRESENT beside a quote reading "June 15, 2030".
 - **The rule.** `covenant_extract.unstated_in_quote(value, quote)` lists each year and each
-  dollar figure the value states that the quote does not. When it lists any,
+  currency figure the value states that the quote does not. When it lists any,
   `_extract_from_exhibit` refuses the term: UNKNOWN, with a note opening
-  `VALUE_REFUSED_NOTE_PREFIX` ("(E5) refused: the value states …"), and an (E5) flag naming the
-  figures.
-- **What counts as stated.** Figures and years are read with the existing parsers; no new figure
-  grammar:
-  - `release_parse.quoted_figures` reads the value's dollar figures, and `figure_stated` checks
-    each at either scale ("$1.5 billion" is "$1,500,000,000"). Both are called, not edited.
-  - A year is four digits from 1900 to 2099 standing alone, in any date form ("6/30/2029" is
-    stated by "June 30, 2029").
+  `VALUE_REFUSED_NOTE_PREFIX` ("(E5) refused: the value states …"), and an (E5) flag naming each
+  figure as the value writes it.
+- **What counts as stated** (as of review round 2, below):
+  - A figure is read only where a currency marker states it (`_money`). It is stated when the
+    quote states the same amount in the same currency at any scale: "$1.5 billion" is
+    "$1,500,000,000", and "US$", "U.S.$" and "USD" are "$".
+  - A year is four digits from 1900 to 2099 that is not inside a decimal or a figure, in any date
+    form ("6/30/2029" is stated by "June 30, 2029"; "FY2031" is a year).
   - **A conformed replacement is stated.** A conformed amendment prints the new figure right after
-    the struck one, with no "$" of its own: UBER's "$ 1,500,000,000 1,000,000,000", NFLX's
-    "$ 500,000,000 . 750,000,000". Without this rule, three committed values that read the
-    replacement correctly would be refused.
-  - A bare number that follows no dollar figure is not a dollar figure.
-- **Scope.** A percent or bps figure is NOT checked: rate components have their own check
-  (`rate_components`, STATE row 34). The span check runs first, so a quote that is not in the
-  exhibit keeps its own reason.
+    the struck one, with no marker of its own: UBER's "$ 1,500,000,000 1,000,000,000", NFLX's
+    "$ 500,000,000 . 750,000,000", WERN's fused "$325,000,000350,000,000". Without this rule,
+    three committed in-scope values that read the replacement correctly would be refused.
+  - A bare number that follows no figure is not a figure.
+- **Scope.** A percent, a bps figure and "zero" are NOT checked: rate components have their own
+  check (`rate_components`, STATE row 34). The span check runs first, so a quote that is not in
+  the exhibit keeps its own reason.
 - **The page lead.** It is a refusal, so a LATER exhibit withheld this way still withholds an
   older value (`governing_terms`, unchanged). The lead (`render._refused_newer_text`, dossier.js
   `refusedNewerText`) no longer says that refusal's "quote could not be matched", because it was
@@ -82,9 +82,10 @@ another clause, but nothing on the page shows which one.
   Markdown and the web agree, both in the main-body line and in the appendix row, which sits in
   `<details>` and so prints expanded.
 
-**The 29 terms**, each `<page> · <term> · <exhibit> · what its quote does not state`:
-1. AMZN · Principal / commitment amount · 0001104659-23-113444 · $5,000,000,000
-2. AMZN · Mandatory prepayment / events of default · 0001104659-23-113444 · $1,500,000,000
+**The 29 terms**, each `<page> · <term> · <exhibit> · what its quote does not state`, the figure as
+the value states it (since review round 2):
+1. AMZN · Principal / commitment amount · 0001104659-23-113444 · US$5,000,000,000
+2. AMZN · Mandatory prepayment / events of default · 0001104659-23-113444 · US$1,500,000,000
 3. AMZN · Principal / commitment amount · 0001193125-20-176528 · $3,000,000,000
 4. AMZN · Mandatory prepayment / events of default · 0001193125-20-176528 · $1,000,000,000
 5. AMZN · Principal / commitment amount · 0001018724-14-000042 · $1,000,000,000
@@ -102,16 +103,16 @@ another clause, but nothing on the page shows which one.
 17. NKE · Mandatory prepayment / events of default · 0000320187-24-000009 · $200,000,000
 18. NKE · Mandatory prepayment / events of default · 0000320187-26-000020 · $200,000,000
 19. PARR · Financial-maintenance covenants · 0001193125-15-116573 · 2016, 2017, 2018, 2019
-20. PARR · Mandatory prepayment / events of default · 0001193125-15-116573 · $2,500,000
+20. PARR · Mandatory prepayment / events of default · 0001193125-15-116573 · $2,500,000.00
 21. PARR · Financial-maintenance covenants · 0001193125-14-392228 · $1,000,000
 22. SMPL · Financial-maintenance covenants · 0001104659-19-060856 · $100,000,000
 23. TJX · Mandatory prepayment / events of default · 0000109198-25-000033 · 2030
 24. UBER · Mandatory prepayment / events of default · 0001552781-22-000307 · $150,000,000
 25. UBER · Principal / commitment amount · 0001552781-23-000109 · $2,511,000,000
 26. UBER · Mandatory prepayment / events of default · 0001552781-23-000109 · 2021, $350,000,000
-27. V · Principal / commitment amount · 0001193125-13-032823 · $5,000,000,000
+27. V · Principal / commitment amount · 0001193125-13-032823 · U.S.$5,000,000,000
 28. V · Maturity date · 0001193125-13-032823 · 2013
-29. V · Mandatory prepayment / events of default · 0001193125-13-032823 · $150,000,000
+29. V · Mandatory prepayment / events of default · 0001193125-13-032823 · U.S.$150,000,000
 
 **THE BRIEF SAID 27; THIS MEASURES 29.** The brief's count came from a re-verification whose
 method is not on file. Seven pages match it exactly. AMZN measures 7 against 6, and PARR 3
@@ -153,3 +154,34 @@ against 2; PARR's third term is a capital-expenditure cap of exactly $1,000,000.
 - A year the quote fuses to a prefix ("FY2030") now counts as stated.
 - This record's fail-first count is corrected.
 - The corpus count is unchanged at 29 of 176.
+
+**REVIEW ROUND 2 (coordinator review of #873 at 58f9aa5a, the last round under the cap).**
+- **The money reader is the module's own now** (`covenant_extract._money`).
+  `release_parse.quoted_figures` is not edited, but it no longer reads covenant values: its
+  figures carry no currency and no span, it reads "zero" in every unit, and its count-noun rule
+  drops the scale from "$500 million of shares". It took "Term SOFR + 1.75%; floor of zero" as
+  "$0".
+- **What `_money` reads.** Only a figure with a currency marker is read. Each spelling of one
+  currency maps to one code: $, US$, U.S.$ and USD are one currency; €, £, RMB, ¥, C$, A$ and
+  CHF are others.
+  - Figures compare in their own currency, at any scale, and the flag names each figure as the
+    value writes it: "$54.6728", "€500 million", never a "$" the value did not write.
+  - A range's low side takes the high side's scale only when it is a short bare number
+    ("$300-350 million", "between $250 and $500 million").
+  - A conformed replacement counts as stated, whether fused (WERN's "$325,000,000350,000,000"
+    as `html_to_text` reads it) or written with cents ("$ 12,000,000.00 15,000,000.00").
+  - A figure with no marker ("500 million euros", "zero", a percent) is not read, so it is never
+    checked and never named as dollars.
+- **Years.** A year is no longer read inside a decimal (the "2000" in "0.2000%") or inside a
+  figure. The VALUE side now reads a year fused to a prefix ("FY2031"); round 1 fixed only the
+  quote side.
+- **The corpus re-run** (committed pages outside the held test packs at 8e6b12b1):
+  - the 13 in-scope pages: the same 29 terms on the same 9 pages;
+  - the 13 other non-held pages: 33 of 167 PRESENT terms on 10 pages, down from 35. IT's two
+    interest rows and NCNO's are no longer refused for "$0"; one MVST row is newly refused
+    because its value states "RMB 1,000,000" and "RMB 30,000,000" and its elided quote does not;
+    WERN's "$350,000,000" now reads as stated.
+  - 0 committed renders move.
+- **STILL OPEN under E2-D19 — a day or month mismatch.** A value "June 16, 2030" beside a quote
+  "June 15, 2030" is outside this PR: only the year is read, so it stays PRESENT. E2-D19 is
+  PARTIAL until a date reader compares whole dates.

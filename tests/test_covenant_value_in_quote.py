@@ -163,6 +163,79 @@ def test_a_rate_figure_is_left_to_the_rate_component_check() -> None:
     measured, separate class (13 committed terms on the 13 in-scope pages at 8e6b12b1)."""
     _kept(*_one("Term SOFR + 1.75%", "Term SOFR plus the Applicable Margin",
                 name="Interest / coupon rate"), "Term SOFR + 1.75%")
+    # review round 2: "zero" is a rate floor, never "$0" — and the rate components ride along
+    payload = {"terms": [{"name": "Interest / coupon rate", "present": True,
+                          "value": "Term SOFR + 1.75%; floor of zero",
+                          "quote": "Term SOFR plus 1.75%; if Term SOFR is less than zero, it "
+                                   "shall be deemed to be zero", "margin_pct": 1.75,
+                          "floor_pct": 0.0}]}
+    quote = payload["terms"][0]["quote"]
+    (row,), flags, _ = ce._extract_from_exhibit(
+        _FakeLlm(payload), f"x {quote} y", name="Example Co", ticker="EXM", source_ref=_SRC,
+        title="CREDIT AGREEMENT")
+    _kept(row, flags, "Term SOFR + 1.75%; floor of zero")
+    assert (row.margin_pct, row.floor_pct) == (1.75, 0.0)
+    # ...and the "2000" inside "0.2000%" is not a year
+    _kept(*_one("Commitment fee: 0.2000% per annum",
+                "the Commitment Fee Rate shall be 0.20% per annum", name="Commitment Fee"),
+          "Commitment fee: 0.2000% per annum")
+
+
+@pytest.mark.parametrize(("value", "quote"), [
+    ("Facility: €500 million", "an aggregate principal amount of €500,000,000"),
+    ("Commitments of $5,000,000,000", "Commitments of USD 5,000,000,000"),
+    ("Total Commitment $3,000,000,000", "The initial Total Commitment is U.S.$3,000,000,000."),
+    # MVST, committed: a bracketed RMB figure
+    ("RMB 800,000,000.00 yuan (Eight hundred million)",
+     "a medium / long-term loan facility in an aggregate amount up to RMB [800,000,000.00] yuan"),
+], ids=["EUR-scales", "USD-code", "U.S.$", "RMB-bracketed"])
+def test_a_figure_is_compared_in_its_own_currency(value: str, quote: str) -> None:
+    """(+) Review round 2: like currencies compare ($ = US$ = U.S.$ = USD), at any scale."""
+    _kept(*_one(value, quote, name="Principal / commitment amount"), value)
+
+
+def test_a_figure_in_another_currency_is_named_in_it_never_as_dollars() -> None:
+    """(−) Review round 2: €500 million is not stated by $500,000,000, and the note names the
+    figure as the value states it — never a "$" the value never wrote."""
+    row, flags = _one("Facility: €500 million", "an aggregate principal amount of $500,000,000",
+                      name="Principal / commitment amount")
+    _refused(row, flags, "€500 million")
+    assert "$500" not in (row.value.note or "")
+
+
+@pytest.mark.parametrize(("value", "quote"), [
+    # WERN, 8-K 0000793074-26-000120, as html_to_text reads it: struck and new figure fused
+    ("Facility Limit: $350,000,000",
+     "“Facility Limit” means $325,000,000350,000,000 as reduced or increased from time to time"),
+    ("Commitment $15,000,000", "the Commitment shall be $ 12,000,000.00 15,000,000.00"),
+], ids=["fused", "with-cents"])
+def test_a_conformed_replacement_fused_or_with_cents_is_stated(value: str, quote: str) -> None:
+    """(+) Review round 2: the two forms of a conformed replacement the first rule missed."""
+    _kept(*_one(value, quote, name="Principal / commitment amount"), value)
+
+
+@pytest.mark.parametrize(("value", "quote"), [
+    ("Incremental: $300-350 million", "between $300 million and $350 million"),
+    ("Incremental facilities between $250 and $500 million",
+     "in an aggregate amount between $250,000,000 and $500,000,000"),
+    ("Repurchases up to $500 million", "may repurchase up to $500 million of shares"),
+], ids=["hyphen-range", "between-range", "dollars-of-shares"])
+def test_a_range_and_a_dollar_amount_of_shares_are_read_at_their_scale(
+        value: str, quote: str) -> None:
+    """(+) Review round 2: a range's low side takes the high side's scale, and "$500 million of
+    shares" is $500 million — a "$" makes it money whatever noun follows."""
+    _kept(*_one(value, quote, name="Negative covenant"), value)
+
+
+def test_a_figure_is_named_as_the_value_states_it() -> None:
+    """(−) Review round 2: the flag prints "$54.6728" as stated, never rounded to cents."""
+    _refused(*_one("Fee: $54.6728 per unit", "a fee per unit as set out in Schedule 2"),
+             "$54.6728")
+
+
+def test_a_year_fused_to_a_prefix_in_the_value_is_checked() -> None:
+    """(−) Review round 2: "FY2031" in the VALUE is a year the quote must state too."""
+    _refused(*_one("Notes mature FY2031", "The Notes shall mature on June 15, 2030"), "2031")
 
 
 def test_a_quote_not_in_the_exhibit_keeps_its_own_reason() -> None:
