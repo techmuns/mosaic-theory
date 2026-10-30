@@ -48,14 +48,6 @@ def _facts(path: Path) -> dict[str, Any]:
 VRRM = _facts(_ROOT / "tests" / "fixtures" / "companyfacts" / "VRRM.json")
 
 
-@pytest.fixture(autouse=True)
-def _fresh_cover_cache() -> None:
-    """The parsed-cover cache is keyed on the URL, so one test's served cover would answer the
-    next test's refusing fetcher."""
-    import vinci.dossier.mechanical as mech
-    mech._COVER_TEXTS.clear()
-
-
 # ─── the anchored parse ───────────────────────────────────────────────────────────────────────
 
 @pytest.mark.parametrize("ticker", ["VRRM", "JJSF"])
@@ -326,3 +318,56 @@ def test_the_cover_cache_does_not_keep_a_client_alive() -> None:
     del http
     gc.collect()
     assert ref() is None
+
+
+# ─── review round 2: each comparison carries its own measured tolerance ─────────────────────
+
+def _vrrm_newest_scaled(k: float) -> dict[str, Any]:
+    facts = json.loads(json.dumps(VRRM))
+    for r in facts["facts"]["dei"]["EntityCommonStockSharesOutstanding"]["units"]["shares"]:
+        if r["accn"] == "0001193125-26-335490":
+            r["val"] = round(r["val"] * k)
+    return facts
+
+
+@pytest.mark.parametrize(("k", "refused"), [(1.07, False), (1.12, True)])
+def test_the_diluted_average_check_has_its_own_tolerance(k: float, refused: bool) -> None:
+    """VRRM's 10-Q is checked against its quarter diluted average. Cover vs that average is wider
+    than cover vs a balance-sheet count (14,279 cached pairs: p90 5.68%, 93.5% within 10%), so a
+    7% gap is ordinary and a 12% one is not."""
+    facts = _vrrm_newest_scaled(k)
+    c = next(c for c in cc.date_counts(extract_points(facts, "shares"), facts, read=_read("VRRM"))
+             if c.point.accession == "0001193125-26-335490")
+    assert (c.refused is not None) is refused
+    assert cc.TOLERANCES["diluted weighted average"] == 0.10
+
+
+def test_a_previous_count_older_than_the_age_bound_is_no_reference() -> None:
+    """With no other count in its filing, a count is held against the previous one only within the
+    readers' 180-day age bound. VRRM's count before its 2026-08-05 10-Q, read with no other count
+    in reach, is from 2025-10-24 — 285 days back: nothing to check against."""
+    def pt(end: date, filed: date, value: float, acc: str) -> ConceptPoint:
+        return ConceptPoint(concept="shares", tag="EntityCommonStockSharesOutstanding",
+                            unit="shares", value=value, period_start=None, period_end=end,
+                            filed=filed, fy=None, fp=None, form="10-Q", accession=acc)
+    prev = pt(date(2025, 10, 24), date(2025, 10, 29), 159_564_447, "0001193125-25-256492")
+    late = pt(date(2026, 8, 31), date(2026, 8, 5), 151_982_804, "0001193125-26-335490")
+    got = cc.date_counts([prev, late], {"facts": {}}, read=_read("VRRM"))[1]
+    assert got.refused is None
+    assert any("no other count" in f for f in got.flags)
+    from vinci.dossier.mechanical import _SHARES_MAX_AGE_DAYS
+    assert cc.PREVIOUS_COUNT_MAX_AGE_DAYS == _SHARES_MAX_AGE_DAYS
+
+
+def test_a_count_first_met_past_the_cover_block_is_not_a_cover() -> None:
+    """Natural Resource Partners' count first appears on its balance sheet ("units issued and
+    outstanding at March 31, 2026"), past the document's first PART I heading — no cover sentence.
+    The cover block ends there: over every cached cover read that equals its own tag, the count
+    sits before the first PART I heading (2,825) or the document has none (53), never after it."""
+    c = COVERS["NRP"]
+    text = f"{c['part_one_heading']} {c['balance_sheet_window']}"
+    assert cc.cover_date(c["balance_sheet_window"], float(c["value"])) == date(2026, 3, 31)
+    assert cc.cover_date(text, float(c["value"])) is None
+    v = COVERS["VRRM"]  # the negative pin: a cover ahead of its PART I heading still reads
+    assert cc.cover_date(f"{v['cover_window']} PART I. FINANCIAL INFORMATION", 151_982_804.0) == (
+        date(2026, 8, 3))

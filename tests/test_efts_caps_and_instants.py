@@ -30,7 +30,7 @@ from vinci.dossier.mechanical import (
 from vinci.dossier.schemas import CapitalInstrument, SourceStatus
 from vinci.edgar.client import EdgarClient, FtsHit, FtsResult
 from vinci.edgar.concepts import extract_points, latest_instant
-from vinci.netcache import CachedHttp
+from vinci.netcache import CachedHttp, HttpError
 from vinci.themes.exposure import mention_prefilter
 
 _ROOT = Path(__file__).resolve().parent.parent
@@ -89,16 +89,16 @@ def test_fulltext_search_reads_past_the_first_page() -> None:
     """250 matches are 250 hits from three requests — not 100 from one."""
     efts = _PagedEfts(250)
     got = _client(efts).fulltext_search("Credit Agreement", ciks="1")
-    assert len(efts.urls) == 3
     assert len(got.hits) == 250 and got.total == 250 and not got.capped
+    assert len(efts.urls) == 3
     assert len({h.accession for h in got.hits}) == 250
 
 
 def test_fulltext_search_says_when_it_stopped_short() -> None:
     efts = _PagedEfts(250)
     got = _client(efts).fulltext_search("Credit Agreement", ciks="1", max_pages=2)
-    assert len(efts.urls) == 2
     assert got.capped and len(got.hits) == 200 and got.total == 250
+    assert len(efts.urls) == 2 and got.stopped is None  # the cap, not a failure
 
 
 def test_a_one_page_search_is_one_request_on_the_url_it_always_had() -> None:
@@ -232,3 +232,112 @@ def test_the_prefilter_cap_line_counts_the_hits_it_read() -> None:
     mention_prefilter(cast(CachedHttp, _ShortPageEfts(564)), ["0000000001"], ("defense",),
                       startdt="2025-09-01", enddt="2026-06-30", capped=capped)
     assert len(capped) == 1 and "read 300 of 564" in capped[0], capped
+
+
+# ─── review round 2: a later page that fails, and reading only as far as the caller needs ─────
+
+class _FailingEfts(_PagedEfts):
+    """efts whose page starting at ``fail_from`` refuses (a throttle or a 5xx)."""
+
+    def __init__(self, total: int, fail_from: int) -> None:
+        super().__init__(total)
+        self.fail_from = fail_from
+
+    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
+        start = int(url.split("&from=")[1].split("&")[0]) if "&from=" in url else 0
+        if start >= self.fail_from:
+            self.urls.append(url)
+            raise HttpError(f"simulated 503: {url}")
+        return super().get_json(url, ttl_seconds=ttl_seconds)
+
+
+class _NoSec:
+    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
+        raise HttpError(f"not served: {url}")
+
+
+def test_a_later_page_that_fails_keeps_the_hits_already_read() -> None:
+    efts = _FailingEfts(250, fail_from=100)
+    client = EdgarClient(http=cast(CachedHttp, _NoSec()), efts_http=cast(CachedHttp, efts))
+    got = client.fulltext_search("Credit Agreement", ciks="1")
+    assert len(got.hits) == 100 and got.total == 250 and got.capped
+    assert got.stopped is not None and "page 2" in got.stopped
+
+
+def test_a_search_reads_only_as_far_as_its_caller_iterates() -> None:
+    """Two hits from a 250-match search cost one request, not three."""
+    efts = _PagedEfts(250)
+    got = _client(efts).fulltext_search("Credit Agreement", ciks="1")
+    taken = [h for _, h in zip(range(2), got, strict=False)]
+    assert len(taken) == 2 and len(efts.urls) == 1
+
+
+def _real_client_pointers(efts: _PagedEfts, ticker: str = "BRBR") -> Any:
+    edgar = EdgarClient(http=cast(CachedHttp, _NoSec()), efts_http=cast(CachedHttp, efts))
+    with patch.object(mech, "_exhibit_names", lambda http, cik, acc: ["ex10-1_agreement.htm"]):
+        return _covenant_pointers(edgar, cast(CachedHttp, None), "0000000001",
+                                  _instruments(ticker), date(2026, 10, 16))
+
+
+def test_page_twos_failure_does_not_erase_page_ones_pointers() -> None:
+    """BRBR's real panel, its agreement family matching 250 filings and page 2 refusing: main
+    located 2 pointers from page 1; reading the pages eagerly lost them and the table read "no
+    agreement exhibit located across the filing history"."""
+    efts = _FailingEfts(250, fail_from=100)
+    out = _real_client_pointers(efts)
+    assert out.status is SourceStatus.PRESENT
+    assert sum(1 for r in out.value if r.accession) == 2
+    assert len(efts.urls) == 1  # two pointers on page 1: page 2 is never asked for
+
+
+def test_a_family_whose_search_fails_is_named_never_found_nothing() -> None:
+    """A page-1 failure (pre-existing on main: the family was skipped with no word) is a search that
+    stopped short, not a search of the filing history that found nothing."""
+    out = _real_client_pointers(_FailingEfts(250, fail_from=0))
+    assert out.status is SourceStatus.UNKNOWN
+    assert out.note != COVENANT_SEARCH_FOUND_NOTHING and "stopped short" in (out.note or "")
+    assert "could not be read" in (out.note or "")
+
+
+def test_a_search_that_stopped_short_is_not_called_one_that_could_not_run() -> None:
+    """assemble.py keyed its sentence on the found-nothing constant alone, so a search that ran and
+    stopped short read "the covenant-exhibit search could not run (the search stopped short …)"."""
+    from vinci.dossier.assemble import covenant_fail_reason
+    from vinci.dossier.schemas import CovenantPointer, Sourced
+    short = _real_client_pointers(_FailingEfts(250, fail_from=0))
+    why = covenant_fail_reason(short, gov_present=False, mat_present=False)
+    assert why is not None and "could not run" not in why and "stopped short" in why
+    assert "UNKNOWN, not absent" in why
+    # the other three states read as they did
+    assert "could not run" in (covenant_fail_reason(
+        Sourced.unknown(note="no CIK for covenant-pointer lookup"),
+        gov_present=False, mat_present=False) or "")
+    assert "the gap is in the pointer search" in (covenant_fail_reason(
+        Sourced.unknown(note=COVENANT_SEARCH_FOUND_NOTHING),
+        gov_present=False, mat_present=False) or "")
+    row = CovenantPointer(family="f", filing="8-K", filing_date="2026-01-05",
+                          accession="0000000001-26-000001", exhibits=["ex10-1.htm"])
+    assert covenant_fail_reason(Sourced.present([row], source_ref="x"), gov_present=False,
+                                mat_present=False) == (
+        "no covenant terms extracted from located exhibits")
+    assert covenant_fail_reason(short, gov_present=True, mat_present=False) is None
+
+
+class _CiklessEfts(_PagedEfts):
+    """efts whose every other hit carries no CIK (`parse_efts_ciks` keeps only the ones that do)."""
+
+    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
+        data = super().get_json(url, ttl_seconds=ttl_seconds)
+        for i, h in enumerate(data["hits"]["hits"]):
+            if i % 2:
+                h["_source"].pop("ciks")
+        return data
+
+
+def test_the_prefilter_cap_line_counts_hits_not_the_ciks_it_kept() -> None:
+    """Review round 2: "read N of M hits" counted the CIKs kept, so a page with CIK-less hits read
+    as half a page."""
+    capped: list[str] = []
+    mention_prefilter(cast(CachedHttp, _CiklessEfts(564)), ["0000000001"], ("defense",),
+                      startdt="2025-09-01", enddt="2026-06-30", capped=capped)
+    assert len(capped) == 1 and "read 500 of 564" in capped[0], capped

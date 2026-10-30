@@ -4246,6 +4246,9 @@ def _capital_structure_vintage(
 #: keys on `bool(value)` cannot tell them apart and will report a completed search that never
 #: happened. Shared as a constant rather than matched as a literal, so the two cannot drift.
 COVENANT_SEARCH_FOUND_NOTHING = "no CIK-scoped agreement exhibit located across the filing history"
+#: the note's lead when the search ran and STOPPED SHORT (a cap, or a page or family it could not
+#: read) and located nothing in what it read — never "across the filing history"
+COVENANT_SEARCH_STOPPED_SHORT = "the search stopped short and located no agreement exhibit"
 
 
 def _covenant_pointers(
@@ -4301,12 +4304,16 @@ def _covenant_pointers(
     for fam, phrase in list(queries.items())[:_COVENANT_QUERY_CAP]:
         try:
             found = edgar.fulltext_search(phrase, forms="8-K", ciks=cik10)
-        except HttpError:
+        except HttpError as exc:
+            # a family whose search could not be read is named, never dropped (review of #871):
+            # skipped silently, it left a "found nothing across the filing history" note behind
+            cut.append(f"the efts search for '{phrase}' could not be read ({type(exc).__name__})")
+            rows.append(CovenantPointer(family=fam, filing="—", filing_date="", accession="",
+                                        exhibits=[], note=cut[-1]))
             continue
         added = 0
-        for h in found.hits:
-            if added >= 2:
-                break
+        # each later efts page is read only when the hits in hand run out (`FtsResult`)
+        for h in found:
             # (H1a) DEFENSE-IN-DEPTH cross-CIK guard — reject any hit whose filer CIK ≠ the subject
             if h.cik and pad_cik(h.cik) != cik10:
                 continue
@@ -4326,8 +4333,11 @@ def _covenant_pointers(
                 filing_date=h.file_date.isoformat() if h.file_date else "",
                 accession=h.accession, exhibits=exs))
             added += 1
+            if added >= 2:
+                break
         if found.capped and added < 2:
-            cut.append(f"efts read {len(found.hits)} of {found.total} hits for '{phrase}'")
+            stop = f"; {found.stopped}" if found.stopped else ""
+            cut.append(f"efts read {found.read} of {found.total} hits for '{phrase}'{stop}")
             rows.append(CovenantPointer(
                 family=fam, filing="—", filing_date="", accession="", exhibits=[],
                 note=f"{cut[-1]} — an execution filing past them was not looked at"))
@@ -4360,8 +4370,8 @@ def _covenant_pointers(
     if not any(r.accession for r in rows):
         # "found nothing across the filing history" is a claim only a WHOLE search can make
         return Sourced.unknown(note=(
-            f"the search stopped short and located no agreement exhibit in what it read: "
-            f"{'; '.join(cut)}" if cut else COVENANT_SEARCH_FOUND_NOTHING))
+            f"{COVENANT_SEARCH_STOPPED_SHORT} in what it read: {'; '.join(cut)}" if cut
+            else COVENANT_SEARCH_FOUND_NOTHING))
     return Sourced.present(
         rows,
         source_ref=(f"EDGAR {annual_form} exhibit index + CIK-scoped efts (agreement-class, "

@@ -132,8 +132,10 @@ def test_the_reason_is_chosen_from_whether_a_pointer_exists() -> None:
     import inspect
 
     import vinci.dossier.assemble as asm
-    src = inspect.getsource(asm.assemble_one)
-    assert "located_any = ptrs is not None and bool(ptrs.value)" in src, (
+    # the choice lives in `covenant_fail_reason` since review round 2 of #871; the seat calls it
+    assert "covenant_fail_reason(ptrs" in inspect.getsource(asm.assemble_one)
+    src = inspect.getsource(asm.covenant_fail_reason)
+    assert "if ptrs is not None and ptrs.value:" in src, (
         "the digest no longer distinguishes 'nothing located' from 'extraction failed'")
 
 
@@ -229,8 +231,10 @@ def test_the_digest_reports_all_three_states_distinctly() -> None:
     import inspect
 
     import vinci.dossier.assemble as asm
-    src = inspect.getsource(asm.assemble_one)
-    assert "searched = (ptrs is not None" in src, "the third state was collapsed away again"
+    # four states since review round 2 of #871 (a search that stopped short is the fourth), chosen
+    # in `covenant_fail_reason`, each pinned by behaviour in tests/test_efts_caps_and_instants.py
+    src = inspect.getsource(asm.covenant_fail_reason)
+    assert "COVENANT_SEARCH_STOPPED_SHORT" in src, "the fourth state was collapsed away again"
     assert "COVENANT_SEARCH_FOUND_NOTHING" in src, (
         "the digest matches a literal rather than the search's own constant — they will drift")
     assert "could not run" in src

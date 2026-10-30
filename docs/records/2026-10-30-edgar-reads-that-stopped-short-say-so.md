@@ -17,25 +17,32 @@ superseded-by:
   - THE DATE comes from the filing's cover sentence, by an anchored parse: the count's FIRST
     occurrence as the cover prints it (`151,982,804`), and exactly one date in its sentence
     introduced by "as of", "as at", "at" or "on". The hidden inline-XBRL header is dropped before
-    the 400,000-character head is read. A date further before the filing than its form's cover
-    counts at (`MAX_LEAD_DAYS` 90; 180 for a 20-F or 40-F) is not the count's.
+    the 400,000-character head is read. The occurrence must sit in the cover block, before the
+    document's first PART I heading (review round 2). A date further before the filing than its
+    form's cover counts at (`MAX_LEAD_DAYS` 90; 180 for a 20-F or 40-F) is not the count's.
   - UNREAD — no fetcher, the filing not in the submissions index, a failed fetch, no such
     sentence — the count is dated at its filing day, an upper bound, and printed `filed <date>`.
   - THE VALUE is held against the same filing's balance-sheet `CommonStockSharesOutstanding`
     (latest instant), else its quarter diluted weighted average, else the previous
-    correctly-dated count. Past `CROSS_CHECK_TOL` (5%) the count is UNKNOWN: the share count
-    reads None, a trend across it reads UNKNOWN, and a caveat (`share count UNKNOWN:`) names both
-    figures.
+    correctly-dated count no more than 180 days before the filing (the readers' own age bound;
+    further back there is nothing to check against). Each comparison carries its own tolerance,
+    set by face validity on its own measured distribution (`TOLERANCES`, review round 2): 5%
+    against a balance-sheet count, 10% against the diluted average or the previous count. Past it
+    the count is UNKNOWN: the share count reads None, a trend across it reads UNKNOWN, and a caveat
+    (`share count UNKNOWN:`) names both figures.
   - Each correction is a QA flag (`share count:`, added to `flags._QA_MARKERS`) naming the
     accession, the tagged date and the date read or the bound, for every count in the trailing
     ~2y window.
   - A cover is fetched only for a count filed inside that window, through the assembly's SEC
     `CachedHttp`, for the name being assembled. `SecRateLimitedError` is not caught.
 - **Full-text search reads every page, or says it did not (E1-D11).** `EdgarClient.fulltext_search`
-  read one 100-hit efts page and returned it as the answer. It now reads page after page (`from=`)
-  until every match is read or `FTS_MAX_PAGES` (5) is spent, and returns an `FtsResult`: the hits,
-  efts's own `total`, and `capped`. The first page keeps the URL it always had, so the cache key
-  does not move.
+  read one 100-hit efts page and returned it as the answer. It now returns an `FtsResult` that
+  reads its first page at once and each later page (`from=`) only when the caller iterates into
+  it, until every match is read or `FTS_MAX_PAGES` (5) is spent; it carries efts's own `total`,
+  `capped`, and `stopped` — why reading ended early. A later page that cannot be read ends the
+  search with the hits already read (review round 2: reading every page up front lost page 1's
+  hits to a page-2 failure, and the covenant table then read "found nothing"). The first page
+  keeps the URL it always had, so the cache key does not move.
 - **The theme prefilter names a query its page cap cut (E1-D11).** `mention_prefilter` takes
   `capped`, the twin of `skipped`: each batch×phrase that spent `max_pages` with matches unread is
   named with what it read of its total. `scan_driver_exposure` prints them under
@@ -43,9 +50,13 @@ superseded-by:
 - **The covenant-pointer table states its caps.** `_covenant_pointers` searches 6 agreement
   families (`_COVENANT_QUERY_CAP`) and names 4 aggregate lines (`_COVENANT_GENERIC_CAP`). Each cap,
   when it binds, now adds one row saying what it left out, and a family whose capped search located
-  fewer than two pointers says it read N of M hits. When nothing at all is located and the search
-  stopped short anywhere, the note says so instead of `COVENANT_SEARCH_FOUND_NOTHING` ("across the
-  filing history"), a claim only a whole search can make.
+  fewer than two pointers says it read N of M hits. A family whose search cannot be read at all
+  is named in a row too (pre-existing on main: it was skipped with no word). When nothing at all
+  is located and the search stopped short anywhere, the note leads with
+  `COVENANT_SEARCH_STOPPED_SHORT` instead of `COVENANT_SEARCH_FOUND_NOTHING` ("across the filing
+  history"), a claim only a whole search can make, and `assemble.covenant_fail_reason` gives it a
+  fourth sentence of its own: "the covenant-exhibit search stopped short (…) — whether an agreement
+  exists is UNKNOWN, not absent", where it read "…could not run (the search stopped short …)".
 - **`latest_instant` returns None when no point is an instant (E1-D16).** It fell back to the whole
   list, so a list of flows answered with a flow.
 
@@ -100,25 +111,49 @@ name; nothing feeds it flows today, which is the time to close it.
   count mutated 10% high is refused against its filing's diluted weighted average (151,945,000),
   and the share count and trend then read UNKNOWN. An AST pin holds every call of a share reader
   in `mechanical.py` to passing `http=`.
-- **The tolerance, by face validity.** Every dei cover count in the cache against the SAME
-  filing's balance-sheet `CommonStockSharesOutstanding` (66,950 pairs): the gap's median is
-  0.05%, p75 0.36%, p90 2.07%, p95 8.72%; 85.4% sit within 1%, 89.8% within 2%, 93.5% within 5%,
-  95.4% within 10%. Against the quarter diluted weighted average where the filing has no
-  balance-sheet count (14,289): median 1.09%, p90 5.68%, 89.0% within 5%. 5% admits a month or two
-  of ordinary buybacks or issuance and refuses what a second share class or a unit slip produces.
+- Review pins (rounds 1 and 2; each failed on the head it was written against, `df387b1a` for
+  round 2, in a throwaway worktree): a cached cover keeps no http client alive; every share reader
+  is passed its fetcher by keyword, never `None`; the prefilter's cap line counts every hit read
+  (300 of 564 on 60-hit pages; 500 with every other hit CIK-less, where it read 250); a page-2
+  failure keeps page 1's hits (100 of 250, `stopped` naming page 2), and on BRBR's real panel the
+  two pointers on page 1 are kept with page 2 never asked for (the head read UNKNOWN, "found
+  nothing"); taking 2 hits of a 250-match search costs one request (the head made three); a
+  family whose search fails is named and the note says "stopped short"; assembly's sentence for
+  that state is not "could not run"; a +7% gap against the diluted average passes and +12%
+  refuses; a previous count 285 days back is no reference; Natural Resource Partners' balance-
+  sheet sentence past its PART I heading reads nothing.
+- **The tolerances, by face validity, one per comparison** (review round 2: the first cut applied
+  the balance-sheet comparison's 5% to all three). Every correctly-dated dei cover count in the
+  cache against:
+  - the SAME filing's balance-sheet `CommonStockSharesOutstanding` (66,950 pairs): median 0.05%,
+    p75 0.36%, p90 2.07%, p95 8.72%; 85.4% within 1%, 89.8% within 2%, 93.5% within 5%, 95.4%
+    within 10%. **5%**: the two are weeks apart, so it admits a month or two of ordinary buybacks
+    or issuance and refuses a second share class or a unit slip;
+  - the same filing's quarter diluted weighted average, where the filing has no balance-sheet
+    count (14,279 pairs): median 1.09%, p75 2.43%, p90 5.68%, p95 13.49%; 69.5% within 2%, 89.0%
+    within 5%, 93.5% within 10%. **10%**: an average over a quarter that also counts options and
+    convertibles sits further from a point count;
+  - the previous correctly-dated cover count filed no more than 180 days before (85,261 pairs):
+    median 0.30%, p75 1.09%, p90 4.23%, p95 12.13%; 91.0% within 5%, 94.2% within 10%. **10%**:
+    up to two quarters of issuance or buybacks lie between them. Past 180 days — the share
+    readers' own age bound — there is nothing to check against.
   Nothing here reads a forward return.
 - **The lead window, by face validity.** filed − tagged date over every correctly-dated dei cover
   count in the cache: 10-K (22,251) median 7 days, 98.36% within 90; 10-Q (65,325) median 6, 99.41%
   within 90; 20-F (1,741) median 91, 96.32% within 180; 40-F (484) median 79, 99.17% within 180.
 - **The parser over the corpus**, read exactly as production reads (header dropped, head, first
-  occurrence, lead window), over every dei cover count whose accession has a cached document
-  holding the count (3,391 of the 3,450 with any cached document of the accession). For the 3,385
-  CORRECTLY-dated counts the read must equal the filer's own tag: read 2,902, equal 2,877 (99.1%),
-  differ 25, refused by the lead window 9, unread 474. Four of the 25 inspected are the filing
-  disagreeing with itself, not the parser: PagerDuty's cover states March 9 against a tag of
-  March 10; Chimera's and CytomX's covers state January 31 and February 28 against period-end
-  tags; Natural Resource Partners' count first appears on its balance sheet, "outstanding at
-  March 31, 2026", which is true of that count. The 9 refused are market-value dates and a cover
+  occurrence, cover block, lead window), over every dei cover count whose accession has a cached
+  document holding the count (3,391 of the 3,450 with any cached document of the accession). For
+  the 3,385 CORRECTLY-dated counts the read must equal the filer's own tag: read 2,901, equal 2,877
+  (99.2%), differ 24, refused by the lead window 9, unread 475. Of the 24, three were inspected
+  and each is the filing disagreeing with itself, not the parser: PagerDuty's cover states March 9
+  against a tag of March 10; Chimera's and CytomX's covers state January 31 and February 28
+  against period-end tags. The other 21 were not inspected; most differ from their tag by one to
+  five days. A fourth inspected difference was the parser's: Natural Resource Partners' count
+  first appears on its balance sheet, past the cover, and the cover-block bound (review round 2)
+  now refuses it — over every cached cover read that equals its own tag, the count sits before
+  the document's first PART I heading (2,825) or the document has none (53), never after it. The
+  9 refused are market-value dates and a cover
   stating the wrong year (Hawaiian Electric, CVB, Cathay's "As of February 13, 2025" in a 10-K
   filed 2026-03-02). All 6 future-dated counts with a cached cover are read, each within its
   lead: Lindsay 2026-03-31 (tag 2026-05-31), Farmers National Banc 2026-02-20 (tag 2026-03-20,
@@ -128,8 +163,10 @@ name; nothing feeds it flows today, which is the time to close it.
   stating "As o f May 4, 2026".
 - **The rule over all 107 future-dated points** (covers read from the cache only, so a filing
   not cached is dated at its filing day here where assembly would fetch it): 6 dated from their
-  cover, 101 at their filing day; the value agrees with its own filing on 91, is refused on 15,
-  and has no other count to check against on 1. The ruling's five filers, each as its share count
+  cover, 101 at their filing day; the value agrees with its own filing on 91, is refused on 14,
+  and has no other count to check against on 2 (one of them past the 180-day bound for the
+  previous count). Against the first cut's single 5%, one refusal clears: DXP's 2014 count, −6.6%
+  against its quarter diluted average. The ruling's five filers, each as its share count
   is served now:
   - **VRRM** 151,982,804, tag 2026-08-31 → cover 2026-08-03; agrees +0.02% with the same 10-Q's
     diluted weighted average (151,945,000; the filing tags no undimensioned balance-sheet count).
@@ -167,13 +204,22 @@ name; nothing feeds it flows today, which is the time to close it.
   matches its description, else an aggregate line, each family counted once.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- A capped search costs up to 5 efts requests where it cost 1. The covenant search runs at most 6
-  queries an assembly, and the 15 cached covenant queries match at most 58 filings each, so the
-  usual cost is unchanged: one request a family.
-- **Pages move only at re-assembly.** The 13 pages above gain their truncation row when next
-  assembled; added to STATE row 41. So is VRRM's trend line; its count and anchor do not move.
-- **A refused count is UNKNOWN, not a fallback.** Fifteen of the 107 future-dated points refuse at
-  5% (all in filings from 2012 to 2025; none is read by a committed page). Some are unit slips
+- **The covenant search's real worst case** (review round 2). A later efts page is read only when
+  the hits in hand run out, and the search stops at two exhibit-bearing hits, each of which costs
+  one index.json fetch — as does every hit it looks at and rejects for having no exhibit. So a
+  family costs one efts request and at most 100 index fetches when page 1 suffices (main's worst
+  case too), and at most 5 efts requests and 500 index fetches when no exhibit-bearing hit turns up
+  in its first four pages; an assembly searches at most 6 families, so at most 30 efts requests
+  and 3,000 index fetches where main's worst was 6 and 600. Today: the 15 cached covenant queries
+  match 2 to 58 filings, so every family is one page — the cost is unchanged.
+- **Pages move only at re-assembly, and some never are** (STATE row 41). The pointer-cap row
+  reaches 13 committed pages; of these AMZN, GOOGL, UBER, V, LLY and NFLX gain it at their next
+  assembly, ROST, TJX, CNXC and NKE only at another pass, and IT, TGT and WLK — not rebuilt —
+  never. VRRM is not rebuilt either: its page keeps "164,658,507 (2024-08-31) → 151,982,804
+  (2026-08-31)"; its count and anchor would not move at a re-assembly.
+- **A refused count is UNKNOWN, not a fallback.** Fourteen of the 107 future-dated points refuse
+  (all in filings from 2012 to 2025; none is read by a committed page). NovaGold's 2025 count is
+  one: +21.6% against its previous cover count of 2025-03-26, inside the 180-day bound. Some are unit slips
   (a balance-sheet count tagged 1,000 times too large at Ormat, in thousands at Fennec); others are real
   issuance between the balance-sheet and cover dates, which the rule cannot tell from a slip and so
   refuses. Falsifier: a page whose share count reads UNKNOWN where the filing's cover and balance
@@ -184,3 +230,10 @@ name; nothing feeds it flows today, which is the time to close it.
 - The prefilter's cut is printed, not persisted: a scan's saved output does not carry it, as it
   does not carry `skipped`. Falsifier: a saved scan read later as complete when its log printed a
   page cap.
+
+**OPEN — NOT THIS PR (Session C, batch C2).** Four more readers take a share count tagged after its
+own filing as written: the screen's share change (`screens/assemble.py`, `share_count_change`), the
+rank's dilution demote (`rank/structural._shares_for`), the universe's cross-filer frames
+(`client.shares_outstanding_with_provenance`) and the theme desk's per-share basis
+(`theme_intelligence/market.py`). AAL, JJSF, REPX and VRRM are candidates in the 2026-10-16 screen
+run, all FAIL, so no screen or rank decision moves today.

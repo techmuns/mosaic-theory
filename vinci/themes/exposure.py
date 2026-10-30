@@ -211,7 +211,8 @@ def mention_prefilter(
                         skipped.append(f"{phrase!r} × batch of {len(batch)} CIKs "
                                        f"(from={frm}): {type(exc).__name__}: {exc}")
                     break  # transient efts error — skip this batch×phrase, keep scanning
-                read += len(page)
+                # every hit on the page — `page` holds only the CIKs kept (review of #871)
+                read += len(data["hits"]["hits"])
                 for c in page:
                     if c in bset:
                         matched.setdefault(c, set()).add(phrase)

@@ -11,7 +11,8 @@ sentence must carry the tagged value itself, and exactly one date introduced by 
 "at" or "on". A cover that cannot be read dates the count at its filing day, an UPPER bound, which
 every reader prints as "filed <date>" — never as the count's own date. And the VALUE is checked
 against another count in the same filing (:func:`cross_check`); a disagreement past
-:data:`CROSS_CHECK_TOL` makes the count UNKNOWN, naming both figures — never one picked."""
+its comparison's :data:`TOLERANCES` entry makes the count UNKNOWN, naming both figures — never one
+picked."""
 from __future__ import annotations
 
 import re
@@ -34,6 +35,10 @@ _DATED = re.compile(rf"\b(?:as\s+of|as\s+at|at|on)\s+({_MONTH})\s+(\d{{1,2}}),?\
 _SENTENCE_END = re.compile(r"(?<=[a-z0-9)])\.\s+(?=[A-Z])")
 #: how far either side of the count its date may sit, inside the count's own sentence
 _REACH = 300
+#: the cover block ends at the document's first PART I heading (never II, III or IV): over every
+#: cached cover read that equals its own tag, the count sits before it (2,825) or the document has
+#: none (53) — never after it (review of #871; Natural Resource Partners' balance sheet was read)
+_PART_ONE = re.compile(r"\bPART\s+I\b(?![IVX])", re.IGNORECASE)
 
 #: an inline-XBRL filing opens with its hidden facts, which no reader sees and which can run to
 #: hundreds of thousands of characters (Farmers National Banc's 10-K: to character 756,469)
@@ -48,13 +53,28 @@ def cover_head(html: str) -> str:
     return _IX_HEADER.sub(" ", html, count=1)[:COVER_HEAD_CHARS]
 
 
-#: The cover-vs-filing tolerance, set by FACE VALIDITY and never on an outcome. Between a filing's
-#: balance-sheet date and its cover date a company buys back or issues for a few weeks; measured
-#: over every cover count in the cache with a same-filing balance-sheet count (66,950, 2026-10-30),
-#: the gap's median is 0.05%, p75 0.36%, p90 2.07%, p95 8.72%. 5% admits a month or two of
-#: ordinary buybacks or issuance (93.5% of those cover counts sit within it) and refuses what a
-#: second share class or a unit slip produces — tens of percent or more.
-CROSS_CHECK_TOL = 0.05
+#: Each comparison's tolerance, set by FACE VALIDITY on its own measured distribution and never on
+#: an outcome — the operator's ruling of a tolerance "set by face validity on the corpus", applied
+#: to each comparison separately (review of #871). Measured 2026-10-30 over every correctly-dated
+#: dei cover count in the cache (latest companyfacts per CIK, 2,253 blobs):
+#: - the same filing's BALANCE-SHEET count (66,950 pairs): median 0.05%, p75 0.36%, p90 2.07%, p95
+#:   8.72%; 93.5% within 5%. The two are weeks apart, so 5% admits a month or two of ordinary
+#:   buybacks or issuance and refuses a second share class or a unit slip (tens of percent or more);
+#: - the same filing's quarter DILUTED WEIGHTED AVERAGE, where the filing has no balance-sheet count
+#:   (14,279 pairs): median 1.09%, p75 2.43%, p90 5.68%, p95 13.49%; 89.0% within 5%, 93.5% within
+#:   10%. An average over a quarter that also counts options and convertibles sits further from a
+#:   point count, so 10%;
+#: - the PREVIOUS correctly-dated count within :data:`PREVIOUS_COUNT_MAX_AGE_DAYS` (85,261 pairs):
+#:   median 0.30%, p75 1.09%, p90 4.23%, p95 12.13%; 91.0% within 5%, 94.2% within 10%. Up to two
+#:   quarters of issuance or buybacks sit between them, so 10%.
+TOLERANCES: dict[str, float] = {
+    "balance-sheet count": 0.05,
+    "diluted weighted average": 0.10,
+    "previous cover count": 0.10,
+}
+#: the previous count is a reference only this close to the filing — the share readers' own age
+#: bound (`mechanical._SHARES_MAX_AGE_DAYS`); further back, there is nothing to check against
+PREVIOUS_COUNT_MAX_AGE_DAYS = 180
 
 
 def cover_date(text: str, value: float) -> date | None:
@@ -68,13 +88,14 @@ def cover_date(text: str, value: float) -> date | None:
     THE FIRST OCCURRENCE ONLY. Reading on to the next one took a date from the financial
     statements whenever the cover's own was unreadable: Whitestone's cover prints "As o f May 4,
     2026" and its balance sheet's 2026-03-31 was read instead (measured over 3,450 cached covers,
-    2026-10-30)."""
+    2026-10-30). And that occurrence must sit in the cover block, before the first PART I heading
+    (:data:`_PART_ONE`)."""
     if value <= 0 or value != int(value):
         return None
     needle = f"{int(value):,}"
     m = re.search(rf"(?<![\d,]){re.escape(needle)}(?![\d,])", text)
-    if m is None:
-        return None
+    if m is None or ((part := _PART_ONE.search(text)) is not None and part.start() < m.start()):
+        return None  # no count, or a first occurrence past the cover block
     lo = max(0, m.start() - _REACH)
     hi = min(len(text), m.end() + _REACH)
     before = list(_SENTENCE_END.finditer(text, lo, m.start()))
@@ -115,6 +136,7 @@ class CrossCheck:
 
     value: float
     other: float
+    kind: str  # which comparison: a key of :data:`TOLERANCES`
     other_label: str  # what the other count is and where it was read
 
     @property
@@ -122,8 +144,12 @@ class CrossCheck:
         return self.value / self.other - 1.0
 
     @property
+    def tolerance(self) -> float:
+        return TOLERANCES[self.kind]
+
+    @property
     def agrees(self) -> bool:
-        return abs(self.gap) <= CROSS_CHECK_TOL
+        return abs(self.gap) <= self.tolerance
 
 
 #: a weighted average over at most this many days is a QUARTER's — the cross-check's second rung
@@ -134,27 +160,30 @@ def cross_check(point: ConceptPoint, series: list[ConceptPoint],
                 facts: dict[str, Any]) -> CrossCheck | None:
     """``point`` held against the nearest other count, in the ruling's order: the same filing's
     balance-sheet ``CommonStockSharesOutstanding`` (its latest instant), else the same filing's
-    quarter diluted weighted average, else the previous correctly-dated count in ``series``. None
-    when there is none. A reference dated after its own filing is never one."""
+    quarter diluted weighted average, else the previous correctly-dated count in ``series`` no
+    more than :data:`PREVIOUS_COUNT_MAX_AGE_DAYS` before the filing. None when there is none. A
+    reference dated after its own filing is never one."""
     acc = point.accession
     bs = [q for q in points_for_tag(facts, "CommonStockSharesOutstanding")
           if acc and q.accession == acc and q.is_instant and q.value and q.period_end <= q.filed]
     if bs:
         ref = max(bs, key=lambda q: (q.period_end, q.filed))
-        return CrossCheck(point.value, ref.value,
+        return CrossCheck(point.value, ref.value, "balance-sheet count",
                           f"the same filing's balance-sheet count at {ref.period_end}")
     wavg = [q for q in points_for_tag(facts, "WeightedAverageNumberOfDilutedSharesOutstanding")
             if acc and q.accession == acc and q.value and q.period_start is not None
             and (q.period_end - q.period_start).days <= _QUARTER_MAX_DAYS]
     if wavg:
         ref = max(wavg, key=lambda q: (q.period_end, q.filed))
-        return CrossCheck(point.value, ref.value, f"the same filing's diluted weighted average "
-                                                  f"for {ref.period_start}..{ref.period_end}")
+        return CrossCheck(point.value, ref.value, "diluted weighted average",
+                          f"the same filing's diluted weighted average "
+                          f"for {ref.period_start}..{ref.period_end}")
     prev = [q for q in series
-            if q.value and q.period_end <= q.filed and q.filed < point.filed]
+            if q.value and q.period_end <= q.filed and q.filed < point.filed
+            and (point.filed - q.period_end).days <= PREVIOUS_COUNT_MAX_AGE_DAYS]
     if prev:
         ref = max(prev, key=lambda q: (q.period_end, q.filed))
-        return CrossCheck(point.value, ref.value,
+        return CrossCheck(point.value, ref.value, "previous cover count",
                           f"the previous cover count at {ref.period_end} ({ref.accession})")
     return None
 
@@ -182,8 +211,9 @@ def date_counts(series: list[ConceptPoint], facts: dict[str, Any], *,
     A count dated on or before its filing is kept as tagged. One dated AFTER it is dated from its
     cover sentence (``read`` returns the filing's text, or None when it cannot be had), else at its
     filing day as an upper bound; its value is then cross-checked (:func:`cross_check`) and a
-    disagreement past :data:`CROSS_CHECK_TOL` refuses it. Each correction flags the tagged date,
-    the date read (or the bound) and the accession; a refusal flags both figures."""
+    disagreement past its comparison's :data:`TOLERANCES` entry refuses it. Each correction flags
+    the tagged date, the date read (or the bound) and the accession; a refusal names both
+    figures."""
     out: list[DatedCount] = []
     for p in series:
         if p.period_end <= p.filed:
@@ -208,7 +238,7 @@ def date_counts(series: list[ConceptPoint], facts: dict[str, Any], *,
         elif not check.agrees:
             refused = (f"{p.accession}'s count {p.value:,.0f} and {check.other_label} "
                        f"{check.other:,.0f} differ by {check.gap:+.1%}, past the "
-                       f"{CROSS_CHECK_TOL:.0%} cross-check — the count is UNKNOWN")
+                       f"{check.tolerance:.0%} cross-check — the count is UNKNOWN")
             flags.append(f"share count UNKNOWN: {refused}")
         out.append(DatedCount(p.model_copy(update={"period_end": on or p.filed}), p.period_end,
                               bound=on is None, refused=refused, flags=tuple(flags)))

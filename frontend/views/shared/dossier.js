@@ -137,7 +137,9 @@ const EXTRACTION_VERSIONS = [
   ["2026-10-30.cover-dated-shares",
     "a share count tagged after its own filing is dated from its cover sentence (an anchored " +
     "parse; unread, at its filing day, printed 'filed <date>'), its value cross-checked " +
-    "against another count in the same filing and UNKNOWN past 5%, each correction a QA flag " +
+    "against another count in the same filing and UNKNOWN past that comparison's tolerance " +
+    "(5% to a balance-sheet count, 10% to a diluted average or a previous count), each " +
+    "correction a QA flag " +
     "(audit X1(a)); the covenant-pointer table names the aggregate lines and agreement " +
     "families its caps leave out, and a full-text search reads every page or says it did not " +
     "(audit E1-D11)"],
