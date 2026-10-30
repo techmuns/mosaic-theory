@@ -34,7 +34,7 @@ from vinci.dossier.schemas import (
     Sourced,
     SourceStatus,
 )
-from vinci.edgar.release_parse import figure_stated
+from vinci.edgar.release_parse import figure_stated, quoted_figures
 from vinci.graph.filings import html_to_text
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.netcache import CachedHttp
@@ -46,6 +46,11 @@ _ARCHIVE = "https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{doc}"
 # from a term the exhibit never stated — no structured field carries that, and the committed rows
 # predate one — so the writer and the reader share this one constant, and dossier.js mirrors it.
 REFUSED_NOTE_PREFIX = "(E5) refused:"
+# A refusal for what the VALUE states (audit E2-D19): the quote was found, but the value beside it
+# states a year or a dollar figure the quote does not. It IS a refusal — a later one still withholds
+# an older value in `governing_terms` — and the page's lead names it apart from a quote that was
+# not found (`render._refused_newer_text`, dossier.js ``refusedNewerText``).
+VALUE_REFUSED_NOTE_PREFIX = f"{REFUSED_NOTE_PREFIX} the value states"
 # An exhibit larger than this is not sent in a single pass — extract by hand rather than silently
 # truncate (a term past the cut would read as a false UNKNOWN). THAT REFUSAL IS UNCHANGED; only the
 # threshold moved, because the old one was set against a window the configured model does not have.
@@ -263,6 +268,42 @@ class RateComponents(NamedTuple):
     values: dict[str, float | None]
     quotes: dict[str, str]
     withheld: dict[str, str]
+
+
+#: A year as a value states one: four digits, 1900–2099, standing alone ("2031", "6/30/2029").
+_YEAR = re.compile(r"\b(?:19|20)\d{2}\b")
+#: The replacement a conformed amendment prints right after the figure it strikes — UBER's
+#: "$ 1,500,000,000 1,000,000,000", NFLX's "$ 500,000,000 . 750,000,000" and "$ 3,750,000,000,
+#: 6,000,000,000,". The replacement carries no "$" of its own, so `quoted_figures` does not read it
+#: as money; it is the struck figure's currency. A bare number anywhere else is not a dollar figure.
+_CONFORMED_REPLACEMENT = re.compile(
+    r"\$\s*\d[\d,]*(?:\.\d+)?\s*[.,]?\s+(\d{1,3}(?:,\d{3})+)(?!\d|,\d|\.\d)")
+
+
+def unstated_in_quote(value: str, quote: str) -> list[str]:
+    """Each year and each dollar figure ``value`` states that ``quote`` does not (audit E2-D19):
+    the years first, then the dollar figures, each in the value's order and once; empty when the
+    quote states them all.
+
+    THE QUOTE WAS CHECKED; THE VALUE BESIDE IT WAS NOT. #804 proves the quote is a span of the
+    exhibit, but the model writes the value separately, so "June 15, 2031" stood beside a quote
+    reading "June 15, 2030". Measured on the 13 in-scope committed pages at 8e6b12b1: 29 of 176
+    PRESENT terms on 9 pages state a year or a dollar figure their quote does not.
+
+    A dollar figure is stated when the quote states it at any scale (`release_parse.figure_stated`:
+    "$1.5 billion" is "$1,500,000,000"), or prints it as a conformed replacement. A percent or bps
+    figure is NOT checked here: the rate components have their own check (`rate_components`)."""
+    missing = [y for y in _YEAR.findall(value) if not re.search(rf"\b{y}\b", quote)]
+    replacements = {int(m.replace(",", "")) for m in _CONFORMED_REPLACEMENT.findall(quote)}
+    for f in quoted_figures(value):
+        if f.unit not in ("$", "$M"):
+            continue
+        dollars = f.value * 1e6 if f.unit == "$M" else f.value
+        if (figure_stated(quote, dollars / 1e6, ("$M",)) or figure_stated(quote, dollars, ("$",))
+                or (dollars == int(dollars) and int(dollars) in replacements)):
+            continue
+        missing.append(f"${dollars:,.2f}".removesuffix(".00"))
+    return list(dict.fromkeys(missing))
 
 
 def rate_components(t: dict[str, Any], quote: str, source: SourceText) -> RateComponents:
@@ -514,6 +555,17 @@ def _extract_from_exhibit(
             val = Sourced.unknown(note=f"{REFUSED_NOTE_PREFIX} {why} {source_ref}")
             flags.append(f"(E5) covenant term refused — {why} the exhibit, so it is UNKNOWN: "
                          f"{term_name} · {source_ref}")
+        elif stated and (unstated := unstated_in_quote(str(t["value"]), quote)):
+            # REFUSED FOR WHAT THE VALUE SAYS (audit E2-D19). The quote is the exhibit's own words;
+            # a year or a dollar figure the value adds is the model's, bound to nothing. The value
+            # is withheld whole, as a quote refusal withholds it, and the flag names the figures.
+            # Measured at 8e6b12b1: 29 of 176 PRESENT terms on the 13 in-scope pages (9 pages);
+            # none shown wrong — a sublimit read from another clause, a date added as context.
+            shown = ", ".join(unstated)
+            val = Sourced.unknown(note=f"{VALUE_REFUSED_NOTE_PREFIX} {shown}, which the model's "
+                                       f"quote does not — {source_ref}")
+            flags.append(f"(E5) covenant term refused — its value states {shown}, which its quote "
+                         f"does not, so it is UNKNOWN: {term_name} · {source_ref}")
         elif stated:
             note = f"verbatim: “{quote}”"
             val = Sourced.present(str(t["value"]).strip(), source_ref=source_ref, note=note)
