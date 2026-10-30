@@ -28,6 +28,7 @@ from typing import Any
 
 from vinci.dossier.schemas import PeerComps, Sourced, SourceStatus
 from vinci.edgar.concepts import (
+    NOT_D_AND_A,
     ConceptPoint,
     annual_by_period,
     current_pair,
@@ -35,6 +36,7 @@ from vinci.edgar.concepts import (
     filed_at,
     fiscal_year_ends,
     fiscal_year_of,
+    leg_refusal,
     negative_leg,
     superseded,
 )
@@ -93,9 +95,11 @@ class EdgarFundamentals:
         for pe in sorted(self._op.keys() & self._da.keys()):
             if self._op[pe].period_start != self._da[pe].period_start:
                 continue
-            if negative_leg("D&A", self._da[pe]):
-                self._withheld.append(f"{self._label(self._da[pe])} EBITDA ({self._da[pe].tag} "
-                                      f"filed negative)")
+            if leg_refusal("D&A", self._da[pe]) is not None:
+                why = ("nets accretion — not a D&A" if self._da[pe].tag in NOT_D_AND_A
+                       else "filed negative")
+                self._withheld.append(f"{self._label(self._da[pe])} EBITDA "
+                                      f"({self._da[pe].tag} {why})")
                 continue
             self._ebitda[pe] = self._op[pe].value + self._da[pe].value
         self._fcf: dict[date, float] = {}
@@ -153,7 +157,7 @@ class EdgarFundamentals:
         if len(margin) < 2:
             return Sourced.unknown(
                 note="EDGAR: no ≥2-period EBITDA margin (operating_income+D&A ÷ revenue) — "
-                "D&A absent/misaligned or revenue absent"
+                "D&A absent/misaligned or revenue absent" + self._withheld_note("EBITDA")
             )
         bits = ["EBITDA margin: " + " → ".join(
             f"{self._label(self._rev[pe])} {margin[pe]:.0%}" for pe in sorted(margin))]
@@ -165,7 +169,8 @@ class EdgarFundamentals:
             bits.append(f"absolute revenue: {abs_rev}")
         return Sourced.present(
             "; ".join(bits) + "  [EDGAR GAAP basis, $M; margin % can fall while absolute EBITDA "
-            "RISES — read them together]" + self._withheld_note("EBITDA"),
+            "RISES — read them together]" + self._withheld_note("EBITDA")
+            + self._restated_note(("revenue", "operating income", "D&A")),
             source_ref=f"EDGAR XBRL companyfacts {self._op[max(self._op)].tag}+D&A ÷ "
             f"{self._rev[max(self._rev)].tag} [{_span(self._rev, self._year_ends)}]",
         )
@@ -195,10 +200,11 @@ class EdgarFundamentals:
         held = [w for w in self._withheld if only is None or f" {only} (" in w]
         return f"  [withheld: {'; '.join(held)}]" if held else ""
 
-    def _restated_note(self) -> str:
+    def _restated_note(self, only: tuple[str, ...] | None = None) -> str:
         """Every printed figure a later filing restated, with the figure first filed (audit
         E1-D5): WOR's FY2022 revenue prints 1,309 and was first filed as 5,242. Only a restatement
-        the printed $M shows — one that rounds away is not a different figure on this line."""
+        the printed $M shows — one that rounds away is not a different figure on this line.
+        ``only`` keeps the legs a line prints (the margin trend prints no FCF)."""
         legs = [("revenue", self._rev, set(self._rev)),
                 ("operating income", self._op, set(self._ebitda)),
                 ("D&A", self._da, set(self._ebitda)),
@@ -206,6 +212,8 @@ class EdgarFundamentals:
                 ("capex", self._capex, set(self._fcf))]
         out: list[str] = []
         for name, points, periods in legs:
+            if only is not None and name not in only:
+                continue
             for pe in sorted(periods):
                 p = points[pe]
                 old = superseded(self._facts, p)

@@ -18,8 +18,8 @@ from vinci.edgar.concepts import (
     ConceptPoint,
     currency_withheld,
     extract_points,
+    refused_endpoint,
     share_count_change,
-    share_window_start,
     unit_currency,
 )
 from vinci.edgar.cover_count import ShareSeries, share_series
@@ -505,15 +505,14 @@ def share_change_field(facts: dict[str, Any] | None) -> DataField[float]:
             note=(f"XBRL shares {chg.from_value:,.0f} "
                   f"({series.when(chg.from_date, chg.from_value)}) → "
                   f"{chg.to_value:,.0f} ({series.when(chg.to_date, chg.to_value)})"))
-    # the window opens from EVERY count's date, refused ones too: with all of them refused there
-    # is no kept point to open it from, and the refusal went unnamed (review round 1)
-    start = share_window_start(series.points + [(d, 0.0) for d, _ in series.refused])
-    inside = [why for d, why in series.refused if start is not None and d >= start]
+    # a refused count that would itself be an endpoint is named — with every count refused there is
+    # no kept point, and the window opens from the refused ones (review rounds 1 and 2)
+    end = refused_endpoint(series.points, [d for d, _ in series.refused])
+    why = next((w for d, w in series.refused if d == end), None)
     return DataField.unknown(
         source="EDGAR", tier=SourceTier.EDGAR,
-        note=(f"a share count in the window is UNKNOWN: {inside[0]}"
-              + (f" (1 of {len(inside)} refused)" if len(inside) > 1 else "")
-              if inside else "fewer than 2 usable XBRL share points"))
+        note=(f"a share count at an end of the window is UNKNOWN: {why}" if why
+              else "fewer than 2 usable XBRL share points"))
 
 
 def enrich_with_fundamentals(

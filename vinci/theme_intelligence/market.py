@@ -218,9 +218,10 @@ def desk_points(facts: dict[str, Any], as_of: date | None) -> list[ConceptPoint]
     """The annual diluted EPS and the cover-page share counts :func:`edgar_eps` serves.
 
     THE SHARE COUNTS ARE DATED AS COUNTED (Phase 2 C2, audit X1(a)): one tagged after its own
-    filing reads at its filing day, an upper bound, and one its own filing contradicts is left out
-    (`vinci.edgar.cover_count.share_series`; no cover is fetched outside an assembly). THM's 2023
-    count, tagged 2033, sorted last in `basis_breaks`' consecutive pairs."""
+    filing reads at its filing day, an upper bound, marked `SHARES_FILED` so it prints "filed";
+    one its own filing contradicts is kept, marked `SHARES_REFUSED`, so `basis_breaks` names it
+    and never measures across it (review of #875) — no cover is fetched outside an assembly. THM's
+    2023 count, tagged 2033, sorted last in `basis_breaks`' consecutive pairs."""
     from vinci.edgar.concepts import REPORTING, extract_points
     from vinci.edgar.cover_count import date_counts
 
@@ -229,7 +230,16 @@ def desk_points(facts: dict[str, Any], as_of: date | None) -> list[ConceptPoint]
     eps = [p for p in extract_points(facts, "eps_diluted", currency=REPORTING, as_of=as_of)
            if p.is_annual]
     counts = date_counts(extract_points(facts, "shares"), facts, read=lambda _: None)
-    return eps + [c.point for c in counts if not c.refused]
+    return eps + [c.point.model_copy(update={"concept": SHARES_REFUSED if c.refused
+                                             else SHARES_FILED if c.bound else "shares"})
+                  for c in counts]
+
+
+#: a share count its own filing contradicts (`vinci.edgar.cover_count`), and one read at its
+#: filing day because it was tagged after it — kept beside the others so neither is silent
+SHARES_REFUSED = "shares (refused)"
+SHARES_FILED = "shares (filed)"
+_SHARES = ("shares", SHARES_FILED, SHARES_REFUSED)
 
 
 #: a per-share figure restated by this factor or more (either way), or a share count that moves by
@@ -253,7 +263,7 @@ def basis_breaks(points: Sequence[ConceptPoint], since: date,
     out: list[tuple[BreakKind, str]] = []
     by: dict[date, list[ConceptPoint]] = {}
     for p in known:
-        if p.concept != "shares" and p.is_annual and p.period_end >= since:
+        if p.concept not in _SHARES and p.is_annual and p.period_end >= since:
             by.setdefault(p.period_end, []).append(p)
     for end, ps in sorted(by.items()):
         filed = sorted({p.filed for p in ps})
@@ -265,14 +275,33 @@ def basis_breaks(points: Sequence[ConceptPoint], since: date,
             out.append(("eps", f"the year ending {end.isoformat()}: EPS {a:g} as first filed, "
                                f"{b:g} as filed {filed[-1].isoformat()} "
                                f"(×{max(a / b, b / a):.1f})"))
-    shares = sorted({(p.period_end, p.value) for p in known
-                     if p.concept == "shares" and p.value > 0})
-    for (d0, v0), (d1, v1) in zip(shares, shares[1:], strict=False):
-        if d1 >= since and max(v1 / v0, v0 / v1) >= BASIS_BREAK:
-            out.append(("shares", f"shares outstanding {v0:,.0f} on {d0.isoformat()}, "
-                                  f"{v1:,.0f} on {d1.isoformat()} "
+    shares = sorted({(p.period_end, p.value, p.concept) for p in known
+                     if p.concept in _SHARES and p.value > 0})
+    named: set[date] = set()
+    for (d0, v0, c0), (d1, v1, c1) in zip(shares, shares[1:], strict=False):
+        if d1 < since:
+            continue
+        # A REFUSED COUNT IS NAMED, NEVER MEASURED ACROSS (review of #875): dropped, its neighbours
+        # were compared and a basis move it carried was invisible to the P/E guard — and a 1.5x
+        # move IS past the cross-check, so a late-tagged one is refused by construction
+        for d, v, c in ((d0, v0, c0), (d1, v1, c1)):
+            if c == SHARES_REFUSED and d not in named:
+                named.add(d)
+                out.append(("shares", f"shares outstanding {v:,.0f} {_on(d, c)} contradicted by "
+                                      f"its own filing — UNKNOWN, so no per-share basis is read "
+                                      f"across it"))
+        if SHARES_REFUSED in (c0, c1):
+            continue
+        if max(v1 / v0, v0 / v1) >= BASIS_BREAK:
+            out.append(("shares", f"shares outstanding {v0:,.0f} {_on(d0, c0)}, "
+                                  f"{v1:,.0f} {_on(d1, c1)} "
                                   f"(×{max(v1 / v0, v0 / v1):.1f})"))
     return out
+
+
+def _on(d: date, concept: str) -> str:
+    """A share count's date as the desk prints it — a filing-day bound says so (nit 7)."""
+    return f"filed {d.isoformat()}" if concept == SHARES_FILED else f"on {d.isoformat()}"
 
 
 def _held(closes: Closes, as_of: date) -> Closes:
@@ -393,7 +422,7 @@ def pe_against_history(closes: Closes, eps: list[ConceptPoint], as_of: date,
     # close less the reach-back — a 2022 split refused AMZN's and GOOGL's two-year range
     # (2026-10-16) though no observation in it divides across the split.
     consumed = held[0][0] - timedelta(days=MAX_EPS_AGE_DAYS)
-    annual = [p for p in eps if p.concept != "shares"]
+    annual = [p for p in eps if p.concept == "eps_diluted"]
     pe, pct = pe_current_and_percentile(_bars(ticker, held),
                                         [p for p in annual if p.period_end >= consumed],
                                         reference_date=as_of)

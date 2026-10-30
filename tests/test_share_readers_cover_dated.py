@@ -95,10 +95,12 @@ def test_the_rank_series_ends_at_a_date_its_filing_could_state(name: str, newest
     assert series is not None and max(d for d, _ in series) == newest
 
 
-def test_a_refused_count_in_the_window_leaves_the_rank_no_series() -> None:
-    """Demote-only: a change across an UNKNOWN count is not evaluated, so no dilution flag can
-    rest on a count its own filing contradicts."""
-    assert _shares_for(cast(EdgarClient, _Edgar(_vrrm_newest_scaled(1.2))), "x") == []
+def test_a_refused_endpoint_is_a_named_refusal_for_the_rank() -> None:
+    """No dilution flag can rest on a count its own filing contradicts at an end of the window —
+    and the rank is TOLD so (`ShareCountRefusedError`), never handed a clean empty series."""
+    from vinci.rank.structural import ShareCountRefusedError
+    with pytest.raises(ShareCountRefusedError, match="UNKNOWN"):
+        _shares_for(cast(EdgarClient, _Edgar(_vrrm_newest_scaled(1.2))), "x")
     assert _shares_for(cast(EdgarClient, _Edgar(_facts("VRRM"))), "x")  # the negative pin
 
 
@@ -109,7 +111,7 @@ def test_the_desk_reads_no_share_count_after_its_filing() -> None:
     day. The EPS points are untouched."""
     facts = _facts("THM")
     pts = desk_points(facts, None)
-    shares = [p for p in pts if p.concept == "shares"]
+    shares = [p for p in pts if p.concept.startswith("shares")]  # filed-day bounds included
     assert shares and all(p.period_end <= p.filed for p in shares)
     raw = [p for p in extract_points(facts, "shares") if p.value]
     assert any(p.period_end > p.filed for p in raw)  # the slip is in the fixture
@@ -131,3 +133,62 @@ def test_a_series_refused_entire_names_its_refusal() -> None:
     f = share_change_field(facts)
     assert f.coverage_status is CoverageStatus.UNKNOWN
     assert "UNKNOWN" in (f.note or "") and "fewer than 2" not in (f.note or "")
+
+
+# ─── review round 2 (coordinator) ─────────────────────────────────────────────────────────────
+
+def test_a_refused_count_between_the_endpoints_does_not_void_the_change() -> None:
+    """NovaGold's 2025-06-30 count (406,897,647, filed 2025-06-25) is refused — +21.6% against its
+    previous cover — yet it is genuine (406,926,988 and 406,994,531 follow it) and it is not an
+    endpoint. The change reads only its endpoints, so it stands: main's +31.1%."""
+    f = share_change_field(_facts("NG"))
+    assert f.coverage_status is CoverageStatus.PRESENT
+    assert f.value is not None and round(f.value, 3) == 0.311
+    series = _shares_for(cast(EdgarClient, _Edgar(_facts("NG"))), "x")
+    assert series  # the rank reads it too
+
+
+def test_a_refused_endpoint_leaves_the_rank_name_unscanned_with_a_reason() -> None:
+    """A refused ENDPOINT made the rank's series empty, and `scan_structural` then marked the name
+    covered — under the weekly replace semantics a prior dilution flag would be erased (#420's
+    class). The name is now NOT covered, with the reason."""
+    from tests.test_rank import _cand
+    from vinci.edgar.client import Filing
+    from vinci.rank.structural import scan_structural
+
+    class _E(_Edgar):
+        def recent_filings(self, cik: str, *, forms: tuple[str, ...] = ("8-K",),
+                           since: date | None = None) -> list[Filing]:
+            return []
+
+    scan = scan_structural([_cand(ticker="VRRM", cik="0001682745")],
+                           edgar=cast(EdgarClient, _E(_vrrm_newest_scaled(1.2))),
+                           http=cast(Any, None))
+    assert scan.covered == frozenset()
+    assert "SEC-X-VRRM" in scan.not_scanned and "UNKNOWN" in scan.not_scanned["SEC-X-VRRM"]
+
+
+def test_the_desk_names_a_refused_count_and_reads_no_basis_across_it() -> None:
+    """The desk dropped a refused count and compared its neighbours, so a basis move it carried was
+    invisible to the P/E guard. It is now named as a "shares" break — the kind the guard holds the
+    P/E back for — never measured across."""
+    from vinci.theme_intelligence.market import basis_breaks
+    pts = desk_points(_vrrm_newest_scaled(1.5), None)
+    breaks = basis_breaks(pts, date(2024, 1, 1), date(2026, 10, 30))
+    assert any(kind == "shares" and "UNKNOWN" in words for kind, words in breaks), breaks
+    clean = basis_breaks(desk_points(_facts("VRRM"), None), date(2024, 1, 1), date(2026, 10, 30))
+    assert not [w for k, w in clean if "UNKNOWN" in w]  # the negative pin
+
+
+def test_the_desk_prints_a_filing_day_bound_as_one() -> None:
+    """Nit 7, on the desk: a basis break whose count reads at its filing day prints "filed <date>",
+    never the day as the count's own. AAL's real count (661,969,951, tagged 2027-07-17, 10-Q filed
+    2026-07-23) beside a halved earlier count."""
+    from vinci.theme_intelligence.market import basis_breaks
+    pts = desk_points(_facts("AAL"), None)
+    late = next(p for p in pts if p.concept != "eps_diluted" and p.value == 661_969_951)
+    before = late.model_copy(update={"concept": "shares", "value": late.value / 2,
+                                     "period_end": date(2026, 4, 17), "filed": date(2026, 4, 24)})
+    words = " ".join(w for _, w in basis_breaks([before, late], date(2026, 1, 1),
+                                                 date(2026, 10, 30)))
+    assert "filed 2026-07-23" in words and "2027" not in words

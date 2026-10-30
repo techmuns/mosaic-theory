@@ -158,10 +158,10 @@ const EXTRACTION_VERSIONS = [
   ["2026-10-30.edgar-provenance",
     "every EDGAR fallback figure says where it was filed — its tag, period, form, " +
     "accession and day — and one a later filing restated names the figure it restates; a " +
-    "capex or D&A leg filed negative is refused, naming it, never sign-flipped (audit " +
-    "E1-D5, E1-D12); the screen's share change, the rank's dilution demote and the theme " +
-    "desk's basis check read a share count tagged after its own filing at its filing day, " +
-    "cross-checked (audit X1(a))"],
+    "capex or D&A leg filed negative, or a D&A under the accretion-net tag, is refused, " +
+    "naming it, never sign-flipped (audit E1-D5, E1-D12); the screen's share change, the " +
+    "rank's dilution demote and the theme desk's basis check read a share count tagged " +
+    "after its own filing at its filing day, cross-checked (audit X1(a))"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

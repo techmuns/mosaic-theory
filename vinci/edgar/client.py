@@ -34,6 +34,7 @@ from vinci.edgar.concepts import (
     filed_at,
     filer_fiscal_year,
     foreign_currency,
+    leg_refusal,
     negative_leg,
 )
 from vinci.edgar.net_debt import NO_DEBT_OR_CASH, Basis, net_debt
@@ -170,14 +171,16 @@ def _sign(x: float) -> int:
 
 
 def _present_f(value: float, as_of: date, filed: str) -> DataField[float]:
-    """A PRESENT EDGAR figure, ``filed`` saying where each leg was filed (audit E1-D5)."""
-    return DataField.present(value, as_of=as_of, source="EDGAR", tier=SourceTier.EDGAR,
-                             note=filed)
+    """A PRESENT EDGAR figure whose SOURCE says where each leg was filed (audit E1-D5).
+
+    In the source, NEVER the note (review of #875): `mechanical._sourced` carries a field's note
+    onto the page, and the web renders any note on a present fact as a "⚠" caveat — a clean figure
+    would have read as a warning on every page's Brief."""
+    return DataField.present(value, as_of=as_of, source=f"EDGAR {filed}", tier=SourceTier.EDGAR)
 
 
 def _present_i(value: int, as_of: date, filed: str) -> DataField[int]:
-    return DataField.present(value, as_of=as_of, source="EDGAR", tier=SourceTier.EDGAR,
-                             note=filed)
+    return DataField.present(value, as_of=as_of, source=f"EDGAR {filed}", tier=SourceTier.EDGAR)
 
 
 def _unknown_f(note: str) -> DataField[float]:
@@ -262,7 +265,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
     ebitda_refused: str | None = None
     if ebitda_legs:
         eb_op, eb_da = ebitda_legs
-        if (ebitda_refused := negative_leg("D&A", eb_da)) is not None:
+        if (ebitda_refused := leg_refusal("D&A", eb_da)) is not None:
             ebitda = _unknown_f(ebitda_refused)
         else:
             ebitda_val = eb_op.value + eb_da.value
@@ -289,7 +292,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
         net_debt_val = nd.value(Basis.LEVERAGE)
         assert net_debt_val is not None
         net_debt_f = _present_f(net_debt_val, nd.filed,
-                                f"net debt at {nd.at}, cash {filed_at(nd.cash)}")
+                                f"net debt at {nd.at}, cash {filed_at(nd.cash, facts)}")
     # the ratios name the SAME reason, so a refused reading never reads as an absent one
     no_nd = ("no net-debt — debt/cash not in XBRL" if absent or refusal is None
              else f"no net-debt — {refusal}")
@@ -309,7 +312,7 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
         net_lev = _unknown_f("net-debt as-of date missing")
     else:
         net_lev = _present_f(net_debt_val / ebitda_val, net_debt_f.as_of,
-                             f"{net_debt_f.note} ÷ EBITDA {ebitda_filed}")
+                             f"{net_debt_f.source.removeprefix('EDGAR ')} ÷ EBITDA {ebitda_filed}")
 
     # net debt / OCF — the leverage read that SURVIVES untaggable D&A (the MVST case): operating
     # cash flow already contains the D&A add-back EBITDA needs, and OCF is reliably tagged. Same
@@ -324,7 +327,8 @@ def compute_fundamental_snapshot(cik10: str, facts: dict[str, Any], *,
         net_ocf = _unknown_f("net-debt as-of date missing")
     else:
         net_ocf = _present_f(net_debt_val / ocf.value, net_debt_f.as_of,
-                             f"{net_debt_f.note} ÷ {filed_at(ocf, facts)}")
+                             f"{net_debt_f.source.removeprefix('EDGAR ')} ÷ "
+                             f"{filed_at(ocf, facts)}")
 
     eps_df = (_present_f(eps.value, eps.filed, filed_at(eps, facts)) if eps
               else _unknown_f(_why("no diluted EPS", eps_stale)))
