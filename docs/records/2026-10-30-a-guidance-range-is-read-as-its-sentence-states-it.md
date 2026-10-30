@@ -1,0 +1,169 @@
+---
+id: 2026-10-30-a-guidance-range-is-read-as-its-sentence-states-it
+status: shipped
+date: 2026-10-30
+prs: [869]
+supersedes:
+superseded-by:
+---
+
+# A guidance range is read as its sentence states it — its scale, its line, its standing, its unit and its partner range; no committed value moves (audit E2-D1, D2, D7, D8, D13; Phase 2 batch B1)
+
+**WHAT.** Five changes to `vinci/edgar/release_parse._guidance`. `parse_release`'s signature is
+unchanged.
+- **SCALE (E2-D1).** `_GUIDE_RANGE` now captures `thousand`/`K` and each side's `$`
+  (`_RANGE_BODY`). `_admit_range` refuses two kinds of `$M` range, each with a
+  `GUIDANCE_REFUSAL_PREFIX` note:
+  - a range stated in thousands;
+  - a range that states no scale at all ("$500,000 to $550,000", "$80 to $100").
+
+  Both used to be stored as `$M`: a 1000x overstatement, or a guess. A scale stated once over a
+  table ("Fiscal 2026 Outlook (in millions) Revenue of $985 to $995", `_table_scale`) and a plural
+  scale word ("$500 to $550 millions") are read as stated scales, as main reads both.
+- **LINE (E2-D2).** A revenue or net-sales guide is checked with the actuals' lead-word allowlist
+  (`_sub_line`, from `_revenue_lead` and `_REVENUE_LEAD_OK`, plus "year-over-year", which
+  qualifies a growth rate rather than the line). A sub-line ("subscription revenue", "North
+  America revenue") is refused aloud instead of being stored as company revenue. Words that
+  state a period ("FY26", "annual", "calendar", "fourth-quarter", "second-half"), a heading
+  ("Full Year 2026 Outlook", "2026 Guidance"), a table's scale ("(in millions)"), a verb that
+  states or moves the guide ("raising") or a clause edge (a comma) are not qualifiers. The check
+  runs in all four guidance loops (level, growth rate and change), after the
+  one-range-per-scope gate, with one note per stated guide.
+- **STANDING (E2-D7).** A range is dropped only when it is stated as the OLD figure beside a
+  NEW one. `_stated_as_prior` finds a range whose clause states the prior outlook
+  ("Previously, the Company expected…") with nothing that states or keeps a current one. A
+  prior marker governs only with no other amount between it and the metric. "now", a
+  present-tense forward verb, "raising", "updating" and "reaffirming its prior guidance" all
+  keep the range current; a current word inside the marker ("Previously updated guidance") does
+  not. The clause ends at a ';'. `_superseded_refused` then drops such a range only when the
+  release states a NEW range for the same metric later on, so the one figure a release gives is
+  never lost. The drop is said to the reader: the note carries `GUIDANCE_REFUSAL_PREFIX`.
+- **UNIT (E2-D8).** A gross margin stated in dollars (a `$`, or a scale word, and no `%`) is
+  refused aloud. It is gross profit, not the rate the metric holds. Before, it was stored as
+  1.2–1.3 %.
+- **PARTNER (E2-D13).** `_CONTINUED` reads a second range that "and" joins to the first ("$250
+  million to $260 million in the third quarter and $1.00 billion to $1.10 billion for the full
+  year 2026"). `_paired_range` gives each range only the period stated right beside it
+  (`_own_period`, a bare "Q3" included). So, in reverse order, the full-year range cannot take
+  its partner's quarter. The second range's quote starts at the metric, so the 200-character cap
+  never ends it before its own figures.
+  A yearless quarter takes the year its partner states ("in the third quarter and … for fiscal
+  2026" is Q3 2026, main's label).
+  - **A second range is refused aloud** when either range has no period beside it, when another
+    measure follows its period, or when its scope is already read (one range per metric per
+    scope). Before, it was dropped with no note.
+  - **"respectively" refuses both ranges**: main filed the first, a quarter, as annual.
+  - **A partner of another unit class is not a second range:** "… and 8% to 10% for fiscal 2026"
+    is a growth rate, not a revenue level.
+  - **A first range with no period beside it reads the sentence as before**, but never past its
+    partner's "and": "For fiscal 2026, … $1.00 billion to $1.10 billion and $250 million to $260
+    million in the fourth quarter" is fiscal 2026, where main filed it as Q4.
+- **`EXTRACTION_VERSIONS` row `2026-10-30.E2-guidance`**, in both twins. The drift pins are
+  repinned.
+- **One existing pin changed.** `tests/test_guidance_unit_suffix.py::
+  test_a_following_word_is_not_eaten_as_a_unit` stored "$2.4 to $2.5 based on current rates" as
+  $2.4–2.5M. That is G3's shape, which D1 refuses. The pin now asserts the refusal. Its real
+  invariant (the "b" of "based" is never billions) still holds.
+
+**WHY.** These are root-cause classes RC3, RC4, RC7 and RC8 of audit E2. In each case the stated
+number was stored as something it is not:
+- a scale nobody stated (RC8);
+- a metric matched as a substring (RC4);
+- a first match winning over a later supersession (RC3);
+- a unit taken from the metric's name (RC8);
+- a vocabulary that read one range per sentence, so the second was lost (RC7).
+
+None of the five reaches a committed page today, and none is on the decision path. Each is
+closed behind its audit probe.
+
+**HOW VERIFIED.**
+- **Failing first.** `tests/test_guidance_ranges_as_stated.py` holds 54 tests (parametrized
+  cases counted). All 54 pass on this branch.
+  - **Main `9503c4fa`:** 23 fail, covering every defect probe and the cases main gets wrong. The
+    other 31 pass: the negative pins, and round 2's regression pins, which main gets right.
+  - **Round 1** (an in-session `/code-review high`, run because Codex's review failed on its usage
+    limit): its three tests fail on the PR head `246c6741`.
+  - **Round 2** (the coordinator's review of `09015d80`): 33 of the 54 fail on that head, among
+    them every round-2 test.
+  - **Negative pins.** Eight issuers' filed sentences are quoted verbatim, across seven tests:
+    Amazon and Verra Mobility, nCino, EPAM, Simply Good, Artivion, Vital Farms and BellRing. The
+    Verra Mobility outlook is quoted whole from 8-K 0001193125-26-239351 since round 2. The
+    "reaffirmed or now" pin is constructed, and the percent gross-margin pin pairs a constructed
+    level with Simply Good's filed change.
+- **The real run.** A read-only, offline replay from the primary checkout's SEC cache, run on
+  main's code and on this branch's code, compared field by field (guidance, actuals, one-offs,
+  qa_flags):
+  - **The 13 pages in the rebuild's scope:** 54 cited releases, 53 replayed. No EX-99.1
+    resolves from the cache for LLY's 2026-10-29 8-K. Main's actuals equal the committed actuals
+    on all 53.
+    **0 field differences.**
+  - **26 of the 27 committed pages:** 113 exhibits. **0 field differences.**
+- **Corpus before synthetic: each check on real text, ignoring the `seen` slot.** The population
+  is 127 EX-99 documents: the 113 above plus 14 more cached EX-99 found by filename. They hold
+  248 guidance-pattern matches.
+  - **D2 fires 10 times,** on every one of nCino's "Subscription revenues between …" bullets
+    (five releases, a quarter list and a year list each). Each sits after its "Total revenues"
+    bullet, so the slot already holds the total and nothing stored moves. Before, the same range
+    alone under its header was stored as nCino's revenue; a pin covers that case.
+  - **D13 matches 1 sentence,** BellRing's "net sales and Adjusted EBITDA* … between
+    $2.41-$2.49 billion and $425-$455 million, respectively". The existing two-metric refusal
+    already covers it, and it adds no second note.
+  - **D1, D7 and D8 match 0** of the 248.
+  - **D7's prior-outlook vocabulary does find real prior statements.** Over the 127 documents it
+    finds 20 markers with an amount after them in their clause. `_stated_as_prior`, evaluated at
+    that amount, gives:
+    - 14 prior, for example Artivion's "This compares to the previous range of $486 to $504
+      million", Target's "prior guidance of $7.50 to $8.50" and Verra Mobility's "up from a prior
+      range of $925 million to $935 million";
+    - 6 not prior: four Artivion sentences that open with the current statement ("The Company
+      expects … compared to the previous range of $435 to $443 million"), and Netflix's two
+      current statements ("we are narrowing our revenue forecast…", "…we currently expect").
+
+    None of the 20 prior figures follows a metric word, so none is a guide candidate, and D7
+    changes nothing live.
+- **Gates.** ruff, `mypy --strict vinci`, `node --check frontend/views/shared/dossier.js`, and the
+  full offline suite (`pytest -m "not network"`). The PR body carries the counts.
+
+**BOUNDARY.**
+- **Commit.** Measured 2026-10-30, main `9503c4fa` against this branch.
+- **Pages.** 27 committed pages under `data/dossiers/`. One is held out under a standing operator
+  constraint and was not opened or replayed, and its issuer's filings were excluded from the
+  cache scan by CIK.
+  - The 13 pages in the rebuild's scope: AMZN, CNXC, GOOGL, LLY, NFLX, NKE, ORKA, PARR, ROST,
+    SMPL, TJX, UBER and V.
+  - The other 13: AORT, BRBR, EPAM, FUBO, IT, MVST, NCNO, TECX, TGT, VITL, VRRM, WERN and WLK.
+- **Releases.** One EX-99.1 exhibit per cited 8-K.
+  - The 13 pages: 54 cited, 53 cached.
+  - All 26: 114 cited, 113 cached.
+- **Guides.** On the 13 pages, the committed pages carry 56 numeric guides. Main's code parses 65
+  from the 53 exhibits; the difference is STATE row 30's relabels, which wait for re-assembly.
+  The 13 pages carry 49 actual rows.
+- **Probe population.** 127 documents and 248 guidance-pattern matches: `_GUIDE_RANGE`,
+  `_GUIDE_PCT` and the three change patterns, each match counted once per pattern.
+- **Cache.** The primary checkout's `data/cache/sec`, read-only, with no network.
+
+**WHAT IT COSTS / WHAT IS ACCEPTED.**
+- **Thousands are refused, not scaled.** This is the brief's specification. Scaling would be
+  defensible, because the scale is stated, but a thousands guide beside a page of $M guides is
+  implausible enough to want a reader. Falsifier: a filer that really guides in thousands.
+- **A $M range whose scale is stated nowhere is refused aloud.** A table heading's scale within
+  300 characters (`_TABLE_SCALE_REACH`) counts as stated. No unscaled range exists in the 248
+  matches. Falsifier: a refusal note on a real outlook table whose scale sits further up.
+- **A sub-line shadowed by its own total is still skipped without a note** (nCino ×10), as it was
+  before. The check runs after the one-range-per-scope gate so that pages' flags do not churn. The
+  total is what the page carries.
+- **D7 is a vocabulary, and it errs toward current.**
+  - A prior range with no marker in its own clause (for example a "Prior | Updated" table column)
+    is not seen as prior. In the corpus such tables (Eli Lilly's) carry no introducer, so
+    `_GUIDE_RANGE` never matches them.
+  - A sentence that names a prior outlook and also raises it ("The Company raised its outlook from
+    its prior guidance of revenue of $1.00–1.05bn") keeps first-wins, which is main's behaviour.
+    A current guide is never dropped to catch it.
+  - Falsifier: a stored guide whose verbatim is a prior range.
+- **A pair whose first range states no period beside it never reads the second.** "For fiscal
+  2026, revenue of $1.00–1.10bn and $250–260M in the fourth quarter" keeps the first (fiscal 2026)
+  and refuses the second aloud. A yearless period stays yearless when neither side states a year
+  ("in the third quarter and … for the full year" under a "Third Quarter 2026 Guidance" header
+  reads Q3 and FY), as main labels the first.
+- **Not addressed.** The audit's probe G12, "adjusted EBITDA of 20% to 22% of revenue", is still
+  stored as an adjusted-EBITDA percentage level. It is not in batch B1's list.
