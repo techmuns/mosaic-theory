@@ -141,6 +141,7 @@ def test_a_conformed_replacement_figure_is_stated(value: str, quote: str) -> Non
     ("Commitments of $1.5 billion", "the Aggregate Commitments equal $1,500,000,000."),
     ("Commitments of $1,500,000,000", "the Aggregate Commitments equal $1.5 billion."),
     ("Maturity: 6/30/2029", "the Maturity Date shall be June 30, 2029"),
+    ("tested through fiscal year 2030", "tested quarterly through FY2030"),  # review round 1
 ])
 def test_a_figure_stated_at_another_scale_or_a_year_in_another_date_form_is_stated(
         value: str, quote: str) -> None:
@@ -207,6 +208,9 @@ def test_a_later_value_refusal_withholds_the_older_value_and_its_lead_says_why()
                            "2025-01-05) states this term, but its value could not be verified "
                            "against the filing"), text
     assert "quote could not be matched" not in text
+    # the governing value's own note must not say the quote was refused either (review round 1)
+    assert "quote was refused" not in (g.value.note or ""), g.value.note
+    assert "2023-01-05" in (g.value.note or "") and _NEW in (g.value.note or "")
 
 
 def _nke_host_with_a_value_refusal() -> dict[str, typing.Any]:

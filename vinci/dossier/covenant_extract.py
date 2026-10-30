@@ -293,7 +293,8 @@ def unstated_in_quote(value: str, quote: str) -> list[str]:
     A dollar figure is stated when the quote states it at any scale (`release_parse.figure_stated`:
     "$1.5 billion" is "$1,500,000,000"), or prints it as a conformed replacement. A percent or bps
     figure is NOT checked here: the rate components have their own check (`rate_components`)."""
-    missing = [y for y in _YEAR.findall(value) if not re.search(rf"\b{y}\b", quote)]
+    # in the quote a year may be fused to a prefix ("FY2030"), so only digits may not touch it
+    missing = [y for y in _YEAR.findall(value) if not re.search(rf"(?<!\d){y}(?!\d)", quote)]
     replacements = {int(m.replace(",", "")) for m in _CONFORMED_REPLACEMENT.findall(quote)}
     for f in quoted_figures(value):
         if f.unit not in ("$", "$M"):
@@ -802,7 +803,7 @@ def governing_terms(
                 last_verified = gov_row.value
                 value = Sourced.unknown(note=(
                     f"(E5) not verified since {gov_dt}: {len(refused)} later exhibit(s) stated "
-                    f"this term and each quote was refused "
+                    f"this term and each was refused "
                     f"({'; '.join(_acc_of(r.note) for r in refused)}); last verified in "
                     f"{gov_row.value.source_ref}"))
             base_ref = present[0][1].value.source_ref

@@ -48,12 +48,14 @@ another clause, but nothing on the page shows which one.
 **HOW VERIFIED.**
 - *Fails first on main* (8e6b12b1), in `tests/test_covenant_value_in_quote.py`. Every case is a
   model answer stubbed through the real `_extract_from_exhibit`, with frozen value/quote pairs
-  copied from committed pages. Seven cases fail on main:
+  copied from committed pages. Seven cases fail on main, six on behaviour and one only on the
+  constant it reads:
   - the audit's 2031/2030 stub;
   - AMZN's sublimit;
   - V's added "2013";
   - a bare 1,000,000,000 that is not money;
-  - a quote refusal keeping its own reason;
+  - a quote refusal keeping its own reason (it errors on main for want of
+    `VALUE_REFUSED_NOTE_PREFIX`; the behaviour it pins already held there);
   - the collapse lead;
   - the end-to-end NKE page, in Markdown and on the production web renderer.
 - *Seven positive pins pass on both main and this branch:*
@@ -144,3 +146,10 @@ against 2; PARR's third term is a capital-expenditure cap of exactly $1,000,000.
   scope call for the coordinator.
 - **Not rebuilt here.** No committed page is touched; the change lands at re-assembly
   (STATE row 41).
+
+**REVIEW ROUND 1 (in-session `/code-review high`; Codex's review failed, usage limit).**
+- The governing value's note said a later exhibit's "quote was refused" even when the value was
+  refused. It now reads "each was refused", in both twins.
+- A year the quote fuses to a prefix ("FY2030") now counts as stated.
+- This record's fail-first count is corrected.
+- The corpus count is unchanged at 29 of 176.

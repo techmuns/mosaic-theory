@@ -2973,7 +2973,7 @@ function governingTerms(rows, pointers) {
         lastVerified = govRow.value;
         value = { value: null, source_ref: null, status: "unknown",
           note: `(E5) not verified since ${govDt}: ${refusedNewer.length} later exhibit(s) stated ` +
-            `this term and each quote was refused ` +
+            `this term and each was refused ` +
             `(${refusedNewer.map((r) => _accOf(r.note)).join("; ")}); last verified in ` +
             `${govRow.value.source_ref}` };
       }
