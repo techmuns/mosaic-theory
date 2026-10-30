@@ -21,7 +21,12 @@ from typing import TYPE_CHECKING, Any, ParamSpec
 
 from vinci.config import get_config
 from vinci.dossier.anchor import DQ_LEASE_BASIS, PLACEHOLDER_HINTS, SHARES_REFUSED, Anchor
-from vinci.dossier.covenant_extract import GoverningTerm, _derive_conversion, governing_terms
+from vinci.dossier.covenant_extract import (
+    VALUE_REFUSED_NOTE_PREFIX,
+    GoverningTerm,
+    _derive_conversion,
+    governing_terms,
+)
 from vinci.dossier.extraction_version import (
     refresh_line,
     refreshed_to,
@@ -1521,12 +1526,20 @@ def _refused_newer_text(g: GoverningTerm, dates: dict[str, str]) -> str:
     since = (dates.get(lv.group(1)) or lv.group(1)) if lv else "the last verified exhibit"
     later = [dates.get(m.group(1)) or m.group(1)
              for r in g.refused_newer if (m := _ACC_IN_REF.search(r.note or ""))]
-    if len(later) == 1:
+    # A VALUE REFUSAL (audit E2-D19) found its quote — it is the value that said more — so the
+    # lead must not say the quote failed to match. Each refusal's own reason is in the table row.
+    by_value = any((r.note or "").startswith(VALUE_REFUSED_NOTE_PREFIX) for r in g.refused_newer)
+    if len(later) == 1 and by_value:
+        tail = (f"a later exhibit (filed {later[0]}) states this term, but its value could not be "
+                f"verified against the filing, so it is withheld")
+    elif len(later) == 1:
         tail = (f"a later exhibit (filed {later[0]}) states this term, but its quote could not be "
                 f"matched to the filing, so its value is withheld")
     else:
         tail = (f"{len(later)} later exhibits (filed {', '.join(later)}) state this term, but "
-                f"their quotes could not be matched to the filings, so their values are withheld")
+                + ("their values could not be verified against the filings, so they are withheld"
+                   if by_value else "their quotes could not be matched to the filings, so their "
+                   "values are withheld"))
     return f"UNKNOWN — not verified since {since}: {tail}"
 
 
