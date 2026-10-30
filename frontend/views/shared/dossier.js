@@ -162,6 +162,19 @@ const EXTRACTION_VERSIONS = [
     "replacement figure counts as stated, a percent or 'zero' is left to the rate-component " +
     "check, and a later exhibit withheld this way leads its term as a value that could not " +
     "be verified"],
+  ["2026-10-30.latest-cell",
+    "every CIQ Financials reader of a row's latest figure reads the column whose header " +
+    "states the latest date, never the rightmost valued one: a marker there is UNKNOWN with " +
+    "its reason, never an older period (LLY's free cash flow, OCF and vendor FCF; ORKA's " +
+    "interest coverage, both legs at that column; the EV bridge's balance-sheet column); a " +
+    "header naming an undated column places none; the EBITDA reconciliation is refused, its " +
+    "reason on the page, at a marker in its four latest quarters; the own-history multiple " +
+    "band is unavailable at an NM latest close; the anchor bridge fills from a narrower row " +
+    "(cash and equivalents, a D&A component, an annual diluted count) only where the row is " +
+    "absent, and its revenue states its period (audit A-D5, A-D7, " +
+    "A-D12, D-D2, D-D3); a Balance Sheet or Cash Flow whose latest column is a 'Press " +
+    "Release' column is refused at assembly and by the anchor's CIQ bridge, as the Income " +
+    "Statement is (operator ruling 2026-10-30)"],
   ["2026-10-30.E2-spans-frames",
     "a release figure under a six- or nine-month heading or bullet lead-in that states a span " +
     "(ended, a period, or a section noun such as Highlights or Results; singular or plural) " +
@@ -2093,7 +2106,8 @@ function ebitdaBasisNote(m) {
 // EV/EBITDA on the page divides it. The block's own sentence, verbatim. Twin: render._brief_financials.
 function ebitdaReconNote(m) {
   const r = (m.financial_summary || {}).ebitda_reconciliation;
-  if (!r || r.any_different !== true || !r.line) return "";
+  // a REFUSED block says so on the page (PR #872 round 2) — twin: render._brief_financials
+  if (!r || !(r.any_different === true || r.refused) || !r.line) return "";
   return `<div class="fact-caveat">⚠ <b>CIQ's EBITDA against the filings</b> — ${escapeHtml(String(r.line))}</div>`;
 }
 

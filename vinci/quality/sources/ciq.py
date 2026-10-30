@@ -121,6 +121,8 @@ def _ebitda_vs_xbrl(page: dict[str, Any]) -> ItemResult:
         return ItemResult(not_run="no ebitda_reconciliation block on the page — no quarterly CIQ "
                                   "export, no EDGAR facts, or the export's four latest columns "
                                   "are not four consecutive quarters")
+    if er.get("refused"):   # (PR #872 round 2) a marker in one of the LTM's quarters — said
+        return ItemResult(not_run=f"ebitda_reconciliation refused at assembly — {er['refused']}")
     if not er.get("quarters"):
         return ItemResult(not_run="ebitda_reconciliation block carries no quarters")
     c: Counter[str] = Counter()

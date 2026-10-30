@@ -73,7 +73,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from vinci.dossier import lease_basis as lb
-from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, clean_num
 from vinci.dossier.schemas import EbitdaReconciliation, EbitdaReconQuarter, ReleaseExtract
 from vinci.edgar.concepts import CONCEPT_ALIASES, points_for_tag
 
@@ -221,12 +221,30 @@ def _filing_ebitda(facts: dict[str, Any], q: date,
                   "interest-expense line, for this quarter"), list(da[1])
 
 
-def _ciq_quarters(bundle: CiqBundle) -> dict[date, float]:
-    """CIQ's quarterly EBITDA by fiscal period end, $M — the series the LTM sums."""
+def _ciq_quarters(bundle: CiqBundle) -> dict[date, float | None]:
+    """CIQ's quarterly EBITDA by fiscal period end, $M — the series the LTM sums. A quarter whose
+    cell is a marker is KEPT, as None (audit D-D2, 2026-10-30): dropping it shifted the four-quarter
+    window back past it, and `reconcile` set four quarters that are not CIQ's LTM against the
+    filings under the LTM's name."""
     inc = bundle.sheet("financials", "Income Statement", freq="quarterly")
-    by_end = lb._dated(lb._row(inc, "For the Fiscal Period Ending", prefix=True),
-                       lb._row(inc, "EBITDA"))
-    return {d: v for d, v in by_end.items() if v is not None}
+    return lb._dated(lb._row(inc, "For the Fiscal Period Ending", prefix=True),
+                     lb._row(inc, "EBITDA"))
+
+
+def _refused(bundle: CiqBundle, ends: list[date]) -> EbitdaReconciliation:
+    """The block for an LTM one of whose four quarters reads a marker: no quarters, the reason."""
+    from vinci.dossier.ciq_sheets import _cell_words
+
+    inc = bundle.sheet("financials", "Income Statement", freq="quarterly")
+    raw = lb._cells(lb._row(inc, "For the Fiscal Period Ending", prefix=True),
+                    lb._row(inc, "EBITDA"))
+    gaps = "; ".join(f"the quarter ending {q.isoformat()} reads {_cell_words(raw.get(q))}"
+                     for q in ends if clean_num(raw.get(q)) is None)
+    why = (f"CIQ's quarterly EBITDA is unavailable in a quarter of its LTM ({gaps}), so the LTM "
+           "the multiples divide is not set against the filings, and no older quarter is set in "
+           "its place")
+    return EbitdaReconciliation(quarters=[], ciq_ltm=None, any_different=False, line=f"{why}.",
+                                source_ref=SOURCE_REF, refused=why)
 
 
 def _ciq_unusual(bundle: CiqBundle) -> dict[date, float]:
@@ -373,7 +391,8 @@ def reconcile(bundle: CiqBundle, facts: dict[str, Any] | None, releases: list[Re
               text_for: Callable[[ReleaseExtract], str | None]) -> EbitdaReconciliation | None:
     """The four quarters of CIQ's LTM against the filings. None when there is no quarterly CIQ
     export or no EDGAR facts — nothing to set side by side, which is a different fact from a
-    quarter that could not be rebuilt (stated per quarter)."""
+    quarter that could not be rebuilt (stated per quarter) — or when CIQ's own EBITDA reads a marker
+    in any of its four latest quarters (D-D2): those four are not reconciled by four older ones."""
     if facts is None or bundle.workbook("financials", freq="quarterly") is None:
         return None
     try:
@@ -388,14 +407,21 @@ def reconcile(bundle: CiqBundle, facts: dict[str, Any] | None, releases: list[Re
     # fiscal years set against four rebuilt quarters would read as four quarters that differ
     if not _LTM_SPAN_DAYS[0] <= (ends[-1] - ends[0]).days <= _LTM_SPAN_DAYS[1]:
         return None
+    # FOUR VALUED QUARTERS AT THE LATEST, OR A REFUSED BLOCK (D-D2): a marker in any of them is a
+    # quarter of CIQ's LTM that cannot be set against its filing — never replaced by an older one,
+    # and never a block that vanishes (PR #872 round 2): the refusal is written, with its reason
+    if any(ciq[q] is None for q in ends):
+        return _refused(bundle, ends)
     rows: list[EbitdaReconQuarter] = []
     for q in ends:
+        cq = ciq[q]
+        assert cq is not None   # refused above
         filing, how, tags = _filing_ebitda(facts, q)
         if filing is None:
-            rows.append(EbitdaReconQuarter(period_end=q.isoformat(), ciq_ebitda=round(ciq[q], 3),
+            rows.append(EbitdaReconQuarter(period_end=q.isoformat(), ciq_ebitda=round(cq, 3),
                                            tags=tags, note=how))
             continue
-        gap = ciq[q] - filing
+        gap = cq - filing
         different = abs(gap) > DIFFERENT_SHARE * abs(filing) and abs(gap) >= 1.0
         quote = source = None
         if different:
@@ -410,7 +436,7 @@ def reconcile(bundle: CiqBundle, facts: dict[str, Any] | None, releases: list[Re
                 quote, source = fact
         u = unusual.get(q)
         rows.append(EbitdaReconQuarter(
-            period_end=q.isoformat(), ciq_ebitda=round(ciq[q], 3), filing_ebitda=round(filing, 3),
+            period_end=q.isoformat(), ciq_ebitda=round(cq, 3), filing_ebitda=round(filing, 3),
             construction=how, tags=tags, gap=round(gap, 3), different=different,
             matching_amount=quote, matching_source=source,
             ciq_unusual=round(u, 3) if u is not None else None))
@@ -537,6 +563,10 @@ def backfill_transform(ticker: str, *, facts: dict[str, Any] | None, bundle: Ciq
         releases = [ReleaseExtract.model_validate(r) for r in
                     ((out.get("primary_source") or {}).get("releases") or [])]
         rec = reconcile(bundle, facts, releases, text_for)
+        if rec is not None and rec.refused:   # said, never "wrote no block" (PR #872 round 2)
+            refused.append(f"{ticker}: ebitda_reconciliation — the rebuild refuses it: "
+                           f"{rec.refused}")
+            return out
         if rec is None:
             ends = sorted(date.fromisoformat(q["period_end"]) for q in held.get("quarters") or [])
             if len(ends) == 4 and not (_LTM_SPAN_DAYS[0] <= (ends[-1] - ends[0]).days

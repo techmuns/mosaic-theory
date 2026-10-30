@@ -1,6 +1,6 @@
 """"The last column is the latest" is a claim about the export, so it gets checked.
 
-TWO AUDIT P2s, one root. Nine decision-path extractors take `_latest_col`'s value as the LATEST and
+TWO AUDIT P2s, one root. Nine decision-path extractors took `_latest_col`'s value as the LATEST and
 stamp it with the period label returned beside it. Nothing asserted that the export runs
 chronologically left to right — it was inherited from how CIQ happens to write the file, and if it
 ever ran the other way the VALUE and its LABEL would be wrong together.
@@ -26,7 +26,7 @@ import pytest
 
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets as cs
-from vinci.dossier.ciq import CiqBundle, excel_date
+from vinci.dossier.ciq import CiqBundle, clean_num, excel_date
 from vinci.dossier.manual_store import LocalFolderStore
 
 
@@ -44,45 +44,45 @@ def _bundles() -> list[tuple[str, CiqBundle]]:
 
 
 # ─── the guard ──────────────────────────────────────────────────────────────────────────────────
-def test_a_descending_export_is_refused_rather_than_mislabelled() -> None:
+def test_a_descending_export_serves_its_latest_date_never_its_oldest() -> None:
     """THE POSITIVE HALF, on rows shaped like the sheets this reads. A right-to-left export makes
-    the rightmost column the OLDEST; returning it would hand a caller a stale value stamped with a
-    stale period and call it the latest. Refusing is what `_capital_summary` already does, and the
-    house rule it follows: refuse rather than mislabel."""
+    the rightmost column the OLDEST. `_latest_col` refused it when its serial header proved the
+    order (and served the oldest when a labelled header could not); `latest_cell` (audit A-D5,
+    2026-10-30) reads the column whose header states the latest DATE, so either order serves the
+    same value under the same period."""
     ascending = [
         ["Fiscal Period", 46112.0, 46203.0],   # 2026-03-31 → 2026-06-30
         ["Book Value/Share", 9.0, 11.0],
     ]
-    got = cs._latest_col(ascending, 1, 0)
-    assert got is not None, "an ascending export must still resolve"
-    col, value, _ = got
-    assert (col, value) == (2, 11.0), "the rightmost column is the latest when order is ascending"
+    got = cs.latest_cell(ascending, 1, 0)
+    assert (got.col, got.value) == (2, 11.0), "the latest-dated column is the rightmost here"
 
     descending = [
         ["Fiscal Period", 46203.0, 46112.0],   # 2026-06-30 → 2026-03-31  (backwards)
         ["Book Value/Share", 11.0, 9.0],
     ]
-    assert cs._latest_col(descending, 1, 0) is None, (
-        "a descending export returned a value: the last column is the OLDEST there, so both the "
-        "figure and the period stamped beside it would be wrong")
+    back = cs.latest_cell(descending, 1, 0)
+    assert (back.col, back.value, back.label) == (1, 11.0, got.label), (
+        "a descending export served another column than the latest-dated one")
 
 
-def test_an_unreadable_header_degrades_rather_than_refusing() -> None:
-    """THE NEGATIVE HALF — a PROVEN violation is required, never an unparseable header. Only
-    columns whose dates decode are compared (as `_capital_summary` does), so a sheet labelled
-    "LTM" / "FY2025" / "Press Release …" still resolves. Refusing on those would blank out real
-    values across the fleet to guard against an ordering nobody has demonstrated."""
+def test_an_undated_column_is_never_placed_as_the_latest() -> None:
+    """THE NEGATIVE HALF. A column whose header states no date cannot be PLACED in time, so no
+    column is called the latest (PR #872 round 2): skipping it would serve the one before it — the
+    step-back, through the header. A sheet whose header dates no column at all answers nothing
+    either ("unplaced"), never its rightmost cell. 0 such header cells in 104 exports on file."""
     rows = [
         ["Fiscal Period", "LTM", "Press Release Jun-30-2026"],
         ["Book Value/Share", 9.0, 11.0],
     ]
-    got = cs._latest_col(rows, 1, 0)
-    assert got is not None and got[1] == 11.0, (
-        "an undated header triggered a refusal — 'order unknown' is not 'order violated'")
+    got = cs.latest_cell(rows, 1, 0)
+    assert (got.state, got.value) == ("unplaced", None)
+    assert got.reason is not None and "'LTM'" in got.reason
 
-    # ONE decodable date cannot establish an ordering either.
     single = [["Fiscal Period", 46203.0, "n/a"], ["Book Value/Share", 11.0, 12.0]]
-    assert cs._latest_col(single, 1, 0) is not None
+    assert cs.latest_cell(single, 1, 0).state == "unplaced"
+    undated = [["Fiscal Period", "LTM", "FY2025"], ["Book Value/Share", 9.0, 11.0]]
+    assert cs.latest_cell(undated, 1, 0).state == "unplaced"
 
 
 def test_the_ascending_convention_holds_on_every_committed_bundle() -> None:
@@ -110,9 +110,8 @@ def test_the_ascending_convention_holds_on_every_committed_bundle() -> None:
                     violations.append(f"{tk}/{sheet}/{freq}")
     assert checked, "no sheet was read — the corpus sweep found nothing to check"
     assert not violations, (
-        f"the ascending convention no longer holds on {violations} — `_latest_col` now REFUSES "
-        f"there, so those fields go UNKNOWN. That is the guard working, but decide deliberately "
-        f"whether refusal is right for that name before re-assembling")
+        f"the ascending convention no longer holds on {violations}. `latest_cell` reads by date "
+        f"and is immune to it, but a reader that still assumes position would not be — find it")
 
 
 # ─── the stamp ──────────────────────────────────────────────────────────────────────────────────
@@ -183,16 +182,19 @@ def test_key_ratios_never_mixes_two_periods_in_one_line() -> None:
             ri = next((i for i, r in enumerate(rs) if r and str(r[0]).strip() == lbl), None)
             if ri is None:
                 continue
-            got = cs._latest_col(rs, ri, hdr)
-            if got is not None:
-                landed.append((lbl, got[0]))
+            # each row's own rightmost VALUED column — what a per-row scan would have read
+            own = [j for j in range(1, len(rs[ri])) if clean_num(rs[ri][j]) is not None]
+            if own:
+                landed.append((lbl, own[-1], ri))
         if len(landed) < 2:
             continue
+        pinned = cs.latest_cell(rs, landed[0][2], hdr).col   # the sheet's latest column
+        if pinned is None or not any(c == pinned for _l, c, _r in landed):
+            continue   # no ratio at the latest column: the panel is UNKNOWN, nothing printed
         checked += 1
-        pinned = max(c for _l, c in landed)
         printed = cs.key_ratios(b).value or ""
         display = {lbl: name for lbl, name, _pct in cs._KEY_RATIO_ROWS}
-        for lbl, own in landed:
+        for lbl, own, _ri in landed:
             if own == pinned:
                 continue
             splits += 1
@@ -234,8 +236,8 @@ def test_no_extractor_reads_the_rightmost_column_outside_the_guard() -> None:
                         offenders.append(f"{py.name}:{fn.name}")
     assert not offenders, (
         f"these scan a sheet row right-to-left outside the checked selector: {offenders}. "
-        f"Route the read through `_latest_col`, which verifies the export's column ORDER before "
-        f"'rightmost' is allowed to mean 'latest'")
+        f"Route the read through `latest_cell`, which reads the column whose header states the "
+        f"latest DATE, never 'rightmost'")
 
 
 def test_a_press_release_basis_is_visible_in_the_stamp() -> None:
@@ -256,10 +258,10 @@ def test_a_press_release_basis_is_visible_in_the_stamp() -> None:
                    if r and str(r[0]).strip() == "Book Value/Share"), None)
         if hdr is None or ri is None:
             continue
-        got = cs._latest_col(bs, ri, hdr)
-        if got is None:
+        got = cs.latest_cell(bs, ri, hdr)
+        if got.value is None or got.col is None:
             continue
-        col, _, _ = got
+        col = got.col
         if excel_date(bs[hdr][col]) is not None:
             continue                      # a normal dated period column
         checked += 1
