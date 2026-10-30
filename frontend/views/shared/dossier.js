@@ -134,6 +134,11 @@ const EXTRACTION_VERSIONS = [
     "restated, press release) being a parsed field; each additive annual-summary row's LTM is " +
     "checked against the four quarters ending on its date, a disagreement or a '-' quarter " +
     "is a QA flag, and a material row its quarters contradict refuses the build"],
+  ["2026-10-30.G-D7",
+    "an LLM's quote is a span of its document only with every gap between two digits kept: " +
+    "a quote reading 'Level 11.25%' is refused where the exhibit prints 'Level 1 1.25%', " +
+    "where whitespace removal had joined the two figures into one (audit G-D7); every " +
+    "committed quote reads as before"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

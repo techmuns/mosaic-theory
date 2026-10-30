@@ -239,6 +239,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "checked against the four quarters ending on its date, a disagreement or a '-' quarter "
         "is a QA flag, and a material row its quarters contradict refuses the build",
     ),
+    (
+        "2026-10-30.G-D7",
+        "an LLM's quote is a span of its document only with every gap between two digits kept: "
+        "a quote reading 'Level 11.25%' is refused where the exhibit prints 'Level 1 1.25%', "
+        "where whitespace removal had joined the two figures into one (audit G-D7); every "
+        "committed quote reads as before",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

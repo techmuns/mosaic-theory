@@ -17,6 +17,10 @@ reduction removes something that is NOT the document's wording:
 - ALL whitespace and the invisible format characters are removed. `html_to_text` joins text nodes
   with a space, so a bolded defined term reads “ Maturity Date ” and a tag before a comma reads
   "WHEREAS ," — spaces the document never had.
+- EXCEPT between two digits, where whitespace reduces to ONE space, never to nothing (audit G-D7).
+  Removing it there joined two figures into a third: "Level 1 1.25%" read as "Level 11.25%", and a
+  quote stating 11.25% matched a document that prints 1.25%. An invisible character is no gap, and
+  still folds away inside a figure.
 Nothing else is forgiven. A reordered clause, an inserted section number, a dropped parenthetical, a
 corrected typo, page furniture the quote reads across: none is a span, and each is refused.
 
@@ -44,9 +48,11 @@ _QUOTE_MARKS = "\"'`\u00b4\u2018\u2019\u201a\u201b\u201c\u201d\u201e\u201f\u00ab
 #: Hyphen, non-breaking hyphen, figure dash, en dash, em dash, horizontal bar, minus.
 _DASHES = "\u2010\u2011\u2012\u2013\u2014\u2015\u2212"
 _FOLD = str.maketrans({**dict.fromkeys(_QUOTE_MARKS, "'"), **dict.fromkeys(_DASHES, "-")})
-#: Whitespace, plus the characters that render as nothing: soft hyphen, zero-width space/joiners,
-#: word joiner, BOM. `\s` matches none of the invisible ones.
-_DROP = re.compile("[\\s\u00ad\u200b\u200c\u200d\u2060\ufeff]+")
+#: The characters that render as nothing: soft hyphen, zero-width space/joiners, word joiner, BOM.
+#: `\s` matches none of them. Dropped first, so one never decides whether a gap sits between digits.
+_INVISIBLE = re.compile("[\u00ad\u200b\u200c\u200d\u2060\ufeff]+")
+#: Whitespace: a run between two digits (group 1) is kept as one space, any other run is dropped.
+_DROP = re.compile(r"(?<=\d)(\s+)(?=\d)|\s+")
 #: An omission marker AFTER reduction: "…" is "..." by NFKC and ". . ." loses its spaces, so one
 #: pattern covers all three; a bracket around it ("[...]") is part of the marker.
 _ELLIPSIS = re.compile(r"\[?\.{3,}\]?")
@@ -69,8 +75,15 @@ class SpanMatch(enum.StrEnum):
 
 def comparison_key(text: str) -> str:
     """The text reduced to what a span check compares: NFKC, one quote mark, one dash, case-folded,
-    no whitespace. Applied identically to the quote and to its source."""
-    return _DROP.sub("", unicodedata.normalize("NFKC", text).translate(_FOLD).casefold())
+    no whitespace but one space between two digits. Applied identically to the quote and to its
+    source."""
+    return squeeze(unicodedata.normalize("NFKC", text).translate(_FOLD).casefold())
+
+
+def squeeze(text: str) -> str:
+    """The whitespace step of :func:`comparison_key`: invisible characters dropped, a whitespace
+    run between two digits kept as one space, every other run dropped."""
+    return _DROP.sub(lambda m: " " if m.group(1) else "", _INVISIBLE.sub("", text))
 
 
 class SourceText:
