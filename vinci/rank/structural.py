@@ -25,7 +25,8 @@ from dataclasses import dataclass
 from datetime import date, timedelta
 
 from vinci.edgar.client import EdgarClient
-from vinci.edgar.concepts import extract_points, share_count_change
+from vinci.edgar.concepts import share_count_change, share_window_start
+from vinci.edgar.cover_count import share_series
 from vinci.edgar.going_concern import find_going_concern_statement
 from vinci.graph.filings import html_to_text
 from vinci.netcache import CachedHttp, HttpError
@@ -204,14 +205,22 @@ def _shares_for(edgar: EdgarClient, cik: str) -> list[tuple[date, float]] | None
     """The shares-outstanding series, or **None if companyfacts could not be fetched**.
 
     Same `[]` vs `None` distinction as :func:`_filings_for` — `[]` is an issuer with no share points
-    in XBRL, `None` is a fetch that failed. The dilution-spiral leg reads this series, so silently
+    in XBRL (or none the dilution leg may read: a refused count in the window), `None` is a fetch
+    that failed. The dilution-spiral leg reads this series, so silently
     returning `[]` disabled that signal without anyone being able to tell.
     """
     try:
-        pts = extract_points(edgar.companyfacts(cik), "shares")
+        series = share_series(edgar.companyfacts(cik))
     except (HttpError, KeyError):
         return None
-    return [(p.period_end, p.value) for p in pts if p.value is not None]
+    # each count at the day it was counted (`vinci.edgar.cover_count`, Phase 2 C2): REPX's 2024
+    # count, tagged 2029, was the series' newest point. A count its own filing contradicts inside
+    # the window leaves NO series — demote-only, so the leg is not evaluated rather than measured
+    # around an UNKNOWN count
+    start = share_window_start(series.points)
+    if start is not None and any(d >= start for d, _ in series.refused):
+        return []
+    return series.points
 
 
 @dataclass(frozen=True)

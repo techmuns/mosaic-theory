@@ -19,9 +19,9 @@ import re
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
-from typing import Any
+from typing import Any, NamedTuple
 
-from vinci.edgar.concepts import ConceptPoint, points_for_tag
+from vinci.edgar.concepts import ConceptPoint, extract_points, points_for_tag
 
 _MONTHS = {m: i for i, m in enumerate(
     ("jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"), 1)}
@@ -243,3 +243,37 @@ def date_counts(series: list[ConceptPoint], facts: dict[str, Any], *,
         out.append(DatedCount(p.model_copy(update={"period_end": on or p.filed}), p.period_end,
                               bound=on is None, refused=refused, flags=tuple(flags)))
     return out
+
+
+def _unread(_: ConceptPoint) -> None:
+    """No cover is fetched: a reader that is not assembling one name may not send for one."""
+    return None
+
+
+class ShareSeries(NamedTuple):
+    """A filer's share counts, each at the day it was counted, for a reader that fetches nothing.
+
+    ``points`` leaves out every refused count; ``refused`` keeps their read dates and reasons, so a
+    change across one reads UNKNOWN (:func:`vinci.edgar.concepts.share_count_change`)."""
+
+    points: list[tuple[date, float]]
+    refused: list[tuple[date, str]]
+    bound: frozenset[date] = frozenset()  # read dates that are a filing day, not a count date
+
+    def when(self, d: date) -> str:
+        """A read date as a reader prints it — a filing-day bound says so."""
+        return f"filed {d}" if d in self.bound else str(d)
+
+
+def share_series(facts: dict[str, Any], *,
+                 read: Callable[[ConceptPoint], str | None] = _unread) -> ShareSeries:
+    """The ONE share series for the readers outside the dossier — the screen's share change, the
+    rank's dilution demote, the theme desk's basis check (Phase 2 C2). None of them is assembling
+    one name, so none may fetch a cover (operator ruling 2026-10-30): a count tagged after its own
+    filing is dated at its filing day, an upper bound, and still cross-checked against its filing's
+    other counts. Correctly-dated counts are read exactly as before."""
+    counts = date_counts([p for p in extract_points(facts, "shares") if p.value], facts, read=read)
+    return ShareSeries(
+        points=[(c.point.period_end, c.point.value) for c in counts if not c.refused],
+        refused=[(c.point.period_end, c.refused) for c in counts if c.refused],
+        bound=frozenset(c.point.period_end for c in counts if c.bound and not c.refused))

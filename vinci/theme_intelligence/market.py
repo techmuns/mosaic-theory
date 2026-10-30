@@ -34,7 +34,7 @@ import json
 from collections.abc import Callable, Sequence
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from vinci.dossier.schemas import ForwardConsensus
 from vinci.edgar.concepts import ConceptPoint
@@ -206,18 +206,30 @@ def edgar_eps(as_of: date | None = None) -> EpsSource:
     check reads them. ``as_of`` is the run's date: the EPS is read in the currency the filer
     reported in on it (`concepts.reporting_currency`)."""
     from vinci.edgar.client import EdgarClient
-    from vinci.edgar.concepts import REPORTING, extract_points
 
     edgar = EdgarClient.from_config()
 
     def get(cik: str) -> list[ConceptPoint]:
-        facts = edgar.companyfacts(cik)
-        # the filer's own currency as of the run's date: the P/E level is withheld unless it is
-        # USD, and the percentile ranks one series in one currency (pe_current_and_percentile)
-        return ([p for p in extract_points(facts, "eps_diluted", currency=REPORTING,
-                                           as_of=as_of) if p.is_annual]
-                + extract_points(facts, "shares"))
+        return desk_points(edgar.companyfacts(cik), as_of)
     return get
+
+
+def desk_points(facts: dict[str, Any], as_of: date | None) -> list[ConceptPoint]:
+    """The annual diluted EPS and the cover-page share counts :func:`edgar_eps` serves.
+
+    THE SHARE COUNTS ARE DATED AS COUNTED (Phase 2 C2, audit X1(a)): one tagged after its own
+    filing reads at its filing day, an upper bound, and one its own filing contradicts is left out
+    (`vinci.edgar.cover_count.share_series`; no cover is fetched outside an assembly). THM's 2023
+    count, tagged 2033, sorted last in `basis_breaks`' consecutive pairs."""
+    from vinci.edgar.concepts import REPORTING, extract_points
+    from vinci.edgar.cover_count import date_counts
+
+    # the filer's own currency as of the run's date: the P/E level is withheld unless it is
+    # USD, and the percentile ranks one series in one currency (pe_current_and_percentile)
+    eps = [p for p in extract_points(facts, "eps_diluted", currency=REPORTING, as_of=as_of)
+           if p.is_annual]
+    counts = date_counts(extract_points(facts, "shares"), facts, read=lambda _: None)
+    return eps + [c.point for c in counts if not c.refused]
 
 
 #: a per-share figure restated by this factor or more (either way), or a share count that moves by

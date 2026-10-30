@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import re
 from collections import Counter
+from collections.abc import Sequence
 from datetime import date, timedelta
 from typing import Any, NamedTuple
 
@@ -930,6 +931,52 @@ def fiscal_year_of(year_ends: dict[int, tuple[date, ...]], point: ConceptPoint) 
     return fy
 
 
+def _amount(value: float, unit: str) -> str:
+    """A figure as provenance prints it: a per-share one to the cent, any other whole."""
+    return f"{value:,.2f}" if "/" in unit else f"{value:,.0f}"
+
+
+def superseded(facts: dict[str, Any], p: ConceptPoint) -> ConceptPoint | None:
+    """The FIRST filing of ``p``'s own period, tag and unit, when it stated another value — the
+    figure a later filing restated (audit E1-D5). None when ``p`` was never stated differently.
+
+    The served point is the latest filed, which on a forward page is the value known at build; the
+    earlier one is what a reader of that first filing saw. WOR's FY2022 revenue is served as 1,309
+    (filed 2024-07-30, after the steel spin-off) and was first filed as 5,242 (2022-08-01)."""
+    earlier = [q for q in points_for_tag(facts, p.tag, currency=EVERY)
+               if q.unit == p.unit and q.period_start == p.period_start
+               and q.period_end == p.period_end and q.filed < p.filed and q.value != p.value]
+    return min(earlier, key=lambda q: q.filed) if earlier else None
+
+
+def filed_at(p: ConceptPoint, facts: dict[str, Any] | None = None) -> str:
+    """Where ``p`` was filed, as a reader can go and check it: its tag, its period, the form and
+    accession that carried it and the day — and, given ``facts``, the figure it restates (audit
+    E1-D5: the EDGAR fallback served its figures with no accession at all)."""
+    when = (f"at {p.period_end}" if p.period_start is None
+            else f"{p.period_start}..{p.period_end}")
+    out = (f"{p.tag} {when} ({p.form or 'form unstated'} "
+           f"{p.accession or 'accession unstated'}, filed {p.filed})")
+    if facts is not None and (old := superseded(facts, p)) is not None:
+        out += (f", restating {_amount(old.value, old.unit)} first filed {old.filed} "
+                f"({old.accession or 'accession unstated'})")
+    return out
+
+
+def negative_leg(what: str, p: ConceptPoint) -> str | None:
+    """Why a combined figure refuses ``p``, or None: a capex or D&A leg filed NEGATIVE (audit
+    E1-D12). A payment and an expense are filed positive, so a negative one is not the leg the
+    figure needs — taken as filed it raised FCF (WOR's capex negated: 170.2 → 282.0) or lowered
+    EBITDA (8 of 1,241 current EBITDA pairs in the cache, 2026-10-30, 7 of them under
+    `DepreciationAmortizationAndAccretionNet`, which nets accretion income). Refused, naming it —
+    never sign-flipped, which would be a guess at what the filer meant."""
+    if p.value >= 0:
+        return None
+    return (f"{what} filed negative: {p.tag} {_amount(p.value, p.unit)} for "
+            f"{p.period_start}..{p.period_end} ({p.form or 'form unstated'} "
+            f"{p.accession or 'accession unstated'}) — refused, never sign-flipped")
+
+
 def latest_instant(points: list[ConceptPoint]) -> ConceptPoint | None:
     """Latest balance-sheet value (most recent period_end, then most recent filing), or None.
 
@@ -966,8 +1013,16 @@ class ShareCountChange(NamedTuple):
     to_value: float
 
 
+def share_window_start(shares: Sequence[tuple[date, float]], *,
+                       window_days: int = SHARES_WINDOW_DAYS) -> date | None:
+    """Where the trailing share window opens: ``window_days`` before the LAST point, or None for an
+    empty series — the one definition :func:`share_count_change` and its callers measure from."""
+    return max(d for d, _ in shares) - timedelta(days=window_days) if shares else None
+
+
 def share_count_change(
-    shares: list[tuple[date, float]], *, window_days: int = SHARES_WINDOW_DAYS
+    shares: list[tuple[date, float]], *, window_days: int = SHARES_WINDOW_DAYS,
+    refused: Sequence[date] = (),
 ) -> ShareCountChange | None:
     """Fractional change in shares outstanding across the trailing window, or None if unreadable.
 
@@ -975,11 +1030,18 @@ def share_count_change(
     change" would read as a confirmed flat share count, which is the opposite of "we could not
     tell". The window is anchored on the LAST point rather than on today, so a name whose XBRL
     series ends early is measured over the span it actually has.
+
+    None, too, when a count in ``refused`` (one its own filing contradicts,
+    :mod:`vinci.edgar.cover_count`) falls inside the window: a change across an UNKNOWN count is
+    UNKNOWN, never measured around it (Phase 2 C2, audit X1(a)).
     """
     if len(shares) < 2:
         return None
     series = sorted(shares)
-    anchor = series[-1][0] - timedelta(days=window_days)
+    anchor = share_window_start(series, window_days=window_days)
+    assert anchor is not None
+    if any(d >= anchor for d in refused):
+        return None
     window = [s for s in series if s[0] >= anchor]
     # TWO DISTINCT DATES INSIDE THE WINDOW, or nothing (review, #440). When every other point is
     # older than the window, `window` holds only the latest tuple — and unpacking [0] and [-1] then

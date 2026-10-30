@@ -180,7 +180,8 @@ def test_the_screen_withholds_a_yuan_level_and_keeps_g3s_percentile() -> None:
     ("vinci/screens/assemble.py", "enrich_with_fundamentals"),
     ("vinci/dossier/mechanical.py", "_at_latest_close"),
     ("vinci/cli.py", "_pc_valuation"),
-    ("vinci/theme_intelligence/market.py", "edgar_eps"),
+    # `edgar_eps` serves `desk_points`, which holds the read since Phase 2 C2
+    ("vinci/theme_intelligence/market.py", "desk_points"),
 ])
 def test_every_reader_that_ranks_a_pe_reads_eps_in_the_filers_own_currency(
         path: str, function: str) -> None:
