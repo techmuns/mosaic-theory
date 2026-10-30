@@ -310,6 +310,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "rank's dilution demote and the theme desk's basis check read a share count tagged "
         "after its own filing at its filing day, cross-checked (audit X1(a))",
     ),
+    (
+        "2026-10-30.submissions-pages",
+        "a filings window that reaches past the submissions index's recent page (a heavy "
+        "filer's newest ~1,000 filings) reads every older page it overlaps, through the SEC "
+        "client, or raises naming the page it could not read — never a short list read as "
+        "complete (audit E1-D10)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

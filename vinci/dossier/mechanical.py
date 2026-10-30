@@ -2685,13 +2685,11 @@ def _ownership_events(
     empty shelf register. UNKNOWN is reserved for the states where the register could not be READ
     — no CIK, or the fetch failing — and the two must never render alike.
 
-    KNOWN LIMIT, STATED RATHER THAN GUARDED: `recent_filings` reads only the submissions index's
-    ``recent`` block, which EDGAR caps (~1000 filings) and paginates the overflow. Every name on
-    this fleet reaches back past the 3y window today, so the counts are complete — but NFLX's
-    index reaches only 2023-06 against a 2023-08 window start, roughly two months of headroom, so
-    a heavy filer WILL eventually under-count. No guard is shipped because none can be shown
-    firing on the live corpus; recorded in STATE with its unlock (read ``filings.files`` overflow
-    pages) rather than built speculatively."""
+    A HEAVY FILER'S WINDOW IS READ WHOLE (audit E1-D10): the submissions index's ``recent`` block
+    holds a filer's newest ~1000 filings, and `recent_filings` now reads the older pages a 3y window
+    overlaps, or raises naming the page it could not read — the fetch-failing UNKNOWN below, never
+    a short count read as complete. (Until then NFLX's index reached only ~2 months past the window
+    start, and a heavy filer would have under-counted.)"""
     since = reference_date - timedelta(days=_OWNERSHIP_SCAN_DAYS)
     if not cik:
         return OwnershipEvents(filings=[], window_days=_OWNERSHIP_SCAN_DAYS,
