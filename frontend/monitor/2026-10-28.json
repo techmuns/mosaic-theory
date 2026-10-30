@@ -222,8 +222,11 @@
       "verdict": "BUY",
       "last_evidence_date": "2026-09-01",
       "last_evidence_source": "underwrite_date",
-      "newer_filings": [],
-      "unread_print": false,
+      "newer_filings": [
+        "8-K 2026-10-28 acc 0001652044-26-000080",
+        "10-Q 2026-10-29 acc 0001652044-26-000084"
+      ],
+      "unread_print": true,
       "next_expected_print": "2026-10-29",
       "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
       "triggers": [],
@@ -1953,10 +1956,13 @@
       "value": {
         "last_evidence_date": "2026-09-01",
         "last_evidence_source": "underwrite_date",
-        "newer_filings": [],
+        "newer_filings": [
+          "8-K 2026-10-28 acc 0001652044-26-000080",
+          "10-Q 2026-10-29 acc 0001652044-26-000084"
+        ],
         "next_expected_print": "2026-10-29",
         "next_expected_basis": "ESTIMATE — same-quarter filing one year prior + 365d (filer's own cadence)",
-        "unread_print": false
+        "unread_print": true
       },
       "sources": [
         "last evidence via underwrite_date",
@@ -2532,13 +2538,13 @@
       "reason": "",
       "value": {
         "metric": "EV/EBITDA (TEV/LTM)",
-        "current": 25.848826,
+        "current": 28.473142,
         "low": 13.292352,
         "high": 61.889554,
-        "median": 26.1163045,
-        "percentile": 0.5,
-        "n_closes": 38,
-        "as_of": "2026-09-21",
+        "median": 25.682746,
+        "percentile": 0.6153846153846154,
+        "n_closes": 39,
+        "as_of": "2026-10-28",
         "series": [
           [
             "2017-03-31",
@@ -2678,7 +2684,7 @@
           ],
           [
             "2025-09-30",
-            28.860186
+            28.82113
           ],
           [
             "2025-12-31",
@@ -2693,8 +2699,12 @@
             30.397626
           ],
           [
-            "2026-09-21",
-            25.848826
+            "2026-09-30",
+            25.682746
+          ],
+          [
+            "2026-10-28",
+            28.473142
           ]
         ],
         "current_is_last_point": true,
@@ -2791,7 +2801,8 @@
       "reason": "",
       "value": {
         "refs": [
-          "10-Q 0000059478-26-000081",
+          "10-Q 0000059478-26-000108",
+          "8-K 0000059478-26-000104 EX-99.1",
           "8-K 0000059478-26-000077 EX-99.1",
           "8-K 0000059478-26-000043 EX-99.1",
           "8-K 0000059478-26-000008 EX-99.1",
@@ -3383,13 +3394,13 @@
       "reason": "",
       "value": {
         "metric": "EV/EBITDA (TEV/LTM)",
-        "current": 20.244861,
+        "current": 15.92852,
         "low": 12.672372,
         "high": 157.668517,
-        "median": 43.346486999999996,
-        "percentile": 0.05263157894736842,
-        "n_closes": 38,
-        "as_of": "2026-09-21",
+        "median": 42.000915,
+        "percentile": 0.02564102564102564,
+        "n_closes": 39,
+        "as_of": "2026-10-27",
         "series": [
           [
             "2017-03-31",
@@ -3544,8 +3555,12 @@
             20.32581
           ],
           [
-            "2026-09-21",
-            20.244861
+            "2026-09-30",
+            19.226795
+          ],
+          [
+            "2026-10-27",
+            15.92852
           ]
         ],
         "current_is_last_point": true,

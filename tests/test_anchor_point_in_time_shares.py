@@ -217,7 +217,10 @@ def test_lillys_real_page_refuses_its_count_and_keeps_its_equity() -> None:
     """THE COMPUTE, on LLY's committed mechanical layer and its frozen companyfacts (the artifact
     pins above cannot see a code change; this one can): the count is refused, no dilution test is
     struck, and the base divides the diluted weighted average — the SAME equity the page re-struck
-    with a corroborated count (its basic average, 892,400,000) divides."""
+    with a corroborated count (its basic average, 891,900,000) divides.
+
+    The averages are the Q3 2026 10-Q's (0000059478-26-000108, filed 2026-10-29), which the page and
+    the fixture moved onto in #867; they were the Q2 10-Q's 893,700,000 / 892,400,000 before."""
     from datetime import UTC, datetime
 
     mech = json.loads(Path("data/dossiers/LLY/dossier.json").read_text())["mechanical"]
@@ -228,11 +231,11 @@ def test_lillys_real_page_refuses_its_count_and_keeps_its_equity() -> None:
     assert a.shares_outstanding.source.startswith(an.SHARES_REFUSED)
     assert a.anchor_base_value_per_share is not None
     assert a.anchor_base_value_per_share_diluted is None
-    assert a.diluted_shares is not None and a.diluted_shares.value == 893_700_000
+    assert a.diluted_shares is not None and a.diluted_shares.value == 893_400_000
     fixed = json.loads(json.dumps(mech))
-    fixed["stock_info"]["shares_out"]["value"] = 892_400_000
+    fixed["stock_info"]["shares_out"]["value"] = 891_900_000
     b = an.compute_anchor(fixed, facts=facts, computed_at=now)
-    assert b.shares_outstanding is not None and b.shares_outstanding.value == 892_400_000
+    assert b.shares_outstanding is not None and b.shares_outstanding.value == 891_900_000
     assert b.anchor_base_value_per_share is not None
-    assert a.anchor_base_value_per_share * 893_700_000 == pytest.approx(
-        b.anchor_base_value_per_share * 892_400_000, rel=1e-6)
+    assert a.anchor_base_value_per_share * 893_400_000 == pytest.approx(
+        b.anchor_base_value_per_share * 891_900_000, rel=1e-6)
