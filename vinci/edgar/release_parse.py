@@ -1192,6 +1192,20 @@ _GUIDE_METRICS = (
 
 
 # --- (2) guidance ranges + QUALITATIVE-only outlook ----------------------------------------------
+#: The scale a dollar guide may state. THOUSANDS ARE READ so they can be REFUSED (audit E2-D1): the
+#: pattern captured no thousand word, so "$500 to $550 thousand" matched with no unit and was stored
+#: as $500–550M, a 1000x overstatement. `_admit_range` refuses a thousands range and a dollar range
+#: stating no scale at all ("$500,000 to $550,000", "$80 to $100") — $M is never assumed. The
+#: actuals' own token (`_SCALE`), so the two readers share one scale vocabulary.
+#: A range's two numbers, each side's own unit, and each side's `$` — CAPTURED, because a gross
+#: margin stated in dollars is gross profit, not the rate the metric holds (audit E2-D8).
+_RANGE_BODY = (
+    r"(?P<cur>\$)?\s*(?P<low>[\d,.]*\d)\s*(?P<pct>%)?\s*"
+    rf"(?:(?P<lowunit>{_SCALE})(?![A-Za-z])\s*)?"
+    r"(?:to|and|[-–—])\s*"
+    r"(?P<cur2>\$)?\s*(?P<high>[\d,.]*\d)\s*"
+    rf"(?:(?P<unitword>{_SCALE}|%)(?![A-Za-z]))?"
+)
 _GUIDE_RANGE = re.compile(
     # Metric names as filers write them (net sales / total revenues — BellRing, Simply Good, nCino
     # all guide on these and were invisible), an optional footnote marker, and BOTH range
@@ -1252,11 +1266,18 @@ _GUIDE_RANGE = re.compile(
     # its sentence — TJX's "…in the range of $5.15 to $5.20." and Target's "GAAP and Adjusted EPS
     # of $7.50 to $8.50." read their high side as '5.20.' — and `_money` refused it, so the guide
     # was dropped with no refusal note: the absent-and-silent shape `_guidance` exists to prevent.
-    r"\$?\s*(?P<low>[\d,.]*\d)\s*(?P<pct>%)?\s*"
-    r"(?:(?P<lowunit>million|billion|bn|mm|[MB])(?![A-Za-z])\s*)?"
-    r"(?:to|and|[-–—])\s*"
-    r"\$?\s*(?P<high>[\d,.]*\d)\s*"
-    r"(?:(?P<unitword>million|billion|bn|mm|[MB]|%)(?![A-Za-z]))?",
+    rf"{_RANGE_BODY}",
+    re.I,
+)
+#: A SECOND RANGE JOINED BY "and" (audit E2-D13): "revenue of $250 million to $260 million in the
+#: third quarter AND $1.00 billion to $1.10 billion for the full year 2026". The pattern above
+#: needs a metric word before its number, so the second range was dropped with no note. Matched AT
+#: the first range's end; the gap may hold that range's own period and nothing else — no stop, no
+#: amount, no bullet — and `_paired_range` decides whether each range states its own.
+_CONTINUED = re.compile(
+    r"(?P<gap>[^.;:$%•●○◦■▪·]{0,80}?),?\s+and\s+(?:between\s+)?"
+    r"(?:(?:approximately|about|around|roughly)\s+)?"
+    rf"{_RANGE_BODY}",
     re.I,
 )
 
@@ -1268,8 +1289,8 @@ def _unit_scale(word: str | None) -> float:
     w = (word or "").strip().lower()
     if w.startswith("billion") or w in {"bn", "b"}:
         return 1000.0
-    # (2026-10-22) "$500 thousand" was read as $500M by the actuals — a 1000x overstatement. The
-    # guidance pattern captures no thousand word, so this branch is the actuals' only.
+    # (2026-10-22) "$500 thousand" was read as $500M by the actuals — a 1000x overstatement. A
+    # guide stated in thousands is refused instead (`_admit_range`, audit E2-D1), never scaled.
     if w.startswith("thousand") or w == "k":
         return 0.001
     return 1.0
@@ -1701,6 +1722,125 @@ def _period_for(text: str, start: int, end: int, verbatim: str) -> str:
     return _opener_period(text, start, end) or "next-fy"
 
 
+# --- WHAT A RANGE'S OWN SENTENCE SAYS IT IS (audit E2-D2, D7, D13; 2026-10-30) --------------------
+#: The guide metrics that name a COMPANY TOTAL, and the words that may stand right before one — the
+#: actuals' allowlist (`_REVENUE_LEAD_OK`), plus "year-over-year", which qualifies a growth RATE,
+#: not the line: EPAM's "now expects the year-over-year revenue growth rate to be in the range of
+#: 3.2% to 4.2%" (all 10 growth-rate matches in the 123 cached EX-99 exhibits, 2026-10-30).
+_TOTAL_GUIDES = frozenset({"revenue", "net sales"})
+_GUIDE_LEAD_OK = _REVENUE_LEAD_OK | {"year-over-year"}
+
+
+def _sub_line(text: str, metric: str, at: int) -> str | None:
+    """The word that makes the revenue guide at ``at`` a SUB-LINE, or None (audit E2-D2). A guide
+    for "subscription revenue" or "North America revenue" read exactly like the company's own:
+    nCino lists "Subscription revenues between $130.75 million and $132.25 million" under every
+    outlook, and the metric pattern matched its "revenues" alone. "Net product revenue" is the
+    total where the release names no other line, as it is for the actuals (`_net_product_total`)."""
+    if metric not in _TOTAL_GUIDES:
+        return None
+    lead = _revenue_lead(text, at)
+    if lead in _GUIDE_LEAD_OK or _net_product_total(text, at):
+        return None
+    return lead
+
+
+#: A range the sentence states as the PRIOR outlook (audit E2-D7): "Previously, the Company expected
+#: revenue of $1.00 billion to $1.05 billion. The Company now expects revenue of $1.10 billion to
+#: $1.15 billion." First-wins kept the first — the superseded figure. "previously" counts only where
+#: it governs an expectation ("previously provided", "Previously, the Company expected"), never a
+#: "previously announced acquisition".
+_PRIOR_OUTLOOK = re.compile(
+    r"\b(?:previously|originally|initially|formerly)\b,?\s+(?:[\w-]+\s+){0,3}?"
+    r"(?:expected|anticipated|projected|forecast(?:ed)?|guided|provided|issued|stated|"
+    r"articulated|outlook|guidance|range)\b"
+    r"|\bhad\s+(?:previously\s+)?(?:expected|anticipated|projected|forecast(?:ed)?|guided)\b"
+    r"|\b(?:prior|previous|original|earlier)\s+(?:[\w-]+\s+){0,2}?"
+    r"(?:outlook|guidance|range|expectations?|forecast)\b",
+    re.I)
+#: The words that make a later clause the CURRENT statement — Simply Good's "is updating its
+#: previously provided outlook" names the old outlook as the object of the update, and "… and now
+#: expects revenue of" states the new one. A PRESENT-tense forward verb counts too ("Reflecting
+#: higher than previously anticipated spending, the Company expects …"): erring toward current only
+#: falls back to the first-wins reading, while erring toward prior would drop a current guide.
+_NEW_OUTLOOK = re.compile(
+    r"\b(?:now|currently|expects?|anticipates?|projects?|forecasts?|sees|"
+    r"updat(?:es|ed|ing)|rais(?:es|ed|ing)|increas(?:es|ed|ing)|"
+    r"lower(?:s|ed|ing)|narrow(?:s|ed|ing)|revis(?:es|ed|ing))\b", re.I)
+#: A prior outlook carried forward unchanged IS the current one: "reaffirming its prior guidance".
+_REAFFIRMED = re.compile(r"\b(?:reaffirm\w*|reiterat\w*|maintain(?:s|ed|ing)?\b)|\bunchanged\b",
+                         re.I)
+
+
+def _superseded(text: str, at: int) -> bool:
+    """True when the metric at ``at`` sits in a clause that states a PRIOR outlook, with no current
+    statement after it. Its range must never take the metric's slot from the range that replaces
+    it. The clause is the sentence or bullet, up to the metric."""
+    lo, _ = _clause(text, at, at)
+    lead = text[lo:at]
+    prior = [p.start() for p in _PRIOR_OUTLOOK.finditer(lead)]
+    if not prior or _REAFFIRMED.search(lead):
+        return False
+    return not any(n.start() > prior[-1] for n in _NEW_OUTLOOK.finditer(lead))
+
+
+#: The preposition that makes a period phrase a range's OWN: "in the third quarter", "for the full
+#: year 2026" — the rule `_introduced` applies everywhere else.
+_OWN_PERIOD_LEAD = re.compile(r"\s*,?\s*(?:in|for|during)\s+(?:the\s+)?", re.I)
+_BARE_QUARTER = re.compile(r"Q([1-4])\b", re.I)
+
+
+def _own_period(text: str, pos: int) -> tuple[str, int] | None:
+    """The label of the introduced period phrase opening at ``pos``, and where it ends — or None
+    when there is none, or when it names a span no guide label carries (year-to-date, trailing,
+    relative, dated). Labelled as `_header_period` labels a header: ``Qn [YYYY]``, ``Fiscal
+    YYYY``, ``YYYY`` or ``FY``."""
+    lead = _OWN_PERIOD_LEAD.match(text, pos)
+    p = _PHRASE.match(text, lead.end()) if lead else None
+    if p is None:
+        # "in Q3" with no year: `_PHRASE`'s short form needs one, a guide beside its range does not
+        bare_q = _BARE_QUARTER.match(text, lead.end()) if lead else None
+        return (f"Q{bare_q[1]}", bare_q.end()) if bare_q else None
+    g = p.groupdict()
+    if g["q"]:
+        return f"Q{_QN[g['qn'].lower()]}" + (f" {g['qy']}" if g["qy"] else ""), p.end()
+    if g["qs"]:
+        return f"Q{g['qsn']} {g['qsy']}", p.end()
+    if g["fy"] or g["bare"]:
+        y = g["fyy"] or g["fyy2"] or g["bareyear"]
+        if y is None:
+            return "FY", p.end()
+        return (f"Fiscal {y}" if "fiscal" in p.group(0).lower() else y), p.end()
+    return None
+
+
+class _Paired(NamedTuple):
+    """A range joined by "and" to the one before it (`_CONTINUED`), with each range's OWN period —
+    both None unless BOTH ranges state one beside them and no "respectively" pairs them by order."""
+
+    second: re.Match[str]
+    first_period: str | None
+    second_period: str | None
+
+
+def _paired_range(text: str, first: re.Match[str]) -> _Paired | None:
+    """The range "and" joins to ``first``, or None (audit E2-D13). Each range keeps ONLY the period
+    stated beside it: a period read from the shared sentence could be the partner's, and the order
+    of two ranges is not evidence — "$1.00 billion to $1.10 billion for the full year 2026 and $250
+    million to $260 million in the third quarter" must not label the full year a quarter."""
+    cont = _CONTINUED.match(text, first.end())
+    if cont is None:
+        return None
+    gap = cont["gap"].rstrip(" ,")
+    own1 = _own_period(gap, 0) if gap else None
+    own2 = _own_period(text, cont.end())
+    _, hi = _clause(text, cont.start("low"), cont.end())
+    if (own1 is None or own1[1] != len(gap) or own2 is None
+            or re.search(r"\brespectively\b", text[cont.end():hi], re.I)):
+        return _Paired(cont, None, None)
+    return _Paired(cont, own1[0], own2[0])
+
+
 def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[GuidanceItem]:
     """Guidance items from a release. ``notes`` collects REFUSALS — sentences that plainly state a
     guidance range which cannot be attributed safely.
@@ -1714,13 +1854,8 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
     seen: set[str] = set()
     scoped: set[tuple[str, str | None]] = set()
     notes = notes if notes is not None else []
-    for m in _GUIDE_RANGE.finditer(text):
-        metric = _guide_metric(m["metric"])
-        low, high = _money(m["low"]), _money(m["high"])
-        if low is None or high is None:
-            continue
-        vb = _verbatim(text, m.start(), m.end())
-        period = _period_for(text, m.start(), m.end(), vb)
+
+    def _held(metric: str, period: str) -> bool:
         # ONE RANGE PER METRIC PER SCOPE, not per release (2026-10-21). TJX guides adjusted EPS for
         # the third quarter ($1.30–$1.32) and THEN the year ($5.15–$5.20), and first-wins kept the
         # quarter and dropped the year — the figure a valuation reads. A LATER range for a metric
@@ -1728,22 +1863,40 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         # is what a restated or comparison range lands on) and names a scope not yet held, so
         # every range the old rule kept is still kept, first, unchanged.
         scope = period_scope(period)
-        if metric in seen and (period == "next-fy" or scope is None
-                               or (metric, scope) in scoped):
-            continue
-        # AMBIGUOUS SENTENCE ⇒ REFUSE, never guess. BellRing writes "Fiscal year 2026 net sales and
-        # Adjusted EBITDA* expected to range between $2.41-$2.49 billion": TWO metrics, ONE range.
-        # The regex binds it to whichever sits nearer the introducer, which produced an "adjusted
-        # EBITDA" guide of $2,410–2,490M against a business earning ~$490M — a ~5x error stated
-        # confidently. A reader cannot resolve that sentence either, so neither may we — but the
-        # refusal is ATTRIBUTED, with the sentence, so the reader can resolve it from the filing.
-        named = {_guide_metric(x.group(0)) for x in _METRIC_WORDS.finditer(vb)}
-        if len(named) > 1:
-            notes.append(
-                f"{GUIDANCE_REFUSAL_PREFIX} — one range is shared by "
-                f"{len(named)} metrics ({', '.join(sorted(named))}), so which it governs cannot be "
-                f"read from the sentence; verify against the filing: \"{vb[:150]}\" ({src})")
-            continue
+        return metric in seen and (period == "next-fy" or scope is None
+                                   or (metric, scope) in scoped)
+
+    def _refuse(why: str, vb: str) -> None:
+        notes.append(f"{GUIDANCE_REFUSAL_PREFIX} — {why}; verify against the filing: "
+                     f"\"{vb[:150]}\" ({src})")
+
+    def _sub_line_refused(metric: str, at: int, vb: str) -> bool:
+        if (lead := _sub_line(text, metric, at)) is None:
+            return False
+        _refuse(f"revenue qualified by '{lead}' is a sub-line, not the company's total", vb)
+        return True
+
+    def _superseded_note(vb: str) -> None:
+        # NOT a refusal: the release states its current outlook elsewhere, and a prior one is not
+        # guidance. Said in the machine tier so the skip is never silent.
+        notes.append(f"Superseded guidance not read — its sentence states a prior outlook, not "
+                     f"the current one: \"{vb[:150]}\" ({src})")
+
+    def _admit_range(r: re.Match[str], metric: str, period: str, vb: str) -> None:
+        """Store ONE stated range, scaled and unit-labelled from its OWN tokens — or refuse it."""
+        low, high = _money(r["low"]), _money(r["high"])
+        if low is None or high is None:
+            return
+        pct = r["pct"] or (r["unitword"] if r["unitword"] == "%" else None)
+        # A GROSS MARGIN IN DOLLARS IS GROSS PROFIT (audit E2-D8). The unit came from the metric
+        # name alone, so "gross margin of $1.2 billion to $1.3 billion" was stored as 1.2–1.3 %.
+        # The rate this metric holds is not stated there, and a dollar figure under its name is a
+        # different measure — refused, never converted.
+        if metric == "gross margin" and not pct and (r["cur"] or r["cur2"] or r["lowunit"]
+                                                     or r["unitword"]):
+            _refuse("a gross margin stated in dollars is gross profit, not the margin rate this "
+                    "metric holds", vb)
+            return
         # UNITS: normalise to $M. Concentrix guides revenue in BILLIONS ("$2.465 to $2.49 billion")
         # while every other name guides in millions, and the composer prints the bare number — so an
         # un-scaled 2.465 read as $2.5M beside VRRM's 985.0 ($M). A magnitude error in a
@@ -1751,14 +1904,26 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
         # Scale ONLY on the stated unit word — the trailing unit governs the whole range
         # ("$2.465 to $2.49 billion"). Inferring billions from magnitude would be a guess, and a
         # guessed magnitude is exactly the fabrication this codebase refuses.
-        unit = _guide_unit(metric, m["pct"] or (m["unitword"] if m["unitword"] == "%" else None))
+        unit = _guide_unit(metric, pct)
         if unit == "$M":
             # PER-SIDE, with the trailing unit as the fallback for a bare side. "$2.465 to $2.49
             # billion" states one unit and it governs both (unchanged); "$500 million to $1.2
             # billion" states two and each governs its own number.
-            governing = m["unitword"] or m["lowunit"]
-            low *= _unit_scale(m["lowunit"] or governing)
-            high *= _unit_scale(m["unitword"] or governing)
+            governing = r["unitword"] or r["lowunit"]
+            # A DOLLAR RANGE STATES ITS SCALE (audit E2-D1). With no unit word the bare digits were
+            # stored as $M — "$500,000 to $550,000" as 500,000–550,000 $M, "$80 to $100" as a
+            # guess — and "thousand" was not a unit at all. Both refused: $M is never assumed, and
+            # a thousands figure on a page of $M guides is the 1000x error the actuals fixed.
+            if governing is None:
+                _refuse("a dollar range stated without its scale (no million or billion), so its "
+                        "magnitude cannot be read", vb)
+                return
+            lo_unit, hi_unit = r["lowunit"] or governing, r["unitword"] or governing
+            if _unit_scale(lo_unit) < 1 or _unit_scale(hi_unit) < 1:
+                _refuse("a dollar range stated in thousands, not the $M this guide holds", vb)
+                return
+            low *= _unit_scale(lo_unit)
+            high *= _unit_scale(hi_unit)
         # AN IMPOSSIBLE RANGE ⇒ REFUSE, AND DO NOT SORT IT (review finding, #430). Per-side scaling
         # is what makes this reachable: "$1.2 billion to $500M" arrives as low=1,200 high=500, and
         # before this it was emitted as real guidance — printed on the page and fed to the
@@ -1775,20 +1940,75 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
                 f"{GUIDANCE_REFUSAL_PREFIX} — the stated range runs backwards after unit "
                 f"normalisation ({low:,.1f} to {high:,.1f} {unit}), so the bounds cannot be read "
                 f"with confidence; verify against the filing: \"{vb[:150]}\" ({src})")
-            continue
+            return
         seen.add(metric)
-        scoped.add((metric, scope))
+        scoped.add((metric, period_scope(period)))
         out.append(GuidanceItem(
             metric=metric, period=period,
             low=low, high=high, unit=unit, qualitative=False,
             verbatim=vb, source_ref=src,
         ))
+
+    for m in _GUIDE_RANGE.finditer(text):
+        metric = _guide_metric(m["metric"])
+        if _money(m["low"]) is None or _money(m["high"]) is None:
+            continue
+        vb = _verbatim(text, m.start(), m.end())
+        pair = _paired_range(text, m)
+        period = (pair.first_period if pair is not None and pair.first_period is not None
+                  else _period_for(text, m.start(), m.end(), vb))
+        second = pair.second_period if pair is not None else None
+        if _held(metric, period) and (second is None or _held(metric, second)):
+            continue
+        # A SUPERSEDED RANGE NEVER TAKES THE SLOT (audit E2-D7) — tested before `seen` is touched,
+        # so the range that replaces it, later in the release, is the one read.
+        if _superseded(text, m.start()):
+            _superseded_note(vb)
+            continue
+        if _sub_line_refused(metric, m.start(), vb):
+            continue
+        # AMBIGUOUS SENTENCE ⇒ REFUSE, never guess. BellRing writes "Fiscal year 2026 net sales and
+        # Adjusted EBITDA* expected to range between $2.41-$2.49 billion": TWO metrics, ONE range.
+        # The regex binds it to whichever sits nearer the introducer, which produced an "adjusted
+        # EBITDA" guide of $2,410–2,490M against a business earning ~$490M — a ~5x error stated
+        # confidently. A reader cannot resolve that sentence either, so neither may we — but the
+        # refusal is ATTRIBUTED, with the sentence, so the reader can resolve it from the filing.
+        named = {_guide_metric(x.group(0)) for x in _METRIC_WORDS.finditer(vb)}
+        if len(named) > 1:
+            notes.append(
+                f"{GUIDANCE_REFUSAL_PREFIX} — one range is shared by "
+                f"{len(named)} metrics ({', '.join(sorted(named))}), so which it governs cannot be "
+                f"read from the sentence; verify against the filing: \"{vb[:150]}\" ({src})")
+            continue
+        first_held = _held(metric, period)
+        if not first_held:
+            _admit_range(m, metric, period, vb)
+        if pair is None:
+            continue
+        # THE SECOND RANGE OF THE SENTENCE (audit E2-D13): read when it states its own period
+        # beside it, refused aloud when it does not — never dropped in silence again.
+        # quoted FROM THE METRIC, never snapped back to the sentence start: the 200-character cap
+        # must not end the quote before the second range's own figures
+        vb2 = " ".join(text[m.start():pair.second.end()].split())[:VERBATIM_CAP]
+        if second is None:
+            if not first_held:
+                _refuse(f"a second {metric} range joined by 'and' states no period of its own (or "
+                        f"is paired by 'respectively'), so which period it governs cannot be read",
+                        vb2)
+            continue
+        if not _held(metric, second):
+            _admit_range(pair.second, metric, second, vb2)
     for m in _GUIDE_PCT.finditer(text):
         metric = _guide_metric(m.group(1))
         lo, hi = _money(m.group(2)), _money(m.group(3))
         if lo is None or hi is None or metric in seen:
             continue
         vb = _verbatim(text, m.start(), m.end())
+        if _superseded(text, m.start()):
+            _superseded_note(vb)
+            continue
+        if _sub_line_refused(metric, m.start(1), vb):
+            continue
         # A DECLINE WORD MAKES THE SIGN AMBIGUOUS ⇒ REFUSE, never guess — the BellRing precedent
         # one loop up. "the revenue growth rate to decline in the range of 2% to 3%" reads two ways:
         # the growth rate DECLINES TO +2..+3% (positive), or it declines BY 2..3% (negative). This
@@ -1846,6 +2066,11 @@ def _guidance(text: str, src: str, notes: list[str] | None = None) -> list[Guida
             if lo > hi:                      # a decline range reverses: -350..-300, not -300..-350
                 lo, hi = hi, lo
             vb = _verbatim(text, m.start(), m.end())
+            if _superseded(text, m.start()):
+                _superseded_note(vb)
+                continue
+            if _sub_line_refused(metric, m.start(), vb):
+                continue
             seen.add(metric)
             out.append(GuidanceItem(
                 metric=metric, period=_period_for(text, m.start(), m.end(), vb),

@@ -239,6 +239,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "checked against the four quarters ending on its date, a disagreement or a '-' quarter "
         "is a QA flag, and a material row its quarters contradict refuses the build",
     ),
+    (
+        "2026-10-30.E2-guidance",
+        "a guidance range is read as its sentence states it (audit E2-D1, D2, D7, D8, D13): a "
+        "dollar range stated in thousands or with no scale is refused aloud, never stored as $M; "
+        "a revenue guide qualified by a sub-line word (subscription, a region) is refused by the "
+        "actuals' allowlist; a range stated as the prior outlook never takes the metric's slot; a "
+        "gross margin stated in dollars is refused; a second range joined by 'and' is read when "
+        "it states its own period and refused aloud when it does not",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
