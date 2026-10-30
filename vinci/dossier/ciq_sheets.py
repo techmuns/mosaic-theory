@@ -5751,9 +5751,9 @@ def _fin_periods(hdr: list[Any]) -> list[tuple[int, str, bool, bool]]:
     """(col, short_label, is_ltm, is_reclassified) for each non-empty period column of a header —
     the basis read off the header's STATUS field (:func:`header_period`), never off its label."""
     return [
-        (j, _fin_short(hdr[j]), _is_ltm(hdr[j]), header_period(hdr[j]).status == "reclassified")
+        (j, _fin_short(hdr[j]), p.kind == "LTM", p.status == "reclassified")
         for j in range(1, len(hdr))
-        if str(hdr[j]).strip()
+        if str(hdr[j]).strip() and (p := header_period(hdr[j])) is not None
     ]
 
 
@@ -6515,8 +6515,10 @@ def currency_flag(currency: CiqCurrency | None) -> str | None:
 
 # --- (2026-10-30) A PRESS-RELEASE INCOME STATEMENT IS REFUSED AT ASSEMBLY -----------------------
 # Operator ruling 2026-10-30 ("go ahead with this fix then"): the Income Statement only. The balance
-# sheet and cash flow carry press-release columns too (ONON's and UBER's balance sheets among them),
-# and no defect is measured there; each sits in an export whose Income Statement is refused anyway.
+# sheet and cash flow carry press-release columns too, and a defect IS measured there (UBER's
+# release balance sheet to Jun-30-2026 differs from the filed one on 11 of 48 rows, Net Debt
+# 9,340.0 against 4,744.0), but every such column on file sits in an export whose Income Statement
+# is refused here anyway; widening the refusal is the operator's call.
 
 #: Both Financials Income Statements, as the refusal reads them. Every address is a STRING LITERAL,
 #: so the CIQ-manifest drift guard sees each one (`requirements.CIQ_MODULES`).

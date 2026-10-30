@@ -40,6 +40,7 @@ from typing import Any, Literal
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, clean_num
 from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
+from vinci.dossier.schemas import FinTable
 
 #: ABOUT 2%, SET BY FACE VALIDITY (operator ruling 2026-10-30) and never tuned on an outcome:
 #: restated prior-year comparatives legitimately move a filed LTM 1-2% off its quarters (measured
@@ -53,6 +54,11 @@ PRINT_SLACK_MUSD = 0.5
 FLAG_PREFIX = "ciq-ltm-quarters:"
 
 Outcome = Literal["agree", "differ", "unverified", "not_run"]
+
+#: The annual summary's additive core rows → the Income Statement label each is read from
+#: (`ciq_sheets._C1_ROWS`, money rows only: never an EPS row).
+_CORE: dict[str, str] = {f"{disp} ($M)": is_lbl for disp, is_lbl, _est, fmt in cs._C1_ROWS
+                         if fmt == "m"}
 
 
 @dataclass(frozen=True)
@@ -133,13 +139,12 @@ def refusal_message(ticker: str, rows: list[LtmCheck]) -> str:
             "before re-exporting, and re-run once they agree")
 
 
-def _additive_rows(inc: list[list[Any]], table: Any) -> list[tuple[str, int]]:
+def _additive_rows(inc: list[list[Any]], table: FinTable) -> list[tuple[str, int]]:
     """(summary label, annual row index) for each ADDITIVE Income Statement row the annual summary
     carries: the core money rows by the label the summary reads them from (`_C1_ROWS`), and every
     unusual item it surfaces, from inside the sheet's own block, as the summary takes it."""
-    core = {f"{disp} ($M)": is_lbl for disp, is_lbl, _est, fmt in cs._C1_ROWS if fmt == "m"}
     where: dict[str, int] = {}
-    for label, is_lbl in core.items():
+    for label, is_lbl in _CORE.items():
         if (ri := cs._find_row(inc, is_lbl)) is not None:
             where[label] = ri
     try:
@@ -150,8 +155,7 @@ def _additive_rows(inc: list[list[Any]], table: Any) -> list[tuple[str, int]]:
         lbl = str(inc[ri][0] or "").strip() if inc[ri] else ""
         if lbl:
             where.setdefault(f"{lbl} ($M)", ri)
-    return [(r.label, where[r.label]) for r in getattr(table, "rows", []) or []
-            if r.label in where]
+    return [(r.label, where[r.label]) for r in table.rows if r.label in where]
 
 
 def _quarter_row(q: list[list[Any]], sheet_label: str, unusual: bool) -> int | None:
@@ -187,7 +191,7 @@ def _four_quarters(q: list[list[Any]], hdr: int,
     return [slots[m][0] for m in sorted(slots)], None
 
 
-def check(bundle: CiqBundle, table: Any) -> LtmQuarterRead:
+def check(bundle: CiqBundle, table: FinTable | None) -> LtmQuarterRead:
     """Each additive annual-summary row's LTM against the four quarters ending on its date."""
     if table is None:
         return LtmQuarterRead((), "the annual summary is UNKNOWN, so no row reached it")
@@ -219,7 +223,6 @@ def check(bundle: CiqBundle, table: Any) -> LtmQuarterRead:
             located, why = _four_quarters(q, qhdr, period.end)
     except CiqUnavailableError as exc:
         why = f"no quarterly Income Statement ({exc})"
-    core = {f"{disp} ($M)": is_lbl for disp, is_lbl, _est, fmt in cs._C1_ROWS if fmt == "m"}
     out: list[LtmCheck] = []
     for label, ri in rows:
         value = clean_num(inc[ri][col]) if col < len(inc[ri]) else None
@@ -228,11 +231,16 @@ def check(bundle: CiqBundle, table: Any) -> LtmQuarterRead:
         if located is None:
             out.append(LtmCheck(label, value, period.end, (), "not_run", why))
             continue
-        sheet_label = core.get(label, str(inc[ri][0]).strip())
-        qi = _quarter_row(q, sheet_label, unusual=label not in core)
+        sheet_label = _CORE.get(label, str(inc[ri][0]).strip())
+        qi = _quarter_row(q, sheet_label, unusual=label not in _CORE)
+        if qi is None:
+            out.append(LtmCheck(label, value, period.end, (), "not_run",
+                                f"the quarterly Income Statement carries no '{sheet_label}' row"
+                                + ("" if label in _CORE else " inside its unusual-items block")))
+            continue
         cells = tuple(
             QuarterCell(p.end, p.quarter,
-                        clean_num(q[qi][j]) if qi is not None and j < len(q[qi]) else None)
+                        clean_num(q[qi][j]) if j < len(q[qi]) else None)
             for j, p in located if p.end is not None)
         out.append(_judge(label, value, period.end, cells))
     return LtmQuarterRead(tuple(out))
