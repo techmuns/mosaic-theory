@@ -156,11 +156,14 @@ const EXTRACTION_VERSIONS = [
     "families its caps leave out, and a full-text search reads every page or says it did not " +
     "(audit E1-D11)"],
   ["2026-10-30.E2-spans-frames",
-    "a release figure under a six- or nine-month heading or bullet lead-in, with or without " +
-    "'ended' and in the singular, takes no quarter label " +
-    "(audit E2-D4); the release frame never comes from a comparison in its head, and a head " +
-    "naming its quarter only by its end date frames by that date (E2-D6); the GAAP gross " +
-    "margin is the first non-GAAP-free statement that states its period (E2-D9)"],
+    "a release figure under a six- or nine-month heading or bullet lead-in that states a span " +
+    "(ended, a period, or a section noun such as Highlights or Results; singular or plural) " +
+    "takes no quarter label, and a twelve-month section heading none either (audit E2-D4); " +
+    "the release frame never comes from the phrase a comparison in its head compares " +
+    "against, and a calendar head naming its quarter only by its end date frames by that " +
+    "date (E2-D6); the GAAP gross margin is the first statement that is the company's own " +
+    "and states its period, never a non-GAAP, segment, sub-line, prior-period or " +
+    "year-to-date one, and the reader stops at one it cannot place (E2-D9)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

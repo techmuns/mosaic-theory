@@ -18,6 +18,8 @@ verbatim (whitespace collapsed); two fragments of one filing are joined where a 
 """
 from __future__ import annotations
 
+import pytest
+
 from vinci.edgar import release_parse as rp
 from vinci.edgar.release_parse import parse_release
 
@@ -216,3 +218,129 @@ def test_microvast_keeps_its_gaap_gross_margin() -> None:
     """NEGATIVE PIN: the GAAP figure stated first stays; the adjusted one never replaces it."""
     assert [a for a in _actuals(f"{MVST_HEAD} {MVST_GM}") if a[0] == "gross margin"] == [
         ("gross margin", "Q2 2026", 29.5)]
+
+
+# --- review round 2 (coordinator review of e470dd38) --------------------------------------------
+_H = "Acme Reports Third Quarter 2026 Results. "
+_N = "Gross margin was 40.0% for the nine months ended September 30, 2026. "
+
+
+@pytest.mark.parametrize("tail", [
+    "In the Products segment, gross margin was 30.0% for the third quarter of 2026.",
+    "For the Products segment, gross margin was 30.0% for the third quarter of 2026.",
+    "Hardware gross margin was 22.0%.",
+    "Subscription gross margin was 80.0%.",
+    "Product gross margin was 35.0%.",
+    "Gross margin was 41.5% in the prior year period.",
+])
+def test_reading_past_a_year_to_date_margin_never_reaches_another_lines(tail: str) -> None:
+    """Item 1 (BLOCKER): a segment's, a sub-line's or a prior period's margin is never the
+    company's GAAP figure; main stores nothing for each."""
+    assert [a for a in _actuals(_H + _N + tail) if a[0] == "gross margin"] == [], tail
+
+
+def test_an_unplaceable_margin_stops_the_reader() -> None:
+    """Item 1: a forward statement is unplaceable, and the reader stops there."""
+    text = (_H + "We expect gross margin of 45.0% for the fourth quarter. Services gross margin "
+            "was 20.0% in the third quarter of 2026.")
+    assert [a for a in _actuals(text) if a[0] == "gross margin"] == []
+
+
+#: Simply Good Foods, 8-K 0001702744-26-000010 EX-99.1: its head and its excluding-items margin
+#: sentence (two verbatim fragments). The 32.8% is the quarter's margin EXCLUDING one-time items,
+#: an adjusted figure; main stores it as the GAAP margin when it is the first statement.
+SMPL_HEAD = ("The Simply Good Foods Company Reports Fiscal Second Quarter 2026 Financial Results "
+             "and Updates Fiscal Year 2026 Outlook Denver, CO, April 9, 2026 - The Simply Good "
+             "Foods Company (Nasdaq: SMPL) (“Simply Good Foods,” or the “Company”), a leader in "
+             "the Nutritional Snacking Category, today reported financial results for the "
+             "thirteen and twenty-six weeks ended February 28, 2026.")
+SMPL_EXCLUDING = ("Excluding $3.9 million of one-time OWYN integration expenses in the current "
+                  "year period and a $0.4 million non-cash inventory purchase accounting step-up "
+                  "adjustment expense related to the OWYN acquisition that occurred in the "
+                  "comparable prior year period, gross margin was 32.8%, a 350 basis point decline "
+                  "versus the comparable year ago period.")
+
+
+def test_simply_goods_excluding_items_margin_is_not_its_gaap_margin() -> None:
+    assert [a for a in _actuals(f"{SMPL_HEAD} {SMPL_EXCLUDING}") if a[0] == "gross margin"] == []
+
+
+@pytest.mark.parametrize(("text", "wrong"), [
+    ("Acme Reports Fourth Quarter and Full Year Results. NEW YORK, Feb. 1, 2026 -- Acme today "
+     "reported financial results for the fourth quarter ended December 31, 2025. • Adjusted "
+     "EBITDA of $500.0 million • Revenue of $2.0 billion", "Q4 2025"),
+    ("Acme Reports First Quarter Results. ST. LOUIS, Feb. 3, 2026 -- Acme today reported "
+     "results for its first fiscal quarter ended December 31, 2025. • Adjusted EBITDA of $50.0 "
+     "million", "Q1 2025"),
+    ("Acme Stores Reports Fourth Quarter Results. DUBLIN, Calif., Mar. 3, 2026 -- Acme today "
+     "reported results for its fourth quarter ended January 31, 2026, the end of fiscal 2025. • "
+     "Adjusted EBITDA of $500.0 million", "Q4 2026"),
+])
+def test_the_quarter_end_frame_never_serves_a_fiscal_or_full_year_head(text: str,
+                                                                       wrong: str) -> None:
+    """Item 2: a combined Q4/full-year release (main refuses its figures), a fiscal filer's quarter
+    end (its fiscal Q1 2026, not the calendar Q1 2025) and a retailer's (fiscal Q4 2025, not Q4
+    2026): the quarter-end tier frames none of them, and no figure takes its calendar label."""
+    assert rp._release_frame(text).kind != "quarter", text
+    assert [a for a in _actuals(text) if a[1] == wrong] == [], text
+
+
+@pytest.mark.parametrize("text", [
+    "Acme Delivers Record Sales Compared to Last Year, Reports Third Quarter 2026 Results NEW "
+    "YORK, Nov. 1, 2026 -- Adjusted EBITDA of $20.0 million.",
+    "Acme Grows Revenue 15% Versus Prior Year in Third Quarter 2026 NEW YORK, Nov. 1, 2026 -- Acme "
+    "today reported. Adjusted EBITDA of $20.0 million.",
+    "Acme Reports Results. NEW YORK -- Compared with the third quarter of 2025, revenue grew 10% "
+    "in the third quarter of 2026. Adjusted EBITDA of $20.0 million.",
+])
+def test_a_comparison_governs_only_the_phrase_it_introduces(text: str) -> None:
+    """Item 3: a marker earlier in a headline does not take the release's own period with it."""
+    assert rp._release_frame(text).label == "Q3 2026", text
+    assert _actuals(text) == [("adjusted ebitda", "Q3 2026", 20.0)], text
+
+
+def test_results_from_a_combined_period_is_no_comparison() -> None:
+    text = ("Acme Announces Results from the Fourth Quarter and Full Year 2025. NEW YORK, Feb. 1, "
+            "2026 -- Acme today reported results for its fourth quarter ended December 31, 2025. "
+            "Adjusted EBITDA of $500.0 million.")
+    assert rp._release_frame(text).kind == "combined"
+
+
+@pytest.mark.parametrize("qualifier", [
+    "Adjusted*", "Adjusted(1)", "Non-GAAP(1)", "Non GAAP", "Non-GAAP consolidated"])
+def test_a_footnoted_or_spelled_out_non_gaap_margin_is_not_the_gaap_one(qualifier: str) -> None:
+    """Item 4: the qualifier's footnote mark and words between still qualify the margin."""
+    text = _H + f"{qualifier} gross margin was 47.0% for the third quarter of 2026."
+    assert [a for a in _actuals(text) if a[0] == "gross margin"] == [], qualifier
+
+
+@pytest.mark.parametrize("text", [
+    _H + "After six months of integration, adjusted EBITDA was $20.0 million.",
+    _H + "Third Quarter Highlights • Adjusted EBITDA of $20.0 million, the highest in six months.",
+    _H + "Third Quarter Highlights • Revenue of $100.0 million. Six-Month Backlog Overview • "
+    "Adjusted EBITDA of $20.0 million",
+])
+def test_six_months_that_is_not_a_span_drops_nothing(text: str) -> None:
+    """Item 5: main labels each figure the quarter, and so does this reader."""
+    assert ("adjusted ebitda", "Q3 2026", 20.0) in _actuals(text), text
+
+
+def test_a_twelve_month_heading_is_no_quarter() -> None:
+    """Found re-running the review's probes: once "month" makes "Twelve Month Results" a heading,
+    its figure must not fall to the frame's quarter (main reaches no label there)."""
+    text = (_H + "Fourth Quarter Highlights • x. Twelve Month Results • Adjusted EBITDA of $20.0 "
+            "million")
+    assert _actuals(text) == []
+
+
+#: NIKE's table narrowed so the NINE MONTHS ENDED header sits inside the gross-margin row's clause
+#: (verbatim fragments of 0000320187-26-000026, the rows between dropped): the row's first column
+#: can no longer be told from its year-to-date one, so no margin is read — never 41.0 as Q3.
+NKE_TABLE_NARROW = ("THREE MONTHS ENDED % NINE MONTHS ENDED % (In millions, except per share data) "
+                    "2/28/2026 2/28/2025 Change 2/28/2026 2/28/2025 Change Gross profit 4,530 "
+                    "4,675 -3 % 14,518 15,321 -5 % Gross margin 40.2 % 41.5 % 41.0 % 43.5 %")
+
+
+def test_nikes_narrowed_table_reads_no_margin_rather_than_a_wrong_one() -> None:
+    """Item 6: the negative pin exercised through the new year-to-date path."""
+    assert [a for a in _actuals(f"{NKE_HEAD} {NKE_TABLE_NARROW}") if a[0] == "gross margin"] == []

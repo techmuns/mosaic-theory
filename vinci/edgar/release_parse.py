@@ -369,8 +369,30 @@ _HDR_ANNUAL = re.compile(
 _HDR_ANY_YEAR = re.compile(r"(?:reports|results|full[- ]year|fiscal)\D{0,25}?(20\d\d)", re.I)
 
 
-#: "… revenue rose FROM second quarter 2025 levels": the period a comparison starts from.
-_FROM_BEFORE = re.compile(r"\bfrom\s+(?:the\s+)?$", re.I)
+#: "… revenue ROSE FROM second quarter 2025 levels": a change verb makes "from" a comparison; a bare
+#: "from" does not ("Results from the Fourth Quarter and Full Year 2025", review round 2).
+_FROM_CHANGE = re.compile(
+    r"\b(?:rose|grew|increased|decreased|declined|fell|improved|expanded|up|down)\s+"
+    r"(?:\S+\s+){0,3}?from\b", re.I)
+#: Something between a comparison marker and a header phrase that ends the marker's reach: a
+#: clause comma, or a period the comparison is already about ("Versus Prior Year in Third Quarter
+#: 2026", "Compared to Last Year, Reports Third Quarter 2026 Results").
+_CMP_OBJECT = re.compile(r",\s|\b(?:last|prior|previous)\s+year\b", re.I)
+
+
+def _in_comparison(head: str, at: int) -> bool:
+    """True when the header phrase at ``at`` is what a comparison marker in its clause compares
+    against: the nearest marker before it, with no clause comma and no other period between them
+    (review round 2 — a marker anywhere earlier in a headline skipped the release's own period)."""
+    lo = 0
+    for e in _EDGE.finditer(head, 0, at):
+        lo = e.end()
+    markers = [m.end() for m in _CMP.finditer(head, lo, at)]
+    markers += [m.end() for m in _FROM_CHANGE.finditer(head, lo, at)]
+    if not markers:
+        return False
+    gap = head[max(markers):at]
+    return not (_CMP_OBJECT.search(gap) or _PHRASE.search(gap))
 
 
 def _own_header(pattern: re.Pattern[str], head: str) -> re.Match[str] | None:
@@ -378,12 +400,8 @@ def _own_header(pattern: re.Pattern[str], head: str) -> re.Match[str] | None:
     Amazon heads its 2026 releases "… in the second quarter, COMPARED WITH $167.7 billion in second
     quarter 2025", and the first quarter phrase framed both releases as 2025."""
     for m in pattern.finditer(head):
-        lo = 0
-        for e in _EDGE.finditer(head, 0, m.start()):
-            lo = e.end()
-        if _CMP.search(head, lo, m.start()) or _FROM_BEFORE.search(head, lo, m.start()):
-            continue
-        return m
+        if not _in_comparison(head, m.start()):
+            return m
     return None
 
 
@@ -403,10 +421,13 @@ def _release_frame(text: str) -> _ReleaseFrame:
         return _ReleaseFrame("quarter", _QN[qn], qy, _fy_offset(text, qy))
     if a := _own_header(_HDR_ANNUAL, head):
         return _ReleaseFrame("annual", None, a.group(1) or a.group(2))
-    if e := _own_header(_HDR_QENDED, head):
+    if not _FISCAL_OR_FULL_YEAR.search(head) and (e := _own_header(_HDR_QENDED, head)):
         # The year IS the quarter-end date's, so there is no fiscal shift to measure — and
         # `_fy_offset` would read one from a table's column header: Amazon's "Three Months Ended
         # March 31, 2025 2026" prints the first column's year, which gave its Q1 2026 frame +1.
+        # A head that names a fiscal year or a full year never reaches here (review round 2): a
+        # fiscal filer's quarter end is not its fiscal year, and a fourth quarter announced "and
+        # Full Year" is the combined frame, which names two periods.
         return _ReleaseFrame("quarter", _QN[e["qn"].lower()], e["y"], 0)
     y = _HDR_ANY_YEAR.search(head) or re.search(r"(20\d\d)", head)
     return _ReleaseFrame("unknown", None, y.group(1) if y else None)
@@ -433,6 +454,10 @@ _MONTH = (r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|
           r"sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\.?")
 #: "… today announced financial results for its second quarter ended June 30, 2026" — the head's
 #: own quarter and its end date, where the header names the quarter without a year (Amazon).
+#: A head that speaks of a fiscal year or announces a full year — the quarter-end tier is not
+#: its frame ("its first fiscal quarter ended December 31, 2025", "the end of fiscal 2025",
+#: "Reports Fourth Quarter and Full Year Results").
+_FISCAL_OR_FULL_YEAR = re.compile(r"\bfiscal\b|\bfy\b|\b(?:full|entire)[- ]year\b|\bannual\b", re.I)
 _HDR_QENDED = re.compile(
     rf"(?P<qn>first|second|third|fourth)\s+(?:fiscal\s+)?quarter\s+ended\s+{_MONTH}\s+\d{{1,2}},?"
     r"\s+(?P<y>20\d\d)", re.I)
@@ -445,14 +470,21 @@ _PHRASE = re.compile(
     # A SIX- OR NINE-MONTH SPAN IS YEAR-TO-DATE WITHOUT "ended" TOO (audit E2-D4): a section heading
     # states it bare — "Nine Months Highlights", BellRing's "Nine Month Operating Results",
     # "Nine-Month Results" — and with "ended" required, each heading's figures filed as the quarter.
-    r"(?P<ytd>\bytd\b|year[- ]to[- ]date|\b(?:six|nine)[- ]months?\b|"
+    # Only as a SPAN, though (review round 2): "after six months of integration", "the highest in
+    # six months" and a "Six-Month Backlog Overview" are not the period of any figure.
+    r"(?P<ytd>\bytd\b|year[- ]to[- ]date|\b(?:six|nine)[- ]months?(?=\s+(?:ended|periods?|"
+    r"highlights|results|summary|overview|operating\s+results|financial\s+(?:results|highlights))\b)|"
     r"first\s+(?:half|six\s+months|nine\s+months)|first\s+three\s+quarters)"
     # A TRAILING-TWELVE-MONTH figure spans four quarters and is no one quarter or fiscal year
     # (audit E2-D5). FuboTV lists "● Over the trailing twelve months: ○ … ○ Pro Forma Adjusted
     # EBITDA of $77.9 million" under its Q1 heading, and with no TTM word in this vocabulary the
     # heading filed the TTM figure as Q1 2026 (the quarter's own is $41.4M). Before `yended`, so
     # "trailing twelve months ended June 30" is the span and not a fiscal year.
-    r"|(?P<ttm>\b(?:ttm|ltm)\b|\b(?:trailing|last)[- ](?:twelve|12)[- ]months?\b)"
+    # …and a bare twelve-month SPAN where `_PERIOD_WORD`'s "month" now admits its heading (review
+    # round 2): "Twelve Month Results" is no one quarter, and the frame would have labelled it
+    r"|(?P<ttm>\b(?:ttm|ltm)\b|\b(?:trailing|last)[- ](?:twelve|12)[- ]months?\b|"
+    r"\b(?:twelve|12)[- ]months?(?=\s+(?:periods?|highlights|results|summary|overview|"
+    r"operating\s+results|financial\s+(?:results|highlights))\b))"
     rf"|(?P<qended>(?:three[- ]months?|quarter)\s+ended\s+"
     rf"{_MONTH}\s+\d{{1,2}},?\s+(?P<qey>20\d\d))"
     rf"|(?P<yended>(?:twelve[- ]months?|(?:fiscal\s+)?year)\s+ended\s+"
@@ -667,7 +699,10 @@ def _heading_period(text: str, before: int, frame: _ReleaseFrame) -> object:
     if not heads:
         return _NO
     words = heads[-1].group(1)
-    names = _phrases(words, 0, len(words))
+    # the WHOLE heading, its noun included: a span reads as one only before such a noun ("Nine
+    # Months Highlights", "Nine Month Operating Results"), review round 2
+    whole = heads[-1].group(0)
+    names = _phrases(whole, 0, len(whole))
     if any(p.group("ytd") or p.group("ttm") for p in names):
         return None  # "Year-to-Date Third Quarter Fiscal Year 2025 Summary" — a YTD section
     has_q = any(p.group("q") or p.group("qs") for p in names)
@@ -895,12 +930,17 @@ _RECON = re.compile(
 )
 #: A gross margin's non-GAAP qualifier, RIGHT before it: "Non-GAAP gross margin", "adjusted gross
 #: margin", "Non-GAAP adjusted gross margin*" (audit E2-D9) — never another metric's ("Adjusted EPS
-#: and gross margin was 40.0%" states a GAAP margin).
-_NON_GAAP_LEAD = re.compile(r"\b(?:non-gaap|adjusted)(?:[\s-]+(?:non-gaap|adjusted))*\s*$", re.I)
-#: A SEGMENT'S gross margin — "segment" in the gross margin's own phrase, after the clause's last
-#: comma ("The Products segment gross margin was 30.0%"), never one the sentence names before it
-#: ("Excluding the impact of the segment divestiture, gross margin was 40.0%", review round 1).
-_SEGMENT_LEAD = re.compile(r"\bsegments?\b[^,;]*$", re.I)
+#: and gross margin was 40.0%" states a GAAP margin). Its footnote mark and the words a filer puts
+#: between ride along (review round 2): "Adjusted* gross margin", "Adjusted(1) …", "Non GAAP …",
+#: "Non-GAAP consolidated gross margin".
+_NON_GAAP_LEAD = re.compile(
+    r"\b(?:non[\s-]?gaap|adjusted)(?:\s*(?:[*†‡¹²³⁴⁵⁶⁷⁸⁹⁰]+|\(\d{1,2}\))|"
+    r"\s+(?:non[\s-]?gaap|adjusted|consolidated|total))*\s*$", re.I)
+#: A SEGMENT'S gross margin — "segment" right before it, its comma or possessive between ("The
+#: Products segment gross margin", "In the Products segment, gross margin", review round 2), never a
+#: segment the sentence names otherwise ("Excluding the impact of the segment divestiture, gross
+#: margin was 40.0%", review round 1).
+_SEGMENT_LEAD = re.compile(r"\bsegments?(?:['’]s)?\s*,?\s*$", re.I)
 _GROSS_MARGIN = re.compile(
     r"gross\s+margin\s+(?:of\s+|(?:decreased|increased|declined)\s+to\s+|was\s+)?([\d.]+)\s*%",
     re.I,
@@ -938,6 +978,12 @@ _REVENUE_LEAD_OK = frozenset({
     "expect", "expects", "expected", "forecast", "forecasts", "forecasted", "project", "projects",
     "projected", "anticipate", "anticipates", "anticipated", "sees", "guides", "estimated",
 })
+#: The word standing right before "gross margin" (whitespace only between) — a SUB-LINE's margin
+#: names its line there: "Hardware gross margin", "Services gross margin". A table row's label or a
+#: number between is no qualifier. Measured 2026-10-30 over the 55 gross-margin statements in 127
+#: cached EX-99 documents: "", a comma, "gaap", "from", "resilient" and the non-GAAP qualifiers.
+_GM_LEAD_WORD = re.compile(r"([A-Za-z][A-Za-z'’-]*)\s+$")
+_GM_LEAD_OK = _REVENUE_LEAD_OK | {"from", "resilient", "overall", "company"}
 
 
 #: A revenue COMPONENT a release names when its revenue has more than one line.
@@ -987,6 +1033,28 @@ def _revenue_lead(text: str, at: int) -> str:
 #: A filer that writes BOTH "EBITDA" and "adjusted EBITDA" means two different measures by them.
 _ADJ_EBITDA = re.compile(r"(?:non-gaap|adjusted)\s+ebitda", re.I)
 _RECON_PREFIXED = re.compile(r"(?:non-gaap|adjusted)\s", re.I)
+
+
+def _company_gross_margin(text: str, at: int) -> bool:
+    """False when the gross margin at ``at`` is qualified as not the company's GAAP figure: a
+    non-GAAP qualifier, a segment, or a sub-line's name right before it."""
+    if _NON_GAAP_LEAD.search(text, max(0, at - 30), at) or _SEGMENT_LEAD.search(
+            text, max(0, at - 30), at):
+        return False
+    lead = _GM_LEAD_WORD.search(text, max(0, at - 30), at)
+    return lead is None or lead.group(1).lower() in _GM_LEAD_OK
+
+
+def _prior_period_stated(text: str, lo: int, hi: int, start: int, end: int) -> bool:
+    """True when the figure at [start, end) states a PRIOR period as its own — leading its clause
+    ("In the comparable prior year period, gross margin was 32.8%", Simply Good) or introduced right
+    after it ("… was 41.5% in the prior year period") — never inside a comparison sub-clause. A
+    relative phrase is no evidence to `_as_current`, so the frame's period would label it."""
+    cut = _CMP.search(text, end, hi)
+    for p in _phrases(text, end, cut.start() if cut else hi):
+        if _introduced(text, p):
+            return bool(p["relq"] or p["relp"])
+    return any(p["relq"] or p["relp"] for p in _outside_comparisons(text, lo, start))
 
 
 def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
@@ -1172,21 +1240,28 @@ def _reconciliation(text: str, src: str, frame: _ReleaseFrame,
             metric="revenue", period=p, value=val,
             verbatim=_verbatim(text, m.start(), m.end()), source_ref=src,
         ))
-    # THE GAAP GROSS MARGIN, FROM THE FIRST STATEMENT THAT STATES ITS PERIOD (audit E2-D9, D4).
-    # "Non-GAAP gross margin was 47.0%" passed a 12-character "adjusted" look-back and was stored
-    # as the GAAP figure; and only the FIRST statement was read, so a GAAP margin stated after a
-    # non-GAAP or a year-to-date one ("Gross margin was 40.0% for the nine months ended …. Gross
-    # margin was 41.0% for the third quarter") was never reached.
+    # THE COMPANY'S GAAP GROSS MARGIN (audit E2-D9, D4). "Non-GAAP gross margin was 47.0%" passed a
+    # 12-character "adjusted" look-back and was stored as the GAAP figure, and only the FIRST
+    # statement was read, so a GAAP margin after a non-GAAP or a year-to-date one ("Gross margin was
+    # 40.0% for the nine months ended …. Gross margin was 41.0% for the third quarter") was lost.
+    # The reader passes ONLY a statement that is not the company's GAAP margin of the release's own
+    # period — non-GAAP, a sub-line's, a segment's, a prior period's or a year-to-date one — and
+    # STOPS at any other it cannot place (review round 2: reading past an unplaceable statement
+    # reached a sub-line's margin, and main stores nothing there).
     for gm in _GROSS_MARGIN.finditer(text):
-        clause_lo, _ = _clause(text, gm.start(), gm.start())
-        if (_NON_GAAP_LEAD.search(text, max(0, gm.start() - 24), gm.start())
-                or _SEGMENT_LEAD.search(text, clause_lo, gm.start())):
+        if not _company_gross_margin(text, gm.start()):
             continue
         if (v := _money(gm.group(1))) is None:
             continue
+        lo, hi = _clause(text, gm.start(), gm.end())
+        if _prior_period_stated(text, lo, hi, gm.start(), gm.end()):
+            continue
         gp = _figure_period(text, gm.start(), gm.end(), frame)
         if gp is None:
-            continue
+            if (_under_trailing_lead_in(text, lo)
+                    or any(p["ytd"] or p["ttm"] for p in _outside_comparisons(text, lo, hi))):
+                continue                     # the year-to-date margin — the quarter's may follow
+            break
         out.append(ReconciliationValue(
             metric="gross margin", period=gp, value=v,
             verbatim=_verbatim(text, gm.start(), gm.end()), source_ref=src,
