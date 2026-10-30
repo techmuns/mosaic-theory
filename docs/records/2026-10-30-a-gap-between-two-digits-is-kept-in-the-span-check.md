@@ -97,3 +97,13 @@ grid and leverage schedule, and AORT's two leverage schedules ("Q4-2024 6.25:1.0
 - Falsifier: an (E5) "the model's quote is not in" refusal at re-assembly whose exhibit splits
   the quoted figure across tags.
 - No committed page moves, so none is added to STATE row 41.
+
+**DEFERRED FROM REVIEW (round 1, in-session `/code-review high`; Codex's review failed).**
+- NFKC turns a superscript digit into an ASCII digit, which then joins the figure before it.
+  "$500¹ million" reduces to "$5001million": a correct quote "$500 million" is refused, and
+  "$5001 million" would be accepted.
+- It is the same figure-joining class, reached through normalisation rather than whitespace. It
+  is outside G-D7, and it predates this change.
+- Measured at 0: no superscript digit (¹ ² ³ ⁰–⁹) directly follows a digit in the 58 committed
+  covenant exhibits on the 26 non-held pages, read from the SEC cache on 2026-10-30.
+- No owner is needed until a refusal shows it.
