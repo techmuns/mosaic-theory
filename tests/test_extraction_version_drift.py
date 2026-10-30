@@ -83,7 +83,7 @@ PINNED_AT = "2026-10-30.zero-coercion"
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
-    "vinci/dossier/anchor.py": "a538abb9a405",
+    "vinci/dossier/anchor.py": "eb941b03752f",
     "vinci/dossier/assemble.py": "add1ba861986",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "77def45663a9",

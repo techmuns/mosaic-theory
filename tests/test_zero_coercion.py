@@ -217,6 +217,9 @@ def test_a_marker_on_a_lease_row_refuses_the_net_debt_fact(bundle: CiqBundle, ma
     ciq = ciq_balance.extract(bundle, gen.TICKER)
     assert "net_debt" not in ciq.facts
     assert f"[{LATEST_Q}]" in ciq.unavailable["net_debt"]
+    from vinci.dossier.anchor import _bridge_inputs
+    nd = _bridge_inputs({}, {}, ciq)["net_debt"]
+    assert nd.value is None and "CIQ's net debt: " in (nd.source or "")
 
 
 def test_no_d_and_a_ratio_gives_no_ebitda_margin_beside_the_street() -> None:

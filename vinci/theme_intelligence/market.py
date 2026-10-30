@@ -496,8 +496,8 @@ def consensus_revisions(ticker: str, as_of: date, dossiers: Path) -> MarketFigur
     rc = next((r for r in fc.revisions if r.metric == metric and r.period == period
                and r.window == "3m"), None)
     # a count CIQ states as a marker is None on the page (audit A-D1): 'n/a', never a 0
-    up, down = (("n/a" if n is None else str(n)) for n in ((rc.up, rc.down) if rc is not None
-                                                          else (None, None)))
+    up = "n/a" if rc is None or rc.up is None else str(rc.up)
+    down = "n/a" if rc is None or rc.down is None else str(rc.down)
     counts = (f"; {up} analyst(s) revised up and {down} down"
               + (f", of {rc.analysts}" if rc.analysts else "") if rc is not None
               else "; revision counts not held")
