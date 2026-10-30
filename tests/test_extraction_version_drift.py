@@ -77,8 +77,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "e871cc6365ea"
-PINNED_AT = "2026-10-30.press-release-ltm"
+PINNED_TABLE = "4abfd82cf59d"
+PINNED_AT = "2026-10-30.cover-dated-shares"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -100,14 +100,14 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/edgar_fundamentals.py": "c8ecafb0bcb4",
     "vinci/dossier/ev_ebitda_basis.py": "ad13b0e13ca0",
     "vinci/dossier/ev_gap.py": "6a0c9a26afac",
-    "vinci/dossier/flags.py": "0fde0b63ffba",
+    "vinci/dossier/flags.py": "8466d404a234",
     "vinci/dossier/freshness.py": "e5852b313d22",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
     "vinci/dossier/ltm_quarters.py": "f6a3904e1011",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "6d17333aaeb7",
+    "vinci/dossier/mechanical.py": "6142b30cd405",
     "vinci/dossier/midcycle.py": "dfa24e1bc15a",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "0c07bfc551a1",
@@ -118,9 +118,10 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "766d2ed17c7a",
     "vinci/dossier/verdict.py": "0b43167d2044",
-    "vinci/edgar/client.py": "b09eb3cd3d9d",
+    "vinci/edgar/client.py": "70f710114cef",
     "vinci/edgar/commissioning.py": "dc2004432387",
-    "vinci/edgar/concepts.py": "abaa46f51d9f",
+    "vinci/edgar/concepts.py": "2aa467ddf37a",
+    "vinci/edgar/cover_count.py": "6610f2a384c0",
     "vinci/edgar/debt_maturities.py": "a72fba167d94",
     "vinci/edgar/filing_sections.py": "568c36df04a2",
     "vinci/edgar/going_concern.py": "5097f25ade31",

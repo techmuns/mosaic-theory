@@ -153,6 +153,7 @@ def test_pointer_discovery_cannot_reach_past_the_records_own_as_of() -> None:
 
     from vinci.dossier.mechanical import _covenant_pointers
     from vinci.dossier.schemas import CapitalInstrument
+    from vinci.edgar.client import FtsHit, FtsResult
 
     ref = _d(2026, 7, 6)
 
@@ -161,17 +162,17 @@ def test_pointer_discovery_cannot_reach_past_the_records_own_as_of() -> None:
         def __init__(self, d: _d, acc: str) -> None:
             self.filing_date, self.accession, self.form = d, acc, "10-K"
 
-    class _Hit:
-        def __init__(self, d: _d, acc: str) -> None:
-            self.file_date, self.accession, self.cik = d, acc, "0000000001"
+    def _hit(d: _d, acc: str) -> FtsHit:
+        return FtsHit(accession=acc, cik="0000000001", form="8-K", file_date=d, display_names=[])
 
     class _Edgar:
         def recent_filings(self, cik: str, *, forms: tuple[str, ...] = ()) -> list[_F]:
             # newest FIRST, as the real index returns — and the newest postdates the as-of
             return [_F(_d(2026, 9, 1), "AFTER-THE-ASOF"), _F(_d(2026, 2, 1), "BEFORE-0001")]
 
-        def fulltext_search(self, phrase: str, *, forms: str = "", ciks: str = "") -> list[_Hit]:
-            return [_Hit(_d(2026, 9, 9), "EFTS-AFTER"), _Hit(_d(2026, 1, 5), "EFTS-BEFORE")]
+        def fulltext_search(self, phrase: str, *, forms: str = "", ciks: str = "") -> FtsResult:
+            return FtsResult(hits=[_hit(_d(2026, 9, 9), "EFTS-AFTER"),
+                                   _hit(_d(2026, 1, 5), "EFTS-BEFORE")], total=2)
 
     seen_accessions: list[str] = []
 

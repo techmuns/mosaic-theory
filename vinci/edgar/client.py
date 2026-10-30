@@ -58,6 +58,28 @@ class FtsHit(BaseModel, frozen=True):
     display_names: list[str]
 
 
+#: efts serves at most this many hits per request; a later page is asked for with ``from=``.
+FTS_PAGE_SIZE = 100
+#: How many efts pages one ``fulltext_search`` reads before it stops and says so.
+FTS_MAX_PAGES = 5
+
+
+class FtsResult(BaseModel, frozen=True):
+    """The hits one full-text search read, beside efts's own count of what matched.
+
+    THE COUNT TRAVELS WITH THE HITS (audit E1-D11). The search read one 100-hit page and returned it
+    as the answer: 250 matches came back as 100, with nothing a caller could test. ``capped`` is
+    the search saying it stopped short — read it, or say why not."""
+
+    hits: list[FtsHit]
+    total: int  # efts's ``hits.total.value`` — every match, read or not
+
+    @property
+    def capped(self) -> bool:
+        """True when the search stopped before it had read every match."""
+        return len(self.hits) < self.total
+
+
 class Filing(BaseModel, frozen=True):
     """A filing from the submissions feed (used for 8-K event detection)."""
 
@@ -461,20 +483,33 @@ class EdgarClient:
         ciks: str | None = None,
         startdt: str | None = None,
         enddt: str | None = None,
-    ) -> list[FtsHit]:
+        max_pages: int = FTS_MAX_PAGES,
+    ) -> FtsResult:
         """Search EDGAR full text for an exact phrase. Spaces → %20 (an efts requirement).
 
         ``ciks`` scopes the search to a single filer — pass the 10-digit ZERO-PADDED CIK (a bare
         integer returns nothing; efts requires the padded form). Without it a phrase like
-        "Convertible Bond" matches ANY filer, so a covenant lookup MUST scope to the subject."""
+        "Convertible Bond" matches ANY filer, so a covenant lookup MUST scope to the subject.
+
+        Reads page after page until every match is read or ``max_pages`` is spent; the result's
+        ``capped`` says which. The first page's URL carries no ``from=``, as it always has."""
         q = urllib.parse.quote(f'"{phrase}"')  # quote() => spaces become %20, not '+'
         url = f"{_EFTS}?q={q}&forms={forms}"
         if ciks:
             url += f"&ciks={pad_cik(ciks)}"  # 10-digit; a bare int yields an empty efts result
         if startdt and enddt:
             url += f"&startdt={startdt}&enddt={enddt}"
-        data = cast(dict[str, Any], self._efts.get_json(url, ttl_seconds=_ONE_DAY))
-        return parse_fts_response(data)
+        hits: list[FtsHit] = []
+        total = 0
+        for page in range(max_pages):
+            data = cast(dict[str, Any], self._efts.get_json(
+                f"{url}&from={page * FTS_PAGE_SIZE}" if page else url, ttl_seconds=_ONE_DAY))
+            got = parse_fts_response(data)
+            total = int((data["hits"].get("total") or {}).get("value", 0))
+            hits += got
+            if not got or len(hits) >= total:
+                break
+        return FtsResult(hits=hits, total=max(total, len(hits)))
 
     # --- registrant names (reverse-merger / rename vintage) ------------------------------------
     def _remember_submissions(

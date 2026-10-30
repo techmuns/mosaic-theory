@@ -931,8 +931,13 @@ def fiscal_year_of(year_ends: dict[int, tuple[date, ...]], point: ConceptPoint) 
 
 
 def latest_instant(points: list[ConceptPoint]) -> ConceptPoint | None:
-    """Latest balance-sheet value (most recent period_end, then most recent filing)."""
-    instants = [p for p in points if p.is_instant] or points
+    """Latest balance-sheet value (most recent period_end, then most recent filing), or None.
+
+    NONE WHEN NO POINT IS AN INSTANT (audit E1-D16). The fallback was ``… or points``, so a list of
+    flows answered with a flow: WOR's revenue returned its year to 2026-05-31 as if it were a
+    balance. No caller feeds it flows today (0 of 2,253 cached filers through net debt and the
+    share count, 2026-10-30), which is why the widened population had to go before one did."""
+    instants = [p for p in points if p.is_instant]
     if not instants:
         return None
     return max(instants, key=lambda p: (p.period_end, p.filed))

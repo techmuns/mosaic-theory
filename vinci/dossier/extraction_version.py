@@ -239,6 +239,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "checked against the four quarters ending on its date, a disagreement or a '-' quarter "
         "is a QA flag, and a material row its quarters contradict refuses the build",
     ),
+    (
+        "2026-10-30.cover-dated-shares",
+        "a share count tagged after its own filing is dated from its cover sentence (an anchored "
+        "parse; unread, at its filing day, printed 'filed <date>'), its value cross-checked "
+        "against another count in the same filing and UNKNOWN past 5%, each correction a QA flag "
+        "(audit X1(a)); the covenant-pointer table names the aggregate lines and agreement "
+        "families its caps leave out, and a full-text search reads every page or says it did not "
+        "(audit E1-D11)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

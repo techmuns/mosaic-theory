@@ -85,8 +85,8 @@ from vinci.dossier.schemas import (
     StockPerformance,
     Valuation,
 )
+from vinci.edgar import cover_count, filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar import debt_maturities as dmx
-from vinci.edgar import filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar.client import EdgarClient, Filing
 from vinci.edgar.concepts import (
     ANNUAL_REPORT_FORMS,
@@ -97,7 +97,6 @@ from vinci.edgar.concepts import (
     extract_points,
     facts_as_of,
     foreign_currency,
-    latest_instant,
     points_for_tag,
 )
 from vinci.edgar.net_debt import not_applicable
@@ -1255,7 +1254,54 @@ def _basis_break(pts: list[ConceptPoint], factor: float) -> int | None:
     return best[1] if best is not None else None
 
 
-def _split_straddled_trend(recent: list[ConceptPoint], brk: int, factor: float) -> Sourced[str]:
+def _cover_text(edgar: EdgarClient, http: CachedHttp | None, cik: str,
+                p: ConceptPoint) -> str | None:
+    """The opening text of the filing that carried ``p`` — where its cover sentence is — or None
+    when it cannot be had: no fetcher, the filing not in the submissions index, a failed fetch.
+    A refusal by SEC is not one of these; it stops the run (`SecRateLimitedError`)."""
+    if http is None or not p.accession or not p.form:
+        return None
+    try:
+        doc = next((f.primary_doc for f in edgar.recent_filings(cik, forms=(p.form,))
+                    if f.accession == p.accession), None)
+        if not doc:
+            return None
+        url = _ARCHIVE.format(cik=int(pad_cik(cik)), acc=p.accession.replace("-", ""), doc=doc)
+        return html_to_text(cover_count.cover_head(http.get_text(url, ttl_seconds=None)))
+    except (HttpError, KeyError, ValueError):
+        return None
+
+
+def _dated_shares(edgar: EdgarClient, http: CachedHttp | None, cik: str,
+                  facts: dict[str, Any], points: list[ConceptPoint],
+                  reference_date: date) -> list[cover_count.DatedCount]:
+    """``points`` each dated at the day it was counted (:mod:`vinci.edgar.cover_count`). A cover
+    is fetched only for a count filed inside the trailing ~2y — the furthest any reader looks."""
+    def read(p: ConceptPoint) -> str | None:
+        if (reference_date - p.filed).days > _SHARES_WINDOW_DAYS:
+            return None
+        return _cover_text(edgar, http, cik, p)
+    return cover_count.date_counts(points, facts, read=read)
+
+
+def _share_count_flags(edgar: EdgarClient, http: CachedHttp | None, cik: str | None,
+                       reference_date: date) -> list[str]:
+    """The QA flags of every share count in the trailing ~2y that was tagged after its own filing:
+    the date it is read at instead, or its refusal. Counts outside the window are read by nothing
+    on the page, so they flag nothing."""
+    facts = _companyfacts_or_none(edgar, cik)
+    if not facts or not cik:
+        return []
+    counts = _dated_shares(edgar, http, cik, facts,
+                           [p for p in extract_points(facts, "shares") if p.value], reference_date)
+    return [f for c in counts
+            if (reference_date - c.point.period_end).days <= _SHARES_WINDOW_DAYS
+            for f in c.flags]
+
+
+def _split_straddled_trend(recent: list[ConceptPoint], brk: int, factor: float, *,
+                           when: Callable[[ConceptPoint], str] = lambda p: str(p.period_end),
+                           ) -> Sourced[str]:
     """The reading for a window a share-basis change runs through — measured on ONE side of it.
 
     NO CROSS-BASIS PERCENTAGE IS PRINTED, not even a corrected one. Re-scaling the pre-change points
@@ -1265,14 +1311,14 @@ def _split_straddled_trend(recent: list[ConceptPoint], brk: int, factor: float) 
     named so the missing earlier half is explained rather than silently dropped.
     """
     post = recent[brk:]
-    at = recent[brk].period_end
+    at = when(recent[brk])
     rose = (recent[brk].value or 0) > (recent[brk - 1].value or 0)
     change = f"~{factor:.1f}x share-basis change at {at} (count {'rose' if rose else 'fell'})"
-    src = f"EDGAR XBRL shares, post-basis-change {post[0].period_end}..{post[-1].period_end}"
+    src = f"EDGAR XBRL shares, post-basis-change {when(post[0])}..{when(post[-1])}"
     if len(post) < 2:
         return Sourced.present(
             f"NOT COMPARABLE across this window: {change}. Only one share count since it "
-            f"({post[0].value:,.0f} at {post[0].period_end}) — no trend on the current basis yet.",
+            f"({post[0].value:,.0f} at {when(post[0])}) — no trend on the current basis yet.",
             source_ref=src)
     first, last = post[0], post[-1]
     pct = (last.value / first.value - 1.0) if first.value else 0.0
@@ -1285,14 +1331,15 @@ def _split_straddled_trend(recent: list[ConceptPoint], brk: int, factor: float) 
     # the span explicit is what keeps the label honest at a length it was not calibrated for.
     span = (last.period_end - first.period_end).days / 365.0
     return Sourced.present(
-        f"{word} over ~{span:.1f}y since a {change}: {first.value:,.0f} ({first.period_end}) → "
-        f"{last.value:,.0f} ({last.period_end}), {pct:+.1%}. The pre-change count is a DIFFERENT "
+        f"{word} over ~{span:.1f}y since a {change}: {first.value:,.0f} ({when(first)}) → "
+        f"{last.value:,.0f} ({when(last)}), {pct:+.1%}. The pre-change count is a DIFFERENT "
         f"BASIS and is not compared — an endpoint delta across the change measures the "
         f"restatement, not dilution.",
         source_ref=src)
 
 
-def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> Sourced[str]:
+def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date, *,
+                       http: CachedHttp | None = None) -> Sourced[str]:
     """Recent (trailing ~2y) share-count trend — a 7y endpoint delta hides the current posture.
 
     SPLIT-AWARE, because across a basis change the percentage is a lie of arithmetic. NFLX's
@@ -1315,11 +1362,20 @@ def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> So
     """
     try:
         facts = edgar.companyfacts(cik)
-        pts = [p for p in extract_points(facts, "shares") if p.value]
+        raw = [p for p in extract_points(facts, "shares") if p.value]
     except (HttpError, KeyError):
         return Sourced.unknown(note="EDGAR companyfacts shares unavailable")
-    pts.sort(key=lambda p: p.period_end)
-    recent = [p for p in pts if (reference_date - p.period_end).days <= _SHARES_WINDOW_DAYS]
+    # each count at the date it was COUNTED: one tagged after its own filing is dated from its cover
+    # sentence or, unread, at its filing day — printed "filed <date>" (audit X1(a))
+    counts = sorted(_dated_shares(edgar, http, cik, facts, raw, reference_date),
+                    key=lambda c: (c.point.period_end, c.point.filed))
+    window = [c for c in counts
+              if (reference_date - c.point.period_end).days <= _SHARES_WINDOW_DAYS]
+    if refused := [c.refused for c in window if c.refused]:
+        return Sourced.unknown(note=f"a share count in the trailing ~2y is UNKNOWN: {refused[0]}")
+    when = {id(c.point): c.when for c in counts}
+    pts = [c.point for c in counts]
+    recent = [c.point for c in window]
     if len(recent) < 2:
         return Sourced.unknown(
             note=f"<2 XBRL shares points in the trailing ~2y ({len(pts)} total) — no current trend"
@@ -1333,15 +1389,16 @@ def _share_count_trend(edgar: EdgarClient, cik: str, reference_date: date) -> So
                                                as_of=reference_date))
     brk = _basis_break(recent, factor) if factor else None
     if brk is not None:
-        return _split_straddled_trend(recent, brk, factor or 0.0)
+        return _split_straddled_trend(recent, brk, factor or 0.0,
+                                      when=lambda p: when[id(p)])
     first, last = recent[0], recent[-1]
     pct = (last.value / first.value - 1.0) if first.value else 0.0
     word = "diluting" if pct > 0.02 else "buying back" if pct < -0.02 else "flat"
     span = (last.period_end - first.period_end).days / 365.0
     return Sourced.present(
-        f"{word} (trailing ~{span:.1f}y): {first.value:,.0f} ({first.period_end}) → "
-        f"{last.value:,.0f} ({last.period_end}), {pct:+.1%}",
-        source_ref=f"EDGAR XBRL shares, trailing {first.period_end}..{last.period_end}",
+        f"{word} (trailing ~{span:.1f}y): {first.value:,.0f} ({when[id(first)]}) → "
+        f"{last.value:,.0f} ({when[id(last)]}), {pct:+.1%}",
+        source_ref=f"EDGAR XBRL shares, trailing {when[id(first)]}..{when[id(last)]}",
     )
 
 
@@ -1685,7 +1742,7 @@ _ADJ_EPS = re.compile(rf"Adjusted EPS of \$?{_NUM} to \$?{_NUM}", re.I)
 
 def _adjusted_facts(
     record: DataRecord, edgar: EdgarClient, revised_guidance: Sourced[str],
-    reference_date: date,
+    reference_date: date, *, http: CachedHttp | None = None,
 ) -> tuple[Sourced[str], Sourced[str], Sourced[str]]:
     """Surface the adjusted (non-GAAP) figures the GAAP caveats called UNAVAILABLE — the 99.1
     revised guidance is in the dossier: adjusted EPS, forward EV/adj-EBITDA, and covenant-basis
@@ -1716,11 +1773,10 @@ def _adjusted_facts(
     cik = record.identity.cik
     try:
         snap = edgar.fundamental_snapshot(cik) if cik else None
-        share_pts = (
-            [p for p in extract_points(edgar.companyfacts(cik), "shares") if p.value] if cik else []
-        )
+        facts = edgar.companyfacts(cik) if cik else {}
+        share_pts = [p for p in extract_points(facts, "shares") if p.value] if cik else []
     except (HttpError, KeyError):
-        snap, share_pts = None, []
+        snap, facts, share_pts = None, {}, []
     # a bank, lender or insurer has no net-debt leverage (vinci.edgar.net_debt): its borrowings
     # fund its book — the same rule the screen applies to the record's ratios
     na = not_applicable(record.identity.sic)
@@ -1731,11 +1787,14 @@ def _adjusted_facts(
     # split factor, on a page whose headline share basis was correctly refused. Guarding one
     # consumer of a bad number and leaving its neighbour is how the first fix would have half
     # landed — the fleet is unaffected either way (counts run 10–375d against a 540d bound).
-    fresh_pts = [
-        p for p in share_pts
-        if (reference_date - p.period_end).days <= _SHARES_MAX_AGE_DAYS
+    # each count aged from the date it was counted, as the stock-info basis is (audit X1(a))
+    fresh = [
+        c for c in (_dated_shares(edgar, http, cik, facts, share_pts, reference_date)
+                    if cik else [])
+        if (reference_date - c.point.period_end).days <= _SHARES_MAX_AGE_DAYS
     ]
-    shares = max(fresh_pts, key=lambda p: p.period_end).value if fresh_pts else None
+    newest = max(fresh, key=lambda c: (c.point.period_end, c.point.filed)) if fresh else None
+    shares = newest.point.value if newest is not None and not newest.refused else None
 
     ev_adj, nd_adj = unk, unk
     if eb:
@@ -1982,7 +2041,7 @@ def _survival_capacity(
 def _quality(
     record: DataRecord, edgar: EdgarClient, bundle: CiqBundle, reference_date: date,
     adj_leverage: Sourced[str], *, fcf: Sourced[float], margin: Sourced[str],
-    trajectory: Sourced[str],
+    trajectory: Sourced[str], http: CachedHttp | None = None,
 ) -> Quality:
     """``fcf`` / ``margin`` / ``trajectory`` arrive already resolved against the EDGAR fallback (CIQ
     primary; EDGAR fills only an empty CIQ field) — assembled in :func:`assemble_mechanical`."""
@@ -2015,7 +2074,7 @@ def _quality(
         ),
         interest_coverage=ciq_sheets.interest_coverage(bundle),
         share_count_trend=(
-            _share_count_trend(edgar, record.identity.cik, reference_date)
+            _share_count_trend(edgar, record.identity.cik, reference_date, http=http)
             if record.identity.cik
             else Sourced.unknown(note="no CIK")
         ),
@@ -3552,7 +3611,8 @@ def in_traded_units(count: float | None, ads: AdsRatio | None) -> tuple[float | 
 
 
 def _edgar_shares_outstanding(
-    edgar: EdgarClient, cik: str | None, *, as_of: date | None = None
+    edgar: EdgarClient, cik: str | None, *, as_of: date | None = None,
+    http: CachedHttp | None = None,
 ) -> float | None:
     """(H5) Latest EDGAR XBRL shares outstanding (dei cover-page, us-gaap fallback), or None when
     absent OR STALE — the denominator for short interest as a % of shares out, and the share basis
@@ -3567,18 +3627,28 @@ def _edgar_shares_outstanding(
     the chance to bridge to a basis that agrees with the cap, or to say UNKNOWN.
 
     ``as_of`` defaults to today only so existing callers keep working; assembly passes its
-    reference date so a build is reproducible rather than clock-dependent."""
+    reference date so a build is reproducible rather than clock-dependent.
+
+    A COUNT TAGGED AFTER ITS OWN FILING is aged from the date it was counted (audit X1(a)): its
+    cover sentence's date, or its filing day as a bound. Measured from the tag, a future date is
+    never "too old" — THM's 2023 count, tagged 2033, read as fresh. One whose value its own filing
+    contradicts is None (:mod:`vinci.edgar.cover_count`)."""
     facts = _companyfacts_or_none(edgar, cik)
-    if not facts:
+    if not facts or not cik:
         return None
-    pt = latest_instant(extract_points(facts, "shares"))
-    if pt is None:
-        return None
-    end = getattr(pt, "period_end", None)
     ref = as_of or date.today()
-    if isinstance(end, date) and ref - end > timedelta(days=_shares_max_age(edgar, cik, ref)):
+    counts = [c for c in _dated_shares(edgar, http, cik, facts,
+                                       extract_points(facts, "shares"), ref)
+              if c.point.is_instant]
+    if not counts:
         return None
-    return pt.value
+    newest = max(counts, key=lambda c: (c.point.period_end, c.point.filed))
+    if newest.refused:
+        return None
+    end = newest.point.period_end
+    if ref - end > timedelta(days=_shares_max_age(edgar, cik, ref)):
+        return None
+    return newest.point.value
 
 
 def _catalyst_path(
@@ -3993,6 +4063,10 @@ def _maturity_8ks(
 # agreement. Trailing `\w*` restores the prefix match the alternation was written for.
 _COVENANT_CLASS_RE = re.compile(
     r"\b(loan|credit|facilit|indenture|convertible|agreement|bond)\w*", re.IGNORECASE)
+#: efts queries one assembly spends on agreement families, and aggregate lines it lists by name —
+#: each a budget the pointer table states when it binds, never a silent cut.
+_COVENANT_QUERY_CAP = 6
+_COVENANT_GENERIC_CAP = 4
 # an EXECUTION filing carries the agreement as an EXHIBIT — a material-contract ex-10.x or a
 # filename naming the contract; a primary 8-K body ('mvst-20240603.htm') matches none of these.
 #: A MATERIAL-CONTRACT EXHIBIT FILENAME, across the conventions filers actually use.
@@ -4189,6 +4263,7 @@ def _covenant_pointers(
 
     # (2) per whitelisted family — efts (ciks-scoped) → keep only EXHIBIT-BEARING execution 8-Ks
     queries: dict[str, str] = {}  # family → canonical efts phrase
+    cut: list[str] = []  # every place the search stopped short, named
     generic: list[str] = []
     for i in instruments:
         fam = i.description.split(" With ")[0].split(" - ")[0].strip()
@@ -4196,13 +4271,13 @@ def _covenant_pointers(
             queries.setdefault(fam, _covenant_query(i.description))
         elif fam not in generic:
             generic.append(fam)
-    for fam, phrase in list(queries.items())[:6]:
+    for fam, phrase in list(queries.items())[:_COVENANT_QUERY_CAP]:
         try:
-            hits = edgar.fulltext_search(phrase, forms="8-K", ciks=cik10)
+            found = edgar.fulltext_search(phrase, forms="8-K", ciks=cik10)
         except HttpError:
             continue
         added = 0
-        for h in hits:
+        for h in found.hits:
             if added >= 2:
                 break
             # (H1a) DEFENSE-IN-DEPTH cross-CIK guard — reject any hit whose filer CIK ≠ the subject
@@ -4224,15 +4299,42 @@ def _covenant_pointers(
                 filing_date=h.file_date.isoformat() if h.file_date else "",
                 accession=h.accession, exhibits=exs))
             added += 1
+        if found.capped and added < 2:
+            cut.append(f"efts read {len(found.hits)} of {found.total} hits for '{phrase}'")
+            rows.append(CovenantPointer(
+                family=fam, filing="—", filing_date="", accession="", exhibits=[],
+                note=f"{cut[-1]} — an execution filing past them was not looked at"))
+    # A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION (CLAUDE.md). Both caps below dropped the rest
+    # with no row saying so: the aggregate-line cap binds on 13 of the 26 committed pages measured
+    # (LLY named 4 of 52, 2026-10-30); the query cap on none of them yet.
+    unsearched = list(queries)[_COVENANT_QUERY_CAP:]
+    if unsearched:
+        cut.append(f"{len(unsearched)} of {len(queries)} agreement families not searched")
+        rows.append(CovenantPointer(
+            family=(f"{len(unsearched)} more agreement "
+                    f"famil{'y' if len(unsearched) == 1 else 'ies'}"),
+            filing="—", filing_date="", accession="", exhibits=[],
+            note=(f"not searched (the search reads {_COVENANT_QUERY_CAP} of {len(queries)} "
+                  f"families): " + "; ".join(unsearched))))
 
     # (3) generic balance-sheet aggregates — honest "no contract-level filing" note (not a pointer)
-    for fam in generic[:4]:
+    for fam in generic[:_COVENANT_GENERIC_CAP]:
         rows.append(CovenantPointer(
             family=fam, filing="—", filing_date="", accession="", exhibits=[],
             note="no contract-level filing expected (aggregate line item)"))
+    if len(generic) > _COVENANT_GENERIC_CAP:
+        rows.append(CovenantPointer(
+            family=(f"{len(generic) - _COVENANT_GENERIC_CAP} more aggregate "
+                    f"line{'' if len(generic) - _COVENANT_GENERIC_CAP == 1 else 's'}"),
+            filing="—", filing_date="", accession="", exhibits=[],
+            note=(f"showing {_COVENANT_GENERIC_CAP} of {len(generic)} aggregate lines — the full "
+                  f"instrument panel lists every one")))
 
     if not any(r.accession for r in rows):
-        return Sourced.unknown(note=COVENANT_SEARCH_FOUND_NOTHING)
+        # "found nothing across the filing history" is a claim only a WHOLE search can make
+        return Sourced.unknown(note=(
+            f"the search stopped short and located no agreement exhibit in what it read: "
+            f"{'; '.join(cut)}" if cut else COVENANT_SEARCH_FOUND_NOTHING))
     return Sourced.present(
         rows,
         source_ref=(f"EDGAR {annual_form} exhibit index + CIK-scoped efts (agreement-class, "
@@ -5372,6 +5474,7 @@ def _price_stale_note(last_close: date | None, today: date) -> str | None:
 def _stock_info(
     record: DataRecord, store: Store, edgar: EdgarClient, bundle: CiqBundle,
     reference_date: date, market_cap: Sourced[float], *, today: date | None = None,
+    http: CachedHttp | None = None,
 ) -> StockInfo:
     """(Phase-2) The market-data 'stock info' box: CMP + 52-week range (EOD price features), shares
     outstanding (EDGAR XBRL), book value/share + market cap (CIQ). Each value is source-bound; a
@@ -5383,7 +5486,7 @@ def _stock_info(
         bars, reference_date=reference_date,
         staleness_days=get_config().price_staleness_days, market_cap=cap_val)
     sym = record.identity.eod_symbol
-    shares = _edgar_shares_outstanding(edgar, record.identity.cik, as_of=reference_date)
+    shares = _edgar_shares_outstanding(edgar, record.identity.cik, as_of=reference_date, http=http)
     shares_src = "EDGAR XBRL shares outstanding"
     refused: str | None = None
     if record.ads is not None:
@@ -5594,7 +5697,7 @@ def assemble_mechanical(
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
     drawdown, drawdown_flags = _drawdown_cause(record, edgar, http)
     adj_eps, adj_ev, adj_lev = _adjusted_facts(
-        record, edgar, drawdown.revised_guidance, reference_date)
+        record, edgar, drawdown.revised_guidance, reference_date, http=http)
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
     # EDGAR fundamentals fallback: when the CIQ Financials subsheets are present-but-empty while CIQ
     # multiples ARE populated, fill free_cash_flow / margin_trend / multi_year_trajectory from EDGAR
@@ -5626,7 +5729,7 @@ def assemble_mechanical(
         peer_comps = edgar_fundamentals.flag_deltas_basis(peer_comps)
     quality = _quality(
         record, edgar, bundle, reference_date, adj_lev,
-        fcf=fcf, margin=margin, trajectory=trajectory,
+        fcf=fcf, margin=margin, trajectory=trajectory, http=http,
     )
     implied_val = ciq_sheets.implied_valuation(bundle, peer_comps.comparability)
     # cap-band benchmark for the dossier surface (exhibit + 180d relative) — the monitor's policy
@@ -5647,7 +5750,7 @@ def assemble_mechanical(
             # flipping with no data change, in a repo whose whole point is as-of discipline.
             # in ADSs for a depositary line: FINRA counts the short position in the traded unit
             shares_out=in_traded_units(_edgar_shares_outstanding(
-                edgar, record.identity.cik, as_of=reference_date), record.ads)[0]),
+                edgar, record.identity.cik, as_of=reference_date, http=http), record.ads)[0]),
     )
     valuation = _valuation(
         record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None,
@@ -5695,7 +5798,8 @@ def assemble_mechanical(
         key_ratios=key_ratios,  # (Phase-2) the Motilal-style CIQ Ratios panel
         return_ratios=return_ratios,  # (Phase-4) per-period return-ratio series (chart + table)
         stock_info=_stock_info(  # (Phase-2) CMP + 52wk range + shares + book value + cap
-            record, store, edgar, bundle, reference_date, implied_val.market_cap, today=today),
+            record, store, edgar, bundle, reference_date, implied_val.market_cap, today=today,
+            http=http),
         # (Brief) 52-week rebased price path — name vs the cap-band benchmark (the idio closes).
         stock_performance=_stock_performance(
             record.identity, store, reference_date, bench=bench),
@@ -5785,6 +5889,7 @@ def assemble_mechanical(
     # TECX (AvroBio), ORKA (ARCA) are the live proof. The marker states the filed fact and directs
     # verification; it never asserts a mechanism (a bare rename — AAPL 2019 — is not a predecessor).
     flags += _former_name_flags(edgar, record.identity.cik, reference_date)
+    flags += _share_count_flags(edgar, http, record.identity.cik, reference_date)
     flags += drawdown_flags  # degraded-feed twin of the UNKNOWN drawdown-cause note
     flags += maturity_caveats(mech.capital_structure)  # each governed / springing maturity
     if line_flag is not None:

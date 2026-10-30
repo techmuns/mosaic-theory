@@ -36,6 +36,7 @@ from vinci.edgar.client import (
     EdgarClient,
     Filing,
     FtsHit,
+    FtsResult,
     FundamentalSnapshot,
     all_unknown_snapshot,
 )
@@ -1244,8 +1245,8 @@ class _FakeEdgar:
         return self._tenks if "10-K" in forms else self._filings
 
     def fulltext_search(self, phrase: str, forms: str = "8-K", ciks: str | None = None,
-                        startdt: date | None = None, enddt: date | None = None) -> list[FtsHit]:
-        return self._hits
+                        startdt: date | None = None, enddt: date | None = None) -> FtsResult:
+        return FtsResult(hits=self._hits, total=len(self._hits))
 
 
 class _FakeHttp:
