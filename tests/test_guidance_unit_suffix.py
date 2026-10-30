@@ -128,9 +128,15 @@ def test_the_spelled_out_forms_are_untouched(sentence: str, expected: tuple[floa
 def test_a_following_word_is_not_eaten_as_a_unit() -> None:
     """THE INVERTED RISK, guarded. `[MB]` under re.I would otherwise read the `b` of "based" as
     billions and turn $2.5M into $2,500M — the same magnitude error this fix removes, pointing the
-    other way. The suffix must be a suffix, not the first letter of the next word."""
-    g = _guide("We project 2026 revenue of $2.4 to $2.5 based on current rates.")
-    assert g is not None and (g.low, g.high) == (2.4, 2.5)
+    other way. The suffix must be a suffix, not the first letter of the next word.
+
+    The range states NO scale, so since audit E2-D1 it is refused aloud rather than stored as
+    $2.4–2.5M (an assumed $M is the same guess as an assumed billion); what this pins is that it is
+    never 2,400–2,500."""
+    r = parse_release("Outlook\nWe project 2026 revenue of $2.4 to $2.5 based on current rates.\n",
+                      source_ref="8-K test EX-99.1")
+    assert r.guidance == []
+    assert [f for f in r.qa_flags if f.startswith(GUIDANCE_REFUSAL_PREFIX) and "scale" in f]
 
     million = _guide("We project 2026 revenue of $900 to $950 million, mostly subscriptions.")
     assert million is not None and (million.low, million.high) == (900.0, 950.0)
