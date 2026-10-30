@@ -67,18 +67,20 @@ def test_a_descending_export_serves_its_latest_date_never_its_oldest() -> None:
 
 
 def test_an_undated_column_is_never_placed_as_the_latest() -> None:
-    """THE NEGATIVE HALF. A column whose header states no date cannot be PLACED in time, so it is
-    never read as the latest, however far right it sits — the dated column answers. A sheet whose
-    header dates no column at all answers nothing ("unplaced"), never its rightmost cell."""
+    """THE NEGATIVE HALF. A column whose header states no date cannot be PLACED in time, so no
+    column is called the latest (PR #872 round 2): skipping it would serve the one before it — the
+    step-back, through the header. A sheet whose header dates no column at all answers nothing
+    either ("unplaced"), never its rightmost cell. 0 such header cells in 104 exports on file."""
     rows = [
         ["Fiscal Period", "LTM", "Press Release Jun-30-2026"],
         ["Book Value/Share", 9.0, 11.0],
     ]
     got = cs.latest_cell(rows, 1, 0)
-    assert (got.state, got.value) == ("present", 11.0)
+    assert (got.state, got.value) == ("unplaced", None)
+    assert got.reason is not None and "'LTM'" in got.reason
 
     single = [["Fiscal Period", 46203.0, "n/a"], ["Book Value/Share", 11.0, 12.0]]
-    assert cs.latest_cell(single, 1, 0).value == 11.0
+    assert cs.latest_cell(single, 1, 0).state == "unplaced"
     undated = [["Fiscal Period", "LTM", "FY2025"], ["Book Value/Share", 9.0, 11.0]]
     assert cs.latest_cell(undated, 1, 0).state == "unplaced"
 

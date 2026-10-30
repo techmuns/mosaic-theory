@@ -73,7 +73,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from vinci.dossier import lease_basis as lb
-from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, clean_num
 from vinci.dossier.schemas import EbitdaReconciliation, EbitdaReconQuarter, ReleaseExtract
 from vinci.edgar.concepts import CONCEPT_ALIASES, points_for_tag
 
@@ -229,6 +229,22 @@ def _ciq_quarters(bundle: CiqBundle) -> dict[date, float | None]:
     inc = bundle.sheet("financials", "Income Statement", freq="quarterly")
     return lb._dated(lb._row(inc, "For the Fiscal Period Ending", prefix=True),
                      lb._row(inc, "EBITDA"))
+
+
+def _refused(bundle: CiqBundle, ends: list[date]) -> EbitdaReconciliation:
+    """The block for an LTM one of whose four quarters reads a marker: no quarters, the reason."""
+    from vinci.dossier.ciq_sheets import _cell_words
+
+    inc = bundle.sheet("financials", "Income Statement", freq="quarterly")
+    raw = lb._cells(lb._row(inc, "For the Fiscal Period Ending", prefix=True),
+                    lb._row(inc, "EBITDA"))
+    gaps = "; ".join(f"the quarter ending {q.isoformat()} reads {_cell_words(raw.get(q))}"
+                     for q in ends if clean_num(raw.get(q)) is None)
+    why = (f"CIQ's quarterly EBITDA is unavailable in a quarter of its LTM ({gaps}), so the LTM "
+           "the multiples divide is not set against the filings, and no older quarter is set in "
+           "its place")
+    return EbitdaReconciliation(quarters=[], ciq_ltm=None, any_different=False, line=f"{why}.",
+                                source_ref=SOURCE_REF, refused=why)
 
 
 def _ciq_unusual(bundle: CiqBundle) -> dict[date, float]:
@@ -387,15 +403,15 @@ def reconcile(bundle: CiqBundle, facts: dict[str, Any] | None, releases: list[Re
     ends = sorted(ciq)[-4:]
     if len(ends) < 4:
         return None
-    # FOUR VALUED QUARTERS AT THE LATEST, OR NO BLOCK (D-D2): a marker in any of them is a quarter
-    # of CIQ's LTM that cannot be set against its filing — refused, never replaced by an older one
-    vals = [ciq[q] for q in ends]
-    if any(v is None for v in vals):
-        return None
     # FOUR QUARTERS OR NO LTM: LLY's quarterly export is its annual one (2026-10-27), and four
     # fiscal years set against four rebuilt quarters would read as four quarters that differ
     if not _LTM_SPAN_DAYS[0] <= (ends[-1] - ends[0]).days <= _LTM_SPAN_DAYS[1]:
         return None
+    # FOUR VALUED QUARTERS AT THE LATEST, OR A REFUSED BLOCK (D-D2): a marker in any of them is a
+    # quarter of CIQ's LTM that cannot be set against its filing — never replaced by an older one,
+    # and never a block that vanishes (PR #872 round 2): the refusal is written, with its reason
+    if any(ciq[q] is None for q in ends):
+        return _refused(bundle, ends)
     rows: list[EbitdaReconQuarter] = []
     for q in ends:
         cq = ciq[q]
@@ -547,6 +563,10 @@ def backfill_transform(ticker: str, *, facts: dict[str, Any] | None, bundle: Ciq
         releases = [ReleaseExtract.model_validate(r) for r in
                     ((out.get("primary_source") or {}).get("releases") or [])]
         rec = reconcile(bundle, facts, releases, text_for)
+        if rec is not None and rec.refused:   # said, never "wrote no block" (PR #872 round 2)
+            refused.append(f"{ticker}: ebitda_reconciliation — the rebuild refuses it: "
+                           f"{rec.refused}")
+            return out
         if rec is None:
             ends = sorted(date.fromisoformat(q["period_end"]) for q in held.get("quarters") or [])
             if len(ends) == 4 and not (_LTM_SPAN_DAYS[0] <= (ends[-1] - ends[0]).days

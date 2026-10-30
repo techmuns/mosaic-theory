@@ -73,14 +73,18 @@ superseded-by:
   - **LLY:** `quality.free_cash_flow` 1,951.0 [12 months Dec-31-2025]; `net_debt_to_ocf` 2.7, CIQ
     net debt at the press-release Q3 over OCF 16,813 for FY2025; `anchor.ltm_fcf` 8,972.0,
     "fiscal year to 2025-12-31 (vendor basis)". Each sits behind an LTM press-release column that
-    reads 'NA' / '-'.
+    reads 'NA' / '-'. The anchor bridge's `d_and_a` fact, 1,997.0 for FY Dec-2025, behind a '-'
+    'Depreciation & Amort., Total', becomes absent with its reason. LLY's anchor reads EDGAR's D&A,
+    so no anchor value moves with it. Its D&A check line now names both rows' '-' cells, where it
+    said "only one statement discloses a depreciation line".
   - **ORKA:** interest coverage −59.5x, read from [12 months Dec-31-2024] behind a '-' LTM interest
     expense.
   - **FUBO:** free cash flow −107.8, read from [12 months Sep-27-2025].
 
 **HOW VERIFIED.**
-- **Failing first.** `tests/test_latest_cell_contract.py`: 55 failed, 2 passed and 1 skipped on
-  main 9503c4fa; 59 passed here. The suite covers:
+- **Failing first.** `tests/test_latest_cell_contract.py` failed 55 and passed 2 (with 1 skipped)
+  on main 9503c4fa, at this PR's first head. At the final head it passes 73: 62 at the
+  coordinator's review of 856051cd, plus round 2's 11. The suite covers:
   - each of the 8 `gen.MARKERS` at the latest column, through the reader and through each
     decision-path reader;
   - the positive fences;
@@ -137,6 +141,36 @@ superseded-by:
   pursued and keeps its value.
 - Falsifier for "unplaced never fires": a re-export whose header carries two columns at its latest
   date. Those reads then go UNKNOWN, and the reason names both columns.
+
+**ROUND 2 (coordinator review of 856051cd; one commit, each fix behind a test failing there).**
+- **The bridge fills from a narrower row only where the primary row is ABSENT.** This covers
+  'Cash And Equivalents' for 'Total Cash & ST Investments', the 'Depreciation & Amort.' component
+  for the consolidated total, and the annual diluted average for the quarterly count. A marker on
+  the primary row makes the fact unavailable, with its reason in `CiqFacts.unavailable`.
+  - Under `_latest_col` a marker stepped back to an older period, so the fallback was reached only
+    for an absent row.
+  - This PR's first cut let the component fill in silently. On the synthetic case that was a D&A
+    of 8.0 for 12.8, which the containment check compared with itself. 0 of 104 exports had the
+    shape.
+- **`ev_bridge` reads its balance-sheet column through `latest_cell`.** It used to take the highest
+  dated column index. On a right-to-left sheet it bridged 2024-08-31 while `net_debt` read
+  Aug-31-2026. The 26 pages' bridges are identical.
+- **A refused EBITDA reconciliation is written WITH its reason.** `EbitdaReconciliation.refused`
+  is a new field: no quarters, `ciq_ltm` None, and `line` naming the quarter and its cell.
+  - Both renderers print it.
+  - The scorecard reads it: "refused at assembly — …".
+  - The backfill transform names it: "the rebuild refuses it: …".
+  - It used to return None, which the page, the scorecard ("not four consecutive quarters") and
+    the transform ("the rebuild wrote no block") all misread. `refused` is absent when unset, so
+    committed blocks round-trip byte-identical.
+- **An annual balance-sheet release column at the fiscal year's end waits for the 10-K.** It used
+  to name the 10-Q. A bare date has no kind, so the year end is read as the month the export's
+  columns mostly end in.
+- **A period header naming an undated column places none.** A newest column suffixed
+  'Jun-30-2026A' was skipped, and the one before it was served as the latest. 0 of 13,496
+  non-empty period-header cells in 615 header rows across the 104 exports are undated.
+- **Replayed** under main 8e6b12b1's code and this branch's, over the 26 pages' names: the same
+  moves only (LLY, ORKA, FUBO, plus LLY's bridge facts above). R1 is unchanged.
 
 **DEFERRED FROM REVIEW (PR #872 round 1, in-session `/code-review high`; Codex hit its usage limit).**
 - **To A2, the zero-coercion PR:** `key_ratios` prints "dividend: none" when the pinned column's

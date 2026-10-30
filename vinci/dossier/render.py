@@ -2893,7 +2893,8 @@ def _brief_financials(m: MechanicalLayer) -> list[str]:
     # (2026-10-21) and the actual column itself is CIQ's, not the filing's, where they differ —
     # every EV/EBITDA on the page divides it. Twin: ebitdaReconNote() in dossier.js.
     rec = fs.ebitda_reconciliation
-    if rec is not None and rec.any_different:
+    # a REFUSED block says so on the page (PR #872 round 2): CIQ's LTM was not set against them
+    if rec is not None and (rec.any_different or rec.refused):
         out += ["", f"> **CIQ's EBITDA against the filings.** {rec.line}", ""]
     return out
 

@@ -23,7 +23,9 @@ The corpus checks at the end read the licensed workbooks and skip where they are
 
 from __future__ import annotations
 
+import json
 from datetime import date
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -273,8 +275,13 @@ def test_the_ebitda_reconciliation_never_shifts_its_window(bundle: CiqBundle) ->
     CIQ's LTM, and a reconciliation of them would be stamped as if they were."""
     rec = ebitda_recon.reconcile(bundle, {}, [], lambda _r: None)
     assert rec is not None and rec.quarters[-1].period_end == gen.Q_DATES[-1].isoformat()
+    assert rec.refused is None and "refused" not in rec.model_dump()   # absent, never null
     _row(_sheet(bundle, "Income Statement", "quarterly"), "EBITDA")[-1] = "NA"
-    assert ebitda_recon.reconcile(bundle, {}, [], lambda _r: None) is None
+    got = ebitda_recon.reconcile(bundle, {}, [], lambda _r: None)
+    # (PR #872 round 2) refused WITH its reason, never a block that vanishes
+    assert got is not None and got.quarters == [] and got.ciq_ltm is None
+    assert got.refused is not None and gen.Q_DATES[-1].isoformat() in got.refused
+    assert "'NA'" in got.refused and got.line.startswith(got.refused)
 
 
 def _tev_close(b: CiqBundle) -> list[Any]:
@@ -334,6 +341,166 @@ def test_a_press_release_balance_sheet_or_cash_flow_is_refused(
         ciq_bridge(bundle, gen.TICKER)
     if sheet == "Balance Sheet":   # a refresh transform reads it unrefused: its words are kept
         assert "[Press Release " in (cs.net_debt(bundle).source_ref or "")
+
+
+# --- PR #872 round 2 (coordinator review) ---------------------------------------------------------
+
+
+def test_a_marker_on_the_total_d_and_a_row_is_never_filled_from_its_component(
+        bundle: CiqBundle) -> None:
+    """(1) The narrower row fills only an ABSENT total: a marker on 'Depreciation & Amort., Total'
+    is unavailable with its reason, never the opex component under the consolidated name."""
+    cf = _sheet(bundle, "Cash Flow", "annual")
+    _row(cf, "Depreciation & Amort., Total")[-1] = "-"
+    cf.append(["Depreciation & Amort.", 6.0, 6.5, 7.0, 7.4, 7.8, 8.0])
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert "d_and_a" not in ciq.facts
+    assert f"[{LTM_LABEL}]" in ciq.unavailable["d_and_a"]
+    assert any(c.startswith("D&A: containment unrun — ") and "Depreciation & Amort., Total" in c
+               for c in ciq.checks), ciq.checks
+    da = _bridge_inputs({}, {}, ciq)["d_and_a"]
+    assert da.value is None and "CIQ's D&A: " in (da.source or "")
+
+
+def test_an_absent_total_d_and_a_row_is_still_read_from_its_component(bundle: CiqBundle) -> None:
+    """(+) The fallback the bridge always had, for a row the sheet does not carry."""
+    cf = _sheet(bundle, "Cash Flow", "annual")
+    cf.remove(_row(cf, "Depreciation & Amort., Total"))
+    cf.append(["Depreciation & Amort.", 6.0, 6.5, 7.0, 7.4, 7.8, 8.0])
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert ciq.value("d_and_a") == 8.0 and "d_and_a" not in ciq.unavailable
+
+
+def test_a_marker_on_total_cash_is_never_filled_from_cash_and_equivalents(
+        bundle: CiqBundle) -> None:
+    bs = _sheet(bundle, "Balance Sheet", "quarterly")
+    _row(bs, "Total Cash & ST Investments")[-1] = "-"
+    bs.append(["Cash And Equivalents", *[round(c - 10.0, 1) for c in gen.Q_CASH]])
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert "cash" not in ciq.facts and "net_debt" not in ciq.facts
+    assert gen._mdy(gen.Q_DATES[-1]) in ciq.unavailable["cash"]
+
+
+def test_a_marker_on_the_quarterly_diluted_count_is_never_the_annual_average(
+        bundle: CiqBundle) -> None:
+    label = "Weighted Avg. Diluted Shares Out."
+    _sheet(bundle, "Income Statement", "quarterly").append(
+        [label, *[50.0 + i for i in range(len(gen.Q_DATES) - 1)], "NA"])
+    _sheet(bundle, "Income Statement", "annual").append([label, 48.0, 49.0, 50.0, 51.0, 52.0, 53.0])
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert "diluted_shares" not in ciq.facts
+    assert gen.Q_DATES[-1].strftime("%b-%d-%Y") in ciq.unavailable["diluted_shares"]
+
+
+def test_the_ev_bridge_reads_the_latest_dated_column_whatever_its_position(
+        bundle: CiqBundle) -> None:
+    """(2) A right-to-left quarterly balance sheet bridges its NEWEST column, as `net_debt` reads
+    it — never the highest dated column index."""
+    bs = _sheet(bundle, "Balance Sheet", "quarterly")
+    hdr = cs._bs_period_header(bs)
+    assert hdr is not None
+    for r in range(hdr, len(bs)):
+        bs[r] = [bs[r][0], *reversed(bs[r][1:])]
+    got = cs.ev_bridge(bundle, fy_periods=["FY27"])
+    assert got is not None and got.balance_sheet_date == gen.Q_DATES[-1].isoformat()
+    assert got.net_debt == round(gen.Q_DEBT[-1] - gen.Q_CASH[-1], 1) == cs.net_debt(bundle).value
+
+
+def _refused_block(bundle: CiqBundle) -> dict[str, Any]:
+    _row(_sheet(bundle, "Income Statement", "quarterly"), "EBITDA")[-1] = "NA"
+    rec = ebitda_recon.reconcile(bundle, {}, [], lambda _r: None)
+    assert rec is not None and rec.refused
+    return json.loads(rec.model_dump_json())
+
+
+def test_a_refused_reconciliation_is_said_on_the_page_md_e2e(bundle: CiqBundle) -> None:
+    """(3) A committed page carrying the refused block prints its sentence in the brief."""
+    from vinci.dossier import render as dr
+    from vinci.dossier import schemas as ds
+    from vinci.dossier.assemble import _read_scenario_card
+
+    page = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())
+    page["mechanical"]["financial_summary"]["ebitda_reconciliation"] = _refused_block(bundle)
+    doc = ds.Dossier.model_validate(page)
+    rec = doc.mechanical.financial_summary.ebitda_reconciliation  # type: ignore[union-attr]
+    assert rec is not None
+    brief = dr.render_markdown(doc, card=_read_scenario_card(doc.ticker)).split(
+        "# Analysis — full dossier", 1)[0]
+    assert f"> **CIQ's EBITDA against the filings.** {rec.line}" in brief
+
+
+def test_a_refused_reconciliation_is_said_on_the_web_page_e2e(bundle: CiqBundle) -> None:
+    """(3) The web twin, through the real render path."""
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    page = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())
+    block = _refused_block(bundle)
+    page["mechanical"]["financial_summary"]["ebitda_reconciliation"] = block
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = f"""
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+const {{ renderDossier }} = await import("{dj}");
+const html = renderDossier({json.dumps(page)}, null);
+const m = /<b>CIQ's EBITDA against the filings<\\/b> — ([^<]*)<\\/div>/.exec(html);
+console.log(JSON.stringify(m ? m[1] : null));
+"""
+    out = subprocess.run(["node", "--input-type=module", "-e", driver], capture_output=True,
+                         text=True, check=True).stdout.strip().splitlines()[-1]
+    shown = json.loads(out)
+    assert shown is not None
+    assert shown.replace("&#39;", "'").replace("&amp;", "&") == block["line"]
+
+
+def test_the_scorecard_names_a_refused_reconciliation(bundle: CiqBundle) -> None:
+    from vinci.quality.sources.ciq import _ebitda_vs_xbrl
+
+    block = _refused_block(bundle)
+    got = _ebitda_vs_xbrl({"mechanical": {"financial_summary": {"ebitda_reconciliation": block}}})
+    assert got.not_run == f"ebitda_reconciliation refused at assembly — {block['refused']}"
+
+
+def test_the_backfill_names_a_refused_rebuild(
+        bundle: CiqBundle, monkeypatch: pytest.MonkeyPatch) -> None:
+    from vinci.dossier import lease_basis
+
+    monkeypatch.setattr(lease_basis, "own_quarterly_export", lambda _out, _b: True)
+    _refused_block(bundle)   # the export's latest EBITDA now reads 'NA'
+    held = {"quarters": [{"period_end": d.isoformat(), "ciq_ebitda": 1.0}
+                         for d in gen.Q_DATES[-4:]]}
+    refused: list[str] = []
+    out = ebitda_recon.backfill_transform(gen.TICKER, facts={}, bundle=bundle,
+                                          text_for=lambda _r: None, refused=refused)(
+        {"financial_summary": {"ebitda_reconciliation": held}})
+    assert out["financial_summary"]["ebitda_reconciliation"] == held   # left as it is
+    assert len(refused) == 1 and "the rebuild refuses it: " in refused[0]
+    assert gen.Q_DATES[-1].isoformat() in refused[0]
+
+
+def test_a_fiscal_year_end_balance_sheet_release_waits_for_the_10k(bundle: CiqBundle) -> None:
+    """(4) An annual balance sheet's release column at the fiscal year's end (May-31) names the
+    10-K, as an FY income-statement column does — a bare balance-sheet date has no kind."""
+    bs = _sheet(bundle, "Balance Sheet", "annual")
+    hdr = cs._bs_period_header(bs)
+    assert hdr is not None
+    bs[hdr][-1] = f"Press Release\n{gen._mdy(gen.A_DATES[-1])}"
+    with pytest.raises(cs.CiqPreliminaryError,
+                       match=f"the 10-K for the period ending {gen.A_DATES[-1].isoformat()}"):
+        cs.require_filed_income_statement(bundle, gen.TICKER)
+
+
+def test_a_header_suffixed_on_its_newest_column_places_nothing() -> None:
+    """(5) CIQ suffixes some newest headers ('Jun-30-2026A'): skipping the undated column would
+    serve the one before it as the latest — the step-back, through the header."""
+    rows = [["For the Fiscal Period Ending", "12 months\nMay-31-2026", "Jun-30-2026A"],
+            ["EBITDA", 10.0, 12.0]]
+    got = cs.latest_cell(rows, 1, 0)
+    assert got.state == "unplaced" and got.value is None
+    assert got.reason is not None and "'Jun-30-2026A'" in got.reason
 
 
 # --- the corpus (licensed workbooks; skipped where absent) --------------------------------------

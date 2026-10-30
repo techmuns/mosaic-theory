@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 import statistics
+from collections import Counter
 from collections.abc import Callable
 from datetime import date, datetime
 from typing import Any, Literal, NamedTuple
@@ -283,9 +284,13 @@ def latest_cell(rows: Rows, ri: int, hdr: int | None) -> LatestCell:
     * "present" — the latest column carries a number;
     * "unavailable" — it carries a marker ('-', 'NA', 'NM', …) or nothing: the reason names the
       cell and the column, and NO older column is read in its place;
-    * "unplaced" — no header (or no header cell) states a date, or two columns state the latest
-      one (a restated copy beside an as-reported one): nothing can be called the latest. Census of
-      104 non-test Financials exports on file, current and archived (2026-10-30): 0 of either.
+    * "unplaced" — no header (or no header cell) states a date, a header cell names a column but no
+      date (a newest header CIQ suffixes, 'Jun-30-2026A', would otherwise be skipped and the
+      column before it served as the latest — the step-back, through the header), or two columns
+      state the latest one (a restated copy beside an as-reported one): nothing can be called the
+      latest. Census of 104 non-test Financials exports on file, current and archived
+      (2026-10-30): 0 of any — 13,496 non-empty period-header cells in 615 header rows, every one
+      dated (PR #872 round 2).
 
     THE PERIOD CARRIES THE COLUMN'S STATUS (#868's field), so a press-release column is visible to
     every caller: its label prints 'Press Release'. Whether a press-release statement is read at
@@ -305,6 +310,12 @@ def latest_cell(rows: Rows, ri: int, hdr: int | None) -> LatestCell:
     if not dated:
         return none("unplaced", f"{what}: no period-header column states a date, so none can be "
                                 "placed as the latest")
+    undated = [_period_text(c) for j, c in enumerate(rows[hdr]) if j >= 1
+               and str(c if c is not None else "").strip() and _column_date(c) is None]
+    if undated:
+        return none("unplaced", f"{what}: the period header names {len(undated)} column(s) with no "
+                    f"date it reads ({'; '.join(repr(u) for u in undated)}), so which column is "
+                    "the latest is not guessed")
     end = max(d for d, _j in dated)
     at = [j for d, j in dated if d == end]
     if len(at) > 1:
@@ -3367,12 +3378,18 @@ def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float
     except CiqUnavailableError:
         return None
     hdr = _dated_header(bs)
-    col = (max((j for j in range(1, len(bs[hdr])) if _column_date(bs[hdr][j]) is not None),
-               default=None) if hdr is not None else None)
-    if hdr is None or col is None:
+    nd_i = _find_row(bs, "Net Debt")
+    if hdr is None or nd_i is None:
+        return None
+    # THE LATEST COLUMN BY DATE (`latest_cell`, PR #872 round 2): this took the highest dated
+    # column INDEX, so a right-to-left sheet bridged its oldest balance sheet while `net_debt`, on
+    # the same sheet, read the newest
+    latest = latest_cell(bs, nd_i, hdr)
+    col = latest.col
+    if col is None:
         return None
     bs_date = _column_date(bs[hdr][col])
-    nd = _row_at(bs, "Net Debt", col)
+    nd = latest.value
     td, cash = _row_at(bs, "Total Debt", col), _row_at(bs, "Total Cash & ST Investments", col)
     if nd is None or td is None or cash is None:
         return None
@@ -6604,6 +6621,9 @@ class PreliminaryColumn(NamedTuple):
     header: str           # the header as CIQ wrote it, on one line
     period: HeaderPeriod
     sheet: str = "Income Statement"
+    #: (PR #872 round 2) a bare balance-sheet date that is the FISCAL YEAR's end — the month the
+    #: export's other dated columns mostly end in — so the refusal waits for the 10-K, not a 10-Q
+    year_end: bool = False
 
 
 def press_release_income_columns(
@@ -6630,20 +6650,26 @@ def press_release_income_columns(
         if _no_data_available(rows) or hdr is None:
             continue
         cols = [(header_period(c), _period_text(c)) for c in rows[hdr][1:] if str(c).strip()]
+        # the month the export's columns mostly end in: an annual balance sheet's are fiscal years
+        months = Counter(_nominal_month(p.end) % 12 for p, _t in cols if p.end is not None)
+        fy_month = months.most_common(1)[0][0] if months else None
         latest = [pt for pt in cols if pt[0].kind == "LTM"]
         for kind in ("FY", "Q", None):
             ends = [p.end for p, _t in cols if p.kind == kind and p.end is not None]
             if ends:
                 latest += [pt for pt in cols if pt[0].kind == kind and pt[0].end == max(ends)]
-        out += [PreliminaryColumn(export, text, p, sheet) for p, text in latest
-                if p.status == "press_release"]
+        out += [PreliminaryColumn(export, text, p, sheet,
+                                  year_end=(export == "annual" and p.kind is None
+                                            and p.end is not None
+                                            and _nominal_month(p.end) % 12 == fy_month))
+                for p, text in latest if p.status == "press_release"]
     return out
 
 
 def _filing_for(cols: list[PreliminaryColumn]) -> str:
     """The filing that replaces a release for these columns: the 10-K at a fiscal year's end."""
-    return ("10-K" if any(c.period.kind == "FY" or c.period.quarter == 4 for c in cols)
-            else "10-Q")
+    return ("10-K" if any(c.period.kind == "FY" or c.period.quarter == 4 or c.year_end
+                          for c in cols) else "10-Q")
 
 
 def require_filed_income_statement(bundle: CiqBundle, ticker: str) -> None:
