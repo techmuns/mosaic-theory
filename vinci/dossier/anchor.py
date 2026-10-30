@@ -1359,13 +1359,24 @@ def ciq_bridge(bundle: Any, ticker: str) -> tuple[CiqFacts | None, str | None]:
 
     A MONEY PANEL STATING ANOTHER CURRENCY RAISES `CiqCurrencyError` here too (2026-10-27, #819
     review finding 1): assembly refused it before any fetch (`ciq_sheets.require_usd`) while
-    `anchor-backfill` read the same workbook's facts as dollars. One refusal on both paths."""
+    `anchor-backfill` read the same workbook's facts as dollars. One refusal on both paths.
+
+    SO DOES A PRESS-RELEASE INCOME STATEMENT (2026-10-30, coordinator review of #868, round 1):
+    `CiqPreliminaryError`, a `CiqAmbiguousError`. `anchor-backfill` reads the export ON DISK with
+    no stamp, the one reader that does — every refresh transform reads only the page's own export,
+    by hash or by reproducing its figures."""
     from vinci.dossier.ciq import CiqAmbiguousError
     from vinci.dossier.ciq_balance import extract
-    from vinci.dossier.ciq_sheets import CiqCurrencyError, require_usd, stated_currency
+    from vinci.dossier.ciq_sheets import (
+        CiqCurrencyError,
+        require_filed_income_statement,
+        require_usd,
+        stated_currency,
+    )
 
     try:
         require_usd(stated_currency(bundle), ticker)
+        require_filed_income_statement(bundle, ticker)
         ciq = extract(bundle, ticker)
     except (CiqAmbiguousError, CiqCurrencyError):
         raise

@@ -255,6 +255,22 @@ class CiqMislabelledError(CiqAmbiguousError):
     handler, for the same reason — a page assembled on a mislabelled export is a wrong page."""
 
 
+class CiqPreliminaryError(CiqAmbiguousError):
+    """A Financials Income Statement whose latest LTM, fiscal-year or quarter column is a CIQ
+    'Press Release' column (2026-10-30, operator ruling "go ahead with this fix then").
+
+    CIQ BUILDS THAT COLUMN FROM THE EARNINGS RELEASE before it has processed the 10-Q/10-K, and the
+    release carries fewer lines than the filing. A line it omits carries the last fiscal year into
+    the LTM (GOOGL's gain on investments read FY25's 24,620 to Sep-30-2026, where its quarters sum
+    to 138,156 without Q3); a line it reports only in aggregate lands in a catch-all (GOOGL's other
+    non-operating LTM 102,541 against quarters summing to -9,267). GOOGL's filed LTM to Jun-30-2026
+    reconciles to its quarters exactly. A vendor treats the release as preliminary and replaces it
+    with the filing; the page refuses it rather than print it under the same 'LTM' as a filed one.
+
+    A SUBCLASS OF `CiqAmbiguousError`, as `CiqMislabelledError` is: a caller that lets a two-export
+    folder stop the name does the same here, because a page assembled on it is a wrong page."""
+
+
 #: The statements whose "Period Type:" cells name an export's frequency. The other sheets do not
 #: speak for it: FUBO's Annual export carries a Capital Structure Details sheet reading Quarterly,
 #: and Key Stats / Multiples carry no such cell (census of the 34 non-test folders, 2026-10-29).

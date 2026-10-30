@@ -23,6 +23,7 @@ from vinci.dossier.ciq import (
     CiqBundle,
     CiqFormat,
     CiqParseError,
+    CiqPreliminaryError,
     CiqUnavailableError,
     clean_num,
     excel_date,
@@ -127,12 +128,27 @@ def _no_data_note(sheet: str) -> str:
 
 
 def _reclassified_cols(header: list[Any]) -> set[int]:
-    return {j for j, c in enumerate(header) if isinstance(c, str) and "Reclassified" in c}
+    return {j for j, c in enumerate(header) if header_period(c).status == "reclassified"}
 
 
 def _is_ltm(cell: Any) -> bool:
     """A period-header cell whose label marks a trailing-twelve-month column (vs a fiscal year)."""
     return "LTM" in str(cell).upper()
+
+
+#: What CIQ says a Financials column was built from. "filed" is a column carrying no status word.
+ColumnStatus = Literal["filed", "reclassified", "restated", "press_release"]
+
+#: The status words CIQ writes over a period column, as written, MOST SERIOUS FIRST — census of the
+#: 5,955 Financials header cells in the 34 non-test `-ta` folders and their archived exports
+#: (2026-10-30): 'Reclassified' 626, 'Restated' 282, 'Press Release' 63, and no cell carrying two.
+#: Should one ever carry two, the earlier word here is the column's status: a press-release column
+#: is never read as merely reclassified.
+_COLUMN_STATUS_WORDS: tuple[tuple[str, ColumnStatus], ...] = (
+    ("Press Release", "press_release"),
+    ("Restated", "restated"),
+    ("Reclassified", "reclassified"),
+)
 
 
 class HeaderPeriod(NamedTuple):
@@ -142,6 +158,13 @@ class HeaderPeriod(NamedTuple):
     quarter: int | None  # the FISCAL quarter, 1-4 (kind "Q" only)
     end: date | None  # the period's last day, as the header states it
     fiscal_year: int | None  # the fiscal year the column belongs to (kinds "FY" and "Q")
+    #: (2026-10-30) the column's STATUS. "press_release" is CIQ's column built from the earnings
+    #: release before it has processed the 10-Q/10-K: the release carries fewer lines than the
+    #: filing, so a line it omits carries the last fiscal year into an LTM cell and a line it
+    #: reports only in aggregate lands in a catch-all (GOOGL's LTM to Sep-30-2026 read its FY25
+    #: gain on investments, 24,620, against quarters summing to 138,156 without Q3). Every consumer
+    #: reads this field, never the label: `_fin_short` prints a bare 'LTM' for either.
+    status: ColumnStatus
 
 
 #: The FISCAL quarter of a quarterly header: 'FQ4/CQ2' → 4, never the calendar half, and the bare
@@ -192,7 +215,9 @@ def header_period(cell: Any) -> HeaderPeriod:
         fiscal_year = end.year
     elif end is not None and quarter is not None:
         fiscal_year = (_nominal_month(end) + 3 * (4 - quarter)) // 12
-    return HeaderPeriod(kind, quarter, end, fiscal_year)
+    # a substring read, as every status consumer read the label before this field existed
+    status: ColumnStatus = next((st for word, st in _COLUMN_STATUS_WORDS if word in text), "filed")
+    return HeaderPeriod(kind, quarter, end, fiscal_year, status)
 
 
 def _period_text(cell: Any) -> str:
@@ -1723,7 +1748,8 @@ def _period_label(cell: Any) -> str:
     """A compact period label + basis markers — 'Dec-2024 (R)' reclassified, 'Mar-31-2026 (LTM)'."""
     s = str(cell).replace("\n", " ").strip()
     m = re.search(r"([A-Z][a-z]{2}-[\d-]*\d{4}|\d{4})", s)
-    suffix = (" (R)" if "Reclassified" in s else "") + (" (LTM)" if "LTM" in s.upper() else "")
+    suffix = ((" (R)" if header_period(cell).status == "reclassified" else "")
+              + (" (LTM)" if "LTM" in s.upper() else ""))
     return (m.group(1) if m else s[:10]) + suffix
 
 
@@ -5722,11 +5748,12 @@ def _fin_short(cell: Any) -> str:
 
 
 def _fin_periods(hdr: list[Any]) -> list[tuple[int, str, bool, bool]]:
-    """(col, short_label, is_ltm, is_reclassified) for each non-empty period column of a header."""
+    """(col, short_label, is_ltm, is_reclassified) for each non-empty period column of a header —
+    the basis read off the header's STATUS field (:func:`header_period`), never off its label."""
     return [
-        (j, _fin_short(hdr[j]), _is_ltm(hdr[j]), "Reclassified" in str(hdr[j]))
-        for j in range(1, len(hdr))
-        if str(hdr[j]).strip()
+        (j, _fin_short(c), p.kind == "LTM", p.status == "reclassified")
+        for j, c in enumerate(hdr[1:], 1) if str(c).strip()
+        for p in (header_period(c),)
     ]
 
 
@@ -6484,3 +6511,85 @@ def currency_flag(currency: CiqCurrency | None) -> str | None:
         return None
     return (f"ciq-currency: {len(unstated)} CIQ money panel(s) state no currency, so reading them "
             f"as USD is UNVERIFIED — {'; '.join(unstated)}")
+
+
+# --- (2026-10-30) A PRESS-RELEASE INCOME STATEMENT IS REFUSED AT ASSEMBLY -----------------------
+# Operator ruling 2026-10-30 ("go ahead with this fix then"): the Income Statement only. The balance
+# sheet and cash flow carry press-release columns too, and a defect IS measured there (UBER's
+# release balance sheet to Jun-30-2026 differs from the filed one on 11 of 48 rows, Net Debt
+# 9,340.0 against 4,744.0), but every such column on file sits in an export whose Income Statement
+# is refused here anyway; widening the refusal is the operator's call.
+
+#: Both Financials Income Statements, as the refusal reads them. Every address is a STRING LITERAL,
+#: so the CIQ-manifest drift guard sees each one (`requirements.CIQ_MODULES`).
+_INCOME_STATEMENTS: tuple[tuple[str, Callable[[CiqBundle], Rows]], ...] = (
+    ("annual", lambda bundle: bundle.sheet("financials", "Income Statement", freq="annual")),
+    ("quarterly", lambda bundle: bundle.sheet("financials", "Income Statement", freq="quarterly")),
+)
+
+
+class PreliminaryColumn(NamedTuple):
+    """One Income Statement column a page reads as the latest of its kind, built from a release."""
+
+    export: str           # "annual" / "quarterly"
+    header: str           # the header as CIQ wrote it, on one line
+    period: HeaderPeriod
+
+
+def press_release_income_columns(bundle: CiqBundle) -> list[PreliminaryColumn]:
+    """Every press-release column among the Income Statement columns a page reads as the LATEST of
+    their kind: in each Financials export, every LTM column, and the newest fiscal year and the
+    newest quarter — newest BY THE DATE the header states, never by position, and every column at
+    that date (a restated copy beside an as-reported one is two columns). Status is read off
+    :func:`header_period`'s field.
+
+    An older press-release column is not refused: ONON reports its first and third quarters by
+    release alone, so each of them is a 'Press Release' column for good (census 2026-10-30)."""
+    out: list[PreliminaryColumn] = []
+    for export, read in _INCOME_STATEMENTS:
+        try:
+            rows = read(bundle)
+        except CiqUnavailableError:
+            continue
+        if _no_data_available(rows) or (hdr := _period_header(rows)) is None:
+            continue
+        cols = [(header_period(c), _period_text(c)) for c in rows[hdr][1:] if str(c).strip()]
+        latest = [pt for pt in cols if pt[0].kind == "LTM"]
+        for kind in ("FY", "Q"):
+            ends = [p.end for p, _t in cols if p.kind == kind and p.end is not None]
+            if ends:
+                latest += [pt for pt in cols if pt[0].kind == kind and pt[0].end == max(ends)]
+        out += [PreliminaryColumn(export, text, p) for p, text in latest
+                if p.status == "press_release"]
+    return out
+
+
+def _filing_for(cols: list[PreliminaryColumn]) -> str:
+    """The filing that replaces a release for these columns: the 10-K at a fiscal year's end."""
+    return ("10-K" if any(c.period.kind == "FY" or c.period.quarter == 4 for c in cols)
+            else "10-Q")
+
+
+def require_filed_income_statement(bundle: CiqBundle, ticker: str) -> None:
+    """Raise :class:`CiqPreliminaryError` when :func:`press_release_income_columns` finds any.
+    Every column is named, with the period end and the filing a re-export waits for."""
+    found = press_release_income_columns(bundle)
+    if not found:
+        return
+    by_end: dict[date | None, list[PreliminaryColumn]] = {}
+    for c in found:
+        by_end.setdefault(c.period.end, []).append(c)
+    waits = "; ".join(
+        f"the {_filing_for(cols)} for the period ending "
+        + (f"{end:%Y-%m-%d}" if end is not None else "the date its header does not state")
+        for end, cols in sorted(by_end.items(), key=lambda kv: kv[0] or date.min))
+    raise CiqPreliminaryError(
+        f"{ticker}: {len(found)} CIQ Financials Income Statement column(s) a page reads as the "
+        "latest are 'Press Release' columns — "
+        + "; ".join(f"{c.export} export '{c.header}'" for c in found)
+        + ". CIQ builds such a column from the earnings release, which carries fewer lines than "
+        "the filing: a line the release omits carries the last fiscal year into the LTM, and a "
+        "line it reports only in aggregate lands in a catch-all, so it is never read as a filed "
+        f"period. Re-export BOTH Financials workbooks (Annual and Quarterly) once CIQ has "
+        f"processed {waits}, move the old pair to "
+        "data/manual/ciq-archive/replaced-<YYYY-MM-DD>/<TICKER>/ and re-run")
