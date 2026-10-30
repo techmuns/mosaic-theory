@@ -2,7 +2,7 @@
 id: 2026-10-30-a-release-figures-span-frame-and-gross-margin-basis-are-read-as-stated
 status: shipped
 date: 2026-10-30
-prs: [873]
+prs: [874]
 supersedes:
 superseded-by:
 ---
