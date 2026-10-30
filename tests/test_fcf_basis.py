@@ -40,7 +40,7 @@ PERIOD = "LTM 12 months Jun-30-2026"
 
 
 def _rows(cfo: float | None, capex: float | None) -> list[list[Any]]:
-    """A Cash Flow sheet in the REAL shape `_find_row`/`_latest_col`/`_period_header` consume:
+    """A Cash Flow sheet in the REAL shape `_find_row`/`latest_cell`/`_period_header` consume:
     a Fiscal Period header row, then labelled rows whose column 0 is the label."""
     return [
         ["Fiscal Period", PERIOD],
@@ -209,7 +209,7 @@ def test_the_two_legs_are_read_from_the_levered_column_not_each_rows_own_latest(
     """REVIEW FINDING (P1, #421), and the irony is the point: the note exists to make a basis claim
     auditable, and it was itself making an unaudited same-period claim.
 
-    `_latest_col` picks the rightmost POPULATED cell **per row**. A newly added period is routinely
+    `_latest_col` picked the rightmost POPULATED cell **per row**. A newly added period is routinely
     filled for one row before the others — so Levered FCF lands in the new column while CFO still
     ends in the previous one, the subtraction spans two periods, and the sentence says "on the same
     sheet and period [LTM …]" about it. That is the same-window defect the buyback average was

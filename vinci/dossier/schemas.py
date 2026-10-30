@@ -1787,12 +1787,24 @@ class EbitdaReconciliation(BaseModel, frozen=True):
     states to the million. `line` is the ONE sentence both renderers print."""
 
     quarters: list[EbitdaReconQuarter]        # the four quarters of CIQ's LTM, oldest first
-    ciq_ltm: float
+    ciq_ltm: float | None                     # $M; None only on a REFUSED block
     filing_ltm: float | None = None           # only when all four quarters rebuild
     ltm_gap: float | None = None
     any_different: bool
     line: str
     source_ref: str
+    #: (2026-10-30, PR #872 round 2, audit D-D2) why CIQ's LTM is NOT set against the filings: a
+    #: quarter of its four reads a marker. The block is written with no quarters and `line` states
+    #: it, so the refusal is on the page — a block that vanished read the same as "no quarterly
+    #: export". ABSENT, never null, when unset, so an older block round-trips byte-identical.
+    refused: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("refused") is None:
+            out.pop("refused", None)
+        return out
 
 
 class StatementReconRow(BaseModel, frozen=True):

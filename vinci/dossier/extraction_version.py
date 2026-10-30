@@ -276,6 +276,21 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "be verified",
     ),
     (
+        "2026-10-30.latest-cell",
+        "every CIQ Financials reader of a row's latest figure reads the column whose header "
+        "states the latest date, never the rightmost valued one: a marker there is UNKNOWN with "
+        "its reason, never an older period (LLY's free cash flow, OCF and vendor FCF; ORKA's "
+        "interest coverage, both legs at that column; the EV bridge's balance-sheet column); a "
+        "header naming an undated column places none; the EBITDA reconciliation is refused, its "
+        "reason on the page, at a marker in its four latest quarters; the own-history multiple "
+        "band is unavailable at an NM latest close; the anchor bridge fills from a narrower row "
+        "(cash and equivalents, a D&A component, an annual diluted count) only where the row is "
+        "absent, and its revenue states its period (audit A-D5, A-D7, "
+        "A-D12, D-D2, D-D3); a Balance Sheet or Cash Flow whose latest column is a 'Press "
+        "Release' column is refused at assembly and by the anchor's CIQ bridge, as the Income "
+        "Statement is (operator ruling 2026-10-30)",
+    ),
+    (
         "2026-10-30.edgar-provenance",
         "every EDGAR fallback figure says where it was filed — its tag, period, form, "
         "accession and day — and one a later filing restated names the figure it restates; a "

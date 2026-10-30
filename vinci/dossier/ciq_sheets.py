@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import re
 import statistics
+from collections import Counter
 from collections.abc import Callable
 from datetime import date, datetime
 from typing import Any, Literal, NamedTuple
@@ -242,41 +243,92 @@ def _pct1(v: float | None) -> str:  # a fraction → "1.9%" (one decimal), or em
     return f"{v * 100:.1f}%" if v is not None else "—"
 
 
-def _latest_col(rows: Rows, ri: int, hdr: int | None) -> tuple[int, float, str] | None:
-    """The rightmost column of row ``ri`` carrying a value → (col, value, period-label).
+#: What :func:`latest_cell` found: a number; a marker (or a blank) in the latest column; or no
+#: column it can place as the latest.
+LatestState = Literal["present", "unavailable", "unplaced"]
 
-    "RIGHTMOST" IS A CLAIM ABOUT THE EXPORT, SO IT IS CHECKED (audit P2). Nine decision-path call
-    sites take this value as the LATEST and stamp it with the period label returned beside it —
-    both of which are wrong together if the export ever runs right-to-left. Nothing asserted the
-    ascending convention; it was inherited from how CIQ happens to write the file.
 
-    It is the same unasserted-convention shape :func:`_capital_summary` already refuses on, and the
-    same one item 20 records arriving through the DATA PROVIDER rather than through the code —
-    `source_ref="Close (latest)"` sitting on a months-old value in three dossiers. A guard here is
-    the generalisation of that fix to every consumer of "the last column".
+class LatestCell(NamedTuple):
+    """One row's cell at its sheet's LATEST column (:func:`latest_cell`)."""
 
-    REFUSE RATHER THAN MISLABEL, matching the house pattern and costing nothing today: the
-    convention holds across all 19 committed bundles (Balance Sheet / Income Statement / Cash Flow,
-    both frequencies — 0 violations), and every caller already handles the ``None`` this returns
-    when a row is empty, so refusal travels an existing path rather than a new one.
+    value: float | None           # the number — only when ``state`` is "present"
+    col: int | None               # the column read; None when no column could be placed
+    period: HeaderPeriod | None   # that column's header, read once — its STATUS included
+    label: str                    # that header as a source_ref prints it ('' when unplaced)
+    state: LatestState
+    reason: str | None            # why there is no value, in words; None when present
 
-    A PROVEN violation is required, never an unreadable header. Only columns whose dates DECODE are
-    compared, exactly as `_capital_summary` does — a header naming no date degrades to "order
-    unknown" for that column and cannot by itself trigger a refusal."""
-    if hdr is not None:
-        known = [d for j in range(1, len(rows[hdr]))
-                 if (d := excel_date(rows[hdr][j])) is not None]
-        if len(known) > 1 and known != sorted(known):
-            return None
-    valid = [(j, clean_num(rows[ri][j])) for j in range(1, len(rows[ri]))]
-    present = [(j, v) for j, v in valid if v is not None]
-    if not present:
-        return None
-    j, v = present[-1]
-    period = ""
-    if hdr is not None and j < len(rows[hdr]):
-        period = _period_text(rows[hdr][j])
-    return j, v, period
+
+def _cell_words(cell: Any) -> str:
+    """A marker cell as a reason quotes it — the blank cell by name, since '' reads as nothing."""
+    s = str(cell if cell is not None else "").strip()
+    return f"'{s}'" if s else "blank"
+
+
+def latest_cell(rows: Rows, ri: int, hdr: int | None) -> LatestCell:
+    """THE ONE READER OF A ROW'S LATEST CELL (audit RC3: A-D5, A-D7, A-D12; 2026-10-30) — every
+    Financials reader that serves "the latest" figure takes it from here, never from a scan of its
+    own.
+
+    THE LATEST COLUMN IS THE ONE WHOSE HEADER STATES THE LATEST DATE (:func:`_column_date`, the
+    parser :func:`header_period` reads dates with), never a position. Its predecessor took the
+    rightmost VALUED cell, so a CIQ marker in the latest column stepped the read back to an older
+    period with nothing said — LLY's press-release LTM cash flow reads 'NA' / '-', and its free
+    cash flow, its net-debt/OCF and its anchor's vendor FCF were served off FY Dec-2025; ORKA's
+    interest expense reads '-' at its LTM, and its coverage was served off FY Dec-2024. Item 20's
+    rule ("no backward-fill on ANY time series") had reached only the Multiples readers. And its
+    order guard decoded only Excel serials, so it ran on the annual balance sheet alone: every
+    other sheet's labelled header passed it, and a right-to-left export served its OLDEST period.
+
+    THREE STATES, NEVER A GUESS:
+    * "present" — the latest column carries a number;
+    * "unavailable" — it carries a marker ('-', 'NA', 'NM', …) or nothing: the reason names the
+      cell and the column, and NO older column is read in its place;
+    * "unplaced" — no header (or no header cell) states a date, a header cell names a column but no
+      date (a newest header CIQ suffixes, 'Jun-30-2026A', would otherwise be skipped and the
+      column before it served as the latest — the step-back, through the header), or two columns
+      state the latest one (a restated copy beside an as-reported one): nothing can be called the
+      latest. Census of 104 non-test Financials exports on file, current and archived
+      (2026-10-30): 0 of any — 13,496 non-empty period-header cells in 615 header rows, every one
+      dated (PR #872 round 2).
+
+    THE PERIOD CARRIES THE COLUMN'S STATUS (#868's field), so a press-release column is visible to
+    every caller: its label prints 'Press Release'. Whether a press-release statement is read at
+    all is decided at assembly and in the anchor's CIQ bridge (:data:`PRESS_RELEASE_REFUSED`: all
+    three statements, operator ruling 2026-10-30), never here — a reader that dropped it would be a
+    third place that rule lives."""
+    def none(state: LatestState, reason: str, col: int | None = None,
+             period: HeaderPeriod | None = None, label: str = "") -> LatestCell:
+        return LatestCell(None, col, period, label, state, reason)
+
+    what = f"'{str(rows[ri][0]).strip()}'" if rows[ri] else "the row"
+    if hdr is None:
+        return none("unplaced", f"{what}: the sheet has no period header, so no column can be "
+                                "placed as the latest")
+    dated = [(d, j) for j in range(1, len(rows[hdr]))
+             if (d := _column_date(rows[hdr][j])) is not None]
+    if not dated:
+        return none("unplaced", f"{what}: no period-header column states a date, so none can be "
+                                "placed as the latest")
+    undated = [_period_text(c) for j, c in enumerate(rows[hdr]) if j >= 1
+               and str(c if c is not None else "").strip() and _column_date(c) is None]
+    if undated:
+        return none("unplaced", f"{what}: the period header names {len(undated)} column(s) with no "
+                    f"date it reads ({'; '.join(repr(u) for u in undated)}), so which column is "
+                    "the latest is not guessed")
+    end = max(d for d, _j in dated)
+    at = [j for d, j in dated if d == end]
+    if len(at) > 1:
+        return none("unplaced", f"{what}: {len(at)} columns state the latest date ("
+                    + "; ".join(_period_text(rows[hdr][j]) for j in at)
+                    + ") — which is the latest is not guessed")
+    j = at[0]
+    period, label = header_period(rows[hdr][j]), _period_text(rows[hdr][j])
+    cell = rows[ri][j] if j < len(rows[ri]) else ""
+    if (value := clean_num(cell)) is not None:
+        return LatestCell(value, j, period, label, "present", None)
+    return none("unavailable", f"{what} reads {_cell_words(cell)} at the latest column [{label}] "
+                "— an older period is never read in its place", j, period, label)
 
 
 def _multiples_close(rows: Rows, metric: str) -> list[tuple[Any, float | None]]:
@@ -779,10 +831,10 @@ def free_cash_flow(bundle: CiqBundle) -> Sourced[float]:
     ri = _find_row(rows, "Levered Free Cash Flow")
     if ri is None:
         return Sourced.unknown(note="Cash Flow sheet has no 'Levered Free Cash Flow' row")
-    latest = _latest_col(rows, ri, _period_header(rows))
-    if latest is None:
-        return Sourced.unknown(note="Levered Free Cash Flow has no value in any period")
-    col, value, period = latest
+    got = latest_cell(rows, ri, _period_header(rows))
+    if got.value is None or got.col is None:
+        return Sourced.unknown(note=f"Cash Flow {got.reason}")
+    col, value, period = got.col, got.value, got.label
     return Sourced.present(
         round(value, 1),
         source_ref=f"CIQ Financials→Cash Flow 'Levered Free Cash Flow' [{period}]",
@@ -813,10 +865,10 @@ def _fcf_basis_note(rows: list[list[Any]], levered: float, period: str, col: int
     if cfo_i is None or capex_i is None:
         return ("basis: CIQ 'Levered Free Cash Flow' — NOT CFO − capex. The same sheet carries no "
                 "'Cash from Ops.'/'Capital Expenditure' pair to state the other basis against.")
-    # THE SAME COLUMN, NOT EACH ROW'S OWN LATEST (review finding, #421). `_latest_col` picks the
-    # rightmost POPULATED cell per row, so when a newly added period is filled for Levered FCF but
-    # not yet for CFO, the two legs come from DIFFERENT columns — and the note then says
-    # "on the same sheet and period [LTM …]" about a subtraction that spanned two. That is the
+    # THE SAME COLUMN, NOT EACH ROW'S OWN LATEST (review finding, #421). The reader this replaced
+    # picked the rightmost POPULATED cell per row, so when a newly added period is filled for
+    # Levered FCF but not yet for CFO, the two legs come from DIFFERENT columns — and the note then
+    # says "on the same sheet and period [LTM …]" about a subtraction that spanned two. That is the
     # same-window defect the buyback average was refused for, committed by the very sentence
     # written to make the basis auditable.
     # `_cell_at` (defined below, beside the revisions reader) is exactly this: one row's value
@@ -861,25 +913,21 @@ def interest_coverage(bundle: CiqBundle) -> Sourced[float]:
     hdr = _period_header(rows)
     if e_i is None or i_i is None:
         return Sourced.unknown(note="Income Statement missing EBITDA or Interest Expense row")
-    col = next(
-        (
-            j
-            for j in range(len(rows[e_i]) - 1, 0, -1)
-            if clean_num(rows[e_i][j]) is not None
-            and j < len(rows[i_i])
-            and clean_num(rows[i_i][j]) is not None
-        ),
-        None,
-    )
-    if col is None:
-        return Sourced.unknown(note="no period with both EBITDA and Interest Expense")
-    ebitda, interest = clean_num(rows[e_i][col]), clean_num(rows[i_i][col])
-    if not interest or ebitda is None:
-        return Sourced.unknown(note="interest expense is zero/unavailable")
-    period = str(rows[hdr][col]).strip().replace("\n", " ") if hdr is not None else ""
+    # BOTH LEGS AT THE LATEST COLUMN (audit A-D12, 2026-10-30). This scanned right to left for the
+    # first column where both rows were valued, so ORKA's LTM interest expense reading '-' served
+    # its coverage off FY Dec-2024 (−59.5x) under the same label as a current figure.
+    ebitda, interest = latest_cell(rows, e_i, hdr), latest_cell(rows, i_i, hdr)
+    for leg in (ebitda, interest):
+        if leg.value is None:
+            return Sourced.unknown(note=f"Income Statement {leg.reason}")
+    assert ebitda.value is not None and interest.value is not None
+    if not interest.value:
+        return Sourced.unknown(note=f"Interest Expense is zero at the latest column "
+                                    f"[{interest.label}] — coverage is unbounded")
     return Sourced.present(
-        round(ebitda / abs(interest), 1),
-        source_ref=f"CIQ Financials→Income Statement EBITDA ÷ Interest Expense [{period}]",
+        round(ebitda.value / abs(interest.value), 1),
+        source_ref=(f"CIQ Financials→Income Statement EBITDA ÷ Interest Expense "
+                    f"[{interest.label}]"),
     )
 
 
@@ -903,16 +951,17 @@ def _bs_latest_from(bundle: CiqBundle, label: str) -> tuple[Sourced[float], str 
     "annual", None when neither did) — so a fact can name the workbook it was read from
     (`ciq_balance`, audit A-D6)."""
     def pick(rows: Rows) -> Sourced[float] | None:
+        """None only when the sheet has no such row: the other granularity may then answer. A row
+        it HAS answers at its latest column, or says why not — the annual sheet is never asked
+        for an older period in its place (audit A-D12)."""
         ri = _find_row(rows, label)
         if ri is None:
             return None
-        latest = _latest_col(rows, ri, _bs_period_header(rows))
-        if latest is None:
-            return None
-        _, value, period = latest
-        suffix = f" [{period}]" if period else " [latest]"
+        got = latest_cell(rows, ri, _bs_period_header(rows))
+        if got.value is None:
+            return Sourced.unknown(note=f"Balance Sheet {got.reason}")
         return Sourced.present(
-            round(value, 1), source_ref=f"CIQ Financials→Balance Sheet '{label}'{suffix}"
+            round(got.value, 1), source_ref=f"CIQ Financials→Balance Sheet '{label}' [{got.label}]"
         )
 
     seen = False
@@ -950,9 +999,10 @@ def total_debt(bundle: CiqBundle) -> Sourced[float]:
 
 
 def ltm_ebitda(bundle: CiqBundle) -> Sourced[float]:
-    """Latest consolidated EBITDA ($M) — the rightmost valued column of the Income Statement
-    'EBITDA' row (LTM/TTM if the workbook carries one, else the latest FY): the net-debt/EBITDA
-    denominator paired with CIQ Net Debt. Fail-loud UNKNOWN if the row is absent or empty."""
+    """Latest consolidated EBITDA ($M) — the Income Statement 'EBITDA' row at the sheet's latest
+    column (:func:`latest_cell`: LTM/TTM if the workbook carries one, else the latest FY): the
+    net-debt/EBITDA denominator paired with CIQ Net Debt. Fail-loud UNKNOWN if the row is absent
+    or its latest cell is a marker."""
     try:
         rows = bundle.sheet("financials", "Income Statement", freq="annual")
     except CiqUnavailableError as exc:
@@ -960,20 +1010,19 @@ def ltm_ebitda(bundle: CiqBundle) -> Sourced[float]:
     ri = _find_row(rows, "EBITDA")
     if ri is None:
         return Sourced.unknown(note="Income Statement sheet has no 'EBITDA' row")
-    latest = _latest_col(rows, ri, _period_header(rows))
-    if latest is None:
-        return Sourced.unknown(note="EBITDA row has no value in any period")
-    _, value, period = latest
+    got = latest_cell(rows, ri, _period_header(rows))
+    if got.value is None:
+        return Sourced.unknown(note=f"Income Statement {got.reason}")
     return Sourced.present(
-        round(value, 1), source_ref=f"CIQ Financials→Income Statement 'EBITDA' [{period}]"
+        round(got.value, 1), source_ref=f"CIQ Financials→Income Statement 'EBITDA' [{got.label}]"
     )
 
 
 def ltm_ocf(bundle: CiqBundle) -> Sourced[float]:
-    """Latest operating cash flow ($M) — the rightmost valued column of the Cash Flow 'Cash from
-    Ops.' row (LTM/TTM when present, else latest FY). The net-debt/OCF denominator paired with CIQ
-    Net Debt; OCF carries the D&A add-back so it survives an untaggable-EBITDA name. Fail-loud
-    UNKNOWN if the row is absent or empty."""
+    """Latest operating cash flow ($M) — the Cash Flow 'Cash from Ops.' row at the sheet's latest
+    column (:func:`latest_cell`: LTM/TTM when present, else latest FY). The net-debt/OCF
+    denominator paired with CIQ Net Debt; OCF carries the D&A add-back so it survives an
+    untaggable-EBITDA name. Fail-loud UNKNOWN if the row is absent or its latest cell a marker."""
     try:
         rows = bundle.sheet("financials", "Cash Flow", freq="annual")
     except CiqUnavailableError as exc:
@@ -981,12 +1030,11 @@ def ltm_ocf(bundle: CiqBundle) -> Sourced[float]:
     ri = _find_row(rows, "Cash from Ops.")
     if ri is None:
         return Sourced.unknown(note="Cash Flow sheet has no 'Cash from Ops.' row")
-    latest = _latest_col(rows, ri, _period_header(rows))
-    if latest is None:
-        return Sourced.unknown(note="'Cash from Ops.' has no value in any period")
-    _, value, period = latest
+    got = latest_cell(rows, ri, _period_header(rows))
+    if got.value is None:
+        return Sourced.unknown(note=f"Cash Flow {got.reason}")
     return Sourced.present(
-        round(value, 1), source_ref=f"CIQ Financials→Cash Flow 'Cash from Ops.' [{period}]"
+        round(got.value, 1), source_ref=f"CIQ Financials→Cash Flow 'Cash from Ops.' [{got.label}]"
     )
 
 
@@ -1016,24 +1064,28 @@ def _quarterly_revenue_yoy(bundle: CiqBundle) -> str | None:
     hdr, rev_i = _period_header(rows), _find_row(rows, "Total Revenue")
     if hdr is None or rev_i is None:
         return None
-    latest = _latest_col(rows, rev_i, hdr)
-    if latest is None:
-        return None
-    col, rev, _ = latest
-    now = header_period(rows[hdr][col]) if col < len(rows[hdr]) else None
-    if now is None or now.quarter is None or now.fiscal_year is None:
+    latest = latest_cell(rows, rev_i, hdr)
+    if latest.value is None or latest.col is None or latest.period is None:
+        return None  # never the quarter before an unavailable latest one (audit A-D12)
+    col, rev, now = latest.col, latest.value, latest.period
+    if now.quarter is None or now.fiscal_year is None:
         return None
     recl = _reclassified_cols(rows[hdr])
-    for j in range(col - 1, 0, -1):  # the nearest column of the same quarter a fiscal year earlier
-        p = header_period(rows[hdr][j]) if j < len(rows[hdr]) else None
-        if p is None or (p.quarter, p.fiscal_year) != (now.quarter, now.fiscal_year - 1):
-            continue
-        pv = clean_num(rows[rev_i][j])
-        if not pv or (j in recl) != (col in recl):
-            return None
-        cur, pri = _short_period(rows[hdr][col]), _short_period(rows[hdr][j])
-        return f"{rev / pv - 1:+.1%} ({cur} vs {pri})"
-    return None
+    # THE SAME QUARTER A FISCAL YEAR EARLIER, FOUND BY ITS PERIOD WHEREVER IT SITS (PR #872, round
+    # 1): a leftward search from the latest column never reached it on a right-to-left sheet. Two
+    # columns naming that quarter are not guessed between (0 of the 52 non-held quarterly Income
+    # Statements on file repeat one, current and archived, 2026-10-30).
+    want = (now.quarter, now.fiscal_year - 1)
+    prior = [j for j in range(1, len(rows[hdr])) if j != col
+             and ((p := header_period(rows[hdr][j])).quarter, p.fiscal_year) == want]
+    if len(prior) != 1:
+        return None
+    j = prior[0]
+    pv = clean_num(rows[rev_i][j]) if j < len(rows[rev_i]) else None
+    if not pv or (j in recl) != (col in recl):
+        return None
+    cur, pri = _short_period(rows[hdr][col]), _short_period(rows[hdr][j])
+    return f"{rev / pv - 1:+.1%} ({cur} vs {pri})"
 
 
 def margin_trend(bundle: CiqBundle) -> Sourced[str]:
@@ -1564,10 +1616,10 @@ def _segment_roster(rows: list[list[Any]], hdr: int | None) -> list[tuple[str, f
     )
     if start is None or total is None:
         return None
-    latest = _latest_col(rows, total, hdr)
-    if latest is None:
+    latest = latest_cell(rows, total, hdr)
+    if latest.value is None or latest.col is None:
         return None
-    col, tot, _period = latest
+    col, tot = latest.col, latest.value
     if not tot:
         return None
     out: list[tuple[str, float]] = []
@@ -1660,10 +1712,10 @@ def _segment_section(
     )
     if start is None or total is None or hdr is None:
         return Sourced.unknown(note=_absence_reason(rows, section, hdr, after_label=after_label))
-    latest = _latest_col(rows, total, hdr)
-    if latest is None:
-        return Sourced.unknown(note=f"Segments 'Total {section}' has no value")
-    col, tot, period = latest
+    latest = latest_cell(rows, total, hdr)
+    if latest.value is None or latest.col is None:
+        return Sourced.unknown(note=f"Segments {latest.reason}")
+    col, tot, period = latest.col, latest.value, latest.label
     items: list[tuple[str, float, float]] = []
     for i in range(start + 1, total):
         seg = str(rows[i][0]).strip()
@@ -3326,12 +3378,18 @@ def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float
     except CiqUnavailableError:
         return None
     hdr = _dated_header(bs)
-    col = (max((j for j in range(1, len(bs[hdr])) if _column_date(bs[hdr][j]) is not None),
-               default=None) if hdr is not None else None)
-    if hdr is None or col is None:
+    nd_i = _find_row(bs, "Net Debt")
+    if hdr is None or nd_i is None:
+        return None
+    # THE LATEST COLUMN BY DATE (`latest_cell`, PR #872 round 2): this took the highest dated
+    # column INDEX, so a right-to-left sheet bridged its oldest balance sheet while `net_debt`, on
+    # the same sheet, read the newest
+    latest = latest_cell(bs, nd_i, hdr)
+    col = latest.col
+    if col is None:
         return None
     bs_date = _column_date(bs[hdr][col])
-    nd = _row_at(bs, "Net Debt", col)
+    nd = latest.value
     td, cash = _row_at(bs, "Total Debt", col), _row_at(bs, "Total Cash & ST Investments", col)
     if nd is None or td is None or cash is None:
         return None
@@ -4899,8 +4957,9 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
     It is fixed the way #421 fixed it: pin ONE column and read every row from it with the existing
     :func:`_cell_at`. **A ratio with no value in the pinned column is OMITTED, never back-filled
     from an older one** — #421's rule that comparing against a different period is not the check
-    you claimed to make. Column selection goes through :func:`_latest_col`, so this also inherits
-    the ascending-order guard instead of trusting the rightmost cell.
+    you claimed to make. THE PINNED COLUMN IS THE SHEET'S LATEST (:func:`latest_cell`, audit A-D12,
+    2026-10-30): it was the rightmost column ANY ratio populated, so a sheet whose latest column
+    reported none (LLY's press-release LTM reads 'NA' on three of five) pinned an older one.
 
     The stamp names the period, replacing an undated `Ratios (latest period)` — the same
     unverifiable recency claim item 20 records."""
@@ -4913,17 +4972,18 @@ def key_ratios(bundle: CiqBundle) -> Sourced[str]:
         lbl: next((i for i, r in enumerate(rs) if r and str(r[0]).strip() == lbl), None)
         for lbl, _n, _p in (*_KEY_RATIO_ROWS, ("Dividend per Share", "", False))
     }
-    # THE PINNED COLUMN is the rightmost one any key ratio populates — the latest period this panel
-    # actually reports — resolved through `_latest_col` so an out-of-order export refuses here too.
-    landed = [
-        got[0] for lbl, _n, _p in _KEY_RATIO_ROWS
-        if (ri := rows_by_label[lbl]) is not None and (got := _latest_col(rs, ri, hdr)) is not None
-    ]
+    # THE PINNED COLUMN is the sheet's latest; a panel no key ratio reports there is UNKNOWN
+    reads = [latest_cell(rs, ri, hdr) for lbl, _n, _p in _KEY_RATIO_ROWS
+             if (ri := rows_by_label[lbl]) is not None]
+    if not reads:
+        return Sourced.unknown(note="no key ratio rows in the CIQ Ratios sheet")
+    landed = [got.col for got in reads if got.value is not None and got.col is not None]
     if not landed:
-        return Sourced.unknown(
-            note="no key ratios found in the CIQ Ratios sheet, or its period columns are not in "
-                 "ascending date order (so the last column is not the latest)")
-    col = max(landed)
+        where = (f"at the latest column [{reads[0].label}]" if reads[0].state == "unavailable"
+                 else f"— {reads[0].reason}")
+        return Sourced.unknown(note=f"Ratios: no key ratio is reported {where}; an older column "
+                                    "is never read in its place")
+    col = landed[0]
 
     parts: list[str] = []
     # ABSENCE IS ATTRIBUTED, NOT SILENT. Dropping a ratio that the pinned column does not report
@@ -4970,8 +5030,8 @@ def book_value_per_share(bundle: CiqBundle) -> Sourced[float]:
     `Press Release` column** — a pre-filing figure on a different basis from the audited balance
     sheet beside it, presented identically. Naming the column is what makes those two visible.
 
-    Selection now goes through :func:`_latest_col`, so this inherits the ascending-order guard
-    rather than re-implementing `reversed()` — one rightmost-column rule, checked once."""
+    Selection goes through :func:`latest_cell` — the latest column by date, never an older one
+    behind a marker (audit A-D12)."""
     try:
         bs = bundle.sheet("financials", "Balance Sheet", freq="annual")
     except CiqUnavailableError as exc:
@@ -4980,13 +5040,11 @@ def book_value_per_share(bundle: CiqBundle) -> Sourced[float]:
     if ri is None:
         return Sourced.unknown(note="no Book Value/Share row in the CIQ Balance Sheet")
     hdr = _bs_period_header(bs)
-    latest = _latest_col(bs, ri, hdr)
-    if latest is None:
-        return Sourced.unknown(
-            note="Book Value/Share has no value in any period, or the Balance Sheet's period "
-                 "columns are not in ascending date order (so the last column is not the latest)")
-    col, value, period = latest
-    # DECODE FROM THE RAW CELL, NEVER THE RENDERED LABEL. `_latest_col` hands back a stringified
+    latest = latest_cell(bs, ri, hdr)
+    if latest.value is None or latest.col is None:
+        return Sourced.unknown(note=f"Balance Sheet {latest.reason}")
+    col, value, period = latest.col, latest.value, latest.label
+    # DECODE FROM THE RAW CELL, NEVER THE RENDERED LABEL. `latest_cell` hands back a stringified
     # header, and CIQ writes most of these columns as Excel SERIALS — so parsing the label yields
     # "46112.0" and stamps a raw serial where a reader needs a date. The structured value is one
     # index away; taking the string instead is the display-formatting-as-load-bearing bug this
@@ -6240,18 +6298,24 @@ def financial_summary_quarterly(bundle: CiqBundle) -> Sourced[FinTable]:
 
 
 def _bs_posture_build(bs: Rows, freq: str) -> Sourced[str] | None:
-    """(C3) Build the posture string from ONE Balance Sheet grid, or None if cash is absent (so the
-    caller can fall through to the other freq). Every line is read AT THE CASH COLUMN's period — a
-    single as-of — so a partial latest quarter can't stitch a stale debt or a period-mixed net
-    working capital under one 'as of' label (as-of discipline): a line blank at that column is
-    omitted, never back-filled from an earlier period. Split out so ``balance_sheet_posture`` can
-    address both freqs with string literals the CIQ-manifest drift guard can see."""
+    """(C3) Build the posture string from ONE Balance Sheet grid, or None if the cash ROW is absent
+    (so the caller can fall through to the other freq) — a cash row whose latest cell is a marker
+    is UNKNOWN, never answered from an older column or the other sheet (audit A-D12). Every line is
+    read AT THE CASH COLUMN's period — a single as-of — so a partial latest quarter can't stitch a
+    stale debt or a period-mixed net working capital under one 'as of' label (as-of discipline): a
+    line blank at that column is omitted, never back-filled from an earlier period. Split out so
+    ``balance_sheet_posture`` can address both freqs with string literals the CIQ-manifest drift
+    guard can see."""
     hdr = _bs_period_header(bs)
     cash_ri = _find_row(bs, "Total Cash & ST Investments")
-    anchor = _latest_col(bs, cash_ri, hdr) if cash_ri is not None else None
-    if anchor is None:
+    if cash_ri is None:
         return None
-    pj, cash_v, _ = anchor  # the ONE period every line below is reported at
+    # the cash anchor is the LATEST column, or the posture says why not — never an older column
+    # behind a marker, and never the other sheet's (audit A-D12, 2026-10-30)
+    anchor = latest_cell(bs, cash_ri, hdr)
+    if anchor.value is None or anchor.col is None:
+        return Sourced.unknown(note=f"Balance Sheet ({freq}) {anchor.reason}")
+    pj, cash_v = anchor.col, anchor.value  # the ONE period every line below is reported at
 
     def at(label: str) -> float | None:  # value at the ANCHOR column (not the row's own latest)
         ri = _find_row(bs, label)
@@ -6513,66 +6577,105 @@ def currency_flag(currency: CiqCurrency | None) -> str | None:
             f"as USD is UNVERIFIED — {'; '.join(unstated)}")
 
 
-# --- (2026-10-30) A PRESS-RELEASE INCOME STATEMENT IS REFUSED AT ASSEMBLY -----------------------
-# Operator ruling 2026-10-30 ("go ahead with this fix then"): the Income Statement only. The balance
-# sheet and cash flow carry press-release columns too, and a defect IS measured there (UBER's
-# release balance sheet to Jun-30-2026 differs from the filed one on 11 of 48 rows, Net Debt
-# 9,340.0 against 4,744.0), but every such column on file sits in an export whose Income Statement
-# is refused here anyway; widening the refusal is the operator's call.
+# --- (2026-10-30) A PRESS-RELEASE STATEMENT IS REFUSED AT ASSEMBLY --------------------------------
+# Operator ruling 2026-10-30 ("go ahead with this fix then"): the Income Statement (#868). RULED
+# 2026-10-30 (operator, "agreed"; PR #872): the Balance Sheet and the Cash Flow too — "Waiting a few
+# days for the filed numbers costs us nothing. A wrong net debt inside a valuation costs a lot. …
+# the anchor and bridge calculations would still run on the wrong number; a label doesn't stop
+# that." The measured defect: UBER's release quarterly balance sheet to Jun-30-2026
+# (`ciq-archive/replaced-2026-10-11`) against its filed one differs on 14 of the 48 rows valued on
+# either side — 7 by value, Net Debt 9,340.0 against 4,744.0 among them, and 7 a value against a
+# marker (`docs/records/2026-10-30-one-latest-cell-reader.md`). Widening refused no further name:
+# every release column on file sits in an export whose Income Statement is a release too.
 
-#: Both Financials Income Statements, as the refusal reads them. Every address is a STRING LITERAL,
-#: so the CIQ-manifest drift guard sees each one (`requirements.CIQ_MODULES`).
-_INCOME_STATEMENTS: tuple[tuple[str, Callable[[CiqBundle], Rows]], ...] = (
-    ("annual", lambda bundle: bundle.sheet("financials", "Income Statement", freq="annual")),
-    ("quarterly", lambda bundle: bundle.sheet("financials", "Income Statement", freq="quarterly")),
+#: THE STATEMENTS WHOSE LATEST PRESS-RELEASE COLUMN IS REFUSED at assembly and by the anchor's CIQ
+#: bridge (:func:`require_filed_income_statement`) — all three (operator ruling 2026-10-30). A
+#: release column a reader still meets OUTSIDE those two paths — a refresh transform re-reading a
+#: page's own export, which a page assembled on a release export before this refusal has — keeps
+#: its state shown: every latest-cell source_ref prints the column's own words ('Press Release …',
+#: :func:`latest_cell`), and :class:`LatestCell` carries the status.
+PRESS_RELEASE_REFUSED: tuple[str, ...] = ("Income Statement", "Balance Sheet", "Cash Flow")
+
+#: Every Financials statement, as the refusal reads them. Every address is a STRING LITERAL, so the
+#: CIQ-manifest drift guard sees each one (`requirements.CIQ_MODULES`).
+_STATEMENTS: tuple[tuple[str, str, Callable[[CiqBundle], Rows]], ...] = (
+    ("Income Statement", "annual",
+     lambda bundle: bundle.sheet("financials", "Income Statement", freq="annual")),
+    ("Income Statement", "quarterly",
+     lambda bundle: bundle.sheet("financials", "Income Statement", freq="quarterly")),
+    ("Balance Sheet", "annual",
+     lambda bundle: bundle.sheet("financials", "Balance Sheet", freq="annual")),
+    ("Balance Sheet", "quarterly",
+     lambda bundle: bundle.sheet("financials", "Balance Sheet", freq="quarterly")),
+    ("Cash Flow", "annual",
+     lambda bundle: bundle.sheet("financials", "Cash Flow", freq="annual")),
+    ("Cash Flow", "quarterly",
+     lambda bundle: bundle.sheet("financials", "Cash Flow", freq="quarterly")),
 )
 
 
 class PreliminaryColumn(NamedTuple):
-    """One Income Statement column a page reads as the latest of its kind, built from a release."""
+    """One statement column a page reads as the latest of its kind, built from a release."""
 
     export: str           # "annual" / "quarterly"
     header: str           # the header as CIQ wrote it, on one line
     period: HeaderPeriod
+    sheet: str = "Income Statement"
+    #: (PR #872 round 2) a bare balance-sheet date that is the FISCAL YEAR's end — the month the
+    #: export's other dated columns mostly end in — so the refusal waits for the 10-K, not a 10-Q
+    year_end: bool = False
 
 
-def press_release_income_columns(bundle: CiqBundle) -> list[PreliminaryColumn]:
-    """Every press-release column among the Income Statement columns a page reads as the LATEST of
-    their kind: in each Financials export, every LTM column, and the newest fiscal year and the
-    newest quarter — newest BY THE DATE the header states, never by position, and every column at
-    that date (a restated copy beside an as-reported one is two columns). Status is read off
-    :func:`header_period`'s field.
+def press_release_income_columns(
+        bundle: CiqBundle, sheets: tuple[str, ...] | None = None) -> list[PreliminaryColumn]:
+    """Every press-release column among the statement columns a page reads as the LATEST of their
+    kind, in each statement ``sheets`` names (:data:`PRESS_RELEASE_REFUSED` by default — the name
+    predates that table): in each Financials export, every LTM column, and the newest fiscal year,
+    the newest quarter and the newest bare balance-sheet date — newest BY THE DATE the header
+    states, never by position, and every column at that date (a restated copy beside an
+    as-reported one is two columns). Status is read off :func:`header_period`'s field.
 
     An older press-release column is not refused: ONON reports its first and third quarters by
     release alone, so each of them is a 'Press Release' column for good (census 2026-10-30)."""
+    wanted = PRESS_RELEASE_REFUSED if sheets is None else sheets
     out: list[PreliminaryColumn] = []
-    for export, read in _INCOME_STATEMENTS:
+    for sheet, export, read in _STATEMENTS:
+        if sheet not in wanted:
+            continue
         try:
             rows = read(bundle)
         except CiqUnavailableError:
             continue
-        if _no_data_available(rows) or (hdr := _period_header(rows)) is None:
+        hdr = _bs_period_header(rows) if sheet == "Balance Sheet" else _period_header(rows)
+        if _no_data_available(rows) or hdr is None:
             continue
         cols = [(header_period(c), _period_text(c)) for c in rows[hdr][1:] if str(c).strip()]
+        # the month the export's columns mostly end in: an annual balance sheet's are fiscal years
+        months = Counter(_nominal_month(p.end) % 12 for p, _t in cols if p.end is not None)
+        fy_month = months.most_common(1)[0][0] if months else None
         latest = [pt for pt in cols if pt[0].kind == "LTM"]
-        for kind in ("FY", "Q"):
+        for kind in ("FY", "Q", None):
             ends = [p.end for p, _t in cols if p.kind == kind and p.end is not None]
             if ends:
                 latest += [pt for pt in cols if pt[0].kind == kind and pt[0].end == max(ends)]
-        out += [PreliminaryColumn(export, text, p) for p, text in latest
-                if p.status == "press_release"]
+        out += [PreliminaryColumn(export, text, p, sheet,
+                                  year_end=(export == "annual" and p.kind is None
+                                            and p.end is not None
+                                            and _nominal_month(p.end) % 12 == fy_month))
+                for p, text in latest if p.status == "press_release"]
     return out
 
 
 def _filing_for(cols: list[PreliminaryColumn]) -> str:
     """The filing that replaces a release for these columns: the 10-K at a fiscal year's end."""
-    return ("10-K" if any(c.period.kind == "FY" or c.period.quarter == 4 for c in cols)
-            else "10-Q")
+    return ("10-K" if any(c.period.kind == "FY" or c.period.quarter == 4 or c.year_end
+                          for c in cols) else "10-Q")
 
 
 def require_filed_income_statement(bundle: CiqBundle, ticker: str) -> None:
-    """Raise :class:`CiqPreliminaryError` when :func:`press_release_income_columns` finds any.
-    Every column is named, with the period end and the filing a re-export waits for."""
+    """Raise :class:`CiqPreliminaryError` when :func:`press_release_income_columns` finds any, in
+    the statements :data:`PRESS_RELEASE_REFUSED` names. Every column is named, with its statement,
+    the period end and the filing a re-export waits for."""
     found = press_release_income_columns(bundle)
     if not found:
         return
@@ -6583,13 +6686,16 @@ def require_filed_income_statement(bundle: CiqBundle, ticker: str) -> None:
         f"the {_filing_for(cols)} for the period ending "
         + (f"{end:%Y-%m-%d}" if end is not None else "the date its header does not state")
         for end, cols in sorted(by_end.items(), key=lambda kv: kv[0] or date.min))
+    statements = " / ".join(dict.fromkeys(c.sheet for c in found))
     raise CiqPreliminaryError(
-        f"{ticker}: {len(found)} CIQ Financials Income Statement column(s) a page reads as the "
+        f"{ticker}: {len(found)} CIQ Financials {statements} column(s) a page reads as the "
         "latest are 'Press Release' columns — "
-        + "; ".join(f"{c.export} export '{c.header}'" for c in found)
+        + "; ".join(f"{c.export} export {c.sheet} '{c.header}'" for c in found)
         + ". CIQ builds such a column from the earnings release, which carries fewer lines than "
-        "the filing: a line the release omits carries the last fiscal year into the LTM, and a "
-        "line it reports only in aggregate lands in a catch-all, so it is never read as a filed "
+        "the filing: on the income statement a line the release omits carries the last fiscal "
+        "year into the LTM and a line it reports only in aggregate lands in a catch-all; on the "
+        "balance sheet a line it does not disclose leaves the totals (UBER's release Net Debt "
+        "9,340.0 against its filing's 4,744.0), so it is never read as a filed "
         f"period. Re-export BOTH Financials workbooks (Annual and Quarterly) once CIQ has "
         f"processed {waits}, move the old pair to "
         "data/manual/ciq-archive/replaced-<YYYY-MM-DD>/<TICKER>/ and re-run")

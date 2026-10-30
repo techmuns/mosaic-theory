@@ -536,7 +536,7 @@ def multiple_anchor(bundle: Any) -> MultipleAnchor:
     """Own-history EV/EBITDA trough / median / upper-quartile. CIQ absent (or too few closes) →
     UNAVAILABLE, said plainly — never fabricated, and never blocks the margin anchors."""
     from vinci.dossier.ciq import CiqUnavailableError
-    from vinci.dossier.ciq_sheets import _multiples_close
+    from vinci.dossier.ciq_sheets import _latest_close, _multiples_close
 
     if bundle is None:
         return MultipleAnchor(available=False,
@@ -548,7 +548,18 @@ def multiple_anchor(bundle: Any) -> MultipleAnchor:
             available=False,
             note=f"multiple anchors: UNAVAILABLE — CIQ absent ({type(exc).__name__}: the "
                  f"Financials→Quarterly 'Multiples' sheet); margin anchors A/B are unaffected")
-    series = [v for _, v in _multiples_close(rows, "TEV/LTM EBITDA") if v is not None]
+    pairs = _multiples_close(rows, "TEV/LTM EBITDA")
+    # NM AT THE LATEST CLOSE IS UNAVAILABLE (audit D-D3, 2026-10-30), as `_own_history_band` and
+    # `ev_ebitda_percentile` already refuse it: a band built on the closes before an NM one would
+    # carry no date to reveal that the current read is not among them
+    latest = _latest_close(pairs)
+    if latest is not None and latest[1] is None:
+        return MultipleAnchor(
+            available=False,
+            note=f"multiple anchors: UNAVAILABLE — TEV/LTM EBITDA is NM at the latest Close "
+                 f"[{latest[0].isoformat()}]; a band on the earlier closes is not built in its "
+                 f"place; margin anchors A/B are unaffected")
+    series = [v for _, v in pairs if v is not None]
     if len(series) < 4:
         return MultipleAnchor(
             available=False, n_quarters=len(series),

@@ -580,10 +580,9 @@ def test_a_balance_sheet_period_label_is_never_a_raw_serial() -> None:
     assert ref == f"CIQ Financials→Balance Sheet 'Net Debt' [{gen._mdy(gen.A_DATES[-1])}]"
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
-    "A-D5: the 'latest' column is the rightmost one, and the export's 'Order:' cell is never "
-    "read, so a right-to-left sheet serves its OLDEST period as the latest"))
 def test_a_right_to_left_sheet_never_serves_its_oldest_period_as_latest() -> None:
+    """A-D5, FIXED 2026-10-30 (was a strict xfail): the latest column is the one whose header
+    states the latest date (`ciq_sheets.latest_cell`), never the rightmost."""
     b = _bundle(ANNUAL)
     inc = b.sheet("financials", "Income Statement", freq="annual")
     for r in range(HEADER_ROW, len(inc)):  # the period columns only; the settings block stays put
@@ -661,7 +660,8 @@ def test_a_row_of_nothing_but_markers_has_no_latest_value(path: Path) -> None:
     inc = read_sheets(path)["Income Statement"]
     ri = cs._find_row(inc, gen.MARKER_ROW)
     assert ri is not None
-    assert cs._latest_col(inc, ri, cs._period_header(inc)) is None
+    got = cs.latest_cell(inc, ri, cs._period_header(inc))
+    assert got.value is None and got.state == "unavailable"
 
 
 def test_nm_at_the_latest_close_refuses_rather_than_reaching_back(bundle: CiqBundle) -> None:
