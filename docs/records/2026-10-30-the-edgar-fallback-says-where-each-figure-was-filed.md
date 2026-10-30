@@ -56,11 +56,12 @@ newest point and anchored a window with nothing else in it; THM's 2033 tag did t
   - the operating-income and FCF signs, net debt / OCF and EPS move on none;
   - EBITDA goes UNKNOWN on 3, each a D&A leg filed negative: THG (Hanover) 928.4M, SID 821.0M,
     AVBP (ArriVent) −180.6M; THG's net leverage 0.62 goes UNKNOWN with it;
-  - the screen's share change and the rank's dilution read move on 5: REPX (UNKNOWN → +3.1%),
-    DEC (UNKNOWN → −7.0%), AVBC (UNKNOWN → 0.0%), AAL (+0.3% → +0.7%, its endpoint now its filing
-    day 2026-07-23) and NG (NovaGold, +31.1% → UNKNOWN: its 2025 count, tagged after its filing, is
-    +21.6% against its previous cover count, past 10%);
-  - the dilution-spiral flag set is IDENTICAL, 61 names on both sides; and none of the 8 names
+  - the screen's share change and the rank's dilution read move on 3: REPX (UNKNOWN → +3.1%), AAL
+    (+0.3% → +0.7%, its endpoint now its filing day 2026-07-23) and NG (NovaGold, +31.1% →
+    UNKNOWN: its 2025 count, tagged after its filing, is +21.6% against its previous cover count,
+    past 10%). (DEC and AVBC moved too until review round 0 kept zero-valued counts, which make
+    their change UNKNOWN on main and on the branch alike.);
+  - the dilution-spiral flag set is IDENTICAL, 61 names on both sides; and none of the 6 names
     that move passed the screen (FAIL or NOT_EVALUATED). No screen or rank decision moves.
 - **The corpus** (the latest companyfacts per CIK, 2,225 USD reporters): 0 of 1,625 current FCF
   pairs carry a negative capex leg; 8 of 1,241 current EBITDA pairs a negative D&A leg (7 under
