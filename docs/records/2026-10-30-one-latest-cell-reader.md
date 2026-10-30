@@ -44,15 +44,23 @@ superseded-by:
     no period.
   - `CiqFacts.unavailable` records why the OCF, capex or D&A fact is absent.
   - `anchor._bridge_inputs` adds that reason to `ltm_fcf`'s and `d_and_a`'s UNKNOWN source.
-- **The press-release policy is one constant.** `ciq_sheets.PRESS_RELEASE_REFUSED` names the
-  statements whose latest press-release column `require_filed_income_statement` refuses (at
-  assembly and in `anchor.ciq_bridge`). It holds `("Income Statement",)`, which is #868's ruling.
-  - A release Balance Sheet or Cash Flow column is SERVED WITH ITS STATE SHOWN. Every latest-cell
-    source_ref prints the header's own words ('[Press Release Q3 Sep-30-2026]'), and the posture
-    appends "(press release)", which `_fin_short` erased.
-  - Refusing those two as well is one line:
-    `("Income Statement", "Balance Sheet", "Cash Flow")`.
-  - **An operator ruling is owed**; see the PR body.
+- **A press-release Balance Sheet or Cash Flow is REFUSED, as the Income Statement is.**
+  `ciq_sheets.PRESS_RELEASE_REFUSED = ("Income Statement", "Balance Sheet", "Cash Flow")` names
+  the statements whose latest press-release column `require_filed_income_statement` refuses, at
+  assembly and in `anchor.ciq_bridge` alike.
+  - **RULED 2026-10-30** by the operator ("agreed") on this reasoning: "Waiting a few days for
+    the filed numbers costs us nothing. A wrong net debt inside a valuation costs a lot. Serving
+    the figure with '(press release)' shown would warn a human reader, but the anchor and bridge
+    calculations would still run on the wrong number; a label doesn't stop that."
+  - The PR first shipped `("Income Statement",)`, #868's ruling, so the choice was one line; the
+    ruling made that edit.
+  - **Where a release column can still be read:** outside those two paths, in a refresh
+    transform that re-reads a page's own export with no refusal (e.g. `release_figures_transform`
+    → `mechanical._release_lines` → `ciq_sheets.net_debt`). A page assembled on a release export
+    before #868 has one: LLY's #867 page. There the source_ref keeps CIQ's own words ('[Press
+    Release Q3 Sep-30-2026]'), and `LatestCell` carries the status.
+  - The posture's "(press release)" suffix, added in this PR's first cut, is removed: the posture
+    is built only in assembly, after the refusal, so a release column can no longer reach it.
 
 **WHY.**
 - `_latest_col` took the rightmost VALUED cell, so a marker in the latest column served an older
@@ -76,7 +84,8 @@ superseded-by:
   - each of the 8 `gen.MARKERS` at the latest column, through the reader and through each
     decision-path reader;
   - the positive fences;
-  - the policy's one-line switch;
+  - the refusal of a release Balance Sheet and Cash Flow, at assembly and in `ciq_bridge`, which
+    fails on the pre-ruling head 29702126, with its filed-statement fence;
   - three corpus properties.
 - The strict xfail `test_a_right_to_left_sheet_never_serves_its_oldest_period_as_latest` passes,
   and its marker is removed.
@@ -96,7 +105,6 @@ superseded-by:
   pages' names on their `-ta` exports:
   - values move only for LLY, ORKA and FUBO (listed above);
   - every bridge revenue fact gains its period, with no value change;
-  - the posture's label gains "(press release)" on GOOGL, LLY and SMPL;
   - the EBITDA window changes only on FUBO, refused both before and after.
 
 **BOUNDARY.**
@@ -107,10 +115,12 @@ superseded-by:
   - 1,975 reads: 1,845 unchanged, 88 empty either way, and 42 that `_latest_col` stepped back past
     a marker (32 of them in current exports).
   - 0 headers undated, 0 out of order, 0 with two columns at the latest date.
-- **Press-release measurement:** the 34 current non-held folders, 2026-10-30.
-  - With the refusal widened to the Balance Sheet and Cash Flow, 0 names are added: the same four
-    (GOOGL, LLY, ONON, SMPL) are refused either way, because every release column on file sits in
-    an export whose Income Statement is a release too.
+- **Press-release measurement:** the 34 current non-held folders, 2026-10-30, run again on the
+  ruling's code.
+  - Refusing all three statements adds 0 names: the same four (GOOGL, LLY, ONON, SMPL) are refused
+    as under the Income Statement alone, because every release column on file sits in an export
+    whose Income Statement is a release too. Each refusal now names 6 columns (both exports × the
+    three statements), where it named 2.
   - UBER's archived release export (`replaced-2026-10-11`), set against its current filed export
     at Jun-30-2026, counting rows valued on either side:
     - quarterly Balance Sheet: 14 of 48 differ (7 by value, including Net Debt 9,340.0 against

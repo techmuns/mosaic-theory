@@ -294,30 +294,46 @@ def test_the_multiple_band_is_unavailable_when_the_latest_close_is_nm(bundle: Ci
     assert gen.M_DATES[-1].isoformat() in got.note and "NM" in got.note
 
 
-# --- a press-release balance sheet or cash flow: the ruling owed, as one line ---------------------
+# --- a press-release balance sheet or cash flow: REFUSED (operator ruling 2026-10-30) -----------
 
 
-def test_a_press_release_balance_sheet_is_served_with_its_state_shown(
-        bundle: CiqBundle, monkeypatch: pytest.MonkeyPatch) -> None:
-    """`PRESS_RELEASE_REFUSED` holds the Income Statement alone (#868's ruling): a release column on
-    the balance sheet is SERVED, and every reader names it. Naming the Balance Sheet there — the
-    one-line change the operator's ruling would make — refuses the same bundle at assembly."""
-    bs = _sheet(bundle, "Balance Sheet", "quarterly")
-    hdr = cs._bs_period_header(bs)
-    assert hdr is not None
-    bs[hdr][-1] = f"Press Release\n{bs[hdr][-1]}"
+def test_a_filed_balance_sheet_and_cash_flow_pass_the_refusal(bundle: CiqBundle) -> None:
+    """(+) The synthetic exports as written: every statement filed, nothing refused, and the bridge
+    reads."""
+    from vinci.dossier.anchor import ciq_bridge
+
+    assert cs.PRESS_RELEASE_REFUSED == ("Income Statement", "Balance Sheet", "Cash Flow")
     assert cs.press_release_income_columns(bundle) == []
-    cs.require_filed_income_statement(bundle, gen.TICKER)   # served: no refusal
-    nd = cs.net_debt(bundle)
-    assert nd.status is SourceStatus.PRESENT and "[Press Release " in (nd.source_ref or "")
-    assert "(press release)" in str(cs.balance_sheet_posture(bundle).value)
-    every = ("Income Statement", "Balance Sheet", "Cash Flow")
-    found = cs.press_release_income_columns(bundle, every)
-    assert [(c.sheet, c.export, c.period.end) for c in found] == [
-        ("Balance Sheet", "quarterly", gen.Q_DATES[-1])]
-    monkeypatch.setattr(cs, "PRESS_RELEASE_REFUSED", every)
-    with pytest.raises(cs.CiqPreliminaryError, match="quarterly export Balance Sheet"):
+    cs.require_filed_income_statement(bundle, gen.TICKER)
+    assert cs.net_debt(bundle).status is SourceStatus.PRESENT
+    ciq, _line = ciq_bridge(bundle, gen.TICKER)
+    assert ciq is not None and ciq.value("ocf") is not None
+
+
+@pytest.mark.parametrize(("sheet", "freq", "named"), [
+    ("Balance Sheet", "quarterly", "quarterly export Balance Sheet"),
+    ("Cash Flow", "annual", "annual export Cash Flow"),
+], ids=["balance-sheet", "cash-flow"])
+def test_a_press_release_balance_sheet_or_cash_flow_is_refused(
+        bundle: CiqBundle, sheet: str, freq: str, named: str) -> None:
+    """(−) RULED 2026-10-30 (operator, "agreed"): a release Balance Sheet or Cash Flow column is
+    refused at assembly and by the anchor's CIQ bridge, as the Income Statement is (#868) — "the
+    anchor and bridge calculations would still run on the wrong number; a label doesn't stop
+    that". Outside those two paths a reader still names the column as CIQ wrote it."""
+    from vinci.dossier.anchor import ciq_bridge
+
+    rows = _sheet(bundle, sheet, freq)
+    hdr = cs._bs_period_header(rows) if sheet == "Balance Sheet" else cs._period_header(rows)
+    assert hdr is not None
+    rows[hdr][-1] = f"Press Release\n{rows[hdr][-1]}"
+    found = cs.press_release_income_columns(bundle)
+    assert [(c.sheet, c.export) for c in found] == [(sheet, freq)]
+    with pytest.raises(cs.CiqPreliminaryError, match=named):
         cs.require_filed_income_statement(bundle, gen.TICKER)
+    with pytest.raises(cs.CiqPreliminaryError, match=named):
+        ciq_bridge(bundle, gen.TICKER)
+    if sheet == "Balance Sheet":   # a refresh transform reads it unrefused: its words are kept
+        assert "[Press Release " in (cs.net_debt(bundle).source_ref or "")
 
 
 # --- the corpus (licensed workbooks; skipped where absent) --------------------------------------

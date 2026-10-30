@@ -123,8 +123,8 @@ PR (CLAUDE.md: coin-time translation).
   column whose header states the latest DATE — never the rightmost column holding a number. A marker
   ('-', 'NA', 'NM') there means the figure is unavailable, and no older period is read instead;
   "unplaced" means no column can be called the latest (no dated header, or two at one date).* Home:
-  `vinci/dossier/ciq_sheets.py::latest_cell`; the press-release policy beside it is
-  `PRESS_RELEASE_REFUSED`.
+  `vinci/dossier/ciq_sheets.py::latest_cell`; the statements whose latest press-release column
+  is refused (all three, 2026-10-30) are `PRESS_RELEASE_REFUSED`.
 - **Listing basis / ADS ratio / traded unit** (2026-10-28, FPI4). Plain words: *a depositary
   line (an ADR/GDR) trades in ADSs, its issuer reports per ordinary share, and the ADS ratio is how
   many ordinary shares one ADS represents, as the issuer's own filing states it (QFIN 2, KT 0.5).

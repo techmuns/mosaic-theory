@@ -288,9 +288,10 @@ def latest_cell(rows: Rows, ri: int, hdr: int | None) -> LatestCell:
       104 non-test Financials exports on file, current and archived (2026-10-30): 0 of either.
 
     THE PERIOD CARRIES THE COLUMN'S STATUS (#868's field), so a press-release column is visible to
-    every caller: its label prints 'Press Release'. Whether a press-release Balance Sheet or Cash
-    Flow column is served at all is decided at assembly (:data:`PRESS_RELEASE_REFUSED`), never
-    here — a reader that dropped it would be a third place that rule lives."""
+    every caller: its label prints 'Press Release'. Whether a press-release statement is read at
+    all is decided at assembly and in the anchor's CIQ bridge (:data:`PRESS_RELEASE_REFUSED`: all
+    three statements, operator ruling 2026-10-30), never here — a reader that dropped it would be a
+    third place that rule lives."""
     def none(state: LatestState, reason: str, col: int | None = None,
              period: HeaderPeriod | None = None, label: str = "") -> LatestCell:
         return LatestCell(None, col, period, label, state, reason)
@@ -6304,10 +6305,6 @@ def _bs_posture_build(bs: Rows, freq: str) -> Sourced[str] | None:
         return clean_num(bs[ri][pj]) if ri is not None and pj < len(bs[ri]) else None
 
     per = _fin_short(bs[hdr][pj]) if hdr is not None and pj < len(bs[hdr]) else "latest"
-    # `_fin_short` prints a bare label for either basis, so a release column's state is said in the
-    # VALUE; the source_ref keeps its words, since a synthesis citation quotes it as a join key
-    shown = (f"{per} (press release)"
-             if anchor.period is not None and anchor.period.status == "press_release" else per)
     parts = [f"cash & ST inv {_fmt_m(cash_v)}"]
     for lbl, key in (("total debt", "Total Debt"), ("net debt", "Net Debt")):
         if (v := at(key)) is not None:
@@ -6322,7 +6319,7 @@ def _bs_posture_build(bs: Rows, freq: str) -> Sourced[str] | None:
         parts.append(f"net working capital {_fmt_m(tca - tcl)}")
     parts.append("net-debt/EBITDA → see the Leverage & survival block (not recomputed)")
     return Sourced.present(
-        f"as of {shown} ($M): " + "; ".join(parts),
+        f"as of {per} ($M): " + "; ".join(parts),
         source_ref=f"CIQ Financials→Balance Sheet ({freq}, {per})",
     )
 
@@ -6563,22 +6560,24 @@ def currency_flag(currency: CiqCurrency | None) -> str | None:
             f"as USD is UNVERIFIED — {'; '.join(unstated)}")
 
 
-# --- (2026-10-30) A PRESS-RELEASE INCOME STATEMENT IS REFUSED AT ASSEMBLY -----------------------
-# Operator ruling 2026-10-30 ("go ahead with this fix then"): the Income Statement only. The balance
-# sheet and cash flow carry press-release columns too, and a defect IS measured there: UBER's
-# release quarterly balance sheet to Jun-30-2026 (`ciq-archive/replaced-2026-10-11`) against its
-# filed one differs on 14 of the 48 rows valued on either side — 7 by value, Net Debt 9,340.0
-# against 4,744.0 among them, and 7 a value against a marker (re-measured 2026-10-30,
-# `docs/records/2026-10-30-one-latest-cell-reader.md`). Every such column on file sits in an
-# export whose Income Statement is refused here anyway; widening the refusal is the operator's call.
+# --- (2026-10-30) A PRESS-RELEASE STATEMENT IS REFUSED AT ASSEMBLY --------------------------------
+# Operator ruling 2026-10-30 ("go ahead with this fix then"): the Income Statement (#868). RULED
+# 2026-10-30 (operator, "agreed"; PR #872): the Balance Sheet and the Cash Flow too — "Waiting a few
+# days for the filed numbers costs us nothing. A wrong net debt inside a valuation costs a lot. …
+# the anchor and bridge calculations would still run on the wrong number; a label doesn't stop
+# that." The measured defect: UBER's release quarterly balance sheet to Jun-30-2026
+# (`ciq-archive/replaced-2026-10-11`) against its filed one differs on 14 of the 48 rows valued on
+# either side — 7 by value, Net Debt 9,340.0 against 4,744.0 among them, and 7 a value against a
+# marker (`docs/records/2026-10-30-one-latest-cell-reader.md`). Widening refused no further name:
+# every release column on file sits in an export whose Income Statement is a release too.
 
 #: THE STATEMENTS WHOSE LATEST PRESS-RELEASE COLUMN IS REFUSED at assembly and by the anchor's CIQ
-#: bridge (:func:`require_filed_income_statement`). A RULING IS OWED on the other two (audit A1,
-#: 2026-10-30): refusing a press-release Balance Sheet and Cash Flow too is THIS ONE LINE —
-#: ``("Income Statement", "Balance Sheet", "Cash Flow")``. Until then such a column is SERVED WITH
-#: ITS STATE SHOWN: every latest-cell reader's source_ref prints the column's own words ('Press
-#: Release …', :func:`latest_cell`), and the balance-sheet posture names it.
-PRESS_RELEASE_REFUSED: tuple[str, ...] = ("Income Statement",)
+#: bridge (:func:`require_filed_income_statement`) — all three (operator ruling 2026-10-30). A
+#: release column a reader still meets OUTSIDE those two paths — a refresh transform re-reading a
+#: page's own export, which a page assembled on a release export before this refusal has — keeps
+#: its state shown: every latest-cell source_ref prints the column's own words ('Press Release …',
+#: :func:`latest_cell`), and :class:`LatestCell` carries the status.
+PRESS_RELEASE_REFUSED: tuple[str, ...] = ("Income Statement", "Balance Sheet", "Cash Flow")
 
 #: Every Financials statement, as the refusal reads them. Every address is a STRING LITERAL, so the
 #: CIQ-manifest drift guard sees each one (`requirements.CIQ_MODULES`).
@@ -6667,8 +6666,10 @@ def require_filed_income_statement(bundle: CiqBundle, ticker: str) -> None:
         "latest are 'Press Release' columns — "
         + "; ".join(f"{c.export} export {c.sheet} '{c.header}'" for c in found)
         + ". CIQ builds such a column from the earnings release, which carries fewer lines than "
-        "the filing: a line the release omits carries the last fiscal year into the LTM, and a "
-        "line it reports only in aggregate lands in a catch-all, so it is never read as a filed "
+        "the filing: on the income statement a line the release omits carries the last fiscal "
+        "year into the LTM and a line it reports only in aggregate lands in a catch-all; on the "
+        "balance sheet a line it does not disclose leaves the totals (UBER's release Net Debt "
+        "9,340.0 against its filing's 4,744.0), so it is never read as a filed "
         f"period. Re-export BOTH Financials workbooks (Annual and Quarterly) once CIQ has "
         f"processed {waits}, move the old pair to "
         "data/manual/ciq-archive/replaced-<YYYY-MM-DD>/<TICKER>/ and re-run")
