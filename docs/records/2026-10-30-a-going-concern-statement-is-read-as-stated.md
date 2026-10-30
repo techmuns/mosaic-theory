@@ -1,8 +1,8 @@
 ---
 id: 2026-10-30-a-going-concern-statement-is-read-as-stated
-status: open
+status: shipped
 date: 2026-10-30
-prs: []
+prs: [879]
 supersedes:
 superseded-by:
 ---
