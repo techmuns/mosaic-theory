@@ -20,9 +20,9 @@ superseded-by:
   page — and parsed by the one row reader both kinds of page share (`_page_filings`). Pages
   wholly before the window are not fetched. A page the window needs and cannot read RAISES
   `HttpError`, naming the page — unreachable, answered with something that is not JSON (an
-  interstitial), missing its arrays, or listed with no name, all alike (`_older_filings`;
-  in-session review round 0: a `ValueError` or `KeyError` would have escaped the callers that
-  catch only `HttpError` and aborted the assembly); every windowed caller already turns an `HttpError` into its
+  interstitial), missing its arrays, listed with no name, or listed with a span date that is not
+  ISO, all alike (`_older_filings`; in-session review rounds 0 and 1: a `ValueError` or `KeyError`
+  would have escaped the callers that catch only `HttpError` and aborted the assembly); every windowed caller already turns an `HttpError` into its
   UNKNOWN (the ownership register, insider and Section 16 scans, the dilution scan, the rank's
   8-K scan, the theme prefilter, the gap and maturity 8-Ks).
 - A page that FAILED is remembered by the client, as the document's failure is (`_submissions`'
@@ -44,13 +44,14 @@ dilution scans read exactly such windows, and an empty or thin result there is P
 window"), never UNKNOWN.
 
 **HOW VERIFIED.**
-- **Failing first.** `tests/test_submissions_older_pages.py` (8) on main `08948b5a`: the
+- **Failing first.** `tests/test_submissions_older_pages.py` (9) on main `08948b5a`: the
   older-page read and the unreadable-page raise FAILED on main's behaviour (page -001's 8-Ks
   missing; no raise); the two negative pins (a window inside the recent page, and no window, fetch
   nothing more) passed on main and pass now. The fifth — a failed page fetched once by one client
   across two windowed reads — failed on this branch's first cut (fetched twice) before the memo;
   the three malformed-page cases (interstitial, no `form` array, unnamed page) failed on the
-  reviewed head (a `ValueError`, a `KeyError`, a fetch of `/None`) before `_older_filings`. Fixtures are Gartner's real submissions document and
+  reviewed head (a `ValueError`, a `KeyError`, a fetch of `/None`) before `_older_filings`; the
+  non-ISO `filingTo` case failed on the PR head (`af70903c`, a `ValueError`) before review round 1. Fixtures are Gartner's real submissions document and
   its real older page -001, each cut to a slice of its rows (`tests/fixtures/submissions_pages`);
   HTTP is mocked.
 - **One live read through the shared limiter** (`EdgarClient.from_config()`, this worktree's
@@ -96,3 +97,9 @@ window"), never UNKNOWN.
   may not, and the answer is None. That is the as-of cut (C4), which waits on its ruling.
 - **`theme_intelligence.securities._walk_filings`** reads the older pages itself and stops
   silently at one it cannot read — not Session C's file.
+- **A 200 interstitial is cached as the page for its TTL** (review round 1, DEFERRED).
+  `CachedHttp.get_text` writes any 200 body before `get_json` parses it, so an interstitial served
+  for an older page reads "could not be read" (UNKNOWN, never a short count) for the page's
+  30 days rather than the document's 1. The fix is to validate a JSON body before caching it in
+  `vinci/netcache.py`, which is not Session C's file; `theme_intelligence.securities` holds its
+  pages 30 days the same way.

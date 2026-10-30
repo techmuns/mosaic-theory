@@ -758,15 +758,15 @@ class EdgarClient:
             return []
         out: list[Filing] = []
         for page in files:
-            to = page.get("filingTo")
-            if to and date.fromisoformat(to) < since:
-                continue  # wholly before the window
             name = page.get("name")
             why = f"so the filings window from {since} is incomplete"
             if not name:
                 raise HttpError(f"an older submissions page for CIK{cik10} is listed with no "
                                 f"name, {why}")
             try:
+                to = page.get("filingTo")
+                if to and date.fromisoformat(to) < since:
+                    continue  # wholly before the window
                 rows = self._older_page(str(name))
                 if not isinstance(rows, dict):
                     raise TypeError(f"{type(rows).__name__}, not a JSON object")

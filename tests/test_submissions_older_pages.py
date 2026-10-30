@@ -99,17 +99,21 @@ def test_a_page_that_failed_is_not_fetched_again_by_the_same_client() -> None:
 
 class _Malformed(_Sec):
     """Page -001 answered with an HTML interstitial (a ValueError from the JSON parse), a page
-    missing its `form` array, or a `files` entry with no name."""
+    missing its `form` array, a `files` entry with no name, or one whose `filingTo` is not an ISO
+    date (review round 1: its parse ran outside the guard)."""
 
     def __init__(self, how: str) -> None:
         super().__init__()
         self.how = how
 
     def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
-        if url.endswith(f"CIK{CIK}.json") and self.how == "unnamed":
+        if url.endswith(f"CIK{CIK}.json") and self.how in ("unnamed", "bad-span"):
             doc = json.loads(json.dumps(DOC))
             for page in doc["filings"]["files"]:
-                page.pop("name")
+                if self.how == "unnamed":
+                    page.pop("name")
+                else:
+                    page["filingTo"] = page["filingTo"].replace("-", "/")
             self.urls.append(url)
             return cast(dict[str, Any], doc)
         if url.endswith("-submissions-001.json"):
@@ -120,7 +124,7 @@ class _Malformed(_Sec):
         return super().get_json(url, ttl_seconds=ttl_seconds)
 
 
-@pytest.mark.parametrize("how", ["interstitial", "no-form-array", "unnamed"])
+@pytest.mark.parametrize("how", ["interstitial", "no-form-array", "unnamed", "bad-span"])
 def test_a_malformed_older_page_raises_an_http_error_naming_it(how: str) -> None:
     """The windowed callers degrade an HttpError to UNKNOWN, and several catch nothing else: a
     page SEC answers with an interstitial, or one missing its arrays, must not escape as a
