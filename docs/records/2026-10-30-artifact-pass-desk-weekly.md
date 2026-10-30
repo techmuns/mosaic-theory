@@ -2,7 +2,7 @@
 id: 2026-10-30-artifact-pass-desk-weekly
 status: recorded
 date: 2026-10-30
-prs: []
+prs: [876]
 supersedes:
 superseded-by:
 ---
