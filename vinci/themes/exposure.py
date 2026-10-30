@@ -169,6 +169,7 @@ def mention_prefilter(
     max_pages: int = 5,
     skip_errors: bool = False,
     skipped: list[str] | None = None,
+    capped: list[str] | None = None,
     progress: ProgressFn | None = None,
 ) -> dict[str, set[str]]:
     """Batched-CIK efts: which universe CIKs mention each driver phrase recently. Returns
@@ -183,7 +184,12 @@ def mention_prefilter(
     a scan reporting 745 graded names could have dropped any number and nothing said so. Each
     entry is one ``batch×phrase`` query that errored, and a batch holds up to 100 CIKs, so one
     entry can cost up to 100 names their match on that phrase. An empty list is the only thing
-    that licenses reading the yield as complete."""
+    that licenses reading the yield as complete.
+
+    PASS ``capped`` FOR THE OTHER HALF OF THAT GAP (audit E1-D11). A batch×phrase whose matches
+    outrun ``max_pages`` pages stopped reading with no word: 6 of the 984 batch×phrase queries in
+    the efts cache did (2026-10-30, all `"defense"`, 530-774 hits read as 500). Each is named
+    here with what it read of its total."""
     matched: dict[str, set[str]] = {}
     batches = [ciks_padded[i:i + 100] for i in range(0, len(ciks_padded), 100)]
     rep = ProgressReporter("efts prefilter", len(batches) * len(phrases), emit=progress)
@@ -191,7 +197,7 @@ def mention_prefilter(
     for batch in batches:
         bset = set(batch)
         for phrase in phrases:
-            frm = 0
+            frm = total = read = 0
             for _ in range(max_pages):
                 try:
                     data = cast(dict[str, Any],
@@ -205,12 +211,18 @@ def mention_prefilter(
                         skipped.append(f"{phrase!r} × batch of {len(batch)} CIKs "
                                        f"(from={frm}): {type(exc).__name__}: {exc}")
                     break  # transient efts error — skip this batch×phrase, keep scanning
+                # every hit on the page — `page` holds only the CIKs kept (review of #871)
+                read += len(data["hits"]["hits"])
                 for c in page:
                     if c in bset:
                         matched.setdefault(c, set()).add(phrase)
                 frm += 100
                 if frm >= total or not page:
                     break
+            else:  # every page spent and matches remain: this batch×phrase is a LOWER BOUND
+                if capped is not None:
+                    capped.append(f"{phrase!r} × batch of {len(batch)} CIKs: read {read} of "
+                                  f"{total} hits ({max_pages}-page cap)")
             done += 1
             rep.tick(done)
     return matched
@@ -639,8 +651,10 @@ def scan_driver_exposure(
     ciks = [c for _, c in names]
     ticker_by_cik = {c: t for t, c in names}
     prefilter_skips: list[str] = []
+    prefilter_caps: list[str] = []
     matched = mention_prefilter(efts_http, ciks, spec.prefilter_terms, startdt=startdt, enddt=enddt,
-                                skip_errors=True, skipped=prefilter_skips, progress=progress)
+                                skip_errors=True, skipped=prefilter_skips, capped=prefilter_caps,
+                                progress=progress)
     if prefilter_skips:
         # NOT a warning to be scrolled past: the scan's denominator is now unknown, so every count
         # derived from it ("N graded", any share of N) is N-that-succeeded over an unknown base.
@@ -652,6 +666,13 @@ def scan_driver_exposure(
             print(f"   {line}")
         if len(prefilter_skips) > 10:
             print(f"   … and {len(prefilter_skips) - 10} more")
+    if prefilter_caps:
+        print(f"!! PREFILTER PAGE CAP — {len(prefilter_caps)} batch×phrase quer(ies) stopped at "
+              f"the page cap with matches unread, so the matched set is a LOWER BOUND.")
+        for line in prefilter_caps[:10]:
+            print(f"   {line}")
+        if len(prefilter_caps) > 10:
+            print(f"   … and {len(prefilter_caps) - 10} more")
     candidates = sorted(matched)
     since = date.fromisoformat(startdt)
     rep = ProgressReporter("exposure scan", len(candidates), emit=progress)

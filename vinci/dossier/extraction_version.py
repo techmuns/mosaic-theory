@@ -256,6 +256,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "committed quote reads as before",
     ),
     (
+        "2026-10-30.cover-dated-shares",
+        "a share count tagged after its own filing is dated from its cover sentence (an anchored "
+        "parse; unread, at its filing day, printed 'filed <date>'), its value cross-checked "
+        "against another count in the same filing and UNKNOWN past that comparison's tolerance "
+        "(5% to a balance-sheet count, 10% to a diluted average or a previous count), each "
+        "correction a QA flag "
+        "(audit X1(a)); the covenant-pointer table names the aggregate lines and agreement "
+        "families its caps leave out, and a full-text search reads every page or says it did not "
+        "(audit E1-D11)",
+    ),
+    (
         "2026-10-30.latest-cell",
         "every CIQ Financials reader of a row's latest figure reads the column whose header "
         "states the latest date, never the rightmost valued one: a marker there is UNKNOWN with "

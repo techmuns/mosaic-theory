@@ -132,8 +132,10 @@ def test_the_reason_is_chosen_from_whether_a_pointer_exists() -> None:
     import inspect
 
     import vinci.dossier.assemble as asm
-    src = inspect.getsource(asm.assemble_one)
-    assert "located_any = ptrs is not None and bool(ptrs.value)" in src, (
+    # the choice lives in `covenant_fail_reason` since review round 2 of #871; the seat calls it
+    assert "covenant_fail_reason(ptrs" in inspect.getsource(asm.assemble_one)
+    src = inspect.getsource(asm.covenant_fail_reason)
+    assert "if ptrs is not None and ptrs.value:" in src, (
         "the digest no longer distinguishes 'nothing located' from 'extraction failed'")
 
 
@@ -153,6 +155,7 @@ def test_pointer_discovery_cannot_reach_past_the_records_own_as_of() -> None:
 
     from vinci.dossier.mechanical import _covenant_pointers
     from vinci.dossier.schemas import CapitalInstrument
+    from vinci.edgar.client import FtsHit, FtsResult
 
     ref = _d(2026, 7, 6)
 
@@ -161,17 +164,17 @@ def test_pointer_discovery_cannot_reach_past_the_records_own_as_of() -> None:
         def __init__(self, d: _d, acc: str) -> None:
             self.filing_date, self.accession, self.form = d, acc, "10-K"
 
-    class _Hit:
-        def __init__(self, d: _d, acc: str) -> None:
-            self.file_date, self.accession, self.cik = d, acc, "0000000001"
+    def _hit(d: _d, acc: str) -> FtsHit:
+        return FtsHit(accession=acc, cik="0000000001", form="8-K", file_date=d, display_names=[])
 
     class _Edgar:
         def recent_filings(self, cik: str, *, forms: tuple[str, ...] = ()) -> list[_F]:
             # newest FIRST, as the real index returns — and the newest postdates the as-of
             return [_F(_d(2026, 9, 1), "AFTER-THE-ASOF"), _F(_d(2026, 2, 1), "BEFORE-0001")]
 
-        def fulltext_search(self, phrase: str, *, forms: str = "", ciks: str = "") -> list[_Hit]:
-            return [_Hit(_d(2026, 9, 9), "EFTS-AFTER"), _Hit(_d(2026, 1, 5), "EFTS-BEFORE")]
+        def fulltext_search(self, phrase: str, *, forms: str = "", ciks: str = "") -> FtsResult:
+            return FtsResult(hits=[_hit(_d(2026, 9, 9), "EFTS-AFTER"),
+                                   _hit(_d(2026, 1, 5), "EFTS-BEFORE")], total=2)
 
     seen_accessions: list[str] = []
 
@@ -228,8 +231,10 @@ def test_the_digest_reports_all_three_states_distinctly() -> None:
     import inspect
 
     import vinci.dossier.assemble as asm
-    src = inspect.getsource(asm.assemble_one)
-    assert "searched = (ptrs is not None" in src, "the third state was collapsed away again"
+    # four states since review round 2 of #871 (a search that stopped short is the fourth), chosen
+    # in `covenant_fail_reason`, each pinned by behaviour in tests/test_efts_caps_and_instants.py
+    src = inspect.getsource(asm.covenant_fail_reason)
+    assert "COVENANT_SEARCH_STOPPED_SHORT" in src, "the fourth state was collapsed away again"
     assert "COVENANT_SEARCH_FOUND_NOTHING" in src, (
         "the digest matches a literal rather than the search's own constant — they will drift")
     assert "could not run" in src

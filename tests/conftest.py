@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import sys
+
 import pytest
 
 from vinci import netcache
@@ -25,3 +27,12 @@ def _suite_sec_budget(request: pytest.FixtureRequest, monkeypatch: pytest.Monkey
     built = netcache._SEC_PACE  # noqa: SLF001 — rebuilt below when the budget it reads changed
     if built is not None and built._path != netcache._sec_pace_path():  # noqa: SLF001
         monkeypatch.setattr(netcache, "_SEC_PACE", None)
+
+
+@pytest.fixture(autouse=True)
+def _fresh_cover_cache() -> None:
+    """The parsed-cover cache (`mechanical._COVER_TEXTS`) is module-global and keyed on the URL,
+    so one test's served cover would answer the next test's refusing fetcher, in any file."""
+    mech = sys.modules.get("vinci.dossier.mechanical")
+    if mech is not None:
+        mech._COVER_TEXTS.clear()  # noqa: SLF001

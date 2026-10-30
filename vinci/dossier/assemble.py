@@ -42,9 +42,14 @@ from vinci.dossier.covenant_extract import (
 from vinci.dossier.driver_extract import extract_transcript_drivers
 from vinci.dossier.extraction_version import EXTRACTION_VERSION
 from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
-from vinci.dossier.mechanical import COVENANT_SEARCH_FOUND_NOTHING, assemble_mechanical
+from vinci.dossier.mechanical import (
+    COVENANT_SEARCH_FOUND_NOTHING,
+    COVENANT_SEARCH_STOPPED_SHORT,
+    assemble_mechanical,
+)
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import (
+    CovenantPointer,
     Dossier,
     PriceStoreStamp,
     Sourced,
@@ -1074,16 +1079,7 @@ def assemble_one(
             # unreachable) — so keying on it reports a COMPLETED search that never happened. The
             # reassuring answer is the dangerous one, and this was introduced while fixing a
             # two-states-must-not-read-alike bug. Keyed on the search's own note constant.
-            located_any = ptrs is not None and bool(ptrs.value)
-            searched = (ptrs is not None
-                        and (bool(ptrs.value) or ptrs.note == COVENANT_SEARCH_FOUND_NOTHING))
-            fail = (None if (gov_present or mat_present)
-                    else "no covenant terms extracted from located exhibits" if located_any
-                    else "no agreement exhibit was located to extract from — the gap is in the "
-                         "pointer search, not in extraction" if searched
-                    else "the covenant-exhibit search could not run "
-                         f"({ptrs.note if ptrs is not None else 'no pointer result'}) — whether an "
-                         "agreement exists is UNKNOWN, not absent")
+            fail = covenant_fail_reason(ptrs, gov_present=gov_present, mat_present=mat_present)
             digest = covenant_digest(gov, maturity_event, fail_reason=fail)
             cs_pre = mech.capital_structure.model_copy(update={
                 "covenant_terms": Sourced.present(digest, source_ref="fenced Tier-2 digest (P1)"),
@@ -1331,3 +1327,26 @@ def assemble_cohort(
             f"{len(skipped)} name(s) not attempted: {', '.join(sorted(skipped)) or 'none'}"
         ) from refused[0]
     return dossiers, errors
+
+
+def covenant_fail_reason(ptrs: Sourced[list[CovenantPointer]] | None, *, gov_present: bool,
+                         mat_present: bool) -> str | None:
+    """Why no covenant term reached the digest — FOUR states, keyed on the search's own notes.
+
+    A search that RAN AND STOPPED SHORT (an efts page or a family that could not be read, or a cap)
+    is neither "found nothing" nor "could not run" (review of #871): it read part of the filing
+    history and located nothing there, so whether an agreement exists is UNKNOWN."""
+    if gov_present or mat_present:
+        return None
+    if ptrs is not None and ptrs.value:
+        return "no covenant terms extracted from located exhibits"
+    note = ptrs.note if ptrs is not None else None
+    if note == COVENANT_SEARCH_FOUND_NOTHING:
+        return ("no agreement exhibit was located to extract from — the gap is in the pointer "
+                "search, not in extraction")
+    if note and note.startswith(COVENANT_SEARCH_STOPPED_SHORT):
+        return (f"the covenant-exhibit search stopped short ({note}) — whether an agreement "
+                f"exists is UNKNOWN, not absent")
+    return ("the covenant-exhibit search could not run "
+            f"({note if ptrs is not None else 'no pointer result'}) — whether an agreement exists "
+            "is UNKNOWN, not absent")
