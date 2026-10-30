@@ -22,6 +22,10 @@ superseded-by:
   after the currency refusal, before anything is fetched. The message names each column and its
   period end. It says to re-export BOTH Financials workbooks once CIQ has processed that period's
   10-Q, or the 10-K at a fiscal year end.
+- **The anchor's CIQ bridge refuses too** (coordinator review, round 1). `anchor.ciq_bridge`, which
+  `anchor-backfill` reads and assembly reuses, calls the refusal beside `require_usd`, and its
+  existing `except (CiqAmbiguousError, …): raise` lets `CiqPreliminaryError` through. That is one
+  refusal on both paths, as #819 made the currency's.
 - **The value check.** `vinci/dossier/ltm_quarters.py` runs in `assemble_one` right after the
   mechanical layer, before any model call. It covers each ADDITIVE Income Statement row on the
   annual summary: revenue, EBITDA, EBIT, net income, and the unusual items the summary surfaces.
@@ -103,7 +107,12 @@ The annual LTM's EBT excluding unusual items (20,500.3) exceeds its quarters' su
   - the value refusal on NFLX and on GOOGL's release gain;
   - CNXC's material `-` that reconciles, which does not refuse;
   - by date, never position: GOOGL's filed annual beside the later quarterly export still agrees;
-  - both call sites, by AST, before the first spend.
+  - both call sites, by AST, before the first spend;
+  - round 1: `ciq_bridge` refuses GOOGL's 10-29 rows and still reads GOOGL's filed rows (revenue).
+    That pin failed on the PR head `bbb918d7` before the fix.
+- **Round 1 real run of the bridge** over the same 37 folders: it refuses GOOGL, LLY and SMPL
+  (`CiqPreliminaryError`); ONON stays refused on currency. GOOGL's and LLY's filed archives read
+  (8 facts, 4 checks passed each).
 - **Mutation:** six mutants, all killed. They dropped the status word, deleted the refusal call,
   picked quarters by position, refused on a `-`, deleted the value refusal, and set the tolerance
   to 30%.
@@ -148,19 +157,49 @@ refused. It is the operator's call.
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **GOOGL waits** for the operator to re-export both Financials workbooks after CIQ processes its
   Q3 10-Q (filed 2026-10-29).
-- **LLY's committed page (#867) sits on the press-release column.** Other unusual items show
-  FY25's −484.0 against −1,066.1 on its three filed trailing quarters. Asset writedown shows
-  −885.0 against −303.0 in Q3 alone. The anchor reads a preliminary LTM EBIT and revenue (each
-  within 2% of its quarters). LLY owes one re-assembly after its 10-Q is processed.
+- **LLY's committed page (#867) sits on the press-release export.**
+  - Other unusual items show FY25's −484.0 against −1,066.1 on its three filed trailing quarters.
+  - Asset writedown shows −885.0 against −303.0 in Q3 alone.
+  - The anchor reads a preliminary LTM EBIT and revenue (each within 2% of its quarters).
+  - The release's annual Cash Flow LTM carries no figure. Levered FCF reads `NA`; CFO, capex and
+    both D&A rows read `-`. So `_latest_col` steps back to FY Dec-2025, and the page shows:
+    - `quality.free_cash_flow` 1,951.0 [FY Dec-2025];
+    - `net_debt_to_ocf` 2.7, which divides net debt from the press-release Q3 Sep-2026 column
+      (45,162) by FY2025 OCF (16,813);
+    - `anchor.ltm_fcf` 8,972.0, "fiscal year to 2025-12-31 (vendor basis)".
+
+    The silent step-back is audit A-D12 and stays in Phase 2.
+  - LLY owes one re-assembly after its 10-Q is processed.
 - **NFLX's committed page (#867) states the merger row as a −2,800.0 charge.** Its bear point says
   the charge "flattered" net income. Its next assembly is refused until the two exports agree.
-  Which export is right is the operator's call, with the arithmetic above.
+  **The filing supports the quarterly export's +2,800.0.** In the committed companyfacts
+  (`tests/fixtures/companyfacts/NFLX.json`; neither local SEC cache holds NFLX's companyfacts, and
+  nothing was fetched), the Q1 2026 10-Q (`0001065280-26-000138`, filed 2026-04-17) reports:
+  - pre-tax income of 6,547.1, CIQ's quarterly EBT including unusual items, which books +2,800.0;
+  - operating income of 3,957.0, so 2,590.1 sits below the operating line.
+
+  A −2,800.0 charge would leave pre-tax income near 950. The reading is the operator's, with this
+  arithmetic.
 - **SMPL** is refused at its newest fiscal year, consistent with row 36.
 - **Committed pages are not touched;** the refusal is at assembly.
-- **Not covered:**
-  - `anchor-backfill` (`ciq_bridge`) and the refresh transforms read the same workbooks and do
-    not refuse a press-release column;
-  - a press-release balance sheet in an export whose Income Statement is filed (none on the
+- **Not covered, and why** (round 1 census of every reader that loads a bundle outside assembly).
+  None of these refuses a release column. None can put a release figure on a page that was not
+  already built from that export:
+  - **Gated by hash** to the export the page was built from: `lease_basis_transform` (annual
+    Income Statement), `valuation_bases_transform` (`ebitda_recon`, quarterly Income Statement)
+    and `ev_bridge_transform` (quarterly Balance Sheet).
+  - **Gated by figure-proof**, written only when the export reproduces the page's own values:
+    - `statement_recon_transform` (annual Income Statement and Cash Flow);
+    - `financials-backfill` (its vintage guard);
+    - `release_figures_transform` (quarterly Balance Sheet net debt; it refuses unless the page's
+      lines reproduce);
+    - `basis_triangulation_transform` (net debt and annual Cash Flow FCF; it raises if more than
+      the covenant line moves).
+  - **Read no Financials statement** (measured by logging every `bundle.sheet` call on GOOGL's
+    10-29 bundle): the consensus, ev-gap, credit-health, forward-consensus,
+    forward-multiple-history (Multiples only), historical-forecast-error and horizon-read
+    transforms, and `own-history-refresh` (Multiples only).
+  - A press-release balance sheet in an export whose Income Statement is filed (none on the
     corpus).
 - **Falsifiers:**
   - a filed LTM that the quarters contradict on a material row where the quarterly side is the

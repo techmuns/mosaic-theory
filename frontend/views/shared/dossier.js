@@ -129,7 +129,8 @@ const EXTRACTION_VERSIONS = [
     "material row is sent the prompt it was sent before (audit D-D5 follow-up)"],
   ["2026-10-30.press-release-ltm",
     "a CIQ Income Statement whose latest LTM, fiscal-year or quarter column is a 'Press " +
-    "Release' column is refused at assembly, the header's status (filed, reclassified, " +
+    "Release' column is refused at assembly and by the anchor's CIQ bridge, the header's " +
+    "status (filed, reclassified, " +
     "restated, press release) being a parsed field; each additive annual-summary row's LTM is " +
     "checked against the four quarters ending on its date, a disagreement or a '-' quarter " +
     "is a QA flag, and a material row its quarters contradict refuses the build"],

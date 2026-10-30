@@ -361,3 +361,24 @@ def test_mechanical_refuses_right_after_the_currency() -> None:
     order = [f for _ln, f in calls]
     i = order.index("ciq_sheets.require_usd")
     assert order[i + 1] == "ciq_sheets.require_filed_income_statement"
+
+
+# --- round 1: the anchor's CIQ bridge refuses too ------------------------------------------------
+
+def test_the_anchor_bridge_refuses_a_press_release_income_statement() -> None:
+    """(−) `anchor-backfill` reads the export ON DISK through `ciq_bridge`, gated by no stamp —
+    the one reader that does (every refresh transform reads only the page's own export, by hash or
+    by reproducing its figures). One refusal on both paths, as the currency's (#819 finding 1)."""
+    from vinci.dossier.anchor import ciq_bridge
+
+    with pytest.raises(CiqPreliminaryError, match="GOOGL: 2 CIQ Financials Income Statement"):
+        ciq_bridge(_bundle("GOOGL"), "GOOGL")
+
+
+def test_the_anchor_bridge_still_reads_a_filed_export() -> None:
+    """(+) GOOGL's filed export passes the refusal and its bridge reads: revenue off the frozen
+    annual Income Statement (the rows carry no balance sheet, so the rest is reported unread)."""
+    from vinci.dossier.anchor import ciq_bridge
+
+    ciq, _note = ciq_bridge(_bundle("GOOGL-filed"), "GOOGL")
+    assert ciq is not None and "revenue" in ciq.facts

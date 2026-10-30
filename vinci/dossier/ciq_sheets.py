@@ -5751,9 +5751,9 @@ def _fin_periods(hdr: list[Any]) -> list[tuple[int, str, bool, bool]]:
     """(col, short_label, is_ltm, is_reclassified) for each non-empty period column of a header —
     the basis read off the header's STATUS field (:func:`header_period`), never off its label."""
     return [
-        (j, _fin_short(hdr[j]), p.kind == "LTM", p.status == "reclassified")
-        for j in range(1, len(hdr))
-        if str(hdr[j]).strip() and (p := header_period(hdr[j])) is not None
+        (j, _fin_short(c), p.kind == "LTM", p.status == "reclassified")
+        for j, c in enumerate(hdr[1:], 1) if str(c).strip()
+        for p in (header_period(c),)
     ]
 
 
