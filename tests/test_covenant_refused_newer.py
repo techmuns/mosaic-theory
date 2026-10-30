@@ -292,12 +292,14 @@ def test_the_synthesis_digest_omits_a_withheld_value() -> None:
         assert not any(ln.strip().startswith(f"{c.term}:") for ln in block), (c.ticker, block)
 
 
-def _node_render(tmp_path: pathlib.Path, ticker: str) -> str:
-    """The web page of the frozen-block dossier, through the production `renderDossier`."""
+def _node_render(tmp_path: pathlib.Path, ticker: str,
+                 host: dict[str, typing.Any] | None = None) -> str:
+    """The web page of the frozen-block dossier (or of ``host``), through the production
+    `renderDossier`."""
     if not shutil.which("node"):
         pytest.skip("node unavailable")
     src = tmp_path / f"{ticker}.json"
-    src.write_text(json.dumps(_host(ticker)))
+    src.write_text(json.dumps(host if host is not None else _host(ticker)))
     driver = r"""
 import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
