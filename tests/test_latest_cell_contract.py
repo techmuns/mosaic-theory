@@ -218,6 +218,19 @@ def test_quarterly_revenue_yoy_never_steps_back_a_quarter(bundle: CiqBundle) -> 
     assert cs._quarterly_revenue_yoy(bundle) is None
 
 
+def test_quarterly_revenue_yoy_reads_its_prior_year_by_date_too(bundle: CiqBundle) -> None:
+    """(PR #872 round 1) Both legs by date: a right-to-left quarterly sheet gives the same YoY,
+    where a leftward search from the latest column never reached the prior year's quarter."""
+    want = cs._quarterly_revenue_yoy(bundle)
+    assert want is not None
+    inc = _sheet(bundle, "Income Statement", "quarterly")
+    hdr = cs._period_header(inc)
+    assert hdr is not None
+    for r in range(hdr, len(inc)):   # the period columns only; the settings block stays put
+        inc[r] = [inc[r][0], *reversed(inc[r][1:])]
+    assert cs._quarterly_revenue_yoy(bundle) == want
+
+
 # --- the anchor's CIQ bridge (decision path) ----------------------------------------------------
 
 

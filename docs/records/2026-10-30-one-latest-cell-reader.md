@@ -127,3 +127,17 @@ superseded-by:
   pursued and keeps its value.
 - Falsifier for "unplaced never fires": a re-export whose header carries two columns at its latest
   date. Those reads then go UNKNOWN, and the reason names both columns.
+
+**DEFERRED FROM REVIEW (PR #872 round 1, in-session `/code-review high`; Codex hit its usage limit).**
+- **To A2, the zero-coercion PR:** `key_ratios` prints "dividend: none" when the pinned column's
+  Dividend per Share cell is any non-number, a CIQ marker included. That is the RC1 class (a marker
+  read as a stated absence).
+- **Latent, 0 cases on file:**
+  - `ciq_balance._bs` drops the reason when a balance-sheet leg's latest cell is a marker, so the
+    anchor's CIQ net-debt fill fails without naming it. There are 0 such BS-leg markers on the rows
+    the bridge reads in current exports; the census above covers it.
+  - `ebitda_recon._ciq_quarters` keys quarters by date, so two columns at one date collapse with
+    the rightmost winning. There are 0 same-date columns in the 104 exports.
+- **For the coordinator:** the corpus tests here, like every existing corpus test, iterate every
+  folder under `data/manual/ciq`. In a checkout that holds the held test pack they read its
+  exports. Excluding it needs its names in code, which this PR may not write.

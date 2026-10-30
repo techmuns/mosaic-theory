@@ -1059,16 +1059,21 @@ def _quarterly_revenue_yoy(bundle: CiqBundle) -> str | None:
     if now.quarter is None or now.fiscal_year is None:
         return None
     recl = _reclassified_cols(rows[hdr])
-    for j in range(col - 1, 0, -1):  # the nearest column of the same quarter a fiscal year earlier
-        p = header_period(rows[hdr][j]) if j < len(rows[hdr]) else None
-        if p is None or (p.quarter, p.fiscal_year) != (now.quarter, now.fiscal_year - 1):
-            continue
-        pv = clean_num(rows[rev_i][j])
-        if not pv or (j in recl) != (col in recl):
-            return None
-        cur, pri = _short_period(rows[hdr][col]), _short_period(rows[hdr][j])
-        return f"{rev / pv - 1:+.1%} ({cur} vs {pri})"
-    return None
+    # THE SAME QUARTER A FISCAL YEAR EARLIER, FOUND BY ITS PERIOD WHEREVER IT SITS (PR #872, round
+    # 1): a leftward search from the latest column never reached it on a right-to-left sheet. Two
+    # columns naming that quarter are not guessed between (0 of the 52 non-held quarterly Income
+    # Statements on file repeat one, current and archived, 2026-10-30).
+    want = (now.quarter, now.fiscal_year - 1)
+    prior = [j for j in range(1, len(rows[hdr])) if j != col
+             and ((p := header_period(rows[hdr][j])).quarter, p.fiscal_year) == want]
+    if len(prior) != 1:
+        return None
+    j = prior[0]
+    pv = clean_num(rows[rev_i][j]) if j < len(rows[rev_i]) else None
+    if not pv or (j in recl) != (col in recl):
+        return None
+    cur, pri = _short_period(rows[hdr][col]), _short_period(rows[hdr][j])
+    return f"{rev / pv - 1:+.1%} ({cur} vs {pri})"
 
 
 def margin_trend(bundle: CiqBundle) -> Sourced[str]:
@@ -6560,10 +6565,12 @@ def currency_flag(currency: CiqCurrency | None) -> str | None:
 
 # --- (2026-10-30) A PRESS-RELEASE INCOME STATEMENT IS REFUSED AT ASSEMBLY -----------------------
 # Operator ruling 2026-10-30 ("go ahead with this fix then"): the Income Statement only. The balance
-# sheet and cash flow carry press-release columns too, and a defect IS measured there (UBER's
-# release balance sheet to Jun-30-2026 differs from the filed one on 11 of 48 rows, Net Debt
-# 9,340.0 against 4,744.0), but every such column on file sits in an export whose Income Statement
-# is refused here anyway; widening the refusal is the operator's call.
+# sheet and cash flow carry press-release columns too, and a defect IS measured there: UBER's
+# release quarterly balance sheet to Jun-30-2026 (`ciq-archive/replaced-2026-10-11`) against its
+# filed one differs on 14 of the 48 rows valued on either side — 7 by value, Net Debt 9,340.0
+# against 4,744.0 among them, and 7 a value against a marker (re-measured 2026-10-30,
+# `docs/records/2026-10-30-one-latest-cell-reader.md`). Every such column on file sits in an
+# export whose Income Statement is refused here anyway; widening the refusal is the operator's call.
 
 #: THE STATEMENTS WHOSE LATEST PRESS-RELEASE COLUMN IS REFUSED at assembly and by the anchor's CIQ
 #: bridge (:func:`require_filed_income_statement`). A RULING IS OWED on the other two (audit A1,
