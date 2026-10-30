@@ -373,3 +373,14 @@ def test_review_round_0_tense_and_abbreviation() -> None:
     assert states_going_concern_doubt(
         "Following Amendment No. 2, management's plans alleviated substantial doubt about the "
         "Company's ability to continue as a going concern.") is False
+
+
+def test_review_round_1_a_negator_is_a_word_and_even_if_is_not_a_condition() -> None:
+    """(+) Review round 1 on #879: the "no" that ends "casino" is not a denial, and a concessive
+    "even if" states the doubt whatever the condition."""
+    assert states_going_concern_doubt(
+        "Losses in our casino operations raise substantial doubt about our ability to continue as "
+        "a going concern.") is True
+    assert states_going_concern_doubt(
+        "Even if the offering closes there is substantial doubt about our ability to continue as "
+        "a going concern.") is True

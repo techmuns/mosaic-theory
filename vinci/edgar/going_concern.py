@@ -134,7 +134,7 @@ _VALUATION_SENSE = re.compile(r"going\s+concern\s+value", re.I)
 #: uncertainty exists", ACRS's "does not believe that substantial doubt exists", and a doubt "has
 #: been alleviated" (an issuer whose 2025 offering closed). "Alleviate" as a verb is `_ALLEVIATES`.
 _NEGATED = re.compile(
-    r"(?:no|not|does\s+not|do\s+not|did\s+not|never)\s+(?:\w+\s+){0,4}"
+    r"\b(?:no|not|does\s+not|do\s+not|did\s+not|never)\s+(?:\w+\s+){0,4}"  # "casino" is no "no"
     r"(?:raise|indicate|create)\s+substantial\s+doubt|"
     r"\bno\s+(?:longer\s+)?(?:substantial\s+doubt|material\s+uncertaint)|"
     r"\bnot\s+believe\s+(?:that\s+)?(?:there\s+(?:is|exists)\s+)?substantial\s+doubt|"
@@ -165,7 +165,9 @@ _HYPOTHETICAL = re.compile(
     # MNLK "If we seek additional financing … and there remains substantial doubt …": the doubt is
     # the condition. A comma ends the clause, so SOCC's "…, if at all, substantial doubt exists"
     # still states it.
-    r"\bif\b[^,.;]{0,120}?\bthere\s+(?:is|remains|exists)\s+(?:a\s+)?substantial\s+doubt",
+    # (a concessive "even if" states the doubt whatever the condition)
+    r"(?<!even\s)\bif\b[^,.;]{0,120}?\bthere\s+(?:is|remains|exists)\s+(?:a\s+)?"
+    r"substantial\s+doubt",
     re.I,
 )
 

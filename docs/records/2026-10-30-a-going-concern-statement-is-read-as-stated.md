@@ -120,3 +120,12 @@ it hid a real conclusion because of the standard it named.
   other words still reads DOUBT (an under-read, the module's chosen bias).
 - Falsifier: a dossier or a queue name that reads None for a filer whose own filing concludes it
   has doubt now.
+
+**REVIEW ROUND 1 (in-session `/code-review high`; Codex's review failed, usage limit).**
+- `_NEGATED`'s first form now needs its negator to be a word. The "no" that ends "casino" read as
+  a denial, so "Losses in our casino operations raise substantial doubt…" read None, on main
+  too.
+- A concessive "even if" no longer makes a sentence a hypothetical.
+- Both were pinned red first.
+- The corpus re-run is unchanged: DOUBT 187 → 144, 0 new.
+- The ranker replay is unchanged: flags and queue order identical, the same 6 sunk.
