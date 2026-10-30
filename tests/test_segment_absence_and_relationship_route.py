@@ -35,9 +35,15 @@ CIQ = ROOT / "data" / "manual" / "ciq"
 OLD_SHEET_SHAPE_NOTE = "as expected"
 
 
+#: CIQ's own Segments period header (every one of the 103 on file states its date, 2026-10-30):
+#: the roster is read at the latest DATED column (`ciq_sheets.latest_cell`), so an undated header
+#: places no column at all.
+SEG_HEADER = ["For the Fiscal Period Ending\n", "12 months\nSep-30-2025"]
+
+
 def _seg_rows(segments: list[tuple[str, float]]) -> list[list[Any]]:
     """A minimal Segments sheet carrying a Revenues roster and NO EBITDA section."""
-    rows: list[list[Any]] = [["Fiscal Period", "FY 2025"]]
+    rows: list[list[Any]] = [list(SEG_HEADER)]
     rows.append(["Revenues", None])
     rows += [[name, val] for name, val in segments]
     rows.append(["Total Revenues", sum(v for _n, v in segments)])
@@ -122,7 +128,7 @@ def test_an_empty_row_in_the_roster_block_does_not_crash_the_build() -> None:
     ``_segment_section`` has the same shape but runs on the SUCCESS path; this one runs on the
     FAILURE path, so the unguarded read turned a graceful UNKNOWN into a crash that kills the whole
     dossier build — strictly worse than the note it was trying to write."""
-    rows: list[list[Any]] = [["Fiscal Period", "FY 2025"], ["Revenues", None],
+    rows: list[list[Any]] = [list(SEG_HEADER), ["Revenues", None],
                              ["A", 60.0], [], ["B", 40.0], ["Total Revenues", 100.0]]
     note = _absence_reason(rows, "EBITDA", hdr=0)      # must not raise
     assert "reports 2 segments" in note and "A; B" in note

@@ -108,6 +108,11 @@ class CiqFacts:
     #: revenue to measure against or no figure to measure (ORKA and TECX report no revenue). The
     #: lines said only "checks passed", so a scale check that never ran read the same as a pass.
     scale_check: CrossCheck = CHECK_NOT_RUN
+    #: (2026-10-30, audit A-D12) why a cash-flow fact the bridge reads is ABSENT, by key ("ocf",
+    #: "capex", "d_and_a"): its row reads a marker at the sheet's latest column, which is never
+    #: answered from an older one. Not a failure — `ok` is unchanged — but a fill that cannot be
+    #: made says so (`anchor._bridge_inputs`).
+    unavailable: dict[str, str] = field(default_factory=dict)
 
     @property
     def ok(self) -> bool:
@@ -171,6 +176,27 @@ def _bs(bundle: CiqBundle, label: str) -> tuple[float | None, str | None, Proven
     return float(s.value), s.source_ref, _provenance(bundle, freq)
 
 
+def _bs_unavailable(bundle: CiqBundle, label: str) -> str | None:
+    """Why `_bs` returns nothing for a Balance Sheet row a sheet HAS: its latest cell's reason, from
+    the sheet that answers (`ciq_sheets._bs_latest_from`'s order, quarterly first). None when the
+    row is valued or absent from both sheets — only an ABSENT row may be filled from a narrower
+    one. Both addresses are LITERALS for the CIQ-manifest drift guard."""
+    reads: tuple[Callable[[], list[list[Any]]], ...] = (
+        lambda: bundle.sheet("financials", "Balance Sheet", freq="quarterly"),
+        lambda: bundle.sheet("financials", "Balance Sheet", freq="annual"),
+    )
+    for read in reads:
+        try:
+            rows = read()
+        except CiqUnavailableError:
+            continue
+        if (ri := cs._find_row(rows, label)) is None:
+            continue
+        got = cs.latest_cell(rows, ri, cs._bs_period_header(rows))
+        return f"Balance Sheet {got.reason}" if got.value is None else None
+    return None
+
+
 def header_period(cell: Any) -> tuple[str | None, date | None]:
     """A period-header cell → ("LTM" | "FY" | None, its end date | None).
 
@@ -182,18 +208,24 @@ def header_period(cell: Any) -> tuple[str | None, date | None]:
     return (p.kind if p.kind in ("LTM", "FY") else None), p.end
 
 
+def pick_latest(rows: list[list[Any]], label: str) -> cs.LatestCell | None:
+    """A row's cell at its sheet's latest column (`ciq_sheets.latest_cell`) — None only when the
+    sheet has no such row."""
+    ri = cs._find_row(rows, label)
+    return cs.latest_cell(rows, ri, cs._period_header(rows)) if ri is not None else None
+
+
 def pick_with_period(rows: list[list[Any]],
                      label: str) -> tuple[float, str | None, date | None] | None:
-    """A row's latest value and the period its column covers (:func:`header_period`)."""
-    ri = cs._find_row(rows, label)
-    if ri is None:
+    """A row's value at the sheet's LATEST column and the period that column covers
+    (:func:`header_period`) — None when the row is absent or that cell is a marker, which is never
+    answered from an older column (audit A-D12, 2026-10-30: LLY's OCF and capex read '-' at the
+    press-release LTM and were served off FY Dec-2025)."""
+    got = pick_latest(rows, label)
+    if got is None or got.value is None or got.period is None:
         return None
-    hdr = cs._period_header(rows)
-    got = cs._latest_col(rows, ri, hdr)
-    if got is None:
-        return None
-    cell = rows[hdr][got[0]] if hdr is not None and got[0] < len(rows[hdr]) else None
-    return (float(got[1]), *header_period(cell))
+    return (float(got.value),
+            got.period.kind if got.period.kind in ("LTM", "FY") else None, got.period.end)
 
 
 def _pick(rows: list[list[Any]], label: str) -> float | None:
@@ -201,32 +233,73 @@ def _pick(rows: list[list[Any]], label: str) -> float | None:
     return got[0] if got is not None else None
 
 
-def _cf_cell(bundle: CiqBundle, label: str,
-             annual: bool) -> tuple[float, str | None, date | None, Provenance] | None:
-    """Latest column of a Cash Flow / Income Statement row, cash flow first, with the period that
-    column covers (:func:`pick_with_period`) and the export it was read from (audit A-D6).
+def _cf_latest(bundle: CiqBundle, label: str,
+               annual: bool) -> tuple[cs.LatestCell, Provenance] | None:
+    """A Cash Flow / Income Statement row's cell at its sheet's latest column, cash flow first,
+    with the export it was read from (audit A-D6) — None when neither sheet has the row.
+
+    THE FIRST SHEET CARRYING THE ROW ANSWERS, marker or not (audit A-D12): a cash-flow row reading
+    '-' at its latest column is unavailable, never re-read from the income statement's.
 
     Every (kind, sheet, freq) address below is a STRING LITERAL, fully unrolled. The CIQ-manifest
     drift guard reads these call sites statically and rejects a computed argument — a loop over
     sheet names or a freq parameter is invisible to it, so the manifest could silently stop
     covering an address this module depends on. Four explicit branches is the price of that guard
     seeing the truth, and it said so loudly the first two times this function was written."""
-    def one(rows_fn: Any) -> tuple[float, str | None, date | None] | None:
+    def one(rows_fn: Any) -> cs.LatestCell | None:
         try:
             rows = rows_fn()
         except CiqUnavailableError:
             return None
-        return pick_with_period(rows, label)
+        return pick_latest(rows, label)
 
     if annual:
         got = one(lambda: bundle.sheet("financials", "Cash Flow", freq="annual"))
         if got is None:
             got = one(lambda: bundle.sheet("financials", "Income Statement", freq="annual"))
-        return (*got, _provenance(bundle, "annual")) if got is not None else None
+        return (got, _provenance(bundle, "annual")) if got is not None else None
     got = one(lambda: bundle.sheet("financials", "Cash Flow", freq="quarterly"))
     if got is None:
         got = one(lambda: bundle.sheet("financials", "Income Statement", freq="quarterly"))
-    return (*got, _provenance(bundle, "quarterly")) if got is not None else None
+    return (got, _provenance(bundle, "quarterly")) if got is not None else None
+
+
+def _cf_cell(bundle: CiqBundle, label: str,
+             annual: bool) -> tuple[float, str | None, date | None, Provenance] | None:
+    """:func:`_cf_latest`'s value, the period its column covers ("LTM" / "FY", or None for a
+    quarter) and its export — None when the row is absent or its latest cell is a marker."""
+    got = _cf_latest(bundle, label, annual)
+    if got is None:
+        return None
+    (value, _col, period, _label, _state, _why), wbs = got
+    if value is None or period is None:
+        return None
+    return (float(value), period.kind if period.kind in ("LTM", "FY") else None, period.end, wbs)
+
+
+def _cf_unavailable(bundle: CiqBundle, label: str, annual: bool) -> str | None:
+    """Why :func:`_cf_cell` returns nothing for a row the sheet HAS: its latest cell's reason."""
+    got = _cf_latest(bundle, label, annual)
+    return got[0].reason if got is not None and got[0].value is None else None
+
+
+Cell = tuple[float, str | None, date | None, Provenance]
+
+
+def _cf_or(bundle: CiqBundle, primary: tuple[str, bool],
+           fallback: tuple[str, bool]) -> tuple[Cell | None, str | None]:
+    """(the primary row's cell, or why there is none) — the FALLBACK row answers only when the
+    primary row is ABSENT (PR #872 round 2). A primary row whose latest cell is a marker is
+    unavailable with its reason: under `_latest_col` a marker stepped back to an older period, so
+    the narrower fallback was reached only for an absent row; reading it at a marker would put a
+    component under the total's name with nothing said (a 'Depreciation & Amort.' opex line as the
+    consolidated D&A, a fiscal-year diluted average as the latest quarter's)."""
+    cell = _cf_cell(bundle, *primary)
+    if cell is not None:
+        return cell, None
+    if (why := _cf_unavailable(bundle, *primary)) is not None:
+        return None, why
+    return _cf_cell(bundle, *fallback), None
 
 
 def _cf_row(bundle: CiqBundle, label: str, annual: bool) -> float | None:
@@ -301,8 +374,14 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     sha, _mtime = cs.file_provenance(wb.path) if wb is not None else (None, None)
     src_file = wb.path.name if wb is not None else None
 
+    # THE NARROWER ROW FILLS ONLY AN ABSENT ONE (PR #872 round 2): a 'Total Cash & ST
+    # Investments' at a marker is unavailable with its reason, never 'Cash And Equivalents' under
+    # the total's basis — a net debt struck on less cash than the total, with nothing said
+    unavailable: dict[str, str] = {}
     cash, cash_ref, cash_wb = _bs(bundle, "Total Cash & ST Investments")
-    if cash is None:
+    if cash is None and (why := _bs_unavailable(bundle, "Total Cash & ST Investments")):
+        unavailable["cash"] = why
+    elif cash is None:
         cash, cash_ref, cash_wb = _bs(bundle, "Cash And Equivalents")
     debt, debt_ref, debt_wb = _bs(bundle, "Total Debt")
     fin_lease, fin_ref, fin_wb = _bs(bundle, "Capital Leases")
@@ -311,20 +390,23 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     # revenue is the SCALE REFERENCE every other figure is magnitude-checked against, so it is read
     # first and independently: annual where the workbook carries it, else the quarterly sheet.
     rev_cell = _cf_cell(bundle, "Total Revenue", True)
+    rev_basis = "total revenue, the annual sheet's latest column"
     if not (rev_cell and rev_cell[0]):
         rev_cell = _cf_cell(bundle, "Total Revenue", False)
+        rev_basis = "total revenue, the quarterly sheet's latest column (one quarter)"
     revenue = rev_cell[0] if rev_cell else None
 
-    da_cell = (_cf_cell(bundle, "Depreciation & Amort., Total", True)
-               or _cf_cell(bundle, "Depreciation & Amort.", True))
-    # OCF and capex read the annual Cash Flow sheet's rightmost valued column, as `ltm_ocf` does,
-    # each WITH that column's period: the FCF fill pairs them only when it is one (#830's follow-up)
+    da_cell, da_why = _cf_or(bundle, ("Depreciation & Amort., Total", True),
+                             ("Depreciation & Amort.", True))
+    # OCF and capex read the annual Cash Flow sheet's LATEST column, as `ltm_ocf` does, each WITH
+    # that column's period: the FCF fill pairs them only when it is one (#830's follow-up)
     ocf_cell = _cf_cell(bundle, "Cash from Ops.", True)
     capex_cell = _cf_cell(bundle, "Capital Expenditure", True)
     ocf = round(ocf_cell[0], 1) if ocf_cell else None   # `ltm_ocf`'s rounding, so no value moves
     capex = capex_cell[0] if capex_cell else None
-    dil_cell = _cf_cell(bundle, "Weighted Avg. Diluted Shares Out.", False)
-    if not (dil_cell and dil_cell[0]):
+    dil_cell, dil_why = _cf_or(bundle, ("Weighted Avg. Diluted Shares Out.", False),
+                               ("Weighted Avg. Diluted Shares Out.", True))
+    if dil_cell is not None and not dil_cell[0]:   # a zero quarterly count: the annual answers
         dil_cell = _cf_cell(bundle, "Weighted Avg. Diluted Shares Out.", True)
 
     facts: dict[str, CiqFact] = {}
@@ -363,7 +445,14 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
         value=(abs(capex) if capex is not None else None))
     put("diluted_shares", dil_cell, "millions",
         "weighted-average diluted shares, latest period", period=False)
-    put("revenue", rev_cell, "$M", "total revenue, latest full year", period=False)
+    # A-D7 (2026-10-30): the scale reference states the period it covers — on 25 annual exports it
+    # is the LTM column, and its basis read "latest full year" with no period
+    put("revenue", rev_cell, "$M", rev_basis)
+    unavailable.update({key: why for key, why in (("d_and_a", da_why),
+                                                  ("diluted_shares", dil_why)) if why})
+    unavailable.update({key: why for key, label in (("ocf", "Cash from Ops."),
+                                                    ("capex", "Capital Expenditure"))
+                        if key not in facts and (why := _cf_unavailable(bundle, label, True))})
 
     checks: list[str] = []
     failures: list[str] = []
@@ -417,7 +506,11 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
                             f"cash-flow total {da_total:,.2f} — the operating-expense portion "
                             "cannot be larger than the whole; one of these rows is misread")
     else:
-        checks.append("D&A: only one statement discloses a depreciation line — containment unrun")
+        # a row at a marker is not a row the statement leaves out: say which (PR #872 round 2)
+        gaps = [w for w in (unavailable.get("d_and_a"),
+                            _cf_unavailable(bundle, "Depreciation & Amort.", True)) if w]
+        checks.append("D&A: containment unrun — " + "; ".join(gaps) if gaps else
+                      "D&A: only one statement discloses a depreciation line — containment unrun")
 
     # (2) Net debt: balance sheet vs the Multiples sheet's implied enterprise value less market cap
     nd_bs = None
@@ -434,7 +527,8 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
                       f"cross-read needs a market cap the workbook does not carry — deferred to "
                       f"the anchor, which holds one")
     return CiqFacts(ticker=ticker, as_of=None, source_file=src_file, source_sha256=sha,
-                    facts=facts, checks=checks, failures=failures, scale_check=scale_check)
+                    facts=facts, checks=checks, failures=failures, scale_check=scale_check,
+                    unavailable=unavailable)
 
 
 def scale_outcome(bundle: CiqBundle, ticker: str) -> CrossCheck:

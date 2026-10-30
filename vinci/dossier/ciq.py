@@ -257,7 +257,9 @@ class CiqMislabelledError(CiqAmbiguousError):
 
 class CiqPreliminaryError(CiqAmbiguousError):
     """A Financials Income Statement whose latest LTM, fiscal-year or quarter column is a CIQ
-    'Press Release' column (2026-10-30, operator ruling "go ahead with this fix then").
+    'Press Release' column (2026-10-30, operator ruling "go ahead with this fix then") — and, by
+    the operator's ruling of the same day (PR #872), a Balance Sheet or Cash Flow whose latest
+    column is one: every statement `ciq_sheets.PRESS_RELEASE_REFUSED` names.
 
     CIQ BUILDS THAT COLUMN FROM THE EARNINGS RELEASE before it has processed the 10-Q/10-K, and the
     release carries fewer lines than the filing. A line it omits carries the last fiscal year into

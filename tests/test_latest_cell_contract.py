@@ -1,0 +1,614 @@
+"""ONE LATEST-CELL CONTRACT (audit RC3: A-D5, A-D7, A-D12, D-D2, D-D3; 2026-10-30).
+
+THE DEFECT. `ciq_sheets._latest_col` took the rightmost VALUED cell of a row, so a CIQ marker
+('-', 'NA', 'NM', …) in the latest column stepped the read back to an older period with nothing
+said, and its order guard decoded only serial headers, so it ran on the annual balance sheet alone.
+Live on two committed pages: LLY's press-release LTM cash flow reads 'NA' / '-', so its free cash
+flow (1,951.0), its net-debt/OCF (2.7, a Q3 net debt over FY2025 OCF) and its anchor's vendor FCF
+(8,972.0) were read off FY Dec-2025; ORKA's interest coverage (−59.5x) was read off FY Dec-2024
+because its LTM interest expense reads '-'. Four sibling readers re-implemented the same step-back
+(`interest_coverage`'s scan, `ebitda_recon`'s window, `midcycle.multiple_anchor`'s band, and
+`ciq_balance`'s revenue, whose fact carried no period).
+
+THE CONTRACT. `ciq_sheets.latest_cell` reads a row's cell at the column whose header states the
+LATEST DATE (`header_period`), never a position, and returns (value, column, period, label, state,
+reason): a marker there is UNAVAILABLE with a reason, never an older value; a header that dates no
+column, or two columns at the latest date, places nothing. The period carries the column's STATUS,
+so a press-release column is visible to every caller.
+
+The synthetic exports are FROZEN, so value pins are allowed on them (CLAUDE.md TEST-LAYER RULE):
+each test edits a fresh bundle's cells IN MEMORY, the marker taken as the BIFF probe row decodes it.
+The corpus checks at the end read the licensed workbooks and skip where they are absent.
+"""
+
+from __future__ import annotations
+
+import json
+from datetime import date
+from pathlib import Path
+from typing import Any
+
+import pytest
+
+from tests.fixtures.ciq_synthetic import generate as gen
+from vinci.config import get_config
+from vinci.dossier import ciq_balance, ebitda_recon, midcycle
+from vinci.dossier import ciq_sheets as cs
+from vinci.dossier.anchor import _bridge_inputs
+from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, read_sheets
+from vinci.dossier.manual_store import LocalFolderStore
+from vinci.dossier.schemas import SourceStatus
+
+FIX = gen.HERE
+ANNUAL = FIX / gen.ANNUAL_XLS
+QUARTERLY = FIX / gen.QUARTERLY_XLS
+LTM_LABEL = f"LTM 12 months {gen._mdy(gen.LTM_DATE)}"
+
+
+@pytest.fixture
+def bundle() -> CiqBundle:
+    """The two Financials exports, freshly loaded: each test's in-memory edits stay its own."""
+    return CiqBundle.from_files(gen.TICKER, sorted([ANNUAL, QUARTERLY]))
+
+
+def _probe(marker: str) -> Any:
+    """The marker AS DECODED from the committed BIFF probe row."""
+    inc = read_sheets(QUARTERLY)["Income Statement"]
+    ri = cs._find_row(inc, gen.MARKER_ROW)
+    assert ri is not None
+    return inc[ri][gen.MARKERS.index(marker) + 1]
+
+
+def _row(rows: list[list[Any]], label: str) -> list[Any]:
+    ri = cs._find_row(rows, label)
+    assert ri is not None, label
+    return rows[ri]
+
+
+def _sheet(b: CiqBundle, sheet: str, freq: str) -> list[list[Any]]:
+    return b.sheet("financials", sheet, freq=freq)
+
+
+# --- the reader itself ---------------------------------------------------------------------------
+
+
+def test_the_latest_cell_is_the_latest_dated_column_whatever_its_position() -> None:
+    rows = [["For the Fiscal Period Ending", "12 months\nMay-31-2025",
+             "LTM\n12 months\nAug-31-2026", "12 months\nMay-31-2026", ""],
+            ["EBITDA", 1.0, 3.0, 2.0, ""]]
+    got = cs.latest_cell(rows, 1, 0)
+    assert (got.state, got.value, got.col, got.label) == (
+        "present", 3.0, 2, "LTM 12 months Aug-31-2026")
+    assert got.period is not None and got.period.end == date(2026, 8, 31)
+    assert got.reason is None
+
+
+@pytest.mark.parametrize("marker", gen.MARKERS, ids=lambda m: repr(m))
+def test_a_marker_at_the_latest_column_is_unavailable_never_an_older_value(marker: str) -> None:
+    rows = [["For the Fiscal Period Ending", "12 months\nMay-31-2025", "12 months\nMay-31-2026",
+             "LTM\n12 months\nAug-31-2026"],
+            ["Cash from Ops.", 10.0, 20.0, _probe(marker)]]
+    got = cs.latest_cell(rows, 1, 0)
+    assert got.state == "unavailable" and got.value is None
+    assert got.col == 3 and got.label == "LTM 12 months Aug-31-2026"
+    assert got.reason is not None and "[LTM 12 months Aug-31-2026]" in got.reason
+    assert "20.0" not in got.reason and "May-31-2026" not in got.reason
+
+
+def test_the_latest_cell_carries_its_column_status() -> None:
+    rows = [["For the Fiscal Period Ending", "12 months\nDec-31-2025",
+             "LTM\nPress Release\n12 months\nSep-30-2026"],
+            ["Levered Free Cash Flow", 1951.0, 2400.0]]
+    got = cs.latest_cell(rows, 1, 0)
+    assert got.state == "present" and got.value == 2400.0
+    assert got.period is not None and got.period.status == "press_release"
+    assert "Press Release" in got.label
+
+
+def test_two_columns_at_the_latest_date_are_never_guessed_between() -> None:
+    rows = [["Balance Sheet as of:", "Jun-30-2026", "Restated Sep-30-2026", "Sep-30-2026"],
+            ["Net Debt", 1.0, 2.0, 3.0]]
+    got = cs.latest_cell(rows, 1, 0)
+    assert got.state == "unplaced" and got.value is None and got.col is None
+    assert got.reason is not None and "Sep-30-2026" in got.reason
+
+
+def test_a_header_that_dates_no_column_places_nothing() -> None:
+    rows = [["Fiscal Period", "LTM", "FY2025"], ["EBITDA", 1.0, 2.0]]
+    got = cs.latest_cell(rows, 1, 0)
+    assert got.state == "unplaced" and got.value is None
+    assert cs.latest_cell(rows, 1, None).state == "unplaced"
+
+
+# --- every reader that took the latest cell, on the synthetic exports -----------------------------
+
+
+@pytest.mark.parametrize("marker", gen.MARKERS, ids=lambda m: repr(m))
+@pytest.mark.parametrize(("reader", "label"), [
+    (cs.free_cash_flow, "Levered Free Cash Flow"),
+    (cs.ltm_ocf, "Cash from Ops."),
+], ids=["free_cash_flow", "ltm_ocf"])
+def test_a_cash_flow_figure_never_steps_back_past_a_marker(
+        bundle: CiqBundle, reader: Any, label: str, marker: str) -> None:
+    _row(_sheet(bundle, "Cash Flow", "annual"), label)[-1] = _probe(marker)
+    got = reader(bundle)
+    assert got.status is SourceStatus.UNKNOWN and got.value is None, got.source_ref
+    assert f"[{LTM_LABEL}]" in (got.note or ""), got.note
+
+
+def test_ltm_ebitda_never_steps_back_past_a_marker(bundle: CiqBundle) -> None:
+    _row(_sheet(bundle, "Income Statement", "annual"), "EBITDA")[-1] = _probe("NA")
+    got = cs.ltm_ebitda(bundle)
+    assert got.status is SourceStatus.UNKNOWN and f"[{LTM_LABEL}]" in (got.note or "")
+
+
+def test_a_filed_latest_column_still_reads(bundle: CiqBundle) -> None:
+    """(+) the fixture as written: every reader lands on the LTM column."""
+    fcf = cs.free_cash_flow(bundle)
+    assert fcf.status is SourceStatus.PRESENT and f"[{LTM_LABEL}]" in (fcf.source_ref or "")
+    assert cs.ltm_ocf(bundle).value == gen._annual((38.4, 44.0, 47.9), gen.Q_CFO)[-1]
+    nd = cs.net_debt(bundle)
+    assert nd.value == round(gen.Q_DEBT[-1] - gen.Q_CASH[-1], 1)
+
+
+@pytest.mark.parametrize("marker", gen.MARKERS, ids=lambda m: repr(m))
+def test_a_balance_sheet_line_never_steps_back_or_falls_to_an_older_sheet(
+        bundle: CiqBundle, marker: str) -> None:
+    """The quarterly sheet carries the row, so the annual sheet (latest May-31-2026, a quarter
+    older) never answers for it."""
+    _row(_sheet(bundle, "Balance Sheet", "quarterly"), "Net Debt")[-1] = _probe(marker)
+    got = cs.net_debt(bundle)
+    assert got.status is SourceStatus.UNKNOWN and got.value is None, got.source_ref
+    assert gen._mdy(gen.Q_DATES[-1]) in (got.note or ""), got.note
+
+
+def test_interest_coverage_reads_both_legs_at_the_latest_column(bundle: CiqBundle) -> None:
+    """ORKA's shape: EBITDA at the LTM column, interest expense '-' there and valued a year back."""
+    inc = _sheet(bundle, "Income Statement", "annual")
+    inc.append(["Interest Expense", -2.0, -2.1, -2.2, -2.3, -2.4, "-"])
+    got = cs.interest_coverage(bundle)
+    assert got.status is SourceStatus.UNKNOWN and got.value is None, got.source_ref
+    assert f"[{LTM_LABEL}]" in (got.note or "") and "Interest Expense" in (got.note or "")
+    inc[-1][-1] = -2.5   # (+) both legs at the LTM column
+    ok = cs.interest_coverage(bundle)
+    assert ok.status is SourceStatus.PRESENT and f"[{LTM_LABEL}]" in (ok.source_ref or "")
+    assert ok.value == round(gen._annual((51.8, 56.3, 60.9), gen.Q_EBITDA)[-1] / 2.5, 1)
+
+
+def test_the_posture_never_anchors_on_an_older_cash_column(bundle: CiqBundle) -> None:
+    _row(_sheet(bundle, "Balance Sheet", "quarterly"), "Total Cash & ST Investments")[-1] = "NA"
+    got = cs.balance_sheet_posture(bundle)
+    assert got.status is SourceStatus.UNKNOWN and got.value is None, got.value
+    assert gen._mdy(gen.Q_DATES[-1]) in (got.note or ""), got.note
+
+
+def test_book_value_per_share_never_steps_back(bundle: CiqBundle) -> None:
+    _sheet(bundle, "Balance Sheet", "annual").append(
+        ["Book Value/Share", 4.1, 4.3, 4.6, 4.8, "NA"])
+    got = cs.book_value_per_share(bundle)
+    assert got.status is SourceStatus.UNKNOWN and got.value is None, got.source_ref
+    assert gen._mdy(gen.A_DATES[-1]) in (got.note or ""), got.note
+
+
+def _with_ratios(b: CiqBundle, rows: list[list[Any]]) -> CiqBundle:
+    _sheet(b, "Income Statement", "annual")   # loads the annual export into the bundle's cache
+    wb = b.workbook("financials", freq="annual")
+    assert wb is not None
+    b._cache[wb.path]["Ratios"] = rows
+    return b
+
+
+def test_key_ratios_pin_the_latest_column_and_never_step_back(bundle: CiqBundle) -> None:
+    head = ["For the Fiscal Period Ending", "12 months\nMay-31-2026", f"LTM\n12 months\n"
+            f"{gen._mdy(gen.LTM_DATE)}"]
+    _with_ratios(bundle, [head, ["Return on Equity %", 0.12, "NM"], ["Current Ratio", 1.4, "NA"]])
+    got = cs.key_ratios(bundle)
+    assert got.status is SourceStatus.UNKNOWN and got.value is None, got.value
+    assert f"[{LTM_LABEL}]" in (got.note or ""), got.note
+    # (+) one ratio at the latest column pins it; the other is named, never back-filled
+    bundle2 = CiqBundle.from_files(gen.TICKER, sorted([ANNUAL, QUARTERLY]))
+    _with_ratios(bundle2, [head, ["Return on Equity %", 0.12, 0.15],
+                           ["Current Ratio", 1.4, "NA"]])
+    ok = cs.key_ratios(bundle2)
+    assert ok.status is SourceStatus.PRESENT and "RoE 15.0%" in (ok.value or "")
+    assert "not reported this period: current ratio" in (ok.value or "")
+
+
+def test_quarterly_revenue_yoy_never_steps_back_a_quarter(bundle: CiqBundle) -> None:
+    assert cs._quarterly_revenue_yoy(bundle) is not None   # (+) as written
+    _row(_sheet(bundle, "Income Statement", "quarterly"), "Total Revenue")[-1] = "NA"
+    assert cs._quarterly_revenue_yoy(bundle) is None
+
+
+def test_quarterly_revenue_yoy_reads_its_prior_year_by_date_too(bundle: CiqBundle) -> None:
+    """(PR #872 round 1) Both legs by date: a right-to-left quarterly sheet gives the same YoY,
+    where a leftward search from the latest column never reached the prior year's quarter."""
+    want = cs._quarterly_revenue_yoy(bundle)
+    assert want is not None
+    inc = _sheet(bundle, "Income Statement", "quarterly")
+    hdr = cs._period_header(inc)
+    assert hdr is not None
+    for r in range(hdr, len(inc)):   # the period columns only; the settings block stays put
+        inc[r] = [inc[r][0], *reversed(inc[r][1:])]
+    assert cs._quarterly_revenue_yoy(bundle) == want
+
+
+# --- the anchor's CIQ bridge (decision path) ----------------------------------------------------
+
+
+def test_the_bridge_revenue_fact_states_its_period(bundle: CiqBundle) -> None:
+    """A-D7: the scale reference is the annual sheet's LTM column, and its fact says so."""
+    rev = ciq_balance.extract(bundle, gen.TICKER).facts["revenue"]
+    assert (rev.period, rev.period_end) == ("LTM", gen.LTM_DATE)
+    assert "latest full year" not in rev.basis
+
+
+@pytest.mark.parametrize("marker", gen.MARKERS, ids=lambda m: repr(m))
+def test_the_bridge_never_pairs_an_older_ocf_and_capex(bundle: CiqBundle, marker: str) -> None:
+    """LLY's shape: OCF and capex '-' at the press-release LTM column, valued at the fiscal year
+    before it — the anchor's vendor FCF must be unavailable with the reason, never FY's figure."""
+    cf = _sheet(bundle, "Cash Flow", "annual")
+    _row(cf, "Cash from Ops.")[-1] = _probe(marker)
+    _row(cf, "Capital Expenditure")[-1] = _probe(marker)
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert "ocf" not in ciq.facts and "capex" not in ciq.facts
+    assert f"[{LTM_LABEL}]" in ciq.unavailable["ocf"]
+    bridge = _bridge_inputs({}, {}, ciq)
+    fcf = bridge["ltm_fcf"]
+    assert fcf.value is None and "ltm_fcf" not in bridge["vendor_filled"]
+    assert f"[{LTM_LABEL}]" in fcf.source, fcf.source
+
+
+def test_the_bridge_fills_fcf_from_a_filed_latest_column(bundle: CiqBundle) -> None:
+    """(+) the fixture as written: OCF and capex at the LTM column fill the hole, one period."""
+    bridge = _bridge_inputs({}, {}, ciq_balance.extract(bundle, gen.TICKER))
+    cfo = gen._annual((38.4, 44.0, 47.9), gen.Q_CFO)[-1]
+    assert bridge["ltm_fcf"].value == round(cfo - abs(gen.A_CAPEX[-1]), 3)
+    assert "ltm_fcf" in bridge["vendor_filled"]
+
+
+# --- the two sibling readers: EBITDA reconciliation and the multiple band -------------------------
+
+
+def test_the_ebitda_reconciliation_never_shifts_its_window(bundle: CiqBundle) -> None:
+    """D-D2: an unavailable latest quarter refuses the block — the four quarters before it are not
+    CIQ's LTM, and a reconciliation of them would be stamped as if they were."""
+    rec = ebitda_recon.reconcile(bundle, {}, [], lambda _r: None)
+    assert rec is not None and rec.quarters[-1].period_end == gen.Q_DATES[-1].isoformat()
+    assert rec.refused is None and "refused" not in rec.model_dump()   # absent, never null
+    _row(_sheet(bundle, "Income Statement", "quarterly"), "EBITDA")[-1] = "NA"
+    got = ebitda_recon.reconcile(bundle, {}, [], lambda _r: None)
+    # (PR #872 round 2) refused WITH its reason, never a block that vanishes
+    assert got is not None and got.quarters == [] and got.ciq_ltm is None
+    assert got.refused is not None and gen.Q_DATES[-1].isoformat() in got.refused
+    assert "'NA'" in got.refused and got.line.startswith(got.refused)
+
+
+def _tev_close(b: CiqBundle) -> list[Any]:
+    rows = _sheet(b, "Multiples", "quarterly")
+    lbl = cs._find_row(rows, "TEV/LTM EBITDA")
+    assert lbl is not None
+    return next(rows[i] for i in range(lbl, lbl + 6) if str(rows[i][1]).strip() == "Close")
+
+
+def test_the_multiple_band_is_unavailable_when_the_latest_close_is_nm(bundle: CiqBundle) -> None:
+    """D-D3: as `_own_history_band` already refuses — a band built on the closes before an NM one
+    would carry no date to reveal it."""
+    assert midcycle.multiple_anchor(bundle).available   # (+) as written
+    _tev_close(bundle)[-1] = "NM"
+    got = midcycle.multiple_anchor(bundle)
+    assert not got.available
+    assert gen.M_DATES[-1].isoformat() in got.note and "NM" in got.note
+
+
+# --- a press-release balance sheet or cash flow: REFUSED (operator ruling 2026-10-30) -----------
+
+
+def test_a_filed_balance_sheet_and_cash_flow_pass_the_refusal(bundle: CiqBundle) -> None:
+    """(+) The synthetic exports as written: every statement filed, nothing refused, and the bridge
+    reads."""
+    from vinci.dossier.anchor import ciq_bridge
+
+    assert cs.PRESS_RELEASE_REFUSED == ("Income Statement", "Balance Sheet", "Cash Flow")
+    assert cs.press_release_income_columns(bundle) == []
+    cs.require_filed_income_statement(bundle, gen.TICKER)
+    assert cs.net_debt(bundle).status is SourceStatus.PRESENT
+    ciq, _line = ciq_bridge(bundle, gen.TICKER)
+    assert ciq is not None and ciq.value("ocf") is not None
+
+
+@pytest.mark.parametrize(("sheet", "freq", "named"), [
+    ("Balance Sheet", "quarterly", "quarterly export Balance Sheet"),
+    ("Cash Flow", "annual", "annual export Cash Flow"),
+], ids=["balance-sheet", "cash-flow"])
+def test_a_press_release_balance_sheet_or_cash_flow_is_refused(
+        bundle: CiqBundle, sheet: str, freq: str, named: str) -> None:
+    """(−) RULED 2026-10-30 (operator, "agreed"): a release Balance Sheet or Cash Flow column is
+    refused at assembly and by the anchor's CIQ bridge, as the Income Statement is (#868) — "the
+    anchor and bridge calculations would still run on the wrong number; a label doesn't stop
+    that". Outside those two paths a reader still names the column as CIQ wrote it."""
+    from vinci.dossier.anchor import ciq_bridge
+
+    rows = _sheet(bundle, sheet, freq)
+    hdr = cs._bs_period_header(rows) if sheet == "Balance Sheet" else cs._period_header(rows)
+    assert hdr is not None
+    rows[hdr][-1] = f"Press Release\n{rows[hdr][-1]}"
+    found = cs.press_release_income_columns(bundle)
+    assert [(c.sheet, c.export) for c in found] == [(sheet, freq)]
+    with pytest.raises(cs.CiqPreliminaryError, match=named):
+        cs.require_filed_income_statement(bundle, gen.TICKER)
+    with pytest.raises(cs.CiqPreliminaryError, match=named):
+        ciq_bridge(bundle, gen.TICKER)
+    if sheet == "Balance Sheet":   # a refresh transform reads it unrefused: its words are kept
+        assert "[Press Release " in (cs.net_debt(bundle).source_ref or "")
+
+
+# --- PR #872 round 2 (coordinator review) ---------------------------------------------------------
+
+
+def test_a_marker_on_the_total_d_and_a_row_is_never_filled_from_its_component(
+        bundle: CiqBundle) -> None:
+    """(1) The narrower row fills only an ABSENT total: a marker on 'Depreciation & Amort., Total'
+    is unavailable with its reason, never the opex component under the consolidated name."""
+    cf = _sheet(bundle, "Cash Flow", "annual")
+    _row(cf, "Depreciation & Amort., Total")[-1] = "-"
+    cf.append(["Depreciation & Amort.", 6.0, 6.5, 7.0, 7.4, 7.8, 8.0])
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert "d_and_a" not in ciq.facts
+    assert f"[{LTM_LABEL}]" in ciq.unavailable["d_and_a"]
+    assert any(c.startswith("D&A: containment unrun — ") and "Depreciation & Amort., Total" in c
+               for c in ciq.checks), ciq.checks
+    da = _bridge_inputs({}, {}, ciq)["d_and_a"]
+    assert da.value is None and "CIQ's D&A: " in (da.source or "")
+
+
+def test_an_absent_total_d_and_a_row_is_still_read_from_its_component(bundle: CiqBundle) -> None:
+    """(+) The fallback the bridge always had, for a row the sheet does not carry."""
+    cf = _sheet(bundle, "Cash Flow", "annual")
+    cf.remove(_row(cf, "Depreciation & Amort., Total"))
+    cf.append(["Depreciation & Amort.", 6.0, 6.5, 7.0, 7.4, 7.8, 8.0])
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert ciq.value("d_and_a") == 8.0 and "d_and_a" not in ciq.unavailable
+
+
+def test_a_marker_on_total_cash_is_never_filled_from_cash_and_equivalents(
+        bundle: CiqBundle) -> None:
+    bs = _sheet(bundle, "Balance Sheet", "quarterly")
+    _row(bs, "Total Cash & ST Investments")[-1] = "-"
+    bs.append(["Cash And Equivalents", *[round(c - 10.0, 1) for c in gen.Q_CASH]])
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert "cash" not in ciq.facts and "net_debt" not in ciq.facts
+    assert gen._mdy(gen.Q_DATES[-1]) in ciq.unavailable["cash"]
+
+
+def test_a_marker_on_the_quarterly_diluted_count_is_never_the_annual_average(
+        bundle: CiqBundle) -> None:
+    label = "Weighted Avg. Diluted Shares Out."
+    _sheet(bundle, "Income Statement", "quarterly").append(
+        [label, *[50.0 + i for i in range(len(gen.Q_DATES) - 1)], "NA"])
+    _sheet(bundle, "Income Statement", "annual").append([label, 48.0, 49.0, 50.0, 51.0, 52.0, 53.0])
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert "diluted_shares" not in ciq.facts
+    assert gen.Q_DATES[-1].strftime("%b-%d-%Y") in ciq.unavailable["diluted_shares"]
+
+
+def test_the_ev_bridge_reads_the_latest_dated_column_whatever_its_position(
+        bundle: CiqBundle) -> None:
+    """(2) A right-to-left quarterly balance sheet bridges its NEWEST column, as `net_debt` reads
+    it — never the highest dated column index."""
+    bs = _sheet(bundle, "Balance Sheet", "quarterly")
+    hdr = cs._bs_period_header(bs)
+    assert hdr is not None
+    for r in range(hdr, len(bs)):
+        bs[r] = [bs[r][0], *reversed(bs[r][1:])]
+    got = cs.ev_bridge(bundle, fy_periods=["FY27"])
+    assert got is not None and got.balance_sheet_date == gen.Q_DATES[-1].isoformat()
+    assert got.net_debt == round(gen.Q_DEBT[-1] - gen.Q_CASH[-1], 1) == cs.net_debt(bundle).value
+
+
+def _refused_block(bundle: CiqBundle) -> dict[str, Any]:
+    _row(_sheet(bundle, "Income Statement", "quarterly"), "EBITDA")[-1] = "NA"
+    rec = ebitda_recon.reconcile(bundle, {}, [], lambda _r: None)
+    assert rec is not None and rec.refused
+    return json.loads(rec.model_dump_json())
+
+
+def test_a_refused_reconciliation_is_said_on_the_page_md_e2e(bundle: CiqBundle) -> None:
+    """(3) A committed page carrying the refused block prints its sentence in the brief."""
+    from vinci.dossier import render as dr
+    from vinci.dossier import schemas as ds
+    from vinci.dossier.assemble import _read_scenario_card
+
+    page = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())
+    page["mechanical"]["financial_summary"]["ebitda_reconciliation"] = _refused_block(bundle)
+    doc = ds.Dossier.model_validate(page)
+    rec = doc.mechanical.financial_summary.ebitda_reconciliation  # type: ignore[union-attr]
+    assert rec is not None
+    brief = dr.render_markdown(doc, card=_read_scenario_card(doc.ticker)).split(
+        "# Analysis — full dossier", 1)[0]
+    assert f"> **CIQ's EBITDA against the filings.** {rec.line}" in brief
+
+
+def test_a_refused_reconciliation_is_said_on_the_web_page_e2e(
+        bundle: CiqBundle, tmp_path: Path) -> None:
+    """(3) The web twin, through the real render path. The page goes to node as a FILE: inline on
+    the command line it exceeds Linux's argument limit (CI's E2BIG), which macOS does not."""
+    import shutil
+    import subprocess
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    page = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())
+    block = _refused_block(bundle)
+    page["mechanical"]["financial_summary"]["ebitda_reconciliation"] = block
+    (tmp_path / "page.json").write_text(json.dumps(page))
+    dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
+    driver = tmp_path / "driver.mjs"
+    driver.write_text(f"""
+import {{ readFileSync }} from "node:fs";
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+const {{ renderDossier }} = await import("{dj}");
+const page = JSON.parse(readFileSync({json.dumps(str(tmp_path / "page.json"))}, "utf8"));
+const html = renderDossier(page, null);
+const m = /<b>CIQ's EBITDA against the filings<\\/b> — ([^<]*)<\\/div>/.exec(html);
+console.log(JSON.stringify(m ? m[1] : null));
+""")
+    out = subprocess.run(["node", str(driver)], capture_output=True,
+                         text=True, check=True).stdout.strip().splitlines()[-1]
+    shown = json.loads(out)
+    assert shown is not None
+    assert shown.replace("&#39;", "'").replace("&amp;", "&") == block["line"]
+
+
+def test_the_scorecard_names_a_refused_reconciliation(bundle: CiqBundle) -> None:
+    from vinci.quality.sources.ciq import _ebitda_vs_xbrl
+
+    block = _refused_block(bundle)
+    got = _ebitda_vs_xbrl({"mechanical": {"financial_summary": {"ebitda_reconciliation": block}}})
+    assert got.not_run == f"ebitda_reconciliation refused at assembly — {block['refused']}"
+
+
+def test_the_backfill_names_a_refused_rebuild(
+        bundle: CiqBundle, monkeypatch: pytest.MonkeyPatch) -> None:
+    from vinci.dossier import lease_basis
+
+    monkeypatch.setattr(lease_basis, "own_quarterly_export", lambda _out, _b: True)
+    _refused_block(bundle)   # the export's latest EBITDA now reads 'NA'
+    held = {"quarters": [{"period_end": d.isoformat(), "ciq_ebitda": 1.0}
+                         for d in gen.Q_DATES[-4:]]}
+    refused: list[str] = []
+    out = ebitda_recon.backfill_transform(gen.TICKER, facts={}, bundle=bundle,
+                                          text_for=lambda _r: None, refused=refused)(
+        {"financial_summary": {"ebitda_reconciliation": held}})
+    assert out["financial_summary"]["ebitda_reconciliation"] == held   # left as it is
+    assert len(refused) == 1 and "the rebuild refuses it: " in refused[0]
+    assert gen.Q_DATES[-1].isoformat() in refused[0]
+
+
+def test_a_fiscal_year_end_balance_sheet_release_waits_for_the_10k(bundle: CiqBundle) -> None:
+    """(4) An annual balance sheet's release column at the fiscal year's end (May-31) names the
+    10-K, as an FY income-statement column does — a bare balance-sheet date has no kind."""
+    bs = _sheet(bundle, "Balance Sheet", "annual")
+    hdr = cs._bs_period_header(bs)
+    assert hdr is not None
+    bs[hdr][-1] = f"Press Release\n{gen._mdy(gen.A_DATES[-1])}"
+    with pytest.raises(cs.CiqPreliminaryError,
+                       match=f"the 10-K for the period ending {gen.A_DATES[-1].isoformat()}"):
+        cs.require_filed_income_statement(bundle, gen.TICKER)
+
+
+def test_a_header_suffixed_on_its_newest_column_places_nothing() -> None:
+    """(5) CIQ suffixes some newest headers ('Jun-30-2026A'): skipping the undated column would
+    serve the one before it as the latest — the step-back, through the header."""
+    rows = [["For the Fiscal Period Ending", "12 months\nMay-31-2026", "Jun-30-2026A"],
+            ["EBITDA", 10.0, 12.0]]
+    got = cs.latest_cell(rows, 1, 0)
+    assert got.state == "unplaced" and got.value is None
+    assert got.reason is not None and "'Jun-30-2026A'" in got.reason
+
+
+# --- the corpus (licensed workbooks; skipped where absent) --------------------------------------
+
+
+def _bundles() -> list[tuple[str, CiqBundle]]:
+    root = get_config().data_dir / "manual" / "ciq"
+    if not root.is_dir() or not any(root.iterdir()):
+        pytest.skip("licensed CIQ bundles unavailable (never committed)")
+    ms = LocalFolderStore(root)
+    return [(tk, CiqBundle.from_files(tk, files))
+            for tk in sorted(p.name for p in root.iterdir() if p.is_dir())
+            if (files := ms.files(tk))]
+
+
+def _latest_label(rows: list[list[Any]], hdr: int | None) -> str | None:
+    if hdr is None:
+        return None
+    dated = [(d, j) for j in range(1, len(rows[hdr]))
+             if (d := cs._column_date(rows[hdr][j])) is not None]
+    return cs._period_text(rows[hdr][max(dated)[1]]) if dated else None
+
+
+_READS: tuple[tuple[str, Any, str, str], ...] = (
+    ("free_cash_flow", cs.free_cash_flow, "Cash Flow", "annual"),
+    ("ltm_ocf", cs.ltm_ocf, "Cash Flow", "annual"),
+    ("ltm_ebitda", cs.ltm_ebitda, "Income Statement", "annual"),
+    ("interest_coverage", cs.interest_coverage, "Income Statement", "annual"),
+)
+
+
+def test_no_reader_serves_a_period_older_than_its_sheets_latest_column() -> None:
+    """THE PROPERTY, over every bundle on file: a PRESENT figure names its sheet's latest dated
+    column. On main 9503c4fa it failed on FUBO and LLY (free cash flow, FY behind a 'NA' LTM), LLY
+    (OCF) and ORKA (interest coverage, FY Dec-2024 behind a '-' LTM)."""
+    checked, older = 0, []
+    for tk, b in _bundles():
+        for name, reader, sheet, freq in _READS:
+            try:
+                rows = b.sheet("financials", sheet, freq=freq)
+            except CiqUnavailableError:
+                continue
+            want = _latest_label(rows, cs._period_header(rows))
+            got = reader(b)
+            if want is None or got.status is not SourceStatus.PRESENT:
+                continue
+            checked += 1
+            if f"[{want}]" not in (got.source_ref or ""):
+                older.append(f"{tk} {name}: {got.source_ref!r}, latest column [{want}]")
+    assert checked, "no reader produced a figure — the property never ran"
+    assert older == []
+
+
+def test_the_bridge_never_pairs_a_period_older_than_the_latest_column() -> None:
+    """The anchor's vendor OCF and capex, over every bundle on file: each fact's period is its
+    sheet's latest LTM or fiscal-year column, or the fact is absent with a reason."""
+    checked, older = 0, []
+    for tk, b in _bundles():
+        try:
+            cf = b.sheet("financials", "Cash Flow", freq="annual")
+        except CiqUnavailableError:
+            continue
+        hdr = cs._period_header(cf)
+        want = _latest_label(cf, hdr)
+        if want is None or hdr is None:
+            continue
+        latest = max(d for c in cf[hdr][1:] if (d := cs._column_date(c)) is not None)
+        try:
+            ciq = ciq_balance.extract(b, tk)
+        except Exception:  # noqa: BLE001 — an export the bridge cannot read is not this check's
+            continue
+        for key in ("ocf", "capex"):
+            checked += 1
+            fact = ciq.facts.get(key)
+            if fact is None:
+                assert ciq.unavailable.get(key), f"{tk} {key}: absent and no reason given"
+            elif fact.period_end != latest:
+                older.append(f"{tk} {key}: {fact.period} {fact.period_end}, latest {want}")
+    assert checked, "no bundle carried an annual cash flow — the property never ran"
+    assert older == []
+
+
+def test_corpus_markers_are_said_where_they_used_to_step_back() -> None:
+    """CORPUS BEFORE SYNTHETIC: the readers above, on the files they failed on — wherever the
+    latest column's cell IS a marker, the figure is UNKNOWN and says so. A name absent from this
+    checkout's copy, or re-exported with the column filled, is skipped, never assumed."""
+    by = dict(_bundles())
+    seen = 0
+    for tk, reader, sheet, label in (
+            ("LLY", cs.free_cash_flow, "Cash Flow", "Levered Free Cash Flow"),
+            ("LLY", cs.ltm_ocf, "Cash Flow", "Cash from Ops."),
+            ("FUBO", cs.free_cash_flow, "Cash Flow", "Levered Free Cash Flow"),
+            ("ORKA", cs.interest_coverage, "Income Statement", "Interest Expense")):
+        if tk not in by:
+            continue
+        rows = by[tk].sheet("financials", sheet, freq="annual")
+        cell = cs.latest_cell(rows, cs._find_row(rows, label) or 0, cs._period_header(rows))
+        if cell.state != "unavailable":
+            continue
+        seen += 1
+        got = reader(by[tk])
+        assert got.status is SourceStatus.UNKNOWN, (tk, label, got.source_ref)
+        assert f"at the latest column [{cell.label}]" in (got.note or ""), (tk, got.note)
+    if not seen:
+        pytest.skip("no name on file still carries a marker at its latest column")

@@ -3675,12 +3675,15 @@ def test_quarterly_yoy_refuses_cross_basis_prior() -> None:
 
 
 def test_interest_coverage_and_fcf_from_subsheets() -> None:
+    # CIQ's own dated period header: the latest figure is read at the latest-DATED column
+    # (`ciq_sheets.latest_cell`; 0 of 104 exports on file carry an undated one, 2026-10-30)
+    head = ["For the Fiscal Period Ending\n", "12 months\nDec-31-2024", "12 months\nDec-31-2025"]
     inc: list[list[typing.Any]] = [
-        ["For the Fiscal Period", "12mo 2024", "12mo 2025"], ["EBITDA", 360, 400],
+        list(head), ["EBITDA", 360, 400],
         ["Interest Expense", 40, 50],
     ]
     cf: list[list[typing.Any]] = [
-        ["For the Fiscal Period", "12mo 2024", "12mo 2025"],
+        list(head),
         ["Levered Free Cash Flow", 120.0, 150.0],
     ]
     ic = cs.interest_coverage(_fin_bundle({"Income Statement": inc}, freq="annual"))
