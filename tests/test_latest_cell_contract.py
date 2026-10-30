@@ -429,8 +429,10 @@ def test_a_refused_reconciliation_is_said_on_the_page_md_e2e(bundle: CiqBundle) 
     assert f"> **CIQ's EBITDA against the filings.** {rec.line}" in brief
 
 
-def test_a_refused_reconciliation_is_said_on_the_web_page_e2e(bundle: CiqBundle) -> None:
-    """(3) The web twin, through the real render path."""
+def test_a_refused_reconciliation_is_said_on_the_web_page_e2e(
+        bundle: CiqBundle, tmp_path: Path) -> None:
+    """(3) The web twin, through the real render path. The page goes to node as a FILE: inline on
+    the command line it exceeds Linux's argument limit (CI's E2BIG), which macOS does not."""
     import shutil
     import subprocess
 
@@ -439,17 +441,21 @@ def test_a_refused_reconciliation_is_said_on_the_web_page_e2e(bundle: CiqBundle)
     page = json.loads(Path("data/dossiers/TJX/dossier.json").read_text())
     block = _refused_block(bundle)
     page["mechanical"]["financial_summary"]["ebitda_reconciliation"] = block
+    (tmp_path / "page.json").write_text(json.dumps(page))
     dj = Path("frontend/views/shared/dossier.js").resolve().as_uri()
-    driver = f"""
+    driver = tmp_path / "driver.mjs"
+    driver.write_text(f"""
+import {{ readFileSync }} from "node:fs";
 const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
 const stub = new Proxy(function(){{}}, handler);
 for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
 const {{ renderDossier }} = await import("{dj}");
-const html = renderDossier({json.dumps(page)}, null);
+const page = JSON.parse(readFileSync({json.dumps(str(tmp_path / "page.json"))}, "utf8"));
+const html = renderDossier(page, null);
 const m = /<b>CIQ's EBITDA against the filings<\\/b> — ([^<]*)<\\/div>/.exec(html);
 console.log(JSON.stringify(m ? m[1] : null));
-"""
-    out = subprocess.run(["node", "--input-type=module", "-e", driver], capture_output=True,
+""")
+    out = subprocess.run(["node", str(driver)], capture_output=True,
                          text=True, check=True).stdout.strip().splitlines()[-1]
     shown = json.loads(out)
     assert shown is not None
