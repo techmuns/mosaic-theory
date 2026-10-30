@@ -397,9 +397,11 @@ def test_fundamental_snapshot_real_company() -> None:
 @pytest.mark.network
 def test_fulltext_search_finds_guidance_8ks() -> None:
     client = EdgarClient.from_config()
-    # exact-phrase search over all dates — reliably non-empty; a single (paced, cached) efts call
-    hits = client.fulltext_search("lowered guidance", forms="8-K")
-    assert len(hits) > 0
+    # exact-phrase search over all dates — reliably non-empty; a single (paced, cached) efts call,
+    # so one page, which the result must then report as cut short
+    got = client.fulltext_search("lowered guidance", forms="8-K", max_pages=1)
+    hits = got.hits
+    assert len(hits) > 0 and got.total > len(hits) and got.capped  # thousands match, one page
     assert all(h.accession for h in hits)
     assert all(h.form == "8-K" for h in hits if h.form)
 

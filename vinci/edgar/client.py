@@ -17,7 +17,7 @@ from __future__ import annotations
 import threading
 import urllib.parse
 from collections import OrderedDict
-from collections.abc import Sequence
+from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
 from datetime import date
 from typing import Any, NoReturn, cast
@@ -56,6 +56,83 @@ class FtsHit(BaseModel, frozen=True):
     form: str | None
     file_date: date | None
     display_names: list[str]
+
+
+#: efts serves at most this many hits per request; a later page is asked for with ``from=``.
+FTS_PAGE_SIZE = 100
+#: How many efts pages one ``fulltext_search`` reads before it stops and says so.
+FTS_MAX_PAGES = 5
+
+
+class FtsResult:
+    """The hits one full-text search reads, beside efts's own count of what matched.
+
+    THE COUNT TRAVELS WITH THE HITS (audit E1-D11). The search read one 100-hit page and returned it
+    as the answer: 250 matches came back as 100, with nothing a caller could test. ``capped`` is
+    the search saying it stopped short — read it, or say why not.
+
+    A PAGE IS READ ONLY WHEN THE CALLER ITERATES INTO IT (review of #871). The covenant search stops
+    at two exhibit-bearing hits, each costing an index fetch; reading every page up front cost up to
+    four more efts requests a family for hits nobody looked at. The first page is read when the
+    search is made, so its failure raises there, as it always has. A LATER page that fails ends the
+    search with the hits already read and the reason in ``stopped`` — never by discarding them."""
+
+    def __init__(self, hits: Sequence[FtsHit] = (), total: int = 0, *,
+                 page: Callable[[int], dict[str, Any]] | None = None,
+                 max_pages: int = FTS_MAX_PAGES) -> None:
+        self._hits: list[FtsHit] = list(hits)
+        self.total = total  # efts's ``hits.total.value`` — every match, read or not
+        self.stopped: str | None = None  # why reading ended before every match, when it did
+        self._page = page
+        self._next = 0
+        self._max_pages = max_pages
+        if page is not None:
+            self._read_next()
+
+    def _read_next(self) -> bool:
+        """Read the next page; False when there is none to read (or it could not be read)."""
+        if (self._page is None or self.stopped is not None or self._next >= self._max_pages
+                or (self._next and len(self._hits) >= self.total)):
+            return False
+        n = self._next
+        try:
+            data = self._page(n)
+            got = parse_fts_response(data)
+        except HttpError as exc:
+            if n == 0:
+                raise
+            self.stopped = f"page {n + 1} could not be read ({type(exc).__name__})"
+            return False
+        self.total = max(int((data["hits"].get("total") or {}).get("value", 0)),
+                         len(self._hits) + len(got))
+        self._hits += got
+        self._next += 1
+        if not got:
+            self._page = None
+        return bool(got)
+
+    def __iter__(self) -> Iterator[FtsHit]:
+        i = 0
+        while i < len(self._hits) or self._read_next():
+            yield self._hits[i]
+            i += 1
+
+    @property
+    def hits(self) -> list[FtsHit]:
+        """Every hit the search can read — reads each remaining page."""
+        while self._read_next():
+            pass
+        return self._hits
+
+    @property
+    def read(self) -> int:
+        """How many hits have been read so far."""
+        return len(self._hits)
+
+    @property
+    def capped(self) -> bool:
+        """True while the hits read fall short of every match."""
+        return len(self._hits) < self.total
 
 
 class Filing(BaseModel, frozen=True):
@@ -461,20 +538,27 @@ class EdgarClient:
         ciks: str | None = None,
         startdt: str | None = None,
         enddt: str | None = None,
-    ) -> list[FtsHit]:
+        max_pages: int = FTS_MAX_PAGES,
+    ) -> FtsResult:
         """Search EDGAR full text for an exact phrase. Spaces → %20 (an efts requirement).
 
         ``ciks`` scopes the search to a single filer — pass the 10-digit ZERO-PADDED CIK (a bare
         integer returns nothing; efts requires the padded form). Without it a phrase like
-        "Convertible Bond" matches ANY filer, so a covenant lookup MUST scope to the subject."""
+        "Convertible Bond" matches ANY filer, so a covenant lookup MUST scope to the subject.
+
+        Reads the first page now and each later one only as the caller iterates, until every match
+        is read or ``max_pages`` is spent; ``capped`` and ``stopped`` say which. The first page's
+        URL carries no ``from=``, as it always has."""
         q = urllib.parse.quote(f'"{phrase}"')  # quote() => spaces become %20, not '+'
         url = f"{_EFTS}?q={q}&forms={forms}"
         if ciks:
             url += f"&ciks={pad_cik(ciks)}"  # 10-digit; a bare int yields an empty efts result
         if startdt and enddt:
             url += f"&startdt={startdt}&enddt={enddt}"
-        data = cast(dict[str, Any], self._efts.get_json(url, ttl_seconds=_ONE_DAY))
-        return parse_fts_response(data)
+        def page(n: int) -> dict[str, Any]:
+            return cast(dict[str, Any], self._efts.get_json(
+                f"{url}&from={n * FTS_PAGE_SIZE}" if n else url, ttl_seconds=_ONE_DAY))
+        return FtsResult(page=page, max_pages=max_pages)
 
     # --- registrant names (reverse-merger / rename vintage) ------------------------------------
     def _remember_submissions(

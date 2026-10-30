@@ -1,0 +1,55 @@
+{
+ "_note": "Real cover windows (<=600 chars of vinci.graph.filings.html_to_text output) cut 2026-10-30 from the primary checkout's SEC cache, for audit X1(a): each filing tags its cover count AFTER its own filing date, and the cover sentence states the true one.",
+ "JJSF": {
+  "accession": "0001437749-26-015618",
+  "cik": 785956,
+  "form": "10-Q",
+  "primary_doc": "jjsf20260328_10q.htm",
+  "url": "https://www.sec.gov/Archives/edgar/data/785956/000143774926015618/jjsf20260328_10q.htm",
+  "tagged_end": "2026-05-14",
+  "filed": "2026-05-07",
+  "value": 18753416,
+  "cover_window": "tandards provided pursuant to Section 13(a) of the Exchange Act. ☐ Indicate by check mark whether the registrant is a shell company (as defined in Rule 12b-2 of the Exchange Act). ☐ Yes ☒ No Indicate the number of shares outstanding of each of the issuer’s classes of common stock, as of the latest practicable date. Class Outstanding as of May 1, 2026 Common Stock, no par value 18,753,416 shares INDEX Page Number Part I. Financial Information Item l. Consolidated Financial Statements Consolidated Balance Sheets – March 28, 2026 (unaudited) and September 27, 2025 3 Consolidat",
+  "cover_date": "2026-05-01"
+ },
+ "VRRM": {
+  "accession": "0001193125-26-335490",
+  "cik": 1682745,
+  "form": "10-Q",
+  "primary_doc": "vrrm-20260630.htm",
+  "url": "https://www.sec.gov/Archives/edgar/data/1682745/000119312526335490/vrrm-20260630.htm",
+  "tagged_end": "2026-08-31",
+  "filed": "2026-08-05",
+  "value": 151982804,
+  "cover_window": "indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standards provided pursuant to Section 13(a) of the Exchange Act. ☐ In dicate by check mark whether the registrant is a shell company (as defined in Rule 12b‑2 of the Exchange Act). YES ☐ NO ☒ As of August 3, 2026, there were 151,982,804 shares of the Company’s Class A Common Stock, par value $0.0001 per share, issued and outstanding. VERRA MOBILITY CORPORATION FORM 10-Q FOR THE QUARTER ENDED JUNE 30, 2026 TABLE OF CONTENT",
+  "cover_date": "2026-08-03"
+ },
+ "HE": {
+  "accession": "0000354707-26-000008",
+  "form": "10-K",
+  "url": "https://www.sec.gov/Archives/edgar/data/354707/000035470726000008/he-20251231.htm",
+  "tagged_end": "2026-02-17",
+  "filed": "2026-02-27",
+  "value": 172620476,
+  "cover_window": "stries, Inc. Yes ☐ No ☒ Hawaiian Electric Company, Inc. Yes ☐ No ☒ Aggregate market value of the voting and non-voting common equity held by non-affiliates of the registrants as of Number of shares of common stock outstanding of the registrants as of June 30, 2025 June 30, 2025 February 17, 2026 Hawaiian Electric Industries, Inc. (Without Par Value) $ 1,834,863,997 172,611,853 172,620,476 Hawaiian Electric Company, Inc. ($6-2/3 Par Value) None 17,854,278 17,854,278 HAWAIIAN ELECTRIC COMPANY, INC. MEETS THE CONDITIONS SET FOR"
+ },
+ "WSR": {
+  "accession": "0001437749-26-015260",
+  "form": "10-Q",
+  "url": "https://www.sec.gov/Archives/edgar/data/1175535/000143774926015260/wstr20260331_10q.htm",
+  "tagged_end": "2026-05-04",
+  "filed": "2026-05-06",
+  "value": 51393977,
+  "cover_window": "ansition period for complying with any new or revised financial accounting standards provided pursuant to Section 13(a) of the Exchange Act. ☐ Indicate by check mark whether the registrant is a shell company (as defined in Rule 12b-2 of the Exchange Act). ☐ Yes   ☒ No As o f May 4, 2026, there were 51,393,977 common shares of beneficial interest, $0.001 par value per share, outstanding. Table of Contents PART I - FIN"
+ },
+ "NRP": {
+  "accession": "0001437749-26-015150",
+  "form": "10-Q",
+  "url": "https://www.sec.gov/Archives/edgar/data/1171486/000143774926015150/nrp20260331_10q.htm",
+  "tagged_end": "2026-05-06",
+  "filed": "2026-05-06",
+  "value": 13250412,
+  "part_one_heading": "Part I. Financial Information Item 1. Consolidated Financial Statements Consolidated Balance Sheets 1 Consolidated Statements of Comprehensive Income 2 Consolid",
+  "balance_sheet_window": "net 14,234 14,198 Total current liabilities $ 28,595 $ 32,986 Deferred revenue 59,136 58,067 Long-term debt, net 46,084 18,884 Other non-current liabilities 5,310 5,909 Total liabilities $ 139,125 $ 115,846 Commitments and contingencies (see Note 12) Partners’ capital Common unitholders’ interest ( 13,250,412 and 13,138,097 units issued and outstanding at March 31, 2026 and December 31, 2025, respectively) $ 624,902 "
+ }
+}

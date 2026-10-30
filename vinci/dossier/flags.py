@@ -65,6 +65,11 @@ _QA_MARKERS: tuple[str, ...] = (
     # check of CIQ's arithmetic. A MATERIAL row that fails it refuses the build, so what reaches a
     # page here is a non-material disagreement or a quarter reading '-' — dev/JSON QA
     "ciq-ltm-quarters:",
+    # (2026-10-30, audit X1(a), operator ruling "Yes, cross-check") a share count tagged after its
+    # own filing, re-dated from its cover sentence or its filing day: each correction is QA. Its
+    # REFUSAL is not — "share count UNKNOWN:" explains an UNKNOWN the reader sees, so it stays a
+    # caveat (`vinci.edgar.cover_count`)
+    "share count:",
 )
 
 # The validator-speak caveats carry a `{where}:` field name (which synthesis point tripped it).
