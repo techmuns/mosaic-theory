@@ -1,8 +1,8 @@
 ---
 id: 2026-10-30-a-gap-between-two-digits-is-kept-in-the-span-check
-status: open
+status: shipped
 date: 2026-10-30
-prs: []
+prs: [870]
 supersedes:
 superseded-by:
 ---
