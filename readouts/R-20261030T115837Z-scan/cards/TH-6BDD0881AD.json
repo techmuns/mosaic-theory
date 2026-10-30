@@ -1,0 +1,2467 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-13",
+   "ancestry": [
+    "ai_models_platforms"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T10:22:01.560502Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-08-21",
+   "latest_article_date": "2026-08-21",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "AI model developers and AI platforms / applications",
+   "status": "ACTIVE",
+   "thesis_id": "TH-6BDD0881AD",
+   "title": "Product and harness, not raw benchmarks, protect frontier lab economics"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-f7d37ff4ecf399",
+     "C-19deb651b67d88"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SemiAnalysis prefers closed Fable 5 for daily work despite Kimi K scoring higher on its composite, and GPT-5.2 scored better than Opus 4.5 without a better user experience, because the full agentic product (model + harness) matters more than benchmarks."
+   },
+   {
+    "claim_ids": [
+     "C-7b349774de73d7",
+     "C-f7d37ff4ecf399",
+     "C-19deb651b67d88"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues it is 'less bearish frontier models than you might initially think' because benchmarks are an imperfect proxy and productization defends closed-lab economics."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If product/harness quality, not raw benchmark parity, drives real usage and revenue, open-model benchmark catch-up may overstate the commoditization risk to closed frontier labs like Anthropic."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-7b1412bf406e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-beb449f03d812d"
+     ],
+     "original_date": "2026-08-21",
+     "period": "since May 2025",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Since the general release of Claude Code in May 2025, Anthropic has added north of $65B in ARR. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-19deb651b67d88"
+     ],
+     "original_date": "2026-08-21",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "GPT-5.2 scored better than Opus 4.5 on the benchmark suite but did not deliver a better user experience, because the full agentic product (model + harness) is what matters."
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f7d37ff4ecf399"
+     ],
+     "original_date": "2026-08-21",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Although Kimi K scores higher than Fable 5 on the composite, SemiAnalysis still prefers using Fable for day-to-day work, partly due to Anthropic's productization."
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7b349774de73d7"
+     ],
+     "original_date": "2026-08-21",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The authors argue they are less bearish on frontier models than the catch-up trend might initially suggest."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:22 UTC, analysed as of 2026-10-13, from a source published 2026-08-21; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-509eb5ab8af711",
+     "C-19deb651b67d88"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Open models converge on closed benchmark scores each era, but real agentic value depends on the model+harness product."
+   },
+   {
+    "claim_ids": [
+     "C-beb449f03d812d",
+     "C-f7d37ff4ecf399"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "listed_earnings",
+    "text": "Superior productization (Claude Code, Claude Tag) sustains usage and ARR for closed labs despite benchmark convergence. \u27e8cited figures: approximate\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-7b1412bf406e",
+    "block_id": "b036",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-beb449f03d812d",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "ARR added",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since May 2025",
+    "qualifiers": [
+     "north of",
+     "Anthropic"
+    ],
+    "quote": "Since the general release of Claude Code in May 2025, Anthropic has ad north of $65B in ARR.",
+    "role": "supports",
+    "unit": "USD",
+    "value": 65.0,
+    "value_text": "$65B"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b1412bf406e",
+    "block_id": "b039",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-19deb651b67d88",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "GPT-5.2 scored better than Opus 4.5 on the benchmark suite but did not deliver a better user experience, because the full agentic product (model + harness) is what matters.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "GPT-5.2 (OpenAI\u2019s flagship at the time) performed better on our benchmark suite, but this didn\u2019t correspond to a better u experience",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b1412bf406e",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7b349774de73d7",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The authors argue they are less bearish on frontier models than the catch-up trend might initially suggest.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "less bearish than you might think"
+    ],
+    "quote": "we\u2019ll extend this analysis into the future, and explain why less bearish frontier models than you might initially think",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b1412bf406e",
+    "block_id": "b044",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f7d37ff4ecf399",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Although Kimi K scores higher than Fable 5 on the composite, SemiAnalysis still prefers using Fable for day-to-day work, partly due to Anthropic's productization.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "benchmarks not a perfect proxy for real work"
+    ],
+    "quote": "Kimi K may score higher than Fable 5 on our curated composite, but we still prefer using Fable at SemiAnalysis for our day to day work.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b161d891ec917e",
+     "name_as_written": "GLM 5.3",
+     "other_securities": [],
+     "quote": "GLM 5.3",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "Open-source model cited as capable of coding/agentic tasks"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2db1cd1f4dba4e",
+     "name_as_written": "Kimi K3",
+     "other_securities": [],
+     "quote": "Kimi K3",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "Open-source model from Moonshot cited as capable"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-fbbe0ef0b0b327",
+     "name_as_written": "Fireworks",
+     "other_securities": [],
+     "quote": "Fireworks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Inference provider processing over 40T tokens/day"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4eb708d2d6c683",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "DeepSeek",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "Open-model developer (R1, V3)"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-90a6b7a9753673",
+     "name_as_written": "Prime Intellect",
+     "other_securities": [],
+     "quote": "Prime Intellect's",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "data_source",
+     "role_detail": "Evaluation stack / environments hub used for benchmarks"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-bf3e064a2bab4a",
+     "name_as_written": "Artificial Analysis",
+     "other_securities": [],
+     "quote": "Artificial Analysis",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Third-party benchmark runs"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1ef56180b7a81d",
+     "name_as_written": "Datacurve's DeepSWE leaderboard",
+     "other_securities": [],
+     "quote": "Datacurve's DeepSWE leaderboard",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "DeepSWE leaderboard source"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": "0001326801",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-867dda25da350c",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "Meta's",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "disruptor",
+     "role_detail": "Released Llama-4 Maverick and earlier Llama models (FAIR)"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-edaedcb84d981a",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "t for the top of the leaderbo in this era. While OpenAI and Google traded crowns, Anthropic was turning Cla into the default c",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Gemini 2.5 Pro pushed the reasoning frontier"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-569676028fb785",
+     "name_as_written": "Moonshot",
+     "other_securities": [],
+     "quote": "Moonshot",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "Open-model developer (Kimi)"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5b2e137544d397",
+     "name_as_written": "Zhipu",
+     "other_securities": [],
+     "quote": "Zhipu",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "disruptor",
+     "role_detail": "Open-model developer (GLM)"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-360eda0e9bf9f2",
+     "name_as_written": "Cognition",
+     "other_securities": [],
+     "quote": "Cognition\u2019s",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Viral Devin agent demo in March 2024"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-06cf8cdbc57ca6",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "SemiAnalysis",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher of the article"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-abaf63604bece4",
+     "name_as_written": "Llama-2-70B",
+     "other_securities": [],
+     "quote": "successfully ship Llama-2-70B",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "Meta open model that approached the Era-1 frontier"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2947e41625a9e2",
+     "name_as_written": "FAIR",
+     "other_securities": [],
+     "quote": "FAIR is about to",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "disruptor",
+     "role_detail": "Meta's AI research lab that shipped Llama-2-70B"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-008b64874cf2bb",
+     "name_as_written": "GPT-3.5 Turbo",
+     "other_securities": [],
+     "quote": "Llam stacked up against GPT-3.5 Turbo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "OpenAI frontier model benchmarked in Era 1"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f2c71861a14f5b",
+     "name_as_written": "Mixtral-8x7B",
+     "other_securities": [],
+     "quote": "Mixtral-8x7B released",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "open model creating momentum toward GPT-4 capability"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-43305193f4db03",
+     "name_as_written": "Mistral",
+     "other_securities": [],
+     "quote": "past the Mistral exodus",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "referenced via the 'Mistral exodus' from FAIR"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-708c9bb8b1ab0f",
+     "name_as_written": "Llama-3.1-405B",
+     "other_securities": [],
+     "quote": "Llama-3.1-405B release in July 2024",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "open model that closed the GPT-3.5 Turbo gap"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5580670a11eded",
+     "name_as_written": "DeepSeek V3",
+     "other_securities": [],
+     "quote": "matched in capability by DeepSeek V3 in December 2024",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "open model matching GPT-4o"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-bfdcc68f5c037e",
+     "name_as_written": "GPT-4o",
+     "other_securities": [],
+     "quote": "GPT-4o at a sixth",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "OpenAI frontier model matched by DeepSeek V3"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-db0a3863f00725",
+     "name_as_written": "Qwen2.5-72B",
+     "other_securities": [],
+     "quote": "Qwen2.5-72B landed within striking distance of GPT-4o",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "Alibaba open model near GPT-4o at a sixth parameter count"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5948ca428b3e3c",
+     "name_as_written": "o1-preview",
+     "other_securities": [],
+     "quote": "OpenAI shipped o1-preview",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "OpenAI reasoning model that started Era 2"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-57a7d69f97310f",
+     "name_as_written": "Scale AI",
+     "other_securities": [],
+     "quote": "Scale AI collected some of the most es PhD-level multiple choice questions",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "data_source",
+     "role_detail": "collected questions for Humanity's Last Exam benchmark"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-92fbfbef6dec6a",
+     "name_as_written": "DeepSeek R1",
+     "other_securities": [],
+     "quote": "A little known model called DeepSeek R1",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "open reasoning model that narrowed the Era-2 gap"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a9fea718813a92",
+     "name_as_written": "Llama-4 Maverick",
+     "other_securities": [],
+     "quote": "squashed by Meta's Llama-4 Maverick",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Meta model that squashed R1 momentum"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1252d4f5cc9cba",
+     "name_as_written": "Gemini 2.5 Pro",
+     "other_securities": [],
+     "quote": "Gemini 2.5 Pro and o3 continued to push the reasoning frontier",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Google frontier reasoning model"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0ba9d9d10c6067",
+     "name_as_written": "o3",
+     "other_securities": [],
+     "quote": "Gemini 2.5 Pro and o3 continued to push the reasoning frontier",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "OpenAI frontier reasoning model"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-cb046bfe702fea",
+     "name_as_written": "Claude",
+     "other_securities": [],
+     "quote": "Prior to Claude Code, agents had their moments (like Cognition\u2019s viral demo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Anthropic model becoming default coding agent"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-fa0c0042589f91",
+     "name_as_written": "Opus 4.5",
+     "other_securities": [],
+     "quote": "Most AI experts consider Opus 4.5 the official start of the agentic era",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Anthropic model marking start of agentic era"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-c33996f3ff9eb8",
+     "name_as_written": "Kimi K2.6",
+     "other_securities": [],
+     "quote": "Kimi K2.6 surpassed Opus 4.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "open model surpassing Opus 4.5"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1e788b1790c409",
+     "name_as_written": "GLM-5.2",
+     "other_securities": [],
+     "quote": "GLM-5.2 cleared GPT-5.2",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "disruptor",
+     "role_detail": "open model clearing GPT-5.2"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-750ea42f886192",
+     "name_as_written": "Prime Intellect's evalu stack",
+     "other_securities": [],
+     "quote": "Prime Intellect's evalu stack, specifically their environments hub",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "evaluation stack used to run benchmarks"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a1d3157528e5a6",
+     "name_as_written": "vLLM",
+     "other_securities": [],
+     "quote": "vLLM versions",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "serving framework used for open models"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2b7ed3a89989f7",
+     "name_as_written": "R1",
+     "other_securities": [],
+     "quote": "no one actually used R1 to do economically valuable work",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "DeepSeek model of the 'DeepSeek moment'"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-02390c971e5c57",
+     "name_as_written": "Fable 5",
+     "other_securities": [],
+     "quote": "Kimi K may score higher than Fable 5",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "closed model SemiAnalysis prefers for daily work despite lower benchmark score"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-f21b351a759ac3",
+     "name_as_written": "GPT-5.2",
+     "other_securities": [],
+     "quote": "GPT-5.2 (OpenAI\u2019s flagship at the time) performed better on our benchmark suite",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "OpenAI flagship scoring higher but not winning user experience"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-1158351955360f",
+     "name_as_written": "Claude Code",
+     "other_securities": [],
+     "quote": "Since the general release of Claude Code in May 2025",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Anthropic agentic product driving ARR"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-e2402ea55d7d40",
+     "name_as_written": "Codex",
+     "other_securities": [],
+     "quote": "Codex, in contrast, was comparatively crude",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "OpenAI agentic harness described as comparatively crude"
+    }
+   ],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-b824e10e39b721",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "Anthropic",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potentially_harmed",
+     "role_detail": "Frontier lab whose margins could be pressured by open-model commoditization"
+    },
+    {
+     "article_id": "A-7b1412bf406e",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-8b7f9ba4594d20",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "OpenAI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potentially_harmed",
+     "role_detail": "Frontier lab in duopoly; API volume comparator"
+    }
+   ],
+   "sector_exposures": [],
+   "sectors": [
+    "AI model developers / frontier labs"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-19deb651b67d88",
+      "C-f7d37ff4ecf399"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Benchmarks show open models catching up, but closed labs retain a product/harness edge that benchmarks miss."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-f7d37ff4ecf399"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "Durability of closed-lab economics depends on continued productization advantage rather than benchmark leadership."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-7329afdb8f8b53",
+      "C-509eb5ab8af711"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "If open models stay capable enough at a fraction of the cost, the model layer commoditizes and frontier lab margins collapse (the FUD case)."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-38CA111885: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (disruption_revenue_erosion vs competitive_share_shift) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-C1889ABBA5: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-7329afdb8f8b53"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "If open models stay capable enough relative to the closed frontier at a fraction of the cost, the model layer could become commoditized, which would be disastrous for frontier lab margins."
+    },
+    {
+     "claim_ids": [
+      "C-509eb5ab8af711"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "With each generation, open-source models take half as long to catch up to the first closed-source model of the era."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Open-model harnesses (e.g. open agentic frameworks) reaching parity with Claude Code in real usage"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Closed-lab ARR growth decelerating as cheaper open models win token share"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: that closed labs continue to out-productize open models via harness and workflow integration even when open benchmarks converge"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether closed labs can sustain their productization lead as open-model harnesses improve"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the benchmark-vs-user-experience gap persists or is itself quickly closed"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No quantification of the revenue or margin protection the product edge provides"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Open-model harnesses close the user-experience gap quickly"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Enterprises migrate token volume to cheaper open models at parity"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Assess whether closed-lab productization (harness, workflow integration) is defensible against rapidly improving open-model tooling, and whether it is reflected in sustained token-share and ARR."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Closed-lab ARR continues outgrowing benchmark-equivalent open models"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence that users pay a premium for harness quality over raw capability"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-7b1412bf406e",
+    "authors": [
+     "EVAN CLOUTIER",
+     "MAX KAN",
+     "JORDAN NANOS"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-f7d37ff4ecf399",
+     "C-19deb651b67d88",
+     "C-7b349774de73d7",
+     "C-beb449f03d812d",
+     "C-7329afdb8f8b53",
+     "C-509eb5ab8af711"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-08-21T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Are Open Models Catching Up?",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/are-open-models-catching-up",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-21",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-07-29 (0001193125-26-323660)",
+    "business": "cloud, software; GitHub Copilot agentic coding product",
+    "direction": "positive",
+    "enrichment_id": "EC-a94e6c8d20c380",
+    "evidence": "s03.1: Superior productization (Claude Code, Claude Tag) sustains usage and ARR for closed labs despite benchmark convergence.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-07-29 (accession 0001193125-26-323660) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, $ 0.00000625 par value per share",
+      "ticker": "MSFT"
+     }
+    ],
+    "name": "Microsoft",
+    "rationale": "GitHub Copilot and Azure OpenAI monetize model+harness productization; superior agentic UX sustains subscription and consumption revenue despite open-model benchmark convergence.",
+    "registrant": "MICROSOFT CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "GitHub Copilot and Azure AI services",
+    "revenue_model": "subscription",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-6BDD0881AD",
+    "ticker_hint": "MSFT"
+   },
+   {
+    "basis_check": "FILING_NAMES_OTHER",
+    "basis_note": "its revenue-source sentences name advertising \u2014 not usage-based",
+    "basis_quote": [
+     "We generate a significant portion of our revenues from advertising.",
+     "We generate revenues by delivering relevant, cost-effective online advertising;"
+    ],
+    "basis_source": "10-K filed 2026-02-05 (0001652044-26-000018)",
+    "business": "search, cloud; Gemini models and agentic coding tools",
+    "direction": "positive",
+    "enrichment_id": "EC-88a31065729ae6",
+    "evidence": "s03.1: Superior productization (Claude Code, Claude Tag) sustains usage and ARR for closed labs despite benchmark convergence.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-10-21",
+      "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, $0.001 par value",
+      "ticker": "GOOGL"
+     },
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-10-21",
+      "pit_source": "10-Q filed 2026-07-23 (accession 0001652044-26-000071) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class C Capital Stock, $0.001 par value",
+      "ticker": "GOOG"
+     }
+    ],
+    "name": "Alphabet",
+    "rationale": "Gemini-integrated agentic products and Vertex AI harness monetize productization, sustaining cloud ARR if product quality rather than benchmarks drives usage.",
+    "registrant": "Alphabet Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7370); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Google Cloud Vertex AI and Gemini products",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-6BDD0881AD",
+    "ticker_hint": "GOOGL"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names subscription",
+    "basis_quote": [
+     "We derive our revenues predominately from subscription revenues, which are primarily comprised of subscription fees that give customers access to the ordered subscription service, related support and updates, if any, to the subscribed service during the subscription term."
+    ],
+    "basis_source": "10-K filed 2026-01-29 (0001373715-26-000007)",
+    "business": "enterprise workflow software with embedded AI agents",
+    "direction": "positive",
+    "enrichment_id": "EC-ccd787bb32803a",
+    "evidence": "s03.1: Superior productization (Claude Code, Claude Tag) sustains usage and ARR for closed labs despite benchmark convergence.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-23 (accession 0001373715-26-000076) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.001 per share",
+      "ticker": "NOW"
+     }
+    ],
+    "name": "ServiceNow",
+    "rationale": "Now Assist agentic product layers harness around models; productization defensibility sustains subscription uplift regardless of underlying open-model benchmark parity.",
+    "registrant": "ServiceNow, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Now Assist AI agent subscriptions",
+    "revenue_model": "subscription",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-6BDD0881AD",
+    "ticker_hint": "NOW"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-06 (0001018724-26-000004)",
+    "business": "cloud (AWS); Bedrock agentic AI platform, Q Developer",
+    "direction": "positive",
+    "enrichment_id": "EC-5cba5ab288c9ad",
+    "evidence": "s03.1: Superior productization (Claude Code, Claude Tag) sustains usage and ARR for closed labs despite benchmark convergence.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-31 (accession 0001018724-26-000026) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $.01 per share",
+      "ticker": "AMZN"
+     }
+    ],
+    "name": "Amazon",
+    "rationale": "AWS Bedrock and Q Developer harness and host closed-lab models; productized agentic coding sustains consumption revenue as benchmarks commoditize raw models.",
+    "registrant": "AMAZON COM INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 5961); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AWS Bedrock and Amazon Q agentic services",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-6BDD0881AD",
+    "ticker_hint": "AMZN"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-20 (0001640147-26-000008)",
+    "business": "cloud data platform with hosted open models (Cortex)",
+    "direction": "negative",
+    "enrichment_id": "EC-85b39e65e5f41f",
+    "evidence": "s03.0: Open models converge on closed benchmark scores each era, but real agentic value depends on the model+harness product.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-04 (accession 0001640147-26-000037) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.0001 par value",
+      "ticker": "SNOW"
+     }
+    ],
+    "name": "Snowflake",
+    "rationale": "Cortex emphasizes hosting commoditizing open models; if raw benchmarks underprice product/harness value, open-model-led strategy may capture less premium agentic spend.",
+    "registrant": "Snowflake Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 7372); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Cortex AI inference on open models",
+    "revenue_model": "usage_based",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-6BDD0881AD",
+    "ticker_hint": "SNOW"
+   }
+  ],
+  "created_at": "2026-10-21T11:48:13.994675Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261021T114639Z-enrich",
+  "set_id": "ES-926d20d7850fe3",
+  "thesis_id": "TH-6BDD0881AD",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-13",
+   "change_summary": "Initial record \u2014 created from A-7b1412bf406e",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-13",
+     "ancestry": [
+      "ai_models_platforms"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:22:01.560502Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-08-21",
+     "latest_article_date": "2026-08-21",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "AI model developers and AI platforms / applications",
+     "status": "ACTIVE",
+     "thesis_id": "TH-6BDD0881AD",
+     "title": "Product and harness, not raw benchmarks, protect frontier lab economics"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-f7d37ff4ecf399",
+       "C-19deb651b67d88"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SemiAnalysis prefers closed Fable 5 for daily work despite Kimi K scoring higher on its composite, and GPT-5.2 scored better than Opus 4.5 without a better user experience, because the full agentic product (model + harness) matters more than benchmarks."
+     },
+     {
+      "claim_ids": [
+       "C-7b349774de73d7",
+       "C-f7d37ff4ecf399",
+       "C-19deb651b67d88"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues it is 'less bearish frontier models than you might initially think' because benchmarks are an imperfect proxy and productization defends closed-lab economics."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If product/harness quality, not raw benchmark parity, drives real usage and revenue, open-model benchmark catch-up may overstate the commoditization risk to closed frontier labs like Anthropic."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-7b1412bf406e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-beb449f03d812d"
+       ],
+       "original_date": "2026-08-21",
+       "period": "since May 2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Since the general release of Claude Code in May 2025, Anthropic has added north of $65B in ARR. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-19deb651b67d88"
+       ],
+       "original_date": "2026-08-21",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "GPT-5.2 scored better than Opus 4.5 on the benchmark suite but did not deliver a better user experience, because the full agentic product (model + harness) is what matters."
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f7d37ff4ecf399"
+       ],
+       "original_date": "2026-08-21",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Although Kimi K scores higher than Fable 5 on the composite, SemiAnalysis still prefers using Fable for day-to-day work, partly due to Anthropic's productization."
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7b349774de73d7"
+       ],
+       "original_date": "2026-08-21",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The authors argue they are less bearish on frontier models than the catch-up trend might initially suggest."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:22 UTC, analysed as of 2026-10-13, from a source published 2026-08-21; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-509eb5ab8af711",
+       "C-19deb651b67d88"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Open models converge on closed benchmark scores each era, but real agentic value depends on the model+harness product."
+     },
+     {
+      "claim_ids": [
+       "C-beb449f03d812d",
+       "C-f7d37ff4ecf399"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "listed_earnings",
+      "text": "Superior productization (Claude Code, Claude Tag) sustains usage and ARR for closed labs despite benchmark convergence. \u27e8cited figures: approximate\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-7b1412bf406e",
+      "block_id": "b036",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-beb449f03d812d",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "ARR added",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since May 2025",
+      "qualifiers": [
+       "north of",
+       "Anthropic"
+      ],
+      "quote": "Since the general release of Claude Code in May 2025, Anthropic has ad north of $65B in ARR.",
+      "role": "supports",
+      "unit": "USD",
+      "value": 65.0,
+      "value_text": "$65B"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b1412bf406e",
+      "block_id": "b039",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-19deb651b67d88",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "GPT-5.2 scored better than Opus 4.5 on the benchmark suite but did not deliver a better user experience, because the full agentic product (model + harness) is what matters.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "GPT-5.2 (OpenAI\u2019s flagship at the time) performed better on our benchmark suite, but this didn\u2019t correspond to a better u experience",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b1412bf406e",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7b349774de73d7",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The authors argue they are less bearish on frontier models than the catch-up trend might initially suggest.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "less bearish than you might think"
+      ],
+      "quote": "we\u2019ll extend this analysis into the future, and explain why less bearish frontier models than you might initially think",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b1412bf406e",
+      "block_id": "b044",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f7d37ff4ecf399",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Although Kimi K scores higher than Fable 5 on the composite, SemiAnalysis still prefers using Fable for day-to-day work, partly due to Anthropic's productization.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "benchmarks not a perfect proxy for real work"
+      ],
+      "quote": "Kimi K may score higher than Fable 5 on our curated composite, but we still prefer using Fable at SemiAnalysis for our day to day work.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b161d891ec917e",
+       "name_as_written": "GLM 5.3",
+       "other_securities": [],
+       "quote": "GLM 5.3",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "Open-source model cited as capable of coding/agentic tasks"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2db1cd1f4dba4e",
+       "name_as_written": "Kimi K3",
+       "other_securities": [],
+       "quote": "Kimi K3",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "Open-source model from Moonshot cited as capable"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-fbbe0ef0b0b327",
+       "name_as_written": "Fireworks",
+       "other_securities": [],
+       "quote": "Fireworks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Inference provider processing over 40T tokens/day"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4eb708d2d6c683",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "DeepSeek",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "Open-model developer (R1, V3)"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-90a6b7a9753673",
+       "name_as_written": "Prime Intellect",
+       "other_securities": [],
+       "quote": "Prime Intellect's",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "data_source",
+       "role_detail": "Evaluation stack / environments hub used for benchmarks"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-bf3e064a2bab4a",
+       "name_as_written": "Artificial Analysis",
+       "other_securities": [],
+       "quote": "Artificial Analysis",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Third-party benchmark runs"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1ef56180b7a81d",
+       "name_as_written": "Datacurve's DeepSWE leaderboard",
+       "other_securities": [],
+       "quote": "Datacurve's DeepSWE leaderboard",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "DeepSWE leaderboard source"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": "0001326801",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-867dda25da350c",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta's",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "disruptor",
+       "role_detail": "Released Llama-4 Maverick and earlier Llama models (FAIR)"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-edaedcb84d981a",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "t for the top of the leaderbo in this era. While OpenAI and Google traded crowns, Anthropic was turning Cla into the default c",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Gemini 2.5 Pro pushed the reasoning frontier"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-569676028fb785",
+       "name_as_written": "Moonshot",
+       "other_securities": [],
+       "quote": "Moonshot",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "Open-model developer (Kimi)"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5b2e137544d397",
+       "name_as_written": "Zhipu",
+       "other_securities": [],
+       "quote": "Zhipu",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "disruptor",
+       "role_detail": "Open-model developer (GLM)"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-360eda0e9bf9f2",
+       "name_as_written": "Cognition",
+       "other_securities": [],
+       "quote": "Cognition\u2019s",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Viral Devin agent demo in March 2024"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-06cf8cdbc57ca6",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "SemiAnalysis",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher of the article"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-abaf63604bece4",
+       "name_as_written": "Llama-2-70B",
+       "other_securities": [],
+       "quote": "successfully ship Llama-2-70B",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "Meta open model that approached the Era-1 frontier"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2947e41625a9e2",
+       "name_as_written": "FAIR",
+       "other_securities": [],
+       "quote": "FAIR is about to",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "disruptor",
+       "role_detail": "Meta's AI research lab that shipped Llama-2-70B"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-008b64874cf2bb",
+       "name_as_written": "GPT-3.5 Turbo",
+       "other_securities": [],
+       "quote": "Llam stacked up against GPT-3.5 Turbo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "OpenAI frontier model benchmarked in Era 1"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f2c71861a14f5b",
+       "name_as_written": "Mixtral-8x7B",
+       "other_securities": [],
+       "quote": "Mixtral-8x7B released",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "open model creating momentum toward GPT-4 capability"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-43305193f4db03",
+       "name_as_written": "Mistral",
+       "other_securities": [],
+       "quote": "past the Mistral exodus",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "referenced via the 'Mistral exodus' from FAIR"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-708c9bb8b1ab0f",
+       "name_as_written": "Llama-3.1-405B",
+       "other_securities": [],
+       "quote": "Llama-3.1-405B release in July 2024",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "open model that closed the GPT-3.5 Turbo gap"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5580670a11eded",
+       "name_as_written": "DeepSeek V3",
+       "other_securities": [],
+       "quote": "matched in capability by DeepSeek V3 in December 2024",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "open model matching GPT-4o"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-bfdcc68f5c037e",
+       "name_as_written": "GPT-4o",
+       "other_securities": [],
+       "quote": "GPT-4o at a sixth",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "OpenAI frontier model matched by DeepSeek V3"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-db0a3863f00725",
+       "name_as_written": "Qwen2.5-72B",
+       "other_securities": [],
+       "quote": "Qwen2.5-72B landed within striking distance of GPT-4o",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "Alibaba open model near GPT-4o at a sixth parameter count"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5948ca428b3e3c",
+       "name_as_written": "o1-preview",
+       "other_securities": [],
+       "quote": "OpenAI shipped o1-preview",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "OpenAI reasoning model that started Era 2"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-57a7d69f97310f",
+       "name_as_written": "Scale AI",
+       "other_securities": [],
+       "quote": "Scale AI collected some of the most es PhD-level multiple choice questions",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "data_source",
+       "role_detail": "collected questions for Humanity's Last Exam benchmark"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-92fbfbef6dec6a",
+       "name_as_written": "DeepSeek R1",
+       "other_securities": [],
+       "quote": "A little known model called DeepSeek R1",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "open reasoning model that narrowed the Era-2 gap"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a9fea718813a92",
+       "name_as_written": "Llama-4 Maverick",
+       "other_securities": [],
+       "quote": "squashed by Meta's Llama-4 Maverick",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Meta model that squashed R1 momentum"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1252d4f5cc9cba",
+       "name_as_written": "Gemini 2.5 Pro",
+       "other_securities": [],
+       "quote": "Gemini 2.5 Pro and o3 continued to push the reasoning frontier",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Google frontier reasoning model"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0ba9d9d10c6067",
+       "name_as_written": "o3",
+       "other_securities": [],
+       "quote": "Gemini 2.5 Pro and o3 continued to push the reasoning frontier",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "OpenAI frontier reasoning model"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-cb046bfe702fea",
+       "name_as_written": "Claude",
+       "other_securities": [],
+       "quote": "Prior to Claude Code, agents had their moments (like Cognition\u2019s viral demo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Anthropic model becoming default coding agent"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-fa0c0042589f91",
+       "name_as_written": "Opus 4.5",
+       "other_securities": [],
+       "quote": "Most AI experts consider Opus 4.5 the official start of the agentic era",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Anthropic model marking start of agentic era"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c33996f3ff9eb8",
+       "name_as_written": "Kimi K2.6",
+       "other_securities": [],
+       "quote": "Kimi K2.6 surpassed Opus 4.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "open model surpassing Opus 4.5"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1e788b1790c409",
+       "name_as_written": "GLM-5.2",
+       "other_securities": [],
+       "quote": "GLM-5.2 cleared GPT-5.2",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "disruptor",
+       "role_detail": "open model clearing GPT-5.2"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-750ea42f886192",
+       "name_as_written": "Prime Intellect's evalu stack",
+       "other_securities": [],
+       "quote": "Prime Intellect's evalu stack, specifically their environments hub",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "evaluation stack used to run benchmarks"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a1d3157528e5a6",
+       "name_as_written": "vLLM",
+       "other_securities": [],
+       "quote": "vLLM versions",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "serving framework used for open models"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2b7ed3a89989f7",
+       "name_as_written": "R1",
+       "other_securities": [],
+       "quote": "no one actually used R1 to do economically valuable work",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "DeepSeek model of the 'DeepSeek moment'"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-02390c971e5c57",
+       "name_as_written": "Fable 5",
+       "other_securities": [],
+       "quote": "Kimi K may score higher than Fable 5",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "closed model SemiAnalysis prefers for daily work despite lower benchmark score"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-f21b351a759ac3",
+       "name_as_written": "GPT-5.2",
+       "other_securities": [],
+       "quote": "GPT-5.2 (OpenAI\u2019s flagship at the time) performed better on our benchmark suite",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "OpenAI flagship scoring higher but not winning user experience"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-1158351955360f",
+       "name_as_written": "Claude Code",
+       "other_securities": [],
+       "quote": "Since the general release of Claude Code in May 2025",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Anthropic agentic product driving ARR"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-e2402ea55d7d40",
+       "name_as_written": "Codex",
+       "other_securities": [],
+       "quote": "Codex, in contrast, was comparatively crude",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "OpenAI agentic harness described as comparatively crude"
+      }
+     ],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-b824e10e39b721",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "Anthropic",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potentially_harmed",
+       "role_detail": "Frontier lab whose margins could be pressured by open-model commoditization"
+      },
+      {
+       "article_id": "A-7b1412bf406e",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-8b7f9ba4594d20",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "OpenAI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potentially_harmed",
+       "role_detail": "Frontier lab in duopoly; API volume comparator"
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "AI model developers / frontier labs"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-19deb651b67d88",
+        "C-f7d37ff4ecf399"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Benchmarks show open models catching up, but closed labs retain a product/harness edge that benchmarks miss."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-f7d37ff4ecf399"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "Durability of closed-lab economics depends on continued productization advantage rather than benchmark leadership."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-7329afdb8f8b53",
+        "C-509eb5ab8af711"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "If open models stay capable enough at a fraction of the cost, the model layer commoditizes and frontier lab margins collapse (the FUD case)."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-38CA111885: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (disruption_revenue_erosion vs competitive_share_shift) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-C1889ABBA5: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-7329afdb8f8b53"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "If open models stay capable enough relative to the closed frontier at a fraction of the cost, the model layer could become commoditized, which would be disastrous for frontier lab margins."
+      },
+      {
+       "claim_ids": [
+        "C-509eb5ab8af711"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "With each generation, open-source models take half as long to catch up to the first closed-source model of the era."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Open-model harnesses (e.g. open agentic frameworks) reaching parity with Claude Code in real usage"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Closed-lab ARR growth decelerating as cheaper open models win token share"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: that closed labs continue to out-productize open models via harness and workflow integration even when open benchmarks converge"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether closed labs can sustain their productization lead as open-model harnesses improve"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the benchmark-vs-user-experience gap persists or is itself quickly closed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No quantification of the revenue or margin protection the product edge provides"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Open-model harnesses close the user-experience gap quickly"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Enterprises migrate token volume to cheaper open models at parity"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Assess whether closed-lab productization (harness, workflow integration) is defensible against rapidly improving open-model tooling, and whether it is reflected in sustained token-share and ARR."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Closed-lab ARR continues outgrowing benchmark-equivalent open models"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that users pay a premium for harness quality over raw capability"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-7b1412bf406e",
+      "authors": [
+       "EVAN CLOUTIER",
+       "MAX KAN",
+       "JORDAN NANOS"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-f7d37ff4ecf399",
+       "C-19deb651b67d88",
+       "C-7b349774de73d7",
+       "C-beb449f03d812d",
+       "C-7329afdb8f8b53",
+       "C-509eb5ab8af711"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-08-21T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Are Open Models Catching Up?",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/are-open-models-catching-up",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "ce4664828d572e83ebcb3970db00237c400122cf65371d3fa3bf7351258ce389",
+   "created_at": "2026-10-21T10:22:09.660293Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-beb449f03d812d"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 1 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-beb449f03d812d"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-beb449f03d812d: measured 2026-08-21 (53 days before the as-of)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-7329afdb8f8b53",
+       "C-509eb5ab8af711"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (2 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 1 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); no verified dislocation or catalyst; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_exposure",
+      "kind": "held",
+      "text": "no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names)"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261021T101854Z-ingest",
+   "thesis_id": "TH-6BDD0881AD",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 6,
+ "other_cited_evidence": [
+  "C-509eb5ab8af711",
+  "C-7329afdb8f8b53"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {},
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Exposure \u2014 no listed company or verified sector exposure; whether the source names business groups is not checkable on this machine (the article text is not held here).",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {}
+}

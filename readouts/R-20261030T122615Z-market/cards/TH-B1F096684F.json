@@ -1,0 +1,3768 @@
+{
+ "analyst_corrections": {
+  "s06.0": "The line stated the 2.8-5x price rise as already happening; the source projects it. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)"
+ },
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-22",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.datacenter_physical"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:08:22.452295Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-19",
+   "latest_article_date": "2026-10-19",
+   "region": "Global",
+   "research_action": "RESEARCH NOW",
+   "sector": "Datacenter construction, cooling, racks and physical inputs",
+   "status": "ACTIVE",
+   "thesis_id": "TH-B1F096684F",
+   "title": "AI data center demand drives optical fiber shortage lifting fiber supplier pricing"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-270a13f50f4acf",
+     "C-64ac45bd160480",
+     "C-077ca4e0a8c4ef",
+     "C-ff9aac38fad269",
+     "C-686ac1ba435753",
+     "C-93a09f25f8ba7a",
+     "C-91083bfd41bade",
+     "C-f05a556c5b5a2a"
+    ],
+    "provenance": "FORECAST",
+    "text": "TrendForce forecasts a 180 million fiber-km global supply shortfall in 2026, capacity utilization at 92%, inventories down to one month, and finished fiber spot prices rising to 2.8-5x their 2025 levels, with shortages persisting to at least 2028. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-6bccbc277d58c2",
+     "C-57e250cf43347b",
+     "C-b9ebf1aa935a01"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article implies long-term supply agreements will become increasingly common as telecom operators and infrastructure providers rush to lock in scarce fiber supply."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A multi-year structural fiber shortage with severalfold price increases is a tailwind for optical fiber producers like Corning, though the article does not quantify any supplier's earnings or margin impact."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-87c41612b31b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-270a13f50f4acf"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Global optical fiber supply shortfall expected to reach 180 million fiber-kilometers in 2026 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-87c41612b31b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-64ac45bd160480"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Spot prices for finished optical fiber products projected to reach 2.8-5x their 2025 levels or higher \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-87c41612b31b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ff9aac38fad269"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Global optical fiber capacity utilization climbed to 92% in 2026"
+    },
+    {
+     "article_id": "A-87c41612b31b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-93a09f25f8ba7a"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Average price of bend-insensitive fiber (BIF) expected to average more than 5x its 2025 level in 2026 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-87c41612b31b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-077ca4e0a8c4ef"
+     ],
+     "original_date": "2026-10-19",
+     "period": "late 2025 to at least 2028",
+     "provenance": "FORECAST",
+     "text": "AI data center demand has tightened global optical fiber supply since late 2025, with shortages expected to persist until at least 2028"
+    },
+    {
+     "article_id": "A-87c41612b31b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-686ac1ba435753"
+     ],
+     "original_date": "2026-10-19",
+     "period": "2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Optical fiber inventory levels fell from four months in 2024 to just one month"
+    },
+    {
+     "article_id": "A-87c41612b31b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 14 pieces of evidence from A-87c41612b31b \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:08 UTC, analysed as of 2026-10-21, from a source published 2026-10-19; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-077ca4e0a8c4ef",
+     "C-460e1c8439cb9f",
+     "C-59603c212608da",
+     "C-990c4173b08137"
+    ],
+    "provenance": "FORECAST",
+    "step": "industry_shift",
+    "text": "AI data center, interconnect and backbone network deployments drive rising incremental demand for optical fiber \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-270a13f50f4acf",
+     "C-ff9aac38fad269",
+     "C-460e1c8439cb9f"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Demand reaches 577 million fiber-km in 2026 against constrained supply, producing a 180 million fiber-km shortfall with 92% utilization \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-64ac45bd160480",
+     "C-93a09f25f8ba7a",
+     "C-91083bfd41bade",
+     "C-f05a556c5b5a2a"
+    ],
+    "provenance": "FORECAST",
+    "step": "pricing",
+    "text": "Supply-demand imbalance pushes finished fiber spot prices to 2.8-5x their 2025 levels, with BIF over 5x \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-6bccbc277d58c2"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Higher fiber volumes and prices would benefit suppliers' revenue, but the article does not quantify any listed supplier's earnings impact"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-077ca4e0a8c4ef",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "supply shortage duration",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "late 2025 to at least 2028",
+    "qualifiers": [
+     "global",
+     "at least"
+    ],
+    "quote": "substantial demand from AI data center-related applications has tightened global optical fiber supply since late 2025, with shortages expected to persist until at least 2028",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "until at least 2028"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-270a13f50f4acf",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "supply shortfall",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "global"
+    ],
+    "quote": "this is expected to lead to a global supply shortfall of 180 million fiber-kilometers in 2026",
+    "role": "supports",
+    "unit": "fiber-kilometers",
+    "value": 180.0,
+    "value_text": "180 million"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-460e1c8439cb9f",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "demand",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "global"
+    ],
+    "quote": "Global optical fiber demand is estimated to reach 577 million fiber-kilometers in 2026",
+    "role": "supports",
+    "unit": "fiber-kilometers",
+    "value": 577.0,
+    "value_text": "577 million"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-57b31db88830b2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "capacity expansion lead time",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "typically"
+    ],
+    "quote": "expanding optical fiber preform capacity requires installing deposition equipment and establishing production processes, typically taking 18\u201324 months",
+    "role": "supports",
+    "unit": "months",
+    "value": null,
+    "value_text": "18\u201324 months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-59603c212608da",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "demand share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "roughly",
+     "data center construction"
+    ],
+    "quote": "driven primarily by data center construction, which accounts for roughly 18\u201320% of the total",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "18\u201320%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-64ac45bd160480",
+    "comparator": "2025 levels",
+    "epistemic": "forecast",
+    "label": "spot price change",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "or higher"
+    ],
+    "quote": "Tightening supply is projected to push spot prices for finished optical fiber products to 2.8\u20135 times their 2025 levels or higher",
+    "role": "supports",
+    "unit": "x",
+    "value": null,
+    "value_text": "2.8\u20135 times"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-686ac1ba435753",
+    "comparator": "four months in 2024",
+    "epistemic": "actual",
+    "label": "inventory level",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "inventory levels have fallen from four months in 2024 to just one month",
+    "role": "supports",
+    "unit": "months",
+    "value": 1.0,
+    "value_text": "one month"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-91083bfd41bade",
+    "comparator": "2025 levels",
+    "epistemic": "forecast",
+    "label": "price change",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "approximately",
+     "AI backbone fiber"
+    ],
+    "quote": "Prices for AI backbone fiber used in data center interconnects and high-capacity backbone networks are projected to reach approximately 2.8 times their 2025 levels",
+    "role": "supports",
+    "unit": "x",
+    "value": 2.8,
+    "value_text": "approximately 2.8 times"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b011",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-93a09f25f8ba7a",
+    "comparator": "2025 level",
+    "epistemic": "forecast",
+    "label": "price change",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "more than",
+     "BIF",
+     "cabling within data centers"
+    ],
+    "quote": "the average price of bend-insensitive fiber (BIF) used for cabling within data centers is expected to average more than five times its 2025 level in 2026",
+    "role": "supports",
+    "unit": "x",
+    "value": 5.0,
+    "value_text": "more than five times"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-990c4173b08137",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "demand share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "data center construction"
+    ],
+    "quote": "That share is projected to rise to 30\u201335% in 2027",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "30\u201335%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f05a556c5b5a2a",
+    "comparator": "previous levels",
+    "epistemic": "forecast",
+    "label": "price change",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "around",
+     "mainstream telecom fiber"
+    ],
+    "quote": "quotations for mainstream telecom fiber are expected to rise to around 3.7 times their previous levels",
+    "role": "supports",
+    "unit": "x",
+    "value": 3.7,
+    "value_text": "around 3.7 times"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ff9aac38fad269",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "capacity utilization",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "global"
+    ],
+    "quote": "global optical fiber capacity utilization has climbed to 92% in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": 92.0,
+    "value_text": "92%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5c6b80d1be1c25",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Some leading fiber suppliers are already booked into Q1 2027",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "1Q27",
+    "qualifiers": [],
+    "quote": "Some leading suppliers are already booked into the first quarter of 2027",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": "first quarter of 2027"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-87c41612b31b",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6bccbc277d58c2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "contract volume",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "September 2026",
+    "qualifiers": [
+     "delivery between 2027 and 2032",
+     "high-density optical fiber"
+    ],
+    "quote": "In September 2026, Verizon and Corning signed a multi-year supply agreement covering 129 million fiber-kilometers (approximately 80 million fiber-miles) of high-density optical fiber and connectivity solutions for delivery between 2027 and 2032",
+    "role": "catalyst",
+    "unit": "fiber-kilometers",
+    "value": 129.0,
+    "value_text": "129 million"
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-87c41612b31b",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2b6fe3b9dd5586",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm publishing this telecommunications industry report and its data/forecasts"
+    },
+    {
+     "article_id": "A-87c41612b31b",
+     "cik": "0001326801",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-049db2249fbf47",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Named only in an unrelated 'Next Article' teaser about AR glasses shipments; not part of this article's optical fiber analysis."
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-87c41612b31b",
+     "cik": "0000024741",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-29 (accession 0000024741-26-000255) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.50 par value per share",
+       "ticker": "GLW"
+      }
+     ],
+     "mention_id": "M-b3cde6d20e923c",
+     "name_as_written": "Corning",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-29 (accession 0000024741-26-000255) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "4.125% Notes due 2031",
+       "ticker": "GLW31"
+      }
+     ],
+     "quote": "Corning",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Optical fiber supplier that signed a multi-year 129 million fiber-km supply agreement with Verizon amid tightening supply and surging prices"
+    },
+    {
+     "article_id": "A-87c41612b31b",
+     "cik": "0000732712",
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-10-21",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.10",
+       "ticker": "VZ"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": "one of 2 common-equity classes registered as of 2026-10-21",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $0.10",
+       "ticker": "VZ"
+      }
+     ],
+     "mention_id": "M-0f1b342fc3b57d",
+     "name_as_written": "Verizon",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.375% Notes due 2026",
+       "ticker": "VZ 26B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "0.875% Notes due 2027",
+       "ticker": "VZ 27E"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.375% Notes due 2028",
+       "ticker": "VZ 28"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.125% Notes due 2028",
+       "ticker": "VZ 28A"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.350% Fixed Rate Notes due 2028",
+       "ticker": "VZ 28C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.875% Notes due 2029",
+       "ticker": "VZ 29B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "0.375% Notes due 2029",
+       "ticker": "VZ 29D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.250% Notes due 2030",
+       "ticker": "VZ 30"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.875% Notes due 2030",
+       "ticker": "VZ 30A"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "4.250% Notes due 2030",
+       "ticker": "VZ 30D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2031",
+       "ticker": "VZ 31"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.500% Notes due 2031",
+       "ticker": "VZ 31A"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.000% Fixed Rate Notes due 2031",
+       "ticker": "VZ 31D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "0.875% Notes due 2032",
+       "ticker": "VZ 32"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "0.750% Notes due 2032",
+       "ticker": "VZ 32A"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.500% Notes due 2032",
+       "ticker": "VZ 32B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.250% Notes due 2032",
+       "ticker": "VZ 32C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.300% Notes due 2033",
+       "ticker": "VZ 33B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "4.75% Notes due 2034",
+       "ticker": "VZ 34"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "4.750% Notes due 2034",
+       "ticker": "VZ 34C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2035",
+       "ticker": "VZ 35"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.125% Notes due 2035",
+       "ticker": "VZ 35A"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.375% Notes due 2036",
+       "ticker": "VZ 36A"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.750% Notes due 2036",
+       "ticker": "VZ 36B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.750% Notes due 2037",
+       "ticker": "VZ 37B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.875% Notes due 2038",
+       "ticker": "VZ 38B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.875% Notes due 2038",
+       "ticker": "VZ 38C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.500% Notes due 2039",
+       "ticker": "VZ 39C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.50% Fixed Rate Notes due 2039",
+       "ticker": "VZ 39D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "1.850% Notes due 2040",
+       "ticker": "VZ 40"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.850% Fixed Rate Notes due 2041",
+       "ticker": "VZ 41C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.9962% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+       "ticker": "VZ 56"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "5.7420% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+       "ticker": "VZ 56A"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "4.2462% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+       "ticker": "VZ 56B"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "5.7427% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+       "ticker": "VZ 56C"
+      }
+     ],
+     "quote": "Verizon",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Telecom operator that signed a multi-year fiber supply agreement with Corning to lock in supply"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [],
+   "sectors": [
+    "optical fiber suppliers",
+    "telecommunications equipment"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "September 2026 Verizon-Corning multi-year supply agreement; supplier order books booked into Q1 2027 [MEASURED OBSERVATION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-ff9aac38fad269",
+      "C-686ac1ba435753",
+      "C-5c6b80d1be1c25",
+      "C-64ac45bd160480"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Capacity utilization has climbed to 92% with inventories down to one month and some suppliers booked into the first quarter of 2027; tightening supply is projected to push spot prices to 2.8-5 times their 2025 levels. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-077ca4e0a8c4ef",
+      "C-57b31db88830b2",
+      "C-b9ebf1aa935a01"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The shortage is driven by sustained AI data center demand and new preform capacity takes 18-24 months, so shortages are expected to persist until at least 2028."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-b9ebf1aa935a01"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The article frames this shortage as different from past telecom infrastructure cycles, implicitly acknowledging prior fiber cycles have reversed; it does not rule out demand or capacity normalization."
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Fiber spot prices declining toward 2025 levels"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Capacity utilization falling and inventories rebuilding above one month"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "New preform capacity coming online faster than the 18-24 month lead time"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI data center fiber demand growth slowing below forecast"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether named suppliers' (e.g. Corning) earnings or valuations already reflect the price surge"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the severalfold spot price increases translate to realized contract prices and margins given the shift to long-term agreements"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether planned capacity expansions could close the shortfall faster than forecast"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Spot prices reverting toward 2025 levels"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Major new preform capacity announced coming online before 2028"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI data center fiber demand forecasts cut"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check Corning's fiber segment revenue, pricing exposure and order backlog, and identify other listed optical fiber/preform producers to assess who benefits most from the shortage and whether valuations already price it in."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Additional large multi-year LTAs signed at elevated prices"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Fiber spot prices continuing to rise into 2027"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Suppliers raising capex guidance or backlog disclosures"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 10); source-named exposure(s): Corning (GLW), Verizon (VZ/VZ); verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-87c41612b31b",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-5c6b80d1be1c25",
+     "C-6bccbc277d58c2",
+     "C-270a13f50f4acf",
+     "C-64ac45bd160480",
+     "C-077ca4e0a8c4ef",
+     "C-ff9aac38fad269",
+     "C-686ac1ba435753",
+     "C-57b31db88830b2",
+     "C-460e1c8439cb9f",
+     "C-59603c212608da",
+     "C-990c4173b08137",
+     "C-93a09f25f8ba7a",
+     "C-91083bfd41bade",
+     "C-f05a556c5b5a2a"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-19T16:14:38+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Optical Fiber Spot Prices Surge Severalfold in 2026, with Data Center-Driven Supply Shortages Expected to Persist Through 2028, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261019-13275.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-14 (0000820318-26-000020)",
+    "business": "optical fiber, lasers and photonics components maker",
+    "direction": "positive",
+    "enrichment_id": "EC-375f2da3447766",
+    "evidence": "s03.2: Supply-demand imbalance pushes finished fiber spot prices to 2.8-5x their 2025 levels, with BIF over 5x",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-08-14 (accession 0000820318-26-000020) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, no par value",
+      "ticker": "COHR"
+     }
+    ],
+    "name": "Coherent Corp",
+    "rationale": "Produces specialty optical fiber; higher fiber spot prices and tight supply would lift pricing and margins on its fiber product line.",
+    "registrant": "COHERENT CORP.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3827); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "specialty optical fiber products",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-B1F096684F",
+    "ticker_hint": "COHR"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-17 (0001628280-26-057358)",
+    "business": "optical transceivers and photonics for datacom/telecom",
+    "direction": "positive",
+    "enrichment_id": "EC-1fdf7bea867300",
+    "evidence": "s03.0: AI data center, interconnect and backbone network deployments drive rising incremental demand for optical fiber",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-08-17 (accession 0001628280-26-057358) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value of $0.001 per share",
+      "ticker": "LITE"
+     }
+    ],
+    "name": "Lumentum Holdings",
+    "rationale": "AI datacenter interconnect buildout drives demand for its optical components; fiber deployment growth supports its datacom transceiver volumes.",
+    "registrant": "Lumentum Holdings Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3669); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "datacom optical transceivers and components",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-B1F096684F",
+    "ticker_hint": "LITE"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "cables and optical fiber systems maker (ADR)",
+    "direction": "positive",
+    "enrichment_id": "EC-e47aa26acaf68c",
+    "evidence": "s03.2: Supply-demand imbalance pushes finished fiber spot prices to 2.8-5x their 2025 levels, with BIF over 5x",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Prysmian S.p.A.",
+    "rationale": "Large global optical fiber and cable producer; shortage-driven several-fold price increases would lift its telecom fiber revenue and margins.",
+    "registrant": "Prysmian S.p.A.",
+    "resolution_note": "only OTC/unlisted lines in the SEC map",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "optical fiber and cable",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-B1F096684F",
+    "ticker_hint": "PRYSY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-11 (0001104659-26-013549)",
+    "business": "interconnect, cable and fiber optic systems maker",
+    "direction": "positive",
+    "enrichment_id": "EC-495f6323ab54f6",
+    "evidence": "s03.0: AI data center, interconnect and backbone network deployments drive rising incremental demand for optical fiber",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-31 (accession 0001104659-26-089194) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A Common Stock, $0.001 par value",
+      "ticker": "APH"
+     }
+    ],
+    "name": "Amphenol Corporation",
+    "rationale": "AI datacenter interconnect demand lifts its fiber optic and high-speed cable assembly sales; a growing part of communications solutions segment.",
+    "registrant": "AMPHENOL CORP /DE/",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3678); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "fiber optic interconnect assemblies",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-B1F096684F",
+    "ticker_hint": "APH"
+   }
+  ],
+  "created_at": "2026-10-30T12:24:19.731428Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-f45b3870d4acdd",
+  "thesis_id": "TH-B1F096684F",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-87c41612b31b",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.datacenter_physical"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:08:22.452295Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-19",
+     "latest_article_date": "2026-10-19",
+     "region": "Global",
+     "research_action": "RESEARCH NOW",
+     "sector": "Datacenter construction, cooling, racks and physical inputs",
+     "status": "ACTIVE",
+     "thesis_id": "TH-B1F096684F",
+     "title": "AI data center demand drives optical fiber shortage lifting fiber supplier pricing"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-270a13f50f4acf",
+       "C-64ac45bd160480",
+       "C-077ca4e0a8c4ef",
+       "C-ff9aac38fad269",
+       "C-686ac1ba435753",
+       "C-93a09f25f8ba7a",
+       "C-91083bfd41bade",
+       "C-f05a556c5b5a2a"
+      ],
+      "provenance": "FORECAST",
+      "text": "TrendForce forecasts a 180 million fiber-km global supply shortfall in 2026, capacity utilization at 92%, inventories down to one month, and finished fiber spot prices rising to 2.8-5x their 2025 levels, with shortages persisting to at least 2028. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-6bccbc277d58c2",
+       "C-57e250cf43347b",
+       "C-b9ebf1aa935a01"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article implies long-term supply agreements will become increasingly common as telecom operators and infrastructure providers rush to lock in scarce fiber supply."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A multi-year structural fiber shortage with severalfold price increases is a tailwind for optical fiber producers like Corning, though the article does not quantify any supplier's earnings or margin impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-270a13f50f4acf"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Global optical fiber supply shortfall expected to reach 180 million fiber-kilometers in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-64ac45bd160480"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Spot prices for finished optical fiber products projected to reach 2.8-5x their 2025 levels or higher \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ff9aac38fad269"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Global optical fiber capacity utilization climbed to 92% in 2026"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-93a09f25f8ba7a"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Average price of bend-insensitive fiber (BIF) expected to average more than 5x its 2025 level in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-077ca4e0a8c4ef"
+       ],
+       "original_date": "2026-10-19",
+       "period": "late 2025 to at least 2028",
+       "provenance": "FORECAST",
+       "text": "AI data center demand has tightened global optical fiber supply since late 2025, with shortages expected to persist until at least 2028"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-686ac1ba435753"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Optical fiber inventory levels fell from four months in 2024 to just one month"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 14 pieces of evidence from A-87c41612b31b \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:08 UTC, analysed as of 2026-10-21, from a source published 2026-10-19; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-077ca4e0a8c4ef",
+       "C-460e1c8439cb9f",
+       "C-59603c212608da",
+       "C-990c4173b08137"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "AI data center, interconnect and backbone network deployments drive rising incremental demand for optical fiber \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-270a13f50f4acf",
+       "C-ff9aac38fad269",
+       "C-460e1c8439cb9f"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Demand reaches 577 million fiber-km in 2026 against constrained supply, producing a 180 million fiber-km shortfall with 92% utilization \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-64ac45bd160480",
+       "C-93a09f25f8ba7a",
+       "C-91083bfd41bade",
+       "C-f05a556c5b5a2a"
+      ],
+      "provenance": "FORECAST",
+      "step": "pricing",
+      "text": "Supply-demand imbalance pushes finished fiber spot prices to 2.8-5x their 2025 levels, with BIF over 5x \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-6bccbc277d58c2"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher fiber volumes and prices would benefit suppliers' revenue, but the article does not quantify any listed supplier's earnings impact"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-077ca4e0a8c4ef",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "supply shortage duration",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "late 2025 to at least 2028",
+      "qualifiers": [
+       "global",
+       "at least"
+      ],
+      "quote": "substantial demand from AI data center-related applications has tightened global optical fiber supply since late 2025, with shortages expected to persist until at least 2028",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "until at least 2028"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-270a13f50f4acf",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "supply shortfall",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "global"
+      ],
+      "quote": "this is expected to lead to a global supply shortfall of 180 million fiber-kilometers in 2026",
+      "role": "supports",
+      "unit": "fiber-kilometers",
+      "value": 180.0,
+      "value_text": "180 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-460e1c8439cb9f",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "global"
+      ],
+      "quote": "Global optical fiber demand is estimated to reach 577 million fiber-kilometers in 2026",
+      "role": "supports",
+      "unit": "fiber-kilometers",
+      "value": 577.0,
+      "value_text": "577 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-57b31db88830b2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "capacity expansion lead time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "typically"
+      ],
+      "quote": "expanding optical fiber preform capacity requires installing deposition equipment and establishing production processes, typically taking 18\u201324 months",
+      "role": "supports",
+      "unit": "months",
+      "value": null,
+      "value_text": "18\u201324 months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-59603c212608da",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "demand share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "roughly",
+       "data center construction"
+      ],
+      "quote": "driven primarily by data center construction, which accounts for roughly 18\u201320% of the total",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "18\u201320%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-64ac45bd160480",
+      "comparator": "2025 levels",
+      "epistemic": "forecast",
+      "label": "spot price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "or higher"
+      ],
+      "quote": "Tightening supply is projected to push spot prices for finished optical fiber products to 2.8\u20135 times their 2025 levels or higher",
+      "role": "supports",
+      "unit": "x",
+      "value": null,
+      "value_text": "2.8\u20135 times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-686ac1ba435753",
+      "comparator": "four months in 2024",
+      "epistemic": "actual",
+      "label": "inventory level",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "inventory levels have fallen from four months in 2024 to just one month",
+      "role": "supports",
+      "unit": "months",
+      "value": 1.0,
+      "value_text": "one month"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-91083bfd41bade",
+      "comparator": "2025 levels",
+      "epistemic": "forecast",
+      "label": "price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately",
+       "AI backbone fiber"
+      ],
+      "quote": "Prices for AI backbone fiber used in data center interconnects and high-capacity backbone networks are projected to reach approximately 2.8 times their 2025 levels",
+      "role": "supports",
+      "unit": "x",
+      "value": 2.8,
+      "value_text": "approximately 2.8 times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-93a09f25f8ba7a",
+      "comparator": "2025 level",
+      "epistemic": "forecast",
+      "label": "price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "more than",
+       "BIF",
+       "cabling within data centers"
+      ],
+      "quote": "the average price of bend-insensitive fiber (BIF) used for cabling within data centers is expected to average more than five times its 2025 level in 2026",
+      "role": "supports",
+      "unit": "x",
+      "value": 5.0,
+      "value_text": "more than five times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-990c4173b08137",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "demand share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "data center construction"
+      ],
+      "quote": "That share is projected to rise to 30\u201335% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "30\u201335%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f05a556c5b5a2a",
+      "comparator": "previous levels",
+      "epistemic": "forecast",
+      "label": "price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "around",
+       "mainstream telecom fiber"
+      ],
+      "quote": "quotations for mainstream telecom fiber are expected to rise to around 3.7 times their previous levels",
+      "role": "supports",
+      "unit": "x",
+      "value": 3.7,
+      "value_text": "around 3.7 times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ff9aac38fad269",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "capacity utilization",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "global"
+      ],
+      "quote": "global optical fiber capacity utilization has climbed to 92% in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 92.0,
+      "value_text": "92%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5c6b80d1be1c25",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Some leading fiber suppliers are already booked into Q1 2027",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "1Q27",
+      "qualifiers": [],
+      "quote": "Some leading suppliers are already booked into the first quarter of 2027",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "first quarter of 2027"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6bccbc277d58c2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "contract volume",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September 2026",
+      "qualifiers": [
+       "delivery between 2027 and 2032",
+       "high-density optical fiber"
+      ],
+      "quote": "In September 2026, Verizon and Corning signed a multi-year supply agreement covering 129 million fiber-kilometers (approximately 80 million fiber-miles) of high-density optical fiber and connectivity solutions for delivery between 2027 and 2032",
+      "role": "catalyst",
+      "unit": "fiber-kilometers",
+      "value": 129.0,
+      "value_text": "129 million"
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-87c41612b31b",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2b6fe3b9dd5586",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing this telecommunications industry report and its data/forecasts"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "cik": "0001326801",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-049db2249fbf47",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Named only in an unrelated 'Next Article' teaser about AR glasses shipments; not part of this article's optical fiber analysis."
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-87c41612b31b",
+       "cik": "0000024741",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-29 (accession 0000024741-26-000255) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.50 par value per share",
+         "ticker": "GLW"
+        }
+       ],
+       "mention_id": "M-b3cde6d20e923c",
+       "name_as_written": "Corning",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-29 (accession 0000024741-26-000255) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.125% Notes due 2031",
+         "ticker": "GLW31"
+        }
+       ],
+       "quote": "Corning",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Optical fiber supplier that signed a multi-year 129 million fiber-km supply agreement with Verizon amid tightening supply and surging prices"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "cik": "0000732712",
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-10-21",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.10",
+         "ticker": "VZ"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-10-21",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.10",
+         "ticker": "VZ"
+        }
+       ],
+       "mention_id": "M-0f1b342fc3b57d",
+       "name_as_written": "Verizon",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.375% Notes due 2026",
+         "ticker": "VZ 26B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.875% Notes due 2027",
+         "ticker": "VZ 27E"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.375% Notes due 2028",
+         "ticker": "VZ 28"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.125% Notes due 2028",
+         "ticker": "VZ 28A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.350% Fixed Rate Notes due 2028",
+         "ticker": "VZ 28C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.875% Notes due 2029",
+         "ticker": "VZ 29B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.375% Notes due 2029",
+         "ticker": "VZ 29D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.250% Notes due 2030",
+         "ticker": "VZ 30"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.875% Notes due 2030",
+         "ticker": "VZ 30A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.250% Notes due 2030",
+         "ticker": "VZ 30D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2031",
+         "ticker": "VZ 31"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.500% Notes due 2031",
+         "ticker": "VZ 31A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.000% Fixed Rate Notes due 2031",
+         "ticker": "VZ 31D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.875% Notes due 2032",
+         "ticker": "VZ 32"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.750% Notes due 2032",
+         "ticker": "VZ 32A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.500% Notes due 2032",
+         "ticker": "VZ 32B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.250% Notes due 2032",
+         "ticker": "VZ 32C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.300% Notes due 2033",
+         "ticker": "VZ 33B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.75% Notes due 2034",
+         "ticker": "VZ 34"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.750% Notes due 2034",
+         "ticker": "VZ 34C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2035",
+         "ticker": "VZ 35"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.125% Notes due 2035",
+         "ticker": "VZ 35A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.375% Notes due 2036",
+         "ticker": "VZ 36A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.750% Notes due 2036",
+         "ticker": "VZ 36B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.750% Notes due 2037",
+         "ticker": "VZ 37B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.875% Notes due 2038",
+         "ticker": "VZ 38B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.875% Notes due 2038",
+         "ticker": "VZ 38C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.500% Notes due 2039",
+         "ticker": "VZ 39C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.50% Fixed Rate Notes due 2039",
+         "ticker": "VZ 39D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.850% Notes due 2040",
+         "ticker": "VZ 40"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.850% Fixed Rate Notes due 2041",
+         "ticker": "VZ 41C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.9962% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+         "ticker": "VZ 56"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "5.7420% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+         "ticker": "VZ 56A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.2462% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+         "ticker": "VZ 56B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "5.7427% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+         "ticker": "VZ 56C"
+        }
+       ],
+       "quote": "Verizon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Telecom operator that signed a multi-year fiber supply agreement with Corning to lock in supply"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [],
+     "sectors": [
+      "optical fiber suppliers",
+      "telecommunications equipment"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "September 2026 Verizon-Corning multi-year supply agreement; supplier order books booked into Q1 2027 [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-ff9aac38fad269",
+        "C-686ac1ba435753",
+        "C-5c6b80d1be1c25",
+        "C-64ac45bd160480"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Capacity is near full with inventories at one month and suppliers booked into Q1 2027, and 2026 prices already rising 2.8-5x, indicating near-term tightness. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-077ca4e0a8c4ef",
+        "C-57b31db88830b2",
+        "C-b9ebf1aa935a01"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The shortage is driven by sustained AI data center demand and new preform capacity takes 18-24 months, so shortages are expected to persist until at least 2028."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-b9ebf1aa935a01"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The article frames this shortage as different from past telecom infrastructure cycles, implicitly acknowledging prior fiber cycles have reversed; it does not rule out demand or capacity normalization."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Fiber spot prices declining toward 2025 levels"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Capacity utilization falling and inventories rebuilding above one month"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "New preform capacity coming online faster than the 18-24 month lead time"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI data center fiber demand growth slowing below forecast"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether named suppliers' (e.g. Corning) earnings or valuations already reflect the price surge"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the severalfold spot price increases translate to realized contract prices and margins given the shift to long-term agreements"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether planned capacity expansions could close the shortfall faster than forecast"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Spot prices reverting toward 2025 levels"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Major new preform capacity announced coming online before 2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI data center fiber demand forecasts cut"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check Corning's fiber segment revenue, pricing exposure and order backlog, and identify other listed optical fiber/preform producers to assess who benefits most from the shortage and whether valuations already price it in."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Additional large multi-year LTAs signed at elevated prices"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Fiber spot prices continuing to rise into 2027"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Suppliers raising capex guidance or backlog disclosures"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 10); source-named exposure(s): Corning (GLW), Verizon (VZ/VZ); verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-87c41612b31b",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-5c6b80d1be1c25",
+       "C-6bccbc277d58c2",
+       "C-270a13f50f4acf",
+       "C-64ac45bd160480",
+       "C-077ca4e0a8c4ef",
+       "C-ff9aac38fad269",
+       "C-686ac1ba435753",
+       "C-57b31db88830b2",
+       "C-460e1c8439cb9f",
+       "C-59603c212608da",
+       "C-990c4173b08137",
+       "C-93a09f25f8ba7a",
+       "C-91083bfd41bade",
+       "C-f05a556c5b5a2a"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-19T16:14:38+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Optical Fiber Spot Prices Surge Severalfold in 2026, with Data Center-Driven Supply Shortages Expected to Persist Through 2028, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261019-13275.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "bf70e6c10695f5b5e5416725fe0a373e853f4eb1089b80022767b71e9ef27cce",
+   "created_at": "2026-10-21T08:08:32.236301Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 10); source-named exposure(s): Corning (GLW), Verizon (VZ/VZ); verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-270a13f50f4acf",
+       "C-64ac45bd160480",
+       "C-077ca4e0a8c4ef",
+       "C-ff9aac38fad269",
+       "C-686ac1ba435753",
+       "C-57b31db88830b2",
+       "C-460e1c8439cb9f",
+       "C-59603c212608da",
+       "C-990c4173b08137",
+       "C-93a09f25f8ba7a",
+       "C-91083bfd41bade",
+       "C-f05a556c5b5a2a",
+       "C-5c6b80d1be1c25",
+       "C-6bccbc277d58c2"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "14"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-270a13f50f4acf",
+       "C-64ac45bd160480",
+       "C-460e1c8439cb9f",
+       "C-59603c212608da",
+       "C-93a09f25f8ba7a",
+       "C-91083bfd41bade",
+       "C-f05a556c5b5a2a",
+       "C-6bccbc277d58c2",
+       "C-ff9aac38fad269",
+       "C-686ac1ba435753"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "10 claim(s) inside the next 2-4 quarters (C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026); showing 4 of 10); 1 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Corning (GLW), Verizon (VZ/VZ)",
+      "value": "2 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-6bccbc277d58c2"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-5c6b80d1be1c25",
+      "value": "present"
+     },
+     {
+      "claim_ids": [
+       "C-686ac1ba435753"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "C-686ac1ba435753: measured 2026-10-19 (2 days before the as-of) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Corning, Verizon already reflect inventory level of one month months in 2026?",
+      "value": "qualifies"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 14 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 10); source-named exposure(s): Corning (GLW), Verizon (VZ/VZ); verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-B1F096684F",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s06.0 \u2014 The line stated the 2.8-5x price rise as already happening; the source projects it. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.datacenter_physical"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:08:22.452295Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-19",
+     "latest_article_date": "2026-10-19",
+     "region": "Global",
+     "research_action": "RESEARCH NOW",
+     "sector": "Datacenter construction, cooling, racks and physical inputs",
+     "status": "ACTIVE",
+     "thesis_id": "TH-B1F096684F",
+     "title": "AI data center demand drives optical fiber shortage lifting fiber supplier pricing"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-270a13f50f4acf",
+       "C-64ac45bd160480",
+       "C-077ca4e0a8c4ef",
+       "C-ff9aac38fad269",
+       "C-686ac1ba435753",
+       "C-93a09f25f8ba7a",
+       "C-91083bfd41bade",
+       "C-f05a556c5b5a2a"
+      ],
+      "provenance": "FORECAST",
+      "text": "TrendForce forecasts a 180 million fiber-km global supply shortfall in 2026, capacity utilization at 92%, inventories down to one month, and finished fiber spot prices rising to 2.8-5x their 2025 levels, with shortages persisting to at least 2028. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-6bccbc277d58c2",
+       "C-57e250cf43347b",
+       "C-b9ebf1aa935a01"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article implies long-term supply agreements will become increasingly common as telecom operators and infrastructure providers rush to lock in scarce fiber supply."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A multi-year structural fiber shortage with severalfold price increases is a tailwind for optical fiber producers like Corning, though the article does not quantify any supplier's earnings or margin impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-270a13f50f4acf"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Global optical fiber supply shortfall expected to reach 180 million fiber-kilometers in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-64ac45bd160480"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Spot prices for finished optical fiber products projected to reach 2.8-5x their 2025 levels or higher \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ff9aac38fad269"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Global optical fiber capacity utilization climbed to 92% in 2026"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-93a09f25f8ba7a"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Average price of bend-insensitive fiber (BIF) expected to average more than 5x its 2025 level in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-077ca4e0a8c4ef"
+       ],
+       "original_date": "2026-10-19",
+       "period": "late 2025 to at least 2028",
+       "provenance": "FORECAST",
+       "text": "AI data center demand has tightened global optical fiber supply since late 2025, with shortages expected to persist until at least 2028"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-686ac1ba435753"
+       ],
+       "original_date": "2026-10-19",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Optical fiber inventory levels fell from four months in 2024 to just one month"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 14 pieces of evidence from A-87c41612b31b \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:08 UTC, analysed as of 2026-10-21, from a source published 2026-10-19; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-077ca4e0a8c4ef",
+       "C-460e1c8439cb9f",
+       "C-59603c212608da",
+       "C-990c4173b08137"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "AI data center, interconnect and backbone network deployments drive rising incremental demand for optical fiber \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-270a13f50f4acf",
+       "C-ff9aac38fad269",
+       "C-460e1c8439cb9f"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Demand reaches 577 million fiber-km in 2026 against constrained supply, producing a 180 million fiber-km shortfall with 92% utilization \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-64ac45bd160480",
+       "C-93a09f25f8ba7a",
+       "C-91083bfd41bade",
+       "C-f05a556c5b5a2a"
+      ],
+      "provenance": "FORECAST",
+      "step": "pricing",
+      "text": "Supply-demand imbalance pushes finished fiber spot prices to 2.8-5x their 2025 levels, with BIF over 5x \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-6bccbc277d58c2"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher fiber volumes and prices would benefit suppliers' revenue, but the article does not quantify any listed supplier's earnings impact"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-077ca4e0a8c4ef",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "supply shortage duration",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "late 2025 to at least 2028",
+      "qualifiers": [
+       "global",
+       "at least"
+      ],
+      "quote": "substantial demand from AI data center-related applications has tightened global optical fiber supply since late 2025, with shortages expected to persist until at least 2028",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "until at least 2028"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-270a13f50f4acf",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "supply shortfall",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "global"
+      ],
+      "quote": "this is expected to lead to a global supply shortfall of 180 million fiber-kilometers in 2026",
+      "role": "supports",
+      "unit": "fiber-kilometers",
+      "value": 180.0,
+      "value_text": "180 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-460e1c8439cb9f",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "global"
+      ],
+      "quote": "Global optical fiber demand is estimated to reach 577 million fiber-kilometers in 2026",
+      "role": "supports",
+      "unit": "fiber-kilometers",
+      "value": 577.0,
+      "value_text": "577 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-57b31db88830b2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "capacity expansion lead time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "typically"
+      ],
+      "quote": "expanding optical fiber preform capacity requires installing deposition equipment and establishing production processes, typically taking 18\u201324 months",
+      "role": "supports",
+      "unit": "months",
+      "value": null,
+      "value_text": "18\u201324 months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-59603c212608da",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "demand share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "roughly",
+       "data center construction"
+      ],
+      "quote": "driven primarily by data center construction, which accounts for roughly 18\u201320% of the total",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "18\u201320%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-64ac45bd160480",
+      "comparator": "2025 levels",
+      "epistemic": "forecast",
+      "label": "spot price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "or higher"
+      ],
+      "quote": "Tightening supply is projected to push spot prices for finished optical fiber products to 2.8\u20135 times their 2025 levels or higher",
+      "role": "supports",
+      "unit": "x",
+      "value": null,
+      "value_text": "2.8\u20135 times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-686ac1ba435753",
+      "comparator": "four months in 2024",
+      "epistemic": "actual",
+      "label": "inventory level",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "inventory levels have fallen from four months in 2024 to just one month",
+      "role": "supports",
+      "unit": "months",
+      "value": 1.0,
+      "value_text": "one month"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-91083bfd41bade",
+      "comparator": "2025 levels",
+      "epistemic": "forecast",
+      "label": "price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately",
+       "AI backbone fiber"
+      ],
+      "quote": "Prices for AI backbone fiber used in data center interconnects and high-capacity backbone networks are projected to reach approximately 2.8 times their 2025 levels",
+      "role": "supports",
+      "unit": "x",
+      "value": 2.8,
+      "value_text": "approximately 2.8 times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b011",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-93a09f25f8ba7a",
+      "comparator": "2025 level",
+      "epistemic": "forecast",
+      "label": "price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "more than",
+       "BIF",
+       "cabling within data centers"
+      ],
+      "quote": "the average price of bend-insensitive fiber (BIF) used for cabling within data centers is expected to average more than five times its 2025 level in 2026",
+      "role": "supports",
+      "unit": "x",
+      "value": 5.0,
+      "value_text": "more than five times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-990c4173b08137",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "demand share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "data center construction"
+      ],
+      "quote": "That share is projected to rise to 30\u201335% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "30\u201335%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f05a556c5b5a2a",
+      "comparator": "previous levels",
+      "epistemic": "forecast",
+      "label": "price change",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "around",
+       "mainstream telecom fiber"
+      ],
+      "quote": "quotations for mainstream telecom fiber are expected to rise to around 3.7 times their previous levels",
+      "role": "supports",
+      "unit": "x",
+      "value": 3.7,
+      "value_text": "around 3.7 times"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ff9aac38fad269",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "capacity utilization",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "global"
+      ],
+      "quote": "global optical fiber capacity utilization has climbed to 92% in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 92.0,
+      "value_text": "92%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5c6b80d1be1c25",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Some leading fiber suppliers are already booked into Q1 2027",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "1Q27",
+      "qualifiers": [],
+      "quote": "Some leading suppliers are already booked into the first quarter of 2027",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "first quarter of 2027"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-87c41612b31b",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6bccbc277d58c2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "contract volume",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September 2026",
+      "qualifiers": [
+       "delivery between 2027 and 2032",
+       "high-density optical fiber"
+      ],
+      "quote": "In September 2026, Verizon and Corning signed a multi-year supply agreement covering 129 million fiber-kilometers (approximately 80 million fiber-miles) of high-density optical fiber and connectivity solutions for delivery between 2027 and 2032",
+      "role": "catalyst",
+      "unit": "fiber-kilometers",
+      "value": 129.0,
+      "value_text": "129 million"
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-87c41612b31b",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2b6fe3b9dd5586",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing this telecommunications industry report and its data/forecasts"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "cik": "0001326801",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-049db2249fbf47",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Named only in an unrelated 'Next Article' teaser about AR glasses shipments; not part of this article's optical fiber analysis."
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-87c41612b31b",
+       "cik": "0000024741",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-29 (accession 0000024741-26-000255) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.50 par value per share",
+         "ticker": "GLW"
+        }
+       ],
+       "mention_id": "M-b3cde6d20e923c",
+       "name_as_written": "Corning",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-29 (accession 0000024741-26-000255) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.125% Notes due 2031",
+         "ticker": "GLW31"
+        }
+       ],
+       "quote": "Corning",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Optical fiber supplier that signed a multi-year 129 million fiber-km supply agreement with Verizon amid tightening supply and surging prices"
+      },
+      {
+       "article_id": "A-87c41612b31b",
+       "cik": "0000732712",
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-10-21",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.10",
+         "ticker": "VZ"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": "one of 2 common-equity classes registered as of 2026-10-21",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $0.10",
+         "ticker": "VZ"
+        }
+       ],
+       "mention_id": "M-0f1b342fc3b57d",
+       "name_as_written": "Verizon",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.375% Notes due 2026",
+         "ticker": "VZ 26B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.875% Notes due 2027",
+         "ticker": "VZ 27E"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.375% Notes due 2028",
+         "ticker": "VZ 28"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.125% Notes due 2028",
+         "ticker": "VZ 28A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.350% Fixed Rate Notes due 2028",
+         "ticker": "VZ 28C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.875% Notes due 2029",
+         "ticker": "VZ 29B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.375% Notes due 2029",
+         "ticker": "VZ 29D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.250% Notes due 2030",
+         "ticker": "VZ 30"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.875% Notes due 2030",
+         "ticker": "VZ 30A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.250% Notes due 2030",
+         "ticker": "VZ 30D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2031",
+         "ticker": "VZ 31"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.500% Notes due 2031",
+         "ticker": "VZ 31A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.000% Fixed Rate Notes due 2031",
+         "ticker": "VZ 31D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.875% Notes due 2032",
+         "ticker": "VZ 32"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "0.750% Notes due 2032",
+         "ticker": "VZ 32A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.500% Notes due 2032",
+         "ticker": "VZ 32B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.250% Notes due 2032",
+         "ticker": "VZ 32C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.300% Notes due 2033",
+         "ticker": "VZ 33B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.75% Notes due 2034",
+         "ticker": "VZ 34"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.750% Notes due 2034",
+         "ticker": "VZ 34C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2035",
+         "ticker": "VZ 35"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.125% Notes due 2035",
+         "ticker": "VZ 35A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.375% Notes due 2036",
+         "ticker": "VZ 36A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.750% Notes due 2036",
+         "ticker": "VZ 36B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.750% Notes due 2037",
+         "ticker": "VZ 37B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.875% Notes due 2038",
+         "ticker": "VZ 38B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.875% Notes due 2038",
+         "ticker": "VZ 38C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.500% Notes due 2039",
+         "ticker": "VZ 39C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.50% Fixed Rate Notes due 2039",
+         "ticker": "VZ 39D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "1.850% Notes due 2040",
+         "ticker": "VZ 40"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.850% Fixed Rate Notes due 2041",
+         "ticker": "VZ 41C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.9962% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+         "ticker": "VZ 56"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "5.7420% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+         "ticker": "VZ 56A"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "4.2462% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+         "ticker": "VZ 56B"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000732712-26-000046) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "5.7427% Fixed-to-Fixed Rate Junior Subordinated Notes due 2056",
+         "ticker": "VZ 56C"
+        }
+       ],
+       "quote": "Verizon",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Telecom operator that signed a multi-year fiber supply agreement with Corning to lock in supply"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [],
+     "sectors": [
+      "optical fiber suppliers",
+      "telecommunications equipment"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "September 2026 Verizon-Corning multi-year supply agreement; supplier order books booked into Q1 2027 [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-ff9aac38fad269",
+        "C-686ac1ba435753",
+        "C-5c6b80d1be1c25",
+        "C-64ac45bd160480"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Capacity utilization has climbed to 92% with inventories down to one month and some suppliers booked into the first quarter of 2027; tightening supply is projected to push spot prices to 2.8-5 times their 2025 levels. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-077ca4e0a8c4ef",
+        "C-57b31db88830b2",
+        "C-b9ebf1aa935a01"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The shortage is driven by sustained AI data center demand and new preform capacity takes 18-24 months, so shortages are expected to persist until at least 2028."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-b9ebf1aa935a01"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The article frames this shortage as different from past telecom infrastructure cycles, implicitly acknowledging prior fiber cycles have reversed; it does not rule out demand or capacity normalization."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Fiber spot prices declining toward 2025 levels"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Capacity utilization falling and inventories rebuilding above one month"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "New preform capacity coming online faster than the 18-24 month lead time"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI data center fiber demand growth slowing below forecast"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether named suppliers' (e.g. Corning) earnings or valuations already reflect the price surge"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the severalfold spot price increases translate to realized contract prices and margins given the shift to long-term agreements"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether planned capacity expansions could close the shortfall faster than forecast"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Spot prices reverting toward 2025 levels"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Major new preform capacity announced coming online before 2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI data center fiber demand forecasts cut"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check Corning's fiber segment revenue, pricing exposure and order backlog, and identify other listed optical fiber/preform producers to assess who benefits most from the shortage and whether valuations already price it in."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Additional large multi-year LTAs signed at elevated prices"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Fiber spot prices continuing to rise into 2027"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Suppliers raising capex guidance or backlog disclosures"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 10); source-named exposure(s): Corning (GLW), Verizon (VZ/VZ); verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-87c41612b31b",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-5c6b80d1be1c25",
+       "C-6bccbc277d58c2",
+       "C-270a13f50f4acf",
+       "C-64ac45bd160480",
+       "C-077ca4e0a8c4ef",
+       "C-ff9aac38fad269",
+       "C-686ac1ba435753",
+       "C-57b31db88830b2",
+       "C-460e1c8439cb9f",
+       "C-59603c212608da",
+       "C-990c4173b08137",
+       "C-93a09f25f8ba7a",
+       "C-91083bfd41bade",
+       "C-f05a556c5b5a2a"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-19T16:14:38+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Optical Fiber Spot Prices Surge Severalfold in 2026, with Data Center-Driven Supply Shortages Expected to Persist Through 2028, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261019-13275.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "9224c81c37833133bb6f2fb79ed4f4f6d91612c7ca9edf36f58f9357a2effdec",
+   "created_at": "2026-10-22T07:42:55.388527Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": "bf70e6c10695f5b5e5416725fe0a373e853f4eb1089b80022767b71e9ef27cce",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-077ca4e0a8c4ef",
+       "C-270a13f50f4acf",
+       "C-460e1c8439cb9f",
+       "C-57b31db88830b2",
+       "C-59603c212608da",
+       "C-64ac45bd160480",
+       "C-686ac1ba435753",
+       "C-91083bfd41bade",
+       "C-93a09f25f8ba7a",
+       "C-990c4173b08137",
+       "C-f05a556c5b5a2a",
+       "C-ff9aac38fad269",
+       "C-5c6b80d1be1c25",
+       "C-6bccbc277d58c2"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "14"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-270a13f50f4acf",
+       "C-460e1c8439cb9f",
+       "C-59603c212608da",
+       "C-64ac45bd160480",
+       "C-91083bfd41bade",
+       "C-93a09f25f8ba7a",
+       "C-f05a556c5b5a2a",
+       "C-6bccbc277d58c2",
+       "C-686ac1ba435753",
+       "C-ff9aac38fad269"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "10 claim(s) inside the next 2-4 quarters (C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026); showing 4 of 10); 1 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Corning (GLW), Verizon (VZ/VZ)",
+      "value": "2 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-6bccbc277d58c2"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-5c6b80d1be1c25",
+      "value": "present"
+     },
+     {
+      "claim_ids": [
+       "C-686ac1ba435753"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "C-686ac1ba435753: measured 2026-10-19 (3 days before the as-of) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Corning, Verizon already reflect inventory level of one month months in 2026?",
+      "value": "qualifies"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 14 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "RESEARCH NOW",
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-270a13f50f4acf: forecast window 2026-01-01..2026-12-31 (2026); C-460e1c8439cb9f: forecast window 2026-01-01..2026-12-31 (2026); C-59603c212608da: forecast window 2026-01-01..2026-12-31 (2026); C-64ac45bd160480: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 10); source-named exposure(s): Corning (GLW), Verizon (VZ/VZ); verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-B1F096684F",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 10,
+ "other_cited_evidence": [
+  "C-57e250cf43347b",
+  "C-b9ebf1aa935a01"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {},
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Research Now \u2014 a mispricing measured in the last quarter or a dated catalyst, timing inside the next 2-4 quarters, an exposure the source names, a premise the source states, and the full text read. An investigation, not a trade."
+ ],
+ "withheld_sentences": {}
+}

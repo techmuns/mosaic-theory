@@ -1,0 +1,2177 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-13",
+   "ancestry": [
+    "industrials"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-13",
+   "first_ingested_at": "2026-10-13T16:46:32.780167Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-25",
+   "latest_article_date": "2026-09-25",
+   "region": "China",
+   "research_action": "SKIP",
+   "sector": "Industrials, defense, transport, capital goods",
+   "status": "ACTIVE",
+   "thesis_id": "TH-A381AB426E",
+   "title": "China Industry 5.0 capex supercycle lifts automation, robotics, semis and industrial software suppliers"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-a01dc3d5e830dd",
+     "C-cf7ce812a085e3",
+     "C-83381c2cb52c50",
+     "C-d683cf7b4a65fb",
+     "C-7b79ec98d5831c"
+    ],
+    "provenance": "FORECAST",
+    "text": "Morgan Stanley expects China to spend up to $12 trillion through 2035 on infrastructure, factory upgrades and new industrial capacity under its Industry 5.0 strategy, split roughly $0.5tn infrastructure, $5.5tn factory upgrades and $6tn new capacity. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-adee5ed66e4a8a",
+     "C-83381c2cb52c50",
+     "C-d683cf7b4a65fb",
+     "C-7b79ec98d5831c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article says the spending may create opportunities for companies involved in automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing technologies, across three areas: infrastructure, factory upgrades and new capacity. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A multi-year, multi-trillion-dollar spending cycle would raise demand volumes for suppliers of automation, robotics, semiconductors, semicap equipment and industrial software, but the article names no specific listed companies and quantifies no supplier revenue effect."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-cf7ce812a085e3"
+     ],
+     "original_date": "2026-09-25",
+     "period": "through 2035",
+     "provenance": "FORECAST",
+     "text": "China may spend up to $12 trillion through 2035 on infrastructure, factory upgrades and new industrial capacity. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-48544f51040803"
+     ],
+     "original_date": "2026-09-25",
+     "period": "by 2035",
+     "provenance": "FORECAST",
+     "text": "Morgan Stanley expects China's profit margins to rise from approximately 5% to 8%. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a01dc3d5e830dd"
+     ],
+     "original_date": "2026-09-25",
+     "period": "next decade",
+     "provenance": "FORECAST",
+     "text": "China's Industry 5.0 strategy could unlock $12 trillion in investment over the next decade. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9d09069ef49279"
+     ],
+     "original_date": "2026-09-25",
+     "period": "by 2035",
+     "provenance": "FORECAST",
+     "text": "China's share of global manufacturing value-added could increase from 28% to 30% by 2035. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f421eb341f0b57"
+     ],
+     "original_date": "2026-09-25",
+     "period": "by 2035",
+     "provenance": "FORECAST",
+     "text": "AI and industrial investments could boost China's potential GDP by approximately 3.5%. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-83381c2cb52c50"
+     ],
+     "original_date": "2026-09-25",
+     "period": "through 2035",
+     "provenance": "FORECAST",
+     "text": "Infrastructure spend under Industry 5.0 estimated at $0.5 trillion. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 24 pieces of evidence from A-9faa09cf8082 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-13 16:46 UTC, analysed as of 2026-10-13, from a source published 2026-09-25; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-cf7ce812a085e3",
+     "C-adee5ed66e4a8a",
+     "C-166876aaa3e794",
+     "C-53aa69d7db2ea9",
+     "C-d13e6eac8dcf25"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "China shifts from 'made in China' to 'made by China', embedding AI and automation across factories and supply chains. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-cf7ce812a085e3",
+     "C-adee5ed66e4a8a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Up to $12 trillion of industrial capex through 2035 raises demand volumes for automation, robotics, semis and industrial software suppliers. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-48544f51040803"
+    ],
+    "provenance": "FORECAST",
+    "step": "margins",
+    "text": "China captures more value in higher-margin software and equipment, lifting profit margins from ~5% to 8%. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Supplier earnings would rise with spending, but the article quantifies no listed-company earnings impact."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b047",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1b27c4574347fa",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "share of global manufacturing value-added",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "by 2035",
+    "qualifiers": [],
+    "quote": "the country\u2019s share of global manufacturing value-added could increase from 28% to 30%",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "28% to 30%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3b4d2e6bcc52eb",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Morgan Stanley identifies five breakthroughs that could support China's shift from scale/cost toward ecosystem and innovation leadership.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "five breakthroughs could support its shift from scale and cost toward ecosystem and industrial innovation leadership",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "five"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-48544f51040803",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "profit margin",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "by 2035",
+    "qualifiers": [
+     "approximately",
+     "from 5%"
+    ],
+    "quote": "supporting an increase in profit margins from approximately 5% to 8%",
+    "role": "supports",
+    "unit": "%",
+    "value": 8.0,
+    "value_text": "5% to 8%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b065",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7b79ec98d5831c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "new capacity spend",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "through 2035",
+    "qualifiers": [],
+    "quote": "US $6 trillion",
+    "role": "supports",
+    "unit": "$tn",
+    "value": 6.0,
+    "value_text": "US $6 trillion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b065",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-83381c2cb52c50",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "infrastructure spend",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "through 2035",
+    "qualifiers": [],
+    "quote": "Spend: $0.5 trillion",
+    "role": "supports",
+    "unit": "$tn",
+    "value": 0.5,
+    "value_text": "$0.5 trillion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9d09069ef49279",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "share of global manufacturing value-added",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "by 2035",
+    "qualifiers": [
+     "from 28%"
+    ],
+    "quote": "increasing China\u2019s share of global manufacturing value-added from 28% to 30% by 2035",
+    "role": "supports",
+    "unit": "%",
+    "value": 30.0,
+    "value_text": "28% to 30%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a01dc3d5e830dd",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Industry 5.0 investment",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next decade",
+    "qualifiers": [
+     "could",
+     "over the next decade"
+    ],
+    "quote": "China's Industry 5.0 strategy could unlock $12 trillion in investment over the next decade.",
+    "role": "supports",
+    "unit": "$tn",
+    "value": 12.0,
+    "value_text": "$12 trillion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b045",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c43981436971c6",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "profit margins",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "by 2035",
+    "qualifiers": [],
+    "quote": "\u201cAs China's industrial ecosystem moves further into software, equipment, advanced materials, services and platforms, we expect profit margins to \uf002 increase from 5% to 8%.\u201d",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "5% to 8%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cf7ce812a085e3",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "industrial investment spend",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "through 2035",
+    "qualifiers": [
+     "up to"
+    ],
+    "quote": "China may spend up to $12 trillion through 2035 on infrastructure, factory upgrades and new industrial capacity",
+    "role": "supports",
+    "unit": "$tn",
+    "value": 12.0,
+    "value_text": "$12 trillion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b065",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d683cf7b4a65fb",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "factory upgrades spend",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "through 2035",
+    "qualifiers": [],
+    "quote": "US$5.5 trillion",
+    "role": "supports",
+    "unit": "$tn",
+    "value": 5.5,
+    "value_text": "US$5.5 trillion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b047",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f421eb341f0b57",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "potential GDP boost",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "by 2035",
+    "qualifiers": [
+     "approximately",
+     "could"
+    ],
+    "quote": "AI and industrial investments could boost China's potential GDP by approximately 3.5%",
+    "role": "supports",
+    "unit": "%",
+    "value": 3.5,
+    "value_text": "3.5%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-166876aaa3e794",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "China is moving from being the world's factory toward becoming the world's industrial operating system, combining scale, automation, AI and supply-chain depth.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "China is moving from being the world\u2019s factory toward becoming the world\u2019s industrial operating system",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b066",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-28cfd4223ae9e7",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "New capacity spend ($6tn) extends the cycle into strategic and emerging industries including semiconductors, semiconductor equipment, defense-related manufacturing and frontier sectors.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Extending the cycle into",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-34883a4a920825",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Industry 5.0 is characterized as simultaneously a productivity revolution, geopolitical response, manufacturing reorganization and strategic capital supercycle.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "China's Industry 5.0 is simultaneously a productivity revolution, a geopolitical response, a manufacturing reorganization and a strategic capital Supercycle",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-53aa69d7db2ea9",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "AI is becoming embedded across factories, supply chains and industrial systems rather than remaining a standalone tool.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "AI is moving beyond standalone tools and becoming embedded across factories, supply chains and industrial systems.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b066",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-679b2298914544",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Factory upgrades spend ($5.5tn) is about modernizing China's existing manufacturing base with intelligent equipment, robotics, sensors, edge semis and industrial software.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Modernizing China's existing",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b067",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7f186d3f340f79",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Leadership is a strategic overlay making the capex cycle broader and longer than a normal industrial recovery as localization, security, standards and market-share ambitions enter the capex equation.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Leadership is the strategic overlay that makes the cycle broader and longer than a normal industrial recovery",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-96348ff9ce1a0b",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "China's AI focus is increasingly on industrial applications \u2014 embedding AI into factories, supply chains and energy systems at scale \u2014 rather than chatbots.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "China's focus is increasingly on industrial applications",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-adee5ed66e4a8a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The spending may create opportunities for automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing companies.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "opportunities for companies involved in automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing technologies",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b034",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cd20ddca029885",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Breakthrough: AI becomes the operating system of the factory, coordinating workflows and optimizing production in real time.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "AI becomes the operating system of the factory, coordinating workflows, predicting maintenance needs and optimizing production in real time",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b041",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ce9968f34e4dda",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Breakthrough: export of industrial ecosystems not just products \u2014 exporting technologies, equipment and expertise from factory systems to energy and industrial infrastructure.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "exporting the technologies, equipment and expertise that support those products, from factory systems to energy and industrial infrastructure",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d13e6eac8dcf25",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "First pillar industrial intelligence: using AI, robotics, industrial software and autonomous systems to make factories smarter and more adaptive.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "using AI, robotics, industrial software and autonomous systems to make factories and production networks smarter",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b066",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d9e9bcc0286c7a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Infrastructure spend ($0.5tn) is the foundational backbone of Industry 5.0 including AI infrastructure, energy, digital connectivity and industrial software.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The foundational backbone",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b029",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-dffc183c8ff061",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Third pillar industrial leadership: building global ecosystems through scale, standards setting, industrial platforms and next-gen manufacturing.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "building global ecosystems through scale, standards setting, industrial platforms and next-generation manufacturing capabilities",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-71342c59687ea1",
+     "name_as_written": "Sheng Zhong",
+     "other_securities": [],
+     "quote": "says Sheng Zhong, Morgan Stanley\u2019s Head of China Industrials Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley's Head of China Industrials Research quoted in the article"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-689ecee2a6bc1a",
+     "name_as_written": "Robin Xing",
+     "other_securities": [],
+     "quote": "Robin Xing Morgan Stanley's Chief China Economist",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley's Chief China Economist quoted in the article"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7e3bdc2ebcd614",
+     "name_as_written": "Chetan Ahya",
+     "other_securities": [],
+     "quote": "says Chetan Ahya, Morgan Stanley's Chief Asia Economist",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley's Chief Asia Economist quoted in the article"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ea8a366ae47afb",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "Morgan Stanley Research believes",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher and research source of the article"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-9faa09cf8082",
+     "claim_ids": [
+      "C-adee5ed66e4a8a"
+     ],
+     "direction": "positive",
+     "name": "automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing technologies",
+     "provenance": "SOURCE OPINION",
+     "quote": "companies involved in automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing technologies"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "claim_ids": [
+      "C-adee5ed66e4a8a"
+     ],
+     "direction": "positive",
+     "name": "factory upgrades, automation, robotics, semiconductors and industrial software",
+     "provenance": "SOURCE OPINION",
+     "quote": "The largest opportunities span factory upgrades, automation, robotics, semiconductors and industrial software."
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "claim_ids": [
+      "C-d9e9bcc0286c7a"
+     ],
+     "direction": "positive",
+     "name": "industrial software",
+     "provenance": "SOURCE OPINION",
+     "quote": "industrial software"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "claim_ids": [
+      "C-679b2298914544"
+     ],
+     "direction": "positive",
+     "name": "robotics",
+     "provenance": "SOURCE OPINION",
+     "quote": "robotics"
+    }
+   ],
+   "sectors": [
+    "automation",
+    "robotics",
+    "semiconductors",
+    "industrial software",
+    "power systems",
+    "next-generation manufacturing"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-cf7ce812a085e3"
+     ],
+     "provenance": "FORECAST",
+     "text": "The article frames a decade-long spending cycle through 2035, not a near-term catalyst. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-a01dc3d5e830dd",
+      "C-cf7ce812a085e3",
+      "C-48544f51040803",
+      "C-9d09069ef49279",
+      "C-34883a4a920825",
+      "C-7f186d3f340f79",
+      "C-c5e6950a5bd39a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Industry 5.0 is framed as a strategic capital supercycle spanning infrastructure, factory upgrades and new capacity, extended by China's localization and leadership ambitions. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-0edef6eb1a60b3",
+      "C-b24267da307f33"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Overbuilding advanced manufacturing capacity without enough demand could pressure prices and profitability; China also faces weak pricing power, excess capacity, property headwinds and deflation."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-0edef6eb1a60b3"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The biggest risk is overbuilding advanced manufacturing capacity without demand, pressuring prices and profitability."
+    },
+    {
+     "claim_ids": [
+      "C-b24267da307f33"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China faces near-term challenges including weak pricing power, excess capacity, property headwinds and deflationary pressures."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of excess capacity and falling prices in targeted industries"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Downward revisions to China industrial capex plans"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Persistent deflation and weak pricing power eroding margins"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-0edef6eb1a60b3"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Building too much advanced manufacturing capacity without enough demand could pressure prices and profitability across the targeted industries. (scope: China advanced manufacturing capacity broadly; article's stated 'biggest risk' to the Industry 5.0 thesis.)"
+    },
+    {
+     "claim_ids": [
+      "C-b24267da307f33"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China faces weak pricing power, excess capacity, property headwinds, persistent deflation, an aging population and rising local government debt. (scope: China macro/industrial near-term challenges.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies capture the spending"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the capex earns commercial returns within an investable horizon"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether supplier earnings or valuations already reflect it"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus expectations for the named sectors"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of overcapacity and price pressure in targeted industries"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "China industrial investment plans are cut"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify the specific listed Chinese and global suppliers in automation, robotics, semicap and industrial software most exposed to China's Industry 5.0 capex, and check whether their orders and valuations reflect the forecast spend."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Chinese policy commits concrete funding to Industry 5.0"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Named supplier order books accelerate"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "SKIP",
+   "rule_trace": [
+    "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-9faa09cf8082",
+    "authors": [],
+    "authors_status": "UNKNOWN",
+    "claim_ids": [
+     "C-a01dc3d5e830dd",
+     "C-cf7ce812a085e3",
+     "C-48544f51040803",
+     "C-9d09069ef49279",
+     "C-f421eb341f0b57",
+     "C-83381c2cb52c50",
+     "C-d683cf7b4a65fb",
+     "C-7b79ec98d5831c",
+     "C-adee5ed66e4a8a",
+     "C-3b4d2e6bcc52eb",
+     "C-c43981436971c6",
+     "C-1b27c4574347fa",
+     "C-53aa69d7db2ea9",
+     "C-166876aaa3e794",
+     "C-34883a4a920825",
+     "C-96348ff9ce1a0b",
+     "C-d13e6eac8dcf25",
+     "C-dffc183c8ff061",
+     "C-cd20ddca029885",
+     "C-ce9968f34e4dda",
+     "C-d9e9bcc0286c7a",
+     "C-679b2298914544",
+     "C-28cfd4223ae9e7",
+     "C-7f186d3f340f79",
+     "C-0edef6eb1a60b3",
+     "C-b24267da307f33"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-25T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "China\u2019s Next Industrial Revolution: The Industry 5.0 Opportunity",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/china-next-industrial-revolution-industry-5-outlook",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": null,
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-13",
+   "change_summary": "Initial record \u2014 created from A-9faa09cf8082",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-13",
+     "ancestry": [
+      "industrials"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-13",
+     "first_ingested_at": "2026-10-13T16:46:32.780167Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-25",
+     "latest_article_date": "2026-09-25",
+     "region": "China",
+     "research_action": "SKIP",
+     "sector": "Industrials, defense, transport, capital goods",
+     "status": "ACTIVE",
+     "thesis_id": "TH-A381AB426E",
+     "title": "China Industry 5.0 capex supercycle lifts automation, robotics, semis and industrial software suppliers"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-a01dc3d5e830dd",
+       "C-cf7ce812a085e3",
+       "C-83381c2cb52c50",
+       "C-d683cf7b4a65fb",
+       "C-7b79ec98d5831c"
+      ],
+      "provenance": "FORECAST",
+      "text": "Morgan Stanley expects China to spend up to $12 trillion through 2035 on infrastructure, factory upgrades and new industrial capacity under its Industry 5.0 strategy, split roughly $0.5tn infrastructure, $5.5tn factory upgrades and $6tn new capacity. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-adee5ed66e4a8a",
+       "C-83381c2cb52c50",
+       "C-d683cf7b4a65fb",
+       "C-7b79ec98d5831c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article says the spending may create opportunities for companies involved in automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing technologies, across three areas: infrastructure, factory upgrades and new capacity. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A multi-year, multi-trillion-dollar spending cycle would raise demand volumes for suppliers of automation, robotics, semiconductors, semicap equipment and industrial software, but the article names no specific listed companies and quantifies no supplier revenue effect."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-cf7ce812a085e3"
+       ],
+       "original_date": "2026-09-25",
+       "period": "through 2035",
+       "provenance": "FORECAST",
+       "text": "China may spend up to $12 trillion through 2035 on infrastructure, factory upgrades and new industrial capacity. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-48544f51040803"
+       ],
+       "original_date": "2026-09-25",
+       "period": "by 2035",
+       "provenance": "FORECAST",
+       "text": "Morgan Stanley expects China's profit margins to rise from approximately 5% to 8%. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a01dc3d5e830dd"
+       ],
+       "original_date": "2026-09-25",
+       "period": "next decade",
+       "provenance": "FORECAST",
+       "text": "China's Industry 5.0 strategy could unlock $12 trillion in investment over the next decade. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9d09069ef49279"
+       ],
+       "original_date": "2026-09-25",
+       "period": "by 2035",
+       "provenance": "FORECAST",
+       "text": "China's share of global manufacturing value-added could increase from 28% to 30% by 2035. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f421eb341f0b57"
+       ],
+       "original_date": "2026-09-25",
+       "period": "by 2035",
+       "provenance": "FORECAST",
+       "text": "AI and industrial investments could boost China's potential GDP by approximately 3.5%. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-83381c2cb52c50"
+       ],
+       "original_date": "2026-09-25",
+       "period": "through 2035",
+       "provenance": "FORECAST",
+       "text": "Infrastructure spend under Industry 5.0 estimated at $0.5 trillion. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 24 pieces of evidence from A-9faa09cf8082 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-13 16:46 UTC, analysed as of 2026-10-13, from a source published 2026-09-25; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-cf7ce812a085e3",
+       "C-adee5ed66e4a8a",
+       "C-166876aaa3e794",
+       "C-53aa69d7db2ea9",
+       "C-d13e6eac8dcf25"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "China shifts from 'made in China' to 'made by China', embedding AI and automation across factories and supply chains. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-cf7ce812a085e3",
+       "C-adee5ed66e4a8a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Up to $12 trillion of industrial capex through 2035 raises demand volumes for automation, robotics, semis and industrial software suppliers. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-48544f51040803"
+      ],
+      "provenance": "FORECAST",
+      "step": "margins",
+      "text": "China captures more value in higher-margin software and equipment, lifting profit margins from ~5% to 8%. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Supplier earnings would rise with spending, but the article quantifies no listed-company earnings impact."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1b27c4574347fa",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "share of global manufacturing value-added",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by 2035",
+      "qualifiers": [],
+      "quote": "the country\u2019s share of global manufacturing value-added could increase from 28% to 30%",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "28% to 30%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3b4d2e6bcc52eb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Morgan Stanley identifies five breakthroughs that could support China's shift from scale/cost toward ecosystem and innovation leadership.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "five breakthroughs could support its shift from scale and cost toward ecosystem and industrial innovation leadership",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "five"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-48544f51040803",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "profit margin",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by 2035",
+      "qualifiers": [
+       "approximately",
+       "from 5%"
+      ],
+      "quote": "supporting an increase in profit margins from approximately 5% to 8%",
+      "role": "supports",
+      "unit": "%",
+      "value": 8.0,
+      "value_text": "5% to 8%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b065",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7b79ec98d5831c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "new capacity spend",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "through 2035",
+      "qualifiers": [],
+      "quote": "US $6 trillion",
+      "role": "supports",
+      "unit": "$tn",
+      "value": 6.0,
+      "value_text": "US $6 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b065",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-83381c2cb52c50",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "infrastructure spend",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "through 2035",
+      "qualifiers": [],
+      "quote": "Spend: $0.5 trillion",
+      "role": "supports",
+      "unit": "$tn",
+      "value": 0.5,
+      "value_text": "$0.5 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9d09069ef49279",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "share of global manufacturing value-added",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by 2035",
+      "qualifiers": [
+       "from 28%"
+      ],
+      "quote": "increasing China\u2019s share of global manufacturing value-added from 28% to 30% by 2035",
+      "role": "supports",
+      "unit": "%",
+      "value": 30.0,
+      "value_text": "28% to 30%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a01dc3d5e830dd",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Industry 5.0 investment",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next decade",
+      "qualifiers": [
+       "could",
+       "over the next decade"
+      ],
+      "quote": "China's Industry 5.0 strategy could unlock $12 trillion in investment over the next decade.",
+      "role": "supports",
+      "unit": "$tn",
+      "value": 12.0,
+      "value_text": "$12 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b045",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c43981436971c6",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "profit margins",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by 2035",
+      "qualifiers": [],
+      "quote": "\u201cAs China's industrial ecosystem moves further into software, equipment, advanced materials, services and platforms, we expect profit margins to \uf002 increase from 5% to 8%.\u201d",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "5% to 8%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cf7ce812a085e3",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "industrial investment spend",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "through 2035",
+      "qualifiers": [
+       "up to"
+      ],
+      "quote": "China may spend up to $12 trillion through 2035 on infrastructure, factory upgrades and new industrial capacity",
+      "role": "supports",
+      "unit": "$tn",
+      "value": 12.0,
+      "value_text": "$12 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b065",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d683cf7b4a65fb",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "factory upgrades spend",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "through 2035",
+      "qualifiers": [],
+      "quote": "US$5.5 trillion",
+      "role": "supports",
+      "unit": "$tn",
+      "value": 5.5,
+      "value_text": "US$5.5 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f421eb341f0b57",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "potential GDP boost",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by 2035",
+      "qualifiers": [
+       "approximately",
+       "could"
+      ],
+      "quote": "AI and industrial investments could boost China's potential GDP by approximately 3.5%",
+      "role": "supports",
+      "unit": "%",
+      "value": 3.5,
+      "value_text": "3.5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-166876aaa3e794",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "China is moving from being the world's factory toward becoming the world's industrial operating system, combining scale, automation, AI and supply-chain depth.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "China is moving from being the world\u2019s factory toward becoming the world\u2019s industrial operating system",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b066",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-28cfd4223ae9e7",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "New capacity spend ($6tn) extends the cycle into strategic and emerging industries including semiconductors, semiconductor equipment, defense-related manufacturing and frontier sectors.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Extending the cycle into",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-34883a4a920825",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Industry 5.0 is characterized as simultaneously a productivity revolution, geopolitical response, manufacturing reorganization and strategic capital supercycle.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "China's Industry 5.0 is simultaneously a productivity revolution, a geopolitical response, a manufacturing reorganization and a strategic capital Supercycle",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-53aa69d7db2ea9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AI is becoming embedded across factories, supply chains and industrial systems rather than remaining a standalone tool.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "AI is moving beyond standalone tools and becoming embedded across factories, supply chains and industrial systems.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b066",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-679b2298914544",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Factory upgrades spend ($5.5tn) is about modernizing China's existing manufacturing base with intelligent equipment, robotics, sensors, edge semis and industrial software.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Modernizing China's existing",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b067",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7f186d3f340f79",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Leadership is a strategic overlay making the capex cycle broader and longer than a normal industrial recovery as localization, security, standards and market-share ambitions enter the capex equation.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Leadership is the strategic overlay that makes the cycle broader and longer than a normal industrial recovery",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-96348ff9ce1a0b",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "China's AI focus is increasingly on industrial applications \u2014 embedding AI into factories, supply chains and energy systems at scale \u2014 rather than chatbots.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "China's focus is increasingly on industrial applications",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-adee5ed66e4a8a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The spending may create opportunities for automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing companies.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "opportunities for companies involved in automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing technologies",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b034",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cd20ddca029885",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Breakthrough: AI becomes the operating system of the factory, coordinating workflows and optimizing production in real time.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "AI becomes the operating system of the factory, coordinating workflows, predicting maintenance needs and optimizing production in real time",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b041",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ce9968f34e4dda",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Breakthrough: export of industrial ecosystems not just products \u2014 exporting technologies, equipment and expertise from factory systems to energy and industrial infrastructure.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "exporting the technologies, equipment and expertise that support those products, from factory systems to energy and industrial infrastructure",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d13e6eac8dcf25",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "First pillar industrial intelligence: using AI, robotics, industrial software and autonomous systems to make factories smarter and more adaptive.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "using AI, robotics, industrial software and autonomous systems to make factories and production networks smarter",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b066",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d9e9bcc0286c7a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Infrastructure spend ($0.5tn) is the foundational backbone of Industry 5.0 including AI infrastructure, energy, digital connectivity and industrial software.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The foundational backbone",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-dffc183c8ff061",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Third pillar industrial leadership: building global ecosystems through scale, standards setting, industrial platforms and next-gen manufacturing.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "building global ecosystems through scale, standards setting, industrial platforms and next-generation manufacturing capabilities",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-71342c59687ea1",
+       "name_as_written": "Sheng Zhong",
+       "other_securities": [],
+       "quote": "says Sheng Zhong, Morgan Stanley\u2019s Head of China Industrials Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley's Head of China Industrials Research quoted in the article"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-689ecee2a6bc1a",
+       "name_as_written": "Robin Xing",
+       "other_securities": [],
+       "quote": "Robin Xing Morgan Stanley's Chief China Economist",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley's Chief China Economist quoted in the article"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7e3bdc2ebcd614",
+       "name_as_written": "Chetan Ahya",
+       "other_securities": [],
+       "quote": "says Chetan Ahya, Morgan Stanley's Chief Asia Economist",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley's Chief Asia Economist quoted in the article"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ea8a366ae47afb",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "Morgan Stanley Research believes",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher and research source of the article"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-9faa09cf8082",
+       "claim_ids": [
+        "C-adee5ed66e4a8a"
+       ],
+       "direction": "positive",
+       "name": "automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing technologies",
+       "provenance": "SOURCE OPINION",
+       "quote": "companies involved in automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing technologies"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "claim_ids": [
+        "C-adee5ed66e4a8a"
+       ],
+       "direction": "positive",
+       "name": "factory upgrades, automation, robotics, semiconductors and industrial software",
+       "provenance": "SOURCE OPINION",
+       "quote": "The largest opportunities span factory upgrades, automation, robotics, semiconductors and industrial software."
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "claim_ids": [
+        "C-d9e9bcc0286c7a"
+       ],
+       "direction": "positive",
+       "name": "industrial software",
+       "provenance": "SOURCE OPINION",
+       "quote": "industrial software"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "claim_ids": [
+        "C-679b2298914544"
+       ],
+       "direction": "positive",
+       "name": "robotics",
+       "provenance": "SOURCE OPINION",
+       "quote": "robotics"
+      }
+     ],
+     "sectors": [
+      "automation",
+      "robotics",
+      "semiconductors",
+      "industrial software",
+      "power systems",
+      "next-generation manufacturing"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-cf7ce812a085e3"
+       ],
+       "provenance": "FORECAST",
+       "text": "The article frames a decade-long spending cycle through 2035, not a near-term catalyst. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-a01dc3d5e830dd",
+        "C-cf7ce812a085e3",
+        "C-48544f51040803",
+        "C-9d09069ef49279",
+        "C-34883a4a920825",
+        "C-7f186d3f340f79",
+        "C-c5e6950a5bd39a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Industry 5.0 is framed as a strategic capital supercycle spanning infrastructure, factory upgrades and new capacity, extended by China's localization and leadership ambitions. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-0edef6eb1a60b3",
+        "C-b24267da307f33"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Overbuilding advanced manufacturing capacity without enough demand could pressure prices and profitability; China also faces weak pricing power, excess capacity, property headwinds and deflation."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-0edef6eb1a60b3"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The biggest risk is overbuilding advanced manufacturing capacity without demand, pressuring prices and profitability."
+      },
+      {
+       "claim_ids": [
+        "C-b24267da307f33"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China faces near-term challenges including weak pricing power, excess capacity, property headwinds and deflationary pressures."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of excess capacity and falling prices in targeted industries"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Downward revisions to China industrial capex plans"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Persistent deflation and weak pricing power eroding margins"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-0edef6eb1a60b3"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Building too much advanced manufacturing capacity without enough demand could pressure prices and profitability across the targeted industries. (scope: China advanced manufacturing capacity broadly; article's stated 'biggest risk' to the Industry 5.0 thesis.)"
+      },
+      {
+       "claim_ids": [
+        "C-b24267da307f33"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China faces weak pricing power, excess capacity, property headwinds, persistent deflation, an aging population and rising local government debt. (scope: China macro/industrial near-term challenges.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies capture the spending"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the capex earns commercial returns within an investable horizon"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether supplier earnings or valuations already reflect it"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus expectations for the named sectors"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of overcapacity and price pressure in targeted industries"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "China industrial investment plans are cut"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify the specific listed Chinese and global suppliers in automation, robotics, semicap and industrial software most exposed to China's Industry 5.0 capex, and check whether their orders and valuations reflect the forecast spend."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Chinese policy commits concrete funding to Industry 5.0"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Named supplier order books accelerate"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "SKIP",
+     "rule_trace": [
+      "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-9faa09cf8082",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-a01dc3d5e830dd",
+       "C-cf7ce812a085e3",
+       "C-48544f51040803",
+       "C-9d09069ef49279",
+       "C-f421eb341f0b57",
+       "C-83381c2cb52c50",
+       "C-d683cf7b4a65fb",
+       "C-7b79ec98d5831c",
+       "C-adee5ed66e4a8a",
+       "C-3b4d2e6bcc52eb",
+       "C-c43981436971c6",
+       "C-1b27c4574347fa",
+       "C-53aa69d7db2ea9",
+       "C-166876aaa3e794",
+       "C-34883a4a920825",
+       "C-96348ff9ce1a0b",
+       "C-d13e6eac8dcf25",
+       "C-dffc183c8ff061",
+       "C-cd20ddca029885",
+       "C-ce9968f34e4dda",
+       "C-d9e9bcc0286c7a",
+       "C-679b2298914544",
+       "C-28cfd4223ae9e7",
+       "C-7f186d3f340f79",
+       "C-0edef6eb1a60b3",
+       "C-b24267da307f33"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-25T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "China\u2019s Next Industrial Revolution: The Industry 5.0 Opportunity",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/china-next-industrial-revolution-industry-5-outlook",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "cca2d10e13782d85f432956a5cab84bd9e01b2dadeb9666946493fc3f1833b30",
+   "created_at": "2026-10-21T10:25:41.838801Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-a01dc3d5e830dd",
+       "C-cf7ce812a085e3",
+       "C-48544f51040803",
+       "C-9d09069ef49279",
+       "C-f421eb341f0b57",
+       "C-83381c2cb52c50",
+       "C-d683cf7b4a65fb",
+       "C-7b79ec98d5831c",
+       "C-c43981436971c6",
+       "C-1b27c4574347fa"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "10"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-a01dc3d5e830dd",
+       "C-cf7ce812a085e3",
+       "C-48544f51040803",
+       "C-9d09069ef49279",
+       "C-f421eb341f0b57",
+       "C-83381c2cb52c50",
+       "C-d683cf7b4a65fb",
+       "C-7b79ec98d5831c",
+       "C-c43981436971c6",
+       "C-1b27c4574347fa"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 10 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "longer_term_only"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: automation, robotics, semiconductors, industrial software, power systems and next-generation manufacturing technologies, sector: factory upgrades, automation, robotics, semiconductors and industrial software, sector: industrial software, sector: robotics",
+      "value": "0 listed \u00b7 4 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-0edef6eb1a60b3",
+       "C-b24267da307f33"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (2 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 10 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "SKIP",
+    "rules_fired": [
+     "SKIP-3 longer-term only \u2014 no dated window inside the next 2-4 quarters"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T101854Z-ingest",
+   "thesis_id": "TH-A381AB426E",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 21,
+ "other_cited_evidence": [
+  "C-c5e6950a5bd39a",
+  "C-0edef6eb1a60b3",
+  "C-b24267da307f33"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s03.0": "The 'made in China' to 'made by China' phrasing is not in any cited span; cited spans support AI/automation embedding and world's factory to industrial operating system, but not the specific slogan",
+  "s06.0": "Cited span supports the through-2035 decade-long spending figure, but 'not a near-term catalyst' is an added framing not present in the cited span",
+  "s07.4": "Cited span supports weak pricing power, excess capacity, property headwinds and deflation, but 'aging population and rising local government debt' are not in the cited span"
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": "Registry status now ARCHIVED since 2026-10-13: research action is SKIP \u2014 kept in the searchable archive, off the active list",
+ "why_action": [
+  "Skip \u2014 longer-term only: no dated window inside the next 2-4 quarters."
+ ],
+ "withheld_sentences": {}
+}

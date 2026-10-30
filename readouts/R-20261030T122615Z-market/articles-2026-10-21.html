@@ -1,0 +1,367 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name="robots" content="noindex, nofollow"><title>Articles — Week of 12–21 Oct 2026 · with research re-read after the scan · Research desk</title><style>
+:root{--bg:#f5f5f2;--panel:#fff;--ink:#16181d;--ink2:#3b4049;--muted:#676d78;--line:#e0e2e6;
+--soft:#f0f1f3;--accent:#1f3a5f;--accent-bg:#eef2f7;--now:#8c1d18;--now-bg:#f8e7e5;
+--watch:#7a5200;--watch-bg:#f6eedc;--skip:#555b65;--skip-bg:#eceef1;--warn:#9a3412;
+--warn-bg:#fff3ea;--ok:#1f6f43;--ok-bg:#e6f2eb;--bad:#9b1c1c;--bad-bg:#fbe9e7;--info:#0f5f6e;
+--info-bg:#e3f1f3;--obs:#1f6f43;--fc:#0f5f6e;--op:#6b3fa0;--inf:#8a5a00;--ext:#1d4f91;
+--unk:#676d78;--block:#9b1c1c}
+@media (prefers-color-scheme: dark){:root{--bg:#111316;--panel:#181b1f;--ink:#eceef1;
+--ink2:#c9cdd4;--muted:#9aa1ab;--line:#2b2f35;--soft:#20242a;--accent:#9cc2f5;
+--accent-bg:#1a2433;--now:#ffb4ab;--now-bg:#3a1916;--watch:#f0c36b;--watch-bg:#33280f;
+--skip:#c9cdd4;--skip-bg:#24282e;--warn:#fdba74;--warn-bg:#2c1c10;--ok:#7fd4a4;--ok-bg:#132621;
+--bad:#ffb4ab;--bad-bg:#3a1916;--info:#8fd6e0;--info-bg:#10272b;--obs:#7fd4a4;--fc:#8fd6e0;
+--op:#c9a8f0;--inf:#f0c36b;--ext:#9cc2f5;--unk:#9aa1ab;--block:#ffb4ab}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-padding-top:60px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,-apple-system,
+BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.topnav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.topnav .in{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+gap:20px;min-height:50px}
+.brand{font-weight:700;white-space:nowrap;color:var(--ink)}.brand small{font-weight:500;
+color:var(--muted);margin-left:6px}
+.links{display:flex;gap:18px;overflow-x:auto;white-space:nowrap;flex:1;min-width:0;
+scrollbar-width:none}.links::-webkit-scrollbar{display:none}
+.links a{color:var(--ink2);font-size:14px;padding:14px 0;border-bottom:2px solid transparent}
+.links a:hover{color:var(--ink);text-decoration:none;border-bottom-color:var(--line)}
+.links a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.subnav{max-width:1120px;margin:0 auto;padding:10px 16px 0;font-size:13px;color:var(--muted)}
+.subnav a{margin:0 4px}
+.auditbar{font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;
+border:1px solid var(--line);border-radius:6px;padding:4px 9px}
+#audit:checked~.topnav .auditbar{background:var(--accent-bg);color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 64px;overflow-wrap:break-word}
+.wrap.narrow{max-width:940px}
+.pill{display:inline-block;font-size:12px;font-weight:650;letter-spacing:.02em;padding:3px 10px;
+border-radius:999px;white-space:nowrap;vertical-align:1px}
+.pill.now{background:var(--now-bg);color:var(--now)}.pill.watch{background:var(--watch-bg);
+color:var(--watch)}.pill.skip,.pill.dir{background:var(--skip-bg);color:var(--skip)}
+.pill.kind{background:var(--accent-bg);color:var(--accent)}
+.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.topnav .aud{display:revert}
+#audit:checked~.wrap .nonaud{display:none}
+@media (max-width:720px){.topnav .in{gap:0 12px;flex-wrap:wrap;padding-top:8px}
+.brand small{display:none}.auditbar{margin-left:auto}
+.links{order:3;flex-basis:100%;flex-wrap:wrap;gap:0 16px;white-space:normal;overflow:visible}
+.links a{padding:6px 0 8px}.wrap{padding:18px 12px 48px}}
+@media print{.topnav,.subnav{display:none}body{background:#fff}.aud{display:revert!important}
+.nonaud{display:none!important}}
+
+table.mktt td.n{text-align:right;white-space:nowrap}.mkt .nh{color:var(--muted)}
+.mkt td.mkw{color:var(--warn,#8a5a00);font-size:13px}
+.mkt .mktl{margin:0 0 4px}.mkt .note{font-size:12.5px;color:var(--muted)}details.mkth{margin:6px 0}
+h1{font-size:26px;line-height:1.2;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:17px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);
+font-size:13px;margin-left:6px}h3{font-size:14px;margin:14px 0 6px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+font-weight:600}
+.hero{margin-bottom:20px}.lede{font-size:16px;color:var(--ink2);margin:0 0 14px;max-width:820px}
+.sum{font-size:15px;color:var(--ink2);margin:0 0 10px}
+.hint{color:var(--muted);font-size:13px;margin:0 0 12px;max-width:820px}
+.muted{color:var(--muted)}.nowrap{white-space:nowrap}.small{font-size:12.5px;color:var(--muted)}
+.mt{margin-top:26px}
+.strip{display:flex;gap:12px;flex-wrap:wrap}
+.strip>*{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;
+min-width:150px;flex:1;color:var(--ink);display:flex;flex-direction:column;gap:1px}
+.strip b{font-size:24px;line-height:1.15}
+.strip span{font-size:13px;font-weight:600;color:var(--ink2)}
+.strip small{font-size:12px;color:var(--muted)}
+.strip a.warn b{color:var(--bad)}.strip a:hover{text-decoration:none;border-color:var(--accent)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start;
+margin-bottom:30px}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px 8px;
+position:sticky;top:76px}
+.att{list-style:none;margin:0;padding:0}.att li{padding:10px 0;border-top:1px solid var(--line);
+font-size:14px;display:flex;flex-direction:column;gap:2px}.att li:first-child{border-top:0;
+padding-top:0}.att li span{font-size:12.5px;color:var(--muted)}
+.area{margin-bottom:20px}.area h3{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+color:var(--muted);margin:0 0 8px}
+.trow{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+padding:12px 16px;margin-bottom:8px;color:var(--ink)}
+.trow:hover{border-color:var(--accent);text-decoration:none}
+.ttop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:4px}
+.ttitle{font-weight:650;font-size:16px;line-height:1.35;margin-bottom:2px}
+.tmeta .miss,.tsub .miss{color:var(--ink2)}.tsub{display:flex;flex-wrap:wrap;gap:2px 10px;
+margin-top:3px;font-size:12.5px}.tsub .stale{margin-top:0}
+details.gone>summary{font-size:12.5px;color:var(--muted);cursor:pointer}
+.tline{color:var(--ink2);font-size:14.5px}.tmeta{color:var(--muted);font-size:12.5px;margin-top:4px}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gapi{color:var(--ink2)}
+.ev{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:20px;
+padding:1px 8px;color:var(--ink2);background:var(--panel);white-space:nowrap}
+.ev.down{color:var(--bad);border-color:var(--bad-bg)}.ev.up{color:var(--ok)}.ev.new{color:var(--info)}
+.ev.rv{color:var(--bad);background:var(--bad-bg);border-color:transparent}
+.st{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12.5px;white-space:nowrap}
+.st.ok{color:var(--ok);background:var(--ok-bg)}.st.part{color:var(--watch);background:var(--watch-bg)}
+.st.bad{color:var(--bad);background:var(--bad-bg)}.st.info{color:var(--info);background:var(--info-bg)}
+.st.mute{color:var(--muted);background:var(--soft)}
+table{border-collapse:collapse;width:100%;background:var(--panel)}
+.hscroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;max-width:100%}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;
+font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--soft)}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14.5px}
+tr:last-child td{border-bottom:0}
+section{margin-bottom:28px}
+code{font-size:12.5px;background:var(--soft);border-radius:4px;padding:1px 5px;
+overflow-wrap:anywhere}
+code.cmd{display:inline-block;white-space:normal}
+aside code.cmd,.howto code.cmd{display:block;margin:4px 0;font-size:12px}.nw{white-space:nowrap}
+.headsup{margin:12px 0 0;font-size:13.5px;color:var(--ink2)}
+.steps4{list-style:none;padding:0;margin:12px 0 6px;display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.steps4 li{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.filters input:not([type=checkbox]),.filters select{font:inherit;font-size:14px;padding:7px 10px;
+border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+.filters input#q{min-width:240px;flex:1}.filters label{display:inline-flex;gap:8px;
+align-items:center;font-size:14px}
+.weeks{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:4px;max-width:100%}
+.wk{white-space:nowrap;border:1px solid var(--line);border-radius:8px;padding:5px 10px;
+font-size:13px;background:var(--panel);color:var(--ink2)}
+.wk small{margin-left:6px;color:var(--muted)}.wk.on{border-color:var(--accent);color:var(--ink);
+font-weight:600}
+details summary{cursor:pointer;color:var(--accent);font-size:13.5px}
+details.more-rows>summary{margin:8px 14px 12px}
+details.ubk,details.quiet{background:var(--panel);border:1px solid var(--line);
+border-radius:12px;padding:10px 16px;margin-bottom:10px}
+details.ubk>summary,details.quiet>summary{color:var(--ink);font-size:15px}
+details.ubk .hscroll{margin-top:10px}
+.act{display:inline-flex;gap:2px;vertical-align:middle}.act i{width:9px;height:14px;
+border-radius:2px;background:var(--line);display:block}.act i.on{background:var(--accent)}
+.stale{display:inline-block;font-size:12px;color:var(--bad);margin-top:3px}
+.rvlist{list-style:none;padding:0;margin:0}
+.rvi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;
+margin-bottom:10px}
+.rvlist .panel li,.panel .rvlist li{padding:10px 0;border-top:1px solid var(--line)}
+.rvhead{margin-bottom:6px}.line{font-size:15px}
+.said{font-size:13.5px;color:var(--ink2);margin:4px 0}
+.dec{font-size:13px;color:var(--bad);margin:4px 0}
+.plainlist{padding-left:18px;margin:8px 0}.plainlist li{margin-bottom:10px}
+.steps{padding-left:18px;margin:0 0 10px;font-size:14px}.steps li{margin-bottom:9px}
+.hs{display:inline-flex;gap:2px;vertical-align:middle}.hs i{width:10px;height:14px;
+border-radius:2px;display:block}
+.h-healthy{background:var(--ok)}.h-degraded{background:var(--watch)}.h-blocked{background:var(--bad)}
+.h-error{background:var(--bad)}.h-unknown{background:var(--line)}
+.crumb{font-size:13px;color:var(--muted);margin-bottom:8px}
+.th h1{font-size:28px;max-width:920px}.th .meta{display:flex;flex-wrap:wrap;gap:8px 12px;
+align-items:center;color:var(--muted);font-size:13.5px;margin-bottom:18px}
+.flag{background:var(--bad-bg);color:var(--bad);border-radius:6px;padding:2px 9px;font-size:13px}
+.flagi{font-size:11.5px;color:var(--bad);margin-left:4px;white-space:nowrap}
+.thesis{font-size:19px;line-height:1.55;margin:0;border-left:3px solid var(--accent);
+padding-left:16px}
+.tag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px;
+white-space:nowrap;vertical-align:1px;margin-left:4px;background:var(--panel)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;
+margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.sheet{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 28px}
+.sheet .decide{border-left:1px solid var(--line);padding-left:24px}
+.sheet .decide h2{margin-top:0}.sheet .numh{margin:18px 0 8px}
+.sheet .nums{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.rvcompact .rvi summary{cursor:pointer;display:flex;gap:8px;align-items:baseline;
+list-style:none}.rvcompact .rvi summary::-webkit-details-marker{display:none}
+.rvcompact .clamp1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.rvcompact .said{font-size:13.5px;margin:6px 0}
+.grid2 .panel{margin-bottom:0}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.num{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.num b{font-size:24px;line-height:1.1}.num .unit{color:var(--muted);font-size:13px;margin-left:5px}
+.num .lbl{display:block;font-size:13.5px;color:var(--ink2);margin-top:6px;line-height:1.35}
+.num small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.chain{list-style:none;padding:0;margin:0;counter-reset:s}
+.chain li{position:relative;padding:0 0 14px 34px;font-size:14.5px}
+.chain li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:1px;width:22px;
+height:22px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:12px;
+font-weight:700;text-align:center;line-height:22px}
+.sn{display:block;font-weight:650;font-size:13px}
+.gates{list-style:none;padding:0;margin:0}.gates li{display:flex;gap:10px;padding:7px 0;
+border-top:1px solid var(--line)}.gates li:first-child{border-top:0}
+.gates .ic{width:20px;flex:none;font-weight:700}.gates .ok .ic{color:var(--ok)}
+.gates .unmet .ic{color:var(--bad)}.gates b{display:block;font-size:14px;font-weight:600}
+.gates span:not(.ic){font-size:13px;color:var(--muted)}.decide ul.clears{font-size:13px;
+color:var(--ink2);padding-left:18px;margin:4px 0 0}.decide ul.clears li{margin:3px 0}
+.calls{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}.calls h4{margin:0 0 4px;
+font-size:13px;color:var(--muted);font-weight:600}.calls ul{margin:0;padding-left:18px;
+font-size:14px}.calls li{margin:3px 0}.gates span.gap{display:block;margin-top:5px;
+color:var(--ink2)}
+details.met{margin-top:8px}
+.timing{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}
+.timing ul{padding-left:18px;margin:4px 0}
+.conflict{background:var(--bad-bg);color:var(--bad);border-radius:8px;padding:8px 12px;
+font-size:13.5px;margin:6px 0}
+.risk,.next ul{padding-left:18px;margin:0;font-size:14.5px}.risk li{margin-bottom:6px}
+.next p{font-size:15.5px;margin:0 0 6px}
+.who{list-style:none;padding:0;margin:0 0 10px;font-size:14.5px}.who li{padding:5px 0;
+border-top:1px solid var(--line)}.who li:first-child{border-top:0}.who .small{margin-top:2px}
+.hypo{border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:12px 0}
+.hypo h3{margin:0 0 4px}.hypo h4{font-size:13px;margin:10px 0 2px;color:var(--ink2)}
+.hypo .basis{color:var(--ink2)}
+.hypo h4.cond{font-size:13px;font-weight:500;color:var(--ink2);margin:12px 0 4px}
+.hrows{border-top:1px solid var(--line)}
+details.hrow{border-bottom:1px solid var(--line)}
+details.hrow>summary,.hhead{display:grid;grid-template-columns:64px minmax(0,220px) 130px
+minmax(0,170px) 40px;gap:12px;align-items:baseline;padding:6px 2px;font-size:14px}
+details.hrow>summary{cursor:pointer;list-style:none}
+.hhead{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
+padding-top:2px}
+details.hrow>summary::-webkit-details-marker{display:none}
+details.hrow .tkr{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:600}
+details.hrow .side.up{color:var(--ok)}details.hrow .side.down{color:var(--bad)}
+details.hrow .earn{color:var(--muted);font-size:13px}details.hrow .ck{text-align:center}
+.hbody{padding:2px 2px 10px 82px;font-size:13.5px}.hbody p{margin:4px 0}
+.hbody .filing{color:var(--ink2);border-left:2px solid var(--line);padding-left:8px}
+@media (max-width:880px){.hhead{display:none}
+details.hrow>summary{display:flex;flex-wrap:wrap;gap:2px 10px}
+details.hrow .tkr{width:52px}details.hrow>summary>b{flex:1 1 60%}
+details.hrow .side{margin-left:62px}details.hrow .ck{margin-left:auto}.hbody{padding-left:0}
+.rvcompact .rvi summary{flex-wrap:wrap}.rvcompact .clamp1{flex-basis:100%;white-space:normal}}
+.tk{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
+padding:0 6px;margin-left:4px;white-space:nowrap}
+.tabs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px 18px}
+.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 -20px 16px;padding:0 12px;
+overflow-x:auto}
+.tabbar button{border:0;background:none;padding:14px 10px;font:inherit;font-size:14px;
+color:var(--ink2);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tabbar button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+details.evg{border-top:1px solid var(--line);padding:8px 0}details.evg:first-child{border-top:0}
+details.evg>summary{color:var(--ink);font-size:14.5px}details.evg .hscroll{margin-top:8px}
+.q{color:var(--muted);font-size:13px;font-style:italic;margin-top:3px}
+.timeline{list-style:none;padding:0;margin:0}.timeline li{display:flex;gap:12px;align-items:center;
+padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap;font-size:14px}
+.timeline li:first-child{border-top:0}.hv{font-weight:650;min-width:78px;white-space:nowrap}
+.btn{display:inline-block;background:var(--accent);color:var(--panel);border-radius:8px;
+padding:8px 14px;margin:0 8px 8px 0}
+.btn2{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:8px 14px}
+.btn:hover,.btn2:hover{text-decoration:none}
+.nine{columns:2;font-size:14px}
+tr.xtra{display:none}.morebox:checked+.hscroll tr.xtra{display:table-row}
+.morelbl{display:inline-block;margin:8px 2px 12px;font-size:13.5px;color:var(--accent);
+cursor:pointer}
+.morebox:checked~.morelbl{display:none}
+.why{font-size:13px;color:var(--ink2);margin-top:3px}
+details.cmdd{min-width:150px}details.cmdd code{display:block;margin-top:6px;word-break:break-all}
+details.older{display:inline-block;margin-left:4px}details.older[open]{display:block}
+td:empty{padding:0}
+.bdg{display:inline-block;font-size:11.5px;border-radius:999px;padding:1px 8px;white-space:nowrap;
+background:var(--soft);color:var(--ink2)}.bdg.bad{background:var(--bad-bg);color:var(--bad)}
+.tmeta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.alist{list-style:none;padding:0;margin:0;border:1px solid var(--line);border-radius:12px;
+background:var(--panel)}
+.alist li{display:grid;grid-template-columns:170px minmax(0,1fr);gap:4px 14px;padding:10px 14px;
+border-top:1px solid var(--line);align-items:start}.alist li:first-child{border-top:0}
+.alist li>.st{justify-self:start}
+.atl{font-weight:600;line-height:1.35}.aprod{font-size:13.5px;margin-top:3px}
+.weeknav{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:6px 0;font-size:14px}
+.weeknav details.older{display:inline-block}.weeknav details[open]{flex-basis:100%}
+.weeknav .weeks{margin-top:8px}
+.counts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin:8px 0}
+.cnt{display:inline-flex;gap:5px;align-items:center}
+.rvg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px 6px;
+margin-bottom:10px}
+.rvgh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-bottom:2px}
+.rvgh a{font-weight:650}
+.rvitems{list-style:none;padding:0;margin:0}
+.rvitems li.rvi{background:none;border:0;border-top:1px solid var(--line);border-radius:0;
+padding:10px 0 8px;margin:0}.rvitems li.rvi:first-child{border-top:0}
+.rvmeta{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:12.5px;
+color:var(--muted);margin-top:4px}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.uilist{list-style:none;padding:0;margin:8px 0 0}
+.ui{display:grid;grid-template-columns:minmax(0,1fr) 230px 150px;gap:6px 18px;padding:12px 0;
+border-top:1px solid var(--line);align-items:start}.uilist>.ui:first-child{border-top:0}
+.uiside{font-size:13.5px}.uiact{font-size:13px}
+details.fold{margin-top:8px}details.fold>summary{font-size:13px}
+.pillcheck{border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+background:var(--panel)}
+.meta2{font-size:13px;color:var(--muted);margin:-10px 0 16px}
+.rel{list-style:none;padding:0;margin:0}.rel li{margin:0 0 10px}
+.evsum{font-size:14px;color:var(--ink2);margin:0 0 6px}.evsum .against{color:var(--bad)}
+.evh{font-size:14px;margin:18px 0 4px}
+.evl{list-style:none;padding:0;margin:0}.evl>li{border-top:1px solid var(--line);padding:7px 0}
+.evl>li:first-child{border-top:0}
+.evl details>summary{cursor:pointer;color:var(--ink);font-size:14px;list-style:none;
+line-height:1.45}
+.evl details>summary::-webkit-details-marker{display:none}
+.evl details>summary::before{content:"▸";color:var(--muted);font-size:10px;
+margin-right:8px}
+.evl details[open]>summary::before{content:"▾"}
+.evl .v{font-weight:650;margin-right:4px}.evl.against .v{color:var(--bad)}
+.evl blockquote{margin:6px 0 2px 18px;padding:4px 10px;border-left:3px solid var(--line);
+color:var(--muted);font-style:italic;font-size:13px}
+details.evg{margin:10px 0 0}details.evg>summary{font-size:14px;color:var(--ink)}
+.srcl li{margin:0 0 10px}
+.arts tr[data-hassub] td{border-bottom:0}.arts td.subrow{padding-top:0;font-size:13px}
+.compl>li{margin:0 0 10px}.compl ul{margin:4px 0 0;padding-left:18px}
+.grid2{align-items:start}
+.testdata{background:#3b2a00;color:#ffe9b0;font-size:12.5px;padding:6px 20px;text-align:center}
+.foot{margin:18px 0 0;font-size:12.5px;color:var(--muted)}
+.hit{outline:2px solid var(--accent);outline-offset:3px}
+details.ubk>summary .muted{margin-left:10px;font-size:13px}
+.ml{display:none}.arts.artt{table-layout:fixed}.arts.artt th:nth-child(1){width:110px}
+.arts.artt th:nth-child(3){width:170px}.arts.artt th:nth-child(5){width:180px}
+.arts.themes{table-layout:fixed}.arts.themes th{overflow-wrap:normal;word-break:normal}
+.arts.themes th:nth-child(2){width:156px}
+.arts.themes th:nth-child(3){width:118px}.arts.themes th:nth-child(4),
+.arts.themes th:nth-child(5){width:100px}.arts.themes th:nth-child(6){width:170px}
+@media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}
+aside{position:static;min-width:0}
+.ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
+.steps4{grid-template-columns:1fr}
+.grid2{grid-template-columns:1fr}.sheet{grid-template-columns:1fr}
+.sheet .decide{border-left:0;padding-left:0;order:-1;border-bottom:1px solid var(--line);
+padding-bottom:12px;margin-bottom:16px}.calls{grid-template-columns:1fr}
+h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
+.filters input#q{min-width:0;width:100%;flex-basis:100%}
+.arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}
+.arts tr:first-child{display:none}.arts tr{padding:12px 14px;border-bottom:1px solid var(--line)}
+.arts td{border:0;padding:2px 0}.arts td:empty{display:none}.hscroll{border-radius:10px}
+.arts tr.xtra{display:none}.morebox:checked+.hscroll .arts tr.xtra{display:block}
+.ml{display:inline;color:var(--muted);font-size:12.5px}
+.tabbar{flex-wrap:wrap;overflow:visible}.tabbar button{padding:10px 8px}}
+@media print{.tabbar,.filters{display:none}[data-panel]{display:block!important}}
+</style></head><body><input type="checkbox" id="audit" hidden><nav class="topnav" id="top"><div class="in"><a class="brand" href="index.html">Mosaic Theory<small>Research desk</small></a><div class="links"><a href="index.html">This week</a><a href="themes.html">Themes</a><a href="articles.html" class="on">Articles</a><a href="review.html">Review</a><a href="uploads.html">Uploads</a><a href="sources.html">Sources</a></div><label for="audit" class="auditbar" title="Show evidence IDs, engine codes and the decision trace">Audit view</label></div></nav><main class="wrap"><section class="hero"><h1 class="tabtitle">Articles</h1><p class="sum">Week of 12–21 Oct 2026 · with research re-read after the scan · 16 items</p><nav class="weeknav"><a href="articles-2026-10-20.html">‹ 11–20 Oct 2026</a><b>12–21 Oct 2026</b><a href="articles.html">21–30 Oct 2026 ›</a><details class="older"><summary>All weeks (3)</summary><div class="weeks"><a class="wk" href="articles.html">21–30 Oct 2026 <small>7</small></a><a class="wk on" href="articles-2026-10-21.html">12–21 Oct 2026 <small>16</small></a><a class="wk" href="articles-2026-10-20.html">11–20 Oct 2026 <small>0</small></a></div></details></nav><div class="counts"><span class="cnt"><span class="st ok">Read in full</span> 12</span><span class="cnt"><span class="st part">Partial — preview only</span> 4</span></div></section><div class="filters"><select id="fr" onchange="fa()" aria-label="State"><option value="">Every state</option><option value="FULL">Read in full</option><option value="PARTIAL">Partial — preview only</option></select><select id="fp" onchange="fa()" aria-label="Publisher"><option value="">Every publisher</option><option>Citi</option><option>J.P. Morgan Private Bank</option><option>Morgan Stanley</option><option>SemiAnalysis</option><option>TrendForce</option></select><span id="cnt2" class="small"></span></div><div class="hscroll"><table class="arts artt" id="at"><tr><th>Published</th><th>Article</th><th>State</th><th>Produced</th><th>Follow-up</th></tr><tr data-state="FULL" data-pub="TrendForce"><td class="nowrap">19 Oct 2026</td><td class="art"><a href="https://www.trendforce.com/presscenter/news/20261019-13275.html">Optical Fiber Spot Prices Surge Severalfold in 2026, with Data Center-Driven Supply Shortages Expected to Persist Through 2028, Says TrendForce</a><div class="small">TrendForce</div><span class="aud cc">A-87c41612b31b · version AV-1862084c9db5c714 · run R-20261021T080508Z-scan</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-B1F096684F.html">AI data center demand drives optical fiber shortage lifting fiber supplier pricing</a> <span class="small">· created</span></td><td class="small"></td></tr><tr data-state="FULL" data-pub="J.P. Morgan Private Bank" data-hassub><td class="nowrap">16 Oct 2026</td><td class="art"><a href="https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/inflation-yields-and-equities-when-does-the-pressure-actually-matter">Inflation, yields and equities: When does the pressure actually matter?</a><div class="small">J.P. Morgan Private Bank</div><span class="aud cc">A-cfd53f3cc80a · version AV-a4d414878ae8fc15 · run R-20261021T080508Z-scan</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-393DF5CD2B.html">Equities can absorb above-target inflation and higher yields while earnings hold</a> <span class="small">· created</span></td><td class="small"></td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>3 items to check <span class="muted">· 43 of 43 figures captured</span></summary><ul><li>Coverage alert: proposition dropped: “Equities can keep grinding higher despite hot inflation as long as earnings hold” — pass 1: named in the answer&#x27;s malformed hypotheses and not recoverable without guessing (the text is not valid JSON even after deletion-only repair) — its evidence was kept; REVIEW REQUIRED</li><li>Coverage alert: a risk the source states that no model pass listed — “That dispersion is the point: A bond sell-off can be a headwind, but the rates move alone does not determine the equity outcome.” (on NO card — no thesis&#x27;s evidence is in its paragraph)</li><li>Coverage alert: 12 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 0.6%; 9.1%; 1.3%; mid-40% range; below 30%; 10.06%; 4.67%; 2.08%; more than 100 basis points; 5.5%; First bank earnings reads were broadly resilient with support from lending and markets and no broad consumer credit deterioration; 7.84% — verified, UNASSESSED: no thesis or research action in this registry rests on it</li></ul></details></td></tr><tr data-state="FULL" data-pub="TrendForce"><td class="nowrap">15 Oct 2026</td><td class="art"><a href="https://www.trendforce.com/presscenter/news/20261015-13273.html">Meta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce</a><div class="small">TrendForce</div><span class="aud cc">A-1c3e6ee1d553 · version AV-d9291d742639a3c9 · run R-20261021T080508Z-scan</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-722932E64F.html">Near-eye microdisplay makers benefit as OLEDoS, LEDoS and LCoS scale with AR glasses</a> <span class="small">· created</span><br><a href="theses/TH-3C22A83E75.html">AR glasses shipments double in 2026 driven by Meta and Chinese brands</a> <span class="small">· created</span></td><td class="small"></td></tr><tr data-state="FULL" data-pub="TrendForce" data-hassub><td class="nowrap">14 Oct 2026</td><td class="art"><a href="https://www.trendforce.com/presscenter/news/20261014-13269.html">CSP CapEx Projected to Exceed US$1.5 Trillion in 2027, with AI Server Revenue Growing Over 90% YoY on Higher Shipments and Prices, Says TrendForce</a><div class="small">TrendForce</div><span class="aud cc">A-373089a2ba59 · version AV-3f4ab5655e436ff8 · run R-20261021T080508Z-scan</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-05208D689A.html">Component shortages, especially memory, lift AI server rack ASPs and revenue</a> <span class="small">· created</span><br><a href="theses/TH-0D381F307A.html">Surging CSP CapEx drives AI server shipments and spenders&#x27; infrastructure buildout</a> <span class="small">· created</span></td><td class="small"></td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>1 item to check <span class="muted">· 14 of 15 figures captured</span></summary><ul><li>Figure &#x27;36%&#x27; not captured — the claim meant to capture it could not be verified</li></ul></details></td></tr><tr data-state="FULL" data-pub="TrendForce"><td class="nowrap">13 Oct 2026</td><td class="art"><a href="https://www.trendforce.com/presscenter/news/20261013-13267.html">Integrated Optical-Electrical Testing Platforms Become Key to CPO Mass Production, Reshaping the Test Equipment Supply Chain, Says TrendForce</a><div class="small">TrendForce</div><span class="aud cc">A-0b9c4a3220b7 · version AV-d33a335319a544b8 · run R-20261021T080508Z-scan</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-921772E86C.html">CPO mass production shifts value to integrated optical-electrical test platform suppliers</a> <span class="small">· created</span></td><td class="small"></td></tr><tr data-state="FULL" data-pub="Morgan Stanley"><td class="nowrap">29 Sep 2026</td><td class="art"><a href="https://www.morganstanley.com/insights/articles/healthcare-consumerism-drives-26-b-opportunity-2026">Healthcare Consumerism: Patients Drive a $26B Opportunity</a><div class="small">Morgan Stanley · upload</div><span class="aud cc">A-8dead6e3ab71 · version AV-321996283cbff3a4 · run R-20261021T102637Z-ingest · document D-d0465b9a4bfe8cf6</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-A097D4722F.html">Direct-to-consumer cash-pay access unlocks a $26B biopharma demand opportunity</a> <span class="small">· created</span><br><a href="theses/TH-DEB6560D7F.html">Robust, consumer-driven healthcare utilization supports services and diagnostics demand</a> <span class="small">· evidence against</span></td><td class="small"></td></tr><tr data-state="FULL" data-pub="Morgan Stanley" data-hassub><td class="nowrap">25 Sep 2026</td><td class="art"><a href="https://www.morganstanley.com/insights/articles/china-next-industrial-revolution-industry-5-outlook">China’s Next Industrial Revolution: The Industry 5.0 Opportunity</a><div class="small">Morgan Stanley · upload</div><span class="aud cc">A-9faa09cf8082 · version AV-b099f0851644f8cb · run R-20261021T101854Z-ingest · document D-aabbd08f3d4f4141</span></td><td><span class="st ok">Read in full</span></td><td><details class="gone"><summary>+5 retired or archived</summary><a href="theses/TH-431B4B9195.html">Multipolar industrial landscape distributes leadership across US, Europe, Japan and China</a> <span class="small">· created · archived</span><br><a href="theses/TH-A381AB426E.html">China Industry 5.0 capex supercycle lifts automation, robotics, semis and industrial software suppliers</a> <span class="small">· created · archived</span><br><a href="theses/TH-87D93CD53A.html">China localization of chips, tools and materials lifts domestic industrial-resilience suppliers</a> <span class="small">· created · archived</span><br><a href="theses/TH-5151436FE1.html">China&#x27;s state-backed financing structure sustains long-cycle industrial capex despite delayed returns</a> <span class="small">· created · archived</span><br><a href="theses/TH-45A01B5D5C.html">Humanoid/embodied AI robotics becomes an industrial labor platform, a robotics beneficiary theme</a> <span class="small">· created · archived</span></details></td><td class="small"></td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>1 item to check <span class="muted">· 31 of 32 figures captured</span></summary><ul><li>Figure &#x27;5&#x27; not captured — the claim meant to capture it could not be verified</li></ul></details></td></tr><tr data-state="FULL" data-pub="Morgan Stanley"><td class="nowrap">18 Sep 2026</td><td class="art"><a href="https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026">Healthcare Industry Trends Powering Growth Beyond 2026</a><div class="small">Morgan Stanley · upload</div><span class="aud cc">A-cfc65506a485 · version AV-fa24a4c524bdede6 · run R-20261021T102637Z-ingest · document D-f07743491474341f</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-7AC3AE200E.html">CMS push to value-based, outcome-based competition reshapes managed care economics</a> <span class="small">· created</span><br><a href="theses/TH-BBF8E714C1.html">GLP-1 obesity/diabetes market keeps growing as oral drugs and Medicare expand access</a> <span class="small">· created</span><br><a href="theses/TH-DEB6560D7F.html">Robust, consumer-driven healthcare utilization supports services and diagnostics demand</a> <span class="small">· created</span><details class="gone"><summary>+2 retired or archived</summary><a href="theses/TH-48CF61E45B.html">AI adoption shortens drug development and cuts costs, lifting pharma efficiency</a> <span class="small">· created · archived</span><br><a href="theses/TH-C2BEC5879A.html">China&#x27;s rise as a biopharma innovator creates partnership upside and competitive risk</a> <span class="small">· created · archived</span></details></td><td class="small"></td></tr><tr data-state="FULL" data-pub="Morgan Stanley" data-hassub><td class="nowrap">15 Sep 2026</td><td class="art"><a href="https://www.morganstanley.com/insights/articles/canada-economic-growth-accelerates-through-2030">Canada&#x27;s Economic Growth Poised to Accelerate Through 2030</a><div class="small">Morgan Stanley · upload</div><span class="aud cc">A-479ccc154807 · version AV-977e84e4a3c444b6 · run R-20261021T102637Z-ingest · document D-46320a8686ac13aa</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-41B1AB7F8C.html">Canada&#x27;s capital-deepening cycle lifts potential growth and Canadian assets</a> <span class="small">· created</span><details class="gone"><summary>+2 retired or archived</summary><a href="theses/TH-BCBAD262D4.html">Broadening capital cycle into machinery, software and manufacturing</a> <span class="small">· created · archived</span><br><a href="theses/TH-188B31F187.html">Canadian power and critical minerals as an AI-compute supply opportunity</a> <span class="small">· created · archived</span></details></td><td class="small"></td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>1 item to check <span class="muted">· 13 of 13 figures captured</span></summary><ul><li>Coverage alert: proposition dropped: “Canada&#x27;s capital-deepening cycle should lift growth and Canadian assets” — pass 1: named in the answer&#x27;s malformed hypotheses and not recoverable without guessing (recovered from the malformed text, but the item fails its schema) — its evidence was kept; REVIEW REQUIRED</li></ul></details></td></tr><tr data-state="FULL" data-pub="Morgan Stanley" data-hassub><td class="nowrap">14 Sep 2026</td><td class="art"><a href="https://www.morganstanley.com/insights/articles/biotech-industry-trends-reshaping-healthcare-market">3 Biotech Industry Trends Reshaping the Healthcare Market</a><div class="small">Morgan Stanley · upload</div><span class="aud cc">A-8feaba79612d · version AV-d0d5ca4060ef3b75 · run R-20261021T102637Z-ingest · document D-d8542bd1c57f1262</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-8DDD7B2868.html">Alzheimer&#x27;s innovation unlocks a $70bn drug market plus adjacent value</a> <span class="small">· created</span><br><a href="theses/TH-1B06ACA0B7.html">AI picks-and-shovels enablers monetize drug-discovery productivity now</a> <span class="small">· created</span><br><a href="theses/TH-ABE7D2B79D.html">In-vivo gene editing opens new organ markets above consensus by 2035</a> <span class="small">· created</span></td><td class="small"></td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>1 item to check <span class="muted">· 25 of 25 figures captured</span></summary><ul><li>One argument paragraph not accounted for</li></ul></details></td></tr><tr data-state="FULL" data-pub="Morgan Stanley" data-hassub><td class="nowrap">2 Sep 2026</td><td class="art"><a href="https://www.morganstanley.com/insights/articles/caffeine-market-outlook-outpace-industry-2026">Caffeine Market Outlook: What&#x27;s Fueling the Next Growth Wave?</a><div class="small">Morgan Stanley · upload</div><span class="aud cc">A-bcae0b1f5d86 · version AV-8809a3db245c41dc · run R-20261021T102637Z-ingest · document D-a50ad278805b99cc</span></td><td><span class="st ok">Read in full</span></td><td><a href="theses/TH-16225B12C4.html">U.S. energy drink demand set for structural multi-year growth from new occasions</a> <span class="small">· created</span></td><td class="small"></td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>3 items to check <span class="muted">· 36 of 37 figures captured</span></summary><ul><li>Figure &#x27;6%&#x27; not captured — the claim meant to capture it could not be verified</li><li>Coverage alert: propositions merged: “Beverage shops positioned to grow on away-from-home caffeine demand” — merged with h1 “U.S. energy drink demand set for structural multi-year growth from new occasions” under one identity key — 1 supporting claim(s) shared, 3 its own — DISTINCT EVIDENCE: review whether it is the same thesis</li><li>Coverage alert: page 2: 2 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 6%; about 3,000 — verified, UNASSESSED: no thesis or research action in this registry rests on it</li></ul></details></td></tr><tr data-state="FULL" data-pub="Citi" data-hassub><td class="nowrap">30 Oct 2024</td><td class="art"><a href="https://www.citigroup.com/global/insights/money-the-evolution-to-digital">Money: The Evolution to Digital</a><div class="small">Citi · upload</div><span class="aud cc">A-2fb4b4c924c5 · version AV-8499b2b79847f471 · run R-20261021T101854Z-ingest · document D-be1b8eb45d772d2f</span></td><td><span class="st ok">Read in full</span></td><td><span class="small">No thesis: the analysis proposed none.</span></td><td class="small"></td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>4 items to check <span class="muted">· 5 of 6 figures captured</span></summary><ul><li>Figure &#x27;$250,000&#x27; not captured — the claim quoting it failed the number check</li><li>One argument paragraph not accounted for — the review accounted for it without naming a record</li><li>One argument paragraph not accounted for</li><li>Coverage alert: page 4: 2 verified material facts no thesis carries — a mechanism no card holds? Source evidence: morethan20,000; 2022 — verified, UNASSESSED: no thesis or research action in this registry rests on it</li></ul></details></td></tr><tr data-state="PARTIAL" data-pub="SemiAnalysis" data-hassub><td class="nowrap">19 Oct 2026</td><td class="art"><a href="https://newsletter.semianalysis.com/p/datacenters-2027-the-year-of-acceleration">Datacenters 2027: The Year of Acceleration, +50GW in a Single Year</a><div class="small">SemiAnalysis · 1,575 words read</div><span class="aud cc">A-3211e327f4ef · version AV-5f051bd70c56d1cd · run R-20261021T080508Z-scan</span></td><td><span class="st part">Partial — preview only</span></td><td><a href="theses/TH-C1889ABBA5.html">Compute supply surge in 2027 accelerates revenue for AI labs and token vendors</a> <span class="small">· created</span><br><a href="theses/TH-3557AAE138.html">AI datacenter buildout accelerates +50GW in 2027, lifting physical datacenter suppliers</a> <span class="small">· created</span></td><td class="small">Preview only — by decision, never requested</td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>1 item to check <span class="muted">· 21 of 21 figures captured</span></summary><ul><li>Coverage alert: 6 verified material facts no thesis carries — a mechanism no card holds? Source evidence: +43GW; over a trillion USD; under 10 months; up to 63%; The ex-US datacenter buildout is sharply accelerating in 2027 and expected to gain market share in 2028; Grid headroom is expected to dip negative at the end of 2027, driving behind-the-meter generation — verified, UNASSESSED: no thesis or research action in this registry rests on it</li></ul></details></td></tr><tr data-state="PARTIAL" data-pub="SemiAnalysis" data-hassub><td class="nowrap">15 Oct 2026</td><td class="art"><a href="https://newsletter.semianalysis.com/p/asml-is-building-a-hybrid-bonding">ASML Is Building a Hybrid Bonding Tool, Sending More Chills to Besi</a><div class="small">SemiAnalysis · 2,334 words read</div><span class="aud cc">A-7b20abdd06d4 · version AV-795b73c94b399800 · run R-20261021T080508Z-scan</span></td><td><span class="st part">Partial — preview only</span></td><td><a href="theses/TH-77926B9936.html">ASML&#x27;s hybrid bonding tool threatens Besi&#x27;s logic and HBM equipment franchise</a> <span class="small">· created</span></td><td class="small">Preview only — by decision, never requested</td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>1 item to check <span class="muted">· 18 of 18 figures captured</span></summary><ul><li>Coverage alert: 6 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 2029; one; about 6um; about 10um; around 10mm; 1.2-second — verified, UNASSESSED: no thesis or research action in this registry rests on it</li></ul></details></td></tr><tr data-state="PARTIAL" data-pub="SemiAnalysis" data-hassub><td class="nowrap">8 Oct 2026</td><td class="art"><a href="https://newsletter.semianalysis.com/p/beijing-will-not-pace-the-frontier">Beijing Will Not Pace the Frontier: China’s Speed-First AI Safety Regime</a><div class="small">SemiAnalysis · upload · 4,698 words read</div><span class="aud cc">A-5bfa8fff567e · version AV-ccf8d02aeb365e05 · run R-20261021T123003Z-ingest · document D-7eb518c393c30b6a</span></td><td><span class="st part">Partial — preview only</span></td><td><a href="theses/TH-38CA111885.html">Open models catch up to frontier faster each era, risking model-layer commoditization</a> <span class="small">· evidence against</span></td><td class="small">Preview only — by decision, never requested</td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>16 items to check <span class="muted">· 93 of 98 figures captured</span></summary><ul><li>Figure &#x27;102&#x27; not captured — the claim meant to capture it could not be verified</li><li>Figure &#x27;32&#x27; not captured — the claim meant to capture it could not be verified</li><li>Figure &#x27;102&#x27; not captured — the claim meant to capture it could not be verified</li><li>Figure &#x27;13&#x27; not captured — the claim meant to capture it could not be verified</li><li>Figure &#x27;32&#x27; not captured — the claim meant to capture it could not be verified</li><li>One argument paragraph not accounted for</li><li>Coverage alert: page 2: 2 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 3.0; four months — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 4: 2 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 16; Seven — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 5: 7 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 3.6%; 9; 9; 4; 5; 741; 116 — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 6: 3 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 42; 7; 15 — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 8: 4 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 93%; 18; 9; 3 — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 9: 3 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 65; 15; Six — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 11: 2 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 102; 51 — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 12: 9 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 32; 44%; 91%; 89%; 45%; 100%; 43%; 48%; 55% — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 14: 4 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 42; 22 (52%); 8; Thirteen — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 17: 3 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 2.0; 13; 10× — verified, UNASSESSED: no thesis or research action in this registry rests on it</li></ul></details></td></tr><tr data-state="PARTIAL" data-pub="SemiAnalysis" data-hassub><td class="nowrap">21 Aug 2026</td><td class="art"><a href="https://newsletter.semianalysis.com/p/are-open-models-catching-up">Are Open Models Catching Up?</a><div class="small">SemiAnalysis · upload · 1,946 words read</div><span class="aud cc">A-7b1412bf406e · version AV-d92fd8542a3fcd4d · run R-20261021T101854Z-ingest · document D-d363b83c3a46984d</span></td><td><span class="st part">Partial — preview only</span></td><td><a href="theses/TH-6BDD0881AD.html">Product and harness, not raw benchmarks, protect frontier lab economics</a> <span class="small">· created</span><br><a href="theses/TH-38CA111885.html">Open models catch up to frontier faster each era, risking model-layer commoditization</a> <span class="small">· created</span></td><td class="small">Preview only — by decision, never requested</td></tr><tr data-sub><td colspan="5" class="subrow"><details class="fold"><summary>3 items to check <span class="muted">· 33 of 33 figures captured</span></summary><ul><li>Coverage alert: page 6: 3 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 75.7; 39.9; 100 — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 7: 3 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 86; 95.5; 18T — verified, UNASSESSED: no thesis or research action in this registry rests on it</li><li>Coverage alert: page 13: 3 verified material facts no thesis carries — a mechanism no card holds? Source evidence: 51 days; 213; 120 — verified, UNASSESSED: no thesis or research action in this registry rests on it</li></ul></details></td></tr></table></div><div class="foot">Generated 2026-10-30 12:43 UTC from the registry<span class="aud"> (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).</span></div><div class="foot"><a href="dashboard.html">Full weekly report</a> · <a href="report_print.html">Printable report</a></div></main><script>function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
+function openAll(root){rowsOf(root+' details.more-rows').forEach(function(d){d.open=true});
+rowsOf('input.morebox').forEach(function(b){b.checked=true})}
+function recap(root){rowsOf(root+' table[data-cap],table'+root+'[data-cap]').forEach(
+function(t){var cap=+t.dataset.cap,k=0;
+Array.prototype.slice.call(t.rows).forEach(function(r){if(r.querySelector('th'))return;
+if(!r.hasAttribute('data-sub')&&r.style.display!=='none')k++;r.classList.toggle('xtra',k>cap)});
+var l=document.querySelector('label[for="'+t.dataset.box+'"]');if(l){l.style.display=k>cap?'':
+'none';if(k>cap)l.textContent='Showing '+cap+' of '+k+' '+t.dataset.what+' — show all '+k}})}
+function flt(){var q=(document.getElementById('q').value||'').toLowerCase(),
+s=document.getElementById('fs').value,a=document.getElementById('fa').value,
+ar=document.getElementById('far').value,n=0,all=rowsOf('#tt tr[data-area]');
+if(q||a||ar)openAll('#tt');
+all.forEach(function(r){var ok=(!s||r.dataset.status===s)&&(!a||r.dataset.action===a)&&
+(!ar||r.dataset.area===ar)&&(!q||(r.textContent+' '+r.dataset.area).toLowerCase().indexOf(q)>=0);
+r.style.display=ok?'':'none';n+=ok?1:0});recap('#tt');
+document.getElementById('cnt').textContent=n+' of '+all.length+' match'}
+function srt(){var k=document.getElementById('so').value;var v=function(r){return k==='upd'?
+-r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:k==='rv'?-r.dataset.rv:
++r.dataset.ord};
+rowsOf('#tt table').forEach(function(t){var rs=Array.prototype.slice.call(t.querySelectorAll(
+'tr[data-area]'));rs.sort(function(a,b){return v(a)-v(b)||a.dataset.ord-b.dataset.ord})
+.forEach(function(r){(r.parentNode).appendChild(r)})});recap('#tt')}
+function fa(){var r=document.getElementById('fr').value,p=document.getElementById('fp').value,n=0,
+all=rowsOf('#at tr[data-state]');if(r||p)openAll('#at');all.forEach(function(x){var ok=
+(!r||x.dataset.state===r)&&(!p||x.dataset.pub===p);x.style.display=ok?'':'none';n+=ok?1:0});
+rowsOf('#at tr[data-sub]').forEach(function(x){var t=x.previousElementSibling;
+x.style.display=t&&t.style.display==='none'?'none':''});recap('#at');
+document.getElementById('cnt2').textContent=n+' of '+all.length+' match'}
+function fr2(){var d=document.getElementById('fdec').checked,rn=document.getElementById('frn')
+.checked,o=document.getElementById('fold').checked,n=0,all=rowsOf('#rv li.rvi');
+if(d||rn||o)openAll('#rv');all.forEach(function(x){var ok=(!d||x.dataset.dec==='1')&&(!rn||
+x.dataset.act==='RESEARCH NOW')&&(!o||+x.dataset.age>=28);x.style.display=ok?'':'none';
+n+=ok?1:0});rowsOf('#rv li.rvg').forEach(function(g){g.style.display=Array.prototype.slice
+.call(g.querySelectorAll('li.rvi')).some(function(x){return x.style.display!=='none'})?'':'none'});
+document.getElementById('cnt3').textContent=n+' of '+all.length+' match'}
+function deskInit(root,u){root.querySelectorAll('[data-tabs]').forEach(function(g){
+var b=g.querySelectorAll('[data-tab]'),p=g.querySelectorAll('[data-panel]');b.forEach(function(x){
+x.addEventListener('click',function(){b.forEach(function(y){y.classList.toggle('on',y===x)});
+p.forEach(function(q){q.hidden=q.dataset.panel!==x.dataset.tab})})})});
+if(document.getElementById('tt')){if(u.get('area'))document.getElementById('far').value=
+u.get('area');if(u.get('sort'))document.getElementById('so').value=u.get('sort');srt();flt()}
+if(document.getElementById('at'))fa();if(document.getElementById('rv'))fr2()}
+window.addEventListener('beforeprint',function(){rowsOf('details').forEach(function(d){
+d.open=true});rowsOf('input.morebox').forEach(function(b){b.checked=true})});
+deskInit(document,new URLSearchParams(location.search));</script><script>function reveal(h){if(!h||h.length<2)return;var t=document.getElementById(decodeURIComponent(h.slice(1)));if(!t)return;for(var d=t.closest('details');d;d=d.parentElement?d.parentElement.closest('details'):null)d.open=true;t.scrollIntoView({block:'center'});t.classList.add('hit');setTimeout(function(){t.classList.remove('hit')},2500)}addEventListener('hashchange',function(){reveal(location.hash)});addEventListener('load',function(){reveal(location.hash)});document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)reveal(location.hash)});</script></body></html>

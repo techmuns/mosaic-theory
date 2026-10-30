@@ -1,0 +1,1535 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-14",
+   "ancestry": [
+    "healthcare",
+    "healthcare.pharma_biotech"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-14",
+   "first_ingested_at": "2026-10-14T11:06:27.105670Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-14",
+   "latest_article_date": "2026-09-14",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+   "status": "ACTIVE",
+   "thesis_id": "TH-8DDD7B2868",
+   "title": "Alzheimer's innovation unlocks a $70bn drug market plus adjacent value"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-55e912c3c17990",
+     "C-8e7edba9378565",
+     "C-b9a49aadaaa45f"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Morgan Stanley estimates a $70 billion Alzheimer's drug market with two investable areas (disease-modifying and symptomatic therapies), and argues the economic value extends beyond drug revenue to delaying institutional care. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-8e7edba9378565",
+     "C-b61ce16619b773"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Investment implications extend beyond therapeutics to diagnostics, care delivery, retirement and insurance industries."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A large estimated market plus adjacent beneficiaries (diagnostics, care delivery, retirement, insurance) implies broad research scope, but the article names no companies and does not quantify earnings effects."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-8feaba79612d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-55e912c3c17990"
+     ],
+     "original_date": "2026-09-14",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "Morgan Stanley estimates a $70 billion market for Alzheimer's drugs \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-8feaba79612d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b9a49aadaaa45f"
+     ],
+     "original_date": "2026-09-14",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "U.S. life expectancy is around 80 years while healthspan has plateaued around 70 \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-8feaba79612d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8e7edba9378565"
+     ],
+     "original_date": "2026-09-14",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "A therapy delaying nursing-home admission by 12-18 months could deliver value worth multiples of its list price"
+    },
+    {
+     "article_id": "A-8feaba79612d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b61ce16619b773"
+     ],
+     "original_date": "2026-09-14",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Beyond therapeutics, diagnostics, care delivery, retirement and insurance industries could benefit from or need to adapt to Alzheimer's treatment advances."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 11:06 UTC, analysed as of 2026-10-14, from a source published 2026-09-14; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-b9a49aadaaa45f",
+     "C-55e912c3c17990"
+    ],
+    "provenance": "FORECAST",
+    "step": "industry_shift",
+    "text": "Progress against Alzheimer's is needed to extend healthspan, creating a large treatment market. \u27e8cited figures: approximate; forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-55e912c3c17990"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "A $70bn addressable drug market implies substantial volume for disease-modifying and symptomatic therapies. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Earnings impact to specific listed companies is not quantified in the article."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8feaba79612d",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-55e912c3c17990",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Alzheimer's drug market size",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "estimate"
+    ],
+    "quote": "We estimate a $70 billion market for Alzheimer\u2019s drugs",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 70.0,
+    "value_text": "$70 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8feaba79612d",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8e7edba9378565",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "nursing home delay",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "could",
+     "worth multiples of list price"
+    ],
+    "quote": "A therapy that delays a move to a nursing home by even 12 to 18 months could deliver value to the U.S. healthcare system worth multiples of its list price.",
+    "role": "supports",
+    "unit": "months",
+    "value": null,
+    "value_text": "12 to 18 months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-8feaba79612d",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b9a49aadaaa45f",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "healthspan",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": null,
+    "qualifiers": [
+     "around",
+     "plateaued"
+    ],
+    "quote": "Although U.S. life expectancy has risen to around 80 years, healthspan\u2014the number of years lived without disease-related impairment\u2014has plateaued at around 70.",
+    "role": "supports",
+    "unit": "years",
+    "value": 70.0,
+    "value_text": "around 70"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8feaba79612d",
+    "block_id": "b021",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b61ce16619b773",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Beyond therapeutics, diagnostics, care delivery, retirement and insurance industries could benefit from or need to adapt to Alzheimer's treatment advances.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Diagnostics and care delivery, as well as the retirement and insurance industries, could benefit from\u2014or need to adapt to\u2014a society \uf002 planning for longer, but less certain, late-life outcomes.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-8feaba79612d",
+     "cik": "0000895421",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "MS"
+      }
+     ],
+     "mention_id": "M-f57b6600ae9de3",
+     "name_as_written": "Morgan Stanley",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+       "ticker": "MS/PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+       "ticker": "MS/PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+       "ticker": "MS/PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+       "ticker": "MS/PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+       "ticker": "MS/PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+       "ticker": "MS/PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+       "ticker": "MS/PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+       "ticker": "MS/PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+       "ticker": "MS/PQ"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+       "ticker": "MS/29"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PQ"
+      }
+     ],
+     "quote": "Sign up to get Morgan Stanley Ideas delivered to your inbox.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher and research author"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-8feaba79612d",
+     "claim_ids": [
+      "C-8e7edba9378565"
+     ],
+     "direction": "unclear",
+     "name": "Diagnostics and care delivery, retirement and insurance industries",
+     "provenance": "SOURCE OPINION",
+     "quote": "Diagnostics and care delivery, as well as the retirement and insurance industries, could benefit from\u2014or need to adapt to"
+    },
+    {
+     "article_id": "A-8feaba79612d",
+     "claim_ids": [
+      "C-b61ce16619b773"
+     ],
+     "direction": "positive",
+     "name": "Diagnostics and care delivery, as well as the retirement and insurance industries",
+     "provenance": "SOURCE OPINION",
+     "quote": "Diagnostics and care delivery, as well as the retirement and insurance industries, could benefit"
+    }
+   ],
+   "sectors": [
+    "Alzheimer's drugs",
+    "disease-modifying therapies",
+    "symptomatic control",
+    "diagnostics and care delivery",
+    "retirement and insurance industries"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Disease-modifying drugs have thus far had a modest clinical effect; symptomatic control likely remains a mainstay near term."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-55e912c3c17990",
+      "C-b9a49aadaaa45f"
+     ],
+     "provenance": "FORECAST",
+     "text": "Extending healthspan requires Alzheimer's progress, creating a durable $70bn market with value beyond drug sales. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Disease-modifying therapies have thus far had only a modest clinical effect, limiting near-term disease modification."
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Failed late-stage disease-modifying trial readouts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Payer refusal to reimburse at list prices"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies capture the $70bn market"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether disease-modifying therapies achieve clinically meaningful efficacy"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether adjacent industries' earnings actually benefit"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Further disappointing disease-modifying efficacy data"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed companies with Alzheimer's disease-modifying and symptomatic-control pipelines and assess how much of the $70bn estimate is in consensus."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Positive disease-modifying trial readout"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Payer adoption of outcomes-based Alzheimer's pricing"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-8feaba79612d",
+    "authors": [
+     "Sean Laaman",
+     "Maxwell Skor"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-55e912c3c17990",
+     "C-8e7edba9378565",
+     "C-b9a49aadaaa45f",
+     "C-fabcfcd9718afc",
+     "C-b61ce16619b773"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-14T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "3 Biotech Industry Trends Reshaping the Healthcare Market",
+    "upstream_origins": [
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/biotech-industry-trends-reshaping-healthcare-market",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-21",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-12 (0000059478-26-000013)",
+    "business": "pharmaceutical maker including Alzheimer's drug Kisunla",
+    "direction": "positive",
+    "enrichment_id": "EC-70b10c972f31ed",
+    "evidence": "s03.1: A $70bn addressable drug market implies substantial volume for disease-modifying and symptomatic therapies.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-05 (accession 0000059478-26-000081) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock (no par value)",
+      "ticker": "LLY"
+     }
+    ],
+    "name": "Eli Lilly",
+    "rationale": "Kisunla (donanemab) is a disease-modifying anti-amyloid therapy; a $70bn market lifts its neuroscience franchise volume and revenue.",
+    "registrant": "ELI LILLY & Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2834); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "disease-modifying Alzheimer's therapy",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-8DDD7B2868",
+    "ticker_hint": "LLY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-06 (0000875045-26-000013)",
+    "business": "biotech developing neurology therapies including Leqembi",
+    "direction": "positive",
+    "enrichment_id": "EC-98494213a13e8a",
+    "evidence": "s03.1: A $70bn addressable drug market implies substantial volume for disease-modifying and symptomatic therapies.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-29 (accession 0000875045-26-000075) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.0005 par value",
+      "ticker": "BIIB"
+     }
+    ],
+    "name": "Biogen",
+    "rationale": "Co-markets Leqembi (lecanemab), a disease-modifying anti-amyloid therapy; a large addressable market directly lifts its Alzheimer's revenue share.",
+    "registrant": "BIOGEN INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2836); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "disease-modifying Alzheimer's therapy",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-8DDD7B2868",
+    "ticker_hint": "BIIB"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "Japanese pharma, lead developer of Leqembi",
+    "direction": "positive",
+    "enrichment_id": "EC-8d3310175fd648",
+    "evidence": "s03.1: A $70bn addressable drug market implies substantial volume for disease-modifying and symptomatic therapies.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Eisai",
+    "rationale": "Leqembi (lecanemab) is Eisai's lead disease-modifying Alzheimer's therapy; a $70bn market lifts its volume and royalty revenue.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "disease-modifying Alzheimer's therapy",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-8DDD7B2868",
+    "ticker_hint": "ESAIY"
+   },
+   {
+    "basis_check": "FILING_NAMES_OTHER",
+    "basis_note": "its revenue-source sentences name licences and maintenance \u2014 not product sales",
+    "basis_quote": [
+     "We generate revenue from license or similar agreements with pharmaceutical companies for the development and commercialization of certain products.",
+     "The Company generates revenue from license or similar agreements with pharmaceutical companies for the development and commercialization of certain products."
+    ],
+    "basis_source": "10-K filed 2026-02-23 (0001193125-26-064267)",
+    "business": "CNS drug developer with Alzheimer's agitation pipeline",
+    "direction": "positive",
+    "enrichment_id": "EC-6176c42aef3d03",
+    "evidence": "s03.1: A $70bn addressable drug market implies substantial volume for disease-modifying and symptomatic therapies.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-10 (accession 0001193125-26-342360) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, Par Value $0.0001 Per Share",
+      "ticker": "AXSM"
+     }
+    ],
+    "name": "Axsome Therapeutics",
+    "rationale": "Develops AXS-05 for Alzheimer's agitation, a symptomatic therapy; approval would capture symptomatic segment of the estimated market.",
+    "registrant": "Axsome Therapeutics, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2834); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "symptomatic Alzheimer's therapy",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-8DDD7B2868",
+    "ticker_hint": "AXSM"
+   }
+  ],
+  "created_at": "2026-10-21T11:49:01.142714Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Fujirebio / miravista \u2014 use Fujifilm: more than 4 on one side \u2014 set aside",
+   "Lantheus Holdings: more than 4 on one side \u2014 set aside",
+   "Quest Diagnostics: more than 4 on one side \u2014 set aside",
+   "Prothena: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261021T114639Z-enrich",
+  "set_id": "ES-e049db38f04599",
+  "thesis_id": "TH-8DDD7B2868",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-8feaba79612d",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "healthcare",
+      "healthcare.pharma_biotech"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T11:06:27.105670Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-14",
+     "latest_article_date": "2026-09-14",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+     "status": "ACTIVE",
+     "thesis_id": "TH-8DDD7B2868",
+     "title": "Alzheimer's innovation unlocks a $70bn drug market plus adjacent value"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-55e912c3c17990",
+       "C-8e7edba9378565",
+       "C-b9a49aadaaa45f"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Morgan Stanley estimates a $70 billion Alzheimer's drug market with two investable areas (disease-modifying and symptomatic therapies), and argues the economic value extends beyond drug revenue to delaying institutional care. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-8e7edba9378565",
+       "C-b61ce16619b773"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Investment implications extend beyond therapeutics to diagnostics, care delivery, retirement and insurance industries."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A large estimated market plus adjacent beneficiaries (diagnostics, care delivery, retirement, insurance) implies broad research scope, but the article names no companies and does not quantify earnings effects."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-8feaba79612d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-55e912c3c17990"
+       ],
+       "original_date": "2026-09-14",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "Morgan Stanley estimates a $70 billion market for Alzheimer's drugs \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-8feaba79612d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b9a49aadaaa45f"
+       ],
+       "original_date": "2026-09-14",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "U.S. life expectancy is around 80 years while healthspan has plateaued around 70 \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-8feaba79612d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8e7edba9378565"
+       ],
+       "original_date": "2026-09-14",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "A therapy delaying nursing-home admission by 12-18 months could deliver value worth multiples of its list price"
+      },
+      {
+       "article_id": "A-8feaba79612d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b61ce16619b773"
+       ],
+       "original_date": "2026-09-14",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Beyond therapeutics, diagnostics, care delivery, retirement and insurance industries could benefit from or need to adapt to Alzheimer's treatment advances."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 11:06 UTC, analysed as of 2026-10-14, from a source published 2026-09-14; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-b9a49aadaaa45f",
+       "C-55e912c3c17990"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "Progress against Alzheimer's is needed to extend healthspan, creating a large treatment market. \u27e8cited figures: approximate; forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-55e912c3c17990"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "A $70bn addressable drug market implies substantial volume for disease-modifying and symptomatic therapies. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Earnings impact to specific listed companies is not quantified in the article."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8feaba79612d",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-55e912c3c17990",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Alzheimer's drug market size",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "estimate"
+      ],
+      "quote": "We estimate a $70 billion market for Alzheimer\u2019s drugs",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 70.0,
+      "value_text": "$70 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8feaba79612d",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8e7edba9378565",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "nursing home delay",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "could",
+       "worth multiples of list price"
+      ],
+      "quote": "A therapy that delays a move to a nursing home by even 12 to 18 months could deliver value to the U.S. healthcare system worth multiples of its list price.",
+      "role": "supports",
+      "unit": "months",
+      "value": null,
+      "value_text": "12 to 18 months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-8feaba79612d",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b9a49aadaaa45f",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "healthspan",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": null,
+      "qualifiers": [
+       "around",
+       "plateaued"
+      ],
+      "quote": "Although U.S. life expectancy has risen to around 80 years, healthspan\u2014the number of years lived without disease-related impairment\u2014has plateaued at around 70.",
+      "role": "supports",
+      "unit": "years",
+      "value": 70.0,
+      "value_text": "around 70"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8feaba79612d",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b61ce16619b773",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Beyond therapeutics, diagnostics, care delivery, retirement and insurance industries could benefit from or need to adapt to Alzheimer's treatment advances.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Diagnostics and care delivery, as well as the retirement and insurance industries, could benefit from\u2014or need to adapt to\u2014a society \uf002 planning for longer, but less certain, late-life outcomes.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-8feaba79612d",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-f57b6600ae9de3",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Sign up to get Morgan Stanley Ideas delivered to your inbox.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and research author"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-8feaba79612d",
+       "claim_ids": [
+        "C-8e7edba9378565"
+       ],
+       "direction": "unclear",
+       "name": "Diagnostics and care delivery, retirement and insurance industries",
+       "provenance": "SOURCE OPINION",
+       "quote": "Diagnostics and care delivery, as well as the retirement and insurance industries, could benefit from\u2014or need to adapt to"
+      },
+      {
+       "article_id": "A-8feaba79612d",
+       "claim_ids": [
+        "C-b61ce16619b773"
+       ],
+       "direction": "positive",
+       "name": "Diagnostics and care delivery, as well as the retirement and insurance industries",
+       "provenance": "SOURCE OPINION",
+       "quote": "Diagnostics and care delivery, as well as the retirement and insurance industries, could benefit"
+      }
+     ],
+     "sectors": [
+      "Alzheimer's drugs",
+      "disease-modifying therapies",
+      "symptomatic control",
+      "diagnostics and care delivery",
+      "retirement and insurance industries"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Disease-modifying drugs have thus far had a modest clinical effect; symptomatic control likely remains a mainstay near term."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-55e912c3c17990",
+        "C-b9a49aadaaa45f"
+       ],
+       "provenance": "FORECAST",
+       "text": "Extending healthspan requires Alzheimer's progress, creating a durable $70bn market with value beyond drug sales. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Disease-modifying therapies have thus far had only a modest clinical effect, limiting near-term disease modification."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Failed late-stage disease-modifying trial readouts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Payer refusal to reimburse at list prices"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies capture the $70bn market"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether disease-modifying therapies achieve clinically meaningful efficacy"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether adjacent industries' earnings actually benefit"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Further disappointing disease-modifying efficacy data"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed companies with Alzheimer's disease-modifying and symptomatic-control pipelines and assess how much of the $70bn estimate is in consensus."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Positive disease-modifying trial readout"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Payer adoption of outcomes-based Alzheimer's pricing"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-8feaba79612d",
+      "authors": [
+       "Sean Laaman",
+       "Maxwell Skor"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-55e912c3c17990",
+       "C-8e7edba9378565",
+       "C-b9a49aadaaa45f",
+       "C-fabcfcd9718afc",
+       "C-b61ce16619b773"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-14T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "3 Biotech Industry Trends Reshaping the Healthcare Market",
+      "upstream_origins": [
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/biotech-industry-trends-reshaping-healthcare-market",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "0aac2d911298fbe4569fbe2ba8ce0e7e49495079b84f366e3ffb20cf4384f16d",
+   "created_at": "2026-10-21T10:29:30.719418Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-55e912c3c17990",
+       "C-b9a49aadaaa45f",
+       "C-fabcfcd9718afc"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-b9a49aadaaa45f"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-b9a49aadaaa45f: measured 2026-09-14 (30 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: Diagnostics and care delivery, retirement and insurance industries, sector: Diagnostics and care delivery, as well as the retirement and insurance industries",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 2 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-8DDD7B2868",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 5,
+ "other_cited_evidence": [
+  "C-fabcfcd9718afc"
+ ],
+ "review_carried": {},
+ "review_dismissed": {
+  "s01.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-55e912c3c17990",
+    "C-8e7edba9378565",
+    "C-b9a49aadaaa45f"
+   ],
+   "created_at": "2026-10-22T07:43:04.795647Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s01.0: The $70bn market and the delaying-institutional-care value points are supported, but the claim of 'two investable areas (disease-modifying and symptomatic therapies)' is not present in any cited span. | \"Morgan Stanley estimates a $70 billion Alzheimer's drug market with two investable areas (disease-mo\"",
+   "finding_key": "F-d7b1e0f3e131",
+   "finding_version": 1,
+   "line_text": "Morgan Stanley estimates a $70 billion Alzheimer's drug market with two investable areas (disease-modifying and symptomatic therapies), and argues the economic value extends beyond drug revenue to delaying institutional care. \u27e8cited figures: forecast; approximate\u27e9",
+   "reason": "The source says it: 'two main areas of investable opportunity: Disease-modifying therapies ... Symptomatic control'. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-ab6543759c4c",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074304Z-review-2",
+   "sentence_id": "s01.0",
+   "supersedes": [],
+   "thesis_id": "TH-8DDD7B2868",
+   "version": 1
+  },
+  "s03.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-b9a49aadaaa45f",
+    "C-55e912c3c17990"
+   ],
+   "created_at": "2026-10-22T07:43:05.534589Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s03.0: Cited spans give the healthspan plateau (~70) and the $70bn market, but do not state that progress against Alzheimer's is 'needed to extend healthspan' creating the market \u2014 that causal link is not in the cited spans. | \"Progress against Alzheimer's is needed to extend healthspan, creating a large treatment market. \u27e8cit\"",
+   "finding_key": "F-187044af477b",
+   "finding_version": 1,
+   "line_text": "Progress against Alzheimer's is needed to extend healthspan, creating a large treatment market. \u27e8cited figures: approximate; forecast\u27e9",
+   "reason": "The source says it: 'Further gains in healthspan will require progress against Alzheimer's disease, creating a significant market for treatments.' \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-99cf59ea1439",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074305Z-review",
+   "sentence_id": "s03.0",
+   "supersedes": [],
+   "thesis_id": "TH-8DDD7B2868",
+   "version": 1
+  },
+  "s03.1": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-55e912c3c17990"
+   ],
+   "created_at": "2026-10-22T07:43:06.288985Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s03.1: The $70bn market is supported, but 'substantial volume for disease-modifying and symptomatic therapies' adds detail not in the cited span. | 'A $70bn addressable drug market implies substantial volume for disease-modifying and symptomatic the'",
+   "finding_key": "F-dfdc5b36ccec",
+   "finding_version": 1,
+   "line_text": "A $70bn addressable drug market implies substantial volume for disease-modifying and symptomatic therapies. \u27e8cited figures: forecast\u27e9",
+   "reason": "The source names both areas (disease-modifying and symptomatic); 'substantial volume' is soft wording on the cited $70bn market. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-0ff570ce5a2e",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074306Z-review",
+   "sentence_id": "s03.1",
+   "supersedes": [],
+   "thesis_id": "TH-8DDD7B2868",
+   "version": 1
+  },
+  "s06.1": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-55e912c3c17990",
+    "C-b9a49aadaaa45f"
+   ],
+   "created_at": "2026-10-22T07:43:07.025070Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s06.1: The $70bn market and 'value beyond drug sales' are supported, but 'extending healthspan requires Alzheimer's progress' and 'durable' are not stated in the cited spans. | \"Extending healthspan requires Alzheimer's progress, creating a durable $70bn market with value beyon\"",
+   "finding_key": "F-fc87d6ad558e",
+   "finding_version": 1,
+   "line_text": "Extending healthspan requires Alzheimer's progress, creating a durable $70bn market with value beyond drug sales. \u27e8cited figures: forecast; approximate\u27e9",
+   "reason": "The source says it: 'Further gains in healthspan will require progress against Alzheimer's disease'; 'durable' is soft wording. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-ad0e845c9867",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074307Z-review",
+   "sentence_id": "s06.1",
+   "supersedes": [],
+   "thesis_id": "TH-8DDD7B2868",
+   "version": 1
+  }
+ },
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The $70bn market and the delaying-institutional-care value points are supported, but the claim of 'two investable areas (disease-modifying and symptomatic therapies)' is not present in any cited span.",
+  "s03.0": "Cited spans give the healthspan plateau (~70) and the $70bn market, but do not state that progress against Alzheimer's is 'needed to extend healthspan' creating the market \u2014 that causal link is not in the cited spans.",
+  "s03.1": "The $70bn market is supported, but 'substantial volume for disease-modifying and symptomatic therapies' adds detail not in the cited span.",
+  "s06.1": "The $70bn market and 'value beyond drug sales' are supported, but 'extending healthspan requires Alzheimer's progress' and 'durable' are not stated in the cited spans."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}

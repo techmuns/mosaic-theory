@@ -1,4 +1,6 @@
 {"origin_id": "ES-044b50fe7b56", "payload": "{\"origin_id\":\"ES-044b50fe7b56\",\"name\":\"JPM WM Solutions. Bloomberg Finance L.P.\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-15dc9f5d637e", "payload": "{\"origin_id\":\"ES-15dc9f5d637e\",\"name\":\"ODMs\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-172788df3493", "payload": "{\"origin_id\":\"ES-172788df3493\",\"name\":\"Murata executives\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-2247eb10ad22", "payload": "{\"origin_id\":\"ES-2247eb10ad22\",\"name\":\"Brad Gerstner\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-370bfea99a7f", "payload": "{\"origin_id\":\"ES-370bfea99a7f\",\"name\":\"State Council\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-376a4a64f9cb", "payload": "{\"origin_id\":\"ES-376a4a64f9cb\",\"name\":\"The Elec\",\"kind\":\"data_vendor\"}"}
@@ -12,11 +14,16 @@
 {"origin_id": "ES-87e28a692503", "payload": "{\"origin_id\":\"ES-87e28a692503\",\"name\":\"Morgan Stanley Research + United Nations\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-9054521ac923", "payload": "{\"origin_id\":\"ES-9054521ac923\",\"name\":\"SemiAnalysis Datacenter Industry Model\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-96049bd84655", "payload": "{\"origin_id\":\"ES-96049bd84655\",\"name\":\"Morgan Stanley Research\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-9967e36f8fe5", "payload": "{\"origin_id\":\"ES-9967e36f8fe5\",\"name\":\"Federal Reserve Board + Markit\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-a1797c7540c2", "payload": "{\"origin_id\":\"ES-a1797c7540c2\",\"name\":\"bankrate.com\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-aab273bf90d4", "payload": "{\"origin_id\":\"ES-aab273bf90d4\",\"name\":\"Bloomberg Finance L.P.\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-af9b7e755d4f", "payload": "{\"origin_id\":\"ES-af9b7e755d4f\",\"name\":\"pymnts.com\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-b20f79378f16", "payload": "{\"origin_id\":\"ES-b20f79378f16\",\"name\":\"Citi (own analysis)\",\"kind\":\"publisher_own\"}"}
 {"origin_id": "ES-b273a4ebae6e", "payload": "{\"origin_id\":\"ES-b273a4ebae6e\",\"name\":\"market consensus\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-be29a1565272", "payload": "{\"origin_id\":\"ES-be29a1565272\",\"name\":\"Liang Wenfeng (unverified DeepSeek investor meeting transcript)\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-c1879b598a67", "payload": "{\"origin_id\":\"ES-c1879b598a67\",\"name\":\"Huawei\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-c414df565bed", "payload": "{\"origin_id\":\"ES-c414df565bed\",\"name\":\"Tristan Hume on Twitter\",\"kind\":\"data_vendor\"}"}
+{"origin_id": "ES-df28d5413b5c", "payload": "{\"origin_id\":\"ES-df28d5413b5c\",\"name\":\"Markit\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-f1a195435792", "payload": "{\"origin_id\":\"ES-f1a195435792\",\"name\":\"Atlantic Council\",\"kind\":\"data_vendor\"}"}
 {"origin_id": "ES-f41ee4fccc95", "payload": "{\"origin_id\":\"ES-f41ee4fccc95\",\"name\":\"Morgan Stanley (own analysis)\",\"kind\":\"publisher_own\"}"}
 {"origin_id": "ES-f8175a623c1d", "payload": "{\"origin_id\":\"ES-f8175a623c1d\",\"name\":\"AlphaWise + Morgan Stanley Research\",\"kind\":\"data_vendor\"}"}

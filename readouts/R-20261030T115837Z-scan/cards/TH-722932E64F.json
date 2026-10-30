@@ -1,0 +1,1680 @@
+{
+ "analyst_corrections": {
+  "s01.0": "The OLEDoS lead, LCoS-through-Meta and specification claims are not in the evidence; the 80% figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s03.0": "The monochrome-green and dual-colour details are not in the evidence; the 80% figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s03.1": "'As shipments reach new highs' is not in the evidence; the 80% figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s06.1": "No evidence supports the specification, Meta and cost-flexibility inference; the 80% figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)"
+ },
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-22",
+   "ancestry": [
+    "electronic_components"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:16:21.886888Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-15",
+   "latest_article_date": "2026-10-15",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Passive and electronic components (MLCC, VCSEL, connectors)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-722932E64F",
+   "title": "Near-eye microdisplay makers benefit as OLEDoS, LEDoS and LCoS scale with AR glasses"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-0e6b6ca9a0c35c"
+    ],
+    "provenance": "FORECAST",
+    "text": "TrendForce expects OLEDoS and LEDoS to account for approximately 80% of the AR glasses display market combined in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "As display technologies improve and expand applications, brands get wider technology options and greater cost-management flexibility, driving product innovation and application expansion."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Scaling AR glasses volumes imply rising demand for microdisplay technologies (OLEDoS, LEDoS, LCoS), but the article names no microdisplay suppliers and gives no revenue or margin figures."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0e6b6ca9a0c35c"
+     ],
+     "original_date": "2026-10-15",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "OLEDoS and LEDoS combined expected to account for about 80% of the AR glasses display market \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:16 UTC, analysed as of 2026-10-21, from a source published 2026-10-15; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-0e6b6ca9a0c35c"
+    ],
+    "provenance": "FORECAST",
+    "step": "industry_shift",
+    "text": "OLEDoS and LEDoS are expected to hold approximately 80% of the AR glasses display market combined. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-0e6b6ca9a0c35c"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "OLEDoS and LEDoS combined are expected to account for approximately 80% of the display market. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Higher display volumes would flow to microdisplay suppliers' revenue, but the article names no suppliers and quantifies no earnings effect."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-1c3e6ee1d553",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0e6b6ca9a0c35c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "OLEDoS and LEDoS share of AR glasses display market \u2014 display technology market share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "approximately",
+     "combined"
+    ],
+    "quote": "OLEDoS and LEDoS are expected to account for approximately 80% of the market combined",
+    "role": "supports",
+    "unit": "%",
+    "value": 80.0,
+    "value_text": "approximately 80%"
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8d8d1e6ea6877b",
+     "name_as_written": "XREAL",
+     "other_securities": [],
+     "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "One of four major non-Meta AR glasses brands; focuses on entertainment/media AR glasses"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1f4f9ad95e0d3b",
+     "name_as_written": "Even Realities",
+     "other_securities": [],
+     "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "AR glasses brand specializing in information-display, lightweight designs"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ec310a441010ff",
+     "name_as_written": "Rokid",
+     "other_securities": [],
+     "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "AR glasses brand with diverse product portfolios"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d902a7c1e25ee8",
+     "name_as_written": "RayNeo",
+     "other_securities": [],
+     "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "AR glasses brand with diverse product portfolios"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-00b2ebf8effa9a",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "developed in collaboration with Google",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Collaborating with XREAL on Aura glasses launching end of 2026"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-80a0c3fc83f749",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm publishing the near-eye display market report and forecasts"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8ada0836441769",
+     "name_as_written": "Ray-Ban Display",
+     "other_securities": [],
+     "quote": "Meta\u2019s Ray-Ban Display glasses",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Meta's AR glasses product driving demand momentum"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-287f478da8f195",
+     "name_as_written": "Aura",
+     "other_securities": [],
+     "quote": "Its Aura glasses",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "XREAL AR glasses developed with Google, launching end of 2026"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": "0001326801",
+     "direction": "positive",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "spending customer",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-58a2675f791c60",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "Meta\u2019s Ray-Ban Display glasses",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Market leader in AR glasses with ~20% of 2026 shipments via Ray-Ban Display glasses"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "claim_ids": [
+      "C-0e6b6ca9a0c35c"
+     ],
+     "direction": "positive",
+     "name": "OLEDoS",
+     "provenance": "FORECAST",
+     "quote": "OLEDoS and LEDoS are expected to account for approximately 80%"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "claim_ids": [
+      "C-0e6b6ca9a0c35c"
+     ],
+     "direction": "positive",
+     "name": "LEDoS",
+     "provenance": "FORECAST",
+     "quote": "OLEDoS and LEDoS are expected to account for approximately 80%"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "claim_ids": [],
+     "direction": "positive",
+     "name": "LCoS",
+     "provenance": "SOURCE OPINION",
+     "quote": "LCoS adoption grows through Meta's products"
+    }
+   ],
+   "sectors": [
+    "near-eye display",
+    "microdisplay",
+    "OLEDoS",
+    "LEDoS",
+    "LCoS"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-0e6b6ca9a0c35c"
+     ],
+     "provenance": "FORECAST",
+     "text": "OLEDoS and LEDoS combined to account for ~80% of the AR glasses display market in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-0e6b6ca9a0c35c"
+     ],
+     "provenance": "FORECAST",
+     "text": "OLEDoS and LEDoS are expected to account for approximately 80% of the market combined in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "LEDoS full-color technical hurdles stalling information-display adoption"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "OLEDoS capacity overhang pressuring display pricing"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AR glasses shipment shortfall reducing display demand"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies supply OLEDoS, LEDoS or LCoS microdisplays and their AR exposure"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether full-color LEDoS technical challenges delay adoption"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Revenue and margin economics for display suppliers"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Persistent full-color LEDoS technical barriers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "OLEDoS oversupply depressing display economics"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Map listed microdisplay suppliers (OLEDoS, LEDoS, LCoS) and their AR-glasses design wins, capacity plans and the pricing implications of OLEDoS capacity coming online."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Dual-color red-green LEDoS or full-color breakthroughs confirmed"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Listed display suppliers announcing AR design wins"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-1c3e6ee1d553",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-0e6b6ca9a0c35c"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-15T16:16:46+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261015-13273.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-06-18 (0001193125-26-274893)",
+    "business": "electronics conglomerate; leading OLEDoS microdisplay maker",
+    "direction": "positive",
+    "enrichment_id": "EC-7632e40e93c053",
+    "evidence": "s03.2: Higher display volumes would flow to microdisplay suppliers' revenue, but the article names no suppliers and quantifies no earnings effect.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Sony Group",
+    "rationale": "Its Semiconductor Solutions unit is a leading OLED-on-silicon microdisplay supplier; scaling AR glasses volumes lift microdisplay unit sales.",
+    "registrant": "Sony Group Corp",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['SONY', 'SNEJF'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "OLEDoS microdisplays for near-eye devices",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-722932E64F",
+    "ticker_hint": "SONY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-03-27 (0001104659-26-035507)",
+    "business": "display driver ICs; LCoS microdisplay supplier",
+    "direction": "positive",
+    "enrichment_id": "EC-63f0597cb9a932",
+    "evidence": "s03.2: Higher display volumes would flow to microdisplay suppliers' revenue, but the article names no suppliers and quantifies no earnings effect.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Himax Technologies",
+    "rationale": "Supplies LCoS microdisplays and drivers for AR/waveguide glasses; rising AR glasses volumes raise its non-driver microdisplay revenue.",
+    "registrant": "Himax Technologies, Inc.",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['HIMX'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "LCoS microdisplays and display drivers for AR",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-722932E64F",
+    "ticker_hint": "HIMX"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-04-13 (0001493152-26-016338)",
+    "business": "microdisplay maker (OLED, microLED, LCoS)",
+    "direction": "positive",
+    "enrichment_id": "EC-7ec1a7c08975e6",
+    "evidence": "s03.2: Higher display volumes would flow to microdisplay suppliers' revenue, but the article names no suppliers and quantifies no earnings effect.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-11 (accession 0001493152-26-037194) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01",
+      "ticker": "KOPN"
+     }
+    ],
+    "name": "Kopin",
+    "rationale": "Pure-play microdisplay supplier across OLEDoS and microLED for near-eye wearables; scaling AR volumes directly raise display unit sales.",
+    "registrant": "KOPIN CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "near-eye microdisplays for AR/VR",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-722932E64F",
+    "ticker_hint": "KOPN"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-04-28 (0001193125-26-183413)",
+    "business": "OLED and display panel manufacturer",
+    "direction": "positive",
+    "enrichment_id": "EC-114c19e8e68a25",
+    "evidence": "s03.2: Higher display volumes would flow to microdisplay suppliers' revenue, but the article names no suppliers and quantifies no earnings effect.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "LG Display",
+    "rationale": "Develops OLEDoS microdisplays for AR/VR; growing near-eye display demand adds a new revenue line beyond large panels.",
+    "registrant": "LG Display Co., Ltd.",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['LPL'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "OLEDoS microdisplays for near-eye devices",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-722932E64F",
+    "ticker_hint": "LPL"
+   }
+  ],
+  "created_at": "2026-10-30T12:23:09.823645Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-cce5af154ed168",
+  "thesis_id": "TH-722932E64F",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-1c3e6ee1d553",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "electronic_components"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:16:21.886888Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-15",
+     "latest_article_date": "2026-10-15",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Passive and electronic components (MLCC, VCSEL, connectors)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-722932E64F",
+     "title": "Near-eye microdisplay makers benefit as OLEDoS, LEDoS and LCoS scale with AR glasses"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "provenance": "FORECAST",
+      "text": "TrendForce expects OLEDoS and LEDoS combined to account for ~80% of the AR glasses display market, with OLEDoS keeping a slight lead and LCoS adoption growing through Meta's products, as display technologies improve specs and expand into new applications. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "As display technologies improve and expand applications, brands get wider technology options and greater cost-management flexibility, driving product innovation and application expansion."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Scaling AR glasses volumes imply rising demand for microdisplay technologies (OLEDoS, LEDoS, LCoS), but the article names no microdisplay suppliers and gives no revenue or margin figures."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0e6b6ca9a0c35c"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "OLEDoS and LEDoS combined expected to account for about 80% of the AR glasses display market \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:16 UTC, analysed as of 2026-10-21, from a source published 2026-10-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "AR glasses adoption drives OLEDoS, LEDoS and LCoS display technology development, including monochrome green and dual-color red-green solutions. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "OLEDoS and LEDoS combined expected to hold ~80% of the display market as shipments reach new highs. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher display volumes would flow to microdisplay suppliers' revenue, but the article names no suppliers and quantifies no earnings effect."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0e6b6ca9a0c35c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "OLEDoS and LEDoS share of AR glasses display market \u2014 display technology market share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately",
+       "combined"
+      ],
+      "quote": "OLEDoS and LEDoS are expected to account for approximately 80% of the market combined",
+      "role": "supports",
+      "unit": "%",
+      "value": 80.0,
+      "value_text": "approximately 80%"
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8d8d1e6ea6877b",
+       "name_as_written": "XREAL",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "One of four major non-Meta AR glasses brands; focuses on entertainment/media AR glasses"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1f4f9ad95e0d3b",
+       "name_as_written": "Even Realities",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand specializing in information-display, lightweight designs"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ec310a441010ff",
+       "name_as_written": "Rokid",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d902a7c1e25ee8",
+       "name_as_written": "RayNeo",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-00b2ebf8effa9a",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "developed in collaboration with Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Collaborating with XREAL on Aura glasses launching end of 2026"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-80a0c3fc83f749",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the near-eye display market report and forecasts"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8ada0836441769",
+       "name_as_written": "Ray-Ban Display",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Meta's AR glasses product driving demand momentum"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-287f478da8f195",
+       "name_as_written": "Aura",
+       "other_securities": [],
+       "quote": "Its Aura glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "XREAL AR glasses developed with Google, launching end of 2026"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": "0001326801",
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-58a2675f791c60",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Market leader in AR glasses with ~20% of 2026 shipments via Ray-Ban Display glasses"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [
+        "C-0e6b6ca9a0c35c"
+       ],
+       "direction": "positive",
+       "name": "OLEDoS",
+       "provenance": "FORECAST",
+       "quote": "OLEDoS and LEDoS are expected to account for approximately 80%"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [
+        "C-0e6b6ca9a0c35c"
+       ],
+       "direction": "positive",
+       "name": "LEDoS",
+       "provenance": "FORECAST",
+       "quote": "OLEDoS and LEDoS are expected to account for approximately 80%"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "LCoS",
+       "provenance": "SOURCE OPINION",
+       "quote": "LCoS adoption grows through Meta's products"
+      }
+     ],
+     "sectors": [
+      "near-eye display",
+      "microdisplay",
+      "OLEDoS",
+      "LEDoS",
+      "LCoS"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-0e6b6ca9a0c35c"
+       ],
+       "provenance": "FORECAST",
+       "text": "OLEDoS and LEDoS combined to account for ~80% of the AR glasses display market in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "LEDoS and OLEDoS improve specs while LCoS grows through Meta, giving brands wider technology options and cost flexibility."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "LEDoS full-color technical hurdles stalling information-display adoption"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "OLEDoS capacity overhang pressuring display pricing"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AR glasses shipment shortfall reducing display demand"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies supply OLEDoS, LEDoS or LCoS microdisplays and their AR exposure"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether full-color LEDoS technical challenges delay adoption"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue and margin economics for display suppliers"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Persistent full-color LEDoS technical barriers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "OLEDoS oversupply depressing display economics"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map listed microdisplay suppliers (OLEDoS, LEDoS, LCoS) and their AR-glasses design wins, capacity plans and the pricing implications of OLEDoS capacity coming online."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Dual-color red-green LEDoS or full-color breakthroughs confirmed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Listed display suppliers announcing AR design wins"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-1c3e6ee1d553",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-15T16:16:46+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261015-13273.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "b521315ebada62e9c8f2f60c386d400a5c204e68172c6b3495549c6398d073ec",
+   "created_at": "2026-10-21T08:16:30.454103Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-0e6b6ca9a0c35c: forecast window 2026-01-01..2026-12-31 (2026)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Meta (META), sector: OLEDoS, sector: LEDoS, sector: LCoS",
+      "value": "1 listed \u00b7 3 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 1 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-722932E64F",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s01.0 \u2014 The OLEDoS lead, LCoS-through-Meta and specification claims are not in the evidence; the 80% figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s03.0 \u2014 The monochrome-green and dual-colour details are not in the evidence; the 80% figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s03.1 \u2014 'As shipments reach new highs' is not in the evidence; the 80% figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s06.1 \u2014 No evidence supports the specification, Meta and cost-flexibility inference; the 80% figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "electronic_components"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:16:21.886888Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-15",
+     "latest_article_date": "2026-10-15",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Passive and electronic components (MLCC, VCSEL, connectors)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-722932E64F",
+     "title": "Near-eye microdisplay makers benefit as OLEDoS, LEDoS and LCoS scale with AR glasses"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "provenance": "FORECAST",
+      "text": "TrendForce expects OLEDoS and LEDoS to account for approximately 80% of the AR glasses display market combined in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "As display technologies improve and expand applications, brands get wider technology options and greater cost-management flexibility, driving product innovation and application expansion."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Scaling AR glasses volumes imply rising demand for microdisplay technologies (OLEDoS, LEDoS, LCoS), but the article names no microdisplay suppliers and gives no revenue or margin figures."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0e6b6ca9a0c35c"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "OLEDoS and LEDoS combined expected to account for about 80% of the AR glasses display market \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:16 UTC, analysed as of 2026-10-21, from a source published 2026-10-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "OLEDoS and LEDoS are expected to hold approximately 80% of the AR glasses display market combined. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "OLEDoS and LEDoS combined are expected to account for approximately 80% of the display market. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher display volumes would flow to microdisplay suppliers' revenue, but the article names no suppliers and quantifies no earnings effect."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0e6b6ca9a0c35c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "OLEDoS and LEDoS share of AR glasses display market \u2014 display technology market share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately",
+       "combined"
+      ],
+      "quote": "OLEDoS and LEDoS are expected to account for approximately 80% of the market combined",
+      "role": "supports",
+      "unit": "%",
+      "value": 80.0,
+      "value_text": "approximately 80%"
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8d8d1e6ea6877b",
+       "name_as_written": "XREAL",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "One of four major non-Meta AR glasses brands; focuses on entertainment/media AR glasses"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1f4f9ad95e0d3b",
+       "name_as_written": "Even Realities",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand specializing in information-display, lightweight designs"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ec310a441010ff",
+       "name_as_written": "Rokid",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d902a7c1e25ee8",
+       "name_as_written": "RayNeo",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-00b2ebf8effa9a",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "developed in collaboration with Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Collaborating with XREAL on Aura glasses launching end of 2026"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-80a0c3fc83f749",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the near-eye display market report and forecasts"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8ada0836441769",
+       "name_as_written": "Ray-Ban Display",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Meta's AR glasses product driving demand momentum"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-287f478da8f195",
+       "name_as_written": "Aura",
+       "other_securities": [],
+       "quote": "Its Aura glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "XREAL AR glasses developed with Google, launching end of 2026"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": "0001326801",
+       "direction": "positive",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-58a2675f791c60",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Market leader in AR glasses with ~20% of 2026 shipments via Ray-Ban Display glasses"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [
+        "C-0e6b6ca9a0c35c"
+       ],
+       "direction": "positive",
+       "name": "OLEDoS",
+       "provenance": "FORECAST",
+       "quote": "OLEDoS and LEDoS are expected to account for approximately 80%"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [
+        "C-0e6b6ca9a0c35c"
+       ],
+       "direction": "positive",
+       "name": "LEDoS",
+       "provenance": "FORECAST",
+       "quote": "OLEDoS and LEDoS are expected to account for approximately 80%"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "LCoS",
+       "provenance": "SOURCE OPINION",
+       "quote": "LCoS adoption grows through Meta's products"
+      }
+     ],
+     "sectors": [
+      "near-eye display",
+      "microdisplay",
+      "OLEDoS",
+      "LEDoS",
+      "LCoS"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-0e6b6ca9a0c35c"
+       ],
+       "provenance": "FORECAST",
+       "text": "OLEDoS and LEDoS combined to account for ~80% of the AR glasses display market in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-0e6b6ca9a0c35c"
+       ],
+       "provenance": "FORECAST",
+       "text": "OLEDoS and LEDoS are expected to account for approximately 80% of the market combined in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "LEDoS full-color technical hurdles stalling information-display adoption"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "OLEDoS capacity overhang pressuring display pricing"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AR glasses shipment shortfall reducing display demand"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies supply OLEDoS, LEDoS or LCoS microdisplays and their AR exposure"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether full-color LEDoS technical challenges delay adoption"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue and margin economics for display suppliers"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Persistent full-color LEDoS technical barriers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "OLEDoS oversupply depressing display economics"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map listed microdisplay suppliers (OLEDoS, LEDoS, LCoS) and their AR-glasses design wins, capacity plans and the pricing implications of OLEDoS capacity coming online."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Dual-color red-green LEDoS or full-color breakthroughs confirmed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Listed display suppliers announcing AR design wins"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-1c3e6ee1d553",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-15T16:16:46+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261015-13273.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "e2174b94e0998b7fed9671e10ba8947aab65a9f0a2629492664cfb213ccb5937",
+   "created_at": "2026-10-22T07:42:55.360767Z",
+   "diffs": [
+    {
+     "change_class": "no material change",
+     "claim_ids": [
+      "C-0e6b6ca9a0c35c"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "Scaling AR glasses volumes imply rising demand for microdisplay technologies (OLEDoS, LEDoS, LCoS), but the article names no microdisplay suppliers and gives no revenue or margin figures.",
+     "note": "",
+     "old": "Scaling AR glasses volumes imply rising demand for microdisplay technologies (OLEDoS, LEDoS, LCoS), but the article names no microdisplay suppliers and gives no revenue or margin figures."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": "b521315ebada62e9c8f2f60c386d400a5c204e68172c6b3495549c6398d073ec",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-0e6b6ca9a0c35c"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-0e6b6ca9a0c35c: forecast window 2026-01-01..2026-12-31 (2026)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Meta (META), sector: OLEDoS, sector: LEDoS, sector: LCoS",
+      "value": "1 listed \u00b7 3 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 1 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-722932E64F",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 1,
+ "other_cited_evidence": [],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {},
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}

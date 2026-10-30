@@ -1,0 +1,1549 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-30",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.compute_semis"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-30",
+   "first_ingested_at": "2026-10-30T12:16:13.266303Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-22",
+   "latest_article_date": "2026-10-22",
+   "region": "Global",
+   "research_action": "RESEARCH NOW",
+   "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+   "status": "ACTIVE",
+   "thesis_id": "TH-0577F0AD38",
+   "title": "AI inference and agentic AI drive server CPU shipment growth above 40%"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-2c89cc9ee1444c",
+     "C-a73163d91f2a4f",
+     "C-14ececf955e692",
+     "C-3cb9676f3d6af0"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Server CPU shipments are forecast to grow 31% YoY in 2026 and more than 40% YoY in 2027, driven by rising AI inference demand and agentic AI services shifting the CPU-to-GPU/ASIC ratio from 1:8 toward 1:2 or 1:1. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-a73163d91f2a4f",
+     "C-3cb9676f3d6af0"
+    ],
+    "provenance": "FORECAST",
+    "text": "The article presents strong server CPU shipment growth as a market-wide opportunity driven by AI inference and agentic AI. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A rising CPU-to-accelerator ratio implies more CPU content per AI server, benefiting all server CPU suppliers by volume, though the article does not quantify revenue or earnings impact."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a73163d91f2a4f"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Server CPU shipments expected to grow more than 40% YoY in 2027 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-3cb9676f3d6af0"
+     ],
+     "original_date": "2026-10-22",
+     "period": null,
+     "provenance": "FORECAST",
+     "text": "CPU-to-GPU/ASIC ratio in servers expected to shift from traditional 1:8 toward 1:2 or 1:1 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-2c89cc9ee1444c"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Server CPU shipments projected to grow 31% YoY in 2026 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-14ececf955e692"
+     ],
+     "original_date": "2026-10-22",
+     "period": "since 2H 2025",
+     "provenance": "SOURCE OPINION",
+     "text": "Server CPU demand has grown steadily since 2H 2025 as AI providers introduce AI agent applications"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-30 12:16 UTC, analysed as of 2026-10-30, from a source published 2026-10-22; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-14ececf955e692",
+     "C-3cb9676f3d6af0"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "AI agents increase inference workloads in cloud data centers, shifting the CPU-to-GPU/ASIC ratio toward more CPUs per server \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-2c89cc9ee1444c",
+     "C-a73163d91f2a4f"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Server CPU shipments grow 31% in 2026 and more than 40% in 2027 \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-a73163d91f2a4f"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Higher shipment volumes would lift server CPU supplier revenue, though the article does not quantify the effect \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2c89cc9ee1444c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "server CPU shipment growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "Server CPU shipments are projected to increase 31% YoY in 2026.",
+    "role": "supports",
+    "unit": "% YoY",
+    "value": 31.0,
+    "value_text": "31%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3cb9676f3d6af0",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "CPU-to-GPU/ASIC ratio",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the CPU-to-GPU/ASIC ratio is expected to shift from the traditional 1:8 toward 1:2\u2014or even 1:1",
+    "role": "supports",
+    "unit": "ratio",
+    "value": null,
+    "value_text": "1:8 toward 1:2\u2014or even 1:1"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e41cabda3e1d86",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "server CPU shipment growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "Over"
+    ],
+    "quote": "Server CPU Shipments Projected to Grow Over 40% YoY in 2027",
+    "role": "supports",
+    "unit": "% YoY",
+    "value": 40.0,
+    "value_text": "Over 40%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-14ececf955e692",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Server CPU demand has grown steadily since 2H 2025 as AI providers introduce AI agent applications",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since 2H 2025",
+    "qualifiers": [],
+    "quote": "demand for server CPUs has grown steadily since the second half of 2025 as AI service providers actively introduce AI agent applications",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e41ce8fb77d4a5",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author and research firm producing the forecasts"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ebe45dbb5c7ca4",
+     "name_as_written": "AWS",
+     "other_securities": [],
+     "quote": "AWS continues to deploy its internally developed Graviton processors",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Deploys in-house Arm-based Graviton server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9418e4fcf3a329",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Google\u2019s in-house Axion CPUs have entered high-volume shipments",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Deploys in-house Arm-based Axion server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0000789019",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-52d8c558dd8ba4",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "Microsoft\u2019s Cobalt 100 and Arm\u2019s internally developed AGI processors",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Deploys in-house Arm-based Cobalt 100 server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b22ac875d96a21",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "high-volume production of new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Named as introducing new Arm-based server processors in 2027"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ee154d6b5a56d3",
+     "name_as_written": "Huawei",
+     "other_securities": [],
+     "quote": "new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Named as introducing new Arm-based server processors in 2027"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8e791e26a218d3",
+     "name_as_written": "Alibaba",
+     "other_securities": [],
+     "quote": "Alibaba\u2019s introduction of new Yitian 720/730 CPUs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Introducing new Yitian 720/730 Arm-based server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2c490a5aecb2d3",
+     "name_as_written": "TSMC",
+     "other_securities": [],
+     "quote": "tight capacity at TSMC limiting AMD\u2019s ability to accommodate additional orders",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Foundry whose tight capacity limits AMD's server CPU orders"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0000002488",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-a3a84c26c9d70e",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "led by Intel and AMD",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "x86 server CPU supplier gaining market share"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0000050863",
+     "direction": "negative",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "spending customer",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-30 (accession 0000050863-26-000191) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.001 par value",
+       "ticker": "INTC"
+      }
+     ],
+     "mention_id": "M-89a2fbdbf3efff",
+     "name_as_written": "Intel",
+     "other_securities": [],
+     "quote": "led by Intel and AMD",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potentially_harmed",
+     "role_detail": "x86 server CPU supplier facing shipment delays and declining market share"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0001045810",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-53a27766a8ba21",
+     "name_as_written": "NVIDIA",
+     "other_securities": [],
+     "quote": "demand for NVIDIA\u2019s Grace CPUs continues to expand",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Arm-based Grace and Vera server CPU supplier"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0001973239",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-f6a2c41b469eef",
+     "name_as_written": "Arm",
+     "other_securities": [],
+     "quote": "Arm\u2019s internally developed AGI processors have also entered mass production",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Arm architecture provider and in-house AGI processor developer"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "claim_ids": [
+      "C-2c89cc9ee1444c",
+      "C-a73163d91f2a4f"
+     ],
+     "direction": "positive",
+     "name": "server CPUs",
+     "provenance": "FORECAST",
+     "quote": "expected to drive server CPU shipments up by more than 40% YoY"
+    }
+   ],
+   "sectors": [
+    "Semiconductors",
+    "server CPUs"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 shipment growth [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-2c89cc9ee1444c",
+      "C-a73163d91f2a4f"
+     ],
+     "provenance": "FORECAST",
+     "text": "Server CPU shipments grow 31% in 2026, accelerating to over 40% in 2027. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-3cb9676f3d6af0"
+     ],
+     "provenance": "FORECAST",
+     "text": "Agentic AI structurally increases CPU content per server, providing sustained momentum for server CPU shipments. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 8 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Server CPU shipment growth falling below forecast in 2026-2027"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CPU-to-GPU/ASIC ratio staying near 1:8"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether shipment growth translates to pricing power or margins for suppliers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the CPU:GPU ratio shift materializes as planned by providers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Revenue and earnings impact per named supplier"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI inference demand decelerates"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Server CPU shipment growth undershoots forecast"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Verify the CPU-to-GPU/ASIC ratio assumptions against hyperscaler rack configuration plans and assess content-per-server implications for CPU suppliers."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscaler rack plans confirm higher CPU:accelerator ratios"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "2026 server CPU shipment data tracks above 31%"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): AMD (AMD), Intel (INTC), NVIDIA (NVDA), sector: server CPUs; a near-term fundamental inflection \u2014 C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for AMD, Intel, NVIDIA, server CPUs already reflect server CPU shipment growth of 31% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-a7f0f66d2b3b",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-a73163d91f2a4f",
+     "C-2c89cc9ee1444c",
+     "C-14ececf955e692",
+     "C-3cb9676f3d6af0",
+     "C-e41cabda3e1d86"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-22T14:28:30+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Server CPU Shipments Projected to Grow Over 40% YoY in 2027, with Arm-Based Products Continuing to Gain Market Share, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261022-13279.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-23 (0001193125-26-119321)",
+    "business": "designs edge AI inference SoCs and processors",
+    "direction": "positive",
+    "enrichment_id": "EC-2398ca63fb0317",
+    "evidence": "s03.2: Higher shipment volumes would lift server CPU supplier revenue, though the article does not quantify the effect",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-04 (accession 0001193125-26-383365) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary Shares, $0.00045 Par Value Per Share",
+      "ticker": "AMBA"
+     }
+    ],
+    "name": "Ambarella",
+    "rationale": "Not server CPUs; weak fit. Excluded from strong list.",
+    "registrant": "AMBARELLA INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "edge AI inference chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-0577F0AD38",
+    "ticker_hint": "AMBA"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-31 (0001375365-26-000022)",
+    "business": "builds AI and cloud server systems",
+    "direction": "positive",
+    "enrichment_id": "EC-eb1f95069a156c",
+    "evidence": "s03.1: Server CPU shipments grow 31% in 2026 and more than 40% in 2027",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-08-31 (accession 0001375365-26-000022) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "SMCI"
+     }
+    ],
+    "name": "Super Micro Computer",
+    "rationale": "More CPU content per AI server raises bill-of-materials and system value for its server platforms, lifting revenue as shipments grow.",
+    "registrant": "Super Micro Computer, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3571); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AI and cloud server systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-0577F0AD38",
+    "ticker_hint": "SMCI"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-16 (0001571996-26-000008)",
+    "business": "builds servers and enterprise infrastructure systems",
+    "direction": "positive",
+    "enrichment_id": "EC-15c486716db9c4",
+    "evidence": "s03.1: Server CPU shipments grow 31% in 2026 and more than 40% in 2027",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-08 (accession 0001571996-26-000046) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class C Common Stock, par value of $0.01 per share",
+      "ticker": "DELL"
+     }
+    ],
+    "name": "Dell Technologies",
+    "rationale": "Rising CPU-to-accelerator ratio increases CPU content per AI server, raising ASPs in its ISG server segment as volumes grow.",
+    "registrant": "Dell Technologies Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3571); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AI and enterprise servers (ISG)",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-0577F0AD38",
+    "ticker_hint": "DELL"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales \u2014 and also licences and maintenance",
+    "basis_quote": [
+     "our revenue is derived from sales of products and services and the associated support and maintenance, and such revenue is recognized when, or as, control of promised products or services is transferred to the customer at the transaction price."
+    ],
+    "basis_source": "10-K filed 2025-12-18 (0001645590-25-000130)",
+    "business": "builds servers and compute infrastructure",
+    "direction": "positive",
+    "enrichment_id": "EC-d51def4c3634b9",
+    "evidence": "s03.1: Server CPU shipments grow 31% in 2026 and more than 40% in 2027",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-03 (accession 0001645590-26-000080) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.01 per share",
+      "ticker": "HPE"
+     }
+    ],
+    "name": "Hewlett Packard Enterprise",
+    "rationale": "More CPUs per AI server lifts compute-segment server BOM value and revenue as shipment volumes grow 31-40%.",
+    "registrant": "Hewlett Packard Enterprise Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3570); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AI and compute servers",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-0577F0AD38",
+    "ticker_hint": "HPE"
+   }
+  ],
+  "created_at": "2026-10-30T12:20:59.608091Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Taiwan Semiconductor (ADR): more than 4 on one side \u2014 set aside",
+   "ASE Technology: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-50d9439885fb35",
+  "thesis_id": "TH-0577F0AD38",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-30",
+   "change_summary": "Initial record \u2014 created from A-a7f0f66d2b3b",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-30",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.compute_semis"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-30",
+     "first_ingested_at": "2026-10-30T12:16:13.266303Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-22",
+     "latest_article_date": "2026-10-22",
+     "region": "Global",
+     "research_action": "RESEARCH NOW",
+     "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+     "status": "ACTIVE",
+     "thesis_id": "TH-0577F0AD38",
+     "title": "AI inference and agentic AI drive server CPU shipment growth above 40%"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-2c89cc9ee1444c",
+       "C-a73163d91f2a4f",
+       "C-14ececf955e692",
+       "C-3cb9676f3d6af0"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Server CPU shipments are forecast to grow 31% YoY in 2026 and more than 40% YoY in 2027, driven by rising AI inference demand and agentic AI services shifting the CPU-to-GPU/ASIC ratio from 1:8 toward 1:2 or 1:1. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-a73163d91f2a4f",
+       "C-3cb9676f3d6af0"
+      ],
+      "provenance": "FORECAST",
+      "text": "The article presents strong server CPU shipment growth as a market-wide opportunity driven by AI inference and agentic AI. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A rising CPU-to-accelerator ratio implies more CPU content per AI server, benefiting all server CPU suppliers by volume, though the article does not quantify revenue or earnings impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a73163d91f2a4f"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Server CPU shipments expected to grow more than 40% YoY in 2027 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3cb9676f3d6af0"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "FORECAST",
+       "text": "CPU-to-GPU/ASIC ratio in servers expected to shift from traditional 1:8 toward 1:2 or 1:1 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-2c89cc9ee1444c"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Server CPU shipments projected to grow 31% YoY in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-14ececf955e692"
+       ],
+       "original_date": "2026-10-22",
+       "period": "since 2H 2025",
+       "provenance": "SOURCE OPINION",
+       "text": "Server CPU demand has grown steadily since 2H 2025 as AI providers introduce AI agent applications"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-30 12:16 UTC, analysed as of 2026-10-30, from a source published 2026-10-22; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-14ececf955e692",
+       "C-3cb9676f3d6af0"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AI agents increase inference workloads in cloud data centers, shifting the CPU-to-GPU/ASIC ratio toward more CPUs per server \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-2c89cc9ee1444c",
+       "C-a73163d91f2a4f"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Server CPU shipments grow 31% in 2026 and more than 40% in 2027 \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-a73163d91f2a4f"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher shipment volumes would lift server CPU supplier revenue, though the article does not quantify the effect \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2c89cc9ee1444c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "server CPU shipment growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "Server CPU shipments are projected to increase 31% YoY in 2026.",
+      "role": "supports",
+      "unit": "% YoY",
+      "value": 31.0,
+      "value_text": "31%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3cb9676f3d6af0",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "CPU-to-GPU/ASIC ratio",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the CPU-to-GPU/ASIC ratio is expected to shift from the traditional 1:8 toward 1:2\u2014or even 1:1",
+      "role": "supports",
+      "unit": "ratio",
+      "value": null,
+      "value_text": "1:8 toward 1:2\u2014or even 1:1"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e41cabda3e1d86",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "server CPU shipment growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "Over"
+      ],
+      "quote": "Server CPU Shipments Projected to Grow Over 40% YoY in 2027",
+      "role": "supports",
+      "unit": "% YoY",
+      "value": 40.0,
+      "value_text": "Over 40%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-14ececf955e692",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Server CPU demand has grown steadily since 2H 2025 as AI providers introduce AI agent applications",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2H 2025",
+      "qualifiers": [],
+      "quote": "demand for server CPUs has grown steadily since the second half of 2025 as AI service providers actively introduce AI agent applications",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e41ce8fb77d4a5",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author and research firm producing the forecasts"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ebe45dbb5c7ca4",
+       "name_as_written": "AWS",
+       "other_securities": [],
+       "quote": "AWS continues to deploy its internally developed Graviton processors",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Deploys in-house Arm-based Graviton server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9418e4fcf3a329",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Google\u2019s in-house Axion CPUs have entered high-volume shipments",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Deploys in-house Arm-based Axion server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0000789019",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-52d8c558dd8ba4",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "Microsoft\u2019s Cobalt 100 and Arm\u2019s internally developed AGI processors",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Deploys in-house Arm-based Cobalt 100 server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b22ac875d96a21",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "high-volume production of new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Named as introducing new Arm-based server processors in 2027"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ee154d6b5a56d3",
+       "name_as_written": "Huawei",
+       "other_securities": [],
+       "quote": "new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Named as introducing new Arm-based server processors in 2027"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8e791e26a218d3",
+       "name_as_written": "Alibaba",
+       "other_securities": [],
+       "quote": "Alibaba\u2019s introduction of new Yitian 720/730 CPUs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Introducing new Yitian 720/730 Arm-based server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2c490a5aecb2d3",
+       "name_as_written": "TSMC",
+       "other_securities": [],
+       "quote": "tight capacity at TSMC limiting AMD\u2019s ability to accommodate additional orders",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Foundry whose tight capacity limits AMD's server CPU orders"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0000002488",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-a3a84c26c9d70e",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "led by Intel and AMD",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "x86 server CPU supplier gaining market share"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0000050863",
+       "direction": "negative",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-30 (accession 0000050863-26-000191) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.001 par value",
+         "ticker": "INTC"
+        }
+       ],
+       "mention_id": "M-89a2fbdbf3efff",
+       "name_as_written": "Intel",
+       "other_securities": [],
+       "quote": "led by Intel and AMD",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potentially_harmed",
+       "role_detail": "x86 server CPU supplier facing shipment delays and declining market share"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0001045810",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-53a27766a8ba21",
+       "name_as_written": "NVIDIA",
+       "other_securities": [],
+       "quote": "demand for NVIDIA\u2019s Grace CPUs continues to expand",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Arm-based Grace and Vera server CPU supplier"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0001973239",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-f6a2c41b469eef",
+       "name_as_written": "Arm",
+       "other_securities": [],
+       "quote": "Arm\u2019s internally developed AGI processors have also entered mass production",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Arm architecture provider and in-house AGI processor developer"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "claim_ids": [
+        "C-2c89cc9ee1444c",
+        "C-a73163d91f2a4f"
+       ],
+       "direction": "positive",
+       "name": "server CPUs",
+       "provenance": "FORECAST",
+       "quote": "expected to drive server CPU shipments up by more than 40% YoY"
+      }
+     ],
+     "sectors": [
+      "Semiconductors",
+      "server CPUs"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 shipment growth [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-2c89cc9ee1444c",
+        "C-a73163d91f2a4f"
+       ],
+       "provenance": "FORECAST",
+       "text": "Server CPU shipments grow 31% in 2026, accelerating to over 40% in 2027. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-3cb9676f3d6af0"
+       ],
+       "provenance": "FORECAST",
+       "text": "Agentic AI structurally increases CPU content per server, providing sustained momentum for server CPU shipments. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 8 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Server CPU shipment growth falling below forecast in 2026-2027"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CPU-to-GPU/ASIC ratio staying near 1:8"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether shipment growth translates to pricing power or margins for suppliers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the CPU:GPU ratio shift materializes as planned by providers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue and earnings impact per named supplier"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI inference demand decelerates"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Server CPU shipment growth undershoots forecast"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Verify the CPU-to-GPU/ASIC ratio assumptions against hyperscaler rack configuration plans and assess content-per-server implications for CPU suppliers."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscaler rack plans confirm higher CPU:accelerator ratios"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "2026 server CPU shipment data tracks above 31%"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): AMD (AMD), Intel (INTC), NVIDIA (NVDA), sector: server CPUs; a near-term fundamental inflection \u2014 C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for AMD, Intel, NVIDIA, server CPUs already reflect server CPU shipment growth of 31% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-a7f0f66d2b3b",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-a73163d91f2a4f",
+       "C-2c89cc9ee1444c",
+       "C-14ececf955e692",
+       "C-3cb9676f3d6af0",
+       "C-e41cabda3e1d86"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-22T14:28:30+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Server CPU Shipments Projected to Grow Over 40% YoY in 2027, with Arm-Based Products Continuing to Gain Market Share, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261022-13279.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "c2dee1bd8c2539f6f8dbd11091b2aa386a74941a10968e208a10db0178cb42f7",
+   "created_at": "2026-10-30T12:16:19.810515Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): AMD (AMD), Intel (INTC), NVIDIA (NVDA), sector: server CPUs; a near-term fundamental inflection \u2014 C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for AMD, Intel, NVIDIA, server CPUs already reflect server CPU shipment growth of 31% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-2c89cc9ee1444c",
+       "C-3cb9676f3d6af0",
+       "C-e41cabda3e1d86",
+       "C-a73163d91f2a4f"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-2c89cc9ee1444c"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "1 claim(s) inside the next 2-4 quarters (C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026)); 2 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: AMD (AMD), Intel (INTC), NVIDIA (NVDA), sector: server CPUs",
+      "value": "3 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-a73163d91f2a4f",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-2c89cc9ee1444c"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for AMD, Intel, NVIDIA, server CPUs already reflect server CPU shipment growth of 31% YoY in 2026?",
+      "value": "qualifies"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 3 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): AMD (AMD), Intel (INTC), NVIDIA (NVDA), sector: server CPUs; a near-term fundamental inflection \u2014 C-2c89cc9ee1444c: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for AMD, Intel, NVIDIA, server CPUs already reflect server CPU shipment growth of 31% YoY in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261030T115837Z-scan",
+   "thesis_id": "TH-0577F0AD38",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-a73163d91f2a4f"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {},
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Research Now \u2014 no recent mispricing or dated catalyst, but a credible near-term change in a fundamental: do current earnings estimates and market expectations for AMD, Intel, NVIDIA, server CPUs already reflect server CPU shipment growth of 31% YoY in 2026? An investigation, not a trade."
+ ],
+ "withheld_sentences": {}
+}

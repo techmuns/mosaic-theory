@@ -1,0 +1,2541 @@
+{
+ "analyst_corrections": {
+  "s06.1": "'Multi-year runway' is not in the source; its stated utilization point restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s07.3": "Withheld for a date the cited claims do not carry; the speakers' stated view restated without it. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)"
+ },
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-22",
+   "ancestry": [
+    "healthcare",
+    "healthcare.pharma_biotech"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T10:34:56.781658Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-18",
+   "latest_article_date": "2026-09-18",
+   "region": "US",
+   "research_action": "RESEARCH NOW",
+   "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+   "status": "ACTIVE",
+   "thesis_id": "TH-BBF8E714C1",
+   "title": "GLP-1 obesity/diabetes market keeps growing as oral drugs and Medicare expand access"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-81005ab94e9f15",
+     "C-5babc43fcbb6ed",
+     "C-3e9166fc1476d4",
+     "C-b6479142e45245"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Conference executives say diabetes/obesity treatments keep bringing new patients, oral GLP-1s add to rather than cannibalize growth, utilization remains low versus potential, and a new Medicare program offers $50/month weight-loss drug access (6,000 participants in 60 days)."
+   },
+   {
+    "claim_ids": [
+     "C-5babc43fcbb6ed",
+     "C-ca8ce500eef506",
+     "C-453966c2691596"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article presents continued GLP-1 growth opportunity as a driver boosting investor optimism in healthcare."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article frames continued GLP-1 demand growth as a positive for biopharma makers of these therapies but names no specific company and quantifies no revenue or earnings impact."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-cfc65506a485",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-3e9166fc1476d4"
+     ],
+     "original_date": "2026-09-18",
+     "period": "July",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Medicare launched a temporary program in July giving eligible Part D beneficiaries access to specific weight-loss medications for $50 per month."
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b6479142e45245"
+     ],
+     "original_date": "2026-09-18",
+     "period": "first 60 days",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The Medicare weight-loss medication program had 6,000 participants in its first 60 days."
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-81005ab94e9f15"
+     ],
+     "original_date": "2026-09-18",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "GLP-1 utilization remains low despite rapid adoption, and oral treatments are adding to the market rather than replacing existing therapies."
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-5babc43fcbb6ed"
+     ],
+     "original_date": "2026-09-18",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Biopharma leaders said GLP-1 utilization is low relative to potential and Medicare access expansion could be a critical growth development."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:34 UTC, analysed as of 2026-10-14, from a source published 2026-09-18; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-81005ab94e9f15",
+     "C-3e9166fc1476d4"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Oral GLP-1s and expanding Medicare access broaden the addressable obesity/diabetes patient market."
+   },
+   {
+    "claim_ids": [
+     "C-5babc43fcbb6ed",
+     "C-81005ab94e9f15"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "New patients enter the market and utilization rises from low current levels."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Higher drug volumes would lift GLP-1 makers' revenue, though the article quantifies no earnings effect."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b029",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b6479142e45245",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "program participants",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "first 60 days",
+    "qualifiers": [
+     "first 60 days"
+    ],
+    "quote": "The program had 6,000 participants in its first 60 days.",
+    "role": "supports",
+    "unit": "participants",
+    "value": 6000.0,
+    "value_text": "6,000"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b029",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3e9166fc1476d4",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "flat monthly cost of weight-loss medication under Medicare program",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "July",
+    "qualifiers": [
+     "temporary program",
+     "eligible Part D beneficiaries"
+    ],
+    "quote": "Medicare launched a temporary program in July that provides eligible Part D beneficiaries access to specific weight-loss medications for a flat cost of $50 per month.",
+    "role": "catalyst",
+    "unit": "USD per month",
+    "value": 50.0,
+    "value_text": "$50"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b028",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5babc43fcbb6ed",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Biopharma leaders said GLP-1 utilization is low relative to potential and Medicare access expansion could be a critical growth development.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "relative to its potential"
+    ],
+    "quote": "despite the rapid pace of adoption, current utilization of GLP-1s remains low relative to its potential. One critical development could be the expansion of access through Medicare in the U.S.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b004",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-81005ab94e9f15",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "GLP-1 utilization remains low despite rapid adoption, and oral treatments are adding to the market rather than replacing existing therapies.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "despite rapid adoption"
+    ],
+    "quote": "GLP-1 utilization remains low despite rapid adoption, while oral treatments are adding to the market rather than simply replacing existing therapies.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": "0000895421",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "MS"
+      }
+     ],
+     "mention_id": "M-4c9a86dfce827c",
+     "name_as_written": "Morgan Stanley",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+       "ticker": "MS/PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+       "ticker": "MS/PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+       "ticker": "MS/PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+       "ticker": "MS/PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+       "ticker": "MS/PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+       "ticker": "MS/PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+       "ticker": "MS/PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+       "ticker": "MS/PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+       "ticker": "MS/PQ"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+       "ticker": "MS/29"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PQ"
+      }
+     ],
+     "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher and host of the conference"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-eb61e6263a6bf0",
+     "name_as_written": "Sean Laaman",
+     "other_securities": [],
+     "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d634aef6dae373",
+     "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+     "other_securities": [],
+     "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Agency whose policy agenda was presented"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7d263b0d970556",
+     "name_as_written": "Dan Brillman",
+     "other_securities": [],
+     "quote": "Dan Brillman, Director of Medicaid",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CMS Director of Medicaid, keynote speaker"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-dd505e35a8d3d5",
+     "name_as_written": "John Brooks",
+     "other_securities": [],
+     "quote": "John Brooks, Director of Medicare",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CMS Director of Medicare, keynote speaker"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d2df5629373eec",
+     "name_as_written": "Erin Wright",
+     "other_securities": [],
+     "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d1d93702292d40",
+     "name_as_written": "Morgan Stanley Institute",
+     "other_securities": [],
+     "quote": "a Morgan Stanley Institute keynote panel",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-6b5294d05dda8f",
+     "name_as_written": "Medicare",
+     "other_securities": [],
+     "quote": "Medicare launched a temporary program in July",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Launched temporary weight-loss medication access program"
+    }
+   ],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-cfc65506a485",
+     "claim_ids": [
+      "C-81005ab94e9f15"
+     ],
+     "direction": "positive",
+     "name": "diabetes and obesity treatments",
+     "provenance": "SOURCE OPINION",
+     "quote": "diabetes and obesity treatments continue to bring new patients into the market"
+    }
+   ],
+   "sectors": [
+    "biopharma",
+    "diabetes and obesity treatments"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "July Medicare temporary program and its long-term expansion [MEASURED OBSERVATION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-3e9166fc1476d4",
+      "C-b6479142e45245"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "A temporary Medicare program launched in July already enrolled 6,000 participants in 60 days."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-5babc43fcbb6ed"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Despite rapid adoption, GLP-1 utilization remains low relative to its potential; expanded access through Medicare in the U.S. could be a critical development."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different segment (Neurology (Alzheimer's, dementia) vs Obesity and metabolic (GLP-1)) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-ABE7D2B79D: same value-chain node, not the same claim \u2014 a different segment (Genetic medicine (gene editing, gene therapy) vs Obesity and metabolic (GLP-1)); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 1 other thesis in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Medicare program not expanded or participation stalling"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Oral GLP-1s cannibalizing injectable sales rather than adding"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of utilization plateauing"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-5a22571db8dc55"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Conference speakers said policymakers have largely addressed tariffs, vaccine guidance, international pricing and affordability, reducing the likelihood of major disruption; that is their view, not a settled fact."
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies benefit and by how much in revenue/earnings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the Medicare program becomes permanent and scales beyond 6,000 participants"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Pricing impact of $50/month flat-cost access on manufacturer margins"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Oral GLP-1s shown to cannibalize existing therapies"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Medicare access expansion stalls"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed GLP-1 makers and model the revenue sensitivity to Medicare access expansion and oral drug uptake."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Medicare weight-loss program made permanent or broadened"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "GLP-1 manufacturers raise volume guidance"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-3e9166fc1476d4: measured 2026-09-18 (34 days before the as-of); C-b6479142e45245: measured 2026-09-18 (34 days before the as-of); source-named exposure(s): sector: diabetes and obesity treatments; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-cfc65506a485",
+    "authors": [],
+    "authors_status": "UNKNOWN",
+    "claim_ids": [
+     "C-3e9166fc1476d4",
+     "C-81005ab94e9f15",
+     "C-5babc43fcbb6ed",
+     "C-b6479142e45245",
+     "C-5a22571db8dc55",
+     "C-a49f9a1de52407"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-18T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-12 (0000059478-26-000013)",
+    "business": "pharma maker of GLP-1 drugs Mounjaro, Zepbound",
+    "direction": "positive",
+    "enrichment_id": "EC-fcd75354f9ab37",
+    "evidence": "s03.2: Higher drug volumes would lift GLP-1 makers' revenue, though the article quantifies no earnings effect.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0000059478-26-000108) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock (no par value)",
+      "ticker": "LLY"
+     }
+    ],
+    "name": "Eli Lilly",
+    "rationale": "Higher GLP-1 volumes from new patients and oral orforglipron rollout lift its large and fast-growing incretin franchise revenue.",
+    "registrant": "ELI LILLY & Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2834); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "GLP-1 diabetes and obesity drugs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-BBF8E714C1",
+    "ticker_hint": "LLY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-02-04 (0000353278-26-000012)",
+    "business": "pharma maker of GLP-1 drugs Ozempic, Wegovy",
+    "direction": "positive",
+    "enrichment_id": "EC-b3da6bedb1afbb",
+    "evidence": "s03.2: Higher drug volumes would lift GLP-1 makers' revenue, though the article quantifies no earnings effect.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Novo Nordisk",
+    "rationale": "Rising utilization, Medicare access and oral semaglutide (Rybelsus/oral Wegovy) expand volumes in its dominant incretin franchise.",
+    "registrant": "NOVO NORDISK A S",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['NVO', 'NONOF'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "GLP-1 diabetes and obesity drugs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-BBF8E714C1",
+    "ticker_hint": "NVO"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-11 (0001193125-26-046876)",
+    "business": "clinical-stage developer of obesity GLP-1 candidates",
+    "direction": "positive",
+    "enrichment_id": "EC-fcb9b70a14f616",
+    "evidence": "s03.0: Oral GLP-1s and expanding Medicare access broaden the addressable obesity/diabetes patient market.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0001193125-26-436432) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.00001 per share",
+      "ticker": "VKTX"
+     }
+    ],
+    "name": "Viking Therapeutics",
+    "rationale": "Broadening addressable market and oral GLP-1 interest increase the value of its injectable and oral VK2735 obesity programs.",
+    "registrant": "Viking Therapeutics, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2834); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "obesity GLP-1 drug pipeline",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-BBF8E714C1",
+    "ticker_hint": "VKTX"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0000318154-26-000010)",
+    "business": "biopharma with obesity candidate MariTide",
+    "direction": "positive",
+    "enrichment_id": "EC-6ff249cb334a3e",
+    "evidence": "s03.0: Oral GLP-1s and expanding Medicare access broaden the addressable obesity/diabetes patient market.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-05 (accession 0000318154-26-000126) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, $0.0001 par value",
+      "ticker": "AMGN"
+     }
+    ],
+    "name": "Amgen",
+    "rationale": "A larger addressable obesity market raises potential uptake for its MariTide incretin program as it advances in trials.",
+    "registrant": "AMGEN INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2836); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "obesity drug pipeline (MariTide)",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-BBF8E714C1",
+    "ticker_hint": "AMGN"
+   }
+  ],
+  "created_at": "2026-10-30T12:24:34.438877Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-8a240d08a50100",
+  "thesis_id": "TH-BBF8E714C1",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-cfc65506a485",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "healthcare",
+      "healthcare.pharma_biotech"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:34:56.781658Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-18",
+     "latest_article_date": "2026-09-18",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+     "status": "ACTIVE",
+     "thesis_id": "TH-BBF8E714C1",
+     "title": "GLP-1 obesity/diabetes market keeps growing as oral drugs and Medicare expand access"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-81005ab94e9f15",
+       "C-5babc43fcbb6ed",
+       "C-3e9166fc1476d4",
+       "C-b6479142e45245"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Conference executives say diabetes/obesity treatments keep bringing new patients, oral GLP-1s add to rather than cannibalize growth, utilization remains low versus potential, and a new Medicare program offers $50/month weight-loss drug access (6,000 participants in 60 days)."
+     },
+     {
+      "claim_ids": [
+       "C-5babc43fcbb6ed",
+       "C-ca8ce500eef506",
+       "C-453966c2691596"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article presents continued GLP-1 growth opportunity as a driver boosting investor optimism in healthcare."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article frames continued GLP-1 demand growth as a positive for biopharma makers of these therapies but names no specific company and quantifies no revenue or earnings impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3e9166fc1476d4"
+       ],
+       "original_date": "2026-09-18",
+       "period": "July",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Medicare launched a temporary program in July giving eligible Part D beneficiaries access to specific weight-loss medications for $50 per month."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b6479142e45245"
+       ],
+       "original_date": "2026-09-18",
+       "period": "first 60 days",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The Medicare weight-loss medication program had 6,000 participants in its first 60 days."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-81005ab94e9f15"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "GLP-1 utilization remains low despite rapid adoption, and oral treatments are adding to the market rather than replacing existing therapies."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5babc43fcbb6ed"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Biopharma leaders said GLP-1 utilization is low relative to potential and Medicare access expansion could be a critical growth development."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:34 UTC, analysed as of 2026-10-14, from a source published 2026-09-18; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-81005ab94e9f15",
+       "C-3e9166fc1476d4"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Oral GLP-1s and expanding Medicare access broaden the addressable obesity/diabetes patient market."
+     },
+     {
+      "claim_ids": [
+       "C-5babc43fcbb6ed",
+       "C-81005ab94e9f15"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "New patients enter the market and utilization rises from low current levels."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher drug volumes would lift GLP-1 makers' revenue, though the article quantifies no earnings effect."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b6479142e45245",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "program participants",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "first 60 days",
+      "qualifiers": [
+       "first 60 days"
+      ],
+      "quote": "The program had 6,000 participants in its first 60 days.",
+      "role": "supports",
+      "unit": "participants",
+      "value": 6000.0,
+      "value_text": "6,000"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3e9166fc1476d4",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "flat monthly cost of weight-loss medication under Medicare program",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "July",
+      "qualifiers": [
+       "temporary program",
+       "eligible Part D beneficiaries"
+      ],
+      "quote": "Medicare launched a temporary program in July that provides eligible Part D beneficiaries access to specific weight-loss medications for a flat cost of $50 per month.",
+      "role": "catalyst",
+      "unit": "USD per month",
+      "value": 50.0,
+      "value_text": "$50"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b028",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5babc43fcbb6ed",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Biopharma leaders said GLP-1 utilization is low relative to potential and Medicare access expansion could be a critical growth development.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "relative to its potential"
+      ],
+      "quote": "despite the rapid pace of adoption, current utilization of GLP-1s remains low relative to its potential. One critical development could be the expansion of access through Medicare in the U.S.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-81005ab94e9f15",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "GLP-1 utilization remains low despite rapid adoption, and oral treatments are adding to the market rather than replacing existing therapies.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "despite rapid adoption"
+      ],
+      "quote": "GLP-1 utilization remains low despite rapid adoption, while oral treatments are adding to the market rather than simply replacing existing therapies.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-4c9a86dfce827c",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and host of the conference"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-eb61e6263a6bf0",
+       "name_as_written": "Sean Laaman",
+       "other_securities": [],
+       "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d634aef6dae373",
+       "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "other_securities": [],
+       "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Agency whose policy agenda was presented"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d263b0d970556",
+       "name_as_written": "Dan Brillman",
+       "other_securities": [],
+       "quote": "Dan Brillman, Director of Medicaid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicaid, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dd505e35a8d3d5",
+       "name_as_written": "John Brooks",
+       "other_securities": [],
+       "quote": "John Brooks, Director of Medicare",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicare, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d2df5629373eec",
+       "name_as_written": "Erin Wright",
+       "other_securities": [],
+       "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1d93702292d40",
+       "name_as_written": "Morgan Stanley Institute",
+       "other_securities": [],
+       "quote": "a Morgan Stanley Institute keynote panel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-6b5294d05dda8f",
+       "name_as_written": "Medicare",
+       "other_securities": [],
+       "quote": "Medicare launched a temporary program in July",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Launched temporary weight-loss medication access program"
+      }
+     ],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-81005ab94e9f15"
+       ],
+       "direction": "positive",
+       "name": "diabetes and obesity treatments",
+       "provenance": "SOURCE OPINION",
+       "quote": "diabetes and obesity treatments continue to bring new patients into the market"
+      }
+     ],
+     "sectors": [
+      "biopharma",
+      "diabetes and obesity treatments"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "July Medicare temporary program and its long-term expansion [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-3e9166fc1476d4",
+        "C-b6479142e45245"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "A temporary Medicare program launched in July already enrolled 6,000 participants in 60 days."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-5babc43fcbb6ed"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Utilization remains low relative to potential, implying multi-year runway for GLP-1 market growth."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different segment (Neurology (Alzheimer's, dementia) vs Obesity and metabolic (GLP-1)) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-ABE7D2B79D: same value-chain node, not the same claim \u2014 a different segment (Genetic medicine (gene editing, gene therapy) vs Obesity and metabolic (GLP-1)); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 1 other thesis in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Medicare program not expanded or participation stalling"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Oral GLP-1s cannibalizing injectable sales rather than adding"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of utilization plateauing"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-5a22571db8dc55",
+        "C-a49f9a1de52407"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A more stable U.S. policy environment is a characterization by conference speakers, not a settled fact; policy on tariffs, vaccine guidance, international pricing and affordability could re-emerge as sources of disruption to the healthcare industry. (scope: U.S. healthcare/biopharma policy environment as described by conference executives in September 2026.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies benefit and by how much in revenue/earnings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the Medicare program becomes permanent and scales beyond 6,000 participants"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Pricing impact of $50/month flat-cost access on manufacturer margins"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Oral GLP-1s shown to cannibalize existing therapies"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Medicare access expansion stalls"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed GLP-1 makers and model the revenue sensitivity to Medicare access expansion and oral drug uptake."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Medicare weight-loss program made permanent or broadened"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "GLP-1 manufacturers raise volume guidance"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-3e9166fc1476d4: measured 2026-09-18 (26 days before the as-of); C-b6479142e45245: measured 2026-09-18 (26 days before the as-of); source-named exposure(s): sector: diabetes and obesity treatments; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-cfc65506a485",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-3e9166fc1476d4",
+       "C-81005ab94e9f15",
+       "C-5babc43fcbb6ed",
+       "C-b6479142e45245",
+       "C-5a22571db8dc55",
+       "C-a49f9a1de52407"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-18T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "328977c542a4f68b6dbf0bb1f12596f466ab7178bbde1156446f7c41720dea8d",
+   "created_at": "2026-10-21T10:35:18.866956Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-3e9166fc1476d4: measured 2026-09-18 (26 days before the as-of); C-b6479142e45245: measured 2026-09-18 (26 days before the as-of); source-named exposure(s): sector: diabetes and obesity treatments; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-b6479142e45245",
+       "C-3e9166fc1476d4"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-3e9166fc1476d4",
+       "C-b6479142e45245"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-3e9166fc1476d4: measured 2026-09-18 (26 days before the as-of); C-b6479142e45245: measured 2026-09-18 (26 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: diabetes and obesity treatments",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-3e9166fc1476d4"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 2 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-3e9166fc1476d4: measured 2026-09-18 (26 days before the as-of); C-b6479142e45245: measured 2026-09-18 (26 days before the as-of); source-named exposure(s): sector: diabetes and obesity treatments; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-BBF8E714C1",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s07.3 \u2014 Withheld for a date the cited claims do not carry; the speakers' stated view restated without it. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s06.1 \u2014 'Multi-year runway' is not in the source; its stated utilization point restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "healthcare",
+      "healthcare.pharma_biotech"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:34:56.781658Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-18",
+     "latest_article_date": "2026-09-18",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+     "status": "ACTIVE",
+     "thesis_id": "TH-BBF8E714C1",
+     "title": "GLP-1 obesity/diabetes market keeps growing as oral drugs and Medicare expand access"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-81005ab94e9f15",
+       "C-5babc43fcbb6ed",
+       "C-3e9166fc1476d4",
+       "C-b6479142e45245"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Conference executives say diabetes/obesity treatments keep bringing new patients, oral GLP-1s add to rather than cannibalize growth, utilization remains low versus potential, and a new Medicare program offers $50/month weight-loss drug access (6,000 participants in 60 days)."
+     },
+     {
+      "claim_ids": [
+       "C-5babc43fcbb6ed",
+       "C-ca8ce500eef506",
+       "C-453966c2691596"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article presents continued GLP-1 growth opportunity as a driver boosting investor optimism in healthcare."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article frames continued GLP-1 demand growth as a positive for biopharma makers of these therapies but names no specific company and quantifies no revenue or earnings impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3e9166fc1476d4"
+       ],
+       "original_date": "2026-09-18",
+       "period": "July",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Medicare launched a temporary program in July giving eligible Part D beneficiaries access to specific weight-loss medications for $50 per month."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b6479142e45245"
+       ],
+       "original_date": "2026-09-18",
+       "period": "first 60 days",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The Medicare weight-loss medication program had 6,000 participants in its first 60 days."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-81005ab94e9f15"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "GLP-1 utilization remains low despite rapid adoption, and oral treatments are adding to the market rather than replacing existing therapies."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5babc43fcbb6ed"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Biopharma leaders said GLP-1 utilization is low relative to potential and Medicare access expansion could be a critical growth development."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:34 UTC, analysed as of 2026-10-14, from a source published 2026-09-18; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-81005ab94e9f15",
+       "C-3e9166fc1476d4"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Oral GLP-1s and expanding Medicare access broaden the addressable obesity/diabetes patient market."
+     },
+     {
+      "claim_ids": [
+       "C-5babc43fcbb6ed",
+       "C-81005ab94e9f15"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "New patients enter the market and utilization rises from low current levels."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher drug volumes would lift GLP-1 makers' revenue, though the article quantifies no earnings effect."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b6479142e45245",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "program participants",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "first 60 days",
+      "qualifiers": [
+       "first 60 days"
+      ],
+      "quote": "The program had 6,000 participants in its first 60 days.",
+      "role": "supports",
+      "unit": "participants",
+      "value": 6000.0,
+      "value_text": "6,000"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b029",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3e9166fc1476d4",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "flat monthly cost of weight-loss medication under Medicare program",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "July",
+      "qualifiers": [
+       "temporary program",
+       "eligible Part D beneficiaries"
+      ],
+      "quote": "Medicare launched a temporary program in July that provides eligible Part D beneficiaries access to specific weight-loss medications for a flat cost of $50 per month.",
+      "role": "catalyst",
+      "unit": "USD per month",
+      "value": 50.0,
+      "value_text": "$50"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b028",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5babc43fcbb6ed",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Biopharma leaders said GLP-1 utilization is low relative to potential and Medicare access expansion could be a critical growth development.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "relative to its potential"
+      ],
+      "quote": "despite the rapid pace of adoption, current utilization of GLP-1s remains low relative to its potential. One critical development could be the expansion of access through Medicare in the U.S.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-81005ab94e9f15",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "GLP-1 utilization remains low despite rapid adoption, and oral treatments are adding to the market rather than replacing existing therapies.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "despite rapid adoption"
+      ],
+      "quote": "GLP-1 utilization remains low despite rapid adoption, while oral treatments are adding to the market rather than simply replacing existing therapies.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-4c9a86dfce827c",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and host of the conference"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-eb61e6263a6bf0",
+       "name_as_written": "Sean Laaman",
+       "other_securities": [],
+       "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d634aef6dae373",
+       "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "other_securities": [],
+       "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Agency whose policy agenda was presented"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d263b0d970556",
+       "name_as_written": "Dan Brillman",
+       "other_securities": [],
+       "quote": "Dan Brillman, Director of Medicaid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicaid, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dd505e35a8d3d5",
+       "name_as_written": "John Brooks",
+       "other_securities": [],
+       "quote": "John Brooks, Director of Medicare",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicare, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d2df5629373eec",
+       "name_as_written": "Erin Wright",
+       "other_securities": [],
+       "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1d93702292d40",
+       "name_as_written": "Morgan Stanley Institute",
+       "other_securities": [],
+       "quote": "a Morgan Stanley Institute keynote panel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-6b5294d05dda8f",
+       "name_as_written": "Medicare",
+       "other_securities": [],
+       "quote": "Medicare launched a temporary program in July",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Launched temporary weight-loss medication access program"
+      }
+     ],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-81005ab94e9f15"
+       ],
+       "direction": "positive",
+       "name": "diabetes and obesity treatments",
+       "provenance": "SOURCE OPINION",
+       "quote": "diabetes and obesity treatments continue to bring new patients into the market"
+      }
+     ],
+     "sectors": [
+      "biopharma",
+      "diabetes and obesity treatments"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "July Medicare temporary program and its long-term expansion [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-3e9166fc1476d4",
+        "C-b6479142e45245"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "A temporary Medicare program launched in July already enrolled 6,000 participants in 60 days."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-5babc43fcbb6ed"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Despite rapid adoption, GLP-1 utilization remains low relative to its potential; expanded access through Medicare in the U.S. could be a critical development."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different segment (Neurology (Alzheimer's, dementia) vs Obesity and metabolic (GLP-1)) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-ABE7D2B79D: same value-chain node, not the same claim \u2014 a different segment (Genetic medicine (gene editing, gene therapy) vs Obesity and metabolic (GLP-1)); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 1 other thesis in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Medicare program not expanded or participation stalling"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Oral GLP-1s cannibalizing injectable sales rather than adding"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of utilization plateauing"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-5a22571db8dc55"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Conference speakers said policymakers have largely addressed tariffs, vaccine guidance, international pricing and affordability, reducing the likelihood of major disruption; that is their view, not a settled fact."
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies benefit and by how much in revenue/earnings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the Medicare program becomes permanent and scales beyond 6,000 participants"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Pricing impact of $50/month flat-cost access on manufacturer margins"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Oral GLP-1s shown to cannibalize existing therapies"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Medicare access expansion stalls"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed GLP-1 makers and model the revenue sensitivity to Medicare access expansion and oral drug uptake."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Medicare weight-loss program made permanent or broadened"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "GLP-1 manufacturers raise volume guidance"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-3e9166fc1476d4: measured 2026-09-18 (34 days before the as-of); C-b6479142e45245: measured 2026-09-18 (34 days before the as-of); source-named exposure(s): sector: diabetes and obesity treatments; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-cfc65506a485",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-3e9166fc1476d4",
+       "C-81005ab94e9f15",
+       "C-5babc43fcbb6ed",
+       "C-b6479142e45245",
+       "C-5a22571db8dc55",
+       "C-a49f9a1de52407"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-18T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "a233fc57fa416d360c3b44bf8e5c22c27c33ddca7df547faa774620fc8eb32b3",
+   "created_at": "2026-10-22T07:42:55.394018Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": "328977c542a4f68b6dbf0bb1f12596f466ab7178bbde1156446f7c41720dea8d",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-b6479142e45245",
+       "C-3e9166fc1476d4"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-3e9166fc1476d4",
+       "C-b6479142e45245"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-3e9166fc1476d4: measured 2026-09-18 (34 days before the as-of); C-b6479142e45245: measured 2026-09-18 (34 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: diabetes and obesity treatments",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-3e9166fc1476d4"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 2 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "RESEARCH NOW",
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-3e9166fc1476d4: measured 2026-09-18 (34 days before the as-of); C-b6479142e45245: measured 2026-09-18 (34 days before the as-of); source-named exposure(s): sector: diabetes and obesity treatments; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-BBF8E714C1",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 7,
+ "other_cited_evidence": [
+  "C-ca8ce500eef506",
+  "C-453966c2691596",
+  "C-5a22571db8dc55",
+  "C-a49f9a1de52407"
+ ],
+ "review_carried": {},
+ "review_dismissed": {
+  "s01.1": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-5babc43fcbb6ed",
+    "C-ca8ce500eef506",
+    "C-453966c2691596"
+   ],
+   "created_at": "2026-10-22T07:43:10.676989Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s01.1: The cited China span (C-ca8ce500eef506) is not relevant to the GLP-1 growth-as-driver claim; the growth/optimism parts are supported by C-5babc43fcbb6ed and C-453966c2691596. | 'The article presents continued GLP-1 growth opportunity as a driver boosting investor optimism in he'",
+   "finding_key": "F-cf8f143ea0d2",
+   "finding_version": 2,
+   "line_text": "The article presents continued GLP-1 growth opportunity as a driver boosting investor optimism in healthcare.",
+   "reason": "Citation hygiene only: the review finds the growth and optimism supported by the line's other cited claims. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-d797e3ba71c5",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074310Z-review",
+   "sentence_id": "s01.1",
+   "supersedes": [],
+   "thesis_id": "TH-BBF8E714C1",
+   "version": 2
+  }
+ },
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.1": "The cited China span (C-ca8ce500eef506) is not relevant to the GLP-1 growth-as-driver claim; the growth/optimism parts are supported by C-5babc43fcbb6ed and C-453966c2691596."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Research Now \u2014 a mispricing measured in the last quarter or a dated catalyst, timing inside the next 2-4 quarters, an exposure the source names, a premise the source states, and the full text read. An investigation, not a trade."
+ ],
+ "withheld_sentences": {}
+}

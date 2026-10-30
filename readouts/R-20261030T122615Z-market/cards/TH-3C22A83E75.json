@@ -1,0 +1,4156 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-30",
+   "ancestry": [
+    "consumer_electronics"
+   ],
+   "evidence_direction": "MIXED",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:16:11.970339Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-29",
+   "latest_article_date": "2026-10-29",
+   "region": "Global",
+   "research_action": "RESEARCH NOW",
+   "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-3C22A83E75",
+   "title": "AR glasses shipments double in 2026 driven by Meta and Chinese brands"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-43edca7ee80c70",
+     "C-8fc6400bb05f07",
+     "C-d241416a394058",
+     "C-721296f9609ab7",
+     "C-9bdb9c5f8edeee",
+     "C-66860c5f782f79"
+    ],
+    "provenance": "FORECAST",
+    "text": "TrendForce forecasts global AR glasses shipments to more than double from 620,000 units in 2025 to 1.31 million in 2026 (111.1% YoY), led by Meta (~20% share) and four brands XREAL, Even Realities, Rokid and RayNeo (combined 53.2%), with nearly 80% further growth expected in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-3e1842d0cd420a",
+     "C-3ca90756e4869b"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Stronger-than-expected momentum for Meta's Ray-Ban Display glasses has drawn more consumer attention to AR glasses, among the primary drivers behind global shipments passing one million units in 2026."
+   },
+   {
+    "claim_ids": [
+     "C-b87a9f51a7cb96",
+     "C-46e83d03d45d4d",
+     "C-16213e9dd9927d",
+     "C-56d8edaff72d55"
+    ],
+    "provenance": "FORECAST",
+    "text": "\u27e8update 2026-10-29 \u00b7 TrendForce\u27e9 TrendForce forecasts global OLED notebook shipments to grow nearly 40% in 2026 and more than 40% in 2027, with Apple's OLED MacBook Pro adding momentum to a market previously driven by Windows OEMs. \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "change_class": "new",
+     "claim_ids": [
+      "C-56d8edaff72d55"
+     ],
+     "original_date": "2026-10-29",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Shipments of the new MacBook Pro with PROLED XDR Display will reach 1.2\u20131.5 million units in 2027. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "change_class": "new",
+     "claim_ids": [
+      "C-478f82e3596aa8"
+     ],
+     "original_date": "2026-10-29",
+     "period": "2029",
+     "provenance": "FORECAST",
+     "text": "Competing OLED panel makers (LG Display, BOE, TCL CSOT) are targeting the OLED MacBook Air supply chain, expected to debut in 2029. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "change_class": "new",
+     "claim_ids": [
+      "C-b87a9f51a7cb96"
+     ],
+     "original_date": "2026-10-29",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Global OLED notebook shipments are forecast to grow over 40% YoY in 2027. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "change_class": "new",
+     "claim_ids": [
+      "C-46e83d03d45d4d"
+     ],
+     "original_date": "2026-10-29",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "OLED notebook shipments will grow nearly 40% YoY in 2026. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "change_class": "new",
+     "claim_ids": [
+      "C-16213e9dd9927d"
+     ],
+     "original_date": "2026-10-29",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "OLED notebook shipments will grow more than 40% YoY in 2027. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-a7143f9b384e26"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The premium price and availability alongside existing Mini-LED models could temper near-term replacement demand. \u27e8the source states evidence against this thesis\u27e9"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "change_class": "new",
+     "claim_ids": [
+      "C-45adb0d887a6e9"
+     ],
+     "original_date": "2026-10-29",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The new MacBook Pro's starting price is US$2,899 for the 14-inch model. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    }
+   ],
+   "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+   "vs_prior": "v2 held 8 claim(s); this source adds: contradictory \u00d71, new \u00d76"
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-3e1842d0cd420a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "AR glasses transition from proof-of-concept to consumer market, drawing consumer attention after Meta's Ray-Ban Display momentum."
+   },
+   {
+    "claim_ids": [
+     "C-43edca7ee80c70",
+     "C-8fc6400bb05f07",
+     "C-d241416a394058",
+     "C-66860c5f782f79"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Global shipments forecast to rise from 620,000 units (2025) to 1.31 million (2026), +111.1% YoY, and grow nearly 80% in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Higher volumes would flow to brand and supply-chain revenue, but the article gives no revenue, margin or earnings figures for any listed company."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1c3e6ee1d553",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-43edca7ee80c70",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "global AR glasses shipments \u2014 AR glasses shipments",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [],
+    "quote": "global AR glasses shipments to surge from 620,000 units in 2025 to 1.31 million units in 2026",
+    "role": "supports",
+    "unit": "units",
+    "value": 620000.0,
+    "value_text": "620,000"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-1c3e6ee1d553",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-66860c5f782f79",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "global AR glasses shipments \u2014 AR glasses shipments YoY growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "nearly"
+    ],
+    "quote": "global AR glasses shipments projected to grow by nearly 80% in 2027",
+    "role": "supports",
+    "unit": "%",
+    "value": 80.0,
+    "value_text": "nearly 80%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-1c3e6ee1d553",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-721296f9609ab7",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Meta share of global AR glasses shipments \u2014 AR glasses shipment share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "Meta is expected to maintain its lead in 2026 with approximately 20% of global shipments",
+    "role": "supports",
+    "unit": "%",
+    "value": 20.0,
+    "value_text": "approximately 20%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1c3e6ee1d553",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8fc6400bb05f07",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "global AR glasses shipments \u2014 AR glasses shipments",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "global AR glasses shipments to surge from 620,000 units in 2025 to 1.31 million units in 2026",
+    "role": "supports",
+    "unit": "units",
+    "value": 1310000.0,
+    "value_text": "1.31 million"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1c3e6ee1d553",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9bdb9c5f8edeee",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "four non-Meta brands share of global AR glasses shipments \u2014 AR glasses shipment share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "combined four brands"
+    ],
+    "quote": "XREAL, Even Realities, Rokid, and RayNeo\u2014are projected to account for a combined 53.2%",
+    "role": "supports",
+    "unit": "%",
+    "value": 53.2,
+    "value_text": "53.2%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1c3e6ee1d553",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d241416a394058",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "global AR glasses shipments \u2014 AR glasses shipments YoY growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "YoY"
+    ],
+    "quote": "marking 111.1% YoY growth",
+    "role": "supports",
+    "unit": "%",
+    "value": 111.1,
+    "value_text": "111.1%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b010",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-16213e9dd9927d",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "OLED notebook shipment growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "more than"
+    ],
+    "quote": "followed by another increase of more than 40% in 2027",
+    "role": "supports",
+    "unit": "% YoY",
+    "value": 40.0,
+    "value_text": "more than 40%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b010",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-46e83d03d45d4d",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "OLED notebook shipment growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "nearly"
+    ],
+    "quote": "OLED notebook shipments will grow nearly 40% YoY in 2026",
+    "role": "supports",
+    "unit": "% YoY",
+    "value": 40.0,
+    "value_text": "nearly 40%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b006",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-56d8edaff72d55",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "MacBook Pro OLED shipments",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "shipments of the new model will reach 1.2\u20131.5 million units in 2027",
+    "role": "catalyst",
+    "unit": "units",
+    "value": null,
+    "value_text": "1.2\u20131.5 million"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1c3e6ee1d553",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3ca90756e4869b",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "AR glasses market drivers",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "the primary drivers behind global AR glasses shipments surpassing one million units in 2026",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-1c3e6ee1d553",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3e1842d0cd420a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Meta Ray-Ban Display glasses demand",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "Stronger-than-expected growth momentum for Meta\u2019s Ray-Ban Display glasses has drawn more consumer attention to AR glasses",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b015",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-478f82e3596aa8",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Competing OLED panel makers (LG Display, BOE, TCL CSOT) are targeting the OLED MacBook Air supply chain, expected to debut in 2029.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2029",
+    "qualifiers": [
+     "OLED MacBook Air expected to debut in 2029"
+    ],
+    "quote": "competing OLED panel makers, including LG Display, BOE, and TCL CSOT, are largely directing their efforts toward securing a place in the supply chain for the OLED MacBook Air, which is expected to debut in 2029",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-00b2ebf8effa9a",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "developed in collaboration with Google",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Collaborating with XREAL on Aura glasses launching end of 2026"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-80a0c3fc83f749",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm publishing the near-eye display market report and forecasts"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8ada0836441769",
+     "name_as_written": "Ray-Ban Display",
+     "other_securities": [],
+     "quote": "Meta\u2019s Ray-Ban Display glasses",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Meta's AR glasses product driving demand momentum"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-287f478da8f195",
+     "name_as_written": "Aura",
+     "other_securities": [],
+     "quote": "Its Aura glasses",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "XREAL AR glasses developed with Google, launching end of 2026"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6012c0fa6c288f",
+     "name_as_written": "MacBook Pro with PROLED XDR Display",
+     "other_securities": [],
+     "quote": "MacBook Pro with PROLED XDR Display",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "First Apple notebook with tandem OLED touchscreen"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5ac9f848f4a4ef",
+     "name_as_written": "MacBook Neo",
+     "other_securities": [],
+     "quote": "the MacBook Neo\u2019s departure from Apple\u2019s traditional entry-level pricing strategy",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Apple product cited as example of pricing strategy expansion"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e1decb67d9fc16",
+     "name_as_written": "Lenovo",
+     "other_securities": [],
+     "quote": "Windows-based brands such as Lenovo, HP, and ASUS",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": "0000047217",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-27 (accession 0000047217-26-000051) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, par value $0.01 per share",
+       "ticker": "HPQ"
+      }
+     ],
+     "mention_id": "M-8dd56c6e6ce6b8",
+     "name_as_written": "HP",
+     "other_securities": [],
+     "quote": "Lenovo, HP, and ASUS",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "sector_example",
+     "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7897ee8b72844c",
+     "name_as_written": "ASUS",
+     "other_securities": [],
+     "quote": "Lenovo, HP, and ASUS",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": "0001326801",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-58a2675f791c60",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "Meta\u2019s Ray-Ban Display glasses",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Market leader in AR glasses with ~20% of 2026 shipments via Ray-Ban Display glasses"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-8d8d1e6ea6877b",
+     "name_as_written": "XREAL",
+     "other_securities": [],
+     "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "One of four major non-Meta AR glasses brands; focuses on entertainment/media AR glasses"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-d3a9dead11aef4",
+     "name_as_written": "Samsung Display",
+     "other_securities": [],
+     "quote": "Samsung Display secures exclusive supply position",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Exclusive panel supplier for the OLED MacBook Pro"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": "0001290109",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-6b7c1b32531262",
+     "name_as_written": "LG Display",
+     "other_securities": [],
+     "quote": "including LG Display, BOE, and TCL CSOT",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-d96f0380c884bc",
+     "name_as_written": "BOE",
+     "other_securities": [],
+     "quote": "LG Display, BOE, and TCL CSOT",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-3be901f9da0783",
+     "name_as_written": "TCL CSOT",
+     "other_securities": [],
+     "quote": "LG Display, BOE, and TCL CSOT",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": "0000320193",
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000320193-26-000020) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.00001 par value per share",
+       "ticker": "AAPL"
+      }
+     ],
+     "mention_id": "M-7f2d43273c597f",
+     "name_as_written": "Apple",
+     "other_securities": [],
+     "quote": "Apple\u2019s newly unveiled MacBook Pro",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "OEM launching the OLED MacBook Pro, driving OLED notebook adoption and panel demand"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-1f4f9ad95e0d3b",
+     "name_as_written": "Even Realities",
+     "other_securities": [],
+     "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "AR glasses brand specializing in information-display, lightweight designs"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-ec310a441010ff",
+     "name_as_written": "Rokid",
+     "other_securities": [],
+     "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "AR glasses brand with diverse product portfolios"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-d902a7c1e25ee8",
+     "name_as_written": "RayNeo",
+     "other_securities": [],
+     "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "AR glasses brand with diverse product portfolios"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "claim_ids": [
+      "C-43edca7ee80c70",
+      "C-8fc6400bb05f07",
+      "C-d241416a394058"
+     ],
+     "direction": "positive",
+     "name": "AR glasses",
+     "provenance": "FORECAST",
+     "quote": "global AR glasses shipments to surge"
+    },
+    {
+     "article_id": "A-1c3e6ee1d553",
+     "claim_ids": [],
+     "direction": "positive",
+     "name": "near-eye display",
+     "provenance": "SOURCE OPINION",
+     "quote": "2026 Near-Eye Display Market Trends and Technology Analysis"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "claim_ids": [
+      "C-46e83d03d45d4d",
+      "C-16213e9dd9927d"
+     ],
+     "direction": "positive",
+     "name": "OLED notebook",
+     "provenance": "FORECAST",
+     "quote": "OLED notebook shipments will grow nearly 40% YoY in 2026"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "claim_ids": [
+      "C-b87a9f51a7cb96"
+     ],
+     "direction": "positive",
+     "name": "OLED notebook market",
+     "provenance": "FORECAST",
+     "quote": "the OLED notebook market has been driven primarily by Windows-based brands"
+    }
+   ],
+   "sectors": [
+    "AR glasses",
+    "consumer electronics",
+    "near-eye display",
+    "OLED notebook panels",
+    "notebook display"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 (and MacBook Air debut 2029) [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-46e83d03d45d4d",
+      "C-a7143f9b384e26"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "OLED notebook shipments forecast to grow nearly 40% in 2026, but the premium MacBook Pro price and Mini-LED availability could temper near-term replacement demand. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-8fc6400bb05f07",
+      "C-721296f9609ab7"
+     ],
+     "provenance": "FORECAST",
+     "text": "2026 shipments forecast to more than double to 1.31 million units with Meta leading at ~20% share. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-16213e9dd9927d",
+      "C-478f82e3596aa8"
+     ],
+     "provenance": "FORECAST",
+     "text": "Apple's OLED entry alongside Windows OEMs supports multi-year OLED adoption in notebooks, with over 40% growth forecast in 2027 and MacBook Air expected 2029. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-66860c5f782f79"
+     ],
+     "provenance": "FORECAST",
+     "text": "AR glasses moving into the consumer market with sustained growth of nearly 80% forecast for 2027. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-a7143f9b384e26"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The overall notebook market is expected to contract for two consecutive years, and the premium price could temper near-term replacement demand."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-a7143f9b384e26"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The premium price and availability alongside existing Mini-LED models could temper near-term replacement demand."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "2026 shipments falling materially short of 1.31 million units"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Meta Ray-Ban Display demand momentum fading"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Delays in XREAL Aura or other brand launches"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "OLED notebook shipment growth falling short of 40% in 2027"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Weaker-than-expected MacBook Pro OLED uptake below 1.2 million units"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Further notebook market contraction dragging OLED volumes"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-a7143f9b384e26",
+      "C-45adb0d887a6e9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The overall notebook market is expected to contract for two consecutive years, and the premium starting price plus continued availability of Mini-LED models could temper near-term replacement demand for the OLED MacBook Pro. (scope: Notebook market demand and OLED MacBook Pro replacement demand; TrendForce forecast/opinion.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether named brands' or suppliers' earnings or valuations reflect the forecast volume growth"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Revenue and margin economics of AR glasses for any listed company"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether early consumer interest sustains beyond proof-of-concept"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether OLED notebook volume growth translates into revenue, margin or earnings gains for any listed panel maker"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus expectations for OLED notebook shipments"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The absolute shipment base behind the percentage growth figures"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Shipment forecast revised down"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Weak Meta Ray-Ban Display sell-through"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "OLED notebook shipment forecasts revised down"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Overall notebook market contraction deepening materially"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed OLED panel suppliers' revenue mix exposed to notebook panels and check consensus estimates against TrendForce's 40%+ 2027 shipment growth."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Confirmation of 2026 shipment pace tracking toward 1.31 million units"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Listed display suppliers reporting AR-glasses order growth"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "MacBook Pro OLED orders tracking above 1.5 million units"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Additional OEMs announcing OLED notebook roadmap prioritization"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 5); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display, sector: OLED notebook, sector: OLED notebook market; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display, OLED notebook, OLED notebook market already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-1c3e6ee1d553",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-3ca90756e4869b",
+     "C-3e1842d0cd420a",
+     "C-43edca7ee80c70",
+     "C-66860c5f782f79",
+     "C-721296f9609ab7",
+     "C-8fc6400bb05f07",
+     "C-9bdb9c5f8edeee",
+     "C-d241416a394058"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-15T16:16:46+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261015-13273.html",
+    "version_dates": []
+   },
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-b1a5f01a5b92",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-56d8edaff72d55",
+     "C-478f82e3596aa8",
+     "C-b87a9f51a7cb96",
+     "C-46e83d03d45d4d",
+     "C-16213e9dd9927d",
+     "C-a7143f9b384e26",
+     "C-45adb0d887a6e9"
+    ],
+    "contribution": "contradictory",
+    "published_at": "2026-10-29T17:01:14+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "New MacBook Pro Enters Market; Global OLED Notebook Shipments Forecast to Grow Over 40% YoY in 2027, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261029-13287.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-03-27 (0001104659-26-035507)",
+    "business": "display driver ICs and LCoS microdisplays for AR",
+    "direction": "positive",
+    "enrichment_id": "EC-a9d41cf248c2c0",
+    "evidence": "s03.2: Higher volumes would flow to brand and supply-chain revenue, but the article gives no revenue, margin or earnings figures for any listed company.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Himax Technologies",
+    "rationale": "LCoS and microdisplay components are designed into AR/near-eye display modules; higher AR glasses volumes lift its non-driver display sales.",
+    "registrant": "Himax Technologies, Inc.",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['HIMX'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "LCoS microdisplays and timing controllers for AR",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-3C22A83E75",
+    "ticker_hint": "HIMX"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "Samsung conglomerate; electronics and display components",
+    "direction": "positive",
+    "enrichment_id": "EC-c781291d6400a9",
+    "evidence": "s03.2: Higher volumes would flow to brand and supply-chain revenue, but the article gives no revenue, margin or earnings figures for any listed company.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "eMagin / Samsung (SMR OLED)",
+    "rationale": "Supplies microdisplays and components into near-eye display supply chain; rising AR volumes add incremental component demand. Small relative to total revenue.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "display and microdisplay components for near-eye",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-3C22A83E75",
+    "ticker_hint": "SMSN"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "eyewear maker; Ray-Ban frames manufacturer",
+    "direction": "positive",
+    "enrichment_id": "EC-14800e8c093b8d",
+    "evidence": "s03.1: Global shipments forecast to rise from 620,000 units (2025) to 1.31 million (2026), +111.1% YoY, and grow nearly 80% in 2027.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "EssilorLuxottica",
+    "rationale": "Manufactures Ray-Ban frames behind Meta's AR glasses; doubling AR shipments lifts its smart-eyewear partnership revenue. ADR trades OTC not NYSE/Nasdaq.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "smart glasses frames and eyewear",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-3C22A83E75",
+    "ticker_hint": "ESLOY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-12 (0000024741-26-000124)",
+    "business": "specialty glass and optical materials maker",
+    "direction": "positive",
+    "enrichment_id": "EC-719cb3a4b8fec5",
+    "evidence": "s03.2: Higher volumes would flow to brand and supply-chain revenue, but the article gives no revenue, margin or earnings figures for any listed company.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0000024741-26-000279) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.50 par value per share",
+      "ticker": "GLW"
+     }
+    ],
+    "name": "Corning",
+    "rationale": "Supplies precision/specialty glass and optical waveguide materials used in AR glasses lenses; AR volume growth adds specialty materials demand. Small share of revenue.",
+    "registrant": "CORNING INC /NY",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3357); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "specialty glass and optical materials for AR",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-3C22A83E75",
+    "ticker_hint": "GLW"
+   }
+  ],
+  "created_at": "2026-10-30T12:22:29.514616Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-b9c167c17e4379",
+  "thesis_id": "TH-3C22A83E75",
+  "thesis_version": 3
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-1c3e6ee1d553",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "consumer_electronics"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:16:11.970339Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-15",
+     "latest_article_date": "2026-10-15",
+     "region": "Global",
+     "research_action": "RESEARCH NOW",
+     "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-3C22A83E75",
+     "title": "AR glasses shipments double in 2026 driven by Meta and Chinese brands"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-721296f9609ab7",
+       "C-9bdb9c5f8edeee",
+       "C-66860c5f782f79"
+      ],
+      "provenance": "FORECAST",
+      "text": "TrendForce forecasts global AR glasses shipments to more than double from 620,000 units in 2025 to 1.31 million in 2026 (111.1% YoY), led by Meta (~20% share) and four brands XREAL, Even Realities, Rokid and RayNeo (combined 53.2%), with nearly 80% further growth expected in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-3ca90756e4869b",
+       "C-3e1842d0cd420a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "AR glasses are transitioning from proof-of-concept to consumer market, and brands are accelerating product development and channels to capture early demand."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Rising AR glasses volumes could benefit the named brands and their display/component supply chains, but the article does not quantify any listed-company revenue, margin or earnings effect, and three of the four non-Meta brands are private."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8fc6400bb05f07"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Global AR glasses shipments forecast at 1.31 million units in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d241416a394058"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "2026 AR glasses shipments forecast represents 111.1% YoY growth \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-43edca7ee80c70"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Global AR glasses shipments were 620,000 units in 2025"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-721296f9609ab7"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Meta expected to hold about 20% of global AR glasses shipments in 2026 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9bdb9c5f8edeee"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "The four major brands XREAL, Even Realities, Rokid and RayNeo projected to hold a combined 53.2% of shipments in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-66860c5f782f79"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Global AR glasses shipments projected to grow nearly 80% in 2027 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 8 pieces of evidence from A-1c3e6ee1d553 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:16 UTC, analysed as of 2026-10-21, from a source published 2026-10-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-3e1842d0cd420a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AR glasses transition from proof-of-concept to consumer market, drawing consumer attention after Meta's Ray-Ban Display momentum."
+     },
+     {
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-66860c5f782f79"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Global shipments forecast to rise from 620,000 units (2025) to 1.31 million (2026), +111.1% YoY, and grow nearly 80% in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher volumes would flow to brand and supply-chain revenue, but the article gives no revenue, margin or earnings figures for any listed company."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-43edca7ee80c70",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [],
+      "quote": "global AR glasses shipments to surge from 620,000 units in 2025 to 1.31 million units in 2026",
+      "role": "supports",
+      "unit": "units",
+      "value": 620000.0,
+      "value_text": "620,000"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-66860c5f782f79",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments YoY growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "global AR glasses shipments projected to grow by nearly 80% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": 80.0,
+      "value_text": "nearly 80%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-721296f9609ab7",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Meta share of global AR glasses shipments \u2014 AR glasses shipment share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "Meta is expected to maintain its lead in 2026 with approximately 20% of global shipments",
+      "role": "supports",
+      "unit": "%",
+      "value": 20.0,
+      "value_text": "approximately 20%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8fc6400bb05f07",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "global AR glasses shipments to surge from 620,000 units in 2025 to 1.31 million units in 2026",
+      "role": "supports",
+      "unit": "units",
+      "value": 1310000.0,
+      "value_text": "1.31 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9bdb9c5f8edeee",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "four non-Meta brands share of global AR glasses shipments \u2014 AR glasses shipment share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "combined four brands"
+      ],
+      "quote": "XREAL, Even Realities, Rokid, and RayNeo\u2014are projected to account for a combined 53.2%",
+      "role": "supports",
+      "unit": "%",
+      "value": 53.2,
+      "value_text": "53.2%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d241416a394058",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments YoY growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "YoY"
+      ],
+      "quote": "marking 111.1% YoY growth",
+      "role": "supports",
+      "unit": "%",
+      "value": 111.1,
+      "value_text": "111.1%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3ca90756e4869b",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AR glasses market drivers",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "the primary drivers behind global AR glasses shipments surpassing one million units in 2026",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3e1842d0cd420a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Meta Ray-Ban Display glasses demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "Stronger-than-expected growth momentum for Meta\u2019s Ray-Ban Display glasses has drawn more consumer attention to AR glasses",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-00b2ebf8effa9a",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "developed in collaboration with Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Collaborating with XREAL on Aura glasses launching end of 2026"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-80a0c3fc83f749",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the near-eye display market report and forecasts"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8ada0836441769",
+       "name_as_written": "Ray-Ban Display",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Meta's AR glasses product driving demand momentum"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-287f478da8f195",
+       "name_as_written": "Aura",
+       "other_securities": [],
+       "quote": "Its Aura glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "XREAL AR glasses developed with Google, launching end of 2026"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": "0001326801",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-58a2675f791c60",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Market leader in AR glasses with ~20% of 2026 shipments via Ray-Ban Display glasses"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-8d8d1e6ea6877b",
+       "name_as_written": "XREAL",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "One of four major non-Meta AR glasses brands; focuses on entertainment/media AR glasses"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-1f4f9ad95e0d3b",
+       "name_as_written": "Even Realities",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand specializing in information-display, lightweight designs"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-ec310a441010ff",
+       "name_as_written": "Rokid",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-d902a7c1e25ee8",
+       "name_as_written": "RayNeo",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [
+        "C-43edca7ee80c70",
+        "C-8fc6400bb05f07",
+        "C-d241416a394058"
+       ],
+       "direction": "positive",
+       "name": "AR glasses",
+       "provenance": "FORECAST",
+       "quote": "global AR glasses shipments to surge"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "near-eye display",
+       "provenance": "SOURCE OPINION",
+       "quote": "2026 Near-Eye Display Market Trends and Technology Analysis"
+      }
+     ],
+     "sectors": [
+      "AR glasses",
+      "consumer electronics",
+      "near-eye display"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "XREAL Aura glasses launch scheduled by end of 2026 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-8fc6400bb05f07",
+        "C-721296f9609ab7"
+       ],
+       "provenance": "FORECAST",
+       "text": "2026 shipments forecast to more than double to 1.31 million units with Meta leading at ~20% share. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-66860c5f782f79"
+       ],
+       "provenance": "FORECAST",
+       "text": "AR glasses moving into the consumer market with sustained growth of nearly 80% forecast for 2027. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "2026 shipments falling materially short of 1.31 million units"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Meta Ray-Ban Display demand momentum fading"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Delays in XREAL Aura or other brand launches"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether named brands' or suppliers' earnings or valuations reflect the forecast volume growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue and margin economics of AR glasses for any listed company"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether early consumer interest sustains beyond proof-of-concept"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Shipment forecast revised down"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Weak Meta Ray-Ban Display sell-through"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed suppliers of OLEDoS, LEDoS and LCoS near-eye displays and assess their AR-glasses revenue exposure and the share each brand's volumes represent."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Confirmation of 2026 shipment pace tracking toward 1.31 million units"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Listed display suppliers reporting AR-glasses order growth"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026); C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-1c3e6ee1d553",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-721296f9609ab7",
+       "C-9bdb9c5f8edeee",
+       "C-66860c5f782f79",
+       "C-3ca90756e4869b",
+       "C-3e1842d0cd420a"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-15T16:16:46+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261015-13273.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "444b67ad8b2b5502e1f407042201ad9ceb97ed19875cfaa6c2d6bd8444c0b5a1",
+   "created_at": "2026-10-21T08:16:21.885571Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026); C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-721296f9609ab7",
+       "C-9bdb9c5f8edeee",
+       "C-66860c5f782f79"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "6"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-721296f9609ab7",
+       "C-9bdb9c5f8edeee"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "4 claim(s) inside the next 2-4 quarters (C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026); C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026)); 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Meta (META), sector: AR glasses, sector: near-eye display",
+      "value": "1 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-8fc6400bb05f07"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026?",
+      "value": "qualifies"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 6 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026); C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-3C22A83E75",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s01.1 \u2014 Brands accelerating product development and channels is not in the source; its stated drivers restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "consumer_electronics"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:16:11.970339Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-15",
+     "latest_article_date": "2026-10-15",
+     "region": "Global",
+     "research_action": "RESEARCH NOW",
+     "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-3C22A83E75",
+     "title": "AR glasses shipments double in 2026 driven by Meta and Chinese brands"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-721296f9609ab7",
+       "C-9bdb9c5f8edeee",
+       "C-66860c5f782f79"
+      ],
+      "provenance": "FORECAST",
+      "text": "TrendForce forecasts global AR glasses shipments to more than double from 620,000 units in 2025 to 1.31 million in 2026 (111.1% YoY), led by Meta (~20% share) and four brands XREAL, Even Realities, Rokid and RayNeo (combined 53.2%), with nearly 80% further growth expected in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-3e1842d0cd420a",
+       "C-3ca90756e4869b"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Stronger-than-expected momentum for Meta's Ray-Ban Display glasses has drawn more consumer attention to AR glasses, among the primary drivers behind global shipments passing one million units in 2026."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Rising AR glasses volumes could benefit the named brands and their display/component supply chains, but the article does not quantify any listed-company revenue, margin or earnings effect, and three of the four non-Meta brands are private."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8fc6400bb05f07"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Global AR glasses shipments forecast at 1.31 million units in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d241416a394058"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "2026 AR glasses shipments forecast represents 111.1% YoY growth \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-43edca7ee80c70"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Global AR glasses shipments were 620,000 units in 2025"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-721296f9609ab7"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Meta expected to hold about 20% of global AR glasses shipments in 2026 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9bdb9c5f8edeee"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "The four major brands XREAL, Even Realities, Rokid and RayNeo projected to hold a combined 53.2% of shipments in 2026 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-66860c5f782f79"
+       ],
+       "original_date": "2026-10-15",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Global AR glasses shipments projected to grow nearly 80% in 2027 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 8 pieces of evidence from A-1c3e6ee1d553 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:16 UTC, analysed as of 2026-10-21, from a source published 2026-10-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-3e1842d0cd420a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AR glasses transition from proof-of-concept to consumer market, drawing consumer attention after Meta's Ray-Ban Display momentum."
+     },
+     {
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-66860c5f782f79"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Global shipments forecast to rise from 620,000 units (2025) to 1.31 million (2026), +111.1% YoY, and grow nearly 80% in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher volumes would flow to brand and supply-chain revenue, but the article gives no revenue, margin or earnings figures for any listed company."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-43edca7ee80c70",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [],
+      "quote": "global AR glasses shipments to surge from 620,000 units in 2025 to 1.31 million units in 2026",
+      "role": "supports",
+      "unit": "units",
+      "value": 620000.0,
+      "value_text": "620,000"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-66860c5f782f79",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments YoY growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "global AR glasses shipments projected to grow by nearly 80% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": 80.0,
+      "value_text": "nearly 80%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-721296f9609ab7",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Meta share of global AR glasses shipments \u2014 AR glasses shipment share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "Meta is expected to maintain its lead in 2026 with approximately 20% of global shipments",
+      "role": "supports",
+      "unit": "%",
+      "value": 20.0,
+      "value_text": "approximately 20%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8fc6400bb05f07",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "global AR glasses shipments to surge from 620,000 units in 2025 to 1.31 million units in 2026",
+      "role": "supports",
+      "unit": "units",
+      "value": 1310000.0,
+      "value_text": "1.31 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9bdb9c5f8edeee",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "four non-Meta brands share of global AR glasses shipments \u2014 AR glasses shipment share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "combined four brands"
+      ],
+      "quote": "XREAL, Even Realities, Rokid, and RayNeo\u2014are projected to account for a combined 53.2%",
+      "role": "supports",
+      "unit": "%",
+      "value": 53.2,
+      "value_text": "53.2%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d241416a394058",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments YoY growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "YoY"
+      ],
+      "quote": "marking 111.1% YoY growth",
+      "role": "supports",
+      "unit": "%",
+      "value": 111.1,
+      "value_text": "111.1%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3ca90756e4869b",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AR glasses market drivers",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "the primary drivers behind global AR glasses shipments surpassing one million units in 2026",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3e1842d0cd420a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Meta Ray-Ban Display glasses demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "Stronger-than-expected growth momentum for Meta\u2019s Ray-Ban Display glasses has drawn more consumer attention to AR glasses",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-00b2ebf8effa9a",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "developed in collaboration with Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Collaborating with XREAL on Aura glasses launching end of 2026"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-80a0c3fc83f749",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the near-eye display market report and forecasts"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8ada0836441769",
+       "name_as_written": "Ray-Ban Display",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Meta's AR glasses product driving demand momentum"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-287f478da8f195",
+       "name_as_written": "Aura",
+       "other_securities": [],
+       "quote": "Its Aura glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "XREAL AR glasses developed with Google, launching end of 2026"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": "0001326801",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-58a2675f791c60",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Market leader in AR glasses with ~20% of 2026 shipments via Ray-Ban Display glasses"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-8d8d1e6ea6877b",
+       "name_as_written": "XREAL",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "One of four major non-Meta AR glasses brands; focuses on entertainment/media AR glasses"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-1f4f9ad95e0d3b",
+       "name_as_written": "Even Realities",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand specializing in information-display, lightweight designs"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-ec310a441010ff",
+       "name_as_written": "Rokid",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-d902a7c1e25ee8",
+       "name_as_written": "RayNeo",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [
+        "C-43edca7ee80c70",
+        "C-8fc6400bb05f07",
+        "C-d241416a394058"
+       ],
+       "direction": "positive",
+       "name": "AR glasses",
+       "provenance": "FORECAST",
+       "quote": "global AR glasses shipments to surge"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "near-eye display",
+       "provenance": "SOURCE OPINION",
+       "quote": "2026 Near-Eye Display Market Trends and Technology Analysis"
+      }
+     ],
+     "sectors": [
+      "AR glasses",
+      "consumer electronics",
+      "near-eye display"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "XREAL Aura glasses launch scheduled by end of 2026 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-8fc6400bb05f07",
+        "C-721296f9609ab7"
+       ],
+       "provenance": "FORECAST",
+       "text": "2026 shipments forecast to more than double to 1.31 million units with Meta leading at ~20% share. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-66860c5f782f79"
+       ],
+       "provenance": "FORECAST",
+       "text": "AR glasses moving into the consumer market with sustained growth of nearly 80% forecast for 2027. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "2026 shipments falling materially short of 1.31 million units"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Meta Ray-Ban Display demand momentum fading"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Delays in XREAL Aura or other brand launches"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether named brands' or suppliers' earnings or valuations reflect the forecast volume growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue and margin economics of AR glasses for any listed company"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether early consumer interest sustains beyond proof-of-concept"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Shipment forecast revised down"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Weak Meta Ray-Ban Display sell-through"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed suppliers of OLEDoS, LEDoS and LCoS near-eye displays and assess their AR-glasses revenue exposure and the share each brand's volumes represent."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Confirmation of 2026 shipment pace tracking toward 1.31 million units"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Listed display suppliers reporting AR-glasses order growth"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-1c3e6ee1d553",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-721296f9609ab7",
+       "C-9bdb9c5f8edeee",
+       "C-66860c5f782f79",
+       "C-3ca90756e4869b",
+       "C-3e1842d0cd420a"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-15T16:16:46+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261015-13273.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "0d3b76d15ca35f4869c325b8f0d71b44115fa02256c2cdb87d48b444b795687c",
+   "created_at": "2026-10-22T07:42:55.350672Z",
+   "diffs": [
+    {
+     "change_class": "no material change",
+     "claim_ids": [
+      "C-43edca7ee80c70",
+      "C-8fc6400bb05f07",
+      "C-d241416a394058",
+      "C-721296f9609ab7",
+      "C-9bdb9c5f8edeee",
+      "C-66860c5f782f79",
+      "C-3e1842d0cd420a",
+      "C-3ca90756e4869b"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "Rising AR glasses volumes could benefit the named brands and their display/component supply chains, but the article does not quantify any listed-company revenue, margin or earnings effect, and three of the four non-Meta brands are private.",
+     "note": "",
+     "old": "Rising AR glasses volumes could benefit the named brands and their display/component supply chains, but the article does not quantify any listed-company revenue, margin or earnings effect, and three of the four non-Meta brands are private."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": "444b67ad8b2b5502e1f407042201ad9ceb97ed19875cfaa6c2d6bd8444c0b5a1",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-66860c5f782f79",
+       "C-721296f9609ab7",
+       "C-8fc6400bb05f07",
+       "C-9bdb9c5f8edeee",
+       "C-d241416a394058"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "6"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-721296f9609ab7",
+       "C-8fc6400bb05f07",
+       "C-9bdb9c5f8edeee",
+       "C-d241416a394058"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "4 claim(s) inside the next 2-4 quarters (C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026)); 1 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Meta (META), sector: AR glasses, sector: near-eye display",
+      "value": "1 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-8fc6400bb05f07"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026?",
+      "value": "qualifies"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 6 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "RESEARCH NOW",
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-3C22A83E75",
+   "version": 2
+  },
+  {
+   "as_of": "2026-10-30",
+   "change_summary": "A-b1a5f01a5b92: contradictory \u00d71, new \u00d76",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-30",
+     "ancestry": [
+      "consumer_electronics"
+     ],
+     "evidence_direction": "MIXED",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:16:11.970339Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-29",
+     "latest_article_date": "2026-10-29",
+     "region": "Global",
+     "research_action": "RESEARCH NOW",
+     "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-3C22A83E75",
+     "title": "AR glasses shipments double in 2026 driven by Meta and Chinese brands"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-721296f9609ab7",
+       "C-9bdb9c5f8edeee",
+       "C-66860c5f782f79"
+      ],
+      "provenance": "FORECAST",
+      "text": "TrendForce forecasts global AR glasses shipments to more than double from 620,000 units in 2025 to 1.31 million in 2026 (111.1% YoY), led by Meta (~20% share) and four brands XREAL, Even Realities, Rokid and RayNeo (combined 53.2%), with nearly 80% further growth expected in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-3e1842d0cd420a",
+       "C-3ca90756e4869b"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Stronger-than-expected momentum for Meta's Ray-Ban Display glasses has drawn more consumer attention to AR glasses, among the primary drivers behind global shipments passing one million units in 2026."
+     },
+     {
+      "claim_ids": [
+       "C-b87a9f51a7cb96",
+       "C-46e83d03d45d4d",
+       "C-16213e9dd9927d",
+       "C-56d8edaff72d55"
+      ],
+      "provenance": "FORECAST",
+      "text": "\u27e8update 2026-10-29 \u00b7 TrendForce\u27e9 TrendForce forecasts global OLED notebook shipments to grow nearly 40% in 2026 and more than 40% in 2027, with Apple's OLED MacBook Pro adding momentum to a market previously driven by Windows OEMs. \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "new",
+       "claim_ids": [
+        "C-56d8edaff72d55"
+       ],
+       "original_date": "2026-10-29",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Shipments of the new MacBook Pro with PROLED XDR Display will reach 1.2\u20131.5 million units in 2027. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "new",
+       "claim_ids": [
+        "C-478f82e3596aa8"
+       ],
+       "original_date": "2026-10-29",
+       "period": "2029",
+       "provenance": "FORECAST",
+       "text": "Competing OLED panel makers (LG Display, BOE, TCL CSOT) are targeting the OLED MacBook Air supply chain, expected to debut in 2029. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "new",
+       "claim_ids": [
+        "C-b87a9f51a7cb96"
+       ],
+       "original_date": "2026-10-29",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Global OLED notebook shipments are forecast to grow over 40% YoY in 2027. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "new",
+       "claim_ids": [
+        "C-46e83d03d45d4d"
+       ],
+       "original_date": "2026-10-29",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "OLED notebook shipments will grow nearly 40% YoY in 2026. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "new",
+       "claim_ids": [
+        "C-16213e9dd9927d"
+       ],
+       "original_date": "2026-10-29",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "OLED notebook shipments will grow more than 40% YoY in 2027. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-a7143f9b384e26"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The premium price and availability alongside existing Mini-LED models could temper near-term replacement demand. \u27e8the source states evidence against this thesis\u27e9"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "new",
+       "claim_ids": [
+        "C-45adb0d887a6e9"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The new MacBook Pro's starting price is US$2,899 for the 14-inch model. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      }
+     ],
+     "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+     "vs_prior": "v2 held 8 claim(s); this source adds: contradictory \u00d71, new \u00d76"
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-3e1842d0cd420a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AR glasses transition from proof-of-concept to consumer market, drawing consumer attention after Meta's Ray-Ban Display momentum."
+     },
+     {
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-8fc6400bb05f07",
+       "C-d241416a394058",
+       "C-66860c5f782f79"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Global shipments forecast to rise from 620,000 units (2025) to 1.31 million (2026), +111.1% YoY, and grow nearly 80% in 2027. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher volumes would flow to brand and supply-chain revenue, but the article gives no revenue, margin or earnings figures for any listed company."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-43edca7ee80c70",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [],
+      "quote": "global AR glasses shipments to surge from 620,000 units in 2025 to 1.31 million units in 2026",
+      "role": "supports",
+      "unit": "units",
+      "value": 620000.0,
+      "value_text": "620,000"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-66860c5f782f79",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments YoY growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "global AR glasses shipments projected to grow by nearly 80% in 2027",
+      "role": "supports",
+      "unit": "%",
+      "value": 80.0,
+      "value_text": "nearly 80%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-721296f9609ab7",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Meta share of global AR glasses shipments \u2014 AR glasses shipment share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "Meta is expected to maintain its lead in 2026 with approximately 20% of global shipments",
+      "role": "supports",
+      "unit": "%",
+      "value": 20.0,
+      "value_text": "approximately 20%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8fc6400bb05f07",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "global AR glasses shipments to surge from 620,000 units in 2025 to 1.31 million units in 2026",
+      "role": "supports",
+      "unit": "units",
+      "value": 1310000.0,
+      "value_text": "1.31 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9bdb9c5f8edeee",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "four non-Meta brands share of global AR glasses shipments \u2014 AR glasses shipment share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "combined four brands"
+      ],
+      "quote": "XREAL, Even Realities, Rokid, and RayNeo\u2014are projected to account for a combined 53.2%",
+      "role": "supports",
+      "unit": "%",
+      "value": 53.2,
+      "value_text": "53.2%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d241416a394058",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "global AR glasses shipments \u2014 AR glasses shipments YoY growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "YoY"
+      ],
+      "quote": "marking 111.1% YoY growth",
+      "role": "supports",
+      "unit": "%",
+      "value": 111.1,
+      "value_text": "111.1%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b010",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-16213e9dd9927d",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "OLED notebook shipment growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "more than"
+      ],
+      "quote": "followed by another increase of more than 40% in 2027",
+      "role": "supports",
+      "unit": "% YoY",
+      "value": 40.0,
+      "value_text": "more than 40%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b010",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-46e83d03d45d4d",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "OLED notebook shipment growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "nearly"
+      ],
+      "quote": "OLED notebook shipments will grow nearly 40% YoY in 2026",
+      "role": "supports",
+      "unit": "% YoY",
+      "value": 40.0,
+      "value_text": "nearly 40%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b006",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-56d8edaff72d55",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "MacBook Pro OLED shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "shipments of the new model will reach 1.2\u20131.5 million units in 2027",
+      "role": "catalyst",
+      "unit": "units",
+      "value": null,
+      "value_text": "1.2\u20131.5 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3ca90756e4869b",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AR glasses market drivers",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "the primary drivers behind global AR glasses shipments surpassing one million units in 2026",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-1c3e6ee1d553",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3e1842d0cd420a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Meta Ray-Ban Display glasses demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "Stronger-than-expected growth momentum for Meta\u2019s Ray-Ban Display glasses has drawn more consumer attention to AR glasses",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b015",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-478f82e3596aa8",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Competing OLED panel makers (LG Display, BOE, TCL CSOT) are targeting the OLED MacBook Air supply chain, expected to debut in 2029.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2029",
+      "qualifiers": [
+       "OLED MacBook Air expected to debut in 2029"
+      ],
+      "quote": "competing OLED panel makers, including LG Display, BOE, and TCL CSOT, are largely directing their efforts toward securing a place in the supply chain for the OLED MacBook Air, which is expected to debut in 2029",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-00b2ebf8effa9a",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "developed in collaboration with Google",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Collaborating with XREAL on Aura glasses launching end of 2026"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-80a0c3fc83f749",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the near-eye display market report and forecasts"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8ada0836441769",
+       "name_as_written": "Ray-Ban Display",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Meta's AR glasses product driving demand momentum"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-287f478da8f195",
+       "name_as_written": "Aura",
+       "other_securities": [],
+       "quote": "Its Aura glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "XREAL AR glasses developed with Google, launching end of 2026"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6012c0fa6c288f",
+       "name_as_written": "MacBook Pro with PROLED XDR Display",
+       "other_securities": [],
+       "quote": "MacBook Pro with PROLED XDR Display",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "First Apple notebook with tandem OLED touchscreen"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5ac9f848f4a4ef",
+       "name_as_written": "MacBook Neo",
+       "other_securities": [],
+       "quote": "the MacBook Neo\u2019s departure from Apple\u2019s traditional entry-level pricing strategy",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Apple product cited as example of pricing strategy expansion"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e1decb67d9fc16",
+       "name_as_written": "Lenovo",
+       "other_securities": [],
+       "quote": "Windows-based brands such as Lenovo, HP, and ASUS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": "0000047217",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-27 (accession 0000047217-26-000051) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, par value $0.01 per share",
+         "ticker": "HPQ"
+        }
+       ],
+       "mention_id": "M-8dd56c6e6ce6b8",
+       "name_as_written": "HP",
+       "other_securities": [],
+       "quote": "Lenovo, HP, and ASUS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "sector_example",
+       "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7897ee8b72844c",
+       "name_as_written": "ASUS",
+       "other_securities": [],
+       "quote": "Lenovo, HP, and ASUS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": "0001326801",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-30 (accession 0001628280-26-050705) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-58a2675f791c60",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "Meta\u2019s Ray-Ban Display glasses",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Market leader in AR glasses with ~20% of 2026 shipments via Ray-Ban Display glasses"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-8d8d1e6ea6877b",
+       "name_as_written": "XREAL",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "One of four major non-Meta AR glasses brands; focuses on entertainment/media AR glasses"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-d3a9dead11aef4",
+       "name_as_written": "Samsung Display",
+       "other_securities": [],
+       "quote": "Samsung Display secures exclusive supply position",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Exclusive panel supplier for the OLED MacBook Pro"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": "0001290109",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-6b7c1b32531262",
+       "name_as_written": "LG Display",
+       "other_securities": [],
+       "quote": "including LG Display, BOE, and TCL CSOT",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-d96f0380c884bc",
+       "name_as_written": "BOE",
+       "other_securities": [],
+       "quote": "LG Display, BOE, and TCL CSOT",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-3be901f9da0783",
+       "name_as_written": "TCL CSOT",
+       "other_securities": [],
+       "quote": "LG Display, BOE, and TCL CSOT",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": "0000320193",
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000320193-26-000020) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.00001 par value per share",
+         "ticker": "AAPL"
+        }
+       ],
+       "mention_id": "M-7f2d43273c597f",
+       "name_as_written": "Apple",
+       "other_securities": [],
+       "quote": "Apple\u2019s newly unveiled MacBook Pro",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "OEM launching the OLED MacBook Pro, driving OLED notebook adoption and panel demand"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-1f4f9ad95e0d3b",
+       "name_as_written": "Even Realities",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand specializing in information-display, lightweight designs"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-ec310a441010ff",
+       "name_as_written": "Rokid",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-d902a7c1e25ee8",
+       "name_as_written": "RayNeo",
+       "other_securities": [],
+       "quote": "XREAL, Even Realities, Rokid, and RayNeo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AR glasses brand with diverse product portfolios"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [
+        "C-43edca7ee80c70",
+        "C-8fc6400bb05f07",
+        "C-d241416a394058"
+       ],
+       "direction": "positive",
+       "name": "AR glasses",
+       "provenance": "FORECAST",
+       "quote": "global AR glasses shipments to surge"
+      },
+      {
+       "article_id": "A-1c3e6ee1d553",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "near-eye display",
+       "provenance": "SOURCE OPINION",
+       "quote": "2026 Near-Eye Display Market Trends and Technology Analysis"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "claim_ids": [
+        "C-46e83d03d45d4d",
+        "C-16213e9dd9927d"
+       ],
+       "direction": "positive",
+       "name": "OLED notebook",
+       "provenance": "FORECAST",
+       "quote": "OLED notebook shipments will grow nearly 40% YoY in 2026"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "claim_ids": [
+        "C-b87a9f51a7cb96"
+       ],
+       "direction": "positive",
+       "name": "OLED notebook market",
+       "provenance": "FORECAST",
+       "quote": "the OLED notebook market has been driven primarily by Windows-based brands"
+      }
+     ],
+     "sectors": [
+      "AR glasses",
+      "consumer electronics",
+      "near-eye display",
+      "OLED notebook panels",
+      "notebook display"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 (and MacBook Air debut 2029) [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-46e83d03d45d4d",
+        "C-a7143f9b384e26"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "OLED notebook shipments forecast to grow nearly 40% in 2026, but the premium MacBook Pro price and Mini-LED availability could temper near-term replacement demand. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-8fc6400bb05f07",
+        "C-721296f9609ab7"
+       ],
+       "provenance": "FORECAST",
+       "text": "2026 shipments forecast to more than double to 1.31 million units with Meta leading at ~20% share. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-16213e9dd9927d",
+        "C-478f82e3596aa8"
+       ],
+       "provenance": "FORECAST",
+       "text": "Apple's OLED entry alongside Windows OEMs supports multi-year OLED adoption in notebooks, with over 40% growth forecast in 2027 and MacBook Air expected 2029. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-66860c5f782f79"
+       ],
+       "provenance": "FORECAST",
+       "text": "AR glasses moving into the consumer market with sustained growth of nearly 80% forecast for 2027. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-a7143f9b384e26"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The overall notebook market is expected to contract for two consecutive years, and the premium price could temper near-term replacement demand."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-a7143f9b384e26"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The premium price and availability alongside existing Mini-LED models could temper near-term replacement demand."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "2026 shipments falling materially short of 1.31 million units"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Meta Ray-Ban Display demand momentum fading"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Delays in XREAL Aura or other brand launches"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "OLED notebook shipment growth falling short of 40% in 2027"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Weaker-than-expected MacBook Pro OLED uptake below 1.2 million units"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Further notebook market contraction dragging OLED volumes"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-a7143f9b384e26",
+        "C-45adb0d887a6e9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The overall notebook market is expected to contract for two consecutive years, and the premium starting price plus continued availability of Mini-LED models could temper near-term replacement demand for the OLED MacBook Pro. (scope: Notebook market demand and OLED MacBook Pro replacement demand; TrendForce forecast/opinion.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether named brands' or suppliers' earnings or valuations reflect the forecast volume growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue and margin economics of AR glasses for any listed company"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether early consumer interest sustains beyond proof-of-concept"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether OLED notebook volume growth translates into revenue, margin or earnings gains for any listed panel maker"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus expectations for OLED notebook shipments"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The absolute shipment base behind the percentage growth figures"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Shipment forecast revised down"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Weak Meta Ray-Ban Display sell-through"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "OLED notebook shipment forecasts revised down"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Overall notebook market contraction deepening materially"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed OLED panel suppliers' revenue mix exposed to notebook panels and check consensus estimates against TrendForce's 40%+ 2027 shipment growth."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Confirmation of 2026 shipment pace tracking toward 1.31 million units"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Listed display suppliers reporting AR-glasses order growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "MacBook Pro OLED orders tracking above 1.5 million units"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Additional OEMs announcing OLED notebook roadmap prioritization"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 5); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display, sector: OLED notebook, sector: OLED notebook market; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display, OLED notebook, OLED notebook market already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-1c3e6ee1d553",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-3ca90756e4869b",
+       "C-3e1842d0cd420a",
+       "C-43edca7ee80c70",
+       "C-66860c5f782f79",
+       "C-721296f9609ab7",
+       "C-8fc6400bb05f07",
+       "C-9bdb9c5f8edeee",
+       "C-d241416a394058"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-15T16:16:46+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Meta and Chinese Brands Drive Doubling of AR Glasses Shipments, 2026 Forecast Expected to Reach 1.31 Million Units, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261015-13273.html",
+      "version_dates": []
+     },
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-b1a5f01a5b92",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-56d8edaff72d55",
+       "C-478f82e3596aa8",
+       "C-b87a9f51a7cb96",
+       "C-46e83d03d45d4d",
+       "C-16213e9dd9927d",
+       "C-a7143f9b384e26",
+       "C-45adb0d887a6e9"
+      ],
+      "contribution": "contradictory",
+      "published_at": "2026-10-29T17:01:14+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "New MacBook Pro Enters Market; Global OLED Notebook Shipments Forecast to Grow Over 40% YoY in 2027, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261029-13287.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "a36244408c486bc17a2ca2cd96cbb6d3bc81bc211f71c1e91c73d8874fc9d32a",
+   "created_at": "2026-10-30T12:03:26.249762Z",
+   "diffs": [
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-16213e9dd9927d"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "OLED notebook shipment growth: more than 40% YoY",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-46e83d03d45d4d"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "OLED notebook shipment growth: nearly 40% YoY",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-56d8edaff72d55"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "MacBook Pro OLED shipments: 1.2\u20131.5 million units",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-478f82e3596aa8"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Competing OLED panel makers (LG Display, BOE, TCL CSOT) are targeting the OLED MacBook Air supply chain, expected to debut in 2029.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-a7143f9b384e26"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "The premium price and availability alongside existing Mini-LED models could temper near-term replacement demand.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-46e83d03d45d4d",
+      "C-a7143f9b384e26",
+      "C-8fc6400bb05f07",
+      "C-721296f9609ab7"
+     ],
+     "field_id": "s06_why_now.catalyst_window",
+     "new": "2027 (and MacBook Air debut 2029) [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "note": "",
+     "old": "XREAL Aura glasses launch scheduled by end of 2026 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window"
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "Samsung Display (potential_beneficiary)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "LG Display (supplier)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "BOE (supplier)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "TCL CSOT (supplier)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "Apple (context)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-46e83d03d45d4d",
+      "C-16213e9dd9927d"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "OLED notebook (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-b87a9f51a7cb96"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "OLED notebook market (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-43edca7ee80c70",
+      "C-8fc6400bb05f07",
+      "C-d241416a394058",
+      "C-721296f9609ab7",
+      "C-9bdb9c5f8edeee",
+      "C-66860c5f782f79",
+      "C-3e1842d0cd420a",
+      "C-3ca90756e4869b",
+      "C-b87a9f51a7cb96",
+      "C-46e83d03d45d4d",
+      "C-16213e9dd9927d",
+      "C-56d8edaff72d55"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "\u27e8update 2026-10-29 \u00b7 TrendForce\u27e9 TrendForce forecasts global OLED notebook shipments to grow nearly 40% in 2026 and more than 40% in 2027, with Apple's OLED MacBook Pro adding momentum to a market previously driven by Windows OEMs. \u27e8cited figures: forecast\u27e9",
+     "note": "",
+     "old": "Rising AR glasses volumes could benefit the named brands and their display/component supply chains, but the article does not quantify any listed-company revenue, margin or earnings effect, and three of the four non-Meta brands are private."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "MIXED",
+   "prior_content_sha": "0d3b76d15ca35f4869c325b8f0d71b44115fa02256c2cdb87d48b444b795687c",
+   "priority": {
+    "change_reason": "no change in action (F2_material_evidence 6\u219211; F6_recognizable_exposures 1 listed \u00b7 2 sector \u00b7 0 instrument\u21921 listed \u00b7 4 sector \u00b7 0 instrument)",
+    "evidence_direction": "MIXED",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-43edca7ee80c70",
+       "C-66860c5f782f79",
+       "C-721296f9609ab7",
+       "C-8fc6400bb05f07",
+       "C-9bdb9c5f8edeee",
+       "C-d241416a394058",
+       "C-b87a9f51a7cb96",
+       "C-46e83d03d45d4d",
+       "C-16213e9dd9927d",
+       "C-56d8edaff72d55",
+       "C-478f82e3596aa8"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "11"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-721296f9609ab7",
+       "C-8fc6400bb05f07",
+       "C-9bdb9c5f8edeee",
+       "C-d241416a394058",
+       "C-46e83d03d45d4d"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "5 claim(s) inside the next 2-4 quarters (C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026); showing 4 of 5); 4 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Meta (META), sector: AR glasses, sector: near-eye display, sector: OLED notebook, sector: OLED notebook market",
+      "value": "1 listed \u00b7 4 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 2 offered but NOT counted (opinion, forecast figure or stale reading): C-56d8edaff72d55, C-478f82e3596aa8",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-8fc6400bb05f07",
+       "C-46e83d03d45d4d"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display, OLED notebook, OLED notebook market already reflect AR glasses shipments of 1.31 million units in 2026?",
+      "value": "qualifies"
+     },
+     {
+      "claim_ids": [
+       "C-a7143f9b384e26"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 10 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "RESEARCH NOW",
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-721296f9609ab7: forecast window 2026-01-01..2026-12-31 (2026); C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026); C-9bdb9c5f8edeee: forecast window 2026-01-01..2026-12-31 (2026); C-d241416a394058: forecast window 2026-01-01..2026-12-31 (2026) (showing 4 of 5); source-named exposure(s): Meta (META), sector: AR glasses, sector: near-eye display, sector: OLED notebook, sector: OLED notebook market; a near-term fundamental inflection \u2014 C-8fc6400bb05f07: forecast window 2026-01-01..2026-12-31 (2026) \u2014 the publisher's own data in an industry data report; research question: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display, OLED notebook, OLED notebook market already reflect AR glasses shipments of 1.31 million units in 2026?; premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261030T115837Z-scan",
+   "thesis_id": "TH-3C22A83E75",
+   "version": 3
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-b1a5f01a5b92",
+   "block_ids": [
+    "b015",
+    "b006"
+   ],
+   "claim_ids": [
+    "C-478f82e3596aa8"
+   ],
+   "excerpt": "Although other panel makers are conducting qualification programs,\u2026",
+   "name": "makers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 5,
+ "other_cited_evidence": [
+  "C-b87a9f51a7cb96",
+  "C-a7143f9b384e26",
+  "C-45adb0d887a6e9"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.2": "Cites C-56d8edaff72d55 (1.2-1.5M units) which is about MacBook Pro, not matching the sentence's claim about Apple adding momentum; but the MacBook Pro/Windows OEM momentum detail is not in any cited span. The growth figures (nearly 40% 2026, over/more than 40% 2027) are supported. The 'Apple OLED MacBook Pro adding momentum to a market previously driven by Windows OEMs' is not supported by cited spans.",
+  "s06.2": "The 'Apple's OLED entry alongside Windows OEMs' claim is not in cited spans; over 40% growth 2027 and MacBook Air 2029 are supported.",
+  "s07.1": "The 'notebook market contracting for two consecutive years' claim is not in cited span C-a7143f9b384e26; the temper demand part is supported.",
+  "s07.2": "The 'notebook market contracting for two consecutive years' claim is not in the cited spans (C-a7143f9b384e26 and C-45adb0d887a6e9); the price and Mini-LED temper demand parts are supported."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Research Now \u2014 no recent mispricing or dated catalyst, but a credible near-term change in a fundamental: do current earnings estimates and market expectations for Meta, AR glasses, near-eye display, OLED notebook, OLED notebook market already reflect AR glasses shipments of 1.31 million units in 2026? An investigation, not a trade."
+ ],
+ "withheld_sentences": {}
+}

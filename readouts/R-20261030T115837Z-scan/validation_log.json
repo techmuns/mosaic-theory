@@ -1,0 +1,1002 @@
+[
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:20:40.978406Z",
+  "detail": "s07.8: The four-cards and two-years-behind figures are supported, but the cited spans do not attribute the statement to Liang Wenfeng; speaker attribution unsupported. | 'Huawei hardware still lags: Liang Wenfeng said four Huawei cards are needed to match one Nvidia card'",
+  "issue_id": "VI-01b5299e2646b7",
+  "ref_id": "TH-B121174B17:s07.8",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-30T12:10:12.893097Z",
+  "detail": "b012: '-10%' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'After that peak, AI stocks fall steeply in mid\u2010October, dropping to around -10% at the low, and finish the period at -7.1%.'",
+  "issue_id": "VI-02083a9ab54f5d",
+  "ref_id": "A-99ef64094883",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:13:54.304782Z",
+  "detail": "s03.0: first check REVIEW_PARTIAL (s03.0: The move to first-class native PyTorch training is supported, but 'lowering the switching cost from CUDA for researchers' is not stated in the cited span) \u2014 re-anchored to C-f5d72399c08d5c; after re-anchoring: supported",
+  "issue_id": "VI-04aecf04e64ab4",
+  "ref_id": "TH-F2CD2F7AFC:s03.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-10-30T12:20:40.987996Z",
+  "detail": "KV (a list of examples, b018) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-04d0a67aa6ade6",
+  "ref_id": "A-52648724ad39",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:05:32.615825Z",
+  "detail": "s07.1: Cited span only supports the ~5% consumer-grade spot price slip; the claim that high-end price increases have begun to lose momentum is not in the cited span. | 'Price increases for high-end specifications have begun to lose momentum, and consumer-grade spot pri'",
+  "issue_id": "VI-0999825790124c",
+  "ref_id": "TH-C2EA7EB06F:s07.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:05:32.615802Z",
+  "detail": "s03.0: Cited span addresses high-capacitance MLCC requirements across CPU motherboards and memory modules; it does not state AI evolution from training to inference/agents driving a new wave of CPU demand with power modules and DDR5. | 'AI evolution from training to inference and agents drives a new wave of CPU demand, each needing pow'",
+  "issue_id": "VI-0c43bbb88c17bd",
+  "ref_id": "TH-C2EA7EB06F:s03.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_UNSUPPORTED",
+  "created_at": "2026-10-30T12:10:12.887130Z",
+  "detail": "s07.2: UNSUPPORTED \u2014 Claim that wider CDS can reflect hedging demand, heavy issuance or financing uncertainty rather than expected default is not in the cited span C-50d63c69dc6db9 (which only gives leaders' spread range). No pool span supports this interpretation. | 'Wider CDS spreads can reflect hedging demand, heavy issuance or financing uncertainty rather than ex'",
+  "issue_id": "VI-11bdada983cd4c",
+  "ref_id": "TH-FAABB39749:s07.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:20:40.978379Z",
+  "detail": "s06.1: The 2027-2028 forecast and hardware ~5 years behind / software at frontier are supported, but 'ecosystem is mature' and 'fully domestic ecosystem' overstate; cited spans don't assert maturity or domestic-ecosystem goal. | \"The article argues the Huawei ecosystem is mature and will become DeepSeek's primary stack by 2027-2\"",
+  "issue_id": "VI-153173a322d4ab",
+  "ref_id": "TH-B121174B17:s06.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:03:26.246828Z",
+  "detail": "s07.1: first check REVIEW_PARTIAL (s07.1: The 'notebook market contracting for two consecutive years' claim is not in cited span C-a7143f9b384e26; the temper demand part is supported. | 'The over) \u2014 re-anchored to ; after re-anchoring: supported",
+  "issue_id": "VI-162f8339813dcc",
+  "ref_id": "TH-3C22A83E75:s07.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-10-30T12:20:40.987771Z",
+  "detail": "5 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 41.5%; 46.8%; 32; 88.8%; 1.32\u00d7 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-17513909694baf",
+  "ref_id": "A-52648724ad39",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:03:26.246845Z",
+  "detail": "s07.2: first check REVIEW_PARTIAL (s07.2: The 'notebook market contracting for two consecutive years' claim is not in the cited spans (C-a7143f9b384e26 and C-45adb0d887a6e9); the price and Mini-L) \u2014 re-anchored to ; after re-anchoring: supported",
+  "issue_id": "VI-17808fe5b16a48",
+  "ref_id": "TH-3C22A83E75:s07.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:05:43.869756Z",
+  "detail": "s03.2: The ~5% slip is supported but 'before finding a temporary floor' is not in the cited span or pool. | 'Consumer-grade MLCC spot prices slipped ~5% before finding a temporary floor. \u27e8cited figures: approx'",
+  "issue_id": "VI-1aee38075c5072",
+  "ref_id": "TH-FDEF68AB50:s03.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:05:43.869773Z",
+  "detail": "s06.1: The cited opinion supports subdued demand and higher memory/component costs, but 'may keep end-product prices elevated' extends beyond the span, which does not mention end-product prices. | 'Persistently higher memory/component costs from AI capacity allocation may keep end-product prices e'",
+  "issue_id": "VI-1d33c4420f30e0",
+  "ref_id": "TH-FDEF68AB50:s06.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:03:26.246350Z",
+  "detail": "s07.1: The 'notebook market contracting for two consecutive years' claim is not in cited span C-a7143f9b384e26; the temper demand part is supported. | 'The overall notebook market is expected to contract for two consecutive years, and the premium price'",
+  "issue_id": "VI-1d3958d49f4f81",
+  "ref_id": "TH-3C22A83E75:s07.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:13.259466Z",
+  "detail": "s06.3: The cited spans support 'nowhere near CUDA maturity' and 'broaden Trainium3 adoption' but do not frame Trainium as a 'potential challenger to Nvidia's training dominance.' That framing goes beyond the cited spans. | \"The publisher frames Trainium as a potential challenger to Nvidia's training dominance if software m\"",
+  "issue_id": "VI-1e643bf3996217",
+  "ref_id": "TH-F2CD2F7AFC:s06.3",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-30T12:19:57.348787Z",
+  "detail": "text-credited author 'Dylan Patel' is not a verbatim span naming them ('Bryan Shan') \u2014 not added",
+  "issue_id": "VI-265ad08989e784",
+  "ref_id": "A-52648724ad39",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-30T12:15:48.861488Z",
+  "detail": "s07.10 prints '100', which none of its cited claims carry: 'The stack still has real friction (long compile times, missing TokenSwitch/MXFP8 support, <100% QA p'",
+  "issue_id": "VI-2a3b55e924eac6",
+  "ref_id": "TH-F2CD2F7AFC:s07.10",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-30T12:03:51.953689Z",
+  "detail": "b010: 'two consecutive years' \u2014 a claim quotes it (C-5d91018b09ee6b) but failed verification, so it is never used as evidence \u2014 sentence 'Despite an anticipated contraction in the overall notebook market for two consecutive years, TrendForce forecasts that OLED notebook shipments will grow nearly 40% YoY in 2026, followed by another increase of more than 40% in 2027.'",
+  "issue_id": "VI-2af2b9551451b0",
+  "ref_id": "A-b1a5f01a5b92",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:03:26.246357Z",
+  "detail": "s07.2: The 'notebook market contracting for two consecutive years' claim is not in the cited spans (C-a7143f9b384e26 and C-45adb0d887a6e9); the price and Mini-LED temper demand parts are supported. | 'The overall notebook market is expected to contract for two consecutive years, and the premium start'",
+  "issue_id": "VI-2b50cf216fb1ea",
+  "ref_id": "TH-3C22A83E75:s07.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:05:43.869767Z",
+  "detail": "s06.0: The notebook ODM 10-15% figure and MLCC soft spot prices are supported, but 'smartphone scale-backs' is not in the cited spans or pool. | 'Notebook ODM orders down 10-15% YoY in 4Q26 with smartphone scale-backs and soft consumer-grade MLCC'",
+  "issue_id": "VI-2c3f1aef1486f0",
+  "ref_id": "TH-FDEF68AB50:s06.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-30T12:03:10.414962Z",
+  "detail": "h2 Samsung Display's exclusive OLED MacBook Pro suppl cites ['C-478f82e3596aa8'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-301b3cf3494685",
+  "ref_id": "h2 Samsung Display's exclusive OLED MacBook Pro suppl",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:20:40.978397Z",
+  "detail": "s07.2: The 'roughly two years behind' is supported, but the cited span does not attribute it to Liang Wenfeng; speaker attribution unsupported. | 'Liang Wenfeng said Huawei is roughly two years behind in bringing its hardware to market. \u27e8cited fig'",
+  "issue_id": "VI-31c8120125f846",
+  "ref_id": "TH-B121174B17:s07.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:13:54.304741Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: The sentence attributes the 23.89%/30.47% MFU figures to Qwen3-32B. The cited throughput/MFU spans do not name the model; and the 30.47% figure is not am) \u2014 re-anchored to C-0d63959e780679, C-a0502962445309; after re-anchoring: supported",
+  "issue_id": "VI-33d78bec536379",
+  "ref_id": "TH-F2CD2F7AFC:s01.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:05:32.615834Z",
+  "detail": "s07.4: Cited span only supports the ~5% consumer-grade slip; the high-end price increases losing momentum portion is not supported by the cited span. | 'High-end MLCC price increases have begun to lose momentum and consumer-grade spot prices slipped ~5%'",
+  "issue_id": "VI-3550b254b9a11f",
+  "ref_id": "TH-C2EA7EB06F:s07.4",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-30T12:09:33.143968Z",
+  "detail": "c2: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-3636e81f97566e",
+  "ref_id": "C-ae86f4506b3707",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:13:54.304759Z",
+  "detail": "s02.0: first check REVIEW_PARTIAL (s02.0: The cited span does not specify Trainium2; the card adds '(Trainium2)'. The measurement was on Trainium2 per pool C-a0502962445309, but the cited span al) \u2014 re-anchored to C-a0502962445309; after re-anchoring: supported",
+  "issue_id": "VI-36a91e0c3dc6aa",
+  "ref_id": "TH-F2CD2F7AFC:s02.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-10-30T12:10:12.892079Z",
+  "detail": "5 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: +0.9%; $100,000; $1 million; 120\u2013135 bps; 20\u201335 bps \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-3c8aac2ede6bb2",
+  "ref_id": "A-99ef64094883",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:13:54.304156Z",
+  "detail": "s02.4: The cited span confirms the gpt-oss 20B training recipe was tested, but does not state it 'worked out of the box'. That claim is unsupported by the cited span. | \"SemiAnalysis tested Neuron's gpt-oss 20B training recipe, which worked out of the box.\"",
+  "issue_id": "VI-3ce57ee0754dee",
+  "ref_id": "TH-F2CD2F7AFC:s02.4",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:20:40.978766Z",
+  "detail": "s02.0: first check REVIEW_PARTIAL (s02.0: The cited span supports '99.7% of the ceiling' but does not mention 'BF16 GEMM shapes' \u2014 that added scope is not in the cited span. Pool C-2afacedd7e1e67) \u2014 re-anchored to C-2afacedd7e1e67; after re-anchoring: supported",
+  "issue_id": "VI-3e66cc4154a9e4",
+  "ref_id": "TH-B121174B17:s02.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "CLASS_DISAGREES",
+  "created_at": "2026-10-30T12:11:38.441761Z",
+  "detail": "model classifies publisher_commentary (This is a SemiAnalysis hands-on technical review/commentary of Amazon's Trainium3 training software stack, based on the publisher's own engi); the record keeps independent_research (channel default for semianalysis)",
+  "issue_id": "VI-4a2ecdf4ed66d6",
+  "ref_id": "A-9fadab568080",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:13.259460Z",
+  "detail": "s06.2: The claim that AI inference adoption is 'structurally reshaping' the market 'away from x86 dominance toward Arm' is an interpretation not directly in the two cited spans, which only give the 10% (2025) and ~30% (2027) Arm share figures. The causal/structural framing is not supported by the cited spans. | 'AI inference adoption is structurally reshaping the server CPU market away from x86 dominance toward'",
+  "issue_id": "VI-4a4fe6b0ea167b",
+  "ref_id": "TH-F2CD2F7AFC:s06.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:31.248298Z",
+  "detail": "s01.0: The ~27% in 2026 forecast is attributed to 'the company' in the cited span, which the card interprets as AMD. The cited span C-6c2c4ac5a74a70 does not name the company; context must establish it's AMD. The Emerald Rapids/Granite Rapids detail is not in any cited span. 'Rises to ~27%' framing: fine. Main issue is the uncited product-line names. | \"Intel's process and packaging challenges with new products have delayed shipments, forcing reliance \"",
+  "issue_id": "VI-4ac5ed4525e97c",
+  "ref_id": "TH-CBFA9511C2:s01.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:10:12.887775Z",
+  "detail": "s01.0: first check REVIEW_PARTIAL (s01.0: Sentence states broad IG is '~60 bps' but the cited spans contain no broad-IG ~60 bps figure; cited C-4f5d3d7ba50f80 gives 'toward 300 bps' for establish) \u2014 re-anchored to C-56524c0cd277d4; after re-anchoring: supported",
+  "issue_id": "VI-51ac78ce057154",
+  "ref_id": "TH-FAABB39749:s01.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:05:43.869736Z",
+  "detail": "s03.0: The cited span supports AI capacity and rising memory/component costs, but says nothing about 'end-product prices' being pushed up. | 'AI applications command a growing share of production capacity, pushing up memory and component cost'",
+  "issue_id": "VI-530c667f52ad0f",
+  "ref_id": "TH-FDEF68AB50:s03.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:13.259473Z",
+  "detail": "s07.3: The cited span says MoE combine/dispatch take 60-70% of communication volume, but does not specify 'training/inference' scope. The added 'in MoE training/inference' scope is not in the cited span. | 'MoE combine and dispatch operations account for 60-70% of communication volume in MoE training/infer'",
+  "issue_id": "VI-53326d23ed1202",
+  "ref_id": "TH-F2CD2F7AFC:s07.3",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-30T12:06:51.682325Z",
+  "detail": "h1 Apple's foldable iPhone entry reshuffles market sh: sector exposure 'foldable smartphone market' is not a verbatim span naming it ('shifts in market share among competing brands') \u2014 dropped",
+  "issue_id": "VI-54118999006545",
+  "ref_id": "h1 Apple's foldable iPhone entry reshuffles market sh",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-30T12:03:10.414944Z",
+  "detail": "h2 Samsung Display's exclusive OLED MacBook Pro suppl cites c13, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-547d6ff00ffcc9",
+  "ref_id": "h2 Samsung Display's exclusive OLED MacBook Pro suppl",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:05:43.869745Z",
+  "detail": "s03.1: The notebook ODM 10-15% figure is supported, but 'smartphone brands cut entry/midrange shipments' is not in the cited span or pool. | 'Notebook ODM orders expected down 10-15% YoY in 4Q26 and smartphone brands cut entry/midrange shipme'",
+  "issue_id": "VI-556ef401ce52d2",
+  "ref_id": "TH-FDEF68AB50:s03.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-30T12:20:22.421510Z",
+  "detail": "s07.5 prints '950', which none of its cited claims carry: 'Huawei 950PR approximated 599-600 W power draw in the same comparison. \u27e8cited figures: approximate\u27e9'",
+  "issue_id": "VI-561d91be206b86",
+  "ref_id": "TH-B121174B17:s07.5",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:13:54.304774Z",
+  "detail": "s02.3: first check REVIEW_PARTIAL (s02.3: The cited span supports 23.89% eager MFU, but does not say Trainium2; the card adds '(Trainium2)'. | 'Eager-mode MFU measured at 23.89% (Trainium2).') \u2014 re-anchored to C-a0502962445309; after re-anchoring: supported",
+  "issue_id": "VI-5a02720d8530ad",
+  "ref_id": "TH-F2CD2F7AFC:s02.3",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:13.259414Z",
+  "detail": "s01.0: The card attributes the benchmark results (23.89%/30.47% MFU on Qwen3-32B, 93% FlexAttention pass rate) to Qwen3-32B and claims these are hands-on findings. The 11,099/14,156 tokens and 23.89%/30.47% MFU cited spans do not name the model; the Qwen3-32B span is about which model was trained but is labelled SOURCE OPINION and does not tie the MFU figures to it explicitly. The 93% pass rate span (89/96 test cases) is FlexAttention-related in context but the cited span itself does not say 'FlexAttention'. Minor conflation but figures match. | 'Amazon has made a major course correction toward a first-class native PyTorch (TorchNeuron) experien'",
+  "issue_id": "VI-5b5cd87a038f0c",
+  "ref_id": "TH-F2CD2F7AFC:s01.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-10-30T12:05:43.874283Z",
+  "detail": "CPU (a list of examples, b005) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-5fce60805acde2",
+  "ref_id": "A-3cc83fe3945b",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:07:23.966413Z",
+  "detail": "s06.2: first check REVIEW_UNSUPPORTED (s06.2: UNSUPPORTED \u2014 Cited span is about Apple's advantage in integrating chips, OS and developer ecosystem; it does not support the claim about shifting compet) \u2014 re-anchored to C-7a8d691d243050; after re-anchoring: supported",
+  "issue_id": "VI-62fec2bc12070b",
+  "ref_id": "TH-F9F8F41CE0:s06.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:10:12.887156Z",
+  "detail": "s07.8: Lehman figures (C-7d7e19299532c1) and the 2005 automaker (C-a91eb59df1ed40) are supported, but the span says the automaker was downgraded to high yield, not that it 'avoided bankruptcy' \u2014 that specific claim is not in the cited spans. | \"Rising CDS protection costs served as early warning signals before Lehman Brothers' 2008 bankruptcy,\"",
+  "issue_id": "VI-632b8f41cecf11",
+  "ref_id": "TH-FAABB39749:s07.8",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:20:40.978333Z",
+  "detail": "s01.1: The forecast (2027-2028) and the narrowing gap are supported, but 'ecosystem is already mature' overstates; cited spans describe the gap narrowing, not maturity. Also conflates 'build a fully domestic Chinese ecosystem' which isn't in cited spans. | \"The article argues Huawei's ecosystem is already mature and that DeepSeek will likely primarily use \"",
+  "issue_id": "VI-63e5cd2d4146cf",
+  "ref_id": "TH-B121174B17:s01.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "FIGURE_UNCAPTURED",
+  "created_at": "2026-10-30T12:20:40.988970Z",
+  "detail": "b012: '16' \u2014 pass 1b claimed a capturing claim, but none verified \u2014 sentence 'Running point chases reading 16 KiB of integer payload per launch, it stays near 134ns through 18 blocks, rises to 182ns at 56, then jumps to 391ns at 64.'",
+  "issue_id": "VI-64579d57cfe761",
+  "ref_id": "A-52648724ad39",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NORMALISED",
+  "created_at": "2026-10-30T12:09:33.143698Z",
+  "detail": "c1: forced approximate: the chart description hedges its values",
+  "issue_id": "VI-6a5ab1e97337c7",
+  "ref_id": "C-707bf72e532475",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "claim",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:20:40.978358Z",
+  "detail": "s02.1: The 40% reduction for smaller sizes is supported, but '950PR' is not in the cited span; the hardware attribution is unsupported by cited spans. | 'TileLang AutoSchedule reduces single-operation execution time by up to 40% on 950PR, especially for '",
+  "issue_id": "VI-6a7de0794991ad",
+  "ref_id": "TH-B121174B17:s02.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-30T12:09:33.148954Z",
+  "detail": "h1 Credit markets single out debt-reliant AI infrastr cites ['C-50d63c69dc6db9'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-6aa8bd2e875f08",
+  "ref_id": "h1 Credit markets single out debt-reliant AI infrastr",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:20:40.978775Z",
+  "detail": "s07.13: first check REVIEW_PARTIAL (s07.13: The cited span supports that only TileLang is usable and CANN 9.2.0 not released, but the specific claimed gaps ('no DeepGEMM on x86 hosts', 'hardcoded ) \u2014 re-anchored to C-a3ec49ed9585d9; after re-anchoring: supported",
+  "issue_id": "VI-6f15c6adcf2ebe",
+  "ref_id": "TH-B121174B17:s07.13",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:31.248349Z",
+  "detail": "s06.0: Cited span supports AMD gaining further share via new products in H1 2027, but the claim that 'Intel's next-generation products remain in limited supply' is not in the cited span C-98c8f03b45a9ca. | \"Intel's next-generation products remain in limited supply while AMD maintains more stable shipments \"",
+  "issue_id": "VI-7049cc01cdfe95",
+  "ref_id": "TH-CBFA9511C2:s06.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:31.248358Z",
+  "detail": "s06.1: Cited span supports manufacturing constraints contributing to share decline, but 'structurally erode its x86 server CPU leadership' overstates \u2014 the span says nothing about x86 leadership or a structural erosion. | \"Intel's manufacturing constraints structurally erode its x86 server CPU leadership.\"",
+  "issue_id": "VI-7260845aedbeec",
+  "ref_id": "TH-CBFA9511C2:s06.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:13.259437Z",
+  "detail": "s01.1: The cited span says 'meaningfully broaden Trainium3 adoption' but does not specify 'into training'. The 'into training' qualifier is added. | 'The publisher believes the software course correction will meaningfully broaden Trainium3 adoption i'",
+  "issue_id": "VI-734927a310f0f0",
+  "ref_id": "TH-F2CD2F7AFC:s01.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:10:12.887792Z",
+  "detail": "s03.3: first check REVIEW_PARTIAL (s03.3: Sentence claims 'broad IG stay contained' but cited spans contain no broad-IG spread figure; cited spans cover weakest borrower, implied default, 10x rat) \u2014 re-anchored to C-56524c0cd277d4; after re-anchoring: supported",
+  "issue_id": "VI-752837cbb7ad1b",
+  "ref_id": "TH-FAABB39749:s03.3",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "AUTHOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-30T12:13:16.621353Z",
+  "detail": "text-credited author 'Kimbo Chen' is not a verbatim span naming them ('Dylan Patel') \u2014 not added",
+  "issue_id": "VI-76cfcf1ff23a2c",
+  "ref_id": "A-9fadab568080",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:20:40.978386Z",
+  "detail": "s07.1: The four-cards-to-one claim is supported by the cited span, but the span does not attribute it to Liang Wenfeng; the speaker attribution is unsupported by the cited span. | 'Liang Wenfeng said it takes four Huawei accelerator cards to match one NVIDIA card.'",
+  "issue_id": "VI-77e763b41e078d",
+  "ref_id": "TH-B121174B17:s07.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:03:51.946332Z",
+  "detail": "s03.1: The forecast span supports 1.2\u20131.5 million units in 2027, but 'SDC captures the exclusive supply' adds an attribution not in the cited forecast span; the exclusivity is a separate SOURCE OPINION claim not cited here (only the Phase 1 dedication span is cited alongside). | 'SDC captures the exclusive supply of 1.2\u20131.5 million MacBook Pro OLED panels in 2027. \u27e8cited figures'",
+  "issue_id": "VI-7ea4e04aa63780",
+  "ref_id": "TH-F9F8F41CE0:s03.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "COMPLETENESS_IN_PARTS",
+  "created_at": "2026-10-30T12:19:57.341952Z",
+  "detail": "87 open gaps after pass 1 (figures not captured + argument paragraphs not anchored) exceed one call's 50 \u2014 reviewed in 2 parts",
+  "issue_id": "VI-80146affab28d7",
+  "ref_id": "A-52648724ad39",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:20:40.978368Z",
+  "detail": "s02.2: Six repositories (TileLang, DeepGEMM, DeepEP, TileKernels, FlashMLA, DeepSelect) is supported, but 'before China's national day holidays' is not in the cited span. | \"DeepSeek released Ascend support for six repositories before China's national day holidays.\"",
+  "issue_id": "VI-808f9afabc53fa",
+  "ref_id": "TH-B121174B17:s02.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:03:51.947072Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: Cited span supports SDC being exclusive supplier, but 'newly launched' and 'mass producing on its first G8.6 FMM OLED line' are not in the cited span C-a) \u2014 re-anchored to C-75027c9a0eebca; after re-anchoring: supported",
+  "issue_id": "VI-8593c1b9f3df78",
+  "ref_id": "TH-F9F8F41CE0:s06.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:03:51.947057Z",
+  "detail": "s01.1: first check REVIEW_UNSUPPORTED (s01.1: UNSUPPORTED \u2014 Cited span only says SDC is the exclusive supplier; it does not state that this 'underscores its technological capabilities' or 'strengthen) \u2014 re-anchored to C-a1820451271914; after re-anchoring: supported",
+  "issue_id": "VI-8705770668142a",
+  "ref_id": "TH-F9F8F41CE0:s01.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-10-30T12:13:54.310002Z",
+  "detail": "XLA (a list of examples, b027) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-8af4b4506eb9d8",
+  "ref_id": "A-9fadab568080",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-30T12:20:22.421612Z",
+  "detail": "s07.6 prints '950', which none of its cited claims carry: 'Huawei 950PR ran at 1500-1550 MHz against its 1650 MHz reference clock.'",
+  "issue_id": "VI-8cd8863e250e91",
+  "ref_id": "TH-B121174B17:s07.6",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "COMPLETENESS_IN_PARTS",
+  "created_at": "2026-10-30T12:13:16.614885Z",
+  "detail": "58 open gaps after pass 1 (figures not captured + argument paragraphs not anchored) exceed one call's 50 \u2014 reviewed in 2 parts",
+  "issue_id": "VI-90c0bc0fd8025e",
+  "ref_id": "A-9fadab568080",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "STALE_SERIES",
+  "created_at": "2026-10-30T12:09:33.146679Z",
+  "detail": "c15: stale series: data as of 2008-09-15, 6612 days before publication",
+  "issue_id": "VI-90f3e66f962135",
+  "ref_id": "C-7d7e19299532c1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "claim",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:07:23.965830Z",
+  "detail": "s07.8: The cited spans support the premium US$2,899 starting price and availability alongside Mini-LED tempering near-term replacement demand, but do not support the claim that the notebook market is expected to contract for two consecutive years. | 'The overall notebook market is expected to contract for two consecutive years, and the premium start'",
+  "issue_id": "VI-914a9ddd5da579",
+  "ref_id": "TH-F9F8F41CE0:s07.8",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:07:23.965814Z",
+  "detail": "s07.3: The cited span does not support 'polarized' feedback or 'praise for split-screen and unfolded viewing'; it only covers black borders, button placement and fingerprint authentication adding to the learning curve. | 'Early user feedback has been polarized: praise for split-screen and unfolded viewing, but black bord'",
+  "issue_id": "VI-9225f9546f252b",
+  "ref_id": "TH-F9F8F41CE0:s07.3",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:05:43.869712Z",
+  "detail": "s01.0: The cited spans support the notebook ODM 10-15% figure, the MLCC ~5% slip, and the subdued demand/AI capacity opinion. But 'smartphone brands cut entry/midrange shipments' is not in any cited span and not in the pool. | 'Consumer electronics faces subdued demand as AI applications take production capacity and push up me'",
+  "issue_id": "VI-9711519ff4198e",
+  "ref_id": "TH-FDEF68AB50:s01.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "MECHANISM_COVERAGE",
+  "created_at": "2026-10-30T12:13:54.309544Z",
+  "detail": "3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: up to 80,000; 184.6; 93% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+  "issue_id": "VI-9967890a05b437",
+  "ref_id": "A-9fadab568080",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-10-30T12:20:40.988231Z",
+  "detail": "DeepSeek V4 (a list of examples, b060) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-9b6b0b12300f89",
+  "ref_id": "A-52648724ad39",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:10:12.887147Z",
+  "detail": "s07.6: The spread spiking higher than 2022 (C-19c02441b4fe76) and the figures are supported, but the interpretive phrase 'signaling rising excess credit risk concentrated in tech/AI borrowers' goes beyond the measured observation; the label MEASURED OBSERVATION is stronger than this interpretive content. | 'The spread between technology-related and broad investment-grade CDS has spiked higher than even dur'",
+  "issue_id": "VI-a39fc97b755149",
+  "ref_id": "TH-FAABB39749:s07.6",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:13:54.304767Z",
+  "detail": "s02.2: first check REVIEW_PARTIAL (s02.2: The cited span says 'passed 89 out of 96 test cases, a 93% pass rate' but does not mention FlexAttention. The card adds 'FlexAttention'. | 'Trainium3 pas) \u2014 re-anchored to C-d7fb27d367ba02; after re-anchoring: supported",
+  "issue_id": "VI-ae333ee70a01e2",
+  "ref_id": "TH-F2CD2F7AFC:s02.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:03:51.947085Z",
+  "detail": "s07.2: first check REVIEW_PARTIAL (s07.2: The two-consecutive-year notebook market contraction claim is not in the cited spans (C-a7143f9b384e26 and C-45adb0d887a6e9); that figure is in pool span) \u2014 re-anchored to ; after re-anchoring: supported",
+  "issue_id": "VI-ae5c5a66a36083",
+  "ref_id": "TH-F9F8F41CE0:s07.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:13.259487Z",
+  "detail": "s07.10: The cited spans support long compile times (27m17s), <100% QA pass rate (93%), and 'far from CUDA maturity.' But 'missing TokenSwitch/MXFP8 support' is not among the three cited spans (those appear elsewhere, s07.2/s07.7), and 'adoption gains may be slow' is an inference not in cited spans. | 'The stack still has real friction (long compile times, missing TokenSwitch/MXFP8 support, <100% QA p'",
+  "issue_id": "VI-ae965eac5ed506",
+  "ref_id": "TH-F2CD2F7AFC:s07.10",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "UNVERIFIED_CLAIM_REF",
+  "created_at": "2026-10-30T12:03:10.414606Z",
+  "detail": "h1 OLED notebook shipments grow over 40% in 2027, lif cites c5, which is not a verified claim \u2014 dropped",
+  "issue_id": "VI-b712c4cba6d3f6",
+  "ref_id": "h1 OLED notebook shipments grow over 40% in 2027, lif",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:03:26.246324Z",
+  "detail": "s01.2: Cites C-56d8edaff72d55 (1.2-1.5M units) which is about MacBook Pro, not matching the sentence's claim about Apple adding momentum; but the MacBook Pro/Windows OEM momentum detail is not in any cited span. The growth figures (nearly 40% 2026, over/more than 40% 2027) are supported. The 'Apple OLED MacBook Pro adding momentum to a market previously driven by Windows OEMs' is not supported by cited spans. | '\u27e8update 2026-10-29 \u00b7 TrendForce\u27e9 TrendForce forecasts global OLED notebook shipments to grow nearly '",
+  "issue_id": "VI-b71b9dd578062b",
+  "ref_id": "TH-3C22A83E75:s01.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-30T12:13:38.454749Z",
+  "detail": "s07.8 prints '100', which none of its cited claims carry: 'The stack still has real friction (long compile times, missing TokenSwitch/MXFP8 support, <100% QA p'",
+  "issue_id": "VI-bba23ef425dddb",
+  "ref_id": "TH-F2CD2F7AFC:s07.8",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:20:40.978740Z",
+  "detail": "s02.5: first check REVIEW_PARTIAL (s02.5: The cited span supports '7 configured, 6 visible, and 5 executing AICPU cores' but does not mention '950PR SKU' as the subject. | 'This 950PR SKU has 7 c) \u2014 re-anchored to C-6bd98d2bf6f582; after re-anchoring: supported",
+  "issue_id": "VI-bbcfb5bc978b1a",
+  "ref_id": "TH-B121174B17:s02.5",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:03:51.946353Z",
+  "detail": "s07.2: The 'two consecutive years' contraction claim is not in the cited spans (C-a7143f9b384e26 and C-45adb0d887a6e9 only cover temper replacement demand and the $2,899 price). It is supported by pool span C-5d91018b09ee6b. | 'The overall notebook market is expected to contract for two consecutive years, and the premium start'",
+  "issue_id": "VI-bd07529425acaa",
+  "ref_id": "TH-F9F8F41CE0:s07.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:31.248329Z",
+  "detail": "s02.0: The cited span says 'the company's share' without naming AMD; the card asserts it is AMD's share. If context confirms AMD, acceptable; but the span itself does not state AMD. | \"AMD's server CPU market share estimated to increase to approximately 27% in 2026 \u27e8cited figures: for\"",
+  "issue_id": "VI-bdfdb6ae47c7aa",
+  "ref_id": "TH-CBFA9511C2:s02.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_SPAN",
+  "created_at": "2026-10-30T12:03:10.412274Z",
+  "detail": "c5: number check failed: value=None value_text='contraction for two consecutive years' vs quote \u2014 quote 'Despite an anticipated contraction in the overall notebook market for two consec'",
+  "issue_id": "VI-c4498510bebc5c",
+  "ref_id": "C-5d91018b09ee6b",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "claim",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-10-30T12:19:57.354372Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-c61882c3479331",
+  "ref_id": "A-52648724ad39",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:13.259480Z",
+  "detail": "s07.6: The cited span mentions 99.99% CI vs below 5% gating parity but does not name 'one unnamed hardware vendor' - the attribution of this to a specific hardware vendor context is an added framing not in the cited span. | 'At one unnamed hardware vendor, CI numbers shown to leadership were 99.99% while actual gating parit'",
+  "issue_id": "VI-c93c3cf554c5d2",
+  "ref_id": "TH-F2CD2F7AFC:s07.6",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SENTENCE_REANCHORED",
+  "created_at": "2026-10-30T12:13:54.304789Z",
+  "detail": "s06.0: first check REVIEW_PARTIAL (s06.0: 'broad library support' and 'compilation-time friction being actively addressed' are not supported by the cited spans; the cited spans show throughput, M) \u2014 re-anchored to C-3e3ab62fd92fc1; after re-anchoring: supported",
+  "issue_id": "VI-ca3d35a4fca508",
+  "ref_id": "TH-F2CD2F7AFC:s06.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:03:51.946344Z",
+  "detail": "s07.0: The cited span supports rivals directing efforts toward securing a place in the 2029 OLED MacBook Air supply chain, but 'are running qualification programs' is not stated in the cited span. | 'Competing panel makers are running qualification programs and could secure a place in the OLED MacBo'",
+  "issue_id": "VI-ce54dc479424a3",
+  "ref_id": "TH-F9F8F41CE0:s07.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "SECTOR_SPAN_NOT_FOUND",
+  "created_at": "2026-10-30T12:13:16.621305Z",
+  "detail": "h1 Trainium3's native PyTorch training stack broadens: sector exposure 'AI training accelerators' is not a verbatim span naming it ('we believe it will meaningfully broaden Trainium3 adoption') \u2014 dropped",
+  "issue_id": "VI-d21b3c917bbad4",
+  "ref_id": "h1 Trainium3's native PyTorch training stack broadens",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:13:54.304169Z",
+  "detail": "s06.0: The sentence is labelled FORECAST but mostly reports measured observations (throughput, MFU, pass rate, compile time). The forecast element (compile-time friction actively addressed, 2-orders-of-magnitude reduction target) is supported by C-3e3ab62fd92fc1. 'broad library support' is loosely tied to the 93% pass rate but acceptable; overall the label is not stronger than content, but 'broad library support now' slightly overstates the cited spans. | 'Hands-on benchmarks show decent training performance and broad library support now, with compilation'",
+  "issue_id": "VI-d411fd16ea109b",
+  "ref_id": "TH-F2CD2F7AFC:s06.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:13.259449Z",
+  "detail": "s01.2: The sentence lists 'AWS, NVIDIA, Google, Microsoft, Arm, OpenAI, Huawei and Alibaba' as ramping Arm processors, but the cited spans only mention Google, Microsoft, Arm, and NVIDIA Vera. AWS, OpenAI, Huawei and Alibaba are not supported by the cited spans (Alibaba appears only in pool C-2656679f1e097f). The 20%/30% share figures and forecast label are supported. | '\u27e8update 2026-10-22 \u00b7 TrendForce\u27e9 Arm-based server CPUs are forecast to grow faster than x86, rising '",
+  "issue_id": "VI-d415b043a79e3d",
+  "ref_id": "TH-F2CD2F7AFC:s01.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "PARTIAL_RETRIEVAL",
+  "created_at": "2026-10-30T12:13:16.624122Z",
+  "detail": "only part of the article was retrieved \u2014 no claim of full-text verification is made",
+  "issue_id": "VI-d511c29430a2d9",
+  "ref_id": "A-9fadab568080",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "CLAIM_BOTH_SIDES",
+  "created_at": "2026-10-30T12:15:47.621346Z",
+  "detail": "h1 Arm-based server CPUs gain share from x86 on AI in cites ['C-98c8f03b45a9ca'] both for and against itself \u2014 kept as support/dislocation/catalyst, removed from counter-evidence",
+  "issue_id": "VI-d9641b4324f700",
+  "ref_id": "h1 Arm-based server CPUs gain share from x86 on AI in",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "hypothesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:03:51.946302Z",
+  "detail": "s03.0: The cited spans support 254 PPI, tandem OLED demanding requirements, and SDC being exclusive supplier, but 'which SDC alone currently qualifies to mass-produce' overstates \u2014 the exclusivity span says SDC is currently exclusive supplier, not that only SDC qualifies to mass-produce. | 'Apple requires demanding tandem OLED panels at 254 PPI, which SDC alone currently qualifies to mass-'",
+  "issue_id": "VI-df83cd65530d63",
+  "ref_id": "TH-F9F8F41CE0:s03.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:13:54.304124Z",
+  "detail": "s01.0: The MFU figures (23.89%/30.47%) and throughput were measured on Qwen3-32B trained on Trainium2 chips (per C-a0502962445309), not on Trainium3. The sentence attributes the MFU/throughput results to Trainium3, mixing scopes. The 93% pass rate and profiler/CUDA claims are supported. | 'Amazon has made a major course correction toward a first-class native PyTorch (TorchNeuron) experien'",
+  "issue_id": "VI-e2a24703513c12",
+  "ref_id": "TH-F2CD2F7AFC:s01.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NAMED_NOT_RECORDED",
+  "created_at": "2026-10-30T12:20:40.988444Z",
+  "detail": "V4.1 (a list of examples, b060) \u2014 named in a cited paragraph, not recorded as a mention",
+  "issue_id": "VI-e56f2ccdae33b2",
+  "ref_id": "A-52648724ad39",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "INFO"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:07:23.965790Z",
+  "detail": "s02.9: The cited span covers black borders, button placement and fingerprint authentication adding to the learning curve, but does not support the claim that feedback was 'polarized' with praise for split-screen and unfolded viewing. | 'Early user feedback has been polarized: praise for split-screen and unfolded viewing, but black bord'",
+  "issue_id": "VI-e62a5deb16eaac",
+  "ref_id": "TH-F9F8F41CE0:s02.9",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "ARGUMENT_UNACCOUNTED",
+  "created_at": "2026-10-30T12:20:40.989359Z",
+  "detail": "b077: pass 1b called it covered \u2014 'Partnership may work for DeepSeek without making Ascend usable for others \u2014 already in first-pass market risks.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked",
+  "issue_id": "VI-e9872e753a25c5",
+  "ref_id": "A-52648724ad39",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "article",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:07:23.965823Z",
+  "detail": "s07.5: The cited span says competing makers are directing efforts toward securing a place in the 2029 OLED MacBook Air supply chain, but does not mention 'running qualification programs'. | 'Competing panel makers are running qualification programs and could secure a place in the OLED MacBo'",
+  "issue_id": "VI-eae76052e7470b",
+  "ref_id": "TH-F9F8F41CE0:s07.5",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "NUMBER_NOT_IN_CITED_CLAIMS",
+  "created_at": "2026-10-30T12:20:22.420018Z",
+  "detail": "s02.1 prints '950', which none of its cited claims carry: 'TileLang AutoSchedule reduces single-operation execution time by up to 40% on 950PR, especially for '",
+  "issue_id": "VI-f2d79a2d334ff1",
+  "ref_id": "TH-B121174B17:s02.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "BLOCK"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:03:26.246342Z",
+  "detail": "s06.2: The 'Apple's OLED entry alongside Windows OEMs' claim is not in cited spans; over 40% growth 2027 and MacBook Air 2029 are supported. | \"Apple's OLED entry alongside Windows OEMs supports multi-year OLED adoption in notebooks, with over \"",
+  "issue_id": "VI-f36f7b6050b534",
+  "ref_id": "TH-3C22A83E75:s06.2",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:10:12.887072Z",
+  "detail": "s01.0: Sentence states broad IG is '~60 bps' citing C-56524c0cd277d4 (investment grade around 60 bps), which is supported. The '50-120 bps' for leaders (C-50d63c69dc6db9), 1,100 bps weak issuer (C-bf069f4dcffacf), ~50% default prob (C-d4a92cd4d83b22) all supported. But the cited C-4f5d3d7ba50f80 (toward 300 bps) is not reflected and the overall claim is otherwise well-supported; minor scope mixing but defensible. | 'CDS spreads on financing-dependent AI infrastructure borrowers have spiked (one weak issuer to 1,100'",
+  "issue_id": "VI-f394878ac573bd",
+  "ref_id": "TH-FAABB39749:s01.0",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ },
+ {
+  "code": "REVIEW_PARTIAL",
+  "created_at": "2026-10-30T12:16:31.248341Z",
+  "detail": "s03.1: The ~27% figure is attributed to AMD gains, but the cited span C-6c2c4ac5a74a70 says 'the company's share' without naming AMD. | 'Constrained shipments cannot meet customer orders, contributing to share decline while AMD gains to '",
+  "issue_id": "VI-f7a5dae9a498b9",
+  "ref_id": "TH-CBFA9511C2:s03.1",
+  "run_id": "R-20261030T115837Z-scan",
+  "scope": "card_sentence",
+  "severity": "WARN"
+ }
+]

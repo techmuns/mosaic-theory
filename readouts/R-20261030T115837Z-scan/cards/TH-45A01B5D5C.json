@@ -1,0 +1,780 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-13",
+   "ancestry": [
+    "industrials"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T10:25:50.092110Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-25",
+   "latest_article_date": "2026-09-25",
+   "region": "China",
+   "research_action": "SKIP",
+   "sector": "Industrials, defense, transport, capital goods",
+   "status": "ACTIVE",
+   "thesis_id": "TH-45A01B5D5C",
+   "title": "Humanoid/embodied AI robotics becomes an industrial labor platform, a robotics beneficiary theme"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-b4cb066342ef13"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues humanoid robots and other AI-powered machines become an increasingly important part of the workforce performing physical tasks."
+   },
+   {
+    "claim_ids": [
+     "C-b4cb066342ef13",
+     "C-3b4d2e6bcc52eb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Embodied AI as a labor platform is one of the five identified breakthroughs supporting the industrial opportunity."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Robotics and humanoid-robot makers could see rising demand, but the article names no companies and gives no unit or revenue figures."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b4cb066342ef13",
+      "C-3b4d2e6bcc52eb"
+     ],
+     "original_date": "2026-09-25",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Breakthrough: embodied AI as a labor platform \u2014 humanoid robots and other AI-powered machines become an increasingly important part of the workforce performing physical tasks."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:25 UTC, analysed as of 2026-10-13, from a source published 2026-09-25; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-b4cb066342ef13"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Humanoid and AI-powered machines increasingly perform physical factory tasks."
+   },
+   {
+    "claim_ids": [
+     "C-b4cb066342ef13"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "Rising robot deployment would raise unit demand for robotics makers."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b037",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b4cb066342ef13",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Breakthrough: embodied AI as a labor platform \u2014 humanoid robots and other AI-powered machines become an increasingly important part of the workforce performing physical tasks.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Humanoid robots an",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-71342c59687ea1",
+     "name_as_written": "Sheng Zhong",
+     "other_securities": [],
+     "quote": "says Sheng Zhong, Morgan Stanley\u2019s Head of China Industrials Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley's Head of China Industrials Research quoted in the article"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-689ecee2a6bc1a",
+     "name_as_written": "Robin Xing",
+     "other_securities": [],
+     "quote": "Robin Xing Morgan Stanley's Chief China Economist",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley's Chief China Economist quoted in the article"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7e3bdc2ebcd614",
+     "name_as_written": "Chetan Ahya",
+     "other_securities": [],
+     "quote": "says Chetan Ahya, Morgan Stanley's Chief Asia Economist",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley's Chief Asia Economist quoted in the article"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ea8a366ae47afb",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "Morgan Stanley Research believes",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher and research source of the article"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-9faa09cf8082",
+     "claim_ids": [
+      "C-b4cb066342ef13"
+     ],
+     "direction": "positive",
+     "name": "robotics",
+     "provenance": "SOURCE OPINION",
+     "quote": "robotics"
+    }
+   ],
+   "sectors": [
+    "robotics",
+    "humanoid robots"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-b4cb066342ef13"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Framed as a progressive, learning-driven adoption over time, not a near-term event."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-b4cb066342ef13"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Embodied AI as a labor platform is a long-term robotics adoption theme."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Slow humanoid robot deployment in factories"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "High unit costs limiting adoption"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed robotics/humanoid companies are exposed"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Adoption pace and cost-effectiveness of humanoid robots"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether deployment earns a commercial return"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence humanoid robots remain uneconomic at scale"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Map listed humanoid-robot and industrial-automation makers and assess order pipelines and factory deployment data."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Large factory humanoid deployment announcements"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Falling unit costs for industrial humanoids"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "SKIP",
+   "rule_trace": [
+    "SKIP-1 no verified material evidence"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-9faa09cf8082",
+    "authors": [],
+    "authors_status": "UNKNOWN",
+    "claim_ids": [
+     "C-b4cb066342ef13"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-25T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "China\u2019s Next Industrial Revolution: The Industry 5.0 Opportunity",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/china-next-industrial-revolution-industry-5-outlook",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": null,
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-13",
+   "change_summary": "Initial record \u2014 created from A-9faa09cf8082",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-13",
+     "ancestry": [
+      "industrials"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:25:50.092110Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-25",
+     "latest_article_date": "2026-09-25",
+     "region": "China",
+     "research_action": "SKIP",
+     "sector": "Industrials, defense, transport, capital goods",
+     "status": "ACTIVE",
+     "thesis_id": "TH-45A01B5D5C",
+     "title": "Humanoid/embodied AI robotics becomes an industrial labor platform, a robotics beneficiary theme"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-b4cb066342ef13"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues humanoid robots and other AI-powered machines become an increasingly important part of the workforce performing physical tasks."
+     },
+     {
+      "claim_ids": [
+       "C-b4cb066342ef13",
+       "C-3b4d2e6bcc52eb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Embodied AI as a labor platform is one of the five identified breakthroughs supporting the industrial opportunity."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Robotics and humanoid-robot makers could see rising demand, but the article names no companies and gives no unit or revenue figures."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b4cb066342ef13",
+        "C-3b4d2e6bcc52eb"
+       ],
+       "original_date": "2026-09-25",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Breakthrough: embodied AI as a labor platform \u2014 humanoid robots and other AI-powered machines become an increasingly important part of the workforce performing physical tasks."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:25 UTC, analysed as of 2026-10-13, from a source published 2026-09-25; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-b4cb066342ef13"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Humanoid and AI-powered machines increasingly perform physical factory tasks."
+     },
+     {
+      "claim_ids": [
+       "C-b4cb066342ef13"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Rising robot deployment would raise unit demand for robotics makers."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b037",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b4cb066342ef13",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Breakthrough: embodied AI as a labor platform \u2014 humanoid robots and other AI-powered machines become an increasingly important part of the workforce performing physical tasks.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Humanoid robots an",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-71342c59687ea1",
+       "name_as_written": "Sheng Zhong",
+       "other_securities": [],
+       "quote": "says Sheng Zhong, Morgan Stanley\u2019s Head of China Industrials Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley's Head of China Industrials Research quoted in the article"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-689ecee2a6bc1a",
+       "name_as_written": "Robin Xing",
+       "other_securities": [],
+       "quote": "Robin Xing Morgan Stanley's Chief China Economist",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley's Chief China Economist quoted in the article"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7e3bdc2ebcd614",
+       "name_as_written": "Chetan Ahya",
+       "other_securities": [],
+       "quote": "says Chetan Ahya, Morgan Stanley's Chief Asia Economist",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley's Chief Asia Economist quoted in the article"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ea8a366ae47afb",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "Morgan Stanley Research believes",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher and research source of the article"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-9faa09cf8082",
+       "claim_ids": [
+        "C-b4cb066342ef13"
+       ],
+       "direction": "positive",
+       "name": "robotics",
+       "provenance": "SOURCE OPINION",
+       "quote": "robotics"
+      }
+     ],
+     "sectors": [
+      "robotics",
+      "humanoid robots"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-b4cb066342ef13"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Framed as a progressive, learning-driven adoption over time, not a near-term event."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-b4cb066342ef13"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Embodied AI as a labor platform is a long-term robotics adoption theme."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs demand_volume_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Slow humanoid robot deployment in factories"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "High unit costs limiting adoption"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed robotics/humanoid companies are exposed"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Adoption pace and cost-effectiveness of humanoid robots"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether deployment earns a commercial return"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence humanoid robots remain uneconomic at scale"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map listed humanoid-robot and industrial-automation makers and assess order pipelines and factory deployment data."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Large factory humanoid deployment announcements"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Falling unit costs for industrial humanoids"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "SKIP",
+     "rule_trace": [
+      "SKIP-1 no verified material evidence"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-9faa09cf8082",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-b4cb066342ef13"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-25T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "China\u2019s Next Industrial Revolution: The Industry 5.0 Opportunity",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/china-next-industrial-revolution-industry-5-outlook",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "f515b5de8e45143eb1bbab0f72353a8270c24d68f8c1c3f8d526f6f26a76b03b",
+   "created_at": "2026-10-21T10:26:10.843030Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label longer_term (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: robotics",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 0 supporting; 0 independent contradicting source(s) vs 0 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "SKIP",
+    "rules_fired": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T101854Z-ingest",
+   "thesis_id": "TH-45A01B5D5C",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 2,
+ "other_cited_evidence": [
+  "C-3b4d2e6bcc52eb"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The cited span C-b4cb066342ef13 is only a truncated fragment 'Humanoid robots an' \u2014 it does not support the full claim that humanoid robots and AI machines become an increasingly important part of the workforce performing physical tasks.",
+  "s02.0": "The humanoid-robots-as-workforce content relies on the truncated fragment 'Humanoid robots an' which does not substantiate the workforce/physical-tasks claim; only the 'five breakthroughs' span is adequately supported.",
+  "s03.0": "The cited span is the truncated fragment 'Humanoid robots an'; it does not support that they increasingly perform physical factory tasks.",
+  "s06.0": "The truncated fragment 'Humanoid robots an' does not support the characterization as a progressive, learning-driven adoption rather than a near-term event.",
+  "s06.1": "The truncated fragment 'Humanoid robots an' does not support that this is a long-term robotics adoption theme."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": "Registry status now ARCHIVED since 2026-10-13: research action is SKIP \u2014 kept in the searchable archive, off the active list",
+ "why_action": [
+  "Skip \u2014 no verified material evidence."
+ ],
+ "withheld_sentences": {}
+}

@@ -1,0 +1,3368 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-30",
+   "ancestry": [
+    "consumer_electronics"
+   ],
+   "evidence_direction": "MIXED",
+   "first_detected": "2026-10-30",
+   "first_ingested_at": "2026-10-30T12:03:26.251545Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-29",
+   "latest_article_date": "2026-10-29",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-F9F8F41CE0",
+   "title": "Samsung Display's exclusive OLED MacBook Pro supply entrenches its panel leadership"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-a68902d4903996",
+     "C-7977e6284a09b7",
+     "C-04a1a1ad853c06"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Samsung Display is the exclusive OLED panel supplier for Apple's MacBook Pro with PROLED XDR Display, with a dedicated G8.6 A6 line at Asan, while high costs and SDC's position create barriers to entry for rivals LG Display, BOE and TCL CSOT."
+   },
+   {
+    "claim_ids": [
+     "C-a68902d4903996",
+     "C-a1820451271914"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article states SDC's selection underscores its technological capabilities and strengthens its position at the forefront of the OLED market."
+   },
+   {
+    "claim_ids": [
+     "C-6b898c356c052c",
+     "C-3956f10949befc",
+     "C-503c9bdcc90d08",
+     "C-08344f67c50ccc"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "\u27e8update 2026-10-28 \u00b7 TrendForce\u27e9 TrendForce estimates global foldable shipments rise only 0.5% in 2026 while Apple's first foldable ships ~5 million units for ~24.8% share, poised to accelerate share shifts among competing brands. \u27e8cited figures: forecast; approximate\u27e9"
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "new",
+     "claim_ids": [
+      "C-3b5afaee0c0567"
+     ],
+     "original_date": "2026-10-28",
+     "period": "January 2027",
+     "provenance": "SOURCE OPINION",
+     "text": "Apple's website showed iPhone Duo delivery dates extending into January 2027 for some orders within a week of preorders opening. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "new",
+     "claim_ids": [
+      "C-6b898c356c052c"
+     ],
+     "original_date": "2026-10-28",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "TrendForce estimates global foldable smartphone shipments will rise 0.5% in 2026. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "new",
+     "claim_ids": [
+      "C-3956f10949befc"
+     ],
+     "original_date": "2026-10-28",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Apple's first foldable iPhone is expected to ship approximately 5 million units in 2026. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "new",
+     "claim_ids": [
+      "C-503c9bdcc90d08"
+     ],
+     "original_date": "2026-10-28",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Apple's foldable iPhone is expected to account for about 24.8% of the foldable market in 2026. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "new",
+     "claim_ids": [
+      "C-08344f67c50ccc"
+     ],
+     "original_date": "2026-10-28",
+     "period": "2026",
+     "provenance": "SOURCE OPINION",
+     "text": "Apple's foldable entry is expected to accelerate market share shifts among competing brands in a largely flat market. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "new",
+     "claim_ids": [
+      "C-7a8d691d243050"
+     ],
+     "original_date": "2026-10-28",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "As app compatibility and hardware reliability improve, the Duo is expected to shift foldable market competition from form-factor innovation toward multitasking efficiency. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-172ceb9c5ee762"
+     ],
+     "original_date": "2026-10-28",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Apple has provided replacements for a small number of iPhone Duo devices with inner-display abnormalities. \u27e8the source states evidence against this thesis\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-8b918a5f9ea19a"
+     ],
+     "original_date": "2026-10-28",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "A hypothesis from teardown analyses is that insufficient retraction of the central support may cause unintended contact and localized stress in the fold area. \u27e8the source states evidence against this thesis\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-d17ae91bcbae89"
+     ],
+     "original_date": "2026-10-28",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Some apps still show black borders or don't use the full screen, indicating software adaptation has not fully capitalized on the foldable hardware. \u27e8the source states evidence against this thesis\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-aa91f8b4b2989f"
+     ],
+     "original_date": "2026-10-28",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Early user feedback has been polarized: praise for split-screen and unfolded viewing, but black borders, button placement and fingerprint authentication add to the learning curve. \u27e8the source states evidence against this thesis\u27e9"
+    },
+    {
+     "article_id": "A-b565451748ea",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 10 of 11 pieces of evidence from A-b565451748ea \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+   "vs_prior": "v1 held 10 claim(s); this source adds: contradictory \u00d75, new \u00d76"
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-ba991a19234145",
+     "C-a68902d4903996"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Apple requires demanding tandem OLED panels at 254 PPI, which SDC alone currently qualifies to mass-produce."
+   },
+   {
+    "claim_ids": [
+     "C-56d8edaff72d55",
+     "C-7977e6284a09b7"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "SDC captures the exclusive supply of 1.2\u20131.5 million MacBook Pro OLED panels in 2027. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Exclusive high-value panel supply would benefit SDC's panel revenue, but the article does not quantify earnings impact."
+   },
+   {
+    "claim_ids": [
+     "C-08344f67c50ccc"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "market_reaction",
+    "text": "TrendForce expects accelerated share shifts among competing brands."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ba991a19234145",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "pixel density",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "tandem OLED architecture"
+    ],
+    "quote": "the new MacBook Pro\u2019s tandem OLED architecture and pixel density of 254 pixels per inch (PPI) impose exceptionally demanding requirements on panel production",
+    "role": "supports",
+    "unit": "PPI",
+    "value": 254.0,
+    "value_text": "254"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-b565451748ea",
+    "block_id": "b008",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-3956f10949befc",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "shipments",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "Apple\u2019s first foldable iPhone is expected to ship approximately 5 million units",
+    "role": "supports",
+    "unit": "units",
+    "value": 5000000.0,
+    "value_text": "approximately 5 million"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-b565451748ea",
+    "block_id": "b008",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-503c9bdcc90d08",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "foldable market share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "about"
+    ],
+    "quote": "accounting for about 24.8% of the market in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": 24.8,
+    "value_text": "about 24.8%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b565451748ea",
+    "block_id": "b008",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-6b898c356c052c",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "foldable smartphone shipment growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "just"
+    ],
+    "quote": "global foldable smartphone shipments will edge up just 0.5% in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": 0.5,
+    "value_text": "0.5%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-56d8edaff72d55",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "MacBook Pro OLED shipments",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "shipments of the new model will reach 1.2\u20131.5 million units in 2027",
+    "role": "catalyst",
+    "unit": "units",
+    "value": null,
+    "value_text": "1.2\u20131.5 million"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-04a1a1ad853c06",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "High costs of meeting Apple's specifications and SDC's established position present considerable barriers to entry for competitors.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the high cost of meeting Apple\u2019s stringent specifications, combined with SDC\u2019s established position as the primary supplier, presents considerable barriers to entry",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-75027c9a0eebca",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "The new MacBook Pro is the first product to enter mass production on SDC's G8.6 fine metal mask (FMM) OLED line.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "first product",
+     "G8.6 FMM OLED line"
+    ],
+    "quote": "the first product to enter mass production on SDC\u2019s G8.6 fine metal mask (FMM) OLED line",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7977e6284a09b7",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Samsung Display designated Phase 1 of its G8.6 A6 production line at Asan, South Korea as a dedicated facility for Apple.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "designated Phase 1 of its G8.6 A6 production line at its Asan campus in South Korea as a dedicated facility for Apple",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a68902d4903996",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Samsung Display is currently the exclusive panel supplier for the MacBook Pro with PROLED XDR Display.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Samsung Display (SDC) is currently the exclusive panel supplier for the MacBook Pro with PROLED XDR Display",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b565451748ea",
+    "block_id": "b008",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-08344f67c50ccc",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Apple's foldable entry is expected to accelerate market share shifts among competing brands in a largely flat market.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "overall market remaining largely flat"
+    ],
+    "quote": "Apple\u2019s entry is poised to accelerate shifts in market share among competing brands",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b565451748ea",
+    "block_id": "b016",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-7a8d691d243050",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "As app compatibility and hardware reliability improve, the Duo is expected to shift foldable market competition from form-factor innovation toward multitasking efficiency.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "helping shift competition in the foldable smartphone market from form-factor innovation toward multitasking efficiency",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b1a5f01a5b92",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-478f82e3596aa8",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "Competing OLED panel makers (LG Display, BOE, TCL CSOT) are targeting the OLED MacBook Air supply chain, expected to debut in 2029.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2029",
+    "qualifiers": [
+     "OLED MacBook Air expected to debut in 2029"
+    ],
+    "quote": "competing OLED panel makers, including LG Display, BOE, and TCL CSOT, are largely directing their efforts toward securing a place in the supply chain for the OLED MacBook Air, which is expected to debut in 2029",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-b565451748ea",
+    "block_id": "b005",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-3b5afaee0c0567",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Apple's website showed iPhone Duo delivery dates extending into January 2027 for some orders within a week of preorders opening.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "January 2027",
+    "qualifiers": [
+     "some orders",
+     "less than a week after preorders"
+    ],
+    "quote": "its official website was already showing delivery dates extending into January 2027 for some orders",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6012c0fa6c288f",
+     "name_as_written": "MacBook Pro with PROLED XDR Display",
+     "other_securities": [],
+     "quote": "MacBook Pro with PROLED XDR Display",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "First Apple notebook with tandem OLED touchscreen"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5ac9f848f4a4ef",
+     "name_as_written": "MacBook Neo",
+     "other_securities": [],
+     "quote": "the MacBook Neo\u2019s departure from Apple\u2019s traditional entry-level pricing strategy",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Apple product cited as example of pricing strategy expansion"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e1decb67d9fc16",
+     "name_as_written": "Lenovo",
+     "other_securities": [],
+     "quote": "Windows-based brands such as Lenovo, HP, and ASUS",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": "0000047217",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-27 (accession 0000047217-26-000051) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, par value $0.01 per share",
+       "ticker": "HPQ"
+      }
+     ],
+     "mention_id": "M-8dd56c6e6ce6b8",
+     "name_as_written": "HP",
+     "other_securities": [],
+     "quote": "Lenovo, HP, and ASUS",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "sector_example",
+     "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7897ee8b72844c",
+     "name_as_written": "ASUS",
+     "other_securities": [],
+     "quote": "Lenovo, HP, and ASUS",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "sector_example",
+     "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d7aca8725e28b8",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research firm publishing the forecasts"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-d3a9dead11aef4",
+     "name_as_written": "Samsung Display",
+     "other_securities": [],
+     "quote": "Samsung Display secures exclusive supply position",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Exclusive panel supplier for the OLED MacBook Pro"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": "0001290109",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-6b7c1b32531262",
+     "name_as_written": "LG Display",
+     "other_securities": [],
+     "quote": "including LG Display, BOE, and TCL CSOT",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-d96f0380c884bc",
+     "name_as_written": "BOE",
+     "other_securities": [],
+     "quote": "LG Display, BOE, and TCL CSOT",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-3be901f9da0783",
+     "name_as_written": "TCL CSOT",
+     "other_securities": [],
+     "quote": "LG Display, BOE, and TCL CSOT",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+    },
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "cik": "0000320193",
+     "direction": "neutral",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "spending customer",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-31 (accession 0000320193-26-000020) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.00001 par value per share",
+       "ticker": "AAPL"
+      }
+     ],
+     "mention_id": "M-7f2d43273c597f",
+     "name_as_written": "Apple",
+     "other_securities": [],
+     "quote": "Apple\u2019s newly unveiled MacBook Pro",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "OEM launching the OLED MacBook Pro, driving OLED notebook adoption and panel demand"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-b565451748ea",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-23f70b7464bf74",
+     "name_as_written": "iPhone Duo",
+     "other_securities": [],
+     "quote": "its first foldable smartphone\u2014the iPhone Duo",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Apple's first foldable smartphone, subject of the demand and reliability analysis"
+    }
+   ],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-b1a5f01a5b92",
+     "claim_ids": [
+      "C-a68902d4903996"
+     ],
+     "direction": "positive",
+     "name": "FMM OLED line",
+     "provenance": "SOURCE OPINION",
+     "quote": "the first product to enter mass production on SDC\u2019s G8.6 fine metal mask (FMM) OLED line"
+    }
+   ],
+   "sectors": [
+    "OLED panel supply",
+    "FMM OLED",
+    "foldable smartphones",
+    "consumer electronics"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "iPhone Duo launch and preorders with delivery into January 2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-3b5afaee0c0567",
+      "C-503c9bdcc90d08"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Strong initial demand (delivery dates into January 2027) plus ~24.8% share suggests near-term share gains for Apple at competitors' expense in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-a68902d4903996",
+      "C-75027c9a0eebca"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "SDC is the sole supplier for the newly launched MacBook Pro, mass producing on its first G8.6 FMM OLED line."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-4e17b2e3a20e4d",
+      "C-7a8d691d243050"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "As app compatibility and hardware reliability improve, the Duo is expected to shift competition from form-factor innovation toward multitasking efficiency."
+    },
+    {
+     "claim_ids": [
+      "C-04a1a1ad853c06",
+      "C-478f82e3596aa8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "High costs and SDC's established position create barriers to entry, so rivals LG Display, BOE and TCL CSOT target the later 2029 MacBook Air supply chain."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-478f82e3596aa8"
+     ],
+     "provenance": "FORECAST",
+     "text": "Competing panel makers are running qualification programs and could secure a place in the OLED MacBook Air supply chain in 2029."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-3C22A83E75: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [
+      "C-172ceb9c5ee762",
+      "C-8b918a5f9ea19a",
+      "C-d17ae91bcbae89"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Reliability concerns (damaged displays, high repair costs, inner-display abnormalities) and incomplete software adaptation could limit Apple's foldable traction and the premium-price justification."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-172ceb9c5ee762"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Apple has provided replacements for a small number of iPhone Duo devices with inner-display abnormalities."
+    },
+    {
+     "claim_ids": [
+      "C-8b918a5f9ea19a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A hypothesis from teardown analyses is that insufficient retraction of the central support may cause unintended contact and localized stress in the fold area."
+    },
+    {
+     "claim_ids": [
+      "C-d17ae91bcbae89"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Some apps still show black borders or don't use the full screen, indicating software adaptation has not fully capitalized on the foldable hardware."
+    },
+    {
+     "claim_ids": [
+      "C-aa91f8b4b2989f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Early user feedback has been polarized: praise for split-screen and unfolded viewing, but black borders, button placement and fingerprint authentication add to the learning curve."
+    },
+    {
+     "claim_ids": [
+      "C-ceca0d92521623"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Reports of damaged displays and high repair estimates have shifted attention toward product reliability and long-term ownership costs."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "A second panel supplier qualifying for the MacBook Pro"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Yield problems limiting SDC's panel output"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Apple diversifying OLED notebook suppliers earlier than 2029"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Foldable market grows well above 0.5% so Apple's share is additive not reallocated"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Apple foldable shipments fall well short of 5 million units"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Widespread reliability failures force recalls or demand collapse"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-a7143f9b384e26",
+      "C-45adb0d887a6e9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The overall notebook market is expected to contract for two consecutive years, and the premium starting price plus continued availability of Mini-LED models could temper near-term replacement demand for the OLED MacBook Pro. (scope: Notebook market demand and OLED MacBook Pro replacement demand; TrendForce forecast/opinion.)"
+    },
+    {
+     "claim_ids": [
+      "C-172ceb9c5ee762",
+      "C-8b918a5f9ea19a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Foldable iPhone reliability concerns \u2014 reports of damaged displays, high repair estimates, and inner-display abnormalities tied to the fold-area structure and hinge \u2014 could undermine demand and the device's premium positioning. (scope: Specific to Apple's iPhone Duo foldable; a small number of devices have received replacements and the fold-area stress hypothesis is from teardown analyses, not established failure rates.)"
+    },
+    {
+     "claim_ids": [
+      "C-d17ae91bcbae89"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Incomplete hardware\u2013software integration \u2014 apps still showing black borders and failing to use the full screen \u2014 may limit the productivity value of the foldable form factor. (scope: Specific to the iPhone Duo's foldable multitasking experience; characterized as software adaptation not yet capitalizing on hardware.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The revenue or margin contribution of exclusive MacBook Pro panel supply to Samsung Display / Samsung Electronics"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether rivals ultimately break into Apple's OLED notebook supply chain"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Yield and cost performance on SDC's G8.6 FMM line"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which competing foldable brands lose share and by how much"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether Apple's foldable is profitable at this volume"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the ~5M unit estimate and 24.8% share translate to any named company's earnings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether reliability issues scale and dent demand"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Rival panel makers qualifying for MacBook Pro supply"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Apple accelerating multi-sourcing of OLED notebook panels"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Foldable market growth accelerates beyond 0.5%"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reliability problems trigger recalls or demand weakness"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify the incumbent foldable brands (e.g. Samsung, Chinese OEMs) most exposed to losing ~24.8% of share and check their foldable unit mix and margins."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "SDC winning additional Apple OLED notebook models"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "MacBook Pro OLED demand exceeding forecast"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Foldable shipment data confirms Apple taking share from named competitors"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Apple foldable demand sustains premium pricing"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-b1a5f01a5b92",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-04a1a1ad853c06",
+     "C-45adb0d887a6e9",
+     "C-478f82e3596aa8",
+     "C-56d8edaff72d55",
+     "C-75027c9a0eebca",
+     "C-7977e6284a09b7",
+     "C-a1820451271914",
+     "C-a68902d4903996",
+     "C-a7143f9b384e26",
+     "C-ba991a19234145"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-29T17:01:14+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "New MacBook Pro Enters Market; Global OLED Notebook Shipments Forecast to Grow Over 40% YoY in 2027, Says TrendForce",
+    "upstream_origins": [
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261029-13287.html",
+    "version_dates": []
+   },
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-b565451748ea",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-3b5afaee0c0567",
+     "C-6b898c356c052c",
+     "C-3956f10949befc",
+     "C-503c9bdcc90d08",
+     "C-08344f67c50ccc",
+     "C-7a8d691d243050",
+     "C-172ceb9c5ee762",
+     "C-8b918a5f9ea19a",
+     "C-d17ae91bcbae89",
+     "C-aa91f8b4b2989f",
+     "C-ceca0d92521623"
+    ],
+    "contribution": "contradictory",
+    "published_at": "2026-10-28T17:19:11+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "iPhone Duo Launch Sparks Strong Demand, but Fold-Area Structural Reliability and Hardware\u2013Software Integration Remain Challenges, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261028-13282.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names licences and maintenance",
+    "basis_quote": [
+     "We generate revenues primarily by selling our proprietary OLED materials and licensing our OLED technologies to display and lighting product manufacturers."
+    ],
+    "basis_source": "10-K filed 2026-02-19 (0001193125-26-059371)",
+    "business": "OLED phosphorescent emitter materials and IP licensor",
+    "direction": "positive",
+    "enrichment_id": "EC-671b1ff2e02800",
+    "evidence": "s03.0: Apple requires demanding tandem OLED panels at 254 PPI, which SDC alone currently qualifies to mass-produce.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436148) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.01 par value",
+      "ticker": "OLED"
+     }
+    ],
+    "name": "Universal Display Corporation",
+    "rationale": "Tandem OLED panels use more emitter material and layers per panel; qualifying new high-PPI MacBook Pro OLED lines lifts material sales and royalties.",
+    "registrant": "UNIVERSAL DISPLAY CORP \\PA\\",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3670); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "OLED emitter materials and technology licences",
+    "revenue_model": "licences",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-F9F8F41CE0",
+    "ticker_hint": "OLED"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-12 (0000024741-26-000124)",
+    "business": "specialty glass substrates and cover glass maker",
+    "direction": "positive",
+    "enrichment_id": "EC-fd319171f60fe9",
+    "evidence": "s03.1: SDC captures the exclusive supply of 1.2\u20131.5 million MacBook Pro OLED panels in 2027.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0000024741-26-000279) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.50 par value per share",
+      "ticker": "GLW"
+     }
+    ],
+    "name": "Corning",
+    "rationale": "New G8.6 OLED line and MacBook Pro panel volumes consume display glass substrates, supporting its display technologies segment sales.",
+    "registrant": "CORNING INC /NY",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3357); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "display glass substrates for OLED panels",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-F9F8F41CE0",
+    "ticker_hint": "GLW"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2025-12-12 (0001628280-25-056742)",
+    "business": "semiconductor and display fabrication equipment maker",
+    "direction": "positive",
+    "enrichment_id": "EC-87fff3105b6419",
+    "evidence": "s03.0: Apple requires demanding tandem OLED panels at 254 PPI, which SDC alone currently qualifies to mass-produce.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-20 (accession 0001628280-26-058235) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $.01 per share",
+      "ticker": "AMAT"
+     }
+    ],
+    "name": "Applied Materials",
+    "rationale": "Dedicated G8.6 A6 OLED line buildout requires deposition and process equipment, supporting its display and adjacent markets equipment sales.",
+    "registrant": "APPLIED MATERIALS INC /DE",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "OLED display manufacturing equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-F9F8F41CE0",
+    "ticker_hint": "AMAT"
+   }
+  ],
+  "created_at": "2026-10-30T12:25:44.651730Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-3e725556965baf",
+  "thesis_id": "TH-F9F8F41CE0",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-30",
+   "change_summary": "Initial record \u2014 created from A-b1a5f01a5b92",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-30",
+     "ancestry": [
+      "consumer_electronics"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-30",
+     "first_ingested_at": "2026-10-30T12:03:26.251545Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-29",
+     "latest_article_date": "2026-10-29",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-F9F8F41CE0",
+     "title": "Samsung Display's exclusive OLED MacBook Pro supply entrenches its panel leadership"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-a68902d4903996",
+       "C-7977e6284a09b7",
+       "C-04a1a1ad853c06"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Samsung Display is the exclusive OLED panel supplier for Apple's MacBook Pro with PROLED XDR Display, with a dedicated G8.6 A6 line at Asan, while high costs and SDC's position create barriers to entry for rivals LG Display, BOE and TCL CSOT."
+     },
+     {
+      "claim_ids": [
+       "C-a68902d4903996",
+       "C-a1820451271914"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article states SDC's selection underscores its technological capabilities and strengthens its position at the forefront of the OLED market."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "SDC's exclusive position on Apple's premium OLED notebook strengthens its competitive standing, but the article does not quantify the revenue or earnings benefit; rivals are targeting the later 2029 MacBook Air."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7977e6284a09b7"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Samsung Display designated Phase 1 of its G8.6 A6 production line at Asan, South Korea as a dedicated facility for Apple."
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ba991a19234145"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The new MacBook Pro's tandem OLED architecture and 254 PPI impose exceptionally demanding panel production requirements."
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a68902d4903996"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Samsung Display is currently the exclusive panel supplier for the MacBook Pro with PROLED XDR Display."
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-04a1a1ad853c06"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "High costs of meeting Apple's specifications and SDC's established position present considerable barriers to entry for competitors."
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-75027c9a0eebca"
+       ],
+       "original_date": "2026-10-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The new MacBook Pro is the first product to enter mass production on SDC's G8.6 fine metal mask (FMM) OLED line."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-30 12:03 UTC, analysed as of 2026-10-30, from a source published 2026-10-29; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-ba991a19234145",
+       "C-a68902d4903996"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Apple requires demanding tandem OLED panels at 254 PPI, which SDC alone currently qualifies to mass-produce."
+     },
+     {
+      "claim_ids": [
+       "C-56d8edaff72d55",
+       "C-7977e6284a09b7"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "SDC captures the exclusive supply of 1.2\u20131.5 million MacBook Pro OLED panels in 2027. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Exclusive high-value panel supply would benefit SDC's panel revenue, but the article does not quantify earnings impact."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ba991a19234145",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "pixel density",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "tandem OLED architecture"
+      ],
+      "quote": "the new MacBook Pro\u2019s tandem OLED architecture and pixel density of 254 pixels per inch (PPI) impose exceptionally demanding requirements on panel production",
+      "role": "supports",
+      "unit": "PPI",
+      "value": 254.0,
+      "value_text": "254"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-56d8edaff72d55",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "MacBook Pro OLED shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "shipments of the new model will reach 1.2\u20131.5 million units in 2027",
+      "role": "catalyst",
+      "unit": "units",
+      "value": null,
+      "value_text": "1.2\u20131.5 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-04a1a1ad853c06",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "High costs of meeting Apple's specifications and SDC's established position present considerable barriers to entry for competitors.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the high cost of meeting Apple\u2019s stringent specifications, combined with SDC\u2019s established position as the primary supplier, presents considerable barriers to entry",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-75027c9a0eebca",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The new MacBook Pro is the first product to enter mass production on SDC's G8.6 fine metal mask (FMM) OLED line.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "first product",
+       "G8.6 FMM OLED line"
+      ],
+      "quote": "the first product to enter mass production on SDC\u2019s G8.6 fine metal mask (FMM) OLED line",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7977e6284a09b7",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Samsung Display designated Phase 1 of its G8.6 A6 production line at Asan, South Korea as a dedicated facility for Apple.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "designated Phase 1 of its G8.6 A6 production line at its Asan campus in South Korea as a dedicated facility for Apple",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a68902d4903996",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Samsung Display is currently the exclusive panel supplier for the MacBook Pro with PROLED XDR Display.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Samsung Display (SDC) is currently the exclusive panel supplier for the MacBook Pro with PROLED XDR Display",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-478f82e3596aa8",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Competing OLED panel makers (LG Display, BOE, TCL CSOT) are targeting the OLED MacBook Air supply chain, expected to debut in 2029.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2029",
+      "qualifiers": [
+       "OLED MacBook Air expected to debut in 2029"
+      ],
+      "quote": "competing OLED panel makers, including LG Display, BOE, and TCL CSOT, are largely directing their efforts toward securing a place in the supply chain for the OLED MacBook Air, which is expected to debut in 2029",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6012c0fa6c288f",
+       "name_as_written": "MacBook Pro with PROLED XDR Display",
+       "other_securities": [],
+       "quote": "MacBook Pro with PROLED XDR Display",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "First Apple notebook with tandem OLED touchscreen"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5ac9f848f4a4ef",
+       "name_as_written": "MacBook Neo",
+       "other_securities": [],
+       "quote": "the MacBook Neo\u2019s departure from Apple\u2019s traditional entry-level pricing strategy",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Apple product cited as example of pricing strategy expansion"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e1decb67d9fc16",
+       "name_as_written": "Lenovo",
+       "other_securities": [],
+       "quote": "Windows-based brands such as Lenovo, HP, and ASUS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": "0000047217",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-27 (accession 0000047217-26-000051) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, par value $0.01 per share",
+         "ticker": "HPQ"
+        }
+       ],
+       "mention_id": "M-8dd56c6e6ce6b8",
+       "name_as_written": "HP",
+       "other_securities": [],
+       "quote": "Lenovo, HP, and ASUS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "sector_example",
+       "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7897ee8b72844c",
+       "name_as_written": "ASUS",
+       "other_securities": [],
+       "quote": "Lenovo, HP, and ASUS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d7aca8725e28b8",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the forecasts"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-d3a9dead11aef4",
+       "name_as_written": "Samsung Display",
+       "other_securities": [],
+       "quote": "Samsung Display secures exclusive supply position",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Exclusive panel supplier for the OLED MacBook Pro"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": "0001290109",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-6b7c1b32531262",
+       "name_as_written": "LG Display",
+       "other_securities": [],
+       "quote": "including LG Display, BOE, and TCL CSOT",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-d96f0380c884bc",
+       "name_as_written": "BOE",
+       "other_securities": [],
+       "quote": "LG Display, BOE, and TCL CSOT",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-3be901f9da0783",
+       "name_as_written": "TCL CSOT",
+       "other_securities": [],
+       "quote": "LG Display, BOE, and TCL CSOT",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": "0000320193",
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000320193-26-000020) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.00001 par value per share",
+         "ticker": "AAPL"
+        }
+       ],
+       "mention_id": "M-7f2d43273c597f",
+       "name_as_written": "Apple",
+       "other_securities": [],
+       "quote": "Apple\u2019s newly unveiled MacBook Pro",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "OEM launching the OLED MacBook Pro, driving OLED notebook adoption and panel demand"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "claim_ids": [
+        "C-a68902d4903996"
+       ],
+       "direction": "positive",
+       "name": "FMM OLED line",
+       "provenance": "SOURCE OPINION",
+       "quote": "the first product to enter mass production on SDC\u2019s G8.6 fine metal mask (FMM) OLED line"
+      }
+     ],
+     "sectors": [
+      "OLED panel supply",
+      "FMM OLED"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 MacBook Pro ramp; 2029 OLED MacBook Air debut [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-a68902d4903996",
+        "C-75027c9a0eebca"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "SDC is the sole supplier for the newly launched MacBook Pro, mass producing on its first G8.6 FMM OLED line."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-04a1a1ad853c06",
+        "C-478f82e3596aa8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "High costs and SDC's established position create barriers to entry, so rivals LG Display, BOE and TCL CSOT target the later 2029 MacBook Air supply chain."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-478f82e3596aa8"
+       ],
+       "provenance": "FORECAST",
+       "text": "Competing panel makers are running qualification programs and could secure a place in the OLED MacBook Air supply chain in 2029."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-3C22A83E75: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A second panel supplier qualifying for the MacBook Pro"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Yield problems limiting SDC's panel output"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Apple diversifying OLED notebook suppliers earlier than 2029"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-a7143f9b384e26",
+        "C-45adb0d887a6e9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The overall notebook market is expected to contract for two consecutive years, and the premium starting price plus continued availability of Mini-LED models could temper near-term replacement demand for the OLED MacBook Pro. (scope: Notebook market demand and OLED MacBook Pro replacement demand; TrendForce forecast/opinion.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The revenue or margin contribution of exclusive MacBook Pro panel supply to Samsung Display / Samsung Electronics"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether rivals ultimately break into Apple's OLED notebook supply chain"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Yield and cost performance on SDC's G8.6 FMM line"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Rival panel makers qualifying for MacBook Pro supply"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Apple accelerating multi-sourcing of OLED notebook panels"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Estimate Samsung Display's revenue and margin exposure to Apple OLED notebook panels and monitor rival qualification progress for the 2029 MacBook Air."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SDC winning additional Apple OLED notebook models"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "MacBook Pro OLED demand exceeding forecast"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-b1a5f01a5b92",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-56d8edaff72d55",
+       "C-478f82e3596aa8",
+       "C-a68902d4903996",
+       "C-7977e6284a09b7",
+       "C-ba991a19234145",
+       "C-04a1a1ad853c06",
+       "C-75027c9a0eebca",
+       "C-a7143f9b384e26",
+       "C-45adb0d887a6e9"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-29T17:01:14+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "New MacBook Pro Enters Market; Global OLED Notebook Shipments Forecast to Grow Over 40% YoY in 2027, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261029-13287.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "6b13960611e3cc6259fe422539ee6a797278648ea8e54855477e04c5d5d2082b",
+   "created_at": "2026-10-30T12:03:51.948098Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-a68902d4903996",
+       "C-7977e6284a09b7",
+       "C-ba991a19234145",
+       "C-75027c9a0eebca",
+       "C-56d8edaff72d55",
+       "C-478f82e3596aa8"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "6"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-7977e6284a09b7",
+       "C-ba991a19234145"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-7977e6284a09b7: measured 2026-10-29 (1 days before the as-of); C-ba991a19234145: measured 2026-10-29 (1 days before the as-of)); 1 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: FMM OLED line",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 2 offered but NOT counted (opinion, forecast figure or stale reading): C-56d8edaff72d55, C-478f82e3596aa8",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 6 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261030T115837Z-scan",
+   "thesis_id": "TH-F9F8F41CE0",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-30",
+   "change_summary": "A-b565451748ea: contradictory \u00d75, new \u00d76",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-30",
+     "ancestry": [
+      "consumer_electronics"
+     ],
+     "evidence_direction": "MIXED",
+     "first_detected": "2026-10-30",
+     "first_ingested_at": "2026-10-30T12:03:26.251545Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-29",
+     "latest_article_date": "2026-10-29",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Consumer electronics and devices (PCs, notebooks, phones, displays)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-F9F8F41CE0",
+     "title": "Samsung Display's exclusive OLED MacBook Pro supply entrenches its panel leadership"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-a68902d4903996",
+       "C-7977e6284a09b7",
+       "C-04a1a1ad853c06"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Samsung Display is the exclusive OLED panel supplier for Apple's MacBook Pro with PROLED XDR Display, with a dedicated G8.6 A6 line at Asan, while high costs and SDC's position create barriers to entry for rivals LG Display, BOE and TCL CSOT."
+     },
+     {
+      "claim_ids": [
+       "C-a68902d4903996",
+       "C-a1820451271914"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article states SDC's selection underscores its technological capabilities and strengthens its position at the forefront of the OLED market."
+     },
+     {
+      "claim_ids": [
+       "C-6b898c356c052c",
+       "C-3956f10949befc",
+       "C-503c9bdcc90d08",
+       "C-08344f67c50ccc"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "\u27e8update 2026-10-28 \u00b7 TrendForce\u27e9 TrendForce estimates global foldable shipments rise only 0.5% in 2026 while Apple's first foldable ships ~5 million units for ~24.8% share, poised to accelerate share shifts among competing brands. \u27e8cited figures: forecast; approximate\u27e9"
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "new",
+       "claim_ids": [
+        "C-3b5afaee0c0567"
+       ],
+       "original_date": "2026-10-28",
+       "period": "January 2027",
+       "provenance": "SOURCE OPINION",
+       "text": "Apple's website showed iPhone Duo delivery dates extending into January 2027 for some orders within a week of preorders opening. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "new",
+       "claim_ids": [
+        "C-6b898c356c052c"
+       ],
+       "original_date": "2026-10-28",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "TrendForce estimates global foldable smartphone shipments will rise 0.5% in 2026. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "new",
+       "claim_ids": [
+        "C-3956f10949befc"
+       ],
+       "original_date": "2026-10-28",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Apple's first foldable iPhone is expected to ship approximately 5 million units in 2026. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "new",
+       "claim_ids": [
+        "C-503c9bdcc90d08"
+       ],
+       "original_date": "2026-10-28",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Apple's foldable iPhone is expected to account for about 24.8% of the foldable market in 2026. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "new",
+       "claim_ids": [
+        "C-08344f67c50ccc"
+       ],
+       "original_date": "2026-10-28",
+       "period": "2026",
+       "provenance": "SOURCE OPINION",
+       "text": "Apple's foldable entry is expected to accelerate market share shifts among competing brands in a largely flat market. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "new",
+       "claim_ids": [
+        "C-7a8d691d243050"
+       ],
+       "original_date": "2026-10-28",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "As app compatibility and hardware reliability improve, the Duo is expected to shift foldable market competition from form-factor innovation toward multitasking efficiency. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-172ceb9c5ee762"
+       ],
+       "original_date": "2026-10-28",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Apple has provided replacements for a small number of iPhone Duo devices with inner-display abnormalities. \u27e8the source states evidence against this thesis\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-8b918a5f9ea19a"
+       ],
+       "original_date": "2026-10-28",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "A hypothesis from teardown analyses is that insufficient retraction of the central support may cause unintended contact and localized stress in the fold area. \u27e8the source states evidence against this thesis\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-d17ae91bcbae89"
+       ],
+       "original_date": "2026-10-28",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Some apps still show black borders or don't use the full screen, indicating software adaptation has not fully capitalized on the foldable hardware. \u27e8the source states evidence against this thesis\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-aa91f8b4b2989f"
+       ],
+       "original_date": "2026-10-28",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Early user feedback has been polarized: praise for split-screen and unfolded viewing, but black borders, button placement and fingerprint authentication add to the learning curve. \u27e8the source states evidence against this thesis\u27e9"
+      },
+      {
+       "article_id": "A-b565451748ea",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 10 of 11 pieces of evidence from A-b565451748ea \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+     "vs_prior": "v1 held 10 claim(s); this source adds: contradictory \u00d75, new \u00d76"
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-ba991a19234145",
+       "C-a68902d4903996"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Apple requires demanding tandem OLED panels at 254 PPI, which SDC alone currently qualifies to mass-produce."
+     },
+     {
+      "claim_ids": [
+       "C-56d8edaff72d55",
+       "C-7977e6284a09b7"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "SDC captures the exclusive supply of 1.2\u20131.5 million MacBook Pro OLED panels in 2027. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Exclusive high-value panel supply would benefit SDC's panel revenue, but the article does not quantify earnings impact."
+     },
+     {
+      "claim_ids": [
+       "C-08344f67c50ccc"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "market_reaction",
+      "text": "TrendForce expects accelerated share shifts among competing brands."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ba991a19234145",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "pixel density",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "tandem OLED architecture"
+      ],
+      "quote": "the new MacBook Pro\u2019s tandem OLED architecture and pixel density of 254 pixels per inch (PPI) impose exceptionally demanding requirements on panel production",
+      "role": "supports",
+      "unit": "PPI",
+      "value": 254.0,
+      "value_text": "254"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-b565451748ea",
+      "block_id": "b008",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-3956f10949befc",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "Apple\u2019s first foldable iPhone is expected to ship approximately 5 million units",
+      "role": "supports",
+      "unit": "units",
+      "value": 5000000.0,
+      "value_text": "approximately 5 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-b565451748ea",
+      "block_id": "b008",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-503c9bdcc90d08",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "foldable market share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "about"
+      ],
+      "quote": "accounting for about 24.8% of the market in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 24.8,
+      "value_text": "about 24.8%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b565451748ea",
+      "block_id": "b008",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-6b898c356c052c",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "foldable smartphone shipment growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "just"
+      ],
+      "quote": "global foldable smartphone shipments will edge up just 0.5% in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 0.5,
+      "value_text": "0.5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-56d8edaff72d55",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "MacBook Pro OLED shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "shipments of the new model will reach 1.2\u20131.5 million units in 2027",
+      "role": "catalyst",
+      "unit": "units",
+      "value": null,
+      "value_text": "1.2\u20131.5 million"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-04a1a1ad853c06",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "High costs of meeting Apple's specifications and SDC's established position present considerable barriers to entry for competitors.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the high cost of meeting Apple\u2019s stringent specifications, combined with SDC\u2019s established position as the primary supplier, presents considerable barriers to entry",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-75027c9a0eebca",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The new MacBook Pro is the first product to enter mass production on SDC's G8.6 fine metal mask (FMM) OLED line.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "first product",
+       "G8.6 FMM OLED line"
+      ],
+      "quote": "the first product to enter mass production on SDC\u2019s G8.6 fine metal mask (FMM) OLED line",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7977e6284a09b7",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Samsung Display designated Phase 1 of its G8.6 A6 production line at Asan, South Korea as a dedicated facility for Apple.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "designated Phase 1 of its G8.6 A6 production line at its Asan campus in South Korea as a dedicated facility for Apple",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a68902d4903996",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Samsung Display is currently the exclusive panel supplier for the MacBook Pro with PROLED XDR Display.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Samsung Display (SDC) is currently the exclusive panel supplier for the MacBook Pro with PROLED XDR Display",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b565451748ea",
+      "block_id": "b008",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-08344f67c50ccc",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Apple's foldable entry is expected to accelerate market share shifts among competing brands in a largely flat market.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "overall market remaining largely flat"
+      ],
+      "quote": "Apple\u2019s entry is poised to accelerate shifts in market share among competing brands",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b565451748ea",
+      "block_id": "b016",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-7a8d691d243050",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "As app compatibility and hardware reliability improve, the Duo is expected to shift foldable market competition from form-factor innovation toward multitasking efficiency.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "helping shift competition in the foldable smartphone market from form-factor innovation toward multitasking efficiency",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b1a5f01a5b92",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-478f82e3596aa8",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "Competing OLED panel makers (LG Display, BOE, TCL CSOT) are targeting the OLED MacBook Air supply chain, expected to debut in 2029.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2029",
+      "qualifiers": [
+       "OLED MacBook Air expected to debut in 2029"
+      ],
+      "quote": "competing OLED panel makers, including LG Display, BOE, and TCL CSOT, are largely directing their efforts toward securing a place in the supply chain for the OLED MacBook Air, which is expected to debut in 2029",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-b565451748ea",
+      "block_id": "b005",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-3b5afaee0c0567",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Apple's website showed iPhone Duo delivery dates extending into January 2027 for some orders within a week of preorders opening.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "January 2027",
+      "qualifiers": [
+       "some orders",
+       "less than a week after preorders"
+      ],
+      "quote": "its official website was already showing delivery dates extending into January 2027 for some orders",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6012c0fa6c288f",
+       "name_as_written": "MacBook Pro with PROLED XDR Display",
+       "other_securities": [],
+       "quote": "MacBook Pro with PROLED XDR Display",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "First Apple notebook with tandem OLED touchscreen"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5ac9f848f4a4ef",
+       "name_as_written": "MacBook Neo",
+       "other_securities": [],
+       "quote": "the MacBook Neo\u2019s departure from Apple\u2019s traditional entry-level pricing strategy",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Apple product cited as example of pricing strategy expansion"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e1decb67d9fc16",
+       "name_as_written": "Lenovo",
+       "other_securities": [],
+       "quote": "Windows-based brands such as Lenovo, HP, and ASUS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": "0000047217",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-27 (accession 0000047217-26-000051) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, par value $0.01 per share",
+         "ticker": "HPQ"
+        }
+       ],
+       "mention_id": "M-8dd56c6e6ce6b8",
+       "name_as_written": "HP",
+       "other_securities": [],
+       "quote": "Lenovo, HP, and ASUS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "sector_example",
+       "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7897ee8b72844c",
+       "name_as_written": "ASUS",
+       "other_securities": [],
+       "quote": "Lenovo, HP, and ASUS",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "sector_example",
+       "role_detail": "Windows OEM that has expanded OLED notebook offerings"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d7aca8725e28b8",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research firm publishing the forecasts"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-d3a9dead11aef4",
+       "name_as_written": "Samsung Display",
+       "other_securities": [],
+       "quote": "Samsung Display secures exclusive supply position",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Exclusive panel supplier for the OLED MacBook Pro"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": "0001290109",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-6b7c1b32531262",
+       "name_as_written": "LG Display",
+       "other_securities": [],
+       "quote": "including LG Display, BOE, and TCL CSOT",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-d96f0380c884bc",
+       "name_as_written": "BOE",
+       "other_securities": [],
+       "quote": "LG Display, BOE, and TCL CSOT",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-3be901f9da0783",
+       "name_as_written": "TCL CSOT",
+       "other_securities": [],
+       "quote": "LG Display, BOE, and TCL CSOT",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Competing OLED panel maker targeting the OLED MacBook Air supply chain"
+      },
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "cik": "0000320193",
+       "direction": "neutral",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0000320193-26-000020) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.00001 par value per share",
+         "ticker": "AAPL"
+        }
+       ],
+       "mention_id": "M-7f2d43273c597f",
+       "name_as_written": "Apple",
+       "other_securities": [],
+       "quote": "Apple\u2019s newly unveiled MacBook Pro",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "OEM launching the OLED MacBook Pro, driving OLED notebook adoption and panel demand"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-b565451748ea",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-23f70b7464bf74",
+       "name_as_written": "iPhone Duo",
+       "other_securities": [],
+       "quote": "its first foldable smartphone\u2014the iPhone Duo",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Apple's first foldable smartphone, subject of the demand and reliability analysis"
+      }
+     ],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-b1a5f01a5b92",
+       "claim_ids": [
+        "C-a68902d4903996"
+       ],
+       "direction": "positive",
+       "name": "FMM OLED line",
+       "provenance": "SOURCE OPINION",
+       "quote": "the first product to enter mass production on SDC\u2019s G8.6 fine metal mask (FMM) OLED line"
+      }
+     ],
+     "sectors": [
+      "OLED panel supply",
+      "FMM OLED",
+      "foldable smartphones",
+      "consumer electronics"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "iPhone Duo launch and preorders with delivery into January 2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-3b5afaee0c0567",
+        "C-503c9bdcc90d08"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Strong initial demand (delivery dates into January 2027) plus ~24.8% share suggests near-term share gains for Apple at competitors' expense in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-a68902d4903996",
+        "C-75027c9a0eebca"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "SDC is the sole supplier for the newly launched MacBook Pro, mass producing on its first G8.6 FMM OLED line."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-4e17b2e3a20e4d",
+        "C-7a8d691d243050"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "As app compatibility and hardware reliability improve, the Duo is expected to shift competition from form-factor innovation toward multitasking efficiency."
+      },
+      {
+       "claim_ids": [
+        "C-04a1a1ad853c06",
+        "C-478f82e3596aa8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "High costs and SDC's established position create barriers to entry, so rivals LG Display, BOE and TCL CSOT target the later 2029 MacBook Air supply chain."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-478f82e3596aa8"
+       ],
+       "provenance": "FORECAST",
+       "text": "Competing panel makers are running qualification programs and could secure a place in the OLED MacBook Air supply chain in 2029."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-3C22A83E75: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [
+        "C-172ceb9c5ee762",
+        "C-8b918a5f9ea19a",
+        "C-d17ae91bcbae89"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reliability concerns (damaged displays, high repair costs, inner-display abnormalities) and incomplete software adaptation could limit Apple's foldable traction and the premium-price justification."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-172ceb9c5ee762"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Apple has provided replacements for a small number of iPhone Duo devices with inner-display abnormalities."
+      },
+      {
+       "claim_ids": [
+        "C-8b918a5f9ea19a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A hypothesis from teardown analyses is that insufficient retraction of the central support may cause unintended contact and localized stress in the fold area."
+      },
+      {
+       "claim_ids": [
+        "C-d17ae91bcbae89"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Some apps still show black borders or don't use the full screen, indicating software adaptation has not fully capitalized on the foldable hardware."
+      },
+      {
+       "claim_ids": [
+        "C-aa91f8b4b2989f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Early user feedback has been polarized: praise for split-screen and unfolded viewing, but black borders, button placement and fingerprint authentication add to the learning curve."
+      },
+      {
+       "claim_ids": [
+        "C-ceca0d92521623"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Reports of damaged displays and high repair estimates have shifted attention toward product reliability and long-term ownership costs."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A second panel supplier qualifying for the MacBook Pro"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Yield problems limiting SDC's panel output"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Apple diversifying OLED notebook suppliers earlier than 2029"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Foldable market grows well above 0.5% so Apple's share is additive not reallocated"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Apple foldable shipments fall well short of 5 million units"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Widespread reliability failures force recalls or demand collapse"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-a7143f9b384e26",
+        "C-45adb0d887a6e9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The overall notebook market is expected to contract for two consecutive years, and the premium starting price plus continued availability of Mini-LED models could temper near-term replacement demand for the OLED MacBook Pro. (scope: Notebook market demand and OLED MacBook Pro replacement demand; TrendForce forecast/opinion.)"
+      },
+      {
+       "claim_ids": [
+        "C-172ceb9c5ee762",
+        "C-8b918a5f9ea19a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Foldable iPhone reliability concerns \u2014 reports of damaged displays, high repair estimates, and inner-display abnormalities tied to the fold-area structure and hinge \u2014 could undermine demand and the device's premium positioning. (scope: Specific to Apple's iPhone Duo foldable; a small number of devices have received replacements and the fold-area stress hypothesis is from teardown analyses, not established failure rates.)"
+      },
+      {
+       "claim_ids": [
+        "C-d17ae91bcbae89"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Incomplete hardware\u2013software integration \u2014 apps still showing black borders and failing to use the full screen \u2014 may limit the productivity value of the foldable form factor. (scope: Specific to the iPhone Duo's foldable multitasking experience; characterized as software adaptation not yet capitalizing on hardware.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The revenue or margin contribution of exclusive MacBook Pro panel supply to Samsung Display / Samsung Electronics"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether rivals ultimately break into Apple's OLED notebook supply chain"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Yield and cost performance on SDC's G8.6 FMM line"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which competing foldable brands lose share and by how much"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether Apple's foldable is profitable at this volume"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the ~5M unit estimate and 24.8% share translate to any named company's earnings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether reliability issues scale and dent demand"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Rival panel makers qualifying for MacBook Pro supply"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Apple accelerating multi-sourcing of OLED notebook panels"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Foldable market growth accelerates beyond 0.5%"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reliability problems trigger recalls or demand weakness"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify the incumbent foldable brands (e.g. Samsung, Chinese OEMs) most exposed to losing ~24.8% of share and check their foldable unit mix and margins."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "SDC winning additional Apple OLED notebook models"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "MacBook Pro OLED demand exceeding forecast"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Foldable shipment data confirms Apple taking share from named competitors"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Apple foldable demand sustains premium pricing"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-b1a5f01a5b92",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-04a1a1ad853c06",
+       "C-45adb0d887a6e9",
+       "C-478f82e3596aa8",
+       "C-56d8edaff72d55",
+       "C-75027c9a0eebca",
+       "C-7977e6284a09b7",
+       "C-a1820451271914",
+       "C-a68902d4903996",
+       "C-a7143f9b384e26",
+       "C-ba991a19234145"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-29T17:01:14+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "New MacBook Pro Enters Market; Global OLED Notebook Shipments Forecast to Grow Over 40% YoY in 2027, Says TrendForce",
+      "upstream_origins": [
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261029-13287.html",
+      "version_dates": []
+     },
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-b565451748ea",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-3b5afaee0c0567",
+       "C-6b898c356c052c",
+       "C-3956f10949befc",
+       "C-503c9bdcc90d08",
+       "C-08344f67c50ccc",
+       "C-7a8d691d243050",
+       "C-172ceb9c5ee762",
+       "C-8b918a5f9ea19a",
+       "C-d17ae91bcbae89",
+       "C-aa91f8b4b2989f",
+       "C-ceca0d92521623"
+      ],
+      "contribution": "contradictory",
+      "published_at": "2026-10-28T17:19:11+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "iPhone Duo Launch Sparks Strong Demand, but Fold-Area Structural Reliability and Hardware\u2013Software Integration Remain Challenges, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261028-13282.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "fe7d8baf39392417818fd7ed271d1c2bbb6907be6879aff09bc3b2313ee05545",
+   "created_at": "2026-10-30T12:07:23.967518Z",
+   "diffs": [
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-3956f10949befc"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "shipments: approximately 5 million units",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-503c9bdcc90d08"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "foldable market share: about 24.8%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-6b898c356c052c"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "foldable smartphone shipment growth: 0.5%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-08344f67c50ccc"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Apple's foldable entry is expected to accelerate market share shifts among competing brands in a largely flat market.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-7a8d691d243050"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "As app compatibility and hardware reliability improve, the Duo is expected to shift foldable market competition from form-factor innovation toward multitasking efficiency.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-3b5afaee0c0567"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Apple's website showed iPhone Duo delivery dates extending into January 2027 for some orders within a week of preorders opening.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-172ceb9c5ee762"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "Apple has provided replacements for a small number of iPhone Duo devices with inner-display abnormalities.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-8b918a5f9ea19a"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "A hypothesis from teardown analyses is that insufficient retraction of the central support may cause unintended contact and localized stress in the fold area.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-d17ae91bcbae89"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "Some apps still show black borders or don't use the full screen, indicating software adaptation has not fully capitalized on the foldable hardware.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-aa91f8b4b2989f"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "Early user feedback has been polarized: praise for split-screen and unfolded viewing, but black borders, button placement and fingerprint authentication add to the learning curve.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-ceca0d92521623"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "Reports of damaged displays and high repair estimates have shifted attention toward product reliability and long-term ownership costs.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-3b5afaee0c0567",
+      "C-503c9bdcc90d08",
+      "C-a68902d4903996",
+      "C-75027c9a0eebca"
+     ],
+     "field_id": "s06_why_now.catalyst_window",
+     "new": "iPhone Duo launch and preorders with delivery into January 2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "note": "",
+     "old": "2027 MacBook Pro ramp; 2029 OLED MacBook Air debut [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window"
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-a68902d4903996",
+      "C-7977e6284a09b7",
+      "C-04a1a1ad853c06",
+      "C-a68902d4903996",
+      "C-a1820451271914",
+      "C-6b898c356c052c",
+      "C-3956f10949befc",
+      "C-503c9bdcc90d08",
+      "C-08344f67c50ccc"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "\u27e8update 2026-10-28 \u00b7 TrendForce\u27e9 TrendForce estimates global foldable shipments rise only 0.5% in 2026 while Apple's first foldable ships ~5 million units for ~24.8% share, poised to accelerate share shifts among competing brands. \u27e8cited figures: forecast; approximate\u27e9",
+     "note": "",
+     "old": "SDC's exclusive position on Apple's premium OLED notebook strengthens its competitive standing, but the article does not quantify the revenue or earnings benefit; rivals are targeting the later 2029 MacBook Air."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "MIXED",
+   "prior_content_sha": "6b13960611e3cc6259fe422539ee6a797278648ea8e54855477e04c5d5d2082b",
+   "priority": {
+    "change_reason": "no change in action (F2_material_evidence 6\u219210; F8_counterevidence 0\u21921)",
+    "evidence_direction": "MIXED",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-75027c9a0eebca",
+       "C-7977e6284a09b7",
+       "C-a68902d4903996",
+       "C-ba991a19234145",
+       "C-6b898c356c052c",
+       "C-3956f10949befc",
+       "C-503c9bdcc90d08",
+       "C-478f82e3596aa8",
+       "C-56d8edaff72d55",
+       "C-3b5afaee0c0567"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "10"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-6b898c356c052c",
+       "C-3956f10949befc",
+       "C-503c9bdcc90d08",
+       "C-7977e6284a09b7",
+       "C-ba991a19234145"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "5 claim(s) inside the next 2-4 quarters (C-6b898c356c052c: forecast window 2026-01-01..2026-12-31 (2026); C-3956f10949befc: forecast window 2026-01-01..2026-12-31 (2026); C-503c9bdcc90d08: forecast window 2026-01-01..2026-12-31 (2026); C-7977e6284a09b7: measured 2026-10-29 (1 days before the as-of); showing 4 of 5); 1 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: FMM OLED line",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 3 offered but NOT counted (opinion, forecast figure or stale reading): C-478f82e3596aa8, C-56d8edaff72d55, C-3b5afaee0c0567",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-172ceb9c5ee762",
+       "C-8b918a5f9ea19a",
+       "C-d17ae91bcbae89",
+       "C-aa91f8b4b2989f",
+       "C-ceca0d92521623"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (5 counter-claims in total); 1 distinct counter-observation(s) from the supporting sources vs 10 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261030T115837Z-scan",
+   "thesis_id": "TH-F9F8F41CE0",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-b1a5f01a5b92",
+   "block_ids": [
+    "b015",
+    "b006"
+   ],
+   "claim_ids": [
+    "C-478f82e3596aa8"
+   ],
+   "excerpt": "Although other panel makers are conducting qualification programs,\u2026",
+   "name": "makers"
+  },
+  {
+   "article_id": "A-b1a5f01a5b92",
+   "block_ids": [
+    "b014"
+   ],
+   "claim_ids": [],
+   "excerpt": "\u2026specifications presents substantial challenges for suppliers, particularly in terms of material\u2026",
+   "name": "suppliers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-a1820451271914",
+  "C-172ceb9c5ee762",
+  "C-8b918a5f9ea19a",
+  "C-d17ae91bcbae89",
+  "C-aa91f8b4b2989f",
+  "C-4e17b2e3a20e4d",
+  "C-ceca0d92521623",
+  "C-a7143f9b384e26",
+  "C-45adb0d887a6e9"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s02.9": "The cited span covers black borders, button placement and fingerprint authentication adding to the learning curve, but does not support the claim that feedback was 'polarized' with praise for split-screen and unfolded viewing.",
+  "s03.0": "The cited spans support 254 PPI, tandem OLED demanding requirements, and SDC being exclusive supplier, but 'which SDC alone currently qualifies to mass-produce' overstates \u2014 the exclusivity span says SDC is currently exclusive supplier, not that only SDC qualifies to mass-produce.",
+  "s03.1": "The forecast span supports 1.2\u20131.5 million units in 2027, but 'SDC captures the exclusive supply' adds an attribution not in the cited forecast span; the exclusivity is a separate SOURCE OPINION claim not cited here (only the Phase 1 dedication span is cited alongside).",
+  "s07.3": "The cited span does not support 'polarized' feedback or 'praise for split-screen and unfolded viewing'; it only covers black borders, button placement and fingerprint authentication adding to the learning curve.",
+  "s07.5": "The cited span says competing makers are directing efforts toward securing a place in the 2029 OLED MacBook Air supply chain, but does not mention 'running qualification programs'.",
+  "s07.8": "The cited spans support the premium US$2,899 starting price and availability alongside Mini-LED tempering near-term replacement demand, but do not support the claim that the notebook market is expected to contract for two consecutive years."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}

@@ -1,0 +1,1458 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-14",
+   "ancestry": [
+    "healthcare",
+    "healthcare.pharma_biotech"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T10:35:18.870058Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-18",
+   "latest_article_date": "2026-09-18",
+   "region": "US",
+   "research_action": "SKIP",
+   "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+   "status": "ACTIVE",
+   "thesis_id": "TH-48CF61E45B",
+   "title": "AI adoption shortens drug development and cuts costs, lifting pharma efficiency"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-d72d22a4d35579",
+     "C-1f5f2783e9a555",
+     "C-5970f3a3e67df8"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Analysts and executives expect AI to accelerate drug development timelines, reduce costs and improve efficiency across clinical and commercial operations, with use cases from post-discharge AI agents to LLM-based scientific data discovery."
+   },
+   {
+    "claim_ids": [
+     "C-d72d22a4d35579"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article presents AI-driven efficiency as a transformative margin and productivity opportunity across healthcare business models."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article argues AI could expand healthcare company margins and productivity but names no beneficiary company and quantifies no cost or timeline savings."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-cfc65506a485",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d72d22a4d35579"
+     ],
+     "original_date": "2026-09-18",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "AI is likely to shorten drug development timelines, reduce costs and improve efficiency across clinical and commercial operations."
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-1f5f2783e9a555"
+     ],
+     "original_date": "2026-09-18",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Healthcare providers are deploying AI-powered agents for post-discharge patient follow-up, potentially reducing readmissions."
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-5970f3a3e67df8"
+     ],
+     "original_date": "2026-09-18",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Physicians are increasingly using LLMs for information, prompting companies to reconsider how their scientific data is surfaced and discovered."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:35 UTC, analysed as of 2026-10-14, from a source published 2026-09-18; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-d72d22a4d35579",
+     "C-1f5f2783e9a555"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "AI is adopted across drug development, provider follow-up and commercial operations."
+   },
+   {
+    "claim_ids": [
+     "C-d72d22a4d35579"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "costs",
+    "text": "AI reduces development costs and timelines and lowers readmissions, per executives."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "margins",
+    "text": "Lower costs would widen margins, though the article quantifies no effect."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b034",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1f5f2783e9a555",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Healthcare providers are deploying AI-powered agents for post-discharge patient follow-up, potentially reducing readmissions.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "providers are deploying AI-powered agents for post-discharge follow-up",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b035",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5970f3a3e67df8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Physicians are increasingly using LLMs for information, prompting companies to reconsider how their scientific data is surfaced and discovered.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "physicians are increasingly turning to large language models (LLMs) for information, prompting companies to",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d72d22a4d35579",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "AI is likely to shorten drug development timelines, reduce costs and improve efficiency across clinical and commercial operations.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "AI is likely to shorten development timelines, reduce costs and improve efficiency across clinical and commercial operations.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": "0000895421",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "MS"
+      }
+     ],
+     "mention_id": "M-4c9a86dfce827c",
+     "name_as_written": "Morgan Stanley",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+       "ticker": "MS/PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+       "ticker": "MS/PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+       "ticker": "MS/PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+       "ticker": "MS/PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+       "ticker": "MS/PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+       "ticker": "MS/PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+       "ticker": "MS/PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+       "ticker": "MS/PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+       "ticker": "MS/PQ"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+       "ticker": "MS/29"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PQ"
+      }
+     ],
+     "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher and host of the conference"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d634aef6dae373",
+     "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+     "other_securities": [],
+     "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Agency whose policy agenda was presented"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7d263b0d970556",
+     "name_as_written": "Dan Brillman",
+     "other_securities": [],
+     "quote": "Dan Brillman, Director of Medicaid",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CMS Director of Medicaid, keynote speaker"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-dd505e35a8d3d5",
+     "name_as_written": "John Brooks",
+     "other_securities": [],
+     "quote": "John Brooks, Director of Medicare",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CMS Director of Medicare, keynote speaker"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6b5294d05dda8f",
+     "name_as_written": "Medicare",
+     "other_securities": [],
+     "quote": "Medicare launched a temporary program in July",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Launched temporary weight-loss medication access program"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d2df5629373eec",
+     "name_as_written": "Erin Wright",
+     "other_securities": [],
+     "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d1d93702292d40",
+     "name_as_written": "Morgan Stanley Institute",
+     "other_securities": [],
+     "quote": "a Morgan Stanley Institute keynote panel",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-eb61e6263a6bf0",
+     "name_as_written": "Sean Laaman",
+     "other_securities": [],
+     "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [],
+   "sectors": [
+    "healthcare",
+    "biopharma",
+    "healthcare services"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-d72d22a4d35579",
+      "C-1f5f2783e9a555",
+      "C-5970f3a3e67df8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Providers are already deploying AI agents for post-discharge follow-up and physicians use LLMs for information."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-d72d22a4d35579"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI is expected to transform healthcare business models over time by cutting costs and timelines."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs margin_expansion_adoption); a different segment (Neurology (Alzheimer's, dementia) vs no named segment) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-ABE7D2B79D: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs margin_expansion_adoption); a different segment (Genetic medicine (gene editing, gene therapy) vs no named segment); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BBF8E714C1: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs margin_expansion_adoption); a different segment (Obesity and metabolic (GLP-1) vs no named segment) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 1 other thesis in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No measurable reduction in development costs or timelines"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI pilots failing to scale across operations"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-5a22571db8dc55",
+      "C-a49f9a1de52407"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A more stable U.S. policy environment is a characterization by conference speakers, not a settled fact; policy on tariffs, vaccine guidance, international pricing and affordability could re-emerge as sources of disruption to the healthcare industry. (scope: U.S. healthcare/biopharma policy environment as described by conference executives in September 2026.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed companies capture the efficiency gains and how much"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether AI adoption translates into measurable margin or earnings improvement"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Realized cost and timeline savings versus expectations"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI efficiency claims remain unquantified"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Regulatory barriers slow AI deployment"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Assess which pharma, CRO and healthcare services companies are furthest along in AI deployment and whether it shows in margins."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Companies report quantified AI-driven cost or timeline savings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "AI drug-discovery tools reach the clinic faster"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "SKIP",
+   "rule_trace": [
+    "SKIP-1 no verified material evidence"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-cfc65506a485",
+    "authors": [],
+    "authors_status": "UNKNOWN",
+    "claim_ids": [
+     "C-d72d22a4d35579",
+     "C-1f5f2783e9a555",
+     "C-5970f3a3e67df8",
+     "C-5a22571db8dc55",
+     "C-a49f9a1de52407"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-18T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": null,
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-cfc65506a485",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "healthcare",
+      "healthcare.pharma_biotech"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:35:18.870058Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-18",
+     "latest_article_date": "2026-09-18",
+     "region": "US",
+     "research_action": "SKIP",
+     "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+     "status": "ACTIVE",
+     "thesis_id": "TH-48CF61E45B",
+     "title": "AI adoption shortens drug development and cuts costs, lifting pharma efficiency"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-d72d22a4d35579",
+       "C-1f5f2783e9a555",
+       "C-5970f3a3e67df8"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Analysts and executives expect AI to accelerate drug development timelines, reduce costs and improve efficiency across clinical and commercial operations, with use cases from post-discharge AI agents to LLM-based scientific data discovery."
+     },
+     {
+      "claim_ids": [
+       "C-d72d22a4d35579"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article presents AI-driven efficiency as a transformative margin and productivity opportunity across healthcare business models."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article argues AI could expand healthcare company margins and productivity but names no beneficiary company and quantifies no cost or timeline savings."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d72d22a4d35579"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "AI is likely to shorten drug development timelines, reduce costs and improve efficiency across clinical and commercial operations."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-1f5f2783e9a555"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Healthcare providers are deploying AI-powered agents for post-discharge patient follow-up, potentially reducing readmissions."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5970f3a3e67df8"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Physicians are increasingly using LLMs for information, prompting companies to reconsider how their scientific data is surfaced and discovered."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:35 UTC, analysed as of 2026-10-14, from a source published 2026-09-18; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-d72d22a4d35579",
+       "C-1f5f2783e9a555"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AI is adopted across drug development, provider follow-up and commercial operations."
+     },
+     {
+      "claim_ids": [
+       "C-d72d22a4d35579"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "costs",
+      "text": "AI reduces development costs and timelines and lowers readmissions, per executives."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "margins",
+      "text": "Lower costs would widen margins, though the article quantifies no effect."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b034",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1f5f2783e9a555",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Healthcare providers are deploying AI-powered agents for post-discharge patient follow-up, potentially reducing readmissions.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "providers are deploying AI-powered agents for post-discharge follow-up",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b035",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5970f3a3e67df8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Physicians are increasingly using LLMs for information, prompting companies to reconsider how their scientific data is surfaced and discovered.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "physicians are increasingly turning to large language models (LLMs) for information, prompting companies to",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d72d22a4d35579",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AI is likely to shorten drug development timelines, reduce costs and improve efficiency across clinical and commercial operations.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "AI is likely to shorten development timelines, reduce costs and improve efficiency across clinical and commercial operations.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-4c9a86dfce827c",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and host of the conference"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d634aef6dae373",
+       "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "other_securities": [],
+       "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Agency whose policy agenda was presented"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d263b0d970556",
+       "name_as_written": "Dan Brillman",
+       "other_securities": [],
+       "quote": "Dan Brillman, Director of Medicaid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicaid, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dd505e35a8d3d5",
+       "name_as_written": "John Brooks",
+       "other_securities": [],
+       "quote": "John Brooks, Director of Medicare",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicare, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6b5294d05dda8f",
+       "name_as_written": "Medicare",
+       "other_securities": [],
+       "quote": "Medicare launched a temporary program in July",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Launched temporary weight-loss medication access program"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d2df5629373eec",
+       "name_as_written": "Erin Wright",
+       "other_securities": [],
+       "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1d93702292d40",
+       "name_as_written": "Morgan Stanley Institute",
+       "other_securities": [],
+       "quote": "a Morgan Stanley Institute keynote panel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-eb61e6263a6bf0",
+       "name_as_written": "Sean Laaman",
+       "other_securities": [],
+       "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [],
+     "sectors": [
+      "healthcare",
+      "biopharma",
+      "healthcare services"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-d72d22a4d35579",
+        "C-1f5f2783e9a555",
+        "C-5970f3a3e67df8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Providers are already deploying AI agents for post-discharge follow-up and physicians use LLMs for information."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-d72d22a4d35579"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI is expected to transform healthcare business models over time by cutting costs and timelines."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs margin_expansion_adoption); a different segment (Neurology (Alzheimer's, dementia) vs no named segment) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-ABE7D2B79D: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs margin_expansion_adoption); a different segment (Genetic medicine (gene editing, gene therapy) vs no named segment); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BBF8E714C1: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs margin_expansion_adoption); a different segment (Obesity and metabolic (GLP-1) vs no named segment) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 1 other thesis in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No measurable reduction in development costs or timelines"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI pilots failing to scale across operations"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-5a22571db8dc55",
+        "C-a49f9a1de52407"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A more stable U.S. policy environment is a characterization by conference speakers, not a settled fact; policy on tariffs, vaccine guidance, international pricing and affordability could re-emerge as sources of disruption to the healthcare industry. (scope: U.S. healthcare/biopharma policy environment as described by conference executives in September 2026.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed companies capture the efficiency gains and how much"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether AI adoption translates into measurable margin or earnings improvement"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Realized cost and timeline savings versus expectations"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI efficiency claims remain unquantified"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Regulatory barriers slow AI deployment"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Assess which pharma, CRO and healthcare services companies are furthest along in AI deployment and whether it shows in margins."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Companies report quantified AI-driven cost or timeline savings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "AI drug-discovery tools reach the clinic faster"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "SKIP",
+     "rule_trace": [
+      "SKIP-1 no verified material evidence"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-cfc65506a485",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-d72d22a4d35579",
+       "C-1f5f2783e9a555",
+       "C-5970f3a3e67df8",
+       "C-5a22571db8dc55",
+       "C-a49f9a1de52407"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-18T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "2a649f1acf3df634b3273154ecf01bd786bb895bab8399980eb1989844059665",
+   "created_at": "2026-10-21T10:35:40.730819Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label longer_term (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 0 supporting; 0 independent contradicting source(s) vs 0 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "SKIP",
+    "rules_fired": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-48CF61E45B",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 5,
+ "other_cited_evidence": [
+  "C-5a22571db8dc55",
+  "C-a49f9a1de52407"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s02.1": "Cited span supports AI agents for post-discharge follow-up but says nothing about 'reducing readmissions'; that is an added claim not in the span.",
+  "s03.1": "Cited span supports cost/timeline reduction but 'lowers readmissions' is not supported by any cited span; neither is the 'per executives' attribution."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": "Registry status now ARCHIVED since 2026-10-14: research action is SKIP \u2014 kept in the searchable archive, off the active list",
+ "why_action": [
+  "Skip \u2014 no verified material evidence."
+ ],
+ "withheld_sentences": {
+  "s07.4": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s07.4 prints '2026', which none of its cited claims carry: 'A more stable U.S. policy environment is a characterization by conference speakers, not a settled fa'"
+ }
+}

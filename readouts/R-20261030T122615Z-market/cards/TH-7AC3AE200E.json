@@ -1,0 +1,2382 @@
+{
+ "analyst_corrections": {
+  "s07.2": "Withheld for a date the cited claims do not carry; the speakers' stated view restated without it. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)"
+ },
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-22",
+   "ancestry": [
+    "healthcare",
+    "healthcare.services_payers"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T10:36:14.506507Z",
+   "horizon": "Unclear in the source",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-18",
+   "latest_article_date": "2026-09-18",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Healthcare services and payers: managed care, providers, pharmacies and PBMs, care delivery, and how patients pay (insurance, cash-pay, direct-to-consumer)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-7AC3AE200E",
+   "title": "CMS push to value-based, outcome-based competition reshapes managed care economics"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-6626063a6d4c7a",
+     "C-8b20483703bfcb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "CMS directors signaled support for value-based initiatives and want health plans to compete on measurable outcomes rather than coding intensity, with plans expected to be more predictable, connected, navigable and accountable."
+   },
+   {
+    "claim_ids": [
+     "C-a49f9a1de52407",
+     "C-8b20483703bfcb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article presents CMS's agenda as part of a more stable, predictable policy backdrop for the industry."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A policy shift away from coding intensity toward outcome-based competition could alter managed-care revenue and risk-adjustment economics, but the article quantifies no effect and the net direction for plans is unclear."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-cfc65506a485",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-6626063a6d4c7a"
+     ],
+     "original_date": "2026-09-18",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "CMS wants health plans to compete on measurable health outcomes rather than coding intensity."
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8b20483703bfcb"
+     ],
+     "original_date": "2026-09-18",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "CMS wants managed care to succeed and restore confidence through accuracy, with more predictable, connected, navigable plans and higher accountability for results."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:36 UTC, analysed as of 2026-10-14, from a source published 2026-09-18; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-6626063a6d4c7a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "CMS wants plans to compete on measurable health outcomes rather than coding intensity that inflates risk scores and federal spending."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Reduced coding-intensity-driven risk scores could pressure managed-care revenue, while value-based success could reward efficient plans; the article quantifies neither."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6626063a6d4c7a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "CMS wants health plans to compete on measurable health outcomes rather than coding intensity.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "attributed to CMS directors"
+    ],
+    "quote": "want healthcare plans to compete on measurable health outcomes rather than coding intensity",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8b20483703bfcb",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "CMS wants managed care to succeed and restore confidence through accuracy, with more predictable, connected, navigable plans and higher accountability for results.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "We want managed care to succeed and to restore confidence through accuracy",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": "0000895421",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "MS"
+      }
+     ],
+     "mention_id": "M-4c9a86dfce827c",
+     "name_as_written": "Morgan Stanley",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+       "ticker": "MS/PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+       "ticker": "MS/PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+       "ticker": "MS/PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+       "ticker": "MS/PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+       "ticker": "MS/PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+       "ticker": "MS/PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+       "ticker": "MS/PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+       "ticker": "MS/PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+       "ticker": "MS/PQ"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+       "ticker": "MS/29"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PQ"
+      }
+     ],
+     "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher and host of the conference"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-eb61e6263a6bf0",
+     "name_as_written": "Sean Laaman",
+     "other_securities": [],
+     "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7d263b0d970556",
+     "name_as_written": "Dan Brillman",
+     "other_securities": [],
+     "quote": "Dan Brillman, Director of Medicaid",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CMS Director of Medicaid, keynote speaker"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-dd505e35a8d3d5",
+     "name_as_written": "John Brooks",
+     "other_securities": [],
+     "quote": "John Brooks, Director of Medicare",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CMS Director of Medicare, keynote speaker"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6b5294d05dda8f",
+     "name_as_written": "Medicare",
+     "other_securities": [],
+     "quote": "Medicare launched a temporary program in July",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Launched temporary weight-loss medication access program"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d2df5629373eec",
+     "name_as_written": "Erin Wright",
+     "other_securities": [],
+     "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d1d93702292d40",
+     "name_as_written": "Morgan Stanley Institute",
+     "other_securities": [],
+     "quote": "a Morgan Stanley Institute keynote panel",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-d634aef6dae373",
+     "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+     "other_securities": [],
+     "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Agency whose policy agenda was presented"
+    }
+   ],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-cfc65506a485",
+     "claim_ids": [
+      "C-8b20483703bfcb"
+     ],
+     "direction": "unclear",
+     "name": "managed care",
+     "provenance": "SOURCE OPINION",
+     "quote": "We want managed care to succeed and to restore confidence through accuracy"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "claim_ids": [
+      "C-6626063a6d4c7a"
+     ],
+     "direction": "unclear",
+     "name": "healthcare plans",
+     "provenance": "SOURCE OPINION",
+     "quote": "want healthcare plans to compete on measurable health outcomes rather than coding intensity"
+    }
+   ],
+   "sectors": [
+    "managed care",
+    "healthcare plans"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-8b20483703bfcb"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "CMS directors signaled their policy direction at the conference; no implementation timeline stated."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-6626063a6d4c7a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A durable regulatory shift toward value-based, outcome-based managed care competition and away from coding intensity."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 SIBLING with TH-DEB6560D7F: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs policy_regulation)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 6 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CMS rules that materially cut risk-adjustment coding revenue for plans"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Managed-care guidance citing coding-intensity policy as an earnings headwind"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-5a22571db8dc55"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Conference speakers said policymakers have largely addressed tariffs, vaccine guidance, international pricing and affordability, reducing the likelihood of major disruption; that is their view, not a settled fact."
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether and how fast CMS implements measures curbing coding intensity, and the net revenue impact on specific listed managed-care companies."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether value-based competition helps or harms incumbent plans; the article names no companies and quantifies no effect."
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CMS agenda remains rhetorical with no implementation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Policy impact shown to be immaterial to plan economics"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Map which listed managed-care insurers rely most on risk-adjustment coding intensity and assess exposure to a CMS shift toward outcome-based competition."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CMS issues concrete rules on coding intensity or value-based competition"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Managed-care companies flag the policy shift in guidance"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; premise is reported_view in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-cfc65506a485",
+    "authors": [],
+    "authors_status": "UNKNOWN",
+    "claim_ids": [
+     "C-6626063a6d4c7a",
+     "C-8b20483703bfcb",
+     "C-5a22571db8dc55",
+     "C-a49f9a1de52407"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-18T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "the basis \u201cother\u201d names no way of earning to look for",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "largest Medicare Advantage insurer and care delivery",
+    "direction": "negative",
+    "enrichment_id": "EC-286bde21541a3f",
+    "evidence": "s03.1: Reduced coding-intensity-driven risk scores could pressure managed-care revenue, while value-based success could reward efficient plans; the article quantifies neither.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-10 (accession 0000731766-26-000197) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $.01 par value",
+      "ticker": "UNH"
+     }
+    ],
+    "name": "UnitedHealth Group",
+    "rationale": "Heavy reliance on risk-adjusted MA revenue; reduced coding-intensity scores would pressure premium revenue from Optum-linked risk coding practices.",
+    "registrant": "UNITEDHEALTH GROUP INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 6324); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Medicare Advantage premiums and risk adjustment",
+    "revenue_model": "other",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-7AC3AE200E",
+    "ticker_hint": "UNH"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "the basis \u201cother\u201d names no way of earning to look for",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "Medicare Advantage-focused health insurer",
+    "direction": "negative",
+    "enrichment_id": "EC-40625325f0a4d0",
+    "evidence": "s03.1: Reduced coding-intensity-driven risk scores could pressure managed-care revenue, while value-based success could reward efficient plans; the article quantifies neither.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-29 (accession 0000049071-26-000050) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, $0.16 2/3 par value",
+      "ticker": "HUM"
+     }
+    ],
+    "name": "Humana",
+    "rationale": "Most concentrated in Medicare Advantage; curbs on coding-intensity-driven risk scores directly reduce per-member premium revenue, the core of its earnings.",
+    "registrant": "HUMANA INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 6324); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Medicare Advantage premiums and risk adjustment",
+    "revenue_model": "other",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-7AC3AE200E",
+    "ticker_hint": "HUM"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "the basis \u201cother\u201d names no way of earning to look for",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "Aetna insurer, PBM and pharmacy chain",
+    "direction": "negative",
+    "enrichment_id": "EC-06757ce7307fad",
+    "evidence": "s03.1: Reduced coding-intensity-driven risk scores could pressure managed-care revenue, while value-based success could reward efficient plans; the article quantifies neither.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "CVS Health",
+    "rationale": "Aetna's Medicare Advantage book exposed to lower risk-adjusted revenue if coding intensity is curtailed under outcome-based competition.",
+    "registrant": null,
+    "resolution_note": "'CVS Health' \u2192 CVS HEALTH Corp (CIK 0000064803) refused: the source describes financials business; the issuer's SEC industry is SIC 5912 Retail-Drug Stores and Proprietary Stores (consumer / healthcare) \u2014 not the same company",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "Aetna Medicare Advantage premiums",
+    "revenue_model": "other",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-7AC3AE200E",
+    "ticker_hint": "CVS"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "the basis \u201cother\u201d names no way of earning to look for",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "diversified health insurer (commercial, Medicare, Medicaid)",
+    "direction": "negative",
+    "enrichment_id": "EC-4a697020139a8e",
+    "evidence": "s03.1: Reduced coding-intensity-driven risk scores could pressure managed-care revenue, while value-based success could reward efficient plans; the article quantifies neither.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-21 (accession 0001156039-26-000071) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.01 par value",
+      "ticker": "ELV"
+     }
+    ],
+    "name": "Elevance Health",
+    "rationale": "Medicare Advantage risk-adjustment revenue would face pressure from reduced coding intensity, though diversified base cushions the impact.",
+    "registrant": "Elevance Health, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 6324); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Medicare Advantage premiums and risk adjustment",
+    "revenue_model": "other",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-7AC3AE200E",
+    "ticker_hint": "ELV"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "the basis \u201cother\u201d names no way of earning to look for",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "technology-driven Medicare Advantage insurer",
+    "direction": "positive",
+    "enrichment_id": "EC-c03f2d9607ae55",
+    "evidence": "s03.1: Reduced coding-intensity-driven risk scores could pressure managed-care revenue, while value-based success could reward efficient plans; the article quantifies neither.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0001628280-26-068247) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.001 per share",
+      "ticker": "ALHC"
+     }
+    ],
+    "name": "Alignment Healthcare",
+    "rationale": "Built on managing outcomes and total cost of care; a shift rewarding efficient value-based plans could favor its model over coding-reliant rivals.",
+    "registrant": "Alignment Healthcare, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 6324); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Medicare Advantage premiums",
+    "revenue_model": "other",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-7AC3AE200E",
+    "ticker_hint": "ALHC"
+   }
+  ],
+  "created_at": "2026-10-30T12:23:37.696336Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Centene: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-81e4f96cc38ff0",
+  "thesis_id": "TH-7AC3AE200E",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-cfc65506a485",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "healthcare",
+      "healthcare.services_payers"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:36:14.506507Z",
+     "horizon": "Unclear in the source",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-18",
+     "latest_article_date": "2026-09-18",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Healthcare services and payers: managed care, providers, pharmacies and PBMs, care delivery, and how patients pay (insurance, cash-pay, direct-to-consumer)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-7AC3AE200E",
+     "title": "CMS push to value-based, outcome-based competition reshapes managed care economics"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-6626063a6d4c7a",
+       "C-8b20483703bfcb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "CMS directors signaled support for value-based initiatives and want health plans to compete on measurable outcomes rather than coding intensity, with plans expected to be more predictable, connected, navigable and accountable."
+     },
+     {
+      "claim_ids": [
+       "C-a49f9a1de52407",
+       "C-8b20483703bfcb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article presents CMS's agenda as part of a more stable, predictable policy backdrop for the industry."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A policy shift away from coding intensity toward outcome-based competition could alter managed-care revenue and risk-adjustment economics, but the article quantifies no effect and the net direction for plans is unclear."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-6626063a6d4c7a"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "CMS wants health plans to compete on measurable health outcomes rather than coding intensity."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8b20483703bfcb"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "CMS wants managed care to succeed and restore confidence through accuracy, with more predictable, connected, navigable plans and higher accountability for results."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:36 UTC, analysed as of 2026-10-14, from a source published 2026-09-18; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-6626063a6d4c7a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "CMS wants plans to compete on measurable health outcomes rather than coding intensity that inflates risk scores and federal spending."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Reduced coding-intensity-driven risk scores could pressure managed-care revenue, while value-based success could reward efficient plans; the article quantifies neither."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6626063a6d4c7a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "CMS wants health plans to compete on measurable health outcomes rather than coding intensity.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "attributed to CMS directors"
+      ],
+      "quote": "want healthcare plans to compete on measurable health outcomes rather than coding intensity",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8b20483703bfcb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "CMS wants managed care to succeed and restore confidence through accuracy, with more predictable, connected, navigable plans and higher accountability for results.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We want managed care to succeed and to restore confidence through accuracy",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-4c9a86dfce827c",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and host of the conference"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-eb61e6263a6bf0",
+       "name_as_written": "Sean Laaman",
+       "other_securities": [],
+       "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d263b0d970556",
+       "name_as_written": "Dan Brillman",
+       "other_securities": [],
+       "quote": "Dan Brillman, Director of Medicaid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicaid, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dd505e35a8d3d5",
+       "name_as_written": "John Brooks",
+       "other_securities": [],
+       "quote": "John Brooks, Director of Medicare",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicare, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6b5294d05dda8f",
+       "name_as_written": "Medicare",
+       "other_securities": [],
+       "quote": "Medicare launched a temporary program in July",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Launched temporary weight-loss medication access program"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d2df5629373eec",
+       "name_as_written": "Erin Wright",
+       "other_securities": [],
+       "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1d93702292d40",
+       "name_as_written": "Morgan Stanley Institute",
+       "other_securities": [],
+       "quote": "a Morgan Stanley Institute keynote panel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-d634aef6dae373",
+       "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "other_securities": [],
+       "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Agency whose policy agenda was presented"
+      }
+     ],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-8b20483703bfcb"
+       ],
+       "direction": "unclear",
+       "name": "managed care",
+       "provenance": "SOURCE OPINION",
+       "quote": "We want managed care to succeed and to restore confidence through accuracy"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-6626063a6d4c7a"
+       ],
+       "direction": "unclear",
+       "name": "healthcare plans",
+       "provenance": "SOURCE OPINION",
+       "quote": "want healthcare plans to compete on measurable health outcomes rather than coding intensity"
+      }
+     ],
+     "sectors": [
+      "managed care",
+      "healthcare plans"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-8b20483703bfcb"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "CMS directors signaled their policy direction at the conference; no implementation timeline stated."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-6626063a6d4c7a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A durable regulatory shift toward value-based, outcome-based managed care competition and away from coding intensity."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 SIBLING with TH-DEB6560D7F: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs policy_regulation)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 6 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CMS rules that materially cut risk-adjustment coding revenue for plans"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Managed-care guidance citing coding-intensity policy as an earnings headwind"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-5a22571db8dc55",
+        "C-a49f9a1de52407"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A more stable U.S. policy environment is a characterization by conference speakers, not a settled fact; policy on tariffs, vaccine guidance, international pricing and affordability could re-emerge as sources of disruption to the healthcare industry. (scope: U.S. healthcare/biopharma policy environment as described by conference executives in September 2026.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether and how fast CMS implements measures curbing coding intensity, and the net revenue impact on specific listed managed-care companies."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether value-based competition helps or harms incumbent plans; the article names no companies and quantifies no effect."
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CMS agenda remains rhetorical with no implementation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Policy impact shown to be immaterial to plan economics"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map which listed managed-care insurers rely most on risk-adjustment coding intensity and assess exposure to a CMS shift toward outcome-based competition."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CMS issues concrete rules on coding intensity or value-based competition"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Managed-care companies flag the policy shift in guidance"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; premise is reported_view in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-cfc65506a485",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-6626063a6d4c7a",
+       "C-8b20483703bfcb",
+       "C-5a22571db8dc55",
+       "C-a49f9a1de52407"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-18T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "d84dcd756b76aa618b1455a983ea74e1713ed970c812a3c6941261f2ed073a89",
+   "created_at": "2026-10-21T10:36:23.901914Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; premise is reported_view in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-6626063a6d4c7a"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label unclear (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: managed care, sector: healthcare plans",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 1 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "reported_view"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; premise is reported_view in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_window",
+      "kind": "missing_data",
+      "text": "near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "premise_reported_view",
+      "kind": "held",
+      "text": "premise is reported_view in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-7AC3AE200E",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s07.2 \u2014 Withheld for a date the cited claims do not carry; the speakers' stated view restated without it. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "healthcare",
+      "healthcare.services_payers"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:36:14.506507Z",
+     "horizon": "Unclear in the source",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-18",
+     "latest_article_date": "2026-09-18",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Healthcare services and payers: managed care, providers, pharmacies and PBMs, care delivery, and how patients pay (insurance, cash-pay, direct-to-consumer)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-7AC3AE200E",
+     "title": "CMS push to value-based, outcome-based competition reshapes managed care economics"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-6626063a6d4c7a",
+       "C-8b20483703bfcb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "CMS directors signaled support for value-based initiatives and want health plans to compete on measurable outcomes rather than coding intensity, with plans expected to be more predictable, connected, navigable and accountable."
+     },
+     {
+      "claim_ids": [
+       "C-a49f9a1de52407",
+       "C-8b20483703bfcb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article presents CMS's agenda as part of a more stable, predictable policy backdrop for the industry."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A policy shift away from coding intensity toward outcome-based competition could alter managed-care revenue and risk-adjustment economics, but the article quantifies no effect and the net direction for plans is unclear."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-6626063a6d4c7a"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "CMS wants health plans to compete on measurable health outcomes rather than coding intensity."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8b20483703bfcb"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "CMS wants managed care to succeed and restore confidence through accuracy, with more predictable, connected, navigable plans and higher accountability for results."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:36 UTC, analysed as of 2026-10-14, from a source published 2026-09-18; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-6626063a6d4c7a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "CMS wants plans to compete on measurable health outcomes rather than coding intensity that inflates risk scores and federal spending."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Reduced coding-intensity-driven risk scores could pressure managed-care revenue, while value-based success could reward efficient plans; the article quantifies neither."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6626063a6d4c7a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "CMS wants health plans to compete on measurable health outcomes rather than coding intensity.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "attributed to CMS directors"
+      ],
+      "quote": "want healthcare plans to compete on measurable health outcomes rather than coding intensity",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8b20483703bfcb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "CMS wants managed care to succeed and restore confidence through accuracy, with more predictable, connected, navigable plans and higher accountability for results.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We want managed care to succeed and to restore confidence through accuracy",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-4c9a86dfce827c",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and host of the conference"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-eb61e6263a6bf0",
+       "name_as_written": "Sean Laaman",
+       "other_securities": [],
+       "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d263b0d970556",
+       "name_as_written": "Dan Brillman",
+       "other_securities": [],
+       "quote": "Dan Brillman, Director of Medicaid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicaid, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dd505e35a8d3d5",
+       "name_as_written": "John Brooks",
+       "other_securities": [],
+       "quote": "John Brooks, Director of Medicare",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicare, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6b5294d05dda8f",
+       "name_as_written": "Medicare",
+       "other_securities": [],
+       "quote": "Medicare launched a temporary program in July",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Launched temporary weight-loss medication access program"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d2df5629373eec",
+       "name_as_written": "Erin Wright",
+       "other_securities": [],
+       "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1d93702292d40",
+       "name_as_written": "Morgan Stanley Institute",
+       "other_securities": [],
+       "quote": "a Morgan Stanley Institute keynote panel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-d634aef6dae373",
+       "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "other_securities": [],
+       "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Agency whose policy agenda was presented"
+      }
+     ],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-8b20483703bfcb"
+       ],
+       "direction": "unclear",
+       "name": "managed care",
+       "provenance": "SOURCE OPINION",
+       "quote": "We want managed care to succeed and to restore confidence through accuracy"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-6626063a6d4c7a"
+       ],
+       "direction": "unclear",
+       "name": "healthcare plans",
+       "provenance": "SOURCE OPINION",
+       "quote": "want healthcare plans to compete on measurable health outcomes rather than coding intensity"
+      }
+     ],
+     "sectors": [
+      "managed care",
+      "healthcare plans"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-8b20483703bfcb"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "CMS directors signaled their policy direction at the conference; no implementation timeline stated."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-6626063a6d4c7a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A durable regulatory shift toward value-based, outcome-based managed care competition and away from coding intensity."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 SIBLING with TH-DEB6560D7F: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs policy_regulation)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 6 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CMS rules that materially cut risk-adjustment coding revenue for plans"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Managed-care guidance citing coding-intensity policy as an earnings headwind"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-5a22571db8dc55"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Conference speakers said policymakers have largely addressed tariffs, vaccine guidance, international pricing and affordability, reducing the likelihood of major disruption; that is their view, not a settled fact."
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether and how fast CMS implements measures curbing coding intensity, and the net revenue impact on specific listed managed-care companies."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether value-based competition helps or harms incumbent plans; the article names no companies and quantifies no effect."
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CMS agenda remains rhetorical with no implementation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Policy impact shown to be immaterial to plan economics"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map which listed managed-care insurers rely most on risk-adjustment coding intensity and assess exposure to a CMS shift toward outcome-based competition."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CMS issues concrete rules on coding intensity or value-based competition"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Managed-care companies flag the policy shift in guidance"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; premise is reported_view in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-cfc65506a485",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-6626063a6d4c7a",
+       "C-8b20483703bfcb",
+       "C-5a22571db8dc55",
+       "C-a49f9a1de52407"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-18T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "e72ca12f83da3a536ad3d8c7a319c73981128f2d337545780dd1496e8356a117",
+   "created_at": "2026-10-22T07:42:55.371652Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": "d84dcd756b76aa618b1455a983ea74e1713ed970c812a3c6941261f2ed073a89",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-6626063a6d4c7a"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label unclear (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: managed care, sector: healthcare plans",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 1 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "reported_view"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; premise is reported_view in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_window",
+      "kind": "missing_data",
+      "text": "near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "premise_reported_view",
+      "kind": "held",
+      "text": "premise is reported_view in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-7AC3AE200E",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 4,
+ "other_cited_evidence": [
+  "C-a49f9a1de52407",
+  "C-5a22571db8dc55"
+ ],
+ "review_carried": {},
+ "review_dismissed": {
+  "s01.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-6626063a6d4c7a",
+    "C-8b20483703bfcb"
+   ],
+   "created_at": "2026-10-22T07:43:01.624735Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s01.0: The cited spans support that CMS wants plans to compete on measurable outcomes rather than coding intensity and wants managed care to succeed through accuracy. But the specific claim that plans are 'expected to be more predictable, connected, navigable and accountable' is not in the cited spans. | 'CMS directors signaled support for value-based initiatives and want health plans to compete on measu'",
+   "finding_key": "F-5c5bb22e0c2d",
+   "finding_version": 2,
+   "line_text": "CMS directors signaled support for value-based initiatives and want health plans to compete on measurable outcomes rather than coding intensity, with plans expected to be more predictable, connected, navigable and accountable.",
+   "reason": "The source says it: 'The goal is for the plans to be more predictable, more connected, easier to navigate and with higher accountability for results.' \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-35d10ce16fcc",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074301Z-review",
+   "sentence_id": "s01.0",
+   "supersedes": [],
+   "thesis_id": "TH-7AC3AE200E",
+   "version": 2
+  },
+  "s02.1": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-8b20483703bfcb"
+   ],
+   "created_at": "2026-10-22T07:43:02.548774Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s02.1: Cited span supports wanting managed care to succeed and restore confidence through accuracy, but 'more predictable, connected, navigable plans and higher accountability for results' is not in the cited span. | 'CMS wants managed care to succeed and restore confidence through accuracy, with more predictable, co'",
+   "finding_key": "F-47a7b9a7548d",
+   "finding_version": 2,
+   "line_text": "CMS wants managed care to succeed and restore confidence through accuracy, with more predictable, connected, navigable plans and higher accountability for results.",
+   "reason": "The source says it: 'The goal is for the plans to be more predictable, more connected, easier to navigate and with higher accountability for results.' \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-61e6539780ca",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074302Z-review",
+   "sentence_id": "s02.1",
+   "supersedes": [],
+   "thesis_id": "TH-7AC3AE200E",
+   "version": 2
+  },
+  "s03.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-6626063a6d4c7a"
+   ],
+   "created_at": "2026-10-22T07:43:03.335766Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s03.0: Cited span supports competing on measurable outcomes rather than coding intensity, but the characterization that coding intensity 'inflates risk scores and federal spending' is not in the cited span. | 'CMS wants plans to compete on measurable health outcomes rather than coding intensity that inflates '",
+   "finding_key": "F-aef6deb4c3ad",
+   "finding_version": 2,
+   "line_text": "CMS wants plans to compete on measurable health outcomes rather than coding intensity that inflates risk scores and federal spending.",
+   "reason": "The source says it: coding intensity is 'the aggressive use of documentation-driven coding that can artificially inflate risk scores and federal spending'. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-3a8dbb2db1e3",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074303Z-review",
+   "sentence_id": "s03.0",
+   "supersedes": [],
+   "thesis_id": "TH-7AC3AE200E",
+   "version": 2
+  },
+  "s06.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-8b20483703bfcb"
+   ],
+   "created_at": "2026-10-22T07:43:04.066713Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s06.0: The cited span is about wanting managed care to succeed through accuracy; it does not establish that directors signaled policy direction 'at the conference' nor that 'no implementation timeline stated.' | 'CMS directors signaled their policy direction at the conference; no implementation timeline stated.'",
+   "finding_key": "F-fb2ebce453cc",
+   "finding_version": 2,
+   "line_text": "CMS directors signaled their policy direction at the conference; no implementation timeline stated.",
+   "reason": "The source says it: 'The two officials laid out the agency's policy agenda during a Morgan Stanley Institute keynote panel at the conference'. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-47cbe8ac1aff",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074304Z-review",
+   "sentence_id": "s06.0",
+   "supersedes": [],
+   "thesis_id": "TH-7AC3AE200E",
+   "version": 2
+  }
+ },
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The cited spans support that CMS wants plans to compete on measurable outcomes rather than coding intensity and wants managed care to succeed through accuracy. But the specific claim that plans are 'expected to be more predictable, connected, navigable and accountable' is not in the cited spans.",
+  "s02.1": "Cited span supports wanting managed care to succeed and restore confidence through accuracy, but 'more predictable, connected, navigable plans and higher accountability for results' is not in the cited span.",
+  "s03.0": "Cited span supports competing on measurable outcomes rather than coding intensity, but the characterization that coding intensity 'inflates risk scores and federal spending' is not in the cited span.",
+  "s06.0": "The cited span is about wanting managed care to succeed through accuracy; it does not establish that directors signaled policy direction 'at the conference' nor that 'no implementation timeline stated.'"
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Timing \u2014 no dated window inside the next 2-4 quarters in the evidence.",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Premise \u2014 reported view in the source."
+ ],
+ "withheld_sentences": {}
+}

@@ -1,0 +1,5301 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-30",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.compute_semis"
+   ],
+   "evidence_direction": "MIXED",
+   "first_detected": "2026-10-30",
+   "first_ingested_at": "2026-10-30T12:13:17.886675Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-23",
+   "latest_article_date": "2026-10-23",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+   "status": "ACTIVE",
+   "thesis_id": "TH-F2CD2F7AFC",
+   "title": "Trainium3's native PyTorch training stack broadens adoption, aiding AWS custom silicon"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-2beeceb16d5c88",
+     "C-c03e1c527e8256",
+     "C-90d00b1ee88cfb",
+     "C-9c90bd72c762ab",
+     "C-8f717dcb83688c",
+     "C-c3c6925ad0e59f",
+     "C-f41ae4588179e6",
+     "C-0d63959e780679",
+     "C-a0502962445309"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Amazon has made a major course correction toward a first-class native PyTorch (TorchNeuron) experience on Trainium3, which the publisher's hands-on testing found promising (23.89%/30.47% MFU on Qwen3-32B, 93% FlexAttention pass rate, SOTA profiler), though still far from CUDA maturity."
+   },
+   {
+    "claim_ids": [
+     "C-2beeceb16d5c88"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The publisher believes the software course correction will meaningfully broaden Trainium3 adoption into training."
+   },
+   {
+    "claim_ids": [
+     "C-5f8fcaed366329",
+     "C-ae101db5717c0b",
+     "C-865ff34f1cba43",
+     "C-0aa530b9902c5f",
+     "C-1022b1afa327c5"
+    ],
+    "provenance": "FORECAST",
+    "text": "\u27e8update 2026-10-22 \u00b7 TrendForce\u27e9 Arm-based server CPUs are forecast to grow faster than x86, rising from above 20% share in 2026 to approximately 30% in 2027, as AWS, NVIDIA, Google, Microsoft, Arm, OpenAI, Huawei and Alibaba ramp in-house and merchant Arm processors. \u27e8cited figures: forecast; approximate\u27e9"
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "new",
+     "claim_ids": [
+      "C-0aa530b9902c5f"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Arm-based CPUs expected to capture approximately 30% of server CPU market in 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "new",
+     "claim_ids": [
+      "C-1022b1afa327c5"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Arm server CPU growth in 2027 driven primarily by ramp-up in NVIDIA Vera CPU shipments \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "new",
+     "claim_ids": [
+      "C-98c8f03b45a9ca"
+     ],
+     "original_date": "2026-10-22",
+     "period": "1H 2027",
+     "provenance": "FORECAST",
+     "text": "AMD's server CPU market share expected to increase further with new product launches in 1H 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "new",
+     "claim_ids": [
+      "C-5f8fcaed366329"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2025",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Arm-based processors recently surpassed 10% of server CPU market \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "new",
+     "claim_ids": [
+      "C-ae101db5717c0b"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Arm-based CPUs' server CPU market share pushed above 20% in 2026 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "new",
+     "claim_ids": [
+      "C-865ff34f1cba43"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Google Axion CPUs in high-volume shipment; Microsoft Cobalt 100 and Arm AGI processors in mass production/shipment \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "new",
+     "claim_ids": [
+      "C-2656679f1e097f"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "Alibaba is introducing new Yitian 720/730 server CPUs, cited as a 2027 Arm-based growth driver. \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-040ac638d8dbbf"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2025",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "x86 segment accounted for nearly 90% of server CPU market in 2025 \u27e8the source states evidence against this thesis\u27e9 \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-6c2c4ac5a74a70"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "AMD's server CPU market share estimated to increase to approximately 27% in 2026 \u27e8the source states evidence against this thesis\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+   "vs_prior": "v1 held 30 claim(s); this source adds: contradictory \u00d72, new \u00d77"
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-e41f831681da1c",
+     "C-2beeceb16d5c88",
+     "C-f5d72399c08d5c"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "AWS moves Trainium to a first-class native PyTorch training experience, lowering the switching cost from CUDA for researchers."
+   },
+   {
+    "claim_ids": [
+     "C-ae101db5717c0b",
+     "C-0aa530b9902c5f",
+     "C-1022b1afa327c5"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Arm server CPU shipments grow faster than x86, lifting Arm share above 20% in 2026 and ~30% in 2027 \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Higher Trainium training adoption would improve AWS custom-silicon economics vs buying Nvidia GPUs; article gives no earnings figure."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b037",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2598a5f20f1186",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The global ML community trusts vLLM/SGLang as the default day-0 inference engine for open-source models.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "day 0",
+    "qualifiers": [],
+    "quote": "No matter the open source model, on day 0, the global ML community trusts vLLM/SGLang as the go-to engine for inference.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "0"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b044",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6047f9ce36e043",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "model size",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "worked out of the box"
+    ],
+    "quote": "we tested its gpt-oss 20B training recipe",
+    "role": "supports",
+    "unit": "billion parameters",
+    "value": 20.0,
+    "value_text": "20B"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b084",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8243f3c0bb19d0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "DMA engines per physical core",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "per physical core"
+    ],
+    "quote": "using the 16 DMA engines per physical core",
+    "role": "supports",
+    "unit": "DMA engines",
+    "value": 16.0,
+    "value_text": "16"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b053",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8f717dcb83688c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "FlexAttention pass rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Trainium3 passed 89 out of 96 test cases, a 93% pass rate.",
+    "role": "supports",
+    "unit": "%",
+    "value": 93.0,
+    "value_text": "93%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-90d00b1ee88cfb",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "MFU (eager)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "eager mode"
+    ],
+    "quote": "We measured 11,099 tokens per second in average training throughput on eager mode, at 23.89% MFU",
+    "role": "supports",
+    "unit": "%",
+    "value": 23.89,
+    "value_text": "23.89%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9c90bd72c762ab",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "training throughput (compiled)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "compiled mode"
+    ],
+    "quote": "For compiled mode, we saw 14,156 tokens per second and 30.47% MFU, a 1.28x throughput improvement over eager mode.",
+    "role": "supports",
+    "unit": "tokens per second",
+    "value": 14156.0,
+    "value_text": "14,156"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c03e1c527e8256",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "training throughput (eager)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "eager mode"
+    ],
+    "quote": "We measured 11,099 tokens per second in average training throughput on eager mode, at 23.89% MFU",
+    "role": "supports",
+    "unit": "tokens per second",
+    "value": 11099.0,
+    "value_text": "11,099"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-9fadab568080",
+    "block_id": "b060",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c43041301a37f3",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "models in test corpus",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "100k+",
+     "Hugging Face models"
+    ],
+    "quote": "AWS collected a giant list of top 100k+ Hugging Face models",
+    "role": "supports",
+    "unit": "models",
+    "value": 100000.0,
+    "value_text": "100k+"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b012",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-2656679f1e097f",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Alibaba is introducing new Yitian 720/730 server CPUs, cited as a 2027 Arm-based growth driver.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "Alibaba\u2019s introduction of new Yitian 720/730 CPUs",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "720/730"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b008",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-5f8fcaed366329",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Arm server CPU market share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [
+     "recently surpassed"
+    ],
+    "quote": "Arm-based processors, meanwhile, had only recently surpassed 10% of the market",
+    "role": "supports",
+    "unit": "%",
+    "value": 10.0,
+    "value_text": "10%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b011",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-ae101db5717c0b",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Arm server CPU market share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "above"
+    ],
+    "quote": "pushing their share of the server CPU market above 20%",
+    "role": "supports",
+    "unit": "%",
+    "value": 20.0,
+    "value_text": "above 20%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b047",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3e3ab62fd92fc1",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "time-to-first-step reduction",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "targeting",
+     "up to"
+    ],
+    "quote": "targeting up to a 2 orders of magnitude reduction in time-to-first-step for both eager and compiled modes, with minimal or no performance regression",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": "2 orders of magnitude"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b012",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-0aa530b9902c5f",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Arm server CPU market share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "TrendForce expects Arm-based CPUs to capture approximately 30% of the server CPU market in 2027",
+    "role": "catalyst",
+    "unit": "%",
+    "value": 30.0,
+    "value_text": "approximately 30%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b061",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2121bbf831157a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "AWS pass rates are not yet 100% but are climbing rapidly with agent swarms fixing remaining failures, and its internal summary shows gaps transparently.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "pass rates not at 100% yet"
+    ],
+    "quote": "AWS is climbing rapidly, with agent swarms systematically fixing the remaining failures",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b065",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2ba269efa6eecd",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Anthropic's head of performance publicly said performance analysis on Trainium is better than on Nvidia GPUs.",
+    "measured_as_of": null,
+    "origin": "Tristan Hume on Twitter",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Anthropic\u2019s head of performance (who is ex-Jane and Finch Street) has publicly said that performance analysis on Trainium is way better than performance analysis on Nvidia GPUs",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2beeceb16d5c88",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The publisher believes Amazon's software course correction will meaningfully broaden Trainium3 adoption.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Amazon has made a major course correction to its software strategy, and we believe it will meaningfully broaden Trainium3 adoption.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b050",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-69874c12e5194e",
+    "comparator": "GB300",
+    "epistemic": "actual",
+    "label": "MatMul MFU vs GB300",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Trainium3 achieved a visibly higher MFU than GB300, starting from the mid-range, where the matrix multiplication performs 1 GFLOP of computation.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b038",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7a13343dc2f9ec",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Trainium is investing in the vLLM/SGLang community with hardware access and early SGLang support on native PyTorch.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Trainium rapidly invest in the vLLM/SGLang community with hardware access and early access to Trainium on SGLang built on native PyTorch (TorchNeuron)",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b050",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b794dd6acb3e8e",
+    "comparator": "GB300 and B200",
+    "epistemic": "actual",
+    "label": "MatMul performance range",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "It was only after 100 GFLOP that GB300 and B200 started outperforming Trainium3, and Trainium3 won again after 1 TFLOP.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b064",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c3c6925ad0e59f",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The publisher judges Trainium's profiler to be industry-leading and state of the art.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Trainium\u2019s profiler is by far leading the industry and is SOTA status.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b054",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cb22de28c7009a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Custom attention variants on Trainium3 matched the numerics of Nvidia GPUs.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "we tried implementing custom attention variants not in the FlexAttention benchmark suite for Trainium3, and it matched the numerics of Nvidia GPUs",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d14265b996b7fb",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "AWS hired the lead of Google's native Torch-on-TPU effort to work on native Torch for Trainium.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "AWS has even hired the lead of Google\u2019s native Torch on TPU effort to work on native Torch for Trainium.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e41f831681da1c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "AWS Neuron team is shifting Trainium to a first-class native PyTorch training experience.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The AWS Neuron team is aggressively working to change this pitfall with the biggest shift being moving towards a first-class, native PyTorch training experience.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9fadab568080",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f5d72399c08d5c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Porting from GPU requires essentially only replacing .to('cuda') with .to('neuron'), with most PyTorch ATen operators working out of the box.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "in theory",
+     "vast majority of operators"
+    ],
+    "quote": "the only change needed is replacing .to(\u201dcuda\u201d) with .to(\u201dneuron\u201d), and in theory the vast majority of the PyTorch ATen operators will work decently well out of the box",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b011",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-865ff34f1cba43",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Google Axion CPUs in high-volume shipment; Microsoft Cobalt 100 and Arm AGI processors in mass production/shipment",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "Google\u2019s in-house Axion CPUs have entered high-volume shipments, and Microsoft\u2019s Cobalt 100 and Arm\u2019s internally developed AGI processors have also entered mass production and shipment",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b012",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-1022b1afa327c5",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "Arm server CPU growth in 2027 driven primarily by ramp-up in NVIDIA Vera CPU shipments",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [],
+    "quote": "Growth will be driven primarily by a substantial ramp-up in NVIDIA Vera CPU shipments",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b013",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-98c8f03b45a9ca",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AMD's server CPU market share expected to increase further with new product launches in 1H 2027",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "1H 2027",
+    "qualifiers": [],
+    "quote": "AMD's market share is expected to increase further as the company plans to launch new products in the first half of 2027",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-9fadab568080",
+     "cik": "0001326801",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Class A Common Stock, $0.000006 par value",
+       "ticker": "META"
+      }
+     ],
+     "mention_id": "M-3ba63dfb34b3f3",
+     "name_as_written": "Meta",
+     "other_securities": [],
+     "quote": "and also land Meta as a production TPU customer",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Named as production TPU customer and owner of PyTorch/TokenSwitch collaborating with AWS"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0ed0920f414a5a",
+     "name_as_written": "Hugging Face",
+     "other_securities": [],
+     "quote": "including Hugging Face Transformers, PEFT, diffusers, TRL, Accelerate",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Provider of PyTorch ecosystem libraries now supported on Trainium Torch"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a0bf5a286d1f74",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "The SemiAnalysis engineering team has been trying out the Trainium3 racks",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author/publisher conducting the hands-on testing"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8f78d5d324a21a",
+     "name_as_written": "PyTorch",
+     "other_securities": [],
+     "quote": "moving towards a first-class, native PyTorch training experience",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "ML framework (Meta) at the center of Trainium's software course correction"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2f2e92e2e537b7",
+     "name_as_written": "Inferact/RadixArk",
+     "other_securities": [],
+     "quote": "Google was able to successfully partner with Inferact/RadixArk",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Partner that helped bring TPUs into vLLM/SGLang ecosystem"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-67e513751e0736",
+     "name_as_written": "Codex",
+     "other_securities": [],
+     "quote": "With the help of Codex",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Coding assistant used to set up Trainium profiling"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-45444a9d23136c",
+     "name_as_written": "Claude",
+     "other_securities": [],
+     "quote": "during the beginning time of testing Trainium, Claude refuses to write Trainium kernels",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Anthropic's model, initially refused to write Trainium kernels"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-70c21c5bf4926d",
+     "name_as_written": "Twitter",
+     "other_securities": [],
+     "quote": "Source: Tristan Hume on Twitter",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "platform cited as source of Tristan Hume's public statement"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e41ce8fb77d4a5",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author and research firm producing the forecasts"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b22ac875d96a21",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "high-volume production of new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Named as introducing new Arm-based server processors in 2027"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ee154d6b5a56d3",
+     "name_as_written": "Huawei",
+     "other_securities": [],
+     "quote": "new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Named as introducing new Arm-based server processors in 2027"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2c490a5aecb2d3",
+     "name_as_written": "TSMC",
+     "other_securities": [],
+     "quote": "tight capacity at TSMC limiting AMD\u2019s ability to accommodate additional orders",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Foundry whose tight capacity limits AMD's server CPU orders"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-9fadab568080",
+     "cik": "0001018724",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value $.01 per share",
+       "ticker": "AMZN"
+      }
+     ],
+     "mention_id": "M-fc0214993abe4a",
+     "name_as_written": "Amazon",
+     "other_securities": [],
+     "quote": "Amazon has made a major course correction to its software strategy",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Owner of AWS/Trainium; subject of the article's positive software-progress thesis"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-b22f88e00d15b3",
+     "name_as_written": "AWS",
+     "other_securities": [],
+     "quote": "The AWS Neuron team is aggressively working to change this pitfall",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Amazon cloud unit developing Trainium and the Neuron/TorchNeuron stack"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": "0001045810",
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-063debfa20febd",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "which is way better than both Nvidia\u2019s and AMD\u2019s profilers",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Incumbent GPU/CUDA competitor against which Trainium is benchmarked (GB300, B200, profiler)"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": "0000002488",
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-39e0e2726ea311",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "way better than both Nvidia\u2019s and AMD\u2019s profilers",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "GPU competitor cited for weaker profiler and historical CI/parity struggles"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-df2182a89c2892",
+     "name_as_written": "Tristan Hume",
+     "other_securities": [],
+     "quote": "Source: Tristan Hume on Twitter",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Anthropic head of performance cited as a source praising the Trainium profiler"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0001973239",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-f6a2c41b469eef",
+     "name_as_written": "Arm",
+     "other_securities": [],
+     "quote": "Arm\u2019s internally developed AGI processors have also entered mass production",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Arm architecture provider and in-house AGI processor developer"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-9418e4fcf3a329",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Google\u2019s in-house Axion CPUs have entered high-volume shipments",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Deploys in-house Arm-based Axion server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0000789019",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-52d8c558dd8ba4",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "Microsoft\u2019s Cobalt 100 and Arm\u2019s internally developed AGI processors",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Deploys in-house Arm-based Cobalt 100 server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-8e791e26a218d3",
+     "name_as_written": "Alibaba",
+     "other_securities": [],
+     "quote": "Alibaba\u2019s introduction of new Yitian 720/730 CPUs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Introducing new Yitian 720/730 Arm-based server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0000050863",
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potentially harmed",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-30 (accession 0000050863-26-000191) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.001 par value",
+       "ticker": "INTC"
+      }
+     ],
+     "mention_id": "M-89a2fbdbf3efff",
+     "name_as_written": "Intel",
+     "other_securities": [],
+     "quote": "led by Intel and AMD",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potentially_harmed",
+     "role_detail": "x86 server CPU supplier facing shipment delays and declining market share"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-0638be285e3dd2",
+     "name_as_written": "vLLM",
+     "other_securities": [],
+     "quote": "vLLM/SGLang ecosystem",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Open-source inference engine ecosystem Trainium is investing in"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-469061bf9e04ba",
+     "name_as_written": "SGLang",
+     "other_securities": [],
+     "quote": "vLLM/SGLang ecosystem",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Open-source inference engine ecosystem Trainium is investing in"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "context",
+     "listings": [],
+     "mention_id": "M-3a00fb26cd2510",
+     "name_as_written": "TorchTitan",
+     "other_securities": [],
+     "quote": "TorchTitan",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Open-source PyTorch pre-training framework Trainium supports"
+    },
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-ebe107fb955137",
+     "name_as_written": "QuACK",
+     "other_securities": [],
+     "quote": "Tri Dao\u2019s QuACK intra-kernel profiler",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Nvidia-based intra-kernel profiler used as a comparator to Neuron Explorer"
+    }
+   ],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-9fadab568080",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [],
+     "mention_id": "M-d47ff340c5527c",
+     "name_as_written": "Anthropic",
+     "other_securities": [],
+     "quote": "Anthropic is running production inference and RL rollouts on Trainium2 and Trainium3.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "spending_customer",
+     "role_detail": "Key Trainium customer running production inference and RL; its performance team praises the profiler"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "claim_ids": [
+      "C-5f8fcaed366329",
+      "C-ae101db5717c0b",
+      "C-0aa530b9902c5f"
+     ],
+     "direction": "positive",
+     "name": "Arm-based processors",
+     "provenance": "FORECAST",
+     "quote": "Arm-based processors, meanwhile, had only recently surpassed 10% of the market"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "claim_ids": [
+      "C-040ac638d8dbbf"
+     ],
+     "direction": "negative",
+     "name": "x86 segment",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "The x86 segment, led by Intel and AMD"
+    }
+   ],
+   "sectors": [
+    "AI training accelerators",
+    "custom AI silicon",
+    "Semiconductors",
+    "Arm-based server CPUs",
+    "x86 server CPUs"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "First half of 2027 and 2027 production ramps [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-ae101db5717c0b",
+      "C-0aa530b9902c5f",
+      "C-1022b1afa327c5"
+     ],
+     "provenance": "FORECAST",
+     "text": "Arm share pushes above 20% in 2026, with substantial 2027 ramp led by NVIDIA Vera and multiple hyperscaler in-house processors. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-c03e1c527e8256",
+      "C-9c90bd72c762ab",
+      "C-8f717dcb83688c",
+      "C-ead98710d7a634",
+      "C-3e3ab62fd92fc1"
+     ],
+     "provenance": "FORECAST",
+     "text": "Hands-on benchmarks show decent training performance and broad library support now, with compilation-time friction being actively addressed. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-5f8fcaed366329",
+      "C-0aa530b9902c5f"
+     ],
+     "provenance": "FORECAST",
+     "text": "AI inference adoption is structurally reshaping the server CPU market away from x86 dominance toward Arm. \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-f41ae4588179e6",
+      "C-2beeceb16d5c88"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The publisher frames Trainium as a potential challenger to Nvidia's training dominance if software matures, but concedes it is nowhere near CUDA ecosystem maturity."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-ead98710d7a634",
+      "C-f41ae4588179e6",
+      "C-8f717dcb83688c"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The stack still has real friction (long compile times, missing TokenSwitch/MXFP8 support, <100% QA pass rates) and is far from CUDA maturity, so adoption gains may be slow."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 8 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    },
+    {
+     "claim_ids": [
+      "C-6c2c4ac5a74a70",
+      "C-98c8f03b45a9ca"
+     ],
+     "provenance": "FORECAST",
+     "text": "AMD is still gaining x86 share and is projected to maintain stable shipments with new 1H 2027 launches, so the x86 segment is not uniformly losing."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-ead98710d7a634"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "gpt-oss training run had compilation time of 27 minutes 17 seconds."
+    },
+    {
+     "claim_ids": [
+      "C-f41ae4588179e6"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The Trainium stack is nowhere near CUDA ecosystem maturity, but heading in the right direction."
+    },
+    {
+     "claim_ids": [
+      "C-61e0ae0df73695"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Trainium Torch will not support TorchAO MXFP8 at launch, prioritizing BF16 training first."
+    },
+    {
+     "claim_ids": [
+      "C-3709dfeba3a7e2"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "MoE combine and dispatch operations account for 60-70% of communication volume in MoE training/inference. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-d7fb27d367ba02"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "All 7 failed FlexAttention cases on Trainium3 occurred at large batch/sequence length and were due to compilation timeouts, not numerical errors."
+    },
+    {
+     "claim_ids": [
+      "C-47cf21c7bf0774"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "It took over 9 months of pushing AMD leadership to get engineers enough stable nodes to reach 93% parity on gating test groups. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-42218bf8c5f870"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "At one unnamed hardware vendor, CI numbers shown to leadership were 99.99% while actual gating parity was below 5%."
+    },
+    {
+     "claim_ids": [
+      "C-60b12eb4e73294"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Trainium does not yet support PyTorch's TokenSwitch MoE API; AWS has committed to collaborate with Meta's PyTorch team to add support."
+    },
+    {
+     "claim_ids": [
+      "C-040ac638d8dbbf"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "x86 segment accounted for nearly 90% of server CPU market in 2025 \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-6c2c4ac5a74a70"
+     ],
+     "provenance": "FORECAST",
+     "text": "AMD's server CPU market share estimated to increase to approximately 27% in 2026 \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "TorchNeuron compile-time reduction fails to ship or underdelivers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Major labs continue training exclusively on Nvidia/CUDA despite TorchNeuron"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "QA/parity pass rates stall below CUDA-grade reliability"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Arm server CPU share stalling below 20% in 2026"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "x86 suppliers retaining share into 2027"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Delays in NVIDIA Vera or hyperscaler Arm CPU ramps"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether broader Trainium training adoption translates into measurable AWS revenue, share gains or margin benefit"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether listed AMZN/NVDA valuations reflect any Trainium training share shift"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the publisher's single-model benchmarks generalize across production training workloads (association, not demonstrated commercial traction)"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the forecast share gains translate into revenue or earnings for named Arm CPU designers or hyperscalers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether in-house hyperscaler silicon benefits merchant suppliers like Arm or displaces them"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus expectations versus these forecasts"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Compile-time and QA gaps persist"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No new training customers adopt Trainium3 despite the software push"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Intel or AMD x86 roadmaps regain share"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Arm CPU ramps slip into 2028"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check whether consensus server CPU share forecasts for Arm vs x86 align with TrendForce's ~30% 2027 Arm share, and quantify revenue exposure for Arm and merchant suppliers."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "TorchNeuron ships the ~2-orders-of-magnitude compile-time reduction with named lab adoption"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "A Tier-1 lab commits to Trainium for a frontier training run"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "NVIDIA Vera CPU volume guidance confirms substantial 2027 ramp"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Hyperscalers disclose larger in-house Arm CPU deployment"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-9fadab568080",
+    "authors": [
+     "Kimbo Chen",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-0d63959e780679",
+     "C-2121bbf831157a",
+     "C-2598a5f20f1186",
+     "C-2ba269efa6eecd",
+     "C-2beeceb16d5c88",
+     "C-3709dfeba3a7e2",
+     "C-3e3ab62fd92fc1",
+     "C-42218bf8c5f870",
+     "C-47cf21c7bf0774",
+     "C-6047f9ce36e043",
+     "C-60b12eb4e73294",
+     "C-61e0ae0df73695",
+     "C-69874c12e5194e",
+     "C-7a13343dc2f9ec",
+     "C-8243f3c0bb19d0",
+     "C-8f717dcb83688c",
+     "C-90d00b1ee88cfb",
+     "C-9c90bd72c762ab",
+     "C-a0502962445309",
+     "C-b794dd6acb3e8e",
+     "C-c03e1c527e8256",
+     "C-c3c6925ad0e59f",
+     "C-c43041301a37f3",
+     "C-cb22de28c7009a",
+     "C-d14265b996b7fb",
+     "C-d7fb27d367ba02",
+     "C-e41f831681da1c",
+     "C-ead98710d7a634",
+     "C-f41ae4588179e6",
+     "C-f5d72399c08d5c"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-23T19:06:44Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "Amazon\u2019s Trainium Takes a Strike at the Training King",
+    "upstream_origins": [
+     "Tristan Hume on Twitter",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/amazons-trainium-takes-a-strike-at",
+    "version_dates": []
+   },
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-a7f0f66d2b3b",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-0aa530b9902c5f",
+     "C-1022b1afa327c5",
+     "C-98c8f03b45a9ca",
+     "C-5f8fcaed366329",
+     "C-ae101db5717c0b",
+     "C-865ff34f1cba43",
+     "C-2656679f1e097f",
+     "C-040ac638d8dbbf",
+     "C-6c2c4ac5a74a70"
+    ],
+    "contribution": "contradictory",
+    "published_at": "2026-10-22T14:28:30+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Server CPU Shipments Projected to Grow Over 40% YoY in 2027, with Arm-Based Products Continuing to Gain Market Share, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261022-13279.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-11 (0001835632-26-000011)",
+    "business": "custom ASIC and networking silicon designer",
+    "direction": "positive",
+    "enrichment_id": "EC-02c353678f22e2",
+    "evidence": "s03.2: Higher Trainium training adoption would improve AWS custom-silicon economics vs buying Nvidia GPUs; article gives no earnings figure.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-28 (accession 0001835632-26-000025) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.002 per share",
+      "ticker": "MRVL"
+     }
+    ],
+    "name": "Marvell Technology",
+    "rationale": "Co-designs AWS Trainium custom silicon; broader Trainium training adoption lifts its custom ASIC design and volume revenue.",
+    "registrant": "Marvell Technology, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "custom compute ASICs for cloud customers",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-F2CD2F7AFC",
+    "ticker_hint": "MRVL"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "ASIC design services for AI accelerators",
+    "direction": "positive",
+    "enrichment_id": "EC-a2d62c543aa4e4",
+    "evidence": "s03.2: Higher Trainium training adoption would improve AWS custom-silicon economics vs buying Nvidia GPUs; article gives no earnings figure.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Alchip Technologies",
+    "rationale": "Design partner for AWS Trainium; higher Trainium volumes raise its ASIC design and production revenue.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "custom AI accelerator ASIC design and turnkey",
+    "revenue_model": "services",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-F2CD2F7AFC",
+    "ticker_hint": "ALCPY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-20 (0001736297-26-000010)",
+    "business": "connectivity silicon for AI servers",
+    "direction": "positive",
+    "enrichment_id": "EC-59d0e710155dc2",
+    "evidence": "s03.2: Higher Trainium training adoption would improve AWS custom-silicon economics vs buying Nvidia GPUs; article gives no earnings figure.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-05 (accession 0001736297-26-000035) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.0001 per share",
+      "ticker": "ALAB"
+     }
+    ],
+    "name": "Astera Labs",
+    "rationale": "Supplies connectivity chips used in custom accelerator racks; more Trainium deployment lifts its interconnect component sales.",
+    "registrant": "Astera Labs, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "PCIe/CXL and interconnect connectivity chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-F2CD2F7AFC",
+    "ticker_hint": "ALAB"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "cloud infrastructure using Arm server CPUs",
+    "direction": "positive",
+    "enrichment_id": "EC-66d60e9faddf3d",
+    "evidence": "s03.1: Arm server CPU shipments grow faster than x86, lifting Arm share above 20% in 2026 and ~30% in 2027",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Ampere Computing / Oracle",
+    "rationale": "Oracle Cloud offers Ampere Arm-based CPU instances; Arm server share growth supports its Arm compute offerings, though small part of revenue.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "Arm-based cloud compute instances",
+    "revenue_model": "usage_based",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-F2CD2F7AFC",
+    "ticker_hint": "ORCL"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-31 (0001375365-26-000022)",
+    "business": "AI servers built around merchant GPUs",
+    "direction": "negative",
+    "enrichment_id": "EC-72fbb858d0e201",
+    "evidence": "s03.2: Higher Trainium training adoption would improve AWS custom-silicon economics vs buying Nvidia GPUs; article gives no earnings figure.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-08-31 (accession 0001375365-26-000022) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "SMCI"
+     }
+    ],
+    "name": "Super Micro Computer",
+    "rationale": "Revenue skews to Nvidia GPU systems; AWS shifting training to in-house Trainium reduces merchant GPU server demand it fulfils.",
+    "registrant": "Super Micro Computer, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3571); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "GPU-based AI server systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-F2CD2F7AFC",
+    "ticker_hint": "SMCI"
+   }
+  ],
+  "created_at": "2026-10-30T12:25:36.018710Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Micron Technology: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-7c19208ca6355b",
+  "thesis_id": "TH-F2CD2F7AFC",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-30",
+   "change_summary": "Initial record \u2014 created from A-9fadab568080",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-30",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.compute_semis"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-30",
+     "first_ingested_at": "2026-10-30T12:13:17.886675Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-23",
+     "latest_article_date": "2026-10-23",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+     "status": "ACTIVE",
+     "thesis_id": "TH-F2CD2F7AFC",
+     "title": "Trainium3's native PyTorch training stack broadens adoption, aiding AWS custom silicon"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-2beeceb16d5c88",
+       "C-c03e1c527e8256",
+       "C-90d00b1ee88cfb",
+       "C-9c90bd72c762ab",
+       "C-8f717dcb83688c",
+       "C-c3c6925ad0e59f",
+       "C-f41ae4588179e6",
+       "C-0d63959e780679",
+       "C-a0502962445309"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Amazon has made a major course correction toward a first-class native PyTorch (TorchNeuron) experience on Trainium3, which the publisher's hands-on testing found promising (23.89%/30.47% MFU on Qwen3-32B, 93% FlexAttention pass rate, SOTA profiler), though still far from CUDA maturity."
+     },
+     {
+      "claim_ids": [
+       "C-2beeceb16d5c88"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The publisher believes the software course correction will meaningfully broaden Trainium3 adoption into training."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If TorchNeuron closes the usability gap with CUDA for research training (not just inference), Trainium could win more training workloads from Nvidia GPUs, supporting Amazon/AWS custom-silicon economics; but the article quantifies no revenue, share or earnings effect."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-9fadab568080",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c03e1c527e8256",
+        "C-a0502962445309"
+       ],
+       "original_date": "2026-10-23",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Measured 11,099 tokens/sec average training throughput in eager mode at 23.89% MFU (Trainium2)."
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9c90bd72c762ab"
+       ],
+       "original_date": "2026-10-23",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Compiled mode gave 14,156 tokens/sec at 30.47% MFU, a 1.28x throughput improvement over eager."
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8f717dcb83688c",
+        "C-d7fb27d367ba02"
+       ],
+       "original_date": "2026-10-23",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Trainium3 passed 89 of 96 FlexAttention test cases (93% pass rate)."
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-90d00b1ee88cfb",
+        "C-a0502962445309"
+       ],
+       "original_date": "2026-10-23",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Eager-mode MFU measured at 23.89% (Trainium2)."
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-6047f9ce36e043"
+       ],
+       "original_date": "2026-10-23",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "SemiAnalysis tested Neuron's gpt-oss 20B training recipe, which worked out of the box."
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7a13343dc2f9ec"
+       ],
+       "original_date": "2026-10-23",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Trainium is investing in the vLLM/SGLang community with hardware access and early SGLang support on native PyTorch."
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 19 pieces of evidence from A-9fadab568080 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-30 12:13 UTC, analysed as of 2026-10-30, from a source published 2026-10-23; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-e41f831681da1c",
+       "C-2beeceb16d5c88",
+       "C-f5d72399c08d5c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AWS moves Trainium to a first-class native PyTorch training experience, lowering the switching cost from CUDA for researchers."
+     },
+     {
+      "claim_ids": [
+       "C-2beeceb16d5c88"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Broader training adoption would increase Trainium chip usage/volumes relative to GPUs; the article does not quantify this."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher Trainium training adoption would improve AWS custom-silicon economics vs buying Nvidia GPUs; article gives no earnings figure."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b037",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2598a5f20f1186",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The global ML community trusts vLLM/SGLang as the default day-0 inference engine for open-source models.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "day 0",
+      "qualifiers": [],
+      "quote": "No matter the open source model, on day 0, the global ML community trusts vLLM/SGLang as the go-to engine for inference.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "0"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b044",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6047f9ce36e043",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "model size",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "worked out of the box"
+      ],
+      "quote": "we tested its gpt-oss 20B training recipe",
+      "role": "supports",
+      "unit": "billion parameters",
+      "value": 20.0,
+      "value_text": "20B"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b084",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8243f3c0bb19d0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "DMA engines per physical core",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "per physical core"
+      ],
+      "quote": "using the 16 DMA engines per physical core",
+      "role": "supports",
+      "unit": "DMA engines",
+      "value": 16.0,
+      "value_text": "16"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b053",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8f717dcb83688c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "FlexAttention pass rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Trainium3 passed 89 out of 96 test cases, a 93% pass rate.",
+      "role": "supports",
+      "unit": "%",
+      "value": 93.0,
+      "value_text": "93%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-90d00b1ee88cfb",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "MFU (eager)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "eager mode"
+      ],
+      "quote": "We measured 11,099 tokens per second in average training throughput on eager mode, at 23.89% MFU",
+      "role": "supports",
+      "unit": "%",
+      "value": 23.89,
+      "value_text": "23.89%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9c90bd72c762ab",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "training throughput (compiled)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "compiled mode"
+      ],
+      "quote": "For compiled mode, we saw 14,156 tokens per second and 30.47% MFU, a 1.28x throughput improvement over eager mode.",
+      "role": "supports",
+      "unit": "tokens per second",
+      "value": 14156.0,
+      "value_text": "14,156"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c03e1c527e8256",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "training throughput (eager)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "eager mode"
+      ],
+      "quote": "We measured 11,099 tokens per second in average training throughput on eager mode, at 23.89% MFU",
+      "role": "supports",
+      "unit": "tokens per second",
+      "value": 11099.0,
+      "value_text": "11,099"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-9fadab568080",
+      "block_id": "b060",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c43041301a37f3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "models in test corpus",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "100k+",
+       "Hugging Face models"
+      ],
+      "quote": "AWS collected a giant list of top 100k+ Hugging Face models",
+      "role": "supports",
+      "unit": "models",
+      "value": 100000.0,
+      "value_text": "100k+"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3e3ab62fd92fc1",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "time-to-first-step reduction",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "targeting",
+       "up to"
+      ],
+      "quote": "targeting up to a 2 orders of magnitude reduction in time-to-first-step for both eager and compiled modes, with minimal or no performance regression",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "2 orders of magnitude"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b061",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2121bbf831157a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AWS pass rates are not yet 100% but are climbing rapidly with agent swarms fixing remaining failures, and its internal summary shows gaps transparently.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "pass rates not at 100% yet"
+      ],
+      "quote": "AWS is climbing rapidly, with agent swarms systematically fixing the remaining failures",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b065",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2ba269efa6eecd",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Anthropic's head of performance publicly said performance analysis on Trainium is better than on Nvidia GPUs.",
+      "measured_as_of": null,
+      "origin": "Tristan Hume on Twitter",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Anthropic\u2019s head of performance (who is ex-Jane and Finch Street) has publicly said that performance analysis on Trainium is way better than performance analysis on Nvidia GPUs",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2beeceb16d5c88",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The publisher believes Amazon's software course correction will meaningfully broaden Trainium3 adoption.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Amazon has made a major course correction to its software strategy, and we believe it will meaningfully broaden Trainium3 adoption.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b050",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-69874c12e5194e",
+      "comparator": "GB300",
+      "epistemic": "actual",
+      "label": "MatMul MFU vs GB300",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Trainium3 achieved a visibly higher MFU than GB300, starting from the mid-range, where the matrix multiplication performs 1 GFLOP of computation.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b038",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7a13343dc2f9ec",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Trainium is investing in the vLLM/SGLang community with hardware access and early SGLang support on native PyTorch.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Trainium rapidly invest in the vLLM/SGLang community with hardware access and early access to Trainium on SGLang built on native PyTorch (TorchNeuron)",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b050",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b794dd6acb3e8e",
+      "comparator": "GB300 and B200",
+      "epistemic": "actual",
+      "label": "MatMul performance range",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "It was only after 100 GFLOP that GB300 and B200 started outperforming Trainium3, and Trainium3 won again after 1 TFLOP.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b064",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c3c6925ad0e59f",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The publisher judges Trainium's profiler to be industry-leading and state of the art.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Trainium\u2019s profiler is by far leading the industry and is SOTA status.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b054",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cb22de28c7009a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Custom attention variants on Trainium3 matched the numerics of Nvidia GPUs.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "we tried implementing custom attention variants not in the FlexAttention benchmark suite for Trainium3, and it matched the numerics of Nvidia GPUs",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d14265b996b7fb",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "AWS hired the lead of Google's native Torch-on-TPU effort to work on native Torch for Trainium.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "AWS has even hired the lead of Google\u2019s native Torch on TPU effort to work on native Torch for Trainium.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e41f831681da1c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "AWS Neuron team is shifting Trainium to a first-class native PyTorch training experience.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The AWS Neuron team is aggressively working to change this pitfall with the biggest shift being moving towards a first-class, native PyTorch training experience.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f5d72399c08d5c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Porting from GPU requires essentially only replacing .to('cuda') with .to('neuron'), with most PyTorch ATen operators working out of the box.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "in theory",
+       "vast majority of operators"
+      ],
+      "quote": "the only change needed is replacing .to(\u201dcuda\u201d) with .to(\u201dneuron\u201d), and in theory the vast majority of the PyTorch ATen operators will work decently well out of the box",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-c71ada173837fd",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "AWS has even hired the lead of Google\u2019s native Torch on TPU effort",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "comparator",
+       "role_detail": "TPU/TorchTPU effort cited as model AWS is emulating; lost its native Torch lead to AWS"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": "0001326801",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-3ba63dfb34b3f3",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "and also land Meta as a production TPU customer",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Named as production TPU customer and owner of PyTorch/TokenSwitch collaborating with AWS"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0ed0920f414a5a",
+       "name_as_written": "Hugging Face",
+       "other_securities": [],
+       "quote": "including Hugging Face Transformers, PEFT, diffusers, TRL, Accelerate",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Provider of PyTorch ecosystem libraries now supported on Trainium Torch"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a0bf5a286d1f74",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "The SemiAnalysis engineering team has been trying out the Trainium3 racks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author/publisher conducting the hands-on testing"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8f78d5d324a21a",
+       "name_as_written": "PyTorch",
+       "other_securities": [],
+       "quote": "moving towards a first-class, native PyTorch training experience",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "ML framework (Meta) at the center of Trainium's software course correction"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2f2e92e2e537b7",
+       "name_as_written": "Inferact/RadixArk",
+       "other_securities": [],
+       "quote": "Google was able to successfully partner with Inferact/RadixArk",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Partner that helped bring TPUs into vLLM/SGLang ecosystem"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-67e513751e0736",
+       "name_as_written": "Codex",
+       "other_securities": [],
+       "quote": "With the help of Codex",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Coding assistant used to set up Trainium profiling"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-45444a9d23136c",
+       "name_as_written": "Claude",
+       "other_securities": [],
+       "quote": "during the beginning time of testing Trainium, Claude refuses to write Trainium kernels",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Anthropic's model, initially refused to write Trainium kernels"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-70c21c5bf4926d",
+       "name_as_written": "Twitter",
+       "other_securities": [],
+       "quote": "Source: Tristan Hume on Twitter",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "platform cited as source of Tristan Hume's public statement"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-9fadab568080",
+       "cik": "0001018724",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-fc0214993abe4a",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "Amazon has made a major course correction to its software strategy",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Owner of AWS/Trainium; subject of the article's positive software-progress thesis"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-b22f88e00d15b3",
+       "name_as_written": "AWS",
+       "other_securities": [],
+       "quote": "The AWS Neuron team is aggressively working to change this pitfall",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Amazon cloud unit developing Trainium and the Neuron/TorchNeuron stack"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": "0001045810",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-063debfa20febd",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "which is way better than both Nvidia\u2019s and AMD\u2019s profilers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Incumbent GPU/CUDA competitor against which Trainium is benchmarked (GB300, B200, profiler)"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": "0000002488",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-39e0e2726ea311",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "way better than both Nvidia\u2019s and AMD\u2019s profilers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "GPU competitor cited for weaker profiler and historical CI/parity struggles"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-df2182a89c2892",
+       "name_as_written": "Tristan Hume",
+       "other_securities": [],
+       "quote": "Source: Tristan Hume on Twitter",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Anthropic head of performance cited as a source praising the Trainium profiler"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-0638be285e3dd2",
+       "name_as_written": "vLLM",
+       "other_securities": [],
+       "quote": "vLLM/SGLang ecosystem",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Open-source inference engine ecosystem Trainium is investing in"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-469061bf9e04ba",
+       "name_as_written": "SGLang",
+       "other_securities": [],
+       "quote": "vLLM/SGLang ecosystem",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Open-source inference engine ecosystem Trainium is investing in"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-3a00fb26cd2510",
+       "name_as_written": "TorchTitan",
+       "other_securities": [],
+       "quote": "TorchTitan",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Open-source PyTorch pre-training framework Trainium supports"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-ebe107fb955137",
+       "name_as_written": "QuACK",
+       "other_securities": [],
+       "quote": "Tri Dao\u2019s QuACK intra-kernel profiler",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Nvidia-based intra-kernel profiler used as a comparator to Neuron Explorer"
+      }
+     ],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-d47ff340c5527c",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "Anthropic is running production inference and RL rollouts on Trainium2 and Trainium3.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "Key Trainium customer running production inference and RL; its performance team praises the profiler"
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "AI training accelerators",
+      "custom AI silicon"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Upcoming TorchNeuron releases targeting up to 2 orders of magnitude time-to-first-step reduction [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-c03e1c527e8256",
+        "C-9c90bd72c762ab",
+        "C-8f717dcb83688c",
+        "C-ead98710d7a634",
+        "C-3e3ab62fd92fc1"
+       ],
+       "provenance": "FORECAST",
+       "text": "Hands-on benchmarks show decent training performance and broad library support now, with compilation-time friction being actively addressed. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-f41ae4588179e6",
+        "C-2beeceb16d5c88"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The publisher frames Trainium as a potential challenger to Nvidia's training dominance if software matures, but concedes it is nowhere near CUDA ecosystem maturity."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-ead98710d7a634",
+        "C-f41ae4588179e6",
+        "C-8f717dcb83688c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The stack still has real friction (long compile times, missing TokenSwitch/MXFP8 support, <100% QA pass rates) and is far from CUDA maturity, so adoption gains may be slow."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 8 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-ead98710d7a634"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "gpt-oss training run had compilation time of 27 minutes 17 seconds."
+      },
+      {
+       "claim_ids": [
+        "C-f41ae4588179e6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The Trainium stack is nowhere near CUDA ecosystem maturity, but heading in the right direction."
+      },
+      {
+       "claim_ids": [
+        "C-61e0ae0df73695"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Trainium Torch will not support TorchAO MXFP8 at launch, prioritizing BF16 training first."
+      },
+      {
+       "claim_ids": [
+        "C-3709dfeba3a7e2"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "MoE combine and dispatch operations account for 60-70% of communication volume in MoE training/inference. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-d7fb27d367ba02"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "All 7 failed FlexAttention cases on Trainium3 occurred at large batch/sequence length and were due to compilation timeouts, not numerical errors."
+      },
+      {
+       "claim_ids": [
+        "C-47cf21c7bf0774"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "It took over 9 months of pushing AMD leadership to get engineers enough stable nodes to reach 93% parity on gating test groups. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-42218bf8c5f870"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "At one unnamed hardware vendor, CI numbers shown to leadership were 99.99% while actual gating parity was below 5%."
+      },
+      {
+       "claim_ids": [
+        "C-60b12eb4e73294"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Trainium does not yet support PyTorch's TokenSwitch MoE API; AWS has committed to collaborate with Meta's PyTorch team to add support."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "TorchNeuron compile-time reduction fails to ship or underdelivers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Major labs continue training exclusively on Nvidia/CUDA despite TorchNeuron"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "QA/parity pass rates stall below CUDA-grade reliability"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether broader Trainium training adoption translates into measurable AWS revenue, share gains or margin benefit"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether listed AMZN/NVDA valuations reflect any Trainium training share shift"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the publisher's single-model benchmarks generalize across production training workloads (association, not demonstrated commercial traction)"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Compile-time and QA gaps persist"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No new training customers adopt Trainium3 despite the software push"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether AWS/Amazon disclosures or supply-chain data show rising Trainium training wafer volumes and named lab commitments, and assess Nvidia's exposure to training share loss."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "TorchNeuron ships the ~2-orders-of-magnitude compile-time reduction with named lab adoption"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A Tier-1 lab commits to Trainium for a frontier training run"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-9fadab568080",
+      "authors": [
+       "Kimbo Chen",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-3e3ab62fd92fc1",
+       "C-2beeceb16d5c88",
+       "C-d14265b996b7fb",
+       "C-c03e1c527e8256",
+       "C-90d00b1ee88cfb",
+       "C-9c90bd72c762ab",
+       "C-8f717dcb83688c",
+       "C-69874c12e5194e",
+       "C-b794dd6acb3e8e",
+       "C-c3c6925ad0e59f",
+       "C-e41f831681da1c",
+       "C-2598a5f20f1186",
+       "C-6047f9ce36e043",
+       "C-c43041301a37f3",
+       "C-f5d72399c08d5c",
+       "C-7a13343dc2f9ec",
+       "C-cb22de28c7009a",
+       "C-2121bbf831157a",
+       "C-8243f3c0bb19d0",
+       "C-2ba269efa6eecd",
+       "C-ead98710d7a634",
+       "C-f41ae4588179e6",
+       "C-61e0ae0df73695",
+       "C-3709dfeba3a7e2",
+       "C-d7fb27d367ba02",
+       "C-47cf21c7bf0774",
+       "C-42218bf8c5f870",
+       "C-60b12eb4e73294"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-23T19:06:44Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Amazon\u2019s Trainium Takes a Strike at the Training King",
+      "upstream_origins": [
+       "Tristan Hume on Twitter",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/amazons-trainium-takes-a-strike-at",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "fc2b28df356590821bbe447c674d1fd5743279a951977776b17718b2e1800132",
+   "created_at": "2026-10-30T12:13:54.305951Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-d14265b996b7fb",
+       "C-c03e1c527e8256",
+       "C-90d00b1ee88cfb",
+       "C-9c90bd72c762ab",
+       "C-8f717dcb83688c",
+       "C-69874c12e5194e",
+       "C-b794dd6acb3e8e",
+       "C-e41f831681da1c",
+       "C-6047f9ce36e043",
+       "C-c43041301a37f3",
+       "C-7a13343dc2f9ec",
+       "C-cb22de28c7009a",
+       "C-8243f3c0bb19d0",
+       "C-3e3ab62fd92fc1"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "14"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-c414df565bed",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 2 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-c03e1c527e8256",
+       "C-90d00b1ee88cfb",
+       "C-9c90bd72c762ab",
+       "C-8f717dcb83688c",
+       "C-6047f9ce36e043",
+       "C-7a13343dc2f9ec"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "6 claim(s) inside the next 2-4 quarters (C-c03e1c527e8256: measured 2026-10-23 (7 days before the as-of); C-90d00b1ee88cfb: measured 2026-10-23 (7 days before the as-of); C-9c90bd72c762ab: measured 2026-10-23 (7 days before the as-of); C-8f717dcb83688c: measured 2026-10-23 (7 days before the as-of); showing 4 of 6); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Amazon (AMZN)",
+      "value": "1 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-3e3ab62fd92fc1",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-ead98710d7a634",
+       "C-f41ae4588179e6",
+       "C-61e0ae0df73695",
+       "C-3709dfeba3a7e2",
+       "C-d7fb27d367ba02",
+       "C-47cf21c7bf0774",
+       "C-42218bf8c5f870",
+       "C-60b12eb4e73294"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (8 counter-claims in total); 7 distinct counter-observation(s) from the supporting sources vs 14 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "7"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261030T115837Z-scan",
+   "thesis_id": "TH-F2CD2F7AFC",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-30",
+   "change_summary": "A-a7f0f66d2b3b: contradictory \u00d72, new \u00d77",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-30",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.compute_semis"
+     ],
+     "evidence_direction": "MIXED",
+     "first_detected": "2026-10-30",
+     "first_ingested_at": "2026-10-30T12:13:17.886675Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-23",
+     "latest_article_date": "2026-10-23",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+     "status": "ACTIVE",
+     "thesis_id": "TH-F2CD2F7AFC",
+     "title": "Trainium3's native PyTorch training stack broadens adoption, aiding AWS custom silicon"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-2beeceb16d5c88",
+       "C-c03e1c527e8256",
+       "C-90d00b1ee88cfb",
+       "C-9c90bd72c762ab",
+       "C-8f717dcb83688c",
+       "C-c3c6925ad0e59f",
+       "C-f41ae4588179e6",
+       "C-0d63959e780679",
+       "C-a0502962445309"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Amazon has made a major course correction toward a first-class native PyTorch (TorchNeuron) experience on Trainium3, which the publisher's hands-on testing found promising (23.89%/30.47% MFU on Qwen3-32B, 93% FlexAttention pass rate, SOTA profiler), though still far from CUDA maturity."
+     },
+     {
+      "claim_ids": [
+       "C-2beeceb16d5c88"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The publisher believes the software course correction will meaningfully broaden Trainium3 adoption into training."
+     },
+     {
+      "claim_ids": [
+       "C-5f8fcaed366329",
+       "C-ae101db5717c0b",
+       "C-865ff34f1cba43",
+       "C-0aa530b9902c5f",
+       "C-1022b1afa327c5"
+      ],
+      "provenance": "FORECAST",
+      "text": "\u27e8update 2026-10-22 \u00b7 TrendForce\u27e9 Arm-based server CPUs are forecast to grow faster than x86, rising from above 20% share in 2026 to approximately 30% in 2027, as AWS, NVIDIA, Google, Microsoft, Arm, OpenAI, Huawei and Alibaba ramp in-house and merchant Arm processors. \u27e8cited figures: forecast; approximate\u27e9"
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "new",
+       "claim_ids": [
+        "C-0aa530b9902c5f"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Arm-based CPUs expected to capture approximately 30% of server CPU market in 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "new",
+       "claim_ids": [
+        "C-1022b1afa327c5"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Arm server CPU growth in 2027 driven primarily by ramp-up in NVIDIA Vera CPU shipments \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "new",
+       "claim_ids": [
+        "C-98c8f03b45a9ca"
+       ],
+       "original_date": "2026-10-22",
+       "period": "1H 2027",
+       "provenance": "FORECAST",
+       "text": "AMD's server CPU market share expected to increase further with new product launches in 1H 2027 \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "new",
+       "claim_ids": [
+        "C-5f8fcaed366329"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Arm-based processors recently surpassed 10% of server CPU market \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "new",
+       "claim_ids": [
+        "C-ae101db5717c0b"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Arm-based CPUs' server CPU market share pushed above 20% in 2026 \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "new",
+       "claim_ids": [
+        "C-865ff34f1cba43"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Google Axion CPUs in high-volume shipment; Microsoft Cobalt 100 and Arm AGI processors in mass production/shipment \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "new",
+       "claim_ids": [
+        "C-2656679f1e097f"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "Alibaba is introducing new Yitian 720/730 server CPUs, cited as a 2027 Arm-based growth driver. \u27e8new evidence from an origin the thesis did not yet hold\u27e9 \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-040ac638d8dbbf"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "x86 segment accounted for nearly 90% of server CPU market in 2025 \u27e8the source states evidence against this thesis\u27e9 \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-6c2c4ac5a74a70"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "AMD's server CPU market share estimated to increase to approximately 27% in 2026 \u27e8the source states evidence against this thesis\u27e9 \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+     "vs_prior": "v1 held 30 claim(s); this source adds: contradictory \u00d72, new \u00d77"
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-e41f831681da1c",
+       "C-2beeceb16d5c88",
+       "C-f5d72399c08d5c"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AWS moves Trainium to a first-class native PyTorch training experience, lowering the switching cost from CUDA for researchers."
+     },
+     {
+      "claim_ids": [
+       "C-ae101db5717c0b",
+       "C-0aa530b9902c5f",
+       "C-1022b1afa327c5"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Arm server CPU shipments grow faster than x86, lifting Arm share above 20% in 2026 and ~30% in 2027 \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Higher Trainium training adoption would improve AWS custom-silicon economics vs buying Nvidia GPUs; article gives no earnings figure."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b037",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2598a5f20f1186",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The global ML community trusts vLLM/SGLang as the default day-0 inference engine for open-source models.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "day 0",
+      "qualifiers": [],
+      "quote": "No matter the open source model, on day 0, the global ML community trusts vLLM/SGLang as the go-to engine for inference.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "0"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b044",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6047f9ce36e043",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "model size",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "worked out of the box"
+      ],
+      "quote": "we tested its gpt-oss 20B training recipe",
+      "role": "supports",
+      "unit": "billion parameters",
+      "value": 20.0,
+      "value_text": "20B"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b084",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8243f3c0bb19d0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "DMA engines per physical core",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "per physical core"
+      ],
+      "quote": "using the 16 DMA engines per physical core",
+      "role": "supports",
+      "unit": "DMA engines",
+      "value": 16.0,
+      "value_text": "16"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b053",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8f717dcb83688c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "FlexAttention pass rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Trainium3 passed 89 out of 96 test cases, a 93% pass rate.",
+      "role": "supports",
+      "unit": "%",
+      "value": 93.0,
+      "value_text": "93%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-90d00b1ee88cfb",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "MFU (eager)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "eager mode"
+      ],
+      "quote": "We measured 11,099 tokens per second in average training throughput on eager mode, at 23.89% MFU",
+      "role": "supports",
+      "unit": "%",
+      "value": 23.89,
+      "value_text": "23.89%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9c90bd72c762ab",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "training throughput (compiled)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "compiled mode"
+      ],
+      "quote": "For compiled mode, we saw 14,156 tokens per second and 30.47% MFU, a 1.28x throughput improvement over eager mode.",
+      "role": "supports",
+      "unit": "tokens per second",
+      "value": 14156.0,
+      "value_text": "14,156"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c03e1c527e8256",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "training throughput (eager)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "eager mode"
+      ],
+      "quote": "We measured 11,099 tokens per second in average training throughput on eager mode, at 23.89% MFU",
+      "role": "supports",
+      "unit": "tokens per second",
+      "value": 11099.0,
+      "value_text": "11,099"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-9fadab568080",
+      "block_id": "b060",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c43041301a37f3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "models in test corpus",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "100k+",
+       "Hugging Face models"
+      ],
+      "quote": "AWS collected a giant list of top 100k+ Hugging Face models",
+      "role": "supports",
+      "unit": "models",
+      "value": 100000.0,
+      "value_text": "100k+"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b012",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-2656679f1e097f",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Alibaba is introducing new Yitian 720/730 server CPUs, cited as a 2027 Arm-based growth driver.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "Alibaba\u2019s introduction of new Yitian 720/730 CPUs",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "720/730"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b008",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-5f8fcaed366329",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Arm server CPU market share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [
+       "recently surpassed"
+      ],
+      "quote": "Arm-based processors, meanwhile, had only recently surpassed 10% of the market",
+      "role": "supports",
+      "unit": "%",
+      "value": 10.0,
+      "value_text": "10%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b011",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-ae101db5717c0b",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Arm server CPU market share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "above"
+      ],
+      "quote": "pushing their share of the server CPU market above 20%",
+      "role": "supports",
+      "unit": "%",
+      "value": 20.0,
+      "value_text": "above 20%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3e3ab62fd92fc1",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "time-to-first-step reduction",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "targeting",
+       "up to"
+      ],
+      "quote": "targeting up to a 2 orders of magnitude reduction in time-to-first-step for both eager and compiled modes, with minimal or no performance regression",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "2 orders of magnitude"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b012",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-0aa530b9902c5f",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Arm server CPU market share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "TrendForce expects Arm-based CPUs to capture approximately 30% of the server CPU market in 2027",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 30.0,
+      "value_text": "approximately 30%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b061",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2121bbf831157a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "AWS pass rates are not yet 100% but are climbing rapidly with agent swarms fixing remaining failures, and its internal summary shows gaps transparently.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "pass rates not at 100% yet"
+      ],
+      "quote": "AWS is climbing rapidly, with agent swarms systematically fixing the remaining failures",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b065",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2ba269efa6eecd",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Anthropic's head of performance publicly said performance analysis on Trainium is better than on Nvidia GPUs.",
+      "measured_as_of": null,
+      "origin": "Tristan Hume on Twitter",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Anthropic\u2019s head of performance (who is ex-Jane and Finch Street) has publicly said that performance analysis on Trainium is way better than performance analysis on Nvidia GPUs",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2beeceb16d5c88",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The publisher believes Amazon's software course correction will meaningfully broaden Trainium3 adoption.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Amazon has made a major course correction to its software strategy, and we believe it will meaningfully broaden Trainium3 adoption.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b050",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-69874c12e5194e",
+      "comparator": "GB300",
+      "epistemic": "actual",
+      "label": "MatMul MFU vs GB300",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Trainium3 achieved a visibly higher MFU than GB300, starting from the mid-range, where the matrix multiplication performs 1 GFLOP of computation.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b038",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7a13343dc2f9ec",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Trainium is investing in the vLLM/SGLang community with hardware access and early SGLang support on native PyTorch.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Trainium rapidly invest in the vLLM/SGLang community with hardware access and early access to Trainium on SGLang built on native PyTorch (TorchNeuron)",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b050",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b794dd6acb3e8e",
+      "comparator": "GB300 and B200",
+      "epistemic": "actual",
+      "label": "MatMul performance range",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "It was only after 100 GFLOP that GB300 and B200 started outperforming Trainium3, and Trainium3 won again after 1 TFLOP.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b064",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c3c6925ad0e59f",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The publisher judges Trainium's profiler to be industry-leading and state of the art.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Trainium\u2019s profiler is by far leading the industry and is SOTA status.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b054",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cb22de28c7009a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Custom attention variants on Trainium3 matched the numerics of Nvidia GPUs.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "we tried implementing custom attention variants not in the FlexAttention benchmark suite for Trainium3, and it matched the numerics of Nvidia GPUs",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d14265b996b7fb",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "AWS hired the lead of Google's native Torch-on-TPU effort to work on native Torch for Trainium.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "AWS has even hired the lead of Google\u2019s native Torch on TPU effort to work on native Torch for Trainium.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e41f831681da1c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "AWS Neuron team is shifting Trainium to a first-class native PyTorch training experience.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The AWS Neuron team is aggressively working to change this pitfall with the biggest shift being moving towards a first-class, native PyTorch training experience.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9fadab568080",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f5d72399c08d5c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Porting from GPU requires essentially only replacing .to('cuda') with .to('neuron'), with most PyTorch ATen operators working out of the box.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "in theory",
+       "vast majority of operators"
+      ],
+      "quote": "the only change needed is replacing .to(\u201dcuda\u201d) with .to(\u201dneuron\u201d), and in theory the vast majority of the PyTorch ATen operators will work decently well out of the box",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b011",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-865ff34f1cba43",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Google Axion CPUs in high-volume shipment; Microsoft Cobalt 100 and Arm AGI processors in mass production/shipment",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "Google\u2019s in-house Axion CPUs have entered high-volume shipments, and Microsoft\u2019s Cobalt 100 and Arm\u2019s internally developed AGI processors have also entered mass production and shipment",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b012",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-1022b1afa327c5",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "Arm server CPU growth in 2027 driven primarily by ramp-up in NVIDIA Vera CPU shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [],
+      "quote": "Growth will be driven primarily by a substantial ramp-up in NVIDIA Vera CPU shipments",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b013",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-98c8f03b45a9ca",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AMD's server CPU market share expected to increase further with new product launches in 1H 2027",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "1H 2027",
+      "qualifiers": [],
+      "quote": "AMD's market share is expected to increase further as the company plans to launch new products in the first half of 2027",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-9fadab568080",
+       "cik": "0001326801",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-22 (accession 0001628280-26-066773) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Class A Common Stock, $0.000006 par value",
+         "ticker": "META"
+        }
+       ],
+       "mention_id": "M-3ba63dfb34b3f3",
+       "name_as_written": "Meta",
+       "other_securities": [],
+       "quote": "and also land Meta as a production TPU customer",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Named as production TPU customer and owner of PyTorch/TokenSwitch collaborating with AWS"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0ed0920f414a5a",
+       "name_as_written": "Hugging Face",
+       "other_securities": [],
+       "quote": "including Hugging Face Transformers, PEFT, diffusers, TRL, Accelerate",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Provider of PyTorch ecosystem libraries now supported on Trainium Torch"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a0bf5a286d1f74",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "The SemiAnalysis engineering team has been trying out the Trainium3 racks",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author/publisher conducting the hands-on testing"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8f78d5d324a21a",
+       "name_as_written": "PyTorch",
+       "other_securities": [],
+       "quote": "moving towards a first-class, native PyTorch training experience",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "ML framework (Meta) at the center of Trainium's software course correction"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2f2e92e2e537b7",
+       "name_as_written": "Inferact/RadixArk",
+       "other_securities": [],
+       "quote": "Google was able to successfully partner with Inferact/RadixArk",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Partner that helped bring TPUs into vLLM/SGLang ecosystem"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-67e513751e0736",
+       "name_as_written": "Codex",
+       "other_securities": [],
+       "quote": "With the help of Codex",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Coding assistant used to set up Trainium profiling"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-45444a9d23136c",
+       "name_as_written": "Claude",
+       "other_securities": [],
+       "quote": "during the beginning time of testing Trainium, Claude refuses to write Trainium kernels",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Anthropic's model, initially refused to write Trainium kernels"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-70c21c5bf4926d",
+       "name_as_written": "Twitter",
+       "other_securities": [],
+       "quote": "Source: Tristan Hume on Twitter",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "platform cited as source of Tristan Hume's public statement"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e41ce8fb77d4a5",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author and research firm producing the forecasts"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b22ac875d96a21",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "high-volume production of new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Named as introducing new Arm-based server processors in 2027"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ee154d6b5a56d3",
+       "name_as_written": "Huawei",
+       "other_securities": [],
+       "quote": "new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Named as introducing new Arm-based server processors in 2027"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2c490a5aecb2d3",
+       "name_as_written": "TSMC",
+       "other_securities": [],
+       "quote": "tight capacity at TSMC limiting AMD\u2019s ability to accommodate additional orders",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Foundry whose tight capacity limits AMD's server CPU orders"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-9fadab568080",
+       "cik": "0001018724",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-30 (accession 0001018724-26-000040) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value $.01 per share",
+         "ticker": "AMZN"
+        }
+       ],
+       "mention_id": "M-fc0214993abe4a",
+       "name_as_written": "Amazon",
+       "other_securities": [],
+       "quote": "Amazon has made a major course correction to its software strategy",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Owner of AWS/Trainium; subject of the article's positive software-progress thesis"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-b22f88e00d15b3",
+       "name_as_written": "AWS",
+       "other_securities": [],
+       "quote": "The AWS Neuron team is aggressively working to change this pitfall",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Amazon cloud unit developing Trainium and the Neuron/TorchNeuron stack"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": "0001045810",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-063debfa20febd",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "which is way better than both Nvidia\u2019s and AMD\u2019s profilers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Incumbent GPU/CUDA competitor against which Trainium is benchmarked (GB300, B200, profiler)"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": "0000002488",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-39e0e2726ea311",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "way better than both Nvidia\u2019s and AMD\u2019s profilers",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "GPU competitor cited for weaker profiler and historical CI/parity struggles"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-df2182a89c2892",
+       "name_as_written": "Tristan Hume",
+       "other_securities": [],
+       "quote": "Source: Tristan Hume on Twitter",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Anthropic head of performance cited as a source praising the Trainium profiler"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0001973239",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-f6a2c41b469eef",
+       "name_as_written": "Arm",
+       "other_securities": [],
+       "quote": "Arm\u2019s internally developed AGI processors have also entered mass production",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Arm architecture provider and in-house AGI processor developer"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-9418e4fcf3a329",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Google\u2019s in-house Axion CPUs have entered high-volume shipments",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Deploys in-house Arm-based Axion server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0000789019",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-52d8c558dd8ba4",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "Microsoft\u2019s Cobalt 100 and Arm\u2019s internally developed AGI processors",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Deploys in-house Arm-based Cobalt 100 server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-8e791e26a218d3",
+       "name_as_written": "Alibaba",
+       "other_securities": [],
+       "quote": "Alibaba\u2019s introduction of new Yitian 720/730 CPUs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Introducing new Yitian 720/730 Arm-based server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0000050863",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-30 (accession 0000050863-26-000191) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.001 par value",
+         "ticker": "INTC"
+        }
+       ],
+       "mention_id": "M-89a2fbdbf3efff",
+       "name_as_written": "Intel",
+       "other_securities": [],
+       "quote": "led by Intel and AMD",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potentially_harmed",
+       "role_detail": "x86 server CPU supplier facing shipment delays and declining market share"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-0638be285e3dd2",
+       "name_as_written": "vLLM",
+       "other_securities": [],
+       "quote": "vLLM/SGLang ecosystem",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Open-source inference engine ecosystem Trainium is investing in"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-469061bf9e04ba",
+       "name_as_written": "SGLang",
+       "other_securities": [],
+       "quote": "vLLM/SGLang ecosystem",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Open-source inference engine ecosystem Trainium is investing in"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "context",
+       "listings": [],
+       "mention_id": "M-3a00fb26cd2510",
+       "name_as_written": "TorchTitan",
+       "other_securities": [],
+       "quote": "TorchTitan",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Open-source PyTorch pre-training framework Trainium supports"
+      },
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-ebe107fb955137",
+       "name_as_written": "QuACK",
+       "other_securities": [],
+       "quote": "Tri Dao\u2019s QuACK intra-kernel profiler",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Nvidia-based intra-kernel profiler used as a comparator to Neuron Explorer"
+      }
+     ],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-9fadab568080",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-d47ff340c5527c",
+       "name_as_written": "Anthropic",
+       "other_securities": [],
+       "quote": "Anthropic is running production inference and RL rollouts on Trainium2 and Trainium3.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "spending_customer",
+       "role_detail": "Key Trainium customer running production inference and RL; its performance team praises the profiler"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "claim_ids": [
+        "C-5f8fcaed366329",
+        "C-ae101db5717c0b",
+        "C-0aa530b9902c5f"
+       ],
+       "direction": "positive",
+       "name": "Arm-based processors",
+       "provenance": "FORECAST",
+       "quote": "Arm-based processors, meanwhile, had only recently surpassed 10% of the market"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "claim_ids": [
+        "C-040ac638d8dbbf"
+       ],
+       "direction": "negative",
+       "name": "x86 segment",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "The x86 segment, led by Intel and AMD"
+      }
+     ],
+     "sectors": [
+      "AI training accelerators",
+      "custom AI silicon",
+      "Semiconductors",
+      "Arm-based server CPUs",
+      "x86 server CPUs"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "First half of 2027 and 2027 production ramps [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-ae101db5717c0b",
+        "C-0aa530b9902c5f",
+        "C-1022b1afa327c5"
+       ],
+       "provenance": "FORECAST",
+       "text": "Arm share pushes above 20% in 2026, with substantial 2027 ramp led by NVIDIA Vera and multiple hyperscaler in-house processors. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-c03e1c527e8256",
+        "C-9c90bd72c762ab",
+        "C-8f717dcb83688c",
+        "C-ead98710d7a634",
+        "C-3e3ab62fd92fc1"
+       ],
+       "provenance": "FORECAST",
+       "text": "Hands-on benchmarks show decent training performance and broad library support now, with compilation-time friction being actively addressed. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-5f8fcaed366329",
+        "C-0aa530b9902c5f"
+       ],
+       "provenance": "FORECAST",
+       "text": "AI inference adoption is structurally reshaping the server CPU market away from x86 dominance toward Arm. \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-f41ae4588179e6",
+        "C-2beeceb16d5c88"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The publisher frames Trainium as a potential challenger to Nvidia's training dominance if software matures, but concedes it is nowhere near CUDA ecosystem maturity."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-ead98710d7a634",
+        "C-f41ae4588179e6",
+        "C-8f717dcb83688c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The stack still has real friction (long compile times, missing TokenSwitch/MXFP8 support, <100% QA pass rates) and is far from CUDA maturity, so adoption gains may be slow."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 8 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      },
+      {
+       "claim_ids": [
+        "C-6c2c4ac5a74a70",
+        "C-98c8f03b45a9ca"
+       ],
+       "provenance": "FORECAST",
+       "text": "AMD is still gaining x86 share and is projected to maintain stable shipments with new 1H 2027 launches, so the x86 segment is not uniformly losing."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-ead98710d7a634"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "gpt-oss training run had compilation time of 27 minutes 17 seconds."
+      },
+      {
+       "claim_ids": [
+        "C-f41ae4588179e6"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The Trainium stack is nowhere near CUDA ecosystem maturity, but heading in the right direction."
+      },
+      {
+       "claim_ids": [
+        "C-61e0ae0df73695"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Trainium Torch will not support TorchAO MXFP8 at launch, prioritizing BF16 training first."
+      },
+      {
+       "claim_ids": [
+        "C-3709dfeba3a7e2"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "MoE combine and dispatch operations account for 60-70% of communication volume in MoE training/inference. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-d7fb27d367ba02"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "All 7 failed FlexAttention cases on Trainium3 occurred at large batch/sequence length and were due to compilation timeouts, not numerical errors."
+      },
+      {
+       "claim_ids": [
+        "C-47cf21c7bf0774"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "It took over 9 months of pushing AMD leadership to get engineers enough stable nodes to reach 93% parity on gating test groups. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-42218bf8c5f870"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "At one unnamed hardware vendor, CI numbers shown to leadership were 99.99% while actual gating parity was below 5%."
+      },
+      {
+       "claim_ids": [
+        "C-60b12eb4e73294"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Trainium does not yet support PyTorch's TokenSwitch MoE API; AWS has committed to collaborate with Meta's PyTorch team to add support."
+      },
+      {
+       "claim_ids": [
+        "C-040ac638d8dbbf"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "x86 segment accounted for nearly 90% of server CPU market in 2025 \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-6c2c4ac5a74a70"
+       ],
+       "provenance": "FORECAST",
+       "text": "AMD's server CPU market share estimated to increase to approximately 27% in 2026 \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "TorchNeuron compile-time reduction fails to ship or underdelivers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Major labs continue training exclusively on Nvidia/CUDA despite TorchNeuron"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "QA/parity pass rates stall below CUDA-grade reliability"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Arm server CPU share stalling below 20% in 2026"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "x86 suppliers retaining share into 2027"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Delays in NVIDIA Vera or hyperscaler Arm CPU ramps"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether broader Trainium training adoption translates into measurable AWS revenue, share gains or margin benefit"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether listed AMZN/NVDA valuations reflect any Trainium training share shift"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the publisher's single-model benchmarks generalize across production training workloads (association, not demonstrated commercial traction)"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the forecast share gains translate into revenue or earnings for named Arm CPU designers or hyperscalers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether in-house hyperscaler silicon benefits merchant suppliers like Arm or displaces them"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus expectations versus these forecasts"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Compile-time and QA gaps persist"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No new training customers adopt Trainium3 despite the software push"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Intel or AMD x86 roadmaps regain share"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Arm CPU ramps slip into 2028"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether consensus server CPU share forecasts for Arm vs x86 align with TrendForce's ~30% 2027 Arm share, and quantify revenue exposure for Arm and merchant suppliers."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "TorchNeuron ships the ~2-orders-of-magnitude compile-time reduction with named lab adoption"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A Tier-1 lab commits to Trainium for a frontier training run"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "NVIDIA Vera CPU volume guidance confirms substantial 2027 ramp"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Hyperscalers disclose larger in-house Arm CPU deployment"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-9fadab568080",
+      "authors": [
+       "Kimbo Chen",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-0d63959e780679",
+       "C-2121bbf831157a",
+       "C-2598a5f20f1186",
+       "C-2ba269efa6eecd",
+       "C-2beeceb16d5c88",
+       "C-3709dfeba3a7e2",
+       "C-3e3ab62fd92fc1",
+       "C-42218bf8c5f870",
+       "C-47cf21c7bf0774",
+       "C-6047f9ce36e043",
+       "C-60b12eb4e73294",
+       "C-61e0ae0df73695",
+       "C-69874c12e5194e",
+       "C-7a13343dc2f9ec",
+       "C-8243f3c0bb19d0",
+       "C-8f717dcb83688c",
+       "C-90d00b1ee88cfb",
+       "C-9c90bd72c762ab",
+       "C-a0502962445309",
+       "C-b794dd6acb3e8e",
+       "C-c03e1c527e8256",
+       "C-c3c6925ad0e59f",
+       "C-c43041301a37f3",
+       "C-cb22de28c7009a",
+       "C-d14265b996b7fb",
+       "C-d7fb27d367ba02",
+       "C-e41f831681da1c",
+       "C-ead98710d7a634",
+       "C-f41ae4588179e6",
+       "C-f5d72399c08d5c"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-23T19:06:44Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "Amazon\u2019s Trainium Takes a Strike at the Training King",
+      "upstream_origins": [
+       "Tristan Hume on Twitter",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/amazons-trainium-takes-a-strike-at",
+      "version_dates": []
+     },
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-a7f0f66d2b3b",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-0aa530b9902c5f",
+       "C-1022b1afa327c5",
+       "C-98c8f03b45a9ca",
+       "C-5f8fcaed366329",
+       "C-ae101db5717c0b",
+       "C-865ff34f1cba43",
+       "C-2656679f1e097f",
+       "C-040ac638d8dbbf",
+       "C-6c2c4ac5a74a70"
+      ],
+      "contribution": "contradictory",
+      "published_at": "2026-10-22T14:28:30+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Server CPU Shipments Projected to Grow Over 40% YoY in 2027, with Arm-Based Products Continuing to Gain Market Share, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261022-13279.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "f7c8c66893cbc0cd9d549f3f0a0c09ab9bf605d5a841de4cd4519ba208c0e963",
+   "created_at": "2026-10-30T12:16:13.264340Z",
+   "diffs": [
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-2656679f1e097f"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Alibaba is introducing new Yitian 720/730 server CPUs, cited as a 2027 Arm-based growth driver.: 720/730",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-5f8fcaed366329"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Arm server CPU market share: 10%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-ae101db5717c0b"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Arm server CPU market share: above 20%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-0aa530b9902c5f"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Arm server CPU market share: approximately 30%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-865ff34f1cba43"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Google Axion CPUs in high-volume shipment; Microsoft Cobalt 100 and Arm AGI processors in mass production/shipment:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-1022b1afa327c5"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Arm server CPU growth in 2027 driven primarily by ramp-up in NVIDIA Vera CPU shipments:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-98c8f03b45a9ca"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "AMD's server CPU market share expected to increase further with new product launches in 1H 2027:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-040ac638d8dbbf"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "x86 segment accounted for nearly 90% of server CPU market in 2025 \u27e8cited figures: approximate\u27e9",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-6c2c4ac5a74a70"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "AMD's server CPU market share estimated to increase to approximately 27% in 2026 \u27e8cited figures: forecast; approximate\u27e9",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-ae101db5717c0b",
+      "C-0aa530b9902c5f",
+      "C-1022b1afa327c5",
+      "C-c03e1c527e8256",
+      "C-9c90bd72c762ab",
+      "C-8f717dcb83688c",
+      "C-ead98710d7a634",
+      "C-3e3ab62fd92fc1"
+     ],
+     "field_id": "s06_why_now.catalyst_window",
+     "new": "First half of 2027 and 2027 production ramps [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "note": "",
+     "old": "Upcoming TorchNeuron releases targeting up to 2 orders of magnitude time-to-first-step reduction [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window"
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "Arm (potential_beneficiary)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "Google (potential_beneficiary)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "Microsoft (potential_beneficiary)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "Alibaba (potential_beneficiary)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "Intel (potentially_harmed)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-5f8fcaed366329",
+      "C-ae101db5717c0b",
+      "C-0aa530b9902c5f"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "Arm-based processors (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-040ac638d8dbbf"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "x86 segment (negative)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-2beeceb16d5c88",
+      "C-c03e1c527e8256",
+      "C-90d00b1ee88cfb",
+      "C-9c90bd72c762ab",
+      "C-8f717dcb83688c",
+      "C-c3c6925ad0e59f",
+      "C-f41ae4588179e6",
+      "C-0d63959e780679",
+      "C-a0502962445309",
+      "C-2beeceb16d5c88",
+      "C-5f8fcaed366329",
+      "C-ae101db5717c0b",
+      "C-865ff34f1cba43",
+      "C-0aa530b9902c5f",
+      "C-1022b1afa327c5"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "\u27e8update 2026-10-22 \u00b7 TrendForce\u27e9 Arm-based server CPUs are forecast to grow faster than x86, rising from above 20% share in 2026 to approximately 30% in 2027, as AWS, NVIDIA, Google, Microsoft, Arm, OpenAI, Huawei and Alibaba ramp in-house and merchant Arm processors. \u27e8cited figures: forecast; approximate\u27e9",
+     "note": "",
+     "old": "If TorchNeuron closes the usability gap with CUDA for research training (not just inference), Trainium could win more training workloads from Nvidia GPUs, supporting Amazon/AWS custom-silicon economics; but the article quantifies no revenue, share or earnings effect."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "MIXED",
+   "prior_content_sha": "fc2b28df356590821bbe447c674d1fd5743279a951977776b17718b2e1800132",
+   "priority": {
+    "change_reason": "no change in action (F1_source_reliability medium\u2192high; F2_material_evidence 14\u219221; F3_independent_origins 2\u21923; F4_profit_transmission inferred\u2192source-shown; F6_recognizable_exposures 1 listed \u00b7 0 sector \u00b7 0 instrument\u21923 listed \u00b7 2 sector \u00b7 0 instrument; F8_counterevidence 7\u21929; F11_retrieval PARTIAL\u2192FULL)",
+    "evidence_direction": "MIXED",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-6047f9ce36e043",
+       "C-69874c12e5194e",
+       "C-7a13343dc2f9ec",
+       "C-8243f3c0bb19d0",
+       "C-8f717dcb83688c",
+       "C-90d00b1ee88cfb",
+       "C-9c90bd72c762ab",
+       "C-b794dd6acb3e8e",
+       "C-c03e1c527e8256",
+       "C-c43041301a37f3",
+       "C-cb22de28c7009a",
+       "C-d14265b996b7fb",
+       "C-e41f831681da1c",
+       "C-5f8fcaed366329",
+       "C-ae101db5717c0b",
+       "C-865ff34f1cba43",
+       "C-2656679f1e097f",
+       "C-3e3ab62fd92fc1",
+       "C-0aa530b9902c5f",
+       "C-1022b1afa327c5",
+       "C-98c8f03b45a9ca"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "21"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-80d1e591e420, ES-c414df565bed",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-ae101db5717c0b",
+       "C-98c8f03b45a9ca",
+       "C-6047f9ce36e043",
+       "C-7a13343dc2f9ec",
+       "C-8f717dcb83688c",
+       "C-90d00b1ee88cfb",
+       "C-9c90bd72c762ab",
+       "C-c03e1c527e8256",
+       "C-865ff34f1cba43"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "9 claim(s) inside the next 2-4 quarters (C-ae101db5717c0b: forecast window 2026-01-01..2026-12-31 (2026); C-98c8f03b45a9ca: forecast window 2027-01-01..2027-06-30 (1h 2027); C-6047f9ce36e043: measured 2026-10-23 (7 days before the as-of); C-7a13343dc2f9ec: measured 2026-10-23 (7 days before the as-of); showing 4 of 9); 3 claim(s) whose window runs past them; 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Amazon (AMZN), Microsoft (MSFT), Intel (INTC), sector: Arm-based processors, sector: x86 segment",
+      "value": "3 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 4 offered but NOT counted (opinion, forecast figure or stale reading): C-3e3ab62fd92fc1, C-0aa530b9902c5f, C-1022b1afa327c5, C-98c8f03b45a9ca",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-3709dfeba3a7e2",
+       "C-42218bf8c5f870",
+       "C-47cf21c7bf0774",
+       "C-60b12eb4e73294",
+       "C-61e0ae0df73695",
+       "C-d7fb27d367ba02",
+       "C-ead98710d7a634",
+       "C-f41ae4588179e6",
+       "C-040ac638d8dbbf",
+       "C-6c2c4ac5a74a70"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (10 counter-claims in total); 9 distinct counter-observation(s) from the supporting sources vs 21 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "9"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261030T115837Z-scan",
+   "thesis_id": "TH-F2CD2F7AFC",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-a7f0f66d2b3b",
+   "block_ids": [
+    "b008"
+   ],
+   "claim_ids": [],
+   "excerpt": "\u2026surpassed 10% of the market. Both x86 and Arm CPU suppliers are aggressively increasing shipments\u2026",
+   "name": "CPU suppliers"
+  },
+  {
+   "article_id": "A-9fadab568080",
+   "block_ids": [
+    "b062"
+   ],
+   "claim_ids": [],
+   "excerpt": "\u2026fix quality control culture at other hardware vendors, we\u2019ve found that senior leadership\u2026",
+   "name": "vendors"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-f41ae4588179e6",
+  "C-0d63959e780679",
+  "C-a0502962445309",
+  "C-040ac638d8dbbf",
+  "C-6c2c4ac5a74a70",
+  "C-ead98710d7a634",
+  "C-61e0ae0df73695",
+  "C-3709dfeba3a7e2",
+  "C-d7fb27d367ba02",
+  "C-47cf21c7bf0774",
+  "C-42218bf8c5f870",
+  "C-60b12eb4e73294"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The MFU figures (23.89%/30.47%) and throughput were measured on Qwen3-32B trained on Trainium2 chips (per C-a0502962445309), not on Trainium3. The sentence attributes the MFU/throughput results to Trainium3, mixing scopes. The 93% pass rate and profiler/CUDA claims are supported.",
+  "s01.1": "The cited span says 'meaningfully broaden Trainium3 adoption' but does not specify 'into training'. The 'into training' qualifier is added.",
+  "s01.2": "The sentence lists 'AWS, NVIDIA, Google, Microsoft, Arm, OpenAI, Huawei and Alibaba' as ramping Arm processors, but the cited spans only mention Google, Microsoft, Arm, and NVIDIA Vera. AWS, OpenAI, Huawei and Alibaba are not supported by the cited spans (Alibaba appears only in pool C-2656679f1e097f). The 20%/30% share figures and forecast label are supported.",
+  "s06.2": "The claim that AI inference adoption is 'structurally reshaping' the market 'away from x86 dominance toward Arm' is an interpretation not directly in the two cited spans, which only give the 10% (2025) and ~30% (2027) Arm share figures. The causal/structural framing is not supported by the cited spans.",
+  "s06.3": "The cited spans support 'nowhere near CUDA maturity' and 'broaden Trainium3 adoption' but do not frame Trainium as a 'potential challenger to Nvidia's training dominance.' That framing goes beyond the cited spans.",
+  "s07.10": "The cited spans support long compile times (27m17s), <100% QA pass rate (93%), and 'far from CUDA maturity.' But 'missing TokenSwitch/MXFP8 support' is not among the three cited spans (those appear elsewhere, s07.2/s07.7), and 'adoption gains may be slow' is an inference not in cited spans.",
+  "s07.3": "The cited span says MoE combine/dispatch take 60-70% of communication volume, but does not specify 'training/inference' scope. The added 'in MoE training/inference' scope is not in the cited span.",
+  "s07.6": "The cited span mentions 99.99% CI vs below 5% gating parity but does not name 'one unnamed hardware vendor' - the attribution of this to a specific hardware vendor context is an added framing not in the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {
+  "s07.10": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s07.10 prints '100', which none of its cited claims carry: 'The stack still has real friction (long compile times, missing TokenSwitch/MXFP8 support, <100% QA p'"
+ }
+}

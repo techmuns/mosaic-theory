@@ -1,0 +1,367 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name="robots" content="noindex, nofollow"><title>ASML&#x27;s hybrid bonding tool threatens Besi&#x27;s logic and HBM equipment franchise · Research desk</title><style>
+:root{--bg:#f5f5f2;--panel:#fff;--ink:#16181d;--ink2:#3b4049;--muted:#676d78;--line:#e0e2e6;
+--soft:#f0f1f3;--accent:#1f3a5f;--accent-bg:#eef2f7;--now:#8c1d18;--now-bg:#f8e7e5;
+--watch:#7a5200;--watch-bg:#f6eedc;--skip:#555b65;--skip-bg:#eceef1;--warn:#9a3412;
+--warn-bg:#fff3ea;--ok:#1f6f43;--ok-bg:#e6f2eb;--bad:#9b1c1c;--bad-bg:#fbe9e7;--info:#0f5f6e;
+--info-bg:#e3f1f3;--obs:#1f6f43;--fc:#0f5f6e;--op:#6b3fa0;--inf:#8a5a00;--ext:#1d4f91;
+--unk:#676d78;--block:#9b1c1c}
+@media (prefers-color-scheme: dark){:root{--bg:#111316;--panel:#181b1f;--ink:#eceef1;
+--ink2:#c9cdd4;--muted:#9aa1ab;--line:#2b2f35;--soft:#20242a;--accent:#9cc2f5;
+--accent-bg:#1a2433;--now:#ffb4ab;--now-bg:#3a1916;--watch:#f0c36b;--watch-bg:#33280f;
+--skip:#c9cdd4;--skip-bg:#24282e;--warn:#fdba74;--warn-bg:#2c1c10;--ok:#7fd4a4;--ok-bg:#132621;
+--bad:#ffb4ab;--bad-bg:#3a1916;--info:#8fd6e0;--info-bg:#10272b;--obs:#7fd4a4;--fc:#8fd6e0;
+--op:#c9a8f0;--inf:#f0c36b;--ext:#9cc2f5;--unk:#9aa1ab;--block:#ffb4ab}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-padding-top:60px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,-apple-system,
+BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.topnav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.topnav .in{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+gap:20px;min-height:50px}
+.brand{font-weight:700;white-space:nowrap;color:var(--ink)}.brand small{font-weight:500;
+color:var(--muted);margin-left:6px}
+.links{display:flex;gap:18px;overflow-x:auto;white-space:nowrap;flex:1;min-width:0;
+scrollbar-width:none}.links::-webkit-scrollbar{display:none}
+.links a{color:var(--ink2);font-size:14px;padding:14px 0;border-bottom:2px solid transparent}
+.links a:hover{color:var(--ink);text-decoration:none;border-bottom-color:var(--line)}
+.links a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.subnav{max-width:1120px;margin:0 auto;padding:10px 16px 0;font-size:13px;color:var(--muted)}
+.subnav a{margin:0 4px}
+.auditbar{font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;
+border:1px solid var(--line);border-radius:6px;padding:4px 9px}
+#audit:checked~.topnav .auditbar{background:var(--accent-bg);color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 64px;overflow-wrap:break-word}
+.wrap.narrow{max-width:940px}
+.pill{display:inline-block;font-size:12px;font-weight:650;letter-spacing:.02em;padding:3px 10px;
+border-radius:999px;white-space:nowrap;vertical-align:1px}
+.pill.now{background:var(--now-bg);color:var(--now)}.pill.watch{background:var(--watch-bg);
+color:var(--watch)}.pill.skip,.pill.dir{background:var(--skip-bg);color:var(--skip)}
+.pill.kind{background:var(--accent-bg);color:var(--accent)}
+.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.topnav .aud{display:revert}
+#audit:checked~.wrap .nonaud{display:none}
+@media (max-width:720px){.topnav .in{gap:0 12px;flex-wrap:wrap;padding-top:8px}
+.brand small{display:none}.auditbar{margin-left:auto}
+.links{order:3;flex-basis:100%;flex-wrap:wrap;gap:0 16px;white-space:normal;overflow:visible}
+.links a{padding:6px 0 8px}.wrap{padding:18px 12px 48px}}
+@media print{.topnav,.subnav{display:none}body{background:#fff}.aud{display:revert!important}
+.nonaud{display:none!important}}
+
+table.mktt td.n{text-align:right;white-space:nowrap}.mkt .nh{color:var(--muted)}
+.mkt td.mkw{color:var(--warn,#8a5a00);font-size:13px}
+.mkt .mktl{margin:0 0 4px}.mkt .note{font-size:12.5px;color:var(--muted)}details.mkth{margin:6px 0}
+h1{font-size:26px;line-height:1.2;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:17px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);
+font-size:13px;margin-left:6px}h3{font-size:14px;margin:14px 0 6px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+font-weight:600}
+.hero{margin-bottom:20px}.lede{font-size:16px;color:var(--ink2);margin:0 0 14px;max-width:820px}
+.sum{font-size:15px;color:var(--ink2);margin:0 0 10px}
+.hint{color:var(--muted);font-size:13px;margin:0 0 12px;max-width:820px}
+.muted{color:var(--muted)}.nowrap{white-space:nowrap}.small{font-size:12.5px;color:var(--muted)}
+.mt{margin-top:26px}
+.strip{display:flex;gap:12px;flex-wrap:wrap}
+.strip>*{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;
+min-width:150px;flex:1;color:var(--ink);display:flex;flex-direction:column;gap:1px}
+.strip b{font-size:24px;line-height:1.15}
+.strip span{font-size:13px;font-weight:600;color:var(--ink2)}
+.strip small{font-size:12px;color:var(--muted)}
+.strip a.warn b{color:var(--bad)}.strip a:hover{text-decoration:none;border-color:var(--accent)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start;
+margin-bottom:30px}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px 8px;
+position:sticky;top:76px}
+.att{list-style:none;margin:0;padding:0}.att li{padding:10px 0;border-top:1px solid var(--line);
+font-size:14px;display:flex;flex-direction:column;gap:2px}.att li:first-child{border-top:0;
+padding-top:0}.att li span{font-size:12.5px;color:var(--muted)}
+.area{margin-bottom:20px}.area h3{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+color:var(--muted);margin:0 0 8px}
+.trow{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+padding:12px 16px;margin-bottom:8px;color:var(--ink)}
+.trow:hover{border-color:var(--accent);text-decoration:none}
+.ttop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:4px}
+.ttitle{font-weight:650;font-size:16px;line-height:1.35;margin-bottom:2px}
+.tmeta .miss,.tsub .miss{color:var(--ink2)}.tsub{display:flex;flex-wrap:wrap;gap:2px 10px;
+margin-top:3px;font-size:12.5px}.tsub .stale{margin-top:0}
+details.gone>summary{font-size:12.5px;color:var(--muted);cursor:pointer}
+.tline{color:var(--ink2);font-size:14.5px}.tmeta{color:var(--muted);font-size:12.5px;margin-top:4px}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gapi{color:var(--ink2)}
+.ev{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:20px;
+padding:1px 8px;color:var(--ink2);background:var(--panel);white-space:nowrap}
+.ev.down{color:var(--bad);border-color:var(--bad-bg)}.ev.up{color:var(--ok)}.ev.new{color:var(--info)}
+.ev.rv{color:var(--bad);background:var(--bad-bg);border-color:transparent}
+.st{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12.5px;white-space:nowrap}
+.st.ok{color:var(--ok);background:var(--ok-bg)}.st.part{color:var(--watch);background:var(--watch-bg)}
+.st.bad{color:var(--bad);background:var(--bad-bg)}.st.info{color:var(--info);background:var(--info-bg)}
+.st.mute{color:var(--muted);background:var(--soft)}
+table{border-collapse:collapse;width:100%;background:var(--panel)}
+.hscroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;max-width:100%}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;
+font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--soft)}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14.5px}
+tr:last-child td{border-bottom:0}
+section{margin-bottom:28px}
+code{font-size:12.5px;background:var(--soft);border-radius:4px;padding:1px 5px;
+overflow-wrap:anywhere}
+code.cmd{display:inline-block;white-space:normal}
+aside code.cmd,.howto code.cmd{display:block;margin:4px 0;font-size:12px}.nw{white-space:nowrap}
+.headsup{margin:12px 0 0;font-size:13.5px;color:var(--ink2)}
+.steps4{list-style:none;padding:0;margin:12px 0 6px;display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.steps4 li{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.filters input:not([type=checkbox]),.filters select{font:inherit;font-size:14px;padding:7px 10px;
+border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+.filters input#q{min-width:240px;flex:1}.filters label{display:inline-flex;gap:8px;
+align-items:center;font-size:14px}
+.weeks{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:4px;max-width:100%}
+.wk{white-space:nowrap;border:1px solid var(--line);border-radius:8px;padding:5px 10px;
+font-size:13px;background:var(--panel);color:var(--ink2)}
+.wk small{margin-left:6px;color:var(--muted)}.wk.on{border-color:var(--accent);color:var(--ink);
+font-weight:600}
+details summary{cursor:pointer;color:var(--accent);font-size:13.5px}
+details.more-rows>summary{margin:8px 14px 12px}
+details.ubk,details.quiet{background:var(--panel);border:1px solid var(--line);
+border-radius:12px;padding:10px 16px;margin-bottom:10px}
+details.ubk>summary,details.quiet>summary{color:var(--ink);font-size:15px}
+details.ubk .hscroll{margin-top:10px}
+.act{display:inline-flex;gap:2px;vertical-align:middle}.act i{width:9px;height:14px;
+border-radius:2px;background:var(--line);display:block}.act i.on{background:var(--accent)}
+.stale{display:inline-block;font-size:12px;color:var(--bad);margin-top:3px}
+.rvlist{list-style:none;padding:0;margin:0}
+.rvi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;
+margin-bottom:10px}
+.rvlist .panel li,.panel .rvlist li{padding:10px 0;border-top:1px solid var(--line)}
+.rvhead{margin-bottom:6px}.line{font-size:15px}
+.said{font-size:13.5px;color:var(--ink2);margin:4px 0}
+.dec{font-size:13px;color:var(--bad);margin:4px 0}
+.plainlist{padding-left:18px;margin:8px 0}.plainlist li{margin-bottom:10px}
+.steps{padding-left:18px;margin:0 0 10px;font-size:14px}.steps li{margin-bottom:9px}
+.hs{display:inline-flex;gap:2px;vertical-align:middle}.hs i{width:10px;height:14px;
+border-radius:2px;display:block}
+.h-healthy{background:var(--ok)}.h-degraded{background:var(--watch)}.h-blocked{background:var(--bad)}
+.h-error{background:var(--bad)}.h-unknown{background:var(--line)}
+.crumb{font-size:13px;color:var(--muted);margin-bottom:8px}
+.th h1{font-size:28px;max-width:920px}.th .meta{display:flex;flex-wrap:wrap;gap:8px 12px;
+align-items:center;color:var(--muted);font-size:13.5px;margin-bottom:18px}
+.flag{background:var(--bad-bg);color:var(--bad);border-radius:6px;padding:2px 9px;font-size:13px}
+.flagi{font-size:11.5px;color:var(--bad);margin-left:4px;white-space:nowrap}
+.thesis{font-size:19px;line-height:1.55;margin:0;border-left:3px solid var(--accent);
+padding-left:16px}
+.tag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px;
+white-space:nowrap;vertical-align:1px;margin-left:4px;background:var(--panel)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;
+margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.sheet{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 28px}
+.sheet .decide{border-left:1px solid var(--line);padding-left:24px}
+.sheet .decide h2{margin-top:0}.sheet .numh{margin:18px 0 8px}
+.sheet .nums{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.rvcompact .rvi summary{cursor:pointer;display:flex;gap:8px;align-items:baseline;
+list-style:none}.rvcompact .rvi summary::-webkit-details-marker{display:none}
+.rvcompact .clamp1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.rvcompact .said{font-size:13.5px;margin:6px 0}
+.grid2 .panel{margin-bottom:0}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.num{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.num b{font-size:24px;line-height:1.1}.num .unit{color:var(--muted);font-size:13px;margin-left:5px}
+.num .lbl{display:block;font-size:13.5px;color:var(--ink2);margin-top:6px;line-height:1.35}
+.num small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.chain{list-style:none;padding:0;margin:0;counter-reset:s}
+.chain li{position:relative;padding:0 0 14px 34px;font-size:14.5px}
+.chain li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:1px;width:22px;
+height:22px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:12px;
+font-weight:700;text-align:center;line-height:22px}
+.sn{display:block;font-weight:650;font-size:13px}
+.gates{list-style:none;padding:0;margin:0}.gates li{display:flex;gap:10px;padding:7px 0;
+border-top:1px solid var(--line)}.gates li:first-child{border-top:0}
+.gates .ic{width:20px;flex:none;font-weight:700}.gates .ok .ic{color:var(--ok)}
+.gates .unmet .ic{color:var(--bad)}.gates b{display:block;font-size:14px;font-weight:600}
+.gates span:not(.ic){font-size:13px;color:var(--muted)}.decide ul.clears{font-size:13px;
+color:var(--ink2);padding-left:18px;margin:4px 0 0}.decide ul.clears li{margin:3px 0}
+.calls{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}.calls h4{margin:0 0 4px;
+font-size:13px;color:var(--muted);font-weight:600}.calls ul{margin:0;padding-left:18px;
+font-size:14px}.calls li{margin:3px 0}.gates span.gap{display:block;margin-top:5px;
+color:var(--ink2)}
+details.met{margin-top:8px}
+.timing{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}
+.timing ul{padding-left:18px;margin:4px 0}
+.conflict{background:var(--bad-bg);color:var(--bad);border-radius:8px;padding:8px 12px;
+font-size:13.5px;margin:6px 0}
+.risk,.next ul{padding-left:18px;margin:0;font-size:14.5px}.risk li{margin-bottom:6px}
+.next p{font-size:15.5px;margin:0 0 6px}
+.who{list-style:none;padding:0;margin:0 0 10px;font-size:14.5px}.who li{padding:5px 0;
+border-top:1px solid var(--line)}.who li:first-child{border-top:0}.who .small{margin-top:2px}
+.hypo{border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:12px 0}
+.hypo h3{margin:0 0 4px}.hypo h4{font-size:13px;margin:10px 0 2px;color:var(--ink2)}
+.hypo .basis{color:var(--ink2)}
+.hypo h4.cond{font-size:13px;font-weight:500;color:var(--ink2);margin:12px 0 4px}
+.hrows{border-top:1px solid var(--line)}
+details.hrow{border-bottom:1px solid var(--line)}
+details.hrow>summary,.hhead{display:grid;grid-template-columns:64px minmax(0,220px) 130px
+minmax(0,170px) 40px;gap:12px;align-items:baseline;padding:6px 2px;font-size:14px}
+details.hrow>summary{cursor:pointer;list-style:none}
+.hhead{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
+padding-top:2px}
+details.hrow>summary::-webkit-details-marker{display:none}
+details.hrow .tkr{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:600}
+details.hrow .side.up{color:var(--ok)}details.hrow .side.down{color:var(--bad)}
+details.hrow .earn{color:var(--muted);font-size:13px}details.hrow .ck{text-align:center}
+.hbody{padding:2px 2px 10px 82px;font-size:13.5px}.hbody p{margin:4px 0}
+.hbody .filing{color:var(--ink2);border-left:2px solid var(--line);padding-left:8px}
+@media (max-width:880px){.hhead{display:none}
+details.hrow>summary{display:flex;flex-wrap:wrap;gap:2px 10px}
+details.hrow .tkr{width:52px}details.hrow>summary>b{flex:1 1 60%}
+details.hrow .side{margin-left:62px}details.hrow .ck{margin-left:auto}.hbody{padding-left:0}
+.rvcompact .rvi summary{flex-wrap:wrap}.rvcompact .clamp1{flex-basis:100%;white-space:normal}}
+.tk{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
+padding:0 6px;margin-left:4px;white-space:nowrap}
+.tabs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px 18px}
+.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 -20px 16px;padding:0 12px;
+overflow-x:auto}
+.tabbar button{border:0;background:none;padding:14px 10px;font:inherit;font-size:14px;
+color:var(--ink2);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tabbar button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+details.evg{border-top:1px solid var(--line);padding:8px 0}details.evg:first-child{border-top:0}
+details.evg>summary{color:var(--ink);font-size:14.5px}details.evg .hscroll{margin-top:8px}
+.q{color:var(--muted);font-size:13px;font-style:italic;margin-top:3px}
+.timeline{list-style:none;padding:0;margin:0}.timeline li{display:flex;gap:12px;align-items:center;
+padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap;font-size:14px}
+.timeline li:first-child{border-top:0}.hv{font-weight:650;min-width:78px;white-space:nowrap}
+.btn{display:inline-block;background:var(--accent);color:var(--panel);border-radius:8px;
+padding:8px 14px;margin:0 8px 8px 0}
+.btn2{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:8px 14px}
+.btn:hover,.btn2:hover{text-decoration:none}
+.nine{columns:2;font-size:14px}
+tr.xtra{display:none}.morebox:checked+.hscroll tr.xtra{display:table-row}
+.morelbl{display:inline-block;margin:8px 2px 12px;font-size:13.5px;color:var(--accent);
+cursor:pointer}
+.morebox:checked~.morelbl{display:none}
+.why{font-size:13px;color:var(--ink2);margin-top:3px}
+details.cmdd{min-width:150px}details.cmdd code{display:block;margin-top:6px;word-break:break-all}
+details.older{display:inline-block;margin-left:4px}details.older[open]{display:block}
+td:empty{padding:0}
+.bdg{display:inline-block;font-size:11.5px;border-radius:999px;padding:1px 8px;white-space:nowrap;
+background:var(--soft);color:var(--ink2)}.bdg.bad{background:var(--bad-bg);color:var(--bad)}
+.tmeta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.alist{list-style:none;padding:0;margin:0;border:1px solid var(--line);border-radius:12px;
+background:var(--panel)}
+.alist li{display:grid;grid-template-columns:170px minmax(0,1fr);gap:4px 14px;padding:10px 14px;
+border-top:1px solid var(--line);align-items:start}.alist li:first-child{border-top:0}
+.alist li>.st{justify-self:start}
+.atl{font-weight:600;line-height:1.35}.aprod{font-size:13.5px;margin-top:3px}
+.weeknav{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:6px 0;font-size:14px}
+.weeknav details.older{display:inline-block}.weeknav details[open]{flex-basis:100%}
+.weeknav .weeks{margin-top:8px}
+.counts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin:8px 0}
+.cnt{display:inline-flex;gap:5px;align-items:center}
+.rvg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px 6px;
+margin-bottom:10px}
+.rvgh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-bottom:2px}
+.rvgh a{font-weight:650}
+.rvitems{list-style:none;padding:0;margin:0}
+.rvitems li.rvi{background:none;border:0;border-top:1px solid var(--line);border-radius:0;
+padding:10px 0 8px;margin:0}.rvitems li.rvi:first-child{border-top:0}
+.rvmeta{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:12.5px;
+color:var(--muted);margin-top:4px}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.uilist{list-style:none;padding:0;margin:8px 0 0}
+.ui{display:grid;grid-template-columns:minmax(0,1fr) 230px 150px;gap:6px 18px;padding:12px 0;
+border-top:1px solid var(--line);align-items:start}.uilist>.ui:first-child{border-top:0}
+.uiside{font-size:13.5px}.uiact{font-size:13px}
+details.fold{margin-top:8px}details.fold>summary{font-size:13px}
+.pillcheck{border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+background:var(--panel)}
+.meta2{font-size:13px;color:var(--muted);margin:-10px 0 16px}
+.rel{list-style:none;padding:0;margin:0}.rel li{margin:0 0 10px}
+.evsum{font-size:14px;color:var(--ink2);margin:0 0 6px}.evsum .against{color:var(--bad)}
+.evh{font-size:14px;margin:18px 0 4px}
+.evl{list-style:none;padding:0;margin:0}.evl>li{border-top:1px solid var(--line);padding:7px 0}
+.evl>li:first-child{border-top:0}
+.evl details>summary{cursor:pointer;color:var(--ink);font-size:14px;list-style:none;
+line-height:1.45}
+.evl details>summary::-webkit-details-marker{display:none}
+.evl details>summary::before{content:"▸";color:var(--muted);font-size:10px;
+margin-right:8px}
+.evl details[open]>summary::before{content:"▾"}
+.evl .v{font-weight:650;margin-right:4px}.evl.against .v{color:var(--bad)}
+.evl blockquote{margin:6px 0 2px 18px;padding:4px 10px;border-left:3px solid var(--line);
+color:var(--muted);font-style:italic;font-size:13px}
+details.evg{margin:10px 0 0}details.evg>summary{font-size:14px;color:var(--ink)}
+.srcl li{margin:0 0 10px}
+.arts tr[data-hassub] td{border-bottom:0}.arts td.subrow{padding-top:0;font-size:13px}
+.compl>li{margin:0 0 10px}.compl ul{margin:4px 0 0;padding-left:18px}
+.grid2{align-items:start}
+.testdata{background:#3b2a00;color:#ffe9b0;font-size:12.5px;padding:6px 20px;text-align:center}
+.foot{margin:18px 0 0;font-size:12.5px;color:var(--muted)}
+.hit{outline:2px solid var(--accent);outline-offset:3px}
+details.ubk>summary .muted{margin-left:10px;font-size:13px}
+.ml{display:none}.arts.artt{table-layout:fixed}.arts.artt th:nth-child(1){width:110px}
+.arts.artt th:nth-child(3){width:170px}.arts.artt th:nth-child(5){width:180px}
+.arts.themes{table-layout:fixed}.arts.themes th{overflow-wrap:normal;word-break:normal}
+.arts.themes th:nth-child(2){width:156px}
+.arts.themes th:nth-child(3){width:118px}.arts.themes th:nth-child(4),
+.arts.themes th:nth-child(5){width:100px}.arts.themes th:nth-child(6){width:170px}
+@media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}
+aside{position:static;min-width:0}
+.ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
+.steps4{grid-template-columns:1fr}
+.grid2{grid-template-columns:1fr}.sheet{grid-template-columns:1fr}
+.sheet .decide{border-left:0;padding-left:0;order:-1;border-bottom:1px solid var(--line);
+padding-bottom:12px;margin-bottom:16px}.calls{grid-template-columns:1fr}
+h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
+.filters input#q{min-width:0;width:100%;flex-basis:100%}
+.arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}
+.arts tr:first-child{display:none}.arts tr{padding:12px 14px;border-bottom:1px solid var(--line)}
+.arts td{border:0;padding:2px 0}.arts td:empty{display:none}.hscroll{border-radius:10px}
+.arts tr.xtra{display:none}.morebox:checked+.hscroll .arts tr.xtra{display:block}
+.ml{display:inline;color:var(--muted);font-size:12.5px}
+.tabbar{flex-wrap:wrap;overflow:visible}.tabbar button{padding:10px 8px}}
+@media print{.tabbar,.filters{display:none}[data-panel]{display:block!important}}
+</style></head><body><input type="checkbox" id="audit" hidden><nav class="topnav" id="top"><div class="in"><a class="brand" href="../index.html">Mosaic Theory<small>Research desk</small></a><div class="links"><a href="../index.html">This week</a><a href="../themes.html" class="on">Themes</a><a href="../articles.html">Articles</a><a href="../review.html">Review</a><a href="../uploads.html">Uploads</a><a href="../sources.html">Sources</a></div><label for="audit" class="auditbar" title="Show evidence IDs, engine codes and the decision trace">Audit view</label></div></nav><main class="wrap"><nav class="crumb"><a href="../themes.html">Themes</a> › AI infrastructure · Chip equipment &amp; foundry</nav><header class="th"><h1>ASML&#x27;s hybrid bonding tool threatens Besi&#x27;s logic and HBM equipment franchise</h1><div class="meta"><span class="pill watch">Watch · needs data</span><span class="ev ">Analyst correction</span></div><div class="meta2">AI infrastructure · Chip equipment &amp; foundry · 1 source · newest evidence published 15 Oct 2026 · on the desk since 21 Oct 2026</div><div class="aud cc">TH-77926B9936 · version 2 · run R-20261022T074255Z-reassess · ai_infrastructure.semicap_foundry · competitive_share_shift</div></header><section class="panel sheet q1"><div class="sheetmain"><h2>The thesis</h2><p class="thesis">ASML is building a die-to-wafer hybrid bonding tool, evidenced by 27 bonding patent families filed Dec 2022-Nov 2024 and a report it began architecture design with Prodrive and VDL ETG; Besi is today the only supplier with D2W tools in volume production, with most of its HB business in logic at TSMC and Intel. <span class="tag">source&#x27;s view</span></p><h3 class="numh">Key figures</h3><div class="nums"><div class="num"><b>27</b><span class="unit">patent families</span><span class="lbl">bonding patent families filed</span><small>Observed · December 2022 to November 2024</small><small>SemiAnalysis, published 15 Oct 2026</small><span class="aud cc">C-728446ee4035c2</span></div><div class="num"><b>0.9nm</b><span class="unit"></span><span class="lbl">overlay accuracy</span><small>Observed · period not stated</small><small>SemiAnalysis, published 15 Oct 2026</small><span class="aud cc">C-8078cb66a0f31e</span></div><div class="num"><b>2.5-3.9nm</b><span class="unit"></span><span class="lbl">post-bond overlay</span><small>Observed · period not stated</small><small>SemiAnalysis, published 15 Oct 2026</small><span class="aud cc">C-b2bb023eb6ca55</span></div></div><h3 class="numh">What changed</h3><p class="small">Version 2, 22 Oct 2026 — new evidence, research action unchanged</p><ul class="changed"><li>ASML filed 27 bonding patent families between December 2022 and November 2024, most of them die-to-wafer. <span class="muted">(December 2022 to November 2024)</span></li><li>The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.</li><li>ASML&#x27;s NXT:2100i holds 0.9nm overlay on a single machine.</li><li class="morewrap"><details class="fold"><summary>3 more changes</summary><ul><li>ASML metrology plus scanner correction brings post-bond overlay from 40-60nm down to below 4nm.</li><li>ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV</li><li>ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm</li></ul></details></li></ul><p class="small muted">showing 6 of 13 pieces of evidence from SemiAnalysis, 2026-10-15 — the rest are in the Evidence tab below</p><h3 class="numh">What would change the call</h3><div class="calls"><div><h4>Would raise priority</h4><ul><li>ASML management announces or demonstrates a working hybrid bonder</li><li>TSMC or Intel qualifies ASML&#x27;s D2W HB tool</li></ul></div><div><h4>Would lower priority</h4><ul><li>ASML delays or shelves the bonder</li><li>HBM D2W adoption accelerates in Besi&#x27;s favor</li><li>Besi extends its volume-production lead</li></ul></div></div></div><aside class="decide"><h2>Why Watch · needs data</h2><p class="small key">Needs data — every open condition is a gap the record could not establish; supplying it can promote this thesis.</p><h3>What's missing</h3><ul class="gates"><li class="unmet"><span class="ic">✗</span><div><b>The whole text was read</b><span>only part was read</span></div></li></ul><h3>Clears when</h3><ul class="clears"><li>the full text is read — supply the document on Uploads</li></ul><h3>Next step</h3><p>Track ASML&#x27;s hybrid bonder patent filings and any management announcement, and estimate Besi&#x27;s HB revenue concentration in logic (TSMC/Intel) and HBM to size the competitive threat.</p><details class="met fold"><summary>8 of 9 conditions met</summary><ul class="gates"><li class="ok"><span class="ic">✓</span><div><b>Verified evidence</b><span>8 verified figures or events</span></div></li><li class="ok"><span class="ic">✓</span><div><b>A stated route to profits</b><span>the source states how it reaches earnings</span></div></li><li class="ok"><span class="ic">✓</span><div><b>Near-term relevance (next 2–4 quarters)</b><span>6 measured observations dated within the last quarter (6 dated only by the article&#x27;s publication date — the source states no measurement date)</span></div></li><li class="ok"><span class="ic">✓</span><div><b>An exposure the source names</b><span>listed companies: Intel (INTC)</span></div></li><li class="ok"><span class="ic">✓</span><div><b>A recent mispricing, a dated catalyst or a measured change</b><span>present</span></div></li><li class="ok"><span class="ic">✓</span><div><b>The source asserts it</b><span>asserted</span></div></li><li class="ok"><span class="ic">✓</span><div><b>No verification hold</b><span>clear</span></div></li><li class="ok"><span class="ic">✓</span><div><b>Source reliability</b><span>medium</span></div></li></ul></details><div class="timing"><h3>Timing</h3><p class="small">6 measured observations dated within the last quarter (6 dated only by the article&#x27;s publication date — the source states no measurement date). The source's own horizon: <b>longer term (beyond 4 quarters)</b>.</p><details class="fold"><summary>Dated evidence (6)</summary><ul class="small"><li>ASML announced a joint photomask initiative with TSMC and Intel in September. · September — measured within the last quarter<span class="aud cc"> C-3b4c4ffc6d1605 · measured 2026-10-15 (7 days before the as-of)</span></li><li>The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and V… [+7 chars — full text in the Evidence tab] · March — measured within the last quarter<span class="aud cc"> C-88e096720cc437 · measured 2026-10-15 (7 days before the as-of)</span></li><li>ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High… [+7 chars — full text in the Evidence tab] — measured within the last quarter<span class="aud cc"> C-c778dba9b52a3b · measured 2026-10-15 (7 days before the as-of)</span></li><li>overlay accuracy — measured within the last quarter<span class="aud cc"> C-8078cb66a0f31e · measured 2026-10-15 (7 days before the as-of)</span></li><li>post-bond overlay — measured within the last quarter<span class="aud cc"> C-b2bb023eb6ca55 · measured 2026-10-15 (7 days before the as-of)</span></li><li>post-bond overlay — measured within the last quarter<span class="aud cc"> C-fbdaa878bf7d2a · measured 2026-10-15 (7 days before the as-of)</span></li></ul><p class="small">All dated by the article&#x27;s publication date — the source states no measurement date.</p></details><div class="aud cc">6 claim(s) inside the next 2-4 quarters (C-3b4c4ffc6d1605: measured 2026-10-15 (7 days before the as-of); C-88e096720cc437: measured 2026-10-15 (7 days before the as-of); C-c778dba9b52a3b: measured 2026-10-15 (7 days before the as-of); C-8078cb66a0f31e: measured 2026-10-15 (7 days before the as-of); showing 4 of 6); 0 long-range claim(s); 3 long-dated statement(s) of the source beside the cited ev… [+135 chars — full text in the Full record]</div></div><div class="aud"><div class="cc">WATCH (RESEARCH NOW unmet: retrieval PARTIAL)</div><div class="cc">F1_source_reliability = medium — face-validity tier of the contributing channel(s)</div><div class="cc">F2_material_evidence = 8 — verified metric / event / forecast claims supporting the thesis (opinion alone is not material)</div><div class="cc">F3_independent_origins = 3 — distinct upstream origins behind the support — counted by ORIGIN, never by article count: ES-376a4a64f9cb, ES-7661d1cfece8, ES-feb5010783c6</div><div class="cc">F4_profit_transmission = source-shown — 1 fundamental step(s) shown by the source, 3 in total</div><div class="cc">F5_near_term_relevance = yes — 6 claim(s) inside the next 2-4 quarters (C-3b4c4ffc6d1605: measured 2026-10-15 (7 days before the as-of); C-88e096720cc437: measured 2026-10-15 (7 days before the as-of); C-c778dba9b52a3b: measured 2026-10-15 (7 days before the as-of); C-8078cb66a0f31e: measured 2026-10-15 (7 days before the as-of);… [+235 chars — full text in the Full record]</div><div class="cc">F6_recognizable_exposures = 1 listed · 0 sector · 0 instrument — source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Intel (INTC)</div><div class="cc">F7_dislocation_or_catalyst = present — 3 counted — a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters</div><div class="cc">F12_fundamental_inflection = absent — none — no verified near-term change in a fundamental</div><div class="cc">F8_counterevidence = 0 — material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 8 supporting; 0 independent contradicting source(s) vs 3 supporting</div><div class="cc">F9_premise_in_source = asserted — asserted | conditional | speculative | reported_view</div><div class="cc">F10_verification_hold = clear — no blocking verification issue</div><div class="cc">F11_retrieval = PARTIAL — PARTIAL text is never analysed as full</div></div></aside></section><section class="panel mkts"><h2>Is it priced?</h2><div class="mkt"><p class="mktl"><b>MARKET CONTEXT — evidence for your judgement; never read by the research action</b></p><p class="note">As of 2026-10-30 · against SPY · Polygon daily bars, split-adjusted closes (prices held 2024-10-30 to 2026-10-29); Tiingo raw closes and split factors before them, for five years of P/E; SEC XBRL annual diluted EPS filed on or before each day; consensus revisions from the fund&#x27;s CIQ dossiers.</p><div class="hscroll"><table class="mktt"><tr><th>Exposure</th><th>Close</th><th>vs 200-day avg</th><th>From 52-wk high</th><th>3m vs SPY</th><th>12m vs SPY</th><th>P/E</th><th>P/E vs own history</th><th>Revisions (3m)</th></tr><tr><td><b>Intel</b> <span class="tk">INTC</span></td><td class="n">92.07<div class="note">2026-10-29</div></td><td class="n"><span title="close 2026-10-29 against the average of the 200 daily closes 2026-01-14 to 2026-10-29">+6.1%</span></td><td class="n"><span title="close 2026-10-29 against the highest close of the 52 weeks to 2026-10-30 (140.94 on 2026-06-22)">−34.7%</span></td><td class="n"><span title="window 2026-07-31→2026-10-29 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)">−0.9 pp</span></td><td class="n"><span title="window 2025-10-30→2026-10-29 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)">+116.1 pp</span></td><td class="n"><span class="nh" title="not held — the last positive annual EPS is older than one filing cycle — a more recent annual figure exists and is negative, so valuing on the older one prices a business that no longer reports those earnings">not held</span></td><td class="n"><span class="nh" title="not held — the last positive annual EPS is older than one filing cycle — a more recent annual figure exists and is negative, so valuing on the older one prices a business that no longer reports those earnings; five years not used — the last positive annual EPS is older than one filing cycle — a more recent annual figure exists and is negative, so valuing on the older one prices a business that no longer reports those earnings">not held</span></td><td class="n"><span class="nh" title="not held — no CIQ consensus held for INTC (the fund holds CIQ exports for its dossier names only)">not held</span></td></tr></table></div><p class="mktl"><span class="lab inf">Companies the thesis implies — EXTERNAL HYPOTHESIS, not named by the source; never counted</span></p><div class="hscroll"><table class="mktt mkth2"><tr><th>Exposure</th><th>Close</th><th>vs 200-day avg</th><th>From 52-wk high</th><th>3m vs SPY</th><th>12m vs SPY</th><th>P/E</th><th>P/E vs own history</th><th>Revisions (3m)</th></tr><tr><td><b>Applied Materials</b> <span class="tk">AMAT</span></td><td class="n">421.66<div class="note">2026-10-29</div></td><td class="n"><span title="close 2026-10-29 against the average of the 200 daily closes 2026-01-14 to 2026-10-29">−5.0%</span></td><td class="n"><span title="close 2026-10-29 against the highest close of the 52 weeks to 2026-10-30 (723.00 on 2026-06-30)">−41.7%</span></td><td class="n"><span title="window 2026-07-31→2026-10-29 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)">−19.9 pp</span></td><td class="n"><span title="window 2025-10-30→2026-10-29 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)">+68.2 pp</span></td><td class="n"><span title="price 2026-10-30 ÷ annual diluted EPS for the period ending 2025-10-26 (369d old, filed 2025-12-12)">48.7×</span></td><td class="n"><span title="share of its daily P/Es from 2021-10-31 to 2026-10-30 at or below today&#x27;s (Tiingo split-adjusted closes 2021-10-25 to 2024-10-29, rebased onto Polygon&#x27;s over 43 overlapping days (ratio 1.0000); Polygon from 2024-10-30)">91st pctile · 5y</span></td><td class="n"><span class="nh" title="not held — no CIQ consensus held for AMAT (the fund holds CIQ exports for its dossier names only)">not held</span></td></tr><tr><td><b>Kulicke &amp; Soffa</b> <span class="tk">KLIC</span></td><td class="n">79.68<div class="note">2026-10-29</div></td><td class="n"><span title="close 2026-10-29 against the average of the 200 daily closes 2026-01-14 to 2026-10-29">−7.8%</span></td><td class="n"><span title="close 2026-10-29 against the highest close of the 52 weeks to 2026-10-30 (133.81 on 2026-07-01)">−40.5%</span></td><td class="n"><span title="window 2026-07-31→2026-10-29 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)">−13.7 pp</span></td><td class="n"><span title="window 2025-10-30→2026-10-29 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)">+88.2 pp</span></td><td class="n"><span title="price 2026-10-30 ÷ annual diluted EPS for the period ending 2025-10-04 (391d old, filed 2025-11-20)">19920.0×</span></td><td class="n"><span class="nh" title="not held — history below the floor — too short to judge a trailing range: only 285 P/E points (&lt; 450); five years not held — the Tiingo request failed (TypeError)">not held</span></td><td class="n"><span class="nh" title="not held — no CIQ consensus held for KLIC (the fund holds CIQ exports for its dossier names only)">not held</span></td></tr><tr><td><b>Onto Innovation</b> <span class="tk">ONTO</span></td><td class="n">221.89<div class="note">2026-10-29</div></td><td class="n"><span title="close 2026-10-29 against the average of the 200 daily closes 2026-01-14 to 2026-10-29">−15.0%</span></td><td class="n"><span title="close 2026-10-29 against the highest close of the 52 weeks to 2026-10-30 (378.45 on 2026-06-30)">−41.4%</span></td><td class="n"><span title="window 2026-07-31→2026-10-29 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)">−17.2 pp</span></td><td class="n"><span title="window 2025-10-30→2026-10-29 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)">+48.7 pp</span></td><td class="n"><span title="price 2026-10-30 ÷ annual diluted EPS for the period ending 2026-01-03 (300d old, filed 2026-02-24)">79.8×</span></td><td class="n"><span title="share of its daily P/Es from 2021-10-31 to 2026-10-30 at or below today&#x27;s (Tiingo split-adjusted closes 2021-10-25 to 2024-10-29, rebased onto Polygon&#x27;s over 43 overlapping days (ratio 1.0000); Polygon from 2024-10-30)">73rd pctile · 5y</span></td><td class="n"><span class="nh" title="not held — no CIQ consensus held for ONTO (the fund holds CIQ exports for its dossier names only)">not held</span></td></tr></table></div><p class="note">Revisions: the next fiscal year&#x27;s EPS consensus over 3 months, and the analysts who revised it up and down — from the fund&#x27;s CIQ dossiers (its dossier names only), when the export is on or before the date and at most a month old.</p><details class="mkth"><summary>How each figure is measured</summary><ul><li><b>Intel</b><ul><li>vs 200-day avg: close 2026-10-29 against the average of the 200 daily closes 2026-01-14 to 2026-10-29</li><li>From 52-wk high: close 2026-10-29 against the highest close of the 52 weeks to 2026-10-30 (140.94 on 2026-06-22)</li><li>3m vs SPY: window 2026-07-31→2026-10-29 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)</li><li>12m vs SPY: window 2025-10-30→2026-10-29 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)</li><li>P/E: not held — the last positive annual EPS is older than one filing cycle — a more recent annual figure exists and is negative, so valuing on the older one prices a business that no longer reports those earnings</li><li>P/E vs own history: not held — the last positive annual EPS is older than one filing cycle — a more recent annual figure exists and is negative, so valuing on the older one prices a business that no longer reports those earnings; five years not used — the last positive annual EPS is older than one filing cycle — a more recent annual figure exists and is negative, so valuing on the older one prices a business that no longer reports those earnings</li><li>Revisions (3m): not held — no CIQ consensus held for INTC (the fund holds CIQ exports for its dossier names only)</li></ul></li><li><b>Applied Materials</b><ul><li>vs 200-day avg: close 2026-10-29 against the average of the 200 daily closes 2026-01-14 to 2026-10-29</li><li>From 52-wk high: close 2026-10-29 against the highest close of the 52 weeks to 2026-10-30 (723.00 on 2026-06-30)</li><li>3m vs SPY: window 2026-07-31→2026-10-29 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)</li><li>12m vs SPY: window 2025-10-30→2026-10-29 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)</li><li>P/E: price 2026-10-30 ÷ annual diluted EPS for the period ending 2025-10-26 (369d old, filed 2025-12-12)</li><li>P/E vs own history: share of its daily P/Es from 2021-10-31 to 2026-10-30 at or below today&#x27;s (Tiingo split-adjusted closes 2021-10-25 to 2024-10-29, rebased onto Polygon&#x27;s over 43 overlapping days (ratio 1.0000); Polygon from 2024-10-30)</li><li>Revisions (3m): not held — no CIQ consensus held for AMAT (the fund holds CIQ exports for its dossier names only)</li></ul></li><li><b>Kulicke &amp; Soffa</b><ul><li>vs 200-day avg: close 2026-10-29 against the average of the 200 daily closes 2026-01-14 to 2026-10-29</li><li>From 52-wk high: close 2026-10-29 against the highest close of the 52 weeks to 2026-10-30 (133.81 on 2026-07-01)</li><li>3m vs SPY: window 2026-07-31→2026-10-29 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)</li><li>12m vs SPY: window 2025-10-30→2026-10-29 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)</li><li>P/E: price 2026-10-30 ÷ annual diluted EPS for the period ending 2025-10-04 (391d old, filed 2025-11-20)</li><li>P/E vs own history: not held — history below the floor — too short to judge a trailing range: only 285 P/E points (&lt; 450); five years not held — the Tiingo request failed (TypeError)</li><li>Revisions (3m): not held — no CIQ consensus held for KLIC (the fund holds CIQ exports for its dossier names only)</li></ul></li><li><b>Onto Innovation</b><ul><li>vs 200-day avg: close 2026-10-29 against the average of the 200 daily closes 2026-01-14 to 2026-10-29</li><li>From 52-wk high: close 2026-10-29 against the highest close of the 52 weeks to 2026-10-30 (378.45 on 2026-06-30)</li><li>3m vs SPY: window 2026-07-31→2026-10-29 spans 90d over 64 bars (target 91d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)</li><li>12m vs SPY: window 2025-10-30→2026-10-29 spans 364d over 251 bars (target 365d; common last bar; name frontier 2026-10-29, benchmark frontier 2026-10-29; 1d short of the 2026-10-30 reference)</li><li>P/E: price 2026-10-30 ÷ annual diluted EPS for the period ending 2026-01-03 (300d old, filed 2026-02-24)</li><li>P/E vs own history: share of its daily P/Es from 2021-10-31 to 2026-10-30 at or below today&#x27;s (Tiingo split-adjusted closes 2021-10-25 to 2024-10-29, rebased onto Polygon&#x27;s over 43 overlapping days (ratio 1.0000); Polygon from 2024-10-30)</li><li>Revisions (3m): not held — no CIQ consensus held for ONTO (the fund holds CIQ exports for its dossier names only)</li></ul></li></ul></details></div></section><section class="panel"><h2>Who is exposed</h2><div class="expo"><h3>Could benefit</h3><ul class="who"><li><b>ASML</b> <span class="tk">no verified US listing</span><div class="small">Lithography equipment maker building a D2W hybrid bonding tool, expanding into back-end packaging and threatening Besi&#x27;s position.</div></li><li><b>Prodrive Technologies</b> <span class="tk">private</span><div class="small">Likely component supplier of linear motors and drives for ASML&#x27;s bonder.</div></li><li><b>VDL ETG</b> <span class="tk">private</span><div class="small">Likely component supplier building ASML&#x27;s frames and modules and wafer handler.</div></li></ul><h3>Could be hurt</h3><ul class="who"><li><b>Besi</b> <span class="tk">no verified US listing</span><div class="small">Current D2W hybrid bonding leader whose logic and HBM business is threatened by ASML&#x27;s entry and Korean challengers.</div></li></ul><h3>Named as exposed — direction not stated</h3><ul class="who"><li><b>TSMC</b> <span class="tk">no verified US listing</span> <span class="muted">a customer / spender</span><div class="small">Key hybrid bonding customer (SoIC) where ASML has decades of relationship; potential first adopter of ASML&#x27;s tool.</div></li><li><b>Intel</b> <span class="tk">INTC</span> <span class="muted">a customer / spender</span><div class="small">Key logic hybrid bonding customer concentrated in Besi&#x27;s business today.</div></li><li><b>Samsung</b> <span class="tk">no verified US listing</span> <span class="muted">a customer / spender</span><div class="small">Partner in ASML&#x27;s photomask initiative.</div></li></ul><div class="hypo"><h3>Companies the thesis implies <span class="tag">our hypothesis</span></h3><p class="small muted">Proposed by the model on 2026-10-30 from the thesis&#x27;s own steps — not named by the source, never counted toward the research action.</p><div class="hhead" aria-hidden="true"><span>Ticker</span><span>Company</span><span>Direction</span><span>Earns from (stated)</span><span>10-K</span></div><h4 class="cond">If this holds: “ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi&#x27;s unit volumes in its core logic segment; article does not quantify.” <span class="tag">our inference</span><span class="aud cc"> s03.1</span></h4><div class="hrows"><details class="hrow"><summary><span class="tkr">AMAT</span><b>Applied Materials</b><span class="side up">would benefit</span><span class="earn">product sales</span><span class="ck" title="its 10-K states no revenue sentence in these words">–</span></summary><div class="hbody"><p>Supplies die-attach and advanced packaging/hybrid bonding tools; growth in advanced-logic HB adoption expands its packaging equipment revenue line.</p><p class="small">Listing: AMAT</p><p class="small basis">basis (the model&#x27;s): product sales — advanced packaging and bonding equipment · 10-K filed 2025-12-12 (0001628280-25-056742): the filing states no revenue-source sentence naming a way of earning in the words this check reads — not found is not wrong; read the filing</p><span class="aud cc">LISTED_EQUITY · model ticker hint verified against SEC registrant name; identity checked against the issuer&#x27;s SEC industry (SIC 3674); point-in-time cover page</span></div></details><details class="hrow"><summary><span class="tkr">KLIC</span><b>Kulicke &amp; Soffa</b><span class="side down">would be hurt</span><span class="earn">product sales</span><span class="ck" title="its 10-K&#x27;s revenue sentence names it">✓</span></summary><div class="hbody"><p>Its thermocompression/die-attach bonding franchise competes in advanced packaging; dominant D2W hybrid-bonding tools from larger vendors could displace its bonder unit volumes.</p><p class="small">Listing: KLIC</p><p class="small basis">basis (the model&#x27;s): product sales — die-attach and bonding equipment · 10-K filed 2025-11-20 (0000056978-25-000081): its revenue-source sentence names product sales</p><p class="filing">“the Company generates revenue from product sales, either directly to customers or to distributors.”</p><span class="aud cc">LISTED_EQUITY · model ticker hint verified against SEC registrant name; identity checked against the issuer&#x27;s SEC industry (SIC 3674); point-in-time cover page</span></div></details><details class="hrow"><summary><span class="tkr">ONTO</span><b>Onto Innovation</b><span class="side up">would benefit</span><span class="earn">product sales</span><span class="ck" title="its 10-K&#x27;s revenue sentence names it">✓</span></summary><div class="hbody"><p>Hybrid bonding&#x27;s tight alignment and particle control drives demand for its packaging metrology and inspection systems as HB logic volumes ramp.</p><p class="small">Listing: ONTO</p><p class="small basis">basis (the model&#x27;s): product sales — advanced-packaging metrology and inspection · 10-K filed 2026-02-24 (0001193125-26-066937): its revenue-source sentence names product sales</p><p class="filing">“Our revenue is derived from the sale of our systems and software, spare parts, and services.”</p><span class="aud cc">LISTED_EQUITY · model ticker hint verified against SEC registrant name; identity checked against the issuer&#x27;s SEC industry (SIC 3829); point-in-time cover page</span></div></details><details class="hrow"><summary><span class="tkr">CAMT</span><b>Camtek</b><span class="side up">would benefit</span><span class="earn">product sales</span><span class="ck" title="its 10-K&#x27;s revenue sentence names another way">≠</span></summary><div class="hbody"><p>Hybrid bonding and HBM stacking require high-end inspection; rising advanced-logic and HBM packaging volumes lift its core packaging inspection sales.</p><p class="small">Listing: CAMT — the US line of a foreign filer, not checked point-in-time</p><p class="small basis">basis (the model&#x27;s): product sales — advanced-packaging inspection equipment · 20-F filed 2026-03-19 (0001178913-26-001561): its revenue-source sentences name licences and maintenance — not product sales</p><p class="filing">“we generate revenues from providing maintenance and support services for our products.”</p><span class="aud cc">UNRESOLVED · foreign private issuer — its US line(s) [&#x27;CAMT&#x27;] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted</span></div></details></div></div><p class="small"><b>Business groups the source names:</b>  Not checkable on this machine — the text of 8 paragraph(s) holding this thesis&#x27;s evidence is not held here (an exported registry carries no article text), so business groups the source names there cannot be read.</p><p class="small muted">Also named, not exposures: AMD (context), Hanwha Semitech (context), Cymer (context), HMI (context) — showing 4 of 9; all in the full record</p></div></section><div class="grid2"><section class="panel"><h2>What could prove it wrong</h2><ul class="risk"><li class=muted>None in the sources so far.</li></ul><details class="fold"><summary>Signals to watch (3)</summary><ul class="risk"><li>ASML abandons or delays the bonder program</li><li>Besi secures new HBM or logic HB qualifications</li><li>Customers reject ASML&#x27;s premium pricing</li></ul></details><details class="fold"><summary>Competing explanation</summary><ul class="risk"><li>Besi has led die-to-wafer bonding and is the only supplier with tools in volume production. <span class="tag">source&#x27;s view</span></li></ul></details></section><section class="panel"><h2>How it reaches fundamentals</h2><ol class="chain"><li><span class="sn">Industry shift</span><span>ASML has started the architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG, The Elec reported in March.</span> <span class="tag">reported</span></li><li><span class="sn">Volumes</span><span>ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi&#x27;s unit volumes in its core logic segment; article does not quantify.</span> <span class="tag">our inference</span></li><li><span class="sn">Pricing</span><span>The source expects ASML to price its tools at a premium to peers.</span> <span class="tag">source&#x27;s view</span></li><li><span class="sn">Listed-company earnings</span><span>Share shift from Besi to ASML would erode Besi&#x27;s HB revenue while adding to ASML&#x27;s back-end sales; article quantifies neither.</span> <span class="tag">our inference</span></li></ol></section></div><section class="panel"><h2>Related theses</h2><details class="more-rows fold"><summary>11 theses in the same broader area</summary><ul class="rel"><li><a href="TH-05208D689A.html">Component shortages, especially memory, lift AI server rack ASPs and revenue</a><div class="small">AI infrastructure</div></li><li><a href="TH-0577F0AD38.html">AI inference and agentic AI drive server CPU shipment growth above 40%</a><div class="small">AI infrastructure · AI chips</div></li><li><a href="TH-0D381F307A.html">Surging CSP CapEx drives AI server shipments and spenders&#x27; infrastructure buildout</a><div class="small">AI infrastructure · Hyperscaler capex</div></li><li><a href="TH-188B31F187.html">Canadian power and critical minerals as an AI-compute supply opportunity</a><div class="small">AI infrastructure</div></li><li><a href="TH-3557AAE138.html">AI datacenter buildout accelerates +50GW in 2027, lifting physical datacenter suppliers</a><div class="small">AI infrastructure · Datacenter build</div></li><li><a href="TH-921772E86C.html">CPO mass production shifts value to integrated optical-electrical test platform suppliers</a><div class="small">AI infrastructure · Optical &amp; networking</div></li><li><a href="TH-B121174B17.html">Huawei-DeepSeek co-design matures a domestic Chinese AI compute ecosystem</a><div class="small">AI infrastructure · AI chips</div></li><li><a href="TH-B1F096684F.html">AI data center demand drives optical fiber shortage lifting fiber supplier pricing</a><div class="small">AI infrastructure · Datacenter build</div></li><li><a href="TH-CBFA9511C2.html">Intel loses server CPU share on process and capacity constraints</a><div class="small">AI infrastructure · AI chips</div></li><li><a href="TH-F2CD2F7AFC.html">Trainium3&#x27;s native PyTorch training stack broadens adoption, aiding AWS custom silicon</a><div class="small">AI infrastructure · AI chips</div></li><li><a href="TH-FAABB39749.html">Credit markets single out debt-reliant AI infrastructure borrowers as weak links</a><div class="small">AI infrastructure</div></li></ul></details></section><section class="tabs" data-tabs><div class="tabbar" role="tablist"><button data-tab="ev" class="on">Evidence (17)</button><button data-tab="hi">History (2)</button><button data-tab="src">Sources (1)</button><button data-tab="full">Full record</button></div><div data-panel="ev"><p class="evsum">17 cited items from 1 source · 13 supporting · none against · 4 context <span class="muted">— click a figure for the source's words</span></p><h3 class="evh">Supporting <small>13</small></h3><details class="evg" open><summary><b>SemiAnalysis · 15 Oct 2026</b> <span class="muted">13 items</span></summary><ul class="evl"><li><details><summary><span class="v">27 patent families</span> bonding patent families filed <span class="muted">· December 2022 to November 2024</span></summary><blockquote>“the company filed 27 bonding patent families between December 2022 and November 2024, most of them D2W”</blockquote></details><span class="aud cc">C-728446ee4035c2</span></li><li><details><summary><span class="v">0.9nm</span> overlay accuracy</summary><blockquote>“Its NXT:2100i holds 0.9nm overlay on a single machine.”</blockquote></details><span class="aud cc">C-8078cb66a0f31e</span></li><li><details><summary><span class="v">2.5-3.9nm</span> post-bond overlay</summary><blockquote>“ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm”</blockquote></details><span class="aud cc">C-b2bb023eb6ca55</span></li><li><details><summary><span class="v">below 4nm</span> post-bond overlay</summary><blockquote>“bringing post-bond overlay from 40-60nm down to below 4nm”</blockquote></details><span class="aud cc">C-fbdaa878bf7d2a</span></li><li><details><summary><span class="v">6-inch to 12-inch</span> ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV</summary><blockquote>“ASML announced joint initiatives with TSMC , Intel Foundry and Samsung to move the industry from 6-inch to 12-inch photomasks for High NA EUV”</blockquote></details><span class="aud cc">C-c778dba9b52a3b</span></li><li><details><summary>Besi has led D2W hybrid bonding and is the only supplier with tools in volume production. <span class="tag">source&#x27;s view</span></summary><blockquote>“Besi has led D2W and is the only supplier with tools in volume production.”</blockquote></details><span class="aud cc">C-1382cb9d497c06</span></li><li><details><summary>SemiAnalysis expects advanced logic to adopt ASML&#x27;s D2W HB tool first, which is bad news for Besi. <span class="tag">source&#x27;s view</span></summary><blockquote>“We expect advanced logic, where D2W already runs in volume, to adopt ASML’s D2W HB tool first. This is bad news for Besi .”</blockquote></details><span class="aud cc">C-191768c254746f</span></li><li><details><summary>SemiAnalysis expects ASML to price its hybrid bonding tools at a premium to peers. <span class="tag">source&#x27;s view</span></summary><blockquote>“We expect ASML to price its tools at a premium to peers.”</blockquote></details><span class="aud cc">C-393c82f7c8a2af</span></li><li><details><summary>ASML shipped its first back-end product, the XT:260 i-line packaging scanner, in 3Q25. <span class="muted">· 3Q25</span></summary><blockquote>“It shipped its first back-end product, the XT:260 i-line packaging scanner, in 3Q25.”</blockquote></details><span class="aud cc">C-46b792a61f0542</span></li><li><details><summary>Logic accounts for most of Besi&#x27;s hybrid bonding business today, concentrated at TSMC and Intel. <span class="muted">· today</span> <span class="tag">source&#x27;s view</span></summary><blockquote>“Logic accounts for most of Besi’s HB business today concentrated at TSMC and Intel.”</blockquote></details><span class="aud cc">C-6af62a2f686aa8</span></li><li class="morewrap"><details class="more-rows"><summary>Showing 10 of 13 items — show all 13</summary><ul class="evl"><li><details><summary>In ASML&#x27;s design the bonder hands each die&#x27;s position map to the scanner, enabling faster lithography on bonded wafers and selling bonder and scanner as a pair <span class="tag">source&#x27;s view</span></summary><blockquote>“the bonder already knows where it put each die and hands that map (a “coordinate system” in the filing) to the scanner”</blockquote></details><span class="aud cc">C-c4605bd9b73093</span></li><li><details><summary>ASML announced a joint photomask initiative with TSMC and Intel in September. <span class="muted">· September</span></summary><blockquote>“ASML has been working with both for more than two decades and just announced a joint photomask initiative in September.”</blockquote></details><span class="aud cc">C-3b4c4ffc6d1605</span></li><li><details><summary>The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG. <span class="muted">· March</span></summary><blockquote>“The Elec also reported in March that ASML had started the architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.”</blockquote></details><span class="aud cc">C-88e096720cc437</span></li></ul></details></li></ul></details><details class="evg"><summary><b>Context and other cited figures</b> <span class="muted">4</span></summary><ul class="evl"><li><details><summary>Besi&#x27;s HBM prospects are weakening as Korean challengers catch up. <span class="tag">source&#x27;s view</span></summary><blockquote>“Besi’s HBM prospects are also weakening. Korean challengers are catching up”</blockquote></details><span class="aud cc">C-cd0b2e292aaeb3</span></li><li><details><summary><span class="v">2029 or beyond year</span> HBM D2W HB adoption timing <span class="muted">· 2029 or beyond</span> <span class="tag">forecast</span></summary><blockquote>“an HBM adoption that we expect to slip to 2029 or beyond”</blockquote></details><span class="aud cc">C-66600ab4683d98</span></li><li><details><summary><span class="v">4.5um</span> SoIC bonding pitch <span class="muted">· around 2029</span> <span class="tag">forecast</span></summary><blockquote>“TSMC’s SoIC bonds at about 6um pitch today and targets 4.5um around 2029”</blockquote></details><span class="aud cc">C-2ffe726cbc9c6a</span></li><li><details><summary><span class="v">4.5um</span> SoIC HB pitch <span class="muted">· by 2029</span> <span class="tag">forecast</span></summary><blockquote>“As its HB pitch moves from 6um to 4.5um by 2029, the placement accuracy requirement will tighten further.”</blockquote></details><span class="aud cc">C-2082af8a4bec40</span></li></ul></details></div><div data-panel="hi" hidden><ol class="timeline"><li><span class="hv">Version 2</span><span>22 Oct 2026</span><span class="pill watch">Watch</span><span class="muted">re-graded from stored evidence — no article read · includes an analyst correction</span><span class="aud cc">REASSESSED under the current research-action rules from stored evidence — no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s03.0 — The vertical-integration and track-based-bonder description is not in the cited claims; the reported design work restated with its own source. — approved by nogods404 (operator) on 2026-10-22 (decisi… [+613 chars — full text in the Full record]</span></li><li><span class="hv">Version 1</span><span>21 Oct 2026</span><span class="pill watch">Watch</span><span class="muted">from the weekly scan</span><span class="aud cc">Initial record — created from A-7b20abdd06d4</span></li></ol></div><div data-panel="src" hidden><ul class="plainlist srcl"><li><a href="https://newsletter.semianalysis.com/p/asml-is-building-a-hybrid-bonding">ASML Is Building a Hybrid Bonding Tool, Sending More Chills to Besi</a><div class="small">SemiAnalysis · 15 Oct 2026 · preview only · 17 cited</div><span class="aud cc"> A-7b20abdd06d4</span></li></ul></div><div data-panel="full" hidden><p>The complete nine-section Living Thesis Card — every line with its label and citations, all evidence and counter-evidence, the history and the audit record.</p><p><a class="btn" href="../cards/TH-77926B9936.html">Open the full record</a> <a class="btn2" href="../cards/TH-77926B9936.print.html">Printable record</a></p><ol class="nine"><li><a href="../cards/TH-77926B9936.html#sec-s01_bottom_line">Bottom line</a></li><li><a href="../cards/TH-77926B9936.html#sec-s02_what_changed">What changed?</a></li><li><a href="../cards/TH-77926B9936.html#sec-s03_transmission">Why could stocks benefit or suffer?</a></li><li><a href="../cards/TH-77926B9936.html#sec-s04_key_evidence">Key evidence &amp; numbers</a></li><li><a href="../cards/TH-77926B9936.html#sec-s05_affected">Affected companies / sectors</a></li><li><a href="../cards/TH-77926B9936.html#sec-s06_why_now">Why now? (next 2-4 quarters)</a></li><li><a href="../cards/TH-77926B9936.html#sec-s07_what_could_go_wrong">What could go wrong?</a></li><li><a href="../cards/TH-77926B9936.html#sec-s08_decision">Decision &amp; next trigger</a></li><li><a href="../cards/TH-77926B9936.html#sec-s09_sources">Sources &amp; change history</a></li></ol></div></section><div class="foot">Generated 2026-10-30 12:43 UTC from the registry<span class="aud"> (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).</span></div><div class="foot"><a href="../dashboard.html">Full weekly report</a> · <a href="../report_print.html">Printable report</a></div></main><script>function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
+function openAll(root){rowsOf(root+' details.more-rows').forEach(function(d){d.open=true});
+rowsOf('input.morebox').forEach(function(b){b.checked=true})}
+function recap(root){rowsOf(root+' table[data-cap],table'+root+'[data-cap]').forEach(
+function(t){var cap=+t.dataset.cap,k=0;
+Array.prototype.slice.call(t.rows).forEach(function(r){if(r.querySelector('th'))return;
+if(!r.hasAttribute('data-sub')&&r.style.display!=='none')k++;r.classList.toggle('xtra',k>cap)});
+var l=document.querySelector('label[for="'+t.dataset.box+'"]');if(l){l.style.display=k>cap?'':
+'none';if(k>cap)l.textContent='Showing '+cap+' of '+k+' '+t.dataset.what+' — show all '+k}})}
+function flt(){var q=(document.getElementById('q').value||'').toLowerCase(),
+s=document.getElementById('fs').value,a=document.getElementById('fa').value,
+ar=document.getElementById('far').value,n=0,all=rowsOf('#tt tr[data-area]');
+if(q||a||ar)openAll('#tt');
+all.forEach(function(r){var ok=(!s||r.dataset.status===s)&&(!a||r.dataset.action===a)&&
+(!ar||r.dataset.area===ar)&&(!q||(r.textContent+' '+r.dataset.area).toLowerCase().indexOf(q)>=0);
+r.style.display=ok?'':'none';n+=ok?1:0});recap('#tt');
+document.getElementById('cnt').textContent=n+' of '+all.length+' match'}
+function srt(){var k=document.getElementById('so').value;var v=function(r){return k==='upd'?
+-r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:k==='rv'?-r.dataset.rv:
++r.dataset.ord};
+rowsOf('#tt table').forEach(function(t){var rs=Array.prototype.slice.call(t.querySelectorAll(
+'tr[data-area]'));rs.sort(function(a,b){return v(a)-v(b)||a.dataset.ord-b.dataset.ord})
+.forEach(function(r){(r.parentNode).appendChild(r)})});recap('#tt')}
+function fa(){var r=document.getElementById('fr').value,p=document.getElementById('fp').value,n=0,
+all=rowsOf('#at tr[data-state]');if(r||p)openAll('#at');all.forEach(function(x){var ok=
+(!r||x.dataset.state===r)&&(!p||x.dataset.pub===p);x.style.display=ok?'':'none';n+=ok?1:0});
+rowsOf('#at tr[data-sub]').forEach(function(x){var t=x.previousElementSibling;
+x.style.display=t&&t.style.display==='none'?'none':''});recap('#at');
+document.getElementById('cnt2').textContent=n+' of '+all.length+' match'}
+function fr2(){var d=document.getElementById('fdec').checked,rn=document.getElementById('frn')
+.checked,o=document.getElementById('fold').checked,n=0,all=rowsOf('#rv li.rvi');
+if(d||rn||o)openAll('#rv');all.forEach(function(x){var ok=(!d||x.dataset.dec==='1')&&(!rn||
+x.dataset.act==='RESEARCH NOW')&&(!o||+x.dataset.age>=28);x.style.display=ok?'':'none';
+n+=ok?1:0});rowsOf('#rv li.rvg').forEach(function(g){g.style.display=Array.prototype.slice
+.call(g.querySelectorAll('li.rvi')).some(function(x){return x.style.display!=='none'})?'':'none'});
+document.getElementById('cnt3').textContent=n+' of '+all.length+' match'}
+function deskInit(root,u){root.querySelectorAll('[data-tabs]').forEach(function(g){
+var b=g.querySelectorAll('[data-tab]'),p=g.querySelectorAll('[data-panel]');b.forEach(function(x){
+x.addEventListener('click',function(){b.forEach(function(y){y.classList.toggle('on',y===x)});
+p.forEach(function(q){q.hidden=q.dataset.panel!==x.dataset.tab})})})});
+if(document.getElementById('tt')){if(u.get('area'))document.getElementById('far').value=
+u.get('area');if(u.get('sort'))document.getElementById('so').value=u.get('sort');srt();flt()}
+if(document.getElementById('at'))fa();if(document.getElementById('rv'))fr2()}
+window.addEventListener('beforeprint',function(){rowsOf('details').forEach(function(d){
+d.open=true});rowsOf('input.morebox').forEach(function(b){b.checked=true})});
+deskInit(document,new URLSearchParams(location.search));</script><script>function reveal(h){if(!h||h.length<2)return;var t=document.getElementById(decodeURIComponent(h.slice(1)));if(!t)return;for(var d=t.closest('details');d;d=d.parentElement?d.parentElement.closest('details'):null)d.open=true;t.scrollIntoView({block:'center'});t.classList.add('hit');setTimeout(function(){t.classList.remove('hit')},2500)}addEventListener('hashchange',function(){reveal(location.hash)});addEventListener('load',function(){reveal(location.hash)});document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)reveal(location.hash)});</script></body></html>

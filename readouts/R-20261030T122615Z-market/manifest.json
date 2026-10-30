@@ -1,0 +1,721 @@
+{
+ "as_of": "2026-10-30",
+ "cost_note": "list price; cached calls cost 0",
+ "cost_usd": 0.0,
+ "counts": {
+  "http_cache_hits": 0,
+  "http_requests": 0,
+  "llm_calls": 0,
+  "llm_calls_cached": 0,
+  "theses_priced": 28
+ },
+ "db_schema_version": 9,
+ "engine_version": "ti-engine-5",
+ "fetch_seconds": 0.0,
+ "finished_at": "2026-10-30T12:43:45.369559+00:00",
+ "generated_at": "2026-10-30T12:43:46.907681+00:00",
+ "llm": {
+  "extract_prompt_version": "ti-extract-6",
+  "model": "claude-opus-4-8",
+  "provider": "anthropic",
+  "review_prompt_version": "ti-review-4"
+ },
+ "llm_seconds": 0.0,
+ "mode": "market",
+ "output_dir": "data/theme_intelligence/runs/R-20261030T122615Z-market",
+ "outputs": [
+  "articles-2026-10-20.html",
+  "articles-2026-10-21.html",
+  "articles.html",
+  "cards/TH-05208D689A.html",
+  "cards/TH-05208D689A.json",
+  "cards/TH-05208D689A.md",
+  "cards/TH-05208D689A.print.html",
+  "cards/TH-0577F0AD38.html",
+  "cards/TH-0577F0AD38.json",
+  "cards/TH-0577F0AD38.md",
+  "cards/TH-0577F0AD38.print.html",
+  "cards/TH-0D381F307A.html",
+  "cards/TH-0D381F307A.json",
+  "cards/TH-0D381F307A.md",
+  "cards/TH-0D381F307A.print.html",
+  "cards/TH-16225B12C4.html",
+  "cards/TH-16225B12C4.json",
+  "cards/TH-16225B12C4.md",
+  "cards/TH-16225B12C4.print.html",
+  "cards/TH-188B31F187.html",
+  "cards/TH-188B31F187.json",
+  "cards/TH-188B31F187.md",
+  "cards/TH-188B31F187.print.html",
+  "cards/TH-1B06ACA0B7.html",
+  "cards/TH-1B06ACA0B7.json",
+  "cards/TH-1B06ACA0B7.md",
+  "cards/TH-1B06ACA0B7.print.html",
+  "cards/TH-3557AAE138.html",
+  "cards/TH-3557AAE138.json",
+  "cards/TH-3557AAE138.md",
+  "cards/TH-3557AAE138.print.html",
+  "cards/TH-38CA111885.html",
+  "cards/TH-38CA111885.json",
+  "cards/TH-38CA111885.md",
+  "cards/TH-38CA111885.print.html",
+  "cards/TH-393DF5CD2B.html",
+  "cards/TH-393DF5CD2B.json",
+  "cards/TH-393DF5CD2B.md",
+  "cards/TH-393DF5CD2B.print.html",
+  "cards/TH-3C22A83E75.html",
+  "cards/TH-3C22A83E75.json",
+  "cards/TH-3C22A83E75.md",
+  "cards/TH-3C22A83E75.print.html",
+  "cards/TH-41B1AB7F8C.html",
+  "cards/TH-41B1AB7F8C.json",
+  "cards/TH-41B1AB7F8C.md",
+  "cards/TH-41B1AB7F8C.print.html",
+  "cards/TH-431B4B9195.html",
+  "cards/TH-431B4B9195.json",
+  "cards/TH-431B4B9195.md",
+  "cards/TH-431B4B9195.print.html",
+  "cards/TH-45A01B5D5C.html",
+  "cards/TH-45A01B5D5C.json",
+  "cards/TH-45A01B5D5C.md",
+  "cards/TH-45A01B5D5C.print.html",
+  "cards/TH-48CF61E45B.html",
+  "cards/TH-48CF61E45B.json",
+  "cards/TH-48CF61E45B.md",
+  "cards/TH-48CF61E45B.print.html",
+  "cards/TH-5151436FE1.html",
+  "cards/TH-5151436FE1.json",
+  "cards/TH-5151436FE1.md",
+  "cards/TH-5151436FE1.print.html",
+  "cards/TH-6BDD0881AD.html",
+  "cards/TH-6BDD0881AD.json",
+  "cards/TH-6BDD0881AD.md",
+  "cards/TH-6BDD0881AD.print.html",
+  "cards/TH-722932E64F.html",
+  "cards/TH-722932E64F.json",
+  "cards/TH-722932E64F.md",
+  "cards/TH-722932E64F.print.html",
+  "cards/TH-77926B9936.html",
+  "cards/TH-77926B9936.json",
+  "cards/TH-77926B9936.md",
+  "cards/TH-77926B9936.print.html",
+  "cards/TH-7AC3AE200E.html",
+  "cards/TH-7AC3AE200E.json",
+  "cards/TH-7AC3AE200E.md",
+  "cards/TH-7AC3AE200E.print.html",
+  "cards/TH-87D93CD53A.html",
+  "cards/TH-87D93CD53A.json",
+  "cards/TH-87D93CD53A.md",
+  "cards/TH-87D93CD53A.print.html",
+  "cards/TH-8DDD7B2868.html",
+  "cards/TH-8DDD7B2868.json",
+  "cards/TH-8DDD7B2868.md",
+  "cards/TH-8DDD7B2868.print.html",
+  "cards/TH-921772E86C.html",
+  "cards/TH-921772E86C.json",
+  "cards/TH-921772E86C.md",
+  "cards/TH-921772E86C.print.html",
+  "cards/TH-A097D4722F.html",
+  "cards/TH-A097D4722F.json",
+  "cards/TH-A097D4722F.md",
+  "cards/TH-A097D4722F.print.html",
+  "cards/TH-A381AB426E.html",
+  "cards/TH-A381AB426E.json",
+  "cards/TH-A381AB426E.md",
+  "cards/TH-A381AB426E.print.html",
+  "cards/TH-ABE7D2B79D.html",
+  "cards/TH-ABE7D2B79D.json",
+  "cards/TH-ABE7D2B79D.md",
+  "cards/TH-ABE7D2B79D.print.html",
+  "cards/TH-B121174B17.html",
+  "cards/TH-B121174B17.json",
+  "cards/TH-B121174B17.md",
+  "cards/TH-B121174B17.print.html",
+  "cards/TH-B1F096684F.html",
+  "cards/TH-B1F096684F.json",
+  "cards/TH-B1F096684F.md",
+  "cards/TH-B1F096684F.print.html",
+  "cards/TH-BBF8E714C1.html",
+  "cards/TH-BBF8E714C1.json",
+  "cards/TH-BBF8E714C1.md",
+  "cards/TH-BBF8E714C1.print.html",
+  "cards/TH-BCBAD262D4.html",
+  "cards/TH-BCBAD262D4.json",
+  "cards/TH-BCBAD262D4.md",
+  "cards/TH-BCBAD262D4.print.html",
+  "cards/TH-C1889ABBA5.html",
+  "cards/TH-C1889ABBA5.json",
+  "cards/TH-C1889ABBA5.md",
+  "cards/TH-C1889ABBA5.print.html",
+  "cards/TH-C2BEC5879A.html",
+  "cards/TH-C2BEC5879A.json",
+  "cards/TH-C2BEC5879A.md",
+  "cards/TH-C2BEC5879A.print.html",
+  "cards/TH-C2EA7EB06F.html",
+  "cards/TH-C2EA7EB06F.json",
+  "cards/TH-C2EA7EB06F.md",
+  "cards/TH-C2EA7EB06F.print.html",
+  "cards/TH-CBFA9511C2.html",
+  "cards/TH-CBFA9511C2.json",
+  "cards/TH-CBFA9511C2.md",
+  "cards/TH-CBFA9511C2.print.html",
+  "cards/TH-DEB6560D7F.html",
+  "cards/TH-DEB6560D7F.json",
+  "cards/TH-DEB6560D7F.md",
+  "cards/TH-DEB6560D7F.print.html",
+  "cards/TH-F2CD2F7AFC.html",
+  "cards/TH-F2CD2F7AFC.json",
+  "cards/TH-F2CD2F7AFC.md",
+  "cards/TH-F2CD2F7AFC.print.html",
+  "cards/TH-F9F8F41CE0.html",
+  "cards/TH-F9F8F41CE0.json",
+  "cards/TH-F9F8F41CE0.md",
+  "cards/TH-F9F8F41CE0.print.html",
+  "cards/TH-FAABB39749.html",
+  "cards/TH-FAABB39749.json",
+  "cards/TH-FAABB39749.md",
+  "cards/TH-FAABB39749.print.html",
+  "cards/TH-FDEF68AB50.html",
+  "cards/TH-FDEF68AB50.json",
+  "cards/TH-FDEF68AB50.md",
+  "cards/TH-FDEF68AB50.print.html",
+  "dashboard.csv",
+  "dashboard.html",
+  "dashboard.json",
+  "dashboard.md",
+  "index.html",
+  "report_print.html",
+  "review.html",
+  "sources.html",
+  "themes.html",
+  "theses/TH-05208D689A.html",
+  "theses/TH-0577F0AD38.html",
+  "theses/TH-0D381F307A.html",
+  "theses/TH-16225B12C4.html",
+  "theses/TH-188B31F187.html",
+  "theses/TH-1B06ACA0B7.html",
+  "theses/TH-3557AAE138.html",
+  "theses/TH-38CA111885.html",
+  "theses/TH-393DF5CD2B.html",
+  "theses/TH-3C22A83E75.html",
+  "theses/TH-41B1AB7F8C.html",
+  "theses/TH-431B4B9195.html",
+  "theses/TH-45A01B5D5C.html",
+  "theses/TH-48CF61E45B.html",
+  "theses/TH-5151436FE1.html",
+  "theses/TH-6BDD0881AD.html",
+  "theses/TH-722932E64F.html",
+  "theses/TH-77926B9936.html",
+  "theses/TH-7AC3AE200E.html",
+  "theses/TH-87D93CD53A.html",
+  "theses/TH-8DDD7B2868.html",
+  "theses/TH-921772E86C.html",
+  "theses/TH-A097D4722F.html",
+  "theses/TH-A381AB426E.html",
+  "theses/TH-ABE7D2B79D.html",
+  "theses/TH-B121174B17.html",
+  "theses/TH-B1F096684F.html",
+  "theses/TH-BBF8E714C1.html",
+  "theses/TH-BCBAD262D4.html",
+  "theses/TH-C1889ABBA5.html",
+  "theses/TH-C2BEC5879A.html",
+  "theses/TH-C2EA7EB06F.html",
+  "theses/TH-CBFA9511C2.html",
+  "theses/TH-DEB6560D7F.html",
+  "theses/TH-F2CD2F7AFC.html",
+  "theses/TH-F9F8F41CE0.html",
+  "theses/TH-FAABB39749.html",
+  "theses/TH-FDEF68AB50.html",
+  "uploads.html",
+  "validation_log.json"
+ ],
+ "parser_version": "ti-parse-8",
+ "research_verification": {
+  "articles": 7,
+  "articles_preview_only": 2,
+  "articles_unreadable": 0,
+  "coverage": [
+   {
+    "article_id": "A-3cc83fe3945b",
+    "article_version_id": "AV-2f493da2ed059d67",
+    "propositions": [
+     "CARD h1 \u201cAI-driven CPU and DDR5 demand creates high-capacitance MLCC shortage lifting supplier pricing\u201d \u2192 TH-C2EA7EB06F",
+     "CARD h2 \u201cAI capacity crowding out consumer electronics weighs on notebook and smartphone demand and consumer MLCC pricing\u201d \u2192 TH-FDEF68AB50"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cRising material and logistics costs (Japan import price index +24.5% YoY in September; nickel, copper, silver exposure) could squeeze MLCC s\u201d \u2014 on 1 card(s): TH-C2EA7EB06F",
+     "\u201cHigh-end MLCC price increases have begun to lose momentum and consumer-grade spot prices slipped ~5%, a risk that pricing strength may not p\u201d \u2014 on 1 card(s): TH-C2EA7EB06F"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 1 fact(s): C-c052906e386f8e  \u2014 'Murata executives have acknowledged that existing production capacity falls far short of market requirements, prompting the company to bring forward its expansi\u2026 [+8 chars \u2014 full text in the JSON export]'"
+    ],
+    "unrecorded_names": [
+     "CPU (a list of examples, b005)"
+    ]
+   },
+   {
+    "article_id": "A-b565451748ea",
+    "article_version_id": "AV-482e62da226087c4",
+    "propositions": [
+     "CARD h1 \u201cApple's foldable iPhone entry reshuffles market share in flat foldable market\u201d \u2192 TH-F9F8F41CE0"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cFoldable iPhone reliability concerns \u2014 reports of damaged displays, high repair estimates, and inner-display abnormalities tied to the fold-\u201d \u2014 on 1 card(s): TH-F9F8F41CE0",
+     "\u201cIncomplete hardware\u2013software integration \u2014 apps still showing black borders and failing to use the full screen \u2014 may limit the productivity \u201d \u2014 on 1 card(s): TH-F9F8F41CE0"
+    ],
+    "source_risks": [],
+    "uncarried": [],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-52648724ad39",
+    "article_version_id": "AV-522dd4aa895df3a9",
+    "propositions": [
+     "CARD h1 \u201cHuawei-DeepSeek co-design matures a domestic Chinese AI compute ecosystem\u201d \u2192 TH-B121174B17"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cThe Huawei-DeepSeek partnership could work well for DeepSeek without making Ascend equally usable for everyone else, with many documented ec\u201d \u2014 on 1 card(s): TH-B121174B17",
+     "\u201cHuawei hardware remains behind Nvidia on absolute performance (950PR between A100 and MI300X; four Huawei cards to match one Nvidia card; ro\u201d \u2014 on 1 card(s): TH-B121174B17"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "EXCLUDED \u2014 1 fact(s) \u2014 figure '0' judged immaterial: NPU ID / utilization reading of an idle device, context only.: C-b85b2627e8ad53 131072 \u2014 '5242 / 131072'",
+     "UNEXPLAINED \u2014 5 fact(s): C-2784ab3606bfff 41.5% \u2014 'its median achieved/attainable fraction is 41.5% versus H100\u2019s 46.8%' \u00b7 C-d5dcaec2fe18ff 46.8% \u2014 'its median achieved/attainable fraction is 41.5% versus H100\u2019s 46.8%' \u00b7 C-bde75bca844323 32 \u2014 'a profile of one rank of DeepSeek-V4.1-Flash on a Huawei Ascend 950DT deployment of 32 chips' \u00b7 C-16997148a90c94 88.8% \u2014 'Stream 19 is occupied for 88.8% of the window but contributes 72.6% of summed device time' \u00b7 C-3ef80b62530a7d 1.32\u00d7 \u2014 'A first-order scenario doubling cube throughput while leaving other device work unchanged gives a 1.32\u00d7 step improvement.'"
+    ],
+    "unrecorded_names": [
+     "KV (a list of examples, b018)",
+     "DeepSeek V4 (a list of examples, b060)",
+     "V4.1 (a list of examples, b060)"
+    ]
+   },
+   {
+    "article_id": "A-99ef64094883",
+    "article_version_id": "AV-7391b41222cca443",
+    "propositions": [
+     "CARD h1 \u201cCredit markets single out debt-reliant AI infrastructure borrowers as weak links\u201d \u2192 TH-FAABB39749"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cThe spread between technology-related and broad investment-grade CDS has spiked higher than even during the 2022 tech downturn, signaling ri\u201d \u2014 on 1 card(s): TH-FAABB39749",
+     "\u201cIf broad investment-grade spreads were to widen and stronger borrowers lose access to capital, stress among the riskiest AI issuers could de\u201d \u2014 on 1 card(s): TH-FAABB39749",
+     "\u201cRising CDS protection costs served as early warning signals before Lehman Brothers' 2008 bankruptcy, though sharp CDS rises do not always en\u201d \u2014 on 1 card(s): TH-FAABB39749"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 5 fact(s): C-ae86f4506b3707 +0.9% \u2014 'ends modestly higher at +0.9%' \u00b7 C-d8017e7258865e $100,000 \u2014 'A CDS spread of 100 basis points broadly means that insuring $10 million of debt costs $100,000 per year.' \u00b7 C-8f9bdee1a9c1d5 $1 million \u2014 'At 1,000 basis points, the annual cost rises to roughly $1 million.' \u00b7 C-9e41a2ef7877a0 120\u2013135 bps \u2014 'tech CDS widens much more sharply\u2014climbing to roughly 120\u2013135 bps at the peak' \u00b7 C-3561b5b689903b 20\u201335 bps \u2014 'pushing the spread up to roughly 20\u201335 bps'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-9fadab568080",
+    "article_version_id": "AV-8207fc164477cd3a",
+    "propositions": [
+     "CARD h1 \u201cTrainium3's native PyTorch training stack broadens adoption, aiding AWS custom silicon\u201d \u2192 TH-F2CD2F7AFC"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 3 fact(s): C-df3ac0988ae5de up to 80,000 \u2014 'Trainium uses up to 80,000 physical cores allocated towards automated quality control.' \u00b7 C-77ad63e8ed84f2 184.6 \u2014 'the first step took 184.6 seconds for eager mode (255.7 seconds for compiled mode), which is 30-55x longer than the average step time' \u00b7 C-c7dfdfeb61211e 93% \u2014 'getting their engineers enough stable nodes to achieve 93% parity on gating test groups.'"
+    ],
+    "unrecorded_names": [
+     "XLA (a list of examples, b027)"
+    ]
+   },
+   {
+    "article_id": "A-b1a5f01a5b92",
+    "article_version_id": "AV-973182899d8abf20",
+    "propositions": [
+     "CARD h1 \u201cOLED notebook shipments grow over 40% in 2027, lifting OLED panel makers\u201d \u2192 TH-3C22A83E75",
+     "CARD h2 \u201cSamsung Display's exclusive OLED MacBook Pro supply entrenches its panel leadership\u201d \u2192 TH-F9F8F41CE0"
+    ],
+    "reverified": [],
+    "risks": [
+     "\u201cThe overall notebook market is expected to contract for two consecutive years, and the premium starting price plus continued availability of\u201d \u2014 on 2 card(s): TH-3C22A83E75, TH-F9F8F41CE0"
+    ],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 1 fact(s): C-5d91018b09ee6b contraction for two consecutive years \u2014 'Despite an anticipated contraction in the overall notebook market for two consecutive years'"
+    ],
+    "unrecorded_names": []
+   },
+   {
+    "article_id": "A-a7f0f66d2b3b",
+    "article_version_id": "AV-a024fc46b37cd371",
+    "propositions": [
+     "CARD h1 \u201cArm-based server CPUs gain share from x86 on AI inference demand\u201d \u2192 TH-F2CD2F7AFC",
+     "CARD h2 \u201cAI inference and agentic AI drive server CPU shipment growth above 40%\u201d \u2192 TH-0577F0AD38",
+     "CARD h3 \u201cIntel loses server CPU share on process and capacity constraints\u201d \u2192 TH-CBFA9511C2"
+    ],
+    "reverified": [],
+    "risks": [],
+    "source_risks": [],
+    "uncarried": [
+     "UNEXPLAINED \u2014 1 fact(s): C-313c8801149ff2  \u2014 'AMD\u2019s next-generation Venice processors entered small-scale mass production in 2026'"
+    ],
+    "unrecorded_names": []
+   }
+  ],
+  "coverage_alerts": [
+   "A-52648724ad39: 5 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 41.5%; 46.8%; 32; 88.8%; 1.32\u00d7 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-99ef64094883: 5 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: +0.9%; $100,000; $1 million; 120\u2013135 bps; 20\u201335 bps \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "A-9fadab568080: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: up to 80,000; 184.6; 93% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "coverage_alerts_plain": [
+   "\u201cThe Huawei-DeepSeek Symbiosis\u201d: 5 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: 41.5%; 46.8%; 32; 88.8%; 1.32\u00d7 \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cCredit markets look for AI\u2019s weak links\u201d: 5 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: +0.9%; $100,000; $1 million; 120\u2013135 bps; 20\u201335 bps \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it",
+   "\u201cAmazon\u2019s Trainium Takes a Strike at the Training King\u201d: 3 verified material facts no thesis carries \u2014 a mechanism no card holds? Source evidence: up to 80,000; 184.6; 93% \u2014 verified, UNASSESSED: no thesis or research action in this registry rests on it"
+  ],
+  "figures": 163,
+  "figures_open": 3,
+  "figures_superseded": 0,
+  "open_causes": {
+   "account_names_no_record": 1,
+   "capture_not_verified": 2,
+   "verification_failed": 1
+  },
+  "open_items": [
+   "AV-522dd4aa895df3a9 b012 figure '16' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-7391b41222cca443 b012 figure '-10%' \u2014 capture_not_verified: pass 1b claimed a capturing claim, but none verified",
+   "AV-973182899d8abf20 b010 figure 'two consecutive years' \u2014 verification_failed: a claim quotes it (C-5d91018b09ee6b) but failed verification, so it is never used as evidence",
+   "AV-522dd4aa895df3a9 b077 paragraph \u2014 account_names_no_record: pass 1b called it covered \u2014 'Partnership may work for DeepSeek without making Ascend usable for others \u2014 already in first-pass market risks.' \u2014 but named no verified claim or hypothesis, so the account cannot be checked"
+  ],
+  "open_items_plain": [
+   "\u201cThe Huawei-DeepSeek Symbiosis\u201d \u2014 figure '16' not captured: the claim meant to capture it could not be verified",
+   "\u201cCredit markets look for AI\u2019s weak links\u201d \u2014 figure '-10%' not captured: the claim meant to capture it could not be verified",
+   "\u201cNew MacBook Pro Enters Market; Global OLED Notebook Shipments Forecast to Grow Over 40% YoY in 2027, Says TrendForce\u201d \u2014 figure 'two consecutive years' not captured: the claim quoting it failed the number check",
+   "\u201cThe Huawei-DeepSeek Symbiosis\u201d \u2014 one argument paragraph not accounted for: the review accounted for it without naming a record"
+  ],
+  "paragraphs": 181,
+  "paragraphs_open": 1,
+  "passes_not_run": 0,
+  "status": "INCOMPLETE",
+  "summary": "NOT fully verified \u2014 over the 7 article(s) this report's 3 runs analysed: 3 of 163 stated figure(s) and 1 of 181 argument paragraph(s) open; causes: account_names_no_record 1, capture_not_verified 2, verification_failed 1; 2 article(s) read only in part (a preview, or pages that could not be read); mechanism coverage: 3 alert(s) for review \u2014 a proposition dropped or merged on distinct evidence, or verified facts no thesis carries. Open material is never used as evidence, so it can hold a thesis back but never raise its research action",
+  "superseded_items_plain": []
+ },
+ "run_id": "R-20261030T122615Z-market",
+ "runtime_seconds": 1050.3,
+ "source_health": {
+  "attention": [
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-10-30T11:59:40.083199+00:00",
+    "consecutive_failed_checks": 2,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source ms_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Morgan Stanley",
+    "reason": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+    "source_id": "ms_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "robots.txt unreachable (ReadTimeout) \u2014 FAIL CLOSED, nothing fetched from www.morganstanley.com \u2014 cannot safely proceed: nothing is fetched (handled conservatively, re-tested every check)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   },
+   {
+    "alert": "PERSISTENT_FAILURE",
+    "changes": [],
+    "checked_at": "2026-10-30T12:00:45.467469+00:00",
+    "consecutive_failed_checks": 3,
+    "discovered": 20,
+    "expect_blocked": false,
+    "freshness": "FRESH",
+    "in_window": 2,
+    "last_scan": {
+     "full": 0,
+     "partial": 2,
+     "run_id": "R-20261021T080508Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-10-30T12:00:45.467469+00:00",
+    "last_successful_extraction": null,
+    "last_verified_publication_date": "2026-10-23",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-10-23",
+    "next_action": "none to supply \u2014 paid posts are read as their free preview by the operator's decision (paywalled_posts = \"preview_only\")",
+    "plain": "articles are read only in part; some articles are previews or summaries of a fuller report",
+    "publisher": "SemiAnalysis",
+    "reason": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261021T080508Z-scan: 0 full, 2 preview / partial, 0 unreadable",
+    "source_id": "semianalysis",
+    "status": "DEGRADED",
+    "tests": [
+     {
+      "detail": "https://newsletter.semianalysis.com/feed answered HTTP 200 (3023 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 0 full text",
+      "name": "extraction",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 3 of 3 carry a byline; latest scan R-20261021T080508Z-scan: 0 of 20 undated",
+      "name": "dates_authors",
+      "result": "PASS"
+     },
+     {
+      "detail": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261021T080508Z-scan: 0 full, 2 preview / partial, 0 unreadable",
+      "name": "completeness",
+      "result": "WARN"
+     },
+     {
+      "detail": "newest dated article 2026-10-23; 2 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 2952\u201311157 words; 0 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   },
+   {
+    "alert": "",
+    "changes": [],
+    "checked_at": "2026-10-30T12:01:25.589360+00:00",
+    "consecutive_failed_checks": 2,
+    "discovered": 0,
+    "expect_blocked": true,
+    "freshness": "UNKNOWN",
+    "in_window": 0,
+    "last_scan": {
+     "full": 0,
+     "partial": 0,
+     "run_id": null,
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": null,
+    "last_successful_extraction": null,
+    "last_verified_publication_date": null,
+    "manual_action": {
+     "action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+     "affected": [
+      "unknown \u2014 the channel cannot be read"
+     ],
+     "affected_total": 1,
+     "issue": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+     "kind": "UPLOAD_REQUIRED"
+    },
+    "manual_upload_recommended": true,
+    "newest_article_date": null,
+    "next_action": "automatic access is refused or unsafe \u2014 never bypassed; re-tested every check. Meanwhile upload an authorized copy into the same pipeline: python -m vinci.theme_intelligence ingest-file --path <report.pdf or saved page> --source gs_research [--url <article URL>]",
+    "plain": "the site refuses automated access; a known restriction \u2014 supply its research by upload",
+    "publisher": "Goldman Sachs",
+    "reason": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+    "source_id": "gs_research",
+    "status": "BLOCKED",
+    "tests": [
+     {
+      "detail": "https://www.goldmansachs.com/insights/goldman-sachs-research/: access denied (HTTP 403)",
+      "name": "access",
+      "result": "FAIL"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "discovery",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "extraction",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "dates_authors",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "completeness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "no article discovered",
+      "name": "freshness",
+      "result": "SKIP"
+     },
+     {
+      "detail": "not reached \u2014 an earlier test failed",
+      "name": "parser_integrity",
+      "result": "SKIP"
+     }
+    ]
+   }
+  ],
+  "checked_at": "2026-10-30T12:01:25.589360+00:00",
+  "counts": {
+   "BLOCKED": 2,
+   "DEGRADED": 1,
+   "ERROR": 0,
+   "HEALTHY": 3,
+   "UNKNOWN": 0
+  },
+  "line": "Sources healthy: 3/6 | Degraded: 1 | Blocked: 2 | Errors: 0",
+  "new_alerts": [
+   {
+    "alert": "PERSISTENT_FAILURE",
+    "changes": [],
+    "checked_at": "2026-10-30T12:00:45.467469+00:00",
+    "consecutive_failed_checks": 3,
+    "discovered": 20,
+    "expect_blocked": false,
+    "freshness": "FRESH",
+    "in_window": 2,
+    "last_scan": {
+     "full": 0,
+     "partial": 2,
+     "run_id": "R-20261021T080508Z-scan",
+     "undated": 0,
+     "unreadable": 0
+    },
+    "last_successful_discovery": "2026-10-30T12:00:45.467469+00:00",
+    "last_successful_extraction": null,
+    "last_verified_publication_date": "2026-10-23",
+    "manual_action": null,
+    "manual_upload_recommended": false,
+    "newest_article_date": "2026-10-23",
+    "next_action": "none to supply \u2014 paid posts are read as their free preview by the operator's decision (paywalled_posts = \"preview_only\")",
+    "plain": "articles are read only in part; some articles are previews or summaries of a fuller report",
+    "publisher": "SemiAnalysis",
+    "reason": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261021T080508Z-scan: 0 full, 2 preview / partial, 0 unreadable",
+    "source_id": "semianalysis",
+    "status": "DEGRADED",
+    "tests": [
+     {
+      "detail": "https://newsletter.semianalysis.com/feed answered HTTP 200 (3023 KB); robots.txt 200 obeyed",
+      "name": "access",
+      "result": "PASS"
+     },
+     {
+      "detail": "20 article URL(s); 20 with a title, 20 with a listing date",
+      "name": "discovery",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled article(s) read; 0 full text",
+      "name": "extraction",
+      "result": "WARN"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) state a publication date; the listing dates 20 of 20; 3 of 3 carry a byline; latest scan R-20261021T080508Z-scan: 0 of 20 undated",
+      "name": "dates_authors",
+      "result": "PASS"
+     },
+     {
+      "detail": "partial: 3 of 3 sampled article(s) are paywalled previews \u2014 only the preview is readable; latest scan R-20261021T080508Z-scan: 0 full, 2 preview / partial, 0 unreadable",
+      "name": "completeness",
+      "result": "WARN"
+     },
+     {
+      "detail": "newest dated article 2026-10-23; 2 URL(s) new since the last check",
+      "name": "freshness",
+      "result": "PASS"
+     },
+     {
+      "detail": "3 of 3 sampled page(s) read, 2952\u201311157 words; 0 re-read against an earlier check",
+      "name": "parser_integrity",
+      "result": "PASS"
+     }
+    ]
+   }
+  ]
+ },
+ "sources": [],
+ "spend_guard": {
+  "actual_total_usd": 0,
+  "bound_total_usd": 0,
+  "calls": [],
+  "calls_over_their_bound": 0,
+  "paid_calls": 0,
+  "refusals": [],
+  "run_limit_usd": 100.0,
+  "spent_usd": 0.0
+ },
+ "started_at": "2026-10-30T12:26:15.074816+00:00",
+ "status": "SUCCEEDED",
+ "theses_in_registry": 38,
+ "tokens": {},
+ "verification": {
+  "BLOCK": 7,
+  "HOLD": 0,
+  "INFO": 74,
+  "WARN": 85
+ },
+ "warnings": [],
+ "window_from": "2026-10-30",
+ "window_to": "2026-10-30"
+}

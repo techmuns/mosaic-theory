@@ -1,0 +1,3763 @@
+{
+ "analyst_corrections": {
+  "s03.1": "The line's frequency-and-penetration mechanism is not in the source; its growth and intent figures restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s03.2": "The source does not say makers use targeted pricing to raise prices; it says energy drinks rose less and stayed affordable. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s06.1": "The line listed 'expanding household penetration' and a 2030 horizon the source does not state; the source's own six factors and 'long term' restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s07.0": "The line's 'tough restaurant backdrop' and 'somewhat surprising' are not in the source; only the bright-spot framing is. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)"
+ },
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-22",
+   "ancestry": [
+    "consumer"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-14",
+   "first_ingested_at": "2026-10-14T06:51:34.144773Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-02",
+   "latest_article_date": "2026-09-02",
+   "region": "US",
+   "research_action": "RESEARCH NOW",
+   "sector": "Consumer discretionary and staples",
+   "status": "ACTIVE",
+   "thesis_id": "TH-16225B12C4",
+   "title": "U.S. energy drink demand set for structural multi-year growth from new occasions"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-76eb00684bc3bc",
+     "C-b97f092d79269c",
+     "C-a2fd5eb5779564",
+     "C-df572ec3392582"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "text": "U.S. caffeinated beverage spending has grown 6% annually since 2019 (energy drinks 8%, beverage shops 7%), nearly double the broader food and restaurant industry, with net purchase intent for energy drinks at 19% versus about 5% in 2019/2021."
+   },
+   {
+    "claim_ids": [
+     "C-26c331257d5362",
+     "C-aa70a41146e85d",
+     "C-77aa1a2ffb1461",
+     "C-3e080c618a3ca9"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Morgan Stanley Research expects the 6% caffeinated beverage spending pace to continue through 2030, driven by six structural factors supporting energy drink demand."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article frames energy drinks and beverage shops as structurally advantaged consumer growth categories driven by demographics, innovation and new occasions rather than substitution, but does not quantify the earnings or revenue impact for any specific listed company."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-76eb00684bc3bc"
+     ],
+     "original_date": "2026-09-02",
+     "period": "since 2019",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "U.S. spending on caffeinated beverages has grown at a 6% annual rate since 2019."
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b97f092d79269c"
+     ],
+     "original_date": "2026-09-02",
+     "period": "since 2019",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Energy drinks grew at 8% annually, leading the category."
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-df572ec3392582"
+     ],
+     "original_date": "2026-09-02",
+     "period": "next three months",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "A net 19% of respondents expect to drink more energy drinks over the next three months, up from about 5% in 2019 and 2021 surveys."
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-11361a1e2eeba9"
+     ],
+     "original_date": "2026-09-02",
+     "period": "next three months",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "33% expect to visit a beverage shop more often vs 16% less often, a net positive intent of 17%."
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-69271be1599347"
+     ],
+     "original_date": "2026-09-02",
+     "period": "since 2019",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Caffeinated beverage spending growth is nearly double the pace of the broader food and restaurant industry. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a2fd5eb5779564"
+     ],
+     "original_date": "2026-09-02",
+     "period": "since 2019",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Beverage shops grew at 7% annually, leading the category."
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 28 pieces of evidence from A-bcae0b1f5d86 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 06:51 UTC, analysed as of 2026-10-14, from a source published 2026-09-02; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-0304e970bcf58c",
+     "C-7ed2a33dfc1faf",
+     "C-2e4154d7165ef2",
+     "C-e72cc66bd003f1",
+     "C-c21eae6df09c87",
+     "C-fae3f4b1623230"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Demographics, innovation in sugar-free/better-for-you options, affordability and convenience create new caffeine consumption occasions rather than substituting existing ones."
+   },
+   {
+    "claim_ids": [
+     "C-b97f092d79269c",
+     "C-a2fd5eb5779564",
+     "C-df572ec3392582"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "volumes",
+    "text": "Energy drinks (8%) and beverage shops (7%) lead category growth since 2019, and a net 19% of respondents expect to drink more over the next three months."
+   },
+   {
+    "claim_ids": [
+     "C-2e4154d7165ef2"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "Energy drinks have seen smaller price increases than soft drinks and packaged coffee in recent years, keeping them a relatively affordable caffeine option."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "The article does not quantify the revenue or earnings effect for any specific listed beverage or restaurant company."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-001efcf3079bb1",
+    "comparator": "roughly 28 for all respondents",
+    "epistemic": "actual",
+    "label": "average energy drinks per month GLP-1 users",
+    "measured_as_of": null,
+    "origin": "Alphawise, Morgan Stanley Research",
+    "period": "2026",
+    "qualifiers": [
+     "GLP-1 users"
+    ],
+    "quote": "consuming an average of 42 per month versus roughly 28 for all respondents",
+    "role": "supports",
+    "unit": "drinks per month",
+    "value": 42.0,
+    "value_text": "42"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-110747853f02ec",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "consumption driver share: healthier options",
+    "measured_as_of": null,
+    "origin": "AlphaWise, Morgan Stanley Research",
+    "period": "2026",
+    "qualifiers": [
+     "Among consumers increasing energy drink consumption"
+    ],
+    "quote": "Healthier options available 27%",
+    "role": "supports",
+    "unit": "%",
+    "value": 27.0,
+    "value_text": "27%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-2be607fcc043e2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "consumption driver share: better quality",
+    "measured_as_of": null,
+    "origin": "AlphaWise, Morgan Stanley Research",
+    "period": "2026",
+    "qualifiers": [
+     "Among consumers increasing energy drink consumption"
+    ],
+    "quote": "Better quality than before 29%",
+    "role": "supports",
+    "unit": "%",
+    "value": 29.0,
+    "value_text": "29%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3e080c618a3ca9",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Morgan Stanley identifies six structural factors supporting long-term energy drink demand",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "long term",
+    "qualifiers": [],
+    "quote": "Morgan Stanley sees six structural factors supporting demand for energy drinks over the long term.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "six"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-53d09593fc234d",
+    "comparator": "19% overall population",
+    "epistemic": "actual",
+    "label": "net purchase intent energy drinks GLP-1 users",
+    "measured_as_of": null,
+    "origin": "Morgan Stanley AlphaWise",
+    "period": "2026",
+    "qualifiers": [
+     "net",
+     "GLP-1 users"
+    ],
+    "quote": "Net purchase intent among GLP-1 users reached 55%, compared with 19% for the overall population",
+    "role": "supports",
+    "unit": "%",
+    "value": 55.0,
+    "value_text": "55%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-69271be1599347",
+    "comparator": "broader food and restaurant industry",
+    "epistemic": "actual",
+    "label": "relative spending growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since 2019",
+    "qualifiers": [
+     "nearly double"
+    ],
+    "quote": "nearly double the pace of the broader food and restaurant industry",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "nearly double"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-76eb00684bc3bc",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "caffeinated beverage spending growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since 2019",
+    "qualifiers": [
+     "annually"
+    ],
+    "quote": "Since 2019, U.S. spending on caffeinated beverages has grown at 6% annually",
+    "role": "supports",
+    "unit": "%",
+    "value": 6.0,
+    "value_text": "6%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a2fd5eb5779564",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "beverage shops \u2014 beverage shop spending growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since 2019",
+    "qualifiers": [],
+    "quote": "with energy drinks (8%) and beverage shops (7%) leading the category",
+    "role": "supports",
+    "unit": "%",
+    "value": 7.0,
+    "value_text": "7%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-b5df579f8f95c4",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "consumption driver share: trying new brands",
+    "measured_as_of": null,
+    "origin": "AlphaWise, Morgan Stanley Research",
+    "period": "2026",
+    "qualifiers": [
+     "Among consumers increasing energy drink consumption"
+    ],
+    "quote": "Trying new brands 37%",
+    "role": "supports",
+    "unit": "%",
+    "value": 37.0,
+    "value_text": "37%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b97f092d79269c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "energy drinks \u2014 energy drink spending growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "since 2019",
+    "qualifiers": [],
+    "quote": "with energy drinks (8%) and beverage shops (7%) leading the category",
+    "role": "supports",
+    "unit": "%",
+    "value": 8.0,
+    "value_text": "8%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b020",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cf4649c3de13e1",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "age cohort with strongest intent",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "Favorable Demographics"
+    ],
+    "quote": "The 25\u201344 age cohort \u2014 Millennials and older Gen Z \u2014 show the strongest intention to increase energy drink consumption",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "25\u201344"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-d290595ea20b25",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "consumption driver share: trying new flavors",
+    "measured_as_of": null,
+    "origin": "AlphaWise, Morgan Stanley Research",
+    "period": "2026",
+    "qualifiers": [
+     "Among consumers increasing energy drink consumption"
+    ],
+    "quote": "Trying new flavors 44%",
+    "role": "supports",
+    "unit": "%",
+    "value": 44.0,
+    "value_text": "44%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-de90ccdd775b85",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "consumption driver - need more energy",
+    "measured_as_of": null,
+    "origin": "Morgan Stanley AlphaWise",
+    "period": "2026",
+    "qualifiers": [
+     "among consumers increasing energy drink consumption"
+    ],
+    "quote": "Need more energy 61%",
+    "role": "supports",
+    "unit": "%",
+    "value": 61.0,
+    "value_text": "61%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-df572ec3392582",
+    "comparator": "about 5% in 2019 and 2021 surveys",
+    "epistemic": "actual",
+    "label": "net purchase intent energy drinks",
+    "measured_as_of": null,
+    "origin": "Morgan Stanley AlphaWise",
+    "period": "next three months",
+    "qualifiers": [
+     "net",
+     "up from about 5% in 2019 and 2021"
+    ],
+    "quote": "a net 19% of respondents saying they expect to drink more over the next three months, up from an average of about 5% in Morgan Stanley's 2019 and 2021 AlphaWise surveys",
+    "role": "supports",
+    "unit": "%",
+    "value": 19.0,
+    "value_text": "19%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-f86c3a0b85b738",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "consumption driver share: switching from soda",
+    "measured_as_of": null,
+    "origin": "AlphaWise, Morgan Stanley Research",
+    "period": "2026",
+    "qualifiers": [
+     "Among consumers increasing energy drink consumption"
+    ],
+    "quote": "Switching from soda 22%",
+    "role": "supports",
+    "unit": "%",
+    "value": 22.0,
+    "value_text": "22%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b042",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-11361a1e2eeba9",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "net intent beverage shop visits",
+    "measured_as_of": null,
+    "origin": "Morgan Stanley AlphaWise",
+    "period": "next three months",
+    "qualifiers": [
+     "net positive",
+     "33% more often vs 16% less often"
+    ],
+    "quote": "33% of consumers expect to visit a beverage shop more often for an awayfrom-home coffee or tea beverage over the next three months, compared to only 16% who expect to go less often \u2014 a net positive intent of 17%",
+    "role": "catalyst",
+    "unit": "%",
+    "value": 17.0,
+    "value_text": "17%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b017",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0304e970bcf58c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Energy drinks are creating new consumption occasions rather than simply replacing coffee or soft drinks.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "expanding the overall market"
+    ],
+    "quote": "energy drinks are not simply replacing coffee or soft drinks",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-26c331257d5362",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Beverage shops are a bright spot in restaurants, with away-from-home coffee/specialty beverages attracting broad demand, especially younger consumers",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Beverage shops stand out as a bright spot in the restaurant industry. Away-from-home coffee and specialty beverages are attracting broad consumer demand, particularly among younger consumers.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b036",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2a59c8a284518b",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "GLP-1 driven demand",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "We expect continued GLP-1 support",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b044",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2d1edcf55acf49",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "at-home vs away-from-home coffee growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "While Morgan Stanley expects more muted growth for at-home coffee, consumers are likely to increasingly shift toward away-from-home coffee occasions and energy drinks, particularly younger consumers who prefer blended and cold beverages over traditional hot coffee.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b020",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2e4154d7165ef2",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Energy drinks have seen smaller price increases than soft drinks and packaged coffee, keeping them relatively affordable.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "recent years",
+    "qualifiers": [],
+    "quote": "Energy drinks have seen smaller price increases than soft drinks and packaged coffee in recent years, helping them remain a relatively affordable caffeine option.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6c3dac9c47200a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Energy drinks provide a lower-cost alternative to specialty coffee beverages from coffee shops (attractive value driver)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "Attractive Value vs. Coffee Shops"
+    ],
+    "quote": "Coffee Shops : EnerRgEyL AdTrIiOnNkSs can provRidEeLA aT IlOoNwSer-cost alternative to \uf0da specialty coffee beverages purchased from coffee shops.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-77aa1a2ffb1461",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "caffeinated beverage spending growth",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "through 2030",
+    "qualifiers": [],
+    "quote": "Morgan Stanley Research expects thaItn psaicgeh tots continuWe eth Droough 2030U, wsith a number of other factors boosting the sector, including the proliferation of healthier energy and carbonated soft drinks, the perception that coffee has health benefits and the expansion of the population on GLP-1 medications.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7ed2a33dfc1faf",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Strongest intent to increase energy drink consumption came from adults ages 25-34 and 35-44.",
+    "measured_as_of": null,
+    "origin": "Morgan Stanley AlphaWise",
+    "period": "2026",
+    "qualifiers": [
+     "ages 25-34 and 35-44"
+    ],
+    "quote": "The strongest intent to increase energy drink consumption came from adults ages 25-34 and 35- 44",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-aa70a41146e85d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Opportunity for beverage shops to expand into custom mixed energy drinks and grow (Harbour)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "there is an opportunity for beverage shops to continue to expand into custom mixed energy drinks and increase an already successful business",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c21eae6df09c87",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Acceleration driven by innovation in sugar-free/better-for-you energy space, bringing new consumers and retaining existing ones as they age (Serotta)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "This acceleration has been driven in part by a wave of innovation from new and existing brands, particularly in the sugar-free and better-for-you energy space bringing new consumers and keeping existing consumers in the category for longer as they get older",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b003",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e72cc66bd003f1",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Demographics, innovation, affordability, pricing power, value and convenience are fueling caffeinated beverage demand",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Demographics, innovation, affordability, pricing power, value and convenience are helping fuel demand.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-bcae0b1f5d86",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fae3f4b1623230",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Packaged energy drinks offer a convenient grab-and-go option fitting busy lifestyles (convenience driver)",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "Convenience of packaged energy drinks"
+    ],
+    "quote": "Widely Wavea iDlaoble and reUasdy to consume, packaged energy drinks offer a grab-and-go option that fits into busy lifestyles.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "publisher",
+     "listings": [],
+     "mention_id": "M-c05e305282f9d4",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "Morgan Stanley Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author/publisher of the research"
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-47d81d5c6a727a",
+     "name_as_written": "AlphaWise",
+     "other_securities": [],
+     "quote": "Morgan Stanley AlphaWise survey",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Morgan Stanley's proprietary consumer survey unit providing the survey data"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "claim_ids": [
+      "C-b97f092d79269c",
+      "C-df572ec3392582"
+     ],
+     "direction": "positive",
+     "name": "energy drinks",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "Morgan Stanley sees six structural factors supporting demand for energy drinks over the long term."
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "claim_ids": [
+      "C-a2fd5eb5779564",
+      "C-11361a1e2eeba9"
+     ],
+     "direction": "positive",
+     "name": "beverage shops",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "Beverage shops stand out as a bright spot in the restaurant industry."
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "claim_ids": [
+      "C-72c522064874af"
+     ],
+     "direction": "positive",
+     "name": "consumer-packaged goods and restaurants",
+     "provenance": "SOURCE OPINION",
+     "quote": "Caffeinated beverages are one of the most attractive growth areas in the consumer-packaged goods and restaurants space"
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "claim_ids": [
+      "C-72c522064874af"
+     ],
+     "direction": "positive",
+     "name": "consumer-packaged goods",
+     "provenance": "SOURCE OPINION",
+     "quote": "consumer-packaged goods and restaurants space"
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "claim_ids": [
+      "C-26c331257d5362"
+     ],
+     "direction": "positive",
+     "name": "restaurants",
+     "provenance": "SOURCE OPINION",
+     "quote": "away-from-home coffee and specialty beverages remain one of the more robust pockets of demand in restaurants"
+    },
+    {
+     "article_id": "A-bcae0b1f5d86",
+     "claim_ids": [
+      "C-2d1edcf55acf49"
+     ],
+     "direction": "negative",
+     "name": "at-home coffee",
+     "provenance": "FORECAST",
+     "quote": "Morgan Stanley expects more muted growth for at-home coffee"
+    }
+   ],
+   "sectors": [
+    "energy drinks",
+    "consumer-packaged goods",
+    "beverages"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-df572ec3392582",
+      "C-11361a1e2eeba9"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Net purchase intent for energy drinks over the next three months is a net 19%, and 33% of consumers expect to visit beverage shops more often versus 16% less, a net positive 17%."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-3e080c618a3ca9",
+      "C-e72cc66bd003f1"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Morgan Stanley sees six structural factors supporting energy drink demand over the long term: demographics, innovation, affordability, pricing power, value and convenience."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-26c331257d5362"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The source calls beverage shops a bright spot in the restaurant industry: the strength it describes is specific to that channel."
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Deceleration of energy drink or beverage shop spending growth below the broader food/restaurant industry"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Falling net purchase intent in subsequent AlphaWise surveys"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of energy drinks cannibalizing rather than adding to caffeine occasions"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which specific listed companies capture this growth and how it flows to their revenue and earnings"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the AlphaWise survey intent translates into actual volume growth"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the growth-group comparisons (adopters vs non-adopters, GLP-1 vs overall) show causation rather than association"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus expectations versus Morgan Stanley's 6% through-2030 forecast"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Energy drink spending growth decelerates toward the broader food/restaurant rate"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Survey intent fails to translate into reported volumes"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify the listed energy drink makers and beverage shop/restaurant operators most exposed to this category and check whether their revenue growth and valuations reflect the 6% through-2030 spending trajectory and GLP-1 tailwind."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Subsequent AlphaWise surveys show rising net purchase intent"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Listed energy drink makers report accelerating volume growth"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Coffee cost inflation widens energy drinks' affordability advantage"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "RESEARCH NOW",
+   "rule_trace": [
+    "NOW all conditions met \u2014 near-term window(s) C-11361a1e2eeba9: measured 2026-09-02 (50 days before the as-of); C-001efcf3079bb1: measured 2026-09-02 (50 days before the as-of); C-110747853f02ec: measured 2026-09-02 (50 days before the as-of); C-2be607fcc043e2: measured 2026-09-02 (50 days before the as-of) (showing 4 of 14); source-named exposure(s): sector: energy drinks, sector: beverage shops, sector: consumer-packaged goods and restaurants, sector: consumer-packaged goods, sector: restaurants, sector: at-home coffee; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-bcae0b1f5d86",
+    "authors": [],
+    "authors_status": "UNKNOWN",
+    "claim_ids": [
+     "C-11361a1e2eeba9",
+     "C-76eb00684bc3bc",
+     "C-69271be1599347",
+     "C-b97f092d79269c",
+     "C-a2fd5eb5779564",
+     "C-df572ec3392582",
+     "C-7ed2a33dfc1faf",
+     "C-de90ccdd775b85",
+     "C-53d09593fc234d",
+     "C-001efcf3079bb1",
+     "C-2e4154d7165ef2",
+     "C-0304e970bcf58c",
+     "C-77aa1a2ffb1461",
+     "C-d290595ea20b25",
+     "C-b5df579f8f95c4",
+     "C-2be607fcc043e2",
+     "C-110747853f02ec",
+     "C-f86c3a0b85b738",
+     "C-cf4649c3de13e1",
+     "C-e72cc66bd003f1",
+     "C-c21eae6df09c87",
+     "C-3e080c618a3ca9",
+     "C-6c3dac9c47200a",
+     "C-fae3f4b1623230",
+     "C-2a59c8a284518b",
+     "C-26c331257d5362",
+     "C-aa70a41146e85d",
+     "C-2d1edcf55acf49"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-02T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "Caffeine Market Outlook: What's Fueling the Next Growth Wave?",
+    "upstream_origins": [
+     "AlphaWise, Morgan Stanley Research",
+     "Alphawise, Morgan Stanley Research",
+     "Morgan Stanley AlphaWise",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/caffeine-market-outlook-outpace-industry-2026",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-27 (0001104659-26-020831)",
+    "business": "energy drink maker (Monster, Reign, Bang)",
+    "direction": "positive",
+    "enrichment_id": "EC-b180bc8d905b61",
+    "evidence": "s03.1: Energy drinks (8%) and beverage shops (7%) lead category growth since 2019, and a net 19% of respondents expect to drink more over the next three months.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-07 (accession 0001104659-26-092193) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock",
+      "ticker": "MNST"
+     }
+    ],
+    "name": "Monster Beverage",
+    "rationale": "Energy drinks are nearly all of revenue; 8% category volume growth and new consumption occasions directly lift its US unit sales.",
+    "registrant": "Monster Beverage Corp",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2086); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "energy drink sales",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-16225B12C4",
+    "ticker_hint": "MNST"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-02 (0001341766-26-000024)",
+    "business": "better-for-you energy drink maker (Celsius, Alani Nu)",
+    "direction": "positive",
+    "enrichment_id": "EC-7b2fdefe019603",
+    "evidence": "s03.0: Demographics, innovation in sugar-free/better-for-you options, affordability and convenience create new caffeine consumption occasions rather than substituting existing ones.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-06 (accession 0001341766-26-000050) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "CELH"
+     }
+    ],
+    "name": "Celsius Holdings",
+    "rationale": "Sugar-free, functional energy drinks are its entire business; the better-for-you innovation occasion directly drives its US volume growth.",
+    "registrant": "Celsius Holdings, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2086); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "functional energy drink sales",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-16225B12C4",
+    "ticker_hint": "CELH"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-24 (0001418135-26-000016)",
+    "business": "beverages and single-serve coffee (incl. energy portfolio)",
+    "direction": "positive",
+    "enrichment_id": "EC-ef0bda9f67993d",
+    "evidence": "s03.1: Energy drinks (8%) and beverage shops (7%) lead category growth since 2019, and a net 19% of respondents expect to drink more over the next three months.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-10 (accession 0001418135-26-000051) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock",
+      "ticker": "KDP"
+     }
+    ],
+    "name": "Keurig Dr Pepper",
+    "rationale": "Distributes and owns energy brands (C4, Ghost); growing US energy volumes lift this segment, partly offsetting any at-home coffee softness.",
+    "registrant": "Keurig Dr Pepper Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2080); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "energy drink and beverage distribution",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-16225B12C4",
+    "ticker_hint": "KDP"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-03 (0000077476-26-000007)",
+    "business": "snacks and beverages (owns Rockstar, distributes Celsius)",
+    "direction": "positive",
+    "enrichment_id": "EC-9eca2219e3f658",
+    "evidence": "s03.1: Energy drinks (8%) and beverage shops (7%) lead category growth since 2019, and a net 19% of respondents expect to drink more over the next three months.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-08 (accession 0000077476-26-000048) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value 1-2/3 cents per share",
+      "ticker": "PEP"
+     }
+    ],
+    "name": "PepsiCo",
+    "rationale": "Owns Rockstar and distributes Celsius in US; rising energy drink volumes add incremental sales within its large beverage portfolio.",
+    "registrant": "PEPSICO INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2080); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "energy drink sales and distribution",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MEASURED OBSERVATION",
+    "thesis_id": "TH-16225B12C4",
+    "ticker_hint": "PEP"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-06-09 (0000091419-26-000050)",
+    "business": "packaged foods and at-home coffee (Folgers, Dunkin retail)",
+    "direction": "negative",
+    "enrichment_id": "EC-e5fd6313656b03",
+    "evidence": "s03.0: Demographics, innovation in sugar-free/better-for-you options, affordability and convenience create new caffeine consumption occasions rather than substituting existing ones.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-26 (accession 0000091419-26-000080) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common shares, no par value",
+      "ticker": "SJM"
+     }
+    ],
+    "name": "The J.M. Smucker Company",
+    "rationale": "At-home coffee is a large segment; energy drinks and beverage shops creating new occasions rather than substituting pressures packaged coffee volumes.",
+    "registrant": "J M SMUCKER Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2033); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "at-home packaged coffee sales",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-16225B12C4",
+    "ticker_hint": "SJM"
+   }
+  ],
+  "created_at": "2026-10-30T12:21:21.655766Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Starbucks: more than 4 on one side \u2014 set aside",
+   "Dutch Bros: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-d6832b48acd330",
+  "thesis_id": "TH-16225B12C4",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-bcae0b1f5d86",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "consumer"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T06:51:34.144773Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-02",
+     "latest_article_date": "2026-09-02",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "Consumer discretionary and staples",
+     "status": "ACTIVE",
+     "thesis_id": "TH-16225B12C4",
+     "title": "U.S. energy drink demand set for structural multi-year growth from new occasions"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-76eb00684bc3bc",
+       "C-b97f092d79269c",
+       "C-a2fd5eb5779564",
+       "C-df572ec3392582"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "text": "U.S. caffeinated beverage spending has grown 6% annually since 2019 (energy drinks 8%, beverage shops 7%), nearly double the broader food and restaurant industry, with net purchase intent for energy drinks at 19% versus about 5% in 2019/2021."
+     },
+     {
+      "claim_ids": [
+       "C-26c331257d5362",
+       "C-aa70a41146e85d",
+       "C-77aa1a2ffb1461",
+       "C-3e080c618a3ca9"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Morgan Stanley Research expects the 6% caffeinated beverage spending pace to continue through 2030, driven by six structural factors supporting energy drink demand."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article frames energy drinks and beverage shops as structurally advantaged consumer growth categories driven by demographics, innovation and new occasions rather than substitution, but does not quantify the earnings or revenue impact for any specific listed company."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-76eb00684bc3bc"
+       ],
+       "original_date": "2026-09-02",
+       "period": "since 2019",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "U.S. spending on caffeinated beverages has grown at a 6% annual rate since 2019."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b97f092d79269c"
+       ],
+       "original_date": "2026-09-02",
+       "period": "since 2019",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Energy drinks grew at 8% annually, leading the category."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-df572ec3392582"
+       ],
+       "original_date": "2026-09-02",
+       "period": "next three months",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "A net 19% of respondents expect to drink more energy drinks over the next three months, up from about 5% in 2019 and 2021 surveys."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-11361a1e2eeba9"
+       ],
+       "original_date": "2026-09-02",
+       "period": "next three months",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "33% expect to visit a beverage shop more often vs 16% less often, a net positive intent of 17%."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-69271be1599347"
+       ],
+       "original_date": "2026-09-02",
+       "period": "since 2019",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Caffeinated beverage spending growth is nearly double the pace of the broader food and restaurant industry. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a2fd5eb5779564"
+       ],
+       "original_date": "2026-09-02",
+       "period": "since 2019",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Beverage shops grew at 7% annually, leading the category."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 28 pieces of evidence from A-bcae0b1f5d86 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 06:51 UTC, analysed as of 2026-10-14, from a source published 2026-09-02; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0304e970bcf58c",
+       "C-7ed2a33dfc1faf",
+       "C-2e4154d7165ef2",
+       "C-e72cc66bd003f1",
+       "C-c21eae6df09c87",
+       "C-fae3f4b1623230"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Demographics, innovation in sugar-free/better-for-you options, affordability and convenience create new caffeine consumption occasions rather than substituting existing ones."
+     },
+     {
+      "claim_ids": [
+       "C-b97f092d79269c",
+       "C-a2fd5eb5779564",
+       "C-df572ec3392582",
+       "C-77aa1a2ffb1461"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Rising frequency and household penetration lift energy drink and beverage shop unit demand, with growth expected to continue through 2030."
+     },
+     {
+      "claim_ids": [
+       "C-2e4154d7165ef2"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "Energy drink makers use targeted pricing to raise prices gradually while maintaining demand."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "The article does not quantify the revenue or earnings effect for any specific listed beverage or restaurant company."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-001efcf3079bb1",
+      "comparator": "roughly 28 for all respondents",
+      "epistemic": "actual",
+      "label": "average energy drinks per month GLP-1 users",
+      "measured_as_of": null,
+      "origin": "Alphawise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "GLP-1 users"
+      ],
+      "quote": "consuming an average of 42 per month versus roughly 28 for all respondents",
+      "role": "supports",
+      "unit": "drinks per month",
+      "value": 42.0,
+      "value_text": "42"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-110747853f02ec",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: healthier options",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Healthier options available 27%",
+      "role": "supports",
+      "unit": "%",
+      "value": 27.0,
+      "value_text": "27%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-2be607fcc043e2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: better quality",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Better quality than before 29%",
+      "role": "supports",
+      "unit": "%",
+      "value": 29.0,
+      "value_text": "29%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3e080c618a3ca9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Morgan Stanley identifies six structural factors supporting long-term energy drink demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "long term",
+      "qualifiers": [],
+      "quote": "Morgan Stanley sees six structural factors supporting demand for energy drinks over the long term.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "six"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-53d09593fc234d",
+      "comparator": "19% overall population",
+      "epistemic": "actual",
+      "label": "net purchase intent energy drinks GLP-1 users",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "2026",
+      "qualifiers": [
+       "net",
+       "GLP-1 users"
+      ],
+      "quote": "Net purchase intent among GLP-1 users reached 55%, compared with 19% for the overall population",
+      "role": "supports",
+      "unit": "%",
+      "value": 55.0,
+      "value_text": "55%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-69271be1599347",
+      "comparator": "broader food and restaurant industry",
+      "epistemic": "actual",
+      "label": "relative spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [
+       "nearly double"
+      ],
+      "quote": "nearly double the pace of the broader food and restaurant industry",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "nearly double"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-76eb00684bc3bc",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "caffeinated beverage spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [
+       "annually"
+      ],
+      "quote": "Since 2019, U.S. spending on caffeinated beverages has grown at 6% annually",
+      "role": "supports",
+      "unit": "%",
+      "value": 6.0,
+      "value_text": "6%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a2fd5eb5779564",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "beverage shops \u2014 beverage shop spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [],
+      "quote": "with energy drinks (8%) and beverage shops (7%) leading the category",
+      "role": "supports",
+      "unit": "%",
+      "value": 7.0,
+      "value_text": "7%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-b5df579f8f95c4",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: trying new brands",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Trying new brands 37%",
+      "role": "supports",
+      "unit": "%",
+      "value": 37.0,
+      "value_text": "37%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b97f092d79269c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "energy drinks \u2014 energy drink spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [],
+      "quote": "with energy drinks (8%) and beverage shops (7%) leading the category",
+      "role": "supports",
+      "unit": "%",
+      "value": 8.0,
+      "value_text": "8%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cf4649c3de13e1",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "age cohort with strongest intent",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "Favorable Demographics"
+      ],
+      "quote": "The 25\u201344 age cohort \u2014 Millennials and older Gen Z \u2014 show the strongest intention to increase energy drink consumption",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "25\u201344"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-d290595ea20b25",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: trying new flavors",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Trying new flavors 44%",
+      "role": "supports",
+      "unit": "%",
+      "value": 44.0,
+      "value_text": "44%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-de90ccdd775b85",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver - need more energy",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "2026",
+      "qualifiers": [
+       "among consumers increasing energy drink consumption"
+      ],
+      "quote": "Need more energy 61%",
+      "role": "supports",
+      "unit": "%",
+      "value": 61.0,
+      "value_text": "61%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-df572ec3392582",
+      "comparator": "about 5% in 2019 and 2021 surveys",
+      "epistemic": "actual",
+      "label": "net purchase intent energy drinks",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "next three months",
+      "qualifiers": [
+       "net",
+       "up from about 5% in 2019 and 2021"
+      ],
+      "quote": "a net 19% of respondents saying they expect to drink more over the next three months, up from an average of about 5% in Morgan Stanley's 2019 and 2021 AlphaWise surveys",
+      "role": "supports",
+      "unit": "%",
+      "value": 19.0,
+      "value_text": "19%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-f86c3a0b85b738",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: switching from soda",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Switching from soda 22%",
+      "role": "supports",
+      "unit": "%",
+      "value": 22.0,
+      "value_text": "22%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b042",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-11361a1e2eeba9",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "net intent beverage shop visits",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "next three months",
+      "qualifiers": [
+       "net positive",
+       "33% more often vs 16% less often"
+      ],
+      "quote": "33% of consumers expect to visit a beverage shop more often for an awayfrom-home coffee or tea beverage over the next three months, compared to only 16% who expect to go less often \u2014 a net positive intent of 17%",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 17.0,
+      "value_text": "17%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0304e970bcf58c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Energy drinks are creating new consumption occasions rather than simply replacing coffee or soft drinks.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "expanding the overall market"
+      ],
+      "quote": "energy drinks are not simply replacing coffee or soft drinks",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-26c331257d5362",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Beverage shops are a bright spot in restaurants, with away-from-home coffee/specialty beverages attracting broad demand, especially younger consumers",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Beverage shops stand out as a bright spot in the restaurant industry. Away-from-home coffee and specialty beverages are attracting broad consumer demand, particularly among younger consumers.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b036",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2a59c8a284518b",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "GLP-1 driven demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We expect continued GLP-1 support",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b044",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2d1edcf55acf49",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "at-home vs away-from-home coffee growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "While Morgan Stanley expects more muted growth for at-home coffee, consumers are likely to increasingly shift toward away-from-home coffee occasions and energy drinks, particularly younger consumers who prefer blended and cold beverages over traditional hot coffee.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2e4154d7165ef2",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Energy drinks have seen smaller price increases than soft drinks and packaged coffee, keeping them relatively affordable.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "recent years",
+      "qualifiers": [],
+      "quote": "Energy drinks have seen smaller price increases than soft drinks and packaged coffee in recent years, helping them remain a relatively affordable caffeine option.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6c3dac9c47200a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Energy drinks provide a lower-cost alternative to specialty coffee beverages from coffee shops (attractive value driver)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "Attractive Value vs. Coffee Shops"
+      ],
+      "quote": "Coffee Shops : EnerRgEyL AdTrIiOnNkSs can provRidEeLA aT IlOoNwSer-cost alternative to \uf0da specialty coffee beverages purchased from coffee shops.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-77aa1a2ffb1461",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "caffeinated beverage spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "through 2030",
+      "qualifiers": [],
+      "quote": "Morgan Stanley Research expects thaItn psaicgeh tots continuWe eth Droough 2030U, wsith a number of other factors boosting the sector, including the proliferation of healthier energy and carbonated soft drinks, the perception that coffee has health benefits and the expansion of the population on GLP-1 medications.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7ed2a33dfc1faf",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Strongest intent to increase energy drink consumption came from adults ages 25-34 and 35-44.",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "2026",
+      "qualifiers": [
+       "ages 25-34 and 35-44"
+      ],
+      "quote": "The strongest intent to increase energy drink consumption came from adults ages 25-34 and 35- 44",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-aa70a41146e85d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Opportunity for beverage shops to expand into custom mixed energy drinks and grow (Harbour)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "there is an opportunity for beverage shops to continue to expand into custom mixed energy drinks and increase an already successful business",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c21eae6df09c87",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Acceleration driven by innovation in sugar-free/better-for-you energy space, bringing new consumers and retaining existing ones as they age (Serotta)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "This acceleration has been driven in part by a wave of innovation from new and existing brands, particularly in the sugar-free and better-for-you energy space bringing new consumers and keeping existing consumers in the category for longer as they get older",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b003",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e72cc66bd003f1",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Demographics, innovation, affordability, pricing power, value and convenience are fueling caffeinated beverage demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Demographics, innovation, affordability, pricing power, value and convenience are helping fuel demand.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fae3f4b1623230",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Packaged energy drinks offer a convenient grab-and-go option fitting busy lifestyles (convenience driver)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "Convenience of packaged energy drinks"
+      ],
+      "quote": "Widely Wavea iDlaoble and reUasdy to consume, packaged energy drinks offer a grab-and-go option that fits into busy lifestyles.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "publisher",
+       "listings": [],
+       "mention_id": "M-c05e305282f9d4",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "Morgan Stanley Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author/publisher of the research"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-47d81d5c6a727a",
+       "name_as_written": "AlphaWise",
+       "other_securities": [],
+       "quote": "Morgan Stanley AlphaWise survey",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Morgan Stanley's proprietary consumer survey unit providing the survey data"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-b97f092d79269c",
+        "C-df572ec3392582"
+       ],
+       "direction": "positive",
+       "name": "energy drinks",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "Morgan Stanley sees six structural factors supporting demand for energy drinks over the long term."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-a2fd5eb5779564",
+        "C-11361a1e2eeba9"
+       ],
+       "direction": "positive",
+       "name": "beverage shops",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "Beverage shops stand out as a bright spot in the restaurant industry."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-72c522064874af"
+       ],
+       "direction": "positive",
+       "name": "consumer-packaged goods and restaurants",
+       "provenance": "SOURCE OPINION",
+       "quote": "Caffeinated beverages are one of the most attractive growth areas in the consumer-packaged goods and restaurants space"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-72c522064874af"
+       ],
+       "direction": "positive",
+       "name": "consumer-packaged goods",
+       "provenance": "SOURCE OPINION",
+       "quote": "consumer-packaged goods and restaurants space"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-26c331257d5362"
+       ],
+       "direction": "positive",
+       "name": "restaurants",
+       "provenance": "SOURCE OPINION",
+       "quote": "away-from-home coffee and specialty beverages remain one of the more robust pockets of demand in restaurants"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-2d1edcf55acf49"
+       ],
+       "direction": "negative",
+       "name": "at-home coffee",
+       "provenance": "FORECAST",
+       "quote": "Morgan Stanley expects more muted growth for at-home coffee"
+      }
+     ],
+     "sectors": [
+      "energy drinks",
+      "consumer-packaged goods",
+      "beverages"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-df572ec3392582",
+        "C-11361a1e2eeba9"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Net purchase intent for energy drinks over the next three months is a net 19%, and 33% of consumers expect to visit beverage shops more often versus 16% less, a net positive 17%."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-2e4154d7165ef2",
+        "C-3e080c618a3ca9",
+        "C-e72cc66bd003f1",
+        "C-6c3dac9c47200a",
+        "C-fae3f4b1623230"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Six structural factors \u2014 favorable demographics, expanding household penetration, affordability, pricing power, value vs coffee shops, and convenience \u2014 are expected to support energy drink demand through 2030."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-11361a1e2eeba9"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "A tough restaurant backdrop, which the analyst calls the beverage-shop strength 'somewhat surprising' against."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Deceleration of energy drink or beverage shop spending growth below the broader food/restaurant industry"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Falling net purchase intent in subsequent AlphaWise surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of energy drinks cannibalizing rather than adding to caffeine occasions"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which specific listed companies capture this growth and how it flows to their revenue and earnings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the AlphaWise survey intent translates into actual volume growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the growth-group comparisons (adopters vs non-adopters, GLP-1 vs overall) show causation rather than association"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus expectations versus Morgan Stanley's 6% through-2030 forecast"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Energy drink spending growth decelerates toward the broader food/restaurant rate"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Survey intent fails to translate into reported volumes"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify the listed energy drink makers and beverage shop/restaurant operators most exposed to this category and check whether their revenue growth and valuations reflect the 6% through-2030 spending trajectory and GLP-1 tailwind."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Subsequent AlphaWise surveys show rising net purchase intent"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Listed energy drink makers report accelerating volume growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Coffee cost inflation widens energy drinks' affordability advantage"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-11361a1e2eeba9: measured 2026-09-02 (42 days before the as-of); C-76eb00684bc3bc: measured 2026-09-02 (42 days before the as-of); C-69271be1599347: measured 2026-09-02 (42 days before the as-of); C-b97f092d79269c: measured 2026-09-02 (42 days before the as-of) (showing 4 of 14); source-named exposure(s): sector: energy drinks, sector: beverage shops, sector: consumer-packaged goods and restaurants, sector: consumer-packaged goods, sector: restaurants, sector: at-home coffee; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-bcae0b1f5d86",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-11361a1e2eeba9",
+       "C-76eb00684bc3bc",
+       "C-69271be1599347",
+       "C-b97f092d79269c",
+       "C-a2fd5eb5779564",
+       "C-df572ec3392582",
+       "C-7ed2a33dfc1faf",
+       "C-de90ccdd775b85",
+       "C-53d09593fc234d",
+       "C-001efcf3079bb1",
+       "C-2e4154d7165ef2",
+       "C-0304e970bcf58c",
+       "C-77aa1a2ffb1461",
+       "C-d290595ea20b25",
+       "C-b5df579f8f95c4",
+       "C-2be607fcc043e2",
+       "C-110747853f02ec",
+       "C-f86c3a0b85b738",
+       "C-cf4649c3de13e1",
+       "C-e72cc66bd003f1",
+       "C-c21eae6df09c87",
+       "C-3e080c618a3ca9",
+       "C-6c3dac9c47200a",
+       "C-fae3f4b1623230",
+       "C-2a59c8a284518b",
+       "C-26c331257d5362",
+       "C-aa70a41146e85d",
+       "C-2d1edcf55acf49"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-02T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Caffeine Market Outlook: What's Fueling the Next Growth Wave?",
+      "upstream_origins": [
+       "AlphaWise, Morgan Stanley Research",
+       "Alphawise, Morgan Stanley Research",
+       "Morgan Stanley AlphaWise",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/caffeine-market-outlook-outpace-industry-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "537966a6632eafdec62cf97faec40ac306b29401c5b9722aa059e271e05cde2a",
+   "created_at": "2026-10-21T10:28:30.714451Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 NOW all conditions met \u2014 near-term window(s) C-11361a1e2eeba9: measured 2026-09-02 (42 days before the as-of); C-76eb00684bc3bc: measured 2026-09-02 (42 days before the as-of); C-69271be1599347: measured 2026-09-02 (42 days before the as-of); C-b97f092d79269c: measured 2026-09-02 (42 days before the as-of) (showing 4 of 14); source-named exposure(s): sector: energy drinks, sector: beverage shops, sector: consumer-packaged goods and restaurants, sector: consumer-packaged goods, sector: restaurants, sector: at-home coffee; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-76eb00684bc3bc",
+       "C-69271be1599347",
+       "C-b97f092d79269c",
+       "C-a2fd5eb5779564",
+       "C-df572ec3392582",
+       "C-7ed2a33dfc1faf",
+       "C-de90ccdd775b85",
+       "C-53d09593fc234d",
+       "C-001efcf3079bb1",
+       "C-77aa1a2ffb1461",
+       "C-d290595ea20b25",
+       "C-b5df579f8f95c4",
+       "C-2be607fcc043e2",
+       "C-110747853f02ec",
+       "C-f86c3a0b85b738",
+       "C-cf4649c3de13e1",
+       "C-2a59c8a284518b",
+       "C-2d1edcf55acf49",
+       "C-11361a1e2eeba9"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "19"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-830d54dc4aae, ES-f41ee4fccc95, ES-f8175a623c1d",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-11361a1e2eeba9",
+       "C-76eb00684bc3bc",
+       "C-69271be1599347",
+       "C-b97f092d79269c",
+       "C-a2fd5eb5779564",
+       "C-df572ec3392582",
+       "C-de90ccdd775b85",
+       "C-53d09593fc234d",
+       "C-001efcf3079bb1",
+       "C-d290595ea20b25",
+       "C-b5df579f8f95c4",
+       "C-2be607fcc043e2",
+       "C-110747853f02ec",
+       "C-f86c3a0b85b738"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "14 claim(s) inside the next 2-4 quarters (C-11361a1e2eeba9: measured 2026-09-02 (42 days before the as-of); C-76eb00684bc3bc: measured 2026-09-02 (42 days before the as-of); C-69271be1599347: measured 2026-09-02 (42 days before the as-of); C-b97f092d79269c: measured 2026-09-02 (42 days before the as-of); showing 4 of 14); 1 long-range claim(s); 1 long-dated statement(s) of the source beside the cited evidence, not on the card: C-9ff5ebee828e77; model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: energy drinks, sector: beverage shops, sector: consumer-packaged goods and restaurants, sector: consumer-packaged goods, sector: restaurants, sector: at-home coffee",
+      "value": "0 listed \u00b7 6 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-11361a1e2eeba9"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [
+       "C-76eb00684bc3bc"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report",
+      "value": "not credible"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 19 supporting; 0 independent contradicting source(s) vs 3 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-11361a1e2eeba9: measured 2026-09-02 (42 days before the as-of); C-76eb00684bc3bc: measured 2026-09-02 (42 days before the as-of); C-69271be1599347: measured 2026-09-02 (42 days before the as-of); C-b97f092d79269c: measured 2026-09-02 (42 days before the as-of) (showing 4 of 14); source-named exposure(s): sector: energy drinks, sector: beverage shops, sector: consumer-packaged goods and restaurants, sector: consumer-packaged goods, sector: restaurants, sector: at-home coffee; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-16225B12C4",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s06.1 \u2014 The line listed 'expanding household penetration' and a 2030 horizon the source does not state; the source's own six factors and 'long term' restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s07.0 \u2014 The line's 'tough restaurant backdrop' and 'somewhat surprising' are not in the source; only the bright-spot framing is. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s03.1 \u2014 The line's frequency-and-penetration mechanism is not in the source; its growth and intent figures restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s03.2 \u2014 The source does not say makers use targeted pricing to raise prices; it says energy drinks rose less and stayed affordable. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "consumer"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T06:51:34.144773Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-02",
+     "latest_article_date": "2026-09-02",
+     "region": "US",
+     "research_action": "RESEARCH NOW",
+     "sector": "Consumer discretionary and staples",
+     "status": "ACTIVE",
+     "thesis_id": "TH-16225B12C4",
+     "title": "U.S. energy drink demand set for structural multi-year growth from new occasions"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-76eb00684bc3bc",
+       "C-b97f092d79269c",
+       "C-a2fd5eb5779564",
+       "C-df572ec3392582"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "text": "U.S. caffeinated beverage spending has grown 6% annually since 2019 (energy drinks 8%, beverage shops 7%), nearly double the broader food and restaurant industry, with net purchase intent for energy drinks at 19% versus about 5% in 2019/2021."
+     },
+     {
+      "claim_ids": [
+       "C-26c331257d5362",
+       "C-aa70a41146e85d",
+       "C-77aa1a2ffb1461",
+       "C-3e080c618a3ca9"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Morgan Stanley Research expects the 6% caffeinated beverage spending pace to continue through 2030, driven by six structural factors supporting energy drink demand."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article frames energy drinks and beverage shops as structurally advantaged consumer growth categories driven by demographics, innovation and new occasions rather than substitution, but does not quantify the earnings or revenue impact for any specific listed company."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-76eb00684bc3bc"
+       ],
+       "original_date": "2026-09-02",
+       "period": "since 2019",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "U.S. spending on caffeinated beverages has grown at a 6% annual rate since 2019."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b97f092d79269c"
+       ],
+       "original_date": "2026-09-02",
+       "period": "since 2019",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Energy drinks grew at 8% annually, leading the category."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-df572ec3392582"
+       ],
+       "original_date": "2026-09-02",
+       "period": "next three months",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "A net 19% of respondents expect to drink more energy drinks over the next three months, up from about 5% in 2019 and 2021 surveys."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-11361a1e2eeba9"
+       ],
+       "original_date": "2026-09-02",
+       "period": "next three months",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "33% expect to visit a beverage shop more often vs 16% less often, a net positive intent of 17%."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-69271be1599347"
+       ],
+       "original_date": "2026-09-02",
+       "period": "since 2019",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Caffeinated beverage spending growth is nearly double the pace of the broader food and restaurant industry. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a2fd5eb5779564"
+       ],
+       "original_date": "2026-09-02",
+       "period": "since 2019",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Beverage shops grew at 7% annually, leading the category."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 28 pieces of evidence from A-bcae0b1f5d86 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 06:51 UTC, analysed as of 2026-10-14, from a source published 2026-09-02; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-0304e970bcf58c",
+       "C-7ed2a33dfc1faf",
+       "C-2e4154d7165ef2",
+       "C-e72cc66bd003f1",
+       "C-c21eae6df09c87",
+       "C-fae3f4b1623230"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Demographics, innovation in sugar-free/better-for-you options, affordability and convenience create new caffeine consumption occasions rather than substituting existing ones."
+     },
+     {
+      "claim_ids": [
+       "C-b97f092d79269c",
+       "C-a2fd5eb5779564",
+       "C-df572ec3392582"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "volumes",
+      "text": "Energy drinks (8%) and beverage shops (7%) lead category growth since 2019, and a net 19% of respondents expect to drink more over the next three months."
+     },
+     {
+      "claim_ids": [
+       "C-2e4154d7165ef2"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "Energy drinks have seen smaller price increases than soft drinks and packaged coffee in recent years, keeping them a relatively affordable caffeine option."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "The article does not quantify the revenue or earnings effect for any specific listed beverage or restaurant company."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-001efcf3079bb1",
+      "comparator": "roughly 28 for all respondents",
+      "epistemic": "actual",
+      "label": "average energy drinks per month GLP-1 users",
+      "measured_as_of": null,
+      "origin": "Alphawise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "GLP-1 users"
+      ],
+      "quote": "consuming an average of 42 per month versus roughly 28 for all respondents",
+      "role": "supports",
+      "unit": "drinks per month",
+      "value": 42.0,
+      "value_text": "42"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-110747853f02ec",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: healthier options",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Healthier options available 27%",
+      "role": "supports",
+      "unit": "%",
+      "value": 27.0,
+      "value_text": "27%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-2be607fcc043e2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: better quality",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Better quality than before 29%",
+      "role": "supports",
+      "unit": "%",
+      "value": 29.0,
+      "value_text": "29%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3e080c618a3ca9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Morgan Stanley identifies six structural factors supporting long-term energy drink demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "long term",
+      "qualifiers": [],
+      "quote": "Morgan Stanley sees six structural factors supporting demand for energy drinks over the long term.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "six"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-53d09593fc234d",
+      "comparator": "19% overall population",
+      "epistemic": "actual",
+      "label": "net purchase intent energy drinks GLP-1 users",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "2026",
+      "qualifiers": [
+       "net",
+       "GLP-1 users"
+      ],
+      "quote": "Net purchase intent among GLP-1 users reached 55%, compared with 19% for the overall population",
+      "role": "supports",
+      "unit": "%",
+      "value": 55.0,
+      "value_text": "55%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-69271be1599347",
+      "comparator": "broader food and restaurant industry",
+      "epistemic": "actual",
+      "label": "relative spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [
+       "nearly double"
+      ],
+      "quote": "nearly double the pace of the broader food and restaurant industry",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "nearly double"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-76eb00684bc3bc",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "caffeinated beverage spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [
+       "annually"
+      ],
+      "quote": "Since 2019, U.S. spending on caffeinated beverages has grown at 6% annually",
+      "role": "supports",
+      "unit": "%",
+      "value": 6.0,
+      "value_text": "6%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a2fd5eb5779564",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "beverage shops \u2014 beverage shop spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [],
+      "quote": "with energy drinks (8%) and beverage shops (7%) leading the category",
+      "role": "supports",
+      "unit": "%",
+      "value": 7.0,
+      "value_text": "7%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-b5df579f8f95c4",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: trying new brands",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Trying new brands 37%",
+      "role": "supports",
+      "unit": "%",
+      "value": 37.0,
+      "value_text": "37%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b97f092d79269c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "energy drinks \u2014 energy drink spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "since 2019",
+      "qualifiers": [],
+      "quote": "with energy drinks (8%) and beverage shops (7%) leading the category",
+      "role": "supports",
+      "unit": "%",
+      "value": 8.0,
+      "value_text": "8%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cf4649c3de13e1",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "age cohort with strongest intent",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "Favorable Demographics"
+      ],
+      "quote": "The 25\u201344 age cohort \u2014 Millennials and older Gen Z \u2014 show the strongest intention to increase energy drink consumption",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "25\u201344"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-d290595ea20b25",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: trying new flavors",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Trying new flavors 44%",
+      "role": "supports",
+      "unit": "%",
+      "value": 44.0,
+      "value_text": "44%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-de90ccdd775b85",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver - need more energy",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "2026",
+      "qualifiers": [
+       "among consumers increasing energy drink consumption"
+      ],
+      "quote": "Need more energy 61%",
+      "role": "supports",
+      "unit": "%",
+      "value": 61.0,
+      "value_text": "61%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-df572ec3392582",
+      "comparator": "about 5% in 2019 and 2021 surveys",
+      "epistemic": "actual",
+      "label": "net purchase intent energy drinks",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "next three months",
+      "qualifiers": [
+       "net",
+       "up from about 5% in 2019 and 2021"
+      ],
+      "quote": "a net 19% of respondents saying they expect to drink more over the next three months, up from an average of about 5% in Morgan Stanley's 2019 and 2021 AlphaWise surveys",
+      "role": "supports",
+      "unit": "%",
+      "value": 19.0,
+      "value_text": "19%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-f86c3a0b85b738",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "consumption driver share: switching from soda",
+      "measured_as_of": null,
+      "origin": "AlphaWise, Morgan Stanley Research",
+      "period": "2026",
+      "qualifiers": [
+       "Among consumers increasing energy drink consumption"
+      ],
+      "quote": "Switching from soda 22%",
+      "role": "supports",
+      "unit": "%",
+      "value": 22.0,
+      "value_text": "22%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b042",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-11361a1e2eeba9",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "net intent beverage shop visits",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "next three months",
+      "qualifiers": [
+       "net positive",
+       "33% more often vs 16% less often"
+      ],
+      "quote": "33% of consumers expect to visit a beverage shop more often for an awayfrom-home coffee or tea beverage over the next three months, compared to only 16% who expect to go less often \u2014 a net positive intent of 17%",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 17.0,
+      "value_text": "17%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b017",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0304e970bcf58c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Energy drinks are creating new consumption occasions rather than simply replacing coffee or soft drinks.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "expanding the overall market"
+      ],
+      "quote": "energy drinks are not simply replacing coffee or soft drinks",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-26c331257d5362",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Beverage shops are a bright spot in restaurants, with away-from-home coffee/specialty beverages attracting broad demand, especially younger consumers",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Beverage shops stand out as a bright spot in the restaurant industry. Away-from-home coffee and specialty beverages are attracting broad consumer demand, particularly among younger consumers.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b036",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2a59c8a284518b",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "GLP-1 driven demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We expect continued GLP-1 support",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b044",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2d1edcf55acf49",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "at-home vs away-from-home coffee growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "While Morgan Stanley expects more muted growth for at-home coffee, consumers are likely to increasingly shift toward away-from-home coffee occasions and energy drinks, particularly younger consumers who prefer blended and cold beverages over traditional hot coffee.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2e4154d7165ef2",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Energy drinks have seen smaller price increases than soft drinks and packaged coffee, keeping them relatively affordable.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "recent years",
+      "qualifiers": [],
+      "quote": "Energy drinks have seen smaller price increases than soft drinks and packaged coffee in recent years, helping them remain a relatively affordable caffeine option.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6c3dac9c47200a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Energy drinks provide a lower-cost alternative to specialty coffee beverages from coffee shops (attractive value driver)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "Attractive Value vs. Coffee Shops"
+      ],
+      "quote": "Coffee Shops : EnerRgEyL AdTrIiOnNkSs can provRidEeLA aT IlOoNwSer-cost alternative to \uf0da specialty coffee beverages purchased from coffee shops.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-77aa1a2ffb1461",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "caffeinated beverage spending growth",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "through 2030",
+      "qualifiers": [],
+      "quote": "Morgan Stanley Research expects thaItn psaicgeh tots continuWe eth Droough 2030U, wsith a number of other factors boosting the sector, including the proliferation of healthier energy and carbonated soft drinks, the perception that coffee has health benefits and the expansion of the population on GLP-1 medications.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7ed2a33dfc1faf",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Strongest intent to increase energy drink consumption came from adults ages 25-34 and 35-44.",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "2026",
+      "qualifiers": [
+       "ages 25-34 and 35-44"
+      ],
+      "quote": "The strongest intent to increase energy drink consumption came from adults ages 25-34 and 35- 44",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-aa70a41146e85d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Opportunity for beverage shops to expand into custom mixed energy drinks and grow (Harbour)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "there is an opportunity for beverage shops to continue to expand into custom mixed energy drinks and increase an already successful business",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c21eae6df09c87",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Acceleration driven by innovation in sugar-free/better-for-you energy space, bringing new consumers and retaining existing ones as they age (Serotta)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "This acceleration has been driven in part by a wave of innovation from new and existing brands, particularly in the sugar-free and better-for-you energy space bringing new consumers and keeping existing consumers in the category for longer as they get older",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b003",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e72cc66bd003f1",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Demographics, innovation, affordability, pricing power, value and convenience are fueling caffeinated beverage demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Demographics, innovation, affordability, pricing power, value and convenience are helping fuel demand.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-bcae0b1f5d86",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fae3f4b1623230",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Packaged energy drinks offer a convenient grab-and-go option fitting busy lifestyles (convenience driver)",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "Convenience of packaged energy drinks"
+      ],
+      "quote": "Widely Wavea iDlaoble and reUasdy to consume, packaged energy drinks offer a grab-and-go option that fits into busy lifestyles.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "publisher",
+       "listings": [],
+       "mention_id": "M-c05e305282f9d4",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "Morgan Stanley Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author/publisher of the research"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-47d81d5c6a727a",
+       "name_as_written": "AlphaWise",
+       "other_securities": [],
+       "quote": "Morgan Stanley AlphaWise survey",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Morgan Stanley's proprietary consumer survey unit providing the survey data"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-b97f092d79269c",
+        "C-df572ec3392582"
+       ],
+       "direction": "positive",
+       "name": "energy drinks",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "Morgan Stanley sees six structural factors supporting demand for energy drinks over the long term."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-a2fd5eb5779564",
+        "C-11361a1e2eeba9"
+       ],
+       "direction": "positive",
+       "name": "beverage shops",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "Beverage shops stand out as a bright spot in the restaurant industry."
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-72c522064874af"
+       ],
+       "direction": "positive",
+       "name": "consumer-packaged goods and restaurants",
+       "provenance": "SOURCE OPINION",
+       "quote": "Caffeinated beverages are one of the most attractive growth areas in the consumer-packaged goods and restaurants space"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-72c522064874af"
+       ],
+       "direction": "positive",
+       "name": "consumer-packaged goods",
+       "provenance": "SOURCE OPINION",
+       "quote": "consumer-packaged goods and restaurants space"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-26c331257d5362"
+       ],
+       "direction": "positive",
+       "name": "restaurants",
+       "provenance": "SOURCE OPINION",
+       "quote": "away-from-home coffee and specialty beverages remain one of the more robust pockets of demand in restaurants"
+      },
+      {
+       "article_id": "A-bcae0b1f5d86",
+       "claim_ids": [
+        "C-2d1edcf55acf49"
+       ],
+       "direction": "negative",
+       "name": "at-home coffee",
+       "provenance": "FORECAST",
+       "quote": "Morgan Stanley expects more muted growth for at-home coffee"
+      }
+     ],
+     "sectors": [
+      "energy drinks",
+      "consumer-packaged goods",
+      "beverages"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-df572ec3392582",
+        "C-11361a1e2eeba9"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Net purchase intent for energy drinks over the next three months is a net 19%, and 33% of consumers expect to visit beverage shops more often versus 16% less, a net positive 17%."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-3e080c618a3ca9",
+        "C-e72cc66bd003f1"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Morgan Stanley sees six structural factors supporting energy drink demand over the long term: demographics, innovation, affordability, pricing power, value and convenience."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-26c331257d5362"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The source calls beverage shops a bright spot in the restaurant industry: the strength it describes is specific to that channel."
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Deceleration of energy drink or beverage shop spending growth below the broader food/restaurant industry"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Falling net purchase intent in subsequent AlphaWise surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of energy drinks cannibalizing rather than adding to caffeine occasions"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which specific listed companies capture this growth and how it flows to their revenue and earnings"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the AlphaWise survey intent translates into actual volume growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the growth-group comparisons (adopters vs non-adopters, GLP-1 vs overall) show causation rather than association"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus expectations versus Morgan Stanley's 6% through-2030 forecast"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Energy drink spending growth decelerates toward the broader food/restaurant rate"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Survey intent fails to translate into reported volumes"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify the listed energy drink makers and beverage shop/restaurant operators most exposed to this category and check whether their revenue growth and valuations reflect the 6% through-2030 spending trajectory and GLP-1 tailwind."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Subsequent AlphaWise surveys show rising net purchase intent"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Listed energy drink makers report accelerating volume growth"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Coffee cost inflation widens energy drinks' affordability advantage"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "RESEARCH NOW",
+     "rule_trace": [
+      "NOW all conditions met \u2014 near-term window(s) C-11361a1e2eeba9: measured 2026-09-02 (50 days before the as-of); C-001efcf3079bb1: measured 2026-09-02 (50 days before the as-of); C-110747853f02ec: measured 2026-09-02 (50 days before the as-of); C-2be607fcc043e2: measured 2026-09-02 (50 days before the as-of) (showing 4 of 14); source-named exposure(s): sector: energy drinks, sector: beverage shops, sector: consumer-packaged goods and restaurants, sector: consumer-packaged goods, sector: restaurants, sector: at-home coffee; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-bcae0b1f5d86",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-11361a1e2eeba9",
+       "C-76eb00684bc3bc",
+       "C-69271be1599347",
+       "C-b97f092d79269c",
+       "C-a2fd5eb5779564",
+       "C-df572ec3392582",
+       "C-7ed2a33dfc1faf",
+       "C-de90ccdd775b85",
+       "C-53d09593fc234d",
+       "C-001efcf3079bb1",
+       "C-2e4154d7165ef2",
+       "C-0304e970bcf58c",
+       "C-77aa1a2ffb1461",
+       "C-d290595ea20b25",
+       "C-b5df579f8f95c4",
+       "C-2be607fcc043e2",
+       "C-110747853f02ec",
+       "C-f86c3a0b85b738",
+       "C-cf4649c3de13e1",
+       "C-e72cc66bd003f1",
+       "C-c21eae6df09c87",
+       "C-3e080c618a3ca9",
+       "C-6c3dac9c47200a",
+       "C-fae3f4b1623230",
+       "C-2a59c8a284518b",
+       "C-26c331257d5362",
+       "C-aa70a41146e85d",
+       "C-2d1edcf55acf49"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-02T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Caffeine Market Outlook: What's Fueling the Next Growth Wave?",
+      "upstream_origins": [
+       "AlphaWise, Morgan Stanley Research",
+       "Alphawise, Morgan Stanley Research",
+       "Morgan Stanley AlphaWise",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/caffeine-market-outlook-outpace-industry-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "0532a2c68ca872e8578fb8f3baf2e6b5657eee0e404472ed6da59fd14588a250",
+   "created_at": "2026-10-22T07:42:55.312937Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": "537966a6632eafdec62cf97faec40ac306b29401c5b9722aa059e271e05cde2a",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-001efcf3079bb1",
+       "C-110747853f02ec",
+       "C-2a59c8a284518b",
+       "C-2be607fcc043e2",
+       "C-2d1edcf55acf49",
+       "C-53d09593fc234d",
+       "C-69271be1599347",
+       "C-76eb00684bc3bc",
+       "C-77aa1a2ffb1461",
+       "C-7ed2a33dfc1faf",
+       "C-a2fd5eb5779564",
+       "C-b5df579f8f95c4",
+       "C-b97f092d79269c",
+       "C-cf4649c3de13e1",
+       "C-d290595ea20b25",
+       "C-de90ccdd775b85",
+       "C-df572ec3392582",
+       "C-f86c3a0b85b738",
+       "C-11361a1e2eeba9"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "19"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-830d54dc4aae, ES-f41ee4fccc95, ES-f8175a623c1d",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-11361a1e2eeba9",
+       "C-001efcf3079bb1",
+       "C-110747853f02ec",
+       "C-2be607fcc043e2",
+       "C-53d09593fc234d",
+       "C-69271be1599347",
+       "C-76eb00684bc3bc",
+       "C-a2fd5eb5779564",
+       "C-b5df579f8f95c4",
+       "C-b97f092d79269c",
+       "C-d290595ea20b25",
+       "C-de90ccdd775b85",
+       "C-df572ec3392582",
+       "C-f86c3a0b85b738"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "14 claim(s) inside the next 2-4 quarters (C-11361a1e2eeba9: measured 2026-09-02 (50 days before the as-of); C-001efcf3079bb1: measured 2026-09-02 (50 days before the as-of); C-110747853f02ec: measured 2026-09-02 (50 days before the as-of); C-2be607fcc043e2: measured 2026-09-02 (50 days before the as-of); showing 4 of 14); 1 long-range claim(s); 1 long-dated statement(s) of the source beside the cited evidence, not on the card: C-9ff5ebee828e77; model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: energy drinks, sector: beverage shops, sector: consumer-packaged goods and restaurants, sector: consumer-packaged goods, sector: restaurants, sector: at-home coffee",
+      "value": "0 listed \u00b7 6 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-11361a1e2eeba9"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "1 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [
+       "C-76eb00684bc3bc"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "1 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report",
+      "value": "not credible"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 19 supporting; 0 independent contradicting source(s) vs 3 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "RESEARCH NOW",
+    "research_action": "RESEARCH NOW",
+    "rules_fired": [
+     "NOW all conditions met \u2014 near-term window(s) C-11361a1e2eeba9: measured 2026-09-02 (50 days before the as-of); C-001efcf3079bb1: measured 2026-09-02 (50 days before the as-of); C-110747853f02ec: measured 2026-09-02 (50 days before the as-of); C-2be607fcc043e2: measured 2026-09-02 (50 days before the as-of) (showing 4 of 14); source-named exposure(s): sector: energy drinks, sector: beverage shops, sector: consumer-packaged goods and restaurants, sector: consumer-packaged goods, sector: restaurants, sector: at-home coffee; verified dislocation/catalyst (1 claim(s)); premise asserted; retrieval FULL; reliability high; no hold \u2014 an INVESTIGATION of the thesis, not a trade (valuation NOT_ASSESSED)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-16225B12C4",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 19,
+ "other_cited_evidence": [
+  "C-72c522064874af"
+ ],
+ "review_carried": {},
+ "review_dismissed": {
+  "s01.1": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-26c331257d5362",
+    "C-aa70a41146e85d",
+    "C-77aa1a2ffb1461",
+    "C-3e080c618a3ca9"
+   ],
+   "created_at": "2026-10-22T07:42:58.013563Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s01.1: The '6% pace continuing through 2030' is a FORECAST (cited C-77aa1a2ffb1461 / pool C-9ff5ebee828e77), but the line carries SOURCE OPINION label. However the sentence states a forecast as the source's expectation, which is consistent; the six structural factors are opinion. The weakest label SOURCE OPINION is not stronger than content, so label is fine. But the span C-77aa1a2ffb1461 is garbled text and the '6%' continuation is better anchored in pool C-9ff5ebee828e77. | 'Morgan Stanley Research expects the 6% caffeinated beverage spending pace to continue through 2030, '",
+   "finding_key": "F-671b7711f012",
+   "finding_version": 2,
+   "line_text": "Morgan Stanley Research expects the 6% caffeinated beverage spending pace to continue through 2030, driven by six structural factors supporting energy drink demand.",
+   "reason": "The review accepts the content and the SOURCE OPINION label; its point is only that a cleaner claim anchors the 6% pace. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-562d723c3287",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074258Z-review",
+   "sentence_id": "s01.1",
+   "supersedes": [],
+   "thesis_id": "TH-16225B12C4",
+   "version": 2
+  }
+ },
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.1": "The '6% pace continuing through 2030' is a FORECAST (cited C-77aa1a2ffb1461 / pool C-9ff5ebee828e77), but the line carries SOURCE OPINION label. However the sentence states a forecast as the source's expectation, which is consistent; the six structural factors are opinion. The weakest label SOURCE OPINION is not stronger than content, so label is fine. But the span C-77aa1a2ffb1461 is garbled text and the '6%' continuation is better anchored in pool C-9ff5ebee828e77."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Research Now \u2014 a mispricing measured in the last quarter or a dated catalyst, timing inside the next 2-4 quarters, an exposure the source names, a premise the source states, and the full text read. An investigation, not a trade."
+ ],
+ "withheld_sentences": {}
+}

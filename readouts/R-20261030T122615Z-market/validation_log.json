@@ -1,0 +1,62 @@
+[
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-30T12:37:15.529008Z",
+  "detail": "AXSM: Tiingo history failed \u2014 TypeError: string indices must be integers, not 'str'",
+  "issue_id": "VI-38a8d2376333aa",
+  "ref_id": "TH-8DDD7B2868",
+  "run_id": "R-20261030T122615Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-30T12:28:15.586261Z",
+  "detail": "AMBA: Tiingo history failed \u2014 TypeError: string indices must be integers, not 'str'",
+  "issue_id": "VI-3a8ec60d49841b",
+  "ref_id": "TH-0577F0AD38",
+  "run_id": "R-20261030T122615Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-30T12:31:01.319254Z",
+  "detail": "SJM: Tiingo history failed \u2014 TypeError: string indices must be integers, not 'str'",
+  "issue_id": "VI-52c878b5a19f6f",
+  "ref_id": "TH-16225B12C4",
+  "run_id": "R-20261030T122615Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-30T12:41:45.610460Z",
+  "detail": "AMBA: Tiingo history failed \u2014 TypeError: string indices must be integers, not 'str'",
+  "issue_id": "VI-b6b5f17347a897",
+  "ref_id": "TH-CBFA9511C2",
+  "run_id": "R-20261030T122615Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-30T12:32:00.444903Z",
+  "detail": "VEEV: Tiingo history failed \u2014 TypeError: string indices must be integers, not 'str'",
+  "issue_id": "VI-e204c6ffb4836e",
+  "ref_id": "TH-1B06ACA0B7",
+  "run_id": "R-20261030T122615Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ },
+ {
+  "code": "MARKET_DATA_FAILED",
+  "created_at": "2026-10-30T12:35:30.532221Z",
+  "detail": "KLIC: Tiingo history failed \u2014 TypeError: string indices must be integers, not 'str'",
+  "issue_id": "VI-f6d1dcd145a824",
+  "ref_id": "TH-77926B9936",
+  "run_id": "R-20261030T122615Z-market",
+  "scope": "thesis",
+  "severity": "WARN"
+ }
+]

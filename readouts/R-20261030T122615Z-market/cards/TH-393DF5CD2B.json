@@ -1,0 +1,2168 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-21",
+   "ancestry": [
+    "macro_market"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:14:29.350361Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-16",
+   "latest_article_date": "2026-10-16",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "REVIEW_NEEDED",
+   "thesis_id": "TH-393DF5CD2B",
+   "title": "Equities can absorb above-target inflation and higher yields while earnings hold"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-eb7415654980c8",
+     "C-46ed2f40404587",
+     "C-8e1b1a28683e02",
+     "C-0a0845c8947bb9",
+     "C-d27f939f199c16",
+     "C-52df385b6c3f4d"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article documents that the S&P 500 sits less than 2% below all-time highs despite hot CPI/PPI prints and two-decade-high long-end yields, that equities historically compounded through long above-2% inflation regimes, and that consensus still calls for ~30% S&P 500 EPS growth. \u27e8cited figures: forecast; approximate; approximate, read from a chart; data as of 2026-09-30\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-b783a6c88fd6f8",
+     "C-01d7456fe2691f",
+     "C-8b0d5d56c271ab",
+     "C-eea6d9a545ce50",
+     "C-8e1b1a28683e02",
+     "C-8376cfa7d8c9c0"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "As long as earnings hold, equities can take hotter inflation and higher yields; if guidance shows weaker demand, margin pressure or rising financing costs, the same inflation data will matter much more. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "The article's investable view is that inflation and yield levels matter little for equities until they show up in earnings; the research opportunity is to watch earnings and credit transmission rather than inflation prints alone, since a targeted above-2% regime is historically survivable."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8e1b1a28683e02"
+     ],
+     "original_date": "2026-10-16",
+     "period": "3Q26",
+     "provenance": "FORECAST",
+     "text": "Consensus calls for S&P 500 earnings to grow roughly 30% year-on-year, a third consecutive quarter above 25% \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-549dc81266d157"
+     ],
+     "original_date": "2026-10-16",
+     "period": "60 trading days",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The current rate-rise episode shows S&P 500 up 1.1% versus a historical average of 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0694ac75c57440"
+     ],
+     "original_date": "2026-10-16",
+     "period": "60 trading days",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Historical average S&P 500 return across comparable rate-rise episodes was 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-eb7415654980c8"
+     ],
+     "original_date": "2026-10-16",
+     "period": "October 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Equities sit less than 2% below all-time highs even after the recent sell-off"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7854412a606444"
+     ],
+     "original_date": "2026-10-16",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "9 of 11 sectors expect double-digit earnings growth this year \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-d6b280972f9a0a"
+     ],
+     "original_date": "2026-10-16",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "Technology sector earnings are expected to grow 64% this year \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 15 pieces of evidence from A-cfd53f3cc80a \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:14 UTC, analysed as of 2026-10-21, from a source published 2026-10-16; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-3a15945cfbb22a",
+     "C-1160b4711aed16",
+     "C-46ed2f40404587"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Successive upside inflation surprises (CPI +3.7% y/y, PPI +6.3% y/y) and two-decade-high long-end Treasury yields raise macro pressure on equities. \u27e8cited figures: data as of 2026-09-30; forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-8e1b1a28683e02",
+     "C-01d7456fe2691f"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "listed_earnings",
+    "text": "Inflation and yields matter most for stocks when they weaken demand, compress margins, raise financing costs or force estimate cuts; until then equities absorb the volatility and consensus still projects ~30% EPS growth. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-eb7415654980c8",
+     "C-0a0845c8947bb9",
+     "C-d27f939f199c16",
+     "C-52df385b6c3f4d"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "market_reaction",
+    "text": "Equities remain less than 2% below all-time highs and have historically compounded through long above-2% inflation regimes, so the market treats current pressure as manageable. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-0694ac75c57440",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 cumulative total return average across episodes",
+    "measured_as_of": "2026-10-14",
+    "origin": "Bloomberg Finance L.P.",
+    "period": "60 trading days",
+    "qualifiers": [
+     "historical average",
+     "25 historical episodes"
+    ],
+    "quote": "the current episode is up 1.1% versus a historical average of 0.4%",
+    "role": "dislocation",
+    "unit": "%",
+    "value": 0.4,
+    "value_text": "0.4%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-549dc81266d157",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 cumulative total return in rate-rise episode",
+    "measured_as_of": "2026-10-14",
+    "origin": "Bloomberg Finance L.P.",
+    "period": "60 trading days",
+    "qualifiers": [
+     "current episode"
+    ],
+    "quote": "the current episode is up 1.1% versus a historical average of 0.4%",
+    "role": "dislocation",
+    "unit": "%",
+    "value": 1.1,
+    "value_text": "1.1%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-0a0845c8947bb9",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "qualifying inflation regime duration",
+    "measured_as_of": "2026-09-30",
+    "origin": "JPM WM Solutions. Bloomberg Finance L.P.",
+    "period": "Feb 1966\u2013Mar 1986",
+    "qualifiers": [],
+    "quote": "first qualifying inflation regime (Feb 1966\u2013Mar 1986, 242 months)",
+    "role": "supports",
+    "unit": "months",
+    "value": 242.0,
+    "value_text": "242"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-52df385b6c3f4d",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "qualifying inflation regime duration",
+    "measured_as_of": "2026-09-30",
+    "origin": "JPM WM Solutions. Bloomberg Finance L.P.",
+    "period": "Mar 2021\u2013Sep 2026",
+    "qualifiers": [
+     "current episode"
+    ],
+    "quote": "the most recent qualifying regime (Mar 2021\u2013Sep 2026, 66 months) the index climbs",
+    "role": "supports",
+    "unit": "months",
+    "value": 66.0,
+    "value_text": "66"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7854412a606444",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "sectors expecting double-digit earnings growth",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "9 of 11 sectors are expecting double-digit earnings growth this year, while the technology sector is expected to grow 64%.",
+    "role": "supports",
+    "unit": "sectors",
+    "value": 9.0,
+    "value_text": "9 of 11"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-d27f939f199c16",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "qualifying inflation regime duration",
+    "measured_as_of": "2026-09-30",
+    "origin": "JPM WM Solutions. Bloomberg Finance L.P.",
+    "period": "Feb 1987\u2013Oct 1997",
+    "qualifiers": [],
+    "quote": "second qualifying regime (Feb 1987\u2013Oct 1997, 129 months)",
+    "role": "supports",
+    "unit": "months",
+    "value": 129.0,
+    "value_text": "129"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d6b280972f9a0a",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "technology sector earnings growth",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "9 of 11 sectors are expecting double-digit earnings growth this year, while the technology sector is expected to grow 64%.",
+    "role": "supports",
+    "unit": "%",
+    "value": 64.0,
+    "value_text": "64%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-eb7415654980c8",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "S&P 500 distance from all-time high",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "October 2026",
+    "qualifiers": [
+     "below all-time highs"
+    ],
+    "quote": "Even after the sell-off of the past two days, equities sit less than 2% below all-time highs.",
+    "role": "supports",
+    "unit": "%",
+    "value": 2.0,
+    "value_text": "less than 2%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8e1b1a28683e02",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "S&P 500 earnings growth",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "3Q26",
+    "qualifiers": [
+     "roughly",
+     "third consecutive quarter above 25%",
+     "consensus"
+    ],
+    "quote": "Consensus still calls for S&P 500 earnings to grow roughly 30% from a year earlier, which would mark a third consecutive quarter above 25%",
+    "role": "catalyst",
+    "unit": "%",
+    "value": 30.0,
+    "value_text": "roughly 30%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b020",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-01d7456fe2691f",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The author distinguishes a relatively targeted above-2% rate (equities can live with) from an accelerating, broadening, embedded inflation process (where economic and valuation damage becomes hard to contain).",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The distinction is between a rate above 2% that is relatively targeted and an inflation process that is accelerating, broadening and becoming embedded in expectations.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-46ed2f40404587",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Mid-to-long-end Treasury yields hit highs not seen in about two decades while equities hover near all-time highs",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "October 2026",
+    "qualifiers": [
+     "about two decades"
+    ],
+    "quote": "Treasuries on the mid to long end of the curve have hit new highs not seen in about two decades, and yet equities hover near all-time highs.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b034",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8b0d5d56c271ab",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The author's view: equities can keep performing as long as tighter policy is seen as a manageable adjustment and earnings remain resilient.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "near term",
+    "qualifiers": [
+     "conditional"
+    ],
+    "quote": "Equities can continue to perform as long as investors continue to see tighter policy as a manageable adjustment rather than the start of a damaging cycle, and as long as earnings continue to show resilience.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b019",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b783a6c88fd6f8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Inflation above the Fed's 2% target says remarkably little about long-run equity returns on its own",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "a level of inflation above the Fed\u2019s target says remarkably little about long-run equity returns on its own",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b036",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-eea6d9a545ce50",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Equities have absorbed inflation and bond-volatility pressure partly due to market concentration and could grind higher as long as risks remain familiar and earnings bolster confidence.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "near term",
+    "qualifiers": [
+     "conditional"
+    ],
+    "quote": "Equities have absorbed the pressure so far, partly because of market concentration, and could continue to grind higher as long as these risks remain familiar and earnings bolster confidence.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfd53f3cc80a",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8376cfa7d8c9c0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Earnings estimates rose during the quarter rather than drifting lower as usual",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "3Q26",
+    "qualifiers": [],
+    "quote": "estimates actually rose during the quarter rather than following their usual downward drift",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-542cd79c135463",
+     "name_as_written": "Bureau of Labor Statistics",
+     "other_securities": [],
+     "quote": "Bureau of Labor Statistics",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Source of CPI inflation data"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-5f746256b21515",
+     "name_as_written": "Haver Analytics",
+     "other_securities": [],
+     "quote": "Haver Analytics",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Data aggregator cited for CPI chart"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-3c93a832904783",
+     "name_as_written": "JPM WM Solutions",
+     "other_securities": [],
+     "quote": "JPM WM Solutions",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of S&P 500 index level chart"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1cb4bc529e2448",
+     "name_as_written": "Bloomberg Finance L.P.",
+     "other_securities": [],
+     "quote": "Bloomberg Finance L.P.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of market and index data cited in charts"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b1db3ba8561f8a",
+     "name_as_written": "Federal Reserve",
+     "other_securities": [],
+     "quote": "October quarter-point Federal Reserve rate hike",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Central bank whose rate path is referenced by hike-probability pricing"
+    },
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "cik": "0000019617",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock",
+       "ticker": "JPM"
+      }
+     ],
+     "mention_id": "M-3226fecf08c67f",
+     "name_as_written": "JPMorgan Chase & Co.",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 5.75% Non-Cumulative Preferred Stock, Series DD",
+       "ticker": "JPM PR D"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 6.00% Non-Cumulative Preferred Stock, Series EE",
+       "ticker": "JPM PR C"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.75% Non-Cumulative Preferred Stock, Series GG",
+       "ticker": "JPM PR J"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.55% Non-Cumulative Preferred Stock, Series JJ",
+       "ticker": "JPM PR K"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.625% Non-Cumulative Preferred Stock, Series LL",
+       "ticker": "JPM PR L"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.20% Non-Cumulative Preferred Stock, Series MM",
+       "ticker": "JPM PR M"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Callable Fixed Rate Notes due June 10, 2032 of JPMorgan Chase Financial Company LLC",
+       "ticker": "JPM/32"
+      },
+      {
+       "exchange": "NYSE Arca",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Alerian MLP Index ETNs due January 28, 2044 of JPMorgan Chase Financial Company LLC",
+       "ticker": "AMJB"
+      },
+      {
+       "exchange": "NYSE Arca",
+       "instrument": "unknown",
+       "note": "unknown \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Guarantee of Inverse VIX Short-Term Futures ETNs due March 22, 2045 of JPMorgan Chase Financial Company LLC",
+       "ticker": "VYLD"
+      }
+     ],
+     "quote": "JPMorgan Chase & Co. (\u201cJPM\u201d)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Parent of the publishing private bank"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-f768c2cd0e6f8f",
+      "C-0a0845c8947bb9",
+      "C-d27f939f199c16",
+      "C-52df385b6c3f4d"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The S&P 500 across qualifying above-2% CPI inflation regimes (60+ month streaks) since 1966, shown without listing members. (constituents not named by the source)"
+    },
+    {
+     "claim_ids": [
+      "C-f24b00af23f419",
+      "C-549dc81266d157",
+      "C-0694ac75c57440"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "25 historical non-overlapping episodes of comparable 30-day 10-year yield rises with similar policy pricing, used to assess S&P 500 forward returns. (constituents not named by the source)"
+    }
+   ],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "market instrument",
+     "listings": [],
+     "mention_id": "M-48f6baccb2e56e",
+     "name_as_written": "S&P 500",
+     "other_securities": [],
+     "quote": "the S&P 500 was only slightly lower after CPI",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "INDEX",
+     "role": "market_instrument",
+     "role_detail": "Main equity index whose resilience to inflation and yields is the subject of the article"
+    }
+   ],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-cfd53f3cc80a",
+     "claim_ids": [
+      "C-eb7415654980c8",
+      "C-eea6d9a545ce50"
+     ],
+     "direction": "positive",
+     "name": "equities",
+     "provenance": "SOURCE OPINION",
+     "quote": "Equities have absorbed the pressure so far"
+    }
+   ],
+   "sectors": [
+    "S&P 500",
+    "equities"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "earnings season (ongoing after October 16, 2026) [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-eea6d9a545ce50",
+      "C-f470658af13ad4"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Equities have absorbed the pressure partly because of market concentration and could continue to grind higher as long as risks remain familiar and earnings bolster confidence."
+    },
+    {
+     "claim_ids": [
+      "C-549dc81266d157"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: The current rate-rise episode shows S&P 500 up 1.1% versus a historical average of 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-0694ac75c57440"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Dislocation evidence: Historical average S&P 500 return across comparable rate-rise episodes was 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-b783a6c88fd6f8",
+      "C-0a0845c8947bb9",
+      "C-d27f939f199c16",
+      "C-52df385b6c3f4d",
+      "C-f768c2cd0e6f8f"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A level of inflation above the Fed's target says remarkably little about long-run equity returns on its own; equities have compounded through decades-long above-2% regimes. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-01d7456fe2691f",
+      "C-1cc147a54c2319",
+      "C-0afa966e67c728",
+      "C-827f2b7f248115"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "An accelerating, broadening, embedded inflation process, visible credit transmission, or a break in the earnings story would turn manageable pressure into economic and valuation damage."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-1cc147a54c2319"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "First warning signal that pressure could turn into upheaval: a broader inflation process (consecutive upside core readings, stronger services inflation, rising inflation expectations)."
+    },
+    {
+     "claim_ids": [
+      "C-0afa966e67c728"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Second warning signal: visible credit transmission (wider high-yield spreads, deteriorating interest coverage, rising delinquencies, tighter lending)."
+    },
+    {
+     "claim_ids": [
+      "C-827f2b7f248115"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Third warning signal: a break in the earnings story (negative revisions, margin compression, weaker guidance)."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consecutive upside core CPI readings or rising inflation expectations"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Wider high-yield spreads, rising delinquencies or tighter lending standards"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Negative earnings revisions, margin compression or weaker guidance"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-f470658af13ad4",
+      "C-eea6d9a545ce50"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Market concentration / narrow leadership is insulating the index but is not healthy over the long run: only 48% of S&P 500 constituents trade above their 200-day moving average, down from 73% two months ago, so a few profitable large weights are masking weakness and the index is vulnerable if that leadership breaks. (scope: S&P 500 breadth; near-term buffer that could reverse (as seen over the past couple of days with the AI sell-off))"
+    },
+    {
+     "claim_ids": [
+      "C-975ca8238436dc",
+      "C-1d82912f076c00"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "AI-linked debt and equity concerns have driven the recent sell-off; a correlated repricing of AI-linked companies and their debt could transmit to the broader index given concentration. (scope: AI-linked companies within the S&P 500; growth/credit channel)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: as long as inflation stays relatively targeted rather than accelerating/broadening/embedded, credit transmission stays contained, and earnings remain resilient"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether earnings will hold or guidance will deteriorate as the rest of earnings season unfolds"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the historical association between above-2% inflation regimes and rising equities reflects causation or coincident drivers"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether contained credit pressure (CCC spreads, distressed share) will broaden"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Earnings continue to beat and estimates keep rising"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Credit pressure stays contained and inflation prints normalize"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Track incoming earnings-season guidance and revisions alongside high-yield credit spreads and core/services inflation to test whether any of the three stated warning signals is emerging."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Negative earnings revisions or weaker guidance appear in the rest of earnings season"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consecutive upside core CPI readings or rising survey/market inflation expectations"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "High-yield spreads widen or distressed share rises further"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); premise is conditional in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "publisher_commentary",
+    "article_id": "A-cfd53f3cc80a",
+    "authors": [
+     "Dana Harlap (Global Investment Strategist)"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-549dc81266d157",
+     "C-0694ac75c57440",
+     "C-8e1b1a28683e02",
+     "C-8376cfa7d8c9c0",
+     "C-eb7415654980c8",
+     "C-46ed2f40404587",
+     "C-7854412a606444",
+     "C-d6b280972f9a0a",
+     "C-b783a6c88fd6f8",
+     "C-0a0845c8947bb9",
+     "C-d27f939f199c16",
+     "C-52df385b6c3f4d",
+     "C-01d7456fe2691f",
+     "C-8b0d5d56c271ab",
+     "C-eea6d9a545ce50",
+     "C-1cc147a54c2319",
+     "C-0afa966e67c728",
+     "C-827f2b7f248115",
+     "C-f470658af13ad4",
+     "C-975ca8238436dc",
+     "C-1d82912f076c00"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-16T10:30:00+05:30",
+    "published_status": "KNOWN",
+    "publisher": "J.P. Morgan Private Bank",
+    "retrieval_state": "FULL",
+    "title": "Inflation, yields and equities: When does the pressure actually matter?",
+    "upstream_origins": [
+     "Bloomberg Finance L.P.",
+     "JPM WM Solutions. Bloomberg Finance L.P.",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/inflation-yields-and-equities-when-does-the-pressure-actually-matter",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": null,
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-cfd53f3cc80a",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "macro_market"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:14:29.350361Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-16",
+     "latest_article_date": "2026-10-16",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+     "status": "REVIEW_NEEDED",
+     "thesis_id": "TH-393DF5CD2B",
+     "title": "Equities can absorb above-target inflation and higher yields while earnings hold"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-eb7415654980c8",
+       "C-46ed2f40404587",
+       "C-8e1b1a28683e02",
+       "C-0a0845c8947bb9",
+       "C-d27f939f199c16",
+       "C-52df385b6c3f4d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article documents that the S&P 500 sits less than 2% below all-time highs despite hot CPI/PPI prints and two-decade-high long-end yields, that equities historically compounded through long above-2% inflation regimes, and that consensus still calls for ~30% S&P 500 EPS growth. \u27e8cited figures: forecast; approximate; approximate, read from a chart; data as of 2026-09-30\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-b783a6c88fd6f8",
+       "C-01d7456fe2691f",
+       "C-8b0d5d56c271ab",
+       "C-eea6d9a545ce50",
+       "C-8e1b1a28683e02",
+       "C-8376cfa7d8c9c0"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "As long as earnings hold, equities can take hotter inflation and higher yields; if guidance shows weaker demand, margin pressure or rising financing costs, the same inflation data will matter much more. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "The article's investable view is that inflation and yield levels matter little for equities until they show up in earnings; the research opportunity is to watch earnings and credit transmission rather than inflation prints alone, since a targeted above-2% regime is historically survivable."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8e1b1a28683e02"
+       ],
+       "original_date": "2026-10-16",
+       "period": "3Q26",
+       "provenance": "FORECAST",
+       "text": "Consensus calls for S&P 500 earnings to grow roughly 30% year-on-year, a third consecutive quarter above 25% \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-549dc81266d157"
+       ],
+       "original_date": "2026-10-16",
+       "period": "60 trading days",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The current rate-rise episode shows S&P 500 up 1.1% versus a historical average of 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0694ac75c57440"
+       ],
+       "original_date": "2026-10-16",
+       "period": "60 trading days",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Historical average S&P 500 return across comparable rate-rise episodes was 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-eb7415654980c8"
+       ],
+       "original_date": "2026-10-16",
+       "period": "October 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Equities sit less than 2% below all-time highs even after the recent sell-off"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7854412a606444"
+       ],
+       "original_date": "2026-10-16",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "9 of 11 sectors expect double-digit earnings growth this year \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-d6b280972f9a0a"
+       ],
+       "original_date": "2026-10-16",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "Technology sector earnings are expected to grow 64% this year \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 15 pieces of evidence from A-cfd53f3cc80a \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:14 UTC, analysed as of 2026-10-21, from a source published 2026-10-16; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-3a15945cfbb22a",
+       "C-1160b4711aed16",
+       "C-46ed2f40404587"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Successive upside inflation surprises (CPI +3.7% y/y, PPI +6.3% y/y) and two-decade-high long-end Treasury yields raise macro pressure on equities. \u27e8cited figures: data as of 2026-09-30; forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-8e1b1a28683e02",
+       "C-01d7456fe2691f"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "listed_earnings",
+      "text": "Inflation and yields matter most for stocks when they weaken demand, compress margins, raise financing costs or force estimate cuts; until then equities absorb the volatility and consensus still projects ~30% EPS growth. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-eb7415654980c8",
+       "C-0a0845c8947bb9",
+       "C-d27f939f199c16",
+       "C-52df385b6c3f4d"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "market_reaction",
+      "text": "Equities remain less than 2% below all-time highs and have historically compounded through long above-2% inflation regimes, so the market treats current pressure as manageable. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-0694ac75c57440",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 cumulative total return average across episodes",
+      "measured_as_of": "2026-10-14",
+      "origin": "Bloomberg Finance L.P.",
+      "period": "60 trading days",
+      "qualifiers": [
+       "historical average",
+       "25 historical episodes"
+      ],
+      "quote": "the current episode is up 1.1% versus a historical average of 0.4%",
+      "role": "dislocation",
+      "unit": "%",
+      "value": 0.4,
+      "value_text": "0.4%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-549dc81266d157",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 cumulative total return in rate-rise episode",
+      "measured_as_of": "2026-10-14",
+      "origin": "Bloomberg Finance L.P.",
+      "period": "60 trading days",
+      "qualifiers": [
+       "current episode"
+      ],
+      "quote": "the current episode is up 1.1% versus a historical average of 0.4%",
+      "role": "dislocation",
+      "unit": "%",
+      "value": 1.1,
+      "value_text": "1.1%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-0a0845c8947bb9",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "qualifying inflation regime duration",
+      "measured_as_of": "2026-09-30",
+      "origin": "JPM WM Solutions. Bloomberg Finance L.P.",
+      "period": "Feb 1966\u2013Mar 1986",
+      "qualifiers": [],
+      "quote": "first qualifying inflation regime (Feb 1966\u2013Mar 1986, 242 months)",
+      "role": "supports",
+      "unit": "months",
+      "value": 242.0,
+      "value_text": "242"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-52df385b6c3f4d",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "qualifying inflation regime duration",
+      "measured_as_of": "2026-09-30",
+      "origin": "JPM WM Solutions. Bloomberg Finance L.P.",
+      "period": "Mar 2021\u2013Sep 2026",
+      "qualifiers": [
+       "current episode"
+      ],
+      "quote": "the most recent qualifying regime (Mar 2021\u2013Sep 2026, 66 months) the index climbs",
+      "role": "supports",
+      "unit": "months",
+      "value": 66.0,
+      "value_text": "66"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7854412a606444",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "sectors expecting double-digit earnings growth",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "9 of 11 sectors are expecting double-digit earnings growth this year, while the technology sector is expected to grow 64%.",
+      "role": "supports",
+      "unit": "sectors",
+      "value": 9.0,
+      "value_text": "9 of 11"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-d27f939f199c16",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "qualifying inflation regime duration",
+      "measured_as_of": "2026-09-30",
+      "origin": "JPM WM Solutions. Bloomberg Finance L.P.",
+      "period": "Feb 1987\u2013Oct 1997",
+      "qualifiers": [],
+      "quote": "second qualifying regime (Feb 1987\u2013Oct 1997, 129 months)",
+      "role": "supports",
+      "unit": "months",
+      "value": 129.0,
+      "value_text": "129"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d6b280972f9a0a",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "technology sector earnings growth",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "9 of 11 sectors are expecting double-digit earnings growth this year, while the technology sector is expected to grow 64%.",
+      "role": "supports",
+      "unit": "%",
+      "value": 64.0,
+      "value_text": "64%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-eb7415654980c8",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "S&P 500 distance from all-time high",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "October 2026",
+      "qualifiers": [
+       "below all-time highs"
+      ],
+      "quote": "Even after the sell-off of the past two days, equities sit less than 2% below all-time highs.",
+      "role": "supports",
+      "unit": "%",
+      "value": 2.0,
+      "value_text": "less than 2%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8e1b1a28683e02",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "S&P 500 earnings growth",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "3Q26",
+      "qualifiers": [
+       "roughly",
+       "third consecutive quarter above 25%",
+       "consensus"
+      ],
+      "quote": "Consensus still calls for S&P 500 earnings to grow roughly 30% from a year earlier, which would mark a third consecutive quarter above 25%",
+      "role": "catalyst",
+      "unit": "%",
+      "value": 30.0,
+      "value_text": "roughly 30%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b020",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-01d7456fe2691f",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author distinguishes a relatively targeted above-2% rate (equities can live with) from an accelerating, broadening, embedded inflation process (where economic and valuation damage becomes hard to contain).",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The distinction is between a rate above 2% that is relatively targeted and an inflation process that is accelerating, broadening and becoming embedded in expectations.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-46ed2f40404587",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Mid-to-long-end Treasury yields hit highs not seen in about two decades while equities hover near all-time highs",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "October 2026",
+      "qualifiers": [
+       "about two decades"
+      ],
+      "quote": "Treasuries on the mid to long end of the curve have hit new highs not seen in about two decades, and yet equities hover near all-time highs.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b034",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8b0d5d56c271ab",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The author's view: equities can keep performing as long as tighter policy is seen as a manageable adjustment and earnings remain resilient.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "near term",
+      "qualifiers": [
+       "conditional"
+      ],
+      "quote": "Equities can continue to perform as long as investors continue to see tighter policy as a manageable adjustment rather than the start of a damaging cycle, and as long as earnings continue to show resilience.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b019",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b783a6c88fd6f8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Inflation above the Fed's 2% target says remarkably little about long-run equity returns on its own",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "a level of inflation above the Fed\u2019s target says remarkably little about long-run equity returns on its own",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b036",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-eea6d9a545ce50",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Equities have absorbed inflation and bond-volatility pressure partly due to market concentration and could grind higher as long as risks remain familiar and earnings bolster confidence.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "near term",
+      "qualifiers": [
+       "conditional"
+      ],
+      "quote": "Equities have absorbed the pressure so far, partly because of market concentration, and could continue to grind higher as long as these risks remain familiar and earnings bolster confidence.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfd53f3cc80a",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8376cfa7d8c9c0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Earnings estimates rose during the quarter rather than drifting lower as usual",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "3Q26",
+      "qualifiers": [],
+      "quote": "estimates actually rose during the quarter rather than following their usual downward drift",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-542cd79c135463",
+       "name_as_written": "Bureau of Labor Statistics",
+       "other_securities": [],
+       "quote": "Bureau of Labor Statistics",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Source of CPI inflation data"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-5f746256b21515",
+       "name_as_written": "Haver Analytics",
+       "other_securities": [],
+       "quote": "Haver Analytics",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Data aggregator cited for CPI chart"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-3c93a832904783",
+       "name_as_written": "JPM WM Solutions",
+       "other_securities": [],
+       "quote": "JPM WM Solutions",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of S&P 500 index level chart"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1cb4bc529e2448",
+       "name_as_written": "Bloomberg Finance L.P.",
+       "other_securities": [],
+       "quote": "Bloomberg Finance L.P.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of market and index data cited in charts"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b1db3ba8561f8a",
+       "name_as_written": "Federal Reserve",
+       "other_securities": [],
+       "quote": "October quarter-point Federal Reserve rate hike",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Central bank whose rate path is referenced by hike-probability pricing"
+      },
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "cik": "0000019617",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock",
+         "ticker": "JPM"
+        }
+       ],
+       "mention_id": "M-3226fecf08c67f",
+       "name_as_written": "JPMorgan Chase & Co.",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 5.75% Non-Cumulative Preferred Stock, Series DD",
+         "ticker": "JPM PR D"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 6.00% Non-Cumulative Preferred Stock, Series EE",
+         "ticker": "JPM PR C"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.75% Non-Cumulative Preferred Stock, Series GG",
+         "ticker": "JPM PR J"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.55% Non-Cumulative Preferred Stock, Series JJ",
+         "ticker": "JPM PR K"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.625% Non-Cumulative Preferred Stock, Series LL",
+         "ticker": "JPM PR L"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Depositary Shares, each representing a one-four hundredth interest in a share of 4.20% Non-Cumulative Preferred Stock, Series MM",
+         "ticker": "JPM PR M"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Callable Fixed Rate Notes due June 10, 2032 of JPMorgan Chase Financial Company LLC",
+         "ticker": "JPM/32"
+        },
+        {
+         "exchange": "NYSE Arca",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Alerian MLP Index ETNs due January 28, 2044 of JPMorgan Chase Financial Company LLC",
+         "ticker": "AMJB"
+        },
+        {
+         "exchange": "NYSE Arca",
+         "instrument": "unknown",
+         "note": "unknown \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-054343) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Guarantee of Inverse VIX Short-Term Futures ETNs due March 22, 2045 of JPMorgan Chase Financial Company LLC",
+         "ticker": "VYLD"
+        }
+       ],
+       "quote": "JPMorgan Chase & Co. (\u201cJPM\u201d)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Parent of the publishing private bank"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-f768c2cd0e6f8f",
+        "C-0a0845c8947bb9",
+        "C-d27f939f199c16",
+        "C-52df385b6c3f4d"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The S&P 500 across qualifying above-2% CPI inflation regimes (60+ month streaks) since 1966, shown without listing members. (constituents not named by the source)"
+      },
+      {
+       "claim_ids": [
+        "C-f24b00af23f419",
+        "C-549dc81266d157",
+        "C-0694ac75c57440"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "25 historical non-overlapping episodes of comparable 30-day 10-year yield rises with similar policy pricing, used to assess S&P 500 forward returns. (constituents not named by the source)"
+      }
+     ],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "market instrument",
+       "listings": [],
+       "mention_id": "M-48f6baccb2e56e",
+       "name_as_written": "S&P 500",
+       "other_securities": [],
+       "quote": "the S&P 500 was only slightly lower after CPI",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "INDEX",
+       "role": "market_instrument",
+       "role_detail": "Main equity index whose resilience to inflation and yields is the subject of the article"
+      }
+     ],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-cfd53f3cc80a",
+       "claim_ids": [
+        "C-eb7415654980c8",
+        "C-eea6d9a545ce50"
+       ],
+       "direction": "positive",
+       "name": "equities",
+       "provenance": "SOURCE OPINION",
+       "quote": "Equities have absorbed the pressure so far"
+      }
+     ],
+     "sectors": [
+      "S&P 500",
+      "equities"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "earnings season (ongoing after October 16, 2026) [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-eea6d9a545ce50",
+        "C-f470658af13ad4"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Equities have absorbed the pressure partly because of market concentration and could continue to grind higher as long as risks remain familiar and earnings bolster confidence."
+      },
+      {
+       "claim_ids": [
+        "C-549dc81266d157"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: The current rate-rise episode shows S&P 500 up 1.1% versus a historical average of 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-0694ac75c57440"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Dislocation evidence: Historical average S&P 500 return across comparable rate-rise episodes was 0.4% \u27e8cited figures: data as of 2026-10-14\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-b783a6c88fd6f8",
+        "C-0a0845c8947bb9",
+        "C-d27f939f199c16",
+        "C-52df385b6c3f4d",
+        "C-f768c2cd0e6f8f"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A level of inflation above the Fed's target says remarkably little about long-run equity returns on its own; equities have compounded through decades-long above-2% regimes. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-01d7456fe2691f",
+        "C-1cc147a54c2319",
+        "C-0afa966e67c728",
+        "C-827f2b7f248115"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "An accelerating, broadening, embedded inflation process, visible credit transmission, or a break in the earnings story would turn manageable pressure into economic and valuation damage."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-1cc147a54c2319"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "First warning signal that pressure could turn into upheaval: a broader inflation process (consecutive upside core readings, stronger services inflation, rising inflation expectations)."
+      },
+      {
+       "claim_ids": [
+        "C-0afa966e67c728"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Second warning signal: visible credit transmission (wider high-yield spreads, deteriorating interest coverage, rising delinquencies, tighter lending)."
+      },
+      {
+       "claim_ids": [
+        "C-827f2b7f248115"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Third warning signal: a break in the earnings story (negative revisions, margin compression, weaker guidance)."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consecutive upside core CPI readings or rising inflation expectations"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Wider high-yield spreads, rising delinquencies or tighter lending standards"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Negative earnings revisions, margin compression or weaker guidance"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-f470658af13ad4",
+        "C-eea6d9a545ce50"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Market concentration / narrow leadership is insulating the index but is not healthy over the long run: only 48% of S&P 500 constituents trade above their 200-day moving average, down from 73% two months ago, so a few profitable large weights are masking weakness and the index is vulnerable if that leadership breaks. (scope: S&P 500 breadth; near-term buffer that could reverse (as seen over the past couple of days with the AI sell-off))"
+      },
+      {
+       "claim_ids": [
+        "C-975ca8238436dc",
+        "C-1d82912f076c00"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "AI-linked debt and equity concerns have driven the recent sell-off; a correlated repricing of AI-linked companies and their debt could transmit to the broader index given concentration. (scope: AI-linked companies within the S&P 500; growth/credit channel)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: as long as inflation stays relatively targeted rather than accelerating/broadening/embedded, credit transmission stays contained, and earnings remain resilient"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether earnings will hold or guidance will deteriorate as the rest of earnings season unfolds"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the historical association between above-2% inflation regimes and rising equities reflects causation or coincident drivers"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether contained credit pressure (CCC spreads, distressed share) will broaden"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Earnings continue to beat and estimates keep rising"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Credit pressure stays contained and inflation prints normalize"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Track incoming earnings-season guidance and revisions alongside high-yield credit spreads and core/services inflation to test whether any of the three stated warning signals is emerging."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Negative earnings revisions or weaker guidance appear in the rest of earnings season"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consecutive upside core CPI readings or rising survey/market inflation expectations"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "High-yield spreads widen or distressed share rises further"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "publisher_commentary",
+      "article_id": "A-cfd53f3cc80a",
+      "authors": [
+       "Dana Harlap (Global Investment Strategist)"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-549dc81266d157",
+       "C-0694ac75c57440",
+       "C-8e1b1a28683e02",
+       "C-8376cfa7d8c9c0",
+       "C-eb7415654980c8",
+       "C-46ed2f40404587",
+       "C-7854412a606444",
+       "C-d6b280972f9a0a",
+       "C-b783a6c88fd6f8",
+       "C-0a0845c8947bb9",
+       "C-d27f939f199c16",
+       "C-52df385b6c3f4d",
+       "C-01d7456fe2691f",
+       "C-8b0d5d56c271ab",
+       "C-eea6d9a545ce50",
+       "C-1cc147a54c2319",
+       "C-0afa966e67c728",
+       "C-827f2b7f248115",
+       "C-f470658af13ad4",
+       "C-975ca8238436dc",
+       "C-1d82912f076c00"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-16T10:30:00+05:30",
+      "published_status": "KNOWN",
+      "publisher": "J.P. Morgan Private Bank",
+      "retrieval_state": "FULL",
+      "title": "Inflation, yields and equities: When does the pressure actually matter?",
+      "upstream_origins": [
+       "Bloomberg Finance L.P.",
+       "JPM WM Solutions. Bloomberg Finance L.P.",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://privatebank.jpmorgan.com/apac/en/insights/markets-and-investing/tmt/inflation-yields-and-equities-when-does-the-pressure-actually-matter",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "eff490ef6b3caaa8101e3f5db4effca91e823f6a5e7913bfe5b198da8dd97aa9",
+   "created_at": "2026-10-21T08:14:51.774389Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-eb7415654980c8",
+       "C-46ed2f40404587",
+       "C-7854412a606444",
+       "C-d6b280972f9a0a",
+       "C-0a0845c8947bb9",
+       "C-d27f939f199c16",
+       "C-52df385b6c3f4d",
+       "C-549dc81266d157",
+       "C-0694ac75c57440",
+       "C-8e1b1a28683e02",
+       "C-8376cfa7d8c9c0"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "11"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-044b50fe7b56, ES-aab273bf90d4, ES-fc428945cc0a",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 1 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-7854412a606444",
+       "C-d6b280972f9a0a",
+       "C-549dc81266d157",
+       "C-0694ac75c57440",
+       "C-eb7415654980c8",
+       "C-0a0845c8947bb9",
+       "C-d27f939f199c16",
+       "C-52df385b6c3f4d"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "8 claim(s) inside the next 2-4 quarters (C-7854412a606444: forecast window 2026-01-01..2026-12-31 (2026); C-d6b280972f9a0a: forecast window 2026-01-01..2026-12-31 (2026); C-549dc81266d157: measured 2026-10-14 (7 days before the as-of); C-0694ac75c57440: measured 2026-10-14 (7 days before the as-of); showing 4 of 8); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: none",
+      "value": "0 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-549dc81266d157",
+       "C-0694ac75c57440"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "2 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 2 offered but NOT counted (opinion, forecast figure or stale reading): C-8e1b1a28683e02, C-8376cfa7d8c9c0",
+      "value": "present"
+     },
+     {
+      "claim_ids": [
+       "C-7854412a606444",
+       "C-d6b280972f9a0a"
+      ],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "2 near-term change(s) but NOT credible \u2014 a forecast alone: no corroborating measured observation, and not the publisher's own data in an industry data report",
+      "value": "not credible"
+     },
+     {
+      "claim_ids": [
+       "C-1cc147a54c2319",
+       "C-0afa966e67c728",
+       "C-827f2b7f248115"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (3 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 11 supporting; 0 independent contradicting source(s) vs 3 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names); premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_exposure",
+      "kind": "held",
+      "text": "no source-named exposure (no point-in-time-verified listed company, no ETF, index or basket attached, no sector the source names)"
+     },
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-393DF5CD2B",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 15,
+ "other_cited_evidence": [
+  "C-3a15945cfbb22a",
+  "C-1160b4711aed16",
+  "C-f768c2cd0e6f8f",
+  "C-f24b00af23f419",
+  "C-f470658af13ad4",
+  "C-1cc147a54c2319",
+  "C-0afa966e67c728",
+  "C-827f2b7f248115",
+  "C-975ca8238436dc",
+  "C-1d82912f076c00"
+ ],
+ "review_carried": {},
+ "review_dismissed": {
+  "s03.2": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-eb7415654980c8",
+    "C-0a0845c8947bb9",
+    "C-d27f939f199c16",
+    "C-52df385b6c3f4d"
+   ],
+   "created_at": "2026-10-22T07:42:58.920085Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s03.2: Line is labelled MEASURED OBSERVATION but 'market treats current pressure as manageable' is the source's interpretation/opinion, not a measurement. The regime figures and <2% are measured, but the interpretive clause is stronger than its measured content. | 'Equities remain less than 2% below all-time highs and have historically compounded through long abov'",
+   "finding_key": "F-b41ff6ac6251",
+   "finding_version": 1,
+   "line_text": "Equities remain less than 2% below all-time highs and have historically compounded through long above-2% inflation regimes, so the market treats current pressure as manageable. \u27e8cited figures: approximate, read from a chart; data as of 2026-09-30\u27e9",
+   "reason": "The source says it (linked C-8b0d5d56c271ab: investors see tighter policy 'as a manageable adjustment'; C-eea6d9a545ce50: 'Equities have absorbed the pressure so far'); the label is already capped. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-ab07fdd4d1c5",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074258Z-review-2",
+   "sentence_id": "s03.2",
+   "supersedes": [],
+   "thesis_id": "TH-393DF5CD2B",
+   "version": 1
+  }
+ },
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s03.2": "Line is labelled MEASURED OBSERVATION but 'market treats current pressure as manageable' is the source's interpretation/opinion, not a measurement. The regime figures and <2% are measured, but the interpretive clause is stronger than its measured content."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Exposure \u2014 only a broad market index (S&P 500) and a name read as a sector that is not one (equities \u2014 the whole market, not a sector) \u2014 none is counted as an exposure.",
+  "Premise \u2014 conditional in the source."
+ ],
+ "withheld_sentences": {}
+}

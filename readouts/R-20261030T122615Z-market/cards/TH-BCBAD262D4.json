@@ -1,0 +1,843 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-14",
+   "ancestry": [
+    "industrials"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T10:32:04.865054Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-15",
+   "latest_article_date": "2026-09-15",
+   "region": "Canada",
+   "research_action": "SKIP",
+   "sector": "Industrials, defense, transport, capital goods",
+   "status": "ACTIVE",
+   "thesis_id": "TH-BCBAD262D4",
+   "title": "Broadening capital cycle into machinery, software and manufacturing"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-db59c77cfefd92",
+     "C-a863df50cf2403"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Today roughly four-fifths of spending in Canada's major capital-building sectors goes to structures and engineering rather than machinery and equipment; the next leg requires investment to broaden into machinery, software, IP and productive assets, with machinery-intensive investment, automation, processing and technology-intensive FDI in manufacturing and autos signaling the capital cycle is broadening."
+   },
+   {
+    "claim_ids": [
+     "C-a863df50cf2403"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Machinery-intensive investment, automation, processing and technology-intensive FDI would show that the capital cycle is broadening."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A shift toward machinery/equipment and technology-intensive investment would benefit Canadian manufacturing, automation and auto-related equities; the article quantifies neither the shift nor earnings effects and names no companies."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-479ccc154807",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-a863df50cf2403"
+     ],
+     "original_date": "2026-09-15",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "In manufacturing and autos, machinery-intensive investment, automation, processing and technology-intensive FDI would signal the capital cycle is broadening"
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-db59c77cfefd92"
+     ],
+     "original_date": "2026-09-15",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:32 UTC, analysed as of 2026-10-14, from a source published 2026-09-15; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-db59c77cfefd92"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Investment broadens from structures/engineering (currently ~four-fifths of capital-building spend) into machinery, software and IP"
+   },
+   {
+    "claim_ids": [
+     "C-a863df50cf2403"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Machinery-intensive investment, automation, processing and technology-intensive FDI in manufacturing and autos rise"
+   },
+   {
+    "claim_ids": [
+     "C-db59c77cfefd92"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "margins",
+    "text": "Converting investment into productivity would lift margins; the test is effectiveness not just volume of building"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b064",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-a863df50cf2403",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "In manufacturing and autos, machinery-intensive investment, automation, processing and technology-intensive FDI would signal the capital cycle is broadening",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Machinery-intensive investment, automation, processing and technology-intensive foreign direct investment would show that the capital cycle is broadening.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b047",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-db59c77cfefd92",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-479ccc154807",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f238e112695a2d",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "according to data from the United Nations and Morgan Stanley Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of the research and data source for projections"
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b5f52b2bbb77f7",
+     "name_as_written": "United Nations",
+     "other_securities": [],
+     "quote": "according to data from the United Nations and Morgan Stanley Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Source for working-age population projections"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-479ccc154807",
+     "claim_ids": [
+      "C-a863df50cf2403"
+     ],
+     "direction": "positive",
+     "name": "Manufacturing and autos",
+     "provenance": "SOURCE OPINION",
+     "quote": "Manufacturing and autos: Machinery-intensive investment, automation, processing and technology-intensive foreign direct investment would show that the capital cycle is broadening."
+    }
+   ],
+   "sectors": [
+    "manufacturing",
+    "autos",
+    "machinery",
+    "software"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-a863df50cf2403"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The broadening is framed as the next leg rather than already underway; machinery/automation/FDI pickup would be an early signal."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-db59c77cfefd92"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Sustained growth gains depend on capital shifting from structures/engineering into machinery, software and IP and converting that investment into productivity."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-45A01B5D5C: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs capex_spending_cycle); a different geography (China vs Canada) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs capex_spending_cycle); a different geography (China vs Canada) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different geography (China vs Canada); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-cd64d1c5b2ee1b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Tariff/USMCA uncertainty could delay and redirect investment but shouldn't derail medium-term growth outlook"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Spending remaining ~four-fifths in structures/engineering"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Weak machinery-intensive investment, automation or technology-intensive FDI"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: capital cycle broadens from structures/engineering into machinery, software, IP and productive business assets"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the capital mix actually shifts toward machinery/equipment"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether investment converts into productivity gains"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "No named companies or quantified effect"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Capital spending staying concentrated in structures/engineering"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Track Canadian capital spending mix (machinery/equipment vs structures/engineering) and FDI into manufacturing/autos to gauge whether the capital cycle is broadening."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Rising machinery/equipment share of capex"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Automation and technology-intensive FDI announcements in manufacturing/autos"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "SKIP",
+   "rule_trace": [
+    "SKIP-1 no verified material evidence"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-479ccc154807",
+    "authors": [
+     "Arunima Sinha"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-db59c77cfefd92",
+     "C-a863df50cf2403",
+     "C-cd64d1c5b2ee1b"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-15T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "Canada's Economic Growth Poised to Accelerate Through 2030",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/canada-economic-growth-accelerates-through-2030",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": null,
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-479ccc154807",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "industrials"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:32:04.865054Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-15",
+     "latest_article_date": "2026-09-15",
+     "region": "Canada",
+     "research_action": "SKIP",
+     "sector": "Industrials, defense, transport, capital goods",
+     "status": "ACTIVE",
+     "thesis_id": "TH-BCBAD262D4",
+     "title": "Broadening capital cycle into machinery, software and manufacturing"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-db59c77cfefd92",
+       "C-a863df50cf2403"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Today roughly four-fifths of spending in Canada's major capital-building sectors goes to structures and engineering rather than machinery and equipment; the next leg requires investment to broaden into machinery, software, IP and productive assets, with machinery-intensive investment, automation, processing and technology-intensive FDI in manufacturing and autos signaling the capital cycle is broadening."
+     },
+     {
+      "claim_ids": [
+       "C-a863df50cf2403"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Machinery-intensive investment, automation, processing and technology-intensive FDI would show that the capital cycle is broadening."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A shift toward machinery/equipment and technology-intensive investment would benefit Canadian manufacturing, automation and auto-related equities; the article quantifies neither the shift nor earnings effects and names no companies."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-a863df50cf2403"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "In manufacturing and autos, machinery-intensive investment, automation, processing and technology-intensive FDI would signal the capital cycle is broadening"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-db59c77cfefd92"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:32 UTC, analysed as of 2026-10-14, from a source published 2026-09-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-db59c77cfefd92"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Investment broadens from structures/engineering (currently ~four-fifths of capital-building spend) into machinery, software and IP"
+     },
+     {
+      "claim_ids": [
+       "C-a863df50cf2403"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Machinery-intensive investment, automation, processing and technology-intensive FDI in manufacturing and autos rise"
+     },
+     {
+      "claim_ids": [
+       "C-db59c77cfefd92"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "margins",
+      "text": "Converting investment into productivity would lift margins; the test is effectiveness not just volume of building"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b064",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-a863df50cf2403",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "In manufacturing and autos, machinery-intensive investment, automation, processing and technology-intensive FDI would signal the capital cycle is broadening",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Machinery-intensive investment, automation, processing and technology-intensive foreign direct investment would show that the capital cycle is broadening.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-db59c77cfefd92",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-479ccc154807",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f238e112695a2d",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "according to data from the United Nations and Morgan Stanley Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the research and data source for projections"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b5f52b2bbb77f7",
+       "name_as_written": "United Nations",
+       "other_securities": [],
+       "quote": "according to data from the United Nations and Morgan Stanley Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Source for working-age population projections"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-479ccc154807",
+       "claim_ids": [
+        "C-a863df50cf2403"
+       ],
+       "direction": "positive",
+       "name": "Manufacturing and autos",
+       "provenance": "SOURCE OPINION",
+       "quote": "Manufacturing and autos: Machinery-intensive investment, automation, processing and technology-intensive foreign direct investment would show that the capital cycle is broadening."
+      }
+     ],
+     "sectors": [
+      "manufacturing",
+      "autos",
+      "machinery",
+      "software"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-a863df50cf2403"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The broadening is framed as the next leg rather than already underway; machinery/automation/FDI pickup would be an early signal."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-db59c77cfefd92"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Sustained growth gains depend on capital shifting from structures/engineering into machinery, software and IP and converting that investment into productivity."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-45A01B5D5C: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs capex_spending_cycle); a different geography (China vs Canada) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-87D93CD53A: same value-chain node, not the same claim \u2014 a different mechanism (competitive_share_shift vs capex_spending_cycle); a different geography (China vs Canada) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different geography (China vs Canada); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-cd64d1c5b2ee1b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Tariff/USMCA uncertainty could delay and redirect investment but shouldn't derail medium-term growth outlook"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Spending remaining ~four-fifths in structures/engineering"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Weak machinery-intensive investment, automation or technology-intensive FDI"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: capital cycle broadens from structures/engineering into machinery, software, IP and productive business assets"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the capital mix actually shifts toward machinery/equipment"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether investment converts into productivity gains"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "No named companies or quantified effect"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Capital spending staying concentrated in structures/engineering"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Track Canadian capital spending mix (machinery/equipment vs structures/engineering) and FDI into manufacturing/autos to gauge whether the capital cycle is broadening."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Rising machinery/equipment share of capex"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Automation and technology-intensive FDI announcements in manufacturing/autos"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "SKIP",
+     "rule_trace": [
+      "SKIP-1 no verified material evidence"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-479ccc154807",
+      "authors": [
+       "Arunima Sinha"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-db59c77cfefd92",
+       "C-a863df50cf2403",
+       "C-cd64d1c5b2ee1b"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-15T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Canada's Economic Growth Poised to Accelerate Through 2030",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/canada-economic-growth-accelerates-through-2030",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "8a9366381e365cc5d373496c29cc5ee2645b74efe9b5f120b7f47a2bc44ba0bb",
+   "created_at": "2026-10-21T10:32:17.997328Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label longer_term (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: Manufacturing and autos",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-cd64d1c5b2ee1b"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 0 supporting; 0 independent contradicting source(s) vs 0 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "SKIP",
+    "rules_fired": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-BCBAD262D4",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 3,
+ "other_cited_evidence": [
+  "C-cd64d1c5b2ee1b"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The 'four-fifths of spending goes to structures and engineering' claim is not in the two cited spans; it appears in pool span C-e824ec6a666657. The rest (next leg, machinery/automation/FDI) is supported by cited spans.",
+  "s03.0": "The '~four-fifths of capital-building spend' figure is not in cited span C-db59c77cfefd92; it is in pool span C-e824ec6a666657. The broadening into machinery/software/IP is supported.",
+  "s03.2": "Cited span supports broadening into productive assets but says nothing about lifting margins or the 'test is effectiveness not volume'. That productivity/effectiveness framing is not in the cited span.",
+  "s06.1": "Cited span supports the shift from structures/engineering into machinery/software/IP, but 'converting that investment into productivity' and 'sustained growth gains depend on' are not in the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": "Registry status now ARCHIVED since 2026-10-14: research action is SKIP \u2014 kept in the searchable archive, off the active list",
+ "why_action": [
+  "Skip \u2014 no verified material evidence."
+ ],
+ "withheld_sentences": {}
+}

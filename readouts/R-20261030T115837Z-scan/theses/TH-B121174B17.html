@@ -1,0 +1,367 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><meta name="robots" content="noindex, nofollow"><title>Huawei-DeepSeek co-design matures a domestic Chinese AI compute ecosystem · Research desk</title><style>
+:root{--bg:#f5f5f2;--panel:#fff;--ink:#16181d;--ink2:#3b4049;--muted:#676d78;--line:#e0e2e6;
+--soft:#f0f1f3;--accent:#1f3a5f;--accent-bg:#eef2f7;--now:#8c1d18;--now-bg:#f8e7e5;
+--watch:#7a5200;--watch-bg:#f6eedc;--skip:#555b65;--skip-bg:#eceef1;--warn:#9a3412;
+--warn-bg:#fff3ea;--ok:#1f6f43;--ok-bg:#e6f2eb;--bad:#9b1c1c;--bad-bg:#fbe9e7;--info:#0f5f6e;
+--info-bg:#e3f1f3;--obs:#1f6f43;--fc:#0f5f6e;--op:#6b3fa0;--inf:#8a5a00;--ext:#1d4f91;
+--unk:#676d78;--block:#9b1c1c}
+@media (prefers-color-scheme: dark){:root{--bg:#111316;--panel:#181b1f;--ink:#eceef1;
+--ink2:#c9cdd4;--muted:#9aa1ab;--line:#2b2f35;--soft:#20242a;--accent:#9cc2f5;
+--accent-bg:#1a2433;--now:#ffb4ab;--now-bg:#3a1916;--watch:#f0c36b;--watch-bg:#33280f;
+--skip:#c9cdd4;--skip-bg:#24282e;--warn:#fdba74;--warn-bg:#2c1c10;--ok:#7fd4a4;--ok-bg:#132621;
+--bad:#ffb4ab;--bad-bg:#3a1916;--info:#8fd6e0;--info-bg:#10272b;--obs:#7fd4a4;--fc:#8fd6e0;
+--op:#c9a8f0;--inf:#f0c36b;--ext:#9cc2f5;--unk:#9aa1ab;--block:#ffb4ab}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%;scroll-padding-top:60px}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,-apple-system,
+BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;font-variant-numeric:tabular-nums}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.topnav{position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.topnav .in{max-width:1120px;margin:0 auto;padding:0 16px;display:flex;align-items:center;
+gap:20px;min-height:50px}
+.brand{font-weight:700;white-space:nowrap;color:var(--ink)}.brand small{font-weight:500;
+color:var(--muted);margin-left:6px}
+.links{display:flex;gap:18px;overflow-x:auto;white-space:nowrap;flex:1;min-width:0;
+scrollbar-width:none}.links::-webkit-scrollbar{display:none}
+.links a{color:var(--ink2);font-size:14px;padding:14px 0;border-bottom:2px solid transparent}
+.links a:hover{color:var(--ink);text-decoration:none;border-bottom-color:var(--line)}
+.links a.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+.subnav{max-width:1120px;margin:0 auto;padding:10px 16px 0;font-size:13px;color:var(--muted)}
+.subnav a{margin:0 4px}
+.auditbar{font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;
+border:1px solid var(--line);border-radius:6px;padding:4px 9px}
+#audit:checked~.topnav .auditbar{background:var(--accent-bg);color:var(--accent)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 16px 64px;overflow-wrap:break-word}
+.wrap.narrow{max-width:940px}
+.pill{display:inline-block;font-size:12px;font-weight:650;letter-spacing:.02em;padding:3px 10px;
+border-radius:999px;white-space:nowrap;vertical-align:1px}
+.pill.now{background:var(--now-bg);color:var(--now)}.pill.watch{background:var(--watch-bg);
+color:var(--watch)}.pill.skip,.pill.dir{background:var(--skip-bg);color:var(--skip)}
+.pill.kind{background:var(--accent-bg);color:var(--accent)}
+.aud{display:none}#audit:checked~.wrap .aud,#audit:checked~.topnav .aud{display:revert}
+#audit:checked~.wrap .nonaud{display:none}
+@media (max-width:720px){.topnav .in{gap:0 12px;flex-wrap:wrap;padding-top:8px}
+.brand small{display:none}.auditbar{margin-left:auto}
+.links{order:3;flex-basis:100%;flex-wrap:wrap;gap:0 16px;white-space:normal;overflow:visible}
+.links a{padding:6px 0 8px}.wrap{padding:18px 12px 48px}}
+@media print{.topnav,.subnav{display:none}body{background:#fff}.aud{display:revert!important}
+.nonaud{display:none!important}}
+
+table.mktt td.n{text-align:right;white-space:nowrap}.mkt .nh{color:var(--muted)}
+.mkt td.mkw{color:var(--warn,#8a5a00);font-size:13px}
+.mkt .mktl{margin:0 0 4px}.mkt .note{font-size:12.5px;color:var(--muted)}details.mkth{margin:6px 0}
+h1{font-size:26px;line-height:1.2;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:17px;margin:0 0 12px}h2 small,h3 small{font-weight:500;color:var(--muted);
+font-size:13px;margin-left:6px}h3{font-size:14px;margin:14px 0 6px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+font-weight:600}
+.hero{margin-bottom:20px}.lede{font-size:16px;color:var(--ink2);margin:0 0 14px;max-width:820px}
+.sum{font-size:15px;color:var(--ink2);margin:0 0 10px}
+.hint{color:var(--muted);font-size:13px;margin:0 0 12px;max-width:820px}
+.muted{color:var(--muted)}.nowrap{white-space:nowrap}.small{font-size:12.5px;color:var(--muted)}
+.mt{margin-top:26px}
+.strip{display:flex;gap:12px;flex-wrap:wrap}
+.strip>*{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;
+min-width:150px;flex:1;color:var(--ink);display:flex;flex-direction:column;gap:1px}
+.strip b{font-size:24px;line-height:1.15}
+.strip span{font-size:13px;font-weight:600;color:var(--ink2)}
+.strip small{font-size:12px;color:var(--muted)}
+.strip a.warn b{color:var(--bad)}.strip a:hover{text-decoration:none;border-color:var(--accent)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start;
+margin-bottom:30px}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px 8px;
+position:sticky;top:76px}
+.att{list-style:none;margin:0;padding:0}.att li{padding:10px 0;border-top:1px solid var(--line);
+font-size:14px;display:flex;flex-direction:column;gap:2px}.att li:first-child{border-top:0;
+padding-top:0}.att li span{font-size:12.5px;color:var(--muted)}
+.area{margin-bottom:20px}.area h3{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+color:var(--muted);margin:0 0 8px}
+.trow{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+padding:12px 16px;margin-bottom:8px;color:var(--ink)}
+.trow:hover{border-color:var(--accent);text-decoration:none}
+.ttop{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:4px}
+.ttitle{font-weight:650;font-size:16px;line-height:1.35;margin-bottom:2px}
+.tmeta .miss,.tsub .miss{color:var(--ink2)}.tsub{display:flex;flex-wrap:wrap;gap:2px 10px;
+margin-top:3px;font-size:12.5px}.tsub .stale{margin-top:0}
+details.gone>summary{font-size:12.5px;color:var(--muted);cursor:pointer}
+.tline{color:var(--ink2);font-size:14.5px}.tmeta{color:var(--muted);font-size:12.5px;margin-top:4px}
+.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gapi{color:var(--ink2)}
+.ev{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:20px;
+padding:1px 8px;color:var(--ink2);background:var(--panel);white-space:nowrap}
+.ev.down{color:var(--bad);border-color:var(--bad-bg)}.ev.up{color:var(--ok)}.ev.new{color:var(--info)}
+.ev.rv{color:var(--bad);background:var(--bad-bg);border-color:transparent}
+.st{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12.5px;white-space:nowrap}
+.st.ok{color:var(--ok);background:var(--ok-bg)}.st.part{color:var(--watch);background:var(--watch-bg)}
+.st.bad{color:var(--bad);background:var(--bad-bg)}.st.info{color:var(--info);background:var(--info-bg)}
+.st.mute{color:var(--muted);background:var(--soft)}
+table{border-collapse:collapse;width:100%;background:var(--panel)}
+.hscroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;max-width:100%}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;
+font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--soft)}
+td{padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:14.5px}
+tr:last-child td{border-bottom:0}
+section{margin-bottom:28px}
+code{font-size:12.5px;background:var(--soft);border-radius:4px;padding:1px 5px;
+overflow-wrap:anywhere}
+code.cmd{display:inline-block;white-space:normal}
+aside code.cmd,.howto code.cmd{display:block;margin:4px 0;font-size:12px}.nw{white-space:nowrap}
+.headsup{margin:12px 0 0;font-size:13.5px;color:var(--ink2)}
+.steps4{list-style:none;padding:0;margin:12px 0 6px;display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.steps4 li{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}
+.filters input:not([type=checkbox]),.filters select{font:inherit;font-size:14px;padding:7px 10px;
+border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+.filters input#q{min-width:240px;flex:1}.filters label{display:inline-flex;gap:8px;
+align-items:center;font-size:14px}
+.weeks{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:4px;max-width:100%}
+.wk{white-space:nowrap;border:1px solid var(--line);border-radius:8px;padding:5px 10px;
+font-size:13px;background:var(--panel);color:var(--ink2)}
+.wk small{margin-left:6px;color:var(--muted)}.wk.on{border-color:var(--accent);color:var(--ink);
+font-weight:600}
+details summary{cursor:pointer;color:var(--accent);font-size:13.5px}
+details.more-rows>summary{margin:8px 14px 12px}
+details.ubk,details.quiet{background:var(--panel);border:1px solid var(--line);
+border-radius:12px;padding:10px 16px;margin-bottom:10px}
+details.ubk>summary,details.quiet>summary{color:var(--ink);font-size:15px}
+details.ubk .hscroll{margin-top:10px}
+.act{display:inline-flex;gap:2px;vertical-align:middle}.act i{width:9px;height:14px;
+border-radius:2px;background:var(--line);display:block}.act i.on{background:var(--accent)}
+.stale{display:inline-block;font-size:12px;color:var(--bad);margin-top:3px}
+.rvlist{list-style:none;padding:0;margin:0}
+.rvi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;
+margin-bottom:10px}
+.rvlist .panel li,.panel .rvlist li{padding:10px 0;border-top:1px solid var(--line)}
+.rvhead{margin-bottom:6px}.line{font-size:15px}
+.said{font-size:13.5px;color:var(--ink2);margin:4px 0}
+.dec{font-size:13px;color:var(--bad);margin:4px 0}
+.plainlist{padding-left:18px;margin:8px 0}.plainlist li{margin-bottom:10px}
+.steps{padding-left:18px;margin:0 0 10px;font-size:14px}.steps li{margin-bottom:9px}
+.hs{display:inline-flex;gap:2px;vertical-align:middle}.hs i{width:10px;height:14px;
+border-radius:2px;display:block}
+.h-healthy{background:var(--ok)}.h-degraded{background:var(--watch)}.h-blocked{background:var(--bad)}
+.h-error{background:var(--bad)}.h-unknown{background:var(--line)}
+.crumb{font-size:13px;color:var(--muted);margin-bottom:8px}
+.th h1{font-size:28px;max-width:920px}.th .meta{display:flex;flex-wrap:wrap;gap:8px 12px;
+align-items:center;color:var(--muted);font-size:13.5px;margin-bottom:18px}
+.flag{background:var(--bad-bg);color:var(--bad);border-radius:6px;padding:2px 9px;font-size:13px}
+.flagi{font-size:11.5px;color:var(--bad);margin-left:4px;white-space:nowrap}
+.thesis{font-size:19px;line-height:1.55;margin:0;border-left:3px solid var(--accent);
+padding-left:16px}
+.tag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px;
+white-space:nowrap;vertical-align:1px;margin-left:4px;background:var(--panel)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;
+margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.sheet{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:0 28px}
+.sheet .decide{border-left:1px solid var(--line);padding-left:24px}
+.sheet .decide h2{margin-top:0}.sheet .numh{margin:18px 0 8px}
+.sheet .nums{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.rvcompact .rvi summary{cursor:pointer;display:flex;gap:8px;align-items:baseline;
+list-style:none}.rvcompact .rvi summary::-webkit-details-marker{display:none}
+.rvcompact .clamp1{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.rvcompact .said{font-size:13.5px;margin:6px 0}
+.grid2 .panel{margin-bottom:0}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.num{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.num b{font-size:24px;line-height:1.1}.num .unit{color:var(--muted);font-size:13px;margin-left:5px}
+.num .lbl{display:block;font-size:13.5px;color:var(--ink2);margin-top:6px;line-height:1.35}
+.num small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.chain{list-style:none;padding:0;margin:0;counter-reset:s}
+.chain li{position:relative;padding:0 0 14px 34px;font-size:14.5px}
+.chain li:before{counter-increment:s;content:counter(s);position:absolute;left:0;top:1px;width:22px;
+height:22px;border-radius:50%;background:var(--accent-bg);color:var(--accent);font-size:12px;
+font-weight:700;text-align:center;line-height:22px}
+.sn{display:block;font-weight:650;font-size:13px}
+.gates{list-style:none;padding:0;margin:0}.gates li{display:flex;gap:10px;padding:7px 0;
+border-top:1px solid var(--line)}.gates li:first-child{border-top:0}
+.gates .ic{width:20px;flex:none;font-weight:700}.gates .ok .ic{color:var(--ok)}
+.gates .unmet .ic{color:var(--bad)}.gates b{display:block;font-size:14px;font-weight:600}
+.gates span:not(.ic){font-size:13px;color:var(--muted)}.decide ul.clears{font-size:13px;
+color:var(--ink2);padding-left:18px;margin:4px 0 0}.decide ul.clears li{margin:3px 0}
+.calls{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px}.calls h4{margin:0 0 4px;
+font-size:13px;color:var(--muted);font-weight:600}.calls ul{margin:0;padding-left:18px;
+font-size:14px}.calls li{margin:3px 0}.gates span.gap{display:block;margin-top:5px;
+color:var(--ink2)}
+details.met{margin-top:8px}
+.timing{border-top:1px solid var(--line);margin-top:12px;padding-top:4px}
+.timing ul{padding-left:18px;margin:4px 0}
+.conflict{background:var(--bad-bg);color:var(--bad);border-radius:8px;padding:8px 12px;
+font-size:13.5px;margin:6px 0}
+.risk,.next ul{padding-left:18px;margin:0;font-size:14.5px}.risk li{margin-bottom:6px}
+.next p{font-size:15.5px;margin:0 0 6px}
+.who{list-style:none;padding:0;margin:0 0 10px;font-size:14.5px}.who li{padding:5px 0;
+border-top:1px solid var(--line)}.who li:first-child{border-top:0}.who .small{margin-top:2px}
+.hypo{border:1px dashed var(--line);border-radius:10px;padding:10px 14px;margin:12px 0}
+.hypo h3{margin:0 0 4px}.hypo h4{font-size:13px;margin:10px 0 2px;color:var(--ink2)}
+.hypo .basis{color:var(--ink2)}
+.hypo h4.cond{font-size:13px;font-weight:500;color:var(--ink2);margin:12px 0 4px}
+.hrows{border-top:1px solid var(--line)}
+details.hrow{border-bottom:1px solid var(--line)}
+details.hrow>summary,.hhead{display:grid;grid-template-columns:64px minmax(0,220px) 130px
+minmax(0,170px) 40px;gap:12px;align-items:baseline;padding:6px 2px;font-size:14px}
+details.hrow>summary{cursor:pointer;list-style:none}
+.hhead{font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;
+padding-top:2px}
+details.hrow>summary::-webkit-details-marker{display:none}
+details.hrow .tkr{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;font-weight:600}
+details.hrow .side.up{color:var(--ok)}details.hrow .side.down{color:var(--bad)}
+details.hrow .earn{color:var(--muted);font-size:13px}details.hrow .ck{text-align:center}
+.hbody{padding:2px 2px 10px 82px;font-size:13.5px}.hbody p{margin:4px 0}
+.hbody .filing{color:var(--ink2);border-left:2px solid var(--line);padding-left:8px}
+@media (max-width:880px){.hhead{display:none}
+details.hrow>summary{display:flex;flex-wrap:wrap;gap:2px 10px}
+details.hrow .tkr{width:52px}details.hrow>summary>b{flex:1 1 60%}
+details.hrow .side{margin-left:62px}details.hrow .ck{margin-left:auto}.hbody{padding-left:0}
+.rvcompact .rvi summary{flex-wrap:wrap}.rvcompact .clamp1{flex-basis:100%;white-space:normal}}
+.tk{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;
+padding:0 6px;margin-left:4px;white-space:nowrap}
+.tabs{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px 18px}
+.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:0 -20px 16px;padding:0 12px;
+overflow-x:auto}
+.tabbar button{border:0;background:none;padding:14px 10px;font:inherit;font-size:14px;
+color:var(--ink2);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+.tabbar button.on{color:var(--ink);border-bottom-color:var(--accent);font-weight:600}
+details.evg{border-top:1px solid var(--line);padding:8px 0}details.evg:first-child{border-top:0}
+details.evg>summary{color:var(--ink);font-size:14.5px}details.evg .hscroll{margin-top:8px}
+.q{color:var(--muted);font-size:13px;font-style:italic;margin-top:3px}
+.timeline{list-style:none;padding:0;margin:0}.timeline li{display:flex;gap:12px;align-items:center;
+padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap;font-size:14px}
+.timeline li:first-child{border-top:0}.hv{font-weight:650;min-width:78px;white-space:nowrap}
+.btn{display:inline-block;background:var(--accent);color:var(--panel);border-radius:8px;
+padding:8px 14px;margin:0 8px 8px 0}
+.btn2{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:8px 14px}
+.btn:hover,.btn2:hover{text-decoration:none}
+.nine{columns:2;font-size:14px}
+tr.xtra{display:none}.morebox:checked+.hscroll tr.xtra{display:table-row}
+.morelbl{display:inline-block;margin:8px 2px 12px;font-size:13.5px;color:var(--accent);
+cursor:pointer}
+.morebox:checked~.morelbl{display:none}
+.why{font-size:13px;color:var(--ink2);margin-top:3px}
+details.cmdd{min-width:150px}details.cmdd code{display:block;margin-top:6px;word-break:break-all}
+details.older{display:inline-block;margin-left:4px}details.older[open]{display:block}
+td:empty{padding:0}
+.bdg{display:inline-block;font-size:11.5px;border-radius:999px;padding:1px 8px;white-space:nowrap;
+background:var(--soft);color:var(--ink2)}.bdg.bad{background:var(--bad-bg);color:var(--bad)}
+.tmeta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.alist{list-style:none;padding:0;margin:0;border:1px solid var(--line);border-radius:12px;
+background:var(--panel)}
+.alist li{display:grid;grid-template-columns:170px minmax(0,1fr);gap:4px 14px;padding:10px 14px;
+border-top:1px solid var(--line);align-items:start}.alist li:first-child{border-top:0}
+.alist li>.st{justify-self:start}
+.atl{font-weight:600;line-height:1.35}.aprod{font-size:13.5px;margin-top:3px}
+.weeknav{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin:6px 0;font-size:14px}
+.weeknav details.older{display:inline-block}.weeknav details[open]{flex-basis:100%}
+.weeknav .weeks{margin-top:8px}
+.counts{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin:8px 0}
+.cnt{display:inline-flex;gap:5px;align-items:center}
+.rvg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px 6px;
+margin-bottom:10px}
+.rvgh{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-bottom:2px}
+.rvgh a{font-weight:650}
+.rvitems{list-style:none;padding:0;margin:0}
+.rvitems li.rvi{background:none;border:0;border-top:1px solid var(--line);border-radius:0;
+padding:10px 0 8px;margin:0}.rvitems li.rvi:first-child{border-top:0}
+.rvmeta{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;font-size:12.5px;
+color:var(--muted);margin-top:4px}
+.clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.uilist{list-style:none;padding:0;margin:8px 0 0}
+.ui{display:grid;grid-template-columns:minmax(0,1fr) 230px 150px;gap:6px 18px;padding:12px 0;
+border-top:1px solid var(--line);align-items:start}.uilist>.ui:first-child{border-top:0}
+.uiside{font-size:13.5px}.uiact{font-size:13px}
+details.fold{margin-top:8px}details.fold>summary{font-size:13px}
+.pillcheck{border:1px solid var(--line);border-radius:999px;padding:4px 12px;
+background:var(--panel)}
+.meta2{font-size:13px;color:var(--muted);margin:-10px 0 16px}
+.rel{list-style:none;padding:0;margin:0}.rel li{margin:0 0 10px}
+.evsum{font-size:14px;color:var(--ink2);margin:0 0 6px}.evsum .against{color:var(--bad)}
+.evh{font-size:14px;margin:18px 0 4px}
+.evl{list-style:none;padding:0;margin:0}.evl>li{border-top:1px solid var(--line);padding:7px 0}
+.evl>li:first-child{border-top:0}
+.evl details>summary{cursor:pointer;color:var(--ink);font-size:14px;list-style:none;
+line-height:1.45}
+.evl details>summary::-webkit-details-marker{display:none}
+.evl details>summary::before{content:"▸";color:var(--muted);font-size:10px;
+margin-right:8px}
+.evl details[open]>summary::before{content:"▾"}
+.evl .v{font-weight:650;margin-right:4px}.evl.against .v{color:var(--bad)}
+.evl blockquote{margin:6px 0 2px 18px;padding:4px 10px;border-left:3px solid var(--line);
+color:var(--muted);font-style:italic;font-size:13px}
+details.evg{margin:10px 0 0}details.evg>summary{font-size:14px;color:var(--ink)}
+.srcl li{margin:0 0 10px}
+.arts tr[data-hassub] td{border-bottom:0}.arts td.subrow{padding-top:0;font-size:13px}
+.compl>li{margin:0 0 10px}.compl ul{margin:4px 0 0;padding-left:18px}
+.grid2{align-items:start}
+.testdata{background:#3b2a00;color:#ffe9b0;font-size:12.5px;padding:6px 20px;text-align:center}
+.foot{margin:18px 0 0;font-size:12.5px;color:var(--muted)}
+.hit{outline:2px solid var(--accent);outline-offset:3px}
+details.ubk>summary .muted{margin-left:10px;font-size:13px}
+.ml{display:none}.arts.artt{table-layout:fixed}.arts.artt th:nth-child(1){width:110px}
+.arts.artt th:nth-child(3){width:170px}.arts.artt th:nth-child(5){width:180px}
+.arts.themes{table-layout:fixed}.arts.themes th{overflow-wrap:normal;word-break:normal}
+.arts.themes th:nth-child(2){width:156px}
+.arts.themes th:nth-child(3){width:118px}.arts.themes th:nth-child(4),
+.arts.themes th:nth-child(5){width:100px}.arts.themes th:nth-child(6){width:170px}
+@media (max-width:880px){.cols{grid-template-columns:minmax(0,1fr)}
+aside{position:static;min-width:0}
+.ui{grid-template-columns:1fr;gap:4px}.alist li{grid-template-columns:1fr}
+.steps4{grid-template-columns:1fr}
+.grid2{grid-template-columns:1fr}.sheet{grid-template-columns:1fr}
+.sheet .decide{border-left:0;padding-left:0;order:-1;border-bottom:1px solid var(--line);
+padding-bottom:12px;margin-bottom:16px}.calls{grid-template-columns:1fr}
+h1{font-size:24px}.th h1{font-size:22px}.thesis{font-size:17px}.nine{columns:1}
+.filters input#q{min-width:0;width:100%;flex-basis:100%}
+.arts,.arts tbody,.arts tr,.arts td{display:block;width:100%}
+.arts tr:first-child{display:none}.arts tr{padding:12px 14px;border-bottom:1px solid var(--line)}
+.arts td{border:0;padding:2px 0}.arts td:empty{display:none}.hscroll{border-radius:10px}
+.arts tr.xtra{display:none}.morebox:checked+.hscroll .arts tr.xtra{display:block}
+.ml{display:inline;color:var(--muted);font-size:12.5px}
+.tabbar{flex-wrap:wrap;overflow:visible}.tabbar button{padding:10px 8px}}
+@media print{.tabbar,.filters{display:none}[data-panel]{display:block!important}}
+</style></head><body><input type="checkbox" id="audit" hidden><nav class="topnav" id="top"><div class="in"><a class="brand" href="../index.html">Mosaic Theory<small>Research desk</small></a><div class="links"><a href="../index.html">This week</a><a href="../themes.html" class="on">Themes</a><a href="../articles.html">Articles</a><a href="../review.html">Review</a><a href="../uploads.html">Uploads</a><a href="../sources.html">Sources</a></div><label for="audit" class="auditbar" title="Show evidence IDs, engine codes and the decision trace">Audit view</label></div></nav><main class="wrap"><nav class="crumb"><a href="../themes.html">Themes</a> › AI infrastructure · AI chips</nav><header class="th"><h1>Huawei-DeepSeek co-design matures a domestic Chinese AI compute ecosystem</h1><div class="meta"><span class="pill watch">Watch · on hold</span><span class="ev new">New</span><a class="flag" href="#review">Review required · 9 findings</a></div><div class="meta2">AI infrastructure · AI chips · 1 source · newest evidence published 21 Oct 2026 · on the desk since 30 Oct 2026</div><div class="aud cc">TH-B121174B17 · version 1 · run R-20261030T115837Z-scan · ai_infrastructure.compute_semis · competitive_share_shift</div></header><section class="panel sheet q1"><div class="sheetmain"><h2>The thesis</h2><p class="thesis">DeepSeek released Ascend support for six software repositories, and SemiAnalysis documents via microbenchmarks that the Huawei Ascend ecosystem is maturing through co-design with DeepSeek, with software at the frontier even as hardware lags Nvidia. <span class="tag">source&#x27;s view</span></p><h3 class="numh">Key figures</h3><div class="nums"><div class="num"><b>up to 40%</b><span class="unit"></span><span class="lbl">execution time reduction</span><small>Observed · period not stated</small><small>SemiAnalysis, published 21 Oct 2026</small><span class="aud cc">C-40d0ecc153be57</span></div><div class="num"><b>99.7%</b><span class="unit"></span><span class="lbl">kernel utilization vs ceiling</span><small>Observed · period not stated</small><small>SemiAnalysis, published 21 Oct 2026</small><span class="aud cc">C-c92bed70239fcd</span></div><div class="num"><b>2028 or even 2027</b><span class="unit"></span><span class="lbl">DeepSeek will likely be primarily using Huawei&#x27;s stack by 2027 or 2028.</span><small>Forecast · 2027-2028</small><small>SemiAnalysis, published 21 Oct 2026</small><span class="aud cc">C-109f205272be74</span></div></div><h3 class="numh">What changed</h3><p class="small">Version 1, 30 Oct 2026 — first recorded</p><ul class="changed"><li>Huawei&#x27;s best stock kernels reach 99.7% of the compute ceiling on BF16 GEMM shapes.</li><li>DeepSeek released Ascend support for six repositories before China&#x27;s national day holidays. <a class="flagi" href="#review">under review</a></li><li>DeepSeek will likely be primarily using Huawei&#x27;s stack by 2027 or 2028. <span class="muted">(2027-2028)</span></li><li class="morewrap"><details class="fold"><summary>2 more changes</summary><ul><li>Pointer-chase latency stays near 134ns through 18 blocks, rises to 182ns at 56 blocks, then jumps to 391ns at 64 — consistent with a second wave beyond 56 Vector cores.</li><li>This 950PR SKU has 7 configured, 6 visible, and 5 executing AICPU cores.</li></ul></details></li></ul><p class="small muted">showing 6 of 25 pieces of evidence from SemiAnalysis, 2026-10-21 — the rest are in the Evidence tab below</p><h3 class="numh">What would change the call</h3><div class="calls"><div><h4>Would raise priority</h4><ul><li>CANN 9.2.0 and HDK release enabling broad Ascend usability</li><li>Evidence of DeepSeek shifting training/inference primarily to Ascend</li><li>Reports of Ascend supernode deployments displacing Nvidia in China</li></ul></div><div><h4>Would lower priority</h4><ul><li>Continued dependence on Nvidia hardware by Chinese labs</li><li>Persistent x86/ecosystem gaps limiting Ascend adoption beyond DeepSeek</li></ul></div></div></div><aside class="decide"><h2>Why Watch · on hold</h2><p class="small key">On hold — the evidence itself falls short; new evidence is needed, not a data fix.</p><h3>What's missing</h3><ul class="gates"><li class="unmet"><span class="ic">✗</span><div><b>A recent mispricing, a dated catalyst or a measured change</b><span class="gap">The evidence is 1 forecast; no measured change in a fundamental from the last quarter corroborates them.</span><span class="gap">None of its 10 measured observations from the last quarter (under Timing) states a verified change in a fundamental — earnings, revenue, prices, demand, margins and the like.</span></div></li><li class="unmet"><span class="ic">✗</span><div><b>The whole text was read</b><span>only part was read</span></div></li><li class="unmet"><span class="ic">✗</span><div><b>No verification hold</b><span>on hold until a failed check is resolved</span></div></li></ul><h3>Clears when</h3><ul class="clears"><li>a measured change from the last quarter (at most 92 days before the as-of) or a dated catalyst inside the next 2–4 quarters — for example, reported results for a period the thesis forecasts</li><li>the full text is read — supply the document on Uploads</li><li>the open review findings are resolved — by an analyst correction or a re-read</li></ul><h3>Next step</h3><p>Investigate which listed Huawei suppliers and Chinese semiconductor foundries capture Ascend volume growth, and verify Ascend production and adoption trends relative to Nvidia in China.</p><details class="met fold"><summary>6 of 9 conditions met</summary><ul class="gates"><li class="ok"><span class="ic">✓</span><div><b>Verified evidence</b><span>20 verified figures or events</span></div></li><li class="ok"><span class="ic">✓</span><div><b>A stated route to profits</b><span>inferred — the source does not state the earnings step</span></div></li><li class="ok"><span class="ic">✓</span><div><b>Near-term relevance (next 2–4 quarters)</b><span>10 measured observations dated within the last quarter (10 dated only by the article&#x27;s publication date — the source states no measurement date)</span></div></li><li class="ok"><span class="ic">✓</span><div><b>An exposure the source names</b><span>sectors: fully domestic chinese ecosystem (could benefit)</span></div></li><li class="ok"><span class="ic">✓</span><div><b>The source asserts it</b><span>asserted</span></div></li><li class="ok"><span class="ic">✓</span><div><b>Source reliability</b><span>medium</span></div></li></ul></details><div class="timing"><h3>Timing</h3><p class="small">10 measured observations dated within the last quarter (10 dated only by the article&#x27;s publication date — the source states no measurement date). The source's own horizon: <b>longer term (beyond 4 quarters)</b>.</p><details class="fold"><summary>Dated evidence (10)</summary><ul class="small"><li>kernel utilization vs ceiling — measured within the last quarter<span class="aud cc"> C-c92bed70239fcd · measured 2026-10-21 (9 days before the as-of)</span></li><li>execution time reduction — measured within the last quarter<span class="aud cc"> C-40d0ecc153be57 · measured 2026-10-21 (9 days before the as-of)</span></li><li>DeepSeek released Ascend support for six repositories before China&#x27;s national day holidays. — measured within the last quarter<span class="aud cc"> C-99b7ba90430f3e · measured 2026-10-21 (9 days before the as-of)</span></li><li>pointer-chase latency — measured within the last quarter<span class="aud cc"> C-b82f204135d60c · measured 2026-10-21 (9 days before the as-of)</span></li><li>AICPU core count — measured within the last quarter<span class="aud cc"> C-666dae8b7698fd · measured 2026-10-21 (9 days before the as-of)</span></li><li>GEMM shapes benchmarked — measured within the last quarter<span class="aud cc"> C-2afacedd7e1e67 · measured 2026-10-21 (9 days before the as-of)</span></li><li>repos with Ascend support — measured within the last quarter<span class="aud cc"> C-b910eff9f642c8 · measured 2026-10-21 (9 days before the as-of)</span></li><li>HBM bandwidth utilization — measured within the last quarter<span class="aud cc"> C-1e598d1017f6a0 · measured 2026-10-21 (9 days before the as-of)</span></li><li class="small">showing 8 of 10</li></ul><p class="small">All dated by the article&#x27;s publication date — the source states no measurement date.</p></details><div class="aud cc">10 claim(s) inside the next 2-4 quarters (C-c92bed70239fcd: measured 2026-10-21 (9 days before the as-of); C-40d0ecc153be57: measured 2026-10-21 (9 days before the as-of); C-99b7ba90430f3e: measured 2026-10-21 (9 days before the as-of); C-b82f204135d60c: measured 2026-10-21 (9 days before the as-of); showing 4 of 10); 1 long-range claim(s); model horizon label longer_term (recorded, not decisive)</div></div><div class="aud"><div class="cc">WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL; verification hold)</div><div class="cc">F1_source_reliability = medium — face-validity tier of the contributing channel(s)</div><div class="cc">F2_material_evidence = 20 — verified metric / event / forecast claims supporting the thesis (opinion alone is not material)</div><div class="cc">F3_independent_origins = 2 — distinct upstream origins behind the support — counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-c1879b598a67</div><div class="cc">F4_profit_transmission = inferred — 0 fundamental step(s) shown by the source, 2 in total</div><div class="cc">F5_near_term_relevance = yes — 10 claim(s) inside the next 2-4 quarters (C-c92bed70239fcd: measured 2026-10-21 (9 days before the as-of); C-40d0ecc153be57: measured 2026-10-21 (9 days before the as-of); C-99b7ba90430f3e: measured 2026-10-21 (9 days before the as-of); C-b82f204135d60c: measured 2026-10-21 (9 days before the as-of)… [+99 chars — full text in the Full record]</div><div class="cc">F6_recognizable_exposures = 0 listed · 1 sector · 0 instrument — source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: fully domestic chinese ecosystem</div><div class="cc">F7_dislocation_or_catalyst = absent — 0 counted — a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-109f205272be74</div><div class="cc">F12_fundamental_inflection = absent — none — no verified near-term change in a fundamental</div><div class="cc">F8_counterevidence = 5 — material counter-claims (8 counter-claims in total); 5 distinct counter-observation(s) from the supporting sources vs 20 supporting; 0 independent contradicting source(s) vs 2 supporting</div><div class="cc">F9_premise_in_source = asserted — asserted | conditional | speculative | reported_view</div><div class="cc">F10_verification_hold = HOLD — review withheld 1 decision-bearing sentence(s): s02.1</div><div class="cc">F11_retrieval = PARTIAL — PARTIAL text is never analysed as full</div></div></aside></section><section class="panel mkts"><h2>Is it priced?</h2><p class="muted">Not computed for this version — prices and filings as of a date, $0, no model call.</p><details class="cmdd"><summary>Import command</summary><code class="cmd">python -m vinci.theme_intelligence market --as-of 2026-10-30 --thesis TH-B121174B17</code></details></section><section class="panel"><h2>Who is exposed</h2><div class="expo"><h3>Could benefit</h3><ul class="who"><li><b>Huawei</b> <span class="tk">no verified US listing</span><div class="small">Supplier of Ascend AI chips and native software stack, central to the symbiosis</div></li><li><b>DeepSeek</b> <span class="tk">private</span><div class="small">AI model developer providing workloads and software engineering for Ascend</div></li><li><b>fully domestic chinese ecosystem</b> <span class="tk">sector</span> <span class="tag">forecast</span></li></ul><p class="small">No US-listed company is named as exposed. A company the source does not name is never added.</p><div class="hypo"><h3>Companies the thesis implies <span class="tag">our hypothesis</span></h3><p class="small muted">Proposed by the model on 2026-10-30 from the thesis&#x27;s own steps — not named by the source, never counted toward the research action.</p><div class="hhead" aria-hidden="true"><span>Ticker</span><span>Company</span><span>Direction</span><span>Earns from (stated)</span><span>10-K</span></div><h4 class="cond">If this holds: “Increased Ascend adoption would benefit Huawei (private) and its domestic supply chain, but no listed-company earnings effect is quantified.” <span class="tag">our inference</span><span class="aud cc"> s03.2</span></h4><div class="hrows"><details class="hrow"><summary><span class="tkr">SMICY</span><b>Semiconductor Manufacturing International Corporation</b><span class="side up">would benefit</span><span class="earn">product sales</span><span class="ck" title="not checked">·</span></summary><div class="hbody"><p>Fabricates Huawei Ascend accelerators domestically; rising Ascend volumes lift its advanced-node wafer manufacturing revenue.</p><p class="small">Listing: SMICY — not verified by the SEC</p><p class="small basis">basis (the model&#x27;s): product sales — foundry wafer manufacturing for Ascend chips · not checked — no verified US listing — no annual report to read</p><span class="aud cc">UNRESOLVED · no SEC-listed registrant matches the name</span></div></details></div><h4 class="cond">If this holds: “If DeepSeek shifts primarily to Huawei&#x27;s stack, Ascend accelerator volumes in China would rise at Nvidia&#x27;s expense, though the article does not quantify this.” <span class="tag">our inference</span><span class="aud cc"> s03.1</span></h4><div class="hrows"><details class="hrow"><summary><span class="tkr">TSM</span><b>Taiwan Semiconductor Manufacturing</b><span class="side down">would be hurt</span><span class="earn">product sales</span><span class="ck" title="its 10-K states no revenue sentence in these words">–</span></summary><div class="hbody"><p>Fabricates Nvidia&#x27;s AI GPUs; a shift of Chinese demand toward domestically-fabbed Ascend reduces advanced-node wafer volumes it earns from.</p><p class="small">Listing: TSM — the US line of a foreign filer, not checked point-in-time</p><p class="small basis">basis (the model&#x27;s): product sales — foundry wafers for Nvidia AI GPUs · 20-F filed 2026-04-16 (0001628280-26-025362): the filing states no revenue-source sentence naming a way of earning in the words this check reads — not found is not wrong; read the filing</p><span class="aud cc">UNRESOLVED · foreign private issuer — its US line(s) [&#x27;TSM&#x27;, &#x27;TSMWF&#x27;] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted</span></div></details></div><div class="aud cc">set aside: NVIDIA: the source already names it — set aside</div></div><p class="small muted">Also named, not exposures: Nvidia (comparator), OpenAI (context), Qwen (comparator), Meituan Longcat (comparator) — showing 4 of 6; all in the full record</p></div></section><div class="grid2"><section class="panel"><h2>What could prove it wrong</h2><ul class="risk"><li>On absolute compute performance, the Ascend 950PR sits between the A100 and MI300X. <span class="tag">source&#x27;s view</span></li><li>Liang Wenfeng said it takes four Huawei accelerator cards to match one NVIDIA card. <span class="tag">source&#x27;s view</span> <a class="flagi" href="#review">under review</a></li><li>Liang Wenfeng said Huawei is roughly two years behind in bringing its hardware to market. <span class="tag">source&#x27;s view</span> <a class="flagi" href="#review">under review</a></li><li class="morewrap"><details class="fold"><summary>7 more risks</summary><ul><li>Nvidia H100 results were power-limited: median power around 690-698 W out of a 700 W limit. <span class="tag">reported</span></li><li>H100 median sampled SM clocks were 1335-1470 MHz, below the 1830 MHz max. <span class="tag">reported</span></li><li>Huawei 950PR approximated 599-600 W power draw in the same comparison. <span class="tag">reported</span> <a class="flagi" href="#review">under review</a></li><li>Huawei 950PR ran at 1500-1550 MHz against its 1650 MHz reference clock. <span class="tag">reported</span> <a class="flagi" href="#review">under review</a></li><li>vLLM-Ascend depends on memfabric_hybrid with hardcoded ARM headers that block startup, so it does not work out of the box on non-ARM hosts. <span class="tag">source&#x27;s view</span></li><li>The Huawei-DeepSeek partnership could work well for DeepSeek without making Ascend equally usable for everyone else, with many documented ecosystem gaps (no DeepGEMM on x86 hosts, hardcoded ARM headers blocking startup, no NPU+x86 CI).<span class="aud scope"> (scope: Specific to Ascend ecosystem usability outside DeepSeek&#x27;s own supernode configurations; limits broader adoption, not a market-wide risk.)</span> <span class="tag">source&#x27;s view</span></li><li>Huawei hardware remains behind Nvidia on absolute performance (950PR between A100 and MI300X; four Huawei cards to match one Nvidia card; roughly two years behind on time-to-market).<span class="aud scope"> (scope: Hardware competitiveness gap specific to Ascend vs Nvidia; the two-year/4:1 figures come from an unverified transcript.)</span> <span class="tag">source&#x27;s view</span></li></ul></details></li></ul><details class="fold"><summary>Signals to watch (3)</summary><ul class="risk"><li>DeepSeek continuing to rely on Nvidia hardware past 2027-2028</li><li>Failure to release CANN 9.2.0 / HDK and broader repo usability</li><li>Persistent 4:1 card disadvantage vs Nvidia not narrowing</li></ul></details><details class="fold"><summary>Competing explanation</summary><ul class="risk"><li>Huawei hardware still lags: Liang Wenfeng said four Huawei cards are needed to match one Nvidia card and Huawei is roughly two years behind on time-to-market; the partnership may work for DeepSeek without making Ascend usable for others. <span class="tag">source&#x27;s view</span></li></ul></details></section><section class="panel"><h2>How it reaches fundamentals</h2><ol class="chain"><li><span class="sn">Industry shift</span><span>DeepSeek and Huawei co-design hardware and software, releasing Ascend support for key repositories, narrowing the software ecosystem gap with Nvidia.</span> <span class="tag">source&#x27;s view</span></li><li><span class="sn">Volumes</span><span>If DeepSeek shifts primarily to Huawei&#x27;s stack, Ascend accelerator volumes in China would rise at Nvidia&#x27;s expense, though the article does not quantify this.</span> <span class="tag">our inference</span></li><li><span class="sn">Listed-company earnings</span><span>Increased Ascend adoption would benefit Huawei (private) and its domestic supply chain, but no listed-company earnings effect is quantified.</span> <span class="tag">our inference</span></li></ol></section></div><div class="grid2"><section class="panel" id="review"><h2>Open review findings <small>9</small></h2><ul class="rvitems rvcompact"><li class="rvi"><details><summary><span class="bdg bad" title="the line restates evidence the research action counts (verified evidence)">Affects action</span> <b>Review</b> <span class="clamp1">“The article argues Huawei&#x27;s ecosystem is already mature and that DeepSeek will likely primarily use Huawei&#x27;s stack by 2027-2028 under pressure to build a fully domestic Chinese ecosystem.”</span></summary><div class="said">The forecast (2027-2028) and the narrowing gap are supported, but &#x27;ecosystem is already mature&#x27; overstates; cited spans describe the gap narrowing, not maturity. Also conflates &#x27;build a fully domestic Chinese ecosystem&#x27; which isn&#x27;t in cited spans.</div><div class="rvmeta"><span>raised 30 Oct 2026 (version 1)</span><a href="../cards/TH-B121174B17.html#L-s01-1">Open in the full record ↗</a></div><span class="aud cc">TH-B121174B17:s01.1 · C-109f205272be74, C-7991b4e9188d24, C-880df3032ddcdb · finding F-d14d99f26fd4 — to dismiss: python -m vinci.theme_intelligence review dismiss --finding F-d14d99f26fd4 --reviewer NAME --reason &quot;…&quot;</span></details></li><li class="rvi"><details><summary><span class="bdg bad" title="a withheld line is never evidence until it is verified">Affects action</span> <b>Why it is held</b> <span class="clamp1">“TileLang AutoSchedule reduces single-operation execution time by up to 40% on 950PR, especially for smaller sizes.”</span></summary><div class="said">Withheld from the card — the line failed source verification.</div><div class="rvmeta"><span>raised 30 Oct 2026 (version 1)</span><a href="../cards/TH-B121174B17.html#L-s02-1">Open in the full record ↗</a></div><span class="aud cc">NUMBER_NOT_IN_CITED_CLAIMS — s02.1 prints &#x27;950&#x27;, which none of its cited claims carry: &#x27;TileLang AutoSchedule reduces single-operation execution time by up to 40% on 950PR, especially for &#x27; · finding F-17e52c485465 — closes by an analyst correction or a re-review, never a dismissal</span></details></li><li class="rvi"><details><summary><span class="bdg bad" title="the line restates evidence the research action counts (verified evidence)">Affects action</span> <b>Review</b> <span class="clamp1">“DeepSeek released Ascend support for six repositories before China&#x27;s national day holidays.”</span></summary><div class="said">Six repositories (TileLang, DeepGEMM, DeepEP, TileKernels, FlashMLA, DeepSelect) is supported, but &#x27;before China&#x27;s national day holidays&#x27; is not in the cited span.</div><div class="rvmeta"><span>raised 30 Oct 2026 (version 1)</span><a href="../cards/TH-B121174B17.html#L-s02-2">Open in the full record ↗</a></div><span class="aud cc">TH-B121174B17:s02.2 · C-99b7ba90430f3e · finding F-454b782ecdeb — to dismiss: python -m vinci.theme_intelligence review dismiss --finding F-454b782ecdeb --reviewer NAME --reason &quot;…&quot;</span></details></li><li class="rvi"><details><summary><span class="bdg bad" title="the line restates evidence the research action counts (verified evidence)">Affects action</span> <b>Review</b> <span class="clamp1">“The article argues the Huawei ecosystem is mature and will become DeepSeek&#x27;s primary stack by 2027-2028 as China builds a fully domestic ecosystem.”</span></summary><div class="said">The 2027-2028 forecast and hardware ~5 years behind / software at frontier are supported, but &#x27;ecosystem is mature&#x27; and &#x27;fully domestic ecosystem&#x27; overstate; cited spans don&#x27;t assert maturity or domestic-ecosystem goal.</div><div class="rvmeta"><span>raised 30 Oct 2026 (version 1)</span><a href="../cards/TH-B121174B17.html#L-s06-1">Open in the full record ↗</a></div><span class="aud cc">TH-B121174B17:s06.1 · C-109f205272be74, C-56745f5164d0e3 · finding F-152d3314dd8e — to dismiss: python -m vinci.theme_intelligence review dismiss --finding F-152d3314dd8e --reviewer NAME --reason &quot;…&quot;</span></details></li><li class="rvi"><details><summary><span class="bdg bad" title="a withheld line is never evidence until it is verified">Affects action</span> <b>Why it is held</b> <span class="clamp1">“Huawei 950PR approximated 599-600 W power draw in the same comparison.”</span></summary><div class="said">Withheld from the card — the line failed source verification.</div><div class="rvmeta"><span>raised 30 Oct 2026 (version 1)</span><a href="../cards/TH-B121174B17.html#L-s07-5">Open in the full record ↗</a></div><span class="aud cc">NUMBER_NOT_IN_CITED_CLAIMS — s07.5 prints &#x27;950&#x27;, which none of its cited claims carry: &#x27;Huawei 950PR approximated 599-600 W power draw in the same comparison. ⟨cited figures: approximate⟩&#x27;</span></details></li><li class="rvi"><details><summary><span class="bdg bad" title="a withheld line is never evidence until it is verified">Affects action</span> <b>Why it is held</b> <span class="clamp1">“Huawei 950PR ran at 1500-1550 MHz against its 1650 MHz reference clock.”</span></summary><div class="said">Withheld from the card — the line failed source verification.</div><div class="rvmeta"><span>raised 30 Oct 2026 (version 1)</span><a href="../cards/TH-B121174B17.html#L-s07-6">Open in the full record ↗</a></div><span class="aud cc">NUMBER_NOT_IN_CITED_CLAIMS — s07.6 prints &#x27;950&#x27;, which none of its cited claims carry: &#x27;Huawei 950PR ran at 1500-1550 MHz against its 1650 MHz reference clock.&#x27;</span></details></li><li class="rvi"><details><summary><b>Review</b> <span class="clamp1">“Liang Wenfeng said it takes four Huawei accelerator cards to match one NVIDIA card.”</span></summary><div class="said">The four-cards-to-one claim is supported by the cited span, but the span does not attribute it to Liang Wenfeng; the speaker attribution is unsupported by the cited span.</div><div class="rvmeta"><span>raised 30 Oct 2026 (version 1)</span><a href="../cards/TH-B121174B17.html#L-s07-1">Open in the full record ↗</a></div><span class="aud cc">TH-B121174B17:s07.1 · C-bde597734a8268 · finding F-9e8eb3d59dff — to dismiss: python -m vinci.theme_intelligence review dismiss --finding F-9e8eb3d59dff --reviewer NAME --reason &quot;…&quot;</span></details></li><li class="rvi"><details><summary><b>Review</b> <span class="clamp1">“Liang Wenfeng said Huawei is roughly two years behind in bringing its hardware to market.”</span></summary><div class="said">The &#x27;roughly two years behind&#x27; is supported, but the cited span does not attribute it to Liang Wenfeng; speaker attribution unsupported.</div><div class="rvmeta"><span>raised 30 Oct 2026 (version 1)</span><a href="../cards/TH-B121174B17.html#L-s07-2">Open in the full record ↗</a></div><span class="aud cc">TH-B121174B17:s07.2 · C-ac7f8d8d03023b · finding F-0b17fae5e82e — to dismiss: python -m vinci.theme_intelligence review dismiss --finding F-0b17fae5e82e --reviewer NAME --reason &quot;…&quot;</span></details></li><li class="rvi"><details><summary><b>Review</b> <span class="clamp1">“Huawei hardware still lags: Liang Wenfeng said four Huawei cards are needed to match one Nvidia card and Huawei is roughly two years behind on time-to-market; the partnership may work for DeepSeek without making Ascend usable for others.”</span></summary><div class="said">The four-cards and two-years-behind figures are supported, but the cited spans do not attribute the statement to Liang Wenfeng; speaker attribution unsupported.</div><div class="rvmeta"><span>raised 30 Oct 2026 (version 1)</span><a href="../cards/TH-B121174B17.html#L-s07-8">Open in the full record ↗</a></div><span class="aud cc">TH-B121174B17:s07.8 · C-bde597734a8268, C-ac7f8d8d03023b · finding F-df31b749385b — to dismiss: python -m vinci.theme_intelligence review dismiss --finding F-df31b749385b --reviewer NAME --reason &quot;…&quot;</span></details></li></ul></section><section class="panel"><h2>Related theses</h2><ul class="rel"><li><a href="TH-CBFA9511C2.html">Intel loses server CPU share on process and capacity constraints</a><div class="small">AI infrastructure · AI chips · a direct contradiction — the same claim predicted the other way</div></li></ul><details class="more-rows fold"><summary>10 theses in the same broader area</summary><ul class="rel"><li><a href="TH-05208D689A.html">Component shortages, especially memory, lift AI server rack ASPs and revenue</a><div class="small">AI infrastructure</div></li><li><a href="TH-0577F0AD38.html">AI inference and agentic AI drive server CPU shipment growth above 40%</a><div class="small">AI infrastructure · AI chips</div></li><li><a href="TH-0D381F307A.html">Surging CSP CapEx drives AI server shipments and spenders&#x27; infrastructure buildout</a><div class="small">AI infrastructure · Hyperscaler capex</div></li><li><a href="TH-188B31F187.html">Canadian power and critical minerals as an AI-compute supply opportunity</a><div class="small">AI infrastructure</div></li><li><a href="TH-3557AAE138.html">AI datacenter buildout accelerates +50GW in 2027, lifting physical datacenter suppliers</a><div class="small">AI infrastructure · Datacenter build</div></li><li><a href="TH-77926B9936.html">ASML&#x27;s hybrid bonding tool threatens Besi&#x27;s logic and HBM equipment franchise</a><div class="small">AI infrastructure · Chip equipment &amp; foundry</div></li><li><a href="TH-921772E86C.html">CPO mass production shifts value to integrated optical-electrical test platform suppliers</a><div class="small">AI infrastructure · Optical &amp; networking</div></li><li><a href="TH-B1F096684F.html">AI data center demand drives optical fiber shortage lifting fiber supplier pricing</a><div class="small">AI infrastructure · Datacenter build</div></li><li><a href="TH-F2CD2F7AFC.html">Trainium3&#x27;s native PyTorch training stack broadens adoption, aiding AWS custom silicon</a><div class="small">AI infrastructure · AI chips</div></li><li><a href="TH-FAABB39749.html">Credit markets single out debt-reliant AI infrastructure borrowers as weak links</a><div class="small">AI infrastructure</div></li></ul></details></section></div><section class="tabs" data-tabs><div class="tabbar" role="tablist"><button data-tab="ev" class="on">Evidence (36)</button><button data-tab="hi">History (1)</button><button data-tab="src">Sources (1)</button><button data-tab="full">Full record</button></div><div data-panel="ev"><p class="evsum">36 cited items from 1 source · 25 supporting · <b class="against">8 against</b> · 3 context <span class="muted">— click a figure for the source's words</span></p><h3 class="evh">Against the thesis <small>8</small></h3><ul class="evl against"><li><details><summary>On absolute compute performance, the Ascend 950PR sits between the A100 and MI300X. <span class="tag">source&#x27;s view</span></summary><blockquote>“950PR’s falls behind on absolute values, sitting somewhere between A100 and MI300X”</blockquote></details><span class="aud cc">C-324c561d4bcdf7</span></li><li><details><summary><span class="v">four cards</span> cards to match one NVIDIA <span class="tag">source&#x27;s view</span></summary><blockquote>“it takes four Huawei accelerator cards to match one NVIDIA card, and Huawei is also roughly two years behind in bringing its hardware to market”</blockquote></details><span class="aud cc">C-bde597734a8268</span></li><li><details><summary><span class="v">roughly two years</span> time-to-market lag <span class="tag">source&#x27;s view</span></summary><blockquote>“Huawei is also roughly two years behind in bringing its hardware to market”</blockquote></details><span class="aud cc">C-ac7f8d8d03023b</span></li><li><details><summary><span class="v">690-698 W</span> GPU power draw</summary><blockquote>“median power around 690-698 W out of a 700 W limit”</blockquote></details><span class="aud cc">C-020780ffc49481</span></li><li><details><summary><span class="v">1335-1470 MHz</span> SM clock</summary><blockquote>“median sampled SM clocks at 1335-1470 MHz, below the max of 1830 MHz”</blockquote></details><span class="aud cc">C-b696cc3b272161</span></li><li><details><summary><span class="v">599-600 W</span> NPU power draw</summary><blockquote>“Huawei approximated 599-600 W”</blockquote></details><span class="aud cc">C-7bb6966a9af9b7</span></li><li><details><summary><span class="v">1500-1550 MHz</span> clock speed</summary><blockquote>“at 1500-1550 MHz against its 1650 MHz reference”</blockquote></details><span class="aud cc">C-e854820ef1527c</span></li><li><details><summary>vLLM-Ascend depends on memfabric_hybrid with hardcoded ARM headers that block startup, so it does not work out of the box on non-ARM hosts.</summary><blockquote>“Dependency on memfabric_hybrid containing hardcoded ARM headers for vLLM-Ascend, blocking startup; vLLM-Ascend doesn’t work out of the box.”</blockquote></details><span class="aud cc">C-a3ec49ed9585d9</span></li></ul><h3 class="evh">Supporting <small>25</small></h3><details class="evg" open><summary><b>SemiAnalysis · 21 Oct 2026</b> <span class="muted">25 items</span></summary><ul class="evl"><li><details><summary><span class="v">40 layers</span> target-model layers</summary><blockquote>“The execution order is 40 target-model layers, the target LM head, 3 DSpark drafter blocks, the draft LM head, and 5 sampling rounds.”</blockquote></details><span class="aud cc">C-120b6bbfe03872</span></li><li><details><summary><span class="v">1,055 shapes</span> GEMM shapes benchmarked</summary><blockquote>“We compared 1,055 BF16 GEMM shapes from several open-sourced models”</blockquote></details><span class="aud cc">C-2afacedd7e1e67</span></li><li><details><summary><span class="v">4.0</span> Engram allows offloading to DRAM without performance loss versus HBM, but offloading to a PCIe 4.0 SSD degrades performance.</summary><blockquote>“offloading to DRAM without performance loss vis-a-vis HBM, but offloading to a PCIe 4.0 SSD degrades performance”</blockquote></details><span class="aud cc">C-3912f122fc15f5</span></li><li><details><summary><span class="v">up to 40%</span> execution time reduction</summary><blockquote>“AutoSchedule helps especially for smaller sizes, reducing execution time by up to 40% for a single operation”</blockquote></details><span class="aud cc">C-40d0ecc153be57</span></li><li><details><summary><span class="v">~5 years</span> hardware lag <span class="tag">source&#x27;s view</span></summary><blockquote>“Although Huawei’s hardware may be beyond ~5 years behind(compared to A100), the software is right at the frontier.”</blockquote></details><span class="aud cc">C-56745f5164d0e3</span></li><li><details><summary><span class="v">7 cores</span> AICPU core count</summary><blockquote>“there are 7 configured, 6 visible, and 5 executing AICPU cores”</blockquote></details><span class="aud cc">C-666dae8b7698fd</span></li><li><details><summary><span class="v">4 operations</span> AICPU-launched HCCL operations per step</summary><blockquote>“only 4 AI CPU-launched HCCL operations appear per step, against 43 expert dispatches”</blockquote></details><span class="aud cc">C-b219fa821794b6</span></li><li><details><summary><span class="v">391ns</span> pointer-chase latency</summary><blockquote>“it stays near 134ns through 18 blocks, rises to 182ns at 56, then jumps to 391ns at 64”</blockquote></details><span class="aud cc">C-b82f204135d60c</span></li><li><details><summary><span class="v">6 repos</span> repos with Ascend support</summary><blockquote>“the 6 repos that received ascend support”</blockquote></details><span class="aud cc">C-b910eff9f642c8</span></li><li><details><summary><span class="v">99.7%</span> kernel utilization vs ceiling</summary><blockquote>“Huawei’s best kernels hits 99.7% of the ceiling”</blockquote></details><span class="aud cc">C-c92bed70239fcd</span></li><li class="morewrap"><details class="more-rows"><summary>Showing 10 of 25 items — show all 25</summary><ul class="evl"><li><details><summary><span class="v">2028 or even 2027</span> DeepSeek will likely be primarily using Huawei&#x27;s stack by 2027 or 2028. <span class="muted">· 2027-2028</span> <span class="tag">forecast</span></summary><blockquote>“In 2028 or even 2027, DeepSeek will likely be primarily using Huawei’s stack”</blockquote></details><span class="aud cc">C-109f205272be74</span></li><li><details><summary>DeepSeek provides Huawei with model weights, supporting Day-0 optimized releases such as DeepSeek V4 and V4.1.</summary><blockquote>“DeepSeek provides Huawei with weights, supporting Day-0 optimized releases, such as DeepSeek V4 and V4.1”</blockquote></details><span class="aud cc">C-10b5cd6a1e0aab</span></li><li><details><summary>HBM bandwidth utilization</summary><blockquote>“950PR’s effective bandwidth and bandwidth utilization surpassing H100 at small message size per buffers, and nearly matching H100 in bandwidth utilization at large message sizes”</blockquote></details><span class="aud cc">C-1e598d1017f6a0</span></li><li><details><summary>Huawei&#x27;s architecture is reshaping DeepSeek&#x27;s software: the new FlashMLA KV-cache layout co-locates quantized values and scales to cut MTE transfer requests on Ascend.</summary><blockquote>“The new implementation places them together, reducing the number of transfer requests by the memory transfer engine(MTE).”</blockquote></details><span class="aud cc">C-3bf6ffbcaa3ac1</span></li><li><details><summary>The 950PR&#x27;s Linx816 AArch64 AICPU cores are likely the same as the middle cores in Huawei&#x27;s Kirin 9000S/9010 SoCs. <span class="tag">source&#x27;s view</span></summary><blockquote>“these cores are likely the same as the middle cores in the Kirin 9000S/9010”</blockquote></details><span class="aud cc">C-46b2b728b95da9</span></li><li><details><summary>Huawei provides hardware and software stack while DeepSeek provides workloads and engineering, a symbiotic exchange. <span class="tag">source&#x27;s view</span></summary><blockquote>“Huawei provides the hardware and native software stack; DeepSeek brings the workloads and engineering needed to make that hardware useful for its models”</blockquote></details><span class="aud cc">C-880df3032ddcdb</span></li><li><details><summary>Huawei has joined NVIDIA in commercializing large scale-up AI systems via Ascend supernodes spanning multiple racks.</summary><blockquote>“Huawei has joined NVIDIA in commercializing large scale-up AI systems, with its Ascend supernodes extending tightly coupled accelerator interconnects across multiple racks”</blockquote></details><span class="aud cc">C-89190f4f1babb0</span></li><li><details><summary>DeepSeek released Ascend support for six repositories before China&#x27;s national day holidays.</summary><blockquote>“DeepSeek released Ascend support for TileLang , DeepGEMM , DeepEP , TileKernels , FlashMLA , and DeepSelect”</blockquote></details><span class="aud cc">C-99b7ba90430f3e</span></li><li><details><summary>The Ascend 950 backend is merged into the main TileLang repository rather than only a separate Huawei adapter, adding native compilation, scheduling and runtime integration.</summary><blockquote>“Ascend 950 backend is merged into the main TileLang repository, rather than existing only in a separate Huawei adapter.”</blockquote></details><span class="aud cc">C-9b18abc972d4f5</span></li><li><details><summary>The Ascend 950PR is designed for prefill and recommendation and has lower memory bandwidth and core count than the larger 950DT.</summary><blockquote>“Ascend 950PR is designed for prefill and recommendation. It gets lower memory bandwidth and core than its bigger brother the 950DT.”</blockquote></details><span class="aud cc">C-9de7aa59fd65b3</span></li><li><details><summary>Huawei&#x27;s Kimi K3 recipe explicitly restricts vector use to leave capacity for concurrent work, illustrating the resource-balancing co-design problem beyond DeepSeek.</summary><blockquote>“Huawei’s Kimi K3 recipe explicitly restricts vector use to leave capacity for concurrent work”</blockquote></details><span class="aud cc">C-c57301a9cdf2d0</span></li><li><details><summary>Huawei&#x27;s Ascend supernodes evolved from the 910 CloudMatrix384 to the 950 SuperPod, extending accelerator interconnects across multiple racks.</summary><blockquote>“from the 910 CloudMatrix384 to the 950 SuperPod”</blockquote></details><span class="aud cc">C-c7065f6c59b5b9</span></li><li><details><summary>TileLang can match and beat CANN in certain cases, with the preferred implementation changing with size (warm-cache naive benchmark). <span class="tag">source&#x27;s view</span></summary><blockquote>“it can match and beat CANN at certain cases; the preferred implementation changes with size”</blockquote></details><span class="aud cc">C-cfd83ef7fb7c63</span></li><li><details><summary>DeepEP-Ascend, proposed by Huawei&#x27;s Ascend team in July 2025 but initially declined, is now distributed under DeepSeek&#x27;s own organization. <span class="muted">· July 2025</span></summary><blockquote>“In July 2025, Huawei’s Ascend team proposed DeepEP-Ascend under deepseek-ai , but a DeepEP maintainer declined . Today, DeepEP-Ascend is distributed under DeepSeek’s own organization.”</blockquote></details><span class="aud cc">C-d332c481bc001e</span></li><li><details><summary>Performance per watt or TCO is the best chip comparison, and in China watts are far cheaper — favoring Ascend&#x27;s economics despite weaker per-chip performance. <span class="tag">source&#x27;s view</span></summary><blockquote>“But for China, watts are far cheaper. We’ll analyze Ascend’s perf per TCO in a future article.”</blockquote></details><span class="aud cc">C-e04472dff2850c</span></li></ul></details></li></ul></details><details class="evg"><summary><b>Context and other cited figures</b> <span class="muted">3</span></summary><ul class="evl"><li><details><summary>Of the six repos, only TileLang is usable as of writing; CANN 9.2.0 had not been released.</summary><blockquote>“only TileLang is usable as of writing, and CANN 9.2.0 has not been released”</blockquote></details><span class="aud cc">C-92f5749d38960d</span></li><li><details><summary>SemiAnalysis asserts the software ecosystem gap narrowed 4 months after the May transcript. <span class="tag">source&#x27;s view</span></summary><blockquote>“4 months later, the ecosystem gap did indeed narrow.”</blockquote></details><span class="aud cc">C-7991b4e9188d24</span></li><li><details><summary><span class="v">28 cores</span> cube cores</summary><blockquote>“we use an Ascend 950PR_9579, with 28 cube cores and 128 GiB HBM”</blockquote></details><span class="aud cc">C-6bd98d2bf6f582</span></li></ul></details></div><div data-panel="hi" hidden><ol class="timeline"><li><span class="hv">Version 1</span><span>30 Oct 2026</span><span class="pill watch">Watch</span><span class="muted">from the weekly scan</span><span class="aud cc">Initial record — created from A-52648724ad39</span></li></ol></div><div data-panel="src" hidden><ul class="plainlist srcl"><li><a href="https://newsletter.semianalysis.com/p/huawei-deepseek">The Huawei-DeepSeek Symbiosis</a><div class="small">SemiAnalysis · 21 Oct 2026 · preview only · 36 cited, 8 against</div><span class="aud cc"> A-52648724ad39</span></li></ul></div><div data-panel="full" hidden><p>The complete nine-section Living Thesis Card — every line with its label and citations, all evidence and counter-evidence, the history and the audit record.</p><p><a class="btn" href="../cards/TH-B121174B17.html">Open the full record</a> <a class="btn2" href="../cards/TH-B121174B17.print.html">Printable record</a></p><ol class="nine"><li><a href="../cards/TH-B121174B17.html#sec-s01_bottom_line">Bottom line</a></li><li><a href="../cards/TH-B121174B17.html#sec-s02_what_changed">What changed?</a></li><li><a href="../cards/TH-B121174B17.html#sec-s03_transmission">Why could stocks benefit or suffer?</a></li><li><a href="../cards/TH-B121174B17.html#sec-s04_key_evidence">Key evidence &amp; numbers</a></li><li><a href="../cards/TH-B121174B17.html#sec-s05_affected">Affected companies / sectors</a></li><li><a href="../cards/TH-B121174B17.html#sec-s06_why_now">Why now? (next 2-4 quarters)</a></li><li><a href="../cards/TH-B121174B17.html#sec-s07_what_could_go_wrong">What could go wrong?</a></li><li><a href="../cards/TH-B121174B17.html#sec-s08_decision">Decision &amp; next trigger</a></li><li><a href="../cards/TH-B121174B17.html#sec-s09_sources">Sources &amp; change history</a></li></ol></div></section><div class="foot">Generated 2026-10-30 12:26 UTC from the registry<span class="aud"> (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).</span></div><div class="foot"><a href="../dashboard.html">Full weekly report</a> · <a href="../report_print.html">Printable report</a></div></main><script>function rowsOf(sel){return Array.prototype.slice.call(document.querySelectorAll(sel))}
+function openAll(root){rowsOf(root+' details.more-rows').forEach(function(d){d.open=true});
+rowsOf('input.morebox').forEach(function(b){b.checked=true})}
+function recap(root){rowsOf(root+' table[data-cap],table'+root+'[data-cap]').forEach(
+function(t){var cap=+t.dataset.cap,k=0;
+Array.prototype.slice.call(t.rows).forEach(function(r){if(r.querySelector('th'))return;
+if(!r.hasAttribute('data-sub')&&r.style.display!=='none')k++;r.classList.toggle('xtra',k>cap)});
+var l=document.querySelector('label[for="'+t.dataset.box+'"]');if(l){l.style.display=k>cap?'':
+'none';if(k>cap)l.textContent='Showing '+cap+' of '+k+' '+t.dataset.what+' — show all '+k}})}
+function flt(){var q=(document.getElementById('q').value||'').toLowerCase(),
+s=document.getElementById('fs').value,a=document.getElementById('fa').value,
+ar=document.getElementById('far').value,n=0,all=rowsOf('#tt tr[data-area]');
+if(q||a||ar)openAll('#tt');
+all.forEach(function(r){var ok=(!s||r.dataset.status===s)&&(!a||r.dataset.action===a)&&
+(!ar||r.dataset.area===ar)&&(!q||(r.textContent+' '+r.dataset.area).toLowerCase().indexOf(q)>=0);
+r.style.display=ok?'':'none';n+=ok?1:0});recap('#tt');
+document.getElementById('cnt').textContent=n+' of '+all.length+' match'}
+function srt(){var k=document.getElementById('so').value;var v=function(r){return k==='upd'?
+-r.dataset.upd:k==='stale'?+r.dataset.left:k==='src'?-r.dataset.src:k==='rv'?-r.dataset.rv:
++r.dataset.ord};
+rowsOf('#tt table').forEach(function(t){var rs=Array.prototype.slice.call(t.querySelectorAll(
+'tr[data-area]'));rs.sort(function(a,b){return v(a)-v(b)||a.dataset.ord-b.dataset.ord})
+.forEach(function(r){(r.parentNode).appendChild(r)})});recap('#tt')}
+function fa(){var r=document.getElementById('fr').value,p=document.getElementById('fp').value,n=0,
+all=rowsOf('#at tr[data-state]');if(r||p)openAll('#at');all.forEach(function(x){var ok=
+(!r||x.dataset.state===r)&&(!p||x.dataset.pub===p);x.style.display=ok?'':'none';n+=ok?1:0});
+rowsOf('#at tr[data-sub]').forEach(function(x){var t=x.previousElementSibling;
+x.style.display=t&&t.style.display==='none'?'none':''});recap('#at');
+document.getElementById('cnt2').textContent=n+' of '+all.length+' match'}
+function fr2(){var d=document.getElementById('fdec').checked,rn=document.getElementById('frn')
+.checked,o=document.getElementById('fold').checked,n=0,all=rowsOf('#rv li.rvi');
+if(d||rn||o)openAll('#rv');all.forEach(function(x){var ok=(!d||x.dataset.dec==='1')&&(!rn||
+x.dataset.act==='RESEARCH NOW')&&(!o||+x.dataset.age>=28);x.style.display=ok?'':'none';
+n+=ok?1:0});rowsOf('#rv li.rvg').forEach(function(g){g.style.display=Array.prototype.slice
+.call(g.querySelectorAll('li.rvi')).some(function(x){return x.style.display!=='none'})?'':'none'});
+document.getElementById('cnt3').textContent=n+' of '+all.length+' match'}
+function deskInit(root,u){root.querySelectorAll('[data-tabs]').forEach(function(g){
+var b=g.querySelectorAll('[data-tab]'),p=g.querySelectorAll('[data-panel]');b.forEach(function(x){
+x.addEventListener('click',function(){b.forEach(function(y){y.classList.toggle('on',y===x)});
+p.forEach(function(q){q.hidden=q.dataset.panel!==x.dataset.tab})})})});
+if(document.getElementById('tt')){if(u.get('area'))document.getElementById('far').value=
+u.get('area');if(u.get('sort'))document.getElementById('so').value=u.get('sort');srt();flt()}
+if(document.getElementById('at'))fa();if(document.getElementById('rv'))fr2()}
+window.addEventListener('beforeprint',function(){rowsOf('details').forEach(function(d){
+d.open=true});rowsOf('input.morebox').forEach(function(b){b.checked=true})});
+deskInit(document,new URLSearchParams(location.search));</script><script>function reveal(h){if(!h||h.length<2)return;var t=document.getElementById(decodeURIComponent(h.slice(1)));if(!t)return;for(var d=t.closest('details');d;d=d.parentElement?d.parentElement.closest('details'):null)d.open=true;t.scrollIntoView({block:'center'});t.classList.add('hit');setTimeout(function(){t.classList.remove('hit')},2500)}addEventListener('hashchange',function(){reveal(location.hash)});addEventListener('load',function(){reveal(location.hash)});document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[href^="#"]');if(a&&a.getAttribute('href')===location.hash)reveal(location.hash)});</script></body></html>

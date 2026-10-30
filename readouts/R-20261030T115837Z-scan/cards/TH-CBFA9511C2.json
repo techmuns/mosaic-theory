@@ -1,0 +1,1535 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-30",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.compute_semis"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-30",
+   "first_ingested_at": "2026-10-30T12:16:19.811830Z",
+   "horizon": "Next 2-4 quarters",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-22",
+   "latest_article_date": "2026-10-22",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+   "status": "ACTIVE",
+   "thesis_id": "TH-CBFA9511C2",
+   "title": "Intel loses server CPU share on process and capacity constraints"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-315df0d71a99f3",
+     "C-ced6951d32d2fc",
+     "C-6c2c4ac5a74a70"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Intel's process and packaging challenges with new products have delayed shipments, forcing reliance on existing Emerald Rapids and Granite Rapids lines; limited internal capacity constrains growth and has contributed to a market share decline, while AMD's share rises to ~27% in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-315df0d71a99f3",
+     "C-ced6951d32d2fc"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article attributes Intel's share decline to its manufacturing and product constraints."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Intel appears to be ceding server CPU share to AMD and Arm suppliers, which would pressure Intel's data center revenue, though the article does not quantify Intel's share level or earnings impact."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-6c2c4ac5a74a70"
+     ],
+     "original_date": "2026-10-22",
+     "period": "2026",
+     "provenance": "FORECAST",
+     "text": "AMD's server CPU market share estimated to increase to approximately 27% in 2026 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-ced6951d32d2fc"
+     ],
+     "original_date": "2026-10-22",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Intel's limited manufacturing capacity constrains shipments and has contributed to market share decline"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-315df0d71a99f3"
+     ],
+     "original_date": "2026-10-22",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Intel's process and packaging challenges with new products have delayed shipments"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-30 12:16 UTC, analysed as of 2026-10-30, from a source published 2026-10-22; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-315df0d71a99f3",
+     "C-ced6951d32d2fc"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Intel's process/packaging issues delay new products and constrain capacity"
+   },
+   {
+    "claim_ids": [
+     "C-ced6951d32d2fc",
+     "C-6c2c4ac5a74a70"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Constrained shipments cannot meet customer orders, contributing to share decline while AMD gains to ~27% \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-ced6951d32d2fc"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Lost share would pressure Intel's server CPU revenue, though the article does not quantify it"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6c2c4ac5a74a70",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AMD server CPU market share",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "TrendForce estimates that the company\u2019s share of the server CPU market will increase significantly to approximately 27% in 2026",
+    "role": "supports",
+    "unit": "%",
+    "value": 27.0,
+    "value_text": "approximately 27%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-315df0d71a99f3",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Intel's process and packaging challenges with new products have delayed shipments",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "process and packaging challenges with Intel\u2019s new products have delayed shipments",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-ced6951d32d2fc",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Intel's limited manufacturing capacity constrains shipments and has contributed to market share decline",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "limited internal manufacturing capacity constrains overall shipment growth and prevents it from fully meeting customer orders. This has contributed to a decline in market share",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-a7f0f66d2b3b",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-98c8f03b45a9ca",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "AMD's server CPU market share expected to increase further with new product launches in 1H 2027",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "1H 2027",
+    "qualifiers": [],
+    "quote": "AMD's market share is expected to increase further as the company plans to launch new products in the first half of 2027",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e41ce8fb77d4a5",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author and research firm producing the forecasts"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ebe45dbb5c7ca4",
+     "name_as_written": "AWS",
+     "other_securities": [],
+     "quote": "AWS continues to deploy its internally developed Graviton processors",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Deploys in-house Arm-based Graviton server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0001045810",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-53a27766a8ba21",
+     "name_as_written": "NVIDIA",
+     "other_securities": [],
+     "quote": "demand for NVIDIA\u2019s Grace CPUs continues to expand",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Arm-based Grace and Vera server CPU supplier"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-9418e4fcf3a329",
+     "name_as_written": "Google",
+     "other_securities": [],
+     "quote": "Google\u2019s in-house Axion CPUs have entered high-volume shipments",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Deploys in-house Arm-based Axion server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0000789019",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.00000625 par value per share",
+       "ticker": "MSFT"
+      }
+     ],
+     "mention_id": "M-52d8c558dd8ba4",
+     "name_as_written": "Microsoft",
+     "other_securities": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "3.125% Notes due 2028",
+       "ticker": "MSFT"
+      },
+      {
+       "exchange": "Nasdaq",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "2.625% Notes due 2033",
+       "ticker": "MSFT"
+      }
+     ],
+     "quote": "Microsoft\u2019s Cobalt 100 and Arm\u2019s internally developed AGI processors",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Deploys in-house Arm-based Cobalt 100 server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0001973239",
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f6a2c41b469eef",
+     "name_as_written": "Arm",
+     "other_securities": [],
+     "quote": "Arm\u2019s internally developed AGI processors have also entered mass production",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Arm architecture provider and in-house AGI processor developer"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b22ac875d96a21",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "high-volume production of new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "Named as introducing new Arm-based server processors in 2027"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ee154d6b5a56d3",
+     "name_as_written": "Huawei",
+     "other_securities": [],
+     "quote": "new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Named as introducing new Arm-based server processors in 2027"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8e791e26a218d3",
+     "name_as_written": "Alibaba",
+     "other_securities": [],
+     "quote": "Alibaba\u2019s introduction of new Yitian 720/730 CPUs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Introducing new Yitian 720/730 Arm-based server CPUs"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-2c490a5aecb2d3",
+     "name_as_written": "TSMC",
+     "other_securities": [],
+     "quote": "tight capacity at TSMC limiting AMD\u2019s ability to accommodate additional orders",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Foundry whose tight capacity limits AMD's server CPU orders"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0000050863",
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potentially harmed",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-10-30 (accession 0000050863-26-000191) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.001 par value",
+       "ticker": "INTC"
+      }
+     ],
+     "mention_id": "M-89a2fbdbf3efff",
+     "name_as_written": "Intel",
+     "other_securities": [],
+     "quote": "led by Intel and AMD",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potentially_harmed",
+     "role_detail": "x86 server CPU supplier facing shipment delays and declining market share"
+    },
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "cik": "0000002488",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-a3a84c26c9d70e",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "led by Intel and AMD",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "x86 server CPU supplier gaining market share"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-a7f0f66d2b3b",
+     "claim_ids": [
+      "C-040ac638d8dbbf",
+      "C-ced6951d32d2fc"
+     ],
+     "direction": "negative",
+     "name": "x86 segment",
+     "provenance": "SOURCE OPINION",
+     "quote": "The x86 segment, led by Intel and AMD"
+    }
+   ],
+   "sectors": [
+    "Semiconductors",
+    "x86 server CPUs"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "Intel next-generation product supply through 2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-98c8f03b45a9ca"
+     ],
+     "provenance": "FORECAST",
+     "text": "Intel's next-generation products remain in limited supply while AMD maintains more stable shipments and gains further share."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-ced6951d32d2fc"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Intel's manufacturing constraints structurally erode its x86 server CPU leadership."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-0577F0AD38: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 COMPETING, held for review (not applied) \u2014 TH-F2CD2F7AFC: held for review \u2014 the same thesis claim (node ai_infrastructure.compute_semis, mechanism competitive_share_shift, overlapping geography and timeframe) predicted the opposite way, but no claim pair is clearly comparable (C-98c8f03b45a9ca vs C-0aa530b9902c5f: a claim names no product the taxonomy knows; a claim names no measured variable; a quote states no single direction of change; overlapping periods; overlapping geography); nothing is filed against it automatically"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 8 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Intel resolving process/packaging delays and regaining share"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Intel meeting customer orders in 2026-2027"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Intel's actual server CPU share level and the magnitude of the decline"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether new Intel products in 2027 reverse the trend"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Earnings impact on Intel's data center segment"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Intel resolves manufacturing constraints"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Intel's 2027 products ramp on schedule"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Quantify Intel's current server CPU share and data center revenue trajectory against AMD's ~27% 2026 share estimate."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Intel reports further server CPU share loss"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Intel product delays persist into 2027"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-a7f0f66d2b3b",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-98c8f03b45a9ca",
+     "C-315df0d71a99f3",
+     "C-ced6951d32d2fc",
+     "C-6c2c4ac5a74a70"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-22T14:28:30+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Server CPU Shipments Projected to Grow Over 40% YoY in 2027, with Arm-Based Products Continuing to Gain Market Share, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261022-13279.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-11 (0001835632-26-000011)",
+    "business": "custom silicon and data center networking chips",
+    "direction": "positive",
+    "enrichment_id": "EC-584b8943e63079",
+    "evidence": "s03.1: Constrained shipments cannot meet customer orders, contributing to share decline while AMD gains to ~27%",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-28 (accession 0001835632-26-000025) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.002 per share",
+      "ticker": "MRVL"
+     }
+    ],
+    "name": "Marvell Technology",
+    "rationale": "Designs custom Arm-based server CPUs and accelerators for hyperscalers; share shift toward Arm server suppliers lifts its data center custom silicon revenue.",
+    "registrant": "Marvell Technology, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "custom data center silicon for hyperscalers",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-CBFA9511C2",
+    "ticker_hint": "MRVL"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-23 (0001193125-26-119321)",
+    "business": "Arm-based edge AI and vision processors",
+    "direction": "positive",
+    "enrichment_id": "EC-00ab919eb1ea3e",
+    "evidence": "s03.1: Constrained shipments cannot meet customer orders, contributing to share decline while AMD gains to ~27%",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-04 (accession 0001193125-26-383365) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Ordinary Shares, $0.00045 Par Value Per Share",
+      "ticker": "AMBA"
+     }
+    ],
+    "name": "Ambarella",
+    "rationale": "Arm-based processor momentum from server share shift is modest; limited direct server CPU exposure makes this a weak fit.",
+    "registrant": "AMBARELLA INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Arm-based SoCs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-CBFA9511C2",
+    "ticker_hint": "AMBA"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-08-31 (0001375365-26-000022)",
+    "business": "server and storage systems maker",
+    "direction": "positive",
+    "enrichment_id": "EC-3b5f6bcbc16220",
+    "evidence": "s03.1: Constrained shipments cannot meet customer orders, contributing to share decline while AMD gains to ~27%",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-K filed 2026-08-31 (accession 0001375365-26-000022) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "SMCI"
+     }
+    ],
+    "name": "Super Micro Computer",
+    "rationale": "Builds servers around both x86 and Arm CPUs; AMD share gains sustain its AMD-based server platform sales as x86 mix shifts.",
+    "registrant": "Super Micro Computer, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3571); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "AMD-based server systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-CBFA9511C2",
+    "ticker_hint": "SMCI"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-04-16 (0001628280-26-025362)",
+    "business": "contract chip foundry",
+    "direction": "positive",
+    "enrichment_id": "EC-f05ea4ba0aba08",
+    "evidence": "s03.0: Intel's process/packaging issues delay new products and constrain capacity",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Taiwan Semiconductor Manufacturing",
+    "rationale": "Source already names TSMC; excluded.",
+    "registrant": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['TSM', 'TSMWF'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "leading-edge foundry",
+    "revenue_model": "services",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-CBFA9511C2",
+    "ticker_hint": "TSM"
+   }
+  ],
+  "created_at": "2026-10-30T12:25:04.580913Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-fcb98e4bb8cc72",
+  "thesis_id": "TH-CBFA9511C2",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-30",
+   "change_summary": "Initial record \u2014 created from A-a7f0f66d2b3b",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-30",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.compute_semis"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-30",
+     "first_ingested_at": "2026-10-30T12:16:19.811830Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-22",
+     "latest_article_date": "2026-10-22",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+     "status": "ACTIVE",
+     "thesis_id": "TH-CBFA9511C2",
+     "title": "Intel loses server CPU share on process and capacity constraints"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-315df0d71a99f3",
+       "C-ced6951d32d2fc",
+       "C-6c2c4ac5a74a70"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Intel's process and packaging challenges with new products have delayed shipments, forcing reliance on existing Emerald Rapids and Granite Rapids lines; limited internal capacity constrains growth and has contributed to a market share decline, while AMD's share rises to ~27% in 2026. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-315df0d71a99f3",
+       "C-ced6951d32d2fc"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article attributes Intel's share decline to its manufacturing and product constraints."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Intel appears to be ceding server CPU share to AMD and Arm suppliers, which would pressure Intel's data center revenue, though the article does not quantify Intel's share level or earnings impact."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-6c2c4ac5a74a70"
+       ],
+       "original_date": "2026-10-22",
+       "period": "2026",
+       "provenance": "FORECAST",
+       "text": "AMD's server CPU market share estimated to increase to approximately 27% in 2026 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-ced6951d32d2fc"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Intel's limited manufacturing capacity constrains shipments and has contributed to market share decline"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-315df0d71a99f3"
+       ],
+       "original_date": "2026-10-22",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Intel's process and packaging challenges with new products have delayed shipments"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-30 12:16 UTC, analysed as of 2026-10-30, from a source published 2026-10-22; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-315df0d71a99f3",
+       "C-ced6951d32d2fc"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Intel's process/packaging issues delay new products and constrain capacity"
+     },
+     {
+      "claim_ids": [
+       "C-ced6951d32d2fc",
+       "C-6c2c4ac5a74a70"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Constrained shipments cannot meet customer orders, contributing to share decline while AMD gains to ~27% \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-ced6951d32d2fc"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Lost share would pressure Intel's server CPU revenue, though the article does not quantify it"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6c2c4ac5a74a70",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AMD server CPU market share",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "TrendForce estimates that the company\u2019s share of the server CPU market will increase significantly to approximately 27% in 2026",
+      "role": "supports",
+      "unit": "%",
+      "value": 27.0,
+      "value_text": "approximately 27%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-315df0d71a99f3",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Intel's process and packaging challenges with new products have delayed shipments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "process and packaging challenges with Intel\u2019s new products have delayed shipments",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-ced6951d32d2fc",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Intel's limited manufacturing capacity constrains shipments and has contributed to market share decline",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "limited internal manufacturing capacity constrains overall shipment growth and prevents it from fully meeting customer orders. This has contributed to a decline in market share",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-a7f0f66d2b3b",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-98c8f03b45a9ca",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "AMD's server CPU market share expected to increase further with new product launches in 1H 2027",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "1H 2027",
+      "qualifiers": [],
+      "quote": "AMD's market share is expected to increase further as the company plans to launch new products in the first half of 2027",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e41ce8fb77d4a5",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author and research firm producing the forecasts"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ebe45dbb5c7ca4",
+       "name_as_written": "AWS",
+       "other_securities": [],
+       "quote": "AWS continues to deploy its internally developed Graviton processors",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Deploys in-house Arm-based Graviton server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0001045810",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-53a27766a8ba21",
+       "name_as_written": "NVIDIA",
+       "other_securities": [],
+       "quote": "demand for NVIDIA\u2019s Grace CPUs continues to expand",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Arm-based Grace and Vera server CPU supplier"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-9418e4fcf3a329",
+       "name_as_written": "Google",
+       "other_securities": [],
+       "quote": "Google\u2019s in-house Axion CPUs have entered high-volume shipments",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Deploys in-house Arm-based Axion server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0000789019",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.00000625 par value per share",
+         "ticker": "MSFT"
+        }
+       ],
+       "mention_id": "M-52d8c558dd8ba4",
+       "name_as_written": "Microsoft",
+       "other_securities": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "3.125% Notes due 2028",
+         "ticker": "MSFT"
+        },
+        {
+         "exchange": "Nasdaq",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-10-28 (accession 0001193125-26-436133) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "2.625% Notes due 2033",
+         "ticker": "MSFT"
+        }
+       ],
+       "quote": "Microsoft\u2019s Cobalt 100 and Arm\u2019s internally developed AGI processors",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Deploys in-house Arm-based Cobalt 100 server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0001973239",
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f6a2c41b469eef",
+       "name_as_written": "Arm",
+       "other_securities": [],
+       "quote": "Arm\u2019s internally developed AGI processors have also entered mass production",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Arm architecture provider and in-house AGI processor developer"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b22ac875d96a21",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "high-volume production of new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "Named as introducing new Arm-based server processors in 2027"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ee154d6b5a56d3",
+       "name_as_written": "Huawei",
+       "other_securities": [],
+       "quote": "new processors from Google, AWS, Microsoft, OpenAI, Arm, and Huawei",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Named as introducing new Arm-based server processors in 2027"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8e791e26a218d3",
+       "name_as_written": "Alibaba",
+       "other_securities": [],
+       "quote": "Alibaba\u2019s introduction of new Yitian 720/730 CPUs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Introducing new Yitian 720/730 Arm-based server CPUs"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-2c490a5aecb2d3",
+       "name_as_written": "TSMC",
+       "other_securities": [],
+       "quote": "tight capacity at TSMC limiting AMD\u2019s ability to accommodate additional orders",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Foundry whose tight capacity limits AMD's server CPU orders"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0000050863",
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-10-30 (accession 0000050863-26-000191) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.001 par value",
+         "ticker": "INTC"
+        }
+       ],
+       "mention_id": "M-89a2fbdbf3efff",
+       "name_as_written": "Intel",
+       "other_securities": [],
+       "quote": "led by Intel and AMD",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potentially_harmed",
+       "role_detail": "x86 server CPU supplier facing shipment delays and declining market share"
+      },
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "cik": "0000002488",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-a3a84c26c9d70e",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "led by Intel and AMD",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "x86 server CPU supplier gaining market share"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-a7f0f66d2b3b",
+       "claim_ids": [
+        "C-040ac638d8dbbf",
+        "C-ced6951d32d2fc"
+       ],
+       "direction": "negative",
+       "name": "x86 segment",
+       "provenance": "SOURCE OPINION",
+       "quote": "The x86 segment, led by Intel and AMD"
+      }
+     ],
+     "sectors": [
+      "Semiconductors",
+      "x86 server CPUs"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "Intel next-generation product supply through 2027 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-98c8f03b45a9ca"
+       ],
+       "provenance": "FORECAST",
+       "text": "Intel's next-generation products remain in limited supply while AMD maintains more stable shipments and gains further share."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-ced6951d32d2fc"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Intel's manufacturing constraints structurally erode its x86 server CPU leadership."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-0577F0AD38: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 COMPETING, held for review (not applied) \u2014 TH-F2CD2F7AFC: held for review \u2014 the same thesis claim (node ai_infrastructure.compute_semis, mechanism competitive_share_shift, overlapping geography and timeframe) predicted the opposite way, but no claim pair is clearly comparable (C-98c8f03b45a9ca vs C-0aa530b9902c5f: a claim names no product the taxonomy knows; a claim names no measured variable; a quote states no single direction of change; overlapping periods; overlapping geography); nothing is filed against it automatically"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 8 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Intel resolving process/packaging delays and regaining share"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Intel meeting customer orders in 2026-2027"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Intel's actual server CPU share level and the magnitude of the decline"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether new Intel products in 2027 reverse the trend"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Earnings impact on Intel's data center segment"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Intel resolves manufacturing constraints"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Intel's 2027 products ramp on schedule"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Quantify Intel's current server CPU share and data center revenue trajectory against AMD's ~27% 2026 share estimate."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Intel reports further server CPU share loss"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Intel product delays persist into 2027"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-a7f0f66d2b3b",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-98c8f03b45a9ca",
+       "C-315df0d71a99f3",
+       "C-ced6951d32d2fc",
+       "C-6c2c4ac5a74a70"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-22T14:28:30+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Server CPU Shipments Projected to Grow Over 40% YoY in 2027, with Arm-Based Products Continuing to Gain Market Share, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261022-13279.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "988799a405515b57db76515f197f441c1eb4448160bc6ac0b87c43a940ddee4e",
+   "created_at": "2026-10-30T12:16:31.249742Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-6c2c4ac5a74a70",
+       "C-98c8f03b45a9ca"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-6c2c4ac5a74a70",
+       "C-98c8f03b45a9ca"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "2 claim(s) inside the next 2-4 quarters (C-6c2c4ac5a74a70: forecast window 2026-01-01..2026-12-31 (2026); C-98c8f03b45a9ca: forecast window 2027-01-01..2027-06-30 (1h 2027)); 0 long-range claim(s); model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Intel (INTC), AMD (AMD), sector: x86 segment",
+      "value": "2 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-98c8f03b45a9ca",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 2 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261030T115837Z-scan",
+   "thesis_id": "TH-CBFA9511C2",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [
+  {
+   "article_id": "A-a7f0f66d2b3b",
+   "block_ids": [
+    "b008"
+   ],
+   "claim_ids": [],
+   "excerpt": "\u2026surpassed 10% of the market. Both x86 and Arm CPU suppliers are aggressively increasing shipments\u2026",
+   "name": "CPU suppliers"
+  }
+ ],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-040ac638d8dbbf"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The ~27% in 2026 forecast is attributed to 'the company' in the cited span, which the card interprets as AMD. The cited span C-6c2c4ac5a74a70 does not name the company; context must establish it's AMD. The Emerald Rapids/Granite Rapids detail is not in any cited span. 'Rises to ~27%' framing: fine. Main issue is the uncited product-line names.",
+  "s02.0": "The cited span says 'the company's share' without naming AMD; the card asserts it is AMD's share. If context confirms AMD, acceptable; but the span itself does not state AMD.",
+  "s03.1": "The ~27% figure is attributed to AMD gains, but the cited span C-6c2c4ac5a74a70 says 'the company's share' without naming AMD.",
+  "s06.0": "Cited span supports AMD gaining further share via new products in H1 2027, but the claim that 'Intel's next-generation products remain in limited supply' is not in the cited span C-98c8f03b45a9ca.",
+  "s06.1": "Cited span supports manufacturing constraints contributing to share decline, but 'structurally erode its x86 server CPU leadership' overstates \u2014 the span says nothing about x86 leadership or a structural erosion."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}

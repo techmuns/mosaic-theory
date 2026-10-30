@@ -1,0 +1,954 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-13",
+   "ancestry": [
+    "industrials"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T10:25:41.841779Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-25",
+   "latest_article_date": "2026-09-25",
+   "region": "China",
+   "research_action": "SKIP",
+   "sector": "Industrials, defense, transport, capital goods",
+   "status": "ACTIVE",
+   "thesis_id": "TH-87D93CD53A",
+   "title": "China localization of chips, tools and materials lifts domestic industrial-resilience suppliers"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-b9f3ab3040e146",
+     "C-c5e6950a5bd39a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Industry 5.0's resilience pillar aims to reduce reliance on foreign technology by developing advanced chips, software, machine tools and materials, a localization share shift toward Chinese suppliers."
+   },
+   {
+    "claim_ids": [
+     "C-b9f3ab3040e146",
+     "C-c5e6950a5bd39a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article frames self-sufficiency in critical technologies as a core, long-term pillar of the investment opportunity."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Domestic Chinese semiconductor, equipment, machine-tool and materials makers could gain share as localization proceeds, but the article names no companies and quantifies no supplier-level revenue effect."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c5e6950a5bd39a"
+     ],
+     "original_date": "2026-09-25",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Breakthrough: sovereign/evolvable industrial stacks \u2014 China reduces reliance on foreign tech by developing advanced chips, software, machine tools and materials."
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b9f3ab3040e146"
+     ],
+     "original_date": "2026-09-25",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Second pillar industrial resilience: greater control over critical technologies and supply chains spanning semiconductors, energy, aerospace, advanced materials and equipment."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:25 UTC, analysed as of 2026-10-13, from a source published 2026-09-25; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-c5e6950a5bd39a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "China develops domestic advanced chips, software, machine tools and materials to reduce foreign reliance."
+   },
+   {
+    "claim_ids": [
+     "C-c5e6950a5bd39a"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "Localization would shift procurement volumes from foreign to domestic suppliers."
+   },
+   {
+    "claim_ids": [
+     "C-c5e6950a5bd39a"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Domestic suppliers' revenues would rise if they win the localized demand; the article does not quantify this."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b028",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b9f3ab3040e146",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Second pillar industrial resilience: greater control over critical technologies and supply chains spanning semiconductors, energy, aerospace, advanced materials and equipment.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "greater control over critical technologies and supply chains, from semiconductors and energy systems to aerospace, advanced materials and manufacturing equipment",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-9faa09cf8082",
+    "block_id": "b039",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c5e6950a5bd39a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Breakthrough: sovereign/evolvable industrial stacks \u2014 China reduces reliance on foreign tech by developing advanced chips, software, machine tools and materials.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "China reduces reliance on foreign technologies by developing the advanced chips, software, machine tools and materials",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-71342c59687ea1",
+     "name_as_written": "Sheng Zhong",
+     "other_securities": [],
+     "quote": "says Sheng Zhong, Morgan Stanley\u2019s Head of China Industrials Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley's Head of China Industrials Research quoted in the article"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-689ecee2a6bc1a",
+     "name_as_written": "Robin Xing",
+     "other_securities": [],
+     "quote": "Robin Xing Morgan Stanley's Chief China Economist",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley's Chief China Economist quoted in the article"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7e3bdc2ebcd614",
+     "name_as_written": "Chetan Ahya",
+     "other_securities": [],
+     "quote": "says Chetan Ahya, Morgan Stanley's Chief Asia Economist",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley's Chief Asia Economist quoted in the article"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-ea8a366ae47afb",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "Morgan Stanley Research believes",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher and research source of the article"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-9faa09cf8082",
+     "claim_ids": [
+      "C-b9f3ab3040e146"
+     ],
+     "direction": "positive",
+     "name": "semiconductors",
+     "provenance": "SOURCE OPINION",
+     "quote": "semiconductors"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "claim_ids": [
+      "C-b9f3ab3040e146"
+     ],
+     "direction": "positive",
+     "name": "advanced materials",
+     "provenance": "SOURCE OPINION",
+     "quote": "advanced materials"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "claim_ids": [
+      "C-b9f3ab3040e146"
+     ],
+     "direction": "positive",
+     "name": "manufacturing equipment",
+     "provenance": "SOURCE OPINION",
+     "quote": "manufacturing equipment"
+    },
+    {
+     "article_id": "A-9faa09cf8082",
+     "claim_ids": [
+      "C-c5e6950a5bd39a"
+     ],
+     "direction": "positive",
+     "name": "machine tools",
+     "provenance": "SOURCE OPINION",
+     "quote": "machine tools"
+    }
+   ],
+   "sectors": [
+    "semiconductors",
+    "semiconductor equipment",
+    "machine tools",
+    "advanced materials",
+    "industrial software"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-c5e6950a5bd39a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The article frames resilience as a multi-year, long-term transformation, not a near-term catalyst."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-b9f3ab3040e146",
+      "C-c5e6950a5bd39a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Localization of critical industrial technology is a durable, multi-year share-shift theme."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-0edef6eb1a60b3"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The biggest risk is overbuilding advanced manufacturing capacity without demand, pressuring prices and profitability."
+    },
+    {
+     "claim_ids": [
+      "C-b24267da307f33"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China faces near-term challenges including weak pricing power, excess capacity, property headwinds and deflationary pressures."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued reliance on foreign chips/tools despite policy push"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Chinese domestic suppliers losing bids on performance"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed Chinese chip, equipment, tool and materials companies are positioned to capture localized demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether localized suppliers can match foreign technology at commercial returns"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consensus expectations already priced into these suppliers"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Persistent technology gap keeping foreign suppliers dominant"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Overcapacity depressing domestic supplier margins"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed Chinese semiconductor, semiconductor-equipment, machine-tool and advanced-materials companies and assess their current share versus foreign incumbents and any valuation re-rating from localization."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Policy or procurement mandates accelerating domestic sourcing"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of domestic suppliers winning major localized contracts"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "SKIP",
+   "rule_trace": [
+    "SKIP-1 no verified material evidence"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-9faa09cf8082",
+    "authors": [],
+    "authors_status": "UNKNOWN",
+    "claim_ids": [
+     "C-b9f3ab3040e146",
+     "C-c5e6950a5bd39a",
+     "C-0edef6eb1a60b3",
+     "C-b24267da307f33"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-25T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "China\u2019s Next Industrial Revolution: The Industry 5.0 Opportunity",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/china-next-industrial-revolution-industry-5-outlook",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": null,
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-13",
+   "change_summary": "Initial record \u2014 created from A-9faa09cf8082",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-13",
+     "ancestry": [
+      "industrials"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:25:41.841779Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-25",
+     "latest_article_date": "2026-09-25",
+     "region": "China",
+     "research_action": "SKIP",
+     "sector": "Industrials, defense, transport, capital goods",
+     "status": "ACTIVE",
+     "thesis_id": "TH-87D93CD53A",
+     "title": "China localization of chips, tools and materials lifts domestic industrial-resilience suppliers"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-b9f3ab3040e146",
+       "C-c5e6950a5bd39a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Industry 5.0's resilience pillar aims to reduce reliance on foreign technology by developing advanced chips, software, machine tools and materials, a localization share shift toward Chinese suppliers."
+     },
+     {
+      "claim_ids": [
+       "C-b9f3ab3040e146",
+       "C-c5e6950a5bd39a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames self-sufficiency in critical technologies as a core, long-term pillar of the investment opportunity."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Domestic Chinese semiconductor, equipment, machine-tool and materials makers could gain share as localization proceeds, but the article names no companies and quantifies no supplier-level revenue effect."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c5e6950a5bd39a"
+       ],
+       "original_date": "2026-09-25",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Breakthrough: sovereign/evolvable industrial stacks \u2014 China reduces reliance on foreign tech by developing advanced chips, software, machine tools and materials."
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b9f3ab3040e146"
+       ],
+       "original_date": "2026-09-25",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Second pillar industrial resilience: greater control over critical technologies and supply chains spanning semiconductors, energy, aerospace, advanced materials and equipment."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:25 UTC, analysed as of 2026-10-13, from a source published 2026-09-25; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-c5e6950a5bd39a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "China develops domestic advanced chips, software, machine tools and materials to reduce foreign reliance."
+     },
+     {
+      "claim_ids": [
+       "C-c5e6950a5bd39a"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Localization would shift procurement volumes from foreign to domestic suppliers."
+     },
+     {
+      "claim_ids": [
+       "C-c5e6950a5bd39a"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Domestic suppliers' revenues would rise if they win the localized demand; the article does not quantify this."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b028",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b9f3ab3040e146",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Second pillar industrial resilience: greater control over critical technologies and supply chains spanning semiconductors, energy, aerospace, advanced materials and equipment.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "greater control over critical technologies and supply chains, from semiconductors and energy systems to aerospace, advanced materials and manufacturing equipment",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-9faa09cf8082",
+      "block_id": "b039",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c5e6950a5bd39a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Breakthrough: sovereign/evolvable industrial stacks \u2014 China reduces reliance on foreign tech by developing advanced chips, software, machine tools and materials.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "China reduces reliance on foreign technologies by developing the advanced chips, software, machine tools and materials",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-71342c59687ea1",
+       "name_as_written": "Sheng Zhong",
+       "other_securities": [],
+       "quote": "says Sheng Zhong, Morgan Stanley\u2019s Head of China Industrials Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley's Head of China Industrials Research quoted in the article"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-689ecee2a6bc1a",
+       "name_as_written": "Robin Xing",
+       "other_securities": [],
+       "quote": "Robin Xing Morgan Stanley's Chief China Economist",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley's Chief China Economist quoted in the article"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7e3bdc2ebcd614",
+       "name_as_written": "Chetan Ahya",
+       "other_securities": [],
+       "quote": "says Chetan Ahya, Morgan Stanley's Chief Asia Economist",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley's Chief Asia Economist quoted in the article"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-ea8a366ae47afb",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "Morgan Stanley Research believes",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher and research source of the article"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-9faa09cf8082",
+       "claim_ids": [
+        "C-b9f3ab3040e146"
+       ],
+       "direction": "positive",
+       "name": "semiconductors",
+       "provenance": "SOURCE OPINION",
+       "quote": "semiconductors"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "claim_ids": [
+        "C-b9f3ab3040e146"
+       ],
+       "direction": "positive",
+       "name": "advanced materials",
+       "provenance": "SOURCE OPINION",
+       "quote": "advanced materials"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "claim_ids": [
+        "C-b9f3ab3040e146"
+       ],
+       "direction": "positive",
+       "name": "manufacturing equipment",
+       "provenance": "SOURCE OPINION",
+       "quote": "manufacturing equipment"
+      },
+      {
+       "article_id": "A-9faa09cf8082",
+       "claim_ids": [
+        "C-c5e6950a5bd39a"
+       ],
+       "direction": "positive",
+       "name": "machine tools",
+       "provenance": "SOURCE OPINION",
+       "quote": "machine tools"
+      }
+     ],
+     "sectors": [
+      "semiconductors",
+      "semiconductor equipment",
+      "machine tools",
+      "advanced materials",
+      "industrial software"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-c5e6950a5bd39a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The article frames resilience as a multi-year, long-term transformation, not a near-term catalyst."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-b9f3ab3040e146",
+        "C-c5e6950a5bd39a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Localization of critical industrial technology is a durable, multi-year share-shift theme."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-A381AB426E: same value-chain node, not the same claim \u2014 a different mechanism (capex_spending_cycle vs competitive_share_shift); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-0edef6eb1a60b3"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The biggest risk is overbuilding advanced manufacturing capacity without demand, pressuring prices and profitability."
+      },
+      {
+       "claim_ids": [
+        "C-b24267da307f33"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China faces near-term challenges including weak pricing power, excess capacity, property headwinds and deflationary pressures."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued reliance on foreign chips/tools despite policy push"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Chinese domestic suppliers losing bids on performance"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed Chinese chip, equipment, tool and materials companies are positioned to capture localized demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether localized suppliers can match foreign technology at commercial returns"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consensus expectations already priced into these suppliers"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Persistent technology gap keeping foreign suppliers dominant"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Overcapacity depressing domestic supplier margins"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed Chinese semiconductor, semiconductor-equipment, machine-tool and advanced-materials companies and assess their current share versus foreign incumbents and any valuation re-rating from localization."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Policy or procurement mandates accelerating domestic sourcing"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of domestic suppliers winning major localized contracts"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "SKIP",
+     "rule_trace": [
+      "SKIP-1 no verified material evidence"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-9faa09cf8082",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-b9f3ab3040e146",
+       "C-c5e6950a5bd39a",
+       "C-0edef6eb1a60b3",
+       "C-b24267da307f33"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-25T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "China\u2019s Next Industrial Revolution: The Industry 5.0 Opportunity",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/china-next-industrial-revolution-industry-5-outlook",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "242d24d05b80c54c6f338da005928d1d7cca9fd18de55cf154ab5be48c601589",
+   "created_at": "2026-10-21T10:25:50.089638Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 2 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label longer_term (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: semiconductors, sector: advanced materials, sector: manufacturing equipment, sector: machine tools",
+      "value": "0 listed \u00b7 4 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-0edef6eb1a60b3",
+       "C-b24267da307f33"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (2 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 0 supporting; 0 independent contradicting source(s) vs 0 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "SKIP",
+    "rules_fired": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T101854Z-ingest",
+   "thesis_id": "TH-87D93CD53A",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 4,
+ "other_cited_evidence": [
+  "C-0edef6eb1a60b3",
+  "C-b24267da307f33"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s06.1": "Cited spans support the localization/critical-technology theme but say nothing about it being 'durable, multi-year' \u2014 the timeframe qualifier is not in the cited spans."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": "Registry status now ARCHIVED since 2026-10-13: research action is SKIP \u2014 kept in the searchable archive, off the active list",
+ "why_action": [
+  "Skip \u2014 no verified material evidence."
+ ],
+ "withheld_sentences": {
+  "s06.0": "REVIEW_UNSUPPORTED \u2014 s06.0: UNSUPPORTED \u2014 Cited span only says China develops domestic tech to reduce foreign reliance; it does not characterize the theme as multi-year, long-term and not a near-term catalyst. No cited or pool span supports the timeframe framing. | 'The article frames resilience as a multi-year, long-term transformation, not a near-term catalyst.'"
+ }
+}

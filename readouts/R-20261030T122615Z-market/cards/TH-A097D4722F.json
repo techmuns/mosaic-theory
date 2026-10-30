@@ -1,0 +1,2446 @@
+{
+ "analyst_corrections": {
+  "s01.1": "The line's 'many large-cap firms now offer DTC platforms' and its 'no longer whether' framing are not in the source; its stated size, proof and volume share restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)"
+ },
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-22",
+   "ancestry": [
+    "healthcare",
+    "healthcare.pharma_biotech"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-14",
+   "first_ingested_at": "2026-10-14T11:12:47.070205Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-29",
+   "latest_article_date": "2026-09-29",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+   "status": "ACTIVE",
+   "thesis_id": "TH-A097D4722F",
+   "title": "Direct-to-consumer cash-pay access unlocks a $26B biopharma demand opportunity"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-c85f62441e9f04",
+     "C-d27c5f36479ebe",
+     "C-166ddf4a2ed62e",
+     "C-5474692f0bd4d7"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Morgan Stanley estimates the direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at peak, with the GLP-1 market already demonstrating that branded prescription products can drive substantial volume through consumer-led access pathways. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-d27c5f36479ebe",
+     "C-5474692f0bd4d7",
+     "C-166ddf4a2ed62e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "In biopharma alone the direct-to-consumer cash-pay market could reach $26 billion at its peak; GLP-1s gave the first large-scale proof the model works, and a branded product could support roughly half its volume through a consumer-led pathway. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If consumer-led cash-pay pathways scale as the GLP-1 case suggests, large-cap biopharma firms offering direct-to-consumer platforms could capture incremental volume outside the reimbursement system, though the article does not quantify earnings impact for any named company."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c85f62441e9f04"
+     ],
+     "original_date": "2026-09-29",
+     "period": "at its peak",
+     "provenance": "FORECAST",
+     "text": "The direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at peak. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7b31e29a3e2d12"
+     ],
+     "original_date": "2026-09-29",
+     "period": "2003",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Healthcare consumerism took root with the creation of Health Savings Accounts in 2003."
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-166ddf4a2ed62e"
+     ],
+     "original_date": "2026-09-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "A branded prescription product (GLP-1) could support roughly half its volume through a consumer-led access pathway. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-5474692f0bd4d7"
+     ],
+     "original_date": "2026-09-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "The GLP-1 market offered the first large-scale proof that the direct-to-consumer model can work."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 11:12 UTC, analysed as of 2026-10-14, from a source published 2026-09-29; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-7b31e29a3e2d12",
+     "C-71258fe89c6422",
+     "C-5e1feecb6f22f7"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Policy changes (HSAs, HDHPs, ACA) and new technology give consumers more control over how they access and pay for care, enabling direct-to-consumer cash-pay access."
+   },
+   {
+    "claim_ids": [
+     "C-166ddf4a2ed62e"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Consumer-led pathways can support substantial prescription volume, as GLP-1s showed roughly half their volume could come through a consumer-led pathway. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Would require this incremental volume to translate into biopharma revenue and earnings; the article does not quantify the effect per company."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-166ddf4a2ed62e",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "share of volume via consumer-led pathway",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "roughly half",
+     "GLP-1"
+    ],
+    "quote": "a branded prescription product could support roughly half of its volume through a consumerled access pathway",
+    "role": "supports",
+    "unit": "%",
+    "value": null,
+    "value_text": "roughly half"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b003",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c85f62441e9f04",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "DTC cash-pay market size",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "at its peak",
+    "qualifiers": [
+     "could reach",
+     "at its peak"
+    ],
+    "quote": "The direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at its peak.",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 26.0,
+    "value_text": "$26 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-5474692f0bd4d7",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The GLP-1 market offered the first large-scale proof that the direct-to-consumer model can work.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The GLP-1 market offered the first large-scale proof that this direct-to-consumer model can work.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7b31e29a3e2d12",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Healthcare consumerism took root with the creation of Health Savings Accounts in 2003.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2003",
+    "qualifiers": [],
+    "quote": "Healthcare consumerism took root with the creation of Health Savings Accounts (HSAs) in 2003",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-8dead6e3ab71",
+     "cik": "0000895421",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "MS"
+      }
+     ],
+     "mention_id": "M-01d76d0b50c37b",
+     "name_as_written": "Morgan Stanley",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+       "ticker": "MS/PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+       "ticker": "MS/PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+       "ticker": "MS/PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+       "ticker": "MS/PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+       "ticker": "MS/PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+       "ticker": "MS/PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+       "ticker": "MS/PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+       "ticker": "MS/PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+       "ticker": "MS/PQ"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+       "ticker": "MS/29"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PQ"
+      }
+     ],
+     "quote": "\u00a9 2026 Morgan Stanley. All rights reserved.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher of the research commentary"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-8dead6e3ab71",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-c9542d5247945b",
+     "name_as_written": "Morgan Stanley AlphaWise",
+     "other_securities": [],
+     "quote": "A Morgan Stanley AlphaWise survey",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Proprietary survey source for consumer out-of-pocket data"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-8dead6e3ab71",
+     "claim_ids": [
+      "C-c85f62441e9f04",
+      "C-d27c5f36479ebe"
+     ],
+     "direction": "positive",
+     "name": "biopharma",
+     "provenance": "FORECAST",
+     "quote": "In biopharma alone, the total direct-to-consumer cash-pay market could reach $26 billion at its peak."
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "claim_ids": [
+      "C-c6c7da7ab0a7f4"
+     ],
+     "direction": "positive",
+     "name": "healthcare services",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "creating potential opportunities across biopharma and healthcare services"
+    }
+   ],
+   "sectors": [
+    "biopharma",
+    "healthcare services"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-c85f62441e9f04"
+     ],
+     "provenance": "MODEL INFERENCE",
+     "text": "No near-term dated catalyst; thesis rests on a peak market-size estimate without a stated timeline. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-c85f62441e9f04",
+      "C-d27c5f36479ebe"
+     ],
+     "provenance": "FORECAST",
+     "text": "A multi-year structural shift toward consumer-driven healthcare access could build a $26B peak biopharma cash-pay market. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-20b368b85af2e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "There are limits to how far the shift can go, along with macroeconomic sensitivities and other risks."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-48CF61E45B: same value-chain node, not the same claim \u2014 a different mechanism (margin_expansion_adoption vs demand_volume_shift); a different segment (no named segment vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different segment (Neurology (Alzheimer's, dementia) vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-ABE7D2B79D: same value-chain node, not the same claim \u2014 a different segment (Genetic medicine (gene editing, gene therapy) vs Direct-to-consumer / cash-pay); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BBF8E714C1: same value-chain node, not the same claim \u2014 a different segment (Obesity and metabolic (GLP-1) vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-C2BEC5879A: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift); a different segment (no named segment vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 related, never used as counter-evidence"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 3 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-20b368b85af2e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Slowing cash-pay adoption in future AlphaWise surveys"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Payers reasserting control over access reducing DTC volumes"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Macroeconomic weakness curbing out-of-pocket spending"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-20b368b85af2e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "There are limits to how far the healthcare consumerism shift can go, along with macroeconomic sensitivities and other risks. (scope: Applies to the overall consumer-driven healthcare access trend, including out-of-pocket cash-pay demand which is sensitive to macroeconomic conditions.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether named biopharma companies' earnings or valuations reflect the DTC opportunity"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "The timeline over which the $26B peak would be reached"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the GLP-1 'roughly half' volume figure generalizes to other drug categories (association, not demonstrated causation)"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence DTC cash-pay volumes plateau below the $26B estimate"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Macroeconomic weakness reducing consumer out-of-pocket spend"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify which large-cap biopharma companies have launched DTC cash-pay platforms and assess what share of revenue the article's $26B peak could represent for them."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Rising cash-pay share in subsequent AlphaWise surveys"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Named biopharma companies reporting growing DTC platform volumes"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; verification hold)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-8dead6e3ab71",
+    "authors": [
+     "Erin Wright"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-c85f62441e9f04",
+     "C-d27c5f36479ebe",
+     "C-166ddf4a2ed62e",
+     "C-5474692f0bd4d7",
+     "C-7b31e29a3e2d12",
+     "C-20b368b85af2e8"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-29T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "Healthcare Consumerism: Patients Drive a $26B Opportunity",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/healthcare-consumerism-drives-26-b-opportunity-2026",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-12 (0000059478-26-000013)",
+    "business": "large-cap biopharma; GLP-1 maker (Mounjaro, Zepbound)",
+    "direction": "positive",
+    "enrichment_id": "EC-312c9f293e5469",
+    "evidence": "s03.1: Consumer-led pathways can support substantial prescription volume, as GLP-1s showed roughly half their volume could come through a consumer-led pathway.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0000059478-26-000108) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock (no par value)",
+      "ticker": "LLY"
+     }
+    ],
+    "name": "Eli Lilly",
+    "rationale": "Operates LillyDirect direct-to-consumer cash-pay platform selling branded GLP-1s; scaled consumer-led pathways capture incremental prescription volume outside reimbursement.",
+    "registrant": "ELI LILLY & Co",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2834); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "branded GLP-1 and incretin therapies",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-A097D4722F",
+    "ticker_hint": "LLY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-02-04 (0000353278-26-000012)",
+    "business": "biopharma; GLP-1 maker (Wegovy, Ozempic)",
+    "direction": "positive",
+    "enrichment_id": "EC-8cbb375ff2b6de",
+    "evidence": "s03.1: Consumer-led pathways can support substantial prescription volume, as GLP-1s showed roughly half their volume could come through a consumer-led pathway.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Novo Nordisk",
+    "rationale": "Sells branded GLP-1s via NovoCare direct-to-consumer cash-pay pharmacy; consumer-led access adds prescription volume outside insurance reimbursement.",
+    "registrant": "NOVO NORDISK A S",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['NVO', 'NONOF'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "branded GLP-1 obesity and diabetes therapies",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-A097D4722F",
+    "ticker_hint": "NVO"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names subscription",
+    "basis_quote": [
+     "we derive a substantial majority of our revenue from customers\u2019 subscription-based purchases of prescription products made available through our platform."
+    ],
+    "basis_source": "10-K filed 2026-02-23 (0001773751-26-000022)",
+    "business": "direct-to-consumer telehealth platform selling prescription treatments",
+    "direction": "positive",
+    "enrichment_id": "EC-ab8c9a0a0350b5",
+    "evidence": "s03.0: Policy changes (HSAs, HDHPs, ACA) and new technology give consumers more control over how they access and pay for care, enabling direct-to-consumer cash-pay access.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-10 (accession 0001773751-26-000163) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Class A common stock, $0.0001 par value per share",
+      "ticker": "HIMS"
+     }
+    ],
+    "name": "Hims & Hers Health",
+    "rationale": "Core cash-pay consumer platform for weight loss and other prescriptions; benefits directly as DTC cash-pay access scales.",
+    "registrant": "Hims & Hers Health, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 8011); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "cash-pay prescription subscriptions incl. GLP-1",
+    "revenue_model": "subscription",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-A097D4722F",
+    "ticker_hint": "HIMS"
+   },
+   {
+    "basis_check": "FILING_NAMES_OTHER",
+    "basis_note": "its revenue-source sentences name product sales \u2014 not subscription",
+    "basis_quote": [
+     "we generate revenue from visit fees as well as sales of hardware and other related services to hospital and health systems, which is reported in \u201cother revenue\u201d."
+    ],
+    "basis_source": "10-K filed 2026-02-26 (0001477449-26-000012)",
+    "business": "virtual care and telehealth services provider",
+    "direction": "positive",
+    "enrichment_id": "EC-e668a347e6f20b",
+    "evidence": "s03.0: Policy changes (HSAs, HDHPs, ACA) and new technology give consumers more control over how they access and pay for care, enabling direct-to-consumer cash-pay access.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0001477449-26-000052) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.001 per share",
+      "ticker": "TDOC"
+     }
+    ],
+    "name": "Teladoc Health",
+    "rationale": "Consumer-led cash-pay access expands telehealth prescribing and consultation volume, though much revenue remains employer/insurer-based.",
+    "registrant": "Teladoc Health, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 8011); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "virtual care consultations and consumer access",
+    "revenue_model": "subscription",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-A097D4722F",
+    "ticker_hint": "TDOC"
+   }
+  ],
+  "created_at": "2026-10-30T12:23:50.381744Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-1012d18eb04b3b",
+  "thesis_id": "TH-A097D4722F",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-8dead6e3ab71",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "healthcare",
+      "healthcare.pharma_biotech"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T11:12:47.070205Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-29",
+     "latest_article_date": "2026-09-29",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+     "status": "ACTIVE",
+     "thesis_id": "TH-A097D4722F",
+     "title": "Direct-to-consumer cash-pay access unlocks a $26B biopharma demand opportunity"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-c85f62441e9f04",
+       "C-d27c5f36479ebe",
+       "C-166ddf4a2ed62e",
+       "C-5474692f0bd4d7"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Morgan Stanley estimates the direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at peak, with the GLP-1 market already demonstrating that branded prescription products can drive substantial volume through consumer-led access pathways. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-d27c5f36479ebe",
+       "C-166ddf4a2ed62e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The question for biopharma is no longer whether direct access can work but where else it can unlock demand the reimbursement system isn't meeting; many large-cap biopharma firms now offer DTC platforms. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If consumer-led cash-pay pathways scale as the GLP-1 case suggests, large-cap biopharma firms offering direct-to-consumer platforms could capture incremental volume outside the reimbursement system, though the article does not quantify earnings impact for any named company."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c85f62441e9f04"
+       ],
+       "original_date": "2026-09-29",
+       "period": "at its peak",
+       "provenance": "FORECAST",
+       "text": "The direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at peak. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7b31e29a3e2d12"
+       ],
+       "original_date": "2026-09-29",
+       "period": "2003",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Healthcare consumerism took root with the creation of Health Savings Accounts in 2003."
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-166ddf4a2ed62e"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "A branded prescription product (GLP-1) could support roughly half its volume through a consumer-led access pathway. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5474692f0bd4d7"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The GLP-1 market offered the first large-scale proof that the direct-to-consumer model can work."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 11:12 UTC, analysed as of 2026-10-14, from a source published 2026-09-29; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-7b31e29a3e2d12",
+       "C-71258fe89c6422",
+       "C-5e1feecb6f22f7"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Policy changes (HSAs, HDHPs, ACA) and new technology give consumers more control over how they access and pay for care, enabling direct-to-consumer cash-pay access."
+     },
+     {
+      "claim_ids": [
+       "C-166ddf4a2ed62e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Consumer-led pathways can support substantial prescription volume, as GLP-1s showed roughly half their volume could come through a consumer-led pathway. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Would require this incremental volume to translate into biopharma revenue and earnings; the article does not quantify the effect per company."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-166ddf4a2ed62e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "share of volume via consumer-led pathway",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "roughly half",
+       "GLP-1"
+      ],
+      "quote": "a branded prescription product could support roughly half of its volume through a consumerled access pathway",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "roughly half"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b003",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c85f62441e9f04",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "DTC cash-pay market size",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "at its peak",
+      "qualifiers": [
+       "could reach",
+       "at its peak"
+      ],
+      "quote": "The direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at its peak.",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 26.0,
+      "value_text": "$26 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5474692f0bd4d7",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The GLP-1 market offered the first large-scale proof that the direct-to-consumer model can work.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The GLP-1 market offered the first large-scale proof that this direct-to-consumer model can work.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7b31e29a3e2d12",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Healthcare consumerism took root with the creation of Health Savings Accounts in 2003.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2003",
+      "qualifiers": [],
+      "quote": "Healthcare consumerism took root with the creation of Health Savings Accounts (HSAs) in 2003",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-01d76d0b50c37b",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "\u00a9 2026 Morgan Stanley. All rights reserved.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher of the research commentary"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-c9542d5247945b",
+       "name_as_written": "Morgan Stanley AlphaWise",
+       "other_securities": [],
+       "quote": "A Morgan Stanley AlphaWise survey",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Proprietary survey source for consumer out-of-pocket data"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "claim_ids": [
+        "C-c85f62441e9f04",
+        "C-d27c5f36479ebe"
+       ],
+       "direction": "positive",
+       "name": "biopharma",
+       "provenance": "FORECAST",
+       "quote": "In biopharma alone, the total direct-to-consumer cash-pay market could reach $26 billion at its peak."
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "claim_ids": [
+        "C-c6c7da7ab0a7f4"
+       ],
+       "direction": "positive",
+       "name": "healthcare services",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "creating potential opportunities across biopharma and healthcare services"
+      }
+     ],
+     "sectors": [
+      "biopharma",
+      "healthcare services"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-c85f62441e9f04"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "No near-term dated catalyst; thesis rests on a peak market-size estimate without a stated timeline. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-c85f62441e9f04",
+        "C-d27c5f36479ebe"
+       ],
+       "provenance": "FORECAST",
+       "text": "A multi-year structural shift toward consumer-driven healthcare access could build a $26B peak biopharma cash-pay market. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the shift can go, along with macroeconomic sensitivities and other risks."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-48CF61E45B: same value-chain node, not the same claim \u2014 a different mechanism (margin_expansion_adoption vs demand_volume_shift); a different segment (no named segment vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different segment (Neurology (Alzheimer's, dementia) vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-ABE7D2B79D: same value-chain node, not the same claim \u2014 a different segment (Genetic medicine (gene editing, gene therapy) vs Direct-to-consumer / cash-pay); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BBF8E714C1: same value-chain node, not the same claim \u2014 a different segment (Obesity and metabolic (GLP-1) vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-C2BEC5879A: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift); a different segment (no named segment vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 3 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Slowing cash-pay adoption in future AlphaWise surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Payers reasserting control over access reducing DTC volumes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macroeconomic weakness curbing out-of-pocket spending"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the healthcare consumerism shift can go, along with macroeconomic sensitivities and other risks. (scope: Applies to the overall consumer-driven healthcare access trend, including out-of-pocket cash-pay demand which is sensitive to macroeconomic conditions.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether named biopharma companies' earnings or valuations reflect the DTC opportunity"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The timeline over which the $26B peak would be reached"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the GLP-1 'roughly half' volume figure generalizes to other drug categories (association, not demonstrated causation)"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence DTC cash-pay volumes plateau below the $26B estimate"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macroeconomic weakness reducing consumer out-of-pocket spend"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify which large-cap biopharma companies have launched DTC cash-pay platforms and assess what share of revenue the article's $26B peak could represent for them."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Rising cash-pay share in subsequent AlphaWise surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Named biopharma companies reporting growing DTC platform volumes"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-8dead6e3ab71",
+      "authors": [
+       "Erin Wright"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-c85f62441e9f04",
+       "C-d27c5f36479ebe",
+       "C-166ddf4a2ed62e",
+       "C-5474692f0bd4d7",
+       "C-7b31e29a3e2d12",
+       "C-20b368b85af2e8"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-29T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Consumerism: Patients Drive a $26B Opportunity",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-consumerism-drives-26-b-opportunity-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "472a89b7189d3d57c709b74cd5b67731a4a9a2e49693ecfd0c0756229ad2c2ce",
+   "created_at": "2026-10-21T10:37:13.329719Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; verification hold)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-c85f62441e9f04",
+       "C-d27c5f36479ebe",
+       "C-7b31e29a3e2d12"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label longer_term (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: biopharma, sector: healthcare services",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-20b368b85af2e8"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 2 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 1 decision-bearing sentence(s): s01.1",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_window",
+      "kind": "missing_data",
+      "text": "near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-A097D4722F",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s01.1 \u2014 The line's 'many large-cap firms now offer DTC platforms' and its 'no longer whether' framing are not in the source; its stated size, proof and volume share restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "healthcare",
+      "healthcare.pharma_biotech"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T11:12:47.070205Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-29",
+     "latest_article_date": "2026-09-29",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+     "status": "ACTIVE",
+     "thesis_id": "TH-A097D4722F",
+     "title": "Direct-to-consumer cash-pay access unlocks a $26B biopharma demand opportunity"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-c85f62441e9f04",
+       "C-d27c5f36479ebe",
+       "C-166ddf4a2ed62e",
+       "C-5474692f0bd4d7"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Morgan Stanley estimates the direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at peak, with the GLP-1 market already demonstrating that branded prescription products can drive substantial volume through consumer-led access pathways. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-d27c5f36479ebe",
+       "C-5474692f0bd4d7",
+       "C-166ddf4a2ed62e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "In biopharma alone the direct-to-consumer cash-pay market could reach $26 billion at its peak; GLP-1s gave the first large-scale proof the model works, and a branded product could support roughly half its volume through a consumer-led pathway. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If consumer-led cash-pay pathways scale as the GLP-1 case suggests, large-cap biopharma firms offering direct-to-consumer platforms could capture incremental volume outside the reimbursement system, though the article does not quantify earnings impact for any named company."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c85f62441e9f04"
+       ],
+       "original_date": "2026-09-29",
+       "period": "at its peak",
+       "provenance": "FORECAST",
+       "text": "The direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at peak. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7b31e29a3e2d12"
+       ],
+       "original_date": "2026-09-29",
+       "period": "2003",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Healthcare consumerism took root with the creation of Health Savings Accounts in 2003."
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-166ddf4a2ed62e"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "A branded prescription product (GLP-1) could support roughly half its volume through a consumer-led access pathway. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-5474692f0bd4d7"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "The GLP-1 market offered the first large-scale proof that the direct-to-consumer model can work."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 11:12 UTC, analysed as of 2026-10-14, from a source published 2026-09-29; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-7b31e29a3e2d12",
+       "C-71258fe89c6422",
+       "C-5e1feecb6f22f7"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Policy changes (HSAs, HDHPs, ACA) and new technology give consumers more control over how they access and pay for care, enabling direct-to-consumer cash-pay access."
+     },
+     {
+      "claim_ids": [
+       "C-166ddf4a2ed62e"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Consumer-led pathways can support substantial prescription volume, as GLP-1s showed roughly half their volume could come through a consumer-led pathway. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Would require this incremental volume to translate into biopharma revenue and earnings; the article does not quantify the effect per company."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-166ddf4a2ed62e",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "share of volume via consumer-led pathway",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "roughly half",
+       "GLP-1"
+      ],
+      "quote": "a branded prescription product could support roughly half of its volume through a consumerled access pathway",
+      "role": "supports",
+      "unit": "%",
+      "value": null,
+      "value_text": "roughly half"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b003",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c85f62441e9f04",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "DTC cash-pay market size",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "at its peak",
+      "qualifiers": [
+       "could reach",
+       "at its peak"
+      ],
+      "quote": "The direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at its peak.",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 26.0,
+      "value_text": "$26 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-5474692f0bd4d7",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The GLP-1 market offered the first large-scale proof that the direct-to-consumer model can work.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The GLP-1 market offered the first large-scale proof that this direct-to-consumer model can work.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7b31e29a3e2d12",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Healthcare consumerism took root with the creation of Health Savings Accounts in 2003.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2003",
+      "qualifiers": [],
+      "quote": "Healthcare consumerism took root with the creation of Health Savings Accounts (HSAs) in 2003",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-01d76d0b50c37b",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "\u00a9 2026 Morgan Stanley. All rights reserved.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher of the research commentary"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-c9542d5247945b",
+       "name_as_written": "Morgan Stanley AlphaWise",
+       "other_securities": [],
+       "quote": "A Morgan Stanley AlphaWise survey",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Proprietary survey source for consumer out-of-pocket data"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "claim_ids": [
+        "C-c85f62441e9f04",
+        "C-d27c5f36479ebe"
+       ],
+       "direction": "positive",
+       "name": "biopharma",
+       "provenance": "FORECAST",
+       "quote": "In biopharma alone, the total direct-to-consumer cash-pay market could reach $26 billion at its peak."
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "claim_ids": [
+        "C-c6c7da7ab0a7f4"
+       ],
+       "direction": "positive",
+       "name": "healthcare services",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "creating potential opportunities across biopharma and healthcare services"
+      }
+     ],
+     "sectors": [
+      "biopharma",
+      "healthcare services"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-c85f62441e9f04"
+       ],
+       "provenance": "MODEL INFERENCE",
+       "text": "No near-term dated catalyst; thesis rests on a peak market-size estimate without a stated timeline. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-c85f62441e9f04",
+        "C-d27c5f36479ebe"
+       ],
+       "provenance": "FORECAST",
+       "text": "A multi-year structural shift toward consumer-driven healthcare access could build a $26B peak biopharma cash-pay market. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the shift can go, along with macroeconomic sensitivities and other risks."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-48CF61E45B: same value-chain node, not the same claim \u2014 a different mechanism (margin_expansion_adoption vs demand_volume_shift); a different segment (no named segment vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different segment (Neurology (Alzheimer's, dementia) vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-ABE7D2B79D: same value-chain node, not the same claim \u2014 a different segment (Genetic medicine (gene editing, gene therapy) vs Direct-to-consumer / cash-pay); no overlapping timeframe \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-BBF8E714C1: same value-chain node, not the same claim \u2014 a different segment (Obesity and metabolic (GLP-1) vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 RELATED, not a contradiction \u2014 TH-C2BEC5879A: the opposite direction on the same value-chain node, but not the same claim \u2014 a different mechanism (competitive_share_shift vs demand_volume_shift); a different segment (no named segment vs Direct-to-consumer / cash-pay); a timeframe only one of them states \u2014 related, never used as counter-evidence"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 3 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Slowing cash-pay adoption in future AlphaWise surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Payers reasserting control over access reducing DTC volumes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macroeconomic weakness curbing out-of-pocket spending"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the healthcare consumerism shift can go, along with macroeconomic sensitivities and other risks. (scope: Applies to the overall consumer-driven healthcare access trend, including out-of-pocket cash-pay demand which is sensitive to macroeconomic conditions.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether named biopharma companies' earnings or valuations reflect the DTC opportunity"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "The timeline over which the $26B peak would be reached"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the GLP-1 'roughly half' volume figure generalizes to other drug categories (association, not demonstrated causation)"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence DTC cash-pay volumes plateau below the $26B estimate"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macroeconomic weakness reducing consumer out-of-pocket spend"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify which large-cap biopharma companies have launched DTC cash-pay platforms and assess what share of revenue the article's $26B peak could represent for them."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Rising cash-pay share in subsequent AlphaWise surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Named biopharma companies reporting growing DTC platform volumes"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-8dead6e3ab71",
+      "authors": [
+       "Erin Wright"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-c85f62441e9f04",
+       "C-d27c5f36479ebe",
+       "C-166ddf4a2ed62e",
+       "C-5474692f0bd4d7",
+       "C-7b31e29a3e2d12",
+       "C-20b368b85af2e8"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-29T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Consumerism: Patients Drive a $26B Opportunity",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-consumerism-drives-26-b-opportunity-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "9221ede79e9904fe231dca4757bb516680ebfcce1a8a0a623c8917970768100c",
+   "created_at": "2026-10-22T07:42:55.382707Z",
+   "diffs": [
+    {
+     "change_class": "no material change",
+     "claim_ids": [
+      "C-c85f62441e9f04",
+      "C-d27c5f36479ebe",
+      "C-166ddf4a2ed62e",
+      "C-5474692f0bd4d7",
+      "C-d27c5f36479ebe",
+      "C-5474692f0bd4d7",
+      "C-166ddf4a2ed62e"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "If consumer-led cash-pay pathways scale as the GLP-1 case suggests, large-cap biopharma firms offering direct-to-consumer platforms could capture incremental volume outside the reimbursement system, though the article does not quantify earnings impact for any named company.",
+     "note": "",
+     "old": "If consumer-led cash-pay pathways scale as the GLP-1 case suggests, large-cap biopharma firms offering direct-to-consumer platforms could capture incremental volume outside the reimbursement system, though the article does not quantify earnings impact for any named company."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": "472a89b7189d3d57c709b74cd5b67731a4a9a2e49693ecfd0c0756229ad2c2ce",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-7b31e29a3e2d12",
+       "C-c85f62441e9f04",
+       "C-d27c5f36479ebe"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label longer_term (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: biopharma, sector: healthcare services",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-20b368b85af2e8"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 2 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 1 decision-bearing sentence(s): s01.1",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it; no verified dislocation or catalyst; verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_window",
+      "kind": "missing_data",
+      "text": "near-term relevance not shown by any dated window \u2014 timing UNKNOWN in the source evidence; a review should establish it"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-A097D4722F",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 8,
+ "other_cited_evidence": [
+  "C-d27c5f36479ebe",
+  "C-71258fe89c6422",
+  "C-5e1feecb6f22f7",
+  "C-c6c7da7ab0a7f4",
+  "C-20b368b85af2e8"
+ ],
+ "review_carried": {},
+ "review_dismissed": {
+  "s01.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-c85f62441e9f04",
+    "C-d27c5f36479ebe",
+    "C-166ddf4a2ed62e",
+    "C-5474692f0bd4d7"
+   ],
+   "created_at": "2026-10-22T07:43:07.757598Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s01.0: The attribution to 'Morgan Stanley' is not in the cited spans, and the claim adds 'branded prescription products can drive substantial volume' and 'GLP-1 market already demonstrating.' The $26B and GLP-1 proof spans support most of this; the 'roughly half' and GLP-1 proof-of-concept spans back the volume point. However the explicit Morgan Stanley attribution is unsourced in cited spans. Still, content is largely covered. | 'Morgan Stanley estimates the direct-to-consumer cash-pay opportunity in biopharma could reach $26 bi'",
+   "finding_key": "F-ddc676b5c139",
+   "finding_version": 2,
+   "line_text": "Morgan Stanley estimates the direct-to-consumer cash-pay opportunity in biopharma could reach $26 billion at peak, with the GLP-1 market already demonstrating that branded prescription products can drive substantial volume through consumer-led access pathways. \u27e8cited figures: forecast; approximate\u27e9",
+   "reason": "The review finds the content largely covered; the 'Morgan Stanley' attribution is the publisher of the article itself. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-bc1a72fd63f0",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074307Z-review-2",
+   "sentence_id": "s01.0",
+   "supersedes": [],
+   "thesis_id": "TH-A097D4722F",
+   "version": 2
+  },
+  "s03.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-7b31e29a3e2d12",
+    "C-71258fe89c6422",
+    "C-5e1feecb6f22f7"
+   ],
+   "created_at": "2026-10-22T07:43:08.487758Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s03.0: The cited spans cover HSAs (2003), ACA (2010), and technology (wearables, diagnostics, etc.). However 'HDHPs' is not mentioned in any cited span. Otherwise well supported. | 'Policy changes (HSAs, HDHPs, ACA) and new technology give consumers more control over how they acces'",
+   "finding_key": "F-8c7ac164dc6b",
+   "finding_version": 2,
+   "line_text": "Policy changes (HSAs, HDHPs, ACA) and new technology give consumers more control over how they access and pay for care, enabling direct-to-consumer cash-pay access.",
+   "reason": "The source says it: 'Health Savings Accounts (HSAs) in 2003, followed by the growth of high-deductible health plans (HDHPs)'. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-8192661e3925",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074308Z-review",
+   "sentence_id": "s03.0",
+   "supersedes": [],
+   "thesis_id": "TH-A097D4722F",
+   "version": 2
+  }
+ },
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.0": "The attribution to 'Morgan Stanley' is not in the cited spans, and the claim adds 'branded prescription products can drive substantial volume' and 'GLP-1 market already demonstrating.' The $26B and GLP-1 proof spans support most of this; the 'roughly half' and GLP-1 proof-of-concept spans back the volume point. However the explicit Morgan Stanley attribution is unsourced in cited spans. Still, content is largely covered.",
+  "s03.0": "The cited spans cover HSAs (2003), ACA (2010), and technology (wearables, diagnostics, etc.). However 'HDHPs' is not mentioned in any cited span. Otherwise well supported."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Timing \u2014 no dated window inside the next 2-4 quarters in the evidence.",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Verification \u2014 on hold until a failed check is resolved."
+ ],
+ "withheld_sentences": {}
+}

@@ -1,0 +1,2218 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-21",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.optical_networking"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:22:56.263932Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-13",
+   "latest_article_date": "2026-10-13",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Optical interconnects, transceivers and datacenter networking",
+   "status": "ACTIVE",
+   "thesis_id": "TH-921772E86C",
+   "title": "CPO mass production shifts value to integrated optical-electrical test platform suppliers"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-e5cc0fdc7c2143",
+     "C-b59b95affce9ba",
+     "C-3f01a7042c78ab"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce says growing AI data center high-speed transmission demand is accelerating CPO toward mass production, raising demand for integrated optical-electrical test equipment and software, with 2027 pivotal and 2028 critical for large-scale production readiness. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-8b7a6aefc8de73",
+     "C-be38d83cda0880"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "TrendForce expects suppliers that integrate test equipment and provide production-scale services to strengthen their strategic positions as customers emphasize testing efficiency, quality and cost."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Suppliers able to integrate electrical and optical test on a single platform (ATE leaders, Taiwanese modules/interfaces, OSAT) could gain CPO testing share, but the article gives no revenue, margin or earnings quantification."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-f469d4818f8bc4"
+     ],
+     "original_date": "2026-10-13",
+     "period": "2025",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-efdfd32558ded0"
+     ],
+     "original_date": "2026-10-13",
+     "period": "September 2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0183ab791418b5"
+     ],
+     "original_date": "2026-10-13",
+     "period": "2026",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b59b95affce9ba"
+     ],
+     "original_date": "2026-10-13",
+     "period": "2027",
+     "provenance": "FORECAST",
+     "text": "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-2305ad3d030b6c"
+     ],
+     "original_date": "2026-10-13",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "A complete test of a single PIC can still take over 100 seconds."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-3f01a7042c78ab"
+     ],
+     "original_date": "2026-10-13",
+     "period": "2028",
+     "provenance": "FORECAST",
+     "text": "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 14 pieces of evidence from A-0b9c4a3220b7 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:22 UTC, analysed as of 2026-10-21, from a source published 2026-10-13; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-e5cc0fdc7c2143",
+     "C-72e0056978231a"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "AI data center high-speed transmission demand accelerates CPO toward mass production, requiring coordinated electrical and optical testing."
+   },
+   {
+    "claim_ids": [
+     "C-8b7a6aefc8de73"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "Demand for integrated test equipment and software rises; platform-integration suppliers would see higher equipment volumes, though the article does not quantify revenue or earnings."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "UNKNOWN",
+    "step": "listed_earnings",
+    "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2305ad3d030b6c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "PIC full test time",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "over"
+    ],
+    "quote": "a complete test of a single photonic integrated circuit (PIC) can still take over 100 seconds",
+    "role": "supports",
+    "unit": "seconds",
+    "value": 100.0,
+    "value_text": "over 100 seconds"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b013",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-bbcb177b28d7b1",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "CPO testing supply chain segments",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "TrendForce identifies seven major segments in the CPO testing supply chain",
+    "role": "supports",
+    "unit": "segments",
+    "value": 7.0,
+    "value_text": "seven"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b021",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3f01a7042c78ab",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2028",
+    "qualifiers": [],
+    "quote": "2028 will serve as a critical period for validating readiness for large-scale mass production",
+    "role": "catalyst",
+    "unit": null,
+    "value": 2028.0,
+    "value_text": "2028"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b59b95affce9ba",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027",
+    "qualifiers": [
+     "pivotal year"
+    ],
+    "quote": "TrendForce expects 2027 to be a pivotal year for the convergence of CPO testing architectures.",
+    "role": "catalyst",
+    "unit": null,
+    "value": 2027.0,
+    "value_text": "2027"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0183ab791418b5",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [],
+    "quote": "The partners subsequently demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-09527de2fa37bb",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "A key CPO mass-production challenge is precise optical coupling, which depends on alignment module suppliers with multi-axis control.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "One key challenge in mass production is ensuring precise optical coupling, which depends on alignment module suppliers equipped with multi-axis control.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-48b7f7865ed63c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The mass-production bottleneck is shifting from alignment accuracy to testing speed.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the bottleneck in mass production is now shifting from alignment accuracy to testing speed",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b010",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-72e0056978231a",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Optical-electrical test integration relies on unified software plus optical path switching and instrument sharing across test stations to improve equipment utilization and reduce cost.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The key to optical-electrical test integration lies in using unified software to coordinate electrical and optical measurements, supported by optical path switching and instrument sharing across multiple test stations to improve equipment utilization.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b021",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8b7a6aefc8de73",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Suppliers able to integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Suppliers that can integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions in the supply chain",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-be38d83cda0880",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Industry value is shifting from individual instrument performance to the ability to integrate complete production testing platforms.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "industry value is gradually shifting from individual instrument performance to the ability to integrate complete production testing platforms",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e5cc0fdc7c2143",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Growing demand for high-speed transmission in AI data centers is accelerating CPO's transition toward mass production.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "growing demand for high-speed transmission in AI data centers is accelerating the transition of co-packaged optics (CPO) toward mass production",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-efdfd32558ded0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "September 2026",
+    "qualifiers": [],
+    "quote": "In September 2026, the company announced a collaboration with VIAVI and SENKO to combine automated testing, optical measurement, and detachable optical interfaces",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b009",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f3c0412bd8c73e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "CPO testing currently requires multiple separate instruments (laser sources, optical switches, optical power meters, optical spectrum analyzers).",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "CPO testing currently requires multiple instruments, including laser sources, optical switches, optical power meters, and optical spectrum analyzers.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-0b9c4a3220b7",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f469d4818f8bc4",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2025",
+    "qualifiers": [],
+    "quote": "Teradyne acquired Quantifi Photonics in 2025 to strengthen its optical measurement capabilities",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-92bb1df0b767df",
+     "name_as_written": "TrendForce",
+     "other_securities": [],
+     "quote": "TrendForce",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Research publisher and author of the report."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7ad4c4a5c0a6d6",
+     "name_as_written": "Quantifi Photonics",
+     "other_securities": [],
+     "quote": "Quantifi Photonics",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Optical measurement company acquired by Teradyne."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-1ae8eda71124d2",
+     "name_as_written": "RoboTechnik",
+     "other_securities": [],
+     "quote": "RoboTechnik completed its full acquisition of Germany-based ficonTEC in 2025",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Acquirer of ficonTEC, entering optoelectronic packaging and test equipment."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-766440dcff4797",
+     "name_as_written": "ficonTEC",
+     "other_securities": [],
+     "quote": "Germany-based ficonTEC",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "German optoelectronic packaging and test equipment company acquired by RoboTechnik."
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": "0000097210",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-31 (accession 0001193125-26-327715) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock",
+       "ticker": "TER"
+      }
+     ],
+     "mention_id": "M-fbbafadbfe65d3",
+     "name_as_written": "Teradyne",
+     "other_securities": [],
+     "quote": "Teradyne acquired Quantifi Photonics in 2025",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "potential_beneficiary",
+     "role_detail": "Traditional ATE supplier expanding into CPO testing via acquisition."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": "0001158838",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-4a30c8ed3c40fb",
+     "name_as_written": "Advantest",
+     "other_securities": [],
+     "quote": "Advantest is integrating optical instruments",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "ATE supplier integrating optical instruments and partnering for CPO testing."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": "0000912093",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-K filed 2026-08-13 (accession 0001628280-26-056765) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, par value of $0.001 per share",
+       "ticker": "VIAV"
+      }
+     ],
+     "mention_id": "M-4335c69c98fa63",
+     "name_as_written": "VIAVI",
+     "other_securities": [],
+     "quote": "a collaboration with VIAVI and SENKO",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "supplier",
+     "role_detail": "Partner in Advantest's CPO testing collaboration (optical measurement)."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-b9bdf968a92371",
+     "name_as_written": "SENKO",
+     "other_securities": [],
+     "quote": "VIAVI and SENKO",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "supplier",
+     "role_detail": "Partner providing detachable optical interfaces in the collaboration."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-092915eab31f65",
+     "name_as_written": "GMT Global",
+     "other_securities": [],
+     "quote": "GMT Global provides multi-axis optical coupling and alignment modules",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Taiwanese supplier of optical coupling and alignment modules."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-a63c27677da197",
+     "name_as_written": "MPI",
+     "other_securities": [],
+     "quote": "MPI offers probing equipment and optical alignment solutions",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Taiwanese supplier of probing equipment and optical alignment solutions."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-4c5066d44859f7",
+     "name_as_written": "WinWay",
+     "other_securities": [],
+     "quote": "WinWay specializes in test interfaces",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Taiwanese supplier specializing in test interfaces."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-0662c341e6d89d",
+     "name_as_written": "Chroma",
+     "other_securities": [],
+     "quote": "Chroma has capabilities in automated testing and burn-in testing",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Taiwanese supplier with automated testing and burn-in capabilities."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-55588683ce3cc3",
+     "name_as_written": "MSS",
+     "other_securities": [],
+     "quote": "MSS, MA-tek, and iST",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Third-party testing provider."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-73ab6099ca50ce",
+     "name_as_written": "MA-tek",
+     "other_securities": [],
+     "quote": "MSS, MA-tek, and iST",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Third-party testing and materials analysis provider."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-7405de578551a2",
+     "name_as_written": "iST",
+     "other_securities": [],
+     "quote": "MSS, MA-tek, and iST",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Third-party testing provider (failure analysis, reliability)."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-bb20aa1de08c7a",
+     "name_as_written": "ASE",
+     "other_securities": [],
+     "quote": "Packaging and testing providers such as ASE",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Packaging and testing provider bridging packaging and production testing."
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-cfd0bea4060ece",
+     "name_as_written": "Semight Instruments",
+     "other_securities": [],
+     "quote": "Semight Instruments has introduced a 65 GHz sampling oscilloscope",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Chinese supplier making progress in high-speed measurement."
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "claim_ids": [
+      "C-be38d83cda0880"
+     ],
+     "direction": "positive",
+     "name": "ATE",
+     "provenance": "SOURCE OPINION",
+     "quote": "ATE"
+    },
+    {
+     "article_id": "A-0b9c4a3220b7",
+     "claim_ids": [
+      "C-bbcb177b28d7b1"
+     ],
+     "direction": "positive",
+     "name": "core optical coupling and alignment modules",
+     "provenance": "SOURCE OPINION",
+     "quote": "core optical coupling and alignment modules"
+    }
+   ],
+   "sectors": [
+    "Semiconductors",
+    "Semiconductor test equipment",
+    "CPO testing supply chain"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027 convergence year; 2028 validation for large-scale mass production [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-efdfd32558ded0",
+      "C-0183ab791418b5",
+      "C-3f01a7042c78ab",
+      "C-b59b95affce9ba"
+     ],
+     "provenance": "FORECAST",
+     "text": "September 2026 Advantest-VIAVI-SENKO collaboration and ECOC 2026 demonstration show near-term platform integration momentum, but mass production readiness is a 2027-2028 story. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-be38d83cda0880"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Industry value is gradually shifting from individual instrument performance to integrated production testing platforms."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-ff1e5eb7255780",
+      "C-204e3b6371f409"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "It remains uncertain whether optical module testing experience extends to complete CPO mass production platforms; customer adoption, test efficiency and long-term stability are still to be proven."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 5 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-ff1e5eb7255780"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China still relies heavily on imports for high-end measurement instruments."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CPO mass production slips beyond 2028"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Test times fail to fall enough to lower per-unit costs"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Customers favor fragmented instrument suppliers over integrated platforms"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-ff1e5eb7255780",
+      "C-e0647dc4945425"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "China relies heavily on imports for high-end measurement instruments, and it is uncertain whether optical module testing experience extends to full CPO mass production platforms; RoboTechnik's acquisition of ficonTEC may influence European/U.S. procurement decisions. (scope: CPO testing supply chain execution and geopolitical/procurement uncertainty; no quantified earnings impact.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether any named supplier's revenue, margins or earnings reflect CPO testing demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether optical module testing experience extends to full CPO mass-production platforms"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which suppliers actually capture the integration share"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether listed valuations already price this shift"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CPO mass production delayed beyond 2028"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Integration advantage fails to materialize into orders"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify which listed ATE, test interface and OSAT names have disclosed CPO testing revenue or order pipelines and compare to current valuations."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Named suppliers disclose CPO testing orders or revenue"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CSP CPO adoption timelines confirmed for 2027"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "industry_data_report",
+    "article_id": "A-0b9c4a3220b7",
+    "authors": [
+     "TrendForce (organization (as stated))"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-b59b95affce9ba",
+     "C-3f01a7042c78ab",
+     "C-e5cc0fdc7c2143",
+     "C-2305ad3d030b6c",
+     "C-48b7f7865ed63c",
+     "C-bbcb177b28d7b1",
+     "C-be38d83cda0880",
+     "C-8b7a6aefc8de73",
+     "C-09527de2fa37bb",
+     "C-f3c0412bd8c73e",
+     "C-72e0056978231a",
+     "C-f469d4818f8bc4",
+     "C-efdfd32558ded0",
+     "C-0183ab791418b5",
+     "C-ff1e5eb7255780",
+     "C-e0647dc4945425"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-13T16:20:02+08:00",
+    "published_status": "KNOWN",
+    "publisher": "TrendForce",
+    "retrieval_state": "FULL",
+    "title": "Integrated Optical-Electrical Testing Platforms Become Key to CPO Mass Production, Reshaping the Test Equipment Supply Chain, Says TrendForce",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.trendforce.com/presscenter/news/20261013-13267.html",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-21",
+  "candidates": [
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales",
+    "basis_quote": [
+     "We primarily generate revenue from the sale of products (hardware and/or software), services, or a combination thereof."
+    ],
+    "basis_source": "10-K filed 2025-12-17 (0001601046-25-000127)",
+    "business": "electronic test and measurement equipment and software",
+    "direction": "positive",
+    "enrichment_id": "EC-00ea8207d253c3",
+    "evidence": "s03.1: Demand for integrated test equipment and software rises; platform-integration suppliers would see higher equipment volumes, though the article does not quantify revenue or earnings.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-09-02 (accession 0001601046-26-000036) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01 per share",
+      "ticker": "KEYS"
+     }
+    ],
+    "name": "Keysight Technologies",
+    "rationale": "Supplies high-speed electrical and optical test instruments; CPO mass production raises demand for integrated test platforms and measurement software.",
+    "registrant": "Keysight Technologies, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3823); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "electronic and optical test instruments and software",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-921772E86C",
+    "ticker_hint": "KEYS"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-17 (0001437749-26-004339)",
+    "business": "semiconductor test handling and interface equipment",
+    "direction": "positive",
+    "enrichment_id": "EC-19432683588807",
+    "evidence": "s03.1: Demand for integrated test equipment and software rises; platform-integration suppliers would see higher equipment volumes, though the article does not quantify revenue or earnings.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-31 (accession 0001437749-26-025144) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $1.00 par value",
+      "ticker": "COHU"
+     }
+    ],
+    "name": "Cohu",
+    "rationale": "Provides test handlers and contactors/interfaces; rising CPO testing volumes could lift demand for integrated test cell and interface products.",
+    "registrant": "COHU INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3825); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "test handlers, contactors and interface products",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-921772E86C",
+    "ticker_hint": "COHU"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-20 (0001039399-26-000009)",
+    "business": "semiconductor probe cards and test systems",
+    "direction": "positive",
+    "enrichment_id": "EC-dbb3a5e7aa17dc",
+    "evidence": "s03.1: Demand for integrated test equipment and software rises; platform-integration suppliers would see higher equipment volumes, though the article does not quantify revenue or earnings.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-04 (accession 0001039399-26-000033) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, $0.001 par value",
+      "ticker": "FORM"
+     }
+    ],
+    "name": "FormFactor",
+    "rationale": "Supplies probe cards and photonics test systems; CPO wafer-level optical-electrical testing could expand demand for its interface products.",
+    "registrant": "FORMFACTOR INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "probe cards and photonics test systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-921772E86C",
+    "ticker_hint": "FORM"
+   },
+   {
+    "basis_check": "FILING_NAMES_OTHER",
+    "basis_note": "its revenue-source sentences name licences and maintenance \u2014 not product sales",
+    "basis_quote": [
+     "we generate revenues from providing maintenance and support services for our products."
+    ],
+    "basis_source": "20-F filed 2026-03-19 (0001178913-26-001561)",
+    "business": "inspection and metrology equipment for semiconductors",
+    "direction": "positive",
+    "enrichment_id": "EC-a58788947037fd",
+    "evidence": "s03.1: Demand for integrated test equipment and software rises; platform-integration suppliers would see higher equipment volumes, though the article does not quantify revenue or earnings.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Camtek",
+    "rationale": "Supplies inspection/metrology for advanced packaging; CPO optical-electrical co-packaging raises demand for alignment and quality inspection volumes.",
+    "registrant": "CAMTEK LTD",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['CAMT'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "advanced-packaging inspection and metrology systems",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-921772E86C",
+    "ticker_hint": "CAMT"
+   }
+  ],
+  "created_at": "2026-10-21T08:25:16.299181Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261021T080508Z-scan",
+  "set_id": "ES-de1942bf2e9cd7",
+  "thesis_id": "TH-921772E86C",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-0b9c4a3220b7",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.optical_networking"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:22:56.263932Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-13",
+     "latest_article_date": "2026-10-13",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Optical interconnects, transceivers and datacenter networking",
+     "status": "ACTIVE",
+     "thesis_id": "TH-921772E86C",
+     "title": "CPO mass production shifts value to integrated optical-electrical test platform suppliers"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-e5cc0fdc7c2143",
+       "C-b59b95affce9ba",
+       "C-3f01a7042c78ab"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce says growing AI data center high-speed transmission demand is accelerating CPO toward mass production, raising demand for integrated optical-electrical test equipment and software, with 2027 pivotal and 2028 critical for large-scale production readiness. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-8b7a6aefc8de73",
+       "C-be38d83cda0880"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "TrendForce expects suppliers that integrate test equipment and provide production-scale services to strengthen their strategic positions as customers emphasize testing efficiency, quality and cost."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Suppliers able to integrate electrical and optical test on a single platform (ATE leaders, Taiwanese modules/interfaces, OSAT) could gain CPO testing share, but the article gives no revenue, margin or earnings quantification."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f469d4818f8bc4"
+       ],
+       "original_date": "2026-10-13",
+       "period": "2025",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-efdfd32558ded0"
+       ],
+       "original_date": "2026-10-13",
+       "period": "September 2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0183ab791418b5"
+       ],
+       "original_date": "2026-10-13",
+       "period": "2026",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b59b95affce9ba"
+       ],
+       "original_date": "2026-10-13",
+       "period": "2027",
+       "provenance": "FORECAST",
+       "text": "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-2305ad3d030b6c"
+       ],
+       "original_date": "2026-10-13",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "A complete test of a single PIC can still take over 100 seconds."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-3f01a7042c78ab"
+       ],
+       "original_date": "2026-10-13",
+       "period": "2028",
+       "provenance": "FORECAST",
+       "text": "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 14 pieces of evidence from A-0b9c4a3220b7 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:22 UTC, analysed as of 2026-10-21, from a source published 2026-10-13; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-e5cc0fdc7c2143",
+       "C-72e0056978231a"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "AI data center high-speed transmission demand accelerates CPO toward mass production, requiring coordinated electrical and optical testing."
+     },
+     {
+      "claim_ids": [
+       "C-8b7a6aefc8de73"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "Demand for integrated test equipment and software rises; platform-integration suppliers would see higher equipment volumes, though the article does not quantify revenue or earnings."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "UNKNOWN",
+      "step": "listed_earnings",
+      "text": "UNKNOWN \u2014 the source does not quantify an effect on listed-company earnings; any earnings impact is a hypothesis to test, not a finding"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2305ad3d030b6c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "PIC full test time",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "over"
+      ],
+      "quote": "a complete test of a single photonic integrated circuit (PIC) can still take over 100 seconds",
+      "role": "supports",
+      "unit": "seconds",
+      "value": 100.0,
+      "value_text": "over 100 seconds"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b013",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-bbcb177b28d7b1",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "CPO testing supply chain segments",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "TrendForce identifies seven major segments in the CPO testing supply chain",
+      "role": "supports",
+      "unit": "segments",
+      "value": 7.0,
+      "value_text": "seven"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3f01a7042c78ab",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "TrendForce expects 2028 to be a critical period for validating readiness for large-scale CPO mass production.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2028",
+      "qualifiers": [],
+      "quote": "2028 will serve as a critical period for validating readiness for large-scale mass production",
+      "role": "catalyst",
+      "unit": null,
+      "value": 2028.0,
+      "value_text": "2028"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b59b95affce9ba",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "TrendForce expects 2027 to be a pivotal year for convergence of CPO testing architectures.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027",
+      "qualifiers": [
+       "pivotal year"
+      ],
+      "quote": "TrendForce expects 2027 to be a pivotal year for the convergence of CPO testing architectures.",
+      "role": "catalyst",
+      "unit": null,
+      "value": 2027.0,
+      "value_text": "2027"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0183ab791418b5",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The partners demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [],
+      "quote": "The partners subsequently demonstrated a simulated production testing workflow for CPO modules at ECOC 2026.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-09527de2fa37bb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "A key CPO mass-production challenge is precise optical coupling, which depends on alignment module suppliers with multi-axis control.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "One key challenge in mass production is ensuring precise optical coupling, which depends on alignment module suppliers equipped with multi-axis control.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-48b7f7865ed63c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The mass-production bottleneck is shifting from alignment accuracy to testing speed.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the bottleneck in mass production is now shifting from alignment accuracy to testing speed",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b010",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-72e0056978231a",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Optical-electrical test integration relies on unified software plus optical path switching and instrument sharing across test stations to improve equipment utilization and reduce cost.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The key to optical-electrical test integration lies in using unified software to coordinate electrical and optical measurements, supported by optical path switching and instrument sharing across multiple test stations to improve equipment utilization.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b021",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8b7a6aefc8de73",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Suppliers able to integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Suppliers that can integrate different test equipment and provide production-scale services are expected to strengthen their strategic positions in the supply chain",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-be38d83cda0880",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Industry value is shifting from individual instrument performance to the ability to integrate complete production testing platforms.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "industry value is gradually shifting from individual instrument performance to the ability to integrate complete production testing platforms",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e5cc0fdc7c2143",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Growing demand for high-speed transmission in AI data centers is accelerating CPO's transition toward mass production.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "growing demand for high-speed transmission in AI data centers is accelerating the transition of co-packaged optics (CPO) toward mass production",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-efdfd32558ded0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "In September 2026 Advantest announced a collaboration with VIAVI and SENKO combining automated testing, optical measurement and detachable optical interfaces.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September 2026",
+      "qualifiers": [],
+      "quote": "In September 2026, the company announced a collaboration with VIAVI and SENKO to combine automated testing, optical measurement, and detachable optical interfaces",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b009",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f3c0412bd8c73e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "CPO testing currently requires multiple separate instruments (laser sources, optical switches, optical power meters, optical spectrum analyzers).",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "CPO testing currently requires multiple instruments, including laser sources, optical switches, optical power meters, and optical spectrum analyzers.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-0b9c4a3220b7",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f469d4818f8bc4",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Teradyne acquired Quantifi Photonics in 2025 to strengthen optical measurement capabilities.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2025",
+      "qualifiers": [],
+      "quote": "Teradyne acquired Quantifi Photonics in 2025 to strengthen its optical measurement capabilities",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-92bb1df0b767df",
+       "name_as_written": "TrendForce",
+       "other_securities": [],
+       "quote": "TrendForce",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Research publisher and author of the report."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7ad4c4a5c0a6d6",
+       "name_as_written": "Quantifi Photonics",
+       "other_securities": [],
+       "quote": "Quantifi Photonics",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Optical measurement company acquired by Teradyne."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-1ae8eda71124d2",
+       "name_as_written": "RoboTechnik",
+       "other_securities": [],
+       "quote": "RoboTechnik completed its full acquisition of Germany-based ficonTEC in 2025",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Acquirer of ficonTEC, entering optoelectronic packaging and test equipment."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-766440dcff4797",
+       "name_as_written": "ficonTEC",
+       "other_securities": [],
+       "quote": "Germany-based ficonTEC",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "German optoelectronic packaging and test equipment company acquired by RoboTechnik."
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": "0000097210",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-31 (accession 0001193125-26-327715) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock",
+         "ticker": "TER"
+        }
+       ],
+       "mention_id": "M-fbbafadbfe65d3",
+       "name_as_written": "Teradyne",
+       "other_securities": [],
+       "quote": "Teradyne acquired Quantifi Photonics in 2025",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "potential_beneficiary",
+       "role_detail": "Traditional ATE supplier expanding into CPO testing via acquisition."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": "0001158838",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-4a30c8ed3c40fb",
+       "name_as_written": "Advantest",
+       "other_securities": [],
+       "quote": "Advantest is integrating optical instruments",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "ATE supplier integrating optical instruments and partnering for CPO testing."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": "0000912093",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-K filed 2026-08-13 (accession 0001628280-26-056765) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, par value of $0.001 per share",
+         "ticker": "VIAV"
+        }
+       ],
+       "mention_id": "M-4335c69c98fa63",
+       "name_as_written": "VIAVI",
+       "other_securities": [],
+       "quote": "a collaboration with VIAVI and SENKO",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "supplier",
+       "role_detail": "Partner in Advantest's CPO testing collaboration (optical measurement)."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-b9bdf968a92371",
+       "name_as_written": "SENKO",
+       "other_securities": [],
+       "quote": "VIAVI and SENKO",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "supplier",
+       "role_detail": "Partner providing detachable optical interfaces in the collaboration."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-092915eab31f65",
+       "name_as_written": "GMT Global",
+       "other_securities": [],
+       "quote": "GMT Global provides multi-axis optical coupling and alignment modules",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier of optical coupling and alignment modules."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-a63c27677da197",
+       "name_as_written": "MPI",
+       "other_securities": [],
+       "quote": "MPI offers probing equipment and optical alignment solutions",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier of probing equipment and optical alignment solutions."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-4c5066d44859f7",
+       "name_as_written": "WinWay",
+       "other_securities": [],
+       "quote": "WinWay specializes in test interfaces",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier specializing in test interfaces."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-0662c341e6d89d",
+       "name_as_written": "Chroma",
+       "other_securities": [],
+       "quote": "Chroma has capabilities in automated testing and burn-in testing",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Taiwanese supplier with automated testing and burn-in capabilities."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-55588683ce3cc3",
+       "name_as_written": "MSS",
+       "other_securities": [],
+       "quote": "MSS, MA-tek, and iST",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Third-party testing provider."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-73ab6099ca50ce",
+       "name_as_written": "MA-tek",
+       "other_securities": [],
+       "quote": "MSS, MA-tek, and iST",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Third-party testing and materials analysis provider."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-7405de578551a2",
+       "name_as_written": "iST",
+       "other_securities": [],
+       "quote": "MSS, MA-tek, and iST",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Third-party testing provider (failure analysis, reliability)."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-bb20aa1de08c7a",
+       "name_as_written": "ASE",
+       "other_securities": [],
+       "quote": "Packaging and testing providers such as ASE",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Packaging and testing provider bridging packaging and production testing."
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-cfd0bea4060ece",
+       "name_as_written": "Semight Instruments",
+       "other_securities": [],
+       "quote": "Semight Instruments has introduced a 65 GHz sampling oscilloscope",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Chinese supplier making progress in high-speed measurement."
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "claim_ids": [
+        "C-be38d83cda0880"
+       ],
+       "direction": "positive",
+       "name": "ATE",
+       "provenance": "SOURCE OPINION",
+       "quote": "ATE"
+      },
+      {
+       "article_id": "A-0b9c4a3220b7",
+       "claim_ids": [
+        "C-bbcb177b28d7b1"
+       ],
+       "direction": "positive",
+       "name": "core optical coupling and alignment modules",
+       "provenance": "SOURCE OPINION",
+       "quote": "core optical coupling and alignment modules"
+      }
+     ],
+     "sectors": [
+      "Semiconductors",
+      "Semiconductor test equipment",
+      "CPO testing supply chain"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027 convergence year; 2028 validation for large-scale mass production [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-efdfd32558ded0",
+        "C-0183ab791418b5",
+        "C-3f01a7042c78ab",
+        "C-b59b95affce9ba"
+       ],
+       "provenance": "FORECAST",
+       "text": "September 2026 Advantest-VIAVI-SENKO collaboration and ECOC 2026 demonstration show near-term platform integration momentum, but mass production readiness is a 2027-2028 story. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-be38d83cda0880"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Industry value is gradually shifting from individual instrument performance to integrated production testing platforms."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-ff1e5eb7255780",
+        "C-204e3b6371f409"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "It remains uncertain whether optical module testing experience extends to complete CPO mass production platforms; customer adoption, test efficiency and long-term stability are still to be proven."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 5 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-ff1e5eb7255780"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China still relies heavily on imports for high-end measurement instruments."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CPO mass production slips beyond 2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Test times fail to fall enough to lower per-unit costs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Customers favor fragmented instrument suppliers over integrated platforms"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-ff1e5eb7255780",
+        "C-e0647dc4945425"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "China relies heavily on imports for high-end measurement instruments, and it is uncertain whether optical module testing experience extends to full CPO mass production platforms; RoboTechnik's acquisition of ficonTEC may influence European/U.S. procurement decisions. (scope: CPO testing supply chain execution and geopolitical/procurement uncertainty; no quantified earnings impact.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether any named supplier's revenue, margins or earnings reflect CPO testing demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether optical module testing experience extends to full CPO mass-production platforms"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which suppliers actually capture the integration share"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether listed valuations already price this shift"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CPO mass production delayed beyond 2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Integration advantage fails to materialize into orders"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify which listed ATE, test interface and OSAT names have disclosed CPO testing revenue or order pipelines and compare to current valuations."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Named suppliers disclose CPO testing orders or revenue"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CSP CPO adoption timelines confirmed for 2027"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "industry_data_report",
+      "article_id": "A-0b9c4a3220b7",
+      "authors": [
+       "TrendForce (organization (as stated))"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-b59b95affce9ba",
+       "C-3f01a7042c78ab",
+       "C-e5cc0fdc7c2143",
+       "C-2305ad3d030b6c",
+       "C-48b7f7865ed63c",
+       "C-bbcb177b28d7b1",
+       "C-be38d83cda0880",
+       "C-8b7a6aefc8de73",
+       "C-09527de2fa37bb",
+       "C-f3c0412bd8c73e",
+       "C-72e0056978231a",
+       "C-f469d4818f8bc4",
+       "C-efdfd32558ded0",
+       "C-0183ab791418b5",
+       "C-ff1e5eb7255780",
+       "C-e0647dc4945425"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-13T16:20:02+08:00",
+      "published_status": "KNOWN",
+      "publisher": "TrendForce",
+      "retrieval_state": "FULL",
+      "title": "Integrated Optical-Electrical Testing Platforms Become Key to CPO Mass Production, Reshaping the Test Equipment Supply Chain, Says TrendForce",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.trendforce.com/presscenter/news/20261013-13267.html",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "63e6f7226f07392f7c0979fb15f2a212719df4064475ff96d4821353d1bcc2b5",
+   "created_at": "2026-10-21T08:23:18.026730Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-2305ad3d030b6c",
+       "C-8b7a6aefc8de73",
+       "C-f3c0412bd8c73e",
+       "C-f469d4818f8bc4",
+       "C-efdfd32558ded0",
+       "C-0183ab791418b5",
+       "C-b59b95affce9ba",
+       "C-3f01a7042c78ab"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "8"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-80d1e591e420",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 1 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-2305ad3d030b6c",
+       "C-efdfd32558ded0",
+       "C-0183ab791418b5"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-2305ad3d030b6c: measured 2026-10-13 (8 days before the as-of); C-efdfd32558ded0: measured 2026-09-30 (21 days before the as-of); C-0183ab791418b5: measured 2026-10-13 (8 days before the as-of)); 1 claim(s) whose window runs past them; 1 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Teradyne (TER), VIAVI (VIAV), sector: ATE, sector: core optical coupling and alignment modules",
+      "value": "2 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 2 offered but NOT counted (opinion, forecast figure or stale reading): C-b59b95affce9ba, C-3f01a7042c78ab",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-ff1e5eb7255780"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 8 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-921772E86C",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 12,
+ "other_cited_evidence": [
+  "C-ff1e5eb7255780",
+  "C-204e3b6371f409",
+  "C-e0647dc4945425"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {},
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}

@@ -1,0 +1,4323 @@
+{
+ "analyst_corrections": {
+  "s01.1": "The investor-optimism link is not in the cited claims; the stated utilization and consumer points restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s06.2": "The line stated an interpretation the cited survey figure does not support; the figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)"
+ },
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-22",
+   "ancestry": [
+    "healthcare",
+    "healthcare.services_payers"
+   ],
+   "evidence_direction": "MIXED",
+   "first_detected": "2026-10-14",
+   "first_ingested_at": "2026-10-14T11:10:37.723186Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-29",
+   "latest_article_date": "2026-09-29",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Healthcare services and payers: managed care, providers, pharmacies and PBMs, care delivery, and how patients pay (insurance, cash-pay, direct-to-consumer)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-DEB6560D7F",
+   "title": "Robust, consumer-driven healthcare utilization supports services and diagnostics demand"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-83ea3687bd0238",
+     "C-f1359889850514",
+     "C-645de21ec5621d"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Conference speakers report healthcare utilization rates remain robust with no signs of demand slowdown across traffic, testing volumes and generics, driven in part by consumers making independent, proactive healthcare decisions."
+   },
+   {
+    "claim_ids": [
+     "C-83ea3687bd0238",
+     "C-645de21ec5621d"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Healthcare utilization remains robust, and consumers are increasingly making independent decisions about the services and products they think are best for their health."
+   },
+   {
+    "claim_ids": [
+     "C-b2f35dbad097d2",
+     "C-6bc3e649ef9d9c",
+     "C-dc5abbc862ee0a"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "text": "\u27e8update 2026-09-29 \u00b7 Morgan Stanley\u27e9 Healthcare services are evolving as payers align with consumer choice and direct-to-consumer pharmacy and consumer-enablement technologies expand access; survey data shows 25% paid out of pocket for a service and 36% willing to pay an average $413/year."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "new",
+     "claim_ids": [
+      "C-b2f35dbad097d2"
+     ],
+     "original_date": "2026-09-29",
+     "period": "past year",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "25% of U.S. consumers paid fully out of pocket for at least one healthcare service in the past year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "new",
+     "claim_ids": [
+      "C-fb3891cd37a697"
+     ],
+     "original_date": "2026-09-29",
+     "period": "past year",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "31% of U.S. consumers paid fully out of pocket for a medicine or treatment in the past year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "new",
+     "claim_ids": [
+      "C-6bc3e649ef9d9c"
+     ],
+     "original_date": "2026-09-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Survey: 36% would be willing to pay out of pocket, spending an average of $413 per year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "new",
+     "claim_ids": [
+      "C-dc5abbc862ee0a"
+     ],
+     "original_date": "2026-09-29",
+     "period": "a year",
+     "provenance": "SOURCE OPINION",
+     "text": "Those willing to pay out of pocket would spend an average of $413 a year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "new",
+     "claim_ids": [
+      "C-5e1feecb6f22f7"
+     ],
+     "original_date": "2026-09-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Wearables, DTC diagnostics, cash-pay testing and direct-primary-care models enable consumers to monitor health and seek care independently. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "new",
+     "claim_ids": [
+      "C-3434c80afaa2bb"
+     ],
+     "original_date": "2026-09-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Direct-to-consumer pharmacy models can expand medication access and transparency as healthcare services evolve. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-20b368b85af2e8"
+     ],
+     "original_date": "2026-09-29",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks. \u27e8the source states evidence against this thesis\u27e9"
+    }
+   ],
+   "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+   "vs_prior": "v1 held 3 claim(s); this source adds: contradictory \u00d71, new \u00d76"
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-645de21ec5621d",
+     "C-5e1feecb6f22f7",
+     "C-3434c80afaa2bb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Consumers increasingly make independent decisions about their healthcare, including direct-to-consumer testing and pharmacy."
+   },
+   {
+    "claim_ids": [
+     "C-83ea3687bd0238",
+     "C-f1359889850514"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "volumes",
+    "text": "Utilization across doctor visits, hospital stays, ER trips, prescriptions, testing and generics remains robust with no slowdown."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Sustained volumes would support revenue at exposed healthcare-services and diagnostics companies, though the article does not quantify any earnings effect."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b029",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-6bc3e649ef9d9c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "share willing to pay out of pocket",
+    "measured_as_of": null,
+    "origin": "Morgan Stanley AlphaWise",
+    "period": null,
+    "qualifiers": [
+     "would be willing to"
+    ],
+    "quote": "The survey also suggests that 36% of consumers would be willing to pay entirely out of pocket for healthcare services, spending an average of $413 per year.",
+    "role": "supports",
+    "unit": "%",
+    "value": 36.0,
+    "value_text": "36%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b028",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-b2f35dbad097d2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "share paid out of pocket for a service",
+    "measured_as_of": null,
+    "origin": "Morgan Stanley AlphaWise",
+    "period": "past year",
+    "qualifiers": [
+     "at least one healthcare service"
+    ],
+    "quote": "In an August 2026 Morgan Stanley AlphaWise survey of U.S. consumers, 25% of respondents said they had paid fully out of pocket for at least one healthcare service in the past year",
+    "role": "supports",
+    "unit": "%",
+    "value": 25.0,
+    "value_text": "25%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b004",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-dc5abbc862ee0a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "average annual out-of-pocket spend",
+    "measured_as_of": null,
+    "origin": "Morgan Stanley AlphaWise",
+    "period": "a year",
+    "qualifiers": [
+     "average"
+    ],
+    "quote": "spending an average $413 a year",
+    "role": "supports",
+    "unit": "$/year",
+    "value": 413.0,
+    "value_text": "$413"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b028",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-fb3891cd37a697",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "share paid out of pocket for medicine/treatment",
+    "measured_as_of": null,
+    "origin": "Morgan Stanley AlphaWise",
+    "period": "past year",
+    "qualifiers": [
+     "medicine or treatment"
+    ],
+    "quote": "31% had done so for a medicine or treatment",
+    "role": "supports",
+    "unit": "%",
+    "value": 31.0,
+    "value_text": "31%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-645de21ec5621d",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Consumers are increasingly making independent decisions about their healthcare services and products.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "consumers are increasingly making independent decisions about services and products they think are the best for their health",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b038",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-83ea3687bd0238",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Healthcare utilization rates remain robust, per conference speakers.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Healthcare utilization rates\u2014or the actual use of medical resources, such as doctor visits, hospital stays, emergency room trips and prescription drugs\u2014remain robust",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-cfc65506a485",
+    "block_id": "b039",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-f1359889850514",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Companies see no signs of demand slowdown across traffic, testing volumes and generics demand.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "From traffic to testing volumes and demand for generics, companies see no signs of slowdown in demand.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b026",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-3434c80afaa2bb",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Direct-to-consumer pharmacy models can expand medication access and transparency as healthcare services evolve.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Direct-to-consumer pharmacy models can expand medication access and transparency.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8dead6e3ab71",
+    "block_id": "b016",
+    "change_class": "new",
+    "chart_derived": false,
+    "claim_id": "C-5e1feecb6f22f7",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Wearables, DTC diagnostics, cash-pay testing and direct-primary-care models enable consumers to monitor health and seek care independently.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "wearables, direct-to-consumer diagnostics, cash-pay testing and direct-primary-care models let consumers monitor their health and seek care on their own",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": "0000895421",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "MS"
+      }
+     ],
+     "mention_id": "M-4c9a86dfce827c",
+     "name_as_written": "Morgan Stanley",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+       "ticker": "MS/PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+       "ticker": "MS/PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+       "ticker": "MS/PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+       "ticker": "MS/PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+       "ticker": "MS/PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+       "ticker": "MS/PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+       "ticker": "MS/PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+       "ticker": "MS/PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+       "ticker": "MS/PQ"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+       "ticker": "MS/29"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PQ"
+      }
+     ],
+     "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher and host of the conference"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-eb61e6263a6bf0",
+     "name_as_written": "Sean Laaman",
+     "other_securities": [],
+     "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d634aef6dae373",
+     "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+     "other_securities": [],
+     "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Agency whose policy agenda was presented"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-7d263b0d970556",
+     "name_as_written": "Dan Brillman",
+     "other_securities": [],
+     "quote": "Dan Brillman, Director of Medicaid",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CMS Director of Medicaid, keynote speaker"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-dd505e35a8d3d5",
+     "name_as_written": "John Brooks",
+     "other_securities": [],
+     "quote": "John Brooks, Director of Medicare",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "CMS Director of Medicare, keynote speaker"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6b5294d05dda8f",
+     "name_as_written": "Medicare",
+     "other_securities": [],
+     "quote": "Medicare launched a temporary program in July",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Launched temporary weight-loss medication access program"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d2df5629373eec",
+     "name_as_written": "Erin Wright",
+     "other_securities": [],
+     "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-d1d93702292d40",
+     "name_as_written": "Morgan Stanley Institute",
+     "other_securities": [],
+     "quote": "a Morgan Stanley Institute keynote panel",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-8dead6e3ab71",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "data source",
+     "listings": [],
+     "mention_id": "M-c9542d5247945b",
+     "name_as_written": "Morgan Stanley AlphaWise",
+     "other_securities": [],
+     "quote": "A Morgan Stanley AlphaWise survey",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Proprietary survey source for consumer out-of-pocket data"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-cfc65506a485",
+     "claim_ids": [
+      "C-83ea3687bd0238"
+     ],
+     "direction": "positive",
+     "name": "Healthcare utilization rates",
+     "provenance": "SOURCE OPINION",
+     "quote": "Healthcare utilization rates\u2014or the actual use of medical resources, such as doctor visits, hospital stays, emergency room trips and prescription drugs\u2014remain robust"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "claim_ids": [
+      "C-645de21ec5621d"
+     ],
+     "direction": "positive",
+     "name": "direct-to-consumer testing or direct-to-consumer pharmacy offerings",
+     "provenance": "SOURCE OPINION",
+     "quote": "whether it's direct-toconsumer testing or direct-to-consumer pharmacy offerings"
+    },
+    {
+     "article_id": "A-cfc65506a485",
+     "claim_ids": [
+      "C-f1359889850514"
+     ],
+     "direction": "positive",
+     "name": "demand for generics",
+     "provenance": "SOURCE OPINION",
+     "quote": "demand for generics"
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "claim_ids": [
+      "C-b2f35dbad097d2",
+      "C-6bc3e649ef9d9c"
+     ],
+     "direction": "positive",
+     "name": "healthcare services",
+     "provenance": "MEASURED OBSERVATION",
+     "quote": "Healthcare services are evolving as well: Payers are aligning more closely with consumer choice."
+    },
+    {
+     "article_id": "A-8dead6e3ab71",
+     "claim_ids": [],
+     "direction": "positive",
+     "name": "Direct-to-consumer pharmacy models",
+     "provenance": "SOURCE OPINION",
+     "quote": "Direct-to-consumer pharmacy models can expand medication access and transparency."
+    }
+   ],
+   "sectors": [
+    "healthcare services",
+    "diagnostics / testing",
+    "generics",
+    "direct-to-consumer pharmacy",
+    "payers"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-b2f35dbad097d2"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "August 2026 AlphaWise survey documents current out-of-pocket behavior but offers no dated repricing catalyst."
+    },
+    {
+     "claim_ids": [
+      "C-f1359889850514"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Speakers see no signs of demand slowdown currently."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-6bc3e649ef9d9c"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "36% of consumers would be willing to pay entirely out of pocket for healthcare services, spending an average of $413 per year."
+    },
+    {
+     "claim_ids": [
+      "C-645de21ec5621d"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "A longer-term shift toward consumer-directed, proactive healthcare engagement supports utilization."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 6 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+    },
+    {
+     "claim_ids": [
+      "C-20b368b85af2e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "There are limits to how far this shift can go, plus macroeconomic sensitivities and other risks."
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-20b368b85af2e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "A reported deceleration in testing volumes, patient traffic or generics demand"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence that direct-to-consumer channels cannibalize rather than expand utilization"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Declining out-of-pocket payment shares in future surveys"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Consumer-choice models failing to gain share"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Macro-driven pullback in discretionary cash-pay healthcare"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-20b368b85af2e8"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "There are limits to how far the healthcare consumerism shift can go, along with macroeconomic sensitivities and other risks. (scope: Applies to the overall consumer-driven healthcare access trend, including out-of-pocket cash-pay demand which is sensitive to macroeconomic conditions.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether robust utilization translates into earnings for specific listed companies; the article names no companies and quantifies no financial effect."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether high utilization reflects durable demand or temporary factors."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed healthcare services companies are positioned to benefit"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether willingness-to-pay converts to actual spending at scale"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the survey's stated behavior reflects durable demand or shifting costs"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Utilization data show deceleration"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Managed-care cost pressure curtails volumes"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Survey data showing out-of-pocket behavior reversing"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Macroeconomic weakness curbing cash-pay demand"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Map listed payers, DTC pharmacy and consumer-enablement platform companies to the transparency/choice trend and assess exposure."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Company reports confirm accelerating testing/utilization volumes"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "DTC testing and pharmacy revenue growth accelerates"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Rising out-of-pocket payment and willingness-to-pay in later surveys"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Payers publicly expanding consumer-choice offerings"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-cfc65506a485",
+    "authors": [],
+    "authors_status": "UNKNOWN",
+    "claim_ids": [
+     "C-645de21ec5621d",
+     "C-83ea3687bd0238",
+     "C-f1359889850514"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-18T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+    "upstream_origins": [
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+    "version_dates": []
+   },
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-8dead6e3ab71",
+    "authors": [
+     "Erin Wright"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-b2f35dbad097d2",
+     "C-fb3891cd37a697",
+     "C-6bc3e649ef9d9c",
+     "C-dc5abbc862ee0a",
+     "C-5e1feecb6f22f7",
+     "C-3434c80afaa2bb",
+     "C-20b368b85af2e8"
+    ],
+    "contribution": "contradictory",
+    "published_at": "2026-09-29T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "Healthcare Consumerism: Patients Drive a $26B Opportunity",
+    "upstream_origins": [
+     "Morgan Stanley AlphaWise",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/healthcare-consumerism-drives-26-b-opportunity-2026",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001022079-26-000015)",
+    "business": "clinical diagnostic laboratory testing services",
+    "direction": "positive",
+    "enrichment_id": "EC-2f83a1b4367b68",
+    "evidence": "s03.1: Utilization across doctor visits, hospital stays, ER trips, prescriptions, testing and generics remains robust with no slowdown.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-23 (accession 0001022079-26-000108) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.01 Par Value",
+      "ticker": "DGX"
+     }
+    ],
+    "name": "Quest Diagnostics",
+    "rationale": "Robust testing volumes, including consumer-initiated direct-to-consumer tests, drive its lab revenue which is almost entirely diagnostic testing.",
+    "registrant": "QUEST DIAGNOSTICS INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 8071); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "clinical diagnostic lab testing",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-DEB6560D7F",
+    "ticker_hint": "DGX"
+   },
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "clinical laboratory and diagnostic testing services",
+    "direction": "positive",
+    "enrichment_id": "EC-d11e14980c17f4",
+    "evidence": "s03.1: Utilization across doctor visits, hospital stays, ER trips, prescriptions, testing and generics remains robust with no slowdown.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Laboratory Corporation of America",
+    "rationale": "Sustained testing volumes and growing consumer direct-to-consumer testing support its core lab-testing revenue.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "clinical diagnostic lab testing",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-DEB6560D7F",
+    "ticker_hint": "LH"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-10 (0001193125-26-044769)",
+    "business": "operates hospitals and surgery centers",
+    "direction": "positive",
+    "enrichment_id": "EC-71c19c164fffd5",
+    "evidence": "s03.1: Utilization across doctor visits, hospital stays, ER trips, prescriptions, testing and generics remains robust with no slowdown.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0001193125-26-437871) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Voting common stock, $.01 par value",
+      "ticker": "HCA"
+     }
+    ],
+    "name": "HCA Healthcare",
+    "rationale": "Robust utilization of hospital stays, ER trips and procedures drives its admission and visit volumes directly.",
+    "registrant": "HCA Healthcare, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 8062); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "hospital and ambulatory patient services",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-DEB6560D7F",
+    "ticker_hint": "HCA"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-17 (0000070318-26-000012)",
+    "business": "operates hospitals and ambulatory surgery centers",
+    "direction": "positive",
+    "enrichment_id": "EC-417f3a8fb2cb70",
+    "evidence": "s03.1: Utilization across doctor visits, hospital stays, ER trips, prescriptions, testing and generics remains robust with no slowdown.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-10-29 (accession 0000070318-26-000050) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, $0.05 par value",
+      "ticker": "THC"
+     }
+    ],
+    "name": "Tenet Healthcare",
+    "rationale": "Strong ER, hospital and outpatient-surgery utilization supports its patient volumes and facility revenue.",
+    "registrant": "TENET HEALTHCARE CORP",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 8062); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "hospital and surgery-center patient services",
+    "revenue_model": "services",
+    "step_id": "s03.1",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-DEB6560D7F",
+    "ticker_hint": "THC"
+   }
+  ],
+  "created_at": "2026-10-30T12:25:22.815512Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Hims & Hers Health: more than 4 on one side \u2014 set aside",
+   "GoodRx Holdings: more than 4 on one side \u2014 set aside",
+   "Teva Pharmaceutical Industries: more than 4 on one side \u2014 set aside",
+   "DaVita: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-ee9cb11250c7ba",
+  "thesis_id": "TH-DEB6560D7F",
+  "thesis_version": 3
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-cfc65506a485",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "healthcare",
+      "healthcare.services_payers"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T11:10:37.723186Z",
+     "horizon": "Next 2-4 quarters",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-18",
+     "latest_article_date": "2026-09-18",
+     "region": "US",
+     "research_action": "SKIP",
+     "sector": "Healthcare services and payers: managed care, providers, pharmacies and PBMs, care delivery, and how patients pay (insurance, cash-pay, direct-to-consumer)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-DEB6560D7F",
+     "title": "Robust, consumer-driven healthcare utilization supports services and diagnostics demand"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-f1359889850514",
+       "C-645de21ec5621d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Conference speakers report healthcare utilization rates remain robust with no signs of demand slowdown across traffic, testing volumes and generics, driven in part by consumers making independent, proactive healthcare decisions."
+     },
+     {
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-645de21ec5621d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames strong utilization and proactive patient engagement as a driver of investor optimism across healthcare."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Sustained utilization and a shift toward direct-to-consumer testing and pharmacy could support revenue for healthcare services, diagnostics and DTC offerings, though the article quantifies none of it."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-83ea3687bd0238"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Healthcare utilization rates remain robust, per conference speakers."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-f1359889850514"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Companies see no signs of demand slowdown across traffic, testing volumes and generics demand."
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-645de21ec5621d"
+       ],
+       "original_date": "2026-09-18",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Consumers are increasingly making independent decisions about their healthcare services and products."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 11:10 UTC, analysed as of 2026-10-14, from a source published 2026-09-18; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-645de21ec5621d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Consumers increasingly make independent decisions about their healthcare, including direct-to-consumer testing and pharmacy."
+     },
+     {
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-f1359889850514"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Utilization across doctor visits, hospital stays, ER trips, prescriptions, testing and generics remains robust with no slowdown."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Sustained volumes would support revenue at exposed healthcare-services and diagnostics companies, though the article does not quantify any earnings effect."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-645de21ec5621d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Consumers are increasingly making independent decisions about their healthcare services and products.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "consumers are increasingly making independent decisions about services and products they think are the best for their health",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b038",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-83ea3687bd0238",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Healthcare utilization rates remain robust, per conference speakers.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Healthcare utilization rates\u2014or the actual use of medical resources, such as doctor visits, hospital stays, emergency room trips and prescription drugs\u2014remain robust",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b039",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f1359889850514",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Companies see no signs of demand slowdown across traffic, testing volumes and generics demand.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "From traffic to testing volumes and demand for generics, companies see no signs of slowdown in demand.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-4c9a86dfce827c",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and host of the conference"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-eb61e6263a6bf0",
+       "name_as_written": "Sean Laaman",
+       "other_securities": [],
+       "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d634aef6dae373",
+       "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "other_securities": [],
+       "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Agency whose policy agenda was presented"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d263b0d970556",
+       "name_as_written": "Dan Brillman",
+       "other_securities": [],
+       "quote": "Dan Brillman, Director of Medicaid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicaid, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dd505e35a8d3d5",
+       "name_as_written": "John Brooks",
+       "other_securities": [],
+       "quote": "John Brooks, Director of Medicare",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicare, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6b5294d05dda8f",
+       "name_as_written": "Medicare",
+       "other_securities": [],
+       "quote": "Medicare launched a temporary program in July",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Launched temporary weight-loss medication access program"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d2df5629373eec",
+       "name_as_written": "Erin Wright",
+       "other_securities": [],
+       "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1d93702292d40",
+       "name_as_written": "Morgan Stanley Institute",
+       "other_securities": [],
+       "quote": "a Morgan Stanley Institute keynote panel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-83ea3687bd0238"
+       ],
+       "direction": "positive",
+       "name": "Healthcare utilization rates",
+       "provenance": "SOURCE OPINION",
+       "quote": "Healthcare utilization rates\u2014or the actual use of medical resources, such as doctor visits, hospital stays, emergency room trips and prescription drugs\u2014remain robust"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-645de21ec5621d"
+       ],
+       "direction": "positive",
+       "name": "direct-to-consumer testing or direct-to-consumer pharmacy offerings",
+       "provenance": "SOURCE OPINION",
+       "quote": "whether it's direct-toconsumer testing or direct-to-consumer pharmacy offerings"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-f1359889850514"
+       ],
+       "direction": "positive",
+       "name": "demand for generics",
+       "provenance": "SOURCE OPINION",
+       "quote": "demand for generics"
+      }
+     ],
+     "sectors": [
+      "healthcare services",
+      "diagnostics / testing",
+      "generics",
+      "direct-to-consumer pharmacy"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-f1359889850514"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Speakers see no signs of demand slowdown currently."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-645de21ec5621d"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A longer-term shift toward consumer-directed, proactive healthcare engagement supports utilization."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 6 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A reported deceleration in testing volumes, patient traffic or generics demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that direct-to-consumer channels cannibalize rather than expand utilization"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether robust utilization translates into earnings for specific listed companies; the article names no companies and quantifies no financial effect."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether high utilization reflects durable demand or temporary factors."
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Utilization data show deceleration"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Managed-care cost pressure curtails volumes"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify which listed healthcare-services, diagnostics, generics and DTC pharmacy companies have the most exposure to current utilization trends and check whether recent reported volumes corroborate the 'no slowdown' claim."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Company reports confirm accelerating testing/utilization volumes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DTC testing and pharmacy revenue growth accelerates"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "SKIP",
+     "rule_trace": [
+      "SKIP-1 no verified material evidence"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-cfc65506a485",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-f1359889850514",
+       "C-645de21ec5621d"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-18T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "1ddb725d8090c8f35b873ba0c5b73e73624eeacb3d18838074ed7a6717b31980",
+   "created_at": "2026-10-21T10:36:14.505322Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 SKIP-1 no verified material evidence",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-f41ee4fccc95",
+      "value": "1"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 0 long-range claim(s) \u2014 timing UNKNOWN: no dated window anywhere in the source evidence; model horizon label next_2_4_quarters (recorded, not decisive)",
+      "value": "not shown"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: Healthcare utilization rates, sector: direct-to-consumer testing or direct-to-consumer pharmacy offerings, sector: demand for generics",
+      "value": "0 listed \u00b7 3 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 0 supporting; 0 independent contradicting source(s) vs 0 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "reported_view"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "SKIP",
+    "rules_fired": [
+     "SKIP-1 no verified material evidence"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": []
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-DEB6560D7F",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "A-8dead6e3ab71: contradictory \u00d71, new \u00d76",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "healthcare",
+      "healthcare.services_payers"
+     ],
+     "evidence_direction": "MIXED",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T11:10:37.723186Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-29",
+     "latest_article_date": "2026-09-29",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Healthcare services and payers: managed care, providers, pharmacies and PBMs, care delivery, and how patients pay (insurance, cash-pay, direct-to-consumer)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-DEB6560D7F",
+     "title": "Robust, consumer-driven healthcare utilization supports services and diagnostics demand"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-f1359889850514",
+       "C-645de21ec5621d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Conference speakers report healthcare utilization rates remain robust with no signs of demand slowdown across traffic, testing volumes and generics, driven in part by consumers making independent, proactive healthcare decisions."
+     },
+     {
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-645de21ec5621d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article frames strong utilization and proactive patient engagement as a driver of investor optimism across healthcare."
+     },
+     {
+      "claim_ids": [
+       "C-b2f35dbad097d2",
+       "C-6bc3e649ef9d9c",
+       "C-dc5abbc862ee0a"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "text": "\u27e8update 2026-09-29 \u00b7 Morgan Stanley\u27e9 Healthcare services are evolving as payers align with consumer choice and direct-to-consumer pharmacy and consumer-enablement technologies expand access; survey data shows 25% paid out of pocket for a service and 36% willing to pay an average $413/year."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-b2f35dbad097d2"
+       ],
+       "original_date": "2026-09-29",
+       "period": "past year",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "25% of U.S. consumers paid fully out of pocket for at least one healthcare service in the past year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-fb3891cd37a697"
+       ],
+       "original_date": "2026-09-29",
+       "period": "past year",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "31% of U.S. consumers paid fully out of pocket for a medicine or treatment in the past year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-6bc3e649ef9d9c"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Survey: 36% would be willing to pay out of pocket, spending an average of $413 per year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-dc5abbc862ee0a"
+       ],
+       "original_date": "2026-09-29",
+       "period": "a year",
+       "provenance": "SOURCE OPINION",
+       "text": "Those willing to pay out of pocket would spend an average of $413 a year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-5e1feecb6f22f7"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Wearables, DTC diagnostics, cash-pay testing and direct-primary-care models enable consumers to monitor health and seek care independently. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-3434c80afaa2bb"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Direct-to-consumer pharmacy models can expand medication access and transparency as healthcare services evolve. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks. \u27e8the source states evidence against this thesis\u27e9"
+      }
+     ],
+     "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+     "vs_prior": "v1 held 3 claim(s); this source adds: contradictory \u00d71, new \u00d76"
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-645de21ec5621d",
+       "C-5e1feecb6f22f7",
+       "C-3434c80afaa2bb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Consumers increasingly make independent decisions about their healthcare, including direct-to-consumer testing and pharmacy."
+     },
+     {
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-f1359889850514"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Utilization across doctor visits, hospital stays, ER trips, prescriptions, testing and generics remains robust with no slowdown."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Sustained volumes would support revenue at exposed healthcare-services and diagnostics companies, though the article does not quantify any earnings effect."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b029",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-6bc3e649ef9d9c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share willing to pay out of pocket",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": null,
+      "qualifiers": [
+       "would be willing to"
+      ],
+      "quote": "The survey also suggests that 36% of consumers would be willing to pay entirely out of pocket for healthcare services, spending an average of $413 per year.",
+      "role": "supports",
+      "unit": "%",
+      "value": 36.0,
+      "value_text": "36%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b028",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-b2f35dbad097d2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share paid out of pocket for a service",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "past year",
+      "qualifiers": [
+       "at least one healthcare service"
+      ],
+      "quote": "In an August 2026 Morgan Stanley AlphaWise survey of U.S. consumers, 25% of respondents said they had paid fully out of pocket for at least one healthcare service in the past year",
+      "role": "supports",
+      "unit": "%",
+      "value": 25.0,
+      "value_text": "25%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b004",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-dc5abbc862ee0a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "average annual out-of-pocket spend",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "a year",
+      "qualifiers": [
+       "average"
+      ],
+      "quote": "spending an average $413 a year",
+      "role": "supports",
+      "unit": "$/year",
+      "value": 413.0,
+      "value_text": "$413"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b028",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-fb3891cd37a697",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share paid out of pocket for medicine/treatment",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "past year",
+      "qualifiers": [
+       "medicine or treatment"
+      ],
+      "quote": "31% had done so for a medicine or treatment",
+      "role": "supports",
+      "unit": "%",
+      "value": 31.0,
+      "value_text": "31%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-645de21ec5621d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Consumers are increasingly making independent decisions about their healthcare services and products.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "consumers are increasingly making independent decisions about services and products they think are the best for their health",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b038",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-83ea3687bd0238",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Healthcare utilization rates remain robust, per conference speakers.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Healthcare utilization rates\u2014or the actual use of medical resources, such as doctor visits, hospital stays, emergency room trips and prescription drugs\u2014remain robust",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b039",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f1359889850514",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Companies see no signs of demand slowdown across traffic, testing volumes and generics demand.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "From traffic to testing volumes and demand for generics, companies see no signs of slowdown in demand.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b026",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-3434c80afaa2bb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Direct-to-consumer pharmacy models can expand medication access and transparency as healthcare services evolve.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Direct-to-consumer pharmacy models can expand medication access and transparency.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b016",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-5e1feecb6f22f7",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Wearables, DTC diagnostics, cash-pay testing and direct-primary-care models enable consumers to monitor health and seek care independently.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "wearables, direct-to-consumer diagnostics, cash-pay testing and direct-primary-care models let consumers monitor their health and seek care on their own",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-4c9a86dfce827c",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and host of the conference"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-eb61e6263a6bf0",
+       "name_as_written": "Sean Laaman",
+       "other_securities": [],
+       "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d634aef6dae373",
+       "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "other_securities": [],
+       "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Agency whose policy agenda was presented"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d263b0d970556",
+       "name_as_written": "Dan Brillman",
+       "other_securities": [],
+       "quote": "Dan Brillman, Director of Medicaid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicaid, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dd505e35a8d3d5",
+       "name_as_written": "John Brooks",
+       "other_securities": [],
+       "quote": "John Brooks, Director of Medicare",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicare, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6b5294d05dda8f",
+       "name_as_written": "Medicare",
+       "other_securities": [],
+       "quote": "Medicare launched a temporary program in July",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Launched temporary weight-loss medication access program"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d2df5629373eec",
+       "name_as_written": "Erin Wright",
+       "other_securities": [],
+       "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1d93702292d40",
+       "name_as_written": "Morgan Stanley Institute",
+       "other_securities": [],
+       "quote": "a Morgan Stanley Institute keynote panel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-c9542d5247945b",
+       "name_as_written": "Morgan Stanley AlphaWise",
+       "other_securities": [],
+       "quote": "A Morgan Stanley AlphaWise survey",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Proprietary survey source for consumer out-of-pocket data"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-83ea3687bd0238"
+       ],
+       "direction": "positive",
+       "name": "Healthcare utilization rates",
+       "provenance": "SOURCE OPINION",
+       "quote": "Healthcare utilization rates\u2014or the actual use of medical resources, such as doctor visits, hospital stays, emergency room trips and prescription drugs\u2014remain robust"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-645de21ec5621d"
+       ],
+       "direction": "positive",
+       "name": "direct-to-consumer testing or direct-to-consumer pharmacy offerings",
+       "provenance": "SOURCE OPINION",
+       "quote": "whether it's direct-toconsumer testing or direct-to-consumer pharmacy offerings"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-f1359889850514"
+       ],
+       "direction": "positive",
+       "name": "demand for generics",
+       "provenance": "SOURCE OPINION",
+       "quote": "demand for generics"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "claim_ids": [
+        "C-b2f35dbad097d2",
+        "C-6bc3e649ef9d9c"
+       ],
+       "direction": "positive",
+       "name": "healthcare services",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "Healthcare services are evolving as well: Payers are aligning more closely with consumer choice."
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "Direct-to-consumer pharmacy models",
+       "provenance": "SOURCE OPINION",
+       "quote": "Direct-to-consumer pharmacy models can expand medication access and transparency."
+      }
+     ],
+     "sectors": [
+      "healthcare services",
+      "diagnostics / testing",
+      "generics",
+      "direct-to-consumer pharmacy",
+      "payers"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-b2f35dbad097d2"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "August 2026 AlphaWise survey documents current out-of-pocket behavior but offers no dated repricing catalyst."
+      },
+      {
+       "claim_ids": [
+        "C-f1359889850514"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Speakers see no signs of demand slowdown currently."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-6bc3e649ef9d9c"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "An emerging consumer-driven healthcare system favors services models built on transparency and choice over the long term."
+      },
+      {
+       "claim_ids": [
+        "C-645de21ec5621d"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A longer-term shift toward consumer-directed, proactive healthcare engagement supports utilization."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 6 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      },
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far this shift can go, plus macroeconomic sensitivities and other risks."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A reported deceleration in testing volumes, patient traffic or generics demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that direct-to-consumer channels cannibalize rather than expand utilization"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Declining out-of-pocket payment shares in future surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consumer-choice models failing to gain share"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macro-driven pullback in discretionary cash-pay healthcare"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the healthcare consumerism shift can go, along with macroeconomic sensitivities and other risks. (scope: Applies to the overall consumer-driven healthcare access trend, including out-of-pocket cash-pay demand which is sensitive to macroeconomic conditions.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether robust utilization translates into earnings for specific listed companies; the article names no companies and quantifies no financial effect."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether high utilization reflects durable demand or temporary factors."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed healthcare services companies are positioned to benefit"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether willingness-to-pay converts to actual spending at scale"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the survey's stated behavior reflects durable demand or shifting costs"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Utilization data show deceleration"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Managed-care cost pressure curtails volumes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Survey data showing out-of-pocket behavior reversing"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macroeconomic weakness curbing cash-pay demand"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map listed payers, DTC pharmacy and consumer-enablement platform companies to the transparency/choice trend and assess exposure."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Company reports confirm accelerating testing/utilization volumes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DTC testing and pharmacy revenue growth accelerates"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Rising out-of-pocket payment and willingness-to-pay in later surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Payers publicly expanding consumer-choice offerings"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-cfc65506a485",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-645de21ec5621d",
+       "C-83ea3687bd0238",
+       "C-f1359889850514"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-18T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+      "version_dates": []
+     },
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-8dead6e3ab71",
+      "authors": [
+       "Erin Wright"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-b2f35dbad097d2",
+       "C-fb3891cd37a697",
+       "C-6bc3e649ef9d9c",
+       "C-dc5abbc862ee0a",
+       "C-5e1feecb6f22f7",
+       "C-3434c80afaa2bb",
+       "C-20b368b85af2e8"
+      ],
+      "contribution": "contradictory",
+      "published_at": "2026-09-29T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Consumerism: Patients Drive a $26B Opportunity",
+      "upstream_origins": [
+       "Morgan Stanley AlphaWise",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-consumerism-drives-26-b-opportunity-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "9b5a8fd4be68d32d2a02f508596632a255af49b9bd1839f7499f8bfebdf33438",
+   "created_at": "2026-10-21T10:37:40.732321Z",
+   "diffs": [
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-6bc3e649ef9d9c"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "share willing to pay out of pocket: 36%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-b2f35dbad097d2"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "share paid out of pocket for a service: 25%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-dc5abbc862ee0a"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "average annual out-of-pocket spend: $413 per year",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-fb3891cd37a697"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "share paid out of pocket for medicine/treatment: 31%",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-3434c80afaa2bb"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Direct-to-consumer pharmacy models can expand medication access and transparency as healthcare services evolve.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-5e1feecb6f22f7"
+     ],
+     "field_id": "s04_key_evidence",
+     "new": "Wearables, DTC diagnostics, cash-pay testing and direct-primary-care models enable consumers to monitor health and seek care independently.:",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [
+      "C-20b368b85af2e8"
+     ],
+     "field_id": "s07_what_could_go_wrong.counter_evidence",
+     "new": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks.",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "contradictory",
+     "claim_ids": [],
+     "field_id": "header.research_action",
+     "new": "WATCH",
+     "note": "",
+     "old": "SKIP"
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.companies",
+     "new": "Morgan Stanley AlphaWise (data_source)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-b2f35dbad097d2",
+      "C-6bc3e649ef9d9c"
+     ],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "healthcare services (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [],
+     "field_id": "s05_affected.sector_exposures",
+     "new": "Direct-to-consumer pharmacy models (positive)",
+     "note": "",
+     "old": null
+    },
+    {
+     "change_class": "new",
+     "claim_ids": [
+      "C-83ea3687bd0238",
+      "C-f1359889850514",
+      "C-645de21ec5621d",
+      "C-83ea3687bd0238",
+      "C-645de21ec5621d",
+      "C-b2f35dbad097d2",
+      "C-6bc3e649ef9d9c",
+      "C-dc5abbc862ee0a"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "\u27e8update 2026-09-29 \u00b7 Morgan Stanley\u27e9 Healthcare services are evolving as payers align with consumer choice and direct-to-consumer pharmacy and consumer-enablement technologies expand access; survey data shows 25% paid out of pocket for a service and 36% willing to pay an average $413/year.",
+     "note": "",
+     "old": "Sustained utilization and a shift toward direct-to-consumer testing and pharmacy could support revenue for healthcare services, diagnostics and DTC offerings, though the article quantifies none of it."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "MIXED",
+   "prior_content_sha": "1ddb725d8090c8f35b873ba0c5b73e73624eeacb3d18838074ed7a6717b31980",
+   "priority": {
+    "change_reason": "SKIP \u2192 WATCH: F2_material_evidence 0\u21924; F3_independent_origins 1\u21922; F5_near_term_relevance not shown\u2192yes; F6_recognizable_exposures 0 listed \u00b7 3 sector \u00b7 0 instrument\u21920 listed \u00b7 5 sector \u00b7 0 instrument; F9_premise_in_source reported_view\u2192asserted",
+    "evidence_direction": "MIXED",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-b2f35dbad097d2",
+       "C-fb3891cd37a697",
+       "C-6bc3e649ef9d9c",
+       "C-dc5abbc862ee0a"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-830d54dc4aae, ES-f41ee4fccc95",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-b2f35dbad097d2",
+       "C-fb3891cd37a697",
+       "C-6bc3e649ef9d9c",
+       "C-dc5abbc862ee0a"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "4 claim(s) inside the next 2-4 quarters (C-b2f35dbad097d2: measured 2026-09-29 (15 days before the as-of); C-fb3891cd37a697: measured 2026-09-29 (15 days before the as-of); C-6bc3e649ef9d9c: measured 2026-09-29 (15 days before the as-of); C-dc5abbc862ee0a: measured 2026-09-29 (15 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: Healthcare utilization rates, sector: direct-to-consumer testing or direct-to-consumer pharmacy offerings, sector: demand for generics, sector: healthcare services, sector: Direct-to-consumer pharmacy models",
+      "value": "0 listed \u00b7 5 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-20b368b85af2e8"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 4 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "SKIP",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-DEB6560D7F",
+   "version": 2
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s06.2 \u2014 The line stated an interpretation the cited survey figure does not support; the figure restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s01.1 \u2014 The investor-optimism link is not in the cited claims; the stated utilization and consumer points restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "healthcare",
+      "healthcare.services_payers"
+     ],
+     "evidence_direction": "MIXED",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T11:10:37.723186Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-29",
+     "latest_article_date": "2026-09-29",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Healthcare services and payers: managed care, providers, pharmacies and PBMs, care delivery, and how patients pay (insurance, cash-pay, direct-to-consumer)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-DEB6560D7F",
+     "title": "Robust, consumer-driven healthcare utilization supports services and diagnostics demand"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-f1359889850514",
+       "C-645de21ec5621d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Conference speakers report healthcare utilization rates remain robust with no signs of demand slowdown across traffic, testing volumes and generics, driven in part by consumers making independent, proactive healthcare decisions."
+     },
+     {
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-645de21ec5621d"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Healthcare utilization remains robust, and consumers are increasingly making independent decisions about the services and products they think are best for their health."
+     },
+     {
+      "claim_ids": [
+       "C-b2f35dbad097d2",
+       "C-6bc3e649ef9d9c",
+       "C-dc5abbc862ee0a"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "text": "\u27e8update 2026-09-29 \u00b7 Morgan Stanley\u27e9 Healthcare services are evolving as payers align with consumer choice and direct-to-consumer pharmacy and consumer-enablement technologies expand access; survey data shows 25% paid out of pocket for a service and 36% willing to pay an average $413/year."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-b2f35dbad097d2"
+       ],
+       "original_date": "2026-09-29",
+       "period": "past year",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "25% of U.S. consumers paid fully out of pocket for at least one healthcare service in the past year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-fb3891cd37a697"
+       ],
+       "original_date": "2026-09-29",
+       "period": "past year",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "31% of U.S. consumers paid fully out of pocket for a medicine or treatment in the past year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-6bc3e649ef9d9c"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Survey: 36% would be willing to pay out of pocket, spending an average of $413 per year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-dc5abbc862ee0a"
+       ],
+       "original_date": "2026-09-29",
+       "period": "a year",
+       "provenance": "SOURCE OPINION",
+       "text": "Those willing to pay out of pocket would spend an average of $413 a year. \u27e8new evidence from an origin the thesis did not yet hold\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-5e1feecb6f22f7"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Wearables, DTC diagnostics, cash-pay testing and direct-primary-care models enable consumers to monitor health and seek care independently. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "new",
+       "claim_ids": [
+        "C-3434c80afaa2bb"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Direct-to-consumer pharmacy models can expand medication access and transparency as healthcare services evolve. \u27e8new evidence from an origin already counted \u2014 not an independent confirmation\u27e9"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "change_class": "contradictory",
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "original_date": "2026-09-29",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks. \u27e8the source states evidence against this thesis\u27e9"
+      }
+     ],
+     "novelty": "assessed against the registry's prior version \u2014 classes are relative to what the thesis already held, not to market knowledge",
+     "vs_prior": "v1 held 3 claim(s); this source adds: contradictory \u00d71, new \u00d76"
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-645de21ec5621d",
+       "C-5e1feecb6f22f7",
+       "C-3434c80afaa2bb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Consumers increasingly make independent decisions about their healthcare, including direct-to-consumer testing and pharmacy."
+     },
+     {
+      "claim_ids": [
+       "C-83ea3687bd0238",
+       "C-f1359889850514"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "volumes",
+      "text": "Utilization across doctor visits, hospital stays, ER trips, prescriptions, testing and generics remains robust with no slowdown."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Sustained volumes would support revenue at exposed healthcare-services and diagnostics companies, though the article does not quantify any earnings effect."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b029",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-6bc3e649ef9d9c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share willing to pay out of pocket",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": null,
+      "qualifiers": [
+       "would be willing to"
+      ],
+      "quote": "The survey also suggests that 36% of consumers would be willing to pay entirely out of pocket for healthcare services, spending an average of $413 per year.",
+      "role": "supports",
+      "unit": "%",
+      "value": 36.0,
+      "value_text": "36%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b028",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-b2f35dbad097d2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share paid out of pocket for a service",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "past year",
+      "qualifiers": [
+       "at least one healthcare service"
+      ],
+      "quote": "In an August 2026 Morgan Stanley AlphaWise survey of U.S. consumers, 25% of respondents said they had paid fully out of pocket for at least one healthcare service in the past year",
+      "role": "supports",
+      "unit": "%",
+      "value": 25.0,
+      "value_text": "25%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b004",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-dc5abbc862ee0a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "average annual out-of-pocket spend",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "a year",
+      "qualifiers": [
+       "average"
+      ],
+      "quote": "spending an average $413 a year",
+      "role": "supports",
+      "unit": "$/year",
+      "value": 413.0,
+      "value_text": "$413"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b028",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-fb3891cd37a697",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "share paid out of pocket for medicine/treatment",
+      "measured_as_of": null,
+      "origin": "Morgan Stanley AlphaWise",
+      "period": "past year",
+      "qualifiers": [
+       "medicine or treatment"
+      ],
+      "quote": "31% had done so for a medicine or treatment",
+      "role": "supports",
+      "unit": "%",
+      "value": 31.0,
+      "value_text": "31%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-645de21ec5621d",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Consumers are increasingly making independent decisions about their healthcare services and products.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "consumers are increasingly making independent decisions about services and products they think are the best for their health",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b038",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-83ea3687bd0238",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Healthcare utilization rates remain robust, per conference speakers.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Healthcare utilization rates\u2014or the actual use of medical resources, such as doctor visits, hospital stays, emergency room trips and prescription drugs\u2014remain robust",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-cfc65506a485",
+      "block_id": "b039",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-f1359889850514",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Companies see no signs of demand slowdown across traffic, testing volumes and generics demand.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "From traffic to testing volumes and demand for generics, companies see no signs of slowdown in demand.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b026",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-3434c80afaa2bb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Direct-to-consumer pharmacy models can expand medication access and transparency as healthcare services evolve.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Direct-to-consumer pharmacy models can expand medication access and transparency.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8dead6e3ab71",
+      "block_id": "b016",
+      "change_class": "new",
+      "chart_derived": false,
+      "claim_id": "C-5e1feecb6f22f7",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Wearables, DTC diagnostics, cash-pay testing and direct-primary-care models enable consumers to monitor health and seek care independently.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "wearables, direct-to-consumer diagnostics, cash-pay testing and direct-primary-care models let consumers monitor their health and seek care on their own",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-4c9a86dfce827c",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Morgan Stanley\u2019s 24th Annual Global Healthcare Conference",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and host of the conference"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-eb61e6263a6bf0",
+       "name_as_written": "Sean Laaman",
+       "other_securities": [],
+       "quote": "Sean Laaman, Head of U.S. Small- and Mid-Cap Biotech Equity Research at Morgan Stanley",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley biotech research head quoted on policy, China and AI"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d634aef6dae373",
+       "name_as_written": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "other_securities": [],
+       "quote": "U.S. Centers for Medicare & Medicaid Services (CMS)",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Agency whose policy agenda was presented"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-7d263b0d970556",
+       "name_as_written": "Dan Brillman",
+       "other_securities": [],
+       "quote": "Dan Brillman, Director of Medicaid",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicaid, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-dd505e35a8d3d5",
+       "name_as_written": "John Brooks",
+       "other_securities": [],
+       "quote": "John Brooks, Director of Medicare",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "CMS Director of Medicare, keynote speaker"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6b5294d05dda8f",
+       "name_as_written": "Medicare",
+       "other_securities": [],
+       "quote": "Medicare launched a temporary program in July",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Launched temporary weight-loss medication access program"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d2df5629373eec",
+       "name_as_written": "Erin Wright",
+       "other_securities": [],
+       "quote": "Erin Wright, Morgan Stanley Research\u2019s Healthcare Services Analyst",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Morgan Stanley healthcare services analyst quoted on patient behavior"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-d1d93702292d40",
+       "name_as_written": "Morgan Stanley Institute",
+       "other_securities": [],
+       "quote": "a Morgan Stanley Institute keynote panel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Morgan Stanley division that hosted the CMS keynote panel at the conference"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-8dead6e3ab71",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "data source",
+       "listings": [],
+       "mention_id": "M-c9542d5247945b",
+       "name_as_written": "Morgan Stanley AlphaWise",
+       "other_securities": [],
+       "quote": "A Morgan Stanley AlphaWise survey",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Proprietary survey source for consumer out-of-pocket data"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-83ea3687bd0238"
+       ],
+       "direction": "positive",
+       "name": "Healthcare utilization rates",
+       "provenance": "SOURCE OPINION",
+       "quote": "Healthcare utilization rates\u2014or the actual use of medical resources, such as doctor visits, hospital stays, emergency room trips and prescription drugs\u2014remain robust"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-645de21ec5621d"
+       ],
+       "direction": "positive",
+       "name": "direct-to-consumer testing or direct-to-consumer pharmacy offerings",
+       "provenance": "SOURCE OPINION",
+       "quote": "whether it's direct-toconsumer testing or direct-to-consumer pharmacy offerings"
+      },
+      {
+       "article_id": "A-cfc65506a485",
+       "claim_ids": [
+        "C-f1359889850514"
+       ],
+       "direction": "positive",
+       "name": "demand for generics",
+       "provenance": "SOURCE OPINION",
+       "quote": "demand for generics"
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "claim_ids": [
+        "C-b2f35dbad097d2",
+        "C-6bc3e649ef9d9c"
+       ],
+       "direction": "positive",
+       "name": "healthcare services",
+       "provenance": "MEASURED OBSERVATION",
+       "quote": "Healthcare services are evolving as well: Payers are aligning more closely with consumer choice."
+      },
+      {
+       "article_id": "A-8dead6e3ab71",
+       "claim_ids": [],
+       "direction": "positive",
+       "name": "Direct-to-consumer pharmacy models",
+       "provenance": "SOURCE OPINION",
+       "quote": "Direct-to-consumer pharmacy models can expand medication access and transparency."
+      }
+     ],
+     "sectors": [
+      "healthcare services",
+      "diagnostics / testing",
+      "generics",
+      "direct-to-consumer pharmacy",
+      "payers"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-b2f35dbad097d2"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "August 2026 AlphaWise survey documents current out-of-pocket behavior but offers no dated repricing catalyst."
+      },
+      {
+       "claim_ids": [
+        "C-f1359889850514"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Speakers see no signs of demand slowdown currently."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-6bc3e649ef9d9c"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "36% of consumers would be willing to pay entirely out of pocket for healthcare services, spending an average of $413 per year."
+      },
+      {
+       "claim_ids": [
+        "C-645de21ec5621d"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "A longer-term shift toward consumer-directed, proactive healthcare engagement supports utilization."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 6 other theses in the same broader area (healthcare) \u2014 context only, never evidence; the desk lists them"
+      },
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far this shift can go, plus macroeconomic sensitivities and other risks."
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the consumerism shift can go, along with macroeconomic sensitivities and other risks."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "A reported deceleration in testing volumes, patient traffic or generics demand"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that direct-to-consumer channels cannibalize rather than expand utilization"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Declining out-of-pocket payment shares in future surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Consumer-choice models failing to gain share"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macro-driven pullback in discretionary cash-pay healthcare"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-20b368b85af2e8"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "There are limits to how far the healthcare consumerism shift can go, along with macroeconomic sensitivities and other risks. (scope: Applies to the overall consumer-driven healthcare access trend, including out-of-pocket cash-pay demand which is sensitive to macroeconomic conditions.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether robust utilization translates into earnings for specific listed companies; the article names no companies and quantifies no financial effect."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether high utilization reflects durable demand or temporary factors."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed healthcare services companies are positioned to benefit"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether willingness-to-pay converts to actual spending at scale"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the survey's stated behavior reflects durable demand or shifting costs"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Utilization data show deceleration"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Managed-care cost pressure curtails volumes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Survey data showing out-of-pocket behavior reversing"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Macroeconomic weakness curbing cash-pay demand"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Map listed payers, DTC pharmacy and consumer-enablement platform companies to the transparency/choice trend and assess exposure."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Company reports confirm accelerating testing/utilization volumes"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DTC testing and pharmacy revenue growth accelerates"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Rising out-of-pocket payment and willingness-to-pay in later surveys"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Payers publicly expanding consumer-choice offerings"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-cfc65506a485",
+      "authors": [],
+      "authors_status": "UNKNOWN",
+      "claim_ids": [
+       "C-645de21ec5621d",
+       "C-83ea3687bd0238",
+       "C-f1359889850514"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-18T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Industry Trends Powering Growth Beyond 2026",
+      "upstream_origins": [
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-industry-trends-global-healthcare-conference-2026",
+      "version_dates": []
+     },
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-8dead6e3ab71",
+      "authors": [
+       "Erin Wright"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-b2f35dbad097d2",
+       "C-fb3891cd37a697",
+       "C-6bc3e649ef9d9c",
+       "C-dc5abbc862ee0a",
+       "C-5e1feecb6f22f7",
+       "C-3434c80afaa2bb",
+       "C-20b368b85af2e8"
+      ],
+      "contribution": "contradictory",
+      "published_at": "2026-09-29T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Healthcare Consumerism: Patients Drive a $26B Opportunity",
+      "upstream_origins": [
+       "Morgan Stanley AlphaWise",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/healthcare-consumerism-drives-26-b-opportunity-2026",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "6b9d8ea363a49ef7c4d63b31cf25c595d959e1bf05e788b1676a4f8f967f3dbb",
+   "created_at": "2026-10-22T07:42:55.404112Z",
+   "diffs": [
+    {
+     "change_class": "no material change",
+     "claim_ids": [
+      "C-83ea3687bd0238",
+      "C-f1359889850514",
+      "C-645de21ec5621d",
+      "C-83ea3687bd0238",
+      "C-645de21ec5621d",
+      "C-b2f35dbad097d2",
+      "C-6bc3e649ef9d9c",
+      "C-dc5abbc862ee0a"
+     ],
+     "field_id": "s01_bottom_line",
+     "new": "\u27e8update 2026-09-29 \u00b7 Morgan Stanley\u27e9 Healthcare services are evolving as payers align with consumer choice and direct-to-consumer pharmacy and consumer-enablement technologies expand access; survey data shows 25% paid out of pocket for a service and 36% willing to pay an average $413/year.",
+     "note": "",
+     "old": "\u27e8update 2026-09-29 \u00b7 Morgan Stanley\u27e9 Healthcare services are evolving as payers align with consumer choice and direct-to-consumer pharmacy and consumer-enablement technologies expand access; survey data shows 25% paid out of pocket for a service and 36% willing to pay an average $413/year."
+    }
+   ],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "MIXED",
+   "prior_content_sha": "9b5a8fd4be68d32d2a02f508596632a255af49b9bd1839f7499f8bfebdf33438",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "MIXED",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-6bc3e649ef9d9c",
+       "C-b2f35dbad097d2",
+       "C-dc5abbc862ee0a",
+       "C-fb3891cd37a697"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "4"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-830d54dc4aae, ES-f41ee4fccc95",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-6bc3e649ef9d9c",
+       "C-b2f35dbad097d2",
+       "C-dc5abbc862ee0a",
+       "C-fb3891cd37a697"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "4 claim(s) inside the next 2-4 quarters (C-6bc3e649ef9d9c: measured 2026-09-29 (23 days before the as-of); C-b2f35dbad097d2: measured 2026-09-29 (23 days before the as-of); C-dc5abbc862ee0a: measured 2026-09-29 (23 days before the as-of); C-fb3891cd37a697: measured 2026-09-29 (23 days before the as-of)); 0 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: Healthcare utilization rates, sector: direct-to-consumer testing or direct-to-consumer pharmacy offerings, sector: demand for generics, sector: healthcare services, sector: Direct-to-consumer pharmacy models",
+      "value": "0 listed \u00b7 5 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-20b368b85af2e8"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 4 supporting; 0 independent contradicting source(s) vs 1 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-DEB6560D7F",
+   "version": 3
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 9,
+ "other_cited_evidence": [
+  "C-20b368b85af2e8"
+ ],
+ "review_carried": {},
+ "review_dismissed": {
+  "s01.2": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-b2f35dbad097d2",
+    "C-6bc3e649ef9d9c",
+    "C-dc5abbc862ee0a"
+   ],
+   "created_at": "2026-10-22T07:43:12.885332Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s01.2: Cited spans support the 25%, 36% and $413 figures, but the preceding claims about payers aligning with consumer choice and DTC pharmacy/consumer-enablement expanding access are not in the cited spans. The survey statistics themselves are correctly MEASURED, but the sentence mixes in unsourced interpretive claims. | '\u27e8update 2026-09-29 \u00b7 Morgan Stanley\u27e9 Healthcare services are evolving as payers align with consumer '",
+   "finding_key": "F-7b0d87682112",
+   "finding_version": 3,
+   "line_text": "\u27e8update 2026-09-29 \u00b7 Morgan Stanley\u27e9 Healthcare services are evolving as payers align with consumer choice and direct-to-consumer pharmacy and consumer-enablement technologies expand access; survey data shows 25% paid out of pocket for a service and 36% willing to pay an average $413/year.",
+   "reason": "The source says it: 'Healthcare services are evolving as well: Payers are aligning more closely with consumer choice'; the survey figures are cited and the label is already capped. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-5c452f49c8d2",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074312Z-review-2",
+   "sentence_id": "s01.2",
+   "supersedes": [],
+   "thesis_id": "TH-DEB6560D7F",
+   "version": 3
+  },
+  "s03.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-645de21ec5621d",
+    "C-5e1feecb6f22f7",
+    "C-3434c80afaa2bb"
+   ],
+   "created_at": "2026-10-22T07:43:13.619927Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s03.0: The cited span supports consumers making independent decisions, but 'including direct-to-consumer testing and pharmacy' is not in the cited span. | 'Consumers increasingly make independent decisions about their healthcare, including direct-to-consum'",
+   "finding_key": "F-feab41be7768",
+   "finding_version": 3,
+   "line_text": "Consumers increasingly make independent decisions about their healthcare, including direct-to-consumer testing and pharmacy.",
+   "reason": "The line cites C-5e1feecb6f22f7 (direct-to-consumer diagnostics, cash-pay testing) and C-3434c80afaa2bb (direct-to-consumer pharmacy), which carry the 'including' clause. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-5318eef1ee8c",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074313Z-review",
+   "sentence_id": "s03.0",
+   "supersedes": [],
+   "thesis_id": "TH-DEB6560D7F",
+   "version": 3
+  }
+ },
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.2": "Cited spans support the 25%, 36% and $413 figures, but the preceding claims about payers aligning with consumer choice and DTC pharmacy/consumer-enablement expanding access are not in the cited spans. The survey statistics themselves are correctly MEASURED, but the sentence mixes in unsourced interpretive claims.",
+  "s03.0": "The cited span supports consumers making independent decisions, but 'including direct-to-consumer testing and pharmacy' is not in the cited span."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}

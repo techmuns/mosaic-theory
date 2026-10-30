@@ -1,0 +1,3224 @@
+{
+ "analyst_corrections": {
+  "s03.0": "The vertical-integration and track-based-bonder description is not in the cited claims; the reported design work restated with its own source. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s03.2": "The expensive-logic-dies rationale is not in the source. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s06.0": "'Not announced by management' and 'adoption over years' are not in the cited claims; the pitch roadmap restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+  "s07.0": "ASML's unannounced tool and unsolved challenges are not in the cited claim; the Besi position restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)"
+ },
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-22",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.semicap_foundry"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T08:18:40.228220Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-15",
+   "latest_article_date": "2026-10-15",
+   "region": "Global",
+   "research_action": "WATCH",
+   "sector": "Semiconductor equipment and foundry capacity",
+   "status": "ACTIVE",
+   "thesis_id": "TH-77926B9936",
+   "title": "ASML's hybrid bonding tool threatens Besi's logic and HBM equipment franchise"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-728446ee4035c2",
+     "C-88e096720cc437",
+     "C-1382cb9d497c06",
+     "C-6af62a2f686aa8"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "ASML is building a die-to-wafer hybrid bonding tool, evidenced by 27 bonding patent families filed Dec 2022-Nov 2024 and a report it began architecture design with Prodrive and VDL ETG; Besi is today the only supplier with D2W tools in volume production, with most of its HB business in logic at TSMC and Intel."
+   },
+   {
+    "claim_ids": [
+     "C-191768c254746f",
+     "C-cd0b2e292aaeb3",
+     "C-66600ab4683d98"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "SemiAnalysis frames ASML's entry as 'bad news for Besi,' expecting advanced logic to adopt ASML's tool first and Besi's HBM prospects to weaken from Korean competition and delayed HBM adoption. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If ASML wins advanced-logic HB customers first using its lithography-derived alignment and particle-control strengths, Besi could lose its leadership in the fastest-growing HB segment; but the article does not quantify revenue or earnings impact for either company."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-7b20abdd06d4",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-728446ee4035c2"
+     ],
+     "original_date": "2026-10-15",
+     "period": "December 2022 to November 2024",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "ASML filed 27 bonding patent families between December 2022 and November 2024, most of them die-to-wafer."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-88e096720cc437"
+     ],
+     "original_date": "2026-10-15",
+     "period": "March",
+     "provenance": "MEASURED OBSERVATION",
+     "text": "The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8078cb66a0f31e"
+     ],
+     "original_date": "2026-10-15",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "ASML's NXT:2100i holds 0.9nm overlay on a single machine."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-fbdaa878bf7d2a"
+     ],
+     "original_date": "2026-10-15",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "ASML metrology plus scanner correction brings post-bond overlay from 40-60nm down to below 4nm."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c778dba9b52a3b"
+     ],
+     "original_date": "2026-10-15",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV"
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b2bb023eb6ca55"
+     ],
+     "original_date": "2026-10-15",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm"
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 13 pieces of evidence from A-7b20abdd06d4 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:18 UTC, analysed as of 2026-10-21, from a source published 2026-10-15; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-88e096720cc437"
+    ],
+    "provenance": "MEASURED OBSERVATION",
+    "step": "industry_shift",
+    "text": "ASML has started the architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG, The Elec reported in March."
+   },
+   {
+    "claim_ids": [
+     "C-191768c254746f",
+     "C-6af62a2f686aa8"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi's unit volumes in its core logic segment; article does not quantify."
+   },
+   {
+    "claim_ids": [
+     "C-393c82f7c8a2af"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "pricing",
+    "text": "The source expects ASML to price its tools at a premium to peers."
+   },
+   {
+    "claim_ids": [
+     "C-191768c254746f"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Share shift from Besi to ASML would erode Besi's HB revenue while adding to ASML's back-end sales; article quantifies neither."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-728446ee4035c2",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "bonding patent families filed",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "December 2022 to November 2024",
+    "qualifiers": [
+     "most of them D2W",
+     "true count likely higher"
+    ],
+    "quote": "the company filed 27 bonding patent families between December 2022 and November 2024, most of them D2W",
+    "role": "supports",
+    "unit": "patent families",
+    "value": 27.0,
+    "value_text": "27"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b042",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8078cb66a0f31e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "overlay accuracy",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "single machine"
+    ],
+    "quote": "Its NXT:2100i holds 0.9nm overlay on a single machine.",
+    "role": "supports",
+    "unit": "nm",
+    "value": 0.9,
+    "value_text": "0.9nm"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b043",
+    "change_class": "novelty_unverified",
+    "chart_derived": true,
+    "claim_id": "C-b2bb023eb6ca55",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "post-bond overlay",
+    "measured_as_of": null,
+    "origin": "ASML",
+    "period": null,
+    "qualifiers": [
+     "metrology plus scanner correction"
+    ],
+    "quote": "ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm",
+    "role": "supports",
+    "unit": "nm",
+    "value": null,
+    "value_text": "2.5-3.9nm"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b042",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fbdaa878bf7d2a",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "post-bond overlay",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "from 40-60nm"
+    ],
+    "quote": "bringing post-bond overlay from 40-60nm down to below 4nm",
+    "role": "supports",
+    "unit": "nm",
+    "value": 4.0,
+    "value_text": "below 4nm"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c778dba9b52a3b",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "High NA EUV"
+    ],
+    "quote": "ASML announced joint initiatives with TSMC , Intel Foundry and Samsung to move the industry from 6-inch to 12-inch photomasks for High NA EUV",
+    "role": "catalyst",
+    "unit": "inch",
+    "value": null,
+    "value_text": "6-inch to 12-inch"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1382cb9d497c06",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Besi has led D2W hybrid bonding and is the only supplier with tools in volume production.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Besi has led D2W and is the only supplier with tools in volume production.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-191768c254746f",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "SemiAnalysis expects advanced logic to adopt ASML's D2W HB tool first, which is bad news for Besi.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "We expect advanced logic, where D2W already runs in volume, to adopt ASML\u2019s D2W HB tool first. This is bad news for Besi .",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-393c82f7c8a2af",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "SemiAnalysis expects ASML to price its hybrid bonding tools at a premium to peers.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "We expect ASML to price its tools at a premium to peers.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b014",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-46b792a61f0542",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "ASML shipped its first back-end product, the XT:260 i-line packaging scanner, in 3Q25.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "3Q25",
+    "qualifiers": [],
+    "quote": "It shipped its first back-end product, the XT:260 i-line packaging scanner, in 3Q25.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6af62a2f686aa8",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Logic accounts for most of Besi's hybrid bonding business today, concentrated at TSMC and Intel.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "today",
+    "qualifiers": [
+     "concentrated at TSMC and Intel"
+    ],
+    "quote": "Logic accounts for most of Besi\u2019s HB business today concentrated at TSMC and Intel.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b015",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c4605bd9b73093",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "In ASML's design the bonder hands each die's position map to the scanner, enabling faster lithography on bonded wafers and selling bonder and scanner as a pair",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "the bonder already knows where it put each die and hands that map (a \u201ccoordinate system\u201d in the filing) to the scanner",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b005",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3b4c4ffc6d1605",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "ASML announced a joint photomask initiative with TSMC and Intel in September.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "September",
+    "qualifiers": [],
+    "quote": "ASML has been working with both for more than two decades and just announced a joint photomask initiative in September.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-7b20abdd06d4",
+    "block_id": "b008",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-88e096720cc437",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.",
+    "measured_as_of": null,
+    "origin": "The Elec",
+    "period": "March",
+    "qualifiers": [],
+    "quote": "The Elec also reported in March that ASML had started the architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": "0000002488",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value per share",
+       "ticker": "AMD"
+      }
+     ],
+     "mention_id": "M-79c6bdf9c1a1ae",
+     "name_as_written": "AMD",
+     "other_securities": [],
+     "quote": "AMD has shipped hybrid-bonded V-Cache since 2022",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "context",
+     "role_detail": "Example of logic company using hybrid-bonded V-Cache in volume since 2022."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e58e14048c49f4",
+     "name_as_written": "Hanwha Semitech",
+     "other_securities": [],
+     "quote": "has also built Hanwha Semitech\u2019s SHB2 Nano bonder",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Prodrive also built Hanwha Semitech's SHB2 Nano bonder."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-4d1e064a9f9e7f",
+     "name_as_written": "Cymer",
+     "other_securities": [],
+     "quote": "ASML bought Cymer for its light source in 2013",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Prior ASML acquisition cited as evidence of vertical integration history."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-919cb5cb962767",
+     "name_as_written": "HMI",
+     "other_securities": [],
+     "quote": "HMI for e-beam inspection in 2016",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Prior ASML acquisition cited in vertical integration history."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-0c0711d554f921",
+     "name_as_written": "Berliner Glas",
+     "other_securities": [],
+     "quote": "Berliner Glas for optics modules in 2020",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "context",
+     "role_detail": "Prior ASML acquisition cited in vertical integration history."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-6a92c077b712f9",
+     "name_as_written": "The Elec",
+     "other_securities": [],
+     "quote": "The Elec also reported in March",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "News outlet that reported ASML started architecture design of a hybrid bonder."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-92e89a88e87e77",
+     "name_as_written": "Inha University",
+     "other_securities": [],
+     "quote": "a patent analysis by Inha University",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "data_source",
+     "role_detail": "Source of patent analysis suggesting ASML is building W2W HB on TWINSCAN."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-51b41824b0cc24",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "SemiAnalysis Wafer Fabrication Equipment Model",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of the research note and its proprietary equipment model."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-e34ebffae56753",
+     "name_as_written": "SuperTrak CONVEYANCE",
+     "other_securities": [],
+     "quote": "ASML names SuperTrak CONVEYANCE (Fig 3) as an example",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "supplier",
+     "role_detail": "Track system named in ASML's patent filing used in the bonder design."
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": "0000937966",
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-87f906637c0b8f",
+     "name_as_written": "ASML",
+     "other_securities": [],
+     "quote": "ASML has not announced anything yet",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Lithography equipment maker building a D2W hybrid bonding tool, expanding into back-end packaging and threatening Besi's position."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "negative",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potentially harmed",
+     "listings": [],
+     "mention_id": "M-1fa1248b623b76",
+     "name_as_written": "Besi",
+     "other_securities": [],
+     "quote": "This is bad news for Besi .",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potentially_harmed",
+     "role_detail": "Current D2W hybrid bonding leader whose logic and HBM business is threatened by ASML's entry and Korean challengers."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [],
+     "mention_id": "M-e807b3e9735acf",
+     "name_as_written": "TSMC",
+     "other_securities": [],
+     "quote": "concentrated at TSMC and Intel",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Key hybrid bonding customer (SoIC) where ASML has decades of relationship; potential first adopter of ASML's tool."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": "0000050863",
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-07-24 (accession 0000050863-26-000157) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common stock, $0.001 par value",
+       "ticker": "INTC"
+      }
+     ],
+     "mention_id": "M-f8fb8733d307cf",
+     "name_as_written": "Intel",
+     "other_securities": [],
+     "quote": "concentrated at TSMC and Intel",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "spending_customer",
+     "role_detail": "Key logic hybrid bonding customer concentrated in Besi's business today."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [],
+     "mention_id": "M-a16f1c081a9c7c",
+     "name_as_written": "Intel Foundry",
+     "other_securities": [],
+     "quote": "ASML announced joint initiatives with TSMC , Intel Foundry and Samsung",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Partner in ASML's photomask initiative for High NA EUV."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "spending customer",
+     "listings": [],
+     "mention_id": "M-7db9c3906c6695",
+     "name_as_written": "Samsung",
+     "other_securities": [],
+     "quote": "joint initiatives with TSMC , Intel Foundry and Samsung",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "spending_customer",
+     "role_detail": "Partner in ASML's photomask initiative."
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-210a101a9b11cb",
+     "name_as_written": "Prodrive Technologies",
+     "other_securities": [],
+     "quote": "architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Likely component supplier of linear motors and drives for ASML's bonder."
+    },
+    {
+     "article_id": "A-7b20abdd06d4",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "supplier",
+     "listings": [],
+     "mention_id": "M-642b4b517051cc",
+     "name_as_written": "VDL ETG",
+     "other_securities": [],
+     "quote": "with Prodrive Technologies and VDL ETG",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "supplier",
+     "role_detail": "Likely component supplier building ASML's frames and modules and wafer handler."
+    }
+   ],
+   "sector_exposures": [],
+   "sectors": [
+    "semiconductor equipment",
+    "advanced packaging"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "September photomask initiative announcement; March report of architecture design start [MEASURED OBSERVATION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-2ffe726cbc9c6a",
+      "C-2082af8a4bec40"
+     ],
+     "provenance": "FORECAST",
+     "text": "TSMC's SoIC bonds at about 6um pitch today and targets 4.5um around 2029, tightening placement-accuracy requirements. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-8078cb66a0f31e",
+      "C-fbdaa878bf7d2a",
+      "C-6af62a2f686aa8",
+      "C-3b4c4ffc6d1605"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "ASML's decades of alignment and particle-control expertise and deep TSMC/Intel relationships position it to displace Besi in advanced-logic hybrid bonding over the long term."
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-1382cb9d497c06"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Besi has led die-to-wafer bonding and is the only supplier with tools in volume production."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 2 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "ASML abandons or delays the bonder program"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Besi secures new HBM or logic HB qualifications"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Customers reject ASML's premium pricing"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether ASML's tool will be qualified and when it ships"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Revenue/earnings magnitude of share shift for ASML and Besi"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether premium pricing wins customers versus incumbent Besi tools"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether patent filings translate to a working volume tool"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "ASML delays or shelves the bonder"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "HBM D2W adoption accelerates in Besi's favor"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Besi extends its volume-production lead"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Track ASML's hybrid bonder patent filings and any management announcement, and estimate Besi's HB revenue concentration in logic (TSMC/Intel) and HBM to size the competitive threat."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "ASML management announces or demonstrates a working hybrid bonder"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "TSMC or Intel qualifies ASML's D2W HB tool"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-7b20abdd06d4",
+    "authors": [
+     "Sherry Zhang",
+     "Gerald Wong",
+     "Steven Lee",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-3b4c4ffc6d1605",
+     "C-88e096720cc437",
+     "C-c778dba9b52a3b",
+     "C-728446ee4035c2",
+     "C-1382cb9d497c06",
+     "C-6af62a2f686aa8",
+     "C-191768c254746f",
+     "C-393c82f7c8a2af",
+     "C-8078cb66a0f31e",
+     "C-fbdaa878bf7d2a",
+     "C-b2bb023eb6ca55",
+     "C-c4605bd9b73093",
+     "C-46b792a61f0542"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-15T19:27:20Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "ASML Is Building a Hybrid Bonding Tool, Sending More Chills to Besi",
+    "upstream_origins": [
+     "ASML",
+     "The Elec",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/asml-is-building-a-hybrid-bonding",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2025-12-12 (0001628280-25-056742)",
+    "business": "broad semiconductor wafer-fabrication equipment maker",
+    "direction": "positive",
+    "enrichment_id": "EC-cd57da8448f468",
+    "evidence": "s03.1: ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi's unit volumes in its core logic segment; article does not quantify.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-20 (accession 0001628280-26-058235) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $.01 per share",
+      "ticker": "AMAT"
+     }
+    ],
+    "name": "Applied Materials",
+    "rationale": "Supplies die-attach and advanced packaging/hybrid bonding tools; growth in advanced-logic HB adoption expands its packaging equipment revenue line.",
+    "registrant": "APPLIED MATERIALS INC /DE",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "advanced packaging and bonding equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-77926B9936",
+    "ticker_hint": "AMAT"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales",
+    "basis_quote": [
+     "the Company generates revenue from product sales, either directly to customers or to distributors."
+    ],
+    "basis_source": "10-K filed 2025-11-20 (0000056978-25-000081)",
+    "business": "semiconductor assembly and bonding equipment supplier",
+    "direction": "negative",
+    "enrichment_id": "EC-597756669bf899",
+    "evidence": "s03.1: ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi's unit volumes in its core logic segment; article does not quantify.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-06 (accession 0000056978-26-000032) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, Without Par Value",
+      "ticker": "KLIC"
+     }
+    ],
+    "name": "Kulicke & Soffa",
+    "rationale": "Its thermocompression/die-attach bonding franchise competes in advanced packaging; dominant D2W hybrid-bonding tools from larger vendors could displace its bonder unit volumes.",
+    "registrant": "KULICKE & SOFFA INDUSTRIES INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3674); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "die-attach and bonding equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-77926B9936",
+    "ticker_hint": "KLIC"
+   },
+   {
+    "basis_check": "IN_FILING",
+    "basis_note": "its revenue-source sentence names product sales",
+    "basis_quote": [
+     "Our revenue is derived from the sale of our systems and software, spare parts, and services."
+    ],
+    "basis_source": "10-K filed 2026-02-24 (0001193125-26-066937)",
+    "business": "metrology and inspection for advanced packaging",
+    "direction": "positive",
+    "enrichment_id": "EC-2ee0d0d7f44bb1",
+    "evidence": "s03.1: ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi's unit volumes in its core logic segment; article does not quantify.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-06 (accession 0001193125-26-338401) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, $0.001 par value per share",
+      "ticker": "ONTO"
+     }
+    ],
+    "name": "Onto Innovation",
+    "rationale": "Hybrid bonding's tight alignment and particle control drives demand for its packaging metrology and inspection systems as HB logic volumes ramp.",
+    "registrant": "ONTO INNOVATION INC.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 3829); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "advanced-packaging metrology and inspection",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-77926B9936",
+    "ticker_hint": "ONTO"
+   },
+   {
+    "basis_check": "FILING_NAMES_OTHER",
+    "basis_note": "its revenue-source sentences name licences and maintenance \u2014 not product sales",
+    "basis_quote": [
+     "we generate revenues from providing maintenance and support services for our products."
+    ],
+    "basis_source": "20-F filed 2026-03-19 (0001178913-26-001561)",
+    "business": "inspection and metrology for advanced packaging/HBM",
+    "direction": "positive",
+    "enrichment_id": "EC-23c179b21daa26",
+    "evidence": "s03.1: ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi's unit volumes in its core logic segment; article does not quantify.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Camtek",
+    "rationale": "Hybrid bonding and HBM stacking require high-end inspection; rising advanced-logic and HBM packaging volumes lift its core packaging inspection sales.",
+    "registrant": "CAMTEK LTD",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['CAMT'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "advanced-packaging inspection equipment",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-77926B9936",
+    "ticker_hint": "CAMT"
+   }
+  ],
+  "created_at": "2026-10-30T12:23:24.748933Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-2cfd467d8210fa",
+  "thesis_id": "TH-77926B9936",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-21",
+   "change_summary": "Initial record \u2014 created from A-7b20abdd06d4",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-21",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.semicap_foundry"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:18:40.228220Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-15",
+     "latest_article_date": "2026-10-15",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Semiconductor equipment and foundry capacity",
+     "status": "ACTIVE",
+     "thesis_id": "TH-77926B9936",
+     "title": "ASML's hybrid bonding tool threatens Besi's logic and HBM equipment franchise"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-728446ee4035c2",
+       "C-88e096720cc437",
+       "C-1382cb9d497c06",
+       "C-6af62a2f686aa8"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "ASML is building a die-to-wafer hybrid bonding tool, evidenced by 27 bonding patent families filed Dec 2022-Nov 2024 and a report it began architecture design with Prodrive and VDL ETG; Besi is today the only supplier with D2W tools in volume production, with most of its HB business in logic at TSMC and Intel."
+     },
+     {
+      "claim_ids": [
+       "C-191768c254746f",
+       "C-cd0b2e292aaeb3",
+       "C-66600ab4683d98"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SemiAnalysis frames ASML's entry as 'bad news for Besi,' expecting advanced logic to adopt ASML's tool first and Besi's HBM prospects to weaken from Korean competition and delayed HBM adoption. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If ASML wins advanced-logic HB customers first using its lithography-derived alignment and particle-control strengths, Besi could lose its leadership in the fastest-growing HB segment; but the article does not quantify revenue or earnings impact for either company."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-728446ee4035c2"
+       ],
+       "original_date": "2026-10-15",
+       "period": "December 2022 to November 2024",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML filed 27 bonding patent families between December 2022 and November 2024, most of them die-to-wafer."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-88e096720cc437"
+       ],
+       "original_date": "2026-10-15",
+       "period": "March",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8078cb66a0f31e"
+       ],
+       "original_date": "2026-10-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML's NXT:2100i holds 0.9nm overlay on a single machine."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-fbdaa878bf7d2a"
+       ],
+       "original_date": "2026-10-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML metrology plus scanner correction brings post-bond overlay from 40-60nm down to below 4nm."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c778dba9b52a3b"
+       ],
+       "original_date": "2026-10-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV"
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b2bb023eb6ca55"
+       ],
+       "original_date": "2026-10-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm"
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 13 pieces of evidence from A-7b20abdd06d4 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:18 UTC, analysed as of 2026-10-21, from a source published 2026-10-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-728446ee4035c2",
+       "C-8078cb66a0f31e",
+       "C-fbdaa878bf7d2a"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "ASML extends vertical integration into back-end hybrid bonding, building a track-based D2W bonder leveraging its litho alignment and cleanliness expertise."
+     },
+     {
+      "claim_ids": [
+       "C-191768c254746f",
+       "C-6af62a2f686aa8"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi's unit volumes in its core logic segment; article does not quantify."
+     },
+     {
+      "claim_ids": [
+       "C-393c82f7c8a2af"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "ASML expected to price tools at a premium to peers given expensive advanced-logic dies."
+     },
+     {
+      "claim_ids": [
+       "C-191768c254746f"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Share shift from Besi to ASML would erode Besi's HB revenue while adding to ASML's back-end sales; article quantifies neither."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-728446ee4035c2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "bonding patent families filed",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "December 2022 to November 2024",
+      "qualifiers": [
+       "most of them D2W",
+       "true count likely higher"
+      ],
+      "quote": "the company filed 27 bonding patent families between December 2022 and November 2024, most of them D2W",
+      "role": "supports",
+      "unit": "patent families",
+      "value": 27.0,
+      "value_text": "27"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b042",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8078cb66a0f31e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "overlay accuracy",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "single machine"
+      ],
+      "quote": "Its NXT:2100i holds 0.9nm overlay on a single machine.",
+      "role": "supports",
+      "unit": "nm",
+      "value": 0.9,
+      "value_text": "0.9nm"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-b2bb023eb6ca55",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "post-bond overlay",
+      "measured_as_of": null,
+      "origin": "ASML",
+      "period": null,
+      "qualifiers": [
+       "metrology plus scanner correction"
+      ],
+      "quote": "ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm",
+      "role": "supports",
+      "unit": "nm",
+      "value": null,
+      "value_text": "2.5-3.9nm"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b042",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fbdaa878bf7d2a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "post-bond overlay",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "from 40-60nm"
+      ],
+      "quote": "bringing post-bond overlay from 40-60nm down to below 4nm",
+      "role": "supports",
+      "unit": "nm",
+      "value": 4.0,
+      "value_text": "below 4nm"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c778dba9b52a3b",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "High NA EUV"
+      ],
+      "quote": "ASML announced joint initiatives with TSMC , Intel Foundry and Samsung to move the industry from 6-inch to 12-inch photomasks for High NA EUV",
+      "role": "catalyst",
+      "unit": "inch",
+      "value": null,
+      "value_text": "6-inch to 12-inch"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1382cb9d497c06",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Besi has led D2W hybrid bonding and is the only supplier with tools in volume production.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Besi has led D2W and is the only supplier with tools in volume production.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-191768c254746f",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "SemiAnalysis expects advanced logic to adopt ASML's D2W HB tool first, which is bad news for Besi.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We expect advanced logic, where D2W already runs in volume, to adopt ASML\u2019s D2W HB tool first. This is bad news for Besi .",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-393c82f7c8a2af",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "SemiAnalysis expects ASML to price its hybrid bonding tools at a premium to peers.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We expect ASML to price its tools at a premium to peers.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-46b792a61f0542",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "ASML shipped its first back-end product, the XT:260 i-line packaging scanner, in 3Q25.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "3Q25",
+      "qualifiers": [],
+      "quote": "It shipped its first back-end product, the XT:260 i-line packaging scanner, in 3Q25.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6af62a2f686aa8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Logic accounts for most of Besi's hybrid bonding business today, concentrated at TSMC and Intel.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "today",
+      "qualifiers": [
+       "concentrated at TSMC and Intel"
+      ],
+      "quote": "Logic accounts for most of Besi\u2019s HB business today concentrated at TSMC and Intel.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c4605bd9b73093",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "In ASML's design the bonder hands each die's position map to the scanner, enabling faster lithography on bonded wafers and selling bonder and scanner as a pair",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the bonder already knows where it put each die and hands that map (a \u201ccoordinate system\u201d in the filing) to the scanner",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3b4c4ffc6d1605",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "ASML announced a joint photomask initiative with TSMC and Intel in September.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September",
+      "qualifiers": [],
+      "quote": "ASML has been working with both for more than two decades and just announced a joint photomask initiative in September.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-88e096720cc437",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.",
+      "measured_as_of": null,
+      "origin": "The Elec",
+      "period": "March",
+      "qualifiers": [],
+      "quote": "The Elec also reported in March that ASML had started the architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": "0000002488",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-79c6bdf9c1a1ae",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "AMD has shipped hybrid-bonded V-Cache since 2022",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Example of logic company using hybrid-bonded V-Cache in volume since 2022."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e58e14048c49f4",
+       "name_as_written": "Hanwha Semitech",
+       "other_securities": [],
+       "quote": "has also built Hanwha Semitech\u2019s SHB2 Nano bonder",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Prodrive also built Hanwha Semitech's SHB2 Nano bonder."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4d1e064a9f9e7f",
+       "name_as_written": "Cymer",
+       "other_securities": [],
+       "quote": "ASML bought Cymer for its light source in 2013",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Prior ASML acquisition cited as evidence of vertical integration history."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-919cb5cb962767",
+       "name_as_written": "HMI",
+       "other_securities": [],
+       "quote": "HMI for e-beam inspection in 2016",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Prior ASML acquisition cited in vertical integration history."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0c0711d554f921",
+       "name_as_written": "Berliner Glas",
+       "other_securities": [],
+       "quote": "Berliner Glas for optics modules in 2020",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Prior ASML acquisition cited in vertical integration history."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6a92c077b712f9",
+       "name_as_written": "The Elec",
+       "other_securities": [],
+       "quote": "The Elec also reported in March",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "News outlet that reported ASML started architecture design of a hybrid bonder."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-92e89a88e87e77",
+       "name_as_written": "Inha University",
+       "other_securities": [],
+       "quote": "a patent analysis by Inha University",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of patent analysis suggesting ASML is building W2W HB on TWINSCAN."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-51b41824b0cc24",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "SemiAnalysis Wafer Fabrication Equipment Model",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the research note and its proprietary equipment model."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e34ebffae56753",
+       "name_as_written": "SuperTrak CONVEYANCE",
+       "other_securities": [],
+       "quote": "ASML names SuperTrak CONVEYANCE (Fig 3) as an example",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "supplier",
+       "role_detail": "Track system named in ASML's patent filing used in the bonder design."
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": "0000937966",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-87f906637c0b8f",
+       "name_as_written": "ASML",
+       "other_securities": [],
+       "quote": "ASML has not announced anything yet",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Lithography equipment maker building a D2W hybrid bonding tool, expanding into back-end packaging and threatening Besi's position."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [],
+       "mention_id": "M-1fa1248b623b76",
+       "name_as_written": "Besi",
+       "other_securities": [],
+       "quote": "This is bad news for Besi .",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potentially_harmed",
+       "role_detail": "Current D2W hybrid bonding leader whose logic and HBM business is threatened by ASML's entry and Korean challengers."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-e807b3e9735acf",
+       "name_as_written": "TSMC",
+       "other_securities": [],
+       "quote": "concentrated at TSMC and Intel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Key hybrid bonding customer (SoIC) where ASML has decades of relationship; potential first adopter of ASML's tool."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": "0000050863",
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-24 (accession 0000050863-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.001 par value",
+         "ticker": "INTC"
+        }
+       ],
+       "mention_id": "M-f8fb8733d307cf",
+       "name_as_written": "Intel",
+       "other_securities": [],
+       "quote": "concentrated at TSMC and Intel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Key logic hybrid bonding customer concentrated in Besi's business today."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-a16f1c081a9c7c",
+       "name_as_written": "Intel Foundry",
+       "other_securities": [],
+       "quote": "ASML announced joint initiatives with TSMC , Intel Foundry and Samsung",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Partner in ASML's photomask initiative for High NA EUV."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-7db9c3906c6695",
+       "name_as_written": "Samsung",
+       "other_securities": [],
+       "quote": "joint initiatives with TSMC , Intel Foundry and Samsung",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Partner in ASML's photomask initiative."
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-210a101a9b11cb",
+       "name_as_written": "Prodrive Technologies",
+       "other_securities": [],
+       "quote": "architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Likely component supplier of linear motors and drives for ASML's bonder."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-642b4b517051cc",
+       "name_as_written": "VDL ETG",
+       "other_securities": [],
+       "quote": "with Prodrive Technologies and VDL ETG",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Likely component supplier building ASML's frames and modules and wafer handler."
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "semiconductor equipment",
+      "advanced packaging"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "September photomask initiative announcement; March report of architecture design start [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-2082af8a4bec40",
+        "C-2ffe726cbc9c6a"
+       ],
+       "provenance": "FORECAST",
+       "text": "A bonder has not been announced by management; adoption would unfold over years as SoIC pitch tightens to 4.5um by 2029. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-8078cb66a0f31e",
+        "C-fbdaa878bf7d2a",
+        "C-6af62a2f686aa8",
+        "C-3b4c4ffc6d1605"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "ASML's decades of alignment and particle-control expertise and deep TSMC/Intel relationships position it to displace Besi in advanced-logic hybrid bonding over the long term."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-1382cb9d497c06"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Besi currently leads D2W and is the only supplier in volume production; ASML has not announced a tool and still must solve feed-forward metrology, die-to-wafer contact and cleanliness challenges."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 2 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "ASML abandons or delays the bonder program"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Besi secures new HBM or logic HB qualifications"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Customers reject ASML's premium pricing"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether ASML's tool will be qualified and when it ships"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue/earnings magnitude of share shift for ASML and Besi"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether premium pricing wins customers versus incumbent Besi tools"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether patent filings translate to a working volume tool"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "ASML delays or shelves the bonder"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "HBM D2W adoption accelerates in Besi's favor"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Besi extends its volume-production lead"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Track ASML's hybrid bonder patent filings and any management announcement, and estimate Besi's HB revenue concentration in logic (TSMC/Intel) and HBM to size the competitive threat."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "ASML management announces or demonstrates a working hybrid bonder"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "TSMC or Intel qualifies ASML's D2W HB tool"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-7b20abdd06d4",
+      "authors": [
+       "Sherry Zhang",
+       "Gerald Wong",
+       "Steven Lee",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-3b4c4ffc6d1605",
+       "C-88e096720cc437",
+       "C-c778dba9b52a3b",
+       "C-728446ee4035c2",
+       "C-1382cb9d497c06",
+       "C-6af62a2f686aa8",
+       "C-191768c254746f",
+       "C-393c82f7c8a2af",
+       "C-8078cb66a0f31e",
+       "C-fbdaa878bf7d2a",
+       "C-b2bb023eb6ca55",
+       "C-c4605bd9b73093",
+       "C-46b792a61f0542"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-15T19:27:20Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "ASML Is Building a Hybrid Bonding Tool, Sending More Chills to Besi",
+      "upstream_origins": [
+       "ASML",
+       "The Elec",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/asml-is-building-a-hybrid-bonding",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "710c22acc927fe2cba3a77baac2af51d223931b00a8f574e1004979d25478326",
+   "created_at": "2026-10-21T08:19:08.791420Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: retrieval PARTIAL)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-728446ee4035c2",
+       "C-8078cb66a0f31e",
+       "C-fbdaa878bf7d2a",
+       "C-b2bb023eb6ca55",
+       "C-46b792a61f0542",
+       "C-3b4c4ffc6d1605",
+       "C-88e096720cc437",
+       "C-c778dba9b52a3b"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "8"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-376a4a64f9cb, ES-7661d1cfece8, ES-feb5010783c6",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-3b4c4ffc6d1605",
+       "C-88e096720cc437",
+       "C-c778dba9b52a3b",
+       "C-8078cb66a0f31e",
+       "C-fbdaa878bf7d2a",
+       "C-b2bb023eb6ca55"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "6 claim(s) inside the next 2-4 quarters (C-3b4c4ffc6d1605: measured 2026-10-15 (6 days before the as-of); C-88e096720cc437: measured 2026-10-15 (6 days before the as-of); C-c778dba9b52a3b: measured 2026-10-15 (6 days before the as-of); C-8078cb66a0f31e: measured 2026-10-15 (6 days before the as-of); showing 4 of 6); 0 long-range claim(s); 2 long-dated statement(s) of the source beside the cited evidence, not on the card: C-66600ab4683d98, C-2082af8a4bec40; model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Intel (INTC)",
+      "value": "1 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-3b4c4ffc6d1605",
+       "C-88e096720cc437",
+       "C-c778dba9b52a3b"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "3 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 8 supporting; 0 independent contradicting source(s) vs 3 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261021T080508Z-scan",
+   "thesis_id": "TH-77926B9936",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s03.0 \u2014 The vertical-integration and track-based-bonder description is not in the cited claims; the reported design work restated with its own source. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s03.2 \u2014 The expensive-logic-dies rationale is not in the source. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s06.0 \u2014 'Not announced by management' and 'adoption over years' are not in the cited claims; the pitch roadmap restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all); ANALYST CORRECTION s07.0 \u2014 ASML's unannounced tool and unsolved challenges are not in the cited claim; the Besi position restated. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.semicap_foundry"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T08:18:40.228220Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-15",
+     "latest_article_date": "2026-10-15",
+     "region": "Global",
+     "research_action": "WATCH",
+     "sector": "Semiconductor equipment and foundry capacity",
+     "status": "ACTIVE",
+     "thesis_id": "TH-77926B9936",
+     "title": "ASML's hybrid bonding tool threatens Besi's logic and HBM equipment franchise"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-728446ee4035c2",
+       "C-88e096720cc437",
+       "C-1382cb9d497c06",
+       "C-6af62a2f686aa8"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "ASML is building a die-to-wafer hybrid bonding tool, evidenced by 27 bonding patent families filed Dec 2022-Nov 2024 and a report it began architecture design with Prodrive and VDL ETG; Besi is today the only supplier with D2W tools in volume production, with most of its HB business in logic at TSMC and Intel."
+     },
+     {
+      "claim_ids": [
+       "C-191768c254746f",
+       "C-cd0b2e292aaeb3",
+       "C-66600ab4683d98"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "SemiAnalysis frames ASML's entry as 'bad news for Besi,' expecting advanced logic to adopt ASML's tool first and Besi's HBM prospects to weaken from Korean competition and delayed HBM adoption. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If ASML wins advanced-logic HB customers first using its lithography-derived alignment and particle-control strengths, Besi could lose its leadership in the fastest-growing HB segment; but the article does not quantify revenue or earnings impact for either company."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-728446ee4035c2"
+       ],
+       "original_date": "2026-10-15",
+       "period": "December 2022 to November 2024",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML filed 27 bonding patent families between December 2022 and November 2024, most of them die-to-wafer."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-88e096720cc437"
+       ],
+       "original_date": "2026-10-15",
+       "period": "March",
+       "provenance": "MEASURED OBSERVATION",
+       "text": "The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8078cb66a0f31e"
+       ],
+       "original_date": "2026-10-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML's NXT:2100i holds 0.9nm overlay on a single machine."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-fbdaa878bf7d2a"
+       ],
+       "original_date": "2026-10-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML metrology plus scanner correction brings post-bond overlay from 40-60nm down to below 4nm."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c778dba9b52a3b"
+       ],
+       "original_date": "2026-10-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV"
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b2bb023eb6ca55"
+       ],
+       "original_date": "2026-10-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm"
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 13 pieces of evidence from A-7b20abdd06d4 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 08:18 UTC, analysed as of 2026-10-21, from a source published 2026-10-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-88e096720cc437"
+      ],
+      "provenance": "MEASURED OBSERVATION",
+      "step": "industry_shift",
+      "text": "ASML has started the architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG, The Elec reported in March."
+     },
+     {
+      "claim_ids": [
+       "C-191768c254746f",
+       "C-6af62a2f686aa8"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "ASML expected to win advanced-logic HB tool orders first (at TSMC/Intel), displacing Besi's unit volumes in its core logic segment; article does not quantify."
+     },
+     {
+      "claim_ids": [
+       "C-393c82f7c8a2af"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "pricing",
+      "text": "The source expects ASML to price its tools at a premium to peers."
+     },
+     {
+      "claim_ids": [
+       "C-191768c254746f"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Share shift from Besi to ASML would erode Besi's HB revenue while adding to ASML's back-end sales; article quantifies neither."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-728446ee4035c2",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "bonding patent families filed",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "December 2022 to November 2024",
+      "qualifiers": [
+       "most of them D2W",
+       "true count likely higher"
+      ],
+      "quote": "the company filed 27 bonding patent families between December 2022 and November 2024, most of them D2W",
+      "role": "supports",
+      "unit": "patent families",
+      "value": 27.0,
+      "value_text": "27"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b042",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8078cb66a0f31e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "overlay accuracy",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "single machine"
+      ],
+      "quote": "Its NXT:2100i holds 0.9nm overlay on a single machine.",
+      "role": "supports",
+      "unit": "nm",
+      "value": 0.9,
+      "value_text": "0.9nm"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b043",
+      "change_class": "novelty_unverified",
+      "chart_derived": true,
+      "claim_id": "C-b2bb023eb6ca55",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "post-bond overlay",
+      "measured_as_of": null,
+      "origin": "ASML",
+      "period": null,
+      "qualifiers": [
+       "metrology plus scanner correction"
+      ],
+      "quote": "ASML metrology plus scanner correction brings post-bond overlay to 2.5-3.9nm",
+      "role": "supports",
+      "unit": "nm",
+      "value": null,
+      "value_text": "2.5-3.9nm"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b042",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fbdaa878bf7d2a",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "post-bond overlay",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "from 40-60nm"
+      ],
+      "quote": "bringing post-bond overlay from 40-60nm down to below 4nm",
+      "role": "supports",
+      "unit": "nm",
+      "value": 4.0,
+      "value_text": "below 4nm"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c778dba9b52a3b",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "ASML announced joint initiatives with TSMC, Intel Foundry and Samsung to move photomasks from 6-inch to 12-inch for High NA EUV",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "High NA EUV"
+      ],
+      "quote": "ASML announced joint initiatives with TSMC , Intel Foundry and Samsung to move the industry from 6-inch to 12-inch photomasks for High NA EUV",
+      "role": "catalyst",
+      "unit": "inch",
+      "value": null,
+      "value_text": "6-inch to 12-inch"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1382cb9d497c06",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Besi has led D2W hybrid bonding and is the only supplier with tools in volume production.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Besi has led D2W and is the only supplier with tools in volume production.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-191768c254746f",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "SemiAnalysis expects advanced logic to adopt ASML's D2W HB tool first, which is bad news for Besi.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We expect advanced logic, where D2W already runs in volume, to adopt ASML\u2019s D2W HB tool first. This is bad news for Besi .",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-393c82f7c8a2af",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "SemiAnalysis expects ASML to price its hybrid bonding tools at a premium to peers.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "We expect ASML to price its tools at a premium to peers.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b014",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-46b792a61f0542",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "ASML shipped its first back-end product, the XT:260 i-line packaging scanner, in 3Q25.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "3Q25",
+      "qualifiers": [],
+      "quote": "It shipped its first back-end product, the XT:260 i-line packaging scanner, in 3Q25.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6af62a2f686aa8",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Logic accounts for most of Besi's hybrid bonding business today, concentrated at TSMC and Intel.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "today",
+      "qualifiers": [
+       "concentrated at TSMC and Intel"
+      ],
+      "quote": "Logic accounts for most of Besi\u2019s HB business today concentrated at TSMC and Intel.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b015",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c4605bd9b73093",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "In ASML's design the bonder hands each die's position map to the scanner, enabling faster lithography on bonded wafers and selling bonder and scanner as a pair",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "the bonder already knows where it put each die and hands that map (a \u201ccoordinate system\u201d in the filing) to the scanner",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b005",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3b4c4ffc6d1605",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "ASML announced a joint photomask initiative with TSMC and Intel in September.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "September",
+      "qualifiers": [],
+      "quote": "ASML has been working with both for more than two decades and just announced a joint photomask initiative in September.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-7b20abdd06d4",
+      "block_id": "b008",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-88e096720cc437",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The Elec reported in March that ASML had started architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.",
+      "measured_as_of": null,
+      "origin": "The Elec",
+      "period": "March",
+      "qualifiers": [],
+      "quote": "The Elec also reported in March that ASML had started the architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG.",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": "0000002488",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-05 (accession 0000002488-26-000123) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value per share",
+         "ticker": "AMD"
+        }
+       ],
+       "mention_id": "M-79c6bdf9c1a1ae",
+       "name_as_written": "AMD",
+       "other_securities": [],
+       "quote": "AMD has shipped hybrid-bonded V-Cache since 2022",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "context",
+       "role_detail": "Example of logic company using hybrid-bonded V-Cache in volume since 2022."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e58e14048c49f4",
+       "name_as_written": "Hanwha Semitech",
+       "other_securities": [],
+       "quote": "has also built Hanwha Semitech\u2019s SHB2 Nano bonder",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Prodrive also built Hanwha Semitech's SHB2 Nano bonder."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-4d1e064a9f9e7f",
+       "name_as_written": "Cymer",
+       "other_securities": [],
+       "quote": "ASML bought Cymer for its light source in 2013",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Prior ASML acquisition cited as evidence of vertical integration history."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-919cb5cb962767",
+       "name_as_written": "HMI",
+       "other_securities": [],
+       "quote": "HMI for e-beam inspection in 2016",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Prior ASML acquisition cited in vertical integration history."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-0c0711d554f921",
+       "name_as_written": "Berliner Glas",
+       "other_securities": [],
+       "quote": "Berliner Glas for optics modules in 2020",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "context",
+       "role_detail": "Prior ASML acquisition cited in vertical integration history."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-6a92c077b712f9",
+       "name_as_written": "The Elec",
+       "other_securities": [],
+       "quote": "The Elec also reported in March",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "News outlet that reported ASML started architecture design of a hybrid bonder."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-92e89a88e87e77",
+       "name_as_written": "Inha University",
+       "other_securities": [],
+       "quote": "a patent analysis by Inha University",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "data_source",
+       "role_detail": "Source of patent analysis suggesting ASML is building W2W HB on TWINSCAN."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-51b41824b0cc24",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "SemiAnalysis Wafer Fabrication Equipment Model",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the research note and its proprietary equipment model."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-e34ebffae56753",
+       "name_as_written": "SuperTrak CONVEYANCE",
+       "other_securities": [],
+       "quote": "ASML names SuperTrak CONVEYANCE (Fig 3) as an example",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "supplier",
+       "role_detail": "Track system named in ASML's patent filing used in the bonder design."
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": "0000937966",
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-87f906637c0b8f",
+       "name_as_written": "ASML",
+       "other_securities": [],
+       "quote": "ASML has not announced anything yet",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Lithography equipment maker building a D2W hybrid bonding tool, expanding into back-end packaging and threatening Besi's position."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "negative",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potentially harmed",
+       "listings": [],
+       "mention_id": "M-1fa1248b623b76",
+       "name_as_written": "Besi",
+       "other_securities": [],
+       "quote": "This is bad news for Besi .",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potentially_harmed",
+       "role_detail": "Current D2W hybrid bonding leader whose logic and HBM business is threatened by ASML's entry and Korean challengers."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-e807b3e9735acf",
+       "name_as_written": "TSMC",
+       "other_securities": [],
+       "quote": "concentrated at TSMC and Intel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Key hybrid bonding customer (SoIC) where ASML has decades of relationship; potential first adopter of ASML's tool."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": "0000050863",
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-07-24 (accession 0000050863-26-000157) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common stock, $0.001 par value",
+         "ticker": "INTC"
+        }
+       ],
+       "mention_id": "M-f8fb8733d307cf",
+       "name_as_written": "Intel",
+       "other_securities": [],
+       "quote": "concentrated at TSMC and Intel",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "spending_customer",
+       "role_detail": "Key logic hybrid bonding customer concentrated in Besi's business today."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-a16f1c081a9c7c",
+       "name_as_written": "Intel Foundry",
+       "other_securities": [],
+       "quote": "ASML announced joint initiatives with TSMC , Intel Foundry and Samsung",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Partner in ASML's photomask initiative for High NA EUV."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "spending customer",
+       "listings": [],
+       "mention_id": "M-7db9c3906c6695",
+       "name_as_written": "Samsung",
+       "other_securities": [],
+       "quote": "joint initiatives with TSMC , Intel Foundry and Samsung",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "spending_customer",
+       "role_detail": "Partner in ASML's photomask initiative."
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-210a101a9b11cb",
+       "name_as_written": "Prodrive Technologies",
+       "other_securities": [],
+       "quote": "architecture design of a hybrid bonder with Prodrive Technologies and VDL ETG",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Likely component supplier of linear motors and drives for ASML's bonder."
+      },
+      {
+       "article_id": "A-7b20abdd06d4",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "supplier",
+       "listings": [],
+       "mention_id": "M-642b4b517051cc",
+       "name_as_written": "VDL ETG",
+       "other_securities": [],
+       "quote": "with Prodrive Technologies and VDL ETG",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "supplier",
+       "role_detail": "Likely component supplier building ASML's frames and modules and wafer handler."
+      }
+     ],
+     "sector_exposures": [],
+     "sectors": [
+      "semiconductor equipment",
+      "advanced packaging"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "September photomask initiative announcement; March report of architecture design start [MEASURED OBSERVATION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-2ffe726cbc9c6a",
+        "C-2082af8a4bec40"
+       ],
+       "provenance": "FORECAST",
+       "text": "TSMC's SoIC bonds at about 6um pitch today and targets 4.5um around 2029, tightening placement-accuracy requirements. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-8078cb66a0f31e",
+        "C-fbdaa878bf7d2a",
+        "C-6af62a2f686aa8",
+        "C-3b4c4ffc6d1605"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "ASML's decades of alignment and particle-control expertise and deep TSMC/Intel relationships position it to displace Besi in advanced-logic hybrid bonding over the long term."
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-1382cb9d497c06"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Besi has led die-to-wafer bonding and is the only supplier with tools in volume production."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 2 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "ASML abandons or delays the bonder program"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Besi secures new HBM or logic HB qualifications"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Customers reject ASML's premium pricing"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether ASML's tool will be qualified and when it ships"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Revenue/earnings magnitude of share shift for ASML and Besi"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether premium pricing wins customers versus incumbent Besi tools"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether patent filings translate to a working volume tool"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "ASML delays or shelves the bonder"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "HBM D2W adoption accelerates in Besi's favor"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Besi extends its volume-production lead"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Track ASML's hybrid bonder patent filings and any management announcement, and estimate Besi's HB revenue concentration in logic (TSMC/Intel) and HBM to size the competitive threat."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "ASML management announces or demonstrates a working hybrid bonder"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "TSMC or Intel qualifies ASML's D2W HB tool"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-7b20abdd06d4",
+      "authors": [
+       "Sherry Zhang",
+       "Gerald Wong",
+       "Steven Lee",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-3b4c4ffc6d1605",
+       "C-88e096720cc437",
+       "C-c778dba9b52a3b",
+       "C-728446ee4035c2",
+       "C-1382cb9d497c06",
+       "C-6af62a2f686aa8",
+       "C-191768c254746f",
+       "C-393c82f7c8a2af",
+       "C-8078cb66a0f31e",
+       "C-fbdaa878bf7d2a",
+       "C-b2bb023eb6ca55",
+       "C-c4605bd9b73093",
+       "C-46b792a61f0542"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-15T19:27:20Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "ASML Is Building a Hybrid Bonding Tool, Sending More Chills to Besi",
+      "upstream_origins": [
+       "ASML",
+       "The Elec",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/asml-is-building-a-hybrid-bonding",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "04565d411edd18cfef03f2b0d6ff5fdb9feb8a1e2e50d3acd01072af4490e466",
+   "created_at": "2026-10-22T07:42:55.367398Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": "710c22acc927fe2cba3a77baac2af51d223931b00a8f574e1004979d25478326",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-46b792a61f0542",
+       "C-728446ee4035c2",
+       "C-8078cb66a0f31e",
+       "C-b2bb023eb6ca55",
+       "C-fbdaa878bf7d2a",
+       "C-3b4c4ffc6d1605",
+       "C-88e096720cc437",
+       "C-c778dba9b52a3b"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "8"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-376a4a64f9cb, ES-7661d1cfece8, ES-feb5010783c6",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 3 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-3b4c4ffc6d1605",
+       "C-88e096720cc437",
+       "C-c778dba9b52a3b",
+       "C-8078cb66a0f31e",
+       "C-b2bb023eb6ca55",
+       "C-fbdaa878bf7d2a"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "6 claim(s) inside the next 2-4 quarters (C-3b4c4ffc6d1605: measured 2026-10-15 (7 days before the as-of); C-88e096720cc437: measured 2026-10-15 (7 days before the as-of); C-c778dba9b52a3b: measured 2026-10-15 (7 days before the as-of); C-8078cb66a0f31e: measured 2026-10-15 (7 days before the as-of); showing 4 of 6); 0 long-range claim(s); 3 long-dated statement(s) of the source beside the cited evidence, not on the card: C-2082af8a4bec40, C-2ffe726cbc9c6a, C-66600ab4683d98; model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: Intel (INTC)",
+      "value": "1 listed \u00b7 0 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [
+       "C-3b4c4ffc6d1605",
+       "C-88e096720cc437",
+       "C-c778dba9b52a3b"
+      ],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "3 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "present"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 8 supporting; 0 independent contradicting source(s) vs 3 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: retrieval PARTIAL)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     }
+    ]
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-77926B9936",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 8,
+ "other_cited_evidence": [
+  "C-cd0b2e292aaeb3",
+  "C-66600ab4683d98",
+  "C-2ffe726cbc9c6a",
+  "C-2082af8a4bec40"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {},
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Source \u2014 only part of the text was read."
+ ],
+ "withheld_sentences": {}
+}

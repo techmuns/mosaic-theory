@@ -1,0 +1,2676 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-30",
+   "ancestry": [
+    "ai_infrastructure",
+    "ai_infrastructure.compute_semis"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-30",
+   "first_ingested_at": "2026-10-30T12:19:57.662353Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-10-21",
+   "latest_article_date": "2026-10-21",
+   "region": "China",
+   "research_action": "WATCH",
+   "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+   "status": "ACTIVE",
+   "thesis_id": "TH-B121174B17",
+   "title": "Huawei-DeepSeek co-design matures a domestic Chinese AI compute ecosystem"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-c92bed70239fcd",
+     "C-56745f5164d0e3",
+     "C-40d0ecc153be57",
+     "C-99b7ba90430f3e",
+     "C-92f5749d38960d",
+     "C-880df3032ddcdb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "DeepSeek released Ascend support for six software repositories, and SemiAnalysis documents via microbenchmarks that the Huawei Ascend ecosystem is maturing through co-design with DeepSeek, with software at the frontier even as hardware lags Nvidia. \u27e8cited figures: approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-109f205272be74",
+     "C-7991b4e9188d24",
+     "C-880df3032ddcdb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The article argues Huawei's ecosystem is already mature and that DeepSeek will likely primarily use Huawei's stack by 2027-2028 under pressure to build a fully domestic Chinese ecosystem. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "A maturing Huawei-DeepSeek domestic stack could shift Chinese AI compute demand toward Ascend and away from Nvidia over time, but the article does not quantify any earnings, revenue or market-share effect for listed suppliers."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-52648724ad39",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c92bed70239fcd",
+      "C-2afacedd7e1e67"
+     ],
+     "original_date": "2026-10-21",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Huawei's best stock kernels reach 99.7% of the compute ceiling on BF16 GEMM shapes."
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-40d0ecc153be57"
+     ],
+     "original_date": "2026-10-21",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "TileLang AutoSchedule reduces single-operation execution time by up to 40% on 950PR, especially for smaller sizes."
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-99b7ba90430f3e"
+     ],
+     "original_date": "2026-10-21",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "DeepSeek released Ascend support for six repositories before China's national day holidays."
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-109f205272be74"
+     ],
+     "original_date": "2026-10-21",
+     "period": "2027-2028",
+     "provenance": "FORECAST",
+     "text": "DeepSeek will likely be primarily using Huawei's stack by 2027 or 2028. \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-b82f204135d60c"
+     ],
+     "original_date": "2026-10-21",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Pointer-chase latency stays near 134ns through 18 blocks, rises to 182ns at 56 blocks, then jumps to 391ns at 64 \u2014 consistent with a second wave beyond 56 Vector cores. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-666dae8b7698fd",
+      "C-6bd98d2bf6f582"
+     ],
+     "original_date": "2026-10-21",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "This 950PR SKU has 7 configured, 6 visible, and 5 executing AICPU cores."
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 25 pieces of evidence from A-52648724ad39 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-30 12:19 UTC, analysed as of 2026-10-30, from a source published 2026-10-21; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-7991b4e9188d24",
+     "C-99b7ba90430f3e",
+     "C-880df3032ddcdb"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "DeepSeek and Huawei co-design hardware and software, releasing Ascend support for key repositories, narrowing the software ecosystem gap with Nvidia."
+   },
+   {
+    "claim_ids": [
+     "C-109f205272be74"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "volumes",
+    "text": "If DeepSeek shifts primarily to Huawei's stack, Ascend accelerator volumes in China would rise at Nvidia's expense, though the article does not quantify this. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-89190f4f1babb0"
+    ],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Increased Ascend adoption would benefit Huawei (private) and its domestic supply chain, but no listed-company earnings effect is quantified."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b066",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-120b6bbfe03872",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "target-model layers",
+    "measured_as_of": null,
+    "origin": "Huawei",
+    "period": null,
+    "qualifiers": [
+     "3 DSpark drafter blocks",
+     "5 sampling rounds"
+    ],
+    "quote": "The execution order is 40 target-model layers, the target LM head, 3 DSpark drafter blocks, the draft LM head, and 5 sampling rounds.",
+    "role": "supports",
+    "unit": "layers",
+    "value": 40.0,
+    "value_text": "40"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2afacedd7e1e67",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "GEMM shapes benchmarked",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "BF16",
+     "from several open-sourced models"
+    ],
+    "quote": "We compared 1,055 BF16 GEMM shapes from several open-sourced models",
+    "role": "supports",
+    "unit": "shapes",
+    "value": 1055.0,
+    "value_text": "1,055"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b071",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3912f122fc15f5",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Engram allows offloading to DRAM without performance loss versus HBM, but offloading to a PCIe 4.0 SSD degrades performance.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "PCIe 4.0 SSD"
+    ],
+    "quote": "offloading to DRAM without performance loss vis-a-vis HBM, but offloading to a PCIe 4.0 SSD degrades performance",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": "4.0"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b044",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-40d0ecc153be57",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "execution time reduction",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "up to",
+     "smaller sizes",
+     "single operation"
+    ],
+    "quote": "AutoSchedule helps especially for smaller sizes, reducing execution time by up to 40% for a single operation",
+    "role": "supports",
+    "unit": "%",
+    "value": 40.0,
+    "value_text": "up to 40%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-52648724ad39",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-56745f5164d0e3",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "hardware lag",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "beyond",
+     "compared to A100"
+    ],
+    "quote": "Although Huawei\u2019s hardware may be beyond ~5 years behind(compared to A100), the software is right at the frontier.",
+    "role": "supports",
+    "unit": "years",
+    "value": 5.0,
+    "value_text": "~5 years"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b018",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-666dae8b7698fd",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "AICPU core count",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "7 configured, 6 visible, 5 executing"
+    ],
+    "quote": "there are 7 configured, 6 visible, and 5 executing AICPU cores",
+    "role": "supports",
+    "unit": "cores",
+    "value": 7.0,
+    "value_text": "7"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b066",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b219fa821794b6",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "AICPU-launched HCCL operations per step",
+    "measured_as_of": null,
+    "origin": "Huawei",
+    "period": null,
+    "qualifiers": [
+     "against 43 expert dispatches"
+    ],
+    "quote": "only 4 AI CPU-launched HCCL operations appear per step, against 43 expert dispatches",
+    "role": "supports",
+    "unit": "operations",
+    "value": 4.0,
+    "value_text": "4"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-52648724ad39",
+    "block_id": "b012",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b82f204135d60c",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "pointer-chase latency",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "16 KiB integer payload per launch",
+     "second wave beyond 56 Vector cores"
+    ],
+    "quote": "it stays near 134ns through 18 blocks, rises to 182ns at 56, then jumps to 391ns at 64",
+    "role": "supports",
+    "unit": "ns",
+    "value": 391.0,
+    "value_text": "391ns"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b035",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b910eff9f642c8",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "repos with Ascend support",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "only TileLang usable as of writing"
+    ],
+    "quote": "the 6 repos that received ascend support",
+    "role": "supports",
+    "unit": "repos",
+    "value": 6.0,
+    "value_text": "6"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b023",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c92bed70239fcd",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "kernel utilization vs ceiling",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "stock torch.matmul",
+     "1,055 BF16 GEMM shapes"
+    ],
+    "quote": "Huawei\u2019s best kernels hits 99.7% of the ceiling",
+    "role": "supports",
+    "unit": "%",
+    "value": 99.7,
+    "value_text": "99.7%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b004",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-109f205272be74",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "DeepSeek will likely be primarily using Huawei's stack by 2027 or 2028.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2027-2028",
+    "qualifiers": [
+     "likely",
+     "driven by external and internal pressure to build a fully domestic Chinese ecosystem"
+    ],
+    "quote": "In 2028 or even 2027, DeepSeek will likely be primarily using Huawei\u2019s stack",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": "2028 or even 2027"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b060",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-10b5cd6a1e0aab",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "DeepSeek provides Huawei with model weights, supporting Day-0 optimized releases such as DeepSeek V4 and V4.1.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "DeepSeek provides Huawei with weights, supporting Day-0 optimized releases, such as DeepSeek V4 and V4.1",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b028",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-1e598d1017f6a0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "HBM bandwidth utilization",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "vs H100"
+    ],
+    "quote": "950PR\u2019s effective bandwidth and bandwidth utilization surpassing H100 at small message size per buffers, and nearly matching H100 in bandwidth utilization at large message sizes",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b038",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-3bf6ffbcaa3ac1",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Huawei's architecture is reshaping DeepSeek's software: the new FlashMLA KV-cache layout co-locates quantized values and scales to cut MTE transfer requests on Ascend.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "bidirectional co-design"
+    ],
+    "quote": "The new implementation places them together, reducing the number of transfer requests by the memory transfer engine(MTE).",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b016",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-46b2b728b95da9",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The 950PR's Linx816 AArch64 AICPU cores are likely the same as the middle cores in Huawei's Kirin 9000S/9010 SoCs.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "inferred from MIDR numbers"
+    ],
+    "quote": "these cores are likely the same as the middle cores in the Kirin 9000S/9010",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b002",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-880df3032ddcdb",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Huawei provides hardware and software stack while DeepSeek provides workloads and engineering, a symbiotic exchange.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Huawei provides the hardware and native software stack; DeepSeek brings the workloads and engineering needed to make that hardware useful for its models",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b047",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-89190f4f1babb0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Huawei has joined NVIDIA in commercializing large scale-up AI systems via Ascend supernodes spanning multiple racks.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "910 CloudMatrix384 to 950 SuperPod"
+    ],
+    "quote": "Huawei has joined NVIDIA in commercializing large scale-up AI systems, with its Ascend supernodes extending tightly coupled accelerator interconnects across multiple racks",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b001",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-99b7ba90430f3e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "DeepSeek released Ascend support for six repositories before China's national day holidays.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "six repositories"
+    ],
+    "quote": "DeepSeek released Ascend support for TileLang , DeepGEMM , DeepEP , TileKernels , FlashMLA , and DeepSelect",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b040",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9b18abc972d4f5",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "The Ascend 950 backend is merged into the main TileLang repository rather than only a separate Huawei adapter, adding native compilation, scheduling and runtime integration.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Ascend 950 backend is merged into the main TileLang repository, rather than existing only in a separate Huawei adapter.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9de7aa59fd65b3",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "The Ascend 950PR is designed for prefill and recommendation and has lower memory bandwidth and core count than the larger 950DT.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Ascend 950PR is designed for prefill and recommendation. It gets lower memory bandwidth and core than its bigger brother the 950DT.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b053",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c57301a9cdf2d0",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Huawei's Kimi K3 recipe explicitly restricts vector use to leave capacity for concurrent work, illustrating the resource-balancing co-design problem beyond DeepSeek.",
+    "measured_as_of": null,
+    "origin": "Huawei",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Huawei\u2019s Kimi K3 recipe explicitly restricts vector use to leave capacity for concurrent work",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b047",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c7065f6c59b5b9",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Huawei's Ascend supernodes evolved from the 910 CloudMatrix384 to the 950 SuperPod, extending accelerator interconnects across multiple racks.",
+    "measured_as_of": null,
+    "origin": "Huawei",
+    "period": null,
+    "qualifiers": [],
+    "quote": "from the 910 CloudMatrix384 to the 950 SuperPod",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b042",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-cfd83ef7fb7c63",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "TileLang can match and beat CANN in certain cases, with the preferred implementation changing with size (warm-cache naive benchmark).",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "warm-cache simple and naive benchmark"
+    ],
+    "quote": "it can match and beat CANN at certain cases; the preferred implementation changes with size",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b050",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-d332c481bc001e",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "DeepEP-Ascend, proposed by Huawei's Ascend team in July 2025 but initially declined, is now distributed under DeepSeek's own organization.",
+    "measured_as_of": null,
+    "origin": "not attributed by the source",
+    "period": "July 2025",
+    "qualifiers": [],
+    "quote": "In July 2025, Huawei\u2019s Ascend team proposed DeepEP-Ascend under deepseek-ai , but a DeepEP maintainer declined . Today, DeepEP-Ascend is distributed under DeepSeek\u2019s own organization.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-52648724ad39",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e04472dff2850c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Performance per watt or TCO is the best chip comparison, and in China watts are far cheaper \u2014 favoring Ascend's economics despite weaker per-chip performance.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "But for China, watts are far cheaper. We\u2019ll analyze Ascend\u2019s perf per TCO in a future article.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-52648724ad39",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-67812472609ed8",
+     "name_as_written": "OpenAI",
+     "other_securities": [],
+     "quote": "OpenAI Jalape\u00f1o: Better Than Nvidia Blackwell",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "context",
+     "role_detail": "Referenced in cited prior SemiAnalysis article title"
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-31b91b9a87cd0c",
+     "name_as_written": "Qwen",
+     "other_securities": [],
+     "quote": "after Qwen and Meituan Longcat",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Prior model to use Engram, comparator"
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-a738f3b119f26b",
+     "name_as_written": "Meituan Longcat",
+     "other_securities": [],
+     "quote": "after Qwen and Meituan Longcat",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Prior model to use Engram, comparator"
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8694aea4ce4234",
+     "name_as_written": "SemiAnalysis",
+     "other_securities": [],
+     "quote": "Source: SemiAnalysis",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Publisher and author of the analysis"
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-8896347681d7a3",
+     "name_as_written": "vLLM-Ascend",
+     "other_securities": [],
+     "quote": "as of vLLM-Ascend_0.26.0rc1 many issues exist working with Ascend on x86 hosts",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "context",
+     "role_detail": "Inference serving stack for Ascend with documented x86-host compatibility gaps"
+    }
+   ],
+   "baskets": [],
+   "companies": [
+    {
+     "article_id": "A-52648724ad39",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-cf152a7bd524d3",
+     "name_as_written": "Huawei",
+     "other_securities": [],
+     "quote": "Huawei provides the hardware and native software stack",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "potential_beneficiary",
+     "role_detail": "Supplier of Ascend AI chips and native software stack, central to the symbiosis"
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "cik": "0001045810",
+     "direction": "negative",
+     "exposure_provenance": "MODEL INFERENCE",
+     "exposure_reading": "potentially harmed",
+     "listings": [
+      {
+       "exchange": "Nasdaq",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.001 par value per share",
+       "ticker": "NVDA"
+      }
+     ],
+     "mention_id": "M-f2d60b221b9a08",
+     "name_as_written": "Nvidia",
+     "other_securities": [],
+     "quote": "rather than binning only compute as Nvidia does",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "comparator",
+     "role_detail": "Comparator for chip binning, benchmark comparison and scale-up systems"
+    }
+   ],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [
+    {
+     "article_id": "A-52648724ad39",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-0e555b387b0eb3",
+     "name_as_written": "Kirin 9000S/9010",
+     "other_securities": [],
+     "quote": "the same as the middle cores in the Kirin 9000S/9010",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Huawei SoCs whose middle cores are likely reused as the 950PR's AICPU cores"
+    },
+    {
+     "article_id": "A-52648724ad39",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "comparator",
+     "listings": [],
+     "mention_id": "M-b44378bf00d1b3",
+     "name_as_written": "Kimi K3",
+     "other_securities": [],
+     "quote": "Huawei\u2019s Kimi K3 recipe",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "comparator",
+     "role_detail": "Model recipe cited as another example of the resource-balancing co-design problem"
+    }
+   ],
+   "private_or_unlisted": [
+    {
+     "article_id": "A-52648724ad39",
+     "cik": null,
+     "direction": "positive",
+     "exposure_provenance": "SOURCE OPINION",
+     "exposure_reading": "potential beneficiary",
+     "listings": [],
+     "mention_id": "M-010c3389436361",
+     "name_as_written": "DeepSeek",
+     "other_securities": [],
+     "quote": "DeepSeek has models but cannot buy the compute it needs",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "PRIVATE",
+     "role": "potential_beneficiary",
+     "role_detail": "AI model developer providing workloads and software engineering for Ascend"
+    }
+   ],
+   "sector_exposures": [
+    {
+     "article_id": "A-52648724ad39",
+     "claim_ids": [
+      "C-109f205272be74"
+     ],
+     "direction": "positive",
+     "name": "fully domestic chinese ecosystem",
+     "provenance": "FORECAST",
+     "quote": "pressure to build a fully domestic chinese ecosystem"
+    }
+   ],
+   "sectors": [
+    "AI accelerators / compute",
+    "AI model developers"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "2027-2028 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-92f5749d38960d"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Only TileLang is usable as of writing and CANN 9.2.0 had not been released; ecosystem readiness for broader users remains incomplete in the near term."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-109f205272be74",
+      "C-56745f5164d0e3"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The article argues the Huawei ecosystem is mature and will become DeepSeek's primary stack by 2027-2028 as China builds a fully domestic ecosystem. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-bde597734a8268",
+      "C-ac7f8d8d03023b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Huawei hardware still lags: Liang Wenfeng said four Huawei cards are needed to match one Nvidia card and Huawei is roughly two years behind on time-to-market; the partnership may work for DeepSeek without making Ascend usable for others."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-0577F0AD38: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 COMPETING, held for review (not applied) \u2014 TH-CBFA9511C2: held for review \u2014 the same thesis claim (node ai_infrastructure.compute_semis, mechanism competitive_share_shift, overlapping geography and timeframe) predicted the opposite way, but no claim pair is clearly comparable (C-109f205272be74 vs C-315df0d71a99f3: a claim names no product the taxonomy knows; a claim names no measured variable; a claim states no period; a quote states no single direction of change; overlapping geography); nothing is filed against it automatically"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: the same claim at an overlapping but different geography (China vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 8 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-324c561d4bcdf7"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "On absolute compute performance, the Ascend 950PR sits between the A100 and MI300X."
+    },
+    {
+     "claim_ids": [
+      "C-bde597734a8268"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Liang Wenfeng said it takes four Huawei accelerator cards to match one NVIDIA card."
+    },
+    {
+     "claim_ids": [
+      "C-ac7f8d8d03023b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Liang Wenfeng said Huawei is roughly two years behind in bringing its hardware to market. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-020780ffc49481"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Nvidia H100 results were power-limited: median power around 690-698 W out of a 700 W limit. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-b696cc3b272161"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "H100 median sampled SM clocks were 1335-1470 MHz, below the 1830 MHz max."
+    },
+    {
+     "claim_ids": [
+      "C-7bb6966a9af9b7"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Huawei 950PR approximated 599-600 W power draw in the same comparison. \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "claim_ids": [
+      "C-e854820ef1527c"
+     ],
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Huawei 950PR ran at 1500-1550 MHz against its 1650 MHz reference clock."
+    },
+    {
+     "claim_ids": [
+      "C-a3ec49ed9585d9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "vLLM-Ascend depends on memfabric_hybrid with hardcoded ARM headers that block startup, so it does not work out of the box on non-ARM hosts."
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "DeepSeek continuing to rely on Nvidia hardware past 2027-2028"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Failure to release CANN 9.2.0 / HDK and broader repo usability"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Persistent 4:1 card disadvantage vs Nvidia not narrowing"
+    }
+   ],
+   "market_risks": [
+    {
+     "claim_ids": [
+      "C-92f5749d38960d",
+      "C-a3ec49ed9585d9"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "The Huawei-DeepSeek partnership could work well for DeepSeek without making Ascend equally usable for everyone else, with many documented ecosystem gaps (no DeepGEMM on x86 hosts, hardcoded ARM headers blocking startup, no NPU+x86 CI). (scope: Specific to Ascend ecosystem usability outside DeepSeek's own supernode configurations; limits broader adoption, not a market-wide risk.)"
+    },
+    {
+     "claim_ids": [
+      "C-324c561d4bcdf7",
+      "C-bde597734a8268",
+      "C-ac7f8d8d03023b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Huawei hardware remains behind Nvidia on absolute performance (950PR between A100 and MI300X; four Huawei cards to match one Nvidia card; roughly two years behind on time-to-market). (scope: Hardware competitiveness gap specific to Ascend vs Nvidia; the two-year/4:1 figures come from an unverified transcript.)"
+    }
+   ],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether increased Ascend adoption translates into quantified revenue or earnings for any listed company"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether any listed equity (Huawei and DeepSeek are not public) captures the benefit"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether the ecosystem becomes usable beyond DeepSeek's own supernode configurations"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued dependence on Nvidia hardware by Chinese labs"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Persistent x86/ecosystem gaps limiting Ascend adoption beyond DeepSeek"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Investigate which listed Huawei suppliers and Chinese semiconductor foundries capture Ascend volume growth, and verify Ascend production and adoption trends relative to Nvidia in China."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CANN 9.2.0 and HDK release enabling broad Ascend usability"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence of DeepSeek shifting training/inference primarily to Ascend"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Reports of Ascend supernode deployments displacing Nvidia in China"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL; verification hold)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "independent_research",
+    "article_id": "A-52648724ad39",
+    "authors": [
+     "Bryan Shan",
+     "Dylan Patel"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-109f205272be74",
+     "C-c92bed70239fcd",
+     "C-56745f5164d0e3",
+     "C-40d0ecc153be57",
+     "C-99b7ba90430f3e",
+     "C-89190f4f1babb0",
+     "C-880df3032ddcdb",
+     "C-b82f204135d60c",
+     "C-46b2b728b95da9",
+     "C-666dae8b7698fd",
+     "C-2afacedd7e1e67",
+     "C-b910eff9f642c8",
+     "C-9de7aa59fd65b3",
+     "C-1e598d1017f6a0",
+     "C-e04472dff2850c",
+     "C-3bf6ffbcaa3ac1",
+     "C-c7065f6c59b5b9",
+     "C-120b6bbfe03872",
+     "C-b219fa821794b6",
+     "C-3912f122fc15f5",
+     "C-9b18abc972d4f5",
+     "C-cfd83ef7fb7c63",
+     "C-d332c481bc001e",
+     "C-c57301a9cdf2d0",
+     "C-10b5cd6a1e0aab",
+     "C-324c561d4bcdf7",
+     "C-bde597734a8268",
+     "C-ac7f8d8d03023b",
+     "C-020780ffc49481",
+     "C-b696cc3b272161",
+     "C-7bb6966a9af9b7",
+     "C-e854820ef1527c",
+     "C-a3ec49ed9585d9",
+     "C-92f5749d38960d"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-10-21T17:34:38Z",
+    "published_status": "KNOWN",
+    "publisher": "SemiAnalysis",
+    "retrieval_state": "PARTIAL",
+    "title": "The Huawei-DeepSeek Symbiosis",
+    "upstream_origins": [
+     "Huawei",
+     "Liang Wenfeng (unverified DeepSeek investor meeting transcript)",
+     "not attributed by the source",
+     "publisher's own analysis"
+    ],
+    "url": "https://newsletter.semianalysis.com/p/huawei-deepseek",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "UNCHECKED",
+    "basis_note": "no verified US listing \u2014 no annual report to read",
+    "basis_quote": [],
+    "basis_source": "",
+    "business": "China's largest contract chip foundry",
+    "direction": "positive",
+    "enrichment_id": "EC-73508574be5111",
+    "evidence": "s03.2: Increased Ascend adoption would benefit Huawei (private) and its domestic supply chain, but no listed-company earnings effect is quantified.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Semiconductor Manufacturing International Corporation",
+    "rationale": "Fabricates Huawei Ascend accelerators domestically; rising Ascend volumes lift its advanced-node wafer manufacturing revenue.",
+    "registrant": null,
+    "resolution_note": "no SEC-listed registrant matches the name",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "foundry wafer manufacturing for Ascend chips",
+    "revenue_model": "product_sales",
+    "step_id": "s03.2",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-B121174B17",
+    "ticker_hint": "SMICY"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "20-F filed 2026-04-16 (0001628280-26-025362)",
+    "business": "world's largest contract chip foundry",
+    "direction": "negative",
+    "enrichment_id": "EC-e8a2fbf1bb5b19",
+    "evidence": "s03.1: If DeepSeek shifts primarily to Huawei's stack, Ascend accelerator volumes in China would rise at Nvidia's expense, though the article does not quantify this.",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Taiwan Semiconductor Manufacturing",
+    "rationale": "Fabricates Nvidia's AI GPUs; a shift of Chinese demand toward domestically-fabbed Ascend reduces advanced-node wafer volumes it earns from.",
+    "registrant": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['TSM', 'TSMWF'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "foundry wafers for Nvidia AI GPUs",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "MODEL INFERENCE",
+    "thesis_id": "TH-B121174B17",
+    "ticker_hint": "TSM"
+   }
+  ],
+  "created_at": "2026-10-30T12:24:03.605618Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "NVIDIA: the source already names it \u2014 set aside"
+  ],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-f15af800d48b74",
+  "thesis_id": "TH-B121174B17",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-30",
+   "change_summary": "Initial record \u2014 created from A-52648724ad39",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-30",
+     "ancestry": [
+      "ai_infrastructure",
+      "ai_infrastructure.compute_semis"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-30",
+     "first_ingested_at": "2026-10-30T12:19:57.662353Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-10-21",
+     "latest_article_date": "2026-10-21",
+     "region": "China",
+     "research_action": "WATCH",
+     "sector": "AI accelerators, GPUs, custom silicon and their direct supply chain",
+     "status": "ACTIVE",
+     "thesis_id": "TH-B121174B17",
+     "title": "Huawei-DeepSeek co-design matures a domestic Chinese AI compute ecosystem"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-c92bed70239fcd",
+       "C-56745f5164d0e3",
+       "C-40d0ecc153be57",
+       "C-99b7ba90430f3e",
+       "C-92f5749d38960d",
+       "C-880df3032ddcdb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "DeepSeek released Ascend support for six software repositories, and SemiAnalysis documents via microbenchmarks that the Huawei Ascend ecosystem is maturing through co-design with DeepSeek, with software at the frontier even as hardware lags Nvidia. \u27e8cited figures: approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-109f205272be74",
+       "C-7991b4e9188d24",
+       "C-880df3032ddcdb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The article argues Huawei's ecosystem is already mature and that DeepSeek will likely primarily use Huawei's stack by 2027-2028 under pressure to build a fully domestic Chinese ecosystem. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "A maturing Huawei-DeepSeek domestic stack could shift Chinese AI compute demand toward Ascend and away from Nvidia over time, but the article does not quantify any earnings, revenue or market-share effect for listed suppliers."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-52648724ad39",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c92bed70239fcd",
+        "C-2afacedd7e1e67"
+       ],
+       "original_date": "2026-10-21",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Huawei's best stock kernels reach 99.7% of the compute ceiling on BF16 GEMM shapes."
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-40d0ecc153be57"
+       ],
+       "original_date": "2026-10-21",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "TileLang AutoSchedule reduces single-operation execution time by up to 40% on 950PR, especially for smaller sizes."
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-99b7ba90430f3e"
+       ],
+       "original_date": "2026-10-21",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "DeepSeek released Ascend support for six repositories before China's national day holidays."
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-109f205272be74"
+       ],
+       "original_date": "2026-10-21",
+       "period": "2027-2028",
+       "provenance": "FORECAST",
+       "text": "DeepSeek will likely be primarily using Huawei's stack by 2027 or 2028. \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-b82f204135d60c"
+       ],
+       "original_date": "2026-10-21",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Pointer-chase latency stays near 134ns through 18 blocks, rises to 182ns at 56 blocks, then jumps to 391ns at 64 \u2014 consistent with a second wave beyond 56 Vector cores. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-666dae8b7698fd",
+        "C-6bd98d2bf6f582"
+       ],
+       "original_date": "2026-10-21",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "This 950PR SKU has 7 configured, 6 visible, and 5 executing AICPU cores."
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 25 pieces of evidence from A-52648724ad39 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-30 12:19 UTC, analysed as of 2026-10-30, from a source published 2026-10-21; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-7991b4e9188d24",
+       "C-99b7ba90430f3e",
+       "C-880df3032ddcdb"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "DeepSeek and Huawei co-design hardware and software, releasing Ascend support for key repositories, narrowing the software ecosystem gap with Nvidia."
+     },
+     {
+      "claim_ids": [
+       "C-109f205272be74"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "volumes",
+      "text": "If DeepSeek shifts primarily to Huawei's stack, Ascend accelerator volumes in China would rise at Nvidia's expense, though the article does not quantify this. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-89190f4f1babb0"
+      ],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Increased Ascend adoption would benefit Huawei (private) and its domestic supply chain, but no listed-company earnings effect is quantified."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b066",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-120b6bbfe03872",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "target-model layers",
+      "measured_as_of": null,
+      "origin": "Huawei",
+      "period": null,
+      "qualifiers": [
+       "3 DSpark drafter blocks",
+       "5 sampling rounds"
+      ],
+      "quote": "The execution order is 40 target-model layers, the target LM head, 3 DSpark drafter blocks, the draft LM head, and 5 sampling rounds.",
+      "role": "supports",
+      "unit": "layers",
+      "value": 40.0,
+      "value_text": "40"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2afacedd7e1e67",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "GEMM shapes benchmarked",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "BF16",
+       "from several open-sourced models"
+      ],
+      "quote": "We compared 1,055 BF16 GEMM shapes from several open-sourced models",
+      "role": "supports",
+      "unit": "shapes",
+      "value": 1055.0,
+      "value_text": "1,055"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b071",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3912f122fc15f5",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Engram allows offloading to DRAM without performance loss versus HBM, but offloading to a PCIe 4.0 SSD degrades performance.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "PCIe 4.0 SSD"
+      ],
+      "quote": "offloading to DRAM without performance loss vis-a-vis HBM, but offloading to a PCIe 4.0 SSD degrades performance",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": "4.0"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b044",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-40d0ecc153be57",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "execution time reduction",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "up to",
+       "smaller sizes",
+       "single operation"
+      ],
+      "quote": "AutoSchedule helps especially for smaller sizes, reducing execution time by up to 40% for a single operation",
+      "role": "supports",
+      "unit": "%",
+      "value": 40.0,
+      "value_text": "up to 40%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-52648724ad39",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-56745f5164d0e3",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "hardware lag",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "beyond",
+       "compared to A100"
+      ],
+      "quote": "Although Huawei\u2019s hardware may be beyond ~5 years behind(compared to A100), the software is right at the frontier.",
+      "role": "supports",
+      "unit": "years",
+      "value": 5.0,
+      "value_text": "~5 years"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b018",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-666dae8b7698fd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "AICPU core count",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "7 configured, 6 visible, 5 executing"
+      ],
+      "quote": "there are 7 configured, 6 visible, and 5 executing AICPU cores",
+      "role": "supports",
+      "unit": "cores",
+      "value": 7.0,
+      "value_text": "7"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b066",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b219fa821794b6",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "AICPU-launched HCCL operations per step",
+      "measured_as_of": null,
+      "origin": "Huawei",
+      "period": null,
+      "qualifiers": [
+       "against 43 expert dispatches"
+      ],
+      "quote": "only 4 AI CPU-launched HCCL operations appear per step, against 43 expert dispatches",
+      "role": "supports",
+      "unit": "operations",
+      "value": 4.0,
+      "value_text": "4"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-52648724ad39",
+      "block_id": "b012",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b82f204135d60c",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "pointer-chase latency",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "16 KiB integer payload per launch",
+       "second wave beyond 56 Vector cores"
+      ],
+      "quote": "it stays near 134ns through 18 blocks, rises to 182ns at 56, then jumps to 391ns at 64",
+      "role": "supports",
+      "unit": "ns",
+      "value": 391.0,
+      "value_text": "391ns"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b035",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b910eff9f642c8",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "repos with Ascend support",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "only TileLang usable as of writing"
+      ],
+      "quote": "the 6 repos that received ascend support",
+      "role": "supports",
+      "unit": "repos",
+      "value": 6.0,
+      "value_text": "6"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b023",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c92bed70239fcd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "kernel utilization vs ceiling",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "stock torch.matmul",
+       "1,055 BF16 GEMM shapes"
+      ],
+      "quote": "Huawei\u2019s best kernels hits 99.7% of the ceiling",
+      "role": "supports",
+      "unit": "%",
+      "value": 99.7,
+      "value_text": "99.7%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-109f205272be74",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "DeepSeek will likely be primarily using Huawei's stack by 2027 or 2028.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2027-2028",
+      "qualifiers": [
+       "likely",
+       "driven by external and internal pressure to build a fully domestic Chinese ecosystem"
+      ],
+      "quote": "In 2028 or even 2027, DeepSeek will likely be primarily using Huawei\u2019s stack",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "2028 or even 2027"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b060",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-10b5cd6a1e0aab",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "DeepSeek provides Huawei with model weights, supporting Day-0 optimized releases such as DeepSeek V4 and V4.1.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "DeepSeek provides Huawei with weights, supporting Day-0 optimized releases, such as DeepSeek V4 and V4.1",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b028",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-1e598d1017f6a0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "HBM bandwidth utilization",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "vs H100"
+      ],
+      "quote": "950PR\u2019s effective bandwidth and bandwidth utilization surpassing H100 at small message size per buffers, and nearly matching H100 in bandwidth utilization at large message sizes",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b038",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-3bf6ffbcaa3ac1",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Huawei's architecture is reshaping DeepSeek's software: the new FlashMLA KV-cache layout co-locates quantized values and scales to cut MTE transfer requests on Ascend.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "bidirectional co-design"
+      ],
+      "quote": "The new implementation places them together, reducing the number of transfer requests by the memory transfer engine(MTE).",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b016",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-46b2b728b95da9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The 950PR's Linx816 AArch64 AICPU cores are likely the same as the middle cores in Huawei's Kirin 9000S/9010 SoCs.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "inferred from MIDR numbers"
+      ],
+      "quote": "these cores are likely the same as the middle cores in the Kirin 9000S/9010",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b002",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-880df3032ddcdb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Huawei provides hardware and software stack while DeepSeek provides workloads and engineering, a symbiotic exchange.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Huawei provides the hardware and native software stack; DeepSeek brings the workloads and engineering needed to make that hardware useful for its models",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-89190f4f1babb0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Huawei has joined NVIDIA in commercializing large scale-up AI systems via Ascend supernodes spanning multiple racks.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "910 CloudMatrix384 to 950 SuperPod"
+      ],
+      "quote": "Huawei has joined NVIDIA in commercializing large scale-up AI systems, with its Ascend supernodes extending tightly coupled accelerator interconnects across multiple racks",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b001",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-99b7ba90430f3e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "DeepSeek released Ascend support for six repositories before China's national day holidays.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "six repositories"
+      ],
+      "quote": "DeepSeek released Ascend support for TileLang , DeepGEMM , DeepEP , TileKernels , FlashMLA , and DeepSelect",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b040",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9b18abc972d4f5",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The Ascend 950 backend is merged into the main TileLang repository rather than only a separate Huawei adapter, adding native compilation, scheduling and runtime integration.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Ascend 950 backend is merged into the main TileLang repository, rather than existing only in a separate Huawei adapter.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9de7aa59fd65b3",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "The Ascend 950PR is designed for prefill and recommendation and has lower memory bandwidth and core count than the larger 950DT.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Ascend 950PR is designed for prefill and recommendation. It gets lower memory bandwidth and core than its bigger brother the 950DT.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b053",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c57301a9cdf2d0",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Huawei's Kimi K3 recipe explicitly restricts vector use to leave capacity for concurrent work, illustrating the resource-balancing co-design problem beyond DeepSeek.",
+      "measured_as_of": null,
+      "origin": "Huawei",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Huawei\u2019s Kimi K3 recipe explicitly restricts vector use to leave capacity for concurrent work",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c7065f6c59b5b9",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Huawei's Ascend supernodes evolved from the 910 CloudMatrix384 to the 950 SuperPod, extending accelerator interconnects across multiple racks.",
+      "measured_as_of": null,
+      "origin": "Huawei",
+      "period": null,
+      "qualifiers": [],
+      "quote": "from the 910 CloudMatrix384 to the 950 SuperPod",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b042",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-cfd83ef7fb7c63",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "TileLang can match and beat CANN in certain cases, with the preferred implementation changing with size (warm-cache naive benchmark).",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "warm-cache simple and naive benchmark"
+      ],
+      "quote": "it can match and beat CANN at certain cases; the preferred implementation changes with size",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b050",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-d332c481bc001e",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "DeepEP-Ascend, proposed by Huawei's Ascend team in July 2025 but initially declined, is now distributed under DeepSeek's own organization.",
+      "measured_as_of": null,
+      "origin": "not attributed by the source",
+      "period": "July 2025",
+      "qualifiers": [],
+      "quote": "In July 2025, Huawei\u2019s Ascend team proposed DeepEP-Ascend under deepseek-ai , but a DeepEP maintainer declined . Today, DeepEP-Ascend is distributed under DeepSeek\u2019s own organization.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-52648724ad39",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e04472dff2850c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Performance per watt or TCO is the best chip comparison, and in China watts are far cheaper \u2014 favoring Ascend's economics despite weaker per-chip performance.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "But for China, watts are far cheaper. We\u2019ll analyze Ascend\u2019s perf per TCO in a future article.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-52648724ad39",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-67812472609ed8",
+       "name_as_written": "OpenAI",
+       "other_securities": [],
+       "quote": "OpenAI Jalape\u00f1o: Better Than Nvidia Blackwell",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "context",
+       "role_detail": "Referenced in cited prior SemiAnalysis article title"
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-31b91b9a87cd0c",
+       "name_as_written": "Qwen",
+       "other_securities": [],
+       "quote": "after Qwen and Meituan Longcat",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Prior model to use Engram, comparator"
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-a738f3b119f26b",
+       "name_as_written": "Meituan Longcat",
+       "other_securities": [],
+       "quote": "after Qwen and Meituan Longcat",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Prior model to use Engram, comparator"
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8694aea4ce4234",
+       "name_as_written": "SemiAnalysis",
+       "other_securities": [],
+       "quote": "Source: SemiAnalysis",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Publisher and author of the analysis"
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-8896347681d7a3",
+       "name_as_written": "vLLM-Ascend",
+       "other_securities": [],
+       "quote": "as of vLLM-Ascend_0.26.0rc1 many issues exist working with Ascend on x86 hosts",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "context",
+       "role_detail": "Inference serving stack for Ascend with documented x86-host compatibility gaps"
+      }
+     ],
+     "baskets": [],
+     "companies": [
+      {
+       "article_id": "A-52648724ad39",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-cf152a7bd524d3",
+       "name_as_written": "Huawei",
+       "other_securities": [],
+       "quote": "Huawei provides the hardware and native software stack",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "potential_beneficiary",
+       "role_detail": "Supplier of Ascend AI chips and native software stack, central to the symbiosis"
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "cik": "0001045810",
+       "direction": "negative",
+       "exposure_provenance": "MODEL INFERENCE",
+       "exposure_reading": "potentially harmed",
+       "listings": [
+        {
+         "exchange": "Nasdaq",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-26 (accession 0001045810-26-000075) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.001 par value per share",
+         "ticker": "NVDA"
+        }
+       ],
+       "mention_id": "M-f2d60b221b9a08",
+       "name_as_written": "Nvidia",
+       "other_securities": [],
+       "quote": "rather than binning only compute as Nvidia does",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "comparator",
+       "role_detail": "Comparator for chip binning, benchmark comparison and scale-up systems"
+      }
+     ],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [
+      {
+       "article_id": "A-52648724ad39",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-0e555b387b0eb3",
+       "name_as_written": "Kirin 9000S/9010",
+       "other_securities": [],
+       "quote": "the same as the middle cores in the Kirin 9000S/9010",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Huawei SoCs whose middle cores are likely reused as the 950PR's AICPU cores"
+      },
+      {
+       "article_id": "A-52648724ad39",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "comparator",
+       "listings": [],
+       "mention_id": "M-b44378bf00d1b3",
+       "name_as_written": "Kimi K3",
+       "other_securities": [],
+       "quote": "Huawei\u2019s Kimi K3 recipe",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "comparator",
+       "role_detail": "Model recipe cited as another example of the resource-balancing co-design problem"
+      }
+     ],
+     "private_or_unlisted": [
+      {
+       "article_id": "A-52648724ad39",
+       "cik": null,
+       "direction": "positive",
+       "exposure_provenance": "SOURCE OPINION",
+       "exposure_reading": "potential beneficiary",
+       "listings": [],
+       "mention_id": "M-010c3389436361",
+       "name_as_written": "DeepSeek",
+       "other_securities": [],
+       "quote": "DeepSeek has models but cannot buy the compute it needs",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "PRIVATE",
+       "role": "potential_beneficiary",
+       "role_detail": "AI model developer providing workloads and software engineering for Ascend"
+      }
+     ],
+     "sector_exposures": [
+      {
+       "article_id": "A-52648724ad39",
+       "claim_ids": [
+        "C-109f205272be74"
+       ],
+       "direction": "positive",
+       "name": "fully domestic chinese ecosystem",
+       "provenance": "FORECAST",
+       "quote": "pressure to build a fully domestic chinese ecosystem"
+      }
+     ],
+     "sectors": [
+      "AI accelerators / compute",
+      "AI model developers"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "2027-2028 [MODEL INFERENCE] \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-92f5749d38960d"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Only TileLang is usable as of writing and CANN 9.2.0 had not been released; ecosystem readiness for broader users remains incomplete in the near term."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-109f205272be74",
+        "C-56745f5164d0e3"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The article argues the Huawei ecosystem is mature and will become DeepSeek's primary stack by 2027-2028 as China builds a fully domestic ecosystem. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-bde597734a8268",
+        "C-ac7f8d8d03023b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Huawei hardware still lags: Liang Wenfeng said four Huawei cards are needed to match one Nvidia card and Huawei is roughly two years behind on time-to-market; the partnership may work for DeepSeek without making Ascend usable for others."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-0577F0AD38: same value-chain node, not the same claim \u2014 a different mechanism (demand_volume_shift vs competitive_share_shift) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 COMPETING, held for review (not applied) \u2014 TH-CBFA9511C2: held for review \u2014 the same thesis claim (node ai_infrastructure.compute_semis, mechanism competitive_share_shift, overlapping geography and timeframe) predicted the opposite way, but no claim pair is clearly comparable (C-109f205272be74 vs C-315df0d71a99f3: a claim names no product the taxonomy knows; a claim names no measured variable; a claim states no period; a quote states no single direction of change; overlapping geography); nothing is filed against it automatically"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-F2CD2F7AFC: the same claim at an overlapping but different geography (China vs Global) \u2014 a separate thesis, never merged; adjacent support, never an automatic confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 8 other theses in the same broader area (ai_infrastructure) \u2014 context only, never evidence; the desk lists them"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-324c561d4bcdf7"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "On absolute compute performance, the Ascend 950PR sits between the A100 and MI300X."
+      },
+      {
+       "claim_ids": [
+        "C-bde597734a8268"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Liang Wenfeng said it takes four Huawei accelerator cards to match one NVIDIA card."
+      },
+      {
+       "claim_ids": [
+        "C-ac7f8d8d03023b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Liang Wenfeng said Huawei is roughly two years behind in bringing its hardware to market. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-020780ffc49481"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Nvidia H100 results were power-limited: median power around 690-698 W out of a 700 W limit. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-b696cc3b272161"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "H100 median sampled SM clocks were 1335-1470 MHz, below the 1830 MHz max."
+      },
+      {
+       "claim_ids": [
+        "C-7bb6966a9af9b7"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Huawei 950PR approximated 599-600 W power draw in the same comparison. \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "claim_ids": [
+        "C-e854820ef1527c"
+       ],
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Huawei 950PR ran at 1500-1550 MHz against its 1650 MHz reference clock."
+      },
+      {
+       "claim_ids": [
+        "C-a3ec49ed9585d9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "vLLM-Ascend depends on memfabric_hybrid with hardcoded ARM headers that block startup, so it does not work out of the box on non-ARM hosts."
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "DeepSeek continuing to rely on Nvidia hardware past 2027-2028"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Failure to release CANN 9.2.0 / HDK and broader repo usability"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Persistent 4:1 card disadvantage vs Nvidia not narrowing"
+      }
+     ],
+     "market_risks": [
+      {
+       "claim_ids": [
+        "C-92f5749d38960d",
+        "C-a3ec49ed9585d9"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "The Huawei-DeepSeek partnership could work well for DeepSeek without making Ascend equally usable for everyone else, with many documented ecosystem gaps (no DeepGEMM on x86 hosts, hardcoded ARM headers blocking startup, no NPU+x86 CI). (scope: Specific to Ascend ecosystem usability outside DeepSeek's own supernode configurations; limits broader adoption, not a market-wide risk.)"
+      },
+      {
+       "claim_ids": [
+        "C-324c561d4bcdf7",
+        "C-bde597734a8268",
+        "C-ac7f8d8d03023b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Huawei hardware remains behind Nvidia on absolute performance (950PR between A100 and MI300X; four Huawei cards to match one Nvidia card; roughly two years behind on time-to-market). (scope: Hardware competitiveness gap specific to Ascend vs Nvidia; the two-year/4:1 figures come from an unverified transcript.)"
+      }
+     ],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether increased Ascend adoption translates into quantified revenue or earnings for any listed company"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether any listed equity (Huawei and DeepSeek are not public) captures the benefit"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether the ecosystem becomes usable beyond DeepSeek's own supernode configurations"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued dependence on Nvidia hardware by Chinese labs"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Persistent x86/ecosystem gaps limiting Ascend adoption beyond DeepSeek"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Investigate which listed Huawei suppliers and Chinese semiconductor foundries capture Ascend volume growth, and verify Ascend production and adoption trends relative to Nvidia in China."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CANN 9.2.0 and HDK release enabling broad Ascend usability"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence of DeepSeek shifting training/inference primarily to Ascend"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Reports of Ascend supernode deployments displacing Nvidia in China"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL; verification hold)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "independent_research",
+      "article_id": "A-52648724ad39",
+      "authors": [
+       "Bryan Shan",
+       "Dylan Patel"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-109f205272be74",
+       "C-c92bed70239fcd",
+       "C-56745f5164d0e3",
+       "C-40d0ecc153be57",
+       "C-99b7ba90430f3e",
+       "C-89190f4f1babb0",
+       "C-880df3032ddcdb",
+       "C-b82f204135d60c",
+       "C-46b2b728b95da9",
+       "C-666dae8b7698fd",
+       "C-2afacedd7e1e67",
+       "C-b910eff9f642c8",
+       "C-9de7aa59fd65b3",
+       "C-1e598d1017f6a0",
+       "C-e04472dff2850c",
+       "C-3bf6ffbcaa3ac1",
+       "C-c7065f6c59b5b9",
+       "C-120b6bbfe03872",
+       "C-b219fa821794b6",
+       "C-3912f122fc15f5",
+       "C-9b18abc972d4f5",
+       "C-cfd83ef7fb7c63",
+       "C-d332c481bc001e",
+       "C-c57301a9cdf2d0",
+       "C-10b5cd6a1e0aab",
+       "C-324c561d4bcdf7",
+       "C-bde597734a8268",
+       "C-ac7f8d8d03023b",
+       "C-020780ffc49481",
+       "C-b696cc3b272161",
+       "C-7bb6966a9af9b7",
+       "C-e854820ef1527c",
+       "C-a3ec49ed9585d9",
+       "C-92f5749d38960d"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-10-21T17:34:38Z",
+      "published_status": "KNOWN",
+      "publisher": "SemiAnalysis",
+      "retrieval_state": "PARTIAL",
+      "title": "The Huawei-DeepSeek Symbiosis",
+      "upstream_origins": [
+       "Huawei",
+       "Liang Wenfeng (unverified DeepSeek investor meeting transcript)",
+       "not attributed by the source",
+       "publisher's own analysis"
+      ],
+      "url": "https://newsletter.semianalysis.com/p/huawei-deepseek",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "11b5241deef77a6567ce5bd280bde66060a6ad46dc6a36e1f74b28b401c51dae",
+   "created_at": "2026-10-30T12:20:40.984029Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL; verification hold)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "medium"
+     },
+     {
+      "claim_ids": [
+       "C-c92bed70239fcd",
+       "C-40d0ecc153be57",
+       "C-99b7ba90430f3e",
+       "C-89190f4f1babb0",
+       "C-b82f204135d60c",
+       "C-666dae8b7698fd",
+       "C-2afacedd7e1e67",
+       "C-b910eff9f642c8",
+       "C-9de7aa59fd65b3",
+       "C-1e598d1017f6a0",
+       "C-3bf6ffbcaa3ac1",
+       "C-c7065f6c59b5b9",
+       "C-120b6bbfe03872",
+       "C-b219fa821794b6",
+       "C-3912f122fc15f5",
+       "C-9b18abc972d4f5",
+       "C-d332c481bc001e",
+       "C-c57301a9cdf2d0",
+       "C-10b5cd6a1e0aab",
+       "C-109f205272be74"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "20"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-7661d1cfece8, ES-c1879b598a67",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "0 fundamental step(s) shown by the source, 2 in total",
+      "value": "inferred"
+     },
+     {
+      "claim_ids": [
+       "C-c92bed70239fcd",
+       "C-40d0ecc153be57",
+       "C-99b7ba90430f3e",
+       "C-b82f204135d60c",
+       "C-666dae8b7698fd",
+       "C-2afacedd7e1e67",
+       "C-b910eff9f642c8",
+       "C-1e598d1017f6a0",
+       "C-120b6bbfe03872",
+       "C-b219fa821794b6"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "10 claim(s) inside the next 2-4 quarters (C-c92bed70239fcd: measured 2026-10-21 (9 days before the as-of); C-40d0ecc153be57: measured 2026-10-21 (9 days before the as-of); C-99b7ba90430f3e: measured 2026-10-21 (9 days before the as-of); C-b82f204135d60c: measured 2026-10-21 (9 days before the as-of); showing 4 of 10); 1 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: fully domestic chinese ecosystem",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-109f205272be74",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-324c561d4bcdf7",
+       "C-bde597734a8268",
+       "C-ac7f8d8d03023b",
+       "C-020780ffc49481",
+       "C-b696cc3b272161",
+       "C-7bb6966a9af9b7",
+       "C-e854820ef1527c",
+       "C-a3ec49ed9585d9"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (8 counter-claims in total); 5 distinct counter-observation(s) from the supporting sources vs 20 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "5"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "review withheld 1 decision-bearing sentence(s): s02.1",
+      "value": "HOLD"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "PARTIAL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; retrieval PARTIAL; verification hold)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "partial_text",
+      "kind": "missing_data",
+      "text": "retrieval PARTIAL"
+     },
+     {
+      "code": "verification_hold",
+      "kind": "missing_data",
+      "text": "verification hold"
+     }
+    ]
+   },
+   "run_id": "R-20261030T115837Z-scan",
+   "thesis_id": "TH-B121174B17",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 0,
+ "other_cited_evidence": [
+  "C-92f5749d38960d",
+  "C-7991b4e9188d24",
+  "C-6bd98d2bf6f582",
+  "C-324c561d4bcdf7",
+  "C-bde597734a8268",
+  "C-ac7f8d8d03023b",
+  "C-020780ffc49481",
+  "C-b696cc3b272161",
+  "C-7bb6966a9af9b7",
+  "C-e854820ef1527c",
+  "C-a3ec49ed9585d9"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s01.1": "The forecast (2027-2028) and the narrowing gap are supported, but 'ecosystem is already mature' overstates; cited spans describe the gap narrowing, not maturity. Also conflates 'build a fully domestic Chinese ecosystem' which isn't in cited spans.",
+  "s02.1": "The 40% reduction for smaller sizes is supported, but '950PR' is not in the cited span; the hardware attribution is unsupported by cited spans.",
+  "s02.2": "Six repositories (TileLang, DeepGEMM, DeepEP, TileKernels, FlashMLA, DeepSelect) is supported, but 'before China's national day holidays' is not in the cited span.",
+  "s06.1": "The 2027-2028 forecast and hardware ~5 years behind / software at frontier are supported, but 'ecosystem is mature' and 'fully domestic ecosystem' overstate; cited spans don't assert maturity or domestic-ecosystem goal.",
+  "s07.1": "The four-cards-to-one claim is supported by the cited span, but the span does not attribute it to Liang Wenfeng; the speaker attribution is unsupported by the cited span.",
+  "s07.2": "The 'roughly two years behind' is supported, but the cited span does not attribute it to Liang Wenfeng; speaker attribution unsupported.",
+  "s07.8": "The four-cards and two-years-behind figures are supported, but the cited spans do not attribute the statement to Liang Wenfeng; speaker attribution unsupported."
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Source \u2014 only part of the text was read.",
+  "Verification \u2014 on hold until a failed check is resolved."
+ ],
+ "withheld_sentences": {
+  "s02.1": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s02.1 prints '950', which none of its cited claims carry: 'TileLang AutoSchedule reduces single-operation execution time by up to 40% on 950PR, especially for '",
+  "s07.5": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s07.5 prints '950', which none of its cited claims carry: 'Huawei 950PR approximated 599-600 W power draw in the same comparison. \u27e8cited figures: approximate\u27e9'",
+  "s07.6": "NUMBER_NOT_IN_CITED_CLAIMS \u2014 s07.6 prints '950', which none of its cited claims carry: 'Huawei 950PR ran at 1500-1550 MHz against its 1650 MHz reference clock.'"
+ }
+}

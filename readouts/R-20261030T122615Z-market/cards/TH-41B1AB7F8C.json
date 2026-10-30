@@ -1,0 +1,2793 @@
+{
+ "analyst_corrections": {
+  "s07.1": "The line said it could weigh on growth even with a benign outcome; the source says it should not derail the outlook. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)"
+ },
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-22",
+   "ancestry": [
+    "macro_market"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-14",
+   "first_ingested_at": "2026-10-14T06:57:24.457979Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-15",
+   "latest_article_date": "2026-09-15",
+   "region": "Canada",
+   "research_action": "WATCH",
+   "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+   "status": "ACTIVE",
+   "thesis_id": "TH-41B1AB7F8C",
+   "title": "Canada's capital-deepening cycle lifts potential growth and Canadian assets"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-63741952dd42c9",
+     "C-c43a89e092cc47",
+     "C-335c33c1eb61c9",
+     "C-607b3fda6b2238",
+     "C-0b564757852ce5",
+     "C-2bb63287013c7c",
+     "C-6a1792a0b1c3d9"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Morgan Stanley argues Canada's potential growth could rise from ~1.5% to 1.7% by end-decade and reach 2% in the 2030s, driven by productivity, efficiency and capital deployment, supported by abundant capital (pension assets 158% of GDP), a growing working-age population (+5% by 2040), and a capex cycle in which utilities, transport, mining and energy are ~61% of planned 2026 capex. \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-0c7c6a563260f6",
+     "C-479272006058e0"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "The payoff should be faster growth, stronger corporate earnings and a more constructive outlook for Canadian assets, including a CAD strengthening to 1.36 from ~1.39. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "If the capital cycle broadens from structures/engineering into machinery, software and IP and productivity spreads, Canadian corporate earnings and the Canadian dollar could benefit; the article does not quantify the earnings effect."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-479ccc154807",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-63741952dd42c9"
+     ],
+     "original_date": "2026-09-15",
+     "period": "by the end of this decade",
+     "provenance": "FORECAST",
+     "text": "Canada's potential growth rate could rise from around 1.5% currently to 1.7% by end of this decade \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-607b3fda6b2238"
+     ],
+     "original_date": "2026-09-15",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Canadian pension assets equal 158% of GDP"
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-0b564757852ce5"
+     ],
+     "original_date": "2026-09-15",
+     "period": "2026",
+     "provenance": "SOURCE OPINION",
+     "text": "Utilities, transportation, mining and energy account for roughly 61% of planned 2026 capex \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-c43a89e092cc47"
+     ],
+     "original_date": "2026-09-15",
+     "period": "2030s",
+     "provenance": "FORECAST",
+     "text": "Growth could reach 2% in the 2030s if investment spreads beyond infrastructure and resources \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-335c33c1eb61c9"
+     ],
+     "original_date": "2026-09-15",
+     "period": "by 2040",
+     "provenance": "FORECAST",
+     "text": "Canada's working-age population projected to grow roughly 5% by 2040 \u27e8cited figures: forecast; approximate\u27e9"
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-7c52deb780fc09"
+     ],
+     "original_date": "2026-09-15",
+     "period": null,
+     "provenance": "MEASURED OBSERVATION",
+     "text": "Canada's GDP valued at approximately $2.4 trillion \u27e8cited figures: approximate\u27e9"
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "change_class": "novelty_unverified",
+     "claim_ids": [],
+     "original_date": null,
+     "period": null,
+     "provenance": "UNKNOWN",
+     "text": "showing 6 of 16 pieces of evidence from A-479ccc154807 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 06:57 UTC, analysed as of 2026-10-14, from a source published 2026-09-15; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-63741952dd42c9",
+     "C-c43a89e092cc47",
+     "C-db59c77cfefd92"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "industry_shift",
+    "text": "Investment broadens from infrastructure/resources into machinery, software, IP and productive business assets, raising potential growth \u27e8cited figures: forecast; approximate\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-e8fa1aa0130fd9",
+     "C-da420782e54aac"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "margins",
+    "text": "Efficiency and productivity gains spread beyond today's technology leaders, lifting productive capacity"
+   },
+   {
+    "claim_ids": [
+     "C-479272006058e0"
+    ],
+    "provenance": "SOURCE OPINION",
+    "step": "listed_earnings",
+    "text": "Stronger growth and productivity support stronger corporate earnings"
+   },
+   {
+    "claim_ids": [
+     "C-0c7c6a563260f6"
+    ],
+    "provenance": "FORECAST",
+    "step": "market_reaction",
+    "text": "A more constructive outlook for Canadian assets and a stronger Canadian dollar (to 1.36 from ~1.39) \u27e8cited figures: forecast\u27e9"
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-479ccc154807",
+    "block_id": "b042",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0b564757852ce5",
+    "comparator": null,
+    "epistemic": "mixed",
+    "label": "share of planned capex",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2026",
+    "qualifiers": [
+     "roughly",
+     "in our framework"
+    ],
+    "quote": "These sectors account for roughly 61% of planned 2026 capital expenditures in our framework.",
+    "role": "supports",
+    "unit": "%",
+    "value": 61.0,
+    "value_text": "61%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b059",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-0c7c6a563260f6",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "USD/CAD exchange rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "medium term",
+    "qualifiers": [
+     "from around 1.39 currently"
+    ],
+    "quote": "The Canadian dollar could strengthen to 1.36 USD per CAD over the medium term, from around 1.39 currently.",
+    "role": "supports",
+    "unit": "USD per CAD",
+    "value": 1.36,
+    "value_text": "1.36"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-479ccc154807",
+    "block_id": "b004",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-2bb63287013c7c",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "potential growth rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "currently",
+    "qualifiers": [
+     "around"
+    ],
+    "quote": "The country\u2019s potential growth could rise from around 1.5%",
+    "role": "supports",
+    "unit": "%",
+    "value": 1.5,
+    "value_text": "around 1.5%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-479ccc154807",
+    "block_id": "b025",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-335c33c1eb61c9",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "working-age population growth",
+    "measured_as_of": null,
+    "origin": "United Nations and Morgan Stanley Research",
+    "period": "by 2040",
+    "qualifiers": [
+     "roughly"
+    ],
+    "quote": "Canada\u2019s is projected to grow roughly 5% by 2040, according to data from the United Nations and Morgan Stanley Research",
+    "role": "supports",
+    "unit": "%",
+    "value": 5.0,
+    "value_text": "roughly 5%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-607b3fda6b2238",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "pension assets to GDP",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Pension assets alone equal 158% of the country\u2019s gross domestic product, which is valued at approximately $2.4 trillion.",
+    "role": "supports",
+    "unit": "%",
+    "value": 158.0,
+    "value_text": "158%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-479ccc154807",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-63741952dd42c9",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "potential growth rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "by the end of this decade",
+    "qualifiers": [
+     "from around 1.5% currently"
+    ],
+    "quote": "Canada\u2019s potential growth rate could rise from around 1.5% currently to 1.7% by the end of this decade",
+    "role": "supports",
+    "unit": "%",
+    "value": 1.7,
+    "value_text": "1.7%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": true,
+    "article_id": "A-479ccc154807",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-7c52deb780fc09",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "GDP",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "approximately"
+    ],
+    "quote": "gross domestic product, which is valued at approximately $2.4 trillion",
+    "role": "supports",
+    "unit": "$tn",
+    "value": 2.4,
+    "value_text": "$2.4 trillion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b022",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-c43a89e092cc47",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "potential growth rate",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "2030s",
+    "qualifiers": [
+     "conditional on investment broadening"
+    ],
+    "quote": "Growth could reach 2% in the 2030s if investment spreads beyond infrastructure and resources",
+    "role": "supports",
+    "unit": "%",
+    "value": 2.0,
+    "value_text": "2%"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b059",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-479272006058e0",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Broadening investment and productivity gains should yield faster growth, stronger earnings, constructive outlook for Canadian assets",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "conditional on investment broadening"
+    ],
+    "quote": "the payoff should be faster growth, stronger corporate earnings and a more constructive outlook for Canadian assets, including its currency",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b056",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-4ed67e67956d00",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Firming domestic demand, greater policy support and improving business investment leave the emerging growth model less dependent on external demand",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "Firming domestic demand, greater policy support and an improving business-investment backdrop leave the emerging growth model less dependent on external demand.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b007",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6a1792a0b1c3d9",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The new growth phase is to be supported by government policies, a strong investment pipeline, a growing working-age population and abundant natural resources and financial assets",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "These will be complemented by a growing working-age population and abundant natural resources and financial assets.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b033",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-6c808d02d5f4cd",
+    "comparator": null,
+    "epistemic": "actual",
+    "label": "Policymakers are lowering the after-tax cost of investment, shortening approval/construction timelines, reducing project risk, and investing alongside private capital to attract domestic and global capital",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "lowering the after-tax cost of investment, shortening approval and construction timelines, reducing project-specific risk for private investors and investing alongside private capital",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-b95125e1b67701",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The challenge is making domestic projects attractive on a risk-adjusted basis to deploy Canada's abundant capital",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The challenge is making domestic projects attractive enough, on a riskadjusted basis, to put that capital to work.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b026",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-da420782e54aac",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The opportunity is to turn Canada's advantages into advanced manufacturing, commercialization, AI-related investment and stronger productive capacity",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The opportunity now is to turn those advantages into advanced manufacturing, commercialization, AI-related investment and stronger productive capacity.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b047",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-db59c77cfefd92",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-479ccc154807",
+    "block_id": "b024",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-e8fa1aa0130fd9",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Fulfilling the growth potential requires capital into productive assets across sectors, infrastructure that attracts private investment, and efficiency gains spreading beyond today's technology leaders",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "capital moving into productive assets across different sectors infrastructure that attracts private investment efficiency gains that spread beyond today\u2019s technology leaders.",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-479ccc154807",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-f238e112695a2d",
+     "name_as_written": "Morgan Stanley Research",
+     "other_securities": [],
+     "quote": "according to data from the United Nations and Morgan Stanley Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "UNRESOLVED",
+     "role": "publisher",
+     "role_detail": "Author of the research and data source for projections"
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "cik": null,
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [],
+     "mention_id": "M-b5f52b2bbb77f7",
+     "name_as_written": "United Nations",
+     "other_securities": [],
+     "quote": "according to data from the United Nations and Morgan Stanley Research",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "NOT_A_SECURITY",
+     "role": "data_source",
+     "role_detail": "Source for working-age population projections"
+    }
+   ],
+   "baskets": [
+    {
+     "claim_ids": [
+      "C-0c7c6a563260f6",
+      "C-479272006058e0"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Canadian assets including the currency (CAD), expected to benefit from faster growth and stronger corporate earnings (constituents not named by the source)"
+    }
+   ],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-479ccc154807",
+     "claim_ids": [
+      "C-0b564757852ce5"
+     ],
+     "direction": "positive",
+     "name": "utilities, transportation, mining and energy",
+     "provenance": "SOURCE OPINION",
+     "quote": "An investment cycle is already under way across utilities, transportation, mining and energy."
+    },
+    {
+     "article_id": "A-479ccc154807",
+     "claim_ids": [
+      "C-553c84fe5c805a"
+     ],
+     "direction": "positive",
+     "name": "Energy, pipelines and infrastructure",
+     "provenance": "FORECAST",
+     "quote": "Energy, pipelines and infrastructure: Canadian oil and gas production can potentially increase by around 12% between 2025 and 2030."
+    }
+   ],
+   "sectors": [
+    "utilities",
+    "transportation",
+    "mining",
+    "energy",
+    "manufacturing"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-cd64d1c5b2ee1b",
+      "C-da538e6df6267a"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Near-term, trade/USMCA uncertainty could delay and redirect investment, though the base case assumes US-Canada agreements are reached."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-63741952dd42c9",
+      "C-c43a89e092cc47",
+      "C-335c33c1eb61c9"
+     ],
+     "provenance": "FORECAST",
+     "text": "Over the medium term to 2030s, potential growth rises to 1.7% then 2% as capital deepening and productivity spread, supported by abundant capital and a growing working-age population. \u27e8cited figures: forecast; approximate\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-cd64d1c5b2ee1b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "U.S. tariff escalation and USMCA uncertainty could delay and redirect investment, though the source says it should not derail the constructive medium-term growth outlook."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a different geography (US vs Canada) \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a different geography (China vs Canada); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [
+    {
+     "claim_ids": [
+      "C-cd64d1c5b2ee1b"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Tariff/USMCA uncertainty could delay and redirect investment but shouldn't derail medium-term growth outlook"
+    }
+   ],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Continued concentration of spending in structures/engineering rather than machinery/equipment"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Investment delayed or redirected by prolonged trade uncertainty"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "CAD failing to strengthen toward 1.36"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Premise the source makes it conditional on: investment broadens beyond infrastructure/resources and productivity gains spread beyond today's leaders"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether investment will actually broaden beyond infrastructure/resources into machinery, software and IP"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether productivity gains will spread beyond today's leaders"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether any earnings or valuation effect for listed Canadian equities is quantified (it is not)"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Escalating tariffs and prolonged USMCA uncertainty"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Spending remaining concentrated in structures/engineering"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Check whether Canadian business investment is actually broadening into machinery/software/IP and whether listed utilities, pipelines, miners and manufacturers reflect the capex cycle in forward estimates."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Evidence that investment is expanding beyond infrastructure/resources"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Productivity gains spreading beyond leading firms"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "US-Canada/USMCA agreements reached reducing trade uncertainty"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-479ccc154807",
+    "authors": [
+     "Arunima Sinha"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-63741952dd42c9",
+     "C-c43a89e092cc47",
+     "C-335c33c1eb61c9",
+     "C-607b3fda6b2238",
+     "C-7c52deb780fc09",
+     "C-0b564757852ce5",
+     "C-0c7c6a563260f6",
+     "C-479272006058e0",
+     "C-2bb63287013c7c",
+     "C-6a1792a0b1c3d9",
+     "C-e8fa1aa0130fd9",
+     "C-da420782e54aac",
+     "C-b95125e1b67701",
+     "C-6c808d02d5f4cd",
+     "C-db59c77cfefd92",
+     "C-4ed67e67956d00",
+     "C-cd64d1c5b2ee1b"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-15T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "Canada's Economic Growth Poised to Accelerate Through 2030",
+    "upstream_origins": [
+     "United Nations and Morgan Stanley Research",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/canada-economic-growth-accelerates-through-2030",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-30",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "40-F filed 2026-02-04 (0001104659-26-010352)",
+    "business": "Class I freight railway across Canada and US",
+    "direction": "positive",
+    "enrichment_id": "EC-0c82758615018d",
+    "evidence": "s03.2: Stronger growth and productivity support stronger corporate earnings",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "Canadian National Railway",
+    "rationale": "Faster Canadian potential growth lifts freight volumes (intermodal, bulk, resources), raising transportation revenue and earnings as a named exposed transport player.",
+    "registrant": "CANADIAN NATIONAL RAILWAY CO",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['CNI'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "Rail freight transportation in Canada",
+    "revenue_model": "services",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-41B1AB7F8C",
+    "ticker_hint": "CNI"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0000016875-26-000008)",
+    "business": "Class I freight railway spanning Canada, US, Mexico",
+    "direction": "positive",
+    "enrichment_id": "EC-c02a5b73a5fbfa",
+    "evidence": "s03.2: Stronger growth and productivity support stronger corporate earnings",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-10-30",
+      "pit_source": "10-Q filed 2026-10-29 (accession 0000016875-26-000033) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Shares, without par value, of Canadian Pacific Kansas City Limited",
+      "ticker": "CP"
+     },
+     {
+      "exchange": null,
+      "instrument": "common_equity",
+      "note": "one of 2 common-equity classes registered as of 2026-10-30",
+      "pit_source": "10-Q filed 2026-10-29 (accession 0000016875-26-000033) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Shares, without par value, of Canadian Pacific Kansas City Limited",
+      "ticker": "CP"
+     }
+    ],
+    "name": "Canadian Pacific Kansas City",
+    "rationale": "Stronger Canadian growth and capex cycle raise carload volumes and pricing power, lifting freight earnings as a named transportation sector beneficiary.",
+    "registrant": "CANADIAN PACIFIC KANSAS CITY LTD/CN",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 4011); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Rail freight transportation in Canada",
+    "revenue_model": "services",
+    "step_id": "s03.2",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-41B1AB7F8C",
+    "ticker_hint": "CP"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-13 (0001193125-26-049810)",
+    "business": "North American oil and gas pipeline, utility operator",
+    "direction": "positive",
+    "enrichment_id": "EC-d45941183f7d27",
+    "evidence": "s03.0: Investment broadens from infrastructure/resources into machinery, software, IP and productive business assets, raising potential growth",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "NYSE",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-07-31 (accession 0001193125-26-326752) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Shares",
+      "ticker": "ENB"
+     }
+    ],
+    "name": "Enbridge",
+    "rationale": "Energy/infrastructure capex cycle expands pipeline and utility asset base; higher throughput and rate base growth lift regulated and transport earnings.",
+    "registrant": "ENBRIDGE INC",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 4610); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "Pipeline transport and gas utilities",
+    "revenue_model": "usage_based",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-41B1AB7F8C",
+    "ticker_hint": "ENB"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "40-F filed 2026-02-13 (0001232384-26-000015)",
+    "business": "Natural gas pipelines and power generation operator",
+    "direction": "positive",
+    "enrichment_id": "EC-4519eacd012d15",
+    "evidence": "s03.0: Investment broadens from infrastructure/resources into machinery, software, IP and productive business assets, raising potential growth",
+    "foreign_filer": true,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [],
+    "name": "TC Energy",
+    "rationale": "Infrastructure/energy capex cycle grows regulated pipeline and power rate base, lifting earnings as a named pipelines and infrastructure beneficiary.",
+    "registrant": "TC ENERGY CORP",
+    "resolution_note": "foreign private issuer \u2014 its US line(s) ['TRP', 'TCANF', 'TCENF', 'TCEYF', 'TNCAF', 'TRPEF', 'TRPPF', 'TRPRF'] are ADR/secondary listings; the primary listing is not resolved here and the ADR is NOT substituted",
+    "resolution_status": "UNRESOLVED",
+    "revenue_line": "Gas pipelines and power in Canada",
+    "revenue_model": "usage_based",
+    "step_id": "s03.0",
+    "step_label": "SOURCE OPINION",
+    "thesis_id": "TH-41B1AB7F8C",
+    "ticker_hint": "TRP"
+   }
+  ],
+  "created_at": "2026-10-30T12:22:51.860248Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [
+   "Nutrien: more than 4 on one side \u2014 set aside",
+   "Shopify: more than 4 on one side \u2014 set aside",
+   "Teck Resources: more than 4 on one side \u2014 set aside",
+   "Open Text: more than 4 on one side \u2014 set aside"
+  ],
+  "run_id": "R-20261030T115837Z-scan",
+  "set_id": "ES-24bfc9b621254e",
+  "thesis_id": "TH-41B1AB7F8C",
+  "thesis_version": 2
+ },
+ "generated": "Generated 2026-10-30 12:43 UTC from the registry (ti-engine-5; run R-20261030T122615Z-market, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-479ccc154807",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "macro_market"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T06:57:24.457979Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-15",
+     "latest_article_date": "2026-09-15",
+     "region": "Canada",
+     "research_action": "WATCH",
+     "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-41B1AB7F8C",
+     "title": "Canada's capital-deepening cycle lifts potential growth and Canadian assets"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-63741952dd42c9",
+       "C-c43a89e092cc47",
+       "C-335c33c1eb61c9",
+       "C-607b3fda6b2238",
+       "C-0b564757852ce5",
+       "C-2bb63287013c7c",
+       "C-6a1792a0b1c3d9"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Morgan Stanley argues Canada's potential growth could rise from ~1.5% to 1.7% by end-decade and reach 2% in the 2030s, driven by productivity, efficiency and capital deployment, supported by abundant capital (pension assets 158% of GDP), a growing working-age population (+5% by 2040), and a capex cycle in which utilities, transport, mining and energy are ~61% of planned 2026 capex. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-0c7c6a563260f6",
+       "C-479272006058e0"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The payoff should be faster growth, stronger corporate earnings and a more constructive outlook for Canadian assets, including a CAD strengthening to 1.36 from ~1.39. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If the capital cycle broadens from structures/engineering into machinery, software and IP and productivity spreads, Canadian corporate earnings and the Canadian dollar could benefit; the article does not quantify the earnings effect."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-63741952dd42c9"
+       ],
+       "original_date": "2026-09-15",
+       "period": "by the end of this decade",
+       "provenance": "FORECAST",
+       "text": "Canada's potential growth rate could rise from around 1.5% currently to 1.7% by end of this decade \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-607b3fda6b2238"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Canadian pension assets equal 158% of GDP"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0b564757852ce5"
+       ],
+       "original_date": "2026-09-15",
+       "period": "2026",
+       "provenance": "SOURCE OPINION",
+       "text": "Utilities, transportation, mining and energy account for roughly 61% of planned 2026 capex \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c43a89e092cc47"
+       ],
+       "original_date": "2026-09-15",
+       "period": "2030s",
+       "provenance": "FORECAST",
+       "text": "Growth could reach 2% in the 2030s if investment spreads beyond infrastructure and resources \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-335c33c1eb61c9"
+       ],
+       "original_date": "2026-09-15",
+       "period": "by 2040",
+       "provenance": "FORECAST",
+       "text": "Canada's working-age population projected to grow roughly 5% by 2040 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7c52deb780fc09"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Canada's GDP valued at approximately $2.4 trillion \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 16 pieces of evidence from A-479ccc154807 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 06:57 UTC, analysed as of 2026-10-14, from a source published 2026-09-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-63741952dd42c9",
+       "C-c43a89e092cc47",
+       "C-db59c77cfefd92"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Investment broadens from infrastructure/resources into machinery, software, IP and productive business assets, raising potential growth \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-e8fa1aa0130fd9",
+       "C-da420782e54aac"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "margins",
+      "text": "Efficiency and productivity gains spread beyond today's technology leaders, lifting productive capacity"
+     },
+     {
+      "claim_ids": [
+       "C-479272006058e0"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "listed_earnings",
+      "text": "Stronger growth and productivity support stronger corporate earnings"
+     },
+     {
+      "claim_ids": [
+       "C-0c7c6a563260f6"
+      ],
+      "provenance": "FORECAST",
+      "step": "market_reaction",
+      "text": "A more constructive outlook for Canadian assets and a stronger Canadian dollar (to 1.36 from ~1.39) \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b042",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0b564757852ce5",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "share of planned capex",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "roughly",
+       "in our framework"
+      ],
+      "quote": "These sectors account for roughly 61% of planned 2026 capital expenditures in our framework.",
+      "role": "supports",
+      "unit": "%",
+      "value": 61.0,
+      "value_text": "61%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b059",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0c7c6a563260f6",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "USD/CAD exchange rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "medium term",
+      "qualifiers": [
+       "from around 1.39 currently"
+      ],
+      "quote": "The Canadian dollar could strengthen to 1.36 USD per CAD over the medium term, from around 1.39 currently.",
+      "role": "supports",
+      "unit": "USD per CAD",
+      "value": 1.36,
+      "value_text": "1.36"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2bb63287013c7c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "potential growth rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "currently",
+      "qualifiers": [
+       "around"
+      ],
+      "quote": "The country\u2019s potential growth could rise from around 1.5%",
+      "role": "supports",
+      "unit": "%",
+      "value": 1.5,
+      "value_text": "around 1.5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-335c33c1eb61c9",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "working-age population growth",
+      "measured_as_of": null,
+      "origin": "United Nations and Morgan Stanley Research",
+      "period": "by 2040",
+      "qualifiers": [
+       "roughly"
+      ],
+      "quote": "Canada\u2019s is projected to grow roughly 5% by 2040, according to data from the United Nations and Morgan Stanley Research",
+      "role": "supports",
+      "unit": "%",
+      "value": 5.0,
+      "value_text": "roughly 5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-607b3fda6b2238",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "pension assets to GDP",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Pension assets alone equal 158% of the country\u2019s gross domestic product, which is valued at approximately $2.4 trillion.",
+      "role": "supports",
+      "unit": "%",
+      "value": 158.0,
+      "value_text": "158%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-63741952dd42c9",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "potential growth rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by the end of this decade",
+      "qualifiers": [
+       "from around 1.5% currently"
+      ],
+      "quote": "Canada\u2019s potential growth rate could rise from around 1.5% currently to 1.7% by the end of this decade",
+      "role": "supports",
+      "unit": "%",
+      "value": 1.7,
+      "value_text": "1.7%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7c52deb780fc09",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "GDP",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "gross domestic product, which is valued at approximately $2.4 trillion",
+      "role": "supports",
+      "unit": "$tn",
+      "value": 2.4,
+      "value_text": "$2.4 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c43a89e092cc47",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "potential growth rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2030s",
+      "qualifiers": [
+       "conditional on investment broadening"
+      ],
+      "quote": "Growth could reach 2% in the 2030s if investment spreads beyond infrastructure and resources",
+      "role": "supports",
+      "unit": "%",
+      "value": 2.0,
+      "value_text": "2%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b059",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-479272006058e0",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Broadening investment and productivity gains should yield faster growth, stronger earnings, constructive outlook for Canadian assets",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "conditional on investment broadening"
+      ],
+      "quote": "the payoff should be faster growth, stronger corporate earnings and a more constructive outlook for Canadian assets, including its currency",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b056",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4ed67e67956d00",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Firming domestic demand, greater policy support and improving business investment leave the emerging growth model less dependent on external demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Firming domestic demand, greater policy support and an improving business-investment backdrop leave the emerging growth model less dependent on external demand.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6a1792a0b1c3d9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The new growth phase is to be supported by government policies, a strong investment pipeline, a growing working-age population and abundant natural resources and financial assets",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "These will be complemented by a growing working-age population and abundant natural resources and financial assets.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6c808d02d5f4cd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Policymakers are lowering the after-tax cost of investment, shortening approval/construction timelines, reducing project risk, and investing alongside private capital to attract domestic and global capital",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "lowering the after-tax cost of investment, shortening approval and construction timelines, reducing project-specific risk for private investors and investing alongside private capital",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b95125e1b67701",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The challenge is making domestic projects attractive on a risk-adjusted basis to deploy Canada's abundant capital",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The challenge is making domestic projects attractive enough, on a riskadjusted basis, to put that capital to work.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b026",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-da420782e54aac",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The opportunity is to turn Canada's advantages into advanced manufacturing, commercialization, AI-related investment and stronger productive capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The opportunity now is to turn those advantages into advanced manufacturing, commercialization, AI-related investment and stronger productive capacity.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-db59c77cfefd92",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e8fa1aa0130fd9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Fulfilling the growth potential requires capital into productive assets across sectors, infrastructure that attracts private investment, and efficiency gains spreading beyond today's technology leaders",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "capital moving into productive assets across different sectors infrastructure that attracts private investment efficiency gains that spread beyond today\u2019s technology leaders.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-479ccc154807",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f238e112695a2d",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "according to data from the United Nations and Morgan Stanley Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the research and data source for projections"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b5f52b2bbb77f7",
+       "name_as_written": "United Nations",
+       "other_securities": [],
+       "quote": "according to data from the United Nations and Morgan Stanley Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Source for working-age population projections"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-0c7c6a563260f6",
+        "C-479272006058e0"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Canadian assets including the currency (CAD), expected to benefit from faster growth and stronger corporate earnings (constituents not named by the source)"
+      }
+     ],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-479ccc154807",
+       "claim_ids": [
+        "C-0b564757852ce5"
+       ],
+       "direction": "positive",
+       "name": "utilities, transportation, mining and energy",
+       "provenance": "SOURCE OPINION",
+       "quote": "An investment cycle is already under way across utilities, transportation, mining and energy."
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "claim_ids": [
+        "C-553c84fe5c805a"
+       ],
+       "direction": "positive",
+       "name": "Energy, pipelines and infrastructure",
+       "provenance": "FORECAST",
+       "quote": "Energy, pipelines and infrastructure: Canadian oil and gas production can potentially increase by around 12% between 2025 and 2030."
+      }
+     ],
+     "sectors": [
+      "utilities",
+      "transportation",
+      "mining",
+      "energy",
+      "manufacturing"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-cd64d1c5b2ee1b",
+        "C-da538e6df6267a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Near-term, trade/USMCA uncertainty could delay and redirect investment, though the base case assumes US-Canada agreements are reached."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-63741952dd42c9",
+        "C-c43a89e092cc47",
+        "C-335c33c1eb61c9"
+       ],
+       "provenance": "FORECAST",
+       "text": "Over the medium term to 2030s, potential growth rises to 1.7% then 2% as capital deepening and productivity spread, supported by abundant capital and a growing working-age population. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-cd64d1c5b2ee1b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Prolonged tariff/USMCA uncertainty could delay and redirect investment and weigh on growth even if the eventual trade outcome is benign."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a different geography (US vs Canada) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a different geography (China vs Canada); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-cd64d1c5b2ee1b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Tariff/USMCA uncertainty could delay and redirect investment but shouldn't derail medium-term growth outlook"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued concentration of spending in structures/engineering rather than machinery/equipment"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Investment delayed or redirected by prolonged trade uncertainty"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CAD failing to strengthen toward 1.36"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: investment broadens beyond infrastructure/resources and productivity gains spread beyond today's leaders"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether investment will actually broaden beyond infrastructure/resources into machinery, software and IP"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether productivity gains will spread beyond today's leaders"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether any earnings or valuation effect for listed Canadian equities is quantified (it is not)"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Escalating tariffs and prolonged USMCA uncertainty"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Spending remaining concentrated in structures/engineering"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether Canadian business investment is actually broadening into machinery/software/IP and whether listed utilities, pipelines, miners and manufacturers reflect the capex cycle in forward estimates."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that investment is expanding beyond infrastructure/resources"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Productivity gains spreading beyond leading firms"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "US-Canada/USMCA agreements reached reducing trade uncertainty"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-479ccc154807",
+      "authors": [
+       "Arunima Sinha"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-63741952dd42c9",
+       "C-c43a89e092cc47",
+       "C-335c33c1eb61c9",
+       "C-607b3fda6b2238",
+       "C-7c52deb780fc09",
+       "C-0b564757852ce5",
+       "C-0c7c6a563260f6",
+       "C-479272006058e0",
+       "C-2bb63287013c7c",
+       "C-6a1792a0b1c3d9",
+       "C-e8fa1aa0130fd9",
+       "C-da420782e54aac",
+       "C-b95125e1b67701",
+       "C-6c808d02d5f4cd",
+       "C-db59c77cfefd92",
+       "C-4ed67e67956d00",
+       "C-cd64d1c5b2ee1b"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-15T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Canada's Economic Growth Poised to Accelerate Through 2030",
+      "upstream_origins": [
+       "United Nations and Morgan Stanley Research",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/canada-economic-growth-accelerates-through-2030",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "ca69cac674e4bca685fe1bfbf56d570a6e2e74db8fadd085fb47b4ecee94b527",
+   "created_at": "2026-10-21T10:31:57.920986Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-63741952dd42c9",
+       "C-c43a89e092cc47",
+       "C-335c33c1eb61c9",
+       "C-607b3fda6b2238",
+       "C-7c52deb780fc09",
+       "C-0b564757852ce5",
+       "C-0c7c6a563260f6",
+       "C-2bb63287013c7c",
+       "C-6c808d02d5f4cd"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "9"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-87e28a692503, ES-f41ee4fccc95",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 2 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-607b3fda6b2238",
+       "C-7c52deb780fc09",
+       "C-6c808d02d5f4cd"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-607b3fda6b2238: measured 2026-09-15 (29 days before the as-of); C-7c52deb780fc09: measured 2026-09-15 (29 days before the as-of); C-6c808d02d5f4cd: measured 2026-09-15 (29 days before the as-of)); 2 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: utilities, transportation, mining and energy, sector: Energy, pipelines and infrastructure",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-cd64d1c5b2ee1b"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 9 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-41B1AB7F8C",
+   "version": 1
+  },
+  {
+   "as_of": "2026-10-22",
+   "change_summary": "REASSESSED under the current research-action rules from stored evidence \u2014 no article read, no model call: no change in action (factor values unchanged (rule re-evaluation)); ANALYST CORRECTION s07.1 \u2014 The line said it could weigh on growth even with a benign outcome; the source says it should not derail the outlook. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-22",
+     "ancestry": [
+      "macro_market"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-14",
+     "first_ingested_at": "2026-10-14T06:57:24.457979Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-15",
+     "latest_article_date": "2026-09-15",
+     "region": "Canada",
+     "research_action": "WATCH",
+     "sector": "Market-wide / multi-sector (index level, concentration, correlation, rates)",
+     "status": "ACTIVE",
+     "thesis_id": "TH-41B1AB7F8C",
+     "title": "Canada's capital-deepening cycle lifts potential growth and Canadian assets"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-63741952dd42c9",
+       "C-c43a89e092cc47",
+       "C-335c33c1eb61c9",
+       "C-607b3fda6b2238",
+       "C-0b564757852ce5",
+       "C-2bb63287013c7c",
+       "C-6a1792a0b1c3d9"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Morgan Stanley argues Canada's potential growth could rise from ~1.5% to 1.7% by end-decade and reach 2% in the 2030s, driven by productivity, efficiency and capital deployment, supported by abundant capital (pension assets 158% of GDP), a growing working-age population (+5% by 2040), and a capex cycle in which utilities, transport, mining and energy are ~61% of planned 2026 capex. \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-0c7c6a563260f6",
+       "C-479272006058e0"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "The payoff should be faster growth, stronger corporate earnings and a more constructive outlook for Canadian assets, including a CAD strengthening to 1.36 from ~1.39. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "If the capital cycle broadens from structures/engineering into machinery, software and IP and productivity spreads, Canadian corporate earnings and the Canadian dollar could benefit; the article does not quantify the earnings effect."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-63741952dd42c9"
+       ],
+       "original_date": "2026-09-15",
+       "period": "by the end of this decade",
+       "provenance": "FORECAST",
+       "text": "Canada's potential growth rate could rise from around 1.5% currently to 1.7% by end of this decade \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-607b3fda6b2238"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Canadian pension assets equal 158% of GDP"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-0b564757852ce5"
+       ],
+       "original_date": "2026-09-15",
+       "period": "2026",
+       "provenance": "SOURCE OPINION",
+       "text": "Utilities, transportation, mining and energy account for roughly 61% of planned 2026 capex \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-c43a89e092cc47"
+       ],
+       "original_date": "2026-09-15",
+       "period": "2030s",
+       "provenance": "FORECAST",
+       "text": "Growth could reach 2% in the 2030s if investment spreads beyond infrastructure and resources \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-335c33c1eb61c9"
+       ],
+       "original_date": "2026-09-15",
+       "period": "by 2040",
+       "provenance": "FORECAST",
+       "text": "Canada's working-age population projected to grow roughly 5% by 2040 \u27e8cited figures: forecast; approximate\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-7c52deb780fc09"
+       ],
+       "original_date": "2026-09-15",
+       "period": null,
+       "provenance": "MEASURED OBSERVATION",
+       "text": "Canada's GDP valued at approximately $2.4 trillion \u27e8cited figures: approximate\u27e9"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "change_class": "novelty_unverified",
+       "claim_ids": [],
+       "original_date": null,
+       "period": null,
+       "provenance": "UNKNOWN",
+       "text": "showing 6 of 16 pieces of evidence from A-479ccc154807 \u2014 the rest are in 04 KEY EVIDENCE and the evidence ledger"
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-14 06:57 UTC, analysed as of 2026-10-14, from a source published 2026-09-15; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-63741952dd42c9",
+       "C-c43a89e092cc47",
+       "C-db59c77cfefd92"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "industry_shift",
+      "text": "Investment broadens from infrastructure/resources into machinery, software, IP and productive business assets, raising potential growth \u27e8cited figures: forecast; approximate\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-e8fa1aa0130fd9",
+       "C-da420782e54aac"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "margins",
+      "text": "Efficiency and productivity gains spread beyond today's technology leaders, lifting productive capacity"
+     },
+     {
+      "claim_ids": [
+       "C-479272006058e0"
+      ],
+      "provenance": "SOURCE OPINION",
+      "step": "listed_earnings",
+      "text": "Stronger growth and productivity support stronger corporate earnings"
+     },
+     {
+      "claim_ids": [
+       "C-0c7c6a563260f6"
+      ],
+      "provenance": "FORECAST",
+      "step": "market_reaction",
+      "text": "A more constructive outlook for Canadian assets and a stronger Canadian dollar (to 1.36 from ~1.39) \u27e8cited figures: forecast\u27e9"
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b042",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0b564757852ce5",
+      "comparator": null,
+      "epistemic": "mixed",
+      "label": "share of planned capex",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2026",
+      "qualifiers": [
+       "roughly",
+       "in our framework"
+      ],
+      "quote": "These sectors account for roughly 61% of planned 2026 capital expenditures in our framework.",
+      "role": "supports",
+      "unit": "%",
+      "value": 61.0,
+      "value_text": "61%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b059",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-0c7c6a563260f6",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "USD/CAD exchange rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "medium term",
+      "qualifiers": [
+       "from around 1.39 currently"
+      ],
+      "quote": "The Canadian dollar could strengthen to 1.36 USD per CAD over the medium term, from around 1.39 currently.",
+      "role": "supports",
+      "unit": "USD per CAD",
+      "value": 1.36,
+      "value_text": "1.36"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b004",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-2bb63287013c7c",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "potential growth rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "currently",
+      "qualifiers": [
+       "around"
+      ],
+      "quote": "The country\u2019s potential growth could rise from around 1.5%",
+      "role": "supports",
+      "unit": "%",
+      "value": 1.5,
+      "value_text": "around 1.5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b025",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-335c33c1eb61c9",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "working-age population growth",
+      "measured_as_of": null,
+      "origin": "United Nations and Morgan Stanley Research",
+      "period": "by 2040",
+      "qualifiers": [
+       "roughly"
+      ],
+      "quote": "Canada\u2019s is projected to grow roughly 5% by 2040, according to data from the United Nations and Morgan Stanley Research",
+      "role": "supports",
+      "unit": "%",
+      "value": 5.0,
+      "value_text": "roughly 5%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-607b3fda6b2238",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "pension assets to GDP",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Pension assets alone equal 158% of the country\u2019s gross domestic product, which is valued at approximately $2.4 trillion.",
+      "role": "supports",
+      "unit": "%",
+      "value": 158.0,
+      "value_text": "158%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-63741952dd42c9",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "potential growth rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by the end of this decade",
+      "qualifiers": [
+       "from around 1.5% currently"
+      ],
+      "quote": "Canada\u2019s potential growth rate could rise from around 1.5% currently to 1.7% by the end of this decade",
+      "role": "supports",
+      "unit": "%",
+      "value": 1.7,
+      "value_text": "1.7%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": true,
+      "article_id": "A-479ccc154807",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-7c52deb780fc09",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "GDP",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "approximately"
+      ],
+      "quote": "gross domestic product, which is valued at approximately $2.4 trillion",
+      "role": "supports",
+      "unit": "$tn",
+      "value": 2.4,
+      "value_text": "$2.4 trillion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b022",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-c43a89e092cc47",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "potential growth rate",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "2030s",
+      "qualifiers": [
+       "conditional on investment broadening"
+      ],
+      "quote": "Growth could reach 2% in the 2030s if investment spreads beyond infrastructure and resources",
+      "role": "supports",
+      "unit": "%",
+      "value": 2.0,
+      "value_text": "2%"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b059",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-479272006058e0",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Broadening investment and productivity gains should yield faster growth, stronger earnings, constructive outlook for Canadian assets",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "conditional on investment broadening"
+      ],
+      "quote": "the payoff should be faster growth, stronger corporate earnings and a more constructive outlook for Canadian assets, including its currency",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b056",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-4ed67e67956d00",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Firming domestic demand, greater policy support and improving business investment leave the emerging growth model less dependent on external demand",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "Firming domestic demand, greater policy support and an improving business-investment backdrop leave the emerging growth model less dependent on external demand.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b007",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6a1792a0b1c3d9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The new growth phase is to be supported by government policies, a strong investment pipeline, a growing working-age population and abundant natural resources and financial assets",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "These will be complemented by a growing working-age population and abundant natural resources and financial assets.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b033",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-6c808d02d5f4cd",
+      "comparator": null,
+      "epistemic": "actual",
+      "label": "Policymakers are lowering the after-tax cost of investment, shortening approval/construction timelines, reducing project risk, and investing alongside private capital to attract domestic and global capital",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "lowering the after-tax cost of investment, shortening approval and construction timelines, reducing project-specific risk for private investors and investing alongside private capital",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-b95125e1b67701",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The challenge is making domestic projects attractive on a risk-adjusted basis to deploy Canada's abundant capital",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The challenge is making domestic projects attractive enough, on a riskadjusted basis, to put that capital to work.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b026",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-da420782e54aac",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The opportunity is to turn Canada's advantages into advanced manufacturing, commercialization, AI-related investment and stronger productive capacity",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The opportunity now is to turn those advantages into advanced manufacturing, commercialization, AI-related investment and stronger productive capacity.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b047",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-db59c77cfefd92",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "The next leg of growth requires investment to broaden into machinery, software, intellectual property and other productive business assets.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-479ccc154807",
+      "block_id": "b024",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-e8fa1aa0130fd9",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Fulfilling the growth potential requires capital into productive assets across sectors, infrastructure that attracts private investment, and efficiency gains spreading beyond today's technology leaders",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "capital moving into productive assets across different sectors infrastructure that attracts private investment efficiency gains that spread beyond today\u2019s technology leaders.",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-479ccc154807",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-f238e112695a2d",
+       "name_as_written": "Morgan Stanley Research",
+       "other_securities": [],
+       "quote": "according to data from the United Nations and Morgan Stanley Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "UNRESOLVED",
+       "role": "publisher",
+       "role_detail": "Author of the research and data source for projections"
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "cik": null,
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [],
+       "mention_id": "M-b5f52b2bbb77f7",
+       "name_as_written": "United Nations",
+       "other_securities": [],
+       "quote": "according to data from the United Nations and Morgan Stanley Research",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "NOT_A_SECURITY",
+       "role": "data_source",
+       "role_detail": "Source for working-age population projections"
+      }
+     ],
+     "baskets": [
+      {
+       "claim_ids": [
+        "C-0c7c6a563260f6",
+        "C-479272006058e0"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Canadian assets including the currency (CAD), expected to benefit from faster growth and stronger corporate earnings (constituents not named by the source)"
+      }
+     ],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-479ccc154807",
+       "claim_ids": [
+        "C-0b564757852ce5"
+       ],
+       "direction": "positive",
+       "name": "utilities, transportation, mining and energy",
+       "provenance": "SOURCE OPINION",
+       "quote": "An investment cycle is already under way across utilities, transportation, mining and energy."
+      },
+      {
+       "article_id": "A-479ccc154807",
+       "claim_ids": [
+        "C-553c84fe5c805a"
+       ],
+       "direction": "positive",
+       "name": "Energy, pipelines and infrastructure",
+       "provenance": "FORECAST",
+       "quote": "Energy, pipelines and infrastructure: Canadian oil and gas production can potentially increase by around 12% between 2025 and 2030."
+      }
+     ],
+     "sectors": [
+      "utilities",
+      "transportation",
+      "mining",
+      "energy",
+      "manufacturing"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "UNKNOWN \u2014 the source names no dated catalyst or earnings window",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-cd64d1c5b2ee1b",
+        "C-da538e6df6267a"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Near-term, trade/USMCA uncertainty could delay and redirect investment, though the base case assumes US-Canada agreements are reached."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-63741952dd42c9",
+        "C-c43a89e092cc47",
+        "C-335c33c1eb61c9"
+       ],
+       "provenance": "FORECAST",
+       "text": "Over the medium term to 2030s, potential growth rises to 1.7% then 2% as capital deepening and productivity spread, supported by abundant capital and a growing working-age population. \u27e8cited figures: forecast; approximate\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-cd64d1c5b2ee1b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "U.S. tariff escalation and USMCA uncertainty could delay and redirect investment, though the source says it should not derail the constructive medium-term growth outlook."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-393DF5CD2B: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a different geography (US vs Canada) \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-431B4B9195: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-5151436FE1: same value-chain node, not the same claim \u2014 an unclassified thesis (no taxonomy node or mechanism) \u2014 not comparable by key; a different mechanism (other vs capex_spending_cycle); a different geography (China vs Canada); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [
+      {
+       "claim_ids": [
+        "C-cd64d1c5b2ee1b"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Tariff/USMCA uncertainty could delay and redirect investment but shouldn't derail medium-term growth outlook"
+      }
+     ],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Continued concentration of spending in structures/engineering rather than machinery/equipment"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Investment delayed or redirected by prolonged trade uncertainty"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "CAD failing to strengthen toward 1.36"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Premise the source makes it conditional on: investment broadens beyond infrastructure/resources and productivity gains spread beyond today's leaders"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether investment will actually broaden beyond infrastructure/resources into machinery, software and IP"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether productivity gains will spread beyond today's leaders"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether any earnings or valuation effect for listed Canadian equities is quantified (it is not)"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Escalating tariffs and prolonged USMCA uncertainty"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Spending remaining concentrated in structures/engineering"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Check whether Canadian business investment is actually broadening into machinery/software/IP and whether listed utilities, pipelines, miners and manufacturers reflect the capex cycle in forward estimates."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Evidence that investment is expanding beyond infrastructure/resources"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Productivity gains spreading beyond leading firms"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "US-Canada/USMCA agreements reached reducing trade uncertainty"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-479ccc154807",
+      "authors": [
+       "Arunima Sinha"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-63741952dd42c9",
+       "C-c43a89e092cc47",
+       "C-335c33c1eb61c9",
+       "C-607b3fda6b2238",
+       "C-7c52deb780fc09",
+       "C-0b564757852ce5",
+       "C-0c7c6a563260f6",
+       "C-479272006058e0",
+       "C-2bb63287013c7c",
+       "C-6a1792a0b1c3d9",
+       "C-e8fa1aa0130fd9",
+       "C-da420782e54aac",
+       "C-b95125e1b67701",
+       "C-6c808d02d5f4cd",
+       "C-db59c77cfefd92",
+       "C-4ed67e67956d00",
+       "C-cd64d1c5b2ee1b"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-15T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "Canada's Economic Growth Poised to Accelerate Through 2030",
+      "upstream_origins": [
+       "United Nations and Morgan Stanley Research",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/canada-economic-growth-accelerates-through-2030",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "f8c11546bcd2cbdf85c02d9319fdd1bfb423b28cf8264d69a7d153abc60680cc",
+   "created_at": "2026-10-22T07:42:55.356849Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": "ca69cac674e4bca685fe1bfbf56d570a6e2e74db8fadd085fb47b4ecee94b527",
+   "priority": {
+    "change_reason": "no change in action (factor values unchanged (rule re-evaluation))",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-0b564757852ce5",
+       "C-0c7c6a563260f6",
+       "C-2bb63287013c7c",
+       "C-335c33c1eb61c9",
+       "C-607b3fda6b2238",
+       "C-63741952dd42c9",
+       "C-6c808d02d5f4cd",
+       "C-7c52deb780fc09",
+       "C-c43a89e092cc47"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "9"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-87e28a692503, ES-f41ee4fccc95",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "2 fundamental step(s) shown by the source, 2 in total; 1 market-reaction step(s) NOT counted \u2014 a price or valuation move is not an earnings mechanism",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-607b3fda6b2238",
+       "C-6c808d02d5f4cd",
+       "C-7c52deb780fc09"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "3 claim(s) inside the next 2-4 quarters (C-607b3fda6b2238: measured 2026-09-15 (37 days before the as-of); C-6c808d02d5f4cd: measured 2026-09-15 (37 days before the as-of); C-7c52deb780fc09: measured 2026-09-15 (37 days before the as-of)); 2 long-range claim(s); 1 long-dated statement(s) of the source beside the cited evidence, not on the card: C-553c84fe5c805a; model horizon label longer_term (recorded, not decisive)",
+      "value": "yes"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: utilities, transportation, mining and energy, sector: Energy, pipelines and infrastructure",
+      "value": "0 listed \u00b7 2 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [
+       "C-cd64d1c5b2ee1b"
+      ],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (1 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 9 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "conditional"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": "WATCH",
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: no verified dislocation or catalyst; premise is conditional in the source)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     },
+     {
+      "code": "premise_conditional",
+      "kind": "held",
+      "text": "premise is conditional in the source"
+     }
+    ]
+   },
+   "run_id": "R-20261022T074255Z-reassess",
+   "thesis_id": "TH-41B1AB7F8C",
+   "version": 2
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 16,
+ "other_cited_evidence": [
+  "C-553c84fe5c805a",
+  "C-cd64d1c5b2ee1b",
+  "C-da538e6df6267a"
+ ],
+ "review_carried": {},
+ "review_dismissed": {},
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {},
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental.",
+  "Premise \u2014 conditional in the source."
+ ],
+ "withheld_sentences": {}
+}

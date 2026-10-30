@@ -1,0 +1,1539 @@
+{
+ "analyst_corrections": {},
+ "attributions_without_version": [],
+ "card": {
+  "header": {
+   "analysis_as_of": "2026-10-14",
+   "ancestry": [
+    "healthcare",
+    "healthcare.pharma_biotech"
+   ],
+   "evidence_direction": "NEW",
+   "first_detected": "2026-10-21",
+   "first_ingested_at": "2026-10-21T10:29:30.720446Z",
+   "horizon": "Longer term (beyond 4 quarters)",
+   "kind": "investment_thesis",
+   "last_material_update": "2026-09-14",
+   "latest_article_date": "2026-09-14",
+   "region": "US",
+   "research_action": "WATCH",
+   "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+   "status": "ACTIVE",
+   "thesis_id": "TH-ABE7D2B79D",
+   "title": "In-vivo gene editing opens new organ markets above consensus by 2035"
+  },
+  "s01_bottom_line": [
+   {
+    "claim_ids": [
+     "C-9ef3ae3f613bbd",
+     "C-64926da6ff9aa4",
+     "C-8e6971623532e4"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Morgan Stanley estimates the in-vivo gene-editing market reaches $10 billion by 2035 in near-term indications alone, above market consensus of $6 billion, and believes it scales faster than ex-vivo approaches. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-612c5057a9c999"
+    ],
+    "provenance": "SOURCE OPINION",
+    "text": "Data expected over the next 18 months could determine how much value investors assign to these platforms."
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "An above-consensus market estimate suggests potential upside to platform valuations, but the article names no companies and does not quantify issuer earnings."
+   }
+  ],
+  "s02_what_changed": {
+   "items": [
+    {
+     "article_id": "A-8feaba79612d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-64926da6ff9aa4"
+     ],
+     "original_date": "2026-09-14",
+     "period": "by 2035",
+     "provenance": "FORECAST",
+     "text": "Morgan Stanley estimates in-vivo gene-editing market at $10 billion by 2035 vs consensus of $6 billion \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-8feaba79612d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-9ef3ae3f613bbd"
+     ],
+     "original_date": "2026-09-14",
+     "period": "by 2035",
+     "provenance": "FORECAST",
+     "text": "In-vivo gene editing could unlock a $10 billion market by 2035 in near-term indications alone \u27e8cited figures: forecast\u27e9"
+    },
+    {
+     "article_id": "A-8feaba79612d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-8e6971623532e4"
+     ],
+     "original_date": "2026-09-14",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Morgan Stanley believes in-vivo gene editing is likely to scale faster than ex-vivo approaches"
+    },
+    {
+     "article_id": "A-8feaba79612d",
+     "change_class": "novelty_unverified",
+     "claim_ids": [
+      "C-fb52f10ef22dcb"
+     ],
+     "original_date": "2026-09-14",
+     "period": null,
+     "provenance": "SOURCE OPINION",
+     "text": "Outcomes-based installment pricing, economic incentives for larger indications, and regulatory support could shape and expand in-vivo gene editing development."
+    }
+   ],
+   "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+   "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:29 UTC, analysed as of 2026-10-14, from a source published 2026-09-14; not necessarily new to the market."
+  },
+  "s03_transmission": [
+   {
+    "claim_ids": [
+     "C-9ef3ae3f613bbd"
+    ],
+    "provenance": "FORECAST",
+    "step": "industry_shift",
+    "text": "In-vivo editing enables access to organs (brain, heart, eyes, liver) that cannot be removed, broadening addressable diseases. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [
+     "C-64926da6ff9aa4"
+    ],
+    "provenance": "FORECAST",
+    "step": "volumes",
+    "text": "Broader addressable indications drive a $10bn market by 2035, above $6bn consensus. \u27e8cited figures: forecast\u27e9"
+   },
+   {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "step": "listed_earnings",
+    "text": "Earnings impact to specific platforms is not quantified in the article."
+   }
+  ],
+  "s04_key_evidence": [
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8feaba79612d",
+    "block_id": "b027",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-64926da6ff9aa4",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "in-vivo gene-editing market size (consensus)",
+    "measured_as_of": null,
+    "origin": "market consensus",
+    "period": "by 2035",
+    "qualifiers": [
+     "market consensus"
+    ],
+    "quote": "We estimate the market for in-vivo gene-editing therapies to reach $10 billion by 2035 in near-term indications alone, compared with market consensus of $6 billion.",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 6.0,
+    "value_text": "$6 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8feaba79612d",
+    "block_id": "b006",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-9ef3ae3f613bbd",
+    "comparator": null,
+    "epistemic": "forecast",
+    "label": "in-vivo gene-editing market size",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "by 2035",
+    "qualifiers": [
+     "near-term indications alone",
+     "could"
+    ],
+    "quote": "Gene editing done inside the body could expand treatments to organs including the liver, lungs and brain and unlock a $10 billion market by 2035 in near-term indications alone.",
+    "role": "supports",
+    "unit": "$bn",
+    "value": 10.0,
+    "value_text": "$10 billion"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8feaba79612d",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-612c5057a9c999",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Data expected over the next 18 months could determine the value investors assign to in-vivo gene-editing platforms",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": "next 18 months",
+    "qualifiers": [
+     "could"
+    ],
+    "quote": "Data expected over the next 18 months could help determine how much value investors are willing to assign to these platforms",
+    "role": "catalyst",
+    "unit": null,
+    "value": null,
+    "value_text": "next 18 months"
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8feaba79612d",
+    "block_id": "b032",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-8e6971623532e4",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Morgan Stanley believes in-vivo gene editing is likely to scale faster than ex-vivo approaches",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [
+     "likely"
+    ],
+    "quote": "we believe in-vivo gene editing is likely to scale faster than ex-vivo approaches",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   },
+   {
+    "also_reported_in": [],
+    "approximate": false,
+    "article_id": "A-8feaba79612d",
+    "block_id": "b031",
+    "change_class": "novelty_unverified",
+    "chart_derived": false,
+    "claim_id": "C-fb52f10ef22dcb",
+    "comparator": null,
+    "epistemic": "opinion",
+    "label": "Outcomes-based installment pricing, economic incentives for larger indications, and regulatory support could shape and expand in-vivo gene editing development.",
+    "measured_as_of": null,
+    "origin": "publisher's own analysis",
+    "period": null,
+    "qualifiers": [],
+    "quote": "shifts toward outcomes-based installment pricing; and regulatory support could be important to expand the use of in-vivo treatments",
+    "role": "supports",
+    "unit": null,
+    "value": null,
+    "value_text": null
+   }
+  ],
+  "s05_affected": {
+   "also_named": [
+    {
+     "article_id": "A-8feaba79612d",
+     "cik": "0000895421",
+     "direction": "neutral",
+     "exposure_provenance": null,
+     "exposure_reading": null,
+     "listings": [
+      {
+       "exchange": "NYSE",
+       "instrument": "common_equity",
+       "note": null,
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Common Stock, $0.01 par value",
+       "ticker": "MS"
+      }
+     ],
+     "mention_id": "M-f57b6600ae9de3",
+     "name_as_written": "Morgan Stanley",
+     "other_securities": [
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+       "ticker": "MS/PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+       "ticker": "MS/PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+       "ticker": "MS/PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+       "ticker": "MS/PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+       "ticker": "MS/PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+       "ticker": "MS/PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+       "ticker": "MS/PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+       "ticker": "MS/PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "preferred",
+       "note": "preferred \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+       "ticker": "MS/PQ"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "debt",
+       "note": "debt \u2014 not the company's common equity",
+       "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+       "pit_status": "VERIFIED",
+       "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+       "ticker": "MS/29"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PA"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PE"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PF"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PI"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PK"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PL"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PO"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PP"
+      },
+      {
+       "exchange": "NYSE",
+       "instrument": "unknown",
+       "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+       "pit_source": null,
+       "pit_status": "NOT_REGISTERED_AS_OF",
+       "security_class": null,
+       "ticker": "MS-PQ"
+      }
+     ],
+     "quote": "Sign up to get Morgan Stanley Ideas delivered to your inbox.",
+     "recommendation_status": "not_a_recommendation",
+     "resolution_status": "LISTED_EQUITY",
+     "role": "publisher",
+     "role_detail": "Publisher and research author"
+    }
+   ],
+   "baskets": [],
+   "companies": [],
+   "enrichment": [],
+   "instruments": [],
+   "not_securities": [],
+   "private_or_unlisted": [],
+   "sector_exposures": [
+    {
+     "article_id": "A-8feaba79612d",
+     "claim_ids": [
+      "C-9ef3ae3f613bbd",
+      "C-64926da6ff9aa4"
+     ],
+     "direction": "positive",
+     "name": "in-vivo gene-editing therapies",
+     "provenance": "FORECAST",
+     "quote": "We estimate the market for in-vivo gene-editing therapies to reach $10 billion by 2035"
+    }
+   ],
+   "sectors": [
+    "in-vivo gene-editing therapies",
+    "gene editing platforms"
+   ]
+  },
+  "s06_why_now": {
+   "catalyst_window": "next 18 months [SOURCE OPINION]",
+   "near_term": [
+    {
+     "claim_ids": [
+      "C-612c5057a9c999"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "Initial in-vivo therapies have focused on the liver, with programs targeting lungs and brain being watched; data over the next 18 months could reprice platforms."
+    }
+   ],
+   "structural": [
+    {
+     "claim_ids": [
+      "C-8e6971623532e4",
+      "C-9ef3ae3f613bbd"
+     ],
+     "provenance": "SOURCE OPINION",
+     "text": "In-vivo gene editing is likely to scale faster than ex-vivo approaches, unlocking significant new markets. \u27e8cited figures: forecast\u27e9"
+    }
+   ],
+   "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+  },
+  "s07_what_could_go_wrong": {
+   "alternative_mechanisms": [
+    {
+     "claim_ids": [
+      "C-64926da6ff9aa4"
+     ],
+     "provenance": "FORECAST",
+     "text": "Market consensus assigns only a $6 billion market, below Morgan Stanley's $10 billion estimate."
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different segment (Neurology (Alzheimer's, dementia) vs Genetic medicine (gene editing, gene therapy)); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+    }
+   ],
+   "counter_evidence": [],
+   "disconfirming_observables": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Negative in-vivo gene-editing clinical readouts"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Regulatory setbacks or payer resistance"
+    }
+   ],
+   "market_risks": [],
+   "price_context": [],
+   "unknowns": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Which listed gene-editing companies capture the market"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether forthcoming clinical data validates the platforms"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Whether regulatory and payer dynamics support larger indications"
+    }
+   ]
+  },
+  "s08_decision": {
+   "investment_readiness": "NOT_ASSESSED",
+   "lower_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Disappointing in-vivo trial data"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Payer or pricing resistance"
+    }
+   ],
+   "next_step": {
+    "claim_ids": [],
+    "provenance": "MODEL INFERENCE",
+    "text": "Identify listed in-vivo gene-editing platform companies and map upcoming clinical data catalysts within the next 18 months."
+   },
+   "raise_priority_if": [
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Positive in-vivo clinical data over next 18 months"
+    },
+    {
+     "claim_ids": [],
+     "provenance": "MODEL INFERENCE",
+     "text": "Regulatory support for larger indications like cardiovascular disease"
+    }
+   ],
+   "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+   "research_action": "WATCH",
+   "rule_trace": [
+    "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-612c5057a9c999: opinion naming a window 2026-10-14..2028-04-14 (next 18 months) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst)"
+   ]
+  },
+  "s09_sources": [
+   {
+    "article_class": "institutional_research",
+    "article_id": "A-8feaba79612d",
+    "authors": [
+     "Sean Laaman",
+     "Maxwell Skor"
+    ],
+    "authors_status": "KNOWN",
+    "claim_ids": [
+     "C-612c5057a9c999",
+     "C-9ef3ae3f613bbd",
+     "C-64926da6ff9aa4",
+     "C-8e6971623532e4",
+     "C-fb52f10ef22dcb"
+    ],
+    "contribution": "novelty_unverified",
+    "published_at": "2026-09-14T00:00:00Z",
+    "published_status": "KNOWN",
+    "publisher": "Morgan Stanley",
+    "retrieval_state": "FULL",
+    "title": "3 Biotech Industry Trends Reshaping the Healthcare Market",
+    "upstream_origins": [
+     "market consensus",
+     "publisher's own analysis"
+    ],
+    "url": "https://www.morganstanley.com/insights/articles/biotech-industry-trends-reshaping-healthcare-market",
+    "version_dates": []
+   }
+  ]
+ },
+ "enrichment": {
+  "as_of": "2026-10-21",
+  "candidates": [
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-26 (0001193125-26-076550)",
+    "business": "in-vivo CRISPR gene-editing therapy developer",
+    "direction": "positive",
+    "enrichment_id": "EC-4a8de429124b2a",
+    "evidence": "s03.0: In-vivo editing enables access to organs (brain, heart, eyes, liver) that cannot be removed, broadening addressable diseases.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-06 (accession 0001193125-26-337952) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.0001 per share",
+      "ticker": "NTLA"
+     }
+    ],
+    "name": "Intellia Therapeutics",
+    "rationale": "Lead programs NTLA-2001 (ATTR amyloidosis, liver) and NTLA-2002 (HAE) are in-vivo editing; broader organ access expands its addressable indications and platform value.",
+    "registrant": "Intellia Therapeutics, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2835); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "in-vivo gene-editing therapy pipeline",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-ABE7D2B79D",
+    "ticker_hint": "NTLA"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-24 (0001193125-26-065194)",
+    "business": "base-editing gene-editing therapy developer",
+    "direction": "positive",
+    "enrichment_id": "EC-1455dc09958908",
+    "evidence": "s03.0: In-vivo editing enables access to organs (brain, heart, eyes, liver) that cannot be removed, broadening addressable diseases.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-04 (accession 0001193125-26-331541) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Stock, par value $0.01 per share",
+      "ticker": "BEAM"
+     }
+    ],
+    "name": "Beam Therapeutics",
+    "rationale": "In-vivo base-editing programs (e.g. liver, lung targets) gain from expanded organ addressability, lifting its pipeline reach beyond ex-vivo approaches.",
+    "registrant": "Beam Therapeutics Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2836); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "in-vivo base-editing therapy pipeline",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-ABE7D2B79D",
+    "ticker_hint": "BEAM"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-03-03 (0001628280-26-013569)",
+    "business": "prime-editing gene-editing therapy developer",
+    "direction": "positive",
+    "enrichment_id": "EC-c58cb5eee61de8",
+    "evidence": "s03.0: In-vivo editing enables access to organs (brain, heart, eyes, liver) that cannot be removed, broadening addressable diseases.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-06 (accession 0001628280-26-053883) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common stock, par value $0.00001 per share",
+      "ticker": "PRME"
+     }
+    ],
+    "name": "Prime Medicine",
+    "rationale": "Prime editing targets diverse organs via in-vivo delivery; broader addressable diseases expand its pipeline opportunity and platform valuation.",
+    "registrant": "Prime Medicine, Inc.",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2836); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "in-vivo prime-editing therapy pipeline",
+    "revenue_model": "product_sales",
+    "step_id": "s03.0",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-ABE7D2B79D",
+    "ticker_hint": "PRME"
+   },
+   {
+    "basis_check": "NOT_DESCRIBED",
+    "basis_note": "the filing states no revenue-source sentence naming a way of earning in the words this check reads \u2014 not found is not wrong; read the filing",
+    "basis_quote": [],
+    "basis_source": "10-K filed 2026-02-12 (0001193125-26-048957)",
+    "business": "CRISPR gene-editing therapy developer",
+    "direction": "positive",
+    "enrichment_id": "EC-4d4f58501aac68",
+    "evidence": "s03.1: Broader addressable indications drive a $10bn market by 2035, above $6bn consensus.",
+    "foreign_filer": false,
+    "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+    "listings": [
+     {
+      "exchange": "Nasdaq",
+      "instrument": "common_equity",
+      "note": null,
+      "pit_source": "10-Q filed 2026-08-03 (accession 0001193125-26-330672) cover page",
+      "pit_status": "VERIFIED",
+      "security_class": "Common Shares, nominal value CHF 0.03",
+      "ticker": "CRSP"
+     }
+    ],
+    "name": "CRISPR Therapeutics",
+    "rationale": "Expanding in-vivo programs (cardiovascular, liver targets) share in the above-consensus $10bn market, though revenue today is ex-vivo Casgevy-led.",
+    "registrant": "CRISPR Therapeutics AG",
+    "resolution_note": "model ticker hint verified against SEC registrant name; identity checked against the issuer's SEC industry (SIC 2836); point-in-time cover page",
+    "resolution_status": "LISTED_EQUITY",
+    "revenue_line": "in-vivo gene-editing therapy pipeline",
+    "revenue_model": "product_sales",
+    "step_id": "s03.1",
+    "step_label": "FORECAST",
+    "thesis_id": "TH-ABE7D2B79D",
+    "ticker_hint": "CRSP"
+   }
+  ],
+  "created_at": "2026-10-21T11:49:29.104509Z",
+  "label": "EXTERNAL HYPOTHESIS \u2014 not named by the source",
+  "model": "claude-opus-4-8",
+  "prompt_version": "ti-enrich-2",
+  "refused": [],
+  "run_id": "R-20261021T114639Z-enrich",
+  "set_id": "ES-a9b5acdef68742",
+  "thesis_id": "TH-ABE7D2B79D",
+  "thesis_version": 1
+ },
+ "generated": "Generated 2026-10-30 12:26 UTC from the registry (ti-engine-5; run R-20261030T115837Z-scan, extract ti-extract-6, review ti-review-4, model claude-opus-4-8).",
+ "history": [
+  {
+   "as_of": "2026-10-14",
+   "change_summary": "Initial record \u2014 created from A-8feaba79612d",
+   "content": {
+    "header": {
+     "analysis_as_of": "2026-10-14",
+     "ancestry": [
+      "healthcare",
+      "healthcare.pharma_biotech"
+     ],
+     "evidence_direction": "NEW",
+     "first_detected": "2026-10-21",
+     "first_ingested_at": "2026-10-21T10:29:30.720446Z",
+     "horizon": "Longer term (beyond 4 quarters)",
+     "kind": "investment_thesis",
+     "last_material_update": "2026-09-14",
+     "latest_article_date": "2026-09-14",
+     "region": "US",
+     "research_action": "WATCH",
+     "sector": "Pharmaceuticals and biotechnology: drug developers, their therapies and pipelines (e.g. Alzheimer's, obesity / GLP-1, oncology), approvals and drug pricing",
+     "status": "ACTIVE",
+     "thesis_id": "TH-ABE7D2B79D",
+     "title": "In-vivo gene editing opens new organ markets above consensus by 2035"
+    },
+    "s01_bottom_line": [
+     {
+      "claim_ids": [
+       "C-9ef3ae3f613bbd",
+       "C-64926da6ff9aa4",
+       "C-8e6971623532e4"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Morgan Stanley estimates the in-vivo gene-editing market reaches $10 billion by 2035 in near-term indications alone, above market consensus of $6 billion, and believes it scales faster than ex-vivo approaches. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-612c5057a9c999"
+      ],
+      "provenance": "SOURCE OPINION",
+      "text": "Data expected over the next 18 months could determine how much value investors assign to these platforms."
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "An above-consensus market estimate suggests potential upside to platform valuations, but the article names no companies and does not quantify issuer earnings."
+     }
+    ],
+    "s02_what_changed": {
+     "items": [
+      {
+       "article_id": "A-8feaba79612d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-64926da6ff9aa4"
+       ],
+       "original_date": "2026-09-14",
+       "period": "by 2035",
+       "provenance": "FORECAST",
+       "text": "Morgan Stanley estimates in-vivo gene-editing market at $10 billion by 2035 vs consensus of $6 billion \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-8feaba79612d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-9ef3ae3f613bbd"
+       ],
+       "original_date": "2026-09-14",
+       "period": "by 2035",
+       "provenance": "FORECAST",
+       "text": "In-vivo gene editing could unlock a $10 billion market by 2035 in near-term indications alone \u27e8cited figures: forecast\u27e9"
+      },
+      {
+       "article_id": "A-8feaba79612d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-8e6971623532e4"
+       ],
+       "original_date": "2026-09-14",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Morgan Stanley believes in-vivo gene editing is likely to scale faster than ex-vivo approaches"
+      },
+      {
+       "article_id": "A-8feaba79612d",
+       "change_class": "novelty_unverified",
+       "claim_ids": [
+        "C-fb52f10ef22dcb"
+       ],
+       "original_date": "2026-09-14",
+       "period": null,
+       "provenance": "SOURCE OPINION",
+       "text": "Outcomes-based installment pricing, economic incentives for larger indications, and regulatory support could shape and expand in-vivo gene editing development."
+      }
+     ],
+     "novelty": "novelty_unverified \u2014 the registry held no earlier verified baseline, so this is new TO THE REGISTRY, not demonstrated new to the market",
+     "vs_prior": "New to the registry \u2014 first ingested 2026-10-21 10:29 UTC, analysed as of 2026-10-14, from a source published 2026-09-14; not necessarily new to the market."
+    },
+    "s03_transmission": [
+     {
+      "claim_ids": [
+       "C-9ef3ae3f613bbd"
+      ],
+      "provenance": "FORECAST",
+      "step": "industry_shift",
+      "text": "In-vivo editing enables access to organs (brain, heart, eyes, liver) that cannot be removed, broadening addressable diseases. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [
+       "C-64926da6ff9aa4"
+      ],
+      "provenance": "FORECAST",
+      "step": "volumes",
+      "text": "Broader addressable indications drive a $10bn market by 2035, above $6bn consensus. \u27e8cited figures: forecast\u27e9"
+     },
+     {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "step": "listed_earnings",
+      "text": "Earnings impact to specific platforms is not quantified in the article."
+     }
+    ],
+    "s04_key_evidence": [
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8feaba79612d",
+      "block_id": "b027",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-64926da6ff9aa4",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "in-vivo gene-editing market size (consensus)",
+      "measured_as_of": null,
+      "origin": "market consensus",
+      "period": "by 2035",
+      "qualifiers": [
+       "market consensus"
+      ],
+      "quote": "We estimate the market for in-vivo gene-editing therapies to reach $10 billion by 2035 in near-term indications alone, compared with market consensus of $6 billion.",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 6.0,
+      "value_text": "$6 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8feaba79612d",
+      "block_id": "b006",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-9ef3ae3f613bbd",
+      "comparator": null,
+      "epistemic": "forecast",
+      "label": "in-vivo gene-editing market size",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "by 2035",
+      "qualifiers": [
+       "near-term indications alone",
+       "could"
+      ],
+      "quote": "Gene editing done inside the body could expand treatments to organs including the liver, lungs and brain and unlock a $10 billion market by 2035 in near-term indications alone.",
+      "role": "supports",
+      "unit": "$bn",
+      "value": 10.0,
+      "value_text": "$10 billion"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8feaba79612d",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-612c5057a9c999",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Data expected over the next 18 months could determine the value investors assign to in-vivo gene-editing platforms",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": "next 18 months",
+      "qualifiers": [
+       "could"
+      ],
+      "quote": "Data expected over the next 18 months could help determine how much value investors are willing to assign to these platforms",
+      "role": "catalyst",
+      "unit": null,
+      "value": null,
+      "value_text": "next 18 months"
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8feaba79612d",
+      "block_id": "b032",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-8e6971623532e4",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Morgan Stanley believes in-vivo gene editing is likely to scale faster than ex-vivo approaches",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [
+       "likely"
+      ],
+      "quote": "we believe in-vivo gene editing is likely to scale faster than ex-vivo approaches",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     },
+     {
+      "also_reported_in": [],
+      "approximate": false,
+      "article_id": "A-8feaba79612d",
+      "block_id": "b031",
+      "change_class": "novelty_unverified",
+      "chart_derived": false,
+      "claim_id": "C-fb52f10ef22dcb",
+      "comparator": null,
+      "epistemic": "opinion",
+      "label": "Outcomes-based installment pricing, economic incentives for larger indications, and regulatory support could shape and expand in-vivo gene editing development.",
+      "measured_as_of": null,
+      "origin": "publisher's own analysis",
+      "period": null,
+      "qualifiers": [],
+      "quote": "shifts toward outcomes-based installment pricing; and regulatory support could be important to expand the use of in-vivo treatments",
+      "role": "supports",
+      "unit": null,
+      "value": null,
+      "value_text": null
+     }
+    ],
+    "s05_affected": {
+     "also_named": [
+      {
+       "article_id": "A-8feaba79612d",
+       "cik": "0000895421",
+       "direction": "neutral",
+       "exposure_provenance": null,
+       "exposure_reading": null,
+       "listings": [
+        {
+         "exchange": "NYSE",
+         "instrument": "common_equity",
+         "note": null,
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Common Stock, $0.01 par value",
+         "ticker": "MS"
+        }
+       ],
+       "mention_id": "M-f57b6600ae9de3",
+       "name_as_written": "Morgan Stanley",
+       "other_securities": [
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series A, $0.01 par value",
+         "ticker": "MS/PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series E, $0.01 par value",
+         "ticker": "MS/PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series F, $0.01 par value",
+         "ticker": "MS/PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series I, $0.01 par value",
+         "ticker": "MS/PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series K, $0.01 par value",
+         "ticker": "MS/PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series L, $0.01 par value",
+         "ticker": "MS/PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series O, $0.01 par value",
+         "ticker": "MS/PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series P, $0.01 par value",
+         "ticker": "MS/PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "preferred",
+         "note": "preferred \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Non-Cumulative Preferred Stock, Series Q, $0.01 par value",
+         "ticker": "MS/PQ"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "debt",
+         "note": "debt \u2014 not the company's common equity",
+         "pit_source": "10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page",
+         "pit_status": "VERIFIED",
+         "security_class": "Global Medium-Term Notes, Series A, Floating Rate Notes Due 2029",
+         "ticker": "MS/29"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PA"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PE"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PF"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PI"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PK"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PL"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PO"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PP"
+        },
+        {
+         "exchange": "NYSE",
+         "instrument": "unknown",
+         "note": "absent from the 10-Q filed 2026-08-04 (accession 0000895421-26-000212) cover page and no 8-A12B registration before 2026-10-14 \u2014 first registered after the as-of date",
+         "pit_source": null,
+         "pit_status": "NOT_REGISTERED_AS_OF",
+         "security_class": null,
+         "ticker": "MS-PQ"
+        }
+       ],
+       "quote": "Sign up to get Morgan Stanley Ideas delivered to your inbox.",
+       "recommendation_status": "not_a_recommendation",
+       "resolution_status": "LISTED_EQUITY",
+       "role": "publisher",
+       "role_detail": "Publisher and research author"
+      }
+     ],
+     "baskets": [],
+     "companies": [],
+     "enrichment": [],
+     "instruments": [],
+     "not_securities": [],
+     "private_or_unlisted": [],
+     "sector_exposures": [
+      {
+       "article_id": "A-8feaba79612d",
+       "claim_ids": [
+        "C-9ef3ae3f613bbd",
+        "C-64926da6ff9aa4"
+       ],
+       "direction": "positive",
+       "name": "in-vivo gene-editing therapies",
+       "provenance": "FORECAST",
+       "quote": "We estimate the market for in-vivo gene-editing therapies to reach $10 billion by 2035"
+      }
+     ],
+     "sectors": [
+      "in-vivo gene-editing therapies",
+      "gene editing platforms"
+     ]
+    },
+    "s06_why_now": {
+     "catalyst_window": "next 18 months [SOURCE OPINION]",
+     "near_term": [
+      {
+       "claim_ids": [
+        "C-612c5057a9c999"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "Initial in-vivo therapies have focused on the liver, with programs targeting lungs and brain being watched; data over the next 18 months could reprice platforms."
+      }
+     ],
+     "structural": [
+      {
+       "claim_ids": [
+        "C-8e6971623532e4",
+        "C-9ef3ae3f613bbd"
+       ],
+       "provenance": "SOURCE OPINION",
+       "text": "In-vivo gene editing is likely to scale faster than ex-vivo approaches, unlocking significant new markets. \u27e8cited figures: forecast\u27e9"
+      }
+     ],
+     "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof"
+    },
+    "s07_what_could_go_wrong": {
+     "alternative_mechanisms": [
+      {
+       "claim_ids": [
+        "C-64926da6ff9aa4"
+       ],
+       "provenance": "FORECAST",
+       "text": "Market consensus assigns only a $6 billion market, below Morgan Stanley's $10 billion estimate."
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Registry link \u2014 ADJACENT SUPPORT (sibling) \u2014 TH-8DDD7B2868: same value-chain node, not the same claim \u2014 a different segment (Neurology (Alzheimer's, dementia) vs Genetic medicine (gene editing, gene therapy)); a timeframe only one of them states \u2014 adjacent support: context, never a confirmation"
+      }
+     ],
+     "counter_evidence": [],
+     "disconfirming_observables": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Negative in-vivo gene-editing clinical readouts"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Regulatory setbacks or payer resistance"
+      }
+     ],
+     "market_risks": [],
+     "price_context": [],
+     "unknowns": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Which listed gene-editing companies capture the market"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether forthcoming clinical data validates the platforms"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Whether regulatory and payer dynamics support larger indications"
+      }
+     ]
+    },
+    "s08_decision": {
+     "investment_readiness": "NOT_ASSESSED",
+     "lower_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Disappointing in-vivo trial data"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Payer or pricing resistance"
+      }
+     ],
+     "next_step": {
+      "claim_ids": [],
+      "provenance": "MODEL INFERENCE",
+      "text": "Identify listed in-vivo gene-editing platform companies and map upcoming clinical data catalysts within the next 18 months."
+     },
+     "raise_priority_if": [
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Positive in-vivo clinical data over next 18 months"
+      },
+      {
+       "claim_ids": [],
+       "provenance": "MODEL INFERENCE",
+       "text": "Regulatory support for larger indications like cardiovascular disease"
+      }
+     ],
+     "readiness_note": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+     "research_action": "WATCH",
+     "rule_trace": [
+      "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-612c5057a9c999: opinion naming a window 2026-10-14..2028-04-14 (next 18 months) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst)"
+     ]
+    },
+    "s09_sources": [
+     {
+      "article_class": "institutional_research",
+      "article_id": "A-8feaba79612d",
+      "authors": [
+       "Sean Laaman",
+       "Maxwell Skor"
+      ],
+      "authors_status": "KNOWN",
+      "claim_ids": [
+       "C-612c5057a9c999",
+       "C-9ef3ae3f613bbd",
+       "C-64926da6ff9aa4",
+       "C-8e6971623532e4",
+       "C-fb52f10ef22dcb"
+      ],
+      "contribution": "novelty_unverified",
+      "published_at": "2026-09-14T00:00:00Z",
+      "published_status": "KNOWN",
+      "publisher": "Morgan Stanley",
+      "retrieval_state": "FULL",
+      "title": "3 Biotech Industry Trends Reshaping the Healthcare Market",
+      "upstream_origins": [
+       "market consensus",
+       "publisher's own analysis"
+      ],
+      "url": "https://www.morganstanley.com/insights/articles/biotech-industry-trends-reshaping-healthcare-market",
+      "version_dates": []
+     }
+    ]
+   },
+   "content_sha": "cb0933ef9653f518428e94e74fb5ed85d02a38628a9b217c06c7632285e6aeb2",
+   "created_at": "2026-10-21T10:29:39.604111Z",
+   "diffs": [],
+   "engine_version": "ti-engine-5",
+   "evidence_direction": "NEW",
+   "prior_content_sha": null,
+   "priority": {
+    "change_reason": "initial assessment \u2014 WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-612c5057a9c999: opinion naming a window 2026-10-14..2028-04-14 (next 18 months) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst)",
+    "evidence_direction": "NEW",
+    "factors": [
+     {
+      "claim_ids": [],
+      "factor_id": "F1_source_reliability",
+      "note": "face-validity tier of the contributing channel(s)",
+      "value": "high"
+     },
+     {
+      "claim_ids": [
+       "C-9ef3ae3f613bbd",
+       "C-64926da6ff9aa4",
+       "C-612c5057a9c999"
+      ],
+      "factor_id": "F2_material_evidence",
+      "note": "verified metric / event / forecast claims supporting the thesis (opinion alone is not material)",
+      "value": "3"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F3_independent_origins",
+      "note": "distinct upstream origins behind the support \u2014 counted by ORIGIN, never by article count: ES-b273a4ebae6e, ES-f41ee4fccc95",
+      "value": "2"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F4_profit_transmission",
+      "note": "1 fundamental step(s) shown by the source, 2 in total",
+      "value": "source-shown"
+     },
+     {
+      "claim_ids": [
+       "C-612c5057a9c999"
+      ],
+      "factor_id": "F5_near_term_relevance",
+      "note": "0 claim(s) inside the next 2-4 quarters; 1 claim(s) whose window runs past them; 2 long-range claim(s); model horizon label longer_term (recorded, not decisive)",
+      "value": "runs_past"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F6_recognizable_exposures",
+      "note": "source-named, point-in-time-verified listed common equity, the ETFs / indices / baskets the source attaches, and sectors / themes the source names: sector: in-vivo gene-editing therapies",
+      "value": "0 listed \u00b7 1 sector \u00b7 0 instrument"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F7_dislocation_or_catalyst",
+      "note": "0 counted \u2014 a mispricing measured in the last quarter, or a dated event inside the next 2-4 quarters; 1 offered but NOT counted (opinion, forecast figure or stale reading): C-612c5057a9c999",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F12_fundamental_inflection",
+      "note": "none \u2014 no verified near-term change in a fundamental",
+      "value": "absent"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F8_counterevidence",
+      "note": "material counter-claims (0 counter-claims in total); 0 distinct counter-observation(s) from the supporting sources vs 3 supporting; 0 independent contradicting source(s) vs 2 supporting",
+      "value": "0"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F9_premise_in_source",
+      "note": "asserted | conditional | speculative | reported_view",
+      "value": "asserted"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F10_verification_hold",
+      "note": "no blocking verification issue",
+      "value": "clear"
+     },
+     {
+      "claim_ids": [],
+      "factor_id": "F11_retrieval",
+      "note": "PARTIAL text is never analysed as full",
+      "value": "FULL"
+     }
+    ],
+    "investment_readiness": "NOT_ASSESSED",
+    "previous_action": null,
+    "research_action": "WATCH",
+    "rules_fired": [
+     "WATCH (RESEARCH NOW unmet: near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-612c5057a9c999: opinion naming a window 2026-10-14..2028-04-14 (next 18 months) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence); no verified dislocation or catalyst)"
+    ],
+    "valuation_status": "NOT_ASSESSED \u2014 the registry holds no consensus, market-expectation or valuation data; an opportunity here is not valuation proof",
+    "watch_reasons": [
+     {
+      "code": "window_runs_past",
+      "kind": "held",
+      "text": "near-term relevance not established \u2014 the dated window(s) run past the next 2-4 quarters (an undifferentiated full-year or multi-quarter figure is not a 2-4-quarter window): C-612c5057a9c999: opinion naming a window 2026-10-14..2028-04-14 (next 18 months) beyond the next 4 quarters (a view's horizon \u2014 never near-term evidence)"
+     },
+     {
+      "code": "no_catalyst",
+      "kind": "held",
+      "text": "no verified dislocation or catalyst"
+     }
+    ]
+   },
+   "run_id": "R-20261021T102637Z-ingest",
+   "thesis_id": "TH-ABE7D2B79D",
+   "version": 1
+  }
+ ],
+ "named_business_groups": [],
+ "named_business_groups_unchecked_paragraphs": 4,
+ "other_cited_evidence": [],
+ "review_carried": {},
+ "review_dismissed": {
+  "s03.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-9ef3ae3f613bbd"
+   ],
+   "created_at": "2026-10-22T07:43:09.218046Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s03.0: Cited span mentions liver, lungs and brain; the sentence lists brain, heart, eyes, liver (heart and eyes not supported; lungs dropped), and 'cannot be removed' framing is not in the span | 'In-vivo editing enables access to organs (brain, heart, eyes, liver) that cannot be removed, broaden'",
+   "finding_key": "F-a320b636a62c",
+   "finding_version": 1,
+   "line_text": "In-vivo editing enables access to organs (brain, heart, eyes, liver) that cannot be removed, broadening addressable diseases. \u27e8cited figures: forecast\u27e9",
+   "reason": "The source says it: in-vivo editing 'could enable access to organs that cannot easily be removed, including the brain, heart, eyes and liver'. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-18b9cb3a5fdf",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074309Z-review",
+   "sentence_id": "s03.0",
+   "supersedes": [],
+   "thesis_id": "TH-ABE7D2B79D",
+   "version": 1
+  },
+  "s06.0": {
+   "action": "dismissed",
+   "claim_ids": [
+    "C-612c5057a9c999"
+   ],
+   "created_at": "2026-10-22T07:43:09.945994Z",
+   "finding_code": "REVIEW_PARTIAL",
+   "finding_detail": "s06.0: Cited span only covers data over next 18 months repricing platforms; claims about liver focus and lung/brain programs being watched are not in the cited span | 'Initial in-vivo therapies have focused on the liver, with programs targeting lungs and brain being w'",
+   "finding_key": "F-4c1b5395c2ac",
+   "finding_version": 1,
+   "line_text": "Initial in-vivo therapies have focused on the liver, with programs targeting lungs and brain being watched; data over the next 18 months could reprice platforms.",
+   "reason": "The source says it: 'While initial in-vivo therapies have focused on the liver, we're also watching the development of programs targeting the lungs and brain'. \u2014 approved by nogods404 (operator) on 2026-10-22 (decision page: approve all)",
+   "resolution_id": "RR-d810f83c335f",
+   "reviewer": "nogods404 (operator)",
+   "run_id": "R-20261022T074309Z-review-2",
+   "sentence_id": "s06.0",
+   "supersedes": [],
+   "thesis_id": "TH-ABE7D2B79D",
+   "version": 1
+  }
+ },
+ "review_not_run": null,
+ "review_removed_lines": [],
+ "review_resolved": {},
+ "review_warnings": {
+  "s03.0": "Cited span mentions liver, lungs and brain; the sentence lists brain, heart, eyes, liver (heart and eyes not supported; lungs dropped), and 'cannot be removed' framing is not in the span",
+  "s06.0": "Cited span only covers data over next 18 months repricing platforms; claims about liver focus and lung/brain programs being watched are not in the cited span"
+ },
+ "section_order": [
+  "s01_bottom_line",
+  "s02_what_changed",
+  "s03_transmission",
+  "s04_key_evidence",
+  "s05_affected",
+  "s06_why_now",
+  "s07_what_could_go_wrong",
+  "s08_decision",
+  "s09_sources"
+ ],
+ "status_note": null,
+ "why_action": [
+  "Timing \u2014 its dated figures run past the next four quarters; a full-year or multi-quarter figure is not a 2-4-quarter window.",
+  "Catalyst \u2014 no verified dislocation, dated catalyst or near-term change in a fundamental."
+ ],
+ "withheld_sentences": {}
+}
