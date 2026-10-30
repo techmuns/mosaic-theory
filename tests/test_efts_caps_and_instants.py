@@ -214,3 +214,21 @@ def test_a_whole_search_that_found_nothing_still_says_so() -> None:
     which assembly keys on to tell 'searched, none' from 'could not search'."""
     out = _pointers(_instruments("BRBR"), _Edgar(FtsResult(hits=[], total=0)), exhibits=())
     assert out.status is SourceStatus.UNKNOWN and out.note == COVENANT_SEARCH_FOUND_NOTHING
+
+
+class _ShortPageEfts(_PagedEfts):
+    """efts serving 60 hits a page — the cap line must count what came back, not the offsets."""
+
+    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
+        data = super().get_json(url, ttl_seconds=ttl_seconds)
+        data["hits"]["hits"] = data["hits"]["hits"][:60]
+        return data
+
+
+def test_the_prefilter_cap_line_counts_the_hits_it_read() -> None:
+    """Review round 1: the line said "read 500" from the request offsets; with 60-hit pages it read
+    300."""
+    capped: list[str] = []
+    mention_prefilter(cast(CachedHttp, _ShortPageEfts(564)), ["0000000001"], ("defense",),
+                      startdt="2025-09-01", enddt="2026-06-30", capped=capped)
+    assert len(capped) == 1 and "read 300 of 564" in capped[0], capped

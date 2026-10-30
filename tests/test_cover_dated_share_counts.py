@@ -48,6 +48,14 @@ def _facts(path: Path) -> dict[str, Any]:
 VRRM = _facts(_ROOT / "tests" / "fixtures" / "companyfacts" / "VRRM.json")
 
 
+@pytest.fixture(autouse=True)
+def _fresh_cover_cache() -> None:
+    """The parsed-cover cache is keyed on the URL, so one test's served cover would answer the
+    next test's refusing fetcher."""
+    import vinci.dossier.mechanical as mech
+    mech._COVER_TEXTS.clear()
+
+
 # ─── the anchored parse ───────────────────────────────────────────────────────────────────────
 
 @pytest.mark.parametrize("ticker", ["VRRM", "JJSF"])
@@ -237,9 +245,11 @@ def test_the_assembly_path_hands_every_share_reader_its_fetcher() -> None:
     calls = [n for n in ast.walk(ast.parse(src)) if isinstance(n, ast.Call)
              and isinstance(n.func, ast.Name) and n.func.id in readers]
     assert len(calls) >= 7, [c.func.id for c in calls if isinstance(c.func, ast.Name)]
+    # BY KEYWORD, every one (review round 1): a positional slot accepted `None` unseen
     unwired = [cast(ast.Name, c.func).id for c in calls
-               if not any(k.arg == "http" for k in c.keywords)
-               and not (cast(ast.Name, c.func).id == "_share_count_flags" and len(c.args) >= 2)]
+               if not any(k.arg == "http" and not (isinstance(k.value, ast.Constant)
+                                                  and k.value.value is None)
+                          for k in c.keywords)]
     assert not unwired, f"share readers called without their fetcher: {unwired}"
 
 
@@ -298,3 +308,21 @@ def test_only_the_first_occurrence_is_the_cover() -> None:
     assert cc.cover_date(c["cover_window"], float(c["value"])) is None
     assert cc.cover_date(c["cover_window"] + later, float(c["value"])) is None
     assert cc.cover_date(later, float(c["value"])) == date(2026, 3, 31)  # the trap, on its own
+
+
+def test_the_cover_cache_does_not_keep_a_client_alive() -> None:
+    """Review round 1: the parsed-cover cache was keyed on the http client, so it held up to 32
+    clients (each with its connection pool) after their run. It is keyed on the URL alone — a
+    filing's document at its accession URL does not change."""
+    import gc
+    import weakref
+
+    import vinci.dossier.mechanical as mech
+    http = _Http()
+    ref = weakref.ref(http)
+    assert mech._cover_text(_edgar(), cast(CachedHttp, http), "0001682745",
+                            extract_points(VRRM, "shares")[-1].model_copy(update={
+                                "accession": COVERS["VRRM"]["accession"], "form": "10-Q"}))
+    del http
+    gc.collect()
+    assert ref() is None

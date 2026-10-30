@@ -197,7 +197,7 @@ def mention_prefilter(
     for batch in batches:
         bset = set(batch)
         for phrase in phrases:
-            frm = total = 0
+            frm = total = read = 0
             for _ in range(max_pages):
                 try:
                     data = cast(dict[str, Any],
@@ -211,6 +211,7 @@ def mention_prefilter(
                         skipped.append(f"{phrase!r} × batch of {len(batch)} CIKs "
                                        f"(from={frm}): {type(exc).__name__}: {exc}")
                     break  # transient efts error — skip this batch×phrase, keep scanning
+                read += len(page)
                 for c in page:
                     if c in bset:
                         matched.setdefault(c, set()).add(phrase)
@@ -219,7 +220,7 @@ def mention_prefilter(
                     break
             else:  # every page spent and matches remain: this batch×phrase is a LOWER BOUND
                 if capped is not None:
-                    capped.append(f"{phrase!r} × batch of {len(batch)} CIKs: read {frm} of "
+                    capped.append(f"{phrase!r} × batch of {len(batch)} CIKs: read {read} of "
                                   f"{total} hits ({max_pages}-page cap)")
             done += 1
             rep.tick(done)

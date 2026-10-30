@@ -10,14 +10,15 @@ a fabricated number. This layer is the ONLY input the synthesis LLM is later giv
 
 from __future__ import annotations
 
-import functools
 import html as htmllib
 import math
 import re
 import statistics
+import threading
 import time
 import unicodedata
 import xml.etree.ElementTree as ET
+from collections import OrderedDict
 from collections.abc import Callable, Sequence
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
@@ -1273,11 +1274,27 @@ def _cover_text(edgar: EdgarClient, http: CachedHttp | None, cik: str,
         return None
 
 
-@functools.lru_cache(maxsize=32)
+#: parsed cover texts by URL — a filing's document at its accession URL does not change. Keyed on
+#: the URL alone, never the client, so no client outlives its run here (review round 1)
+_COVER_TEXTS: OrderedDict[str, str] = OrderedDict()
+_COVER_TEXTS_LOCK = threading.Lock()
+_COVER_TEXTS_MAX = 32
+
+
 def _cover_head_text(http: CachedHttp, url: str) -> str:
     """One filing's cover text, parsed once: five share readers on a page ask for the same covers.
     A failed fetch raises and is not remembered."""
-    return html_to_text(cover_count.cover_head(http.get_text(url, ttl_seconds=None)))
+    with _COVER_TEXTS_LOCK:
+        hit = _COVER_TEXTS.get(url)
+        if hit is not None:
+            _COVER_TEXTS.move_to_end(url)
+            return hit
+    text = html_to_text(cover_count.cover_head(http.get_text(url, ttl_seconds=None)))
+    with _COVER_TEXTS_LOCK:
+        _COVER_TEXTS[url] = text
+        while len(_COVER_TEXTS) > _COVER_TEXTS_MAX:
+            _COVER_TEXTS.popitem(last=False)
+    return text
 
 
 def _dated_shares(edgar: EdgarClient, http: CachedHttp | None, cik: str,
@@ -5899,7 +5916,8 @@ def assemble_mechanical(
     # TECX (AvroBio), ORKA (ARCA) are the live proof. The marker states the filed fact and directs
     # verification; it never asserts a mechanism (a bare rename — AAPL 2019 — is not a predecessor).
     flags += _former_name_flags(edgar, record.identity.cik, reference_date)
-    flags += _share_count_flags(edgar, http, record.identity.cik, reference_date)
+    flags += _share_count_flags(edgar, cik=record.identity.cik, reference_date=reference_date,
+                                http=http)
     flags += drawdown_flags  # degraded-feed twin of the UNKNOWN drawdown-cause note
     flags += maturity_caveats(mech.capital_structure)  # each governed / springing maturity
     if line_flag is not None:

@@ -107,7 +107,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "f6a3904e1011",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "6a69e0bff7fb",
+    "vinci/dossier/mechanical.py": "f800af1f37e8",
     "vinci/dossier/midcycle.py": "dfa24e1bc15a",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "0c07bfc551a1",
