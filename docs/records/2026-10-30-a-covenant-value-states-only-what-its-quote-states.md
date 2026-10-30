@@ -1,8 +1,8 @@
 ---
 id: 2026-10-30-a-covenant-value-states-only-what-its-quote-states
-status: open
+status: shipped
 date: 2026-10-30
-prs: []
+prs: [873]
 supersedes:
 superseded-by:
 ---
