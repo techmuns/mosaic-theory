@@ -248,6 +248,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "the metric's slot; a gross margin stated in dollars is refused; a second range joined by "
         "'and' is read when it states its own period and refused aloud when it does not",
     ),
+    (
+        "2026-10-30.G-D7",
+        "an LLM's quote is a span of its document only with every gap between two digits kept: "
+        "a quote reading 'Level 11.25%' is refused where the exhibit prints 'Level 1 1.25%', "
+        "where whitespace removal had joined the two figures into one (audit G-D7); every "
+        "committed quote reads as before",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

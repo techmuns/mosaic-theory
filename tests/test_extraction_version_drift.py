@@ -77,8 +77,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "15cff35a2a3b"
-PINNED_AT = "2026-10-30.E2-guidance"
+PINNED_TABLE = "30ff9ed385a7"
+PINNED_AT = "2026-10-30.G-D7"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -131,7 +131,7 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/segments.py": "a25da92ebf20",
     "vinci/edgar/submissions.py": "6644355e5c3f",
     "vinci/finra.py": "5787c9793b1b",
-    "vinci/verbatim.py": "b7a2346d323b",
+    "vinci/verbatim.py": "cb75bef0a20e",
 }
 
 #: Modules in the classified packages that cannot change what a dossier carries, each with why.

@@ -226,6 +226,20 @@
    "window": "Section 2.06 Interest Rates . (a)    Each Base Rate Loan shall bear interest on the outstanding principal amount thereof, for each day from the date such Loan is made until it becomes due, at a rate per annum equal to the sum of the Applicable Margin for such day plus the Base Rate for such day.  Such interest shall be payable in arrears on each Interest Payment Date.  Any overdue principal of or interest on any Base Rate Loan shall bear interest, payable on demand, for each day until paid at a rate per annum equal to the sum of 2% plus the rate otherwise applicable to Base Rate Loans for such day. (b)    Each Term SOFR Loan shall bear interest on the outstanding principal amount thereof, for each day during the Interest Period applicable thereto, at a rate per annum equal to the sum of the Applicable Margin for such day plus Term SOFR for such Interest Period.  Such interest shall be payable in",
    "expect": "not_found",
    "why": "every piece is in the exhibit, but the quote puts the Term SOFR clause (b) before the Base Rate clause (a) — a rearrangement, not an omission"
+  },
+  {
+   "id": "uber-struck-figure-beside-its-replacement",
+   "corpus": "covenant_term",
+   "ticker": "UBER",
+   "item": "Financial-maintenance covenants",
+   "cik": "0001543151",
+   "source": "8-K 0001552781-22-000307 · e22228_ex10-1.htm",
+   "source_text": "html_to_text(doc)",
+   "quote": "Section 6.05 Minimum Liquidity . The Borrower shall not permit Liquidity to be less than $ 1,500,000,000 1,000,000,000 as of the last day of any fiscal quarter of the Borrower ending after the Amendment No. 5 Effective Date.",
+   "committed_quote": "Section 6.05 Minimum Liquidity . The Borrower shall not permit Liquidity to be less than $ 1,500,000,000 1,000,000,000 as of the last day of any fiscal quarter of the Borrower ending after the Amendment No. 5 Effective Date.",
+   "window": "Sanctions applicable to any party hereto. Section\n6.05 Minimum Liquidity . The Borrower shall not\npermit Liquidity to be less than $ 1,500,000,000 1,000,000,000 as\nof the last day of any fiscal quarter of the Borrower ending after the Amendment No. 5 Effective Date. Section\n6.06 Restricted Repay",
+   "expect": "verbatim",
+   "why": "a conformed amendment prints the struck figure beside its replacement ($ 1,500,000,000 1,000,000,000): the gap between the two digit runs is kept as one space, so the quote matches as printed and never as one joined figure"
   }
  ]
 }

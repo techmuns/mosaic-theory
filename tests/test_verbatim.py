@@ -83,7 +83,7 @@ def test_each_reduction_is_load_bearing_on_its_own_real_case(
             s = s.translate(str.maketrans(table))
             s = s if step == "case" else s.casefold()
             return (re.sub(r"\s+", " ", s).strip() if step == "ws"
-                    else verbatim._DROP.sub("", s))
+                    else verbatim.squeeze(s))
         return key
 
     for step, case_id in [("ws", "amzn-maturity-tag-spaces"), ("quotes", "klic-quote-marks"),
@@ -136,6 +136,51 @@ def test_page_furniture_is_not_forgiven() -> None:
     assert SourceText(before).match(c["quote"]) is SpanMatch.NOT_FOUND
     assert SourceText(before.replace("- 31 - ", "")).match(c["quote"]) is SpanMatch.VERBATIM
     assert SourceText(c["window"]).match(c["quote"]) is SpanMatch.VERBATIM
+
+
+#: IT's pricing grid, verbatim from its credit agreement (8-K 0001193125-24-083467 ·
+#: d771496dex101.htm, read by `html_to_text` from the SEC cache, 2026-10-30): the ratio, the fee and
+#: the margins sit in one row separated by nothing but spaces.
+_IT_GRID = ("Level Consolidated Leverage Ratio Commitment Fee Rate Applicable Margin for ABR Loans "
+            "Applicable Margin for Term Benchmark Loans and RFR Loans III >1.50 to 1.00 0.175 % "
+            "0.375 % 1.375 % IV >0.75 to 1.00 0.15 % 0.25 % 1.25 % V ≤0.75 to 1.00 0.125 % "
+            "0.125 % 1.125 %")
+#: The same exhibit's head, verbatim — what `agreement_title` reads to admit it as a debt agreement.
+_IT_HEAD = ("EX-10.1 2 d771496dex101.htm EX-10.1 EX-10.1 Exhibit 10.1 EXECUTION VERSION "
+            "$1,000,000,000 CREDIT AGREEMENT among GARTNER, INC., as Borrower, The Several Lenders "
+            "from Time to Time Parties Hereto, and JPMORGAN CHASE BANK, N.A., as Administrative "
+            "Agent Dated as of March 26, 2024")
+
+
+def test_a_space_between_two_digit_runs_is_not_forgiven() -> None:
+    """(-/+) Audit G-D7: removing ALL whitespace joined two figures into one, so a quote reading
+    "Level 11.25%" was VERBATIM in a document printing "Level 1 1.25%" — and the margin it carried
+    was kept as PRESENT. Whitespace between two digits now reduces to ONE space, never to nothing:
+    on IT's real grid a quote that closes the gap between the ratio and the fee states a figure the
+    grid does not print and is refused, while the row as printed — across a line break or a
+    non-breaking space — still matches. A gap anywhere else still folds away (the tag-spaces case
+    above)."""
+    src = SourceText(_IT_GRID)
+    row = "IV >0.75 to 1.00 0.15 % 0.25 % 1.25 %"
+    assert src.match(row) is SpanMatch.VERBATIM
+    across = row.replace("1.00 0.15", "1.00\n0.15").replace("0.25 % 1.25", "0.25 %\u00a01.25")
+    assert src.match(across) is SpanMatch.VERBATIM
+    assert src.match(row.replace("1.00 0.15", "1.000.15")) is SpanMatch.NOT_FOUND
+    assert src.match("to 1.00 0.15 % ... 1.125 %") is SpanMatch.ELIDED
+    assert src.match("to 1.000.15 % ... 1.125 %") is SpanMatch.NOT_FOUND
+    # the audit's case as filed
+    assert SourceText("Level 1 1.25%").match("Level 11.25%") is SpanMatch.NOT_FOUND
+    assert SourceText("Level 1 1.25%").match("Level 1\t1.25%") is SpanMatch.VERBATIM
+    # a real conformed amendment: the struck figure printed beside its replacement
+    uber = _case("uber-struck-figure-beside-its-replacement")
+    assert SourceText(uber["window"]).match(uber["quote"]) is SpanMatch.VERBATIM
+    joined = uber["quote"].replace("1,500,000,000 1,000,000,000", "1,500,000,0001,000,000,000")
+    assert SourceText(uber["window"]).match(joined) is SpanMatch.NOT_FOUND
+    # an invisible character is not a gap: a soft hyphen inside a figure still folds away
+    assert SourceText("$1\u00ad250 million").match("$1250 million") is SpanMatch.VERBATIM
+    # ...and it is dropped BEFORE the whitespace step, so one beside a space never hides the gap:
+    # dropped after it, "Level 1 \u200b1.25%" would reduce to "level11.25%" and reopen G-D7
+    assert SourceText("Level 1 \u200b1.25%").match("Level 11.25%") is SpanMatch.NOT_FOUND
 
 
 # --- end to end: covenant terms ------------------------------------------------------------------
@@ -229,6 +274,37 @@ def test_covenant_terms_keep_a_span_and_refuse_the_rest_end_to_end() -> None:
     assert governing["Term SOFR Loans"].value.status is ds.SourceStatus.PRESENT
     for name in ("Interest / coupon rate", "Maturity date"):
         assert governing[name].value.status is ds.SourceStatus.UNKNOWN, name
+
+
+_IT_ACC, _IT_DOC = "0001193125-24-083467", "d771496dex101.htm"
+
+
+def test_a_covenant_quote_joining_two_figures_is_refused_end_to_end() -> None:
+    """(-/+) Audit G-D7 through `extract_covenant_terms` on IT's real grid: a margin whose quote
+    closes the gap between the leverage ratio and the fee is UNKNOWN + a flag, with no rate
+    component riding on it; the same row quoted as the exhibit prints it stays PRESENT."""
+    ptr = ds.CovenantPointer(family="24 Credit Agreement", filing="8-K", filing_date="2024-04-01",
+                             accession=_IT_ACC, exhibits=[_IT_DOC])
+    # the TJX scaffold carries no issuer data but its pointer rows, which are replaced with IT's
+    cs = _tjx_capital_structure().model_copy(update={
+        "covenant_pointer_rows": ds.Sourced.present([ptr], source_ref="efts")})
+    row = "IV >0.75 to 1.00 0.15 % 0.25 % 1.25 %"
+    payload = {"terms": [
+        {"name": "Interest / coupon rate", "present": True, "value": "Term Benchmark + 1.25%",
+         "quote": row.replace("1.00 0.15", "1.000.15"), "margin_pct": 1.25},
+        {"name": "Applicable Margin", "present": True, "value": "Term Benchmark + 1.25%",
+         "quote": row, "margin_pct": 1.25},
+    ]}
+    http = typing.cast(typing.Any, _FakeSecHttp(f"{_IT_HEAD} … {_IT_GRID}"))
+    rows, _, flags, _ = ce.extract_covenant_terms(
+        cs, llm=_FakeLlm(payload), http=http, cik="0000749251", ticker="IT", name="Gartner")
+    assert rows is not None
+    by = {r.name: r for r in rows.value}
+    joined = by["Interest / coupon rate"]
+    assert joined.value.status is ds.SourceStatus.UNKNOWN and joined.margin_pct is None
+    assert any("Interest / coupon rate" in f and "refused" in f and _IT_ACC in f for f in flags)
+    printed = by["Applicable Margin"]
+    assert printed.value.status is ds.SourceStatus.PRESENT and printed.margin_pct == 1.25
 
 
 # --- end to end: the maturity event --------------------------------------------------------------
