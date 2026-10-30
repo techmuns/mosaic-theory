@@ -700,8 +700,10 @@ class RevisionCount(BaseModel, frozen=True):
     metric: str
     period: str
     window: Literal["1m", "2m", "3m"]
-    up: int
-    down: int
+    # None where CIQ's cell is a marker (audit A-D1, 2026-10-30): no count, never a 0 — a window
+    # whose two cells are BOTH markers is not written at all
+    up: int | None
+    down: int | None
     analysts: int | None = None
     analysts_in_consensus: int | None = None
     outflow_line: bool = False
@@ -837,9 +839,20 @@ class ClaimLine(BaseModel, frozen=True):
 
     label: str                       # the CIQ row verbatim, or the derived line, named
     sign: Literal[1, -1]
-    value: float                     # $M
+    value: float | None              # $M; None where CIQ states no figure (`unread` says why)
     as_of: str | None = None         # the balance-sheet date
     source: str
+    #: (2026-10-30, audit A-D2) why a claim has no figure: its row is absent from the balance sheet,
+    #: or its cell is a marker. It was a 0.0 with nothing behind it. ABSENT, never null, when unset,
+    #: so a bridge built before it round-trips byte-identical.
+    unread: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("unread") is None:
+            out.pop("unread", None)
+        return out
 
 
 class ConsensusYear(BaseModel, frozen=True):

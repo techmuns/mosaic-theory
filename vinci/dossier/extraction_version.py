@@ -310,6 +310,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "rank's dilution demote and the theme desk's basis check read a share count tagged "
         "after its own filing at its filing day, cross-checked (audit X1(a))",
     ),
+    (
+        "2026-10-30.zero-coercion",
+        "a CIQ marker or an absent row is no value, never 0 (audit RC1: A-D1, A-D2): a revision "
+        "count CIQ states as a marker prints 'n/a', never 0; the EV bridge's preferred and "
+        "minority "
+        "lines say why they carry no figure — the row is absent, or its cell is a marker — and the "
+        "claims sum the legs CIQ states (no value moves); the R4 basis states such a leg 'not "
+        "stated'; the anchor bridge names the lease rows its balance sheet lacks and refuses a "
+        "marker on one; the EV gap shows no EBITDA margin without a D&A ratio; 'No Data "
+        "Available' is a marker",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

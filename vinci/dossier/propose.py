@@ -889,9 +889,17 @@ def r4_bridge_fact(doc: dict[str, Any]) -> dict[str, Any]:
             f"{t}: the page's exit claims differ by fiscal year ({listed}) — the template cannot "
             "choose the record's exit year for you. State the claims for your exit year from "
             "`ev_bridge.exit_claims` by hand, naming that year in the basis.")
-    by_label = {ln.get("label"): ln.get("value") for ln in eb.get("lines") or []
-                if isinstance(ln, dict)}
-    pref, minority = by_label.get(_PREF_LINE) or 0.0, by_label.get(_MINORITY_LINE) or 0.0
+    by_label = {ln.get("label"): ln for ln in eb.get("lines") or [] if isinstance(ln, dict)}
+
+    def leg(label: str, name: str) -> str:
+        """A claim as the basis states it: its figure, or why CIQ states none (audit A-D2) — a
+        bridge built before 2026-10-30 carries a 0.0 there, which is stated as it stands."""
+        ln = by_label.get(label) or {}
+        v = ln.get("value")
+        if isinstance(v, (int, float)) and not isinstance(v, bool):
+            return f"{name} {v:,.1f}"
+        return f"{name} not stated ({ln.get('unread') or 'no such line on the bridge'})"
+
     fys = ", ".join(str(x.get("fiscal_year")) for x in exits)
     methods = "/".join(sorted({str(x.get("method")) for x in exits}))
     note = str(eb.get("note") or "").strip()
@@ -899,8 +907,9 @@ def r4_bridge_fact(doc: dict[str, Any]) -> dict[str, Any]:
         "value": values.pop(),
         "unit": "$M",
         "basis": (
-            f"CIQ's TEV claims less market cap: Net Debt {eb.get('net_debt'):,.1f} + preferred "
-            f"{pref:,.1f} + minority interest {minority:,.1f} = {claims:,.1f} ($M), at the "
+            f"CIQ's TEV claims less market cap: Net Debt {eb.get('net_debt'):,.1f} + "
+            f"{leg(_PREF_LINE, 'preferred')} + {leg(_MINORITY_LINE, 'minority interest')} = "
+            f"{claims:,.1f} ($M), at the "
             f"{eb.get('balance_sheet_date')} balance sheet — the build-up CIQ's TEV, and so the "
             "EV/NTM EBIT multiple, carries (operator-confirmed 2026-10-09). At exit ("
             f"{fys}): {methods}" + (f" — {note}" if note else "") + "."),
@@ -1029,8 +1038,10 @@ def r4_evidence(doc: dict[str, Any]) -> dict[str, list[str]]:
     eb = doc.get("ev_bridge") or {}
     for ln in eb.get("lines") or []:
         sign = "+" if ln.get("sign", 1) > 0 else "−"
-        ev["net_debt"].append(f"{sign} {ln.get('label')}: {ln.get('value')} ($M, "
-                              f"{ln.get('as_of')})")
+        v = ln.get("value")
+        ev["net_debt"].append(
+            f"{sign} {ln.get('label')}: {v} ($M, {ln.get('as_of')})" if v is not None
+            else f"{sign} {ln.get('label')}: not stated — {ln.get('unread')} ({ln.get('as_of')})")
     if eb:
         ev["net_debt"].append(
             f"= claims {eb.get('claims')}; CIQ's own TEV less market cap "

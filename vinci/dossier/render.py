@@ -575,7 +575,8 @@ def _horizon_lines(s: Sourced[Any]) -> list[str]:
         if not _HORIZON_KEEP.match(seg):
             skipped += 1
             continue
-        (nonzero if re.search(r"[1-9]\d*[↑↓]", seg) else zero).append(seg)
+        # a count CIQ does not state ('n/a', audit A-D1) is shown, never folded into "no revisions"
+        (nonzero if re.search(r"[1-9]\d*[↑↓]|n/a[↑↓]", seg) else zero).append(seg)
     out = [f"- **{label}** — {_cite_inline(s.source_ref)}:"]
     out += [f"  - {seg}" for seg in nonzero]
     if zero:

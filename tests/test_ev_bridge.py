@@ -40,7 +40,7 @@ def _bridge(ticker: str) -> EvBridge:
     return EvBridge.model_validate(CASES[ticker]["bridge"])
 
 
-def _line(b: EvBridge, label: str) -> float:
+def _line(b: EvBridge, label: str) -> float | None:
     return next(ln.value for ln in b.lines if ln.label == label)
 
 
@@ -58,9 +58,14 @@ def test_claims_are_ciqs_current_tev_less_market_cap(ticker: str) -> None:
 @pytest.mark.parametrize("ticker", sorted(CASES))
 def test_claims_are_the_signed_sum_of_the_lines(ticker: str) -> None:
     b = _bridge(ticker)
-    assert b.claims == pytest.approx(sum(ln.sign * ln.value for ln in b.lines), abs=1e-3)
-    assert b.net_debt == pytest.approx(_line(b, "Total Debt") - _line(
-        b, "Total Cash & ST Investments") - _line(b, cs._NETTED_LABEL), abs=1e-3)
+    # a claim CIQ does not state is unread WITH its reason, never a 0.0 (audit A-D2, 2026-10-30)
+    assert all(ln.unread for ln in b.lines if ln.value is None)
+    assert b.claims == pytest.approx(
+        sum(ln.sign * ln.value for ln in b.lines if ln.value is not None), abs=1e-3)
+    debt, cash = _line(b, "Total Debt"), _line(b, "Total Cash & ST Investments")
+    netted = _line(b, cs._NETTED_LABEL)
+    assert debt is not None and cash is not None and netted is not None
+    assert b.net_debt == pytest.approx(debt - cash - netted, abs=1e-3)
     assert {ln.label for ln in b.lines} == {
         "Total Debt", "Total Cash & ST Investments", cs._NETTED_LABEL, "Total Pref. Equity",
         "Total Minority Interest"}

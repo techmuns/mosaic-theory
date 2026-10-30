@@ -90,14 +90,16 @@
       "label": "Total Pref. Equity",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]",
-      "value": 0.0
+      "unread": "the balance sheet carries no 'Total Pref. Equity' row",
+      "value": null
      },
      {
       "as_of": "2026-06-30",
       "label": "Total Minority Interest",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]",
-      "value": 0.0
+      "unread": "the balance sheet carries no 'Total Minority Interest' row",
+      "value": null
      }
     ],
     "net_debt": 128647.0,
@@ -169,7 +171,8 @@
       "label": "Total Pref. Equity",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [FQ3/CQ2 Jun-30-2026]",
-      "value": 0.0
+      "unread": "the balance sheet carries no 'Total Pref. Equity' row",
+      "value": null
      },
      {
       "as_of": "2026-06-30",
@@ -293,7 +296,8 @@
       "label": "Total Minority Interest",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]",
-      "value": 0.0
+      "unread": "the balance sheet carries no 'Total Minority Interest' row",
+      "value": null
      }
     ],
     "net_debt": -121683.0,
@@ -385,36 +389,38 @@
       "as_of": "2026-06-30",
       "label": "Total Debt",
       "sign": 1,
-      "source": "CIQ Financials→Balance Sheet [46203.0]",
+      "source": "CIQ Financials→Balance Sheet [Jun-30-2026]",
       "value": 54908.0
      },
      {
       "as_of": "2026-06-30",
       "label": "Total Cash & ST Investments",
       "sign": -1,
-      "source": "CIQ Financials→Balance Sheet [46203.0]",
+      "source": "CIQ Financials→Balance Sheet [Jun-30-2026]",
       "value": 8950.0
      },
      {
       "as_of": "2026-06-30",
       "label": "Netted in CIQ Net Debt beyond cash (long-term marketable securities, if disclosed)",
       "sign": -1,
-      "source": "CIQ Financials→Balance Sheet [46203.0]: Total Debt − Total Cash & ST Investments − 'Net Debt'",
+      "source": "CIQ Financials→Balance Sheet [Jun-30-2026]: Total Debt − Total Cash & ST Investments − 'Net Debt'",
       "value": 796.0
      },
      {
       "as_of": "2026-06-30",
       "label": "Total Pref. Equity",
       "sign": 1,
-      "source": "CIQ Financials→Balance Sheet [46203.0]",
-      "value": 0.0
+      "source": "CIQ Financials→Balance Sheet [Jun-30-2026]",
+      "unread": "the balance sheet carries no 'Total Pref. Equity' row",
+      "value": null
      },
      {
       "as_of": "2026-06-30",
       "label": "Total Minority Interest",
       "sign": 1,
-      "source": "CIQ Financials→Balance Sheet [46203.0]",
-      "value": 0.0
+      "source": "CIQ Financials→Balance Sheet [Jun-30-2026]",
+      "unread": "'Total Minority Interest' reads 'NA' at [Jun-30-2026]",
+      "value": null
      }
     ],
     "net_debt": 45162.0,
@@ -501,14 +507,16 @@
       "label": "Total Pref. Equity",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]",
-      "value": 0.0
+      "unread": "'Total Pref. Equity' reads '-' at [Q2 Jun-30-2026]",
+      "value": null
      },
      {
       "as_of": "2026-06-30",
       "label": "Total Minority Interest",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [Q2 Jun-30-2026]",
-      "value": 0.0
+      "unread": "'Total Minority Interest' reads 'NA' at [Q2 Jun-30-2026]",
+      "value": null
      }
     ],
     "net_debt": 65.214,
@@ -617,14 +625,16 @@
       "label": "Total Pref. Equity",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [FQ4/CQ2 May-31-2026]",
-      "value": 0.0
+      "unread": "the balance sheet carries no 'Total Pref. Equity' row",
+      "value": null
      },
      {
       "as_of": "2026-05-31",
       "label": "Total Minority Interest",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [FQ4/CQ2 May-31-2026]",
-      "value": 0.0
+      "unread": "the balance sheet carries no 'Total Minority Interest' row",
+      "value": null
      }
     ],
     "net_debt": 2016.0,
@@ -733,14 +743,16 @@
       "label": "Total Pref. Equity",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [FQ3/CQ2 May-30-2026]",
-      "value": 0.0
+      "unread": "the balance sheet carries no 'Total Pref. Equity' row",
+      "value": null
      },
      {
       "as_of": "2026-05-30",
       "label": "Total Minority Interest",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [FQ3/CQ2 May-30-2026]",
-      "value": 0.0
+      "unread": "the balance sheet carries no 'Total Minority Interest' row",
+      "value": null
      }
     ],
     "net_debt": 324.58,
@@ -848,7 +860,8 @@
       "label": "Total Pref. Equity",
       "sign": 1,
       "source": "CIQ Financials→Balance Sheet [Press Release Q2 Jun-30-2026]",
-      "value": 0.0
+      "unread": "'Total Pref. Equity' reads '-' at [Press Release Q2 Jun-30-2026]",
+      "value": null
      },
      {
       "as_of": "2026-06-30",

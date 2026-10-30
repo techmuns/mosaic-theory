@@ -428,7 +428,12 @@ def _margin_figures(levels: dict[str, list[dict[str, object]]], leg: dict[str, o
     cm, cr = eb_c.get("median"), rev_c.get("median")
     if not isinstance(cm, (int, float)) or not isinstance(cr, (int, float)) or not cr:
         return None
-    ours = float(leg["margin"]) + float(leg.get("d_and_a_ratio") or 0.0)  # type: ignore[arg-type]
+    # NO D&A RATIO, NO EBITDA MARGIN (audit RC1, 2026-10-30): an absent ratio was added as 0, so the
+    # recipe's EBIT margin stood beside the street's EBITDA margin under the EBITDA label
+    da = leg.get("d_and_a_ratio")
+    if not isinstance(da, (int, float)) or isinstance(da, bool):
+        return None
+    ours = float(leg["margin"]) + float(da)  # type: ignore[arg-type]
     return {"ours": ours, "consensus": cm / cr, "basis": "EBITDA margin, ours converted from the "
             "recipe's D&A ratio; consensus = median EBITDA / median revenue at the anchor"}
 

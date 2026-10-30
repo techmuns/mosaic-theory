@@ -495,11 +495,14 @@ def consensus_revisions(ticker: str, as_of: date, dossiers: Path) -> MarketFigur
                          f"figure to compare")
     rc = next((r for r in fc.revisions if r.metric == metric and r.period == period
                and r.window == "3m"), None)
-    counts = (f"; {rc.up} analyst(s) revised up and {rc.down} down"
+    # a count CIQ states as a marker is None on the page (audit A-D1): 'n/a', never a 0
+    up, down = (("n/a" if n is None else str(n)) for n in ((rc.up, rc.down) if rc is not None
+                                                          else (None, None)))
+    counts = (f"; {up} analyst(s) revised up and {down} down"
               + (f", of {rc.analysts}" if rc.analysts else "") if rc is not None
               else "; revision counts not held")
     return MarketFigure(
-        value=v[0] / v[3] - 1.0, detail=f"{rc.up}↑ {rc.down}↓" if rc is not None else "",
+        value=v[0] / v[3] - 1.0, detail=f"{up}↑ {down}↓" if rc is not None else "",
         basis=(f"{period} {metric} consensus over the 3 months to the CIQ export ({when}; the "
                f"fund's dossier assembled {assembled.isoformat()}): {v[3]:g} → {v[0]:g}"
                + counts))

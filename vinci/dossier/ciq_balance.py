@@ -513,13 +513,26 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
                       "D&A: only one statement discloses a depreciation line — containment unrun")
 
     # (2) Net debt: balance sheet vs the Multiples sheet's implied enterprise value less market cap
+    # A LEASE ROW IS ADDED WHERE THE SHEET STATES IT, NAMED WHERE IT DOES NOT, AND A MARKER THERE
+    # REFUSES THE FACT (audit RC1, 2026-10-30): both rows were added as `or 0.0`, so an absent row
+    # and a '-' were each a stated zero. Measured on the 34 non-held quarterly exports: neither row
+    # exists under these labels (CIQ's are 'Curr. Port. of Leases' / 'Long-Term Leases'), so on
+    # every page the fact is debt − cash, as before — now saying so.
     nd_bs = None
-    if debt is not None and cash is not None:
-        nd_bs = debt + (fin_lease or 0.0) + (op_lease or 0.0) - cash
+    lease_rows = (("Capital Leases", fin_lease), ("Operating Lease Liabilities", op_lease))
+    lease_markers = [why for label, v in lease_rows
+                     if v is None and (why := _bs_unavailable(bundle, label))]
+    if debt is not None and cash is not None and lease_markers:
+        unavailable["net_debt"] = "; ".join(lease_markers)
+    elif debt is not None and cash is not None:
+        nd_bs = debt + sum(v for _label, v in lease_rows if v is not None) - cash
         legs = (*debt_wb, *cash_wb, *(fin_wb if fin_lease is not None else ()),
                 *(op_wb if op_lease is not None else ()))
+        absent = [label for label, v in lease_rows if v is None]
         put("net_debt", (nd_bs, None, None, tuple(dict.fromkeys(legs))), "$M",
-            "total debt + leases where disclosed - total cash and short-term investments")
+            "total debt + leases where disclosed - total cash and short-term investments"
+            + (f"; the balance sheet carries no {' or '.join(repr(a) for a in absent)} row, so "
+               "no lease is added" if absent else ""))
     ev_mult = _sourced(bundle, cs.ev_ebitda_current)
     ebitda = _sourced(bundle, cs.ltm_ebitda)
     if nd_bs is not None and ev_mult and ebitda and ebitda > 0:
