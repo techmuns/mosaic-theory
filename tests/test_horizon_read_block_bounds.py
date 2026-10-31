@@ -72,8 +72,10 @@ def _own_block_lines(rows: list[list[Any]]) -> set[str]:
                 w = window_rows.get(wk) or {}
                 up = clean_num(rows[w["Upward"]][col]) if "Upward" in w else None
                 dn = clean_num(rows[w["Downward"]][col]) if "Downward" in w else None
-                if up is not None or dn is not None:
-                    parts.append(f"{wk} {int(up or 0)}↑/{int(dn or 0)}↓")
+                if up is not None or dn is not None:   # a marker is 'n/a', never 0 (A-D1)
+                    u = "n/a" if up is None else str(int(up))
+                    d = "n/a" if dn is None else str(int(dn))
+                    parts.append(f"{wk} {u}↑/{d}↓")
             if parts:
                 label = f"{str(rows[bi][0]).strip()} {str(header[col]).strip()}"
                 out.add(f"{label}: " + ", ".join(parts))
