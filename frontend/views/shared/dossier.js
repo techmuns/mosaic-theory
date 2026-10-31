@@ -196,9 +196,11 @@ const EXTRACTION_VERSIONS = [
     "count CIQ states as a marker prints 'n/a', never 0; the EV bridge's preferred and minority " +
     "lines say why they carry no figure — the row is absent, or its cell is a marker — and the " +
     "claims sum the legs CIQ states (no value moves); the R4 basis states such a leg 'not " +
-    "stated'; the anchor bridge names the lease rows its balance sheet lacks and refuses a " +
-    "marker on one; the EV gap shows no EBITDA margin without a D&A ratio; 'No Data " +
-    "Available' is a marker"],
+    "stated'; the anchor bridge's net debt says CIQ's Total Debt carries its lease rows " +
+    "where its own rows show it (33 of 34 exports), and elsewhere names the lease rows it " +
+    "lacks and refuses a marker on one; the EV gap's EBITDA margin is converted as " +
+    "`our_ebitda` converts it, or not shown; an unknown mid-cycle year count is None; 'No " +
+    "Data Available' is a marker"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

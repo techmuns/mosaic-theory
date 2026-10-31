@@ -49,9 +49,6 @@ ALLOWED: tuple[tuple[str, str, str, str], ...] = (
                 "stored"),
     ("vinci/dossier/anchor.py", "_band_read", "ev.get('n_closes') or 0",
      "unreachable: `n_closes` is a required field of every own-history band (schemas)"),
-    ("vinci/dossier/anchor.py", "midcycle_gap", "median_years or 0",
-     "the gap line beside it reads the None itself ('historical'); the field's 0 has no reader, "
-     "and the 6 committed pages carrying it read 9, 10 or 19 (2026-10-30)"),
     ("vinci/dossier/band_guards.py", "_d_and_a_runs", "revenue or 0.0", GATE),
     ("vinci/dossier/band_guards.py", "_d_and_a_runs", "recorded_d_and_a or 0.0", GATE),
     ("vinci/dossier/capital_allocation.py", "build_peer_capital_intensity",
@@ -137,10 +134,11 @@ def _zero(node: ast.expr) -> bool:
             and node.value == 0)
 
 
-def sites() -> Counter[tuple[str, str, str]]:
-    """Every `x or 0` / `x or 0.0` in `vinci/`: (file, enclosing function, expression), counted."""
+def sites(root: Path = ROOT) -> Counter[tuple[str, str, str]]:
+    """Every `x or 0` / `x or 0.0` under `root/vinci/`: (file, enclosing function, expression),
+    counted."""
     found: Counter[tuple[str, str, str]] = Counter()
-    for py in sorted((ROOT / "vinci").rglob("*.py")):
+    for py in sorted((root / "vinci").rglob("*.py")):
         tree = ast.parse(py.read_text())
         parent = {c: n for n in ast.walk(tree) for c in ast.iter_child_nodes(n)}
         for node in ast.walk(tree):
@@ -153,7 +151,7 @@ def sites() -> Counter[tuple[str, str, str]]:
                 if isinstance(p, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     fn = p.name
                     break
-            found[(py.relative_to(ROOT).as_posix(), fn, ast.unparse(node))] += 1
+            found[(py.relative_to(root).as_posix(), fn, ast.unparse(node))] += 1
     return found
 
 
@@ -174,9 +172,13 @@ def test_no_allowed_entry_outlives_its_site() -> None:
     assert not stale, f"ALLOWED lists sites no longer in vinci/ — remove them: {sorted(stale)}"
 
 
-def test_the_lint_can_fire() -> None:
-    """(−) the scan finds a planted site, so a clean run is a clean package, not a blind scan."""
-    tree = ast.parse("def f(x):\n    return x or 0.0\n")
-    node = next(n for n in ast.walk(tree) if isinstance(n, ast.BoolOp))
-    assert _zero(node.values[-1]) and ast.unparse(node) == "x or 0.0"
-    assert not _zero(ast.parse("x or False").body[0].value.values[-1])  # type: ignore[attr-defined]
+def test_the_lint_can_fire(tmp_path: Path) -> None:
+    """(−) `sites()` itself finds planted sites, so a clean run is a clean package, not a blind
+    scan (PR #877 round 2: this read only `_zero`, never the scan)."""
+    (tmp_path / "vinci" / "sub").mkdir(parents=True)
+    (tmp_path / "vinci" / "sub" / "m.py").write_text(
+        "def f(x, y):\n    a = x or 0.0\n    b = y or 0\n    return a + b + (x or False)\n"
+        "\ndef g(x):\n    return x or 0.0\n")
+    assert sites(tmp_path) == Counter({("vinci/sub/m.py", "f", "x or 0.0"): 1,
+                                       ("vinci/sub/m.py", "f", "y or 0"): 1,
+                                       ("vinci/sub/m.py", "g", "x or 0.0"): 1})

@@ -271,7 +271,9 @@ def _r4_bridge(eb: dict[str, Any], anchor_label: str) -> dict[str, Any]:
             f"sha {eb.get('source_sha256')})"),
         "balance_sheet_date": eb.get("balance_sheet_date"),
         "components": [{"label": ln.get("label"), "sign": ln.get("sign"),
-                        "value": _num(ln.get("value"))} for ln in eb.get("lines") or []],
+                        "value": _num(ln.get("value")),
+                        **({"unread": ln["unread"]} if ln.get("unread") else {})}
+                       for ln in eb.get("lines") or []],
         "ciq_tev_less_market_cap": ciq,
         "reconciles_to_ciq_tev": (abs(claims - ciq) <= EV_BRIDGE_CIQ_TOL
                                   if claims is not None and ciq is not None else None),

@@ -974,6 +974,16 @@ class BridgeComponent(BaseModel, frozen=True):
     label: str
     sign: int
     value: float | None
+    #: (2026-10-30, PR #877 round 2) why `value` is None — the bridge line's own `unread`, carried
+    #: so the "says why" contract does not stop at this block. ABSENT, never null, when unset.
+    unread: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("unread") is None:
+            out.pop("unread", None)
+        return out
 
 
 class BridgeBasis(BaseModel, frozen=True):

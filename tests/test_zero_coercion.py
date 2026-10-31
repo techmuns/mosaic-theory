@@ -187,17 +187,21 @@ def test_an_absent_claim_row_is_named(bundle: CiqBundle) -> None:
 
 
 def test_the_r4_prefill_states_an_unread_claim_never_zero() -> None:
-    """DECISION PATH (R4 prefill): UBER's committed page, its preferred line as the rebuilt bridge
-    writes it — the record's basis says it is not stated; the claims value does not move."""
-    doc = json.loads(Path("data/dossiers/UBER/dossier.json").read_text())
-    before = r4_bridge_fact(doc)
-    pref = next(ln for ln in doc["ev_bridge"]["lines"] if ln["label"] == "Total Pref. Equity")
-    pref.update(value=None, unread="'Total Pref. Equity' reads '-' at [Q2 Jun-30-2026]")
+    """DECISION PATH (R4 prefill), on a bridge `ev_bridge` BUILT from a real unread line (PR #877
+    round 2): MVST's frozen case (`ev_bridge_cases.json`, rebuilt from its own exports by sha),
+    whose preferred reads '-' and minority 'NA'. The record's basis says each is not stated; the
+    value is the bridge's held exit claims, which CIQ's TEV less market cap checks."""
+    eb = json.loads(Path("tests/fixtures/ev_bridge_cases.json").read_text())["cases"]["MVST"][
+        "bridge"]
+    doc = {"ticker": "MVST", "ev_bridge": eb,
+           "forward_consensus": {"source_sha256": eb["estimates_sha256"]}}
     got = r4_bridge_fact(doc)
-    assert got["value"] == before["value"]
+    assert got["value"] == eb["claims"] == eb["exit_claims"][0]["value"]
     assert ("preferred not stated ('Total Pref. Equity' reads '-' at [Q2 Jun-30-2026])"
             in got["basis"])
-    assert "preferred 0.0" not in got["basis"]
+    assert ("minority interest not stated ('Total Minority Interest' reads 'NA' at "
+            "[Q2 Jun-30-2026])" in got["basis"])
+    assert " 0.0 " not in got["basis"]
 
 
 # --- the anchor bridge's lease rows, and the EV gap's margin --------------------------------------
@@ -222,6 +226,53 @@ def test_a_marker_on_a_lease_row_refuses_the_net_debt_fact(bundle: CiqBundle, ma
     assert nd.value is None and "CIQ's net debt: " in (nd.source or "")
 
 
+def _with_total_debt_rows(b: CiqBundle) -> list[list[Any]]:
+    """The quarterly balance sheet with CIQ's five Total Debt rows, the lease rows among them,
+    summing to its Total Debt at every column — the shape 33 of 34 real exports carry."""
+    bs = b.sheet("financials", "Balance Sheet", freq="quarterly")
+    n = len(gen.Q_DATES)
+    bs += [["Short-term Borrowings", *([10.0] * n)], ["Curr. Port. of LT Debt", *(["-"] * n)],
+           ["Curr. Port. of Leases", *([3.0] * n)], ["Long-Term Leases", *([7.0] * n)],
+           ["Long-Term Debt", *[round(d - 20.0, 1) for d in gen.Q_DEBT]]]
+    return bs
+
+
+def test_a_net_debt_whose_total_debt_carries_its_leases_says_so(bundle: CiqBundle) -> None:
+    """(PR #877 round 2) CIQ's Total Debt already holds 'Curr. Port. of Leases' and 'Long-Term
+    Leases': the net debt is lease-inclusive and its basis says so, never "no lease is added"."""
+    _with_total_debt_rows(bundle)
+    nd = ciq_balance.extract(bundle, gen.TICKER).facts["net_debt"]
+    assert nd.value == round(gen.Q_DEBT[-1] - gen.Q_CASH[-1], 4)
+    assert nd.basis.startswith("total debt, lease-inclusive — CIQ's Total Debt ")
+    assert "'Curr. Port. of Leases' 3.0 + 'Long-Term Leases' 7.0" in nd.basis
+    assert "no lease is added" not in nd.basis
+
+
+def test_a_marker_on_an_add_on_lease_row_never_refuses_a_lease_inclusive_net_debt(
+        bundle: CiqBundle) -> None:
+    """(PR #877 round 2) Where Total Debt carries the leases, a 'Capital Leases' row reading '-'
+    would be a double count if valued, so it refuses nothing."""
+    bs = _with_total_debt_rows(bundle)
+    bs.append(["Capital Leases", *([4.0] * (len(gen.Q_DATES) - 1)), "-"])
+    ciq = ciq_balance.extract(bundle, gen.TICKER)
+    assert ciq.value("net_debt") == round(gen.Q_DEBT[-1] - gen.Q_CASH[-1], 4)
+    assert "net_debt" not in ciq.unavailable
+
+
+def test_our_ebitda_margin_is_converted_as_our_ebitda_converts_it() -> None:
+    """(PR #877 round 2) An EBITDA-basis margin needs no D&A; an operating one takes its ratio, or
+    its absolute D&A over its revenue — the conversions `ev_gap.our_ebitda` makes."""
+    levels: dict[str, list[dict[str, object]]] = {
+        "Revenue": [{"fy": "FY2027", "median": 100.0}],
+        "EBITDA": [{"fy": "FY2027", "median": 20.0}]}
+    ebitda_leg = ev_gap._margin_figures(levels, {"margin": 0.18, "margin_basis": "ebitda"},
+                                        "FY2027")
+    assert ebitda_leg is not None and ebitda_leg["ours"] == pytest.approx(0.18)
+    absolute = ev_gap._margin_figures(levels, {"margin": 0.12, "margin_basis": "operating",
+                                               "d_and_a": 25.0, "revenue": 500.0}, "FY2027")
+    assert absolute is not None and absolute["ours"] == pytest.approx(0.17)
+
+
 def test_no_d_and_a_ratio_gives_no_ebitda_margin_beside_the_street() -> None:
     levels: dict[str, list[dict[str, object]]] = {
         "Revenue": [{"fy": "FY2027", "median": 100.0}],
@@ -229,7 +280,18 @@ def test_no_d_and_a_ratio_gives_no_ebitda_margin_beside_the_street() -> None:
     got = ev_gap._margin_figures(levels, {"margin": 0.12, "d_and_a_ratio": 0.03}, "FY2027")
     assert got is not None and got["ours"] == pytest.approx(0.15)       # (+) EBIT + D&A ratio
     assert got["consensus"] == pytest.approx(0.2)
-    assert ev_gap._margin_figures(levels, {"margin": 0.12}, "FY2027") is None
+    assert ev_gap._margin_figures(levels, {"margin": 0.12, "margin_basis": "operating"},
+                                  "FY2027") is None
+
+
+def test_an_unknown_median_year_count_is_none_never_zero() -> None:
+    """(PR #877 round 2) `AnchorMidcycleGap.median_years` was written 0 where the margin median
+    stated no year count."""
+    from vinci.dossier.anchor import midcycle_gap
+
+    gap = midcycle_gap(0.05, None, ltm_ebit=150.0, ltm_revenue=1_000.0)
+    assert gap is not None and gap.median_years is None
+    assert midcycle_gap(0.05, 9, ltm_ebit=150.0, ltm_revenue=1_000.0).median_years == 9  # type: ignore[union-attr]
 
 
 def test_a_valued_claim_still_reads(bundle: CiqBundle) -> None:

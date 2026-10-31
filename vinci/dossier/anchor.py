@@ -144,7 +144,8 @@ class AnchorMidcycleGap(BaseModel, frozen=True):
 
     ltm_margin: float                   # fraction — committed financial_summary EBIT / revenue
     median_margin: float                # fraction — the anchor's own margin.value
-    median_years: int
+    # None where the margin median states no year count (PR #877 round 2): it was written 0
+    median_years: int | None
     gap_pts: float                      # (ltm − median) × 100, signed
     # "above" | "below" the median — a margin's POSITION, named so: `direction` is a forbidden field
     # token (test_dossier_schema_has_no_conclusion_field), and the guard is right to be blunt
@@ -1349,7 +1350,7 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
                  f"points; sources said to agree within {BASIS_AGREE_PTS:g}")
     return AnchorMidcycleGap(
         ltm_margin=round(ltm, 6), median_margin=round(median_margin, 6),
-        median_years=int(median_years or 0), gap_pts=round(gap, 2),
+        median_years=None if median_years is None else int(median_years), gap_pts=round(gap, 2),
         ltm_side="above" if gap > 0 else "below", basis_year=by,
         basis_gap_pts=(round(bgap, 2) if bgap is not None else None),
         basis_gaap_margin=(round(g_m, 6) if g_m is not None else None),
