@@ -323,6 +323,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "`our_ebitda` converts it, or not shown; an unknown mid-cycle year count is None; 'No "
         "Data Available' is a marker",
     ),
+    (
+        "2026-10-30.submissions-pages",
+        "a filings window that reaches past the submissions index's recent page (a heavy "
+        "filer's newest ~1,000 filings) reads every older page it overlaps, through the SEC "
+        "client, each checked against the document's listing of it and read again fresh when "
+        "the two are of different vintages, or raises naming the page it could not read — "
+        "never a short list read as complete (audit E1-D10)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

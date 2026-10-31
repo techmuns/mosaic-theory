@@ -19,7 +19,7 @@ import urllib.parse
 from collections import OrderedDict
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from typing import Any, NoReturn, cast
 
 from pydantic import BaseModel
@@ -46,6 +46,10 @@ from vinci.sec import build_efts_http, build_sec_http
 
 _COMPANYFACTS = "https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
 _SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik}.json"
+#: an older submissions page, named in the document's `filings.files`. NOT immutable: EDGAR
+#: re-cuts the pages from the newest end whenever the recent page's boundary moves, so a page is
+#: cached no longer than the document listing it (`_ONE_DAY`) and checked against that listing
+_SUBMISSIONS_PAGE = "https://data.sec.gov/submissions/{name}"
 _FRAMES = "https://data.sec.gov/api/xbrl/frames/{ns}/{concept}/{unit}/{period}.json"
 _EFTS = "https://efts.sec.gov/LATEST/search-index"
 _ONE_DAY = 86_400.0
@@ -396,6 +400,59 @@ SHARES_TAG_WAVG = "us-gaap:WeightedAverageNumberOfSharesOutstandingBasic"   # PE
 _SUBMISSIONS_MEMO_MAX = 2
 
 
+def _page_filings(cik10: str, rows: dict[str, Any], forms: tuple[str, ...],
+                  since: date | None) -> list[Filing]:
+    """One submissions page's filings of ``forms`` filed on or after ``since``, in page order
+    (newest first). The recent page and every older page share these parallel arrays."""
+    out: list[Filing] = []
+    n = len(rows.get("accessionNumber", []))
+    for i in range(n):
+        form = rows["form"][i]
+        if form not in forms:
+            continue
+        fdate = date.fromisoformat(rows["filingDate"][i])
+        if since and fdate < since:
+            continue
+        items_raw = rows.get("items", [""] * n)[i] or ""
+        rdate_raw = rows.get("reportDate", [""] * n)[i] or ""
+        out.append(
+            Filing(
+                cik=cik10,
+                form=form,
+                filing_date=fdate,
+                accession=rows["accessionNumber"][i],
+                items=[x.strip() for x in items_raw.split(",") if x.strip()],
+                primary_doc=rows.get("primaryDocument", [None] * n)[i],
+                report_date=date.fromisoformat(rdate_raw) if rdate_raw else None,
+            )
+        )
+    return out
+
+
+class _StalePageError(Exception):
+    """An older submissions page disagrees with the document's listing of it: the two are of
+    different vintages. Never an HttpError — `recent_filings` reads the window again, fresh."""
+
+
+def _page_mismatch(listing: dict[str, Any], rows: dict[str, Any]) -> str | None:
+    """How an older page's rows disagree with the document's listing of it, or None.
+
+    Measured on the 35 document/page pairs this machine's caches hold from ONE run (fetched within
+    an hour of each other): the row count is the listed `filingCount` on all 35, the oldest row
+    is `filingFrom` on all 35, and the newest is at most `filingTo` + 1 day. A page of another
+    vintage breaks one of the three — EDGAR re-cuts the pages from the newest end."""
+    n = len(rows["accessionNumber"])
+    dates = [d for d in rows["filingDate"] if d]
+    count, frm, to = listing.get("filingCount"), listing.get("filingFrom"), listing.get("filingTo")
+    if count is not None and n != count:
+        return f"{n} rows where it lists {count}"
+    if dates and frm and min(dates) != frm:
+        return f"its oldest row is {min(dates)} where it lists {frm}"
+    if dates and to and date.fromisoformat(max(dates)) > date.fromisoformat(to) + timedelta(days=1):
+        return f"its newest row is {max(dates)} where it lists {to}"
+    return None
+
+
 @dataclass(frozen=True)
 class _RememberedFailure:
     """A remembered ``HttpError``, stored as its TYPE and ARGS — never the instance.
@@ -612,7 +669,7 @@ class EdgarClient:
                 self._submissions_memo.move_to_end(cik10)
             return remembered
 
-    def _submissions(self, cik: int | str) -> dict[str, Any]:
+    def _submissions(self, cik: int | str, *, fresh: bool = False) -> dict[str, Any]:
         """The submissions document for a CIK. ONE fetch shape for every consumer in this class —
         the URL and the TTL are stated once, so a change to either cannot land at one call site and
         not the other (which would silently double the SEC request rate per dossier).
@@ -642,9 +699,12 @@ class EdgarClient:
         committed dossiers) aborted the whole assembly on its first storm and never reached the
         memo. `_drawdown_cause` now catches `HttpError` and degrades to UNKNOWN, so the measured
         187.4 s -> 15.5 s applies to every name rather than to the no-gap subset.
+
+        ``fresh`` fetches past the memo and the disk cache: a window whose older page disagrees
+        with this document's listing reads both again (:meth:`recent_filings`).
         """
         cik10 = pad_cik(cik)
-        remembered = self._recall_submissions(cik10)
+        remembered = None if fresh else self._recall_submissions(cik10)
         if remembered is not None:
             if isinstance(remembered, _RememberedFailure):
                 # A FRESH equivalent of the SAME type with the SAME args, so every existing
@@ -652,7 +712,8 @@ class EdgarClient:
                 remembered.raise_again()
             return remembered
         try:
-            raw = self._http.get_json(_SUBMISSIONS.format(cik=cik10), ttl_seconds=_ONE_DAY)
+            raw = self._http.get_json(_SUBMISSIONS.format(cik=cik10),
+                                      ttl_seconds=0.0 if fresh else _ONE_DAY)
         except HttpError as exc:
             self._remember_submissions(cik10, _RememberedFailure(type(exc), exc.args))
             raise
@@ -693,29 +754,105 @@ class EdgarClient:
     def recent_filings(
         self, cik: int | str, *, forms: tuple[str, ...] = ("8-K",), since: date | None = None
     ) -> list[Filing]:
+        """The filer's filings of ``forms``, newest first — those filed on or after ``since``.
+
+        A WINDOW READS EVERY PAGE IT OVERLAPS (audit E1-D10). The submissions document holds a
+        filer's newest ~1,000 filings in `filings.recent` and lists the rest as older pages
+        (`filings.files`); reading `recent` alone ended a long window silently at its first row
+        (Gartner's recent page starts 2021-12-02). When ``since`` falls before the recent page, each
+        older page whose span reaches ``since`` is read too, through the same SEC client and its
+        shared limiter; a page that cannot be read RAISES, naming it — never a short list that reads
+        as "no filings" (:meth:`_older_filings`). With no ``since`` only the recent page is read, as
+        before: the caller asked for no window.
+
+        A PAGE OF ANOTHER VINTAGE IS READ AGAIN, never joined (review round 2). EDGAR re-cuts the
+        older pages from the newest end whenever the recent page's boundary moves, so a page cached
+        apart from its document leaves a hole before the recent page or repeats its rows. Each page
+        is checked against the listing that names it (:func:`_page_mismatch`); on a disagreement
+        the document and its pages are fetched fresh once, and a second disagreement raises."""
         cik10 = pad_cik(cik)
-        data = self._submissions(cik10)
-        recent = data.get("filings", {}).get("recent", {})
-        out: list[Filing] = []
-        n = len(recent.get("accessionNumber", []))
-        for i in range(n):
-            form = recent["form"][i]
-            if form not in forms:
-                continue
-            fdate = date.fromisoformat(recent["filingDate"][i])
-            if since and fdate < since:
-                continue
-            items_raw = recent.get("items", [""] * n)[i] or ""
-            rdate_raw = recent.get("reportDate", [""] * n)[i] or ""
-            out.append(
-                Filing(
-                    cik=cik10,
-                    form=form,
-                    filing_date=fdate,
-                    accession=recent["accessionNumber"][i],
-                    items=[x.strip() for x in items_raw.split(",") if x.strip()],
-                    primary_doc=recent.get("primaryDocument", [None] * n)[i],
-                    report_date=date.fromisoformat(rdate_raw) if rdate_raw else None,
-                )
-            )
+        if since is None:
+            recent = self._submissions(cik10).get("filings", {}).get("recent", {})
+            return _page_filings(cik10, recent, forms, since)
+        try:
+            return self._window(cik10, forms, since, fresh=False)
+        except _StalePageError:
+            return self._window(cik10, forms, since, fresh=True)
+
+    def _window(self, cik10: str, forms: tuple[str, ...], since: date, *,
+                fresh: bool) -> list[Filing]:
+        """The recent page's filings and every overlapping older page's, each accession once."""
+        filings = self._submissions(cik10, fresh=fresh).get("filings", {})
+        recent = filings.get("recent", {})
+        out = _page_filings(cik10, recent, forms, since)
+        seen = {f.accession for f in out}
+        for f in self._older_filings(cik10, recent, filings.get("files") or [], forms, since,
+                                     fresh=fresh):
+            if f.accession not in seen:  # pages are disjoint; a repeat is a vintage's residue
+                seen.add(f.accession)
+                out.append(f)
         return out
+
+    def _older_filings(self, cik10: str, recent: dict[str, Any], files: list[dict[str, Any]],
+                       forms: tuple[str, ...], since: date, *, fresh: bool) -> list[Filing]:
+        """The filings of ``forms`` on the older submissions pages a window from ``since``
+        overlaps, newest page first — none when the recent page already reaches back to ``since``.
+
+        Every way a page can fail to be read is an HttpError naming it: unreachable, answered
+        with something that is not JSON (an interstitial's ValueError), not an object, missing its
+        arrays, or listed with no name. Several windowed callers degrade only an HttpError to
+        UNKNOWN, so any other exception here would abort an assembly over one page. A page whose
+        rows disagree with its listing raises `_StalePageError` on a cached read, and an HttpError
+        naming the disagreement on a ``fresh`` one."""
+        why = f"so the filings window from {since} is incomplete"
+        try:
+            # a blank date on a row the caller did not ask for is not read here either
+            dates = [date.fromisoformat(d) for d in recent.get("filingDate") or [] if d]
+        except ValueError as exc:
+            raise HttpError(f"the submissions document for CIK{cik10} carries a filing date that "
+                            f"is not a date, {why}: {exc}") from exc
+        if not files or (dates and min(dates) <= since):
+            return []
+        out: list[Filing] = []
+        for page in files:
+            name = page.get("name")
+            if not name:
+                raise HttpError(f"an older submissions page for CIK{cik10} is listed with no "
+                                f"name, {why}")
+            try:
+                to = page.get("filingTo")
+                # a page's rows run to its listed `filingTo` + 1 day (17 of 35 same-run pairs)
+                if to and date.fromisoformat(to) + timedelta(days=1) < since:
+                    continue  # wholly before the window
+                rows = self._older_page(str(name), fresh=fresh)
+                if not isinstance(rows, dict):
+                    raise TypeError(f"{type(rows).__name__}, not a JSON object")
+                stale = _page_mismatch(page, rows)
+                if stale is None:
+                    out += _page_filings(cik10, rows, forms, since)
+            except (HttpError, ValueError, KeyError, TypeError, IndexError) as exc:
+                raise HttpError(f"older submissions page {name} for CIK{cik10} could not be read, "
+                                f"{why}: {type(exc).__name__}: {exc}") from exc
+            if stale is not None:
+                if not fresh:
+                    raise _StalePageError(str(name))
+                raise HttpError(f"older submissions page {name} for CIK{cik10} disagrees with the "
+                                f"document's listing of it, read fresh ({stale}), {why}")
+        return out
+
+    def _older_page(self, name: str, *, fresh: bool = False) -> Any:
+        """One older submissions page. Its FAILURE is remembered in the submissions memo under the
+        page's name, as `_submissions` remembers the document's: one assembly makes several
+        windowed reads of a filer, and a degraded feed would otherwise re-run the retry storm at
+        each. A page READ is not remembered — the disk holds it, and a heavy filer's pages would
+        evict the document. Only the first failing page of a window is ever reached, so a filer's
+        memo holds at most its document and that page."""
+        remembered = self._recall_submissions(name)
+        if isinstance(remembered, _RememberedFailure):
+            remembered.raise_again()
+        try:
+            return self._http.get_json(_SUBMISSIONS_PAGE.format(name=name),
+                                       ttl_seconds=0.0 if fresh else _ONE_DAY)
+        except HttpError as exc:
+            self._remember_submissions(name, _RememberedFailure(type(exc), exc.args))
+            raise
