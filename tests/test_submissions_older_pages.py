@@ -133,3 +133,124 @@ def test_a_malformed_older_page_raises_an_http_error_naming_it(how: str) -> None
     with pytest.raises(HttpError, match="older submissions page"):
         _client(sec).recent_filings(CIK, forms=("8-K",), since=date(2021, 6, 1))
     assert not any(u.endswith("/None") for u in sec.urls)
+
+
+# ─── review round 2 (coordinator) ─────────────────────────────────────────────────────────────
+# EDGAR RE-CUTS the older pages from the newest end whenever the recent page's boundary moves:
+# WFC's page -001 spanned 2020-02-11..2024-10-20 on 2026-06-30 and 2020-05-29..2025-10-28 on
+# 2026-10-30. A page cached longer than the document listing it therefore belongs to another
+# vintage: it leaves a hole between its newest row and the recent page, or repeats rows the
+# recent page holds. Measured on the 35 document/page pairs this machine's caches hold from one
+# run, a page's rows always match its listing: the count is `filingCount`, the oldest row is
+# `filingFrom`, the newest is at most `filingTo` + 1 day.
+
+def _rows(src: dict[str, Any], keep: list[int]) -> dict[str, Any]:
+    """The rows ``keep`` of a page's parallel arrays (the non-array keys carried as they are)."""
+    return {k: ([v[i] for i in keep] if isinstance(v, list) else v) for k, v in src.items()}
+
+
+_N = len(PAGE1["accessionNumber"])
+_FIRST_8K = PAGE1["form"].index("8-K")
+#: page -001 as an OLDER vintage would serve it: its newest rows, the first 8-K among them,
+#: re-cut onto the recent page since — so a hole where they were
+STALE_PAGE1 = _rows(PAGE1, list(range(_FIRST_8K + 1, _N)))
+
+
+class _Vintages(_Sec):
+    """Serves ``page`` and ``doc`` from the cache (any TTL above 0) and the consistent pair
+    (DOC, PAGE1) when asked for a fresh copy (``ttl_seconds=0``), or ``page`` always."""
+
+    def __init__(self, page: dict[str, Any], doc: dict[str, Any] | None = None, *,
+                 always_stale: bool = False) -> None:
+        super().__init__()
+        self.page, self.doc, self.always_stale = page, doc or DOC, always_stale
+        self.ttls: dict[str, list[float | None]] = {}
+
+    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
+        self.urls.append(url)
+        self.ttls.setdefault(url.rsplit("/", 1)[-1], []).append(ttl_seconds)
+        fresh = ttl_seconds == 0 and not self.always_stale
+        if url.endswith(f"CIK{CIK}.json"):
+            return cast(dict[str, Any], DOC if fresh else self.doc)
+        if url.endswith("-submissions-001.json"):
+            return cast(dict[str, Any], PAGE1 if fresh else self.page)
+        raise HttpError(f"not served: {url}")
+
+
+def test_an_older_page_is_cached_no_longer_than_the_document_listing_it() -> None:
+    """A page held 30 days beside a document held 1 is two vintages a day after the boundary
+    moves. The page takes the document's TTL."""
+    sec = _Vintages(PAGE1)
+    _client(sec).recent_filings(CIK, forms=("8-K",), since=date(2021, 6, 1))
+    assert sec.ttls[f"CIK{CIK}-submissions-001.json"] == sec.ttls[f"CIK{CIK}.json"]
+
+
+def test_a_stale_older_page_is_read_again_never_left_with_a_hole() -> None:
+    """The cached -001 is of an older vintage (its newest rows, an 8-K among them, missing): its
+    rows disagree with the listing, so the window is read again fresh — never returned short."""
+    sec = _Vintages(STALE_PAGE1)
+    got = {f.accession for f in _client(sec).recent_filings(CIK, forms=("8-K",),
+                                                              since=date(2021, 6, 1))}
+    assert _page1_8ks_since(date(2021, 6, 1)) <= got
+    assert 0 in sec.ttls[f"CIK{CIK}-submissions-001.json"]  # read fresh
+
+
+def test_a_page_that_never_matches_its_listing_raises_naming_it() -> None:
+    sec = _Vintages(STALE_PAGE1, always_stale=True)
+    with pytest.raises(HttpError, match=r"submissions-001.*listing"):
+        _client(sec).recent_filings(CIK, forms=("8-K",), since=date(2021, 6, 1))
+
+
+def test_pages_of_two_vintages_never_return_a_filing_twice() -> None:
+    """A NEWER -001 beside an older document: re-cut from the newest end, it holds the recent
+    page's oldest rows too (BMO's document of 07-13 beside its -001 of 08-06 returned 529
+    accessions twice). Its oldest row disagrees with the listing, so the pair is read fresh."""
+    rec = DOC["filings"]["recent"]
+    k = 5
+    older = list(range(len(rec["accessionNumber"]) - k, len(rec["accessionNumber"])))
+    newer = {key: ([rec[key][i] for i in older] + PAGE1[key][:_N - k]
+                   if isinstance(PAGE1.get(key), list) and key in rec else PAGE1[key])
+             for key in PAGE1}
+    forms = tuple(sorted(set(rec["form"]) | set(PAGE1["form"])))
+    got = _client(_Vintages(newer)).recent_filings(CIK, forms=forms, since=date(2021, 6, 1))
+    accessions = [f.accession for f in got]
+    assert len(accessions) == len(set(accessions))
+
+
+def test_a_repeated_accession_across_pages_is_returned_once() -> None:
+    """Belt to the listing check, on a shape no cached pair shows (0 of 35 share a date with the
+    newer page): a page consistent with its listing whose newest row, dated `filingTo` + 1,
+    repeats the recent page's oldest accession."""
+    rec = DOC["filings"]["recent"]
+    page = json.loads(json.dumps(PAGE1))
+    page["accessionNumber"][0] = rec["accessionNumber"][-1]
+    page["form"][0] = rec["form"][-1]
+    page["filingDate"][0] = "2021-12-01"
+    got = _client(_Vintages(page)).recent_filings(CIK, forms=(rec["form"][-1],),
+                                                  since=date(2021, 6, 1))
+    accessions = [f.accession for f in got]
+    assert accessions.count(rec["accessionNumber"][-1]) == 1
+
+
+def test_a_page_listed_to_the_day_before_the_window_is_still_read() -> None:
+    """A page's listed `filingTo` is the newer page's first day minus 2, while its rows run to
+    minus 1 on 17 of the 35 same-run pairs measured: a window opening on `filingTo` + 1 must read
+    the page. Page -001 listed to 2021-11-30, its newest row dated 2021-12-01."""
+    page = json.loads(json.dumps(PAGE1))
+    page["filingDate"][0] = "2021-12-01"
+    got = _client(_Vintages(page)).recent_filings(CIK, forms=(page["form"][0],),
+                                                  since=date(2021, 12, 1))
+    assert page["accessionNumber"][0] in {f.accession for f in got}
+
+
+def test_a_blank_filing_date_on_an_unrequested_row_does_not_stop_the_read() -> None:
+    """`assay.py` records a blank `filingDate` as observed (0 of 2,961 cached documents carry
+    one today). On a row of a form the caller did not ask for, main returned the 8-Ks; the
+    early exit parsed every recent date and raised a ValueError past the HttpError-only
+    callers."""
+    doc = json.loads(json.dumps(DOC))
+    rec = doc["filings"]["recent"]
+    rec["filingDate"][next(i for i, f in enumerate(rec["form"]) if f != "8-K")] = ""
+    got = _client(_Vintages(PAGE1, doc)).recent_filings(CIK, forms=("8-K",),
+                                                        since=date(2021, 6, 1))
+    assert _page1_8ks_since(date(2021, 6, 1)) <= {f.accession for f in got}
