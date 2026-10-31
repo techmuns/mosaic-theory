@@ -384,3 +384,179 @@ def test_review_round_1_a_negator_is_a_word_and_even_if_is_not_a_condition() -> 
     assert states_going_concern_doubt(
         "Even if the offering closes there is substantial doubt about our ability to continue as "
         "a going concern.") is True
+
+
+# --- review round 2 on #879 (coordinator review at 97f4927a) -------------------------------------
+# The guards the first rounds added each swallowed real conclusions; these pin both directions.
+
+#: DOUBT, in the IFRS / ISA 570 term of art: "a material uncertainty … may cast significant doubt"
+#: is the CONCLUSION, not a hypothetical — the modal belongs to the term.
+IFRS_DOUBT = {
+    "KYIV 10-K 0002062440-26-000006":
+        "However, given the uncertainty and exogenous nature of the ongoing war and potential "
+        "sanctions, as well as potential new counter-sanctions we concluded that a material "
+        "uncertainty remains related to events or conditions that may cast substantial doubt on "
+        "our ability to continue as a going concern, such that we may be unable to realize our "
+        "assets and discharge our liabilities in the normal course of our business.",
+    "LAR 10-K 0001193125-26-118478":
+        "The significance of the assumptions underlying the forecast cash flows from "
+        "Cauchari-Olaroz, the amount and timing of distribution of the cash flow to the Company "
+        "and the requirement to satisfy the current portion of long-term debt, gives rise to "
+        "material uncertainty which may cast significant doubt (or substantial doubt as "
+        "contemplated by Public Company Accounting Oversight Board (“PCAOB”) standards) on the "
+        "Company’s ability to continue as a going concern.",
+    "the review's IFRS form":
+        "We concluded that a material uncertainty exists that may cast significant doubt on our "
+        "ability to continue as a going concern.",
+}
+
+#: DOUBT: a whether-clause about something ELSE inside a real conclusion is not the frame.
+WHETHER_IN_A_CONCLUSION = {
+    "assessing whether to file":
+        "The Company is assessing whether to file for protection under Chapter 11 of the "
+        "Bankruptcy Code, and these conditions raise substantial doubt about its ability to "
+        "continue as a going concern.",
+    "considering whether to restructure":
+        "The Board is considering whether to pursue an in-court restructuring, and substantial "
+        "doubt exists about the Company's ability to continue as a going concern.",
+    "until lenders determine whether":
+        "Until the lenders determine whether to waive the covenant default, there is substantial "
+        "doubt about our ability to continue as a going concern.",
+    "after considering whether, noun-first conclusion":
+        "After considering whether its plans can be implemented, management concluded that "
+        "substantial doubt exists about the Company's ability to continue as a going concern.",
+    "in assessing whether, IFRS conclusion":
+        "In assessing whether the going concern basis is appropriate, the Directors concluded "
+        "that a material uncertainty exists that casts significant doubt on the Group's ability "
+        "to continue as a going concern.",
+}
+
+#: DOUBT: only a doubt that HAS BEEN alleviated, unnegated, is denied — a purpose, a future, an
+#: "until" and "no assurance" are not.
+NOT_ALLEVIATED = {
+    "plans to alleviate":
+        "These conditions raise substantial doubt about our ability to continue as a going "
+        "concern, and management's plans to alleviate substantial doubt are described below.",
+    "in order to alleviate":
+        "In order to alleviate substantial doubt about our ability to continue as a going "
+        "concern, we will need to raise additional capital.",
+    "no assurance plans will alleviate":
+        "There can be no assurance that the Company's plans will alleviate substantial doubt about "
+        "its ability to continue as a going concern.",
+    "until it has been alleviated":
+        "The Company will remain on the cash basis until the substantial doubt about its ability "
+        "to continue as a going concern has been alleviated.",
+}
+
+#: None: the standard cited as POLICY (the citation frame restored), and the policy's own words.
+CITED_POLICY = {
+    "RZLV 10-K 0001193125-26-132456":
+        "In accordance with ASC 205-40, management’s analysis can only include the potential "
+        "mitigating impact of management’s plans that have not been fully implemented as of the "
+        "issuance date if (a) it is probable that management’s plans will be effectively "
+        "implemented on a timely basis, and (b) it is probable that the plans, when implemented, "
+        "will alleviate the relevant conditions or events that raise substantial doubt about the "
+        "Company’s ability to continue as a going concern.",
+    "the review's ASC 205-40 policy":
+        "In accordance with ASC 205-40, the Company evaluates conditions and events that raise "
+        "substantial doubt about its ability to continue as a going concern.",
+    "MNPR 10-K 0001437749-26-010025":
+        "Going Concern Assessment The Company applies Accounting Standards Codification (“ASC”) "
+        "205 - 40 (“ASC 205 - 40” ), Disclosure of Uncertainties about an Entity ’ s Ability to "
+        "Continue as a Going Concern , which the Financial Accounting Standards Board (“FASB”) "
+        "issued to provide guidance on determining when and how reporting companies must "
+        "disclose going concern uncertainties in their financial statements.",
+    "CSTL 10-K 0001628280-26-012272 (its second policy sentence)":
+        "When substantial doubt exists, management evaluates whether the mitigating effect of its "
+        "plans sufficiently alleviates substantial doubt about the Company’s ability to continue "
+        "as a going concern.",
+    "CSTL 10-K 0001628280-26-012272":
+        "The mitigating effect of management’s plans, however, is only considered if both: (1) "
+        "it is probable that the plans will be effectively implemented within one year after the "
+        "date that the financial statements are issued; and (2) it is probable that the plans, "
+        "when implemented, will mitigate the relevant conditions or events that raise substantial "
+        "doubt about the Company’s ability to continue as a going concern within one year after "
+        "the date that the financial statements are issued.",
+}
+
+#: None: in-class sentences main and the first rounds still read as DOUBT.
+IN_CLASS = {
+    "SHBI 10-K 0001035092-26-000014 (comma-split denial)":
+        "Based on management's going concern evaluation, management believes that there are no "
+        "conditions or events, considered in the aggregate, that raise substantial doubt about the "
+        "Company's ability to continue as a going concern within one year of the date of the "
+        "issuance of the financial statements.",
+    "ADC 10-K 0000917251-26-000013 (denial)":
+        "No conditions or events that raised substantial doubt about the ability to continue as a "
+        "going concern within one year were identified as of the issuance date of the "
+        "consolidated financial statements contained in this Annual Report on Form 10-K.",
+    "DBVT 10-K 0001628280-26-021504 (no longer present)":
+        "As a result of the proceeds received from the subsequent exercise of the ABSA and BS "
+        "warrants of $ 94 million (€ 81 million) and with existing cash and cash equivalents as of "
+        "December 31, 2025 of $ 194 million, management has determined that the Company has "
+        "sufficient liquidity to fund its operations for at least twelve months from the date of "
+        "issuance of this Form 10‑K and that the conditions that previously raised substantial "
+        "doubt about the Company’s ability to continue as a going concern are no longer present.",
+    "PCT 10-K 0001193125-26-076801 (no longer present)":
+        "The Series B Convertible Perpetual Preferred Stock funding has led management to conclude "
+        "that the previously disclosed substantial doubt about the Company's ability to continue "
+        "as a going concern for a twelve-month period following the date that these financial "
+        "statements were available to be issued is no longer present.",
+    "PSIX 10-K 0001628280-26-013207 (removal)":
+        "federal rate of 21.0 % primarily due to a large decrease in the valuation allowance "
+        "following the Company’s removal of substantial doubt about its ability to continue as a "
+        "going concern and improved financial performance.",
+    "AIRS 10-K 0001870940-26-000011 (frame)":
+        "Going Concern Management evaluates at each annual and interim period whether there are "
+        "conditions or events, considered in the aggregate, that raise substantial doubt about our "
+        "ability to continue as a going concern within one year after the date that the "
+        "consolidated financial statements are issued.",
+    "ADUS 10-K 0001437749-26-005352 (frame)":
+        "Going Concern In connection with the preparation of the financial statements for the "
+        "years ended December 31, 2025 and 2024 , the Company conducted an evaluation as to "
+        "whether there were conditions and events, considered in the aggregate, which raised "
+        "substantial doubt as to the entity’s ability to continue as a going concern within one "
+        "year after the date of the issuance, of the financial statements.",
+    "OGN 10-Q 0001628280-26-029532 (modal)":
+        "Failure to raise significant amounts of funding to repay our 2028 debt at maturity would "
+        "adversely affect our financial condition and could result in a going concern "
+        "qualification with respect to our annual audited financial statements.",
+    "EBS 10-K 0001367644-26-000015 (modal)":
+        "We may be unable to continue to progress on or implement our strategic plans and sustain "
+        "our current operating performance, in which case our business, results of operations, "
+        "financial condition and prospects could be adversely affected, and which may give rise "
+        "to substantial doubt regarding our ability to continue as a going concern.",
+    "DNTH 10-K 0001690585-26-000006 (modal)":
+        "Future reports on our financial statements may include an explanatory paragraph with "
+        "respect to our ability to continue as a going concern.",
+    "AGL 10-K 0001628280-26-011655 (modal)":
+        "If unfunded, such losses have in the past, and could in the future, result in "
+        "substantial doubt related to such subsidiary’s ability to continue operating as a going "
+        "concern, and the contractual and regulatory consequences of such failure could have a "
+        "material adverse effect on our business, financial condition, cash flows, and results of "
+        "operations.",
+    "LRMR 10-Q 0001193125-26-224087 (frame, 'certain conditions'; main read it None)":
+        "2014-15, “Disclosure of Uncertainties about an Entity’s Ability to Continue as a Going "
+        "Concern”, the Company has evaluated whether there are certain conditions and events, "
+        "considered in the aggregate, that raise substantial doubt about the Company’s ability to "
+        "continue as a going concern within one year after the date that these condensed "
+        "consolidated financial statements are issued.",
+    "LODE 10-K 0001437749-26-009589 (modal)":
+        "If we were unable to obtain any necessary additional funds, this could have an immediate "
+        "material adverse effect on liquidity and raise substantial doubt about our ability to "
+        "continue as a going concern.",
+}
+
+
+@pytest.mark.parametrize("case", [*IFRS_DOUBT, *WHETHER_IN_A_CONCLUSION, *NOT_ALLEVIATED])
+def test_round_2_conclusions_the_guards_must_not_swallow(case: str) -> None:
+    """(+) Review round 2: each is doubt, and a guard the first rounds added read it as None."""
+    text = {**IFRS_DOUBT, **WHETHER_IN_A_CONCLUSION, **NOT_ALLEVIATED}[case]
+    assert find_going_concern_statement(text) is not None, case
+
+
+@pytest.mark.parametrize("case", [*CITED_POLICY, *IN_CLASS])
+def test_round_2_policy_denials_frames_and_modals_are_not_doubt(case: str) -> None:
+    """(−) Review round 2: the restored citation frame, the policy's own words, and the in-class
+    denials, frames and hypotheticals the corpus still read as DOUBT."""
+    assert find_going_concern_statement({**CITED_POLICY, **IN_CLASS}[case]) is None, case

@@ -9,6 +9,9 @@ superseded-by:
 
 # A going-concern statement is read as stated: a denial, a hypothetical and the frame are not doubt, and a conclusion that cites ASC 205-40 is (audit E2-D17)
 
+*The rules below are as of review round 2. Each review round's change is recorded at the end of
+this record.*
+
 **WHAT.** `vinci/edgar/going_concern.find_going_concern_statement` is the one detector behind the
 ranker's structural demote (`rank/structural.py`) and the dossier's filing reader
 (`filing_sections`). It misread both directions:
@@ -20,29 +23,63 @@ ranker's structural demote (`rank/structural.py`) and the dossier's filing reade
 
 Each rule below answers a real sentence it misread (the filer and accession are in
 `tests/test_going_concern_precision.py`):
-- **The frame is the QUESTION or the POLICY, never a citation.**
-  - It is the "evaluates / considers / concludes / determines WHETHER" sentence, or "required to
-    make certain additional disclosures if…".
-  - Citing ASU 2014-15 or ASC 205-40 no longer makes a sentence a frame: Wolfspeed's 10-Q
-    concludes doubt "in accordance with the requirements of ASC 205-40".
-  - A frame sentence that states its own conclusion OF DOUBT is read as a conclusion. CRVS's
-    "evaluated whether … and concluded that our existing cash … are sufficient" stays a frame.
-- **A denial names the doubt it denies:** "no longer substantial doubt" (EOSE), "no substantial
-  doubt" (PHAT), "does not believe that substantial doubt exists" (ACRS), "no material
-  uncertainty exists" (MAR), and a doubt that "has been alleviated".
-- **"Alleviate" denies the doubt only when no negator governs it.** "Management's plans
-  alleviated substantial doubt" (RLMD's 2025 10-K) is a denial. "The management plan cannot
-  alleviate the substantial doubt" (a 20-F) is doubt, and read None before.
-- **A hypothetical needs its modal on the doubt itself:**
-  - "could raise substantial doubt" (ZURA);
-  - "may conclude that there is substantial doubt" (MNLK);
+- **The frame is the going-concern QUESTION, the cited STANDARD or the disclosure POLICY, and a
+  sentence that states its own result is never a frame.**
+  - The question is a "whether" whose object IS the evaluation: "whether there are (certain)
+    conditions or events" (TECX, MVST, AIRS's "evaluates at each … period whether", LRMR), or
+    "whether a material uncertainty exists" (the ISA auditor). A whether-clause about anything
+    else ("assessing whether to file for protection under Chapter 11, and these conditions raise
+    substantial doubt") is not a frame.
+  - The standard cited ("in accordance with", ASU 2014-15, ASC 205-40, MNPR's spaced "205 - 40")
+    is policy boilerplate, as main read it (RZLV).
+  - The policy's own words are WVE's "required to make certain additional disclosures" and CSTL's
+    "the mitigating effect of management's / its plans".
+  - The RESULT that overrides the frame is:
+    - "concluded / determined that … raise(d) substantial doubt";
+    - "… substantial doubt exists" or "… a material uncertainty exists / remains";
+    - "these conditions raise substantial doubt";
+    - a plain "there is substantial doubt" that no "whether" or "if" asks.
+
+    So Wolfspeed's "concluded that there is substantial doubt …, in accordance with … ASC
+    205-40" and VSTM's "As a result of the assessment in accordance with the applicable
+    accounting standards, these conditions raise substantial doubt" are doubt. CRVS's "evaluated
+    whether … and concluded that our existing cash … are sufficient" stays a frame.
+- **A denial names the doubt it denies:**
+  - "no (longer) substantial doubt" (EOSE, PHAT, MNPR's "has no substantial doubt");
+  - "no material uncertainty exists" (MAR);
+  - "does not believe that substantial doubt exists" (ACRS);
+  - SHBI's and ADC's "no conditions or events, considered in the aggregate, that raise(d)
+    substantial doubt";
+  - DBVT's and PCT's doubt that "is / are no longer present";
+  - PSIX's "removal of substantial doubt".
+- **Only a doubt that HAS BEEN alleviated is denied, and only where nothing in the sentence
+  unsettles it.** That is RLMD's "plans alleviated substantial doubt", or "substantial doubt … has
+  been alleviated". Each of these leaves the doubt standing:
+  - a purpose: "plans to alleviate", "in order to alleviate";
+  - a future: "will alleviate";
+  - "until …";
+  - "no assurance …" (RZLV);
+  - XIAO's "cannot alleviate".
+- **A hypothetical needs its modal to reach the doubt within a few words.** The forms are:
+  - ZURA's "could raise substantial doubt";
+  - LODE's "could have an immediate material adverse effect on liquidity and raise substantial
+    doubt";
+  - AGL's "could in the future, result in substantial doubt";
+  - OGN's "could result in a going concern qualification";
+  - EBS's "may give rise to …";
+  - DNTH's "may include an explanatory paragraph";
+  - MNLK's "may conclude that there is substantial doubt";
   - "substantial doubt could exist";
-  - "may also contain statements expressing substantial doubt";
   - "If … there remains substantial doubt".
 
-  Real conclusions stay doubt. SOCC's "…, if at all, substantial doubt exists" is doubt: the comma
-  ends the conditional. SANA's "may not be sufficient …, and there is substantial doubt" is doubt:
-  the modal is not on the doubt.
+  These stay doubt:
+  - SOCC's "…, if at all, substantial doubt exists": the comma ends the conditional.
+  - SANA's "may not be sufficient …, and there is substantial doubt": the modal never reaches the
+    doubt.
+  - "Even if … there is substantial doubt": concessive.
+  - **"Cast … doubt" is NOT a hypothetical.** In the IFRS / ISA 570 term of art, "a material
+    uncertainty exists that may cast significant doubt", the modal belongs to the term and the
+    sentence is a conclusion (KYIV, LAR, USAR's 10-Q).
 - **Version.** Extraction version `2026-10-30.E2-D17` (Python and dossier.js), re-pinned.
 
 **WHY.** The demote is demote-only and the module says so: an ambiguous mention is NOT doubt. A
@@ -65,13 +102,17 @@ it hid a real conclusion because of the standard it named.
   detector against this branch's, with `scripts/going_concern_flips.py --ref origin/main`
   (committed, so the counts re-run from the repo; cache only).
   - 582 filings read; 1 more raised in `html_to_text` (below).
-  - DOUBT on 187 filings on main, **144** here.
-  - **43 DOUBT → None**, read one by one: frames (auditor "Conclude whether", "considers
-    whether"), the disclosure policy, denials, alleviations, and risk-factor hypotheticals. None
-    states that the filer is in doubt now.
-  - **0 None → DOUBT.** The first draft flipped CRVS's sufficiency conclusion; the conclusion
-    override was narrowed to a conclusion of doubt.
-  - 5 filings keep DOUBT but now quote another sentence. In Wolfspeed's and VSTM's cases it is
+  - DOUBT on 187 filings on main, **125** here (as of round 2; 144 before it).
+  - **62 DOUBT → None**, read one by one: frames (the auditor's "Conclude whether", "considers
+    whether", AIRS's, TOI's and ADUS's "evaluation as to whether"), the policy (WVE, CSTL, MNPR's
+    standard), denials (SHBI, ADC, DBVT, PSIX), alleviations, and risk-factor hypotheticals (OGN,
+    EBS, DNTH, AGL, LODE). None states that the filer is in doubt now.
+  - **0 None → DOUBT.**
+    - The first draft flipped CRVS's sufficiency conclusion; the conclusion override was narrowed
+      to a conclusion of doubt.
+    - A round-2 draft flipped LRMR's "whether there are certain conditions"; the whether-object
+      was widened.
+  - 11 filings keep DOUBT but now quote another sentence. In Wolfspeed's and VSTM's cases it is
     the conclusion itself, which main had skipped as a frame.
 - **The shown run on the decision path: the ranker queue, before and after.**
   - `scan_structural` was replayed over the committed `candidate_records.jsonl` (343 names). All
@@ -100,7 +141,37 @@ it hid a real conclusion because of the standard it named.
 - **SEC requests:** all went through `CachedHttp` under the shared SEC pace, with nothing beyond
   the cache otherwise.
 
-**FOUND, NOT FIXED — each outside negation and modality:**
+**STILL READ DOUBT (measured at round 2), and why.** Of the 125 filings still DOUBT, these are not
+a current statement of the issuer's own doubt. Main reads every one the same:
+- **In this PR's class (a hypothetical whose modal sits further from the doubt than the window
+  allows):** TALO ("could be well in excess of insured amounts and result in significant current
+  losses … as well as going concern issues") and LZM ("may cause material and adverse impacts …,
+  potentially causing substantial delays and raising substantial doubt"). The window is kept
+  short on purpose: a longer one would reach SANA-like real conclusions.
+- **A prior period's or a previously disclosed doubt** (a period rule, below), 19 filings:
+  - BW, CGC, CODI, "forward" (0001683168-25-009068);
+  - CK 0002100782, VSTM's 10-K;
+  - two ONDS 10-Qs, a USAR 8-K;
+  - the issuer whose 2025 offering closed (0001213900-25-086227);
+  - EVMN, HE's 10-K, PCT;
+  - AURA's Q1 10-Q, IAUX's Q1 10-Q;
+  - MVST's FY2024 and FY2025 10-Ks ("In prior periods, we disclosed …");
+  - NEXT (its 2023 statements);
+  - PSIX's valuation-allowance history.
+- **Not the issuer's own doubt**, 9 filings: a debtor (BBT, BRKL, the ones main also read DOUBT),
+  a borrower (ZIONS twice), a tenant (NHI twice), an investee (BLFS), a predecessor (DBD), an
+  acquiree (PURR's Rorschach).
+- **Raised, then alleviated, in two sentences:** FRMI's Q1 10-Q, and MVST's Q1 10-Q (nit 6 of
+  review round 2). Under ASC 205-40-50-12 an alleviated doubt is no substantial doubt; this
+  detector reads sentence by sentence, so the earlier "raise substantial doubt" still fires.
+  The committed MVST page (its Q2 10-Q) is unaffected.
+
+Of the rest, two filings are the "going concern uncertainty period" term (below), and two are
+TRC's risk lists, whose mention sits past the 600-character sentence window and was not read.
+Everything else is a current statement of doubt: conclusions, auditors' explanatory paragraphs,
+and risk bullets that assert it.
+
+**FOUND, NOT FIXED — outside negation, modality and the frame:**
 - **"The going concern uncertainty period" reads as a doubt marker.** It is ASC 205-40's
   look-forward period. A 10-Q (0001493152-26-023071) saying working capital is sufficient "to
   conform to the going concern uncertainty period" is DOUBT on main and here.
@@ -117,7 +188,8 @@ it hid a real conclusion because of the standard it named.
   hypothesises doubt now carries no going-concern statement, where it carried one before. No
   committed page outside the held test packs moves: MVST's statement stands.
 - The new markers are closed lists, grown from the sentences above. A denial or hypothetical in
-  other words still reads DOUBT (an under-read, the module's chosen bias).
+  other words still reads DOUBT. That is an OVER-read, an over-demote: the direction the module
+  calls unsafe. The lists, measured above, leave two in-class over-reads in the corpus.
 - Falsifier: a dossier or a queue name that reads None for a filer whose own filing concludes it
   has doubt now.
 
@@ -129,3 +201,18 @@ it hid a real conclusion because of the standard it named.
 - Both were pinned red first.
 - The corpus re-run is unchanged: DOUBT 187 → 144, 0 new.
 - The ranker replay is unchanged: flags and queue order identical, the same 6 sunk.
+
+**REVIEW ROUND 2 (coordinator review of #879 at 97f4927a, the last round under the cap).**
+- **Over-reaching guards, narrowed.**
+  - "cast" and "significant" are out of the hypothetical (the IFRS term of art).
+  - The frame is bounded to a whether-clause whose object is the going-concern evaluation.
+  - The citation frame is restored, behind a wider result override.
+  - Alleviation is a denial only when it is past and unsettled.
+- **In-class misses, fixed:** SHBI, ADC, DBVT, AIRS, ABL, ADUS, TOI, CSTL, MNPR, OGN, EBS, DNTH,
+  AGL, LODE and HE's Q1 10-Q. PCT's and PSIX's in-class sentences are fixed too, but each filing
+  still reads DOUBT on a prior-period sentence (listed above).
+- **Pins:** 30 new. 28 are red on 97f4927a. The other two (LRMR's "certain conditions", CSTL's
+  second policy sentence) pass there; they guard regressions a round-2 draft introduced.
+- **Corpus:** DOUBT 187 → 125 (62 off, 0 on).
+- **Ranker replay** over the 343 queue names: unchanged, the same 6 sunk.
+- **MVST and TECX:** unchanged.

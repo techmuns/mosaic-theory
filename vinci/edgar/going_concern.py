@@ -103,25 +103,43 @@ _DOUBT = re.compile(
     re.I,
 )
 
-#: The ASU 2014-15 EVALUATION frame — a sentence saying the assessment is PERFORMED, the QUESTION
-#: it asks ("evaluated whether", WOLF's "considers whether", the auditor's "Conclude whether") or
-#: the disclosure POLICY (WVE). It always contains the trigger phrase, so it is skipped rather than
-#: matched, and the scan CONTINUES past it: the conclusion is a later sentence (MVST). A citation
-#: of the standard is NOT the frame (E2-D17): WOLF concludes doubt "in accordance with … ASC
-#: 205-40" in the sentence that states it.
+#: The ASU 2014-15 EVALUATION frame — a sentence that asks the QUESTION, cites the STANDARD, or
+#: states the disclosure POLICY. It always contains the trigger phrase, so it is skipped rather
+#: than matched, and the scan CONTINUES past it: the conclusion is a later sentence (MVST).
+#: - THE QUESTION is a "whether" whose object IS the going-concern evaluation: "whether there are
+#:   conditions or events" (TECX, MVST, AIRS's "evaluates at each … period whether"), "whether a
+#:   material uncertainty exists" (the ISA auditor), "whether the going concern basis …". A
+#:   whether-clause about anything else ("assessing whether to file for protection under Chapter
+#:   11, and these conditions raise substantial doubt") is no frame (review round 2).
+#: - THE STANDARD cited, as main read it ("in accordance with", ASU 2014-15, ASC / Subtopic 205-40,
+#:   MNPR's spaced "205 - 40"): policy boilerplate, unless the sentence states its own result.
+#: - THE POLICY's own words: WVE's "required to make certain additional disclosures", CSTL's "the
+#:   mitigating effect of management's plans … is only considered if".
 _EVALUATION_FRAME = re.compile(
-    r"(?:evaluat|assess|consider|conclud|determin)\w*\s+whether|"
-    r"required\s+to\s+make\s+certain\s+additional\s+disclosures",
+    r"\bwhether\b(?:\s*,[^,.;]{0,60},)?\s+(?:there\s+(?:are|is|were|was|exists?)\s+|(?:a|any)\s+)?"
+    r"(?:(?:any|such|certain|other)\s+){0,2}"  # LRMR "whether there are certain conditions"
+    r"(?:conditions|events|material\s+uncertaint|substantial\s+doubt|(?:the\s+)?going\s+concern)|"
+    r"in\s+accordance\s+with|asu\s*2014-15|(?:sub)?topic\s*205\s*-\s*40|asc\s*205\s*-\s*40|"
+    r"accounting\s+standards\s+(?:update|codification)|"
+    r"required\s+to\s+make\s+certain\s+additional\s+disclosures|"
+    r"mitigating\s+effect\s+of\s+(?:management|its\s+plans)",  # CSTL's policy, twice
     re.I,
 )
 
-#: A conclusion OF DOUBT stated in the frame's own sentence ("evaluated whether … and concluded
-#: that these conditions raise substantial doubt"): then the sentence is a result. A conclusion of
-#: sufficiency is not one — CRVS "evaluated whether … and concluded that our existing cash … are
-#: sufficient" stays a frame.
+#: A RESULT stated in a frame's own sentence, which makes the sentence a conclusion: "concluded /
+#: determined that … raise(d) substantial doubt" or "… that a material uncertainty exists" (WOLF
+#: "concluded that there is substantial doubt …, in accordance with … ASC 205-40", the Directors'
+#: IFRS form), "these conditions raise substantial doubt" (VSTM, after "in accordance with the
+#: applicable accounting standards"), or a plain "there is substantial doubt" no "whether" or
+#: "if" asks. A conclusion of sufficiency is not one: CRVS "evaluated whether … and concluded that
+#: our existing cash … are sufficient" stays a frame.
 _CONCLUSION = re.compile(
-    r"\b(?:concluded|determined)\s+that\b[^.;]{0,200}?"
-    r"\b(?:raised?|raises|is|exists?|was)\s+(?:a\s+)?substantial\s+doubt",
+    r"\b(?:concluded|determined)\s+that\b[^.;]{0,200}?\b(?:(?:raised?|raises|is|exists?|was|"
+    r"remains)\s+(?:a\s+)?substantial\s+doubt|substantial\s+doubt\s+(?:exists?|remains)|"
+    r"(?:a\s+)?material\s+uncertaint\w*\s+(?:exists?|remains))|"
+    r"\b(?:these|such)\s+(?:conditions|factors|events|circumstances|matters)\b[^.;]{0,80}?"
+    r"\b(?:raise|raises|raised)\s+substantial\s+doubt|"
+    r"(?<!whether\s)(?<!if\s)\bthere\s+is\s+(?:a\s+)?substantial\s+doubt",
     re.I,
 )
 
@@ -131,31 +149,49 @@ _VALUATION_SENSE = re.compile(r"going\s+concern\s+value", re.I)
 #: An explicit denial. A filer that concluded there is NO doubt says so, and the sentence still
 #: contains both the phrase and a doubt marker. Each form names the doubt it denies (E2-D17):
 #: "do not raise substantial doubt", EOSE's "no longer substantial doubt", MAR's "no material
-#: uncertainty exists", ACRS's "does not believe that substantial doubt exists", and a doubt "has
-#: been alleviated" (an issuer whose 2025 offering closed). "Alleviate" as a verb is `_ALLEVIATES`.
+#: uncertainty exists", ACRS's "does not believe that substantial doubt exists"; from review round
+#: 2, SHBI's and ADC's "no conditions or events, considered in the aggregate, that raise(d)
+#: substantial doubt", DBVT's and PCT's doubt that "is / are no longer present", PSIX's "removal
+#: of substantial doubt". A doubt ALLEVIATED is `_ALLEVIATED`.
 _NEGATED = re.compile(
     r"\b(?:no|not|does\s+not|do\s+not|did\s+not|never)\s+(?:\w+\s+){0,4}"  # "casino" is no "no"
     r"(?:raise|indicate|create)\s+substantial\s+doubt|"
     r"\bno\s+(?:longer\s+)?(?:substantial\s+doubt|material\s+uncertaint)|"
     r"\bnot\s+believe\s+(?:that\s+)?(?:there\s+(?:is|exists)\s+)?substantial\s+doubt|"
-    r"substantial\s+doubt\b[^.;]{0,160}?\b(?:has|have|had|was|were)\s+(?:been\s+)?alleviated",
+    r"\bno\s+(?:such\s+)?conditions\s+(?:or|and)\s+events\b[^.;]{0,80}?\braised?\s+substantial\s+doubt|"
+    r"substantial\s+doubt\b[^.;]{0,200}?\b(?:is|are)\s+no\s+longer\s+present|"
+    r"\bremoval\s+of\s+(?:the\s+)?substantial\s+doubt",
     re.I,
 )
 
-#: "…plans alleviated substantial doubt" (RLMD) denies the doubt — unless a negator governs the
-#: verb: XIAO's "cannot alleviate the substantial doubt" says the doubt REMAINS.
-_ALLEVIATES = re.compile(r"\balleviat\w*\s+(?:the\s+)?substantial\s+doubt", re.I)
-_NEGATOR_BEFORE = re.compile(r"\b(?:not|cannot|can't|unable|insufficient|no)\b[^.;]{0,40}$",
-                             re.I)
+#: A doubt that HAS BEEN alleviated (RLMD's "plans alleviated substantial doubt", "substantial
+#: doubt … has been alleviated") denies it — but only where nothing in the sentence unsettles it.
+#: A purpose ("plans to alleviate"), a future ("will alleviate"), "until …", "no assurance …" and
+#: XIAO's "cannot alleviate" all leave the doubt standing (review round 2).
+_ALLEVIATED = re.compile(
+    r"\balleviated\s+(?:the\s+)?substantial\s+doubt|"
+    r"substantial\s+doubt\b[^.;]{0,160}?\b(?:is|are|has|have|had|was|were)\s+(?:been\s+)?"
+    r"alleviated",
+    re.I,
+)
+_UNSETTLED = re.compile(
+    r"\b(?:not|no|cannot|can['’]t|unable|until|unless|whether|if|assurance)\b", re.I)
 
-#: A HYPOTHETICAL: a modal ON the doubt itself — a risk factor saying what COULD happen (ZURA's
-#: "could raise substantial doubt", MNLK's "may conclude that there is substantial doubt",
-#: "substantial doubt could exist"). The modal must govern the doubt: "could raise additional
-#: capital" in a real conclusion is not one, and SANA's "may not be sufficient …, and there is
-#: substantial doubt" still states it.
+#: A HYPOTHETICAL: a modal ON the doubt — a risk factor saying what COULD happen: ZURA's "could
+#: raise substantial doubt", LODE's "could have an immediate material adverse effect on liquidity
+#: and raise substantial doubt", AGL's "could in the future, result in substantial doubt", OGN's
+#: "could result in a going concern qualification", EBS's "may give rise to substantial doubt",
+#: DNTH's "may include an explanatory paragraph", MNLK's "may conclude that there is substantial
+#: doubt", "substantial doubt could exist". The modal must reach the doubt within a few words:
+#: SANA's "may not be sufficient …, and there is substantial doubt" still states it. "Cast …
+#: doubt" is NOT here: in "a material uncertainty exists that may cast significant doubt" the
+#: modal belongs to the IFRS / ISA 570 term of art, and the sentence is a conclusion (KYIV, LAR;
+#: review round 2).
 _HYPOTHETICAL = re.compile(
-    r"\b(?:may|might|could|would)\s+(?:also\s+)?(?:raise|create|cast)\s+(?:a\s+)?"
-    r"(?:substantial|significant)\s+doubt|"
+    r"\b(?:may|might|could|would)\b(?:[\s,]+[\w'’-]+){0,10}?[\s,]+"
+    r"(?:rais(?:e|ing)|result(?:ing)?\s+in|give\s+rise\s+to|includ(?:e|ing)|caus(?:e|ing)|create|"
+    r"lead\s+to)\s+(?:(?:a|an|the)\s+)?(?:substantial\s+doubt|going\s+concern\s+(?:qualification|"
+    r"issue)|explanatory\s+paragraph)|"
     r"\b(?:may|might|could|would)\s+(?:also\s+)?conclude\s+that\s+(?:there\s+is\s+)?(?:a\s+)?"
     r"substantial\s+doubt|"
     r"substantial\s+doubt\s+(?:may|might|could|would)\s+(?:exist|arise)|"
@@ -164,8 +200,7 @@ _HYPOTHETICAL = re.compile(
     r"(?:expressing|regarding|about)\s+substantial\s+doubt|"
     # MNLK "If we seek additional financing … and there remains substantial doubt …": the doubt is
     # the condition. A comma ends the clause, so SOCC's "…, if at all, substantial doubt exists"
-    # still states it.
-    # (a concessive "even if" states the doubt whatever the condition)
+    # still states it (a concessive "even if" states the doubt whatever the condition).
     r"(?<!even\s)\bif\b[^,.;]{0,120}?\bthere\s+(?:is|remains|exists)\s+(?:a\s+)?"
     r"substantial\s+doubt",
     re.I,
@@ -207,9 +242,8 @@ def _sentence_around(text: str, pos: int) -> tuple[str, int]:
 
 
 def _alleviated(sentence: str) -> bool:
-    """The sentence says the doubt was alleviated: an "alleviate" no negator governs."""
-    return any(not _NEGATOR_BEFORE.search(sentence[:m.start()])
-               for m in _ALLEVIATES.finditer(sentence))
+    """The sentence says the doubt HAS BEEN alleviated, and nothing in it unsettles that."""
+    return bool(_ALLEVIATED.search(sentence)) and not _UNSETTLED.search(sentence)
 
 
 def find_going_concern_statement(text: str) -> GoingConcernStatement | None:

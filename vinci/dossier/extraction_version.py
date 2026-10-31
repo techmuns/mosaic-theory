@@ -313,10 +313,11 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
     (
         "2026-10-30.E2-D17",
         "a going-concern statement is read as stated (audit E2-D17): a denial of the doubt (no "
-        "longer, none, not believed, alleviated by plans) and a hypothetical about it are not "
-        "doubt; the frame is the assessment question or the disclosure policy, never a citation "
-        "of ASC 205-40, so a conclusion of doubt that cites the standard is doubt, as is a plan "
-        "that cannot alleviate it",
+        "longer, none, not believed, no longer present, removed, already alleviated) and a "
+        "hypothetical about it are not doubt; the frame is the going-concern question, the cited "
+        "standard or the disclosure policy unless the sentence states its own result, so a "
+        "conclusion of doubt that cites ASC 205-40 is doubt, as is an IFRS material uncertainty "
+        "and a plan that cannot or will alleviate it",
     ),
 )
 
