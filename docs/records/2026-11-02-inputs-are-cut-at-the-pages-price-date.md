@@ -2,7 +2,7 @@
 id: 2026-11-02-asof-price-date
 status: open
 date: 2026-11-02
-prs: []
+prs: [884]
 supersedes:
 superseded-by:
 ---
