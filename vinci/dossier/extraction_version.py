@@ -324,6 +324,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "Data Available' is a marker",
     ),
     (
+        "2026-10-30.submissions-pages",
+        "a filings window that reaches past the submissions index's recent page (a heavy "
+        "filer's newest ~1,000 filings) reads every older page it overlaps, through the SEC "
+        "client, each checked against the document's listing of it and read again fresh when "
+        "the two are of different vintages, or raises naming the page it could not read — "
+        "never a short list read as complete (audit E1-D10)",
+    ),
+    (
         "2026-11-01.small-items",
         "four small reader fixes (audit A-D4, A-D9, D-D9; the relationships sections): a 1904 "
         "date-system workbook's dates are read as the true days; a Key Developments export on "
