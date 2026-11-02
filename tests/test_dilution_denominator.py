@@ -168,6 +168,38 @@ def test_both_legs_come_from_the_same_period_even_when_only_one_tag_has_the_quar
     assert d.period_end == dt.date(2026, 3, 31), "an unpaired later period was used"
 
 
+@pytest.mark.parametrize(("facts_path", "quarter", "basic", "diluted"), [
+    # SMPL's FY2026 10-K: the year to 2026-08-29 runs 363 days, and nothing shorter ends there
+    (FY_END / "SMPL.companyfacts.json", (dt.date(2026, 3, 1), dt.date(2026, 5, 30)),
+     89_940_680, 89_940_680),
+    # Worthington's FY2026 10-K: the year to 2026-05-31, 364 days
+    (ROOT / "tests" / "fixtures" / "companyfacts" / "WOR.json",
+     (dt.date(2025, 12, 1), dt.date(2026, 2, 28)), 49_073_000, 49_665_000),
+], ids=["SMPL-FY2026-10K", "WOR-FY2026-10K"])
+def test_at_fiscal_year_end_the_pair_is_the_last_10q_quarter_never_the_10k_year(
+    facts_path: pathlib.Path, quarter: tuple[dt.date, dt.date], basic: int, diluted: int,
+) -> None:
+    """THE RED (audit X3), `_latest_point`'s fiscal-year-end defect in this module's own pairing.
+    At a 10-K's end date both averages are tagged over the YEAR alone, so "the shortest span at the
+    latest end" was that year — SMPL's 363 days (92,372,473 both legs), WOR's 364. A span longer
+    than `anchor.QUARTER_MAX_DAYS` is never paired, so the pair is the last 10-Q's quarter."""
+    d = diluted_outstanding(json.loads(facts_path.read_text()), basic_out=100_000_000)
+    assert (d.period_start, d.period_end) == quarter, d
+    assert (d.basic_wa, d.diluted_wa) == (basic, diluted), d
+
+
+def test_a_filer_that_tags_no_quarter_is_refused_rather_than_paired_on_its_year() -> None:
+    """(−) Only a year on file — an annual filer, or a first 10-K before any 10-Q. No quarter
+    carries both averages, so no increment is read, and the refusal says a quarter is missing."""
+    year_only = _facts([
+        (BASIC_WA_TAG, "2025-01-01", "2025-12-31", 100_000_000, "2026-02-20"),
+        (DILUTED_WA_TAG, "2025-01-01", "2025-12-31", 104_000_000, "2026-02-20"),
+    ])
+    d = diluted_outstanding(year_only, basic_out=100_000_000)
+    assert d.shares is None and d.increment is None, d
+    assert "quarter" in d.reason and DILUTED_WA_TAG in d.reason, d.reason
+
+
 def test_a_restated_period_takes_the_later_filing() -> None:
     """The same quarter is re-reported in later filings; the newest restatement is the live one."""
     restated = _facts([

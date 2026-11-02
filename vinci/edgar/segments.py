@@ -84,7 +84,7 @@ class SegmentRow:
 
     segment: str
     metric: str          # the row label as stated ("Revenue from contract with customers")
-    period: str          # the column header as stated ("Dec. 31, 2025")
+    period: str          # the column header as stated, both rows ("12 Months Ended Dec. 31, 2025")
     value: float
     unit: str            # from the table's own caption ("$ in Millions")
     source_ref: str
@@ -101,6 +101,33 @@ def _cells(row_html: str) -> list[str]:
     for cell in re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row_html, re.S):
         text = _html.unescape(re.sub(r"<[^>]+>", " ", cell))
         out.append(re.sub(r"\s+", " ", text).strip())
+    return out
+
+
+#: A column's DURATION, stated one header row above its date. A 10-Q dates its quarter AND its
+#: year-to-date column to the same day — GOOGL's Q3 2026 report heads both 127,577 and 357,269
+#: "Sep. 30, 2026" — so the date alone does not say which period a figure covers.
+_DURATION = re.compile(r"\d+ (?:Months|Weeks) Ended", re.I)
+
+
+def _durations(row_html: str) -> list[str]:
+    """The duration header's label for each column, a ``colspan="2"`` label counted twice — or []
+    when the row is not that header. The title cell (``class="tl"``) heads no column; a blank label
+    heads an instant column ("Dec. 31, 2025" alone)."""
+    out: list[str] = []
+    for attrs, cell in re.findall(r"<th([^>]*)>(.*?)</th>", row_html, re.S):
+        if 'class="tl"' in attrs:
+            continue
+        span = re.search(r'colspan="(\d+)"', attrs)
+        text = re.sub(r"\s+", " ", _html.unescape(re.sub(r"<[^>]+>", " ", cell))).strip()
+        out += [text] * (int(span.group(1)) if span else 1)
+    if not any(_DURATION.fullmatch(t) for t in out):
+        return []
+    if not all(not t or _DURATION.fullmatch(t) for t in out):
+        # a duration beside a cell that is neither a duration nor the marked title: dropping the
+        # row would label every column by its date alone, so it is refused (review round 0)
+        raise SegmentReportUnavailableError(
+            f"a duration header carries a column label that is not a duration: {out}")
     return out
 
 
@@ -229,12 +256,15 @@ def segment_rows(http: CachedHttp, cik: str, accession: str) -> list[SegmentRow]
     rows = re.findall(r"<tr[^>]*>(.*?)</tr>", doc, re.S)
     src = f"EDGAR {accession} {fname} — {short}"
     unit, segment = "", ""
+    durations: list[str] = []
     periods: list[str] = []
     out: list[SegmentRow] = []
     for tr in rows:
         cells = _cells(tr)
         if not any(cells):
             continue
+        if not periods and not durations:
+            durations = _durations(tr)   # the caption row carries it, so no `continue` here
         # the caption carries the scale for every number under it ("$ in Millions")
         if not unit and "$ in" in cells[0]:
             m = re.search(r"\$ in (\w+)", cells[0])
@@ -248,7 +278,15 @@ def segment_rows(http: CachedHttp, cik: str, accession: str) -> list[SegmentRow]
         dated = [c for c in cells if c]
         if (not periods and dated
                 and all(re.match(r"[A-Z][a-z]{2}\. \d", c) for c in dated)):
-            periods = dated
+            # BY HEADER, BOTH ROWS: "3 Months Ended" over a date is one period and "9 Months
+            # Ended" over the same date another. Read by date alone, a 10-Q's quarter and its
+            # year-to-date figure shared one key — two values for one (segment, metric, period).
+            if durations and len(durations) != len(dated):
+                raise SegmentReportUnavailableError(
+                    f"{fname}'s duration header spans {len(durations)} columns and its date "
+                    f"header {len(dated)}, so which period a column covers cannot be read")
+            periods = [f"{d} {p}" if d else p
+                       for d, p in zip(durations or [""] * len(dated), dated, strict=True)]
             continue
         head, values = cells[0], [_number(c) for c in cells[1:]]
         if len([c for c in cells if c]) == 1:
@@ -266,8 +304,13 @@ def segment_rows(http: CachedHttp, cik: str, accession: str) -> list[SegmentRow]
             continue
         # POSITIONAL, WITH EMPTIES INTACT: `values` and `periods` are both column-aligned because
         # `_cells` kept the blanks, so a missing figure leaves a None in its own column instead of
-        # pulling every later year one place left.
-        for period, val in zip(periods, values[:len(periods)], strict=False):
+        # pulling every later year one place left. A row with more or fewer columns than the
+        # header is aligned to nothing, and is refused rather than cut to fit.
+        if len(values) != len(periods):
+            raise SegmentReportUnavailableError(
+                f"{fname}'s row {head!r} has {len(values)} figure columns under a header of "
+                f"{len(periods)}, so its figures cannot be placed in their periods")
+        for period, val in zip(periods, values, strict=True):
             if val is not None:
                 out.append(SegmentRow(segment=_AXIS_PREFIX.sub("", segment) or "(consolidated)",
                                       metric=head, period=period, value=val, unit=unit,
