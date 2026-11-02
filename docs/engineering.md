@@ -119,6 +119,11 @@ not a capability index — capabilities are discovered from git log + code (CLAU
 existence-check rule); this only bridges vocabulary. Coined a new term? Add its line in the same
 PR (CLAUDE.md: coin-time translation).
 
+- **Unread (a claim) / read_cell** (2026-10-30, audit RC1). Plain words: *a CIQ cell is read as
+  (value, marker); a marker ('-', 'NA', 'NM', a blank) or a row the sheet lacks is NO value, never
+  0 — an EV-bridge line with no figure carries `unread`, the reason it has none.* Home:
+  `vinci/dossier/ciq.py::read_cell`, `schemas.ClaimLine.unread`; the rule's lint is
+  `tests/test_zero_coercion_lint.py`.
 - **Latest cell / unplaced** (2026-10-30, audit RC3). Plain words: *a CIQ row's value at the
   column whose header states the latest DATE — never the rightmost column holding a number. A marker
   ('-', 'NA', 'NM') there means the figure is unavailable, and no older period is read instead;

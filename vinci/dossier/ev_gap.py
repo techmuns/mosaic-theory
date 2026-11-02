@@ -428,7 +428,23 @@ def _margin_figures(levels: dict[str, list[dict[str, object]]], leg: dict[str, o
     cm, cr = eb_c.get("median"), rev_c.get("median")
     if not isinstance(cm, (int, float)) or not isinstance(cr, (int, float)) or not cr:
         return None
-    ours = float(leg["margin"]) + float(leg.get("d_and_a_ratio") or 0.0)  # type: ignore[arg-type]
+    # OUR EBITDA MARGIN AS `our_ebitda` CONVERTS IT, OR NONE (audit RC1; PR #877 round 2): an
+    # absent D&A ratio was added as 0, so an operating margin stood beside the street's EBITDA
+    # margin under the EBITDA label. An EBITDA-basis margin needs no conversion; an operating one
+    # takes its D&A ratio, or its absolute D&A over its revenue; with neither there is no figure.
+    def num(x: object) -> float | None:
+        return float(x) if isinstance(x, (int, float)) and not isinstance(x, bool) else None
+
+    margin, ratio = float(leg["margin"]), num(leg.get("d_and_a_ratio"))  # type: ignore[arg-type]
+    d_abs, rev = num(leg.get("d_and_a")), num(leg.get("revenue"))
+    if leg.get("margin_basis") == "ebitda":
+        ours = margin
+    elif ratio is not None:
+        ours = margin + ratio
+    elif d_abs is not None and rev:
+        ours = margin + d_abs / rev
+    else:
+        return None
     return {"ours": ours, "consensus": cm / cr, "basis": "EBITDA margin, ours converted from the "
             "recipe's D&A ratio; consensus = median EBITDA / median revenue at the anchor"}
 

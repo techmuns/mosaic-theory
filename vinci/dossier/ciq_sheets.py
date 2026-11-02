@@ -30,6 +30,7 @@ from vinci.dossier.ciq import (
     excel_date,
     is_empty_view,
     is_no_data_shell,
+    read_cell,
     read_sheets,
     read_text,
 )
@@ -2008,6 +2009,12 @@ def surprise_history(bundle: CiqBundle) -> Sourced[str]:
 # --- consensus context: Estimates → Consensus / Revisions -------------------------------------
 
 
+def _count(v: float | None) -> str:
+    """A revision count as printed: the integer, or 'n/a' where CIQ states none (audit A-D1,
+    2026-10-30) — a marker is no count, and printing it as 0 read as "no analyst moved"."""
+    return "n/a" if v is None else str(int(v))
+
+
 def _revision_breadth(rows: Rows, metric_block: str) -> str | None:
     """For a metric block (e.g. 'EPS (GAAP)'), the Last-Month Upward/Downward on the FY column."""
     bi = _find_row(rows, metric_block)
@@ -2023,7 +2030,7 @@ def _revision_breadth(rows: Rows, metric_block: str) -> str | None:
     if fy_col is None or up is None or dn is None:
         return None
     u, d = clean_num(rows[up][fy_col]), clean_num(rows[dn][fy_col])
-    return f"{metric_block} {str(header[fy_col]).strip()}: {int(u or 0)}↑/{int(d or 0)}↓ last mo"
+    return f"{metric_block} {str(header[fy_col]).strip()}: {_count(u)}↑/{_count(d)}↓ last mo"
 
 
 def _revisions_field(bundle: CiqBundle, metric: str) -> Sourced[str]:
@@ -2910,7 +2917,8 @@ def _forward_revisions(rev: Rows, metric: str, starts: list[int]) -> list[Revisi
                 continue
             n = {key: _cell_at(rev, w.get(lbl), col) for lbl, key in _ANALYST_ROWS.items()}
             out.append(RevisionCount(
-                metric=metric, period=period, window=wk, up=int(up or 0), down=int(down or 0),
+                metric=metric, period=period, window=wk,
+                up=None if up is None else int(up), down=None if down is None else int(down),
                 analysts=None if n["analysts"] is None else int(n["analysts"]),
                 analysts_in_consensus=None if n["in_consensus"] is None else int(n["in_consensus"]),
                 outflow_line=metric in _OUTFLOW_LINES))
@@ -3396,19 +3404,32 @@ def ev_bridge(bundle: CiqBundle, *, fy_periods: list[str], edgar_net_debt: float
     period = _period_text(bs[hdr][col])
     as_of = bs_date.isoformat() if bs_date else None
     src = f"CIQ Financials→Balance Sheet [{period}]"
-    pref = _row_at(bs, "Total Pref. Equity", col) or 0.0
-    minority = _row_at(bs, "Total Minority Interest", col) or 0.0
+    # A CLAIM CIQ DOES NOT STATE IS UNREAD, NEVER 0 (audit A-D2, 2026-10-30): an absent row and a
+    # marker ('-', 'NA') each printed a 0.0 line with nothing behind it, on all 13 pursued pages.
+    # The claims total sums the legs CIQ states, and CIQ's own TEV less market cap still checks it.
+    def leg(label: str) -> tuple[float | None, str | None]:
+        ri = _find_row(bs, label)
+        if ri is None:
+            return None, f"the balance sheet carries no '{label}' row"
+        cell = bs[ri][col] if col < len(bs[ri]) else ""
+        if (v := read_cell(cell).value) is not None:
+            return v, None
+        return None, f"'{label}' reads {_cell_words(cell)} at [{period}]"
+
+    pref, pref_unread = leg("Total Pref. Equity")
+    minority, minority_unread = leg("Total Minority Interest")
     lines = [
         ClaimLine(label="Total Debt", sign=1, value=td, as_of=as_of, source=src),
         ClaimLine(label="Total Cash & ST Investments", sign=-1, value=cash, as_of=as_of,
                   source=src),
         ClaimLine(label=_NETTED_LABEL, sign=-1, value=round(td - cash - nd, 3) + 0.0, as_of=as_of,
                   source=f"{src}: Total Debt − Total Cash & ST Investments − 'Net Debt'"),
-        ClaimLine(label="Total Pref. Equity", sign=1, value=pref, as_of=as_of, source=src),
+        ClaimLine(label="Total Pref. Equity", sign=1, value=pref, as_of=as_of, source=src,
+                  unread=pref_unread),
         ClaimLine(label="Total Minority Interest", sign=1, value=minority, as_of=as_of,
-                  source=src),
+                  source=src, unread=minority_unread),
     ]
-    claims = nd + pref + minority
+    claims = nd + sum(v for v in (pref, minority) if v is not None)
     check = _consensus_net_debt_check(bundle)
     exit_claims, note = exit_claims_for(claims, nd, check, fy_periods)
     notes = [note] if note else []
@@ -3585,7 +3606,7 @@ def _horizon_value(rows: Rows, ends: dict[int, int], as_of: str | None) -> str |
                 dn = _cell_at(rows, w.get("Downward"), col)
                 if up is None and dn is None:
                     continue
-                parts.append(f"{wk} {int(up or 0)}↑/{int(dn or 0)}↓")
+                parts.append(f"{wk} {_count(up)}↑/{_count(dn)}↓")
             if parts:
                 lines.append(f"{metric} {period}: " + ", ".join(parts))
     return "; ".join(lines) + _asof_suffix(as_of) if lines else None
@@ -5548,7 +5569,8 @@ def _industry_credit_panel(bundle: CiqBundle) -> CreditHealthPanel | str:
     if me is None:
         return f"{bundle.ticker} not found in its own industry peer table"
     scores = {k: _score(me[col[k.title()]]) for k in _CH_DIM_KEYS}
-    if any(v is None for v in scores.values()):
+    o, op, so, li = (scores[k] for k in ("overall", "operational", "solvency", "liquidity"))
+    if o is None or op is None or so is None or li is None:
         return f"a score outside 1–4 for {bundle.ticker}: {scores}"
     # the verbal block: 'Overall Score' over its word; 'Financial Category' | 'Score' per dimension
     words: dict[str, str] = {}
@@ -5575,8 +5597,7 @@ def _industry_credit_panel(bundle: CiqBundle) -> CreditHealthPanel | str:
     rating = _issuer_rating(me[rating_col]) if has_rating and rating_col is not None else ""
     return CreditHealthPanel(
         population_kind="industry", population=f"{industry} (GICS industry)", n=len(body),
-        overall=scores["overall"] or 0, operational=scores["operational"] or 0,
-        solvency=scores["solvency"] or 0, liquidity=scores["liquidity"] or 0, primary=True,
+        overall=o, operational=op, solvency=so, liquidity=li, primary=True,
         scale_basis="declared: the export's own Top…Bottom labels match its table on all four",
         sp_long_term_issuer=rating or None,
         data_through=max(updated).isoformat() if updated else None)
@@ -5612,9 +5633,8 @@ def credit_health_panels(bundle: CiqBundle) -> Sourced[list[CreditHealthPanel]] 
                      "Panel export")
     cc = _comps_credit(bundle)
     if isinstance(cc, _CompsCredit):
-        sc = [_score(c) for c in cc.cells]
-        if all(v is not None for v in sc):
-            o, op, so, li = (v or 0 for v in sc)
+        o, op, so, li = (_score(c) for c in cc.cells)
+        if o is not None and op is not None and so is not None and li is not None:
             panels.append(CreditHealthPanel(
                 population_kind="comps", population="comp set (CIQ comps template)", n=cc.n,
                 overall=o, operational=op, solvency=so, liquidity=li, primary=False,

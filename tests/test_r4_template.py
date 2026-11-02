@@ -93,18 +93,42 @@ def test_the_pages_tagged_r4_get_the_r4_template_as_committed(ticker: str) -> No
 
 # --- the bridge ----------------------------------------------------------------------------------
 
-@pytest.mark.parametrize("ticker", ["AMZN", "UBER"])
-def test_the_bridge_fact_is_the_pages_ciq_tev_claims(ticker: str) -> None:
-    """The fact is the page's held exit claims, which ARE CIQ's TEV less market cap — Net Debt plus
-    preferred plus minority. UBER is the case where the last two matter ($1,083M of minority)."""
+#: A 0.0 preferred/minority line as the rebuild writes it since 2026-10-30 (audit A-D2, PR #877):
+#: no figure, and the reason. The committed pages' 0.0 lines are all absent rows on AMZN's and
+#: UBER's own exports except UBER's preferred, a '-' (measured on each page's export by sha).
+_UNREAD = {("AMZN", "Total Pref. Equity"): "the balance sheet carries no 'Total Pref. Equity' row",
+           ("AMZN", "Total Minority Interest"):
+               "the balance sheet carries no 'Total Minority Interest' row",
+           ("UBER", "Total Pref. Equity"): "'Total Pref. Equity' reads '-' at [Q2 Jun-30-2026]"}
+
+
+def _rebuilt(ticker: str) -> dict[str, Any]:
+    """The page with its bridge in the shape its owed rebuild writes (PR #877 round 2): the living
+    page carries 0.0 lines until then, so the pins below run on BOTH shapes."""
     doc = _page(ticker)
+    for ln in doc["ev_bridge"]["lines"]:
+        if (why := _UNREAD.get((ticker, ln["label"]))) is not None:
+            assert ln["value"] == 0.0
+            ln.update(value=None, unread=why)
+    return doc
+
+
+@pytest.mark.parametrize("shape", ["committed", "rebuilt"])
+@pytest.mark.parametrize("ticker", ["AMZN", "UBER"])
+def test_the_bridge_fact_is_the_pages_ciq_tev_claims(ticker: str, shape: str) -> None:
+    """The fact is the page's held exit claims, which ARE CIQ's TEV less market cap — Net Debt plus
+    preferred plus minority. UBER is the case where the last two matter ($1,083M of minority). A
+    line with no figure contributes nothing and is NAMED (audit A-D2)."""
+    doc = _page(ticker) if shape == "committed" else _rebuilt(ticker)
     eb = doc["ev_bridge"]
     fact = build_template(doc)["facts"]["net_debt"]
     assert fact["value"] == pytest.approx(eb["claims"])
     assert abs(fact["value"] - eb["ciq_tev_claims"]) <= EV_BRIDGE_CIQ_TOL
-    lines = {ln["label"]: ln["value"] for ln in eb["lines"]}
+    lines = {ln["label"]: ln for ln in eb["lines"]}
+    legs = [lines[k] for k in ("Total Pref. Equity", "Total Minority Interest")]
+    assert all(ln.get("unread") for ln in legs if ln["value"] is None)
     assert fact["value"] == pytest.approx(
-        eb["net_debt"] + lines["Total Pref. Equity"] + lines["Total Minority Interest"])
+        eb["net_debt"] + sum(ln["value"] for ln in legs if ln["value"] is not None))
     assert {x["value"] for x in eb["exit_claims"]} == {fact["value"]}
     assert eb["source_sha256"] in fact["source"] and eb["estimates_sha256"] in fact["source"]
 

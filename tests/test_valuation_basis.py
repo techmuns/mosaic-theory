@@ -124,7 +124,10 @@ def test_an_r4_page_states_r4s_basis_from_its_own_layers(t: str) -> None:
     assert b["ev_bridge"]["reconciles_to_ciq_tev"] is True
     cc = b["ev_bridge"]["cross_check"]
     assert cc["value"] == eb["edgar_net_debt"] and cc["eligible_for_primary_bridge"] is False
-    assert sum(c["sign"] * c["value"] for c in b["ev_bridge"]["components"]) == pytest.approx(
+    comps = b["ev_bridge"]["components"]
+    # a component with no figure contributes nothing and carries the line's reason (audit A-D2)
+    assert all(c.get("unread") for c in comps if c["value"] is None)
+    assert sum(c["sign"] * c["value"] for c in comps if c["value"] is not None) == pytest.approx(
         eb["claims"], abs=EV_BRIDGE_CIQ_TOL)
     # the exit claims are the bridge's own default, automated, never a cash-flow roll-forward
     ex = b["exit_claims"]
@@ -468,3 +471,18 @@ def test_the_valuation_snapshot_date_is_named_beside_the_price() -> None:
             gap = (date.fromisoformat(str(si["as_of"])[:10])
                    - date.fromisoformat(str(si["market_cap_as_of"])[:10])).days
             assert ds["price_days_after_valuation_snapshot"] == gap, t
+
+@pytest.mark.parametrize("t", ["AMZN", "UBER"])
+def test_the_r4_components_carry_an_unread_lines_reason(t: str) -> None:
+    """(PR #877 round 2) The page as its owed rebuild writes the bridge — a 0.0 preferred/minority
+    line becomes no figure plus its reason — re-derived through the serializer: the R4 block's
+    components sum over the lines CIQ states and carry each unread line's reason."""
+    doc = _page(t)
+    for ln in doc["ev_bridge"]["lines"]:
+        if ln["label"] in ("Total Pref. Equity", "Total Minority Interest") and ln["value"] == 0.0:
+            ln.update(value=None, unread=f"the balance sheet carries no '{ln['label']}' row")
+    b = json.loads(dossier_json(Dossier.model_validate(doc)))["valuation_basis"]["ev_bridge"]
+    unread = [c for c in b["components"] if c["value"] is None]
+    assert unread and all(c["unread"].startswith("the balance sheet carries no") for c in unread)
+    assert sum(c["sign"] * c["value"] for c in b["components"] if c["value"] is not None) == (
+        pytest.approx(doc["ev_bridge"]["claims"], abs=EV_BRIDGE_CIQ_TOL))

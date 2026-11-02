@@ -120,8 +120,8 @@ def test_revision_counts_are_bounded_by_their_own_block(ticker: str) -> None:
     if fc is None:
         pytest.skip(f"{ticker}: no Trends sheet")
     for r in fc.revisions:
-        if r.analysts is not None:
-            assert r.up + r.down <= r.analysts, r
+        if r.analysts is not None:   # a marker leg is None, never a count (audit A-D1)
+            assert sum(n for n in (r.up, r.down) if n is not None) <= r.analysts, r
             if r.analysts_in_consensus is not None:
                 assert r.analysts_in_consensus <= r.analysts, r
     if ticker == "AMZN":

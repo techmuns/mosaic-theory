@@ -144,7 +144,8 @@ class AnchorMidcycleGap(BaseModel, frozen=True):
 
     ltm_margin: float                   # fraction — committed financial_summary EBIT / revenue
     median_margin: float                # fraction — the anchor's own margin.value
-    median_years: int
+    # None where the margin median states no year count (PR #877 round 2): it was written 0
+    median_years: int | None
     gap_pts: float                      # (ltm − median) × 100, signed
     # "above" | "below" the median — a margin's POSITION, named so: `direction` is a forbidden field
     # token (test_dossier_schema_has_no_conclusion_field), and the guard is right to be blunt
@@ -955,6 +956,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     # A filled hole is stamped so the human can see which numbers are not EDGAR's — the manual CIQ
     # pull is the depth stage, and a bridge that silently mixed the two would hide that boundary.
     vendor: list[str] = []
+    nd_why = ""
     if ciq is not None and ciq.ok:
         if da is None and (v := ciq.value("d_and_a")) is not None:
             if _ciq_on_window(ciq.facts["d_and_a"], window):
@@ -975,6 +977,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
             nd = (nd_val, f"CIQ classified balance sheet (vendor basis; EDGAR debt tags absent or "
                           f"under-captured) [{ciq.stamp('net_debt')}]")
             vendor.append("net_debt")
+        elif nd_val is None and not ex_lease and (why := ciq.unavailable.get("net_debt")):
+            nd_why = f"; CIQ's net debt: {why}"   # a lease row at a marker (audit RC1)
         o, c = ciq.value("ocf"), ciq.value("capex")
         # A LEG AT A MARKER IS SAID (audit A-D12, 2026-10-30): LLY's press-release LTM reads '-'
         # for both, and the fill was made from FY Dec-2025's — "fiscal year to 2025-12-31"
@@ -1010,7 +1014,7 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                                 source=(nd[1] if nd and nd[1].startswith("CIQ")
                                         else ("EDGAR: " + nd[1]) if nd
                                         else "UNKNOWN — no debt/cash tag" + (
-                                            _NO_VENDOR_EX_LEASE if ex_lease else ""))),
+                                            _NO_VENDOR_EX_LEASE if ex_lease else "") + nd_why)),
         "diluted_shares": AnchorInput(value=(dil.value if dil else None), unit="shares",
                                       basis="diluted weighted-average (latest 10-Q)"
                                             + counts.per_ads_basis,
@@ -1346,7 +1350,7 @@ def midcycle_gap(median_margin: float | None, median_years: int | None, *,
                  f"points; sources said to agree within {BASIS_AGREE_PTS:g}")
     return AnchorMidcycleGap(
         ltm_margin=round(ltm, 6), median_margin=round(median_margin, 6),
-        median_years=int(median_years or 0), gap_pts=round(gap, 2),
+        median_years=None if median_years is None else int(median_years), gap_pts=round(gap, 2),
         ltm_side="above" if gap > 0 else "below", basis_year=by,
         basis_gap_pts=(round(bgap, 2) if bgap is not None else None),
         basis_gaap_margin=(round(g_m, 6) if g_m is not None else None),

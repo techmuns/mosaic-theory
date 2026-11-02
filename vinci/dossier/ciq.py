@@ -20,7 +20,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
 
 _OLE_MAGIC = b"\xd0\xcf\x11\xe0"
 _ZIP_MAGIC = b"PK\x03\x04"
@@ -219,7 +219,10 @@ _WORKBOOK_KEYWORDS: dict[str, tuple[str, ...]] = {
     "credit_health": ("credit health",),
 }
 # unparseable / withheld CIQ cells — ALL mean UNAVAILABLE (notes lines 61, 74); never coerce to 0.
-_UNAVAILABLE_CELLS = frozenset({"", "-", "—", "NM", "NA", "N/A", "Entitlement Needed"})
+# 'No Data Available' joined 2026-10-30 (audit RC1): CIQ writes it in a cell as well as over an
+# empty subsheet, and it was read as an unparseable string rather than as a marker.
+_UNAVAILABLE_CELLS = frozenset({"", "-", "—", "NM", "NA", "N/A", "Entitlement Needed",
+                                "No Data Available"})
 
 
 class CiqUnavailableError(RuntimeError):
@@ -316,20 +319,40 @@ def ambiguous_exports(workbooks: tuple[CiqWorkbook, ...] | list[CiqWorkbook]) ->
             if len(names) > 1]
 
 
-def clean_num(cell: Any) -> float | None:
-    """A CIQ numeric cell → float, or None when UNAVAILABLE (empty / '-' / 'NM' / 'Entitlement'
-    / 'NA') — never coerced to 0 or a value (notes lines 61, 74)."""
+class CellRead(NamedTuple):
+    """One CIQ cell, read (:func:`read_cell`)."""
+
+    value: float | None
+    #: CIQ's own word for "no value" as the cell holds it ('' for a blank one) — None when the
+    #: cell is a number, OR text that is neither a number nor a marker (both fields None then)
+    marker: str | None
+
+
+def read_cell(cell: Any) -> CellRead:
+    """THE ONE READER OF A CIQ VALUE CELL (audit RC1, 2026-10-30): (value, marker), never a 0
+    standing in for either. A marker ('-', 'NA', 'NM', a blank …, `_UNAVAILABLE_CELLS`) is no value
+    and says which; text that is neither a number nor a marker reads as neither, so a caller can
+    tell CIQ's "no value" from a cell it cannot parse — `clean_num` returned None for both."""
     if isinstance(cell, bool):
-        return None
+        return CellRead(None, None)
+    if cell is None:
+        return CellRead(None, "")
     if isinstance(cell, (int, float)):
-        return float(cell)
+        return CellRead(float(cell), None)
     s = str(cell).strip()
     if s in _UNAVAILABLE_CELLS:
-        return None
+        return CellRead(None, s)
     try:
-        return float(s.replace(",", "").replace("%", ""))
+        return CellRead(float(s.replace(",", "").replace("%", "")), None)
     except ValueError:
-        return None
+        return CellRead(None, None)
+
+
+def clean_num(cell: Any) -> float | None:
+    """A CIQ numeric cell → float, or None when UNAVAILABLE (empty / '-' / 'NM' / 'Entitlement'
+    / 'NA' / 'No Data Available') or unparseable — never coerced to 0 or a value (notes lines 61,
+    74). :func:`read_cell`'s value; a caller that must say WHY there is none reads that."""
+    return read_cell(cell).value
 
 
 def excel_date(cell: Any) -> date | None:

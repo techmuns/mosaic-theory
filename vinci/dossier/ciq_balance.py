@@ -197,6 +197,47 @@ def _bs_unavailable(bundle: CiqBundle, label: str) -> str | None:
     return None
 
 
+#: CIQ's Total Debt as its own balance-sheet rows build it — the lease rows among them. Measured
+#: 2026-10-30 on the 34 current non-held quarterly exports: Total Debt at its latest column equals
+#: these five rows there within `_TOTAL_DEBT_TOL` on 33 (31 with a valued lease row); the 34th is
+#: LLY's press-release column, every row of it a marker (PR #877 round 2).
+_TOTAL_DEBT_PARTS = ("Short-term Borrowings", "Curr. Port. of LT Debt", "Curr. Port. of Leases",
+                     "Long-Term Debt", "Long-Term Leases")
+_LEASE_PARTS = ("Curr. Port. of Leases", "Long-Term Leases")
+_TOTAL_DEBT_TOL = 0.6   # $M — CIQ's rounding across five rows
+
+
+def _leases_in_total_debt(bundle: CiqBundle) -> str | None:
+    """How CIQ's Total Debt carries the lease liabilities, in words — or None when the sheet does
+    not show it: Total Debt at its latest column equals its five rows there
+    (`_TOTAL_DEBT_PARTS`), the lease rows included. Read from the sheet that answers Total Debt
+    (`ciq_sheets._bs_latest_from`'s order, quarterly first); both addresses are LITERALS for the
+    CIQ-manifest drift guard."""
+    reads: tuple[Callable[[], list[list[Any]]], ...] = (
+        lambda: bundle.sheet("financials", "Balance Sheet", freq="quarterly"),
+        lambda: bundle.sheet("financials", "Balance Sheet", freq="annual"),
+    )
+    for read in reads:
+        try:
+            rows = read()
+        except CiqUnavailableError:
+            continue
+        if (ri := cs._find_row(rows, "Total Debt")) is None:
+            continue
+        hdr = cs._bs_period_header(rows)
+        td = cs.latest_cell(rows, ri, hdr)
+        if td.value is None:
+            return None
+        parts = {p: (cs.latest_cell(rows, i, hdr).value if (i := cs._find_row(rows, p)) is not None
+                     else None) for p in _TOTAL_DEBT_PARTS}
+        if abs(sum(v for v in parts.values() if v is not None) - td.value) > _TOTAL_DEBT_TOL:
+            return None
+        leases = [f"'{p}' {v:,.1f}" for p in _LEASE_PARTS if (v := parts[p]) is not None]
+        return (f"CIQ's Total Debt {td.value:,.1f} at [{td.label}] is its own rows there, the "
+                f"lease rows included ({' + '.join(leases) if leases else 'neither valued'})")
+    return None
+
+
 def header_period(cell: Any) -> tuple[str | None, date | None]:
     """A period-header cell → ("LTM" | "FY" | None, its end date | None).
 
@@ -513,13 +554,34 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
                       "D&A: only one statement discloses a depreciation line — containment unrun")
 
     # (2) Net debt: balance sheet vs the Multiples sheet's implied enterprise value less market cap
+    # CIQ'S TOTAL DEBT ALREADY CARRIES ITS LEASE ROWS where its own rows show it (PR #877 round 2:
+    # 33 of 34 exports, `_TOTAL_DEBT_PARTS`), so the net debt is lease-inclusive and SAYS so; the
+    # 'Capital Leases' / 'Operating Lease Liabilities' add-on is never added on top (a double count)
+    # and a marker on it refuses nothing. Where the sheet does not show it, a lease row is added
+    # where stated, named where absent, and a marker on one refuses the fact (audit RC1): both rows
+    # were added as `or 0.0`, so an absent row and a '-' were each a stated zero.
     nd_bs = None
-    if debt is not None and cash is not None:
-        nd_bs = debt + (fin_lease or 0.0) + (op_lease or 0.0) - cash
+    carried = _leases_in_total_debt(bundle) if debt is not None and cash is not None else None
+    lease_rows = (("Capital Leases", fin_lease), ("Operating Lease Liabilities", op_lease))
+    lease_markers = ([why for label, v in lease_rows
+                      if v is None and (why := _bs_unavailable(bundle, label))]
+                     if not carried else [])
+    if debt is not None and cash is not None and carried:
+        nd_bs = debt - cash
+        put("net_debt", (nd_bs, None, None, tuple(dict.fromkeys((*debt_wb, *cash_wb)))), "$M",
+            f"total debt, lease-inclusive — {carried} — less total cash and short-term investments")
+    elif debt is not None and cash is not None and lease_markers:
+        unavailable["net_debt"] = "; ".join(lease_markers)
+    elif debt is not None and cash is not None:
+        nd_bs = debt + sum(v for _label, v in lease_rows if v is not None) - cash
         legs = (*debt_wb, *cash_wb, *(fin_wb if fin_lease is not None else ()),
                 *(op_wb if op_lease is not None else ()))
+        absent = [label for label, v in lease_rows if v is None]
         put("net_debt", (nd_bs, None, None, tuple(dict.fromkeys(legs))), "$M",
-            "total debt + leases where disclosed - total cash and short-term investments")
+            "total debt + leases where disclosed - total cash and short-term investments"
+            + (f"; the balance sheet carries no {' or '.join(repr(a) for a in absent)} row, and "
+               "its Total Debt is not shown to include the leases, so none is added"
+               if absent else ""))
     ev_mult = _sourced(bundle, cs.ev_ebitda_current)
     ebitda = _sourced(bundle, cs.ltm_ebitda)
     if nd_bs is not None and ev_mult and ebitda and ebitda > 0:

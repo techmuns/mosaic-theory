@@ -399,8 +399,45 @@ def _guidance() -> Rows:
     return rows
 
 
+#: (2026-10-30, audit A-D1) the Revisions sheet: per metric block, a title row, the listing's period
+#: header, then three windows each carrying '# of Analysts', '# of Analysts still in Consensus',
+#: 'Upward' and 'Downward' — the layout of every real export's Revisions sheet. Counts are floats,
+#: as CIQ writes them; an explicit 0.0 is a count of none (CIQ writes zeros; a marker is no count).
+R_PERIODS = ("FQ1 2027", "FQ2 2027", "FY 2027", "FY 2028")
+#: (window label, {metric: (analysts, in consensus, up, down) per R_PERIODS column}).
+REVISIONS: tuple[tuple[str, dict[str, tuple[tuple[float, float, float, float], ...]]], ...] = (
+    ("Last Month", {"EPS (GAAP)": ((8.0, 7.0, 2.0, 1.0), (8.0, 7.0, 1.0, 0.0),
+                                   (9.0, 8.0, 3.0, 1.0), (6.0, 5.0, 1.0, 1.0)),
+                    "Revenue": ((9.0, 8.0, 1.0, 2.0), (9.0, 8.0, 0.0, 1.0),
+                                (10.0, 9.0, 2.0, 2.0), (7.0, 6.0, 0.0, 0.0))}),
+    ("Last 2 Months", {"EPS (GAAP)": ((8.0, 7.0, 3.0, 1.0), (8.0, 7.0, 2.0, 0.0),
+                                      (9.0, 8.0, 4.0, 1.0), (6.0, 5.0, 1.0, 2.0)),
+                       "Revenue": ((9.0, 8.0, 2.0, 2.0), (9.0, 8.0, 1.0, 1.0),
+                                   (10.0, 9.0, 3.0, 2.0), (7.0, 6.0, 1.0, 0.0))}),
+    ("Last 3 Months", {"EPS (GAAP)": ((8.0, 7.0, 4.0, 2.0), (8.0, 7.0, 2.0, 1.0),
+                                      (9.0, 8.0, 5.0, 2.0), (6.0, 5.0, 2.0, 2.0)),
+                       "Revenue": ((9.0, 8.0, 3.0, 2.0), (9.0, 8.0, 1.0, 2.0),
+                                   (10.0, 9.0, 4.0, 3.0), (7.0, 6.0, 1.0, 1.0))}),
+)
+R_ROWS = ("# of Analysts", "# of Analysts still in Consensus", "Upward", "Downward")
+
+
+def _revisions() -> Rows:
+    rows = _estimates_preamble("Revisions") + [[]]
+    for metric in ("EPS (GAAP)", "Revenue"):
+        rows += [[metric, *([""] * len(R_PERIODS))],
+                 [f"{EXCHANGE}:{TICKER}", *(f"  {p}" for p in R_PERIODS)]]
+        for window, by_metric in REVISIONS:
+            rows.append([window, *([""] * len(R_PERIODS))])
+            cols = by_metric[metric]
+            rows += [[label, *(c[i] for c in cols)] for i, label in enumerate(R_ROWS)]
+        rows.append([])
+    return rows
+
+
 def _estimates_sheets() -> dict[str, Rows]:
-    return {"Consensus": _consensus(), "Trends": _trends(), "Guidance": _guidance()}
+    return {"Consensus": _consensus(), "Trends": _trends(), "Guidance": _guidance(),
+            "Revisions": _revisions()}
 
 
 # --- the Business-Relationships views (real RTF) ------------------------------------------------

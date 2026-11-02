@@ -673,10 +673,9 @@ def test_nm_at_the_latest_close_refuses_rather_than_reaching_back(bundle: CiqBun
 
 
 @pytest.mark.parametrize("marker", gen.MARKERS, ids=lambda m: repr(m))
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
-    "A-D2: an UNAVAILABLE 'Total Pref. Equity' cell is added to the EV bridge as 0.0 — the "
-    "marker becomes a stated zero claim"))
 def test_a_marker_in_the_ev_bridge_is_never_a_zero_claim(bundle: CiqBundle, marker: str) -> None:
+    """A-D2, FIXED 2026-10-30 (was a strict xfail): an UNAVAILABLE 'Total Pref. Equity' cell is
+    an unread claim with its reason (`ClaimLine.unread`), never a 0.0 line."""
     bs = bundle.sheet("financials", "Balance Sheet", freq="quarterly")
     pref = _row(bs, "Total Pref. Equity")
     # the marker cell AS DECODED from the committed BIFF probe row, placed in the latest column

@@ -311,6 +311,27 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "after its own filing at its filing day, cross-checked (audit X1(a))",
     ),
     (
+        "2026-10-30.zero-coercion",
+        "a CIQ marker or an absent row is no value, never 0 (audit RC1: A-D1, A-D2): a revision "
+        "count CIQ states as a marker prints 'n/a', never 0; the EV bridge's preferred and "
+        "minority "
+        "lines say why they carry no figure — the row is absent, or its cell is a marker — and the "
+        "claims sum the legs CIQ states (no value moves); the R4 basis states such a leg 'not "
+        "stated'; the anchor bridge's net debt says CIQ's Total Debt carries its lease rows "
+        "where its own rows show it (33 of 34 exports), and elsewhere names the lease rows it "
+        "lacks and refuses a marker on one; the EV gap's EBITDA margin is converted as "
+        "`our_ebitda` converts it, or not shown; an unknown mid-cycle year count is None; 'No "
+        "Data Available' is a marker",
+    ),
+    (
+        "2026-10-30.submissions-pages",
+        "a filings window that reaches past the submissions index's recent page (a heavy "
+        "filer's newest ~1,000 filings) reads every older page it overlaps, through the SEC "
+        "client, each checked against the document's listing of it and read again fresh when "
+        "the two are of different vintages, or raises naming the page it could not read — "
+        "never a short list read as complete (audit E1-D10)",
+    ),
+    (
         "2026-10-30.E2-D17",
         "a going-concern statement is read as stated (audit E2-D17): a denial of the doubt (no "
         "longer, none, not believed, no longer present, removed, already alleviated) and a "
