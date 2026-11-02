@@ -116,3 +116,14 @@ superseded-by:
   - C4's listed sites are the screens' enrichment, `mechanical._adjusted_facts` and the CIQ-empty
     fallback, and none of them is the anchor.
   - The same cut at `compute_anchor`'s entry would close it.
+
+**ROUND 1 (in-session `/code-review high` on 2d638da3; Codex's review failed on its usage limit).**
+- **STATE row 41's figures now state their boundary:** `compute_anchor`, EDGAR-only, on each page's
+  tracking fixture at its own price date, measured 2026-11-02 at 2d638da3.
+- **DEFERRED: the anchor's CIQ net-debt fill is not cut at the price date.** Where the cut leaves
+  EDGAR no net debt, the workbook's latest balance-sheet column fills it. That export is the page's
+  own input, matched by hash. C4 rules on EDGAR filings, and cutting a CIQ export at the price date
+  is a question of its own.
+- **DISMISSED: the bridge refresh reuses the committed anchor net debt on a page not priced
+  ex-lease.** That is by design (the cross-check follows the anchor's figure), and the anchor's own
+  recompute applies the cut.
