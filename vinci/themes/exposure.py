@@ -31,6 +31,7 @@ from datetime import date, timedelta
 from typing import Any, cast
 
 from vinci.edgar import EdgarClient
+from vinci.edgar.client import annual_report
 from vinci.graph.llm import LlmClient, LlmError
 from vinci.netcache import CachedHttp, HttpError, SecRateLimitedError
 from vinci.progress import ProgressFn, ProgressReporter
@@ -287,23 +288,27 @@ def recent_disclosure_stream(
     lesson — a hyperscaler contract filed as an 8-K). Section-extracted so the LLM reads prose, not
     the cover/XBRL. Fail-loud: a filing whose doc will not fetch is skipped, never fabricated."""
     fils = edgar.recent_filings(
-        cik, forms=("10-K", "20-F", "40-F", "10-Q", "8-K"),
+        cik, forms=("10-Q", "8-K"),
         since=since - timedelta(days=annual_lookback_days),
     )
-    annuals = sorted((f for f in fils if f.form in ("10-K", "20-F", "40-F")),
-                     key=lambda f: f.filing_date, reverse=True)
+    # the original annual, or an /A carrying the period's facts, any later /A named (E1-D7)
+    annual = annual_report(edgar, cik, forms=("10-K", "20-F", "40-F"))
+    if annual is not None and annual.original.filing_date < since - timedelta(
+            days=annual_lookback_days):
+        annual = None
     quarters = sorted((f for f in fils if f.form == "10-Q"),
                       key=lambda f: f.filing_date, reverse=True)
     eightks = sorted((f for f in fils if f.form == "8-K" and f.filing_date >= since),
                      key=lambda f: f.filing_date, reverse=True)[:max_8k]
-    plan: list[tuple[Any, int, tuple[str, ...]]] = []
-    if annuals:
-        plan.append((annuals[0], annual_chars, _BUSINESS_PAT))
+    plan: list[tuple[Any, int, tuple[str, ...], str]] = []
+    if annual is not None:
+        plan.append((annual.filing, annual_chars, _BUSINESS_PAT,
+                     f"; {annual.pointer}" if annual.pointer else ""))
     if quarters:
-        plan.append((quarters[0], quarterly_chars, _MDNA_PAT))
-    plan += [(f, eightk_chars, ()) for f in eightks]
+        plan.append((quarters[0], quarterly_chars, _MDNA_PAT, ""))
+    plan += [(f, eightk_chars, (), "") for f in eightks]
     out: list[tuple[str, str]] = []
-    for f, budget, pats in plan:
+    for f, budget, pats, amended in plan:
         if not f.primary_doc:
             continue
         try:
@@ -312,7 +317,7 @@ def recent_disclosure_stream(
             continue
         text = _to_text(html)
         chunk = _section(text, pats, budget) if pats else text[:budget]
-        out.append((f"{f.form} {f.filing_date} (accession {f.accession})", chunk))
+        out.append((f"{f.form} {f.filing_date} (accession {f.accession}{amended})", chunk))
     return out
 
 

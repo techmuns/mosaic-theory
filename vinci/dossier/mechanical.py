@@ -89,7 +89,8 @@ from vinci.dossier.schemas import (
 )
 from vinci.edgar import cover_count, filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar import debt_maturities as dmx
-from vinci.edgar.client import EdgarClient, Filing
+from vinci.edgar.client import EdgarClient, Filing, annual_report
+from vinci.edgar.client import events as eight_k_events
 from vinci.edgar.concepts import (
     ANNUAL_REPORT_FORMS,
     CONCEPT_ALIASES,
@@ -100,6 +101,7 @@ from vinci.edgar.concepts import (
     facts_as_of,
     foreign_currency,
     points_for_tag,
+    superseded,
 )
 from vinci.edgar.net_debt import not_applicable
 from vinci.edgar.release_parse import GUIDANCE_REFUSAL_PREFIX
@@ -374,7 +376,8 @@ def _drawdown_filings(
 ) -> list[FilingRef]:
     if not gap_dates:
         return []
-    filings = edgar.recent_filings(cik, forms=("8-K",), since=min(gap_dates) - timedelta(days=7))
+    # 8-Ks, and an 8-K/A for the codes it adds (E1-D7)
+    filings = eight_k_events(edgar, cik, since=min(gap_dates) - timedelta(days=7))
     refs: list[FilingRef] = []
     for gd in gap_dates:
         lo, hi = gd - timedelta(days=1), gd + timedelta(days=4)
@@ -2204,12 +2207,13 @@ def _segment_profit(edgar: EdgarClient, http: CachedHttp,
     if not cik:
         return None
     try:
-        tenk = edgar.recent_filings(cik, forms=ANNUAL_REPORT_FORMS)
+        # the original, or an annual /A carrying the period's facts, any later /A named (E1-D7)
+        annual = annual_report(edgar, cik, forms=ANNUAL_REPORT_FORMS)
     except Exception as exc:  # noqa: BLE001 — a failed enumeration is stated, never fatal
         return Sourced.unknown(note=f"annual-report enumeration failed ({type(exc).__name__})")
-    if not tenk:
+    if annual is None:
         return None
-    acc, form = tenk[0].accession, tenk[0].form
+    acc, form = annual.filing.accession, annual.filing.form
     try:
         read = segment_facts.segment_profit(http, cik, acc)
     except segment_facts.SegmentFactsUnavailableError as exc:
@@ -2233,7 +2237,8 @@ def _segment_profit(edgar: EdgarClient, http: CachedHttp,
         line=_segment_profit_line(read, form))
     return Sourced.present(block, source_ref=(
         f"EDGAR {form} {acc} XBRL instance {read.instance} — {read.measure} on the segment "
-        f"contexts, fiscal year ending {read.period_end.isoformat()}"))
+        f"contexts, fiscal year ending {read.period_end.isoformat()}"
+        + (f" · {annual.pointer}" if annual.pointer else "")))
 
 
 def _concentration(bundle: CiqBundle, edgar: EdgarClient, http: CachedHttp,
@@ -2753,6 +2758,11 @@ _SBC_ANNUAL_DAYS = (330, 400)
 def _sbc_annual(node: dict[str, Any], reference_date: date) -> list[dict[str, Any]]:
     """The annual-report facts (10-K, 20-F, 40-F) KNOWABLE at the as-of, newest period first.
 
+    **AN ANNUAL /A IS READ AS ITS BASE FORM** (audit E1-D7, operator ruling 2026-11-01: the latest
+    figure filed by the as-of wins, naming the figure it restates). Matched exactly, a 10-K/A was
+    dropped: Willis Lease's FY2025 SBC is tagged only in its 10-K/A, so FY2024's was served, and
+    Ducommun's 10-K/A restates FY2025's $24.5M as $28.5M. `_sbc_line` names what it restates.
+
     **BOUNDED ON `filed`, NOT ONLY ON `end`** (review of #471, and the #416/#426 lookahead class).
     A period ending before the as-of can be RESTATED long after it: FUBO's FY2021 SBC is
     $63,796,000 as filed 2022-03-01 and $53,150,000 as restated in the 2023 and 2024 10-Ks. An
@@ -2760,7 +2770,9 @@ def _sbc_annual(node: dict[str, Any], reference_date: date) -> list[dict[str, An
     did not exist at the as-of. Both the numerator and the denominator are bounded here."""
     out = []
     for x in node.get("units", {}).get("USD", []):
-        if x.get("form") not in ANNUAL_REPORT_FORMS or not x.get("start") or not x.get("end"):
+        form = str(x.get("form") or "")
+        base = form[:-2] if form.endswith("/A") else form
+        if base not in ANNUAL_REPORT_FORMS or not x.get("start") or not x.get("end"):
             continue
         filed = x.get("filed")
         if filed and date.fromisoformat(str(filed)) > reference_date:
@@ -2784,6 +2796,13 @@ def _sbc_pick(cands: list[dict[str, Any]]) -> tuple[float, str, str, str] | None
     identical ambiguity three lines below.
 
     Only a same-period, SAME-FILED disagreement is irreducible; that refuses."""
+    w = _sbc_winner(cands)
+    return None if w is None else (float(w["val"]) / 1e6, str(w["start"]), str(w["end"]),
+                                   str(w["form"]))
+
+
+def _sbc_winner(cands: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """The fact :func:`_sbc_pick` reads: the newest period's latest filing, or None."""
     if not cands:
         return None
     end = max(str(x["end"]) for x in cands)
@@ -2793,8 +2812,23 @@ def _sbc_pick(cands: list[dict[str, Any]]) -> tuple[float, str, str, str] | None
     vals = {round(float(x["val"]), 2) for x in winners}
     if len(vals) > 1:
         return None
-    w = winners[-1]
-    return float(w["val"]) / 1e6, str(w["start"]), str(w["end"]), str(w["form"])
+    return winners[-1]
+
+
+def _sbc_restated(facts: dict[str, Any], won: dict[str, Any] | None, tag: str = _SBC_TAG) -> str:
+    """", restating $X first filed <day> (<accession>)" when the served ``tag`` fact restates its
+    period's first filing (`concepts.superseded`, #875's source note), else "". The SBC figure
+    and its revenue denominator both take it: Green Brick's 10-K/A restates the FY2025 revenue
+    its ratio divides by."""
+    if won is None or not won.get("accn"):
+        return ""
+    point = next((q for q in points_for_tag(facts, tag)
+                  if q.accession == won["accn"] and str(q.period_start) == str(won["start"])
+                  and str(q.period_end) == str(won["end"])), None)
+    old = superseded(facts, point) if point is not None else None
+    return ("" if old is None else
+            f", restating ${old.value / 1e6:,.1f}M first filed {old.filed} "
+            f"({old.accession or 'accession unstated'})")
 
 
 def _sbc_line(facts: dict[str, Any], reference_date: date) -> SbcLine | None:
@@ -2829,6 +2863,7 @@ def _sbc_line(facts: dict[str, Any], reference_date: date) -> SbcLine | None:
 
     rev: float | None = None
     rev_tag = ""
+    rev_restated = ""
     ambiguous = False
     for tag in _SBC_REVENUE_TAGS:
         node = gaap.get(tag)
@@ -2844,9 +2879,11 @@ def _sbc_line(facts: dict[str, Any], reference_date: date) -> SbcLine | None:
             ambiguous = True     # same period, same filing date, different values
         else:
             rev = got[0]
+            rev_restated = _sbc_restated(facts, _sbc_winner(same), tag)
         break
 
-    src = f"EDGAR XBRL {_SBC_TAG} ({form}, {start}→{end})"
+    restated = _sbc_restated(facts, _sbc_winner(_sbc_annual(gaap[_SBC_TAG], reference_date)))
+    src = f"EDGAR XBRL {_SBC_TAG} ({form}, {start}→{end}){restated}"
     if rev is None or rev <= 0:
         why = (f"two {rev_tag} facts cover {start}→{end} with the same filing date and different "
                "values — the denominator is irreducibly ambiguous, so no ratio is formed"
@@ -2856,7 +2893,8 @@ def _sbc_line(facts: dict[str, Any], reference_date: date) -> SbcLine | None:
         pct = Sourced[float].unknown(note=why)
         line = f"stock-based compensation ${usd:,.1f}M (FY to {end}) · % of revenue UNKNOWN"
     else:
-        pct = Sourced.present(100.0 * usd / rev, source_ref=f"{src} ÷ {rev_tag} (same window)")
+        pct = Sourced.present(100.0 * usd / rev,
+                              source_ref=f"{src} ÷ {rev_tag}{rev_restated} (same window)")
         line = (f"stock-based compensation ${usd:,.1f}M = {100.0 * usd / rev:.1f}% of revenue "
                 f"(${rev:,.1f}M, FY {start}→{end})")
     return SbcLine(expense=Sourced.present(usd, source_ref=src), pct_revenue=pct,
@@ -3138,6 +3176,8 @@ class Section16Reach(NamedTuple):
     place_source: str
     regime: Regime | None
     pending: Regime | None = None
+    #: the later annual /As of ``annual`` named, with their accessions (E1-D7), or ""
+    amendments: str = ""
 
 
 #: The cover-page tag a 20-F/40-F carries for "Jurisdiction of incorporation or organization".
@@ -3235,16 +3275,17 @@ def _section16_reach(
     TEN Bermudian (EDGAR: Greece), BBUC British Columbian (EDGAR: Bermuda), HAFN Singaporean
     (EDGAR: Bermuda), MRX and RNW English (EDGAR: Bermuda, India). EDGAR is read only where the
     cover carries no usable tag."""
-    annuals = [f for f in edgar.recent_filings(cik, forms=_ANNUAL_REPORT_FORMS)
-               if f.filing_date <= reference_date]
-    if not annuals:
+    read = annual_report(edgar, cik, forms=_ANNUAL_REPORT_FORMS, through=reference_date)
+    if read is None:
         return None
-    annual = max(annuals, key=lambda f: f.filing_date)
-    if annual.form not in _FPI_ANNUAL_FORMS:
+    # the ORIGINAL's form says whether the issuer files as an FPI; the cover is read from the
+    # filing read in its place when an /A carries the period's facts (E1-D7)
+    if read.original.form not in _FPI_ANNUAL_FORMS:
         return None
+    annual, amendments = read.filing, read.pointer or ""
     if reference_date < HFIAA_EFFECTIVE:
         # No Form 3/4/5 was owed yet, so the line never names a jurisdiction: none is read.
-        return Section16Reach(annual, None, "", "", None)
+        return Section16Reach(annual, None, "", "", None, amendments=amendments)
     cover = _cover_incorporation(http, cik, annual)
     edgar_inc = None if cover is not None else edgar.state_of_incorporation(cik)
     code: str | None = None
@@ -3260,7 +3301,8 @@ def _section16_reach(
         place = f"EDGAR code {code}"
     in_force = known is not None and known.order.issued <= reference_date
     return Section16Reach(annual, code, place, source,
-                          known if in_force else None, None if in_force else known)
+                          known if in_force else None, None if in_force else known,
+                          amendments=amendments)
 
 
 def _fpi_insider_activity(
@@ -3278,7 +3320,8 @@ def _fpi_insider_activity(
     as a reason they can be partial; only one with NO filings, in an order's jurisdiction, reads
     "may report abroad". Never "no insider activity", and never a bare UNKNOWN.
     """
-    kind = f"foreign private issuer ({reach.annual.form} filed {reach.annual.filing_date})"
+    kind = (f"foreign private issuer ({reach.annual.form} filed {reach.annual.filing_date}"
+            + (f"; {reach.amendments}" if reach.amendments else "") + ")")
     if reference_date < HFIAA_EFFECTIVE:
         return Sourced.unknown(
             note=(f"{kind}: Section 16(a) reached its insiders only from {HFIAA_EFFECTIVE} "
@@ -3871,7 +3914,7 @@ def _catalyst_calendar(
     qa: list[str] = []
     # A + B — the next print, and what it tests
     try:
-        filings = edgar.recent_filings(cik, forms=("8-K",))
+        filings = eight_k_events(edgar, cik)  # 8-Ks, and an 8-K/A for the codes it adds (E1-D7)
         prints = [f.filing_date for f in filings if "2.02" in f.items]
     except Exception as exc:  # noqa: BLE001 — a feed miss is a loud flag, never an abort
         prints = []
@@ -3997,7 +4040,8 @@ def _latest_earnings_print(edgar: EdgarClient, cik: str) -> date | None:
     Operations). Fail-quiet: a submissions-feed miss or a name with no 2.02 on file returns None
     (the caller then raises no freshness caveat, never aborts)."""
     try:
-        prints = [f.filing_date for f in edgar.recent_filings(cik, forms=("8-K",))
+        # 8-Ks, and an 8-K/A for the codes it adds (E1-D7)
+        prints = [f.filing_date for f in eight_k_events(edgar, cik)
                   if "2.02" in f.items]
     except Exception:  # noqa: BLE001 — a feed miss silences the gate, never aborts the assembly
         return None
@@ -4059,7 +4103,8 @@ def _maturity_8ks(
     if not mats or not cik:
         return Sourced.unknown(note="no trailing-12m instrument maturity to anchor an 8-K")
     try:
-        filings = edgar.recent_filings(cik, forms=("8-K",), since=min(mats) - timedelta(days=11))
+        # 8-Ks, and an 8-K/A for the codes it adds (E1-D7)
+        filings = eight_k_events(edgar, cik, since=min(mats) - timedelta(days=11))
     except HttpError as exc:
         return Sourced.unknown(note=f"EDGAR 8-K fetch failed: {exc}")
     lines: list[str] = []
@@ -4071,7 +4116,7 @@ def _maturity_8ks(
             seen.add(f.accession)
             items = ", ".join(item_labels(list(f.items))) or "—"
             lines.append(
-                f"8-K at maturity {m.isoformat()}: filed {f.filing_date.isoformat()} "
+                f"{f.form} at maturity {m.isoformat()}: filed {f.filing_date.isoformat()} "
                 f"[{f.accession}] {items} — read for resolution"
             )
     if not lines:
@@ -4224,7 +4269,8 @@ def _capital_structure_vintage(
         # lookahead class `close_as_of` exists to refuse one module over — it reports an event the
         # reader could not have known, and it makes the artifact irreproducible, because
         # re-assembling at the SAME reference_date yields a different answer as time passes.
-        terminations = [f for f in edgar.recent_filings(cik, forms=("8-K",))
+        # 8-Ks, and an 8-K/A for the codes it adds (E1-D7)
+        terminations = [f for f in eight_k_events(edgar, cik)
                         if _ITEM_TERMINATION in (f.items or [])
                         and filed < f.filing_date <= reference_date]
     except (HttpError, KeyError, ValueError):
@@ -4279,18 +4325,22 @@ def _covenant_pointers(
         # historical dossier would attach a 10-K filed after its own reference date. Same class as
         # #416's termination lookahead, and the widened exhibit matcher makes it REACHABLE for the
         # four names that previously located nothing at all.
-        tenks = [f for f in edgar.recent_filings(cik, forms=ANNUAL_REPORT_FORMS)
-                 if f.filing_date <= reference_date]
-        if tenks and tenks[0].form != "40-F":
-            acc, annual_form = tenks[0].accession, tenks[0].form
+        annual = annual_report(edgar, cik, forms=ANNUAL_REPORT_FORMS, through=reference_date)
+        if annual is not None and annual.original.form != "40-F":
+            # the original's exhibit index, or an /A's that carries the period's facts (E1-D7)
+            acc, annual_form = annual.filing.accession, annual.original.form
             exs = [n for n in _exhibit_names(http, cik, acc)
                    if (_EX4_20F_RE.search(n) if annual_form == "20-F"
                        else re.search(_EX10_RE, n, re.I))]
             if exs:
+                # the later /A rides in `filing`: both renderers print a row's `note` only when
+                # it has no accession, so there it would never reach the page (review round 1)
                 rows.append(CovenantPointer(
                     family=f"material contracts ({annual_form} exhibit index)",
-                    filing=f"latest {annual_form}",
-                    filing_date=tenks[0].filing_date.isoformat(), accession=acc, exhibits=exs))
+                    filing=f"latest {annual_form}"
+                    + (f" ({annual.pointer})" if annual.pointer else ""),
+                    filing_date=annual.filing.filing_date.isoformat(), accession=acc,
+                    exhibits=exs))
                 seen.add(acc)
     except (HttpError, KeyError, ValueError):
         pass
@@ -5356,7 +5406,8 @@ def _primary_source(
     # (1) recent 8-K EX-99.1 earnings/event releases (one failing exhibit never drops the rest) -
     if cik:
         try:
-            for f in edgar.recent_filings(cik, forms=("8-K",))[:10]:
+            # 8-Ks, and an 8-K/A for the codes it adds (E1-D7)
+            for f in eight_k_events(edgar, cik)[:10]:
                 if not (set(f.items) & {"2.02", "8.01"}):
                     continue
                 try:
@@ -5371,7 +5422,7 @@ def _primary_source(
                                   f"EX-99.1 exhibit was found")
                     for url in urls:
                         txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
-                        src = f"8-K {f.accession} EX-99.1"
+                        src = f"{f.form} {f.accession} EX-99.1"
                         rel = release_parse.parse_release(txt, source_ref=src)
                         # the filing's own date, so a consumer can pick the FRESHEST guide
                         # without parsing the accession out of source_ref
@@ -5391,9 +5442,13 @@ def _primary_source(
     periodic_form = "10-Q"
     if cik:
         try:
-            qs = (edgar.recent_filings(cik, forms=("10-Q",))
-                  or [f for f in edgar.recent_filings(cik, forms=("20-F", "40-F"))[:1]
-                      if f.form == "20-F"])
+            qs = edgar.recent_filings(cik, forms=("10-Q",))
+            amended = ""
+            if not qs:
+                # the original 20-F, or a 20-F/A carrying the period's facts (E1-D7)
+                fpi = annual_report(edgar, cik, forms=("20-F", "40-F"))
+                qs = [fpi.filing] if fpi is not None and fpi.original.form == "20-F" else []
+                amended = f" · {fpi.pointer}" if qs and fpi is not None and fpi.pointer else ""
             periodic_form = qs[0].form if qs else periodic_form
             cur = foreign_currency(facts, reference_date) if facts is not None else None
             if qs and cur is not None:
@@ -5402,7 +5457,7 @@ def _primary_source(
             elif qs and qs[0].primary_doc:
                 url = filing_sections.filing_url(cik, qs[0].accession, qs[0].primary_doc)
                 txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
-                src = f"{periodic_form} {qs[0].accession}"
+                src = f"{periodic_form} {qs[0].accession}{amended}"
                 filing = filing_sections.parse_filing_sections(txt, source_ref=src)
                 filing_as_of = qs[0].report_date  # the maturity-wall 'as of' — panel window base
                 saw_10q = True

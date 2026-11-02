@@ -25,7 +25,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 
-from vinci.edgar.client import EdgarClient
+from vinci.edgar.client import EdgarClient, events
 from vinci.edgar.concepts import refused_endpoint, share_count_change
 from vinci.edgar.cover_count import share_series
 from vinci.edgar.going_concern import find_going_concern_statement
@@ -180,7 +180,7 @@ def _filings_for(
     codes, and the item-code-only signals (3.01 delisting, 4.02 restatement) still classify.
     """
     try:
-        raw = edgar.recent_filings(cik, forms=("8-K",), since=since)
+        raw = events(edgar, cik, since=since)  # 8-Ks, and an 8-K/A for the codes it adds (E1-D7)
     except (HttpError, KeyError, ValueError):
         return None
     out: list[FilingText] = []
