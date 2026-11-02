@@ -324,7 +324,10 @@ def _cmd_eod(args: argparse.Namespace) -> int:
     # price date (audit F-D4)
     f = compute_price_features(bars, reference_date=ref, staleness_days=cfg.price_staleness_days,
                                frontier=ref)
-    span = f"{bars[0].bar_date}..{bars[-1].bar_date} ({len(bars)} bars)"
+    # the span the features were computed over, not the whole store (review of #884)
+    read = [b for b in bars if b.bar_date <= ref]
+    span = (f"{read[0].bar_date}..{read[-1].bar_date} ({len(read)} bars)" if read
+            else f"no bar on or before {ref}")
     print(f"=== {ident.ticker} ({ident.name})  features as of {ref}  [{span}] ===")
     for label, field in [
         ("last close", f.last),

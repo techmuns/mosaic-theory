@@ -50,10 +50,11 @@ THE DECLARED SET, NOT A COMPUTED CLOSURE (26b's spec, corrected 2026-07-28: the 
 `assemble` is ~58 modules and a guard that always fires is switched off). Every module under
 vinci/dossier and vinci/edgar is classified — `WATCHED`, or `NOT_EXTRACTION` with the reason — and a
 module joining either package unclassified is a MOVE under the rule above, so the set cannot quietly
-stop covering a new extractor (`--repin` then pins it as watched). Two modules outside them build
-page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps) and
-vinci/finra.py (short interest). Prices (vinci/eod) are market data, not extraction, and vinci/ciq
-feeds only the git-ignored graph test.
+stop covering a new extractor (`--repin` then pins it as watched). Three modules outside them build
+page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps),
+vinci/finra.py (short interest) and vinci/eod/features.py (the price box's 52-week range, whose
+window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction, and
+vinci/ciq feeds only the git-ignored graph test.
 
     python -m tests.test_extraction_version_drift            # print every watched module's hash
     python -m tests.test_extraction_version_drift --repin    # re-pin this file in place
@@ -107,7 +108,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "f6a3904e1011",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "548cafb7d923",
+    "vinci/dossier/mechanical.py": "c350252fe384",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "0c07bfc551a1",
@@ -118,6 +119,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a8870ba9ed91",
     "vinci/dossier/verdict.py": "0b43167d2044",
+    "vinci/edgar/asof.py": "b8166e456b80",
     "vinci/edgar/client.py": "49703bf31602",
     "vinci/edgar/commissioning.py": "dc2004432387",
     "vinci/edgar/concepts.py": "11278504f70c",
@@ -131,6 +133,7 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/segment_facts.py": "9d3c07301296",
     "vinci/edgar/segments.py": "8aa10f003612",
     "vinci/edgar/submissions.py": "6644355e5c3f",
+    "vinci/eod/features.py": "8d23c6080234",
     "vinci/finra.py": "5787c9793b1b",
     "vinci/verbatim.py": "cb75bef0a20e",
 }
@@ -148,7 +151,7 @@ NOT_EXTRACTION: dict[str, str] = {
 }
 
 #: Watched beyond the two classified packages.
-EXTRA_WATCHED = ("vinci/verbatim.py", "vinci/finra.py")
+EXTRA_WATCHED = ("vinci/verbatim.py", "vinci/finra.py", "vinci/eod/features.py")
 CLASSIFIED_PACKAGES = ("vinci/dossier", "vinci/edgar")
 
 

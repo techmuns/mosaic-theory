@@ -22,7 +22,7 @@ from collections import OrderedDict
 from collections.abc import Callable, Sequence
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
-from typing import Any, NamedTuple, TypeVar
+from typing import Any, NamedTuple, TypeVar, cast
 
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals, lease_basis, statement_recon
@@ -89,6 +89,7 @@ from vinci.dossier.schemas import (
 )
 from vinci.edgar import cover_count, filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar import debt_maturities as dmx
+from vinci.edgar.asof import AsOfEdgar, page_price_date
 from vinci.edgar.client import EdgarClient, Filing, annual_report
 from vinci.edgar.client import events as eight_k_events
 from vinci.edgar.concepts import (
@@ -173,6 +174,25 @@ def _prefer_ciq(ciq: Sourced[_S], edgar: Sourced[_S] | None) -> Sourced[_S]:
     if ciq.status is SourceStatus.PRESENT or edgar is None:
         return ciq
     return edgar
+
+
+def _count_filed_after(edgar: EdgarClient, cik: str | None, cut: date | None) -> str | None:
+    """Why there is no share count when the page's cut is the reason: the newest count was FILED
+    after the price date (review of #884 — the UNKNOWN said "absent or older than Nd" of a count
+    that existed). Read on the wrapped client only to SAY what the cut left out; None otherwise."""
+    uncut = getattr(edgar, "uncut", None)
+    if cut is None or uncut is None or not cik:
+        return None
+    facts = _companyfacts_or_none(uncut, cik)
+    # only a count that would have been FRESH at the cut — an old one filed late is not the reason
+    late = [p for p in extract_points(facts, "shares") if p.is_instant and p.value
+            and p.filed > cut and (cut - p.period_end).days <= _SHARES_MAX_AGE_DAYS
+            ] if facts else []
+    if not late:
+        return None
+    p = max(late, key=lambda q: (q.period_end, q.filed))
+    return (f"no share count filed by the {cut} price date — the newest, {p.value:,.0f} "
+            f"(counted {p.period_end}), was filed {p.filed}, after it")
 
 
 def _companyfacts_as_of(edgar: EdgarClient, cik: str | None,
@@ -3726,10 +3746,13 @@ def _edgar_shares_outstanding(
         return None
     ref = as_of or date.today()
     # FILED BY THE CUT (audit X1(b), operator ruling 2026-11-01: "filed on or before it; latest
-    # such filing wins"): LLY's page, priced 2026-10-28, took a count filed 2026-10-29
-    # (dated only once kept, so no cover is fetched for a count the cut discards)
-    filed = [p for p in extract_points(facts, "shares") if p.filed <= ref]
-    counts = [c for c in _dated_shares(edgar, http, cik, facts, filed, ref)
+    # such filing wins"): LLY's page, priced 2026-10-28, took a count filed 2026-10-29. The WHOLE
+    # blob is cut before an alias is chosen (`facts_as_of`), so the tag is picked on the facts as
+    # they stood: chosen on today's, Recursion's dei cover tag looked current on 2026-06-30 by a
+    # count filed 2026-08-05, and its only row by then was 2021's (review of #884)
+    facts = facts_as_of(facts, ref)
+    counts = [c for c in _dated_shares(edgar, http, cik, facts,
+                                       extract_points(facts, "shares"), ref)
               if c.point.is_instant]
     if not counts:
         return None
@@ -5637,7 +5660,7 @@ def _stock_info(
             Sourced.present(float(shares), source_ref=shares_src)
             if shares and shares > 0
             else Sourced.unknown(
-                note=refused or (
+                note=refused or _count_filed_after(edgar, record.identity.cik, cut) or (
                     "no usable share count — the EDGAR cover-page tag is absent or older than "
                     f"{_SHARES_MAX_AGE_DAYS}d" + (
                         "; the CIQ panel is not read for a depositary line, whose unit it does "
@@ -5815,8 +5838,12 @@ def assemble_mechanical(
     # (filed on or before it; latest such filing wins; nothing after a sealed verdict)"): the
     # latest stored close the page divides by. The fundamentals, the fallback, the share count
     # and the price features read nothing filed or traded after it (audit E1-D6, X1(b), F-D4).
-    cut = (record.prices.last.as_of
-           if record.prices.last.is_known and record.prices.last.as_of else reference_date)
+    cut = page_price_date(record.prices.last.as_of if record.prices.last.is_known else None,
+                          reference_date)
+    # ...APPLIED ONCE, HERE: every reader below reads EDGAR as it stood on the cut — companyfacts
+    # pruned whole, the snapshot at the cut, the filing lists and the full-text search bounded
+    # (review of #884: the releases, the valuation bases and capital allocation read past it)
+    edgar = cast(EdgarClient, AsOfEdgar(edgar, cut))
     # the catalyst 8-K's 99.1 (revised guidance) is fetched first: its adjusted EBITDA/EPS feed the
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
     drawdown, drawdown_flags = _drawdown_cause(record, edgar, http)
@@ -5925,8 +5952,8 @@ def assemble_mechanical(
             record, store, edgar, bundle, reference_date, implied_val.market_cap, today=today,
             http=http, cut=cut),
         # (Brief) 52-week rebased price path — name vs the cap-band benchmark (the idio closes).
-        stock_performance=_stock_performance(
-            record.identity, store, reference_date, bench=bench),
+        # ...on the window the price box's range reads: the 365 days ending on the price date
+        stock_performance=_stock_performance(record.identity, store, cut, bench=bench),
         ciq_currency=currency,
     )
     # (2026-10-27) the flat liquidity line prints the year a filing governs, as the table does
