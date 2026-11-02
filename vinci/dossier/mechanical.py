@@ -3726,9 +3726,10 @@ def _edgar_shares_outstanding(
     ref = as_of or date.today()
     # FILED BY THE CUT (audit X1(b), operator ruling 2026-11-01: "filed on or before it; latest
     # such filing wins"): LLY's page, priced 2026-10-28, took a count filed 2026-10-29
-    counts = [c for c in _dated_shares(edgar, http, cik, facts,
-                                       extract_points(facts, "shares"), ref)
-              if c.point.is_instant and c.point.filed <= ref]
+    # (dated only once kept, so no cover is fetched for a count the cut discards)
+    filed = [p for p in extract_points(facts, "shares") if p.filed <= ref]
+    counts = [c for c in _dated_shares(edgar, http, cik, facts, filed, ref)
+              if c.point.is_instant]
     if not counts:
         return None
     newest = max(counts, key=lambda c: (c.point.period_end, c.point.filed))

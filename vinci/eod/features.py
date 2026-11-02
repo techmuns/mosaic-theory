@@ -133,7 +133,7 @@ def compute_price_features(
     page's price date"). No bar after it is read, and every window — the 52-week range, the
     trailing returns, the 90-day ADV — ends on the PRICE DATE, the newest bar at or before it. A
     page's prices run past its reference date, and its "52-week" window ran from the reference
-    date less 365 days to the newest bar: 368–377 days on the committed pages. Without a frontier
+    date less 365 days to the newest bar: 368–387 days on the committed pages. Without a frontier
     (the screen, whose newest bar IS its reference date) the windows end on the reference date as
     before."""
     bars = sorted((b for b in bars if frontier is None or b.bar_date <= frontier),

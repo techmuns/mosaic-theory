@@ -144,3 +144,17 @@ def test_the_screens_share_change_reads_no_count_filed_after_its_price_date() ->
                                    reference_date=date(2026, 10, 16))
     note = got.fundamentals.share_count_change_730d.note or ""
     assert "4,106,325,903" not in note
+
+
+def test_the_fallbacks_facts_read_nothing_filed_after_the_cut() -> None:
+    """The CIQ-empty EDGAR fallback is handed companyfacts as they stood on the page's price date:
+    NFLX's 2026-09-30 count, filed 2026-10-21, is not there on a 2026-10-20 cut."""
+    from vinci.dossier.mechanical import _companyfacts_as_of
+    got = _companyfacts_as_of(cast(EdgarClient, _Facts(_shares("NFLX"))), "0001065280",
+                              date(2026, 10, 20))
+    assert got is not None
+    rows = got["facts"]["dei"]["EntityCommonStockSharesOutstanding"]["units"]["shares"]
+    assert rows and all(r["filed"] <= "2026-10-20" for r in rows)
+    assert any(r["filed"] == "2026-10-21"
+               for r in _shares("NFLX")["facts"]["dei"]["EntityCommonStockSharesOutstanding"]
+               ["units"]["shares"])
