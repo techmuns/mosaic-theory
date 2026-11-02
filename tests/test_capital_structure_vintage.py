@@ -37,23 +37,27 @@ from typing import Any
 import pytest
 
 from vinci.dossier.mechanical import _capital_structure_vintage, _cs_panel_filed
+from vinci.edgar.client import Filing
 
 NFLX_PANEL = "A 2025 filed Jan-23-2026"
 BUILT = date(2026, 7, 29)
 
 
-class _Filing:
-    def __init__(self, d: date, items: list[str], accession: str = "0001193125-26-082247") -> None:
-        self.filing_date, self.items, self.accession = d, items, accession
+def _Filing(d: date, items: list[str],  # noqa: N802 — kept the name its call sites use
+            accession: str = "0001193125-26-082247") -> Filing:
+    """A real `Filing` (an 8-K): the termination check reads the form since E1-D7, and a
+    hand-rolled shape without one stood in for the type it no longer matched."""
+    return Filing(cik="1", form="8-K", filing_date=d, accession=accession, items=items,
+                  primary_doc=None)
 
 
 class _Edgar:
     """Only `recent_filings` is touched, so a duck type drives this offline."""
 
-    def __init__(self, filings: list[_Filing] | Exception) -> None:
+    def __init__(self, filings: list[Filing] | Exception) -> None:
         self._f = filings
 
-    def recent_filings(self, cik: str, *, forms: tuple[str, ...] = ()) -> list[_Filing]:
+    def recent_filings(self, cik: str, *, forms: tuple[str, ...] = ()) -> list[Filing]:
         if isinstance(self._f, Exception):
             raise self._f
         return self._f

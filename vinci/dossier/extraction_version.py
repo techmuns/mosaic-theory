@@ -331,6 +331,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "the two are of different vintages, or raises naming the page it could not read — "
         "never a short list read as complete (audit E1-D10)",
     ),
+    (
+        "2026-11-02.amended-filings",
+        "amended filings are read by the operator's ruling of 2026-11-01 (audit E1-D7): a figure "
+        "is the latest filed by the as-of, naming the one it restates, and the SBC reader reads an "
+        "annual /A as its base form; a document reader reads the original annual unless an /A "
+        "carries the period's us-gaap/ifrs facts, and names every later /A; an 8-K/A counts only "
+        "for the item codes it adds over its report date's original",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
