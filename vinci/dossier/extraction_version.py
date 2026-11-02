@@ -361,6 +361,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "Not Recently Disclosed' are said in its note, never counted as current, while the recent "
         "section's own 'no recently disclosed customers' is read",
     ),
+    (
+        "2026-11-02.D14-D18-FD2-X3",
+        "a sentence that pairs its loans with its dates by position, respectively, states no "
+        "loan maturity (audit E2-D14); a segment report's column is named by its duration and "
+        "its date, and a header or a row whose column count disagrees is refused (E2-D18); an "
+        "ADS count is the whole number, its hyphenated tens, hundreds and thousands separators "
+        "read, and a count that runs on past what was read is refused (F-D2); the dilutive "
+        "increment is never paired over a span longer than a quarter (X3)",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
