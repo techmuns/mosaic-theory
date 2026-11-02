@@ -2,7 +2,7 @@
 id: 2026-11-02-amended-filings
 status: open
 date: 2026-11-02
-prs: []
+prs: [882]
 supersedes:
 superseded-by:
 ---
