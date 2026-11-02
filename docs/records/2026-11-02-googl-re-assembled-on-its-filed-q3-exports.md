@@ -2,7 +2,7 @@
 id: 2026-11-02-googl-re-assembled-on-its-filed-q3-exports
 status: shipped
 date: 2026-11-02
-prs: [884]
+prs: [886]
 supersedes:
 superseded-by:
 ---
@@ -107,8 +107,11 @@ that a pair CIQ has not finished processing can carry the wrong LTM on a materia
     Drive on 11 of 11 files, with no symlinks.
 - **One GOOGL build**, at $3.20 against a $2.80 estimate (stop line about $5.60). No guard refused.
 - **The suite:** the full offline suite, CI-like (the CIQ copy, store, caches and `.env`
-  unlinked, as CI runs it), on the final tree: 8,538 passed, 0 failed, 548 skipped, 9 xfailed
-  (`pytest -m "not network"`, 7m41s).
+  unlinked, as CI runs it), on the pre-merge tree (`5dbdb98e`): 8,538 passed, 0 failed, 548
+  skipped, 9 xfailed (`pytest -m "not network"`, 7m41s).
+  - On the tree with main merged in (`60151ccc`), `bin/commit`'s gate ran 8,603 passed, 0
+    failed, 547 skipped, 8 xfailed. Its `-qq` output prints no totals, so these are counted from
+    its progress characters.
   - Before the frozen vintage and the two R4 pin moves, the same tree with the artifacts failed
     exactly 5 tests: the three GOOGL net-debt pins and the two R4 pins above.
 
