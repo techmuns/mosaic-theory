@@ -297,8 +297,28 @@ def _inside(pos: int, spans: list[tuple[int, int]]) -> bool:
     return any(lo <= pos < hi for lo, hi in spans)
 
 
+#: "The Revolving Credit Facility and the Term Loan B mature on June 1, 2029 and June 1, 2030,
+#: respectively" pairs its loans with its dates BY POSITION, which this grammar does not read: it
+#: gave the first date to the loan nearest the verb, and the Term Loan B's page maturity became
+#: 2029-06-01 against CIQ's 2030-06-01 (audit E2-D14). Such a sentence states nothing here.
+#: THE LIST MUST BE THE MATURITY'S OWN — a maturity verb, then two or more dates or years, then
+#: "respectively" (or the verb, "respectively", the dates). Measured on the cached filings, most
+#: "respectively" sentences pair AMOUNTS or balance dates beside one maturity read right ("matures
+#: on April 22, 2029 and bears interest … floors of 0.50% and 1.50%, respectively"; "a term loan
+#: that matures in March 2032, at March 31, 2026 and December 31, 2025, respectively"), and
+#: refusing the word alone would lose them.
+_DATE_OR_YEAR = rf"(?:(?:on|in)\s+)?(?:{_DATE}|20\d\d\b)"
+_DATE_LIST = rf"{_DATE_OR_YEAR}(?:(?:\s*,\s*(?:and\s+)?|\s+and\s+){_DATE_OR_YEAR})+"
+_MATURITY_VERB = r"\b(?:matur\w*|expir\w*|due|terminat\w*)"
+_RESPECTIVELY = re.compile(
+    rf"{_MATURITY_VERB}\s+{_DATE_LIST}\s*,?\s*respectively"
+    rf"|{_MATURITY_VERB}\s*,?\s*respectively\s*,?\s*{_DATE_LIST}", re.I)
+
+
 def _loans(sentence: str) -> list[Stated]:
     """The term-loan, revolver and generic-facility maturities one sentence states."""
+    if _RESPECTIVELY.search(sentence):
+        return []
     out: list[Stated] = []
     springs = _spring_spans(sentence)
     taken: list[tuple[int, int]] = list(springs)

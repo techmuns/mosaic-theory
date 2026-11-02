@@ -42,13 +42,12 @@ from vinci.schemas.listing import AdsRatio
 #: a 12(b) title (or a sentence) that is about depositary shares at all
 DEPOSITARY_WORDS = re.compile(r"depositary|depository|\bADSs?\b|\bADRs?\b", re.I)
 
-_COUNT_WORDS: dict[str, float] = {
-    "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
-    "nine": 9, "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
-    "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18, "nineteen": 19, "twenty": 20,
-    "twenty-five": 25, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60, "eighty": 80,
-    "one hundred": 100, "hundred": 100, "two hundred": 200, "four hundred": 400,
-}
+_UNIT_WORDS = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+               "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
+               "eighteen", "nineteen"]
+_TENS_WORDS = ["twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
+_COUNT_WORDS: dict[str, float] = ({w: float(i + 1) for i, w in enumerate(_UNIT_WORDS)}
+                                  | {w: 20.0 + 10 * i for i, w in enumerate(_TENS_WORDS)})
 _FRACTION_WORDS: dict[str, float] = {
     "half": 2, "halves": 2, "third": 3, "quarter": 4, "fourth": 4, "fifth": 5, "sixth": 6,
     "seventh": 7, "eighth": 8, "ninth": 9, "tenth": 10, "twentieth": 20, "fortieth": 40,
@@ -56,8 +55,25 @@ _FRACTION_WORDS: dict[str, float] = {
 }
 _FRAC_ALT = (r"halves|half|thirds?|quarters?|fourths?|fifths?|sixths?|sevenths?|eighths?|"
              r"ninths?|tenths?|twentieths?|fortieths?|fiftieths?|hundredths?")
-_NUM = (r"(\d+(?:\.\d+)?|"
-        + "|".join(sorted(map(re.escape, _COUNT_WORDS), key=len, reverse=True)) + r")")
+def _alt(words: list[str]) -> str:
+    return "|".join(sorted(words, key=len, reverse=True))   # "seventeen" before "seven"
+
+
+#: A WHOLE NUMBER, IN WORDS OR DIGITS. Read by its first word, "twenty-four" was 20, "thirty-five"
+#: 30, "three hundred" 3 and "1,000" 1 — a count that stops short of its own end, which the audit
+#: (F-D2) found reading as `known`. The tens take their unit ("twenty-four", "twenty four"), a
+#: count takes "hundred" ("three hundred", "two hundred and fifty"), and digits take their
+#: thousands separators.
+_BELOW_100 = (rf"(?:(?:{_alt(_TENS_WORDS)})(?:[\s-]+(?:{_alt(_UNIT_WORDS[:9])}))?"
+              rf"|{_alt(_UNIT_WORDS)})")
+_WORDS = rf"(?:(?:{_BELOW_100}|a)\s+hundred(?:\s+(?:and\s+)?{_BELOW_100})?|hundred|{_BELOW_100})"
+#: ...and a number that runs on past what was read — "one thousand", "2,50", "ten-fold", the
+#: mixed "2 1/2" — is no count at all: refused, never read as the part before it. The number is
+#: matched ATOMICALLY, so a refused "twenty five thousand" is not retried as "twenty" (review).
+#: Nor does one start mid-number.
+_RUNS_ON = r"(?![-,.]?\d|-\w|\s+\d+\s*/|[\s-]+(?:hundred|thousand|million|billion)\b)"
+_NUM = (r"(?<![\w,.-])((?>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?|" + _WORDS + r"))"
+        + _RUNS_ON)
 #: a number followed by a fraction word or "/n" is a NUMERATOR, never a count (KT, SMFG)
 _NOT_A_NUMERATOR = r"(?![\s-]*(?:/|" + _FRAC_ALT + r"))\b"
 _RIGHT_TO = r"(?:the\s+right\s+to\s+receive\s+)?"
@@ -68,8 +84,7 @@ _ADS_NOUN = (r"(?:ADSs?|ADRs?|American\s+deposit(?:a|o)ry\s+(?:shares?|receipts?
 #: Receipts)' (EC, IX, ITUB)
 _ASIDE = r"(?:\s*\([^()]{0,90}\))?"
 #: "one-half of one share" (KT), "five-ninths of one share" (SKM): numerator, then denominator
-_FRACTION = (r"(?:(" + "|".join(sorted(map(re.escape, _COUNT_WORDS), key=len, reverse=True))
-             + r"|a)[\s-]+)?(" + _FRAC_ALT + r")\s+of\s+(?:one|an?)\b")
+_FRACTION = (r"(?:(" + _BELOW_100 + r"|a)[\s-]+)?(" + _FRAC_ALT + r")\s+of\s+(?:one|an?)\b")
 _SLASH = r"(\d+)\s*/\s*(\d+)(?:th|st|nd|rd)?\s+of\s+(?:one|an?)\b"
 _REPRESENT = r"represent(?:s|ing)?\s+" + _RIGHT_TO
 
@@ -114,10 +129,18 @@ _QUOTE_PAD = 80
 
 
 def _count(word: str) -> float | None:
-    w = " ".join(word.lower().split())
+    w = word.lower().replace(",", "")
     if re.fullmatch(r"\d+(?:\.\d+)?", w):
         return float(w)
-    return _COUNT_WORDS.get(w)
+    value = 0.0
+    for t in w.replace("-", " ").split():
+        if t == "hundred":
+            value = (value or 1) * 100
+        elif t in _COUNT_WORDS:
+            value += _COUNT_WORDS[t]
+        elif t not in ("a", "and"):
+            return None
+    return value or None
 
 
 def _quote(text: str, start: int, end: int) -> str:
