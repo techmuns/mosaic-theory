@@ -11,7 +11,7 @@ superseded-by:
 
 **WHAT.** `tests/test_tiingo_budget.py::test_the_reserve_is_held_before_any_new_symbol_is_asked`
 checked the reserve's cache TTL against `datetime(2026, 10, 1)`. The fetch it checks
-(`vinci/quality/sources/prices.py`, `_TiingoFetch.__call__`) dates the month's start off the wall
+(`vinci/quality/sources/prices.py`, `_TiingoFetch.hold`) dates the month's start off the wall
 clock (`datetime.now(UTC).replace(day=1, …)`). On 2026-11-01 the two parted by exactly one month,
 and the suite went red on main (894e962e) with no code change. The test now dates the month the
 way the fetch does. Test only; no output moves, so no extraction-version row.
