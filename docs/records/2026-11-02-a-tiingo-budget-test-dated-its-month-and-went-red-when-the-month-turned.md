@@ -1,8 +1,8 @@
 ---
 id: 2026-11-02-a-tiingo-budget-test-dated-its-month-and-went-red-when-the-month-turned
-status: open
+status: shipped
 date: 2026-11-02
-prs: []
+prs: [880]
 supersedes:
 superseded-by:
 ---
