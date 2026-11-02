@@ -135,8 +135,11 @@ def test_the_reserve_is_held_before_any_new_symbol_is_asked() -> None:
     f("WVE", date(2026, 1, 1), date(2026, 2, 1))
     assert [s for s, _ in c.asked] == ["iwm", "spy", "WVE"]
     assert f.budget.asked >= {"iwm", "spy", "vrrm", "wve"} and f.budget.new == {"iwm", "spy", "wve"}
-    # a copy kept from before the month began does not hold a symbol: it is asked again
-    month_began = datetime(2026, 10, 1, tzinfo=UTC).timestamp()
+    # a copy kept from before the month began does not hold a symbol: it is asked again. The fetch
+    # dates "the month" off the wall clock (`_TiingoFetch.__call__`), so the check does too — a
+    # fixed 2026-10-01 here turned the suite red on 2026-11-01
+    month_began = datetime.now(UTC).replace(
+        day=1, hour=0, minute=0, second=0, microsecond=0).timestamp()
     ttl = c.asked[0][1]
     assert ttl is not None and abs(ttl - (time.time() - month_began)) < 120
 
