@@ -313,11 +313,23 @@ _MATURITY_VERB = r"\b(?:matur\w*|expir\w*|due|terminat\w*)"
 _RESPECTIVELY = re.compile(
     rf"{_MATURITY_VERB}\s+{_DATE_LIST}\s*,?\s*respectively"
     rf"|{_MATURITY_VERB}\s*,?\s*respectively\s*,?\s*{_DATE_LIST}", re.I)
+#: ...and a list that CONTINUES a statement `_STATEMENT` reads, wherever its own grammar puts the
+#: date ("the maturity date of <X> and <Y> is <D1> and <D2>, respectively", "due in full on <D1>
+#: and <D2>, respectively"): keyed off that grammar's match, so the refusal cannot fall behind a
+#: verb form the reader gains (review round 1).
+_LIST_TAIL = re.compile(
+    rf"(?:(?:\s*,\s*(?:and\s+)?|\s+and\s+){_DATE_OR_YEAR})+\s*,?\s*respectively", re.I)
+
+
+def _paired_respectively(sentence: str) -> bool:
+    """Whether the sentence's maturity dates are a list paired with its loans "respectively"."""
+    return _RESPECTIVELY.search(sentence) is not None or any(
+        _LIST_TAIL.match(sentence, m.end()) for m in _STATEMENT.finditer(sentence))
 
 
 def _loans(sentence: str) -> list[Stated]:
     """The term-loan, revolver and generic-facility maturities one sentence states."""
-    if _RESPECTIVELY.search(sentence):
+    if _paired_respectively(sentence):
         return []
     out: list[Stated] = []
     springs = _spring_spans(sentence)

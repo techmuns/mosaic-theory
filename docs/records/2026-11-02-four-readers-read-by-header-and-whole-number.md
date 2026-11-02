@@ -17,7 +17,11 @@ superseded-by:
   verb, so the Term Loan B differed from CIQ's 2030-06-01, the newer filing governed, and the page
   printed 2029-06-01. A sentence whose MATURITY dates are a list paired "respectively" now states
   no loan maturity: a maturity verb, two or more dates or years, then "respectively" (or the verb,
-  "respectively", then the dates).
+  "respectively", then the dates). So does a list that continues any statement `_STATEMENT` reads,
+  wherever its grammar puts the date: "the maturity date of <X> and <Y> is <D1> and <D2>,
+  respectively", "a maturity date of …", "due in full on …". Each of those was still misread on
+  the PR's first head (review round 1). The rule is keyed off `_STATEMENT`'s own match, so it
+  cannot fall behind a verb form the reader gains.
   - **Narrower than the brief's "refuse respectively sentences", on measurement.** Most such
     sentences in the cached filings pair amounts, rates or balance dates beside one maturity
     that main reads right. "The Series B Term Loan matures on April 22, 2029 and bears interest
@@ -170,6 +174,11 @@ then reads as if no filing stated a maturity, which is DEFERRED below.
 - **`_notes` reads the whole text, not by sentence,** so a "respectively" sentence about notes is
   not refused by this change. Notes never differ (`decide`), so it cannot move a page date. Not
   measured here.
+
+**REVIEW ROUND 1** (Codex failed on its usage limit, so the in-session `/code-review high` ran on
+`34a8202d`). The refusal missed the statement grammar's noun-phrase forms; this is FIXED behind
+three pins that were red on that head. Re-measured after the fix: still 14 of 81 sentences refused
+in the 58 filings, the other 67 read as on main, and the 26 pages' checks move 0 rows.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 1. **A maturity list paired "respectively" is refused whole.** That includes a loan maturity the

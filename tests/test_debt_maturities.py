@@ -761,7 +761,20 @@ _POSITIONAL = [
 ]
 
 
-@pytest.mark.parametrize("sentence", [_RESPECTIVELY, _TGT_RESPECTIVELY, *_POSITIONAL])
+#: (review round 1) the same pairing in the statement grammar's own noun-phrase forms, where words
+#: stand between the verb and its dates — constructed, one per `_STATEMENT` form that reads them
+_POSITIONAL_FORMS = [
+    "The maturity date of the Revolver and the Term Loan B is June 1, 2029 and June 1, 2030, "
+    "respectively.",
+    "The Revolver and the Term Loan B have a maturity date of June 1, 2029 and June 1, 2030, "
+    "respectively.",
+    "The Revolver and the Term Loan B are due in full on June 1, 2029 and June 1, 2030, "
+    "respectively.",
+]
+
+
+@pytest.mark.parametrize("sentence", [_RESPECTIVELY, _TGT_RESPECTIVELY, *_POSITIONAL,
+                                      *_POSITIONAL_FORMS])
 def test_a_maturity_list_paired_respectively_states_no_loan_maturity(sentence: str) -> None:
     """(−) The audit's sentence, Target's, and three more from the cached filings: a maturity
     verb, then two or more dates, then "respectively" — nothing is read, never the first date."""
