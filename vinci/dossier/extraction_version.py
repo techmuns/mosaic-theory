@@ -349,6 +349,18 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "only for the item codes it adds over an 8-K of its report date sharing a non-9.01 code "
         "with it, and one with no such original counts nothing",
     ),
+    (
+        "2026-11-01.small-items",
+        "four small reader fixes (audit A-D4, A-D9, D-D9; the relationships sections): a 1904 "
+        "date-system workbook's dates are read as the true days; a Key Developments export on "
+        "file that is not read (a spreadsheet, an undecodable file, no header) is named in the "
+        "operating-drivers QA flags, and one stating it is empty is read; a positive annual "
+        "capex is unavailable with its reason, never netted as a spend in the FCF fill, and the "
+        "anchor's EDGAR FCF refuses a capex leg filed negative by #875's rule, never "
+        "sign-flipped; and a Customers view's rows under 'Prior and "
+        "Not Recently Disclosed' are said in its note, never counted as current, while the recent "
+        "section's own 'no recently disclosed customers' is read",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

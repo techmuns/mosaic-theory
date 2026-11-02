@@ -157,6 +157,11 @@ def read_text(path: Path, fmt: CiqFormat | None = None) -> str:
     raise CiqParseError(f"{path.name}: format {fmt.value} is not text — use read_sheets()")
 
 
+#: Days from the 1900 date system's serial of a day to the 1904 system's (1904-01-01 is 1900-serial
+#: 1462): xlrd reads a 1904 workbook's date cell as the latter.
+_DATEMODE_1904_DAYS = 1462.0
+
+
 def read_sheets(path: Path, fmt: CiqFormat | None = None) -> dict[str, list[list[Any]]]:
     """Read a CIQ spreadsheet into ``{sheet: rows}``. Lazy xlrd/openpyxl; fail loud if absent.
 
@@ -172,7 +177,17 @@ def read_sheets(path: Path, fmt: CiqFormat | None = None) -> dict[str, list[list
                 f"{path.name}: legacy .xls needs `xlrd` (pip install xlrd) — not installed"
             ) from exc
         with xlrd.open_workbook(str(path)) as book:  # `__exit__` is `release_resources`
-            return {s.name: [s.row_values(r) for r in range(s.nrows)] for s in book.sheets()}
+            if book.datemode == 0:
+                return {s.name: [s.row_values(r) for r in range(s.nrows)] for s in book.sheets()}
+            # THE 1904 DATE SYSTEM, NORMALISED TO 1900 (audit A-D4, 2026-11-01). xlrd hands a date
+            # cell back as its serial in the workbook's OWN system and `excel_date` decodes the
+            # 1900 one, so a 1904 workbook read every date 1,462 days early. Each DATE-typed cell
+            # is moved onto the 1900 serial of the same day; numbers are left as they are. Every
+            # date CIQ writes is date-typed: 116,442 cells over the 238 non-held workbooks on file
+            # (current and archived), 0 dates in a number cell — and all 238 are 1900-system.
+            return {s.name: [[v + _DATEMODE_1904_DAYS if t == xlrd.XL_CELL_DATE else v
+                              for t, v in zip(s.row_types(r), s.row_values(r), strict=True)]
+                             for r in range(s.nrows)] for s in book.sheets()}
     if fmt is CiqFormat.OOXML:
         try:
             import openpyxl  # type: ignore[import-untyped]
