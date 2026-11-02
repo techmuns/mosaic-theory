@@ -51,7 +51,9 @@ materiality from `mark_material_rows`. Only GOOGL passed everything, so only GOO
   - **What moved is condition 3's EPS basis**, on the 2026-11-02 EstimatesReport. CIQ's FY P/E
     rows imply GOOGL's price on GAAP EPS within 0.03% (279.84 / 279.91 / 279.87). The normalized
     line scatters 30.7% (200.75 / 287.09 / 280.79), so `pe_eps_basis.fiscal_years` reads `gaap`.
-    On the 10-26 page both lines fit, and it read `normalized`. Conditions 1 and 2 held then too.
+    On the 10-26 page only the normalized line fit (spread 0.01%; GAAP 1.08%, outside the 1% fit),
+    so it read `normalized`. Conditions 1 and 2 held then too. Why CIQ's FY P/E moved to GAAP EPS
+    is not measured here; what is measured is the fit on each EstimatesReport.
   - **Two value pins on the living pages move with it** (`tests/test_r4_machine_proposal.py`):
     - the machine's selection is now AMZN, GOOGL and UBER;
     - the "FY P/E struck on normalized EPS" negative pin moves from GOOGL to MVST. MVST is the

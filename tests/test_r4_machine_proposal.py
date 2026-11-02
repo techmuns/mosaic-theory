@@ -112,8 +112,8 @@ def test_the_count_and_the_prose_are_one_read() -> None:
 
 def test_the_rule_selects_amzn_googl_and_uber_and_no_other_name() -> None:
     """The ELIGIBILITY test the rule was ratified on, now run by the machine: AMZN and UBER — the
-    ratified table — and, since its 2026-11-02 page, GOOGL, whose FY P/E CIQ now strikes on GAAP
-    EPS once its Q3 10-Q is in (its committed R3 still wins: the proposal is shown, never
+    ratified table — and, since its 2026-11-02 page, GOOGL, whose FY P/E rows on that day's
+    EstimatesReport fit GAAP EPS (its committed R3 still wins: the proposal is shown, never
     written). No other committed name."""
     proposed = [t for t in PAGES if (FIX / f"{t}.json").is_file()
                 and rp.propose(d := _with_count(t), _r1(d)).recipe_hint == rp.RECIPE_R4]
