@@ -207,6 +207,13 @@ const EXTRACTION_VERSIONS = [
     "client, each checked against the document's listing of it and read again fresh when " +
     "the two are of different vintages, or raises naming the page it could not read — " +
     "never a short list read as complete (audit E1-D10)"],
+  ["2026-10-30.E2-D17",
+    "a going-concern statement is read as stated (audit E2-D17): a denial of the doubt (no " +
+    "longer, none, not believed, no longer present, removed, already alleviated) and a " +
+    "hypothetical about it are not doubt; the frame is the going-concern question, the cited " +
+    "standard or the disclosure policy unless the sentence states its own result, so a " +
+    "conclusion of doubt that cites ASC 205-40 is doubt, as is an IFRS material uncertainty " +
+    "and a plan that cannot or will alleviate it"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
