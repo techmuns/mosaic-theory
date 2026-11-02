@@ -4456,9 +4456,11 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
             return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
                                    source_ref=f"CIQ Customers&Suppliers {wb.path.name}")
     if not parsed:
-        return Sourced.unknown(note="; ".join(filter(None, (
-            f"could not parse the Business-Relationships table in {wb.path.name}",
-            _prior_note(prior)))))
+        # rows parsed only under the prior head: the table was read, so never "could not parse"
+        said = (f"{wb.path.name}'s recent section lists no customer and does not say it has none"
+                if prior else
+                f"could not parse the Business-Relationships table in {wb.path.name}")
+        return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))))
     return Sourced.present(_roster(parsed), source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
                            note=_prior_note(prior) or None)
 

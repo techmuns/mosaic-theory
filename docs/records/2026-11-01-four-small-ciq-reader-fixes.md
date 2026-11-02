@@ -101,3 +101,16 @@ superseded-by:
     brief. #875 refuses a capex filed negative there.
 - **`mechanical.py` is touched in one place** (Session C's file, finished): three lines that carry
   the flag into `driver_qa`.
+
+**ROUND 1 (in-session `/code-review high` on the PR head; Codex's review failed on its usage limit).**
+- **TECX pinned on its committed page.** TECX's committed page is rendered with its customers field
+  rebuilt from a prior-section export: TECX's own where it is on file, else the synthetic view. The
+  markdown page and the web page (through node) must both read UNKNOWN with CIQ's statement, never
+  a count. On 01c95fde's code the markdown line reads "1 mapped client relationship(s)".
+- **A view whose rows sit only under the prior head, and whose recent section neither lists one nor
+  says it has none, is no longer called "could not parse".** The table was read; the note now says
+  the recent section lists no customer. No export on file has this shape.
+- **Dismissed:**
+  - the repeated-header guard comparing whole lines: no export on file repeats its header;
+  - a positive capex under 0.05 printing as '+0.0': 0 positive capex sits at an annual latest
+    column, and the refusal turns on the sign.

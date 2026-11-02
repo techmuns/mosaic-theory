@@ -91,7 +91,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq_balance.py": "68c97913bf6e",
     "vinci/dossier/ciq_charting.py": "e25a753aae4f",
     "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
-    "vinci/dossier/ciq_sheets.py": "362b6636d4b8",
+    "vinci/dossier/ciq_sheets.py": "a95452bcc4b6",
     "vinci/dossier/covenant_extract.py": "44efa996baea",
     "vinci/dossier/dilution.py": "87d81ad77c04",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",

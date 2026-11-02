@@ -1067,3 +1067,74 @@ def test_a_view_with_both_sections_lists_only_its_recent_rows_as_current() -> No
     assert [r.split(" — ")[0] for r in rel.recent] == [
         "Quillfeather Freight Ltd", "Brantwick Municipal Power", "Tamsworth Kettle Works"]
     assert rel.prior == ["Ostrel Biologics AG — Customer · Pharmaceuticals · src: Key Development"]
+
+
+def _prior_section_export() -> tuple[CiqBundle, str]:
+    """TECX's own Customers export where it is on file (licensed, never committed), else the
+    synthetic view in its shape — so the pin below runs in CI and on the real file alike."""
+    live = Path(__file__).resolve().parents[1] / "data" / "manual" / "ciq" / "TECX"
+    files = sorted(live.glob("*Customers*")) if live.is_dir() else []
+    return (CiqBundle.from_files("TECX", files), "TECX") if files else (
+        _bundle(PRIOR_CUSTOMERS), gen.TICKER)
+
+
+def test_tecxs_page_rebuilt_from_its_export_says_none_recent_on_both_surfaces(
+        tmp_path: Path) -> None:
+    """TEST-LAYER RULE, round 1: the defect was observed on a rendered page — TECX's committed page
+    prints "2 mapped client relationship(s)" for two prior rows. Its customers field, rebuilt from
+    a prior-section export, renders UNKNOWN with CIQ's statement on the markdown page and the web
+    page alike, and never as a count of current relationships."""
+    import json
+    import subprocess
+
+    from vinci.dossier.render import render_markdown
+    from vinci.dossier.schemas import Dossier
+
+    if not shutil.which("node"):
+        pytest.skip("node not available")
+    b, who = _prior_section_export()
+    page = json.loads((Path(__file__).resolve().parents[1] / "data" / "dossiers" / "TECX"
+                       / "dossier.json").read_text())
+    page["mechanical"]["concentration"]["customers"] = cs.customers(b).model_dump(mode="json")
+    md = [ln for ln in render_markdown(Dossier.model_validate(page)).splitlines()
+          if ln.startswith("- **Customers:**")]
+    assert len(md) == 1 and "_UNKNOWN_" in md[0], md
+    assert f"no recently disclosed customers for {who}" in md[0], md
+    assert "mapped client relationship" not in md[0], md
+    (tmp_path / "page.json").write_text(json.dumps(page))
+    dj = (Path(__file__).resolve().parents[1] / "frontend/views/shared/dossier.js").as_uri()
+    driver = tmp_path / "driver.mjs"
+    driver.write_text(f"""
+import {{ readFileSync }} from "node:fs";
+const handler = {{ get: () => stub, apply: () => stub, construct: () => ({{}}) }};
+const stub = new Proxy(function(){{}}, handler);
+for (const g of ["window","document","location"]) {{ try {{ globalThis[g] = stub; }} catch {{}} }}
+const {{ renderDossier }} = await import("{dj}");
+const page = JSON.parse(readFileSync({json.dumps(str(tmp_path / "page.json"))}, "utf8"));
+const html = renderDossier(page, null);
+const at = html.indexOf(">Customers<");
+console.log(JSON.stringify({{found: at >= 0, row: html.slice(at, at + 400)}}));
+""")
+    out = json.loads(subprocess.run(["node", str(driver)], capture_output=True, text=True,
+                                    check=True).stdout.strip().splitlines()[-1])
+    assert out["found"], "the web page drew no Customers fact"
+    assert "UNKNOWN" in out["row"] and f"no recently disclosed customers for {who}" in out["row"]
+    assert "mapped client relationship" not in out["row"], out["row"]
+
+
+def test_a_prior_only_view_that_states_nothing_is_not_called_unparsed(tmp_path: Path) -> None:
+    """Round 1: rows parsed under the prior head, and the recent section neither lists one nor
+    says it has none. The reader parsed the table, so the note says what the export holds rather
+    than "could not parse". No export on file has this shape (2026-11-01: both prior-section views
+    state the recent one empty)."""
+    rtf = gen.prior_customers_rtf().replace(
+        gen._rtf_par("There are no recently disclosed customers listed"), "")
+    assert rtf != gen.prior_customers_rtf()
+    path = tmp_path / PRIOR_CUSTOMERS.name
+    path.write_bytes(rtf.encode("ascii"))
+    got = cs.customers(_bundle(path))
+    assert got.status is SourceStatus.UNKNOWN and got.note is not None
+    assert "could not parse" not in got.note, got.note
+    assert got.note.startswith(f"{PRIOR_CUSTOMERS.name}'s recent section lists no customer"), \
+        got.note
+    assert "CIQ also lists 1 prior and not recently disclosed relationship(s)" in got.note
