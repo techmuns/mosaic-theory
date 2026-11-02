@@ -118,6 +118,8 @@ def test_the_drift_check_closes_each_xlsx_it_opens(monkeypatch: pytest.MonkeyPat
     (XLSX, b"PK\x03\x04", CiqFormat.OOXML),
     (CUSTOMERS, b"{\\rt", CiqFormat.RTF_TEXT),
     (SUPPLIERS, b"{\\rt", CiqFormat.RTF_TEXT),
+    (FIX / gen.KEYDEV_XLS, b"\xd0\xcf\x11\xe0", CiqFormat.BIFF_XLS),
+    (FIX / gen.PRIOR_CUSTOMERS_RTF, b"{\\rt", CiqFormat.RTF_TEXT),
 ], ids=lambda v: v.name if isinstance(v, Path) else None)
 def test_each_export_is_the_real_format_its_extension_names(path: Path, magic: bytes,
                                                             fmt: CiqFormat) -> None:
@@ -422,11 +424,12 @@ def test_excel_date_shapes(cell: Any, want: date | None) -> None:
     assert excel_date(cell) == want
 
 
-@pytest.mark.xfail(strict=True, raises=AssertionError, reason=(
-    "A-D4: `excel_date` assumes the 1900 date system; a workbook saved in the 1904 system "
-    "decodes every serial 1,462 days early"))
 def test_a_1904_date_system_workbook_decodes_to_the_true_dates() -> None:
+    """A-D4, FIXED 2026-11-01 (was a strict xfail): `read_sheets` moves a 1904 workbook's date
+    cells onto the 1900 system's serials, so every reader decodes the true day — and the same
+    sheet, saved in either system, reads identically."""
     assert cs.ev_ebitda_asof(_bundle(XLS_1904)) == gen.M_DATES[-1]
+    assert read_sheets(XLS_1904) == read_sheets(QUARTERLY)
 
 
 # --- period headers ------------------------------------------------------------------------------
@@ -964,3 +967,103 @@ def test_the_unit_line_is_read_whatever_currency_it_names(line: str, want: str |
     reported currency" — its unit must still be read, never fall back to unstated."""
     from vinci.dossier.ciq import stated_unit
     assert stated_unit([[], [line]]) == want
+
+
+# --- a Key Developments spreadsheet (A-D9), a positive capex (D-D9), a prior customer section ---
+
+KEYDEV = FIX / gen.KEYDEV_XLS
+PRIOR_CUSTOMERS = FIX / gen.PRIOR_CUSTOMERS_RTF
+_KD_UNREAD = "operating-drivers: CIQ Key Developments export on file but not read"
+
+
+def test_a_key_developments_spreadsheet_is_flagged_never_silently_empty() -> None:
+    """A-D9: the reader reads the RTF export's text, and a spreadsheet export returned [] with no
+    trace — the collector flags only an all-source miss. One real export shipped as one (GOOGL's,
+    replaced 2026-09-22). It is flagged, naming the file, and the flag reaches the operating-drivers
+    extract a page carries."""
+    from types import SimpleNamespace
+
+    from vinci.dossier import mechanical as mech
+
+    b = _bundle(KEYDEV)
+    (wb,) = b.workbooks
+    assert (wb.kind, wb.fmt) == ("key_developments", CiqFormat.BIFF_XLS)
+    rows, flag = cs.key_developments(b)
+    assert rows == []
+    assert flag is not None and flag.startswith(_KD_UNREAD)
+    assert KEYDEV.name in flag and "spreadsheet" in flag
+    rec = SimpleNamespace(identity=SimpleNamespace(cik=None, ticker=gen.TICKER))
+    layer = SimpleNamespace(capital_structure=None, leverage_survival=None)
+    _ps, _lat, drivers = mech._primary_source(rec, None, None, b, gen.LTM_DATE,  # type: ignore[arg-type]
+                                              layer)  # type: ignore[arg-type]
+    assert flag in drivers.qa_flags
+
+
+def test_no_key_developments_export_on_file_is_no_flag(bundle: CiqBundle) -> None:
+    """NEGATIVE PIN: an export not pulled is not one that failed to read."""
+    assert cs.key_developments(bundle) == ([], None)
+
+
+def test_a_positive_annual_capex_is_never_netted_as_a_spend(tmp_path: Path) -> None:
+    """D-D9: the FCF fill subtracts capex's MAGNITUDE, assuming CIQ's outflow sign, so a positive
+    cell at the annual sheet's latest column was subtracted as a spend. The capex is unavailable
+    with its reason, and the anchor's FCF says it — never OCF less a figure CIQ did not state as
+    spend."""
+    from vinci.dossier.anchor import _bridge_inputs
+
+    sheets = gen._annual_sheets("USD")
+    row = next(r for r in sheets["Cash Flow"] if r and r[0] == "Capital Expenditure")
+    row[-1] = -row[-1]
+    gen.write_biff(tmp_path / ANNUAL.name, sheets)
+    got = ciq_balance.extract(_bundle(tmp_path / ANNUAL.name, QUARTERLY), gen.TICKER)
+    assert "capex" not in got.facts and "ocf" in got.facts
+    why = got.unavailable["capex"]
+    assert why.startswith(f"'Capital Expenditure' reads +{-gen.A_CAPEX[-1]:,.1f} at the annual "
+                          f"sheet's latest column (LTM to {gen.LTM_DATE})"), why
+    fcf = _bridge_inputs({}, {}, got)["ltm_fcf"]
+    assert fcf.value is None
+    assert f"CIQ's capex: {why}" in (fcf.source or ""), fcf.source
+
+
+def test_a_negative_annual_capex_still_fills_the_fcf(bundle: CiqBundle) -> None:
+    """NEGATIVE PIN — CIQ's sign on 2,285 of the 2,288 valued capex cells on file (2026-11-01):
+    the fill is OCF less the spend, as before."""
+    from vinci.dossier.anchor import _bridge_inputs
+
+    got = ciq_balance.extract(bundle, gen.TICKER)
+    assert "capex" not in got.unavailable
+    fcf = _bridge_inputs({}, {}, got)["ltm_fcf"]
+    assert fcf.value == pytest.approx(got.facts["ocf"].value + gen.A_CAPEX[-1])  # $M
+    assert fcf.basis == f"trailing twelve months to {gen.LTM_DATE} (vendor basis)"
+
+
+def test_a_prior_customer_section_is_never_read_as_current() -> None:
+    """The view's rows sit under 'Prior and Not Recently Disclosed Customers', and its recent
+    section states none in CIQ's words: the field says so, and the prior rows are said beside it
+    rather than counted as current relationships (TECX's page printed "2 mapped client
+    relationship(s)" from this shape). End to end through the line the page prints."""
+    from vinci.dossier import render
+
+    got = cs.customers(_bundle(PRIOR_CUSTOMERS))
+    assert got.status is SourceStatus.UNKNOWN and got.value is None
+    assert got.note is not None
+    assert got.note.startswith(f"CIQ discloses no recently disclosed customers for {gen.TICKER}")
+    assert ("CIQ also lists 1 prior and not recently disclosed relationship(s): Ostrel Biologics "
+            "AG ← Zinnober Predecessor Ltd — Customer · Pharmaceuticals") in got.note
+    line = render._fact("Customers", got, render._fmt_customers)
+    assert "mapped client relationship" not in line and "_UNKNOWN_" in line, line
+
+
+def test_a_view_with_both_sections_lists_only_its_recent_rows_as_current() -> None:
+    """NEGATIVE PIN on the section split: a recent row is still the value, and a prior row under the
+    second head is said in the note, not counted. No export on file has both (2026-11-01: the two
+    carrying the prior section state the recent one empty), so the text is the parser's input."""
+    text = read_text(CUSTOMERS).replace(
+        "Customer Name|", "Recently Disclosed Customers|\nCustomer Name|", 1)
+    text += ("Prior and Not Recently Disclosed Customers|\n"
+             "Ostrel Biologics AG|Customer|Pharmaceuticals|Key Development|\n")
+    rel = cs._relationships(text)
+    assert rel is not None and not rel.recent_states_none
+    assert [r.split(" — ")[0] for r in rel.recent] == [
+        "Quillfeather Freight Ltd", "Brantwick Municipal Power", "Tamsworth Kettle Works"]
+    assert rel.prior == ["Ostrel Biologics AG — Customer · Pharmaceuticals · src: Key Development"]

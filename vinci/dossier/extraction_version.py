@@ -323,6 +323,16 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "`our_ebitda` converts it, or not shown; an unknown mid-cycle year count is None; 'No "
         "Data Available' is a marker",
     ),
+    (
+        "2026-11-01.small-items",
+        "four small reader fixes (audit A-D4, A-D9, D-D9; the relationships sections): a 1904 "
+        "date-system workbook's dates are read as the true days; a Key Developments export on "
+        "file that is not read (a spreadsheet, an undecodable file, no header) is named in the "
+        "operating-drivers QA flags; a positive annual capex is unavailable with its reason, "
+        "never netted as a spend in the FCF fill; and a Customers view's rows under 'Prior and "
+        "Not Recently Disclosed' are said in its note, never counted as current, while the recent "
+        "section's own 'no recently disclosed customers' is read",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

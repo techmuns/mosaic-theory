@@ -16,7 +16,9 @@ would name a data vendor say "Synthetic fixture" instead.
 
 THE FORMATS, as the real corpus ships them: legacy BIFF `.xls` (Financials, Annual and Quarterly;
 the Estimates report's Consensus, Trends and Guidance sheets, added 2026-10-29 for audit A-D8 and
-A-D10), real RTF (the Business-Relationships Customers and Suppliers views), and one OOXML `.xlsx`
+A-D10; a Key Developments export, added 2026-11-01 for A-D9 in the layout of the one real
+spreadsheet), real RTF (the Business-Relationships Customers and Suppliers views, and a second
+Customers view whose rows sit under its prior section), and one OOXML `.xlsx`
 — no real export is OOXML today, but `ciq.read_sheets` has a branch for it and nothing ever
 exercised it. A
 second BIFF workbook uses the 1904 date system, which only a real BIFF file can carry.
@@ -65,8 +67,14 @@ QUARTERLY_1904_XLS = f"date1904/{STEM} Financials_Quarterly.xls"
 #: The Estimates export, named as CIQ names it (the issuer's name with its spaces removed). It sits
 #: apart so the ZZFX folder keeps pinning a bundle that holds no estimates.
 ESTIMATES_XLS = f"estimates/{ISSUER.replace(' ', '')}{EXCHANGE}{TICKER}EstimatesReport.xls"
+#: A Key Developments export as a SPREADSHEET, the layout of the one real one (audit A-D9). Every
+#: other real one is RTF, which the reader reads; this one it does not.
+KEYDEV_XLS = f"keydev/{STEM} Key Developments.xls"
+#: A Customers view not filtered to recent disclosures: the recent section states none and the rows
+#: sit under the prior one. Apart, because a folder holds one Customers export.
+PRIOR_CUSTOMERS_RTF = f"prior/{STEM} Customers.rtf"
 OUTPUTS = (ANNUAL_XLS, QUARTERLY_XLS, CUSTOMERS_RTF, SUPPLIERS_RTF, QUARTERLY_XLSX,
-           QUARTERLY_1904_XLS, ESTIMATES_XLS)
+           QUARTERLY_1904_XLS, ESTIMATES_XLS, KEYDEV_XLS, PRIOR_CUSTOMERS_RTF)
 
 #: CIQ's words for "no value" — the reader treats every one as UNAVAILABLE, never 0. They sit in one
 #: probe row of the Quarterly Income Statement, one per period column; the first is a cell never
@@ -481,6 +489,51 @@ def suppliers_rtf() -> str:
             + "}\n")
 
 
+def prior_customers_rtf() -> str:
+    """The Customers view of a company whose only relationships are old: CIQ heads two sections,
+    states the recent one empty in a sentence and lists the rows under 'Prior and Not Recently
+    Disclosed Customers', in the five-column layout. Every counterparty is invented."""
+    return (_RTF_HEAD
+            + _rtf_table_row(["Customize View"])
+            + _rtf_table_row(["Include Customers for:Current subsidiaries"])
+            + _rtf_table_row(["Customers"])
+            + _rtf_table_row(["Recently Disclosed Customers"])
+            + _rtf_par("There are no recently disclosed customers listed")
+            + _rtf_table_row(["Prior and Not Recently Disclosed Customers"])
+            + _rtf_table_row(["Customer Name", "Supplier Name", "Relationship Type",
+                              "Primary Industry", "Source"])
+            + _rtf_table_row(["Ostrel Biologics AG", "Zinnober Predecessor Ltd", "Customer",
+                              "Pharmaceuticals", "Key DevelopmentClient Announcements May-22-2023"])
+            + _rtf_table_row(["Business Description: an invented drug developer."])
+            + _rtf_table_row(["*denotes proprietary relationship"])
+            + "}\n")
+
+
+# --- Key Developments (a spreadsheet, as one real export shipped) --------------------------------
+
+#: Dated events, newest first, as the export lists them. Every one is invented.
+KD_EVENTS = (
+    (date(2026, 9, 14), "Corporate Guidance - Raised", "Zinnober Fixture Works Inc. Raises FY2026 "
+     "Guidance", "-"),
+    (date(2026, 8, 3), "M&A Transaction Announcement", "Zinnober Fixture Works Inc. agreed to "
+     "acquire Pellmore Gauge Co.", "Pellmore Gauge Co."),
+    (date(2026, 7, 1), "Conference", "Zinnober Fixture Works Inc. Presents at an Industrial "
+     "Conference", "-"),
+)
+
+
+def _key_developments() -> Rows:
+    company = f"{ISSUER}. ({EXCHANGE}:{TICKER})"
+    return [[], [], [], [], [f"{company} > Key Developments"], [], [],
+            ["Report Criteria"], ["Selected Categories:", "Synthetic fixture"],
+            ["Time Frame:", "1 Year"], ["Include Key Developments for:", "Current Subsidiaries"],
+            [], [], ["Key Developments"],
+            ["Date", "Company", "Exchange:Ticker", "Type", "Headline", "Other Parties",
+             "Situation"],
+            *([d, company, f"{EXCHANGE}:{TICKER}", kd_type, headline, other, headline]
+              for d, kd_type, headline, other in KD_EVENTS)]
+
+
 # --- writers ----------------------------------------------------------------------------------
 
 
@@ -568,6 +621,9 @@ def build_all(out_dir: Path) -> list[Path]:
     build_financials(out_dir / QUARTERLY_XLSX, freq="quarterly", encoding="ooxml")
     build_financials(out_dir / QUARTERLY_1904_XLS, freq="quarterly", dates_1904=True)
     write_biff(out_dir / ESTIMATES_XLS, _estimates_sheets())
+    write_biff(out_dir / KEYDEV_XLS, {"Key Developments": _key_developments()})
+    (out_dir / PRIOR_CUSTOMERS_RTF).parent.mkdir(parents=True, exist_ok=True)
+    (out_dir / PRIOR_CUSTOMERS_RTF).write_bytes(prior_customers_rtf().encode("ascii"))
     return [out_dir / rel for rel in OUTPUTS]
 
 

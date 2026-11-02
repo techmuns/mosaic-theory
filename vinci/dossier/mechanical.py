@@ -5412,7 +5412,10 @@ def _primary_source(
         except Exception as exc:
             qa.append(f"primary-source: latest {periodic_form} fetch/parse failed "
                       f"({type(exc).__name__})")
-    driver_rows += ciq_sheets.key_development_drivers(bundle)  # A3 (CIQ Key Developments)
+    kd_rows, kd_unread = ciq_sheets.key_developments(bundle)  # A3 (CIQ Key Developments)
+    driver_rows += kd_rows
+    if kd_unread is not None:
+        driver_qa.append(kd_unread)
     # per-source honest-miss flags (a fetched source that yielded no driver row) — never a fake row
     if saw_release and not any(r.source_ref.startswith("8-K") for r in driver_rows):
         driver_qa.append("operating-drivers: no anchored pattern matched — EX-99.1 pricing/KPI")

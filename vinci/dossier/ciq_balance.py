@@ -443,6 +443,19 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     # that column's period: the FCF fill pairs them only when it is one (#830's follow-up)
     ocf_cell = _cf_cell(bundle, "Cash from Ops.", True)
     capex_cell = _cf_cell(bundle, "Capital Expenditure", True)
+    # CAPEX IS STATED NEGATIVE, AND A POSITIVE ONE IS NOT NETTED (audit D-D9, 2026-11-01). The FCF
+    # fill subtracts the capex MAGNITUDE (`abs` here, `o - abs(c)` in the anchor), which assumes
+    # CIQ's outflow sign; a positive cell (net disposals over spend) would be subtracted as a spend.
+    # It is unavailable, with its reason. Census of the 104 non-held Cash Flow sheets on file
+    # (current and archived, 2026-11-01): 3 positive of 2,288 valued capex cells, all quarterly
+    # (SMPL, TECX), none at an annual sheet's latest column — the cell this reads.
+    capex_sign: str | None = None
+    if capex_cell is not None and capex_cell[0] > 0:
+        capex_sign = (f"'Capital Expenditure' reads +{capex_cell[0]:,.1f} at the annual sheet's "
+                      f"latest column ({capex_cell[1] or 'period'} to {capex_cell[2]}) — CIQ "
+                      "states capex as an outflow, so a positive figure is not a spend the FCF "
+                      "fill can net")
+        capex_cell = None
     ocf = round(ocf_cell[0], 1) if ocf_cell else None   # `ltm_ocf`'s rounding, so no value moves
     capex = capex_cell[0] if capex_cell else None
     dil_cell, dil_why = _cf_or(bundle, ("Weighted Avg. Diluted Shares Out.", False),
@@ -494,6 +507,8 @@ def extract(bundle: CiqBundle, ticker: str) -> CiqFacts:
     unavailable.update({key: why for key, label in (("ocf", "Cash from Ops."),
                                                     ("capex", "Capital Expenditure"))
                         if key not in facts and (why := _cf_unavailable(bundle, label, True))})
+    if capex_sign is not None:
+        unavailable["capex"] = capex_sign
 
     checks: list[str] = []
     failures: list[str] = []
