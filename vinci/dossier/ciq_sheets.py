@@ -4275,10 +4275,36 @@ def consensus_stats(bundle: CiqBundle, *, as_of: str | None = None) -> Sourced[s
     )
 
 
+#: CIQ's section heads in a Business-Relationships view. A view filtered to the last two years
+#: carries only the first; one that is not carries both, and its older rows sit under the second.
+_REL_SECTION = re.compile(r"^(Recently|Prior and Not Recently) Disclosed (?:Customers|Suppliers)$")
+
+
+class _Relationships(NamedTuple):
+    recent: list[str]
+    prior: list[str]
+    #: The recent section says, in CIQ's own words, that it has nothing to list.
+    recent_states_none: bool
+
+
 def _parse_business_relationships(raw: str) -> list[str] | None:
+    """The CURRENT rows of :func:`_relationships` — a view's rows when it heads no section. None
+    when it lists none."""
+    rel = _relationships(raw)
+    return (rel.recent or None) if rel is not None else None
+
+
+def _relationships(raw: str) -> _Relationships | None:
     """Parse the CIQ Business-Relationships export (pipe-delimited RTF text) into readable lines
     'Name — Type · Industry · src: Source'. The table starts at a 'Customer Name|Relationship
-    Type|…' header; 'Business Description:' prose rows are skipped. None if no table is found."""
+    Type|…' header; 'Business Description:' prose rows are skipped. None if no table is found.
+
+    EACH ROW IS FILED UNDER ITS SECTION (2026-11-01). Rows under 'Prior and Not Recently Disclosed
+    Customers' were read as current, and the recent section's own 'There are no recently
+    disclosed customers listed' went unread whenever a row parsed anywhere. TECX's page printed
+    "2 mapped client relationship(s)" for two of AVROBIO's 2023 counterparties under a section
+    stating none. Of the 52 non-held Customers exports on file (2026-11-01, current and archived),
+    TECX's and HLF's carry the prior section, and both state the recent one empty."""
     lines = [ln.strip() for ln in raw.splitlines()]
     hdr = next(
         (i for i, ln in enumerate(lines) if "Customer Name" in ln and "Relationship Type" in ln),
@@ -4306,13 +4332,20 @@ def _parse_business_relationships(raw: str) -> list[str] | None:
     def cell(parts: list[str], i: int | None) -> str:
         return parts[i].strip() if i is not None and i < len(parts) else ""
 
-    out: list[str] = []
-    for ln in lines[hdr + 1 :]:
-        if not ln or ln.startswith("Business Description"):
+    recent: list[str] = []
+    prior: list[str] = []
+    out, states_none = recent, False
+    for k, ln in enumerate(lines):
+        if sec := _REL_SECTION.match(ln.rstrip("|").strip()):
+            out = recent if sec.group(1) == "Recently" else prior
+            continue
+        if out is recent and is_empty_view(ln):
+            states_none = True
+        if k <= hdr or not ln or ln.startswith("Business Description"):
             continue
         parts = ln.split("|")            # NOT filtered — a blank cell is a position, not nothing
         customer, rtype = cell(parts, ci), cell(parts, ti)
-        if not customer or not rtype:
+        if not customer or not rtype or ln == lines[hdr]:  # a section repeating the header
             continue
         supplier = cell(parts, si)
         # In the 5-column view BOTH parties are named and the focal company occupies one of them.
@@ -4325,7 +4358,7 @@ def _parse_business_relationships(raw: str) -> list[str] | None:
         if src := cell(parts, xi):
             line += f" · src: {src}"
         out.append(line)
-    return out or None
+    return _Relationships(recent, prior, states_none) if recent or prior else None
 
 
 _REL_COLUMNS = ("Customer Name", "Relationship Type", "Primary Industry", "Source")
@@ -4391,6 +4424,7 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
                   f"no Customers & Suppliers export for {bundle.ticker} — pull it and re-run")
         )
     parsed: list[str] | None
+    prior: list[str] = []
     if wb.fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
         try:
             sheets = read_sheets(wb.path, wb.fmt)
@@ -4404,8 +4438,10 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
             raw = read_text(wb.path, wb.fmt)
         except CiqParseError as exc:
             return Sourced.unknown(note=str(exc))
-        parsed = _parse_business_relationships(raw)
-        if not parsed and is_empty_view(raw):
+        rel = _relationships(raw)
+        parsed, prior = (rel.recent, rel.prior) if rel is not None else (None, [])
+        # the recent section's own statement once rows parse; the whole view's when none did
+        if not parsed and (rel.recent_states_none if rel is not None else is_empty_view(raw)):
             # NOT a parse failure — CIQ affirmatively states it has nothing to list, and saying
             # "could not parse" below would blame our reader for the source's own answer. The
             # status stays UNKNOWN (no rows ⇒ no value ⇒ nothing to impute); only the NOTE changes,
@@ -4413,19 +4449,39 @@ def customers(bundle: CiqBundle) -> Sourced[str]:
             # case: 0 customer rows beside 33 supplier rows in the same bundle. Swept 2026-09-28
             # over the 26 ticker folders in data/manual/ciq/, it is the ONLY empty view — ROST and
             # TGT parse rows — so this is one name's economics, not a retail-sector rule.
-            return Sourced.unknown(
-                note=(f"CIQ discloses no customers for {bundle.ticker} — the export is empty by "
-                      f"CIQ's own statement, not unparsed"),
-                source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
-            )
+            said = (f"CIQ discloses no customers for {bundle.ticker} — the export is empty by "
+                    f"CIQ's own statement, not unparsed" if rel is None else
+                    f"CIQ discloses no recently disclosed customers for {bundle.ticker} — the "
+                    f"recent section says so in CIQ's own words, not unparsed")
+            return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
+                                   source_ref=f"CIQ Customers&Suppliers {wb.path.name}")
     if not parsed:
-        return Sourced.unknown(
-            note=f"could not parse the Business-Relationships table in {wb.path.name}"
-        )
-    body = "; ".join(parsed[:30])
-    if len(parsed) > 30:
-        body += f"; …(+{len(parsed) - 30} more)"
-    return Sourced.present(body, source_ref=f"CIQ Customers&Suppliers {wb.path.name}")
+        # rows parsed only under the prior head: the table was read, so never "could not parse"
+        said = (f"{wb.path.name}'s recent section lists no customer and does not say it has none"
+                if prior else
+                f"could not parse the Business-Relationships table in {wb.path.name}")
+        # a note naming the file's prior rows makes a claim about the file: cite it (round 2)
+        return Sourced.unknown(note="; ".join(filter(None, (said, _prior_note(prior)))),
+                               source_ref=(f"CIQ Customers&Suppliers {wb.path.name}" if prior
+                                           else None))
+    return Sourced.present(_roster(parsed), source_ref=f"CIQ Customers&Suppliers {wb.path.name}",
+                           note=_prior_note(prior) or None)
+
+
+def _roster(rows: list[str]) -> str:
+    body = "; ".join(rows[:30])
+    if len(rows) > 30:
+        body += f"; …(+{len(rows) - 30} more)"
+    return body
+
+
+def _prior_note(prior: list[str]) -> str:
+    """The prior rows, said beside the value and never as it: a relationship CIQ no longer counts
+    as recently disclosed is not a current customer. Empty when there are none."""
+    if not prior:
+        return ""
+    return (f"CIQ also lists {len(prior)} prior and not recently disclosed relationship(s): "
+            f"{_roster(prior)}")
 
 
 # --- transcripts: qualitative context only (no numbers derived) -------------------------------
@@ -4594,23 +4650,47 @@ def _kd_subject_row(company: str, headline: str, *, ticker: str, name_head: str,
     return _kd_norm(headline).startswith(name_head)
 
 
+#: The lead of the QA flag for a Key Developments export on file that was not read. It sits in
+#: `OperatingDriversExtract.qa_flags`, beside the collector's per-source misses.
+_KD_UNREAD = "operating-drivers: CIQ Key Developments export on file but not read"
+
+
 def key_development_drivers(bundle: CiqBundle) -> list[OperatingDriver]:
+    """The rows of :func:`key_developments`, without its flag."""
+    return key_developments(bundle)[0]
+
+
+def key_developments(bundle: CiqBundle) -> tuple[list[OperatingDriver], str | None]:
     """(PR-B A3) Dated, typed EVENT rows from the CIQ Key Developments export — guidance changes,
     product/client announcements, expansions, impairments (an INCLUDE filter; index/earnings/
     governance noise is dropped). Each row is a derived fact ``{Type, date, Headline, Situation}``,
     source-bound to the export; the raw RTF is never committed. Empty when the export is absent,
-    unparseable, headerless, or carries no operating-mechanism row (collector flags an all-miss)."""
+    unparseable, headerless, or carries no operating-mechanism row.
+
+    THE FLAG NAMES AN EXPORT ON FILE THAT WAS NOT READ (audit A-D9, 2026-11-01): a spreadsheet,
+    which this reader of the RTF's text refuses; a file it cannot decode; or one with no 'Date |
+    Type | Headline' header. Each returned [] with no trace, and the collector's only flag fires
+    when EVERY source missed, so a page with a release row lost its events silently. One real
+    export is a spreadsheet: GOOGL's of 2026-09-22, since replaced by an RTF. None when nothing is
+    on file, or the export was read (its keeping no row is the filter's answer, not a failure)."""
     wb = bundle.workbook("key_developments")
     if wb is None:
-        return []
+        return [], None
+    if wb.fmt in (CiqFormat.BIFF_XLS, CiqFormat.OOXML):
+        return [], (f"{_KD_UNREAD} — {wb.path.name} is a spreadsheet ({wb.fmt.value}); the "
+                    "reader reads the RTF export's text, so none of its events reached the page "
+                    "(re-export as RTF)")
     try:
         text = read_text(wb.path, wb.fmt)
-    except CiqParseError:
-        return []  # unparseable KD export → honest empty; the collector's per-source flag fires
+    except CiqParseError as exc:
+        return [], f"{_KD_UNREAD} — {exc}"
     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
     cols = _kd_columns(lines)
-    if cols is None:
-        return []  # no recognizable header → honest empty (never guess column positions)
+    if cols is None:  # never guess column positions
+        if is_empty_view(text):  # the source's own answer, as an empty Customers view (round 2)
+            return [], None
+        return [], (f"{_KD_UNREAD} — {wb.path.name} carries no 'Date | Type | Headline' header "
+                    "row")
     type_i, head_i, comp_i = cols
     name_head = _kd_issuer_head(wb.path.name, bundle.ticker)
     out: list[OperatingDriver] = []
@@ -4648,7 +4728,7 @@ def key_development_drivers(bundle: CiqBundle) -> list[OperatingDriver]:
             verbatim=" ".join((situation or headline).split())[:300],
             source_ref=f"CIQ Key Developments: {wb.path.name} · {date_s}", tier="anchored",
         ))
-    return out
+    return out, None
 
 
 _TRANSCRIPTS_UNPARSED = "transcripts on file but unparseable"

@@ -2432,8 +2432,19 @@ def test_a3_the_named_misses_are_on_the_live_corpus(monkeypatch: pytest.MonkeyPa
 def test_a3_headerless_kd_is_honest_empty(monkeypatch: pytest.MonkeyPatch) -> None:
     """(PR-B A3 ⊖) A KD text with no recognizable Date|Type|Headline header → honest empty, never a
     guessed column position."""
-    assert cs.key_development_drivers(
-        _kd_bundle(monkeypatch, "Report Criteria|\nrandom text\n")) == []
+    rows, flag = cs.key_developments(_kd_bundle(monkeypatch, "Report Criteria|\nrandom text\n"))
+    assert rows == []
+    # …and the export on file that was not read is NAMED (audit A-D9, 2026-11-01), never silent
+    assert flag is not None and "Acme Co NasdaqGM ACME Key Developments.rtf" in flag
+    assert "no 'Date | Type | Headline' header" in flag
+
+
+def test_a_kd_export_that_reads_carries_no_unread_flag(monkeypatch: pytest.MonkeyPatch) -> None:
+    """NEGATIVE PIN (A-D9): a read export is no failure, whatever its rows keep — a 4-col export
+    keeping one row, and one whose every row the filter drops."""
+    assert cs.key_developments(_kd_bundle(monkeypatch, _KD_4COL))[1] is None
+    dropped = "Date|Type|Headline|Other Parties|\nJan-02-2026|Index Constituent Add|Co added|-|\n"
+    assert cs.key_developments(_kd_bundle(monkeypatch, dropped)) == ([], None)
 
 
 def test_transcript_fail_loud_unparsed_flag_and_routing() -> None:
