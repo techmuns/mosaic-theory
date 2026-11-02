@@ -142,6 +142,18 @@ def test_a_count_that_runs_on_past_what_was_read_is_refused(text: str) -> None:
     assert _ratios(text) == [], _ratios(text)
 
 
+def test_a_holding_of_adss_is_not_a_ratio() -> None:
+    """(−, review round 2) JKS's 20-F cover (0001104659-26-050737), verbatim: once "61,421" and
+    "245,685" parse whole, the N-for-M rule read this HOLDING as a ratio of 4.000016 — beside the
+    title's 4, a text-only filer would be refused for two ratios. A ratio's sides are small counts
+    ("every three ADSs represent two"); a holding is not one."""
+    holding = ("209,429,353 ordinary shares, excluding 61,421 ADSs representing 245,685 ordinary "
+               "shares reserved for future grants under our share incentive plans")
+    assert statements(holding).ratios == []
+    assert [round(v, 6) for v, _q in title_statements(
+        "every three ADSs represent two Class A ordinary shares").ratios] == [0.666667]
+
+
 def test_the_whole_number_reader_moves_no_shape_already_read() -> None:
     """(+) The fences: "two" is still 2, KT's "one-half of one share" 0.5, SMFG's "3/5 of one
     share" 0.6, RERE's "every three ADSs represent two" 2/3 and TSM's "five (5)" 5."""

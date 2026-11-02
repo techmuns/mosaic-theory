@@ -300,7 +300,7 @@ def _inside(pos: int, spans: list[tuple[int, int]]) -> bool:
 #: "The Revolving Credit Facility and the Term Loan B mature on June 1, 2029 and June 1, 2030,
 #: respectively" pairs its loans with its dates BY POSITION, which this grammar does not read: it
 #: gave the first date to the loan nearest the verb, and the Term Loan B's page maturity became
-#: 2029-06-01 against CIQ's 2030-06-01 (audit E2-D14). Such a sentence states nothing here.
+#: 2029-06-01 against CIQ's 2030-06-01 (audit E2-D14). Such a statement is not read here.
 #: THE LIST MUST BE THE MATURITY'S OWN — a maturity verb, then two or more dates or years, then
 #: "respectively" (or the verb, "respectively", the dates). Measured on the cached filings, most
 #: "respectively" sentences pair AMOUNTS or balance dates beside one maturity read right ("matures
@@ -313,24 +313,38 @@ _MATURITY_VERB = r"\b(?:matur\w*|expir\w*|due|terminat\w*)"
 _RESPECTIVELY = re.compile(
     rf"{_MATURITY_VERB}\s+{_DATE_LIST}\s*,?\s*respectively"
     rf"|{_MATURITY_VERB}\s*,?\s*respectively\s*,?\s*{_DATE_LIST}", re.I)
-#: ...and a list that CONTINUES a statement `_STATEMENT` reads, wherever its own grammar puts the
-#: date ("the maturity date of <X> and <Y> is <D1> and <D2>, respectively", "due in full on <D1>
-#: and <D2>, respectively"): keyed off that grammar's match, so the refusal cannot fall behind a
-#: verb form the reader gains (review round 1).
+#: ...and a list that CONTINUES a statement the loan grammars read, wherever each puts its date:
+#: "the maturity date of <X> and <Y> is <D1> and <D2>, respectively" and "due in full on …"
+#: (`_STATEMENT`, review round 1); "extended the maturity dates of <X> and <Y> to <D1> and <D2>,
+#: respectively" (`_TRANSITION`) and "… with a new <X> and a new <Y> maturing on <D1> and <D2>,
+#: respectively" (`_REFINANCE`, review round 2). Keyed off each grammar's own match end, so a
+#: verb form one of them gains is refused with it; a NEW statement grammar must join
+#: `_respectively_spans`, which round 1 wrongly said could not fall behind.
 _LIST_TAIL = re.compile(
     rf"(?:(?:\s*,\s*(?:and\s+)?|\s+and\s+){_DATE_OR_YEAR})+\s*,?\s*respectively", re.I)
 
 
-def _paired_respectively(sentence: str) -> bool:
-    """Whether the sentence's maturity dates are a list paired with its loans "respectively"."""
-    return _RESPECTIVELY.search(sentence) is not None or any(
-        _LIST_TAIL.match(sentence, m.end()) for m in _STATEMENT.finditer(sentence))
+def _respectively_spans(sentence: str) -> list[tuple[int, int]]:
+    """Each stretch of the sentence whose maturity dates are a list paired "respectively" — the
+    statement and its list, never the whole sentence. A positional list in ANOTHER clause ("…, and
+    our Senior Notes are due 2027 and 2029, respectively") leaves the loan's own plain maturity
+    read, as main read it (review round 2)."""
+    spans = [(m.start(), m.end()) for m in _RESPECTIVELY.finditer(sentence)]
+    for grammar in (_STATEMENT, _TRANSITION, _REFINANCE):
+        for m in grammar.finditer(sentence):
+            if tail := _LIST_TAIL.match(sentence, m.end()):
+                spans.append((m.start(), tail.end()))
+    return spans
 
 
 def _loans(sentence: str) -> list[Stated]:
     """The term-loan, revolver and generic-facility maturities one sentence states."""
-    if _paired_respectively(sentence):
-        return []
+    paired = _respectively_spans(sentence)
+
+    def _positional(m: re.Match[str]) -> bool:
+        # a statement that overlaps a "respectively" list is refused: it pairs by position
+        return any(m.start() < hi and lo < m.end() for lo, hi in paired)
+
     out: list[Stated] = []
     springs = _spring_spans(sentence)
     taken: list[tuple[int, int]] = list(springs)
@@ -340,7 +354,7 @@ def _loans(sentence: str) -> list[Stated]:
         return tuple(_springing(sentence[lo:hi]) for lo, hi in springs if lo >= after)
 
     for m in _TRANSITION.finditer(sentence):
-        if _inside(m.start(), springs):
+        if _inside(m.start(), springs) or _positional(m):
             continue
         subj = m.group("subj")
         classes = (_classes_in(subj) if subj else []) or (
@@ -372,6 +386,8 @@ def _loans(sentence: str) -> list[Stated]:
             if new_d is not None:
                 out.append(Stated(cls, key, new_d[0], new_d[1], True, quote, spring))
     for m in _REFINANCE.finditer(sentence):
+        if _positional(m):
+            continue
         cls_new = _classes_in(m.group("new"))
         new_d = _date(m.group("date"))
         if not cls_new or new_d is None:
@@ -390,7 +406,7 @@ def _loans(sentence: str) -> list[Stated]:
         return _PRIOR.search(sentence, max(0, at - _PRIOR_BACK), at) is not None
 
     for m in _STATEMENT.finditer(sentence):
-        if _inside(m.start(), taken):
+        if _inside(m.start(), taken) or _positional(m):
             continue
         d = _date(m.group("date"))
         if d is None:
@@ -406,7 +422,7 @@ def _loans(sentence: str) -> list[Stated]:
         for cls, key in classes:
             out.append(Stated(cls, key, d[0], d[1], current, quote, spring))
     for m in _NAME_DUE.finditer(sentence):
-        if _inside(m.start(), taken):
+        if _inside(m.start(), taken) or _positional(m):
             continue
         noun = None
         for n in _NOUN.finditer(sentence, max(0, m.start() - 60), m.start()):

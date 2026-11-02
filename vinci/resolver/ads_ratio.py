@@ -124,6 +124,11 @@ _UNIT_NOUN = re.compile(r"^\W*(?:\(\d+\)\s*)?(?:[\w’'-]+\s+){0,2}?(?:units?\b|
 #: "representing N" counts: "American Depositary Share representing 100 Series B Shares" (TLK)
 _TITLE_COUNT = re.compile(_REPRESENT + _NUM + _NOT_A_NUMERATOR, re.I)
 _TITLE_FRACTIONS = [re.compile(_REPRESENT + _FRACTION, re.I), re.compile(_REPRESENT + _SLASH, re.I)]
+#: A RATIO'S SIDES ARE SMALL COUNTS ("every three ADSs represent two"); a count this large is a
+#: HOLDING. Once thousands separators parse, JKS's cover — "61,421 ADSs representing 245,685
+#: ordinary shares reserved for future grants" — read as a ratio of 4.000016 beside its title's 4
+#: (review round 2). An N-for-M statement either side of which reaches this is no ratio.
+_HOLDING_MIN = 1000
 #: a quote is cut to this many characters either side of the match, and SAYS it was cut
 _QUOTE_PAD = 80
 
@@ -182,6 +187,9 @@ def _collect(text: str, rules: list[tuple[re.Pattern[str], str]]) -> Statements:
                 v = int(m.group(1)) / int(m.group(2)) if int(m.group(2)) else None
             elif kind == "n_for_m":   # N ADSs represent M shares
                 n, mm = _count(m.group(1)), _count(m.group(2))
+                if any(c is not None and c >= _HOLDING_MIN for c in (n, mm)):
+                    taken.append((m.start(), m.end()))   # a HOLDING, read by no later rule
+                    continue
                 v = mm / n if n and mm else None
             else:
                 v = _count(m.group(1))

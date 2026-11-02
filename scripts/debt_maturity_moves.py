@@ -10,7 +10,11 @@ caches (at any age; a miss is recorded, never fetched). It prints each page whos
 whether the ``--ref`` rebuild reproduces the committed rows. Nothing is written back.
 
     PYTHONPATH=. python scripts/debt_maturity_moves.py --cache-dir <checkout>/data/cache \\
-        [--cache-dir <another>/data/cache] --ref origin/main --out <path.json> [--skip-file <path>]
+        [--cache-dir <another>/data/cache] --ref origin/main --out <path.json> --skip-file <path>
+
+THE SKIP IS REQUIRED: ``--skip-file`` lists the tickers never to read, one per line, and each is
+left out by FOLDER before its page is opened and by CIK (SEC's ticker map, from the caches) for
+any other folder of the same issuer. The list lives outside the repo; nothing here names it.
 
 (`PYTHONPATH=.` imports THIS checkout's `vinci`. The script runs from the repo root, so a relative
 path argument is read from there.)
@@ -60,6 +64,20 @@ class _CacheOnly(CachedHttp):
         raise AssertionError("a cache-only replay never writes")
 
 
+def held_ciks(dirs: list[Path], tickers: set[str]) -> set[int]:
+    """The CIKs of the ``--skip-file`` tickers, from SEC's ticker map in the caches — so a held
+    issuer is left out under any of its tickers, never only under the one written down."""
+    url = "https://www.sec.gov/files/company_tickers.json"
+    for d in dirs:
+        hit = CachedHttp(cache_dir=d, user_agent="cache-only", min_interval_sec=0,
+                         namespace="sec")._read_cache(url, None)
+        if hit is not None:
+            rows = json.loads(hit).values()
+            return {int(r["cik_str"]) for r in rows if r["ticker"] in tickers}
+    raise SystemExit(f"SEC's ticker map ({url}) is in no --cache-dir: the --skip-file tickers "
+                     "cannot be matched to their CIKs, so nothing is run")
+
+
 def _reader_at(ref: str) -> types.ModuleType:
     """`vinci.edgar.debt_maturities` as ``ref`` has it, loaded from git — never this checkout's."""
     path = "vinci/edgar/debt_maturities.py"
@@ -76,13 +94,16 @@ def _rows(check: Any) -> list[dict[str, Any]]:
     return [{k: getattr(r, k) for k in keep} for r in check.rows]
 
 
-def run(dirs: list[Path], old: types.ModuleType, skip: set[str]) -> dict[str, Any]:
+def run(dirs: list[Path], old: types.ModuleType, skip: set[str], skip_ciks: set[int]
+        ) -> dict[str, Any]:
     pages: list[dict[str, Any]] = []
     for path in sorted(Path("data/dossiers").glob("*/dossier.json")):
         ticker = path.parent.name
         if ticker in skip:
-            continue
+            continue    # by folder, before the page is opened
         doc = json.loads(path.read_text())
+        if int(doc["cik"]) in skip_ciks:
+            continue    # the same issuer under another folder
         raw = (doc.get("mechanical") or {}).get("capital_structure")
         if not isinstance(raw, dict) or not raw.get("maturity_check"):
             continue
@@ -126,10 +147,12 @@ def main() -> int:
                     help="a data/cache holding SEC documents; repeat to read several")
     ap.add_argument("--ref", default="origin/main", help="the git ref whose reader is 'old'")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--skip-file", help="tickers to leave out, one per line")
+    ap.add_argument("--skip-file", required=True,
+                    help="tickers never to read, one per line (folder and CIK)")
     a = ap.parse_args()
-    skip = set(Path(a.skip_file).read_text().split()) if a.skip_file else set()
-    rep = run([Path(d) for d in a.cache_dir], _reader_at(a.ref), skip)
+    dirs = [Path(d) for d in a.cache_dir]
+    skip = set(Path(a.skip_file).read_text().split())
+    rep = run(dirs, _reader_at(a.ref), skip, held_ciks(dirs, skip))
     Path(a.out).write_text(json.dumps(rep, indent=1, ensure_ascii=False))
     print(f"pages {rep['pages']} | covered {rep['covered']} | the ref's rebuild reproduces the "
           f"committed rows on {rep['old_reproduces_page']} | rows moved {rep['rows_moved']} "

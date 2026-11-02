@@ -15,13 +15,24 @@ superseded-by:
   mature on June 1, 2029 and June 1, 2030, respectively" pairs its loans with its dates by
   position. The grammar does not read position. It gave the first date to the loan nearest the
   verb, so the Term Loan B differed from CIQ's 2030-06-01, the newer filing governed, and the page
-  printed 2029-06-01. A sentence whose MATURITY dates are a list paired "respectively" now states
-  no loan maturity: a maturity verb, two or more dates or years, then "respectively" (or the verb,
-  "respectively", then the dates). So does a list that continues any statement `_STATEMENT` reads,
-  wherever its grammar puts the date: "the maturity date of <X> and <Y> is <D1> and <D2>,
-  respectively", "a maturity date of …", "due in full on …". Each of those was still misread on
-  the PR's first head (review round 1). The rule is keyed off `_STATEMENT`'s own match, so it
-  cannot fall behind a verb form the reader gains.
+  printed 2029-06-01. A loan statement whose MATURITY dates are a list paired "respectively" is
+  now not read. The forms refused:
+  - a maturity verb, two or more dates or years, then "respectively" (or the verb, then
+    "respectively", then the dates);
+  - a list that continues any statement the loan grammars read, wherever each puts its date.
+    `_STATEMENT` gives "the maturity date of <X> and <Y> is <D1> and <D2>, respectively", "a
+    maturity date of …" and "due in full on …" (review round 1). `_TRANSITION` gives "extended
+    the maturity dates of <X> and <Y> to <D1> and <D2>, respectively", singular or plural, and
+    "from <D1> and <D2> to <D3> and <D4>, respectively". `_REFINANCE` gives "… a new <X> and a new
+    <Y> maturing on …" (review round 2).
+  - Each was still misread on an earlier head. Round 1's record said the rule "cannot fall behind
+    a verb form the reader gains": that was wrong, since it was keyed off `_STATEMENT` alone, and
+    an extension still paired by position. It is now keyed off each grammar's own match. A NEW
+    statement grammar must join `_respectively_spans`.
+  - **The refusal is bounded to the paired statement, not the sentence** (review round 2). A
+    positional list in another clause ("…, and our 2.50% and 3.75% Senior Notes are due 2027 and
+    2029, respectively"; swaps; payment dates) leaves the loan's own plain maturity read, as main
+    reads it.
   - **Narrower than the brief's "refuse respectively sentences", on measurement.** Most such
     sentences in the cached filings pair amounts, rates or balance dates beside one maturity
     that main reads right. "The Series B Term Loan matures on April 22, 2029 and bears interest
@@ -56,6 +67,10 @@ superseded-by:
     thousand", "2,50", "ten-fold", the mixed "2 1/2". The number is matched atomically, so a
     refused "twenty five thousand" is not retried as "twenty" (review round 0). A count that
     starts inside another number is refused too.
+  - **A holding is not a ratio** (review round 2). Once separators parse, JKS's cover — "61,421
+    ADSs representing 245,685 ordinary shares reserved for future grants" — read as 4.000016 beside
+    its title's 4. An N-for-M statement either side of which is 1,000 or more is now no ratio
+    (`_HOLDING_MIN`).
   - The fences hold: "two" is 2, KT's "one-half of one share" 0.5, SMFG's "3/5 of one share"
     0.6, RERE's "every three ADSs represent two" 2/3 and TSM's "five (5)" 5.
 - **X3, `dossier.dilution._paired_period`.** At a 10-K's end date both weighted averages are
@@ -136,8 +151,12 @@ then reads as if no filing stated a maturity, which is DEFERRED below.
 
 **BOUNDARY.**
 - **Code:** branch `claude/p2d-d4-small-batch` from `origin/main` f8e1bbb9.
-- **Held test packs:** never read. Their folders and CIKs are skipped by name before any file is
-  opened.
+- **Held test packs:** never read. Both committed scripts REQUIRE `--skip-file` (review round 2;
+  the first head made it optional, and the ADS script had none). It lists them, kept outside the
+  repo. A page is left out by folder before it is opened and by CIK through SEC's cached ticker
+  map; a depositary line is left out by ticker and by CIK before its filings are read. The
+  session's corpus probes skipped their CIKs from each cache entry's URL before its text was
+  parsed. Neither population contained one: the 85 depositary lines hold none.
 - **D14 pages:** the 26 committed `data/dossiers/*/dossier.json` outside the held test packs that
   carry a `maturity_check`, rebuilt 2026-11-02 at their own reference dates.
 - **D14 sentences:** the primary checkout's `sec` cache, read 2026-11-02: every EDGAR Archives
@@ -171,6 +190,12 @@ then reads as if no filing stated a maturity, which is DEFERRED below.
 - **EDU's cover reads its 12(b) title as "Name of Exchange on Which Registered"**
   (`instrument.cover_lines`, on the 20-F above). So its title states no ratio, and the text's
   three are refused. Not investigated.
+- **`segments` expands the duration row's colspan but not the date row's** (review round 2). So
+  SEC's footnoted layout (CIK 1682745's R93) is refused rather than read. That is strictly better
+  than main, which misfiled FY2025.
+- **`ads_ratio` reads a European "1.000" as 1.0 and "10:1" as 10**, as main does (review round 2).
+- **`QUARTER_MAX_DAYS` (100) excludes a 16-week fiscal first quarter (~111 days)** (review round
+  2). It is inherited from `anchor`, and `dilution` is unwired.
 - **`_notes` reads the whole text, not by sentence,** so a "respectively" sentence about notes is
   not refused by this change. Notes never differ (`decide`), so it cannot move a page date. Not
   measured here.
@@ -180,13 +205,32 @@ then reads as if no filing stated a maturity, which is DEFERRED below.
 three pins that were red on that head. Re-measured after the fix: still 14 of 81 sentences refused
 in the 58 filings, the other 67 read as on main, and the 26 pages' checks move 0 rows.
 
+**REVIEW ROUND 2** (the coordinator's review of `d73a9460`). The FIXes, each behind a pin red on
+that head:
+- `_TRANSITION` and `_REFINANCE` lists are refused (three pins);
+- the refusal is bounded to the paired statement (three pins);
+- an ADS holding is not a ratio (one pin);
+- both scripts now REQUIRE `--skip-file` and skip by CIK as well, through SEC's cached ticker map.
+
+Re-measured after the fixes, against main at 936dd707:
+- still 14 of 81 sentences refused in the 58 filings, the other 67 identical to main;
+- the 26 pages' checks move 0 rows;
+- the 85 depositary lines move 0 ratios (76 known).
+
+The reviewer's own cache-only run found 15 refusals in 3,929 files, all positional; it is a
+different cache population from the 3,718 here.
+
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-1. **A maturity list paired "respectively" is refused whole.** That includes a loan maturity the
-   same sentence states plainly elsewhere. The instrument it would have dated is not run, and the
-   page keeps CIQ's date. A positional pairing the rule does not see stays as main reads it: dates
-   that are not adjacent to "respectively", or a list split by other words. FALSIFIER: a committed
-   page whose maturity check loses a correct filing date to this refusal (0 of the 26 now), or
-   one that still governs on a positional date.
+1. **A positional maturity list is refused with the statement it continues.** The instrument it
+   would have dated is not run, and the page keeps CIQ's date.
+   - A list that follows the loan's own date with OTHER dates, in the same clause, is refused
+     with it. An example is "matures on June 1, 2030 and on March 31, 2026 and December 31, 2025,
+     respectively, its rate was …": the maturity is read as the list's first element. 0 corpus
+     instances.
+   - A positional pairing the rule does not see stays as main reads it: dates that are not
+     adjacent to "respectively", or a list split by other words.
+   - FALSIFIER: a committed page whose maturity check loses a correct filing date to this refusal
+     (0 of the 26 now), or one that still governs on a positional date.
 2. **A segment period label is longer, and the 10-K's labels change.** No caller reads them yet.
 3. **An ADS count beyond "N hundred", or in "thousand" words, is refused, not read.** Not observed
    on the 85 lines.

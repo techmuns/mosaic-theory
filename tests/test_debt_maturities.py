@@ -773,8 +773,24 @@ _POSITIONAL_FORMS = [
 ]
 
 
+#: (review round 2) the same pairing in an EXTENSION or a REFINANCING, whose grammars are not
+#: `_STATEMENT`'s: on round 1's head the first three gave both loans 2029-06-01 — constructed, one
+#: per form (the coordinator's review)
+_POSITIONAL_TRANSITIONS = [
+    "The amendment extended the maturity dates of the Revolving Credit Facility and the Term Loan "
+    "B to June 1, 2029 and June 1, 2030, respectively.",
+    "The amendment extended the maturity date of the Revolving Credit Facility and the Term Loan B "
+    "to June 1, 2029 and June 1, 2030, respectively.",
+    "The amendment extends the maturity of the Revolving Credit Facility and the Term Loan B from "
+    "June 1, 2027 and June 1, 2028 to June 1, 2029 and June 1, 2030, respectively.",
+    "We refinanced the existing term loans with a new revolving credit facility and a new term "
+    "loan B maturing on June 1, 2029 and June 1, 2030, respectively.",
+    "The Revolving Credit Facility and Term Loan B due 2029 and 2030, respectively, were amended.",
+]
+
+
 @pytest.mark.parametrize("sentence", [_RESPECTIVELY, _TGT_RESPECTIVELY, *_POSITIONAL,
-                                      *_POSITIONAL_FORMS])
+                                      *_POSITIONAL_FORMS, *_POSITIONAL_TRANSITIONS])
 def test_a_maturity_list_paired_respectively_states_no_loan_maturity(sentence: str) -> None:
     """(−) The audit's sentence, Target's, and three more from the cached filings: a maturity
     verb, then two or more dates, then "respectively" — nothing is read, never the first date."""
@@ -793,11 +809,20 @@ def test_a_maturity_list_paired_respectively_states_no_loan_maturity(sentence: s
      dmx.TERM_LOAN, "2032-03"),
     # no "respectively" at all
     ("The Term Loan B matures on June 1, 2030.", dmx.TERM_LOAN, "2030-06-01"),
+    # (review round 2) a positional list in ANOTHER clause — notes, swaps, payment dates — refuses
+    # that clause only; on round 1's head each lost the loan's own maturity, which main reads
+    ("The Term Loan B matures on June 1, 2030, and our 2.50% and 3.75% Senior Notes are due 2027 "
+     "and 2029, respectively.", dmx.TERM_LOAN, "2030-06-01"),
+    ("The Revolving Credit Facility matures on May 1, 2031, and our interest rate swaps expire in "
+     "March 2027 and March 2028, respectively.", dmx.REVOLVER, "2031-05-01"),
+    ("The Term Loan B matures on June 1, 2030, and interest payments due on March 31, 2026 and "
+     "June 30, 2026, respectively, were $5.1 million and $5.3 million.", dmx.TERM_LOAN,
+     "2030-06-01"),
 ])
 def test_a_respectively_that_pairs_something_else_leaves_the_maturity_read(
         sentence: str, cls: str, when: str) -> None:
     """(+) A "respectively" that pairs amounts, rates or balance dates beside ONE maturity is not
     a positional pairing of that maturity: refusing the word alone would lose these, which main
     reads right, so they are read as before."""
-    assert [(s.cls, dmx.iso(s.when, s.precision), s.current) for s in dmx.read(sentence)] == [
-        (cls, when, True)]
+    loans = [s for s in dmx.read(sentence) if s.cls in (dmx.TERM_LOAN, dmx.REVOLVER)]
+    assert [(s.cls, dmx.iso(s.when, s.precision), s.current) for s in loans] == [(cls, when, True)]
