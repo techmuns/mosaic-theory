@@ -3713,8 +3713,9 @@ def _edgar_shares_outstanding(
     Returning it "with a note" would put that number on the page; returning None hands the caller
     the chance to bridge to a basis that agrees with the cap, or to say UNKNOWN.
 
-    ``as_of`` defaults to today only so existing callers keep working; assembly passes its
-    reference date so a build is reproducible rather than clock-dependent.
+    ``as_of`` defaults to today only so existing callers keep working; assembly passes the page's
+    PRICE DATE (its cut, operator ruling 2026-11-01), and only a count FILED on or before it is
+    used (audit X1(b)), so a build is reproducible rather than clock-dependent.
 
     A COUNT TAGGED AFTER ITS OWN FILING is aged from the date it was counted (audit X1(a)): its
     cover sentence's date, or its filing day as a bound. Measured from the tag, a future date is

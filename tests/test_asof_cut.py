@@ -48,8 +48,9 @@ def test_the_52_week_window_is_the_365_days_ending_on_the_price_date() -> None:
 def test_no_bar_after_the_frontier_is_read() -> None:
     f = compute_price_features(_BARS, reference_date=date(2026, 10, 2), staleness_days=5,
                                frontier=date(2026, 10, 9))
-    assert f.last.as_of is not None and f.last.as_of <= date(2026, 10, 9)
-    assert "→2026-10-09" in (f.high_52w.note or "") or f.last.as_of < date(2026, 10, 9)
+    # 2026-10-09 is a trading day in the fixture, so the price date is exactly it
+    assert f.last.as_of == date(2026, 10, 9)
+    assert "52-week window 2025-10-09→2026-10-09" in (f.high_52w.note or "")
 
 
 def test_without_a_frontier_the_screen_reads_as_before() -> None:

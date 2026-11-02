@@ -121,3 +121,6 @@ whatever companyfacts held when the code ran, not when the screen judged.
   ruling, never later — and are unchanged.
 - **The rank's dilution series** (`rank/structural._shares_for`) reads companyfacts uncut, as the
   rank runs on today's data.
+- **The page's quality block reads the screen record's fundamentals** (`record.fundamentals`,
+  enriched at the SCREEN's price date), not the page's later one — never later than the cut, but
+  a second, earlier cut on the same page (review round 1, deferred).
