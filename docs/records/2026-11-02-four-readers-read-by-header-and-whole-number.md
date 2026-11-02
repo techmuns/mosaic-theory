@@ -1,8 +1,8 @@
 ---
 id: 2026-11-02-four-readers-read-by-header-and-whole-number
-status: open
+status: shipped
 date: 2026-11-02
-prs: []
+prs: [883]
 supersedes:
 superseded-by:
 ---
