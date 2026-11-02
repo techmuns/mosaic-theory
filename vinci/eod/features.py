@@ -125,9 +125,19 @@ def compute_price_features(
     reference_date: date,
     staleness_days: int,
     market_cap: float | None = None,
+    frontier: date | None = None,
 ) -> PriceFeatures:
-    """Compute the Screen-2 price features from a bar history (any order; sorted internally)."""
-    bars = sorted(bars, key=lambda b: b.bar_date)
+    """Compute the Screen-2 price features from a bar history (any order; sorted internally).
+
+    ``frontier`` BOUNDS THE BARS (audit F-D4, operator ruling 2026-11-01: "Inputs are cut at the
+    page's price date"). No bar after it is read, and every window — the 52-week range, the
+    trailing returns, the 90-day ADV — ends on the PRICE DATE, the newest bar at or before it. A
+    page's prices run past its reference date, and its "52-week" window ran from the reference
+    date less 365 days to the newest bar: 368–377 days on the committed pages. Without a frontier
+    (the screen, whose newest bar IS its reference date) the windows end on the reference date as
+    before."""
+    bars = sorted((b for b in bars if frontier is None or b.bar_date <= frontier),
+                  key=lambda b: b.bar_date)
     if not bars:
         u = _unknown("no price bars")
         return PriceFeatures(
@@ -138,6 +148,8 @@ def compute_price_features(
 
     latest = bars[-1]
     as_of = latest.bar_date
+    # the date every window ends on: the price date when bounded, else the reference date
+    end = as_of if frontier is not None else reference_date
     age = (reference_date - latest.bar_date).days
     if age > staleness_days:
         last = DataField.stale(
@@ -152,7 +164,7 @@ def compute_price_features(
 
     # 52-week high/low + drawdown/distance (only if we actually have ~a year of history)
     if have_year:
-        w_start = reference_date - timedelta(days=YEAR_DAYS)
+        w_start = end - timedelta(days=YEAR_DAYS)
         window = [b for b in bars if b.bar_date >= w_start]
         hi = max(b.high for b in window)
         lo = min(b.low for b in window)
@@ -208,14 +220,14 @@ def compute_price_features(
     # trailing returns
     rets: dict[str, DataField[float]] = {}
     for label, lookback in _RET_LOOKBACK.items():
-        then = _close_on_or_before(bars, reference_date - timedelta(days=lookback))
+        then = _close_on_or_before(bars, end - timedelta(days=lookback))
         if then and then > 0 and span_days >= lookback - 7:
             rets[label] = _derived(latest.close / then - 1.0, as_of)
         else:
             rets[label] = _unknown(f"no close ~{lookback}d ago")
 
     # 90D ADV + volume spike
-    adv_window = [b for b in bars if b.bar_date >= reference_date - timedelta(days=_ADV_WINDOW)]
+    adv_window = [b for b in bars if b.bar_date >= end - timedelta(days=_ADV_WINDOW)]
     if len(adv_window) >= _ADV_MIN_BARS:
         adv_shares_v = sum(b.volume for b in adv_window) / len(adv_window)
         adv_usd_v = sum(b.close * b.volume for b in adv_window) / len(adv_window)

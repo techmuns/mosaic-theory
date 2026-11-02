@@ -3576,7 +3576,8 @@ class _StubEdgar:
     def companyfacts(self, cik: int | str) -> dict[str, typing.Any]:
         return self._facts
 
-    def fundamental_snapshot(self, cik: int | str) -> FundamentalSnapshot:
+    def fundamental_snapshot(self, cik: int | str, *,
+                             as_of: object = None) -> FundamentalSnapshot:
         return all_unknown_snapshot("0001682745").model_copy(update={
             "net_debt": DataField.present(
                 self._net_debt, as_of=date(2026, 3, 31), source="EDGAR", tier=SourceTier.EDGAR

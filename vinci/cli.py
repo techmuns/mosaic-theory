@@ -320,7 +320,10 @@ def _cmd_eod(args: argparse.Namespace) -> int:
     if not bars:
         print(f"no stored bars for {ident.ticker}; run `vinci refresh` first")
         return 1
-    f = compute_price_features(bars, reference_date=ref, staleness_days=cfg.price_staleness_days)
+    # bounded at the date asked for: no later bar is read, and the 52-week window ends on the
+    # price date (audit F-D4)
+    f = compute_price_features(bars, reference_date=ref, staleness_days=cfg.price_staleness_days,
+                               frontier=ref)
     span = f"{bars[0].bar_date}..{bars[-1].bar_date} ({len(bars)} bars)"
     print(f"=== {ident.ticker} ({ident.name})  features as of {ref}  [{span}] ===")
     for label, field in [

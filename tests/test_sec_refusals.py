@@ -240,7 +240,8 @@ def test_the_screen_reads_a_filers_companyfacts_once(
     edgar = _edgar(tmp_path, clock, lambda r: _ok(), sent)
     out = enrich_with_fundamentals(_rec(drawdown=-0.4, rel=-0.3, pe_pctile=0.1), edgar=edgar,
                                    price_bars=[], reference_date=REF)
-    want = compute_fundamental_snapshot("0000000001", _FACTS)
+    # read as of the screen's price date — with no bars, its reference date (C4, audit E1-D6)
+    want = compute_fundamental_snapshot("0000000001", _FACTS, as_of=REF)
     assert len(sent) == 1
     assert out.fundamentals.fcf_sign == want.fcf_sign
 
