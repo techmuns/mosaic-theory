@@ -449,8 +449,14 @@ def test_the_overlay_serves_every_committed_name_and_none_falls_back(
 #:
 #: **NFLX and LLY LANDED** (2026-10-30): re-assembled on #865's code, their bases are the
 #: recompute's (NFLX 53.5401→54.435, LLY 699.6511→752.2356).
+#:
+#: **LLY AWAITING AGAIN** (audit E2-D21, 2026-11-02): net debt is read as filed by the page's price
+#: date (`docs/records/2026-11-02-net-debt-is-read-as-filed-by-the-pages-price-date.md`). LLY's
+#: committed anchor read the 2026-09-30 balance sheet off its Q3 10-Q, filed 2026-10-29 — after the
+#: page's 2026-10-28 price date; cut there it reads 2026-06-30's, so the base is 750.7357 (net debt
+#: 45,980.0→47,320.0). Its owed re-assembly takes a new price date, and the 10-Q with it.
 ANCHORS_AWAITING_BACKFILL: set[str] = {
-    "AORT", "BRBR", "BURL", "EPAM", "IT", "PARR", "SMPL", "TGT", "VRRM", "WLK"}
+    "AORT", "BRBR", "BURL", "EPAM", "IT", "LLY", "PARR", "SMPL", "TGT", "VRRM", "WLK"}
 
 #: Committed anchors whose base cannot be reproduced from EDGAR alone — the CIQ workbook supplied a
 #: fact EDGAR does not carry, and this recompute passes ``ciq=None`` deliberately. Named rather than

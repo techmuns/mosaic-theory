@@ -141,7 +141,7 @@ def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
         return None
     price = si.price.value if si.price.status is SourceStatus.PRESENT else None
     count = share_denominator(mech.model_dump(mode="json"), facts)
-    nd = _lease_inclusive_net_debt(facts, ex_operating_leases=True)
+    nd = _lease_inclusive_net_debt(facts, as_of=si.as_of, ex_operating_leases=True)  # E2-D21
     if not price or count is None or nd is None or nd[0] is None:
         return None
     shares, shares_basis = count

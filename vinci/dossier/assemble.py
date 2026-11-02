@@ -1199,7 +1199,9 @@ def assemble_one(
     edgar_nd: tuple[float | None, str | None] = (None, None)
     try:
         anchor_facts = EdgarClient.from_config(cfg).companyfacts(rec.identity.cik)
-        edgar_nd = lease_inclusive_net_debt(anchor_facts)
+        # as filed by the page's price date (audit E2-D21), the cut its anchor reads too
+        edgar_nd = lease_inclusive_net_debt(
+            anchor_facts, as_of=mech.stock_info.as_of if mech.stock_info else None)
         anchor = _assembly_anchor(mech.model_dump(mode="json"), facts=anchor_facts, bundle=bundle,
                                   ticker=ticker, computed_at=datetime.now(UTC))
     except SecRateLimitedError:

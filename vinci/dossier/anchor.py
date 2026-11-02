@@ -832,7 +832,20 @@ def _no_diluted_quarter(facts: dict[str, Any]) -> str:
             f"{_span(latest)}); no 10-Q quarter is on file to read")
 
 
-def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: bool = False,
+def page_price_date(mechanical: dict[str, Any]) -> date | None:
+    """The page's price date — its EOD bar (`stock_info.as_of`), the date `date_semantics`
+    names `price_as_of` — or None when the page states none. The cut the operator's C4 ruling puts
+    on a page's inputs: "filed on or before it; latest such filing wins"."""
+    raw = (mechanical.get("stock_info") or {}).get("as_of")
+    if isinstance(raw, datetime):   # a date the filing dates compare with, never a timestamp
+        return raw.date()
+    if isinstance(raw, date):
+        return raw
+    return date.fromisoformat(raw) if isinstance(raw, str) and raw else None
+
+
+def _lease_inclusive_net_debt(facts: dict[str, Any], *, as_of: date | None,
+                              ex_operating_leases: bool = False,
                               ) -> tuple[float | None, str] | None:
     """Lease-inclusive net debt ($): total debt + finance leases + operating leases − cash −
     short-term securities, every line at the latest balance sheet — the EV basis of
@@ -852,8 +865,12 @@ def _lease_inclusive_net_debt(facts: dict[str, Any], *, ex_operating_leases: boo
 
     ONE DATE FOR EVERY LINE (§5.0 row 27 (1), 2026-10-19). Each leg used to be read at its own
     latest date, so a current-debt tag that stopped a quarter early still counted (WERN: $9M of
-    debt not on its 2026-06-30 balance sheet, which CIQ's $889M does not carry either)."""
-    nd = net_debt(facts)
+    debt not on its 2026-06-30 balance sheet, which CIQ's $889M does not carry either).
+
+    ``as_of`` IS THE PAGE'S PRICE DATE (audit E2-D21; operator ruling C4, 2026-11-01): every line
+    is read as filed by then (:func:`page_price_date`), so a later re-filing of the balance sheet
+    never moves a sealed figure. Required, so no caller reads every filing by default."""
+    nd = net_debt(facts, as_of=as_of)
     if nd is None or nd.nothing_to_read:
         return None
     if nd.borrowings is None and not nd.undercaptured:
@@ -949,7 +966,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
     window = _page_window(mechanical)
     got_da = _window_dep_amort(facts, window)
     da = None if isinstance(got_da, str) else got_da
-    nd = _lease_inclusive_net_debt(facts, ex_operating_leases=ex_lease)
+    nd = _lease_inclusive_net_debt(facts, as_of=page_price_date(mechanical),
+                                   ex_operating_leases=ex_lease)
     nd_val = nd[0] if nd else None
     counts = _traded_unit_counts(mechanical, facts)
     dil, out, out_src, inc = counts.dil, counts.out, counts.out_src, counts.inc
@@ -1194,7 +1212,8 @@ def per_share_shares(anchor: dict[str, Any]) -> float | None:
     return None
 
 
-def lease_inclusive_net_debt(facts: dict[str, Any]) -> tuple[float | None, str | None]:
+def lease_inclusive_net_debt(facts: dict[str, Any], *,
+                             as_of: date | None) -> tuple[float | None, str | None]:
     """($M, source) — EDGAR's net debt WITH the operating leases, whatever basis R1 prices on.
 
     THE CROSS-CHECK BESIDE A CIQ TEV IS LEASE-INCLUSIVE BY CONSTRUCTION (review of #750). CIQ's
@@ -1202,7 +1221,7 @@ def lease_inclusive_net_debt(facts: dict[str, Any]) -> tuple[float | None, str |
     too. It used to be "the anchor's" net debt, which was the same number until R1 moved to the
     ex-lease bridge on lease-material names; reading the anchor there would set AMZN's $22,687M
     beside CIQ claims that hold $96B of leases."""
-    nd = _lease_inclusive_net_debt(facts)
+    nd = _lease_inclusive_net_debt(facts, as_of=as_of)
     if nd is None:
         return None, "UNKNOWN — no debt/cash tag"
     return (round(nd[0] / _USD_M, 3) if nd[0] is not None else None), "EDGAR: " + nd[1]

@@ -429,8 +429,8 @@ def test_a_lease_material_anchor_prices_the_ex_lease_median_against_ex_lease_net
     assert a.multiple.source.startswith("valuation.lease_basis")
     assert a.net_debt.basis == NET_DEBT_EX_LEASE
     facts = _facts("TJX")
-    inc, ex = _lease_inclusive_net_debt(facts), _lease_inclusive_net_debt(
-        facts, ex_operating_leases=True)
+    inc, ex = _lease_inclusive_net_debt(facts, as_of=None), _lease_inclusive_net_debt(
+        facts, as_of=None, ex_operating_leases=True)
     assert inc and ex and inc[0] is not None and ex[0] is not None
     # the operating leases as the one net-debt builder reads them (§5.0 row 27 (1), #749) — the
     # same reading both bridges are built from
@@ -780,7 +780,7 @@ def test_the_r4_cross_check_stays_lease_inclusive_beside_ciqs_claims() -> None:
     EDGAR figure; on a page whose anchor moved ex-lease, its label says whose figure it is."""
     from vinci.dossier.anchor import lease_inclusive_net_debt
 
-    assert lease_inclusive_net_debt(_facts("TJX"))[0] == pytest.approx(
+    assert lease_inclusive_net_debt(_facts("TJX"), as_of=None)[0] == pytest.approx(
         _doc("TJX")["ev_bridge"]["edgar_net_debt"])
     d = _page_doc("TJX", _lb("TJX"), _lb("TJX"))
     d["anchor"]["recipe_hint"] = "R4_forward_ev_ebit"

@@ -361,6 +361,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "Not Recently Disclosed' are said in its note, never counted as current, while the recent "
         "section's own 'no recently disclosed customers' is read",
     ),
+    (
+        "2026-11-02.net-debt-as-of",
+        "net debt is read as filed by the page's price date (audit E2-D21; operator ruling C4): "
+        "every net-debt reader cuts the companyfacts at `stock_info.as_of` before any leg is "
+        "read, so a later re-filing of a balance sheet, or a later balance sheet, never moves a "
+        "sealed figure — the anchor, the assembly's EV-bridge cross-check, the at-price ex-lease "
+        "multiple and the bridge refresh alike",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
