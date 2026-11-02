@@ -106,6 +106,70 @@ def test_a_fraction_is_never_read_as_its_numerator() -> None:
                             ).ratios == []
 
 
+def _ratios(text: str) -> list[float]:
+    """Every ratio the text and the title readers find, rounded to 6 places."""
+    return [round(v, 6) for read in (statements, title_statements) for v, _q in read(text).ratios]
+
+
+@pytest.mark.parametrize(("text", "ratio"), [
+    # the audit's four (F-D2): each read by its first word on main — 20, 30, 3 and 1, all `known`
+    ("American Depositary Shares, each representing twenty-four ordinary shares", 24.0),
+    ("American Depositary Shares, each representing thirty-five ordinary shares", 35.0),
+    ("American Depositary Shares, each representing three hundred ordinary shares", 300.0),
+    ("American Depositary Shares, each representing 1,000 ordinary shares", 1000.0),
+    # and the tens main's list skipped: "seventy" stated nothing at all
+    ("American Depositary Shares, each representing seventy ordinary shares", 70.0),
+    ("American Depositary Shares, each representing two hundred and fifty ordinary shares", 250.0),
+])
+def test_a_count_is_read_whole(text: str, ratio: float) -> None:
+    """THE RED: a count in words or digits is the whole number, never its first word."""
+    assert _ratios(text) == [ratio, ratio], _ratios(text)
+
+
+@pytest.mark.parametrize("text", [
+    "American Depositary Shares, each representing one thousand ordinary shares",
+    "American Depositary Shares, each representing 2,50 ordinary shares",
+    "American Depositary Shares, each representing ten-fold ordinary shares",
+    # review round 0: a refused whole must not be retried as its prefix ("twenty"), and a mixed
+    # number is not its integer part
+    "American Depositary Shares, each representing twenty five thousand ordinary shares",
+    "American Depositary Shares, each representing 2 1/2 ordinary shares",
+])
+def test_a_count_that_runs_on_past_what_was_read_is_refused(text: str) -> None:
+    """(−) A number this reader does not read whole is no count: "one thousand" is never 1, and a
+    stray separator or hyphen is never the digits before it. Nothing is stated, rather than the
+    part."""
+    assert _ratios(text) == [], _ratios(text)
+
+
+def test_a_holding_of_adss_is_not_a_ratio() -> None:
+    """(−, review round 2) JKS's 20-F cover (0001104659-26-050737), verbatim: once "61,421" and
+    "245,685" parse whole, the N-for-M rule read this HOLDING as a ratio of 4.000016 — beside the
+    title's 4, a text-only filer would be refused for two ratios. A ratio's sides are small counts
+    ("every three ADSs represent two"); a holding is not one."""
+    holding = ("209,429,353 ordinary shares, excluding 61,421 ADSs representing 245,685 ordinary "
+               "shares reserved for future grants under our share incentive plans")
+    assert statements(holding).ratios == []
+    assert [round(v, 6) for v, _q in title_statements(
+        "every three ADSs represent two Class A ordinary shares").ratios] == [0.666667]
+
+
+def test_the_whole_number_reader_moves_no_shape_already_read() -> None:
+    """(+) The fences: "two" is still 2, KT's "one-half of one share" 0.5, SMFG's "3/5 of one
+    share" 0.6, RERE's "every three ADSs represent two" 2/3 and TSM's "five (5)" 5."""
+    assert _ratios("American Depositary Shares, each representing two Class A ordinary shares"
+                   ) == [2.0, 2.0]
+    assert _ratios("American Depositary Shares, each representing one-half of one share"
+                   ) == [0.5, 0.5]
+    assert [round(v, 6) for v, _q in statements(
+        "each American Depositary Share representing 3/5 of one share").ratios] == [0.6]
+    assert [round(v, 6) for v, _q in title_statements(
+        "every three ADSs represent two Class A ordinary shares").ratios] == [0.666667]
+    assert [v for v, _q in statements("each ADS represents five (5) common shares").ratios] == [5.0]
+    for ticker in ("KT", "SMFG", "RERE", "TSM"):
+        assert _read(ticker).known, ticker
+
+
 def test_several_ratios_are_refused_with_every_value_named() -> None:
     """NEGATIVE: BIDU's 20-F states its current ratio (eight shares per ADS) beside the ones it
     replaced (ten ADSs per share, one per share); GRFS states 1 and 0.5. Which is current cannot be
