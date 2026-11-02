@@ -154,6 +154,54 @@ class Filing(BaseModel, frozen=True):
     report_date: date | None = None  # the period the filing reports ON (10-Q/K balance-sheet as-of)
 
 
+class AnnualRead(BaseModel, frozen=True):
+    """The annual report a DOCUMENT reader reads, and every amendment of it (audit E1-D7,
+    operator ruling 2026-11-01).
+
+    The original is read. An annual /A takes its place only when it carries the period's
+    FINANCIAL STATEMENTS — judged by what its accession carries in companyfacts, never by its form
+    name (:func:`_statement_accessions`). One fact is not statements: a Part III 10-K/A with an
+    Item 402(v) pay-versus-performance table tags the company's net income (Catalyst's carries one
+    us-gaap fact and seven ecd), and read as "the annual" it left the segment read UNKNOWN and gave
+    the exhibit index EX-31/32 alone (review round 2). A later /A is always named beside the read
+    (:attr:`pointer`)."""
+
+    filing: Filing  # the one to read: the original, or an /A carrying the period's statements
+    original: Filing
+    later: tuple[Filing, ...] = ()  # the annual /As of the original's period filed after it
+    restating: frozenset[str] = frozenset()  # accessions among ``later`` carrying the statements
+    unjudged: str = ""  # why ``later`` could not be judged, when it could not
+
+    @property
+    def judged(self) -> bool:
+        return not self.unjudged
+
+    @property
+    def pointer(self) -> str | None:
+        """One line naming every later /A with its accession, and why it is or is not read."""
+        if not self.later:
+            return None
+        o = self.original
+        parts = []
+        for a in self.later:
+            head = f"{a.form} {a.accession} (filed {a.filing_date}) amends {o.form} {o.accession}"
+            if a.accession == self.filing.accession:
+                parts.append(f"{head}; read in its place: it carries the period's financial "
+                             f"statements")
+            elif a.accession in self.restating:
+                parts.append(f"{head}; not read: a later amendment carries the period's "
+                             f"statements too")
+            elif self.unjudged:
+                parts.append(f"{head}; not read: not judged — {self.unjudged}")
+            else:
+                # a 10-K's Part III is its proxy items; a 20-F's is its financial statements
+                kind = (" (a Part III or cover amendment)" if a.form in ("10-K/A", "10-KT/A")
+                        else "")
+                parts.append(f"{head}; not read: it carries no financial statements for the "
+                             f"period{kind}")
+        return "; ".join(parts)
+
+
 class FundamentalSnapshot(BaseModel, frozen=True):
     """EDGAR-only fundamentals (no price). Non-distress signals + inputs for step-5 multiples."""
 
@@ -856,3 +904,151 @@ class EdgarClient:
         except HttpError as exc:
             self._remember_submissions(name, _RememberedFailure(type(exc), exc.args))
             raise
+
+
+# --- amended filings (audit E1-D7, operator ruling 2026-11-01) ------------------------------
+# Module functions over any client with `recent_filings` / `companyfacts`, so the readers' test
+# doubles serve them unchanged.
+
+def annual_report(edgar: EdgarClient, cik: int | str, *, forms: tuple[str, ...],
+                  through: date | None = None) -> AnnualRead | None:
+    """The newest annual report of ``forms`` filed by ``through`` (any day when None), as a
+    DOCUMENT reader reads it — :class:`AnnualRead` holds the rule. None when there is none.
+
+    An amendment belongs to the original when its period of report is the original's (or
+    either does not state one) and it was filed on or after it. Companyfacts is read only when
+    an amendment exists; when it cannot be read the original is read and the pointer says the
+    amendment could not be judged."""
+    amended = tuple(f"{f}/A" for f in forms)
+    rows = [f for f in edgar.recent_filings(cik, forms=forms + amended)
+            if through is None or f.filing_date <= through]
+    originals = [f for f in rows if f.form in forms]
+    if not originals:
+        return None
+    orig = max(originals, key=lambda f: f.filing_date)
+    later = tuple(sorted(
+        (f for f in rows if f.form in amended and f.filing_date >= orig.filing_date
+         and (f.report_date is None or orig.report_date is None
+              or f.report_date == orig.report_date)),
+        key=lambda f: f.filing_date))
+    if not later:
+        return AnnualRead(filing=orig, original=orig)
+    restating, unjudged = _statement_accessions(edgar, cik, orig, later)
+    read = max((f for f in later if f.accession in restating),
+               key=lambda f: f.filing_date, default=orig)
+    return AnnualRead(filing=read, original=orig, later=later, restating=restating,
+                      unjudged=unjudged)
+
+
+#: The balance-sheet totals and income-statement lines whose presence, for the period, marks an
+#: amendment as carrying the statements (us-gaap, and ifrs-full's `Assets` / `Revenue` …).
+_BALANCE_TOTALS = frozenset({"Assets", "LiabilitiesAndStockholdersEquity", "EquityAndLiabilities"})
+_INCOME_LINES = frozenset({"Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax",
+                           "RevenueFromContractWithCustomerIncludingAssessedTax", "Revenue",
+                           "NetIncomeLoss", "ProfitLoss", "OperatingIncomeLoss"})
+#: …and the share of the original's own period tags it must carry. Set by face validity on the
+#: cache (review round 2): the 27 cached /As that re-file statements carry 1.00–1.04 of their
+#: original's tags; the pay-versus-performance /As 0.00–0.01, and BMO's 40-F/A 0.08 with no
+#: income line. The threshold sits in that gap, not at any outcome.
+_STATEMENT_SHARE = 0.5
+
+
+def _period_tags(facts: dict[str, Any], accession: str,
+                 end: str) -> tuple[frozenset[str], bool, bool]:
+    """The us-gaap/ifrs-full tags ``accession`` carries for the period ending ``end``, whether one
+    is a balance-sheet total stated at that instant, and whether one is an income line. The ecd
+    namespace (pay versus performance) and dei never count."""
+    tags: set[str] = set()
+    balance = income = False
+    for ns in ("us-gaap", "ifrs-full"):
+        for tag, node in (facts.get("facts") or {}).get(ns, {}).items():
+            for rows in node.get("units", {}).values():
+                for r in rows:
+                    if r.get("accn") != accession or r.get("end") != end:
+                        continue
+                    tags.add(tag)
+                    balance |= tag in _BALANCE_TOTALS and not r.get("start")
+                    income |= tag in _INCOME_LINES
+    return frozenset(tags), balance, income
+
+
+def _statement_accessions(edgar: EdgarClient, cik: int | str, orig: Filing,
+                          later: tuple[Filing, ...]) -> tuple[frozenset[str], str]:
+    """The accessions among ``later`` that carry the period's financial statements, and why none
+    could be judged when none could ("" otherwise).
+
+    An /A carries them when it states, for the original's period, a balance-sheet total AND an
+    income line AND at least :data:`_STATEMENT_SHARE` of the tags the original states for it (the
+    share is vacuous when the original states none: Willis Lease's 10-K carries no fact for FY2025
+    and its 10-K/A 241). Companyfacts that cannot be read — unreachable, or a body that is not
+    JSON — judges nothing; nor does an original whose period, and every /A's, carries no fact."""
+    if orig.report_date is None:
+        return frozenset(), "the original states no period of report"
+    try:
+        facts = edgar.companyfacts(cik)
+    except HttpNotFoundError:
+        facts = {}  # no XBRL at all: nothing carries statements
+    except (HttpError, ValueError) as exc:  # ValueError: a 200 body that is not JSON
+        return frozenset(), f"companyfacts could not be read ({type(exc).__name__})"
+    end = orig.report_date.isoformat()
+    base, _, _ = _period_tags(facts, orig.accession, end)
+    carrying = set()
+    for a in later:
+        tags, balance, income = _period_tags(facts, a.accession, end)
+        if balance and income and len(tags) >= _STATEMENT_SHARE * len(base):
+            carrying.add(a.accession)
+    if not base and not carrying:
+        return frozenset(), "companyfacts carries no fact for the original either"
+    return frozenset(carrying), ""
+
+
+def events(edgar: EdgarClient, cik: int | str, *,
+           since: date | None = None) -> list[Filing]:
+    """The filer's 8-K EVENTS, newest first, for a reader that selects or classifies on item
+    codes (audit E1-D7, operator ruling 2026-11-01: "the event is the original's").
+
+    An 8-K/A's ORIGINAL is an 8-K of the same period of report that shares an item code with it
+    other than 9.01 (the exhibits item every 8-K carries). It counts only for the codes it adds
+    over its original(s), and is returned carrying those alone. One with no original is NEVER a
+    new event and counts nothing (review round 2): matched on the report date alone, PHIN's 4.01
+    8-K/A of 2026-02-12 met that day's earnings 8-K and "added" a second auditor change, and
+    Worthington Steel's 8-K/A re-filing its 2026-06-25 earnings, with no original of its report
+    date, moved the latest print to 07-10. Measured on the 477 cached 8-K/As filed in the year to
+    2026-11-01, keyed so: 268 add nothing, 31 add a code, 178 have no original; MEDS's of
+    2026-04-21 keeps the 3.01 its 2026-04-17 original lacks. Keyed instead on the same primary
+    document, MEDS's lost it and PHIN's kept its 4.01."""
+    # `since` only when given, as each reader asked before: a no-window read is the recent page
+    rows = (edgar.recent_filings(cik, forms=("8-K", "8-K/A")) if since is None
+            else edgar.recent_filings(cik, forms=("8-K", "8-K/A"), since=since))
+    amends = [f for f in rows if f.form == "8-K/A"]
+    if not amends:
+        return rows
+    if since is None:
+        # NO WINDOW, so only the recent page was read, and no older page is read for an
+        # original: one that lies there leaves its amendment with no original, counting nothing
+        # (ORKA's 8-K/A of 2009 had sent the print, termination and release readers to pages
+        # they had never needed).
+        pool = rows
+    else:
+        # an original is filed on or after its own period of report, so this reaches every one
+        lo = min(f.report_date or f.filing_date for f in amends)
+        pool = rows if lo >= since else edgar.recent_filings(cik, forms=("8-K",), since=lo)
+    by_date: dict[date, list[set[str]]] = {}
+    for f in pool:
+        if f.form == "8-K" and f.report_date is not None:
+            by_date.setdefault(f.report_date, []).append(set(f.items))
+    out: list[Filing] = []
+    for f in rows:
+        if f.form == "8-K":
+            out.append(f)
+            continue
+        own = set(f.items) - {"9.01"}
+        same_day = by_date.get(f.report_date, []) if f.report_date is not None else []
+        originals = [c for c in same_day if own & (c - {"9.01"})]
+        if not originals:
+            continue  # no original: never a new event
+        have = set().union(*originals)
+        added = [x for x in f.items if x not in have]
+        if added:
+            out.append(f.model_copy(update={"items": added}))
+    return out

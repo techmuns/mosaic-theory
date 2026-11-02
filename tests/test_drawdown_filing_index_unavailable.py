@@ -307,8 +307,11 @@ def test_the_drawdown_path_reads_submissions_exactly_once() -> None:
         n for n in ast.walk(tree)
         if isinstance(n, ast.FunctionDef) and n.name == "_drawdown_filings"
     )
+    # the read is `recent_filings`, or since E1-D7 the `events` helper over it (named
+    # `eight_k_events` in mechanical), which reads it once per call
     calls = [
         n for n in ast.walk(fn)
-        if isinstance(n, ast.Call) and getattr(n.func, "attr", None) == "recent_filings"
+        if isinstance(n, ast.Call) and (getattr(n.func, "attr", None) == "recent_filings"
+                                        or getattr(n.func, "id", None) == "eight_k_events")
     ]
     assert len(calls) == 1, "the drawdown path should read the submissions index exactly once"
