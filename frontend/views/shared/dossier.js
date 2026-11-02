@@ -214,6 +214,13 @@ const EXTRACTION_VERSIONS = [
     "standard or the disclosure policy unless the sentence states its own result, so a " +
     "conclusion of doubt that cites ASC 205-40 is doubt, as is an IFRS material uncertainty " +
     "and a plan that cannot or will alleviate it"],
+  ["2026-11-02.amended-filings",
+    "amended filings are read by the operator's ruling of 2026-11-01 (audit E1-D7): a figure " +
+    "is the latest filed by the as-of, naming the one it restates, and the SBC reader reads an " +
+    "annual /A as its base form; a document reader reads the original annual unless an /A " +
+    "carries the period's financial statements, and names every later /A; an 8-K/A counts " +
+    "only for the item codes it adds over an 8-K of its report date sharing a non-9.01 code " +
+    "with it, and one with no such original counts nothing"],
   ["2026-11-02.D14-D18-FD2-X3",
     "a sentence that pairs its loans with its dates by position, respectively, states no " +
     "loan maturity (audit E2-D14); a segment report's column is named by its duration and " +
