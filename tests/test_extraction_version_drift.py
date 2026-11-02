@@ -77,8 +77,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "2041fa9b6384"
-PINNED_AT = "2026-11-01.small-items"
+PINNED_TABLE = "d4f8d872c98c"
+PINNED_AT = "2026-11-02.D14-D18-FD2-X3"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -93,7 +93,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
     "vinci/dossier/ciq_sheets.py": "20fecb026ed9",
     "vinci/dossier/covenant_extract.py": "44efa996baea",
-    "vinci/dossier/dilution.py": "87d81ad77c04",
+    "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
     "vinci/dossier/ebitda_basis.py": "7f9996f712e1",
     "vinci/dossier/ebitda_recon.py": "9befc99c437a",
@@ -122,14 +122,14 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/commissioning.py": "dc2004432387",
     "vinci/edgar/concepts.py": "11278504f70c",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",
-    "vinci/edgar/debt_maturities.py": "a72fba167d94",
+    "vinci/edgar/debt_maturities.py": "6ffab9ec2574",
     "vinci/edgar/filing_sections.py": "568c36df04a2",
     "vinci/edgar/going_concern.py": "feb938485fd0",
     "vinci/edgar/net_debt.py": "6257a0464909",
     "vinci/edgar/primary_source.py": "80351248cc8a",
     "vinci/edgar/release_parse.py": "fdb5e7398ef3",
     "vinci/edgar/segment_facts.py": "9d3c07301296",
-    "vinci/edgar/segments.py": "a25da92ebf20",
+    "vinci/edgar/segments.py": "8aa10f003612",
     "vinci/edgar/submissions.py": "6644355e5c3f",
     "vinci/finra.py": "5787c9793b1b",
     "vinci/verbatim.py": "cb75bef0a20e",

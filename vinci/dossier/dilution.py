@@ -38,6 +38,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Any, NamedTuple
 
+from vinci.dossier.anchor import QUARTER_MAX_DAYS
 from vinci.edgar.concepts import ConceptPoint, points_for_tag
 
 BASIC_WA_TAG = "WeightedAverageNumberOfSharesOutstandingBasic"
@@ -101,12 +102,19 @@ def _paired_period(facts: dict[str, Any]) -> tuple[ConceptPoint, ConceptPoint] |
     Selection: among periods BOTH tags report, take the latest end date, then the SHORTEST span at
     that end. The shortest span is the discrete quarter; the longer ones sharing its end date are
     the year-to-date cumulatives a 10-Q tags alongside it.
+
+    **AND NEVER A YEAR** (audit X3) — the defect `anchor._latest_point` closed on 2026-10-29. A
+    10-K tags both averages over the YEAR and no fourth quarter, so at its end date the shortest
+    span was the year: SMPL's FY2026 363 days. A span longer than `anchor.QUARTER_MAX_DAYS` is never
+    a candidate, so between a 10-K and the next 10-Q the pair is the last 10-Q's quarter.
     """
     def by_period(tag: str) -> dict[tuple[date, date], ConceptPoint]:
         out: dict[tuple[date, date], ConceptPoint] = {}
         for p in points_for_tag(facts, tag):
             if p.period_start is None:
                 continue  # an instant has no span; a weighted average is always a duration
+            if (p.period_end - p.period_start).days > QUARTER_MAX_DAYS:
+                continue  # a year-to-date or a fiscal year, never the quarter
             key = (p.period_start, p.period_end)
             prior = out.get(key)
             # the same period can be reported by several filings — the latest restatement wins
@@ -144,8 +152,9 @@ def diluted_outstanding(
     if pair is None:
         return DilutedOutstanding(
             None, basic_out, None, None, None, None,
-            reason=(f"no reporting period carries BOTH {BASIC_WA_TAG} and {DILUTED_WA_TAG} — a "
-                    "delta across two different periods is not a dilution figure"))
+            reason=(f"no quarter carries BOTH {BASIC_WA_TAG} and {DILUTED_WA_TAG} — a delta "
+                    "across two different periods is not a dilution figure, and a year's "
+                    "average is not the quarter's"))
     b, d = pair
     if b.value <= 0:
         return DilutedOutstanding(
