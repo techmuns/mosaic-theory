@@ -4116,7 +4116,7 @@ def _maturity_8ks(
             seen.add(f.accession)
             items = ", ".join(item_labels(list(f.items))) or "—"
             lines.append(
-                f"8-K at maturity {m.isoformat()}: filed {f.filing_date.isoformat()} "
+                f"{f.form} at maturity {m.isoformat()}: filed {f.filing_date.isoformat()} "
                 f"[{f.accession}] {items} — read for resolution"
             )
     if not lines:
@@ -5422,7 +5422,7 @@ def _primary_source(
                                   f"EX-99.1 exhibit was found")
                     for url in urls:
                         txt = normalize_text(html_to_text(http.get_text(url, ttl_seconds=_PS_TTL)))
-                        src = f"8-K {f.accession} EX-99.1"
+                        src = f"{f.form} {f.accession} EX-99.1"
                         rel = release_parse.parse_release(txt, source_ref=src)
                         # the filing's own date, so a consumer can pick the FRESHEST guide
                         # without parsing the accession out of source_ref

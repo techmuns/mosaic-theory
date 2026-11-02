@@ -38,7 +38,10 @@ class _Sec:
 
     def __init__(self, ticker: str, *, facts: bool = True) -> None:
         self.sub = _load(f"{ticker}-submissions")
-        self.facts = _load(f"{ticker}-facts") if facts else None
+        # a filer's facts for its period, where cut, else its SBC/revenue cut
+        name = (f"{ticker}-period-facts" if (_FIX / f"{ticker}-period-facts.json").exists()
+                else f"{ticker}-facts")
+        self.facts = _load(name) if facts else None
         self.urls: list[str] = []
 
     def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
@@ -259,9 +262,10 @@ def test_without_a_window_an_amendment_whose_original_was_read_is_judged() -> No
     oldest = min(eights, key=lambda i: rec["filingDate"][i])
     rec["reportDate"][oldest] = "2025-09-26"            # the original, filed after its event
     for k in rec:
+        shared = [x for x in rec["items"][oldest].split(",") if x != "9.01"][:1]
         rec[k].append({"accessionNumber": "0002030763-25-888888",
                        "filingDate": rec["filingDate"][oldest], "reportDate": "2025-09-26",
-                       "form": "8-K/A", "items": "5.02"}.get(k, ""))
+                       "form": "8-K/A", "items": ",".join(shared + ["5.02"])}.get(k, ""))
     assert "5.02" not in rec["items"][oldest]           # so the amendment adds it
     got = events(EdgarClient(http=cast(CachedHttp, sec)), "2030763")
     assert [f.items for f in got if f.accession == "0002030763-25-888888"] == [["5.02"]]
@@ -286,3 +290,124 @@ def test_the_exhibit_index_names_a_later_amendment_on_the_rendered_page() -> Non
     page = "\n".join(_covenant_pointer_lines(SimpleNamespace(covenant_pointer_rows=got,
                                                              covenant_pointers=None)))
     assert "0000004127-25-000085" in page and "0000004127-26-000003" in page
+
+
+
+# ─── review round 2 (coordinator) ─────────────────────────────────────────────────────────────
+
+def test_a_pay_versus_performance_amendment_is_not_read_in_its_place() -> None:
+    """Catalyst's 10-K/A of 2026-04-30 is Part III with an Item 402(v) pay table: it tags the
+    company's net income (us-gaap 1 fact, ecd 7) and no statement. One fact met "carries the
+    period's us-gaap/ifrs facts", and the segment, exhibit and exposure readers then read a Part III
+    shell as the annual. It must carry the period's financial statements."""
+    read = annual_report(_edgar("CPRX"), "1369568", forms=("10-K", "20-F", "40-F"))
+    assert read is not None and read.filing.accession == "0001193125-26-071525"
+    assert read.pointer is not None and "0001193125-26-197490" in read.pointer
+    assert "not read" in read.pointer
+
+
+def test_an_eight_k_a_matched_only_by_its_report_date_counts_nothing() -> None:
+    """PHIN's 8-K/A of 2026-02-12 (4.01) shares its report date with that day's earnings 8-K
+    (2.02, 9.01) and nothing else: matched by the date alone it "added" a second auditor change,
+    three months after the real one. Its original is the 8-K it shares an item with — none here."""
+    got = events(_edgar("PHIN", facts=False), "1968915")
+    assert not any(f.form == "8-K/A" for f in got)
+
+
+def test_an_eight_k_a_with_no_original_is_never_a_new_event() -> None:
+    """Worthington Steel's 8-K/A of 2026-07-10 re-files its 2026-06-25 earnings (2.02, 9.01) with no
+    original of its report date: counted whole, it moved the latest print to 07-10."""
+    from vinci.dossier.mechanical import _latest_earnings_print
+    edgar = _edgar("WS", facts=False)
+    assert not any(f.form == "8-K/A" for f in events(edgar, "1968487"))
+    assert _latest_earnings_print(edgar, "1968487") == date(2026, 6, 25)
+
+
+class _NotJson(_Sec):
+    """SEC answers companyfacts with a 200 body that is not JSON (an interstitial)."""
+
+    def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
+        if "/companyfacts/" in url:
+            raise json.JSONDecodeError("Expecting value", "<html>", 0)
+        return super().get_json(url, ttl_seconds=ttl_seconds)
+
+
+def test_companyfacts_that_is_not_json_leaves_the_amendment_not_judged() -> None:
+    """The judgement read companyfacts catching only HttpError, so a non-JSON body raised out of
+    the Section 16 reach — before its FPI check — and aborted the name's insider line."""
+    from vinci.dossier.mechanical import _section16_reach
+    edgar = EdgarClient(http=cast(CachedHttp, _NotJson("DCO")))
+    read = annual_report(edgar, "30305", forms=("10-K", "20-F", "40-F"))
+    assert read is not None and read.filing.form == "10-K" and not read.judged
+    assert read.pointer is not None and "could not be read" in read.pointer
+    assert _section16_reach(edgar, cast(CachedHttp, None), "30305", _REF) is None  # a 10-K filer
+
+
+def test_an_original_with_no_period_fact_leaves_its_amendment_not_judged() -> None:
+    """Ultrapar's 20-F of 2026-04-29 carries no us-gaap/ifrs fact for its year in companyfacts, nor
+    does its 20-F/A: neither can be judged, and the pointer says so. A 20-F's Part III is its
+    financial statements, so "Part III" is never printed for a 20-F/A."""
+    read = annual_report(_edgar("UGP"), "1094972", forms=("10-K", "20-F", "40-F"))
+    assert read is not None and read.filing.form == "20-F" and read.pointer is not None
+    assert "not judged" in read.pointer and "for the original either" in read.pointer
+    assert "Part III" not in read.pointer
+
+
+def _f(form: str, filed: str, report: str, items: list[str], acc: str) -> Filing:
+    return Filing(cik="1", form=form, filing_date=date.fromisoformat(filed), accession=acc,
+                  items=items, primary_doc="d.htm", report_date=date.fromisoformat(report))
+
+
+class _Index:
+    def __init__(self, rows: list[Filing]) -> None:
+        self.rows = rows
+
+    def recent_filings(self, cik: str, *, forms: tuple[str, ...] = ("8-K",),
+                       since: date | None = None) -> list[Filing]:
+        return [f for f in self.rows
+                if f.form in forms and (since is None or f.filing_date >= since)]
+
+    def companyfacts(self, cik: str) -> dict[str, Any]:
+        raise HttpError("companyfacts not served")
+
+
+_AMENDED = [_f("8-K/A", "2026-05-06", "2026-05-01", ["2.02", "7.01", "9.01"],
+               "0000000001-26-000002"),
+            _f("8-K", "2026-05-01", "2026-05-01", ["7.01", "9.01"], "0000000001-26-000001")]
+
+
+def test_a_maturity_line_names_an_amendment_as_filed() -> None:
+    """Nit 7: an 8-K/A near a maturity was printed "8-K at maturity …"."""
+    from vinci.dossier.mechanical import _maturity_8ks
+    from vinci.dossier.schemas import CapitalInstrument
+    inst = CapitalInstrument(description="Term loan", type="Term Loans", principal_musd=10.0,
+                             coupon="NA", floating_rate="NA", maturity_date="2026-05-04",
+                             seniority="Senior", secured=True, convertible=False, currency="USD")
+    line = _maturity_8ks(cast(EdgarClient, _Index(_AMENDED)), "1", [inst], _REF).value or ""
+    assert "8-K/A at maturity" in line and "0000000001-26-000002" in line
+
+
+def test_a_release_read_from_an_amendment_cites_it_as_filed(
+        monkeypatch: pytest.MonkeyPatch) -> None:
+    """Nit 7: a release read from an 8-K/A was cited "8-K <accession> EX-99.1"."""
+    from types import SimpleNamespace
+
+    from vinci.dossier import mechanical as mech
+    from vinci.dossier.ciq import CiqBundle
+    monkeypatch.setattr(mech.release_parse, "exhibit_991_urls",
+                        lambda http, cik, acc: [f"https://x/{acc}/ex991.htm"])
+
+    class _Docs:
+        def get_text(self, url: str, *, ttl_seconds: float | None = None) -> str:
+            return "<html><body>Revenue was $10.0 million for the quarter.</body></html>"
+
+        def get_json(self, url: str, *, ttl_seconds: float | None = None) -> Any:
+            raise HttpError(f"not served: {url}")
+
+    rec = SimpleNamespace(identity=SimpleNamespace(cik="0000000001", ticker="X"))
+    layer = SimpleNamespace(capital_structure=None, leverage_survival=None)
+    ps, _lat, _drv = mech._primary_source(rec, cast(EdgarClient, _Index(_AMENDED)),  # type: ignore[arg-type]
+                                          cast(CachedHttp, _Docs()), CiqBundle.from_files("X", []),
+                                          _REF, layer)  # type: ignore[arg-type]
+    refs = [r.source_ref for r in ps.releases]
+    assert "8-K/A 0000000001-26-000002 EX-99.1" in refs

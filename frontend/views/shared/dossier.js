@@ -218,8 +218,9 @@ const EXTRACTION_VERSIONS = [
     "amended filings are read by the operator's ruling of 2026-11-01 (audit E1-D7): a figure " +
     "is the latest filed by the as-of, naming the one it restates, and the SBC reader reads an " +
     "annual /A as its base form; a document reader reads the original annual unless an /A " +
-    "carries the period's us-gaap/ifrs facts, and names every later /A; an 8-K/A counts only " +
-    "for the item codes it adds over its report date's original"],
+    "carries the period's financial statements, and names every later /A; an 8-K/A counts " +
+    "only for the item codes it adds over an 8-K of its report date sharing a non-9.01 code " +
+    "with it, and one with no such original counts nothing"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
