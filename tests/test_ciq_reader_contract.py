@@ -1138,3 +1138,21 @@ def test_a_prior_only_view_that_states_nothing_is_not_called_unparsed(tmp_path: 
     assert got.note.startswith(f"{PRIOR_CUSTOMERS.name}'s recent section lists no customer"), \
         got.note
     assert "CIQ also lists 1 prior and not recently disclosed relationship(s)" in got.note
+    # round 2: the note names the file's rows, so the field names the file (`Sourced.unknown`)
+    assert got.source_ref == f"CIQ Customers&Suppliers {PRIOR_CUSTOMERS.name}"
+
+
+def test_a_key_developments_export_stating_it_is_empty_is_read_not_flagged(
+        tmp_path: Path) -> None:
+    """Round 2: an RTF export that says, in CIQ's words, it has nothing to list carries no
+    'Date | Type | Headline' header, and was flagged "not read". The source answered, as an empty
+    Customers view does, so there is no row and no flag. No export on file states it (2026-11-01:
+    the 51 RTF exports all list rows); a headerless one that states nothing is still flagged
+    (`tests/test_dossier.py::test_a3_headerless_kd_is_honest_empty`)."""
+    path = tmp_path / KEYDEV.name.replace(".xls", ".rtf")
+    path.write_bytes((gen._RTF_HEAD + gen._rtf_table_row(["Key Developments"])
+                      + gen._rtf_table_row(["Report Criteria"])
+                      + gen._rtf_par("There are no key developments listed for the selected "
+                                     "criteria") + "}\n").encode("ascii"))
+    assert is_empty_view(read_text(path))
+    assert cs.key_developments(_bundle(path)) == ([], None)

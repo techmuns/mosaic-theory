@@ -97,8 +97,14 @@ superseded-by:
     route of its own, and no current export needs it.
   - The spreadsheet form of a Customers view (`_parse_relationship_sheet`) has no section split,
     and no export on file is one.
-  - The anchor's EDGAR FCF (`_latest_fcf`, `abs(capex.value)`) still assumes a sign, outside this
-    brief. #875 refuses a capex filed negative there.
+  - The graph's relationships parser (`vinci/ciq/relationships.py`, `parse_relationships`) reads
+    rows under 'Prior and Not Recently Disclosed' as current too. It is planned for Session E
+    (graph-test0 only) and is not changed here.
+  - `ciq_sheets.free_cash_flow`'s basis note subtracts `abs(capex)` (a display note), and
+    `ciq.read_text` lets a failed LibreOffice/pdftotext conversion raise CalledProcessError past
+    every CiqParseError catch (round 0, findings 2 and 3).
+  - (Corrected in round 2: the first cut said the anchor's EDGAR FCF was guarded by #875. It was
+    not; round 2 guards it.)
 - **`mechanical.py` is touched in one place** (Session C's file, finished): three lines that carry
   the flag into `driver_qa`.
 
@@ -114,3 +120,29 @@ superseded-by:
   - the repeated-header guard comparing whole lines: no export on file repeats its header;
   - a positive capex under 0.05 printing as '+0.0': 0 positive capex sits at an annual latest
     column, and the refusal turns on the sign.
+
+**ROUND 2 (coordinator review of aca89982; one commit, each fix behind a test failing on the PR head).**
+- **The anchor's EDGAR FCF refuses a capex leg filed negative** (`anchor._latest_fcf`), with
+  #875's own `concepts.negative_leg`, never a second rule.
+  - It subtracted `abs(capex)`, so WOR's FY2026 capex negated still gave `ltm_fcf` 170.206 $M in
+    silence. `ltm_fcf` feeds the R2 runway.
+  - Now that `ltm_fcf` reads UNKNOWN, naming the leg, its form and its accession
+    (`tests/test_anchor_capex_sign.py`, WOR's committed companyfacts with the leg negated). WOR's
+    real legs give 170.206 as before.
+  - Measured on the 26 committed pages' cached companyfacts (cache only, 2026-10-27; AMZN
+    2026-11-01), held pack excluded: 23 have a current OCF + capex pair, and every capex leg is filed
+    positive. FUBO, IT and LLY have no current pair, so the guard never reaches them. 0 committed
+    anchors move.
+- **The prior-only Customers note cites its file** (`source_ref`), as `Sourced.unknown` reserves it
+  for a note that makes a claim about the source.
+- **A Key Developments RTF that states it is empty is read, not flagged.** It carries no header, and
+  `is_empty_view` now answers before the "not read" flag, as an empty Customers view does. None is
+  on file. A headerless export that states nothing is still flagged.
+- **DEFERRED: the UNKNOWN Customers line prints the prior roster in the page body.** Rendered on
+  TECX, the two AVROBIO rows print inline, where a PRESENT line prints a count.
+  - Moving the roster out of the body without deleting it needs a structured place for it: an
+    UNKNOWN fact carries only its note.
+  - That is a schema field plus both renderers, a render change under the PREVIEW RULE.
+  - TECX is not rebuilt, so no page renders it today.
+- **REPORTED:** `vinci/ciq/relationships.py`'s Prior-rows defect (above), for Session E.
+

@@ -34,6 +34,7 @@ from vinci.edgar.concepts import (
     fiscal_year_ends,
     fiscal_year_of,
     latest_annual,
+    negative_leg,
     points_for_tag,
 )
 from vinci.edgar.net_debt import Basis, net_debt
@@ -762,13 +763,17 @@ def _latest_fcf(facts: dict[str, Any]) -> tuple[float, str, str] | str:
     if legs is None:
         return stale.note if stale else "no aligned operating-cash-flow + capex pair"
     ocf, capex = legs
+    # A CAPEX FILED NEGATIVE IS REFUSED, never sign-flipped (PR #881 round 2): `abs` took WOR's
+    # negated capex as 170.2 of FCF in silence. #875's rule, read here as the snapshot reads it.
+    if (bad := negative_leg("capex", capex)) is not None:
+        return bad
     lbl, trailing = _period_label(ocf, facts)
     basis = (f"trailing {lbl} (the filer's own 10-Q column)" if trailing
              else f"latest {lbl} (not LTM)")
     via = ("" if capex.tag in CONCEPT_ALIASES["capex"]
            else f"; capex read from {capex.tag}, the filer's line once its capex tags stopped")
-    # capex is reported as a POSITIVE outflow in the cash-flow statement; subtract its magnitude
-    return (ocf.value - abs(capex.value), basis,
+    # capex is filed as a POSITIVE outflow, and a negative one was refused above
+    return (ocf.value - capex.value, basis,
             f"EDGAR companyfacts operating_cash_flow − capex ({lbl}, same period{via})")
 
 

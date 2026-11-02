@@ -83,7 +83,7 @@ PINNED_AT = "2026-11-01.small-items"
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
-    "vinci/dossier/anchor.py": "b0f655806100",
+    "vinci/dossier/anchor.py": "734a70cd4e76",
     "vinci/dossier/assemble.py": "add1ba861986",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "77def45663a9",
@@ -91,7 +91,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq_balance.py": "68c97913bf6e",
     "vinci/dossier/ciq_charting.py": "e25a753aae4f",
     "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
-    "vinci/dossier/ciq_sheets.py": "a95452bcc4b6",
+    "vinci/dossier/ciq_sheets.py": "20fecb026ed9",
     "vinci/dossier/covenant_extract.py": "44efa996baea",
     "vinci/dossier/dilution.py": "87d81ad77c04",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
