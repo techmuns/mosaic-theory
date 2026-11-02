@@ -4333,11 +4333,14 @@ def _covenant_pointers(
                    if (_EX4_20F_RE.search(n) if annual_form == "20-F"
                        else re.search(_EX10_RE, n, re.I))]
             if exs:
+                # the later /A rides in `filing`: both renderers print a row's `note` only when
+                # it has no accession, so there it would never reach the page (review round 1)
                 rows.append(CovenantPointer(
                     family=f"material contracts ({annual_form} exhibit index)",
-                    filing=f"latest {annual_form}",
+                    filing=f"latest {annual_form}"
+                    + (f" ({annual.pointer})" if annual.pointer else ""),
                     filing_date=annual.filing.filing_date.isoformat(), accession=acc,
-                    exhibits=exs, note=annual.pointer or ""))
+                    exhibits=exs))
                 seen.add(acc)
     except (HttpError, KeyError, ValueError):
         pass

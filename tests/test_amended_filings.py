@@ -262,8 +262,27 @@ def test_without_a_window_an_amendment_whose_original_was_read_is_judged() -> No
         rec[k].append({"accessionNumber": "0002030763-25-888888",
                        "filingDate": rec["filingDate"][oldest], "reportDate": "2025-09-26",
                        "form": "8-K/A", "items": "5.02"}.get(k, ""))
+    assert "5.02" not in rec["items"][oldest]           # so the amendment adds it
     got = events(EdgarClient(http=cast(CachedHttp, sec)), "2030763")
-    assert [f.items for f in got if f.accession == "0002030763-25-888888"] in ([["5.02"]], [])
-    added = next((f for f in got if f.accession == "0002030763-25-888888"), None)
-    original_items = set(rec["items"][oldest].split(",")) if rec["items"][oldest] else set()
-    assert (added is not None) == ("5.02" not in original_items)
+    assert [f.items for f in got if f.accession == "0002030763-25-888888"] == [["5.02"]]
+
+
+def test_the_exhibit_index_names_a_later_amendment_on_the_rendered_page() -> None:
+    """Review round 1, pinned at the rendered table: the exhibit-index row put the pointer in its
+    `note`, which both renderers print only for a row with no accession — so Skyworks' Part III
+    10-K/A was named in dossier.json and never on the page."""
+    from types import SimpleNamespace
+
+    from vinci.dossier.mechanical import _covenant_pointers
+    from vinci.dossier.render import _covenant_pointer_lines
+    from vinci.dossier.schemas import SourceStatus
+
+    class _Index:
+        def get_json(self, url: str, *, ttl_seconds: float | None = None) -> dict[str, Any]:
+            return {"directory": {"item": [{"name": "swks-20251003xex10_1.htm"}]}}
+
+    got = _covenant_pointers(_edgar("SWKS"), cast(CachedHttp, _Index()), "4127", [], _REF)
+    assert got.status is SourceStatus.PRESENT and got.value
+    page = "\n".join(_covenant_pointer_lines(SimpleNamespace(covenant_pointer_rows=got,
+                                                             covenant_pointers=None)))
+    assert "0000004127-25-000085" in page and "0000004127-26-000003" in page

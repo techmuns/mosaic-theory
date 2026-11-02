@@ -41,7 +41,8 @@ The measured policy it approved: the coordinator's notes, `p2c-d7-amended-filing
   - the segment read (its citation);
   - the Section 16 reach (the FPI insider line names it), the FPI status still decided by the
     ORIGINAL's form;
-  - the exhibit index's covenant pointer (its `note`);
+  - the exhibit index's covenant pointer (its `filing` label: both renderers print a row's `note`
+    only when it has no accession — review round 1, pinned at the rendered table);
   - an FPI's 20-F sections when it files no 10-Q (their citation);
   - the theme exposure stream's annual (its ref).
 - **Events.** `client.events` returns the 8-Ks and each 8-K/A carrying only the item codes it adds
@@ -65,7 +66,7 @@ companyfacts readers took whatever was filed last: the same amendment read in on
 another. Willis Lease's FY2025 SBC exists only in its 10-K/A, so the dossier served FY2024's.
 
 **HOW VERIFIED.**
-- **Failing first.** `tests/test_amended_filings.py` (16), on real cuts of cached SEC JSON
+- **Failing first.** `tests/test_amended_filings.py` (17), on real cuts of cached SEC JSON
   (`tests/fixtures/amended_filings`: Ducommun, Willis Lease, Green Brick, Skyworks, DataMeds).
   - On main `894e962e`, the consumer pins FAILED on main's behaviour: Ducommun's SBC (24.52 served,
     no restatement named), Willis Lease's (FY2024 served), the segment read for Ducommun (the 10-K
