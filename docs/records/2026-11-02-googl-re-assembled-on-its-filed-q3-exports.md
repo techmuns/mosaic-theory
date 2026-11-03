@@ -128,9 +128,11 @@ that a pair CIQ has not finished processing can carry the wrong LTM on a materia
   grouped-daily.
 - **File dates:** Drive mtimes, local time.
 - **Code:** the page was built on `0e574f6b` (extraction version `2026-10-30.submissions-pages`).
-  Main has since merged #879 (E2-D17), #882 (D7, amended filings) and #881 (A3); this branch
-  carries them. Whether they move GOOGL's page is unmeasured. #882's own comparison skipped GOOGL,
-  because its submissions documents were not cached then.
+  Main has since merged #879 (E2-D17), #882 (D7, amended filings), #881 (A3), #883 (four
+  position-paired readers) and #884 (C4, the as-of cut); this branch carries them. Whether they
+  move GOOGL's page is unmeasured. #882's own comparison skipped GOOGL, because its submissions
+  documents were not cached then. #884 measured a GOOGL 52-week low move (244.15 → 251.85) on the
+  10-26 page, not on this one.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 - **$3.20.**
