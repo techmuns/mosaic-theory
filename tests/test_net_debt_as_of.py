@@ -272,3 +272,62 @@ def test_a_balance_sheet_filed_after_the_price_date_is_named_as_such() -> None:
         None, "UNKNOWN — no debt/cash tag")
     assert _anchor_nd(page, {"facts": {}}).source.startswith("UNKNOWN — no debt/cash tag")
     assert "filed by" not in _anchor_nd(page, {"facts": {}}).source
+
+
+# --- the at-price ex-lease multiple reads ONE cut (2026-11-03, stacked on #885) ---------------
+
+
+def test_the_at_price_ex_lease_multiple_reads_its_share_count_as_filed_by_the_price_date() -> None:
+    """`ex_lease_at_price` cut net debt at the page's price date (#885) but handed the facts it was
+    given to `share_denominator` whole. The valuation-bases refresh gives it the UNCUT blob, so one
+    multiple paired a price-date balance sheet with a share count corroborated against a later
+    10-Q: on NCNO (price date 2026-08-17), the diluted average of the 10-Q filed 2026-08-25.
+
+    On every committed page that states the multiple, it is the same on the page's tracking
+    fixture, on that fixture cut at the price date, and once every row gains a later filing."""
+    from vinci.dossier.ev_ebitda_basis import ex_lease_at_price
+    from vinci.dossier.schemas import MechanicalLayer
+
+    def read(m: MechanicalLayer, facts: dict[str, Any]) -> tuple[Any, ...] | None:
+        got = ex_lease_at_price(m, facts)
+        return None if got is None else (got.value, got.shares, got.shares_basis, got.net_debt)
+
+    compared: list[str] = []
+    for doc in sorted(PAGES.glob("*/dossier.json")):
+        t = doc.parent.name
+        if not (FIXTURES / f"{t}.json").is_file():
+            continue
+        mech, facts, _ref, cut = _page(t)
+        m = MechanicalLayer.model_validate(mech)
+        whole = read(m, facts)
+        if whole is None:
+            continue
+        assert whole == read(m, facts_as_of(facts, cut)), t
+        assert whole == read(m, _filed_later(facts, cut)), t
+        compared.append(t)
+    assert len(compared) >= 10 and "NCNO" in compared, compared
+
+
+def test_ncnos_share_count_moves_with_a_filing_after_its_price_date_unless_cut() -> None:
+    """NON-VACUITY for the pin above: on NCNO's fixture the share denominator read whole is the
+    later 10-Q's diluted average (its point-in-time count refused against that quarter); read as
+    filed by the price date it is the corroborated point-in-time count."""
+    mech, facts, _ref, cut = _page("NCNO")
+    whole = anc.share_denominator(mech, facts)
+    as_filed = anc.share_denominator(mech, facts_as_of(facts, cut))
+    assert whole is not None and as_filed is not None and whole != as_filed
+
+
+def test_an_undated_close_strikes_no_ex_lease_multiple() -> None:
+    """A stored close with no date leaves no cut to read the bridge at, so the multiple is None —
+    never a figure read off the whole blob, which a later filing would move. POSITIVE PIN: the same
+    page, dated, states it."""
+    from vinci.dossier.ev_ebitda_basis import ex_lease_at_price
+    from vinci.dossier.schemas import MechanicalLayer
+
+    mech, facts, _ref, _cut = _page("NCNO")
+    m = MechanicalLayer.model_validate(mech)
+    assert m.stock_info is not None and m.stock_info.price.value
+    assert ex_lease_at_price(m, facts) is not None
+    undated = m.model_copy(update={"stock_info": m.stock_info.model_copy(update={"as_of": None})})
+    assert ex_lease_at_price(undated, facts) is None

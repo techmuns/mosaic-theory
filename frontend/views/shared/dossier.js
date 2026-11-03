@@ -256,6 +256,11 @@ const EXTRACTION_VERSIONS = [
     "`vinci.edgar.asof.page_price_date` (the reference date when there is no stored close), " +
     "so the margin, D&A, FCF, the share counts and net debt read the same filings and one " +
     "anchor never pairs a balance sheet with a later quarter's figures"],
+  ["2026-11-03.ex-lease-share-cut",
+    "the at-price ex-lease multiple reads its share count as filed by the price date of the " +
+    "page: `ex_lease_at_price` cuts the companyfacts once at the date of the stored close, so " +
+    "its share count and its net debt read the same filings — the valuation-bases refresh, " +
+    "which hands it the uncut blob, no longer divides by the average of a later 10-Q"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
