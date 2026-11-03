@@ -394,6 +394,13 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "so the margin, D&A, FCF, the share counts and net debt read the same filings and one "
         "anchor never pairs a balance sheet with a later quarter's figures",
     ),
+    (
+        "2026-11-03.ex-lease-share-cut",
+        "the at-price ex-lease multiple reads its share count as filed by the price date of the "
+        "page: `ex_lease_at_price` cuts the companyfacts once at the date of the stored close, so "
+        "its share count and its net debt read the same filings — the valuation-bases refresh, "
+        "which hands it the uncut blob, no longer divides by the average of a later 10-Q",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

@@ -128,9 +128,18 @@ def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
     material and an ex-lease history built), and only from a complete bridge: a price, the
     anchor's share count (`share_denominator` — the one its base value divides), net debt excluding
     operating leases (the anchor's builder) and the history's latest LTM EBITDA. None otherwise,
-    never a partial figure."""
+    never a partial figure.
+
+    ONE CUT FOR THE WHOLE BRIDGE (2026-11-03, after #885). ``facts`` are cut ONCE, at the stored
+    close's date — `vinci.edgar.asof.page_price_date`'s answer whenever there is a close; a close
+    with no date strikes nothing, before any fact is read — so the share count and net debt read
+    the same filings.
+    #885 cut net debt only, and the valuation-bases refresh hands this the UNCUT blob: NCNO's
+    multiple paired its 2026-08-17 balance sheet with the diluted average of a 10-Q filed
+    2026-08-25 (29.4x; 30.5x as filed by its price date)."""
     # the anchor's ONE bridge builder and ONE denominator
     from vinci.dossier.anchor import _lease_inclusive_net_debt, share_denominator
+    from vinci.edgar.concepts import facts_as_of
 
     lb = mech.valuation.lease_basis
     si = mech.stock_info
@@ -140,9 +149,12 @@ def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
     if last is None or last.ltm_ebitda <= 0:
         return None
     price = si.price.value if si.price.status is SourceStatus.PRESENT else None
+    if not price or si.as_of is None:   # no dated close: nothing to strike at, no cut to read at
+        return None
+    facts = facts_as_of(facts, si.as_of)   # E2-D21: every leg below reads this one cut
     count = share_denominator(mech.model_dump(mode="json"), facts)
-    nd = _lease_inclusive_net_debt(facts, as_of=si.as_of, ex_operating_leases=True)  # E2-D21
-    if not price or count is None or nd is None or nd[0] is None:
+    nd = _lease_inclusive_net_debt(facts, as_of=None, ex_operating_leases=True)
+    if count is None or nd is None or nd[0] is None:
         return None
     shares, shares_basis = count
     nd_m = nd[0] / 1e6
