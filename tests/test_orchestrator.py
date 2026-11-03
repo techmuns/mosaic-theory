@@ -48,7 +48,7 @@ class _FakeEdgar:  # duck-types the EdgarClient method enrich uses (one companyf
     def __init__(self) -> None:
         self.fetched: list[str] = []
 
-    def fundamental_snapshot_and_facts(self, cik):  # type: ignore[no-untyped-def]
+    def fundamental_snapshot_and_facts(self, cik, *, as_of=None):  # type: ignore[no-untyped-def]
         self.fetched.append(pad_cik(cik))
         return all_unknown_snapshot(pad_cik(cik)), {}  # no EPS → G3 P/E-percentile defers
 
