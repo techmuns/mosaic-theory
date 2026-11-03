@@ -50,10 +50,11 @@ THE DECLARED SET, NOT A COMPUTED CLOSURE (26b's spec, corrected 2026-07-28: the 
 `assemble` is ~58 modules and a guard that always fires is switched off). Every module under
 vinci/dossier and vinci/edgar is classified — `WATCHED`, or `NOT_EXTRACTION` with the reason — and a
 module joining either package unclassified is a MOVE under the rule above, so the set cannot quietly
-stop covering a new extractor (`--repin` then pins it as watched). Two modules outside them build
-page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps) and
-vinci/finra.py (short interest). Prices (vinci/eod) are market data, not extraction, and vinci/ciq
-feeds only the git-ignored graph test.
+stop covering a new extractor (`--repin` then pins it as watched). Three modules outside them build
+page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps),
+vinci/finra.py (short interest) and vinci/eod/features.py (the price box's 52-week range, whose
+window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction, and
+vinci/ciq feeds only the git-ignored graph test.
 
     python -m tests.test_extraction_version_drift            # print every watched module's hash
     python -m tests.test_extraction_version_drift --repin    # re-pin this file in place
@@ -77,8 +78,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "2041fa9b6384"
-PINNED_AT = "2026-11-01.small-items"
+PINNED_TABLE = "6b3f65ba0e46"
+PINNED_AT = "2026-11-02.asof-price-date"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
@@ -93,7 +94,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
     "vinci/dossier/ciq_sheets.py": "20fecb026ed9",
     "vinci/dossier/covenant_extract.py": "44efa996baea",
-    "vinci/dossier/dilution.py": "87d81ad77c04",
+    "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
     "vinci/dossier/ebitda_basis.py": "7f9996f712e1",
     "vinci/dossier/ebitda_recon.py": "9befc99c437a",
@@ -107,7 +108,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ltm_quarters.py": "f6a3904e1011",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
-    "vinci/dossier/mechanical.py": "cbaf459baf95",
+    "vinci/dossier/mechanical.py": "c350252fe384",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "0c07bfc551a1",
@@ -118,19 +119,21 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a8870ba9ed91",
     "vinci/dossier/verdict.py": "0b43167d2044",
+    "vinci/edgar/asof.py": "b8166e456b80",
     "vinci/edgar/client.py": "49703bf31602",
     "vinci/edgar/commissioning.py": "dc2004432387",
     "vinci/edgar/concepts.py": "11278504f70c",
     "vinci/edgar/cover_count.py": "24d1e9a7d94a",
-    "vinci/edgar/debt_maturities.py": "a72fba167d94",
+    "vinci/edgar/debt_maturities.py": "6ffab9ec2574",
     "vinci/edgar/filing_sections.py": "568c36df04a2",
     "vinci/edgar/going_concern.py": "feb938485fd0",
     "vinci/edgar/net_debt.py": "6257a0464909",
     "vinci/edgar/primary_source.py": "80351248cc8a",
     "vinci/edgar/release_parse.py": "fdb5e7398ef3",
     "vinci/edgar/segment_facts.py": "9d3c07301296",
-    "vinci/edgar/segments.py": "a25da92ebf20",
+    "vinci/edgar/segments.py": "8aa10f003612",
     "vinci/edgar/submissions.py": "6644355e5c3f",
+    "vinci/eod/features.py": "8d23c6080234",
     "vinci/finra.py": "5787c9793b1b",
     "vinci/verbatim.py": "cb75bef0a20e",
 }
@@ -148,7 +151,7 @@ NOT_EXTRACTION: dict[str, str] = {
 }
 
 #: Watched beyond the two classified packages.
-EXTRA_WATCHED = ("vinci/verbatim.py", "vinci/finra.py")
+EXTRA_WATCHED = ("vinci/verbatim.py", "vinci/finra.py", "vinci/eod/features.py")
 CLASSIFIED_PACKAGES = ("vinci/dossier", "vinci/edgar")
 
 

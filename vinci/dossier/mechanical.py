@@ -22,7 +22,7 @@ from collections import OrderedDict
 from collections.abc import Callable, Sequence
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
-from typing import Any, NamedTuple, TypeVar
+from typing import Any, NamedTuple, TypeVar, cast
 
 from vinci.config import get_config
 from vinci.dossier import ciq_sheets, edgar_fundamentals, lease_basis, statement_recon
@@ -89,6 +89,7 @@ from vinci.dossier.schemas import (
 )
 from vinci.edgar import cover_count, filing_sections, primary_source, release_parse, segment_facts
 from vinci.edgar import debt_maturities as dmx
+from vinci.edgar.asof import AsOfEdgar, page_price_date
 from vinci.edgar.client import EdgarClient, Filing, annual_report
 from vinci.edgar.client import events as eight_k_events
 from vinci.edgar.concepts import (
@@ -173,6 +174,33 @@ def _prefer_ciq(ciq: Sourced[_S], edgar: Sourced[_S] | None) -> Sourced[_S]:
     if ciq.status is SourceStatus.PRESENT or edgar is None:
         return ciq
     return edgar
+
+
+def _count_filed_after(edgar: EdgarClient, cik: str | None, cut: date | None) -> str | None:
+    """Why there is no share count when the page's cut is the reason: the newest count was FILED
+    after the price date (review of #884 — the UNKNOWN said "absent or older than Nd" of a count
+    that existed). Read on the wrapped client only to SAY what the cut left out; None otherwise."""
+    uncut = getattr(edgar, "uncut", None)
+    if cut is None or uncut is None or not cik:
+        return None
+    facts = _companyfacts_or_none(uncut, cik)
+    # only a count that would have been FRESH at the cut — an old one filed late is not the reason
+    late = [p for p in extract_points(facts, "shares") if p.is_instant and p.value
+            and p.filed > cut and (cut - p.period_end).days <= _SHARES_MAX_AGE_DAYS
+            ] if facts else []
+    if not late:
+        return None
+    p = max(late, key=lambda q: (q.period_end, q.filed))
+    return (f"no share count filed by the {cut} price date — the newest, {p.value:,.0f} "
+            f"(counted {p.period_end}), was filed {p.filed}, after it")
+
+
+def _companyfacts_as_of(edgar: EdgarClient, cik: str | None,
+                        cut: date) -> dict[str, Any] | None:
+    """:func:`_companyfacts_or_none` as the facts stood on ``cut`` (`concepts.facts_as_of`): the
+    EDGAR fallback's figures read nothing filed after the page's price date (audit E1-D6)."""
+    facts = _companyfacts_or_none(edgar, cik)
+    return facts_as_of(facts, cut) if facts else facts
 
 
 def _companyfacts_or_none(edgar: EdgarClient, cik: str | None) -> dict[str, Any] | None:
@@ -1778,7 +1806,7 @@ _ADJ_EPS = re.compile(rf"Adjusted EPS of \$?{_NUM} to \$?{_NUM}", re.I)
 
 def _adjusted_facts(
     record: DataRecord, edgar: EdgarClient, revised_guidance: Sourced[str],
-    reference_date: date, *, http: CachedHttp | None = None,
+    reference_date: date, *, http: CachedHttp | None = None, cut: date | None = None,
 ) -> tuple[Sourced[str], Sourced[str], Sourced[str]]:
     """Surface the adjusted (non-GAAP) figures the GAAP caveats called UNAVAILABLE — the 99.1
     revised guidance is in the dossier: adjusted EPS, forward EV/adj-EBITDA, and covenant-basis
@@ -1807,9 +1835,14 @@ def _adjusted_facts(
         )
 
     cik = record.identity.cik
+    # READ AS THEY STOOD ON THE CUT, the page's price date (audit E1-D6): the snapshot and the
+    # facts were today's, so a re-assembly priced on an earlier day read filings made since
+    at = cut or reference_date
     try:
-        snap = edgar.fundamental_snapshot(cik) if cik else None
+        snap = edgar.fundamental_snapshot(cik, as_of=cut) if cik else None
         facts = edgar.companyfacts(cik) if cik else {}
+        if cut is not None and facts:
+            facts = facts_as_of(facts, cut)
         share_pts = [p for p in extract_points(facts, "shares") if p.value] if cik else []
     except (HttpError, KeyError):
         snap, facts, share_pts = None, {}, []
@@ -1825,9 +1858,9 @@ def _adjusted_facts(
     # landed — the fleet is unaffected either way (counts run 10–375d against a 540d bound).
     # each count aged from the date it was counted, as the stock-info basis is (audit X1(a))
     fresh = [
-        c for c in (_dated_shares(edgar, http, cik, facts, share_pts, reference_date)
+        c for c in (_dated_shares(edgar, http, cik, facts, share_pts, at)
                     if cik else [])
-        if (reference_date - c.point.period_end).days <= _SHARES_MAX_AGE_DAYS
+        if (at - c.point.period_end).days <= _SHARES_MAX_AGE_DAYS and c.point.filed <= at
     ]
     newest = max(fresh, key=lambda c: (c.point.period_end, c.point.filed)) if fresh else None
     shares = newest.point.value if newest is not None and not newest.refused else None
@@ -3700,8 +3733,9 @@ def _edgar_shares_outstanding(
     Returning it "with a note" would put that number on the page; returning None hands the caller
     the chance to bridge to a basis that agrees with the cap, or to say UNKNOWN.
 
-    ``as_of`` defaults to today only so existing callers keep working; assembly passes its
-    reference date so a build is reproducible rather than clock-dependent.
+    ``as_of`` defaults to today only so existing callers keep working; assembly passes the page's
+    PRICE DATE (its cut, operator ruling 2026-11-01), and only a count FILED on or before it is
+    used (audit X1(b)), so a build is reproducible rather than clock-dependent.
 
     A COUNT TAGGED AFTER ITS OWN FILING is aged from the date it was counted (audit X1(a)): its
     cover sentence's date, or its filing day as a bound. Measured from the tag, a future date is
@@ -3711,6 +3745,12 @@ def _edgar_shares_outstanding(
     if not facts or not cik:
         return None
     ref = as_of or date.today()
+    # FILED BY THE CUT (audit X1(b), operator ruling 2026-11-01: "filed on or before it; latest
+    # such filing wins"): LLY's page, priced 2026-10-28, took a count filed 2026-10-29. The WHOLE
+    # blob is cut before an alias is chosen (`facts_as_of`), so the tag is picked on the facts as
+    # they stood: chosen on today's, Recursion's dei cover tag looked current on 2026-06-30 by a
+    # count filed 2026-08-05, and its only row by then was 2021's (review of #884)
+    facts = facts_as_of(facts, ref)
     counts = [c for c in _dated_shares(edgar, http, cik, facts,
                                        extract_points(facts, "shares"), ref)
               if c.point.is_instant]
@@ -5573,7 +5613,7 @@ def _price_stale_note(last_close: date | None, today: date) -> str | None:
 def _stock_info(
     record: DataRecord, store: Store, edgar: EdgarClient, bundle: CiqBundle,
     reference_date: date, market_cap: Sourced[float], *, today: date | None = None,
-    http: CachedHttp | None = None,
+    http: CachedHttp | None = None, cut: date | None = None,
 ) -> StockInfo:
     """(Phase-2) The market-data 'stock info' box: CMP + 52-week range (EOD price features), shares
     outstanding (EDGAR XBRL), book value/share + market cap (CIQ). Each value is source-bound; a
@@ -5581,11 +5621,13 @@ def _stock_info(
     The 52-week high/low defer to UNKNOWN without ~a year of bars (the price-features rule)."""
     bars = store.get_price_history(record.identity.internal_id)
     cap_val = market_cap.value if market_cap.status is SourceStatus.PRESENT else None
+    # bounded at the cut, so the 52-week window is the 365 days ending on the price date (F-D4)
     feats = compute_price_features(
         bars, reference_date=reference_date,
-        staleness_days=get_config().price_staleness_days, market_cap=cap_val)
+        staleness_days=get_config().price_staleness_days, market_cap=cap_val, frontier=cut)
     sym = record.identity.eod_symbol
-    shares = _edgar_shares_outstanding(edgar, record.identity.cik, as_of=reference_date, http=http)
+    shares = _edgar_shares_outstanding(edgar, record.identity.cik, as_of=cut or reference_date,
+                                       http=http)
     shares_src = "EDGAR XBRL shares outstanding"
     refused: str | None = None
     if record.ads is not None:
@@ -5618,7 +5660,7 @@ def _stock_info(
             Sourced.present(float(shares), source_ref=shares_src)
             if shares and shares > 0
             else Sourced.unknown(
-                note=refused or (
+                note=refused or _count_filed_after(edgar, record.identity.cik, cut) or (
                     "no usable share count — the EDGAR cover-page tag is absent or older than "
                     f"{_SHARES_MAX_AGE_DAYS}d" + (
                         "; the CIQ panel is not read for a depositary line, whose unit it does "
@@ -5792,11 +5834,21 @@ def assemble_mechanical(
     # every "at the current price" reading below — P/E, its percentile, the adjusted and forward
     # multiples, the conflict caveat — reads the latest stored close, the one the price box shows
     record = _at_latest_close(record, store, edgar)
+    # THE CUT (operator ruling 2026-11-01, verbatim: "Inputs are cut at the page's price date
+    # (filed on or before it; latest such filing wins; nothing after a sealed verdict)"): the
+    # latest stored close the page divides by. The fundamentals, the fallback, the share count
+    # and the price features read nothing filed or traded after it (audit E1-D6, X1(b), F-D4).
+    cut = page_price_date(record.prices.last.as_of if record.prices.last.is_known else None,
+                          reference_date)
+    # ...APPLIED ONCE, HERE: every reader below reads EDGAR as it stood on the cut — companyfacts
+    # pruned whole, the snapshot at the cut, the filing lists and the full-text search bounded
+    # (review of #884: the releases, the valuation bases and capital allocation read past it)
+    edgar = cast(EdgarClient, AsOfEdgar(edgar, cut))
     # the catalyst 8-K's 99.1 (revised guidance) is fetched first: its adjusted EBITDA/EPS feed the
     # adjusted-basis multiples + leverage, which in turn RESOLVE the GAAP-only caveats below.
     drawdown, drawdown_flags = _drawdown_cause(record, edgar, http)
     adj_eps, adj_ev, adj_lev = _adjusted_facts(
-        record, edgar, drawdown.revised_guidance, reference_date, http=http)
+        record, edgar, drawdown.revised_guidance, reference_date, http=http, cut=cut)
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)
     # EDGAR fundamentals fallback: when the CIQ Financials subsheets are present-but-empty while CIQ
     # multiples ARE populated, fill free_cash_flow / margin_trend / multi_year_trajectory from EDGAR
@@ -5812,7 +5864,7 @@ def assemble_mechanical(
     edgar_fb = edgar_fundamentals.build_fallback(
         multiples=[ciq_sheets.ev_ebitda_current(bundle), peer_comps.trading_multiples],
         ciq_fundamentals=[ciq_fcf, ciq_margin, ciq_traj],
-        facts_fn=lambda: _companyfacts_or_none(edgar, record.identity.cik),
+        facts_fn=lambda: _companyfacts_as_of(edgar, record.identity.cik, cut),
     )
     fcf = _prefer_ciq(ciq_fcf, edgar_fb.free_cash_flow() if edgar_fb else None)
     margin = _prefer_ciq(ciq_margin, edgar_fb.margin_trend() if edgar_fb else None)
@@ -5849,7 +5901,7 @@ def assemble_mechanical(
             # flipping with no data change, in a repo whose whole point is as-of discipline.
             # in ADSs for a depositary line: FINRA counts the short position in the traded unit
             shares_out=in_traded_units(_edgar_shares_outstanding(
-                edgar, record.identity.cik, as_of=reference_date, http=http), record.ads)[0]),
+                edgar, record.identity.cik, as_of=cut, http=http), record.ads)[0]),
     )
     valuation = _valuation(
         record, bundle, adj_eps, adj_ev, pe_note=pe_recon[1] if pe_recon else None,
@@ -5898,10 +5950,10 @@ def assemble_mechanical(
         return_ratios=return_ratios,  # (Phase-4) per-period return-ratio series (chart + table)
         stock_info=_stock_info(  # (Phase-2) CMP + 52wk range + shares + book value + cap
             record, store, edgar, bundle, reference_date, implied_val.market_cap, today=today,
-            http=http),
+            http=http, cut=cut),
         # (Brief) 52-week rebased price path — name vs the cap-band benchmark (the idio closes).
-        stock_performance=_stock_performance(
-            record.identity, store, reference_date, bench=bench),
+        # ...on the window the price box's range reads: the 365 days ending on the price date
+        stock_performance=_stock_performance(record.identity, store, cut, bench=bench),
         ciq_currency=currency,
     )
     # (2026-10-27) the flat liquidity line prints the year a filing governs, as the table does

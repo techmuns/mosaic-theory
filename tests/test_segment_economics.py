@@ -15,7 +15,9 @@ from vinci.edgar.segments import SegmentReportUnavailableError, _pick_report, se
 
 FIX = pathlib.Path(__file__).resolve().parent / "fixtures" / "segments"
 ACC = "0001652044-26-000018"
-PERIOD = "Dec. 31, 2025"
+#: a column is named by BOTH header rows: the duration above, the date below
+PERIOD = "12 Months Ended Dec. 31, 2025"
+YEARS = (PERIOD, "12 Months Ended Dec. 31, 2024", "12 Months Ended Dec. 31, 2023")
 
 
 class _FrozenHttp:
@@ -67,7 +69,7 @@ def test_the_parsed_segments_reconcile_to_the_disclosed_totals() -> None:
     Checking all three years catches a COLUMN SHIFT, which a single-period check cannot see: every
     figure moving one year together still reconciles inside each column.
     """
-    for period in ("Dec. 31, 2025", "Dec. 31, 2024", "Dec. 31, 2023"):
+    for period in YEARS:
         by = _by_segment(period)
         tot = by["(consolidated)"]
         segs = [s for s in by if s != "(consolidated)"]
@@ -93,7 +95,7 @@ def test_the_two_presentations_of_one_segment_are_joined_and_agree() -> None:
     does for every operating segment in every filed year. A parse that mis-attributed a row would
     break this before it broke any total.
     """
-    for period in ("Dec. 31, 2025", "Dec. 31, 2024", "Dec. 31, 2023"):
+    for period in YEARS:
         by = _by_segment(period)
         checked = 0
         for seg in ("Google Services", "Google Cloud"):
@@ -104,7 +106,7 @@ def test_the_two_presentations_of_one_segment_are_joined_and_agree() -> None:
                 f"{m['Total income from operations']}")
             checked += 1
         assert checked == 2, "both dual-stated segments must be checked, or this proves nothing"
-    assert not any("|" in s for s in _by_segment("Dec. 31, 2025")), (
+    assert not any("|" in s for s in _by_segment(PERIOD)), (
         "a dimensional heading survived the join — the segment is keyed twice")
 
 
@@ -196,8 +198,97 @@ def test_a_blank_cell_leaves_a_hole_rather_than_shifting_every_later_year() -> N
 
     got = {r.period: r.value for r in segment_rows(_Holed(), "0001652044", ACC)  # type: ignore[arg-type]
            if r.segment == "Google Cloud" and r.metric == "Revenue from contract with customers"}
-    assert "Dec. 31, 2025" not in got, (
-        f"the emptied year still reports a figure — {got.get('Dec. 31, 2025')} shifted into it")
-    assert got.get("Dec. 31, 2024") == 43229.0, (
+    assert PERIOD not in got, (
+        f"the emptied year still reports a figure — {got.get(PERIOD)} shifted into it")
+    assert got.get("12 Months Ended Dec. 31, 2024") == 43229.0, (
         f"FY2024 moved out of its own column: {got}")
-    assert got.get("Dec. 31, 2023") == 33088.0, f"FY2023 moved: {got}"
+    assert got.get("12 Months Ended Dec. 31, 2023") == 33088.0, f"FY2023 moved: {got}"
+
+
+# --- a 10-Q heads its columns with TWO rows (audit E2-D18) ---------------------------------------
+#
+# Alphabet's Q3 2026 10-Q (acc 0001652044-26-000084, filed 2026-10-29) as filed: `FilingSummary.xml`
+# and `R84.htm`, byte-for-byte. R84 heads its four columns "3 Months Ended" ×2 over "9 Months Ended"
+# ×2, and every date under them is Sep. 30 — so by date alone the quarter's 127,577 of revenue and
+# the nine months' 357,269 share the one period "Sep. 30, 2026".
+#
+# THE SUMMARY INDEXES TWO segment (Details) reports — "Revenues - Revenue by Segment" and R84 — and
+# `_pick_report` refuses the pair as ambiguous, as it does Amazon's Q2 2026 10-Q. Serving R84's own
+# `<Report>` entry, cut verbatim from that summary, reaches the table reader this pins; the picker
+# is a separate question and is not decided here.
+
+Q3 = "0001652044-26-000084"
+Q3_REVENUE = {"3 Months Ended Sep. 30, 2026": 127_577.0, "3 Months Ended Sep. 30, 2025": 102_346.0,
+              "9 Months Ended Sep. 30, 2026": 357_269.0, "9 Months Ended Sep. 30, 2025": 289_007.0}
+
+
+class _Q3Http:
+    """The 10-Q as an HTTP surface, its summary cut to R84's entry; ``edit`` alters the report."""
+
+    def __init__(self, edit: tuple[str, str] | None = None) -> None:
+        self.edit = edit
+
+    def get_text(self, url: str, *, ttl_seconds: float | None = None,
+                 params: dict[str, object] | None = None) -> str:
+        import re as _re
+
+        name = url.rsplit("/", 1)[-1]
+        text = (FIX / f"GOOGL-{Q3}-{name}").read_text()
+        if name == "FilingSummary.xml":
+            entry = _re.search(r"<Report\b(?:(?!</Report>).)*?<HtmlFileName>R84\.htm"
+                               r"</HtmlFileName>.*?</Report>", text, _re.S)
+            assert entry, "the summary no longer indexes R84"
+            return f"<FilingSummary><MyReports>{entry.group(0)}</MyReports></FilingSummary>"
+        if self.edit:
+            assert self.edit[0] in text, f"the report no longer carries {self.edit[0]!r}"
+            text = text.replace(self.edit[0], self.edit[1], 1)
+        return text
+
+
+def test_a_quarter_and_its_year_to_date_are_two_periods() -> None:
+    """THE RED. The four "Total revenues" figures land in four periods, each named by its duration
+    and its date. By date alone two keys held four figures, and each kept whichever came last."""
+    rows = [r for r in segment_rows(_Q3Http(), "0001652044", Q3)  # type: ignore[arg-type]
+            if r.metric == "Total revenues"]
+    assert len(rows) == 4 and {r.period: r.value for r in rows} == Q3_REVENUE, [
+        (r.period, r.value) for r in rows]
+
+
+def test_each_period_reconciles_to_its_own_total() -> None:
+    """The columns, checked against themselves: in each of the four periods the three segments'
+    revenue plus hedging is that period's total (96,302 + 30,709 + 372 + 194 = 127,577 for the
+    quarter). A quarter and a year-to-date filed under one period sum to neither."""
+    rows = segment_rows(_Q3Http(), "0001652044", Q3)  # type: ignore[arg-type]
+    for period, total in Q3_REVENUE.items():
+        parts = sum(r.value for r in rows if r.period == period and r.metric in (
+            "Revenue from contract with customers", "Hedging gains (losses)"))
+        assert parts == total, f"{period}: {parts} != {total}"
+
+
+def test_a_header_whose_two_rows_disagree_is_refused() -> None:
+    """(−) "9 Months Ended" cut to one column: the duration row spans three columns over four
+    dates, and which period the fourth covers is not in the header. Refused, never guessed."""
+    cut = ('<th class="th" colspan="2">9 Months Ended</th>',
+           '<th class="th" colspan="1">9 Months Ended</th>')
+    with pytest.raises(SegmentReportUnavailableError,
+                       match="spans 3 columns and its date header 4"):
+        segment_rows(_Q3Http(cut), "0001652044", Q3)  # type: ignore[arg-type]
+
+
+def test_a_row_wider_than_its_header_is_refused() -> None:
+    """(−) One figure cell too many on the "Total revenues" row. Cut to the header's width, its
+    first four figures would still read — under whichever periods they happened to sit beside."""
+    wide = ('<td class="nump">289,007<span></span>',
+            '<td class="nump">1</td><td class="nump">289,007<span></span>')
+    with pytest.raises(SegmentReportUnavailableError,
+                       match="has 5 figure columns under a header of 4"):
+        segment_rows(_Q3Http(wide), "0001652044", Q3)  # type: ignore[arg-type]
+
+
+def test_a_duration_header_without_its_title_cell_mark_is_refused() -> None:
+    """(−, review round 0) The caption cell stripped of ``class="tl"``: the duration row then reads
+    as a caption beside two durations, and dropping it would label every column by its date alone
+    — the defect this fixes, silently back. Refused instead."""
+    bare = ('<th class="tl" colspan="1" rowspan="2">', '<th colspan="1" rowspan="2">')
+    with pytest.raises(SegmentReportUnavailableError, match="duration header"):
+        segment_rows(_Q3Http(bare), "0001652044", Q3)  # type: ignore[arg-type]

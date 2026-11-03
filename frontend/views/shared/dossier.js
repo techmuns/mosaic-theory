@@ -231,6 +231,19 @@ const EXTRACTION_VERSIONS = [
     "sign-flipped; and a Customers view's rows under 'Prior and Not Recently " +
     "Disclosed' are said in its note, never counted as current, while the recent section's own " +
     "'no recently disclosed customers' is read"],
+  ["2026-11-02.D14-D18-FD2-X3",
+    "a sentence that pairs its loans with its dates by position, respectively, states no " +
+    "loan maturity (audit E2-D14); a segment report's column is named by its duration and " +
+    "its date, and a header or a row whose column count disagrees is refused (E2-D18); an " +
+    "ADS count is the whole number, its hyphenated tens, hundreds and thousands separators " +
+    "read, and a count that runs on past what was read is refused (F-D2); the dilutive " +
+    "increment is never paired over a span longer than a quarter (X3)"],
+  ["2026-11-02.asof-price-date",
+    "inputs are cut at the page's price date, by the operator's ruling of 2026-11-01: the " +
+    "price features are bounded at it, so the 52-week window is the 365 days ending on the " +
+    "price date (audit F-D4); a share count filed after it is never used (X1(b)); the " +
+    "page's adjusted facts and EDGAR fallback, and the screen's fundamentals, read " +
+    "companyfacts as they stood on it (E1-D6)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

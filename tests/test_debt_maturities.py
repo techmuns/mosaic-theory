@@ -708,3 +708,121 @@ def test_a_liquidity_line_that_cannot_be_governed_says_so() -> None:
     odd = good.model_copy(update={"value": (good.value or "") + " "})
     flag = dm._ungoverned_line_flag(odd, dm.governed_liquidity_line(odd, cs), cs)
     assert flag is not None and flag.startswith(dm.MATURITY_CAVEAT)
+
+
+# --- a "respectively" sentence pairs by POSITION, and is not read (audit E2-D14) -----------------
+
+_RESPECTIVELY = ("The Revolving Credit Facility and the Term Loan B mature on June 1, 2029 and "
+                 "June 1, 2030, respectively.")
+
+
+def _two_loan_panel() -> list[CapitalInstrument]:
+    """A revolver and a Term Loan B on CIQ's dates, in the real type (VRRM's lines, renamed)."""
+    rc, tl = _PAGES["VRRM"]["instruments"][2], _PAGES["VRRM"]["instruments"][0]
+    return [CapitalInstrument.model_validate({**rc, "maturity_date": "2029-06-01"}),
+            CapitalInstrument.model_validate({**tl, "description": "Term Loan B",
+                                              "maturity_date": "2030-06-01"})]
+
+
+def test_a_respectively_sentence_leaves_term_loan_b_on_its_own_date() -> None:
+    """THE RED, end to end: filing text → `read` → `check` → the instruments the page prints. Main
+    gave the first date to the loan nearest the verb, so the Term Loan B differed from CIQ, the
+    newer filing governed, and the page printed 2029-06-01 — the revolver's date."""
+    insts = _two_loan_panel()
+    src = dmx.Source("10-Q", "0000000000-26-000001", date(2026, 8, 5), dmx.READ_PERIODIC,
+                     date(2026, 6, 30), tuple(dmx.read(_RESPECTIVELY)))
+    mc = dmx.check(dm._panel_lines(insts), [src], panel_filed=date(2026, 2, 24),
+                   bound=date(2026, 8, 14))
+    printed = dm.govern_instruments(Sourced.present(insts, source_ref="CIQ"), mc).value or []
+    assert [i.maturity_date for i in printed] == ["2029-06-01", "2030-06-01"], printed
+    assert not any(r.governs for r in mc.rows), mc.rows
+    assert all(r.filing_maturity is None for r in mc.rows), "a positional date was paired"
+
+
+#: Target's 10-Q 0000027419-26-000022 (filed 2026-05-29), verbatim. Main gave the $3.0 billion
+#: revolver October 2026 — the 364-day facility's date; its own is October 2028.
+_TGT_RESPECTIVELY = ("Our committed $1.0 billion 364-day and $3.0 billion unsecured revolving "
+                     "credit facilities that will expire in October 2026 and October 2028, "
+                     "respectively, provide a liquidity backstop to our commercial paper program.")
+
+
+#: Real sentences that pair loans with dates by position, each misread on main (filer CIK and
+#: accession): the Term Loan given the Revolver's 2029 date (2011286, 0001628280-25-053993); the
+#: revolver given the term facility's 2033 (102752, 0000102752-26-000049); the Term B Loans given
+#: the revolving loans' 2028 (1974138, 0001628280-26-012576).
+_POSITIONAL = [
+    "The Revolver and the Term Loan mature on September 27, 2029 and September 27, 2031, "
+    "respectively.",
+    "a $ 900.0 million term loan B facility and an upsize of the Company's existing revolving "
+    "credit facility from $ 400.0 million to $ 500.0 million, maturing on May 5, 2033 and May 2, "
+    "2030, respectively.",
+    "The Revolving Credit Loans and the Term B Loans are not subject to amortization and will "
+    "mature on October 16, 2028 and April 16, 2029, respectively.",
+]
+
+
+#: (review round 1) the same pairing in the statement grammar's own noun-phrase forms, where words
+#: stand between the verb and its dates — constructed, one per `_STATEMENT` form that reads them
+_POSITIONAL_FORMS = [
+    "The maturity date of the Revolver and the Term Loan B is June 1, 2029 and June 1, 2030, "
+    "respectively.",
+    "The Revolver and the Term Loan B have a maturity date of June 1, 2029 and June 1, 2030, "
+    "respectively.",
+    "The Revolver and the Term Loan B are due in full on June 1, 2029 and June 1, 2030, "
+    "respectively.",
+]
+
+
+#: (review round 2) the same pairing in an EXTENSION or a REFINANCING, whose grammars are not
+#: `_STATEMENT`'s: on round 1's head the first three gave both loans 2029-06-01 — constructed, one
+#: per form (the coordinator's review)
+_POSITIONAL_TRANSITIONS = [
+    "The amendment extended the maturity dates of the Revolving Credit Facility and the Term Loan "
+    "B to June 1, 2029 and June 1, 2030, respectively.",
+    "The amendment extended the maturity date of the Revolving Credit Facility and the Term Loan B "
+    "to June 1, 2029 and June 1, 2030, respectively.",
+    "The amendment extends the maturity of the Revolving Credit Facility and the Term Loan B from "
+    "June 1, 2027 and June 1, 2028 to June 1, 2029 and June 1, 2030, respectively.",
+    "We refinanced the existing term loans with a new revolving credit facility and a new term "
+    "loan B maturing on June 1, 2029 and June 1, 2030, respectively.",
+    "The Revolving Credit Facility and Term Loan B due 2029 and 2030, respectively, were amended.",
+]
+
+
+@pytest.mark.parametrize("sentence", [_RESPECTIVELY, _TGT_RESPECTIVELY, *_POSITIONAL,
+                                      *_POSITIONAL_FORMS, *_POSITIONAL_TRANSITIONS])
+def test_a_maturity_list_paired_respectively_states_no_loan_maturity(sentence: str) -> None:
+    """(−) The audit's sentence, Target's, and three more from the cached filings: a maturity
+    verb, then two or more dates, then "respectively" — nothing is read, never the first date."""
+    assert [s for s in dmx.read(sentence) if s.cls in (dmx.TERM_LOAN, dmx.REVOLVER)] == []
+
+
+@pytest.mark.parametrize(("sentence", "cls", "when"), [
+    # its "respectively" pairs rates (1734713, 0001193125-25-288109)
+    ("The Series B Term Loan matures on April 22, 2029 and bears interest at a rate per annum of a "
+     "secured overnight financing rate (“Term SOFR”), plus a margin of 3.25% or a base rate "
+     "(“ABR”) plus a margin of 2.25%, subject to SOFR and ABR floors of 0.50% and 1.50%, "
+     "respectively.", dmx.TERM_LOAN, "2029-04-22"),
+    # its "respectively" pairs balance dates (1364250, 0001364250-26-000032)
+    ("(1) Includes accrued interest of $ 14.9 million and $ 11.5 million for a term loan that "
+     "matures in March 2032, at March 31, 2026 and December 31, 2025, respectively.",
+     dmx.TERM_LOAN, "2032-03"),
+    # no "respectively" at all
+    ("The Term Loan B matures on June 1, 2030.", dmx.TERM_LOAN, "2030-06-01"),
+    # (review round 2) a positional list in ANOTHER clause — notes, swaps, payment dates — refuses
+    # that clause only; on round 1's head each lost the loan's own maturity, which main reads
+    ("The Term Loan B matures on June 1, 2030, and our 2.50% and 3.75% Senior Notes are due 2027 "
+     "and 2029, respectively.", dmx.TERM_LOAN, "2030-06-01"),
+    ("The Revolving Credit Facility matures on May 1, 2031, and our interest rate swaps expire in "
+     "March 2027 and March 2028, respectively.", dmx.REVOLVER, "2031-05-01"),
+    ("The Term Loan B matures on June 1, 2030, and interest payments due on March 31, 2026 and "
+     "June 30, 2026, respectively, were $5.1 million and $5.3 million.", dmx.TERM_LOAN,
+     "2030-06-01"),
+])
+def test_a_respectively_that_pairs_something_else_leaves_the_maturity_read(
+        sentence: str, cls: str, when: str) -> None:
+    """(+) A "respectively" that pairs amounts, rates or balance dates beside ONE maturity is not
+    a positional pairing of that maturity: refusing the word alone would lose these, which main
+    reads right, so they are read as before."""
+    loans = [s for s in dmx.read(sentence) if s.cls in (dmx.TERM_LOAN, dmx.REVOLVER)]
+    assert [(s.cls, dmx.iso(s.when, s.precision), s.current) for s in loans] == [(cls, when, True)]
