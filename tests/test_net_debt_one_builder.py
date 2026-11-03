@@ -322,7 +322,8 @@ def _snap() -> FundamentalSnapshot:
 
 class _Edgar:
     def fundamental_snapshot_and_facts(
-            self, cik: int | str) -> tuple[FundamentalSnapshot, dict[str, Any]]:
+            self, cik: int | str, *, as_of: object = None,
+    ) -> tuple[FundamentalSnapshot, dict[str, Any]]:
         return _snap(), {}
 
 

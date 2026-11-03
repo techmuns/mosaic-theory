@@ -371,6 +371,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "increment is never paired over a span longer than a quarter (X3)",
     ),
     (
+        "2026-11-02.asof-price-date",
+        "inputs are cut at the page's price date, by the operator's ruling of 2026-11-01: the "
+        "price features are bounded at it, so the 52-week window is the 365 days ending on the "
+        "price date (audit F-D4); a share count filed after it is never used (X1(b)); the "
+        "page's adjusted facts and EDGAR fallback, and the screen's fundamentals, read "
+        "companyfacts as they stood on it (E1-D6)",
+    ),
+    (
         "2026-11-02.net-debt-as-of",
         "net debt is read as filed by the page's price date (audit E2-D21; operator ruling C4): "
         "every net-debt reader cuts the companyfacts at `stock_info.as_of` before any leg is "
