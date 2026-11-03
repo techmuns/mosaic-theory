@@ -982,8 +982,10 @@ def _machine_anchor(t: str, d: Any, original: str, cfg: Any, resolver: Any,
         raise   # a money panel stating another currency is refused, as assembly refuses it
     except Exception as exc:  # noqa: BLE001 — no workbook is normal; EDGAR-only then
         print(f"  {t}: no CIQ bridge ({type(exc).__name__})")
+    # cut at the page's price date, its reference date when there is no stored close (E2-D21)
     anchor = compute_anchor(d.mechanical.model_dump(mode="json"), facts=facts,
-                            computed_at=datetime.now(UTC), ciq=ciq)
+                            computed_at=datetime.now(UTC), ciq=ciq,
+                            reference_date=d.reference_date)
     if scale is not None:
         anchor = anchor.model_copy(update={"ciq_scale_check": scale})
     # (2026-10-09) the machine's R4 proposal, on the page as committed — the same rule the

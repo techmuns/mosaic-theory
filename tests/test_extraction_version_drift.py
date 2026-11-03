@@ -78,14 +78,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "6b3f65ba0e46"
-PINNED_AT = "2026-11-02.asof-price-date"
+PINNED_TABLE = "7764559dc79c"
+PINNED_AT = "2026-11-03.ex-lease-share-cut"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
-    "vinci/dossier/anchor.py": "734a70cd4e76",
-    "vinci/dossier/assemble.py": "add1ba861986",
+    "vinci/dossier/anchor.py": "58f1162f05f9",
+    "vinci/dossier/assemble.py": "369d2c388c1e",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "77def45663a9",
     "vinci/dossier/ciq.py": "78815874ffce",
@@ -99,7 +99,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ebitda_basis.py": "7f9996f712e1",
     "vinci/dossier/ebitda_recon.py": "9befc99c437a",
     "vinci/dossier/edgar_fundamentals.py": "6054321e6ca4",
-    "vinci/dossier/ev_ebitda_basis.py": "ad13b0e13ca0",
+    "vinci/dossier/ev_ebitda_basis.py": "232581813776",
     "vinci/dossier/ev_gap.py": "c1cd503b7723",
     "vinci/dossier/flags.py": "8466d404a234",
     "vinci/dossier/freshness.py": "e5852b313d22",
@@ -111,7 +111,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/mechanical.py": "c350252fe384",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
-    "vinci/dossier/refresh.py": "0c07bfc551a1",
+    "vinci/dossier/refresh.py": "459ea906d07c",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "fb5ba5b3c76d",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
@@ -127,7 +127,7 @@ WATCHED: dict[str, str] = {
     "vinci/edgar/debt_maturities.py": "6ffab9ec2574",
     "vinci/edgar/filing_sections.py": "568c36df04a2",
     "vinci/edgar/going_concern.py": "feb938485fd0",
-    "vinci/edgar/net_debt.py": "6257a0464909",
+    "vinci/edgar/net_debt.py": "d60756329d18",
     "vinci/edgar/primary_source.py": "80351248cc8a",
     "vinci/edgar/release_parse.py": "fdb5e7398ef3",
     "vinci/edgar/segment_facts.py": "9d3c07301296",

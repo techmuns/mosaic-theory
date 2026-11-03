@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import json
 import pathlib
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from types import SimpleNamespace
 from typing import Any
 
@@ -32,6 +32,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 CUT: dict[str, dict[str, Any]] = json.loads(
     (ROOT / "tests" / "fixtures" / "anchor_ciq_bridge.json").read_text())["names"]
 T0 = datetime(2026, 10, 27, tzinfo=UTC)
+REF = date(2026, 10, 16)  # GOOGL's reference date; its stored close (10-23) is the cut
 
 #: ONON's shape: a Financials panel stating CHF beside the comps book's 'US Dollar'
 _CHF = CiqCurrency(panels=[
@@ -90,7 +91,7 @@ def test_assembly_stores_the_scale_outcome_on_the_anchor(
     page = CUT["GOOGL"]["page"]
     got = asm._assembly_anchor(page["mechanical"], facts=CUT["GOOGL"]["companyfacts"],
                                bundle=CiqBundle.from_files("GOOGL", []), ticker="GOOGL",
-                               computed_at=T0)
+                               computed_at=T0, reference_date=REF)
     assert got.ciq_scale_check == outcome
 
 
@@ -116,5 +117,5 @@ def test_a_bridged_read_carries_its_own_outcome(monkeypatch: pytest.MonkeyPatch)
     page = CUT["GOOGL"]["page"]
     got = asm._assembly_anchor(page["mechanical"], facts=CUT["GOOGL"]["companyfacts"],
                                bundle=CiqBundle.from_files("GOOGL", []), ticker="GOOGL",
-                               computed_at=T0)
+                               computed_at=T0, reference_date=REF)
     assert got.ciq_scale_check == "agree"

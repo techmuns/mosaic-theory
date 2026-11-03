@@ -231,7 +231,7 @@ def test_total_debt_and_current_debt_never_double_count() -> None:
         if ltd is None or ltd.tag != "LongTermDebt":
             continue
         dc = latest_instant(extract_points(facts, "debt_current"))
-        got = _lease_inclusive_net_debt(facts)
+        got = _lease_inclusive_net_debt(facts, as_of=None)
         assert got is not None, f"{ticker}: no net-debt reading at all"
         if ticker == "MVST":
             assert got[0] is None and "UNDER-CAPTURED: DebtLongtermAndShorttermCombinedAmount" in (
