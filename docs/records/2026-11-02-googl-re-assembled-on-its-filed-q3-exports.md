@@ -1,10 +1,10 @@
 ---
 id: 2026-11-02-googl-re-assembled-on-its-filed-q3-exports
-status: shipped
+status: superseded
 date: 2026-11-02
 prs: [886]
 supersedes:
-superseded-by:
+superseded-by: 2026-11-03-googl-lly-and-amzn-re-assembled-on-their-post-drop-exports.md
 ---
 
 # GOOGL re-assembled on its filed Q3 exports: its material row reconciles with its four quarters and the synthesis states it; LLY's and AMZN's re-exports are held
@@ -140,3 +140,30 @@ that a pair CIQ has not finished processing can carry the wrong LTM on a materia
   - GOOGL's R1 base moves +5.6%.
   - The machine's recipe proposal moves R1 → R4, with the committed R3 unchanged.
   - Its lean stays mixed with no proposal; the draws moved from 3/2 to 4/1.
+
+## Amendments
+
+**2026-11-03 — superseded by a rebuild on the operator's post-drop comps, and three statements
+above corrected.** The GOOGL page this record describes was rebuilt the next day, once, on comps
+dated 2026-10-30 ($279.84), with LLY and AMZN
+(`docs/records/2026-11-03-googl-lly-and-amzn-re-assembled-on-their-post-drop-exports.md`). Each
+correction below was re-derived from the committed pages before it was written. The figures above
+stay visible as first written.
+- **D&A 25,536 is not fiscal 2025.** It is the twelve months to 2026-06-30. The 2026-10-26 page's
+  own annual table carries D&A FY25 21,136 and LTM 25,536 (both rows of today's annual export
+  give FY2025 as 21,136). The 10-26 anchor labelled it "consolidated latest FY". That is the
+  label `anchor.ciq_da_basis` replaced (#830): the CIQ bridge reads the annual sheet's last
+  column, an LTM. So the bullet "D&A: FY25 25,536 → LTM 28,540" should read "LTM to 2026-06-30
+  25,536 → LTM to 2026-09-30 28,540".
+- **R1 divides by shares outstanding, not the diluted count.**
+  - 213.5389 = (0.262717 × 445,866 + 25,536) × 17.451829 + 121,683, all ÷ 12,230,000,000. That
+    denominator is `anchor.shares_outstanding`, EDGAR's point-in-time count.
+  - 225.5389 is the same with 471,098, 28,540 and 114,767, ÷ 12,294,000,000.
+  - The diluted weighted averages, 12,309,000,000 → 12,368,000,000, give 212.17 → 224.19, and
+    neither is on the page. So "Diluted shares: 12.309bn → 12.368bn" should read "shares
+    outstanding 12.230bn → 12.294bn".
+- **The bear point's "four consecutive quarters" is a known defect, recorded and not fixed here.**
+  `vinci/dossier/mechanical.py:2185` takes `_nonop_common(...)[-4:]`: the last four quarters with
+  operating income, pre-tax income and revenue all filed. GOOGL files no standalone Q4, so the
+  window skips Q4 2025 and reaches back to Q3 2025. R4's condition still holds on the four it
+  reads. An artifact PR carries no code; the fix is scheduled separately.
