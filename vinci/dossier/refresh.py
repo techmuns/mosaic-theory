@@ -1122,7 +1122,7 @@ def ev_bridge_transform(ticker: str) -> TopLevelTransform:
     where the anchor prices ex-lease (review of #750). A folder that cannot be read leaves the page
     alone too (the `credit_health_transform` rule)."""
     from vinci.config import get_config
-    from vinci.dossier.anchor import NET_DEBT_EX_LEASE, lease_inclusive_net_debt
+    from vinci.dossier.anchor import NET_DEBT_EX_LEASE, lease_inclusive_net_debt, price_as_of
     from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
     from vinci.dossier.ciq_sheets import ev_bridge
     from vinci.dossier.manual_store import LocalFolderStore
@@ -1144,9 +1144,13 @@ def ev_bridge_transform(ticker: str) -> TopLevelTransform:
         nd = (doc.get("anchor") or {}).get("net_debt") or {}
         edgar_nd: tuple[Any, Any] = (nd.get("value"), nd.get("source"))
         if nd.get("basis") == NET_DEBT_EX_LEASE:
+            from vinci.edgar.asof import page_price_date
             from vinci.edgar.client import EdgarClient
+            # as filed by the page's price date (audit E2-D21): a later re-filing never moves it
             edgar_nd = lease_inclusive_net_debt(
-                EdgarClient.from_config(get_config()).companyfacts(str(doc.get("cik"))))
+                EdgarClient.from_config(get_config()).companyfacts(str(doc.get("cik"))),
+                as_of=page_price_date(price_as_of(doc.get("mechanical") or {}),
+                                      date.fromisoformat(str(doc["reference_date"]))))
         built = ev_bridge(bundle, fy_periods=list(fc.get("periods") or []),
                           edgar_net_debt=edgar_nd[0], edgar_source=edgar_nd[1])
         if (built is None or built.source_sha256 not in stamps

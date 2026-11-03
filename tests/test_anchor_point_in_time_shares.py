@@ -220,10 +220,17 @@ def test_lillys_real_page_refuses_its_count_and_keeps_its_equity() -> None:
     with a corroborated count (its basic average, 891,900,000) divides.
 
     The averages are the Q3 2026 10-Q's (0000059478-26-000108, filed 2026-10-29), which the page and
-    the fixture moved onto in #867; they were the Q2 10-Q's 893,700,000 / 892,400,000 before."""
+    the fixture moved onto in #867; they were the Q2 10-Q's 893,700,000 / 892,400,000 before.
+
+    PRICED THE DAY THAT 10-Q WAS FILED (review of #885). The anchor reads its facts as filed by the
+    page's price date, and LLY's is 2026-10-28, the day BEFORE: cut there, the averages are the Q2
+    10-Q's and no EDGAR D&A covers the window to 2026-09-30, so there is no base to divide
+    (`tests/test_net_debt_as_of.py`). Moving the close to 2026-10-29 keeps this pin on the count."""
     from datetime import UTC, datetime
 
     mech = json.loads(Path("data/dossiers/LLY/dossier.json").read_text())["mechanical"]
+    assert mech["stock_info"]["as_of"] == "2026-10-28"
+    mech["stock_info"]["as_of"] = "2026-10-29"
     facts = json.loads(Path("tests/fixtures/companyfacts/LLY.json").read_text())
     now = datetime.now(UTC)
     a = an.compute_anchor(mech, facts=facts, computed_at=now)

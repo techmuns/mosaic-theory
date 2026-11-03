@@ -51,6 +51,7 @@ from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import (
     CovenantPointer,
     Dossier,
+    MechanicalLayer,
     PriceStoreStamp,
     Sourced,
     SourceStatus,
@@ -65,6 +66,7 @@ from vinci.dossier.synthesis import (
     synthesize,
     uncited_material_figures,
 )
+from vinci.edgar.asof import page_price_date
 from vinci.edgar.client import EdgarClient
 from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
@@ -915,8 +917,18 @@ def _price_store_stamp(cfg: Config) -> PriceStoreStamp:
                            frontier=frontier)
 
 
+def _edgar_cross_check(mech: MechanicalLayer, facts: dict[str, Any], *,
+                       reference_date: date) -> tuple[float | None, str | None]:
+    """EDGAR's lease-inclusive net debt beside CIQ's TEV claims (`ev_bridge`), as filed by the
+    page's price date (audit E2-D21; `vinci.edgar.asof.page_price_date`, the reference date when
+    there is no stored close) — the cut its anchor reads too (`compute_anchor`)."""
+    si = mech.stock_info
+    return lease_inclusive_net_debt(
+        facts, as_of=page_price_date(si.as_of if si else None, reference_date))
+
+
 def _assembly_anchor(mech: dict[str, Any], *, facts: dict[str, Any], bundle: CiqBundle,
-                     ticker: str, computed_at: datetime) -> Anchor:
+                     ticker: str, computed_at: datetime, reference_date: date) -> Anchor:
     """The anchor a fresh assembly writes — the deterministic part of assembly that builds it.
 
     It takes the CIQ facts `anchor-backfill` takes, through the same `ciq_bridge` (row 27 (7)).
@@ -926,7 +938,8 @@ def _assembly_anchor(mech: dict[str, Any], *, facts: dict[str, Any], bundle: Ciq
     from vinci.dossier.ciq_balance import scale_outcome
 
     ciq, _note = ciq_bridge(bundle, ticker)
-    anchor = compute_anchor(mech, facts=facts, computed_at=computed_at, ciq=ciq)
+    anchor = compute_anchor(mech, facts=facts, computed_at=computed_at, ciq=ciq,
+                            reference_date=reference_date)
     # the bridge's own read carries the outcome; only a refused one (None) is read again
     scale = ciq.scale_check if ciq is not None else scale_outcome(bundle, ticker)
     return anchor.model_copy(update={"ciq_scale_check": scale})
@@ -1199,9 +1212,10 @@ def assemble_one(
     edgar_nd: tuple[float | None, str | None] = (None, None)
     try:
         anchor_facts = EdgarClient.from_config(cfg).companyfacts(rec.identity.cik)
-        edgar_nd = lease_inclusive_net_debt(anchor_facts)
+        edgar_nd = _edgar_cross_check(mech, anchor_facts, reference_date=fin.reference_date)
         anchor = _assembly_anchor(mech.model_dump(mode="json"), facts=anchor_facts, bundle=bundle,
-                                  ticker=ticker, computed_at=datetime.now(UTC))
+                                  ticker=ticker, computed_at=datetime.now(UTC),
+                                  reference_date=fin.reference_date)
     except SecRateLimitedError:
         raise  # SEC refused this run: never a page with an "anchor failed" written over it
     except Exception as exc:  # noqa: BLE001 — anchor is best-effort; it never blocks the dossier

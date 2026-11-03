@@ -90,7 +90,7 @@ def test_edgar_cash_plus_the_leg_is_ciqs_cash_and_st_investments(ticker: str) ->
 def test_googl_reads_net_cash_now_and_equals_ciqs_net_debt() -> None:
     """THE INCIDENT. +$64,880M (net debt) became −$121,683M (net cash) — CIQ's own figure, to the
     dollar, because GOOGL's debt and lease legs already agreed with CIQ's Total Debt."""
-    got = anc._lease_inclusive_net_debt(_facts("GOOGL"))
+    got = anc._lease_inclusive_net_debt(_facts("GOOGL"), as_of=None)
     assert got is not None and got[0] is not None
     ciq = CIQ["GOOGL"]
     assert got[0] / 1e6 == pytest.approx(ciq["total_debt"] - ciq["total_cash_and_st_investments"],
@@ -145,7 +145,7 @@ def test_a_securities_tag_that_stopped_before_the_cash_instant_is_not_netted(tic
     assert all(last < end for last in present.values()), (
         f"{ticker}: a read tag reaches the cash instant {end} — not a stale case: {present}")
     assert nd._short_term_securities(facts, end) is None
-    got = anc._lease_inclusive_net_debt(facts)
+    got = anc._lease_inclusive_net_debt(facts, as_of=None)
     if got is not None:
         assert "short-term investments" not in got[1], f"{ticker}: a stale balance was netted"
 
@@ -167,7 +167,7 @@ def test_a_name_without_the_line_keeps_its_bridge_text() -> None:
     prints only where it is netted, so a page that moves is a page whose number moved."""
     facts = _facts("BRBR")
     assert not any(points_for_tag(facts, t) for t in nd._SHORT_TERM_SECURITIES_TAGS)
-    got = anc._lease_inclusive_net_debt(facts)
+    got = anc._lease_inclusive_net_debt(facts, as_of=None)
     assert got is not None and "short-term investments" not in got[1]
     assert got[1].endswith(" ($M)") and " − cash " in got[1]
 
