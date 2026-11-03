@@ -78,14 +78,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "89939a1c931f"
-PINNED_AT = "2026-11-02.net-debt-as-of"
+PINNED_TABLE = "a539c51ac674"
+PINNED_AT = "2026-11-03.anchor-cut-at-price-date"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
-    "vinci/dossier/anchor.py": "97a7ea2ed851",
-    "vinci/dossier/assemble.py": "88e8b5b44962",
+    "vinci/dossier/anchor.py": "58f1162f05f9",
+    "vinci/dossier/assemble.py": "369d2c388c1e",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "77def45663a9",
     "vinci/dossier/ciq.py": "78815874ffce",
@@ -111,7 +111,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/mechanical.py": "c350252fe384",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
-    "vinci/dossier/refresh.py": "1f65684cbd91",
+    "vinci/dossier/refresh.py": "459ea906d07c",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "fb5ba5b3c76d",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",

@@ -10,7 +10,13 @@ it; latest such filing wins; nothing after a sealed verdict)." Every net-debt re
 and cuts the companyfacts blob with `concepts.facts_as_of` (#801) before any leg is read, so each
 `_at` / `latest_instant` sees only what was filed by then. The anchor, the assembly's EV-bridge
 cross-check, the at-price ex-lease multiple and the bridge refresh pass the page's price date
-(`mechanical.stock_info.as_of`).
+(`vinci.edgar.asof.page_price_date`: the stored close's date, else the reference date).
+
+ONE CUT FOR EVERY LEG (round 2, review of #885). Cutting net debt alone let one anchor mix quarters:
+LLY's read a 2026-06-30 balance sheet beside a diluted average filed 2026-10-29, after its
+2026-10-28 price date. `compute_anchor` now cuts the whole blob once at its entry, so the margin,
+D&A, FCF, the share counts and net debt read the same filings; the pins below run on every
+committed page's tracking fixture, and on NCNO (not pursued, so frozen), the live case.
 
 The fixture is OC's frozen companyfacts subset (`tests/fixtures/net_debt_shapes/OC.json`); the
 re-filing is its real 2026-06-30 `LongTermDebt` row (5,125M, the bare total OC's borrowings are
@@ -21,7 +27,7 @@ from __future__ import annotations
 
 import json
 import pathlib
-from datetime import date
+from datetime import UTC, date, datetime, timedelta
 from types import SimpleNamespace
 from typing import Any
 
@@ -29,11 +35,13 @@ import pytest
 
 from vinci.dossier import anchor as anc
 from vinci.edgar import net_debt as nd
+from vinci.edgar.concepts import facts_as_of
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 OC: dict[str, Any] = json.loads((ROOT / "tests" / "fixtures" / "net_debt_shapes" / "OC.json")
                                 .read_text())
 PRICE_DATE = date(2026, 10, 28)
+NOW = datetime(2026, 11, 3, tzinfo=UTC)
 TAG, AT = "LongTermDebt", "2026-06-30"
 M = 1e6
 
@@ -71,13 +79,17 @@ def test_a_refiling_by_the_price_date_is_read() -> None:
     assert _leverage(_refiled(PRICE_DATE.isoformat()), PRICE_DATE) == 5020.0
 
 
+def _anchor_nd(page: dict[str, Any], facts: dict[str, Any]) -> Any:
+    return anc.compute_anchor(page, facts=facts, computed_at=NOW).net_debt
+
+
 def test_the_anchors_net_debt_is_cut_at_the_pages_price_date() -> None:
     """The anchor reads its page's price date (`stock_info.as_of`) and its net debt does not move
     for a re-filing after it; the EV-basis cross-check beside CIQ's TEV is cut the same way."""
     page = {"stock_info": {"as_of": PRICE_DATE.isoformat()}}
     later = _refiled("2026-11-15")
-    assert anc._bridge_inputs(page, later)["net_debt"] == anc._bridge_inputs(page, OC)["net_debt"]
-    assert anc._bridge_inputs({}, later)["net_debt"] != anc._bridge_inputs({}, OC)["net_debt"]
+    assert _anchor_nd(page, later) == _anchor_nd(page, OC)
+    assert _anchor_nd({}, later) != _anchor_nd({}, OC)
     assert (anc.lease_inclusive_net_debt(later, as_of=PRICE_DATE)
             == anc.lease_inclusive_net_debt(OC, as_of=PRICE_DATE))
     assert anc.lease_inclusive_net_debt(later, as_of=PRICE_DATE)[0] == 5458.0
@@ -101,7 +113,7 @@ def test_the_bridge_refresh_cuts_the_edgar_cross_check_at_the_pages_price_date(
         lambda _cfg: SimpleNamespace(files=lambda _t: files)))
     monkeypatch.setattr(ec.EdgarClient, "from_config", staticmethod(
         lambda _cfg: SimpleNamespace(companyfacts=lambda _cik: _refiled("2026-11-15"))))
-    doc = {"cik": "0001370946",
+    doc = {"cik": "0001370946", "reference_date": "2026-10-16",
            "mechanical": {"stock_info": {"as_of": PRICE_DATE.isoformat()},
                           "valuation": {"own_history": {"value": [
                               {"source_sha256": file_provenance(files[0])[0]}]}}},
@@ -110,3 +122,153 @@ def test_the_bridge_refresh_cuts_the_edgar_cross_check_at_the_pages_price_date(
            "anchor": {"net_debt": {"basis": anc.NET_DEBT_EX_LEASE, "value": 1.0}}}
     out = refresh.ev_bridge_transform(gen.TICKER)(doc)
     assert out["ev_bridge"]["edgar_net_debt"] == 5458.0, out["ev_bridge"]
+
+
+# --- round 2 (review of #885): one cut for every leg of the anchor ----------------------------
+
+PAGES = ROOT / "data" / "dossiers"
+FIXTURES = ROOT / "tests" / "fixtures" / "companyfacts"
+
+
+def _page(ticker: str) -> tuple[dict[str, Any], dict[str, Any], date, date]:
+    """(mechanical, tracking-fixture facts, reference date, price date) of a committed page."""
+    doc = json.loads((PAGES / ticker / "dossier.json").read_text())
+    facts = json.loads((FIXTURES / f"{ticker}.json").read_text())
+    mech = doc["mechanical"]
+    return (mech, facts, date.fromisoformat(doc["reference_date"]),
+            date.fromisoformat(mech["stock_info"]["as_of"]))
+
+
+def _filed_later(facts: dict[str, Any], cut: date) -> dict[str, Any]:
+    """``facts`` plus, for EVERY row, a re-filing of its period and a next-year period, both 1.5x
+    the value and filed 30 days after ``cut`` — whatever a leg's reader keeps (the latest filing
+    of a period, or the latest period), it would read one of them were it not cut."""
+    out: dict[str, Any] = json.loads(json.dumps(facts))
+    filed = (cut + timedelta(days=30)).isoformat()
+    for tags in out["facts"].values():
+        for body in tags.values():
+            for rows in body["units"].values():
+                more = []
+                for r in rows:
+                    more.append({**r, "val": r["val"] * 1.5, "filed": filed, "form": "10-K/A",
+                                 "accn": "0000000000-26-999999"})
+                    nxt = {**r, "val": r["val"] * 1.5, "filed": filed,
+                           "accn": "0000000000-26-999998",
+                           "end": (date.fromisoformat(r["end"]) + timedelta(days=364)).isoformat()}
+                    if r.get("start"):
+                        nxt["start"] = (date.fromisoformat(r["start"])
+                                        + timedelta(days=364)).isoformat()
+                    if isinstance(r.get("fy"), int):
+                        nxt["fy"] = r["fy"] + 1
+                    more.append(nxt)
+                rows.extend(more)
+    return out
+
+
+def _values(a: anc.Anchor) -> dict[str, Any]:
+    """Every figure the anchor states — its legs' values and bases, the margin, the base value."""
+    out: dict[str, Any] = {k: getattr(a, k) for k in (
+        "recipe_hint", "applicable", "anchor_base_value_per_share",
+        "anchor_base_value_per_share_diluted", "anchor_ev_ebit")}
+    out["margin"] = a.margin.value if a.margin else None
+    for k in anc._BRIDGE_FIELDS:
+        leg = getattr(a, k)
+        out[k] = (leg.value, leg.basis) if leg else None
+    return out
+
+
+def test_every_leg_of_the_anchor_reads_the_facts_as_filed_by_the_price_date() -> None:
+    """THE BLOCKER, ON EVERY COMMITTED PAGE. The anchor on a page's tracking fixture equals the
+    anchor on that fixture cut at the page's price date, and neither moves when every row gains a
+    later filing. Round 1 cut net debt only: on LLY's fixture the diluted average and the D&A
+    window read the Q3 10-Q filed 2026-10-29, after the 2026-10-28 price date, and on NCNO's the
+    share counts read the 10-Q filed 2026-08-25, after 2026-08-17."""
+    compared: list[str] = []
+    for doc in sorted(PAGES.glob("*/dossier.json")):
+        t = doc.parent.name
+        if not (FIXTURES / f"{t}.json").is_file():
+            continue
+        mech, facts, ref, cut = _page(t)
+        got = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref))
+        assert got == _values(anc.compute_anchor(mech, facts=facts_as_of(facts, cut),
+                                                 computed_at=NOW, reference_date=ref)), t
+        assert got == _values(anc.compute_anchor(mech, facts=_filed_later(facts, cut),
+                                                 computed_at=NOW, reference_date=ref)), t
+        compared.append(t)
+    assert len(compared) >= 20 and {"LLY", "NCNO"} <= set(compared), compared
+
+
+def test_ncnos_filings_after_its_price_date_reach_every_leg_unless_cut() -> None:
+    """NON-VACUITY, the live case. Read uncut (no stored close, no reference date), the later
+    filings move every leg the anchor reads from EDGAR — so the equality above tests each of them,
+    not only net debt."""
+    mech, facts, ref, cut = _page("NCNO")
+    later = _filed_later(facts, cut)
+    cut_read = anc.compute_anchor(mech, facts=later, computed_at=NOW, reference_date=ref)
+    uncut = {**mech, "stock_info": {**mech["stock_info"], "as_of": None}}
+    whole = anc.compute_anchor(uncut, facts=later, computed_at=NOW)
+    moved = {k for k in anc._BRIDGE_FIELDS
+             if getattr(cut_read, k).value != getattr(whole, k).value}
+    assert moved == {"d_and_a", "net_debt", "diluted_shares", "shares_outstanding",
+                     "dilutive_increment", "ltm_fcf"}, moved   # ltm_revenue is the page's own
+
+
+def test_the_cut_falls_back_to_the_reference_date_without_a_stored_close() -> None:
+    """Item 8: no stored close → the page's reference date (`vinci.edgar.asof.page_price_date`).
+    NEGATIVE PIN: neither date → the facts are read whole."""
+    mech, facts, ref, cut = _page("NCNO")
+    at_close = _values(anc.compute_anchor(mech, facts=facts, computed_at=NOW, reference_date=ref))
+    no_close = {**mech, "stock_info": {**mech["stock_info"], "as_of": None}}
+    assert ref < cut
+    assert _values(anc.compute_anchor(no_close, facts=facts, computed_at=NOW,
+                                      reference_date=ref)) == at_close   # nothing filed between
+    assert _values(anc.compute_anchor(no_close, facts=facts, computed_at=NOW)) != at_close
+
+
+def test_the_assemblys_cross_check_is_cut_at_the_pages_price_date() -> None:
+    """Item 2, `assemble._edgar_cross_check` (the `ev_bridge.edgar_net_debt` beside CIQ's TEV):
+    NCNO's tracking fixture holds the 2026-07-31 balance sheet filed after its price date, so the
+    figure is the one filed by then — and, with no stored close, by its reference date."""
+    from vinci.dossier.assemble import _edgar_cross_check
+    from vinci.dossier.schemas import MechanicalLayer
+
+    mech, facts, ref, cut = _page("NCNO")
+    m = MechanicalLayer.model_validate(mech)
+    got = _edgar_cross_check(m, facts, reference_date=ref)
+    assert got == anc.lease_inclusive_net_debt(facts, as_of=cut)
+    assert got != anc.lease_inclusive_net_debt(facts, as_of=None)   # the cut is load-bearing here
+    assert got == _edgar_cross_check(m, _filed_later(facts, cut), reference_date=ref)
+    assert m.stock_info is not None
+    no_close = m.model_copy(update={"stock_info": m.stock_info.model_copy(update={"as_of": None})})
+    assert _edgar_cross_check(no_close, facts, reference_date=ref) == got
+
+
+def test_the_at_price_ex_lease_multiple_is_cut_at_the_pages_price_date() -> None:
+    """Item 2, `ev_ebitda_basis.ex_lease_at_price` (`valuation.ev_ebitda_ex_lease_at_price`): its
+    net debt on NCNO is the one filed by the page's price date, not the later balance sheet's."""
+    from vinci.dossier.ev_ebitda_basis import ex_lease_at_price
+    from vinci.dossier.schemas import MechanicalLayer
+
+    mech, facts, _ref, cut = _page("NCNO")
+    got = ex_lease_at_price(MechanicalLayer.model_validate(mech), facts)
+    assert got is not None
+    as_filed = anc._lease_inclusive_net_debt(facts, as_of=cut, ex_operating_leases=True)
+    whole = anc._lease_inclusive_net_debt(facts, as_of=None, ex_operating_leases=True)
+    assert as_filed and whole and as_filed[0] is not None and whole[0] is not None
+    assert got.net_debt == round(as_filed[0] / M, 3)
+    assert got.net_debt != round(whole[0] / M, 3)   # the cut is load-bearing here
+
+
+def test_a_balance_sheet_filed_after_the_price_date_is_named_as_such() -> None:
+    """Nit 5: where the cut leaves no balance sheet, the source says it was not FILED by the price
+    date, never "no debt/cash tag". NEGATIVE PIN: a filer that tags none keeps the old words."""
+    early = date(2010, 1, 1)   # before OC's first filing in the fixture (2010-08-04)
+    _v, why = anc.lease_inclusive_net_debt(OC, as_of=early)
+    assert why == "UNKNOWN — no debt/cash tag filed by the 2010-01-01 price date"
+    page = {"stock_info": {"as_of": early.isoformat()}}
+    assert _anchor_nd(page, OC).source.startswith(
+        "UNKNOWN — no debt/cash tag filed by the 2010-01-01 price date")
+    assert anc.lease_inclusive_net_debt({"facts": {}}, as_of=early) == (
+        None, "UNKNOWN — no debt/cash tag")
+    assert _anchor_nd(page, {"facts": {}}).source.startswith("UNKNOWN — no debt/cash tag")
+    assert "filed by" not in _anchor_nd(page, {"facts": {}}).source

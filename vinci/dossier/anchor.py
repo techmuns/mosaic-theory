@@ -23,6 +23,7 @@ from pydantic import BaseModel, ValidationError, computed_field
 
 from vinci.dossier import band_guards as bg
 from vinci.dossier import midcycle as mc
+from vinci.edgar.asof import page_price_date
 from vinci.edgar.concepts import (
     ANNUAL_STALE_DAYS,
     CONCEPT_ALIASES,
@@ -30,6 +31,7 @@ from vinci.edgar.concepts import (
     annual_line,
     current_annual,
     current_pair,
+    facts_as_of,
     filer_fiscal_year,
     fiscal_year_ends,
     fiscal_year_of,
@@ -832,10 +834,12 @@ def _no_diluted_quarter(facts: dict[str, Any]) -> str:
             f"{_span(latest)}); no 10-Q quarter is on file to read")
 
 
-def page_price_date(mechanical: dict[str, Any]) -> date | None:
-    """The page's price date — its EOD bar (`stock_info.as_of`), the date `date_semantics`
-    names `price_as_of` — or None when the page states none. The cut the operator's C4 ruling puts
-    on a page's inputs: "filed on or before it; latest such filing wins"."""
+def price_as_of(mechanical: dict[str, Any]) -> date | None:
+    """The date of the close the page stores — its EOD bar (`stock_info.as_of`), which
+    `date_semantics` names `price_as_of` — read off the layer as dumped, or None when the page
+    states none. A field read, not a rule: the page's PRICE DATE, the cut the operator's C4 ruling
+    puts on its inputs, is :func:`vinci.edgar.asof.page_price_date`'s, which falls back to the
+    reference date when there is no stored close (review of #885)."""
     raw = (mechanical.get("stock_info") or {}).get("as_of")
     if isinstance(raw, datetime):   # a date the filing dates compare with, never a timestamp
         return raw.date()
@@ -868,8 +872,10 @@ def _lease_inclusive_net_debt(facts: dict[str, Any], *, as_of: date | None,
     debt not on its 2026-06-30 balance sheet, which CIQ's $889M does not carry either).
 
     ``as_of`` IS THE PAGE'S PRICE DATE (audit E2-D21; operator ruling C4, 2026-11-01): every line
-    is read as filed by then (:func:`page_price_date`), so a later re-filing of the balance sheet
-    never moves a sealed figure. Required, so no caller reads every filing by default."""
+    is read as filed by then (:func:`vinci.edgar.asof.page_price_date`), so a later re-filing of
+    the balance sheet never moves a sealed figure. Required, so no caller reads every filing by
+    default; the anchor's own read passes None, its facts already cut at `compute_anchor`'s
+    entry."""
     nd = net_debt(facts, as_of=as_of)
     if nd is None or nd.nothing_to_read:
         return None
@@ -905,6 +911,15 @@ def _lease_inclusive_net_debt(facts: dict[str, Any], *, as_of: date | None,
 DQ_VENDOR_BRIDGE = "vendor_bridge"
 _NO_VENDOR_EX_LEASE = ("; CIQ's net debt is not substituted, because it carries the operating "
                        "leases this bridge excludes")
+
+
+def _no_balance_sheet(whole: dict[str, Any], cut: date | None) -> str:
+    """Why EDGAR gave no net debt. Where the CUT is the reason — the whole blob holds a balance
+    sheet, filed after the price date — say so, never "no tag" (review of #885); a filer that
+    tags none in any filing keeps the old words."""
+    if cut is not None and _lease_inclusive_net_debt(whole, as_of=None) is not None:
+        return f"UNKNOWN — no debt/cash tag filed by the {cut.isoformat()} price date"
+    return "UNKNOWN — no debt/cash tag"
 
 
 def _ciq_on_window(fact: Any, window: Window | None) -> bool:
@@ -951,7 +966,8 @@ def ciq_da_basis(ciq: Any) -> str:
 
 
 def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
-                   ciq: Any = None, *, ex_lease: bool = False) -> dict[str, Any]:
+                   ciq: Any = None, *, ex_lease: bool = False, cut: date | None = None,
+                   whole: dict[str, Any] | None = None) -> dict[str, Any]:
     """Every SOURCE-BOUND scalar the block carries, gathered independently of whether R1 applies.
 
     Split out (2026-07-21, R2 cohort) because the R1 recipe and the FACTS are different things. The
@@ -962,12 +978,15 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
 
     ``ex_lease`` (2026-10-19): the multiple is the ex-lease history (`lease_basis`), so net debt
     leaves the operating leases out — and the CIQ workbook may NOT fill a missing net debt, because
-    CIQ's net debt carries those leases. A hole stays a hole rather than a mixed bridge."""
+    CIQ's net debt carries those leases. A hole stays a hole rather than a mixed bridge.
+
+    ``facts`` arrive CUT at the page's price date (``cut``, by :func:`compute_anchor`), so every
+    leg below reads them whole; ``cut`` and the uncut blob (``whole``) only word what it left
+    out."""
     window = _page_window(mechanical)
     got_da = _window_dep_amort(facts, window)
     da = None if isinstance(got_da, str) else got_da
-    nd = _lease_inclusive_net_debt(facts, as_of=page_price_date(mechanical),
-                                   ex_operating_leases=ex_lease)
+    nd = _lease_inclusive_net_debt(facts, as_of=None, ex_operating_leases=ex_lease)
     nd_val = nd[0] if nd else None
     counts = _traded_unit_counts(mechanical, facts)
     dil, out, out_src, inc = counts.dil, counts.out, counts.out_src, counts.inc
@@ -1036,7 +1055,8 @@ def _bridge_inputs(mechanical: dict[str, Any], facts: dict[str, Any],
                                                   else "lease-inclusive net debt (latest 10-Q)"),
                                 source=(nd[1] if nd and nd[1].startswith("CIQ")
                                         else ("EDGAR: " + nd[1]) if nd
-                                        else "UNKNOWN — no debt/cash tag" + (
+                                        else _no_balance_sheet(
+                                            facts if whole is None else whole, cut) + (
                                             _NO_VENDOR_EX_LEASE if ex_lease else "") + nd_why)),
         "diluted_shares": AnchorInput(value=(dil.value if dil else None), unit="shares",
                                       basis="diluted weighted-average (latest 10-Q)"
@@ -1223,7 +1243,7 @@ def lease_inclusive_net_debt(facts: dict[str, Any], *,
     beside CIQ claims that hold $96B of leases."""
     nd = _lease_inclusive_net_debt(facts, as_of=as_of)
     if nd is None:
-        return None, "UNKNOWN — no debt/cash tag"
+        return None, _no_balance_sheet(facts, as_of)
     return (round(nd[0] / _USD_M, 3) if nd[0] is not None else None), "EDGAR: " + nd[1]
 
 
@@ -1427,9 +1447,17 @@ def ciq_bridge(bundle: Any, ticker: str) -> tuple[CiqFacts | None, str | None]:
 
 
 def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
-                   computed_at: datetime, ciq: Any = None) -> Anchor:
+                   computed_at: datetime, ciq: Any = None,
+                   reference_date: date | None = None) -> Anchor:
     """The R1 anchor from SOURCE-BOUND inputs. ``mechanical`` is the mechanical layer as a dict
     (``model_dump`` at assembly, committed JSON at backfill); ``facts`` is EDGAR companyfacts.
+
+    ONE CUT FOR EVERY LEG (audit E2-D21; operator ruling C4; review of #885). ``facts`` are cut
+    ONCE, here, at the page's price date (`vinci.edgar.asof.page_price_date`: the stored close's
+    date, else ``reference_date``), so the margin, D&A, FCF, the share counts and net debt all
+    read what was filed by then. Cutting net debt alone let one anchor mix quarters: LLY's read a
+    2026-06-30 balance sheet beside a diluted average filed 2026-10-29, after its 2026-10-28 price
+    date. A page that states neither date is read whole.
 
     Every input is cited and fail-loud: a missing own-history multiple → inapplicable; a
     non-positive margin → the R2 (revenue-anchored) hint; an incomplete value bridge → applicable
@@ -1439,9 +1467,13 @@ def compute_anchor(mechanical: dict[str, Any], *, facts: dict[str, Any],
     An inapplicable RECIPE never suppresses the FACTS: every return path carries the source-bound
     EDGAR bridge (:func:`_bridge_inputs`), because the names R1 cannot anchor are precisely the
     ones the R2 recipe has to underwrite from those same numbers."""
+    whole, on_close = facts, price_as_of(mechanical)
+    cut = page_price_date(on_close, reference_date) if reference_date is not None else on_close
+    if cut is not None:
+        facts = facts_as_of(facts, cut)
     # ONE choice of history, read by the bridge too: an ex-lease multiple takes an ex-lease bridge
     sel = r1_multiple_band(mechanical)
-    bridge = _bridge_inputs(mechanical, facts, ciq, ex_lease=sel.ex_lease)
+    bridge = _bridge_inputs(mechanical, facts, ciq, ex_lease=sel.ex_lease, cut=cut, whole=whole)
     mult = _band_read(sel.band)
     if mult is None:
         return _with_bridge(Anchor(

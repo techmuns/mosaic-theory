@@ -452,7 +452,7 @@ def net_debt(facts: dict[str, Any], *, as_of: date | None = None) -> NetDebt | N
     so a 10-K/A re-reporting a balance-sheet date after a page was priced moved its sealed figure
     at the next rebuild: OC's 2026-06-30 debt re-filed 101M higher read 4,919.0M → 5,020.0M. The
     operator's C4 ruling cuts a page's inputs at its price date. ``None`` reads every row, as
-    before: the screen's snapshot cuts its own facts first (`compute_fundamental_snapshot`).
+    before: the screen's snapshot cuts its own facts first (`compute_fundamental_snapshot`, #884).
 
     Every leg is read in USD (`_usd`), cash included: a filer reporting in another currency (LPL
     in won, HSAI in yuan) would otherwise net a dollar debt line against a foreign cash figure —

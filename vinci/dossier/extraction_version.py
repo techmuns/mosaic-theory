@@ -386,6 +386,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "sealed figure — the anchor, the assembly's EV-bridge cross-check, the at-price ex-lease "
         "multiple and the bridge refresh alike",
     ),
+    (
+        "2026-11-03.anchor-cut-at-price-date",
+        "the anchor reads every leg as filed by the page's price date (review of #885): "
+        "`compute_anchor` cuts the companyfacts once at its entry, at "
+        "`vinci.edgar.asof.page_price_date` (the reference date when there is no stored close), "
+        "so the margin, D&A, FCF, the share counts and net debt read the same filings and one "
+        "anchor never pairs a balance sheet with a later quarter's figures",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
