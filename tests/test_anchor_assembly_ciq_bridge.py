@@ -34,6 +34,9 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 CUT: dict[str, dict[str, Any]] = json.loads(
     (ROOT / "tests" / "fixtures" / "anchor_ciq_bridge.json").read_text())["names"]
 T0 = datetime(2026, 10, 27, tzinfo=UTC)
+#: Both pages' screen reference date. Each carries a stored close (2026-10-23), so the anchor's
+#: facts are cut at that close (`vinci.edgar.asof.page_price_date`), not at this date.
+REF = date(2026, 10, 16)
 
 #: The input only CIQ supplies on each name — the one the 2026-10-26 pass dropped.
 VENDOR_INPUT = {"GOOGL": "d_and_a", "ORKA": "net_debt"}
@@ -93,7 +96,8 @@ def _assembled(t: str, ciq: CiqFacts | None, monkeypatch: pytest.MonkeyPatch) ->
         monkeypatch.setattr(ciq_balance, "extract", lambda _bundle, _ticker: ciq)
     page = CUT[t]["page"]
     fresh = asm._assembly_anchor(page["mechanical"], facts=CUT[t]["companyfacts"],
-                                 bundle=CiqBundle.from_files(t, []), ticker=t, computed_at=T0)
+                                 bundle=CiqBundle.from_files(t, []), ticker=t, computed_at=T0,
+                                 reference_date=REF)
     kept, _notes = preserve_operator_tag(_committed(t), recipe_proposal.propose(page, fresh))
     return kept
 
@@ -139,7 +143,7 @@ def test_the_backfill_reads_the_same_bridge(monkeypatch: pytest.MonkeyPatch,
         monkeypatch.setattr(ciq_balance, "extract", lambda _bundle, _ticker, c=ciq: c)
         page = CUT[t]["page"]
         d = SimpleNamespace(mechanical=SimpleNamespace(
-            model_dump=lambda mode, m=page["mechanical"]: m))
+            model_dump=lambda mode, m=page["mechanical"]: m), reference_date=REF)
         resolver = SimpleNamespace(resolve_ticker=lambda _t: SimpleNamespace(cik="0"))
         edgar = SimpleNamespace(companyfacts=lambda _cik, f=CUT[t]["companyfacts"]: f)
         machine = cli._machine_anchor(t, d, json.dumps(page), SimpleNamespace(data_dir=tmp_path),

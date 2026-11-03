@@ -87,6 +87,7 @@ from vinci.edgar.concepts import (
     CONCEPT_ALIASES,
     ConceptPoint,
     extract_points,
+    facts_as_of,
     latest_instant,
     points_for_tag,
 )
@@ -442,12 +443,22 @@ class NetDebt:
         return max(p.filed for p in pts)
 
 
-def net_debt(facts: dict[str, Any]) -> NetDebt | None:
+def net_debt(facts: dict[str, Any], *, as_of: date | None = None) -> NetDebt | None:
     """Every component at the cash instant, or None when the filer reports no cash line in DOLLARS.
+
+    ``as_of`` reads the facts as they stood that day: every row FILED after it is dropped before any
+    leg is read (:func:`vinci.edgar.concepts.facts_as_of`), so `_at` and each `latest_instant` see
+    only what was filed by then (audit E2-D21, 2026-11-02). Both keep an instant's LATEST filing,
+    so a 10-K/A re-reporting a balance-sheet date after a page was priced moved its sealed figure
+    at the next rebuild: OC's 2026-06-30 debt re-filed 101M higher read 4,919.0M → 5,020.0M. The
+    operator's C4 ruling cuts a page's inputs at its price date. ``None`` reads every row, as
+    before: the screen's snapshot cuts its own facts first (`compute_fundamental_snapshot`, #884).
 
     Every leg is read in USD (`_usd`), cash included: a filer reporting in another currency (LPL
     in won, HSAI in yuan) would otherwise net a dollar debt line against a foreign cash figure —
     LPL read 3.26 trillion "dollars" of net debt before this, review of #749."""
+    if as_of is not None:
+        facts = facts_as_of(facts, as_of)
     cash = latest_instant([p for p in extract_points(facts, "cash") if p.unit == "USD"])
     if cash is None:
         return None

@@ -378,6 +378,29 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "page's adjusted facts and EDGAR fallback, and the screen's fundamentals, read "
         "companyfacts as they stood on it (E1-D6)",
     ),
+    (
+        "2026-11-02.net-debt-as-of",
+        "net debt is read as filed by the page's price date (audit E2-D21; operator ruling C4): "
+        "every net-debt reader cuts the companyfacts at `stock_info.as_of` before any leg is "
+        "read, so a later re-filing of a balance sheet, or a later balance sheet, never moves a "
+        "sealed figure — the anchor, the assembly's EV-bridge cross-check, the at-price ex-lease "
+        "multiple and the bridge refresh alike",
+    ),
+    (
+        "2026-11-03.anchor-cut-at-price-date",
+        "the anchor reads every leg as filed by the page's price date (review of #885): "
+        "`compute_anchor` cuts the companyfacts once at its entry, at "
+        "`vinci.edgar.asof.page_price_date` (the reference date when there is no stored close), "
+        "so the margin, D&A, FCF, the share counts and net debt read the same filings and one "
+        "anchor never pairs a balance sheet with a later quarter's figures",
+    ),
+    (
+        "2026-11-03.ex-lease-share-cut",
+        "the at-price ex-lease multiple reads its share count as filed by the price date of the "
+        "page: `ex_lease_at_price` cuts the companyfacts once at the date of the stored close, so "
+        "its share count and its net debt read the same filings — the valuation-bases refresh, "
+        "which hands it the uncut blob, no longer divides by the average of a later 10-Q",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

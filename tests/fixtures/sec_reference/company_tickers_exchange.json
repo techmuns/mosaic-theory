@@ -43,6 +43,12 @@
    "NYSE"
   ],
   [
+   865752,
+   "Monster Beverage Corp",
+   "MNST",
+   "Nasdaq"
+  ],
+  [
    745732,
    "ROSS STORES, INC.",
    "ROST",
@@ -103,15 +109,15 @@
    "Nasdaq"
   ],
   [
-   793074,
-   "WERNER ENTERPRISES INC",
-   "WERN",
-   "Nasdaq"
-  ],
-  [
    1803599,
    "Concentrix Corp",
    "CNXC",
+   "Nasdaq"
+  ],
+  [
+   793074,
+   "WERNER ENTERPRISES INC",
+   "WERN",
    "Nasdaq"
   ],
   [
@@ -139,15 +145,15 @@
    "Nasdaq"
   ],
   [
-   1681087,
-   "Tectonic Therapeutic, Inc.",
-   "TECX",
-   "Nasdaq"
-  ],
-  [
    1579733,
    "Vital Farms, Inc.",
    "VITL",
+   "Nasdaq"
+  ],
+  [
+   1681087,
+   "Tectonic Therapeutic, Inc.",
+   "TECX",
    "Nasdaq"
   ],
   [

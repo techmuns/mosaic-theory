@@ -66,7 +66,7 @@ def _ciq_net_debt(ticker: str) -> float:
 
 
 def _anchor_value(ticker: str) -> float | None:
-    got = anc._lease_inclusive_net_debt(_facts(ticker))
+    got = anc._lease_inclusive_net_debt(_facts(ticker), as_of=None)
     return None if got is None or got[0] is None else got[0] / M
 
 
@@ -150,7 +150,7 @@ def test_the_screen_and_the_anchor_differ_by_exactly_operating_leases() -> None:
         facts = json.loads(p.read_text())
         reading = nd.net_debt(facts)
         snap = compute_fundamental_snapshot("x", facts).net_debt
-        a = anc._lease_inclusive_net_debt(facts)
+        a = anc._lease_inclusive_net_debt(facts, as_of=None)
         if reading is None or reading.refusal is not None:
             assert not snap.is_known and (a is None or a[0] is None), p.stem
             continue
