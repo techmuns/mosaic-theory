@@ -274,7 +274,7 @@ def test_a_balance_sheet_filed_after_the_price_date_is_named_as_such() -> None:
     assert "filed by" not in _anchor_nd(page, {"facts": {}}).source
 
 
-# --- the at-price ex-lease multiple reads ONE cut (2026-11-03, stacked on #885) ---------------
+# --- the at-price ex-lease multiple reads ONE cut (2026-11-03, after #885) ----------------------
 
 
 def test_the_at_price_ex_lease_multiple_reads_its_share_count_as_filed_by_the_price_date() -> None:

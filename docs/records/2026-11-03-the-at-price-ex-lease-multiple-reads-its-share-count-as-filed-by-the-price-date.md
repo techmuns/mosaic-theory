@@ -7,7 +7,7 @@ supersedes:
 superseded-by:
 ---
 
-# The at-price ex-lease multiple reads its share count as filed by the page's price date: one cut for the whole bridge, as the anchor's (audit E2-D21; operator ruling C4; stacked on #885)
+# The at-price ex-lease multiple reads its share count as filed by the page's price date: one cut for the whole bridge, as the anchor's (audit E2-D21; operator ruling C4; after #885)
 
 **WHAT.**
 - `ev_ebitda_basis.ex_lease_at_price` (`valuation.ev_ebitda_ex_lease_at_price`) cuts the companyfacts

@@ -238,6 +238,7 @@
     "ROST": "quality",
     "BURL": "overshoot",
     "TGT": "quality",
-    "TJX": "overshoot"
+    "TJX": "overshoot",
+    "MNST": "quality"
   }
 }
