@@ -22,7 +22,7 @@ from typing import Any, TypeVar
 from pydantic import ValidationError
 
 from vinci.config import Config, get_config
-from vinci.dossier import ciq_sheets, ltm_quarters, requirements, run_metrics
+from vinci.dossier import ciq_sheets, filed_tiebreak, ltm_quarters, requirements, run_metrics
 from vinci.dossier import flags as dossier_flags
 from vinci.dossier.anchor import (
     RECIPE_UNKNOWN,
@@ -74,7 +74,7 @@ from vinci.finra import build_finra_http
 from vinci.graph.exposure import ExposureGraph
 from vinci.graph.llm import LlmClient, MeteredLlmClient
 from vinci.labels import resolve_label
-from vinci.netcache import SecRateLimitedError, sec_refusal
+from vinci.netcache import HttpError, SecRateLimitedError, sec_refusal
 from vinci.rank import load_candidates_from_snapshot
 from vinci.resolver import EntityResolver
 from vinci.schemas.candidate import CandidateRecord
@@ -919,6 +919,41 @@ def _price_store_stamp(cfg: Config) -> PriceStoreStamp:
                            frontier=frontier)
 
 
+def _filed_tiebreak(cfg: Config, cik: str | None, mech: MechanicalLayer,
+                    refused: list[ltm_quarters.LtmCheck], *, bundle: CiqBundle,
+                    reference_date: date) -> list[filed_tiebreak.Decision]:
+    """The filing's answer for each refused row, read as filed by the page's price date (the cut
+    every page reader takes, `vinci.edgar.asof.page_price_date`). No CIK, or companyfacts EDGAR
+    will not serve (`HttpError`: a 404, or a 5xx past its retries), reads no filing, so every row
+    stays refused, saying so — as `mechanical._companyfacts_or_none` degrades. A throttle is not
+    an `HttpError` and stops the run (`SecRateLimitedError`)."""
+    si = mech.stock_info
+    cut = page_price_date(si.as_of if si else None, reference_date)
+    if not cik:
+        return [filed_tiebreak.Decision(r, None, "the record carries no CIK, so no filing can be "
+                                                 "read") for r in refused]
+    try:
+        facts = EdgarClient.from_config(cfg).companyfacts(cik)
+    except HttpError as exc:
+        return [filed_tiebreak.Decision(r, None, f"EDGAR companyfacts could not be read "
+                                                 f"({type(exc).__name__}: {exc})")
+                for r in refused]
+    return [filed_tiebreak.decide(r, facts, as_filed_by=cut, bundle=bundle) for r in refused]
+
+
+def _settle_ltm_refusals(ticker: str, mech: MechanicalLayer,
+                         decided: list[filed_tiebreak.Decision],
+                         ) -> tuple[MechanicalLayer, list[str]]:
+    """(the layer with every filed figure stated, one main-body caveat per figure) — or RAISE
+    naming each row the filing could not decide. All or nothing: a page is never built with one
+    material row stated as filed and another still contradicted by CIQ's own exports."""
+    if unresolved := [d for d in decided if d.figure is None]:
+        raise DossierAssemblyError(ltm_quarters.refusal_message(
+            ticker, [d.row for d in unresolved], filed_tiebreak.refusal_detail(unresolved)))
+    mech = filed_tiebreak.apply(mech, [d.figure for d in decided if d.figure is not None])
+    return mech, [d.caveat() for d in decided]
+
+
 def _edgar_cross_check(mech: MechanicalLayer, facts: dict[str, Any], *,
                        reference_date: date) -> tuple[float | None, str | None]:
     """EDGAR's lease-inclusive net debt beside CIQ's TEV claims (`ev_bridge`), as filed by the
@@ -1045,7 +1080,14 @@ def assemble_one(
     flags += ltm_read.flags()
     material = {f.label for f in demanded_material_figures(_mark_material(mech))}
     if refused := ltm_read.refused(material):
-        raise DossierAssemblyError(ltm_quarters.refusal_message(ticker, refused))
+        # (2026-11-04, operator approval) THE SEC FILING IS THE TIEBREAKER: a material row CIQ
+        # disagrees with itself on is stated as filed, with a main-body caveat naming CIQ's two
+        # readings, when the filed figure reproduces one of them; any row the filing cannot decide
+        # refuses exactly as before, saying why (`filed_tiebreak`). Still before any spend.
+        mech, filed_caveats = _settle_ltm_refusals(
+            ticker, mech, _filed_tiebreak(cfg, rec.identity.cik, mech, refused, bundle=bundle,
+                                          reference_date=fin.reference_date))
+        flags += filed_caveats
     # (PR-B §3-now) transcript slice computed ONCE here so a fail-loud flag fires whether or not
     # the LLM runs — transcripts on file that don't parse (no LibreOffice) never vanish silently.
     transcript = ciq_sheets.transcript_for_synthesis(bundle)
