@@ -39,7 +39,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-08-25 `[cadence-estimate]` — calendar in Analysis
 
 ## What happened — and can it survive?
-- **Shape (last 180 days):** gradual bleed — no discrete gap-down detected [4]
+- **Shape (180 days to 2026-08-14):** gradual bleed — no discrete gap-down detected [4]
 - **Price (180d):** 28.9% [5]
 - **Market (IWM) 180d:** 16.0% [6]
 - **vs market (180d):** 12.9% [7]
@@ -178,8 +178,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 # Analysis — full dossier
 
 ## What broke — and did it fall alone?
-- **Read — what broke (last 180 days):** gradual bleed — no discrete gap-down detected [4]
-- **Gap-down dates (last 180 days):** _UNKNOWN_ — no gap-down events on the data-record
+- **Read — what broke (180 days to 2026-08-14):** gradual bleed — no discrete gap-down detected [4]
+- **Gap-down dates (180 days to 2026-08-14):** _UNKNOWN_ — no gap-down events on the data-record
 
 _Company-specific or market-wide?_
 - **Name 180d return:** 28.9% [5]

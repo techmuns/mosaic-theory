@@ -19,7 +19,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-11-04 `[cadence-estimate]` — calendar in Analysis
 
 ## What happened — and is the catalyst still ahead?
-- **Shape (last 180 days):** discrete gap-downs — 2026-08-05 earnings [3]
+- **Shape (180 days to 2026-10-16):** discrete gap-downs — 2026-08-05 earnings [3]
 - **Price (180d):** 45.5% [4]
 - **Market (MDY) 180d:** -0.8% [5]
 - **vs market (180d):** 46.3% [6]
@@ -142,7 +142,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 # Analysis — full dossier
 
 ## What moved the price — and did it move alone?
-- **Read — what moved (last 180 days)** · discrete gap-downs: [3]
+- **Read — what moved (180 days to 2026-10-16)** · discrete gap-downs: [3]
   - 2026-08-05 **-15.8%** → earnings
 
 _Company-specific or market-wide?_
