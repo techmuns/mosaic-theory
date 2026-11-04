@@ -2,7 +2,7 @@
 id: 2026-11-04-untraceable-figure-caveats-measured
 status: open
 date: 2026-11-04
-prs: []
+prs: [890]
 supersedes:
 superseded-by:
 ---
