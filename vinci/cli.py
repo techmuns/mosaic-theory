@@ -2714,88 +2714,6 @@ def _cmd_monitor(args: argparse.Namespace) -> int:
     return 0
 
 
-# --- calls tape ---------------------------------------------------------------
-def _cmd_calls_accounts(args: argparse.Namespace) -> int:
-    """Rebuild data/calls/accounts.json from each account's own meta.json (derived, idempotent)."""
-    from vinci.calls.accounts import rebuild_accounts
-    idx = rebuild_accounts(default=getattr(args, "default", None))
-    print(f"default: {idx.default}")
-    for a in idx.accounts:
-        print(f"  {a.display:<22} {a.first}..{a.last}  posts={a.n_posts:>6}  "
-              f"tracked={a.n_tracked:>4}  hand={a.n_hand_labels:>4}  "
-              f"machine={a.n_machine_labels:>6}")
-    return 0
-
-
-def _cmd_calls_bars(args: argparse.Namespace) -> int:
-    """Fetch each tracked ticker's Polygon window into data/calls/<handle>/bars/.
-
-    SERVER-SIDE ONLY. The key is read from the environment and never leaves this process; the
-    browser reads the committed files, never Polygon.
-    """
-    from vinci.calls.accounts import load_accounts
-    from vinci.calls.bars import fetch_account_bars
-    handle = load_accounts().get(args.account).handle
-    only = set(args.only.split(",")) if args.only else None
-
-    def _prog(i: int, tot: int, sym: str, n: int) -> None:
-        print(f"  {i:>4}/{tot}  {sym:<8} {n:>5} bars", flush=True)
-
-    counts = fetch_account_bars(handle, only=only, on_progress=_prog)
-    empty = sorted(t for t, c in counts.items() if c == 0)
-    print(f"{handle}: {len(counts)} tickers, {sum(counts.values()):,} bars")
-    if empty:
-        print(f"  no bars (delisted / renamed / index): {', '.join(empty)}")
-    return 0
-
-
-def _cmd_calls_score(args: argparse.Namespace) -> int:
-    """Score an account's directional calls against the committed bars.
-
-    The printed counts are an OPERATOR RUN SUMMARY, not a published aggregate — see
-    vinci/calls/run.py on why no hit-rate reaches the dashboard until the hand set is large.
-    """
-    import collections
-
-    from vinci.calls.accounts import load_accounts
-    from vinci.calls.run import score_account, write_results
-    handle = load_accounts().get(args.account).handle
-    res = score_account(handle, only_hand=args.hand_only)
-    out = write_results(handle, res, hand_only=args.hand_only)
-    by = collections.Counter(r.status for r in res)
-    print(f"{handle}: scored {len(res)} directional calls -> {out}")
-    for k in ("CLOSED", "OPEN", "NO_PRICE_DATA", "NO_ENTRY_BAR", "BAD_HORIZON"):
-        if by.get(k):
-            print(f"  {k:<14} {by[k]:>5}")
-    tgt = collections.Counter(r.target_status for r in res if r.target_status)
-    print("  target: " + "  ".join(f"{k}={v}" for k, v in sorted(tgt.items())))
-    return 0
-
-
-def _cmd_calls_import(args: argparse.Namespace) -> int:
-    """Merge an exported labelling session back into the account's corpus.
-
-    The dashboard cannot write — it is a static mirror — so landing a session is this deliberate,
-    reviewable step, where the change appears in `git diff` like any other. Does NOT re-score;
-    run `vinci calls score` after.
-    """
-    from vinci.calls.accounts import load_accounts
-    from vinci.calls.ingest import import_labels
-    handle = load_accounts().get(args.account).handle
-    r = import_labels(handle, Path(args.path), dry_run=args.dry_run)
-    verb = "would merge" if args.dry_run else "merged"
-    print(f"{handle}: {verb} {r['rows']} row(s) from {args.path}")
-    print(f"  new                {r['new']:>5}")
-    print(f"  updated (hand)     {r['updated']:>5}")
-    print(f"  replaced a guess   {r['replaced_machine']:>5}")
-    if not args.dry_run:
-        print(f"  hand labels now    {r['hand_total']:>5}")
-        print(f"  calendar days recounted {r['days_recounted']:>5}")
-        print("  scores are NOT updated — run `vinci calls score` to re-score,")
-        print("  and `vinci calls accounts` to refresh the index the dashboard's count reads.")
-    return 0
-
-
 def _cmd_audit_spot(args: argparse.Namespace) -> int:
     """SPOT audit — every committed record's spot against the bar it claims to be. READ-ONLY.
 
@@ -3105,50 +3023,6 @@ def _cmd_run_monthly(args: argparse.Namespace) -> int:
         as_of=as_of, benchmark=args.benchmark, cost_bps=args.cost_bps, progress=stderr_reporter
     )
     print(f"monthly run: spread={report['buy_avoid_spread']} pending={report['n_pending']}")
-    return 0
-
-
-def _cmd_graph_test0(args: argparse.Namespace) -> int:
-    """Score the EDGAR who-names-whom graph against the CIQ ground truth (graph-track Test 0)."""
-    import json
-    from pathlib import Path
-
-    from vinci.ciq import LocalFolderManualStore, load_ciq_edges
-    from vinci.graph import AnthropicLlmClient
-    from vinci.graph.test0 import score_test0
-
-    cfg = get_config()
-    cfg.ensure_dirs()
-    resolver = EntityResolver.from_config(cfg)
-    edgar = EdgarClient.from_config(cfg)
-    llm = AnthropicLlmClient(model=args.model or cfg.graph_llm_model)
-    ciq_dir = Path(args.ciq_dir) if args.ciq_dir else cfg.data_dir / "manual" / "ciq"
-    ciq_edges, _ = load_ciq_edges(LocalFolderManualStore(ciq_dir), resolver)
-
-    report = score_test0(edgar, resolver, llm, ciq_edges, max_focals=args.max_focals)
-    print(
-        f"=== Graph Test 0 · model {report['model']} · "
-        f"{report['focals_scored']} focals vs CIQ ground truth ==="
-    )
-    print(
-        f"precision {report['precision']:.0%} · recall {report['recall']:.0%} (coverage-limited) · "
-        f"resolution-rate {report['resolution_rate']:.0%} · "
-        f"TP {report['true_positives']} / spurious {report['spurious']} / missed {report['missed']}"
-    )
-    for f in report["per_focal"]:
-        print(
-            f"  • {f['focal']:<6} {f['status']:<8} extracted {f['edges_extracted']:>2} "
-            f"(resolved {f['edges_resolved']:>2}) · CIQ {f['ciq_truth']:>3} · "
-            f"matched {len(f['matched']):>2} · spurious {len(f['spurious']):>2}"
-        )
-    if args.json:
-        dump = {k: v for k, v in report.items() if k != "edges"}
-        dump["edges"] = [e.model_dump() for e in report["edges"]]
-        # NOT into snapshots/: the per-focal CIK lists are derived from the licensed CIQ ground
-        # truth, so this artifact stays in the git-ignored data root, never committed.
-        out = cfg.data_dir / "graph_test0.json"
-        out.write_text(json.dumps(dump, indent=2))
-        print(f"wrote {out} (git-ignored — contains CIQ-derived comparison)")
     return 0
 
 
@@ -4819,28 +4693,6 @@ def build_parser() -> argparse.ArgumentParser:
                       help="also write data/snapshots/data_quality/<source>/<as-of>.json")
     p_dq.set_defaults(func=_cmd_audit_quality)
 
-    p_calls = sub.add_parser("calls", help="the calls tape — score a public account's stated calls")
-    calls_sub = p_calls.add_subparsers(dest="calls_what", required=True)
-    p_ca = calls_sub.add_parser("accounts", help="rebuild the account index from each meta.json")
-    p_ca.add_argument("--default", help="handle that opens by default")
-    p_ca.set_defaults(func=_cmd_calls_accounts)
-    p_cb = calls_sub.add_parser("fetch-bars", help="fetch Polygon daily bars for tracked tickers")
-    p_cb.add_argument("--account", help="handle (default: the index's default)")
-    p_cb.add_argument("--only", help="comma-separated tickers, instead of all tracked")
-    p_cb.set_defaults(func=_cmd_calls_bars)
-    p_cs = calls_sub.add_parser("score", help="score labelled calls against the committed bars")
-    p_cs.add_argument("--account", help="handle (default: the index's default)")
-    p_cs.add_argument("--hand-only", action="store_true", dest="hand_only",
-                      help="score only human-labelled rows")
-    p_cs.set_defaults(func=_cmd_calls_score)
-    p_ci = calls_sub.add_parser("import-labels",
-                                help="merge an exported labelling session back into the corpus")
-    p_ci.add_argument("path", help="the JSONL exported from the tape")
-    p_ci.add_argument("--account", help="handle (default: the index's default)")
-    p_ci.add_argument("--dry-run", action="store_true", dest="dry_run",
-                      help="report what would change and write nothing")
-    p_ci.set_defaults(func=_cmd_calls_import)
-
     p_ledger = sub.add_parser("ledger", help="list recorded paper verdicts")
     p_ledger.set_defaults(func=_cmd_ledger)
 
@@ -4862,14 +4714,6 @@ def build_parser() -> argparse.ArgumentParser:
     p_monthly.add_argument("--benchmark", default="IWM")
     p_monthly.add_argument("--cost-bps", type=float, default=25.0, dest="cost_bps")
     p_monthly.set_defaults(func=_cmd_run_monthly)
-
-    p_t0 = sub.add_parser("graph-test0", help="score the EDGAR graph vs CIQ ground truth (Test 0)")
-    p_t0.add_argument("--model", help="LLM model id (default: config graph_llm_model, "
-                                      "claude-opus-4-8 — the benchmarked baseline)")
-    p_t0.add_argument("--ciq-dir", dest="ciq_dir", help="CIQ exports folder (data/manual/ciq)")
-    p_t0.add_argument("--max-focals", type=int, dest="max_focals", help="limit focals (smoke test)")
-    p_t0.add_argument("--json", action="store_true", help="write graph_test0.json (git-ignored)")
-    p_t0.set_defaults(func=_cmd_graph_test0)
 
     p_cov = sub.add_parser("graph-coverage", help="build+measure the 1-hop graph on screen names")
     p_cov.add_argument("--band", default="A", help="triage band to build on (default: A)")
