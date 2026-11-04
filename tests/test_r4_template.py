@@ -94,8 +94,10 @@ def test_the_pages_tagged_r4_get_the_r4_template_as_committed(ticker: str) -> No
 # --- the bridge ----------------------------------------------------------------------------------
 
 #: A 0.0 preferred/minority line as the rebuild writes it since 2026-10-30 (audit A-D2, PR #877):
-#: no figure, and the reason. The committed pages' 0.0 lines are all absent rows on AMZN's and
+#: no figure, and the reason. The committed pages' 0.0 lines were all absent rows on AMZN's and
 #: UBER's own exports except UBER's preferred, a '-' (measured on each page's export by sha).
+#: AMZN's page has carried the rebuilt shape itself since its 2026-11-03 re-assembly, so its two
+#: shapes now read one page; UBER's committed page still carries the 0.0 lines.
 _UNREAD = {("AMZN", "Total Pref. Equity"): "the balance sheet carries no 'Total Pref. Equity' row",
            ("AMZN", "Total Minority Interest"):
                "the balance sheet carries no 'Total Minority Interest' row",
@@ -103,11 +105,15 @@ _UNREAD = {("AMZN", "Total Pref. Equity"): "the balance sheet carries no 'Total 
 
 
 def _rebuilt(ticker: str) -> dict[str, Any]:
-    """The page with its bridge in the shape its owed rebuild writes (PR #877 round 2): the living
-    page carries 0.0 lines until then, so the pins below run on BOTH shapes."""
+    """The page with its bridge in the shape its owed rebuild writes (PR #877 round 2): a living
+    page carries 0.0 lines until then, so the pins below run on BOTH shapes. A page already rebuilt
+    (AMZN since 2026-11-03) carries the shape itself, and must carry exactly that reason."""
     doc = _page(ticker)
     for ln in doc["ev_bridge"]["lines"]:
         if (why := _UNREAD.get((ticker, ln["label"]))) is not None:
+            if ln["value"] is None:
+                assert ln.get("unread") == why, (ticker, ln["label"], ln.get("unread"))
+                continue
             assert ln["value"] == 0.0
             ln.update(value=None, unread=why)
     return doc

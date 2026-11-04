@@ -160,7 +160,8 @@ below is the operator's call; none is built.
 **BOUNDARY.**
 - Corpus: `data/dossiers/*/dossier.json` at 9e996d7f (27 pages; synthesis as committed, assembled
   2026-08-18 → 2026-10-29) and PR #886's three pages at 2746d0ef (assembled 2026-11-03), measured
-  2026-11-04. Unit: an UNTRACEABLE figure (one flag; a point can carry several), or a point.
+  2026-11-04. #886 merged the same day as 213f463b with those three pages byte-identical, so
+  main's corpus now holds the #886 versions of GOOGL, LLY and AMZN. Unit: an UNTRACEABLE figure (one flag; a point can carry several), or a point.
 - Classes: first that applies, in the table's order; "specific" = fewer than 5 of 10 decoys at
   ±4% steps (or ±1 unit of the last digit) also stated; "section" = the cited fact's top-level
   key of the mechanical layer. The hand classification covers #886's 55 and a 20-flag sample of
