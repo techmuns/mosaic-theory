@@ -13,9 +13,13 @@ superseded-by:
 800 raw characters from the outlook heading (`_GUIDANCE_WINDOW`), whitespace collapsed after the cut.
 `drawdown_cause.revised_guidance` stored that window and both renderers printed it as the verbatim
 outlook, with nothing saying the filing goes on. The extractor now also records whether any text
-follows the window (`_OutlookWindow.cut`, threaded by `_revised_guidance` into the new
-`DrawdownCause.revised_guidance_cut`, ABSENT when None via `DROP_WHEN_NONE`). Both renderers
-(`render._guidance_fact`, dossier.js `guidanceFact`) mark the quote where it stops:
+follows the window (`_OutlookWindow.cut`). `_revised_guidance` returns it beside the quote, and
+#906's reader `_read_gaps` → `_GapRead` carries it into the new `revised_guidance_cut`, both on
+`DrawdownCause` (the rolling window) and on each dated part `DrawdownWindow`
+(`drawdown_cause.anchor.at_anchor` / `.since`, #906, merged into this branch at `05b2529b`). Each
+model writes the field only when it is set (its `_absent_not_null` serializer). Both renderers
+(`render._cut_mark`, dossier.js `cutMark`) mark the quote where it stops, on the current window's
+fact line and on a dated part's "outlook then" line:
 
 - `true` → `… (quote cut — the release continues in the filing)`;
 - `false` (the release ended inside the window) → no mark;
@@ -55,6 +59,12 @@ mark is true as it stands, and a re-assembly turns it definite.
   JSON (`dossier.json` untouched), then `mirror_to_frontend`. Exactly BRBR, SMPL, VITL and VRRM
   moved, by one line each: the quote line gains the mark before its cite. No other committed file
   moved.
+- **#906's merge.** After merging main at `05b2529b`, the $0 re-render over all 27 committed
+  pages moved nothing: no committed page yet carries `drawdown_cause.anchor`, and every committed
+  `dossier.md` already equals a fresh render. The dated-part mark is pinned on #906's own
+  real-shape fixture `tests/fixtures/prespend/2026-11-04/SMPL-mechanical-anchored.json`: SMPL's
+  $0 build, whose April quote, ending "near-ter", sits in `at_anchor` and whose rolling window
+  holds none. It is also pinned on a build from #906's real-text 8-K fixtures.
 - **Pins** (`tests/test_guidance_cut_mark.py`):
   - The extractor: positive (cut) and negative (the release ends inside the window, trailing
     whitespace included).
@@ -67,13 +77,22 @@ mark is true as it stands, and a re-assembly turns it definite.
     mark.
   - The web twin on the committed SMPL page prints the possibly-cut mark exactly once.
   - The two marks are declared identically in Python and JS.
-- **Mutations (11 of 11 caught by `tests/test_guidance_cut_mark.py`):**
+  - The dated part, built by `_drawdown_cause` from #906's real-text fixtures: the at-underwrite
+    quote records `cut` true and writes the key. The since part holds no quote and writes none.
+    Built at 2026-08-14 with no anchor, the rolling window carries the quote with `cut` true.
+  - #906's anchored fixture, serialised before the field, round-trips with no key.
+  - E2E on both twins: the at-underwrite "outlook then" line prints the possibly-cut mark as
+    built, the cut mark once recorded, and nothing for a quote the release ended inside.
+- **Mutations (17 of 17 caught by `tests/test_guidance_cut_mark.py`):**
   - Python renderer: no mark; marks a not-cut quote; treats a pre-field page as cut.
   - JS renderer: no mark; marks a not-cut quote; its mark drifts from the Python twin.
   - Extractor: `cut` read from the raw length, so trailing whitespace counts; always cut; never
     cut.
   - The reader drops `cut`.
-  - The field is unregistered in `DROP_WHEN_NONE`, so it is written as null.
+  - `_read_gaps` drops it; `DrawdownWindow` is built without it; `DrawdownCause` is built
+    without it.
+  - The at-anchor line is unmarked, in Python and in JS.
+  - `DrawdownCause` writes the field as null; `DrawdownWindow` writes it as null.
 - **Render preview** from committed JSON, `docs/dossier/guidance-quote-cut-2026-11-04/screenshots/`:
   - SMPL Analysis, collapsed;
   - SMPL Analysis, every `<details>` force-open (the fact is outside every `<details>`, so print
@@ -106,6 +125,7 @@ mark is true as it stands, and a re-assembly turns it definite.
   Each would change what a page computes or what the model is given, so each is its own build.
 - The cut mark says "the release continues", not "the outlook continues". `cut` only knows that
   text follows the window, and a 99.1 always runs on past its outlook into tables and boilerplate.
-- #906 (open) adds `drawdown_cause.anchor.at_anchor`, a `DrawdownWindow` holding its own copy of
-  `revised_guidance`, printed in its render as "outlook then". If #906 merges first, this branch
-  merges main and threads the flag into that copy. If this merges first, #906 owes the same.
+- #906 merged first (`05b2529b`) and is merged into this branch. The flag reaches its dated parts
+  and the "outlook then" line is marked. A page rebuilt after this lands records the dated part's
+  `cut`. Until then an anchored page shows the possibly-cut mark there, as SMPL's coming rebuild
+  will if it is built on code without this branch.

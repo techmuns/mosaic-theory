@@ -26,6 +26,7 @@ import pathlib
 import re
 import shutil
 import subprocess
+from datetime import date
 from typing import Any
 
 import pytest
@@ -41,6 +42,11 @@ JS = ROOT / "frontend" / "views" / "shared" / "dossier.js"
 #: SMPL as assembled 2026-08-18 — its quote stops at "…in the near-ter" like the living page's, and
 #: it never moves (the living SMPL's rebuild drops its April quote from the rolling window).
 FROZEN_SMPL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL" / "dossier.json"
+#: SMPL's $0 build of 2026-11-04 with #906's anchor (`tests/fixtures/prespend/README.md`): its April
+#: outlook quote now sits in `drawdown_cause.anchor.at_anchor` — 800 characters ending "near-ter",
+#: built before `revised_guidance_cut` existed — and the rolling window holds none.
+ANCHORED_SMPL = (ROOT / "tests" / "fixtures" / "prespend" / "2026-11-04"
+                 / "SMPL-mechanical-anchored.json")
 PAGES = sorted(p.parent.name for p in DOSS.glob("*/dossier.json"))
 MARKS = (GUIDANCE_CUT_MARK, GUIDANCE_MAYBE_CUT_MARK)
 
@@ -247,3 +253,84 @@ def test_the_marks_are_twins() -> None:
         m = re.search(rf'^const {name} = "([^"]*)";$', src, re.M)
         assert m is not None, f"dossier.js declares no {name}"
         assert m.group(1) == getattr(rd, name), name
+
+
+# --- the dated part (#906's `drawdown_cause.anchor`) carries its own quote and its own mark -------
+
+
+def _anchored_smpl() -> dict[str, Any]:
+    doc: dict[str, Any] = json.loads(ANCHORED_SMPL.read_text())
+    return doc
+
+
+def _at(doc: dict[str, Any]) -> dict[str, Any]:
+    at: dict[str, Any] = _dc(doc)["anchor"]["at_anchor"]
+    return at
+
+
+def test_the_reader_carries_the_cut_into_the_dated_part() -> None:
+    """SMPL's anchored block, built by `_drawdown_cause` from #906's real-text fixtures (8-K
+    0001702744-26-000010's Ex-99.1, cut after the text its reader reads but past the window): the
+    at-underwrite quote is PRESENT and the release goes on past it, so its part records `cut`
+    True — and writes the key. The rolling window and the since part hold no quote, so they carry
+    no cut and write no key."""
+    from tests.test_anchored_drawdown import _UNDERWRITE, _build
+
+    dc, _ = _build(date(2026, 11, 3), date(2026, 11, 3), _UNDERWRITE)
+    assert dc.anchor is not None
+    at = dc.anchor.at_anchor
+    assert at.revised_guidance.status is SourceStatus.PRESENT
+    assert at.revised_guidance_cut is True
+    assert json.loads(at.model_dump_json())["revised_guidance_cut"] is True
+    assert dc.revised_guidance.status is not SourceStatus.PRESENT
+    assert dc.revised_guidance_cut is None
+    assert dc.anchor.since is not None and dc.anchor.since.revised_guidance_cut is None
+    assert "revised_guidance_cut" not in json.loads(dc.anchor.since.model_dump_json())
+    assert "revised_guidance_cut" not in json.loads(dc.model_dump_json())
+
+
+def test_the_reader_carries_the_cut_into_the_current_window() -> None:
+    """The same real-text fixtures built at 2026-08-14, with no anchor: the rolling window still
+    holds April's gap-downs, so `DrawdownCause` carries the quote and its `cut` (True) — the
+    current window's half of `_GapRead`'s threading."""
+    from tests.test_anchored_drawdown import _build
+
+    dc, _ = _build(date(2026, 8, 14), date(2026, 8, 14), None)
+    assert dc.anchor is None
+    assert dc.revised_guidance.status is SourceStatus.PRESENT
+    assert dc.revised_guidance_cut is True
+    assert json.loads(dc.model_dump_json())["revised_guidance_cut"] is True
+
+
+def test_a_dated_part_built_before_the_field_round_trips_without_it() -> None:
+    """The anchored fixture, serialised before the field existed, round-trips with no
+    `revised_guidance_cut` key on either part — absent means not yet built."""
+    doc = _anchored_smpl()
+    assert "revised_guidance_cut" not in _at(doc)
+    out = json.loads(dossier_json(Dossier.model_validate(doc)))
+    assert "revised_guidance_cut" not in out["mechanical"]["drawdown_cause"]["anchor"]["at_anchor"]
+
+
+def test_the_at_anchor_quote_prints_the_mark_its_field_says_on_both_twins(
+        tmp_path: pathlib.Path) -> None:
+    """E2E on the dated part: the "outlook then" line under "Drawdown at underwrite" prints,
+    directly after the stored quote, the possibly-cut mark as built (before the field), the cut mark
+    once `cut` is recorded, and nothing for a quote the release ended inside — on both twins."""
+    node = shutil.which("node") is not None
+    for cut in (None, True, False):
+        doc = _anchored_smpl()
+        at = _at(doc)
+        if cut is False:
+            at["revised_guidance"]["value"] = at["revised_guidance"]["value"][:120]
+        if cut is not None:
+            at["revised_guidance_cut"] = cut
+        quote = at["revised_guidance"]["value"]
+        mark = _expected_mark(at)
+        md = _md(doc)
+        assert f"  - outlook then: {quote}{mark} [" in md, cut
+        assert not any(m in md for m in MARKS if m != mark), cut
+        if node:
+            web = _web(doc, tmp_path)
+            tail = _web_mark(mark) if mark else ""
+            assert f'<b>outlook then:</b> {_esc(quote)}{tail}<sup class="cite-n"' in web, cut
+            assert not any(_esc(m) in web for m in MARKS if m != mark), cut
