@@ -30,7 +30,7 @@ from vinci.dossier import ciq_balance, ev_gap
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq import CiqBundle, read_cell, read_sheets
 from vinci.dossier.propose import r4_bridge_fact
-from vinci.dossier.schemas import SourceStatus
+from vinci.dossier.schemas import EvBridge, SourceStatus
 
 FIX = gen.HERE
 ANNUAL, QUARTERLY = FIX / gen.ANNUAL_XLS, FIX / gen.QUARTERLY_XLS
@@ -168,7 +168,7 @@ def _line(bridge: Any, label: str) -> Any:
 def test_a_marker_claim_is_unread_and_says_so(bundle: CiqBundle) -> None:
     """The synthetic quarterly balance sheet writes '-' for preferred, as UBER's does."""
     b = cs.ev_bridge(bundle, fy_periods=["FY27"])
-    assert b is not None
+    assert isinstance(b, EvBridge)
     pref = _line(b, "Total Pref. Equity")
     assert pref.value is None and pref.unread == f"'Total Pref. Equity' reads '-' at [{LATEST_Q}]"
     assert _line(b, "Total Minority Interest").value == gen.Q_MINORITY[-1]
@@ -180,7 +180,7 @@ def test_an_absent_claim_row_is_named(bundle: CiqBundle) -> None:
     bs = bundle.sheet("financials", "Balance Sheet", freq="quarterly")
     bs.remove(_row(bs, "Total Minority Interest"))
     b = cs.ev_bridge(bundle, fy_periods=["FY27"])
-    assert b is not None
+    assert isinstance(b, EvBridge)
     m = _line(b, "Total Minority Interest")
     assert m.value is None
     assert m.unread == "the balance sheet carries no 'Total Minority Interest' row"
@@ -299,5 +299,5 @@ def test_a_valued_claim_still_reads(bundle: CiqBundle) -> None:
     bs = bundle.sheet("financials", "Balance Sheet", freq="quarterly")
     _row(bs, "Total Pref. Equity")[-1] = 7.5
     b = cs.ev_bridge(bundle, fy_periods=["FY27"])
-    assert b is not None and _line(b, "Total Pref. Equity").value == 7.5
+    assert isinstance(b, EvBridge) and _line(b, "Total Pref. Equity").value == 7.5
     assert cs.net_debt(bundle).status is SourceStatus.PRESENT
