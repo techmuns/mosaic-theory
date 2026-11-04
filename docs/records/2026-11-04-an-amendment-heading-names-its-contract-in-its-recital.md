@@ -11,9 +11,9 @@ superseded-by:
 
 **WHAT.** `covenant_extract.agreement_title` has a third reading, used only when the head carries
 no capitals title ending in a debt noun (`_TITLE`) and is not a bare "INDENTURE". If the cleaned
-head OPENS with an amendment heading in capitals (`_AMEND_HEAD`: up to three capitals words, then
-AMENDMENT), the title is the contract the recital names (`_BASE_REF`, the same reader a titled
-amendment already falls back on). SMPL's "REPRICING AMENDMENT, DATED AS OF MARCH 16, 2018, BY AND
+head OPENS with an amendment heading in capitals (`_AMEND_HEAD`: up to three capitals words, none
+of them OF, then AMENDMENT), the title is the FIRST contract the recital names, of any kind
+(`_RECITAL_REF`: "the" or "that certain", then title-case words, then a contract noun). SMPL's "REPRICING AMENDMENT, DATED AS OF MARCH 16, 2018, BY AND
 AMONG …" refers to "the Credit Agreement, dated as of July 7, 2017". Its "AMENDMENT NO 2.
 (INCREMENTAL FACILITY AMENDMENT) …" defines "the Credit Agreement". Both now read `CREDIT
 AGREEMENT`, which `is_debt_agreement` passes. Whether the named contract is debt stays that gate's
@@ -22,7 +22,8 @@ where it used to be refused as "no agreement at all". `is_amendment` recognises 
 so these documents are marked as amendments on their own evidence. Until now SMPL's two were marked
 only through a defect (see below). The end of `agreement_title` moved into `_as_title`, which
 both readings use; its one addition, a strip of " .,-", is a no-op on the old path, whose title is
-already stripped (item 2 below finds no other title changed).
+already stripped (item 2 below finds no other title changed). Extraction version
+`2026-11-04.amendment-recital`.
 
 **WHY — the decision, from the guard's own history.** #652 (`f55eff4a`,
 `docs/records/2026-09-28-a-covenant-exhibit-is-identified-by-the-document.md`) put in the
@@ -53,6 +54,18 @@ identity, and it now does. So: yes, it passes.
   Agreement". Read from there, it would be named for a contract its revolver is not, and split from
   the "AMENDED AND RESTATED REVOLVING CREDIT AGREEMENT" it amends. It stays refused, and is left for
   its own fix (below).
+- *Not a charter.* "CERTIFICATE OF AMENDMENT" and "ARTICLES OF AMENDMENT" amend a charter, not a
+  contract, so OF may not stand before AMENDMENT in the heading.
+- *The first contract named, of any kind, not the first debt contract.* The first draft of this
+  change read the recital with `_BASE_REF`, which a titled amendment already falls back on. Review
+  round 0 showed why that is wrong here: `_BASE_REF`'s "the … Agreement" branch names ONLY a
+  Credit/Loan/Indenture/Note agreement, and it is case-insensitive. So an amendment whose recital
+  names "the Employment Agreement" was named for a later "the Credit Agreement" and passed. And a
+  prose run ("the representations and warranties in the Credit Agreement") was taken as the name.
+  An identity reader must not lean toward the answer the gate passes. `_RECITAL_REF` takes the
+  first title-case name ending in a contract noun (Agreement, Indenture, Lease, Note(s),
+  Guaranty/Guarantee, Plan, Letter), allowing "and"/"of" inside it ("Amended and Restated"). It
+  changes no title on the corpus against the `_BASE_REF` draft (item 2).
 
 **HOW VERIFIED** (real runs; CORPUS BEFORE SYNTHETIC).
 
@@ -76,6 +89,8 @@ identity, and it now does. So: yes, it passes.
    2011" (`CREDIT AGREEMENT`), and NCNO's second and fourth office-lease amendments (`OFFICE
    LEASE`, refused). 1 `is_amendment` changes, on BURL's 2014 amendment (False → True, which is
    correct). BURL's is a target past BURL's cost bound, so it is never fetched, before or after.
+   The final code and the `_BASE_REF` draft give the same 6 titles, the same 1 amendment flag and
+   the same fate for all 104 targets.
 3. **The pre-spend check, A/B on identical inputs.** `vinci dossier precheck --ticker SMPL` on a
    copy of the store the paid run `4f30d3a2` used (sha256 `bad8ac0aad77…`) and the operator's
    2026-11-04 exports:
@@ -101,15 +116,22 @@ identity, and it now does. So: yes, it passes.
      is not an amendment; NKE's offer letter, TGT's transition letter, UBER's confirmation and
      TJX's stock-plan amendment are refused; VRRM's title-cased amendment is not renamed `CREDIT
      AGREEMENT`.
-   - Mutations: 6 run, 6 caught. They were: drop the recital reading; require no heading; unanchor
-     the heading; make it case-insensitive; fix `_ORD.upper()` and drop the new `is_amendment`
-     line; refuse a non-debt base inside `agreement_title`. TWO SURVIVED THE FIRST ROUND, and both
-     were the pins' fault. Swapping `.match` for `.search` cannot unanchor a pattern that carries
-     its own `^`, so that mutation changed nothing. And the VRRM pin was first a hand-cut
-     600-character string that stopped before character 888, where the recital names "the Credit
-     Agreement", so it could not fail. That pin now reads VRRM's real 3,000-character head. A
-     seventh run (fix `_ORD.upper()`, keep the new line) survives by design: it shows the pins
-     still hold once that defect is fixed.
+   - Review round 0, each DERIVED from a real head and each failing on the first draft: NCNO's head
+     with its object swapped to "the Employment Agreement" is named `EMPLOYMENT AGREEMENT` and
+     refused (the draft read `None`, and `CREDIT AGREEMENT` once the review's first repair was in);
+     NCNO's head cut so a prose run comes first still reads `CREDIT AGREEMENT`; SMPL's head with a
+     CERTIFICATE / ARTICLES OF AMENDMENT heading reads `None`.
+   - Mutations on the final code: 10 run, 10 caught. They were: drop the recital reading; require
+     no heading; unanchor the heading (`^` removed AND `.search`); make it case-insensitive; let OF
+     stand before AMENDMENT; fix `_ORD.upper()` and drop the new `is_amendment` line; refuse a
+     non-debt base inside `agreement_title`; read the base with `_BASE_REF` again; make
+     `_RECITAL_REF` case-insensitive; let it name only an Agreement. A control (fix `_ORD.upper()`,
+     keep the new line) survives by design: the pins still hold once that defect is fixed.
+     MUTATIONS THAT COULD NOT FAIL, found on the way, and all of them the pins' or the mutation's
+     fault. Removing `^` alone, or swapping `.match` for `.search` alone, unanchors nothing,
+     because each half anchors by itself; that happened twice. And the VRRM pin was first a
+     hand-cut 600-character string that stopped before character 888, where the recital names "the
+     Credit Agreement", so it could not fail. It now reads VRRM's real 3,000-character head.
 5. Suite: ruff and `mypy --strict vinci` clean. `pytest -m "not network" -rs` was run with the CIQ
    folder linked and without it; the counts are in the PR body.
 

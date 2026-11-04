@@ -267,6 +267,12 @@ const EXTRACTION_VERSIONS = [
     "traces (0.026 is the 3rd percentile; both neighbours at an exact half), and a duration " +
     "written hyphenated or abbreviated to y (5-year, 52-week, ~2y) is skipped like its spaced " +
     "form; every other figure still traces only to the fact its point cites"],
+  ["2026-11-04.amendment-recital",
+    "a covenant exhibit whose capitals heading is an amendment naming no contract (REPRICING " +
+    "AMENDMENT, AMENDMENT NO 2.) is named for the first contract its recital names and marked " +
+    "an amendment, so a credit-agreement amendment reaches the covenant extractor and any " +
+    "other is refused for what it amends (an office lease); a CERTIFICATE or ARTICLES OF " +
+    "AMENDMENT and a title-cased heading are not read this way"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

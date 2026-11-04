@@ -480,7 +480,7 @@ _BARE_NOUN = re.compile(r"^(INDENTURE|DEBENTURE)\b", re.I)
 #: MARCH 16, 2018, BY AND AMONG ..." and "AMENDMENT NO 2. (INCREMENTAL FACILITY AMENDMENT)" (SMPL),
 #: "FIRST AMENDMENT THIS FIRST AMENDMENT ... to the Credit Agreement referenced below" (NCNO). Such
 #: a document names its contract only in the recital, so `agreement_title` reads it there
-#: (`_BASE_REF`). ANCHORED AT THE START of the cleaned head: TGT's 8-K cover document cites "the
+#: (`_RECITAL_REF`). ANCHORED AT THE START of the cleaned head: TGT's 8-K cover document cites "the
 #: Credit Agreement" too, and only the heading says a document IS an amendment. CAPITALS ONLY, for
 #: `_IS_AMENDMENT`'s reason: a heading is set in capitals. A title-cased heading names its contract
 #: itself (VRRM's "Amendment No. 4 to REVOLVING CREDIT Agreement"), and its recital's defined term
@@ -488,8 +488,18 @@ _BARE_NOUN = re.compile(r"^(INDENTURE|DEBENTURE)\b", re.I)
 #: exhibits on the pointer rows of the 25 committed pages that have them: it names six, four of
 #: them a credit agreement (SMPL x2, NCNO's First Amendment, BURL's 2014 Amendment No. 4) and two an
 #: office lease (NCNO, refused). Three of those four newly reach the extractor; BURL's is past its
-#: cost bound.
-_AMEND_HEAD = re.compile(r"^(?:[A-Z][A-Z\-]*\s+){0,3}AMENDMENT\b")
+#: cost bound. NOT "... OF AMENDMENT": a CERTIFICATE or ARTICLES OF AMENDMENT amends a charter.
+_AMEND_HEAD = re.compile(r"^(?:(?!OF\b)[A-Z][A-Z\-]*\s+){0,3}AMENDMENT\b")
+#: THE FIRST CONTRACT THE RECITAL NAMES, OF ANY KIND — what such an amendment amends. Not
+#: `_BASE_REF`: its "the ... Agreement" branch names only a Credit/Loan/Indenture/Note agreement,
+#: so it would skip "the Employment Agreement" an amendment amends and take a later "the Credit
+#: Agreement" — an identity reader leaning toward the answer the gate passes (review round 0).
+#: A DEFINED TERM IS CAPITALISED: title-case words, plus "and"/"of" ("Amended and Restated"), so
+#: "the Lenders party to the Credit Agreement" names CREDIT AGREEMENT, not the sentence, and
+#: SMPL's "the (a) Credit Agreement" is passed over for its "the “ Credit Agreement ”".
+_RECITAL_REF = re.compile(
+    r"\b(?:that\s+certain|the)\s+[\u201c\"]?\s*((?:(?:[A-Z][\w'\-]*|and|of)\s+){1,6}"
+    r"(?:Agreement|Indenture|Lease|Notes?|Guarant(?:y|ee)|Plan|Letter))\b")
 #: The capture ran past the heading into the body — a title, not a sentence.
 _PROSE = re.compile(r"\b(ENTERED|DATED|MADE|WHEREAS|BETWEEN|AMONG|BY\s+AND|HEREBY|PURSUANT|"
                     r"MEANING|ASCRIBED|THERETO|DEFINED|REFERRED)\b", re.I)
@@ -568,13 +578,14 @@ def agreement_title(text: str) -> str | None:
         b0 = _BARE_NOUN.match(h)
         if b0:
             return b0.group(1).upper()
-        # An amendment heading naming no contract: the contract is the one its recital names
-        # (`_AMEND_HEAD`). Whether that contract is debt is `is_debt_agreement`'s call, not this
-        # function's: an amendment to a lease is named for the lease, and refused for it.
-        b = _BASE_REF.search(h) if _AMEND_HEAD.match(h) else None
-        if b is None:
+        # An amendment heading naming no contract: the contract is the first one its recital
+        # names (`_AMEND_HEAD`, `_RECITAL_REF`). Whether that contract is debt is
+        # `is_debt_agreement`'s call, not this function's: an amendment to a lease is named for
+        # the lease, and refused for it.
+        r = _RECITAL_REF.search(h) if _AMEND_HEAD.match(h) else None
+        if r is None:
             return None
-        return _as_title(_LEAD_NOISE.sub("", _clean_title(b.group(1) or b.group(2))))
+        return _as_title(_LEAD_NOISE.sub("", _clean_title(r.group(1))))
     # CODES FIRST, THEN THE AMENDMENT PREFIX. `_AMEND_PREFIX` is anchored at ^, so while a filing
     # id still sits in front of the title it cannot match and the amendment INSTANCE survives
     # normalisation. WERN's Amendment No. 3 is the real case: its head begins

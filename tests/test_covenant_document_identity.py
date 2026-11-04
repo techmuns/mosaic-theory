@@ -592,6 +592,51 @@ def test_a_title_cased_heading_is_not_renamed_by_its_recital() -> None:
     assert got != "CREDIT AGREEMENT", got
 
 
+def test_a_recital_run_of_prose_is_not_the_contract_name() -> None:
+    """(-) THE DEFINED TERM, NOT THE SENTENCE AROUND IT (review round 0, finding 1). A recital
+    carries prose runs ending in a contract — NCNO's own head has "the Borrower pursuant to the
+    Credit Agreement" and "the representations and warranties in the Credit Agreement". A
+    case-insensitive capture took the run as the name. DERIVED, not drawn: these cut NCNO's real
+    head so a prose run comes first; on the real heads a clean "the Credit Agreement" comes first.
+    Read as the name, the first was refused (PURSUANT is prose) and the second named
+    "REPRESENTATIONS AND WARRANTIES IN THE CREDIT AGREEMENT"."""
+    head = _heads()[NCNO_FIRST]
+    first_ref = "to the Credit Agreement referenced below"
+    assert first_ref in head, "the derivation must apply"
+    pursuant = head.replace(first_ref, "to the agreement referenced below", 1)
+    cut = head.index(first_ref) + len("to ")
+    warranties = head[:cut] + head[head.index("limitation, all such references"):]
+    for derived in (pursuant, warranties):
+        assert agreement_title(derived) == "CREDIT AGREEMENT", agreement_title(derived)
+
+
+def test_the_contract_named_is_the_first_one_the_recital_names() -> None:
+    """(-) THE READER MUST NOT LEAN TOWARD THE GATE'S ANSWER (review round 0, finding 2). An
+    amendment whose recital names "the Employment Agreement" amends an employment agreement,
+    whatever credit agreement it mentions later. DERIVED from NCNO's real head with its object
+    swapped. Read with `_BASE_REF`, whose "the ... Agreement" branch names only debt contracts, it
+    was named CREDIT AGREEMENT and passed the gate."""
+    head = _heads()[NCNO_FIRST]
+    first_ref = "to the Credit Agreement referenced below"
+    assert first_ref in head and "pursuant to the Credit Agreement" in head, "derivation must apply"
+    swapped = head.replace(first_ref, "to the Employment Agreement referenced below", 1)
+    got = agreement_title(swapped)
+    assert got == "EMPLOYMENT AGREEMENT", got
+    assert not is_debt_agreement(got)
+
+
+def test_a_certificate_of_amendment_is_not_an_amendment_heading() -> None:
+    """(-) A CHARTER INSTRUMENT (review round 0, finding 3). "CERTIFICATE OF AMENDMENT" and
+    "ARTICLES OF AMENDMENT" amend a charter, not a contract, so their recital is not read for one.
+    DERIVED from SMPL's real Repricing Amendment with its heading swapped: it was named CREDIT
+    AGREEMENT and passed."""
+    head = _heads()[SMPL_REPRICING]
+    for heading in ("CERTIFICATE OF AMENDMENT", "ARTICLES OF AMENDMENT"):
+        swapped = head.replace("REPRICING AMENDMENT, DATED", f"{heading}, DATED", 1)
+        assert swapped != head, "the derivation must apply"
+        assert agreement_title(swapped) is None, heading
+
+
 class _ServesHeads:
     """SEC reads served from the real heads, by exhibit filename."""
 
