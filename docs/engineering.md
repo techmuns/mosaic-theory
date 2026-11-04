@@ -124,7 +124,11 @@ PR (CLAUDE.md: coin-time translation).
   quarterly export, the filer's own XBRL figure for the same four quarters (as filed by the page's
   price date, on a hand-reviewed row→concept mapping) decides: if it matches either CIQ reading
   within 2% the page states the filed figure with a caveat, otherwise the build refuses as before.*
-  Home: `vinci/dossier/filed_tiebreak.py` (`MAPPING`, `decide`), `financial_summary.filed_ltm`.
+  A **containing line** (operator ruling 2026-11-04, "NFLX: B") is a filed line that holds the row
+  and more, such as NFLX's non-operating line. It never states the row. It picks CIQ's quarterly
+  reading only when CIQ's own breakdown of the line reproduces it in every quarter, within 0.5 $M.
+  Home: `vinci/dossier/filed_tiebreak.py` (`MAPPING`, `CONTAINING`, `decide`),
+  `financial_summary.filed_ltm`.
 - **Unread (a claim) / read_cell** (2026-10-30, audit RC1). Plain words: *a CIQ cell is read as
   (value, marker); a marker ('-', 'NA', 'NM', a blank) or a row the sheet lacks is NO value, never
   0 — an EV-bridge line with no figure carries `unread`, the reason it has none.* Home:

@@ -11,8 +11,8 @@ Statement is read through `vinci.dossier.ciq`'s real decode path and cut as foll
 The CIQ rows are the operator's licensed exports as of the date in `_about`.
 
 The companyfacts are cut BY CONCEPT, as `build_companyfacts_fixture.py` does: every row of each
-concept `filed_tiebreak.MAPPING` names, unmodified, plus the extra concepts a pin reads (NFLX's
-whole non-operating line). They are SEC's public data, fetched on the date in `_about`.
+concept `filed_tiebreak.MAPPING` and `CONTAINING` name, unmodified. They are SEC's public data,
+fetched on the date in `_about`.
 
     python scripts/build_filed_tiebreak_fixture.py <ciq-folder> <companyfacts-dir>
 
@@ -37,12 +37,14 @@ from vinci.dossier.materiality import unusual_items_block
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 OUT = ROOT / "tests" / "fixtures" / "filed_tiebreak.json"
 CORE = ("Total Revenue", "EBITDA", "EBIT", "Net Income")
-#: Each name, the CIQ rows its pins read, and the companyfacts concepts beyond the mapped ones.
+#: Each name and the CIQ rows its pins read.
+#: The containing line's CIQ component rows (`filed_tiebreak.CONTAINING`), for the names whose
+#: merger row a pin sets against it.
+_NONOP = tuple(line.components for line in filed_tiebreak.CONTAINING.values())[0]
 NAMES: dict[str, dict[str, Any]] = {
-    "CELH": {"rows": ("Merger & Related Restruct. Charges", "Other Unusual Items")},
-    "NFLX": {"rows": ("Merger & Related Restruct. Charges", "Interest and Invest. Income",
-                      "Currency Exchange Gains (Loss)", "Other Non-Operating Inc. (Exp.)"),
-             "tags": ("NonoperatingIncomeExpense",)},
+    "CELH": {"rows": ("Merger & Related Restruct. Charges", "Other Unusual Items", *_NONOP)},
+    "NFLX": {"rows": ("Merger & Related Restruct. Charges", *_NONOP)},
+    "WAT": {"rows": ("Restructuring Charges", "Merger & Related Restruct. Charges", *_NONOP)},
     "EPAM": {"rows": ("Restructuring Charges", "Merger & Related Restruct. Charges",
                       "Other Unusual Items")},
     "BDX": {"rows": ("Other Unusual Items",)},
@@ -102,7 +104,7 @@ def build(ciq: pathlib.Path, cf_dir: pathlib.Path) -> dict[str, Any]:
               for freq in ("annual", "quarterly")}
         facts = json.loads((cf_dir / f"{t}.json").read_text())
         tags = sorted({tg for line in filed_tiebreak.MAPPING.values() for tg in line.tags}
-                      | set(spec.get("tags", ())))
+                      | {line.tag for line in filed_tiebreak.CONTAINING.values()})
         gaap = facts["facts"].get("us-gaap", {})
         names[t] = {
             "folder": f"ciq/{t}",
@@ -123,8 +125,8 @@ def build(ciq: pathlib.Path, cf_dir: pathlib.Path) -> dict[str, Any]:
             "the four quarters ending on the LTM date plus the newest quarter (quarterly). "
             "DERIVED values only; the workbooks are never committed. `market_cap` is "
             "ciq_sheets.comps_market_cap ($M). `companyfacts` is SEC's companyfacts response "
-            f"fetched {date.today()}, cut by concept to every concept filed_tiebreak.MAPPING "
-            "names (plus NFLX's NonoperatingIncomeExpense), each concept's rows unmodified. "
+            f"fetched {date.today()}, cut by concept to every concept filed_tiebreak.MAPPING and "
+            "CONTAINING name, each concept's rows unmodified. "
             "Rebuild: scripts/build_filed_tiebreak_fixture.py."),
         "names": names,
     }

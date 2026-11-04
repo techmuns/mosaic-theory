@@ -16,8 +16,11 @@ concept, each concept's rows unmodified (`scripts/build_filed_tiebreak_fixture.p
   this is the name refused since 2026-11-02.
 * EPAM (+): the filed figure sides with the ANNUAL export (restructuring -53.5 against -28.5;
   filed -53.474). NKE was meant to be this case, but it files no restructuring fact in its window.
-* NFLX (-): the merger fee is filed only inside the whole non-operating line, which the mapping
-  leaves out, so the name stays refused.
+* NFLX (+, the containing line; operator ruling 2026-11-04, "NFLX: B"): the WBD fee is filed only
+  inside `NonoperatingIncomeExpense`. CIQ's quarterly breakdown of that line reproduces it in all
+  four quarters, so the page states CIQ's quarterly +2,800.0 and never the line's 2,992.3.
+* CELH's merger row (-): its breakdown misses the filed line by 2.9-22.9 $M a quarter, so it
+  refuses. WAT (-): it files the line for no 2026 quarter, so it stays refused.
 * BDX (-): a mapped concept far from both CIQ readings refuses. So does EPAM's Other Unusual Items,
   where the band catches the mapping misreading a name.
 """
@@ -105,8 +108,12 @@ def _read(name: str) -> dict[str, lq.LtmCheck]:
     return {r.label: r for r in lq.check(b, cs.financial_summary_annual(b).value).rows}
 
 
-def _decide(name: str, label: str, *, cut: date | None = None) -> ft.Decision:
-    return ft.decide(_read(name)[label], _facts(name), as_filed_by=cut or _cut(name))
+def _decide(name: str, label: str, *, cut: date | None = None,
+            bundle: CiqBundle | None = None) -> ft.Decision:
+    """The tiebreak on the REAL rows and facts, the bundle the row was read from beside them."""
+    b = bundle or _bundle(name)
+    row = {r.label: r for r in lq.check(b, cs.financial_summary_annual(b).value).rows}[label]
+    return ft.decide(row, _facts(name), as_filed_by=cut or _cut(name), bundle=b)
 
 
 # --- CELH: the refused name, now stated as filed ------------------------------------------------
@@ -268,45 +275,115 @@ def test_the_band_catches_the_mapping_misreading_a_name() -> None:
     assert d.figure is None and d.reason is not None and "-53.5, reproduces neither" in d.reason
 
 
-def test_nflx_stays_refused_the_merger_fee_is_filed_only_inside_a_containing_line() -> None:
-    """(−) NFLX: material, -2,800.0 annual against +2,800.0 in Q1 2026. No business-combination
-    concept is filed, and the whole non-operating line is not mapped, so the build refuses — the
-    message now says why the filing cannot decide."""
+NFLX_ACCESSIONS = ("0001065280-26-000034", "0001065280-26-000138", "0001065280-26-000212",
+                   "0001065280-26-000291")
+NONOP = ("Interest and Invest. Income", "Currency Exchange Gains (Loss)",
+         "Other Non-Operating Inc. (Exp.)")
+
+
+def test_nflx_is_decided_by_its_containing_line_with_the_quarterly_sign() -> None:
+    """(+) NFLX: material, -2,800.0 annual against +2,800.0 in Q1 2026. No business-combination
+    concept is filed; the fee sits inside `NonoperatingIncomeExpense`, and CIQ's quarterly
+    breakdown of that line reproduces it in EVERY quarter: 45.5 / 45.473, 2,852.2 / 2,852.166,
+    51.7 / 51.661, 43.0 / 43.006. The figure is CIQ's quarterly reading, never the line's total."""
+    d = _decide("NFLX", MERGER)
+    f = d.figure
+    assert f is not None and d.reason is None
+    assert (f.kind, f.tag, f.supports, f.value.value) == (
+        "containing_line", "NonoperatingIncomeExpense", "quarterly", 2800.0)
+    assert (f.ciq_annual, f.ciq_quarterly, f.components) == (-2800.0, 2800.0, list(NONOP))
+    assert [(q.end, q.value, q.ciq_breakdown) for q in f.quarters] == [
+        ("2025-12-31", 45.473, 45.5), ("2026-03-31", 2852.166, 2852.2),
+        ("2026-06-30", 51.661, 51.7), ("2026-09-30", 43.006, 43.0)]
+    assert all(abs((q.ciq_breakdown or 0) - q.value) <= ft.BREAKDOWN_SLACK_MUSD
+               for q in f.quarters)
+    assert f.value.source_ref is not None
+    assert all(acc in f.value.source_ref for acc in NFLX_ACCESSIONS)
+    filed_total = sum(q.value for q in f.quarters)
+    assert filed_total == pytest.approx(2992.306) and f.value.value != filed_total
+
+
+def test_nflxs_page_states_the_quarterly_reading_and_names_the_annual_one() -> None:
+    """(+) THROUGH THE ASSEMBLY'S SETTLEMENT: the LTM cell reads +2,800.0, the 19c figure demanded
+    is +2,800.0, and the main-body caveat names the annual export's -2,800.0. It also names what
+    the annual export does with the same total: it carries +5,554.7 under Other Non-Operating
+    where the quarterly quarters carry -27.0, so the filed TOTAL alone cannot tell them apart."""
+    from vinci.dossier.assemble import _mark_material, _settle_ltm_refusals
+    from vinci.dossier.render import _flags_section
+    from vinci.dossier.synthesis import demanded_material_figures
+
+    out, caveats = _settle_ltm_refusals("NFLX", _mech("NFLX"), [_decide("NFLX", MERGER)])
+    fs = out.financial_summary
+    assert fs is not None and fs.annual.value is not None
+    table = fs.annual.value
+    col = [str(c) for c in table.columns].index("LTM")
+    row = next(r for r in table.rows if r.label == MERGER)
+    assert (row.values[col], row.cells[col]) == (2800.0, "2,800")
+    demanded = [f for f in demanded_material_figures(_mark_material(out)) if f.label == MERGER]
+    assert [f.value for f in demanded] == [2800.0]
+    shown, qa = dossier_flags.partition(caveats)
+    assert qa == [] and len(shown) == 1
+    page = "\n".join(_flags_section(typing.cast(typing.Any, Dossier).model_construct(
+        caveats=shown)))
+    for needle in ("+2,800.0", "-2,800.0", "NonoperatingIncomeExpense", "+5,554.7", "-27.0",
+                   "2,852.166", *NFLX_ACCESSIONS):
+        assert needle in page, needle
+    assert "2,992.3 against 2,992.3" in page   # the totals: consistent with both exports
+
+
+def _nflx_perturbed(delta: float) -> CiqBundle:
+    """SYNTHETIC, ON THE REAL TYPE: NFLX's real export with its Q1 2026 Other Non-Operating cell
+    moved by ``delta`` $M — the shape of a breakdown that misses the filed line by that much."""
+    b = _bundle("NFLX")
+    sheet = next(iter(b._cache[pathlib.Path("/frozen/NFLX-quarterly.xls")].values()))
+    j = next(i for i, h in enumerate(sheet[0]) if "Mar-31-2026" in str(h))
+    r = next(r for r in sheet if str(r[0]).strip() == NONOP[2])
+    r[j] = float(r[j]) + delta
+    return b
+
+
+@pytest.mark.parametrize(("delta", "decided"), [(0.4, True), (0.6, False)])
+def test_a_breakdown_that_misses_the_filed_line_by_more_than_rounding_refuses(
+        delta: float, decided: bool) -> None:
+    """(−/+) The slack is half a printed million (`BREAKDOWN_SLACK_MUSD`), in EVERY quarter: NFLX's
+    Q1 breakdown 0.034 + 0.4 off the filed line still decides, 0.034 + 0.6 off refuses."""
+    d = _decide("NFLX", MERGER, bundle=_nflx_perturbed(delta))
+    assert (d.figure is not None) is decided
+    if not decided:
+        assert d.reason is not None and "misses the filed line by more than 0.5 $M in 1 of 4" in (
+            d.reason)
+
+
+def test_celhs_merger_breakdown_misses_its_filed_line_and_refuses() -> None:
+    """(−) CORPUS: CELH's merger row (-36.2 annual, -11.1 quarterly) is mapped to the same line.
+    Its quarterly breakdown misses the filed `NonoperatingIncomeExpense` in all four quarters (by
+    2.9 to 22.9 $M), so the line is not shown to contain the row, and the row refuses."""
+    d = _decide("CELH", MERGER)
+    assert d.figure is None and d.reason is not None
+    assert "misses the filed line by more than 0.5 $M in 4 of 4 quarters" in d.reason
+
+
+def test_wat_stays_refused() -> None:
+    """(−) WAT: material, -459.0 annual against -346.0. It files no business-combination concept,
+    and the containing line for neither of its 2026 quarters, so the filing cannot decide."""
     from vinci.dossier.assemble import DossierAssemblyError, _settle_ltm_refusals
 
-    d = _decide("NFLX", MERGER)
+    d = _decide("WAT", MERGER)
     assert d.figure is None and d.reason is not None
-    assert "BusinessCombinationAcquisitionRelatedCosts carries no fact" in d.reason
-    assert MERGER in _material(_mech("NFLX"))
+    assert ("the containing line us-gaap:NonoperatingIncomeExpense states no quarter to "
+            "2026-04-04, 2026-07-04") in d.reason
+    assert MERGER in _material(_mech("WAT"))
     with pytest.raises(DossierAssemblyError) as exc:
-        _settle_ltm_refusals("NFLX", _mech("NFLX"), [d])
-    msg = str(exc.value)
-    assert msg.startswith("NFLX: 1 MATERIAL annual-summary row(s)")
-    assert MERGER in msg and "DIFFER" in msg and "the SEC filing cannot decide it" in msg
+        _settle_ltm_refusals("WAT", _mech("WAT"), [d])
+    assert MERGER in str(exc.value) and "the SEC filing cannot decide it" in str(exc.value)
 
 
-def test_nflxs_containing_line_is_ciqs_own_rows_and_is_not_mapped() -> None:
-    """Why `NonoperatingIncomeExpense` is left out, measured on NFLX. Its Q1 2026 figure,
-    2,852.166, is CIQ's interest income + FX + other non-operating + the merger row exactly. Over
-    the LTM, 2,992.3 is outside the band of +2,800.0, so the band would refuse it even if mapped.
-    No row maps to it."""
-    assert all("NonoperatingIncomeExpense" not in line.tags for line in ft.MAPPING.values())
-    facts = _facts("NFLX")
-    pts = points_for_tag(facts, "NonoperatingIncomeExpense")
-    q1 = ft.filed_quarter(pts, date(2026, 3, 31))
-    assert q1 is not None and q1[0] / 1e6 == pytest.approx(2852.166)
-    qrows = {str(r[0]).strip(): r for r in FIX["names"]["NFLX"]["sheets"][
-        "financials|quarterly|Income Statement"]}
-    hdr = qrows["For the Fiscal Period Ending"]
-    j = next(i for i, h in enumerate(hdr) if "Mar-31-2026" in str(h))
-    parts = [qrows[k][j] for k in ("Interest and Invest. Income", "Currency Exchange Gains (Loss)",
-                                   "Other Non-Operating Inc. (Exp.)",
-                                   "Merger & Related Restruct. Charges")]
-    assert sum(parts) == pytest.approx(2852.166, abs=0.1)
-    quarters = _read("NFLX")[MERGER].quarters
-    got = [ft.filed_quarter(pts, q.end) for q in quarters]
-    ltm = sum(g[0] for g in got if g is not None) / 1e6
-    assert ltm == pytest.approx(2992.306) and not lq.agrees(ltm, 2800.0)
+def test_a_containing_line_with_no_ciq_export_beside_it_refuses() -> None:
+    """(−) The containing line is only ever read against CIQ's breakdown: no bundle, no decision."""
+    b = _bundle("NFLX")
+    row = {r.label: r for r in lq.check(b, cs.financial_summary_annual(b).value).rows}[MERGER]
+    d = ft.decide(row, _facts("NFLX"), as_filed_by=_cut("NFLX"))
+    assert d.figure is None and "no CIQ export to set against" in (d.reason or "")
 
 
 def test_nke_files_no_restructuring_fact_in_its_window() -> None:
@@ -334,7 +411,7 @@ def test_only_a_differing_row_reaches_the_filing() -> None:
     assert (row.outcome, row.ltm, [q.value for q in row.quarters]) == (
         "not_run", 0.875, [None, None, None, None])
     assert points_for_tag(_facts("EPAM"), "BusinessCombinationAcquisitionRelatedCosts")
-    d = ft.decide(row, _facts("EPAM"), as_filed_by=_cut("EPAM"))
+    d = ft.decide(row, _facts("EPAM"), as_filed_by=_cut("EPAM"), bundle=_bundle("EPAM"))
     assert d.figure is None and "no second reading" in (d.reason or "")
 
 
@@ -351,10 +428,16 @@ def test_one_undecided_row_refuses_the_whole_build() -> None:
 
 
 def test_the_mapping_is_explicit_and_signed() -> None:
-    """Every entry is a summary label, names us-gaap concepts by hand and states a sign."""
+    """Every entry is a summary label, names us-gaap concepts by hand and states a sign. The
+    whole non-operating line is only ever a CONTAINING line — never a same-item concept, whose
+    filed figure the page would state."""
     assert set(ft.MAPPING) == {OUI, RESTR, MERGER}
     for label, line in ft.MAPPING.items():
         assert label.endswith(" ($M)") and line.tags and line.sign in (-1, 1) and line.why
+    assert set(ft.CONTAINING) == {MERGER}
+    wide = ft.CONTAINING[MERGER]
+    assert (wide.tag, wide.sign, wide.components) == ("NonoperatingIncomeExpense", 1, NONOP)
+    assert all(wide.tag not in line.tags for line in ft.MAPPING.values())
 
 
 # --- the call site ------------------------------------------------------------------------------
@@ -408,7 +491,7 @@ def test_an_unreadable_edgar_leaves_the_row_refused_never_a_crash(
     monkeypatch.setattr(assemble.EdgarClient, "from_config",
                         staticmethod(lambda cfg: _Edgar(HttpNotFoundError("404 companyfacts"))))
     decided = assemble._filed_tiebreak(typing.cast(typing.Any, None), "1065280", mech, [row],
-                                       reference_date=_cut("NFLX"))
+                                       bundle=_bundle("NFLX"), reference_date=_cut("NFLX"))
     assert [d.figure for d in decided] == [None]
     assert "EDGAR companyfacts could not be read" in (decided[0].reason or "")
     with pytest.raises(assemble.DossierAssemblyError, match="cannot decide it: EDGAR"):
@@ -417,4 +500,4 @@ def test_an_unreadable_edgar_leaves_the_row_refused_never_a_crash(
                         staticmethod(lambda cfg: _Edgar(SecRateLimitedError("blocked"))))
     with pytest.raises(SecRateLimitedError):
         assemble._filed_tiebreak(typing.cast(typing.Any, None), "1065280", mech, [row],
-                                 reference_date=_cut("NFLX"))
+                                 bundle=_bundle("NFLX"), reference_date=_cut("NFLX"))

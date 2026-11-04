@@ -22,14 +22,26 @@ spliced across concepts, never summed with another, and never passed over for a 
 because a later one agrees better. Choosing among candidates by which one agrees would make the
 agreement test pick its own evidence.
 
-`NonoperatingIncomeExpense` IS NOT MAPPED. It is the filer's whole "other income (expense)" line,
-and CIQ always splits that line above its unusual-items block (interest and investment income,
-currency gains, other non-operating). An unusual-items row can therefore never be the whole line.
-NFLX is the measured case. Its filed line for Q1 2026 is 2,852.166M (10-Q 0001065280-26-000138),
-which CIQ's own Q1 rows reproduce exactly: interest income 70.0, FX -8.3, other -9.5 and the merger
-row 2,800.0. Over the LTM to 2026-09-30 the line reads 2,992.3, which includes about 190M of
-interest and currency. Stating it as the merger row would state a different item. The line
-supports the quarterly export's SIGN, and NFLX stays refused for the operator's call.
+A CONTAINING LINE ONLY PICKS A CIQ READING (:data:`CONTAINING`; operator ruling 2026-11-04, "NFLX:
+B"). Some filers tag an item only inside a wider line. NFLX's $2.8B WBD termination fee sits in
+`NonoperatingIncomeExpense`, its whole "interest and other income (expense)" line. CIQ splits that
+line above its unusual-items block into interest and investment income, currency gains and other
+non-operating, so no unusual-items row is the whole line. The line's total is never stated as the
+row: over NFLX's LTM it is 2,992.3, about 190M of interest and currency beyond the fee. It is used
+only to pick WHICH CIQ reading the filing supports:
+- Each named component row plus the row itself, in the quarterly export, must reproduce the filed
+  line in EVERY quarter of the window, within half a printed million (:data:`BREAKDOWN_SLACK_MUSD`).
+- If they do, the page states CIQ's quarterly READING, cited to the filings, and the caveat names
+  the annual export's reading.
+- One quarter that misses refuses.
+NFLX reconciles in all four quarters to 2026-09-30, within 0.04 $M (Q1 2026: 70.0 - 8.3 - 9.5 +
+2,800.0 against 2,852.166 filed, 10-Q 0001065280-26-000138). CELH's merger row misses by 2.9 to
+22.9 $M a quarter and refuses.
+
+The filed TOTAL alone cannot tell NFLX's two exports apart. The annual export reaches the same LTM
+total by carrying +5,554.7 under Other Non-Operating, where the quarterly export's quarters carry
+-27.0: its -2,800.0 row is offset there. What decides is the breakdown quarter by quarter, which
+only the quarterly export offers, and which is the operator's rule. The caveat says so on the page.
 
 THE QUARTERS are read as filed by the page's price date (`concepts.facts_as_of`, cut once at
 :func:`decide`'s entry), so a filing made after the page's close never decides it. Each quarter is
@@ -54,11 +66,11 @@ quarterly one, so it reproduces both.
 DOES THIS SELECT ON FORM? (CLAUDE.md, before any new gate.) It adjudicates between two vendor
 readings by the primary source. It ranks nothing, grades nothing, and moves no weight, verdict or
 proposal. One narrow selection is real and is stated here: WHICH refused names it can clear depends
-on whether the filer tags the item in XBRL. CELH tags its charge as `RestructuringCharges`; NFLX's
-merger fee sits inside a containing line, and WAT's merger costs and NKE's restructuring are tagged
-under no mapped concept in the window. That selection decides only whether a page can be BUILT on a
-verified figure. A name it cannot clear is refused exactly as before, so the selection can only ever
-leave a name where it was.
+on how the filer tags the item in XBRL. CELH tags its charge as `RestructuringCharges`, and NFLX's
+fee sits inside a containing line CIQ's quarterly rows reproduce. WAT's merger costs and NKE's
+restructuring are tagged under no mapped concept for every quarter in the window. That selection
+decides only whether a page can be BUILT on a verified figure. A name it cannot clear is refused
+exactly as before, so the selection can only ever leave a name where it was.
 """
 from __future__ import annotations
 
@@ -66,8 +78,11 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Any
 
+from vinci.dossier import ciq_sheets as cs
 from vinci.dossier import ltm_quarters as lq
+from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, clean_num
 from vinci.dossier.ciq_sheets import _fmt_m
+from vinci.dossier.materiality import MaterialityUnavailableError, unusual_items_block
 from vinci.dossier.schemas import (
     FiledLtmFigure,
     FiledLtmQuarter,
@@ -82,6 +97,11 @@ from vinci.edgar.concepts import ConceptPoint, facts_as_of, filed_at, points_for
 SAME_END_DAYS = 7
 #: A quarter is 80-100 days — a 13-week quarter, or a 14-week one in a 53-week year.
 QUARTER_DAYS = (80, 100)
+#: HALF THE UNIT THE PAGE PRINTS — the repo's rounding floor (`ltm_quarters.PRINT_SLACK_MUSD`),
+#: never set by an outcome. CIQ copies each component of a containing line off the same filing, so
+#: a breakdown that is the filed line lands inside it in every quarter (NFLX's four: at most
+#: 0.039 $M); one that misses by more is not that line (CELH's merger row: 2.9 to 22.9 $M).
+BREAKDOWN_SLACK_MUSD = lq.PRINT_SLACK_MUSD
 
 
 @dataclass(frozen=True)
@@ -116,18 +136,47 @@ MAPPING: dict[str, FiledLine] = {
 
 
 @dataclass(frozen=True)
+class ContainingLine:
+    """A filed line that CONTAINS a CIQ row, with the CIQ quarterly rows that make up the rest of
+    it. It never states the row; it confirms CIQ's quarterly reading (module docstring)."""
+
+    tag: str                       # the us-gaap concept of the whole line
+    sign: int                      # CIQ's figure = sign × the filed figure
+    components: tuple[str, ...]    # CIQ quarterly row labels, above the unusual-items block
+    why: str
+
+
+#: Read only when no same-item concept in :data:`MAPPING` carries every quarter. REVIEWED, ONE
+#: ENTRY AT A TIME, like the map above.
+CONTAINING: dict[str, ContainingLine] = {
+    "Merger & Related Restruct. Charges ($M)": ContainingLine(
+        "NonoperatingIncomeExpense", 1,
+        ("Interest and Invest. Income", "Currency Exchange Gains (Loss)",
+         "Other Non-Operating Inc. (Exp.)"),
+        "NFLX files its $2.8B WBD termination fee only inside its 'interest and other income "
+        "(expense)' line, which is CIQ's interest and investment income, currency and other "
+        "non-operating rows plus the merger row. A filer whose line also holds interest expense or "
+        "equity income reconciles in no quarter and refuses"),
+}
+
+
+@dataclass(frozen=True)
 class Decision:
     """The filing's answer for one refused row: a figure, or why the filing cannot decide."""
 
     row: lq.LtmCheck
     figure: FiledLtmFigure | None
     reason: str | None = None
+    #: (a containing line) what the annual export's own breakdown says, for the caveat
+    note: str | None = None
 
     def caveat(self) -> str:
         """The main-body caveat: what the page states, where it was filed, and what CIQ said."""
         f = self.figure
         if f is None or f.value.value is None:
             raise ValueError("no filed figure — a refused row has no caveat, it has a refusal")
+        if f.kind == "containing_line":
+            return self._containing_caveat(f, f.value.value)
         a, q, v = f.ciq_annual, f.ciq_quarterly, f.value.value
         gap = abs(a - q) / max(abs(a), abs(q))
         n = sum(1 for c in self.row.quarters if c.value is not None)
@@ -145,6 +194,26 @@ class Decision:
                             + (", a longer filed period less the one a quarter shorter"
                                if x.derived else "") + ")" for x in f.quarters)
                 + f" sum to {v:,.1f}")
+
+    def _containing_caveat(self, f: FiledLtmFigure, v: float) -> str:
+        return (f"CIQ READING CONFIRMED BY THE FILING — {f.label}, LTM to {f.ltm_end}: the page "
+                f"states {v:+,.1f}, the quarterly export's reading, because CIQ's two exports "
+                f"disagree: the annual export's LTM reads {f.ciq_annual:+,.1f}. No filed concept "
+                f"states the item alone; the filings carry it inside us-gaap:{f.tag}, a wider "
+                f"line, and the quarterly export's breakdown of that line "
+                f"({', '.join(f.components)} and this row) reproduces it in every quarter within "
+                f"{BREAKDOWN_SLACK_MUSD} $M — "
+                + "; ".join(f"{_breakdown_of(x):,.1f} against {x.value:,.3f} filed ({x.end})"
+                            for x in f.quarters)
+                + f" ({'; '.join(_accessions(f))}). " + (self.note or ""))
+
+
+def _breakdown_of(x: FiledLtmQuarter) -> float:
+    """A containing-line quarter's CIQ breakdown — RAISES on one that carries none, which only a
+    hand-edited record could produce: a missing breakdown is never printed as a zero."""
+    if x.ciq_breakdown is None:
+        raise ValueError(f"the containing-line quarter to {x.end} carries no CIQ breakdown")
+    return x.ciq_breakdown
 
 
 def _accessions(f: FiledLtmFigure) -> list[str]:
@@ -189,19 +258,21 @@ def _quarter_ref(pts: tuple[ConceptPoint, ...], facts: dict[str, Any]) -> str:
     return f"{filed_at(pts[0], facts)} − {filed_at(pts[1], facts)}"
 
 
-def decide(row: lq.LtmCheck, facts: dict[str, Any], *, as_filed_by: date) -> Decision:
+def decide(row: lq.LtmCheck, facts: dict[str, Any], *, as_filed_by: date,
+           bundle: CiqBundle | None = None) -> Decision:
     """The filing's answer for one row ``ltm_quarters`` refuses. ``facts`` is the whole
-    companyfacts blob; it is cut at ``as_filed_by`` here, before anything is read."""
+    companyfacts blob; it is cut at ``as_filed_by`` here, before anything is read. ``bundle`` is
+    the CIQ export the row was read from: a containing line is checked against its breakdown."""
     if row.outcome != "differ" or row.carried is None or not row.quarters:
         return Decision(row, None, "the filing decides between two CIQ readings, and the "
                                    "quarterly export gives no second reading here")
-    line = MAPPING.get(row.label)
-    if line is None:
+    line, wider = MAPPING.get(row.label), CONTAINING.get(row.label)
+    if line is None and wider is None:
         return Decision(row, None, f"no reviewed mapping from the CIQ row {row.label!r} to a filed "
-                                   "concept (`filed_tiebreak.MAPPING`)")
+                                   "concept (`filed_tiebreak.MAPPING`, `CONTAINING`)")
     cut = facts_as_of(facts, as_filed_by)
     misses: list[str] = []
-    for tag in line.tags:
+    for tag in line.tags if line is not None else ():
         pts = points_for_tag(cut, tag)
         got = [filed_quarter(pts, q.end) for q in row.quarters]
         if any(g is None for g in got):
@@ -211,9 +282,119 @@ def decide(row: lq.LtmCheck, facts: dict[str, Any], *, as_filed_by: date) -> Dec
                                                 "carries no fact")
                           + f" as filed by {as_filed_by}")
             continue
+        assert line is not None
         return _judge(row, line, tag, [g for g in got if g is not None], cut,
                       carried=row.carried, as_filed_by=as_filed_by)
+    if wider is not None:
+        pts = points_for_tag(cut, wider.tag)
+        got = [filed_quarter(pts, q.end) for q in row.quarters]
+        if any(g is None for g in got):
+            gone = ", ".join(q.end.isoformat() for q, g in zip(row.quarters, got, strict=True)
+                             if g is None)
+            misses.append(f"the containing line us-gaap:{wider.tag} "
+                          + (f"states no quarter to {gone}" if pts else "carries no fact")
+                          + f" as filed by {as_filed_by}")
+        elif bundle is None:
+            misses.append(f"no CIQ export to set against the containing line us-gaap:{wider.tag}")
+        else:
+            return _judge_containing(row, wider, [g for g in got if g is not None], cut, bundle,
+                                     carried=row.carried, as_filed_by=as_filed_by)
     return Decision(row, None, "no filed figure for every quarter — " + "; ".join(misses))
+
+
+def _row_above_block(sheet: list[list[Any]], label: str) -> int | None:
+    """The row named ``label`` ABOVE the sheet's unusual-items block — where CIQ puts a
+    non-operating component — or None when the sheet has no such row."""
+    try:
+        lo, _hi = unusual_items_block(sheet)
+    except MaterialityUnavailableError:
+        return None
+    return next((i for i in range(lo - 1)
+                 if sheet[i] and str(sheet[i][0] or "").strip() == label), None)
+
+
+def _cell(sheet: list[list[Any]], ri: int | None, col: int) -> float | None:
+    return clean_num(sheet[ri][col]) if ri is not None and col < len(sheet[ri]) else None
+
+
+def _breakdown(row: lq.LtmCheck, wider: ContainingLine, bundle: CiqBundle,
+               ) -> tuple[list[float], dict[str, tuple[float | None, float]], float] | str:
+    """(the quarterly export's breakdown of the line in each quarter, {component: (the annual
+    export's LTM, the quarterly export's four quarters summed)}, the annual export's LTM breakdown)
+    — or why it cannot be read. A '-' is an absence, never a zero, as in `ltm_quarters`."""
+    try:
+        q = bundle.sheet("financials", "Income Statement", freq="quarterly")
+        a = bundle.sheet("financials", "Income Statement", freq="annual")
+    except CiqUnavailableError as exc:
+        return f"no CIQ Income Statement to read the breakdown from ({exc})"
+    qh, ah = cs._period_header(q), cs._period_header(a)
+    if qh is None or ah is None:
+        return "a CIQ Income Statement has no Fiscal Period header"
+    four, why = lq._four_quarters(q, qh, row.ltm_end)
+    if four is None:
+        return why or "the quarterly columns could not be located"
+    ltm = [c for c, _s, is_ltm, _r in cs._fin_periods(a[ah]) if is_ltm][:1]
+    if not ltm:
+        return "the annual Income Statement carries no LTM column"
+    qrows = {lab: _row_above_block(q, lab) for lab in wider.components}
+    arows = {lab: _row_above_block(a, lab) for lab in wider.components}
+    per_q = [sum(v for v in [*(_cell(q, qrows[lab], j) for lab in wider.components), cell.value]
+                 if v is not None)
+             for (j, _p), cell in zip(four, row.quarters, strict=True)]
+    parts = {lab: (_cell(a, arows[lab], ltm[0]),
+                   sum(v for j, _p in four if (v := _cell(q, qrows[lab], j)) is not None))
+             for lab in wider.components}
+    annual = sum(av for av, _qv in parts.values() if av is not None) + row.ltm
+    return per_q, parts, annual
+
+
+def _judge_containing(row: lq.LtmCheck, wider: ContainingLine,
+                      got: list[tuple[float, bool, tuple[ConceptPoint, ...]]],
+                      facts: dict[str, Any], bundle: CiqBundle, *, carried: float,
+                      as_filed_by: date) -> Decision:
+    """CIQ's quarterly reading, when its breakdown of the containing line is the filed line in
+    every quarter; else why not. The line's own total is never the row's figure."""
+    read = _breakdown(row, wider, bundle)
+    if isinstance(read, str):
+        return Decision(row, None, f"the containing line us-gaap:{wider.tag} cannot be set "
+                                   f"against CIQ's breakdown: {read}")
+    per_q, parts, annual = read
+    quarters = [FiledLtmQuarter(end=q.end.isoformat(), value=round(wider.sign * v / 1e6, 3),
+                                derived=derived, source_ref=_quarter_ref(pts, facts),
+                                accessions=list(dict.fromkeys(
+                                    p.accession for p in pts if p.accession)),
+                                ciq_breakdown=round(c, 3))
+                for q, (v, derived, pts), c in zip(row.quarters, got, per_q, strict=True)]
+    missed = [(x, c) for x, c in zip(quarters, per_q, strict=True)
+              if abs(c - x.value) > BREAKDOWN_SLACK_MUSD]
+    if missed:
+        return Decision(row, None, (
+            f"the quarterly export's breakdown of the containing line us-gaap:{wider.tag} "
+            f"({', '.join(wider.components)} and this row) misses the filed line by more than "
+            f"{BREAKDOWN_SLACK_MUSD} $M in {len(missed)} of {len(quarters)} quarters: "
+            + "; ".join(f"{c:,.1f} against {x.value:,.3f} filed ({x.end})" for x, c in missed)))
+    filed_ltm = sum(x.value for x in quarters)
+    accs = sorted({a for x in quarters for a in x.accessions})
+    label = row.label.removesuffix(" ($M)")
+    ref = (f"CIQ Financials (Quarterly)→Income Statement '{label}', four quarters to "
+           f"{row.ltm_end.isoformat()}, its breakdown reconciling in every quarter to EDGAR XBRL "
+           f"us-gaap:{wider.tag} as filed by {as_filed_by.isoformat()} ({', '.join(accs)})")
+    apart = [f"{lab} {av:+,.1f} where the quarterly export's four quarters carry {qv:+,.1f}"
+             for lab, (av, qv) in parts.items() if av is not None and not lq.agrees(av, qv)]
+    note = (("The annual export reaches the same LTM total, "
+             f"{annual:,.1f} against {filed_ltm:,.1f} filed, only by carrying "
+             + "; ".join(apart or ["other components"])
+             + ": the filed total alone cannot tell the two exports apart; the quarterly "
+               "export's breakdown can be set against each quarter, and it reconciles in every one")
+            if lq.agrees(annual, filed_ltm) else
+            f"The annual export's LTM breakdown comes to {annual:,.1f} against {filed_ltm:,.1f} "
+            "filed.")
+    return Decision(row, FiledLtmFigure(
+        label=row.label, ltm_end=row.ltm_end.isoformat(),
+        value=Sourced.present(round(carried, 3), source_ref=ref), tag=wider.tag,
+        kind="containing_line", components=list(wider.components), ciq_annual=row.ltm,
+        ciq_quarterly=round(carried, 3), supports="quarterly", quarters=quarters,
+        as_filed_by=as_filed_by.isoformat()), note=note)
 
 
 def _judge(row: lq.LtmCheck, line: FiledLine, tag: str,

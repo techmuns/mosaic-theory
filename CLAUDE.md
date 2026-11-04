@@ -179,6 +179,11 @@ verdict placement.
   derived analysis with titles, figures and SHORT verbatim source quotes, published on the authed
   deploy and, since 2026-10-22, readable in this public repo. Never an article's text, never a
   local path.
+  **Cut-down CIQ test fixtures** (operator ruling 2026-11-04, #891: "no need to remove fixture or
+  ciq data from main, under our license we can keep it"): `tests/fixtures/ciq_*.json` and
+  `tests/fixtures/filed_tiebreak.json` stay committed. Each holds a sheet's header row and only the
+  cells its pins read, cut through the real decode path. A whole workbook or a pasted table never
+  is.
 - **Execution is human-authorized and paper-gated** (when execution is built): nothing places a trade
   without an explicit, deliberate human action; default is paper; no code path reaches a live broker
   autonomously. State this in any execution code from its first line.

@@ -1872,21 +1872,34 @@ class FiledLtmQuarter(BaseModel, frozen=True):
     #: the accession(s) the value was READ from, structured — the source_ref also names the first
     #: filing a restated figure supersedes, which is not one of them
     accessions: list[str] = Field(default_factory=list)
+    #: (kind "containing_line") the quarterly export's own breakdown of the filed line in this
+    #: quarter, $M — its component rows plus the row — set against ``value``, the filed line
+    ciq_breakdown: float | None = None
 
 
 #: Which CIQ reading a filed LTM reproduces (`FiledLtmFigure.supports`).
 Supports = Literal["annual", "quarterly", "both"]
+#: How the filing decided (`FiledLtmFigure.kind`): ``same_item`` — a filed concept states the row's
+#: own item and the page states the FILED figure; ``containing_line`` — the item is filed only
+#: inside a wider line, CIQ's quarterly breakdown of that line reproduces it in every quarter, and
+#: the page states CIQ's quarterly READING (operator ruling 2026-11-04, "NFLX: B").
+FiledKind = Literal["same_item", "containing_line"]
 
 
 class FiledLtmFigure(BaseModel, frozen=True):
-    """A MATERIAL annual-summary LTM that CIQ's annual and quarterly exports disagree on, as the
-    SEC filings state it (2026-11-04, operator approval). The page's LTM cell for the row reads
-    ``value``; the two CIQ readings it replaced stay here, beside it."""
+    """A MATERIAL annual-summary LTM that CIQ's annual and quarterly exports disagree on, decided by
+    the SEC filings (2026-11-04, operator approval). The page's LTM cell for the row reads
+    ``value``; the two CIQ readings stay here, beside it. ``kind`` says whether ``value`` is the
+    filed figure itself or CIQ's quarterly reading that the filed containing line confirms."""
 
     label: str                                # the annual summary's row label
     ltm_end: str                              # ISO
     value: Sourced[float]                     # $M, in CIQ's sign; source_ref names every accession
     tag: str                                  # the us-gaap concept the reviewed mapping read
+    kind: FiledKind = "same_item"
+    #: (kind "containing_line") the quarterly export's component rows whose sum with the row is
+    #: set against the filed line, in the mapping's order
+    components: list[str] = Field(default_factory=list)
     ciq_annual: float                         # $M — the annual export's LTM cell
     ciq_quarterly: float                      # $M — the quarterly export's quarters carrying a
     #                                           figure, summed (all four, or fewer on a '-')

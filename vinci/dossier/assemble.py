@@ -918,7 +918,7 @@ def _price_store_stamp(cfg: Config) -> PriceStoreStamp:
 
 
 def _filed_tiebreak(cfg: Config, cik: str | None, mech: MechanicalLayer,
-                    refused: list[ltm_quarters.LtmCheck], *,
+                    refused: list[ltm_quarters.LtmCheck], *, bundle: CiqBundle,
                     reference_date: date) -> list[filed_tiebreak.Decision]:
     """The filing's answer for each refused row, read as filed by the page's price date (the cut
     every page reader takes, `vinci.edgar.asof.page_price_date`). No CIK, or companyfacts EDGAR
@@ -936,7 +936,7 @@ def _filed_tiebreak(cfg: Config, cik: str | None, mech: MechanicalLayer,
         return [filed_tiebreak.Decision(r, None, f"EDGAR companyfacts could not be read "
                                                  f"({type(exc).__name__}: {exc})")
                 for r in refused]
-    return [filed_tiebreak.decide(r, facts, as_filed_by=cut) for r in refused]
+    return [filed_tiebreak.decide(r, facts, as_filed_by=cut, bundle=bundle) for r in refused]
 
 
 def _settle_ltm_refusals(ticker: str, mech: MechanicalLayer,
@@ -1083,7 +1083,7 @@ def assemble_one(
         # readings, when the filed figure reproduces one of them; any row the filing cannot decide
         # refuses exactly as before, saying why (`filed_tiebreak`). Still before any spend.
         mech, filed_caveats = _settle_ltm_refusals(
-            ticker, mech, _filed_tiebreak(cfg, rec.identity.cik, mech, refused,
+            ticker, mech, _filed_tiebreak(cfg, rec.identity.cik, mech, refused, bundle=bundle,
                                           reference_date=fin.reference_date))
         flags += filed_caveats
     # (PR-B §3-now) transcript slice computed ONCE here so a fail-loud flag fires whether or not
