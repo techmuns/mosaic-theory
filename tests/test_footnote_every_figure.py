@@ -594,3 +594,65 @@ def test_the_markdown_render_footnotes_each_figure() -> None:
     assert "How each figure is sourced: -29% [" in md and "-45pt ‡ = -29% − +16%" in md
     plain = render_markdown(ds.Dossier.model_validate(json.loads(_FROZEN_SMPL.read_text())))
     assert "How each figure is sourced" not in plain and "‡" not in plain
+
+
+# --- review fixes (code-review round 0) ----------------------------------------------------------
+
+def test_a_footnote_to_a_transcript_ref_the_page_does_not_carry_is_a_caveat_not_a_soft_note() -> (
+        None):
+    """'transcript' in a made-up ref bought the soft, hidden TRANSCRIPT-FIGURE route: a fabricated
+    figure footnoted to "CIQ transcript(s): made up" reached the page with no caveat. Only a
+    transcript the layer carries is soft."""
+    mech = _frozen()
+    _, market, rel = _refs()
+    fake = _point(_GD6_CLAIM, rel, [{"figure": "-29%", "source_ref": "CIQ transcript(s): made up"},
+                                    {"figure": "+16%", "source_ref": market}])
+    flags = _flags(mech, fake)
+    assert [f.split("'")[1] for f in flags if f.startswith("UNTRACEABLE")] == ["-29"]
+    assert not any(f.startswith("TRANSCRIPT-FIGURE") for f in flags)
+    caveats, _ = dflags.partition(flags)
+    assert any(c.startswith("Untraceable figure -29 (a bull point)") for c in caveats), caveats
+
+
+def test_a_footnote_covers_its_own_figure_never_another_of_the_same_magnitude() -> None:
+    """Entries were keyed by magnitude and re-used once exhausted, so a footnoted "$16M" also
+    passed the un-footnoted "16%" beside it — which then escaped the point-ref trace."""
+    mech = _frozen()
+    _, market, rel = _refs()
+    claim = "SMPL fell -29% while the benchmark rose 16%, on $16M of volume"
+    assert _flagged(mech, _point(claim, rel)) == ["-29", "16", "16"]
+    assert _flagged(mech, _point(claim, rel, [{"figure": "$16M", "source_ref": market}])) == [
+        "-29", "16"]
+    # a figure the claim writes twice is covered twice by its one footnote
+    twice = "the benchmark rose +16% and, again, +16%"
+    assert _flagged(mech, _point(twice, rel, [{"figure": "+16%", "source_ref": market}])) == []
+
+
+def test_a_footnote_whose_inputs_are_not_a_list_is_dropped_not_a_crash() -> None:
+    notes: list[str] = []
+    raw = {"evidence_balance": "mixed — x", "bull_points": [{
+        "claim": "a 3.3x figure", "source_ref": "R", "figures": [
+            {"figure": "3.3x", "derived": "ratio", "inputs": 5},
+            {"figure": "3.3x", "derived": "ratio", "inputs": "ab"}]}],
+        "bear_points": [], "twin_reference_cases": [], "key_unknowns": [],
+        "decisive_question": {"question": "q", "evidence_for": [], "evidence_against": []}}
+    s = syn._parse(raw, notes)
+    assert s.bull_points[0].figures == [] and len(notes) == 2
+
+
+def test_a_mark_never_lands_inside_a_longer_decimal() -> None:
+    from vinci.dossier.render import _find_figure
+
+    claim = "margin 5.4% across 5 segments"
+    assert _find_figure(claim, "5", 0) == claim.index("5 segments")
+    assert _find_figure("$1,098M and 98", "98", 0) == len("$1,098M and ")
+
+
+def test_a_footnoted_markdown_point_keeps_its_tag_before_its_own_cite() -> None:
+    """The un-footnoted point prints claim, tag, warning, then its cite; a footnoted one printed
+    its cite before the tag — and with no endnote table, the tag after the cite's sub-line."""
+    from vinci.dossier.render import _footnoted_claim
+
+    _, market, rel = _refs()
+    p = _point("rose +16%", rel, [{"figure": "+16%", "source_ref": market}])
+    assert _footnoted_claim(p, " (crux)") == f"rose +16% (crux)\n  - ↳ `{rel}`"

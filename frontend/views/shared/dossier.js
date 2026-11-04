@@ -1795,9 +1795,10 @@ function _figExpr(f) {
   const core = `${a} ${_FIG_OP[f.derived] || "?"} ${b}`;
   return f.derived === "premium" || f.derived === "growth" ? `(${core}) − 1` : core;
 }
-// the literal at a figure boundary — never inside a longer number ("98" is not in "$1,098M")
+// the literal at a figure boundary — never inside a longer number ("98" is not in "$1,098M",
+// "5" is not in "5.4%")
 function _findFigure(claim, lit, from) {
-  const re = new RegExp(`(?<![\\d.,])${lit.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\d])`, "g");
+  const re = new RegExp(`(?<![\\d.,])${lit.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\d]|[.,]\\d)`, "g");
   re.lastIndex = from;
   const m = re.exec(claim);
   return m ? m.index : -1;

@@ -887,11 +887,17 @@ def _validate(
     # (signed value, type, cited ref) for decisive-mirror dedup — the ref since a figure traces or
     # not by the fact it cites, so the same figure cited to another fact is another finding
     flagged_figs: set[tuple[float, bool, str]] = set()
+    # the citable universe's comparison keys, built ONCE — `_traces` rebuilds them per call, and a
+    # footnoted point traces each figure and each input on its own
+    ref_keys = {comparison_key(u) for u in refs}
 
     def _figure_entries(p: SourcedPoint, where: str) -> dict[float, list[FigureCite]]:
-        """The point's footnotes by the magnitude of the ONE figure each names. An entry that names
-        no figure of the claim (a label, a figure not written there, two figures) is a MISMATCH —
-        an extra the checker reads nothing from, never a figure left unchecked."""
+        """The point's footnotes by the magnitude of the ONE figure each names, each entry listed
+        once per place the claim writes its literal — so a footnote covers ITS figure, never another
+        figure of the same magnitude ("16%" beside a footnoted "$16M" is still traced to the point's
+        own ref). An entry that names no figure of the claim (a label, a figure not written there,
+        two figures) is a MISMATCH — an extra the checker reads nothing from, never a figure left
+        unchecked."""
         out: dict[float, list[FigureCite]] = {}
         claim_vals = {round(abs(v), 6) for v in _claim_figures(p.claim)}
         for e in p.figures:
@@ -901,7 +907,9 @@ def _validate(
                 flags.append(f"MISMATCH {where}: figure entry {e.figure!r} names no single figure "
                              f"the claim writes: '{_snip(p.claim, 55)}'")
                 continue
-            out.setdefault(round(abs(vals[0]), 6), []).append(e)
+            written = len(re.findall(rf"(?<![\d.,]){re.escape(e.figure)}(?![\d]|[.,]\d)",
+                                     p.claim))
+            out.setdefault(round(abs(vals[0]), 6), []).extend([e] * max(1, written))
         return out
 
     def check_figure(n: float, e: FigureCite, entries: dict[float, list[FigureCite]],
@@ -909,12 +917,16 @@ def _validate(
         """One footnoted figure: a cited one traces to the fact it names; a computed one has inputs
         that each trace to theirs, and recomputes to the figure as written."""
         def direct(x: FigureCite) -> tuple[bool, bool]:
-            """(traces, cited to the transcript) for a cited entry's own figure."""
+            """(traces, cited to a transcript OF THE PAGE) for a cited entry's own figure. A ref
+            that only LOOKS like a transcript — 'transcript' in a ref the layer does not carry — is
+            no softer than any other unknown ref: the soft route is for a real call's prose."""
             ref = x.source_ref or ""
-            nums = values_by_ref.get(comparison_key(ref), _FactNumbers())
+            key = comparison_key(ref)
+            nums = values_by_ref.get(key, _FactNumbers())
             v = _claim_figures(x.figure)
-            ok = bool(v) and _traces(ref, refs) and _num_traces(v[0], nums)
-            return ok, bool(_TRANSCRIPT_REF.search(ref))
+            known = bool(key) and key in ref_keys
+            ok = bool(v) and known and _num_traces(v[0], nums)
+            return ok, known and bool(_TRANSCRIPT_REF.search(ref))
 
         if e.derived is None:
             ok, tx = direct(e)
@@ -991,8 +1003,8 @@ def _validate(
         used: Counter[float] = Counter()
         for n in _claim_figures(p.claim):
             k = round(abs(n), 6)
-            if k in entries:   # (item 29) this figure carries its own footnote
-                e = entries[k][min(used[k], len(entries[k]) - 1)]
+            if used[k] < len(entries.get(k, ())):   # (item 29) this figure carries its footnote
+                e = entries[k][used[k]]
                 used[k] += 1
                 check_figure(n, e, entries, p, where, dedup=dedup)
                 continue
@@ -1226,12 +1238,15 @@ def _figure_cites(items: Any, notes: list[str] | None) -> list[FigureCite]:
     for i in items if isinstance(items, list) else []:
         if not isinstance(i, dict):
             continue
+        raw_inputs = i.get("inputs") or []
         try:
+            if not isinstance(raw_inputs, list):   # a bare string/number would iterate or raise
+                raise ValueError(f"inputs is a {type(raw_inputs).__name__}, not a list")
             out.append(FigureCite(
                 figure=str(i.get("figure", "")),
                 source_ref=str(i["source_ref"]) if i.get("source_ref") else None,
                 derived=i.get("derived") or None,
-                inputs=[str(x) for x in i.get("inputs") or []]))
+                inputs=[str(x) for x in raw_inputs]))
         except ValueError as exc:
             if notes is not None:
                 notes.append(f"MISMATCH figures: entry {i!r} dropped — {exc}")

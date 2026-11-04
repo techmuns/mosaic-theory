@@ -148,18 +148,20 @@ def _figure_expr(e: Any) -> str:
 
 
 def _find_figure(claim: str, lit: str, start: int) -> int:
-    """The literal at a figure boundary, never inside a longer number ("98" is not in "$1,098M")."""
-    m = re.compile(rf"(?<![\d.,]){re.escape(lit)}(?!\d)").search(claim, start)
+    """The literal at a figure boundary, never inside a longer number ("98" is not in "$1,098M",
+    "5" is not in "5.4%")."""
+    m = re.compile(rf"(?<![\d.,]){re.escape(lit)}(?![\d]|[.,]\d)").search(claim, start)
     return m.start() if m else -1
 
 
-def _footnoted_claim(p: Any) -> str:
+def _footnoted_claim(p: Any, between: str = "") -> str:
     """(item 29) A point's claim with a marker after each footnoted figure — its fact's ``[n]`` in a
-    render, ‡ for a computed one — and the point's own cite after it. A point with no ``figures``
-    renders exactly as before (claim + its cite)."""
+    render, ‡ for a computed one — then ``between`` (a tag, a warning) and the point's own cite, in
+    the order an un-footnoted point prints them. A point with no ``figures`` renders exactly as
+    before (claim + between + its cite)."""
     figs = getattr(p, "figures", None) or []
     if not figs or _ENDNOTES.get() is None:
-        return f"{p.claim}{_cite(p.source_ref)}"
+        return f"{p.claim}{between}{_cite(p.source_ref)}"
     marks: list[tuple[int, str]] = []
     start: dict[str, int] = {}
     for e in figs:
@@ -173,7 +175,7 @@ def _footnoted_claim(p: Any) -> str:
     for end, mark in sorted(marks):
         out += claim[pos:end] + mark
         pos = end
-    return out + claim[pos:] + _cite(p.source_ref)
+    return out + claim[pos:] + between + _cite(p.source_ref)
 
 
 def _figure_sources_line(p: Any) -> str:
@@ -2588,7 +2590,7 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
     def cite(p: Any, tag: str = "") -> str:
         warn = "" if getattr(p, "cited", True) else " ⚠ uncited"
         if getattr(p, "figures", None):   # (item 29) a marker after each figure, then the line
-            return f"- {_footnoted_claim(p)}{tag}{warn}{_figure_sources_line(p)}"
+            return f"- {_footnoted_claim(p, tag + warn)}{_figure_sources_line(p)}"
         return f"- {p.claim}{tag}{warn}{_cite(p.source_ref)}"
 
     driver_refs = _driver_refs_of(d.mechanical)
