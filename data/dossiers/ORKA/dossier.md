@@ -19,7 +19,7 @@ _8 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-11-06 `[cadence-estimate]` — calendar in Analysis
 
 ## What happened — and does it change the runway?
-- **Shape:** gradual bleed — no discrete gap-down detected [2]
+- **Shape (180 days to 2026-10-16):** gradual bleed — no discrete gap-down detected [2]
 - **Price (180d):** 4.4% [3]
 - **Market (MDY) 180d:** -0.8% [4]
 - **vs market (180d):** 5.2% [5]
@@ -135,8 +135,8 @@ _FCF (levered, CIQ) = CIQ 'Levered Free Cash Flow', NOT CFO − capex_
 # Analysis — full dossier
 
 ## What moved the price — and did it move alone?
-- **Read — what moved:** gradual bleed — no discrete gap-down detected [2]
-- **Gap-down dates:** _UNKNOWN_ — no gap-down events on the data-record
+- **Read — what moved (180 days to 2026-10-16):** gradual bleed — no discrete gap-down detected [2]
+- **Gap-down dates (180 days to 2026-10-16):** _UNKNOWN_ — no gap-down events on the data-record
 
 _Company-specific or market-wide?_
 - **Name 180d return:** 4.4% [3]

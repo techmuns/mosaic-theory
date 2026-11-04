@@ -45,7 +45,9 @@ from vinci.dossier.manual_store import LocalFolderStore, ManualDataStore
 from vinci.dossier.mechanical import (
     COVENANT_SEARCH_FOUND_NOTHING,
     COVENANT_SEARCH_STOPPED_SHORT,
+    AnchorDate,
     assemble_mechanical,
+    drawdown_anchor_date,
 )
 from vinci.dossier.render import render_markdown
 from vinci.dossier.schemas import (
@@ -569,6 +571,20 @@ def _load_graph(cfg: Config) -> ExposureGraph:
     return ExposureGraph.from_edges(edges)
 
 
+def _drawdown_anchor_date(cfg: Config, ticker: str) -> AnchorDate | None:
+    """The date ``ticker``'s drawdown is anchored at — its underwrite record's, else its follow's
+    `followed_since` (`mechanical.drawdown_anchor_date`). The record through `_read_scenario_card`,
+    the one reader of it; the follow through `vinci.followed`, the dated reader of the follow list,
+    since `_follow_entry` reads no dates."""
+    from vinci.followed import follow_records
+
+    card = _read_scenario_card(ticker)
+    follow = next((r for r in follow_records(cfg.data_dir / "followed.json")
+                   if r.ticker == ticker.upper()), None)
+    return drawdown_anchor_date(card, follow.since if follow else None, ticker=ticker.upper(),
+                                follow_until=follow.until if follow else None)
+
+
 def _read_scenario_card(ticker: str) -> Any | None:
     """The committed underwrite record for ``ticker``, or None when the name is not underwritten.
 
@@ -647,9 +663,17 @@ def _refuse_degraded_drawdown_overwrite(dossier: Dossier, folder: Path) -> None:
 
     So the degrade-and-continue stands for a FRESH name (a present record marked UNKNOWN is
     auditable; an absent one is not), and is refused only where it would DESTROY an established
-    finding. Gated on the committed file, not on a mode, exactly as the synthesis guard is."""
+    finding. Gated on the committed file, not on a mode, exactly as the synthesis guard is.
+
+    THE AT-THE-ANCHOR PART TOO (2026-11-04, `DrawdownAnchor`): it is read as of its anchor so that
+    no later build can change it, and a degraded feed is the one thing that still could — its shape
+    goes UNKNOWN exactly as the current window's does. A build whose at-anchor shape is degraded
+    over a committed PRESENT one is refused the same way."""
     dc = dossier.mechanical.drawdown_cause if dossier.mechanical is not None else None
-    if dc is None or dc.shape.status is SourceStatus.PRESENT:
+    if dc is None:
+        return
+    _refuse_degraded_at_anchor_overwrite(dossier, dc, folder)
+    if dc.shape.status is SourceStatus.PRESENT:
         return  # this build read the index fine — nothing to protect against
     existing = folder / "dossier.json"
     if not existing.exists():
@@ -666,6 +690,29 @@ def _refuse_degraded_drawdown_overwrite(dossier: Dossier, folder: Path) -> None:
         "would replace an established finding with UNKNOWN. Re-assemble once the feed recovers. "
         "This refusal is also what keeps `vinci dossier` from exiting 0 on a degraded run and "
         "letting the artifact pass commit blank blocks over good ones.")
+
+
+def _refuse_degraded_at_anchor_overwrite(dossier: Dossier, dc: Any, folder: Path) -> None:
+    """`_refuse_degraded_drawdown_overwrite`'s rule for the at-the-anchor part: refused when this
+    build's at-anchor shape is not PRESENT and the committed page's is."""
+    anchor = getattr(dc, "anchor", None)
+    if anchor is None or anchor.at_anchor.shape.status is SourceStatus.PRESENT:
+        return
+    existing = folder / "dossier.json"
+    if not existing.exists():
+        return
+    try:
+        prior = (json.loads(existing.read_text())["mechanical"]["drawdown_cause"]["anchor"]
+                 ["at_anchor"]["shape"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return  # no committed at-anchor part: no finding of that part to protect
+    if prior.get("status") != SourceStatus.PRESENT.value:
+        return
+    raise DossierAssemblyError(
+        f"{dossier.ticker}: this build could not read the EDGAR filing index for the drawdown at "
+        f"the {anchor.kind} {anchor.on} ({anchor.at_anchor.shape.note}) and the committed dossier "
+        "HAS that part — writing would replace an established finding with UNKNOWN, in the one "
+        "part no later build is meant to change. Re-assemble once the feed recovers.")
 
 
 def _keep_committed_recipe(dossier: Dossier, folder: Path) -> Dossier:
@@ -1069,6 +1116,8 @@ def assemble_one(
             # checked against what the fund already holds. Read-only, and the SAME reader the
             # renderer already uses — one definition of "the record", not two.
             card=_read_scenario_card(ticker),
+            # the drawdown's anchor: the underwrite, else the follow (`_drawdown_anchor_date`)
+            drawdown_anchor=_drawdown_anchor_date(cfg, ticker),
         )
     flags += mech_flags
     # (2026-10-30) EACH ANNUAL-SUMMARY LTM AGAINST ITS FOUR QUARTERS, before anything is spent: a

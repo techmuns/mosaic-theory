@@ -460,12 +460,28 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "cite",
     ),
     (
+        "2026-11-04.anchored-drawdown",
+        "a name with an underwrite record, else a follow, keeps its drawdown at that date "
+        "(`drawdown_cause.anchor`): the gap-downs of the 180 days ending on it, each with its "
+        "move, its 8-K's item labels and the revised-outlook exhibit, read only from closes on or"
+        " before it and 8-Ks filed by it, so no later build changes it; and the gap-downs since "
+        "it to the price date, read the same way at the price date; a name with neither is "
+        "unchanged",
+    ),
+    (
+        "2026-11-04.drawdown-window-at-price-date",
+        "the rolling drawdown window ends on the page's price date, not the screen's reference "
+        "date: the screen's detector over the 180 days ending on the stored close the price box "
+        "shows, so a drop after the last screen run is classified, not only charted "
+        "(`drawdown_cause.gap_window_end`)",
+    ),
+    (
         "2026-11-04.guidance-quote-cut",
         "the drawdown outlook quote says where it stops: `_extract_revised_guidance` quotes 800 "
         "raw characters of the 99.1 from its outlook heading and now records whether the release "
-        "goes on past them (`drawdown_cause.revised_guidance_cut`, absent until built); the quote "
-        "is unchanged, and the page marks it cut, or on a page built before the field, possibly "
-        "cut",
+        "goes on past them (`revised_guidance_cut` on `drawdown_cause` and on each dated part, "
+        "absent until built); the quote is unchanged, and the page marks it cut, or on a page "
+        "built before the field, possibly cut",
     ),
 )
 

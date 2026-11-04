@@ -9623,7 +9623,9 @@ def test_what_broke_event_study_on_committed_cnxc_e2e() -> None:
     if len(gaps) < 2:
         pytest.skip("CNXC no longer has multiple gap-downs")
     md = Path("data/dossiers/CNXC/dossier.md").read_text()
-    if "**Read — what broke** · discrete gap-downs:" not in md:
+    # the label names the rolling window's length since 2026-11-04 (`render._rolling`)
+    read_line = r"\*\*Read — what broke(?: \([^)]*days[^)]*\))?\*\* · discrete gap-downs:"
+    if not re.search(read_line, md):
         pytest.skip("committed md pre-dates the event-study render (artifact pass pending)")
     dd = ds.Dossier.model_validate(d)
     pcts = {g: dr._gap_pct_from_perf(dd.mechanical.stock_performance, g) for g in gaps}

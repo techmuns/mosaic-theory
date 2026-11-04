@@ -70,6 +70,13 @@ BASELINE: frozenset[tuple[str, ...]] = frozenset({
     # asks for when a duplicate stops existing.
     ('LTM EBITDA', 'NTM EBITDA', 'NTM Revenue'),
     ('base', 'bear', 'bull'),
+    # (2026-11-04) How a drawdown anchor names its two dated parts, per `DrawdownAnchor.kind`
+    # (`schemas.DRAWDOWN_ANCHOR_WORDS`, dossier.js `ANCHOR_WORDS`). Unavoidable for the A2
+    # reason: the JS cannot import the Python table, and the labels are presentation, so they
+    # are not written into the page. Bound by a parity pin
+    # (`test_anchored_drawdown.py::test_anchor_words_twin`), so a one-sided edit reds there.
+    ('Drawdown at underwrite', 'Since underwrite', 'underwrite'),
+    ('Drawdown when followed', 'Since followed', 'follow'),
 })
 
 

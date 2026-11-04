@@ -654,8 +654,6 @@ def emit_scenarios() -> list[str]:
 
 MON = ROOT / "data" / "monitor"
 OUT_MON = HERE / "monitor"
-CALLS = ROOT / "data" / "calls"
-OUT_CALLS = HERE / "calls"
 
 
 def emit_monitor() -> list[str]:
@@ -695,7 +693,7 @@ def _mirror_theme_side_files(src: Path, out: Path) -> list[str]:
     re-slugged data-side left its mirror behind forever, so the page kept rendering a declared
     thesis for a driver that has none — presence-when-absent, the exact inversion of the loud
     `THESIS UNSTATED` rule these files exist to serve. Every other mirror here (scenarios,
-    monitor, calls) rebuilds its directory for the same reason.
+    monitor) rebuilds its directory for the same reason.
 
     SAFE TO PRUNE, unlike `build_themes`'s freeze artifacts: those are regenerated from
     GIT-IGNORED `data/forward/` and must survive a deploy that has no source, which is why that
@@ -750,34 +748,6 @@ def emit_theme_economics() -> list[str]:
     the loud empty state for a basket-less driver."""
     return _mirror_theme_side_files(
         ROOT / "data" / "themes" / "economics", OUT_THEMES / "economics")
-
-
-def _mirror_calls() -> list[str]:
-    """Mirror data/calls/<handle>/ -> frontend/calls/<handle>/ for every account present.
-
-    WHOLE-TREE COPY, deliberately. Unlike the snapshot mirror there is no per-file allowlist: an
-    account's shape is its own (a file per month of posts, a file per tracked ticker's bars), and
-    an allowlist would silently drop a new month the moment the corpus grew. What IS enforced is
-    that an account carries a meta.json — a stray directory is skipped rather than half-served.
-
-    ``results.jsonl`` rides along when present; it is written by `vinci calls score`, and without
-    it the chart readout degrades to "not scored" rather than to a fabricated number.
-    """
-    if not CALLS.is_dir():
-        return []
-    if OUT_CALLS.exists():
-        shutil.rmtree(OUT_CALLS)
-    OUT_CALLS.mkdir(parents=True)
-    idx = CALLS / "accounts.json"
-    if idx.exists():
-        shutil.copyfile(idx, OUT_CALLS / "accounts.json")
-    handles: list[str] = []
-    for d in sorted(x for x in CALLS.iterdir() if x.is_dir()):
-        if not (d / "meta.json").is_file():
-            continue
-        shutil.copytree(d, OUT_CALLS / d.name)
-        handles.append(d.name)
-    return handles
 
 
 def _git_sha() -> str | None:
@@ -1578,7 +1548,6 @@ def main(argv: list[str] | None = None) -> None:
 
     scen_tickers = emit_scenarios()
     mon_days = emit_monitor()
-    calls_handles = _mirror_calls()
 
     # DERIVED EDGAR-10-K exposure map → slim graph.json (edges + shared nodes + headline stats).
     # Authorized for the private/authed repo as a derived artifact (CLAUDE.md) and COMMITTED there
@@ -1697,7 +1666,6 @@ def main(argv: list[str] | None = None) -> None:
         f"{len(tickers)} dossier(s) [{', '.join(tickers) or 'none'}], "
         f"{len(scen_tickers)} underwrite(s) [{', '.join(scen_tickers) or 'none'}], "
         f"{len(mon_days)} monitor day(s) [latest {mon_days[-1] if mon_days else 'none'}], "
-        f"{len(calls_handles)} calls account(s) [{', '.join(calls_handles) or 'none'}], "
         f"{len(theme_slugs)} theme(s) [{', '.join(theme_slugs) or 'none'}], "
         f"{len(thesis_slugs)} thesis card(s) [{', '.join(thesis_slugs) or 'none'}], "
         f"{len(econ_slugs)} econ roll-up(s) [{', '.join(econ_slugs) or 'none'}] → frontend/"

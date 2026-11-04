@@ -238,7 +238,8 @@ PR (CLAUDE.md: coin-time translation).
   calendar, the posts for a day, and a price chart for whichever cashtag is focused, on ONE screen,
   built to LABEL those posts rather than to present them. A research input only: it feeds no screen,
   ranker, ledger or spread and gates nothing. "Tape" is the trading sense — the running record of
-  what someone said, in order. Home: `vinci/calls/`, `frontend/views/calls/tape.js`.
+  what someone said, in order. RETIRED 2026-11-04 (operator; R1): it was home in `vinci/calls/`
+  and `frontend/views/calls/tape.js`, last held by `481e82f7`.
 - **cohort split / cohort / residual** (#501, 2026-08-25) — splitting a name's fall into its
   INDUSTRY's share and its own. **Cohort** = the same-SIC-industry names *inside the screened
   universe* (min 5), NOT the market benchmark — IWM is what each name is already measured against,
@@ -253,12 +254,14 @@ PR (CLAUDE.md: coin-time translation).
   waiting to buy, not a target the thesis predicts reaching. Kept and MARKED rather than refused:
   four of the eighty-three hand labels are this shape and all four are correct. It changes what
   "touched" means, so the touch test keys on the LEVEL's position rather than on the bias.
-  Home: `vinci/calls/targets.py` (`TargetStatus.COUNTER_DIRECTIONAL`), `score.py` (`touched`).
+  Was home in `vinci/calls/targets.py` (`TargetStatus.COUNTER_DIRECTIONAL`) and `score.py`
+  (`touched`); retired with the calls tape, 2026-11-04.
 - **implausible target** — a resolved target more than 10x above or 0.1x below the entry price
   (#499). Plain words: a number that cannot be the price target it was read as — usually an options
   FLOW amount ("$CVNA – $10.77M") or a dollar move parsed as a level. Refused, because the touch
   test would otherwise be satisfied by arithmetic. The band is set on face validity, never on what
-  it does to the hit-rate. Home: `vinci/calls/targets.py` (`TargetStatus.IMPLAUSIBLE`).
+  it does to the hit-rate. Was home in `vinci/calls/targets.py` (`TargetStatus.IMPLAUSIBLE`);
+  retired with the calls tape, 2026-11-04.
 - **gate regime / the tiered ladder / eligibility line** — the underwrite gate's threshold
   vocabulary (#487, ratified 2026-08-21). **Gate regime** = WHICH set of thresholds judged a
   record, stamped on it (`result.gate_regime`); an ABSENT stamp means the pre-2026-08-21
@@ -614,6 +617,12 @@ PR (CLAUDE.md: coin-time translation).
 - **Order object** (2026-11-04, slice 2a, `vinci/facts/store.py`) — plain words: *one file per
   company and snapshot recording which stored row was which row of SEC's response, kept apart from
   the facts so a year of facts no new filing touched keeps its name across refreshes.*
+- **Drawdown anchor / at-anchor part / since part** (2026-11-04, `DrawdownAnchor`,
+  `drawdown_cause.anchor`) — plain words: *the date a name's drawdown record is pinned to (its
+  underwrite, else the day it was followed); the at-anchor part is the gap-downs, 8-Ks and outlook
+  of the 180 days ending on that date, read only from what was knowable then, and the since part is
+  what has happened from the next day to the page's price date.* NOT the R1 screening `anchor`
+  (`vinci/dossier/anchor.py`), nor the price refresh's anchor session.
 
 ## Local setup (every laptop, every contributor)
 

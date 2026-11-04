@@ -19,7 +19,7 @@ _7 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** Next results print ~2026-11-05 `[cadence-estimate]` — calendar in Analysis
 
 ## What happened — and does it change the runway?
-- **Shape:** discrete gap-downs — 2026-08-31 no company filing [2]
+- **Shape (180 days to 2026-09-22):** discrete gap-downs — 2026-08-31 no company filing [2]
 - **Price (180d):** -13.8% [3]
 - **Market (IWM) 180d:** 16.1% [4]
 - **vs market (180d):** -29.9% [5]
@@ -135,7 +135,7 @@ _table shows the last 4 fiscal years · 1 earlier year is in the Appendix_
 # Analysis — full dossier
 
 ## What moved the price — and did it move alone?
-- **Read — what moved** · discrete gap-downs: [2]
+- **Read — what moved (180 days to 2026-09-22)** · discrete gap-downs: [2]
   - 2026-08-31 **-15.9%** → no company filing
 
 _Company-specific or market-wide?_
