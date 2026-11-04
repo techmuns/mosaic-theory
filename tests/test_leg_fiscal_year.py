@@ -28,6 +28,11 @@ import vinci.scenarios as sc
 from vinci.dossier.ev_gap import leg_basis
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
+#: SMPL's page as committed on 2026-08-18, frozen (tests/fixtures/frozen_pages/README.md). The
+#: living page was re-assembled on its FY2026 10-K (2026-11-04): FY2026 is no longer a forward
+#: consensus year on it, and `build_template` refuses it on STATE row 36's share gap. The template
+#: fixtures and the year-pinned values read this page; the year-free invariant reads both.
+FROZEN_SMPL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL" / "dossier.json"
 
 
 def _leg(fy: str | None) -> dict[str, object]:
@@ -149,21 +154,29 @@ def test_the_total_gap_does_not_move_with_the_year_but_the_split_does() -> None:
     from vinci.dossier import ev_gap as eg
     from vinci.dossier.refresh import _base_leg
 
-    doc = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
-    m = doc["mechanical"]
-    levels = (m["consensus_context"] or {})["consensus_levels"]
-    leg, br = _base_leg("SMPL"), (m["ev_gap"] or {})["bridge"]
+    leg = _base_leg("SMPL")
     assert leg, "SMPL has no base leg"
-    got = {}
-    for fy in ("2026", "2028"):
-        d = eg._decompose_at(levels, fy, leg, br["tev"], br["net_debt"], leg["shares"])
-        assert d is not None
-        got[fy] = d
-    assert got["2026"]["ev_gap"] == pytest.approx(got["2028"]["ev_gap"], rel=1e-12), (
-        "the TOTAL gap moved with the anchor year — it is our_EV/TEV and carries no year, so this "
-        "is either a real regression or the caveat's central claim is wrong")
-    assert got["2026"]["revenue_ratio"] != pytest.approx(got["2028"]["revenue_ratio"], rel=1e-6), (
-        "the SPLIT did not move between years — then there is nothing for this flag to warn about")
+    living = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    fys = sorted({str(c["fy"]) for c in (living["mechanical"]["consensus_context"] or {})
+                  ["consensus_levels"]["Revenue"]}, key=int)
+    # the frozen page at the years this pin was written on; the living one at its own first and
+    # third forward years (FY2026 is past on it) — the claim carries no year, so it holds on both
+    for doc, (y0, y1) in ((json.loads(FROZEN_SMPL.read_text()), ("2026", "2028")),
+                          (living, (fys[0], fys[2]))):
+        m = doc["mechanical"]
+        levels = (m["consensus_context"] or {})["consensus_levels"]
+        br = (m["ev_gap"] or {})["bridge"]
+        got = {}
+        for fy in (y0, y1):
+            d = eg._decompose_at(levels, fy, leg, br["tev"], br["net_debt"], leg["shares"])
+            assert d is not None, fy
+            got[fy] = d
+        assert got[y0]["ev_gap"] == pytest.approx(got[y1]["ev_gap"], rel=1e-12), (
+            "the TOTAL gap moved with the anchor year — it is our_EV/TEV and carries no year, so "
+            "this is either a real regression or the caveat's central claim is wrong")
+        assert got[y0]["revenue_ratio"] != pytest.approx(got[y1]["revenue_ratio"], rel=1e-6), (
+            "the SPLIT did not move between years — then there is nothing for this flag to warn "
+            "about")
 
 
 def test_both_write_paths_call_the_guard_and_the_template_can_state_the_year() -> None:
@@ -187,7 +200,7 @@ def test_both_write_paths_call_the_guard_and_the_template_can_state_the_year() -
             f"{fn.__name__} does not run the leg-year guard — the field is enforced on one write "
             "path and not the other, so the unguarded one is the one an analyst will use")
 
-    doc = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    doc = json.loads(FROZEN_SMPL.read_text())   # a page the template accepts (row 36)
     base = build_template(doc)["scenarios"]["base"]
     assert "leg_fy" in base, "the template has no cell for the leg year — it cannot be stated"
     anchor = ((doc["mechanical"].get("ev_gap") or {}).get("anchor_fy"))
@@ -223,7 +236,7 @@ def test_every_scenario_input_field_is_settable_from_the_template() -> None:
     #: declared set so an addition is a deliberate, explained act rather than a quiet one.
     exempt: dict[str, str] = {}
 
-    doc = json.loads((ROOT / "data" / "dossiers" / "SMPL" / "dossier.json").read_text())
+    doc = json.loads(FROZEN_SMPL.read_text())   # a page the template accepts (row 36)
     cells = build_template(doc)["scenarios"]
     assert cells, "the template produced no legs — this sweep would check nothing"
 

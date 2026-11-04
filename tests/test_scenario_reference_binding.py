@@ -69,6 +69,22 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 #: defect it names is live.
 KNOWN_FOREIGN: dict[str, str] = {}
 
+#: A RECORD STRUCK ON AN EARLIER VINTAGE OF ITS OWN PAGE: it cites a band figure the page's CURRENT
+#: series no longer produces, because the page moved and the underwrite has not yet. Not
+#: KNOWN_FOREIGN, which names a record carrying ANOTHER name's figures and is earned only while that
+#: record shares an assumptions block (the check below it). Named here rather than bound to a frozen
+#: page, so the gap stays visible; earned only while the reference is still unreproducible
+#: (`test_a_known_stale_record_still_cites_what_its_page_no_longer_produces`).
+#: UNLOCK: the re-underwrite that re-derives the reference from the current band.
+KNOWN_STALE: dict[str, str] = {
+    "SMPL": ("STATE §5.0 row 36: scenarios/SMPL.json (struck 2026-08-05) cites band_low 6.11, and "
+             "its bear leg says '5.5x is below the lowest close … 6.11x'. That no longer holds: "
+             "the page re-assembled 2026-11-04 on its FY2026 10-K reads a band low of 5.04x (34 "
+             "closes 2018-04-10..2026-10-27), so the bear 5.5x now sits ABOVE the band's low. "
+             "Fix at the January re-underwrite, after the Q1 FY27 10-Q; the record is the "
+             "operator's and is not edited here."),
+}
+
 #: The EXACT shared-digest group that is exempt — not "any group containing an allowlisted name".
 #: The first cut exempted the whole group, so a THIRD record pasted from BRBR/SMPL's block would
 #: have been waved through for as long as the BRBR entry lived. Keyed as a frozenset so a new member
@@ -237,7 +253,8 @@ def test_every_band_reference_is_reproducible_from_its_own_series() -> None:
         f"a scenario underwriting a name with no committed dossier is itself the anomaly, and its "
         f"band citations cannot be verified by any means. Assemble the name, or drop the citation. "
         f"(Known: {sorted(NO_COMMITTED_BAND)}.)")
-    unexpected = [f for f in foreign if f.split()[0].split("-")[0] not in KNOWN_FOREIGN]
+    unexpected = [f for f in foreign
+                  if f.split()[0].split("-")[0] not in {**KNOWN_FOREIGN, **KNOWN_STALE}]
     assert not unexpected, (
         f"reference(s) cite a figure their own name's close series cannot produce: {unexpected}. "
         f"A stable-role band statistic on the multiple axis asserts it describes THIS "
@@ -263,6 +280,27 @@ def test_the_known_foreign_record_is_still_foreign_and_still_recorded() -> None:
         f"{sorted(set(KNOWN_FOREIGN) - set(still_shared))} no longer shares an assumptions block "
         f"with another name — the underwriting was re-derived, so DELETE the KNOWN_FOREIGN "
         f"entry so the guards protect this name again. This is the good failure.")
+
+
+def test_a_known_stale_record_still_cites_what_its_page_no_longer_produces() -> None:
+    """THE STALE ALLOWLIST IS EARNED THE SAME WAY — only while its gap is live. Guard 2 skips
+    `KNOWN_STALE`, so without this an entry could outlive the re-underwrite that closes it and
+    exempt the next foreign figure on that name. Each entry must still cite a stable-role band
+    figure its own page's current series cannot produce; once the record is re-derived, this fails
+    and says to delete the entry."""
+    for ticker in KNOWN_STALE:
+        docs = [d for name, d in _scenarios() if name == ticker]
+        assert docs, f"{ticker} is in KNOWN_STALE but has no scenario record — drop it"
+        band = _own_band(ticker)
+        assert band is not None and len(band.get("series") or []) >= 4, (
+            f"{ticker} is in KNOWN_STALE but has no usable committed band to be stale against")
+        stale = [f"{r['role']}={r['value']}" for r in _band_refs(docs[0])
+                 if not any(abs(float(r["value"]) - v) <= 0.02 * max(1.0, abs(v))
+                            for v in _reachable(band, str(r["role"])))]
+        assert stale, (
+            f"{ticker}'s record now cites only band figures its page produces — the underwriting "
+            f"was re-derived, so DELETE its KNOWN_STALE entry so guard 2 protects this name again. "
+            f"This is the good failure.")
 
 
 #: Facts whose value is a NAME-SPECIFIC MAGNITUDE — a revenue, a debt balance, a share count. Two

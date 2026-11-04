@@ -129,13 +129,23 @@ def test_the_multiple_payload_states_that_its_range_excludes_todays_mark() -> No
     """16 of 18 corpus names carry one more series point than the range window counts, and the extra
     one is the current mark — which is why SMPL's 5.56x sits BELOW its own 6.11x low. Left implicit,
     a sparkline drawn over every point beneath a band drawn over n_closes reads as a glitch, and the
-    tempting fix is to widen the band, which would restate the percentile the panel turns on."""
+    tempting fix is to widen the band, which would restate the percentile the panel turns on.
+
+    The STRUCTURE is held on the living page; the VALUE that motivated it — the mark below the low —
+    on SMPL's frozen 2026-08-18 page (tests/fixtures/frozen_pages/README.md). Re-assembled on its
+    FY2026 10-K (2026-11-04), the living page marks 6.13x against a 5.04x low, so it no longer
+    shows the state, though the flag still describes its range."""
     v = multiple_and_price(
         (_dossier("SMPL") or {})["mechanical"]["valuation"])
     assert v is not None
     assert v["range_excludes_current"] is True
     assert len(v["series"]) == v["n_closes"] + 1
-    assert v["current"] < v["low"], "the real state this flag exists to explain"
+    frozen = json.loads((ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL"
+                         / "dossier.json").read_text())
+    f = multiple_and_price(frozen["mechanical"]["valuation"])
+    assert f is not None and f["range_excludes_current"] is True
+    assert len(f["series"]) == f["n_closes"] + 1
+    assert f["current"] < f["low"], "the real state this flag exists to explain"
 
 
 def test_emit_is_deterministic_over_the_committed_corpus() -> None:

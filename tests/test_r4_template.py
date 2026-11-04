@@ -39,9 +39,15 @@ R4_CELL_INPUTS = {"ebit", "ebit_derivation", "multiple", "multiple_derivation", 
                   "years_to_terminal", "leg_fy", "bear_basis"}
 
 
+#: Pages read from a frozen vintage, not the living one (tests/fixtures/frozen_pages/README.md).
+#: SMPL's living page is refused by the template on STATE row 36's share gap since its 2026-11-04
+#: re-assembly, so the R1 case reads the page it had before.
+_FROZEN = {"SMPL": ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL"}
+
+
 def _page(ticker: str, *, tag: str | None = sc.RECIPE_R4) -> dict[str, Any]:
-    doc: dict[str, Any] = json.loads(
-        (ROOT / "data" / "dossiers" / ticker / "dossier.json").read_text())
+    folder = _FROZEN.get(ticker, ROOT / "data" / "dossiers" / ticker)
+    doc: dict[str, Any] = json.loads((folder / "dossier.json").read_text())
     if tag is not None:
         doc["anchor"]["recipe_hint"] = tag
     return doc
