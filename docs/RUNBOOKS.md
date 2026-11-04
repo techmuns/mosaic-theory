@@ -452,8 +452,9 @@ EXPOSURE into an investment view were not written down.
   date's cap, so MDY bars must exist for mid-band names like IT.)*
 - **PRE-SPEND CHECK (mandatory before any paid `vinci dossier --ticker <T>`, after the refresh):**
   `python -m vinci.cli dossier precheck --ticker <T>` — the page built at $0 with no LLM call,
-  compared with the committed page; exit 1 lists every field or block the build would lose, and the
-  pass STOPS for the operator. *(Source: §i step 4; SMPL 2026-11-04.)*
+  compared with the committed page; exit 1 lists every field or block the build would lose, and
+  every refusal the paid build would make only after its LLM calls, and the pass STOPS for the
+  operator. *(Source: §i step 4; SMPL 2026-11-04; MNST 2026-11-02.)*
 - **Browser-preview evidence (frontend PRs):** render from committed JSON on localhost; capture
   **screenshots** of the change and confirm **zero console errors**; render/layout PRs **STOP for
   operator approval** (PREVIEW RULE). *(Source: CLAUDE.md §PREVIEW RULE.)*
@@ -604,8 +605,18 @@ is the 3.9 system one).
    only after a $2.27 build; the hand-written pre-spend checks had all passed —
    `docs/records/2026-11-04-pre-spend-field-check.md`.)*
 
+   - It also **exits 1 on each refusal the paid build makes only AFTER its LLM calls** that needs
+     no synthesis, printed with its message under `POST-SPEND REFUSALS`: `_freshness_check` (a
+     missing cap input, an export panel past the 45-day ceiling, a share-basis mismatch) and
+     `_materiality_check`'s "cannot look" refusal (no annual Income Statement, period header,
+     revenue row or unusual-items block). A material unusual item the summary does not show is
+     listed as decided by the paid draw, not a stop: the synthesis must state it. The freshness
+     line gives the date from which a build is refused on panel age, since the age is measured on
+     the day the check runs. *(Source: MNST, 2026-11-02: run `373c8ffc` paid $3.33 for seven LLM
+     calls before `_freshness_check` refused a share basis its 2-for-1 split had moved —
+     `docs/records/2026-11-04-pre-spend-check-runs-post-spend-refusals.md`.)*
    - It writes nothing to `data/dossiers/` and no `assembly_runs` line. A first assembly (no
-     committed page) has nothing to compare and exits 0.
+     committed page) has no field to compare, but its post-spend refusals still run and exit 1.
    - Its first lines are the count's BOUNDARY — both pages' `assembled_at` and extraction versions,
      the export sha256s on disk against the ones the page stamps, and how many fields it compared.
      Paste them into the pass's record.

@@ -372,7 +372,8 @@ incomplete regardless of code state.
   **`docs/records/`**. Never appended to §5, which is frozen.
 - **ARTIFACT-PASS RULE.** The standing post-merge artifact pass (per name, the $0 pre-spend check
   `vinci dossier precheck --ticker <T>` FIRST — exit 1 means a field the committed page has would be
-  lost, and the pass STOPS for the operator before any spend (RUNBOOKS §i step 4) → re-assemble dossiers → build frontend
+  lost, or a refusal the paid build makes only after its LLM calls would fire, and the pass STOPS
+  for the operator before any spend (RUNBOOKS §i step 4) → re-assemble dossiers → build frontend
   → commit `data/dossiers/*` + `frontend/dossiers/*` + every `data/snapshots/assembly_runs/*` file the
   pass wrote, refused re-rolls included — the cost-and-outcome series, `vinci/dossier/run_metrics.py`
   → push) runs the **FULL offline suite green

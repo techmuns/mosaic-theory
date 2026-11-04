@@ -26,9 +26,15 @@ from vinci.dossier.prespend import (
     ABSENT,
     BLOCKS,
     LLM_WRITTEN,
+    POST_SPEND,
     Forecast,
+    PostSpend,
     compare,
     forecast_llm_fields,
+    freshness_refusal,
+    gate_layer,
+    materiality_refusal,
+    post_spend_checks,
     report,
     sourced_fields,
 )
@@ -71,6 +77,13 @@ def _pages() -> list[pathlib.Path]:
     return sorted(DOSS.glob("*/dossier.json"))
 
 
+def _exports_pass(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A `run` on a temporary data folder reads no CIQ export, so the materiality check would
+    refuse on the missing Income Statement. The real exports pass it (measured on all 36 folders,
+    2026-11-04; GOOGL's pinned below), so a test about something else stands it in."""
+    monkeypatch.setattr(prespend, "materiality_refusal", lambda gate, bundle, ticker: None)
+
+
 # --- positive: the SMPL 2026-11-04 export ---------------------------------------------------------
 
 def test_the_smpl_export_lists_the_twelve_fields_and_the_ev_bridge() -> None:
@@ -89,7 +102,8 @@ def test_the_smpl_export_lists_the_twelve_fields_and_the_ev_bridge() -> None:
 def test_the_report_prints_every_regression_with_its_note_and_stops() -> None:
     committed, fresh = _load(FROZEN_PAGE), _load(BUILD / "SMPL-mechanical.json")
     result = compare(committed, fresh, _forecast())
-    lines = report("SMPL", committed, fresh, result, [("financials/annual", "cc99900b61")])
+    lines = report("SMPL", committed, fresh, result, [("financials/annual", "cc99900b61")],
+                   PostSpend((), (), None))
     text = "\n".join(lines)
     for path in SMPL_REGRESSIONS:
         assert f"  {path.removeprefix('mechanical.')}: present → " in text, path
@@ -99,7 +113,9 @@ def test_the_report_prints_every_regression_with_its_note_and_stops() -> None:
     assert "assembled 2026-08-18T12:47:56" in text and "assembled 2026-11-04T" in text
     assert "e41ebc16a4 ×8 (NOT on disk)" in text
     assert f"compared: {result.compared} Sourced field(s)" in text
-    assert lines[-1].startswith(f"=== {len(SMPL_REGRESSIONS)} regression(s) — STOP")
+    assert lines[-1].startswith(
+        f"=== {len(SMPL_REGRESSIONS)} regression(s) · 0 post-spend refusal(s) — STOP: the paid "
+        "build would publish the regressions")
 
 
 def test_run_exits_one_on_a_regression_and_writes_no_page(
@@ -111,6 +127,7 @@ def test_run_exits_one_on_a_regression_and_writes_no_page(
     built = Dossier.model_validate_json((BUILD / "SMPL-mechanical.json").read_text())
     monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: built)
     monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: _forecast())
+    _exports_pass(monkeypatch)
     out: list[str] = []
     assert prespend.run("smpl", Config(data_dir=tmp_path), emit=out.append) == 1
     assert out[-1].startswith("=== 13 regression(s)")
@@ -173,6 +190,7 @@ def test_run_exits_zero_when_nothing_is_lost(
     same = Dossier.model_validate_json(FROZEN_PAGE.read_text())
     monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: same)
     monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: {})
+    _exports_pass(monkeypatch)
     out: list[str] = []
     assert prespend.run("SMPL", Config(data_dir=tmp_path), emit=out.append) == 0
     assert out[-1].startswith("=== 0 regressions")
@@ -306,3 +324,219 @@ def test_the_forecast_names_every_capital_structure_field_assemble_one_writes() 
                     written |= {k.value for k in kw.value.keys
                                 if isinstance(k, ast.Constant) and isinstance(k.value, str)}
     assert written == set(LLM_WRITTEN)
+
+
+# --- the refusals the paid build makes only after its LLM calls ----------------------------------
+#
+# THE POSITIVE PIN is the one paid build in `data/snapshots/assembly_runs/` (33 runs, 2026-10-26 →
+# 11-03) refused by a check that needs no synthesis: MNST's first assembly, run `373c8ffc`, $3.33,
+# refused by `_freshness_check` on the share basis its 2-for-1 split moved. Its $0 build on the
+# same exports and the same 2026-10-30 close is frozen in `MNST-mechanical.json`. The other three
+# refusals (CNXC, NFLX, LLY) are the uncited-material-figure guard, which the synthesis decides.
+
+MNST_RUN = ROOT / "data" / "snapshots" / "assembly_runs" / "2026-11-02T12-48-42Z-373c8ffc.jsonl"
+
+
+def _built(name: str) -> Dossier:
+    return Dossier.model_validate_json((BUILD / f"{name}-mechanical.json").read_text())
+
+
+def test_mnsts_paid_refusal_is_decided_at_zero() -> None:
+    from vinci.dossier.run_metrics import _capped
+
+    paid = json.loads(MNST_RUN.read_text().splitlines()[0])
+    assert (paid["ticker"], paid["outcome"], len(paid["calls"])) == ("MNST", "failed", 7)
+    assert paid["usd"] > 3.3
+    built = _built("MNST")
+    refusal = freshness_refusal(gate_layer(built), ticker="MNST",
+                                built_at=built.assembled_at.date())
+    assert refusal is not None and refusal.at_zero
+    # the paid run's own record, character for character, as the run log caps it
+    assert _capped(f"{refusal.error}: {refusal.message}") == paid["error"]
+    assert "SHARE-BASIS mismatch" in refusal.message
+
+
+def test_a_first_assembly_runs_the_refusals_and_exits_one(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """MNST has no committed page, which used to exit 0 before anything was built."""
+    def no_forecast(doc: Dossier, http: Any) -> dict[str, Forecast]:
+        raise AssertionError("a first assembly has nothing to compare, so nothing to forecast")
+
+    monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: _built("MNST"))
+    monkeypatch.setattr(prespend, "forecast_llm_fields", no_forecast)
+    _exports_pass(monkeypatch)
+    out: list[str] = []
+    assert prespend.run("MNST", Config(data_dir=tmp_path), emit=out.append) == 1
+    assert "committed page: none — a first assembly" in out[1]
+    assert any(ln.startswith("  _freshness_check · FreshnessError: MNST: market cap implies "
+                             "$92.70/sh against a $47.34 close") for ln in out)
+    assert out[-1].startswith("=== no committed page to compare · 1 post-spend refusal(s) — "
+                              "STOP: the paid build would pay for its LLM calls and then refuse")
+    assert not (tmp_path / "dossiers").exists()
+
+
+def test_a_refusal_and_a_regression_both_stop_and_both_print(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    page = tmp_path / "dossiers" / "SMPL" / "dossier.json"
+    page.parent.mkdir(parents=True)
+    page.write_bytes(FROZEN_PAGE.read_bytes())
+    monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: _built("SMPL"))
+    monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: _forecast())
+    # no stand-in: the temporary folder holds no export, the shape of a worktree with no CIQ link
+    out: list[str] = []
+    assert prespend.run("SMPL", Config(data_dir=tmp_path), emit=out.append) == 1
+    assert any(ln.startswith("  _materiality_check · MaterialityUnavailableError: SMPL: no "
+                             "annual Income Statement") for ln in out)
+    assert out[-1].startswith("=== 13 regression(s) · 1 post-spend refusal(s) — STOP: the paid "
+                              "build would pay for its LLM calls and then refuse, and once the "
+                              "refusal is cleared it would publish the regressions")
+
+
+def test_no_financials_export_is_refused_at_zero() -> None:
+    """The materiality guard's "cannot look" half: with no Financials export there is no Income
+    Statement to read, and the paid build refuses only after spending."""
+    from vinci.dossier.ciq import CiqBundle
+
+    page = Dossier.model_validate_json((DOSS / "GOOGL" / "dossier.json").read_text())
+    post = post_spend_checks(page, CiqBundle.from_files("GOOGL", []))
+    assert [(r.check, r.error) for r in post.refusals] == [
+        ("_materiality_check", "MaterialityUnavailableError")]
+    assert "no annual Income Statement" in post.refusals[0].message
+    assert post.undecided == ()
+
+
+def test_a_material_item_the_summary_omits_is_left_to_the_synthesis(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """`MaterialityError` reads whether the synthesis states the item, so at $0 it is listed and
+    never a stop (on 2026-11-04 it fires on CELH's and WAT's exports read with no page)."""
+    from vinci.dossier import assemble
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.materiality import MaterialityError
+
+    def material(*_: Any, **__: Any) -> None:
+        raise MaterialityError("GOOGL: 1 material UNUSUAL ITEM(s) appear in neither …")
+
+    monkeypatch.setattr(assemble, "_materiality_check", material)
+    page = Dossier.model_validate_json((DOSS / "GOOGL" / "dossier.json").read_text())
+    gate = gate_layer(page)
+    refusal = materiality_refusal(gate, CiqBundle.from_files("GOOGL", []), ticker="GOOGL")
+    assert refusal is not None and not refusal.at_zero
+    target = tmp_path / "dossiers" / "GOOGL" / "dossier.json"
+    target.parent.mkdir(parents=True)
+    target.write_bytes((DOSS / "GOOGL" / "dossier.json").read_bytes())
+    monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: page)
+    monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: {})
+    out: list[str] = []
+    assert prespend.run("GOOGL", Config(data_dir=tmp_path), emit=out.append) == 0
+    assert any(ln.startswith("  decided by the paid draw, not a stop: _materiality_check · "
+                             "MaterialityError") for ln in out)
+    assert out[-1].startswith("=== 0 regressions · 0 post-spend refusals")
+
+
+# --- negative: GOOGL's page, and every committed page -------------------------------------------
+
+@pytest.mark.parametrize("path", _pages(), ids=lambda p: p.parent.name)
+def test_every_committed_page_passes_the_freshness_check_at_its_own_build_date(
+    path: pathlib.Path,
+) -> None:
+    """Each page was written by a build that passed it, so the $0 check must agree (27 of 27 on
+    2026-11-04). A page re-read later is NOT re-measured at today's date: its panels have aged."""
+    page = Dossier.model_validate_json(path.read_text())
+    assert freshness_refusal(gate_layer(page), ticker=page.ticker,
+                             built_at=page.assembled_at.date()) is None
+
+
+def test_googls_page_passes_every_post_spend_check_on_its_export() -> None:
+    from tests.ciq_export_support import skip_unless_export
+    from vinci.config import get_config
+    from vinci.dossier.ciq import CiqBundle
+    from vinci.dossier.manual_store import LocalFolderStore
+
+    files = LocalFolderStore.from_config(get_config()).files("GOOGL")
+    bundle = CiqBundle.from_files("GOOGL", files)
+    skip_unless_export("GOOGL", "financials", "482debf275", freq="annual", bundle=bundle,
+                       why="the materiality guard reads the annual Income Statement")
+    page = Dossier.model_validate_json((DOSS / "GOOGL" / "dossier.json").read_text())
+    post = post_spend_checks(page, bundle)
+    assert (post.refusals, post.undecided) == ((), ())
+    assert post.age is not None and post.age.days <= 45
+
+
+def test_googls_page_run_against_itself_exits_zero(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    target = tmp_path / "dossiers" / "GOOGL" / "dossier.json"
+    target.parent.mkdir(parents=True)
+    target.write_bytes((DOSS / "GOOGL" / "dossier.json").read_bytes())
+    page = Dossier.model_validate_json(target.read_text())
+    monkeypatch.setattr(prespend, "mechanical_build", lambda t, cfg: page)
+    monkeypatch.setattr(prespend, "forecast_llm_fields", lambda d, http: {})
+    _exports_pass(monkeypatch)
+    out: list[str] = []
+    assert prespend.run("GOOGL", Config(data_dir=tmp_path), emit=out.append) == 0
+    assert out[-1] == ("=== 0 regressions · 0 post-spend refusals — nothing present on the "
+                       "committed page is lost at $0, and no refusal the paid build makes after "
+                       "its LLM calls fires ===")
+    assert any(ln.startswith("  freshness measured at this build's date: oldest panel ")
+               for ln in out)
+
+
+# --- the mirror: what the $0 layer must share with the paid build's -------------------------------
+
+_LLM_PATHS = tuple(f"capital_structure.{f}" for f in LLM_WRITTEN) + ("operating_drivers",)
+
+
+@pytest.mark.parametrize("path", _pages(), ids=lambda p: p.parent.name)
+def test_what_the_paid_gate_does_not_see_moves_no_export_age(path: pathlib.Path) -> None:
+    """`gate_layer` leaves `ev_gap` in (the paid build writes it only after its checks) and lacks
+    what the LLM phases add before them. Both are safe only if neither moves the export age the
+    freshness check gates on: measured on every committed page, which carries all of it."""
+    from vinci.dossier.freshness import CONSENSUS_PANELS, panel_dates
+
+    raw = _load(path)
+    gating = [k for k, _ in panel_dates(raw["mechanical"]) if k not in CONSENSUS_PANELS]
+    assert not [k for k in gating if k.startswith(_LLM_PATHS)], path.parent.name
+    page = Dossier.model_validate(raw)
+    layer = gate_layer(page).model_dump(mode="json")
+    seen = copy.deepcopy(layer)
+    seen["ev_gap"] = None
+    seen["operating_drivers"] = None
+    for field in LLM_WRITTEN:
+        (seen.get("capital_structure") or {}).pop(field, None)
+    assert (prespend.panel_age(layer, page.assembled_at, kind="export")
+            == prespend.panel_age(seen, page.assembled_at, kind="export"))
+
+
+def test_the_gate_layer_carries_the_material_marks_a_zero_build_lacks() -> None:
+    """The paid build marks its material rows before the synthesis, and the materiality check
+    reads them as part of the brief; the $0 build never marks them. SMPL's 2026-11-04 build has
+    one material row (its asset writedown) and no mark."""
+    def marked(layer: Any) -> list[str]:
+        table = layer.financial_summary.annual.value
+        return [r.label for r in table.rows if r.material]
+
+    built = _built("SMPL")
+    assert marked(built.mechanical) == []
+    assert marked(gate_layer(built)) == ["Asset Writedown ($M)"]
+
+
+def test_the_post_spend_set_is_every_helper_assemble_one_calls_after_its_synthesis() -> None:
+    """THE MIRROR'S SET, pinned against its source. Inside `assemble_one`'s `llm is not None`
+    branch, every private helper called after `synthesize` is either in `POST_SPEND` or one the
+    synthesis decides (`_require_synthesis`), and every `POST_SPEND` check is among them. Pins the
+    SET, not each check's rules; a new refusal helper there fails this until it is classified."""
+    tree = ast.parse((ROOT / "vinci" / "dossier" / "assemble.py").read_text())
+    fn = next(n for n in ast.walk(tree)
+              if isinstance(n, ast.FunctionDef) and n.name == "assemble_one")
+    branch = next(n for n in ast.walk(fn)
+                  if isinstance(n, ast.If) and ast.unparse(n.test) == "llm is not None")
+    calls = [n for stmt in branch.body for n in ast.walk(stmt)
+             if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)]
+    synth = next(n.lineno for n in calls if isinstance(n.func, ast.Name)
+                 and n.func.id == "synthesize")
+    after = {n.func.id for n in calls if isinstance(n.func, ast.Name)
+             and n.func.id.startswith("_") and n.lineno > synth}
+    assert after == {*POST_SPEND, "_require_synthesis"}
