@@ -44,7 +44,11 @@ built, to:
 - each checked maturity;
 - the EV/EBITDA bases (`headline_basis`, `ex_lease_at_price`);
 - the EBITDA basis;
-- implied expectations and each of its rows.
+- implied expectations and each of its rows;
+- a filed LTM's two CIQ readings (`filed_tiebreak.ciq_readings_ref`). #891 added this block while
+  this branch was open, and the schema guard refused it on the merge: the annual export's LTM cell,
+  which the page's table no longer shows, and the quarterly export's quarters summed sat under no
+  ref of their own. No committed page carries the block yet.
 
 Computations carry a ref that names the computation and its inputs, as "CIQ Net Debt ÷ CIQ EBITDA"
 already did.
@@ -73,7 +77,8 @@ figure cited to the wrong single fact. That is a citation-shape problem, which o
 citation fixes without loosening the trace.
 
 **HOW VERIFIED.** All runs go through the real `_validate` / renderers with no model call.
-- **Committed pages unchanged** (27 pages at 4a820016, main's code against this branch):
+- **Committed pages unchanged** (the 27 pages, the same at 4a820016 and 8d2bb733; main's code at
+  each against this branch, the second after merging main):
   - every `_validate` flag identical: 399 flags, 326 UNTRACEABLE;
   - the web render (`renderDossier`, node) byte-identical on all 27;
   - the Markdown render byte-identical on all 27;
@@ -91,7 +96,7 @@ citation fixes without loosening the trace.
   - The frozen G-D6 draw: 195 of 199 either way (pinned).
   - **Made-up COMPUTED figures** declared from two real, traced inputs: 1,564 of 1,564 and 1,408 of
     1,408 caught.
-- **Pins.** `tests/test_footnote_every_figure.py`, 79 cases:
+- **Pins.** `tests/test_footnote_every_figure.py`, 85 cases:
   - schema and serializer;
   - the per-figure check, positive and negative, on frozen SMPL;
   - derived arithmetic and units;
@@ -99,14 +104,19 @@ citation fixes without loosening the trace.
   - the legacy-equivalence invariant over every committed page;
   - the prompt example against frozen LLY facts;
   - both guards;
-  - each producer's ref;
+  - each producer's ref, the filed LTM's on CELH's and NFLX's committed fixture rows (a point
+    footnoting its readings to that ref traces; to a quarter's filing, or on a block built before
+    it, it does not);
+  - the review round's five (a footnote covers only its own figure, a transcript-looking ref the
+    page lacks, a non-list `inputs`, a mark inside a decimal, a tag's place before the cite);
   - the web e2e (a mark per figure, ‡, the collapsed block, the print rule) and Markdown.
 - **Screenshots** in `docs/dossier/footnote-every-figure-2026-11-04/screenshots/`: GOOGL, LLY and
   AMZN, one committed point each with `figures` injected, collapsed and force-open, from this
   branch's renderer. No console errors.
 
 **BOUNDARY.**
-- The committed corpus is the 27 `data/dossiers/*/dossier.json` at 4a820016, measured 2026-11-04.
+- The committed corpus is the 27 `data/dossiers/*/dossier.json` at 4a820016, measured 2026-11-04,
+  and unchanged at 8d2bb733 (`git diff 4a820016 8d2bb733 -- data/dossiers` is empty).
   The 30-version population is 9e996d7f's 27 pages plus #886's three at 2746d0ef.
 - Mutations: one-point syntheses through the real `_validate`, seeded `20261104:<T>`, four per
   committed structured point.

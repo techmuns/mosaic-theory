@@ -1907,11 +1907,13 @@ Supports = Literal["annual", "quarterly", "both"]
 FiledKind = Literal["same_item", "containing_line"]
 
 
-class FiledLtmFigure(BaseModel, frozen=True):
+class FiledLtmFigure(SourceRefWhenBuilt, frozen=True):
     """A MATERIAL annual-summary LTM that CIQ's annual and quarterly exports disagree on, decided by
     the SEC filings (2026-11-04, operator approval). The page's LTM cell for the row reads
     ``value``; the two CIQ readings stay here, beside it. ``kind`` says whether ``value`` is the
-    filed figure itself or CIQ's quarterly reading that the filed containing line confirms."""
+    filed figure itself or CIQ's quarterly reading that the filed containing line confirms.
+    ``source_ref`` (item 29, option 4) names the two CIQ readings, ``ciq_annual`` and
+    ``ciq_quarterly``, so a point can cite them (`filed_tiebreak.ciq_readings_ref`)."""
 
     label: str                                # the annual summary's row label
     ltm_end: str                              # ISO

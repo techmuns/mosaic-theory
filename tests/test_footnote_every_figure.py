@@ -391,7 +391,7 @@ def test_every_block_of_the_layer_carries_a_ref_or_says_why_it_is_not_a_fact() -
 #: The blocks this change gives a ref — absent on a page assembled before it, required after.
 _NOW_REFFED = ("ConsensusLevel", "PeerCapitalRow", "PeerCapitalIntensity", "MaturityCheckRow",
                "EvEbitdaBasis", "EvEbitdaAtPrice", "EbitdaBasis", "ImpliedExpectations",
-               "ImpliedExpectationRow")
+               "ImpliedExpectationRow", "FiledLtmFigure")
 
 
 def _before_this_version(raw: dict[str, Any]) -> bool:
@@ -497,6 +497,43 @@ def test_implied_expectations_and_each_row_carry_a_ref() -> None:
     ie = dm._implied_expectations(*_ie_inputs())
     assert ie is not None and ie.source_ref and ie.source_ref.startswith("Assembler: ")
     assert ie.rows and all(r.source_ref and r.multiple_source in r.source_ref for r in ie.rows)
+
+
+def test_a_filed_ltm_figures_two_ciq_readings_carry_a_ref_a_point_can_cite() -> None:
+    """#891's filed-LTM block states CIQ's two readings (the annual export's LTM cell, which the
+    page's table no longer shows, and the quarterly export's quarters summed) beside the filed
+    figure. They sat under no ref of their own; on CELH's and NFLX's real fixture rows each figure
+    now names them, and a point footnoting them to that ref traces, while one footnoting them to a
+    quarter's filing, or to the ref on a block built before it, does not. (The filed figure's own
+    ref also traces them, but only by the trace's 2% tolerance: the tiebreak admits a reading
+    within 2% of the filing, so that is a coincidence of bands, never a citation.)"""
+    from tests.test_filed_tiebreak import MERGER, OUI, _decide
+    from vinci.dossier import filed_tiebreak as ft
+
+    for name, label in (("CELH", OUI), ("NFLX", MERGER)):
+        d = _decide(name, label)
+        assert d.figure is not None and d.figure.source_ref == ft.ciq_readings_ref(d.row)
+        assert label in d.figure.source_ref and d.figure.ltm_end in d.figure.source_ref
+    f = _decide("CELH", OUI).figure
+    assert f is not None and f.source_ref and f.value.source_ref
+    assert (f.ciq_annual, f.ciq_quarterly) == (-418.8, -405.027)
+    base = _frozen()
+    assert base.financial_summary is not None
+    mech = base.model_copy(update={"financial_summary": base.financial_summary.model_copy(
+        update={"filed_ltm": [f]})})
+    claim = ("CIQ disagrees with itself on the LTM: the annual export reads -418.8 while the "
+             "quarterly export sums to -405.0.")
+
+    def cited(ref: str) -> ds.SourcedPoint:
+        return _point(claim, f.source_ref or "", [{"figure": "-418.8", "source_ref": ref},
+                                                   {"figure": "-405.0", "source_ref": ref}])
+
+    assert _flagged(mech, cited(f.source_ref)) == []
+    assert f.quarters[0].source_ref
+    assert _flagged(mech, cited(f.quarters[0].source_ref)) == ["-418.8", "-405"]
+    bare = base.model_copy(update={"financial_summary": base.financial_summary.model_copy(
+        update={"filed_ltm": [f.model_copy(update={"source_ref": None})]})})
+    assert _flagged(bare, cited(f.source_ref)) == ["-418.8", "-405"]
 
 
 def test_both_consensus_level_builders_name_a_row_alike(monkeypatch: pytest.MonkeyPatch) -> None:

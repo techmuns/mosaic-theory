@@ -429,7 +429,8 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "the claim, recomputed at their written precision; a figure with no entry is traced to "
         "the point's own ref as before; and the blocks the assembler builds (consensus levels, "
         "peer capital intensity, checked maturities, the EV/EBITDA bases, the EBITDA basis, "
-        "implied expectations) carry a source_ref a point can cite",
+        "implied expectations, a filed LTM's two CIQ readings) carry a source_ref a point can "
+        "cite",
     ),
 )
 
