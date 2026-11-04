@@ -29,6 +29,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.ciq_export_support import skip_unless_pages_export
 from vinci.config import get_config
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.manual_store import LocalFolderStore
@@ -180,6 +181,10 @@ def test_a_re_assembly_would_not_lose_a_persisted_gap(ticker: str) -> None:
     # real assembly cannot run without the bundle, so the None branch is reachable only from a test.
     if not LocalFolderStore.from_config(get_config()).files(ticker):
         pytest.skip(f"licensed CIQ bundle for {ticker} unavailable — vintages unverifiable here")
+    # AND THE VINTAGE IS THE EXPORT'S, so it matches the page's only on the export the page was
+    # built from. An operator re-export ahead of a re-assembly is a newer vintage, not a lost one
+    # (2026-11-04: SMPL's 2026-10-28 export read ≥2026-10-27 against its page's ≥2026-07-21).
+    skip_unless_pages_export(ticker, "estimates")
     assert after["vintages"] == before["vintages"]
 
 

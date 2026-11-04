@@ -12,6 +12,7 @@ from typing import Any
 
 import pytest
 
+from tests.ciq_export_support import skip_unless_export
 from vinci.dossier.materiality import (
     MCAP_FRACTION,
     MaterialityError,
@@ -166,7 +167,8 @@ def test_the_defect_itself_the_extraction_drops_the_line() -> None:
     d = ROOT / "data" / "manual" / "ciq" / "SMPL"
     if not d.is_dir():
         pytest.skip("licensed CIQ bundle unavailable (never committed)")
-    tbl = financial_summary_annual(CiqBundle.from_files("SMPL", sorted(d.glob("*")))).value
+    bundle = CiqBundle.from_files("SMPL", sorted(d.glob("*")))
+    tbl = financial_summary_annual(bundle).value
     assert tbl is not None, "SMPL annual summary is UNKNOWN — cannot observe the defect"
     labels = [r.label for r in tbl.rows]
     assert any("Asset Writedown" in x for x in labels), (
@@ -174,6 +176,12 @@ def test_the_defect_itself_the_extraction_drops_the_line() -> None:
         f"of LTM net income of -$198.8M) does not reach the assembled financial summary. Rows "
         f"present: {labels}"
     )
+    # THE MAGNITUDE IS ONE EXPORT'S LTM COLUMN, so it is pinned to that export: 049150fb62, the
+    # annual Financials SMPL's page was built from (its revenue and operating cash flow reproduce
+    # the page's annual table). SMPL's 2026-10-28 export closed fiscal 2026 and carries the
+    # writedown as -60.9 and -331.0 in two columns — the row still surfaces, checked above.
+    skip_unless_export("SMPL", "financials", "049150fb62", freq="annual", bundle=bundle,
+                       why="the -391.9 figure is one export's LTM column")
     wd = next(r for r in tbl.rows if "Asset Writedown" in r.label)
     assert any(v is not None and abs(v) > 390 for v in wd.values), (
         f"the writedown row surfaced but carries no -391.9 magnitude: {wd.values}")
