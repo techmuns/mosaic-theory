@@ -91,6 +91,13 @@ return is shown as none, never as a guess.
   it, so the latest is the complete set. A day that drops a close it carried before would hide
   that close's return. The python side refuses an unpairable close, so this has not been seen.
 
+- **Across a split, the page shows the sealed entry beside a return on the exit's basis** (review
+  round 1, DEFERRED). For the MNST case the decision log prints the entry 90.36 and the exit 45.98,
+  then +1.77%. The return divides by 45.18; the monitor row carries that as `entry_price`, and the
+  day's notes carry `pair_closes`' split note. Nothing on the page states that basis. Printing it
+  is a rendering change, which goes to a preview first under the PREVIEW RULE. No committed close
+  spans a split, so no page shows the mismatch today.
+
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
 1. **A close shows no return between its exit and the next monitor day.** That is the brief's
    rule: none, never a computed value. FALSIFIER: a committed close older than the latest monitor
