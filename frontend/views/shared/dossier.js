@@ -267,6 +267,16 @@ const EXTRACTION_VERSIONS = [
     "traces (0.026 is the 3rd percentile; both neighbours at an exact half), and a duration " +
     "written hyphenated or abbreviated to y (5-year, 52-week, ~2y) is skipped like its spaced " +
     "form; every other figure still traces only to the fact its point cites"],
+  ["2026-11-04.filed-ltm-tiebreak",
+    "a material annual-summary LTM that CIQ's annual and quarterly exports disagree on is " +
+    "decided by the SEC filing (operator approval 2026-11-04): the filer's XBRL figure for the " +
+    "same four quarters, as filed by the page's price date, on an explicit reviewed mapping, " +
+    "is stated in the row's LTM cell with every accession named and a main-body caveat when " +
+    "it reproduces one of CIQ's readings within 2%; where the item is filed only inside a " +
+    "wider line (NFLX's merger fee, in its non-operating line), the page states CIQ's " +
+    "quarterly reading when CIQ's breakdown of that line reproduces it in every quarter " +
+    "within 0.5 $M (operator ruling 2026-11-04, NFLX: option B); a row the filing cannot decide still " +
+    "refuses the build, saying why (`financial_summary.filed_ltm`)"],
   ["2026-11-04.amendment-recital",
     "a covenant exhibit whose capitals heading is an amendment naming no contract (REPRICING " +
     "AMENDMENT, AMENDMENT NO 2.) is named for the first contract its recital names and marked " +
