@@ -821,7 +821,7 @@ function fact(label, s, fmt, { hi = false } = {}) {
 // GUIDANCE_MAYBE_CUT_MARK (bound by tests/test_guidance_cut_mark.py). The quote is a WINDOW of the
 // release; `revised_guidance_cut` true = cut, false = the release ended inside it (no mark), absent
 // on a page built before the field = may be cut. The quote is printed as stored, never completed.
-const GUIDANCE_CUT_MARK = "… (quote cut — the outlook continues in the filing)";
+const GUIDANCE_CUT_MARK = "… (quote cut — the release continues in the filing)";
 const GUIDANCE_MAYBE_CUT_MARK = "… (quote may be cut — see the filing)";
 function guidanceFact(label, dc) {
   const cut = dc.revised_guidance_cut;

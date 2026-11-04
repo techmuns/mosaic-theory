@@ -17,7 +17,7 @@ follows the window (`_OutlookWindow.cut`, threaded by `_revised_guidance` into t
 `DrawdownCause.revised_guidance_cut`, ABSENT when None via `DROP_WHEN_NONE`). Both renderers
 (`render._guidance_fact`, dossier.js `guidanceFact`) mark the quote where it stops:
 
-- `true` → `… (quote cut — the outlook continues in the filing)`;
+- `true` → `… (quote cut — the release continues in the filing)`;
 - `false` (the release ended inside the window) → no mark;
 - absent on a PRESENT quote (a page built before the field, every committed page today) →
   `… (quote may be cut — see the filing)`.
@@ -95,8 +95,17 @@ mark is true as it stands, and a re-assembly turns it definite.
 - Until each of the four names is re-assembled, its page says the quote "may be cut" where the
   probe showed it is. Falsifier: a re-assembled page with a PRESENT quote and no
   `revised_guidance_cut` key, which would mean the field is not reaching the page.
-- The synthesis brief now sees the flag too, because `drawdown_cause` goes into the facts dump raw.
-  No prompt text was changed.
+- On a page built with the field, the synthesis brief sees it too, because `drawdown_cause` goes
+  into the facts dump raw. No prompt text was changed.
+- **Not done here (review round 0, reported, not fixed):**
+  - On a page built before the field, the model still reads the cut quote with no mark:
+    `synthesis._mark_drawdown_guidance` prepends only a vintage mark.
+  - Two readers parse figures out of the quote without reading `cut`:
+    `_pe_reconciliation` (`_ADJ_EPS`) and the reader near `mechanical.py:1849`. A window ending
+    inside a range ("$1.19 to $1.") could hand them a figure the filing never stated.
+  Each would change what a page computes or what the model is given, so each is its own build.
+- The cut mark says "the release continues", not "the outlook continues". `cut` only knows that
+  text follows the window, and a 99.1 always runs on past its outlook into tables and boilerplate.
 - #906 (open) adds `drawdown_cause.anchor.at_anchor`, a `DrawdownWindow` holding its own copy of
   `revised_guidance`, printed in its render as "outlook then". If #906 merges first, this branch
   merges main and threads the flag into that copy. If this merges first, #906 owes the same.

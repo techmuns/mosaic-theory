@@ -38,6 +38,9 @@ from vinci.dossier.schemas import Dossier, FilingRef, SourceStatus, dossier_json
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 DOSS = ROOT / "data" / "dossiers"
 JS = ROOT / "frontend" / "views" / "shared" / "dossier.js"
+#: SMPL as assembled 2026-08-18 — its quote stops at "…in the near-ter" like the living page's, and
+#: it never moves (the living SMPL's rebuild drops its April quote from the rolling window).
+FROZEN_SMPL = ROOT / "tests" / "fixtures" / "frozen_pages" / "2026-08-18" / "SMPL" / "dossier.json"
 PAGES = sorted(p.parent.name for p in DOSS.glob("*/dossier.json"))
 MARKS = (GUIDANCE_CUT_MARK, GUIDANCE_MAYBE_CUT_MARK)
 
@@ -51,6 +54,11 @@ _TAIL = " Forward-looking statements. This release contains statements about the
 
 def _page(ticker: str) -> dict[str, Any]:
     doc: dict[str, Any] = json.loads((DOSS / ticker / "dossier.json").read_text())
+    return doc
+
+
+def _frozen_smpl() -> dict[str, Any]:
+    doc: dict[str, Any] = json.loads(FROZEN_SMPL.read_text())
     return doc
 
 
@@ -147,8 +155,8 @@ def test_the_reader_carries_the_cut_to_the_field(monkeypatch: pytest.MonkeyPatch
 def test_the_field_is_absent_until_a_page_is_built_with_it() -> None:
     """A page built before the field round-trips without it (`DROP_WHEN_NONE`: absent means not yet
     built, never "built and found nothing"); a page built with it writes it."""
-    doc = _page("SMPL")
-    assert "revised_guidance_cut" not in _dc(doc), "SMPL now carries the field — re-point this pin"
+    doc = _frozen_smpl()
+    assert "revised_guidance_cut" not in _dc(doc)  # frozen before the field existed
     assert '"revised_guidance_cut"' not in dossier_json(Dossier.model_validate(doc))
     _dc(doc)["revised_guidance_cut"] = True
     assert '"revised_guidance_cut": true' in dossier_json(Dossier.model_validate(doc))
@@ -174,11 +182,11 @@ def test_every_committed_quote_prints_the_mark_its_field_says() -> None:
 
 
 def test_a_recorded_cut_prints_the_cut_mark_on_both_twins(tmp_path: pathlib.Path) -> None:
-    """POSITIVE, from SMPL's real page with the field as its extractor records it: the probe of
+    """POSITIVE, from SMPL's frozen page with the field as its extractor records it: the probe of
     2026-11-04 re-ran `_extract_revised_guidance` on SMPL's cached Ex-99.1, reproduced the committed
     quote byte for byte, and found the release running 31,384 characters past the window (anchor at
     character 764 of 32,948)."""
-    doc = _page("SMPL")
+    doc = _frozen_smpl()
     _dc(doc)["revised_guidance_cut"] = True
     quote = _dc(doc)["revised_guidance"]["value"]
     md = _md(doc)
@@ -192,9 +200,9 @@ def test_a_recorded_cut_prints_the_cut_mark_on_both_twins(tmp_path: pathlib.Path
 
 @pytest.mark.skipif(not shutil.which("node"), reason="node unavailable")
 def test_the_web_twin_marks_a_page_built_before_the_field(tmp_path: pathlib.Path) -> None:
-    """E2E on the web twin: SMPL's committed page as it stands (no field) prints the possibly-cut
+    """E2E on the web twin: SMPL's frozen page, built before the field, prints the possibly-cut
     mark directly after the quote, once."""
-    doc = _page("SMPL")
+    doc = _frozen_smpl()
     quote = _dc(doc)["revised_guidance"]["value"]
     web = _web(doc, tmp_path)
     assert f"{_esc(quote)}{_web_mark(GUIDANCE_MAYBE_CUT_MARK)}" in web
@@ -204,9 +212,9 @@ def test_the_web_twin_marks_a_page_built_before_the_field(tmp_path: pathlib.Path
 
 def test_a_quote_the_release_ends_inside_prints_no_mark(tmp_path: pathlib.Path) -> None:
     """NEGATIVE: a quote shorter than the window, whose release ended inside it (`cut` False),
-    prints no mark on either twin. Constructed from SMPL's real page: the quote is cut to its first
-    120 characters by this test, as a release that ended there would leave it."""
-    doc = _page("SMPL")
+    prints no mark on either twin. Constructed from SMPL's frozen page: the quote is cut to its
+    first 120 characters by this test, as a release that ended there would leave it."""
+    doc = _frozen_smpl()
     dc = _dc(doc)
     short = dc["revised_guidance"]["value"][:120]
     assert len(short) < dm._GUIDANCE_WINDOW
@@ -224,7 +232,8 @@ def test_a_quote_the_release_ends_inside_prints_no_mark(tmp_path: pathlib.Path) 
 def test_a_page_without_a_quote_prints_no_mark() -> None:
     """NEGATIVE on the living corpus: a page whose drawdown outlook is UNKNOWN prints its reason,
     and no cut mark of either kind."""
-    unquoted = [t for t in PAGES if t not in set(_quoted())]
+    quoted = set(_quoted())
+    unquoted = [t for t in PAGES if t not in quoted]
     assert unquoted, "every committed page now carries a quote — re-point this test"
     for t in unquoted:
         md = _md(_page(t))

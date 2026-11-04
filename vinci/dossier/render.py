@@ -541,7 +541,7 @@ def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
 #: for a page built before `DrawdownCause.revised_guidance_cut`: its quote came from the same
 #: window, so it MAY be cut and the page cannot say. Web twins: dossier.js `GUIDANCE_CUT_MARK` /
 #: `GUIDANCE_MAYBE_CUT_MARK`, bound by tests/test_guidance_cut_mark.py.
-GUIDANCE_CUT_MARK = "… (quote cut — the outlook continues in the filing)"
+GUIDANCE_CUT_MARK = "… (quote cut — the release continues in the filing)"
 GUIDANCE_MAYBE_CUT_MARK = "… (quote may be cut — see the filing)"
 
 
