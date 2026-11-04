@@ -110,6 +110,41 @@ def reference_latest(cut_blob: dict[str, Any]) -> dict[RefKey, RefLatest]:
     return out
 
 
+class RowsCompared(NamedTuple):
+    row_diffs: int        # rows in one blob and not the other, every field compared, as multisets
+    order_diffs: int      # (taxonomy, tag, unit) lists holding the same rows in another order
+    rows_compared: int    # rows in the reference
+    store_rows: int       # rows in the candidate
+
+
+def compare_rows(reference: dict[str, Any], candidate: dict[str, Any], examples: list[str]
+                 ) -> RowsCompared:
+    """Every row of two companyfacts-shaped blobs, every field, as a multiset per (taxonomy, tag,
+    unit), then in order. Appends up to :data:`EXAMPLES_SHOWN` lines to ``examples``."""
+    ref_tree, cand_tree = _tree(reference), _tree(candidate)
+    row_diffs = order_diffs = 0
+    for k in sorted(set(ref_tree) | set(cand_tree)):
+        a, b = ref_tree.get(k, []), cand_tree.get(k, [])
+        ca, cb = Counter(map(_row_key, a)), Counter(map(_row_key, b))
+        if ca != cb:
+            n = sum(((ca - cb) + (cb - ca)).values())
+            row_diffs += n
+            if len(examples) < EXAMPLES_SHOWN:
+                examples.append(f"rows {k}: {n} differ")
+        elif a != b:
+            order_diffs += 1
+            if len(examples) < EXAMPLES_SHOWN:
+                examples.append(f"order {k}")
+    # THE ORDER OF THE LISTS THEMSELVES: a reader takes the FIRST namespace or unit present
+    # (`points_for_tag`), so two blobs holding the same lists in another order read differently
+    if not row_diffs and list(ref_tree) != list(cand_tree):
+        order_diffs += 1
+        if len(examples) < EXAMPLES_SHOWN:
+            examples.append("order of the (taxonomy, tag, unit) lists")
+    return RowsCompared(row_diffs, order_diffs, sum(len(v) for v in ref_tree.values()),
+                        sum(len(v) for v in cand_tree.values()))
+
+
 @dataclass
 class PageParity:
     ticker: str
@@ -169,22 +204,9 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
     examples: list[str] = []
 
     # 1. ROWS — every field of every row, as a multiset per (taxonomy, tag, unit), then in order
-    ref_tree, cand_tree = _tree(reference), _tree(candidate)
-    row_diffs = order_diffs = 0
-    for k in sorted(set(ref_tree) | set(cand_tree)):
-        a, b = ref_tree.get(k, []), cand_tree.get(k, [])
-        ca, cb = Counter(map(_row_key, a)), Counter(map(_row_key, b))
-        if ca != cb:
-            n = sum(((ca - cb) + (cb - ca)).values())
-            row_diffs += n
-            if len(examples) < EXAMPLES_SHOWN:
-                examples.append(f"rows {k}: {n} differ")
-        elif a != b:
-            order_diffs += 1
-            if len(examples) < EXAMPLES_SHOWN:
-                examples.append(f"order {k}")
-    rows_compared = sum(len(v) for v in ref_tree.values())
-    store_rows = sum(len(v) for v in cand_tree.values())
+    row_diffs, order_diffs, rows_compared, store_rows = compare_rows(reference, candidate,
+                                                                    examples)
+    ref_tree = _tree(reference)
     rows_in_response = sum(len(v) for v in _tree(blob).values())
 
     # 2. LATEST — plain Python on the cut blob against the store's SQL
