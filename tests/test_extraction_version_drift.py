@@ -78,14 +78,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "0a3e550202e4"
+PINNED_TABLE = "9d54c8c18cc2"
 PINNED_AT = "2026-11-04.rank-written-as-rank"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "369d2c388c1e",
+    "vinci/dossier/assemble.py": "939782840589",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "77def45663a9",
     "vinci/dossier/ciq.py": "78815874ffce",
@@ -101,11 +101,12 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/edgar_fundamentals.py": "6054321e6ca4",
     "vinci/dossier/ev_ebitda_basis.py": "232581813776",
     "vinci/dossier/ev_gap.py": "c1cd503b7723",
+    "vinci/dossier/filed_tiebreak.py": "0bf5c1cad5e5",
     "vinci/dossier/flags.py": "8466d404a234",
     "vinci/dossier/freshness.py": "e5852b313d22",
     "vinci/dossier/layer_refresh.py": "4be8899e5872",
     "vinci/dossier/lease_basis.py": "a93d880597ba",
-    "vinci/dossier/ltm_quarters.py": "f6a3904e1011",
+    "vinci/dossier/ltm_quarters.py": "976073b15fc6",
     "vinci/dossier/manual_store.py": "a3e48c8fbc1b",
     "vinci/dossier/materiality.py": "274e1447b37f",
     "vinci/dossier/mechanical.py": "c350252fe384",
@@ -113,7 +114,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
     "vinci/dossier/refresh.py": "459ea906d07c",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "fb5ba5b3c76d",
+    "vinci/dossier/schemas.py": "3ce0211c182c",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
     "vinci/dossier/synthesis.py": "0fbce005ea13",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
