@@ -24,6 +24,7 @@ import warnings
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import date
+from decimal import ROUND_FLOOR, Decimal
 from typing import Any, cast
 
 from vinci.dossier.schemas import (
@@ -52,7 +53,16 @@ _NUM = re.compile(r"-?\d[\d,]*\.?\d+|-?\d+")
 # are not CLAIMED values — skip a number whose immediate context is a fiscal/quarter prefix or a
 # time-unit suffix. (Bare 4-digit years are NOT skipped — they collide with real $ figures.)
 _CAL_BEFORE = re.compile(r"(?:\bFY|\bfiscal\s*|\bQ)\s*$", re.IGNORECASE)
-_CAL_AFTER = re.compile(r"^\s*(?:days?|weeks?|months?|quarters?|qtrs?|years?)\b", re.IGNORECASE)
+_TIME_UNIT = r"(?:days?|weeks?|months?|quarters?|qtrs?|years?)"
+_CAL_AFTER = re.compile(rf"^\s*{_TIME_UNIT}\b", re.IGNORECASE)
+# In a synthesis CLAIM a duration is the same label hyphenated, or abbreviated to "y" — "a 5-year
+# window", "the 52-week low", "over ~2y", "its 2.3y range": on 2026-11-04 those were 7 of the 373
+# UNTRACEABLE figures the 30 committed syntheses carried, each a label the spaced form ("5 years")
+# already skipped. Time units only: "$5-billion" or "5-10%" still states a figure, and "8q",
+# "180d" and "12m" (a month or a million) are left as they were. The claim trace only —
+# `driver_extract` keeps its `_CAL_AFTER` check, so a transcript row's value still needs its quote
+# to state a hyphenated duration.
+_DURATION_AFTER = re.compile(rf"^-{_TIME_UNIT}\b|^y\b", re.IGNORECASE)
 # Digits that state no figure: an EDGAR accession, a date (ISO; CIQ's "Aug-31-2026"; "May 07,
 # 2026"; "June 1 2026"; "Aug-6"; "Nov-2025") and a period label ("Q1-26", "FY2024-25"). A claim
 # that writes one is citing or dating, not claiming a number; a fact that carries one carries its
@@ -80,6 +90,14 @@ def _label_year(m: re.Match[str]) -> float | None:
 _BARE_YEAR = re.compile(r"(?<![\d$.,])(?:19|20)\d\d(?!\d|[.,]\d)")
 # Keys whose values identify a fact rather than state one of its numbers.
 _ID_KEYS = frozenset({"accession", "url", "cik", "id"})
+# The mechanical layer's fields that state a PERCENTILE as a 0..1 fraction (`Valuation.
+# pe_percentile_5y` / `ev_ebitda_percentile_5y`, `OwnHistoryBand.percentile`). A
+# percentile is written as its whole-number rank — 0.026 is "the 3rd percentile" — and the trace's
+# 2% tolerance cannot reach a rank from a fraction that small (2.6 vs 3). A closed set of field
+# NAMES, so a new name is a deliberate addition (`tests/test_untraceable_rank_and_duration.py`
+# checks the schema) — but a new layer model that reuses the name `percentile` is in without one.
+# (`ForwardHistoryBand.percentile` sits on the Dossier, outside the layer this trace reads.)
+_PERCENTILE_FIELDS = frozenset({"percentile", "pe_percentile_5y", "ev_ebitda_percentile_5y"})
 # A point's source_ref pointing at the earnings-call TRANSCRIPT (verbatim prose) rather than a
 # structured CIQ cell. A figure cited to the transcript is NOT in the mechanical layer's number
 # universe, so it earns a soft 'verify-against-the-call' note — NOT a hard UNTRACEABLE, which
@@ -528,6 +546,8 @@ def _claim_figures(text: str) -> list[float]:
             continue  # FY21 / Q1 / fiscal 2025
         if _CAL_AFTER.match(text[m.end():m.end() + 10]):
             continue  # 90 days ago / 8 quarters
+        if _DURATION_AFTER.match(text[m.end():m.end() + 10]):
+            continue  # a 5-year window / the 52-week low / over ~2y
         try:
             out.append(float(m.group().replace(",", "")))
         except ValueError:
@@ -565,20 +585,40 @@ def _traces(ref: str, universe: set[str]) -> bool:
 
 @dataclass
 class _FactNumbers:
-    """The numbers one citable fact STATES: its values, traced at any unit rendering, and the years
-    of its dates and labels, traced only as those years."""
+    """The numbers one citable fact STATES: its values, traced at any unit rendering; the years of
+    its dates and labels, traced only as those years; and the whole-number rank of each percentile
+    it states (`_PERCENTILE_FIELDS`), traced only as that rank."""
 
     values: list[float] = field(default_factory=list)
     years: set[float] = field(default_factory=set)
+    ranks: set[float] = field(default_factory=set)
 
 
-def _stated_numbers(o: Any, into: _FactNumbers) -> None:
+def _percentile_ranks(p: float) -> set[float]:
+    """The whole-number rank(s) a 0..1 percentile is written as: the nearest whole number to it
+    x100, read on its decimal as stored (0.026 -> 3) — and BOTH neighbours at an exact half. The
+    page itself has no one convention there: `render._pctile` rounds 0.025 to the 2nd (Python's
+    half-even), the web's `Math.round` to the 3rd, and in binary floats 0.145 x 100 is 14.4999…, so
+    a writer reading "0.145" says the 15th while the page shows the 14th."""
+    x = Decimal(repr(p)).scaleb(2)
+    lo = x.to_integral_value(rounding=ROUND_FLOOR)
+    frac = x - lo
+    if frac == Decimal("0.5"):
+        return {float(lo), float(lo + 1)}
+    return {float(lo + 1) if frac > Decimal("0.5") else float(lo)}
+
+
+def _stated_numbers(o: Any, into: _FactNumbers, name: str = "") -> None:
     """Every number ``o`` states, read from the values themselves — never from a JSON dump, whose
-    dates and ids are digit runs like any other (`_DATE_OR_ID`, `_ID_KEYS`)."""
+    dates and ids are digit runs like any other (`_DATE_OR_ID`, `_ID_KEYS`). ``name`` is the field
+    ``o`` sits in (a `Sourced` wrapper's ``value`` keeps its own field's name), read only to know
+    a percentile."""
     if o is None or isinstance(o, bool):
         return
     if isinstance(o, (int, float)):
         into.values.append(float(o))
+        if name in _PERCENTILE_FIELDS and 0 <= o <= 1:
+            into.ranks |= _percentile_ranks(float(o))
     elif isinstance(o, date):
         into.years.add(float(o.year))
     elif isinstance(o, str):
@@ -592,10 +632,10 @@ def _stated_numbers(o: Any, into: _FactNumbers) -> None:
     elif isinstance(o, dict):
         for k, v in o.items():
             if k not in _ID_KEYS and not str(k).endswith("_id"):
-                _stated_numbers(v, into)
+                _stated_numbers(v, into, name if k == "value" else str(k))
     elif isinstance(o, (list, tuple, set, frozenset)):
         for v in o:
-            _stated_numbers(v, into)
+            _stated_numbers(v, into, name)
 
 
 def _values_by_ref(mech: MechanicalLayer) -> dict[str, _FactNumbers]:
@@ -604,24 +644,25 @@ def _values_by_ref(mech: MechanicalLayer) -> dict[str, _FactNumbers]:
     filing cited by accession carries its guidance and reconciliation rows."""
     out: dict[str, _FactNumbers] = {}
 
-    def rec(o: Any) -> None:
+    def rec(o: Any, name: str) -> None:
         if isinstance(o, dict):
             keys = {comparison_key(str(o[k])) for k in ("source_ref", "accession", "url")
                     if o.get(k)}
             if keys:
                 nums = _FactNumbers()
-                _stated_numbers(o, nums)
+                _stated_numbers(o, nums, name)
                 for k in keys:
                     acc = out.setdefault(k, _FactNumbers())
                     acc.values.extend(nums.values)
                     acc.years |= nums.years
-            for v in o.values():
-                rec(v)
+                    acc.ranks |= nums.ranks
+            for k, v in o.items():
+                rec(v, str(k))
         elif isinstance(o, (list, tuple)):
             for v in o:
-                rec(v)
+                rec(v, name)
 
-    rec(mech.model_dump())
+    rec(mech.model_dump(), "")
     return out
 
 
@@ -688,6 +729,8 @@ def _validate(
         a = abs(n)
         if a in cited.years:
             return True  # the year of a date the fact carries — as that year, never rescaled
+        if a in cited.ranks:
+            return True  # the rank of a percentile the fact states — as that rank, never rescaled
         for mf in cited.values:
             for s in _TRACE_SCALES:
                 target = abs(mf) * s

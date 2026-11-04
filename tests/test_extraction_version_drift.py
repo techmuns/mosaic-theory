@@ -78,7 +78,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "e341f43cb308"
+PINNED_TABLE = "f13d9cda0eff"
 PINNED_AT = "2026-11-04.fiscal-year-change-marker"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
@@ -115,7 +115,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "9724393685f8",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "9c732c86d48a",
+    "vinci/dossier/synthesis.py": "aa84d1c34196",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",
@@ -142,6 +142,8 @@ WATCHED: dict[str, str] = {
 NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/__init__.py": "the package's docstring",
     "vinci/dossier/extraction_version.py": "the version table itself — editing it IS the bump",
+    "vinci/dossier/prespend.py": "the $0 pre-spend check: builds into a deleted folder and "
+                                 "compares, never writes a page",
     "vinci/dossier/propose.py": "writes scenario records from a committed page, never a page",
     "vinci/dossier/render.py": "renders a page's markdown from its JSON; re-rendered, never "
                                "re-extracted",

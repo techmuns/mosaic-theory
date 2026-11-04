@@ -495,7 +495,16 @@ def _cmd_dossier(args: argparse.Namespace) -> int:
     """Assemble per-finalist dossiers (top N, or one --ticker). Assembles, never concludes.
 
     The ``requirements`` mode instead prints the canonical manual-CIQ manifest (export checklist, or
-    ``--json`` for the upload UI) — the single source the MISSING-manifest path also reads."""
+    ``--json`` for the upload UI) — the single source the MISSING-manifest path also reads.
+    The ``precheck`` mode builds one name at $0 and compares it with its committed page
+    (`vinci.dossier.prespend`), exiting 1 on any field the paid build would lose."""
+    if getattr(args, "mode", "assemble") == "precheck":
+        if not args.ticker:
+            print("precheck requires --ticker")
+            return 1
+        from vinci.dossier.prespend import run as precheck
+
+        return precheck(args.ticker, get_config())
     if getattr(args, "mode", "assemble") == "requirements":
         from vinci.dossier import requirements
 
@@ -4551,9 +4560,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_dossier = sub.add_parser("dossier", help="assemble per-finalist dossiers (never concludes)")
     p_dossier.add_argument(
-        "mode", nargs="?", default="assemble", choices=("assemble", "requirements"),
+        "mode", nargs="?", default="assemble", choices=("assemble", "requirements", "precheck"),
         help="'assemble' (default) builds dossiers; 'requirements' prints the canonical manual-CIQ "
-        "manifest (export checklist; the MISSING-manifest path reads the same definition)",
+        "manifest (export checklist; the MISSING-manifest path reads the same definition); "
+        "'precheck' builds --ticker's page at $0 (no LLM, nothing written) and exits non-zero on "
+        "any field the committed page has and the build would lose — run it before a paid build",
     )
     p_dossier.add_argument("--top", type=int, default=10, help="top N of the queue (default: 10)")
     p_dossier.add_argument(
