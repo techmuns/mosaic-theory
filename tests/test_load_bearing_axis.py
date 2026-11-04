@@ -82,7 +82,7 @@ def test_the_declaration_reader_spans_every_tier() -> None:
     rejected the others — the moment GOOGL declared `multiple_and_price` (universal) the emitter,
     which passed the COHORT registry, refused the whole file and took the grid down with it."""
     keys = set(all_registries().keys())
-    assert {"multiple_and_price", "commissioning", "theme_thesis"} <= keys
+    assert {"multiple_and_price", "commissioning"} <= keys  # the theme tier retired 2026-11-04
     decl = read_declarations(root=ROOT)
     assert decl, "no declarations read"
     for ticker, panels in decl.items():

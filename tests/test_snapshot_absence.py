@@ -10,6 +10,8 @@ The cost was not cosmetic. The theme page awaits its OPTIONAL economics roll-up,
 frozen on 2026-09-01 — the first with no economics file — hung on "Loading theme…" forever on the
 deploy while rendering perfectly against a local server. Reproduced with a fallback server, fixed
 at the fetch layer, and pinned here so the asymmetry between local and deploy cannot return.
+(The probe was the theme economics getter until the Themes edge retired, 2026-11-04; it is now
+the scenario card's, which takes the same graceful-absence branch through the same fetch layer.)
 """
 from __future__ import annotations
 
@@ -32,7 +34,7 @@ globalThis.fetch = async () => new Response(body, {
   status, headers: { "content-type": status === 200 ? "text/html" : "text/plain" } });
 const m = await import(pathToFileURL(path.resolve("frontend/lib/snapshots.js")).href);
 let out;
-try { await m.getThemeEconomics("no-such-driver"); out = { returned: "value" }; }
+try { await m.getScenarioCard("NO-SUCH-TICKER"); out = { returned: "value" }; }
 catch (e) { out = { threw: String(e.message).slice(0, 60), status: e.status ?? null }; }
 console.log(JSON.stringify(out));
 """

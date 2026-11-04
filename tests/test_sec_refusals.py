@@ -23,7 +23,7 @@ import time
 from collections.abc import Callable
 from datetime import date
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import httpx
 import pytest
@@ -453,29 +453,6 @@ def test_a_refused_cohort_stops_at_the_first_name(
     with no_network(), pytest.raises(SecRateLimitedError, match=r"3 name\(s\) not attempted"):
         asm.assemble_cohort(fins, cfg=cfg, max_workers=1)
     assert len(tried) == 1
-
-
-def test_a_refused_exposure_scan_stops_instead_of_grading_every_name(
-        monkeypatch: pytest.MonkeyPatch) -> None:
-    """⊖ the exposure scan graded a refusal as one more UNASSESSED name and moved on to the next."""
-    import vinci.themes.exposure as ex_mod
-    from vinci.themes.drivers import AI_DATACENTER
-
-    names = [(f"T{i}", str(3000 + i)) for i in range(6)]
-    tried: list[str] = []
-
-    def stream(*a: Any, **k: Any) -> Any:
-        tried.append("x")
-        raise SecRateLimitedError("SEC refused (test)")
-
-    monkeypatch.setattr(ex_mod, "mention_prefilter", lambda *a, **k: {c for _, c in names})
-    monkeypatch.setattr(ex_mod, "recent_disclosure_stream", stream)
-    with pytest.raises(SecRateLimitedError, match="STOPPED"):
-        ex_mod.scan_driver_exposure(
-            AI_DATACENTER, names, edgar=cast(Any, None), sec_http=cast(Any, None),
-            efts_http=cast(Any, None), llm=cast(Any, None), startdt="2026-01-01",
-            enddt="2026-06-01", max_workers=1)
-    assert len(tried) <= 2  # the one refused, and at most the one a worker had already begun
 
 
 def test_no_page_is_written_once_sec_has_refused_the_process(

@@ -53,18 +53,6 @@ const EDGES = [
     ],
   },
   {
-    key: "themes", label: "Themes", state: "live",
-    stages: [
-      // Two tabs, funnel order: the themes landing (glance — table, watchlist, intake strip),
-      // then the radar intake (candidates -> inbox -> log). Theme pages and tier tables are
-      // DRILL-DOWNS from the landing (#/themes/<theme>[/<tier>]), framed with these same tabs.
-      { route: "themes", label: "Themes",
-        does: "Where each driver stands, and what it needs next." },
-      { route: "themes/radar", label: "Radar",
-        does: "Every theme idea on one map — how real the evidence is vs how much price has already moved." },
-    ],
-  },
-  {
     // The research desk (vinci/theme_intelligence): rendered by the Python package and published
     // into frontend/theme-intelligence/ (`python -m vinci.theme_intelligence publish`); one view
     // module frames every screen. No `does`: each screen opens with its own summary line.
@@ -107,8 +95,8 @@ const CAPITAL = [
     } },
 ];
 
-// View modules registered by BASE route (first hash segment). The Theme-edge
-// sub-routes (#/themes/scan …) all resolve to the ONE `themes` module.
+// View modules registered by BASE route (first hash segment). Every sub-route
+// (#/intel/themes …) resolves to its base's module.
 const VIEWS = {
   overview: () => import("./views/shared/overview.js"),
   dossier: () => import("./views/shared/dossier.js"),
@@ -118,7 +106,6 @@ const VIEWS = {
   "screen-overshoot": () => import("./views/edge2/screen-overshoot.js"),
   ranker: () => import("./views/edge2/ranker.js"),
   graph: () => import("./views/edge2/graph.js"),
-  themes: () => import("./views/themes/index.js"),
   intel: () => import("./views/intel/desk.js"),
 };
 
@@ -153,9 +140,9 @@ function edgeOfItem(item) {
 }
 
 // Resolve the nav item for a full path by LONGEST route-prefix, so a sub-route
-// (#/themes/scan) resolves to its own stage while a detail path (#/dossier/TICKER)
-// still resolves to its section. Path-segment aware ("themes" matches "themes/scan"
-// but not "themestuff").
+// (#/intel/themes) resolves to its own item while a detail path (#/dossier/TICKER)
+// still resolves to its section. Path-segment aware ("intel" matches "intel/themes"
+// but not "intelx").
 function resolveItem(route, params) {
   const full = [route, ...params].join("/");
   let best = null;
@@ -291,10 +278,6 @@ function renderConditional(root, item) {
 // --- router ------------------------------------------------------------------
 function parseHash() {
   let h = (location.hash || "#/overview").replace(/^#\/?/, "");
-  // Legacy-route normalizer — old URLs keep working after the IA fold-in (radar joined the
-  // themes sub-router; the flat watchlist/scan/forward screens folded into the landing).
-  if (h === "radar" || h.startsWith("radar/")) h = "themes/" + h;
-  else if (h === "themes/watchlist" || h === "themes/scan" || h === "themes/forward") h = "themes";
   const [route, ...rest] = h.split("/");
   return { route: route || "overview", params: rest };
 }

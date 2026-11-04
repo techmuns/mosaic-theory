@@ -441,26 +441,16 @@ def test_every_tier_map_covers_the_whole_enum_in_both_languages() -> None:
 
 
 def test_the_tier_vocabulary_has_exactly_one_js_home() -> None:
-    """REUSE, enforced (review, #489): `uw-card.js` and `themes/portfolio.js` both render tier
-    pills, and a second copy is precisely how the grade-bucket trio came to need a three-way
-    parity pin. The definition lives in `lib/format.js`; the views import it."""
+    """REUSE, enforced (review, #489): a second copy of the tier pill is precisely how the
+    grade-bucket trio came to need a three-way parity pin. The definition lives in `lib/format.js`;
+    the views import it. (`themes/portfolio.js`, its other renderer, retired 2026-11-04.)"""
     fmt = (ROOT / "frontend" / "lib" / "format.js").read_text()
     assert "export function tierPill" in fmt, "tierPill left its shared home"
-    for view in ("views/shared/uw-card.js", "views/themes/portfolio.js"):
+    for view in ("views/shared/uw-card.js",):
         src = (ROOT / "frontend" / view).read_text()
         assert "tierPill" in src and "lib/format.js" in src, f"{view} does not use the shared pill"
         assert "const TIER_LABEL" not in src and "const TIER_TONE" not in src, (
             f"{view} re-declares the tier vocabulary — one home, imported")
-
-
-def test_the_themes_watchlist_does_not_contradict_the_card() -> None:
-    """The stale-legend finding (#489). The themes key asserted a single "≥2:1 bar" that a Buy
-    had "cleared" — false since #487 made ≥1.75:1 the eligibility line — so an eligible-but-not-
-    preferred name read as failing there and passing on its card. Both lines must be named."""
-    src = (ROOT / "frontend" / "views" / "themes" / "portfolio.js").read_text()
-    assert "cleared the fund's ≥2:1 bar" not in src, "the stale single-bar claim is back"
-    assert "1.75" in src and "≥2:1" in src, "the key must name BOTH lines"
-    assert "asymmetryTier" in src, "the watchlist must prefer the tier over the legacy boolean"
 
 
 def test_a_stamped_record_with_null_thresholds_still_renders() -> None:

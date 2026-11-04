@@ -48,9 +48,6 @@ came to answer one question two ways.
 - **Secrets:** `ANTHROPIC_API_KEY`, `POLYGON_API_KEY` live in a git-ignored `.env`, loaded by
   `load_local_env()` in the CLI entrypoint; never printed, never committed. *(Source: CLAUDE.md
   §Security; `vinci/config.py`.)*
-- **Git-ignored vs untracked data:** `data/scan_history/` is **git-ignored** (`.gitignore:50`);
-  `data/snapshots/candidate_themes.jsonl` and `data/priced_check/` are **untracked, not committed**.
-  The sweep does NOT commit `data/`. *(Source: `.gitignore`; `git check-ignore`.)*
 - **Merge is operator-only, per-PR.** Every loop ends at an open PR; a human reviews and merges. A
   prior "yes" is never standing permission. *(Source: CLAUDE.md §Non-negotiable behavior.)*
 - **ONE SESSION OWNS A TICKER, AND THE REMOTE BRANCH IS THE CLAIM.** Two sessions on this repo is
@@ -91,329 +88,14 @@ came to answer one question two ways.
 
 ---
 
-## a. MONTHLY SWEEP LOOP
+## a–d. THEME LOOPS — RETIRED 2026-11-04
 
-The full current monthly sequence: scan → draft → review → refresh → PR.
-
-### (i) Scan — `python -m vinci.cli themes` (zero-LLM)
-
-```
-PYTHONPATH=$PWD $VENV/python -m vinci.cli themes
-```
-
-- Co-movement cluster scan over the universe; **no LLM**. Defaults: `--basis r2` (market+sector+size+vol
-  residualization), `--window-days 365`, `--min-breadth 3` (a basket, not a pair). `--no-write` to
-  dry-run; `--no-scan-history` to skip the archive. *(Source: `vinci.cli themes --help`.)*
-- **Where it's recorded:** writes `data/snapshots/candidate_themes.jsonl` (the "latest" pointer,
-  untracked, per-worktree) **and** an immutable timestamped snapshot under
-  `data/scan_history/component-a/<ts>__<sha>.jsonl` + one line in `data/scan_history/manifest.jsonl`
-  (git-ignored). A monthly sweep can no longer clobber the prior harvest — the archive is append-only.
-  *(Source: `vinci/cli.py:_cmd_themes` (`cfg.snapshots_dir / "candidate_themes.jsonl"`, `record_snapshot`);
-  STATE.md §monthly-sweep.)*
-- **Runtime:** the "~20 min" is an unrecorded operator estimate — **time the scan on the next sweep**
-  (wrap the invocation, e.g. `time PYTHONPATH=$PWD $VENV/python -m vinci.cli themes`) **and record the
-  real duration in that sweep's STATE entry.**
-- **Worktree:** run from a main worktree; print worktree + pwd first (per the Preamble).
-
-### (ii) Draft — `python -m vinci.cli themes-draft` (LLM, ~1 call per unreviewed cluster)
-
-```
-PYTHONPATH=$PWD $VENV/python -m vinci.cli themes-draft
-```
-
-- Drafts an advisory `{draft_name, hypothesis, suggested, reason}` for each **UNREVIEWED** cluster —
-  ONE LLM call each. `suggested ∈ {keep-for-checks, park, reject}`. **A suggestion is NEVER a
-  decision** — the human records the verdict (step iii). *(Source: `themes-draft --help`; `vinci/themes/drafts.py`.)*
-- **Idempotency (`PROMPT_VERSION`):** reuses committed drafts iff the snapshot **and** the prompt
-  version match; a version bump or a legacy no-version pointer regenerates. `--force` redraws anyway.
-  *(Source: `drafts.py:_drafts_current`, `PROMPT_VERSION`; STATE.md §rubric-v2.)*
-- **Never fabricate:** any call error → an `unassessed-error` record carrying the reason (never a
-  guessed draft); 3 consecutive same-4xx (quota/auth) → `DraftAbortedError`, persists nothing (the #123
-  pattern). *(Source: `drafts.py:draft_unreviewed`; STATE.md §Component-A drafting.)*
-- Output: updates committed `frontend/radar/drafts.json` (tagged `prompt_version`) + a git-ignored
-  `component-a-drafts` scan-history snapshot. `--include-reviewed` is the one-shot **face-validity
-  re-check** path (re-drafts the clusters reviewed FOR this scan and prints draft-vs-decision
-  agreement) — NOT part of the normal monthly loop. *(Source: `themes-draft --help`; STATE.md §rubric-v2.)*
-
-### (iii) Operator review — `python -m vinci.cli themes-review`
-
-```
-PYTHONPATH=$PWD $VENV/python -m vinci.cli themes-review \
-  --cluster <scan-date>:<cluster_id> \
-  --decision keep-for-checks|park|reject \
-  --reason "…"                      # --amend to overwrite an existing key; --name to override the label
-```
-
-- Validates the key against the latest snapshot; refuses an existing key without `--amend`; appends to
-  `frontend/radar/reviews.json` (`reviewed` = **today**, the review date, not the scan date).
-  *(Source: `themes-review --help`; `vinci/cli.py:_cmd_themes_review`.)*
-- **The three attribution labels (`by`):**
-  1. **`analyst`** — the analyst's own call (the default the CLI writes). *(Source: `_cmd_themes_review`.)*
-  2. **`analyst (ratified advisor draft)`** — written **automatically by `themes-review`** when the
-     recorded `--decision` **and** `--reason` both match the machine draft's `suggested` + `reason`
-     (a verbatim ratification of the machine's advisory draft). *(Source: `_cmd_themes_review`; STATE.md
-     §Component-A drafting.)*
-  3. **`analyst (advisor-drafted reason)`** — the June convention: a (human) advisor drafted the reason
-     text and the analyst ratified it verbatim. **The CLI has no `--by` flag**, so this label is applied
-     by a **surgical `by`-only edit** to `reviews.json` (touch only the target keys' `by` field — see
-     the Jul-14 recording, which set it on exactly the 11 new keys via a scripted edit). *(Source:
-     STATE.md §"JUL-14 REVIEWS RECORDED"; `reviews.json` `by` values.)*
-
-### (iv) Sweep-refresh — regenerate the Radar mirror
-
-Re-run the two build.py emitters (stdlib-only, deploy-safe) from the committed snapshot × reviews:
-
-```
-PYTHONPATH=$PWD $VENV/python -c "import importlib.util as u; \
- s=u.spec_from_file_location('b','frontend/build.py'); b=u.module_from_spec(s); s.loader.exec_module(b); \
- b.emit_radar_sweep(); b.emit_radar_inbox_log()"
-```
-
-- `emit_radar_sweep` → `frontend/radar/sweep.json`; `next_due = last_run + 30 days`, `source` from the
-  component-a scan_history manifest. `emit_radar_inbox_log` → `inbox.json` (clusters not yet reviewed)
-  + `log.json` (reviews + current match status, member-overlap ≥ 50%). *(Source: `frontend/build.py`;
-  STATE.md §sweep-refresh (#126).)*
-- **Expected end state after reviewing every inbox cluster:** `inbox.json → 0 rows`; `log.json` grows
-  by the number of new reviews (e.g. Jul-14: inbox 0, log 46). *(Source: STATE.md §"JUL-14 REVIEWS
-  RECORDED".)*
-- **Byte-proof scope:** among data files, only `reviews.json` / `inbox.json` / `log.json` (and
-  `sweep.json` if the run date changed) may change; frozen `themes/*.json`, `candidates.json`, and
-  `drafts.json` stay byte-identical (unless step ii re-drafted). *(Source: STATE.md §sweep-refresh,
-  §Jul-14 recording.)*
-
-### (v) PR → operator merges
-
-Open a PR (do NOT merge). **Include the pre-registered rubric-v2 validation note VERBATIM:**
-
-> **DRAFTING-RUBRIC v2 STANDS — 2nd iteration NOT sanctioned; validation PRE-REGISTERED on Aug 13
-> (operator ruling 2026-07-15).** … Validation is **pre-registered on the Aug 13 sweep** —
-> `keep-for-checks` is expected to be the **EXCEPTION, not the default**; disagreements are reviewed
-> **THEN**, on fresh (not-yet-priced) clusters rather than a frothy already-moved set. FACE-VALIDITY
-> only — never tuned on forward returns. (If Aug 13 shows keep-for-checks creeping back to the default,
-> THAT is the trigger to revisit — a real forward test, not a re-fit to the Jul-14 labels.)
-
-*(Source: STATE.md §"DRAFTING-RUBRIC v2 STANDS", verbatim.)*
-
----
-
-## b. GROUP-REVIEW RECORDING
-
-- **File:** `frontend/radar/reviews.json` = `{ "_note": …, "reviews": [ entry ] }`.
-- **Entry schema:** `{ key, display_name, decision, reviewed, by, reason, members[], map_ref? }`.
-  - `key` = `"<scan-date>:<cluster_id>"` — scan-date is the snapshot's `YYYY-MM-DD`; `cluster_id`
-    is **per-run** (never match on it across runs — match by member overlap).
-  - `reviewed` = the **date of review** (today), NOT the scan date (the scan date is already in the key).
-  - `decision ∈ {keep-for-checks, park, reject}`; `by` = one of the three labels in §a(iii).
-  *(Source: `reviews.json`; `_cmd_themes_review`; STATE.md §Jul-14 recording.)*
-- **Single-record rule:** `reviews.json` is **THE single source of review reasons — STATE points here,
-  never copies; reasons are VERBATIM, never re-drafted.** *(Source: `reviews.json` `_note`, verbatim.)*
-- **What the site shows, before vs after a review:** before — the cluster sits in the Radar **INBOX**
-  (unreviewed). After — `emit_radar_inbox_log` matches it to the review by member overlap ≥ 50% and it
-  moves to the **LOG** (with its verbatim reason + current membership delta); the machine only sorts,
-  `reviews.json` holds the decision. *(Source: `frontend/build.py:emit_radar_inbox_log`; STATE.md
-  §Radar inbox+log (#127).)*
-
----
-
-## c. SURVIVOR CHECKS
-
-**The rule:** a **priced-check** and a **research brief** sit **between any draft/registration and any
-advance** — a candidate is not advanced to a scan/underwrite until it survives both. *(Source: STATE.md
-§"T007 ADVANCE / T012" — dispositioned per harvest + priced-check + deep-research evidence doc.)*
-
-### Priced-check — `python -m vinci.cli themes-priced-check`
-
-```
-PYTHONPATH=$PWD $VENV/python -m vinci.cli themes-priced-check \
-  --basket TICK1,TICK2,… --label <name> [--asof YYYY-MM-DD] [--out <path>]
-```
-
-- Assembles the basket's **PRICE AXIS** (the survivor price gate): split-adjusted basket-MEDIAN
-  6/12/18mo cumulative return, excess vs **SPY / IWM**, per-member coverage, a quarter-by-quarter
-  excess-vs-IWM trajectory, market-model residual dispersion, a valuation percentile (repo
-  `pe_current_and_percentile` over ~5y, one cached EDGAR read), and a **MECHANICAL tag** (12mo excess
-  vs BOTH > +20% → PRICED; both <= +20% → NOT-PRICED; else MIXED). `< 3` priced members in a window →
-  UNDEFINED-with-reason, never a fake 0; stale/delisted members (last bar > 7d old) are excluded from
-  "now". Returns are **dividend-blind**; thin-n medians are weak. Prices via the repo Polygon client
-  (`daily_bars`, cached, adjusted). Each run is snapshotted under
-  `data/scan_history/priced-check-<label>/` (git-ignored, dated + immutable); `--out` is an optional
-  operator JSON export. **Run from `-main`** (holds the warm Polygon cache). *(Source:
-  `themes-priced-check --help`; `vinci/themes/priced_check.py` — the method is ported VERBATIM from the
-  ad-hoc `data/priced_check/compute.py` and reproduction-verified exact against `report_all.txt`.)*
-
-### 3-question research brief (template, verbatim from the in-silico / T012 pattern)
-The in-silico adjudication is the **3-question** instance
-(`data/research/insilico_adjudication_2026-07-13.md`):
-- **Q1 — Is the driver live in <year>?** (is the regulatory/structural catalyst actually in force)
-- **Q2 — Revenue reality (filings) + management attribution** (does any name's disclosed revenue show
-  the driver; what does management attribute moves to)
-- **Q3 — Consensus stage & the spike-fade** (has the market already traded it)
-- then: **Per name — the single biggest disconfirming fact**; **Evidence-only conclusion**;
-  **Sources & caveats**.
-
-T012 (senior-housing) **extended the same template to Q1–Q5**
-(`data/research/t012_seniorhousing_adjudication_2026-07-13.md`): Q1 idiosyncratic-vs-demand, Q2
-SH-vs-SNF revenue splits, Q3 pricing-power (rate-beats-cost), Q4 supply/construction-starts, Q5 per-name
-disconfirming fact. *(Source: the two research docs.)* **Count: 3 core questions** (driver live /
-revenue reality in filings / consensus stage), **extended per case** (T012 used Q1–Q5 to adjudicate a
-name-level contradiction). **No canonical count.**
-
----
-
-## d. THEME-ADVANCE LOOP
-
-**Idea → spec → CARD → scan → worksheet → disposition → freeze → SHORTLIST → CIQ → UNDERWRITE →
-mirror → read-out.** Every step below was verified against the live CLI on 2026-09-01; the two
-marked **NO COMMAND** genuinely have none, and saying so here is the point — they are where the
-workflow stalls and where an agent improvises a different answer each time.
-
-The loop was previously documented only as far as the mirror, which is why two frozen themes
-reached 183 ratified names with **one** of them underwritten: the steps that turn confirmed
-EXPOSURE into an investment view were not written down.
-
-1. **Candidate registration** — add the idea to `frontend/radar/candidates.json` with a **source +
-   date tag**. Hand-curated; rules render VERBATIM.
-2. **Spec ratification** — the analyst edits the `DriverSpec` in `vinci/themes/drivers.py`
-   (`description` + `tie_taxonomy`). **Analyst edits = ownership; `tie_taxonomy` is the load-bearing
-   judgment — encoded VERBATIM, do NOT re-draft it (it IS the experiment).**
-   **`mirror_slug` is declared LAST**, when the theme page exists — not at spec time. The binding
-   pin refuses a slug pointing at a mirror nothing has written.
-3. **Thesis card — GATES THE FREEZE.**
-   `python -m vinci.cli theme-thesis declare --driver <key> --file card.json`
-   Writes `data/themes/thesis/<driver>.json`. A driver **cannot freeze** without one, and a theme
-   page carrying no card stamps `THESIS UNSTATED`. Every judgment field is the operator's —
-   mechanism, market_mistake, null_thesis, falsifiers. **`first_confirming` must name a number the
-   filings ACTUALLY publish**: a trigger asking for a line nobody discloses is unfalsifiable, and
-   you find that out on the deadline. Dry-run it against a real recent print BEFORE declaring.
-4. **Exposure scan** — `python -m vinci.cli themes-exposure --driver <key>` (LLM classification into
-   binding / quantified / committed / aspirational / none). **`--only-tickers A,B,C`** / `--only-file`
-   is the delta primitive for names newly admitted to the universe. `--out` writes audit-grade JSONL.
-   Scan history **accumulates** under `data/scan_history/<driver>/`: the full sweep plus every later
-   delta. "Screened" is the UNION, latest-wins per ticker — never the newest file alone.
-5. **Worksheet — NO COMMAND. Nothing in the repo writes it.**
-   `themes-forward --worksheet` CONSUMES `<driver>_committed_review_worksheet.csv`; no code path
-   produces it. It is assembled by hand from the scan archive, and the assembly has a trap that has
-   already shipped a wrong sheet once: the row's evidence must be
-   **`vinci.themes.exposure.grade_driving_fact(assessment)`** — the fact whose EFFECTIVE grade (after
-   the driver-tie gate) SET `exposure_basis`. Picking "the most driver-specific fact" instead showed
-   a NEGATIVE fact ("No disclosed GLP-1 exposure") as the evidence for a positive grade on 15 of 44
-   rows, and `grade_driver_tie` — which is sealed into the ledger — was wrong on all of them.
-   Columns: `ticker, cik, chain_layer, machine_grade, grade_driver_tie, grade_fact, grade_accession,
-   DISPOSITION, RATIONALE`. Include only rows whose `exposure_basis` is committed-tier or above, and
-   only tickers still in a live band. **A `themes-worksheet` command is owed.**
-6. **Disposition** — the analyst fills `DISPOSITION` + `RATIONALE` only; every other column is the
-   evidence they judged and must come back byte-identical (check it). Vocabulary: `ratify` (BUY leg),
-   `pass` (AVOID leg — first-class control data, NOT a discard), `dig-deeper` (temporary; **blocks
-   the freeze** until resolved). A blank disposition is PENDING, never assumed.
-7. **Freeze** — `python -m vinci.cli themes-forward --driver <key> --worksheet <csv>`
-   Appends the ratification ledger (`data/themes/ledgers/<driver>.jsonl`, APPEND-ONLY, no delete
-   path) and writes the basket. Entry dates stamp at freeze; the forward clock starts.
-   **There is no dry run**: `--baskets-out` is applied AFTER the default write, so pointing it at a
-   scratch path still writes the committed basket. A second freeze REFUSES without
-   `--supersede-basket`.
-8. **Shortlist — NO COMMAND.** A frozen basket is not an underwrite queue: 168 ratified names cannot
-   be priced by hand. Rank by the two fields the ledger already carries — `driver_tie` then
-   effective `basis` — and underwrite downward:
-   `binding + driver-specific` → `quantified + driver-specific` → `committed + driver-specific`.
-   An `indirect` tie is capped at committed by the tie gate and is the last call on anyone's time.
-   **CHECK PRICE HERE, WITH THE MATCHED-PAIR INSTRUMENT — not at step 12.** A ratified name whose
-   durability the market already pays for is not a candidate, and that is answerable BEFORE the
-   underwrite cycles: **matched pairs on size within sector, within-stratum percentile rank of a
-   BASE-FREE forward multiple** (`TEV/Forward Total Revenue` — a forward P/E cannot price a
-   loss-maker and drops it, which is a SELECTION not a reading). *Cause: `ai-value-migration` ran
-   two underwrite cycles and closed at step 12 on exactly this test; `glp1-drug-value-chain` did
-   check price at step 8 but with a point-in-time peer snapshot that gave five bases and four
-   answers. The instrument, not the stage, was what differed — and it now exists.* **NOT a screen
-   for CHEAPNESS: disagreement is only interpretable against a durability framework, and without one
-   cheap is just cheap** — CLVT and TDC sit in the cheap tail for deterioration this repo's own
-   sheet had already recorded.
-   **EVERY SHORTLIST ENTRY CARRIES ITS `BOUNDARY` — window, filter, population, unit — beside the
-   figure that admitted it.** Same four words as `docs/records/TEMPLATE.md`, applied one stage
-   earlier; no command is built for this, it is a FORMAT RULE on the entry itself. *Cause: the
-   2026-09-01 `glp1-drug-value-chain` shortlist ran four names and all four broke on one of the
-   four words — BDX on population (a count with no base), WAT on population (a rate with no
-   denominator), WST on population (a segment's revenue share read as the driver's), MCK on unit
-   (correctly scoped revenue, against a prong that never said revenue or earnings). Every figure
-   came from `context.json` prose and none carried its scope. The field governs RECORDS, and this
-   stage writes none — which is exactly why the rule has to sit here.*
-9. **CIQ pull — MANUAL, and the real gate. SIZING FIRST, VALUATION SECOND: it prices nothing that
-   has not already cleared sizing on PRIMARY SOURCES.** *Cause: the 2026-09-01 `glp1-drug-value-chain`
-   pull bought four workbook sets — consensus, multiple distributions, revision drift, all real
-   step-10 inputs — for four names of which four were later disqualified on PROSE the pull never
-   touched (three on calls, one on a 10-K). Two further names were settled from EDGAR filings already
-   in `data/cache/sec/` at zero marginal cost. Step 8 shortlists on prose and step 9 buys valuation
-   data; nothing between them tested the figure, which is how four unsized names reached a pull.* R3 underwrites as `EPS x forward P/E`; forward
-   estimates are in no API this repo holds. This is v6.2.1's S2.0 "PM action outside conversation".
-   Raw workbooks stay in `data/manual/ciq/` and are **never committed**.
-10. **Underwrite — the investment gate, and the step that makes a BUY.**
-    `python -m vinci.cli scenario-propose <TICKER> --out <T>-underwrite.json` emits the template;
-    the analyst fills assumptions and the bear/base/bull legs; `scenario-create <TICKER> --from <file>`
-    scores it. The ladder (regime `2026-08-21`, face-validity, never outcome-tuned):
-    **base-to-bear ratio** <1.0 poor · 1.0-1.75 below_target · 1.75-2.0 target_met · >=2.0 preferred;
-    **base IRR** <12% fails · 12-15% minimum_met · >=15% preferred. IRR NEVER replaces asymmetry.
-    A name that clears exposure but fails here is a WATCH with a re-underwrite trigger, not a BUY.
-    **RATIFIED IS NOT PRICED** — ratifying confirms exposure is real and says nothing about cost.
-    **THE STANDING R3 MULTIPLE METHOD IS ANCHOR-AND-DISPLACE** (ratified on GOOGL 2026-09-10):
-    every leg is a DISPLACEMENT from the name's VERIFIED CURRENT forward multiple — bull holds it,
-    base compresses on duration, bear de-rates — and **never a draw from a distribution**. Own-history
-    quartiles, an EV/EBIT cross-check and peer context CORROBORATE; per the `BASIS MATCH: LIMITED`
-    ruling none of them is load-bearing, because a historical `P/NTM EPS` row is not proven to share
-    the normalized denominator the current figure uses. *The tell that separates the two: on GOOGL,
-    bull 26.0x sits **0.03** from the current 26.03x and **0.75** from p75 26.75x — a
-    distribution-derived bull would sit at p75. Base landing near the median is coincidental
-    corroboration, and it is exactly the proximity that invites a reader to infer derivation.*
-    **THE ANCHOR NEEDS ITS OWN SANITY CHECK — not only the displacement a reason.** The method
-    makes TODAY'S multiple the reference for every leg, so it silently imports whatever the market
-    did that day. Before anchoring, state that current is UNDISTORTED, and use the corroborators to
-    say it: a reference that may not GENERATE a target can still DETECT a distorted anchor, and
-    that is what they are for. Three classes disqualify a bare current anchor —
-    **(a) a post-deal entity**, where the denominator changed under the history (WAT: 26.4x reads
-    63rd percentile, but the n=38 series is pre-BD-Biosciences, so the percentile itself is a
-    `BASIS MATCH: LIMITED` mismatch and the anchor is UNVERIFIABLE);
-    **(b) a one-off in the denominator**, where current EPS is not a run-rate;
-    **(c) a percentile extreme** (MCK: 19.9x against a 13.1x own median, **95th percentile** — an
-    anchor that assumes the extreme persists). Where current IS defensible, say why: GOOGL's 26.03x
-    sits between its own median 24.24x and p75 26.75x; WST's 36.9x is the **37th** percentile of its
-    own history, below median. **A distorted anchor is a reason to price off something else, or to
-    state the distortion as the binding assumption — never to anchor anyway and displace from it.**
-    **A LEG'S MULTIPLE IS STRUCK ONCE, AT A STATED PRICE, AND IS THEREAFTER FIXED IN TURNS —
-    never a standing rule like "holds current".** The two read identically at the striking moment and
-    diverge at every other price, and the difference decides whether a limit can exist at all.
-    *Under a floating "holds current", the exit multiple is `P / NTM_now`, so
-    `base / P = NTM_exit / NTM_now` — INDEPENDENT OF P. The base return collapses to the EPS growth
-    rate, the IRR gate passes at EVERY price or at NONE, and no limit price exists. On WST
-    (2026-09-11) that reading made a 13.13% IRR unimprovable by any entry, which is not a property
-    of the name.* So: strike the number, stamp the price it was struck at, and record it as turns.
-    GOOGL is the precedent read correctly — bull **26.0x** "holds today's ~26.03x" is a FIXED figure
-    struck as a displacement, not a rule that floats with the tape.
-    **THE BASE LEG GETS ITS OWN MECHANISM — never the residual between bear and bull.** If bear is
-    "the observed compression continues" and bull is "it stops", a base struck between them is an
-    INTERPOLATION, not a case: nothing in the world does half of two opposite things. State what
-    base ASSUMES — typically the RATE at which the multiple keeps absorbing earnings growth, which
-    is a number the history can speak to — and state it against a measured rate, not against the
-    other two legs. *`price return = earnings growth + multiple change` is the decomposition that
-    makes this writable: each leg is a position on how the two split, and base's position has to be
-    named like the others'.*
-    **AND THE TWO HALVES MUST SHARE A WINDOW.** A multiple change measured over 24 months beside a
-    consensus change measured over 18 is not a decomposition — it is two facts in one sentence.
-    (WST: the 24m compression is −18.4% and the +24.2% FY27 revision is an 18-MONTH figure because
-    `Trends` carries vintages no further; over the MATCHED 18 months the multiple is ~flat and
-    sign-unstable, so the compression and the revision are SEQUENTIAL, not simultaneous.)
-    **DISPLACEMENT MAGNITUDE IS ANALYST JUDGMENT, and where the memo gives no reason for a
-    displacement the record says so rather than supplying one** — authoring a justification for a
-    bear leg on a record already at PASS is manufacturing support for the outcome, the shape
-    `IRR_FLOOR`'s own docstring forbids.
-11. **Frontend mirror** — `python3 frontend/build.py`. The index ACCUMULATES: a page this run did not
-    rebuild is carried forward, because every historical theme scan is preserved. `driver_summary` in
-    `context.json` is QUOTED from the ratified spec; `analyst_notes` are analyst-owned.
-12. **Read-out** — on the card's `first_confirming` date, read the named prints and record whether it
-    confirmed. `themes-forward --measure` accrues the forward spread (read-only, Polygon EOD).
-    A flat spread over a BUY leg that was never priced says the leg was an exposure map, not a
-    thesis — check that before concluding the theme failed.
-
-**Where the two live themes stand (2026-09-01):** both frozen at step 7 — glp1-drug-value-chain
-15 BUY / 29 AVOID, ai-value-migration 168 BUY / 189 AVOID. Steps 8-10 have run on **one** name of
-183. That gap, not the read-out dates, is the work.
+The monthly sweep (a), group-review recording (b), survivor checks (c) and the theme-advance loop
+(d) ran `vinci.themes`, which the operator retired on 2026-11-04 (R2; record
+`docs/records/2026-11-04-retire-themes-and-the-charting-reader.md`). Restore the text with
+`git checkout 481e82f7 -- docs/RUNBOOKS.md`. The letters below are kept so that citations such as
+"RUNBOOKS §j" still resolve. Theme intelligence (`vinci/theme_intelligence`) is a different
+package and keeps its own loop.
 
 ---
 
@@ -424,7 +106,7 @@ EXPOSURE into an investment view were not written down.
 - **Print-the-artifact contracts:** print any asserted data value / written file so the operator sees
   the real output, not an assertion. *(Source: CLAUDE.md §Non-negotiable "Verify by showing real runs".)*
 - **Byte-identity proofs for untouched data:** show `git diff --quiet -- <file>` for every artifact the
-  change must NOT touch (frozen `themes/*.json`, un-edited radar JSON). *(Source: CLAUDE.md
+  change must NOT touch. *(Source: CLAUDE.md
   §ARTIFACT-PASS; STATE.md PR byte-proofs.)*
 - **SURGICAL EDITS on committed JSON — never a whole-file round-trip reformat.** Edit the target lines
   in place; a `json.load → json.dump` round-trip reformats compact hand-authored objects and clobbers
@@ -472,10 +154,6 @@ merges** any change that touches them:
   `clear_ledger` / ledger-DELETE exists anywhere**, and the dossier package cannot import the ledger
   writer (AST guard: `vinci.schemas.ledger` ≠ `vinci.ledger`). The spread IS the accumulated ledger.
   *(Source: CLAUDE.md §Stack; STATE.md §ledger guard.)*
-- **`DriverSpec` texts** (`vinci/themes/drivers.py`) — `description` + `tie_taxonomy` are analyst-owned,
-  verbatim, load-bearing (they ARE the classification experiment). *(Source: `drivers.py`.)*
-- **`reviews.json` reasons** — the single record of review reasons, verbatim, never re-drafted.
-  *(Source: `reviews.json` `_note`.)*
 - **Verdicts** — the Brief's verdict is a **deterministic** proposal derived from the committed lean;
   the LLM emits **no verdict field** (`Synthesis` no-conclusion schema pin stands). The machine
   proposes; the human decides. *(Source: CLAUDE.md §"The one thing this fund is"; STATE.md §verdict.)*
@@ -487,40 +165,12 @@ merges** any change that touches them:
 - **Structural UI changes run a preview branch on localhost; the operator signs off on the RENDERED
   preview** before merge (a Phase-1 preview from committed JSON, STOP for approval). *(Source: CLAUDE.md
   §PREVIEW RULE.)*
-- **Radar SCOPE CAP (operator-ratified 2026-07-14, verbatim):** *"Radar polish is CAPPED after this PR:
-  no further Radar UI work until a first BUY, a fired watchlist trigger, or actual LP usage of the
-  site."* *(Source: STATE.md §SCOPE CAP, verbatim.)*
-- **Sanctioned exceptions to the cap, to date:**
-  - **#129** — inbox industry hint (a one-line SIC-based hint; explicitly operator-sanctioned).
-  - **#134** — theme-page "What this theme is" + the `candidates.json` text edit (the theme altitude
-    page and a data-text touch — **not** the Radar view; the Radar view code stayed byte-identical).
-  *(Source: STATE.md §#129, §THEME-CONTEXT; git history.)*
 
 ---
 
-## h. CALENDAR + STANDING WATCHES
+## h. CALENDAR + STANDING WATCHES — RETIRED 2026-11-04
 
-- **Next sweep due:** `frontend/radar/sweep.json.next_due` — currently **2026-08-13**
-  (`= last_run 2026-07-14 + 30 days`), `source: "manifest"` (the component-a scan_history manifest).
-  *(Source: `sweep.json`; `frontend/build.py:_radar_sweep_payload`.)*
-- **Recorded wake-up rules (where each lives):**
-  - **Truckload watchlist** — `candidates.json` (slug `truckload-supply-purge`, `detail.watch`) +
-    `THEME #3` STATE entry: **WERN** — *"DOSSIER-NOW: single-name underwrite in progress at the 2:1 bar
-    on NORMALIZED earnings (trailing P/E sits at the 99th percentile of its own history — a
-    trough-earnings artifact, not the bar)."*; **MRTN** + **HTLD** — *"Re-underwrite when TL revenue per
-    loaded mile turns positive YoY for two consecutive reported quarters, OR on a ≥20% derate from the
-    2026-07-13 close while ACT capacity data stays tight."* *(Source: `candidates.json`; STATE.md
-    §THEME #3 FROZEN.)*
-  - **Senior-housing (T012)** — `candidates.json` (slug `senior-housing`, `detail.rules`): *"BKD or SNDA
-    same-store RevPOR growth ≥ same-store opex growth for two consecutive quarters, OR NIC occupancy ≥
-    90.0%"* → re-underwrite with AHR as lead. **Next checkpoint: NIC Q2 data, late July 2026.**
-    *(Source: `candidates.json`; `data/research/t012_seniorhousing_adjudication_2026-07-13.md`.)*
-  - **In-silico evidence** — `candidates.json` (slug `in-silico-evidence`, `detail.rules`), 4 wake-up
-    rules: FDA finalizes any NAMs guidance / Modernization Act 3.0 enacted; first FDA acceptance of
-    in-silico/NAMs data in lieu of animal toxicology in an approval; CERT software growth ≥15% YoY for
-    two consecutive quarters OR bookings turn positive; CRL discloses client-behavior change or
-    NAMs-attributed DSA backlog erosion. **Any ONE fires → re-underwrite CERT as a SINGLE-NAME dossier,
-    NOT a theme scan.** *(Source: `candidates.json`; `data/research/insilico_adjudication_2026-07-13.md`.)*
+Every watch here was the Themes radar's (`frontend/radar/`), retired with `vinci.themes` (R2).
 
 ---
 
@@ -839,7 +489,7 @@ git-ignored, so CI never has it and a fresh worktree does not either. Measured 2
 479 tests** for want of the workbooks. One more file, `tests/test_primary_source.py`, needs them as
 well, but its test is `network`-marked, so the offline suite deselects it. Three files that name the
 loader (`test_ciq_charting`, `test_ev_ebitda_basis`, `test_release_amount_scale`) point it at
-synthetic data and run everywhere. A green suite in CI or in a `.claude/worktrees/*` checkout has
+synthetic data and run everywhere (`test_ciq_charting` left with the charting reader, 2026-11-04, R2). A green suite in CI or in a `.claude/worktrees/*` checkout has
 therefore NOT run those 479 tests: run them in the operator's primary checkout, which holds the
 folder (as a link to the synced Drive copy).
 - **Worktrees can hold the folder too, and most hold a COPY.** On 2026-10-23, 54 of the 70 worktrees
@@ -918,7 +568,4 @@ and it is the first outcome the spread will ever carry.
 
 **None open.** Every loop above is now reproducible from the repo. Items resolved since the first cut
 of this doc:
-- **Priced-check generator** (§c) — the `themes-priced-check` CLI now assembles the survivor price
-  gate (reproduction-verified exact against `report_all.txt`).
-- **Monthly-sweep runtime** (§a.i) — measure and record on the next sweep.
-- **Research-brief question count** (§c) — 3 core questions, extended per case; no canonical count.
+- The three items this list held (§a, §c) left with the theme loops on 2026-11-04.

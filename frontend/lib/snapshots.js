@@ -26,8 +26,6 @@ import { fmtMoney } from "./format.js";
 
 const SNAPSHOTS = "./snapshots"; // copied from data/snapshots/ at deploy (build.py)
 const DOSSIERS = "./dossiers"; // derived dossier.json only (committed to the PRIVATE repo when authed)
-const THEMES = "./themes"; // derived theme-edge display JSON (committed, like dossiers; build.py)
-const RADAR = "./radar"; // analyst-owned candidate registry (committed) + emitted sweep bar (build.py)
 const SCENARIOS = "./scenarios"; // first-cut underwrite cards (committed, like dossiers; build.py)
 const MONITOR = "./monitor"; // committed monitor history — dated marks, never a live fetch
 
@@ -501,8 +499,7 @@ export async function getScenarioIndex() {
   }
 }
 
-// getScenarioCard(ticker) -> the display-card shape build.py emits (same shape the theme JSON
-// embeds as `scenarioCard` — ONE contract), or null if absent.
+// getScenarioCard(ticker) -> the display-card shape build.py emits, or null if absent.
 export async function getScenarioCard(ticker) {
   try {
     return await _json(`${SCENARIOS}/${String(ticker).toUpperCase()}.json`);
@@ -516,125 +513,6 @@ export async function getScenarioCard(ticker) {
 export async function getDossier(ticker) {
   try {
     return await _json(`${DOSSIERS}/${String(ticker).toUpperCase()}.json`);
-  } catch (e) {
-    if (e.status === 404) return null;
-    throw e;
-  }
-}
-
-// --- theme edge (read-only display JSON produced by build.py from the frozen freeze) -----------
-// getThemesIndex() -> { drivers: [{ slug, label, freezeDate, ratifiedCount, surfacedCount,
-//   frozenCount, watchlistCount, tierShape:{binding,quantified,committed,aspirational,none,
-//   surfaced,universe} }], crossDriver: { driversFrozen, totalRatified, totalWatchlist, line } | null }
-// Empty ({ drivers: [], crossDriver: null }) when no theme artifacts are committed to this deploy.
-export async function getThemesIndex() {
-  try {
-    const idx = await _json(`${THEMES}/index.json`);
-    return {
-      drivers: Array.isArray(idx?.drivers) ? idx.drivers : [],
-      crossDriver: idx?.crossDriver ?? null,
-      pooledForward: idx?.pooledForward ?? null,
-    };
-  } catch (e) {
-    if (e.status === 404) return { drivers: [], crossDriver: null, pooledForward: null };
-    throw e;
-  }
-}
-
-// getRadarCandidates() -> { candidates: [{ slug, label, status, source, px12m, map:{x,y,basis}, tip,
-//   theme_route?, detail:{summary?, watch?, comparison?, rules?, lead?, note?} }] }. Empty on 404 (no
-// committed registry). Analyst-owned — rules render VERBATIM; the view never fabricates a disposition.
-export async function getRadarCandidates() {
-  try {
-    const d = await _json(`${RADAR}/candidates.json`);
-    return { candidates: Array.isArray(d?.candidates) ? d.candidates : [] };
-  } catch (e) {
-    if (e.status === 404) return { candidates: [] };
-    throw e;
-  }
-}
-
-// getRadarSweep() -> { last_run, source, next_due, command } | null (404 = no committed sweep). Emitted
-// by build.py from the component-a scan_history manifest; DISPLAY-only reminder, nothing fires.
-export async function getRadarSweep() {
-  try {
-    return await _json(`${RADAR}/sweep.json`);
-  } catch (e) {
-    if (e.status === 404) return null;
-    throw e;
-  }
-}
-
-// getRadarInbox() -> { scan_date, inbox: [{ cluster_id, first_seen, members, label, rel12, mom12,
-//   coherence, breadth_exp, crowding }] }. Emitted by build.py — current sweep clusters NOT yet
-//   matched to a review. Empty on 404. The machine sorts here; reviews.json holds the decisions.
-export async function getRadarInbox() {
-  try {
-    const d = await _json(`${RADAR}/inbox.json`);
-    return { scan_date: d?.scan_date || "", inbox: Array.isArray(d?.inbox) ? d.inbox : [] };
-  } catch (e) {
-    if (e.status === 404) return { scan_date: "", inbox: [] };
-    throw e;
-  }
-}
-
-// getRadarLog() -> { scan_date, reviews: [{...reviews.json entry, match:{status, cluster_id, added,
-//   dropped}}] }. Emitted by build.py — the analyst's recorded dispositions + current match status.
-//   Reasons render VERBATIM from reviews.json (the single record); empty on 404.
-export async function getRadarLog() {
-  try {
-    const d = await _json(`${RADAR}/log.json`);
-    return { scan_date: d?.scan_date || "", reviews: Array.isArray(d?.reviews) ? d.reviews : [] };
-  } catch (e) {
-    if (e.status === 404) return { scan_date: "", reviews: [] };
-    throw e;
-  }
-}
-
-// getThemeDriver(slug) -> the per-driver display object (cohorts, tierShape, names, watchlist +
-// triggers, avoidControls, realTier, forward:{cohorts, undefinedMeasures, diagnostics, honestyLabel,
-// powerNote}), or null if that driver is not committed.
-export async function getThemeDriver(slug) {
-  try {
-    return await _json(`${THEMES}/${String(slug).toLowerCase()}.json`);
-  } catch (e) {
-    if (e.status === 404) return null;
-    throw e;
-  }
-}
-
-// getThemeContext(slug) -> { driver_summary:{quote, source}, analyst_notes:[string] } for one theme,
-// or null (theme absent, or context.json not committed to this deploy → graceful absence). One
-// committed analyst-owned file joined at view time; driver_summary is quoted from the ratified spec.
-export async function getThemeContext(slug) {
-  try {
-    const all = await _once("theme-context", () => _json(`${THEMES}/context.json`));
-    return all?.[String(slug).toLowerCase()] ?? null;
-  } catch (e) {
-    if (e.status === 404) return null;
-    throw e;
-  }
-}
-
-// getThemeThesis(slug) -> the driver's declared thesis card (operator-typed only; mirrored
-// VERBATIM by the build under the registry-stamped slug), or null — and null IS the
-// "THESIS UNSTATED" state the page stamps loudly (ruling R2: absence must never look like
-// passage). Shape: vinci.themes.thesis.ThemeThesis.
-export async function getThemeThesis(slug) {
-  try {
-    return await _json(`${THEMES}/thesis/${String(slug).toLowerCase()}.json`);
-  } catch (e) {
-    if (e.status === 404) return null;
-    throw e;
-  }
-}
-
-// getThemeEconomics(slug) -> the inform-only per-member economics roll-up (NO composite, by pin;
-// vinci.themes.rollup.ThemeEconomicsRollup), or null — not yet assembled, and the page says so
-// rather than rendering nothing.
-export async function getThemeEconomics(slug) {
-  try {
-    return await _json(`${THEMES}/economics/${String(slug).toLowerCase()}.json`);
   } catch (e) {
     if (e.status === 404) return null;
     throw e;

@@ -25,9 +25,6 @@ from vinci.dossier import schemas as ds
 from vinci.dossier import synthesis as syn
 from vinci.dossier.driver_extract import extract_transcript_drivers
 from vinci.graph.llm import LlmClient
-from vinci.themes.drivers import AI_DATACENTER
-from vinci.themes.exposure import assess_exposure
-from vinci.themes.schemas import ExposureBasis, ExposureConcreteness
 
 ROOT = Path(__file__).resolve().parents[1]
 _FROZEN_SMPL = ROOT / "tests/fixtures/frozen_pages/2026-08-18/SMPL/dossier.json"
@@ -285,34 +282,6 @@ class _Exposure(LlmClient):
         return {"disclosed_facts": [{"fact": self._fact, "concreteness": "binding-contract",
                                      "driver_tie": "driver-specific", "source_ref": self._ref}],
                 "primary_business": "datacenter host", "key_unknowns": []}
-
-
-@pytest.mark.parametrize("ref", ["", "8-K", f"(accession {_ACC}) and (accession 0001628280-25-"
-                                            "000001)"])
-def test_an_exposure_fact_that_names_no_one_filing_is_uncited(ref: str) -> None:
-    """FAILED on c51c286a for `''` and `'8-K'`: a substring of a stream ref was cited, and with no
-    accession in it the grounding was SKIPPED — so the fact's concreteness set the basis."""
-    a = assess_exposure(AI_DATACENTER, "X", "1", _EXPOSURE_STREAM, llm=_Exposure(
-        ref, "15-year lease with CoreWeave for 300 MW"))
-    assert a.disclosed_facts[0].concreteness is ExposureConcreteness.NONE
-    assert a.exposure_basis is ExposureBasis.NONE_DISCLOSED
-    assert any(f.startswith("UNCITED fact") for f in a.flags), a.flags
-
-
-def test_an_exposure_fact_citing_one_accession_is_cited_and_grounded_against_that_filing() -> None:
-    """The negative half: the tag the prompt asks for resolves, and its text is then GROUNDED —
-    a fabricated counterparty under a real accession is still refused."""
-    good = assess_exposure(AI_DATACENTER, "X", "1", _EXPOSURE_STREAM, llm=_Exposure(
-        f"(accession {_ACC})", "15-year lease with CoreWeave for 300 MW"))
-    assert good.exposure_basis is ExposureBasis.BINDING_CONTRACTS
-    assert good.flags == []
-    whole = assess_exposure(AI_DATACENTER, "X", "1", _EXPOSURE_STREAM, llm=_Exposure(
-        _EXPOSURE_STREAM[0][0], "15-year lease with CoreWeave for 300 MW"))
-    assert whole.exposure_basis is ExposureBasis.BINDING_CONTRACTS
-    made_up = assess_exposure(AI_DATACENTER, "X", "1", _EXPOSURE_STREAM, llm=_Exposure(
-        f"(accession {_ACC})", "lease with Nebius Group for $900 million"))
-    assert any(f.startswith("UNGROUNDED") for f in made_up.flags), made_up.flags
-    assert made_up.exposure_basis is ExposureBasis.NONE_DISCLOSED
 
 
 # --- G-D6: a figure is traced to the fact its point cites -----------------------------------------
