@@ -17,7 +17,7 @@ dependencies = [
     "openpyxl>=3.1",      # .xlsx CIQ exports — `ciq.read_sheets` has an OOXML branch (audit H-D3)
     "pdfplumber>=0.11,<0.12",  # theme intelligence: manually supplied research PDFs (text, tables, pages)
     "duckdb>=2.0",        # the fact layer's reader (vinci/facts): embedded, in memory, read-only
-    "pyarrow>=26.0",      # the fact layer's Parquet objects (vinci/facts/store.py)
+    "pyarrow==26.0.1",    # the fact layer's writer, PINNED: its bytes embed the version (store.py)
 ]
 
 [project.optional-dependencies]

@@ -11,6 +11,15 @@ raises :class:`FactAmbiguousError` when the latest day's filings state DIFFERENT
 same period, as a 10-K/A and a 10-Q/A filed the same day can (measured on the committed pages'
 companies, 2026-11-04: 14 such keys). Nothing is imputed, and no tie is broken by guesswork.
 
+THE RESPONSE'S ORDER IS ITS OWN OBJECT (schema v2). A data object holds its rows in their canonical
+order, so its name is its content; :meth:`FactStore.companyfacts_as_of` puts them back in the
+response's order by joining each row to the entity's order object on (object, row), and a row the
+order object does not map raises rather than being dropped or misplaced.
+
+A LOCAL SNAPSHOT IS NOT SHARED. A snapshot whose manifest says ``storage: local`` has its objects
+only on the machine that wrote them; opened anywhere else (CI, another checkout) it raises
+:class:`FactsStoreNotPresentError` at open, never a quieter fallback to another reader.
+
 AGENTS ONLY READ. The connection is an in-memory DuckDB with no database file, so there is no
 writable DuckDB file for two processes to share (DuckDB allows one read-write process). The one
 writer per source publishes Parquet objects and a manifest (:mod:`vinci.facts.store`).
@@ -27,6 +36,7 @@ import duckdb
 
 from vinci.edgar.concepts import ANNUAL_REPORT_FORMS
 from vinci.facts.store import (
+    DEFAULT_NAME,
     FactsStoreError,
     _sha256_file,
     load_manifest,
@@ -50,6 +60,10 @@ class FactUnknownError(LookupError):
 
 class FactAmbiguousError(LookupError):
     """The latest filing day states different values for one period; the store will not choose."""
+
+
+class FactsStoreNotPresentError(FactsStoreError):
+    """A locally stored snapshot was opened where its objects are not."""
 
 
 @dataclass(frozen=True)
@@ -155,12 +169,27 @@ def _latest_sql(files: str, filters: Sequence[str]) -> str:
     """
 
 
-def _rows_sql(files: str) -> str:
-    """Every row filed by ``as_of`` (the one bound parameter), in the source response's order."""
+#: A data object's content id, read back from the path DuckDB reports for each row.
+_OBJECT_OF_PATH = r"([0-9a-f]{64})\.parquet$"
+
+
+def _rows_sql(files: str, order: str) -> str:
+    """Every row filed by ``as_of`` (the one bound parameter), in the source response's order: each
+    row joined to its place in ``order`` on (its object's content id, its row in that object). A row
+    the order object does not map comes back with a null position, and the caller raises."""
     return f"""
-        SELECT taxonomy, concept, unit, period_start, period_end, value, accession, fiscal_year,
-               fiscal_period, form, filed_date, frame
-        FROM read_parquet({files}) WHERE filed_date <= ? ORDER BY source_position
+        WITH cut AS (
+            SELECT taxonomy, concept, unit, period_start, period_end, value, accession,
+                   fiscal_year, fiscal_period, form, filed_date, frame,
+                   regexp_extract(filename, '{_OBJECT_OF_PATH}', 1) AS object,
+                   file_row_number AS row
+            FROM read_parquet({files}, filename=true, file_row_number=true)
+            WHERE filed_date <= ?)
+        SELECT cut.taxonomy, cut.concept, cut.unit, cut.period_start, cut.period_end, cut.value,
+               cut.accession, cut.fiscal_year, cut.fiscal_period, cut.form, cut.filed_date,
+               cut.frame, o.source_position
+        FROM cut LEFT JOIN read_parquet({order}) AS o ON cut.object = o.object AND cut.row = o.row
+        ORDER BY o.source_position NULLS FIRST
     """
 
 
@@ -196,19 +225,31 @@ class FactStore:
 
     ``verify`` (default True) hashes every object an entity's query touches the first time it is
     touched, and raises :class:`FactsStoreError` if one is missing or does not match its manifest
-    entry: a reader never serves a fact from bytes the manifest did not seal."""
+    entry: a reader never serves a fact from bytes the manifest did not seal.
+
+    ``name`` picks which current snapshot of ``source`` (``pages``, the committed one, or
+    ``screen``); ``root`` overrides where its objects are read from."""
 
     def __init__(self, snapshot_id: str | None = None, *, source: str = "edgar",
-                 facts_base: Path | None = None, root: str | Path | None = None,
-                 verify: bool = True) -> None:
-        self.manifest = load_manifest(snapshot_id, source=source, base=facts_base)
+                 name: str = DEFAULT_NAME, facts_base: Path | None = None,
+                 root: str | Path | None = None, verify: bool = True) -> None:
+        self.manifest = load_manifest(snapshot_id, source=source, name=name, base=facts_base)
         self.snapshot_id: str = self.manifest["snapshot_id"]
-        self.root = store_root(root)
+        self.storage: str = self.manifest["storage"]
+        self.root = store_root(root, storage=self.storage, base=facts_base)
+        if self.storage == "local" and not self.root.is_dir():
+            raise FactsStoreNotPresentError(
+                f"snapshot {self.snapshot_id} is stored locally and its objects are not here "
+                f"({self.root} does not exist): they are on the machine that wrote them, and not "
+                "shared until R2 exists (STATE.md §5.0 row 32 (30)). Ingest it here from the SEC "
+                "cache, or set $VINCI_FACTS_STORE to where it is")
         self._verify = verify
         self._verified: set[str] = set()
         self._files: dict[str, list[dict[str, Any]]] = {}
         for f in self.manifest["files"]:
             self._files.setdefault(f["entity"], []).append(f)
+        self._orders: dict[str, dict[str, Any]] = {
+            e["entity"]: e["order"] for e in self.manifest["entities"]}
         self._con = duckdb.connect(":memory:")
 
     def close(self) -> None:
@@ -224,20 +265,19 @@ class FactStore:
     def entities(self) -> tuple[str, ...]:
         return tuple(sorted(self._files))
 
+    def _path(self, entry: dict[str, Any]) -> Path:
+        """An object's path, its bytes checked against the manifest the first time it is read."""
+        p = self.root / entry["path"]
+        if self._verify and entry["path"] not in self._verified:
+            if not p.exists():
+                raise FactsStoreError(f"{p}: in snapshot {self.snapshot_id}, not on disk")
+            if _sha256_file(p) != entry["sha256"]:
+                raise FactsStoreError(f"{p}: bytes do not match snapshot {self.snapshot_id}")
+            self._verified.add(entry["path"])
+        return Path(p)
+
     def _paths(self, entities: Iterable[str]) -> list[Path]:
-        paths: list[Path] = []
-        for e in entities:
-            for f in self._files.get(e, []):
-                p = self.root / f["path"]
-                if self._verify and f["path"] not in self._verified:
-                    if not p.exists():
-                        raise FactsStoreError(f"{p}: in snapshot {self.snapshot_id}, not on disk")
-                    if _sha256_file(p) != f["sha256"]:
-                        raise FactsStoreError(
-                            f"{p}: bytes do not match snapshot {self.snapshot_id}")
-                    self._verified.add(f["path"])
-                paths.append(p)
-        return paths
+        return [self._path(f) for e in entities for f in self._files.get(e, [])]
 
     def _latest(self, entities: Sequence[str], as_of: date, *, taxonomy: str | None = None,
                 concept: str | None = None, unit: str | None = None,
@@ -323,10 +363,15 @@ class FactStore:
         ent = pad_entity(entity)
         if ent not in self._files:
             raise FactUnknownError(f"{ent}: not in snapshot {self.snapshot_id}")
-        rows = self._con.execute(_rows_sql(_file_list(self._paths([ent]))), [as_of]).fetchall()
+        sql = _rows_sql(_file_list(self._paths([ent])), _file_list([self._path(self._orders[ent])]))
+        rows = self._con.execute(sql, [as_of]).fetchall()
+        if rows and rows[0][-1] is None:
+            unmapped = sum(1 for r in rows if r[-1] is None)
+            raise FactsStoreError(f"{ent}: {unmapped} row(s) of snapshot {self.snapshot_id} are "
+                                  "not in the entity's order object")
         tree: dict[str, dict[str, dict[str, list[dict[str, Any]]]]] = {}
         for (taxonomy, concept, unit, start, end, value, accn, fy, fp, form, filed,
-             frame) in rows:
+             frame, _position) in rows:
             row: dict[str, Any] = {}
             if start is not None:
                 row["start"] = start.isoformat()
