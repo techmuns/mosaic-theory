@@ -19,7 +19,7 @@ _6 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** effective December 31, 2026 ~2026-12 `[stated]` — calendar in Analysis
 
 ## What happened — and can it survive?
-- **Shape:** discrete gap-downs — 2026-06-30 earnings; 2026-09-08 no company filing [4]
+- **Shape (last 180 days):** discrete gap-downs — 2026-06-30 earnings; 2026-09-08 no company filing [4]
 - **Price (180d):** -7.1% [5]
 - **Market (IWM) 180d:** -1.9% [6]
 - **vs market (180d):** -5.2% [7]
@@ -153,7 +153,7 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 # Analysis — full dossier
 
 ## What broke — and did it fall alone?
-- **Read — what broke** · discrete gap-downs: [4]
+- **Read — what broke (last 180 days)** · discrete gap-downs: [4]
   - 2026-06-30 **-11.2%** → earnings
   - 2026-09-08 → no company filing
 

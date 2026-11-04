@@ -19,7 +19,7 @@ _8 key unknowns + the evidence for/against — in Analysis_
 **Next catalyst:** effective October 26 ~2026-10 `[stated]` — calendar in Analysis
 
 ## What happened — and can it survive?
-- **Shape:** gradual bleed — no discrete gap-down detected [4]
+- **Shape (last 180 days):** gradual bleed — no discrete gap-down detected [4]
 - **Price (180d):** -27.5% [5]
 - **Market (SPY) 180d:** 7.5% [6]
 - **vs market (180d):** -35.0% [7]
@@ -138,8 +138,8 @@ _table shows the last 4 fiscal years · 5 earlier years are in the Appendix_
 # Analysis — full dossier
 
 ## What broke — and did it fall alone?
-- **Read — what broke:** gradual bleed — no discrete gap-down detected [4]
-- **Gap-down dates:** _UNKNOWN_ — no gap-down events on the data-record
+- **Read — what broke (last 180 days):** gradual bleed — no discrete gap-down detected [4]
+- **Gap-down dates (last 180 days):** _UNKNOWN_ — no gap-down events on the data-record
 
 _Company-specific or market-wide?_
 - **Name 180d return:** -27.5% [5]
