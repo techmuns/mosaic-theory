@@ -722,6 +722,21 @@ def test_a_basis_point_figure_is_a_percentage_point_change() -> None:
     assert "difference gives -4,600 to -4,400 as written" in wrong[0]
 
 
+def test_a_footnoted_rank_traces_only_when_the_claim_writes_it_as_one() -> None:
+    """(#899's rule, through a footnote) A figure footnoted to a percentile traces as that
+    percentile's rank only when the claim writes it as a rank: SMPL's P/E percentile is 0.0183, so
+    "the 2nd percentile" footnoted to it traces, and "2.0x" footnoted to it is a figure that fact
+    does not state."""
+    mech = _frozen()
+    fact = mech.valuation.pe_percentile_5y if mech.valuation else None
+    assert fact is not None and fact.source_ref
+    _, _, rel = _refs()
+    assert _flagged(mech, _point("P/E sits at the 2nd percentile of its own range", rel,
+                                 [{"figure": "2nd", "source_ref": fact.source_ref}])) == []
+    assert _flagged(mech, _point("P/E trades at 2.0x its own floor", rel,
+                                 [{"figure": "2.0x", "source_ref": fact.source_ref}])) == ["2"]
+
+
 def test_a_footnote_whose_inputs_are_not_a_list_is_dropped_not_a_crash() -> None:
     notes: list[str] = []
     raw = {"evidence_balance": "mixed — x", "bull_points": [{

@@ -57,14 +57,23 @@ _NUM = re.compile(r"-?\d[\d,]*\.?\d+|-?\d+")
 _CAL_BEFORE = re.compile(r"(?:\bFY|\bfiscal\s*|\bQ)\s*$", re.IGNORECASE)
 _TIME_UNIT = r"(?:days?|weeks?|months?|quarters?|qtrs?|years?)"
 _CAL_AFTER = re.compile(rf"^\s*{_TIME_UNIT}\b", re.IGNORECASE)
-# In a synthesis CLAIM a duration is the same label hyphenated, or abbreviated to "y" — "a 5-year
-# window", "the 52-week low", "over ~2y", "its 2.3y range": on 2026-11-04 those were 7 of the 373
-# UNTRACEABLE figures the 30 committed syntheses carried, each a label the spaced form ("5 years")
-# already skipped. Time units only: "$5-billion" or "5-10%" still states a figure, and "8q",
-# "180d" and "12m" (a month or a million) are left as they were. The claim trace only —
-# `driver_extract` keeps its `_CAL_AFTER` check, so a transcript row's value still needs its quote
-# to state a hyphenated duration.
+# In a synthesis CLAIM a WHOLE-NUMBER duration is the same label hyphenated, or abbreviated to "y" —
+# "a 5-year window", "the 52-week low", "over ~9y". Time units only: "$5-billion" or "5-10%" still
+# states a figure, and "8q", "180d" and "12m" (a month or a million) are left as they were.
+# A DECIMAL ONE IS A FIGURE (cross-review of #890): "2.3y" is NCNO's band span, a fact the point
+# must cite — #890 skipped it, so "7.3y" traced as readily as the true span, and so did a
+# "7.4-year payback". The claim trace only — `driver_extract` keeps its `_CAL_AFTER` check, so a
+# transcript row's value still needs its quote to state a hyphenated duration.
 _DURATION_AFTER = re.compile(rf"^-{_TIME_UNIT}\b|^y\b", re.IGNORECASE)
+# A figure written as a percentile RANK — a number, ordinal or not ("3rd", "3"), before
+# "percentile" / "pctile" / "%ile". Only such a figure may trace as the rank of a percentile its
+# fact states (cross-review of #890: the rank traced in ANY context, so "2.0x", "2 turns" and "fell
+# 2%" cited to SMPL's 0.0183 P/E percentile all passed). An ordinal alone is no rank ("the 2nd
+# straight quarter", "its 2nd-largest customer"), nor is a percentile-POINT move ("rose 2
+# percentile points") — a change, which the fact's level does not state.
+_RANK_AFTER = re.compile(
+    r"^(?:st|nd|rd|th)?[\s-]*(?:percentile|pctile|%ile)\b(?![\s-]*(?:pts?|points?)\b)",
+    re.IGNORECASE)
 # Digits that state no figure: an EDGAR accession, a date (ISO; CIQ's "Aug-31-2026"; "May 07,
 # 2026"; "June 1 2026"; "Aug-6"; "Nov-2025") and a period label ("Q1-26", "FY2024-25"). A claim
 # that writes one is citing or dating, not claiming a number; a fact that carries one carries its
@@ -598,8 +607,9 @@ def _claim_figures(text: str) -> list[float]:
 
 
 def _claim_figure_ends(text: str) -> list[tuple[float, int]]:
-    """`_claim_figures`, each with where its digits end — so a footnote is matched to the place
-    the claim writes its figure (item 29), never to another figure of the same magnitude."""
+    """`_claim_figures`, each with where its digits end — so the trace can read what is written
+    after a figure (a rank's "rd" / "percentile", `_RANK_AFTER`), and a footnote is matched to the
+    place the claim writes its figure (item 29), never to another figure of the same magnitude."""
     out: list[tuple[float, int]] = []
     labels = [(d.start(), d.end()) for d in _DATE_OR_ID.finditer(text)]
     for m in _NUM.finditer(text):
@@ -612,8 +622,8 @@ def _claim_figure_ends(text: str) -> list[tuple[float, int]]:
             continue  # FY21 / Q1 / fiscal 2025
         if _CAL_AFTER.match(text[m.end():m.end() + 10]):
             continue  # 90 days ago / 8 quarters
-        if _DURATION_AFTER.match(text[m.end():m.end() + 10]):
-            continue  # a 5-year window / the 52-week low / over ~2y
+        if "." not in m.group() and _DURATION_AFTER.match(text[m.end():m.end() + 10]):
+            continue  # a 5-year window / the 52-week low / over ~9y — never "2.3y"
         try:
             out.append((float(m.group().replace(",", "")), m.end()))
         except ValueError:
@@ -880,7 +890,7 @@ def _validate(
     # cites ONE fact; its figures are checked against that fact.
     values_by_ref = _values_by_ref(mech)
 
-    def _num_traces(n: float, cited: _FactNumbers) -> bool:
+    def _num_traces(n: float, cited: _FactNumbers, *, as_rank: bool = False) -> bool:
         # Trace by MAGNITUDE at any standard financial unit rendering (%, thousands, millions,
         # billions): the LLM writes the stored −0.726 as "−72.6%", 29,643,500 shares as "29.6
         # million", and a stored −0.027 as "shrunk by 2.7%" (sign carried in words, not the digit).
@@ -888,8 +898,8 @@ def _validate(
         a = abs(n)
         if a in cited.years:
             return True  # the year of a date the fact carries — as that year, never rescaled
-        if a in cited.ranks:
-            return True  # the rank of a percentile the fact states — as that rank, never rescaled
+        if as_rank and a in cited.ranks:
+            return True  # a figure WRITTEN as a rank, as the rank of a percentile the fact states
         for mf in cited.values:
             for s in _TRACE_SCALES:
                 target = abs(mf) * s
@@ -929,10 +939,11 @@ def _validate(
         return out
 
     def check_figure(n: float, e: FigureCite, p: SourcedPoint, where: str, *,
-                     dedup: bool) -> None:
-        """One footnoted figure: a cited one traces to the fact it names; a computed one has inputs
-        that each trace to theirs, and recomputes to the figure as written."""
-        def direct(x: FigureCite) -> tuple[bool, bool]:
+                     dedup: bool, as_rank: bool = False) -> None:
+        """One footnoted figure: a cited one traces to the fact it names (as that fact's
+        percentile rank only when the claim writes it as one, ``as_rank``, #899); a computed one
+        has inputs that each trace to theirs, and recomputes to the figure as written."""
+        def direct(x: FigureCite, rank: bool = False) -> tuple[bool, bool]:
             """(traces, cited to a transcript OF THE PAGE) for a cited entry's own figure. A ref
             that only LOOKS like a transcript — 'transcript' in a ref the layer does not carry — is
             no softer than any other unknown ref: the soft route is for a real call's prose."""
@@ -941,11 +952,11 @@ def _validate(
             nums = values_by_ref.get(key, _FactNumbers())
             v = _claim_figures(x.figure)
             known = bool(key) and key in ref_keys
-            ok = bool(v) and known and _num_traces(v[0], nums)
+            ok = bool(v) and known and _num_traces(v[0], nums, as_rank=rank)
             return ok, known and bool(_TRANSCRIPT_REF.search(ref))
 
         if e.derived is None:
-            ok, tx = direct(e)
+            ok, tx = direct(e, as_rank)
             fkey = comparison_key(e.source_ref or "")
             if ok:
                 return
@@ -1017,11 +1028,12 @@ def _validate(
         cited_nums = values_by_ref.get(ref_key, _FactNumbers()) if ref_key else _FactNumbers()
         entries = _figure_entries(p, where)
         for n, end in _claim_figure_ends(p.claim):
+            as_rank = bool(_RANK_AFTER.match(p.claim[end:end + 32]))
             e = entries.get(end)
             if e is not None:   # (item 29) this figure carries its own footnote
-                check_figure(n, e, p, where, dedup=dedup)
+                check_figure(n, e, p, where, dedup=dedup, as_rank=as_rank)
                 continue
-            if _num_traces(n, cited_nums):
+            if _num_traces(n, cited_nums, as_rank=as_rank):
                 continue
             # key on SIGNED value + flag-type: don't let abs() collapse +N/-N (distinct facts) and
             # don't let a soft TRANSCRIPT-FIGURE on one point suppress a hard UNTRACEABLE elsewhere.

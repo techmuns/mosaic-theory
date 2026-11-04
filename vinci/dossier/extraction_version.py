@@ -440,6 +440,15 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "(`ev_bridge_unbuilt`)",
     ),
     (
+        "2026-11-04.rank-written-as-rank",
+        "the #890 trace is narrowed (its cross-review): a percentile's rank traces only for a "
+        "figure written as a rank (a number, ordinal or not, before percentile / pctile / %ile; "
+        "never an ordinal alone or a percentile-point move) — '2.0x' or 'fell 2%' cited to a "
+        "percentile is a figure again — and only a whole-number "
+        "duration (5-year, 52-week, ~9y) is a label; a decimal one (2.3y, a 7.4-year payback) is "
+        "a figure the cited fact must state",
+    ),
+    (
         "2026-11-04.footnote-every-figure",
         "every synthesis figure is footnoted (item 29, operator ruling 2026-11-04 '1 + 4'): a "
         "point carries one entry per figure of its claim, citing the one fact that states it or "
