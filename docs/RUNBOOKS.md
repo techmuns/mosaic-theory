@@ -92,9 +92,10 @@ came to answer one question two ways.
 
 The monthly sweep (a), group-review recording (b), survivor checks (c) and the theme-advance loop
 (d) ran `vinci.themes`, which the operator retired on 2026-11-04 (R2; record
-`docs/records/2026-11-04-retire-themes-and-the-charting-reader.md`). Restore the text with
-`git checkout 481e82f7 -- docs/RUNBOOKS.md`. The letters below are kept so that citations such as
-"RUNBOOKS §j" still resolve. Theme intelligence (`vinci/theme_intelligence`) is a different
+`docs/records/2026-11-04-retire-themes-and-the-charting-reader.md`). Read the retired text with
+`git show 481e82f7:docs/RUNBOOKS.md`; restoring the loops means reverting #908's squash commit, never
+checking this file out whole. The letters below are kept so that citations such as "RUNBOOKS §j"
+still resolve. Theme intelligence (`vinci/theme_intelligence`) is a different
 package and keeps its own loop.
 
 ---
@@ -170,7 +171,11 @@ merges** any change that touches them:
 
 ## h. CALENDAR + STANDING WATCHES — RETIRED 2026-11-04
 
-Every watch here was the Themes radar's (`frontend/radar/`), retired with `vinci.themes` (R2).
+Every watch here was the Themes radar's (`frontend/radar/`), retired with `vinci.themes` (R2). Three
+were single-name re-underwrite triggers: truckload (MRTN, HTLD), senior housing (AHR) and in-silico
+evidence (CERT, "as a SINGLE-NAME dossier, NOT a theme scan"). All three rules are in
+`frontend/radar/candidates.json` at `481e82f7`, and the AHR and CERT rules also in STATE.md §2's theme
+entries; nothing checks them now.
 
 ---
 

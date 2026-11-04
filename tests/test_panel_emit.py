@@ -155,7 +155,7 @@ def test_emit_is_deterministic_over_the_committed_corpus() -> None:
     assert got == committed, (
         f"the latest monitor day ({snap['as_of']}) no longer reproduces from today's inputs. If "
         f"the emitter's CODE changed, the diff is the defect to inspect first — a new day would "
-        f"commit it. If a page, record or theme card moved, run `vinci monitor` with NO --ref "
+        f"commit it. If a page or record moved, run `vinci monitor` with NO --ref "
         f"(it files the latest close): a NEW day when that close is later than {snap['as_of']}, "
         f"the same-session re-run when it is {snap['as_of']} itself. Never re-cut a day that a "
         f"later close sits after (docs/RUNBOOKS.md §j).")
