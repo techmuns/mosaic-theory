@@ -189,7 +189,9 @@ Each line: *what it does* — *verified how*.
   `dossier.json` + `graph_coverage.json` now committed to the private repo (BLOCKER B re-verified
   CIQ-free); only the authed Cloudflare deploy + BLOCKER A remain (§4/§5). **UPDATE 2026-10-22:**
   the repo is PUBLIC (operator decision) and the derived set stays committed —
-  `docs/records/2026-10-22-repo-made-public.md`. *Verified locally: `build.py` mirrored 301 queue /
+  `docs/records/2026-10-22-repo-made-public.md`. **UPDATE 2026-11-04:** the licence covers publishing
+  CIQ-derived facts and Polygon and Tiingo prices (operator ruling), each with its source_ref and
+  knowable date; the workbook files stay out — `docs/records/2026-11-04-licence-covers-publishing-ciq-derived-facts-and-prices.md`. *Verified locally: `build.py` mirrored 301 queue /
   1,727 universe / FUBO+VRRM dossiers / 339-edge graph; served on `:8731` → overview, dossier (full
   VRRM), and graph all render against local data, no console errors.* **No deploy is wired** —
   Cloudflare is unconnected (0 GitHub deployments / environments / webhooks), so the merge deployed
