@@ -50,22 +50,24 @@ def test_the_levels_reach_the_written_dossier(ticker: str, tmp_path) -> None:  #
 
     fy, median, pair, verified_at = REVENUE_BASELINE[ticker]
     first = levels["Revenue"][0]
-    assert first["fy"] == fy
-    # LANDING is what this test owns, and it stays strict: the row is present, carries the right
-    # forward year, and both value fields survived the write as fields.
+    # LANDING is what this test owns, and it stays strict: the row is present and both value
+    # fields survived the write as fields. WHICH forward year comes first is the export's, and
+    # is checked with the numbers below (2026-11-04: SMPL's fiscal 2026 had closed).
     assert first["estimates"], "the RAW pair did not survive the write"
     assert isinstance(first["median"], (int, float)), "median did not survive the write as a number"
     assert all(int(c["fy"]) >= int(fy) for c in levels["Revenue"]), "forward years only"
 
     # The EXACT numbers are gated on the export vintage for the same reason as the baseline this
-    # imports from — they move when brokers revise. Shared helper, never a second copy of the
+    # imports from — they move when brokers revise, and the first forward year moves when a fiscal
+    # year closes. Shared helper, never a second copy of the
     # rule: two tests disagreeing about when a baseline is current is how one of them starts lying.
     vintage = data_vintage(bundle)
     if vintage is not None and vintage > verified_at:
         pytest.skip(
             f"{ticker}: export re-pulled since the baseline was verified (data ≥{vintage} > "
             f"pinned {verified_at}); landing assertions above still ran. Reads now: "
-            f"median {first['median']!r}, pair {first['estimates']!r}")
+            f"first FY {first['fy']!r}, median {first['median']!r}, pair {first['estimates']!r}")
+    assert first["fy"] == fy
     assert first["median"] == pytest.approx(median, rel=1e-3)
     assert first["estimates"] == pair, "the RAW pair must survive the write, not a re-derived count"
 

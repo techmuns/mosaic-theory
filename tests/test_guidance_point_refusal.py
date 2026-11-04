@@ -26,6 +26,7 @@ from datetime import date
 
 import pytest
 
+from tests.ciq_export_support import skip_unless_export
 from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.ciq_sheets import _POINT_DECISION_BAND, _guidance_reads
 
@@ -131,14 +132,28 @@ def _bundle(ticker: str):
 
 def test_nflx_fq2_2026_reads_at_guide_not_missed() -> None:
     """THE ANALYST'S FINDING, end to end on the licensed workbook. The primary source calls the
-    quarter in line; the page must stop contradicting it."""
-    rows = cs.guidance_bridge_rows(_bundle("NFLX"), reference_date=date(2026, 8, 12)).value or []
+    quarter in line; the page must stop contradicting it.
+
+    PINNED TO AN EXPORT, NOT TO THE PAGE. "Most recent" is FQ2 2026 only on an export pulled before
+    FQ3 2026 reported (2026-10-20); NFLX's page is current, and its 2026-10-28 export reads FQ3, so
+    a check keyed on the page would still fail. The pin was written on the August export, which no
+    folder on this machine still holds; it holds on 406592d103 — the Estimates export of
+    2026-10-07 that the page was built from at #704, archived by the operator on 2026-10-28
+    (verified 2026-11-04). The refusal itself is pinned on frozen rows with these same figures
+    (`test_a_point_call_inside_the_band_is_refused_and_named`), so a skip here loses no value
+    pin."""
+    bundle = _bundle("NFLX")
+    rows = cs.guidance_bridge_rows(bundle, reference_date=date(2026, 8, 12)).value or []
     rev = next(r for r in rows if r.metric == "Revenue")
+    # the RECORD counts every in-band point call in the history, so it holds on any NFLX export
+    assert "at-guide" in rev.record, "the record must disclose how many calls were refused"
+    skip_unless_export("NFLX", "estimates", "406592d103", bundle=bundle,
+                       why="the most recent resolved Revenue call is FQ2 2026 only on an export "
+                           "pulled before FQ3 2026 reported")
     assert "FQ2 2026" in rev.most_recent, rev.most_recent
     assert "MISSED" not in rev.most_recent, (
         f"a −0.11% shortfall against a point forecast still reads as a miss: {rev.most_recent}")
     assert "AT GUIDE" in rev.most_recent
-    assert "at-guide" in rev.record, "the record must disclose how many calls were refused"
 
 
 def test_onon_keeps_a_record_because_the_refusal_is_a_band_not_a_class() -> None:

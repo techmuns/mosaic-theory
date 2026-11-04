@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.ciq_export_support import skip_unless_pages_export
 from vinci.dossier.refresh import ev_gap_transform, refresh_dossier
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -57,7 +58,6 @@ def test_a_second_refresh_preserves_the_computed_gap(ticker: str, tmp_path: Path
     # THE RATIOS THEMSELVES, not merely the status. A gap that survives as `computed` while its
     # numbers move would pass a status-only check and be worse: a wrong figure reads as a right one.
     assert after["ratios"] == pytest.approx(before["ratios"])
-    assert after["vintages"] == before["vintages"]
     # SHAPE IS None where the decomposition is suppressed — nothing to rank, so nothing to label.
     assert (after["shape"] or {}).get("anchor") == (before["shape"] or {}).get("anchor")
 
@@ -65,6 +65,13 @@ def test_a_second_refresh_preserves_the_computed_gap(ticker: str, tmp_path: Path
     # alternating write would pass the check above on every even pass.
     refresh_dossier(path, transform=ev_gap_transform(ticker))
     assert _gap(path)["ratios"] == pytest.approx(before["ratios"])
+
+    # THE VINTAGES LAST, because only they depend on the folder: the transform re-reads the
+    # consensus vintage off the Estimates export on disk, so they survive only where that export is
+    # the page's (2026-11-04: SMPL's and NCNO's 2026-10-28 exports read ≥2026-10-27). Without the
+    # folder the prior stamp is carried and this runs as before.
+    skip_unless_pages_export(ticker, "estimates")
+    assert after["vintages"] == before["vintages"]
 
 
 @pytest.mark.parametrize("ticker", COMPUTED)
