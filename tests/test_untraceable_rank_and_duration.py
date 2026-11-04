@@ -9,6 +9,12 @@ without widening what a figure may trace to (2026-11-04).
    "the 52-week low", "over ~2y" were figures. In the claim trace only: `driver_extract`'s row
    check keeps reading them as figures a row's quote must state.
 
+NARROWED by the cross-review of #890 (posted after merge): the rank traced in ANY context
+("2.0x", "2 turns", "fell 2%" cited to a percentile all passed), and every decimal duration was
+skipped (NCNO's "2.3y" is its band's span — a fact the point must cite — so "7.3y" passed too). A
+rank now traces only when WRITTEN as one (an ordinal, or before "percentile" / "pctile" / "%ile"),
+and only a WHOLE-NUMBER duration is a label.
+
 Measured over the 30 committed syntheses (27 pages at 9e996d7f + PR #886's three rebuilt pages):
 5 rank figures and 7 duration figures of 373 UNTRACEABLE. NOT done, because it would let real
 misbindings through: a general "rounds to the figure's written precision" rule — of the 12 figures
@@ -38,16 +44,21 @@ from vinci.verbatim import comparison_key
 ROOT = Path(__file__).resolve().parents[1]
 _FROZEN_SMPL = ROOT / "tests/fixtures/frozen_pages/2026-08-18/SMPL/dossier.json"
 _COMMITTED = sorted((ROOT / "data/dossiers").glob("*/dossier.json"))
-#: a duration's label form, as `synthesis._DURATION_AFTER` reads it after the number
+#: a duration's label form, as `synthesis._DURATION_AFTER` reads it after a WHOLE number
 _DURATION_AFTER = re.compile(r"^(?:-(?:days?|weeks?|months?|quarters?|qtrs?|years?)\b|y\b)",
                              re.IGNORECASE)
+#: a figure written as a percentile rank, as `synthesis._RANK_AFTER` reads it after the number
+_RANK_AFTER = re.compile(
+    r"^(?:st|nd|rd|th)?[\s-]*(?:percentile|pctile|%ile)\b(?![\s-]*(?:pts?|points?)\b)",
+    re.IGNORECASE)
 
 
 def _frozen() -> ds.MechanicalLayer:
     return ds.MechanicalLayer.model_validate(json.loads(_FROZEN_SMPL.read_text())["mechanical"])
 
 
-def _flagged(mech: ds.MechanicalLayer, claim: str, ref: str) -> list[str]:
+def _flagged(mech: ds.MechanicalLayer, claim: str, ref: str, *, ticker: str = "SMPL",
+             name: str = "Simply Good Foods") -> list[str]:
     """The figures a one-point synthesis citing ``ref`` is flagged for, read from the CAVEATS the
     page prints (`flags.partition`), not from the validator's internal string."""
     point = ds.SourcedPoint(claim=claim, source_ref=ref)
@@ -56,7 +67,7 @@ def _flagged(mech: ds.MechanicalLayer, claim: str, ref: str) -> list[str]:
         twin_reference_cases=[], key_unknowns=[],
         decisive_question=ds.DecisiveQuestion(question="q?", evidence_for=[],
                                               evidence_against=[]))
-    _, flags = syn._validate(synth, mech, ticker="SMPL", name="Simply Good Foods")
+    _, flags = syn._validate(synth, mech, ticker=ticker, name=name)
     caveats, _ = dflags.partition(flags)
     return [m.group(1) for c in caveats
             if (m := re.match(r"Untraceable figure (\S+) \(", c))]
@@ -100,6 +111,44 @@ def test_only_the_rank_itself_is_admitted_and_only_to_its_own_fact() -> None:
     moved = mech.model_copy(update={"valuation": mech.valuation.model_copy(update={
         "ev_ebitda": not_a_percentile})})
     assert _flagged(moved, "it sits at the 2nd percentile", "TEST not-a-pctile") == ["2"]
+
+
+@pytest.mark.parametrize("claim", ["it de-rated to 2.0x", "it trades at 2 turns",
+                                   "the stock fell 2%", "2 straight quarters of decline",
+                                   "the 2nd straight quarter of decline",
+                                   "its 2nd-largest customer",
+                                   "the multiple rose 2 percentile points",
+                                   "a 2 percentile-point drop"])
+def test_the_rank_is_no_figure_written_as_anything_but_a_rank(claim: str) -> None:
+    """Cross-review of #890: each TRACED on a439eabe, cited to SMPL's 0.0183 P/E percentile, because
+    the rank 2 was admitted whatever the "2" stated. Now only a figure written as a rank traces as
+    one."""
+    mech = _frozen()
+    ref = mech.valuation.pe_percentile_5y.source_ref if mech.valuation else None
+    assert ref
+    assert _flagged(mech, claim, ref) == ["2"]
+
+
+@pytest.mark.parametrize("claim", ["the P/E sits at the 2nd percentile",
+                                   "a 2 percentile reading", "the 2 pctile of its range",
+                                   "near its 2%ile", "a 2nd-percentile multiple"])
+def test_a_figure_written_as_a_rank_traces_as_the_rank(claim: str) -> None:
+    mech = _frozen()
+    ref = mech.valuation.pe_percentile_5y.source_ref if mech.valuation else None
+    assert ref
+    assert _flagged(mech, claim, ref) == []
+
+
+def test_only_a_fraction_in_0_to_1_states_a_rank() -> None:
+    """The 0..1 guard, pinned where it acts (cross-review of #890: dropping it failed no test).
+    Through the trace it is unobservable — a percentile field above 1 already traces its x100 value
+    within tolerance, and a negative rank is never a figure's magnitude — so it is pinned on the
+    numbers the fact states."""
+    for value, ranks in ((0.026, {3.0}), (0.0, {0.0}), (1.0, {100.0}), (-0.026, set()),
+                         (1.5, set()), (26.0, set())):
+        nums = syn._FactNumbers()
+        syn._stated_numbers({"value": value, "source_ref": "R"}, nums, "pe_percentile_5y")
+        assert nums.ranks == ranks, value
 
 
 def test_a_band_percentile_traces_as_its_rank() -> None:
@@ -170,11 +219,12 @@ def test_every_percentile_field_of_the_page_schema_is_in_the_closed_set() -> Non
     "impairment-free over the 5-year window",
     "the stock is near its 52-week low",
     "shares roughly flat over ~2y",
-    "the multiple sits low in its own 2.3y range",
+    "the band spans ~9y",
     "a 180-day return",
 ])
 def test_a_hyphenated_or_abbreviated_duration_is_no_figure(claim: str) -> None:
-    """FAILED on 9e996d7f for each: the spaced form ("5 years") was skipped, these were flagged."""
+    """FAILED on 9e996d7f for each: the spaced form ("5 years") was skipped, these were flagged.
+    Whole numbers only (cross-review of #890)."""
     mech = _frozen()
     ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
     assert ref
@@ -182,6 +232,22 @@ def test_a_hyphenated_or_abbreviated_duration_is_no_figure(claim: str) -> None:
     assert syn._claim_figures(claim) == []
     # the transcript-row check is unmoved: there the duration is still a figure its quote must state
     assert dx._figures(claim) != []
+
+
+@pytest.mark.parametrize(("claim", "figure"), [
+    ("the multiple sits low in its own 2.3y range", "2.3"),
+    ("the multiple sits low in its own 7.3y range", "7.3"),
+    ("a 7.3-year span of closes", "7.3"),
+    ("a 7.4-year payback", "7.4"),
+])
+def test_a_decimal_duration_is_a_figure(claim: str, figure: str) -> None:
+    """Cross-review of #890: each TRACED on a439eabe. "2.3y" is NCNO's band span
+    (`own_history.value[0].window_span_years`), a fact the point must cite — and "7.3y" or a
+    "7.4-year payback" is a figure as surely, whatever unit follows it."""
+    mech = _frozen()
+    ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
+    assert ref
+    assert _flagged(mech, claim, ref) == [figure]
 
 
 @pytest.mark.parametrize(("claim", "figures"), [
@@ -251,20 +317,27 @@ def _ranks_by_ref(mech: ds.MechanicalLayer) -> dict[str, set[float]]:
 def test_no_committed_point_is_flagged_for_its_own_percentile_rank_or_a_duration(
         path: Path) -> None:
     """Every committed synthesis point, through `_validate` and the caveat split: no caveat names a
-    whole number that is the rank of a percentile the point's cited fact states, nor a number the
-    point writes only as a duration. On 9e996d7f this failed on IT, NFLX, NKE, TJX (a rank) and
-    EPAM, MVST, NCNO, NFLX, WLK (a duration)."""
+    number WRITTEN as a rank that is the rank of a percentile the point's cited fact states, nor a
+    whole number the point writes only as a duration. On 9e996d7f this failed on IT, NFLX, NKE, TJX
+    (a rank) and EPAM, LLY, NFLX, WLK (a duration); each page is validated as itself."""
     raw = json.loads(path.read_text())
     mech = ds.MechanicalLayer.model_validate(raw["mechanical"])
     ranks = _ranks_by_ref(mech)
     for p in _points(raw):
         if syn._TRANSCRIPT_REF.search(p.source_ref):
             continue
-        flagged = {float(f.replace(",", "")) for f in _flagged(mech, p.claim, p.source_ref)}
+        flagged = {float(f.replace(",", "")) for f in _flagged(
+            mech, p.claim, p.source_ref, ticker=raw["ticker"], name=raw.get("name", ""))}
         own_rank = ranks.get(comparison_key(p.source_ref), set())
-        assert not flagged & own_rank, (p.claim, flagged & own_rank)
-        durations, others = set(), set()
+        written_as_rank: set[float] = set()
+        durations: set[float] = set()
+        others: set[float] = set()
         for m in syn._NUM.finditer(p.claim):
             v = abs(float(m.group().replace(",", "")))
-            (durations if _DURATION_AFTER.match(p.claim[m.end():]) else others).add(v)
+            tail = p.claim[m.end():]
+            if _RANK_AFTER.match(tail):
+                written_as_rank.add(v)
+            whole = "." not in m.group()
+            (durations if whole and _DURATION_AFTER.match(tail) else others).add(v)
+        assert not flagged & own_rank & written_as_rank, (p.claim, flagged & own_rank)
         assert not {abs(f) for f in flagged} & (durations - others), p.claim

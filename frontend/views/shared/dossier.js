@@ -291,6 +291,12 @@ const EXTRACTION_VERSIONS = [
     "order check " +
     "spans the two fiscal calendars it divides; a page with no EV bridge says why " +
     "(`ev_bridge_unbuilt`)"],
+  ["2026-11-04.rank-written-as-rank",
+    "the #890 trace is narrowed (its cross-review): a percentile's rank traces only for a figure " +
+    "written as a rank (a number, ordinal or not, before percentile / pctile / %ile; never an " +
+    "ordinal alone or a percentile-point move) — '2.0x' or 'fell 2%' cited to a percentile is a " +
+    "figure again — and only a whole-number duration (5-year, 52-week, " +
+    "~9y) is a label; a decimal one (2.3y, a 7.4-year payback) is a figure the cited fact must state"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
