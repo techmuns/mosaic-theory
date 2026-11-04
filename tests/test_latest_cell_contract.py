@@ -37,7 +37,7 @@ from vinci.dossier import ciq_sheets as cs
 from vinci.dossier.anchor import _bridge_inputs
 from vinci.dossier.ciq import CiqBundle, CiqUnavailableError, read_sheets
 from vinci.dossier.manual_store import LocalFolderStore
-from vinci.dossier.schemas import SourceStatus
+from vinci.dossier.schemas import EvBridge, SourceStatus
 
 FIX = gen.HERE
 ANNUAL = FIX / gen.ANNUAL_XLS
@@ -402,7 +402,7 @@ def test_the_ev_bridge_reads_the_latest_dated_column_whatever_its_position(
     for r in range(hdr, len(bs)):
         bs[r] = [bs[r][0], *reversed(bs[r][1:])]
     got = cs.ev_bridge(bundle, fy_periods=["FY27"])
-    assert got is not None and got.balance_sheet_date == gen.Q_DATES[-1].isoformat()
+    assert isinstance(got, EvBridge) and got.balance_sheet_date == gen.Q_DATES[-1].isoformat()
     assert got.net_debt == round(gen.Q_DEBT[-1] - gen.Q_CASH[-1], 1) == cs.net_debt(bundle).value
 
 
