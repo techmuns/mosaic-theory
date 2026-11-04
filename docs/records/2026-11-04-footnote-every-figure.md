@@ -1,6 +1,6 @@
 ---
 id: 2026-11-04-footnote-every-figure
-status: open
+status: shipped
 date: 2026-11-04
 prs: [903]
 supersedes:
