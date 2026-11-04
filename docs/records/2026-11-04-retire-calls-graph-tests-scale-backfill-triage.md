@@ -76,8 +76,34 @@ wired in. Each costs suite time and review surface on every change near it.
 **HOW VERIFIED.** (Outputs are in the PR body.)
 
 - **The weekly path is untouched — a `vinci run-weekly` replay of the last committed run
-  (2026-10-16).** RUN_WEEKLY_RESULT
-- **The $0 pre-spend check on three pages.** PRECHECK_RESULT
+  (2026-10-16).** Inputs: the 2026-10-16 weekly's own HTTP cache and
+  store (`research-alpha-audit-bcba59/data`, APFS-cloned, source md5 unchanged), every cached
+  response served whatever its age, and the committed snapshots of each tree. `origin/main`
+  (`481e82f7`) ran first, at `--end 2026-10-16`. Its cache misses were fetched live into its own
+  clone: 1,940 (1,882 SEC filing documents, 58 Polygon), from paths added after 10-16 (cover-page
+  typing, the rename carry-forward). The branch then ran on a clone of that filled cache with the
+  network REFUSED: 0 misses, 97 s. **Every one of the 86 files in `data/snapshots` came out
+  byte-identical between the two runs** — universe (2,065 members), candidate records (344),
+  ranked queue (344), the screen run `2026-10-16-02` and its manifest, universe stats and the
+  alias table — except `event_provenance.jsonl`, which this PR deletes. Against the COMMITTED
+  2026-10-16 run, main's own replay already differs: universe identical, but the queue is 344
+  against 343 (AKTS out; OGG and SKYD in, SKYD by the rename carry-forward #833 added after that
+  run) and four universe drop counts move by one. That is `main`'s code since 10-16, not this
+  PR; the branch reproduces main exactly.
+- **The $0 pre-spend check on three pages.** `vinci dossier precheck --ticker` on GOOGL, VRRM and TJX, with
+  the Anthropic key removed from the process, so any model call fails loud ($0 by construction).
+  Inputs: the assembler's CIQ copy (`mosaic-theory-ta/data/manual`, linked) and an APFS clone of
+  its store (bars to 2026-10-30; source md5 unchanged). Branch: GOOGL 110 Sourced fields + 6
+  blocks compared, **0 regressions, 0 post-spend refusals, exit 0**; TJX **0 / 0, exit 0**; VRRM
+  **0 regressions and 1 post-spend refusal, exit 1** — its CIQ panels are 99 days old against the
+  45-day ceiling, a stop the check exists to make and unrelated to this PR. The same three on
+  `origin/main` print the same 44 lines once timestamps and paths are removed.
+- **The monitor day.** `vinci monitor --ref 2026-11-02 --out <scratch>` on `origin/main`, then on
+  the branch with a clone of the cache main filled: **the two days are byte-identical.** Main's
+  own re-cut differs from the COMMITTED 2026-11-02 day in one field, mirrored into one panel: IT's
+  `newer_filings` lists 3 filings where the committed day lists 5. The two extra are a 10-Q and an
+  8-K filed 2026-11-03, a day after the day's as-of. The live run was made on 11-03 and kept them;
+  a `--ref` re-cut cuts at the reference date. Reported here, not changed.
 - **The frontend.** `frontend/build.py` (code from this worktree) rebuilt every mirror and changed
   no committed file. Served locally: the nav has no Calls entry, `#/calls` falls back to the
   overview, the Themes radar and the dossier view render, and the console logs no error.
@@ -85,7 +111,7 @@ wired in. Each costs suite time and review surface on every change near it.
   `views/calls`, `graph.test0`, `graph.test1`, `run_test1`, `ciq_scale_backfill`, `vinci.triage`,
   `triage_pass`, `triage_cost_gate` and `event_provenance` outside `docs/records/` finds only the
   deliberate leftovers listed above.
-- **Gate.** SUITE_RESULT
+- **Gate.** ruff: all checks passed; `mypy --strict vinci`: no issues in 218 source files; `pytest -m "not network"` on the final head: **9,062 passed, 0 failed**, 555 skipped (chiefly the tests that need the git-ignored CIQ exports, absent in a worktree as in CI), 8 xfailed, 39 deselected, 363.8 s. The first full run (9,059 passed, 1 failed) caught §5.0 over its 60-line cap; closing the withdrawn paragraph instead of annotating it fixed it.
 
 **BOUNDARY.** Line and file counts: `git ls-files` / `wc -l` at `481e82f7`, before the removal.
 Test cases: `pytest --collect-only` over the named files at `481e82f7` (each parametrised case
