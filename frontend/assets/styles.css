@@ -1172,7 +1172,8 @@ table.data.revgroup-table td, table.data.revgroup-table th { padding: 4px 9px; }
 .sweep-run:hover ~ .sweep-cmd, .sweep-cmd.show { opacity: 1; }
 .sweep-cmd.flash { border-color: var(--live); }
 
-.rd-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.rd-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.rd-head .gt { margin-left: auto; }
 .rd-name { font-size: 15px; font-weight: 650; }
 .rd-summary { margin: 4px 0 8px; font-size: 12.5px; }
 .rd-rule, .rd-cmp { display: flex; gap: 8px; padding: 3px 0; align-items: baseline; }
@@ -1512,12 +1513,6 @@ table.data th.peer-desc-h { text-align: left; }
 .card pre { overflow-x: auto; }
 
 
-/* --- radar heading (kept when the calls tape was retired, 2026-11-04) ---------------------
-   These two rules sat in the calls tape's block, after the radar's own `.rd-head` above, so the
-   radar (views/themes/radar.js) has rendered with them. Kept as they were: removing the tape
-   must not move a view that stays. */
-.rd-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
-.rd-head .gt { margin-left: auto; }
 /* --- the cohort split, inside the idiosyncrasy cell (2026-08-25) --------------------------
    G2 strips MARKET beta but not SECTOR, so a name that fell with its whole industry lands in the
    queue looking idiosyncratic. The cell keeps the raw number in its old position and weight, and

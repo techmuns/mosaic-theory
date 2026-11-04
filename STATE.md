@@ -646,6 +646,8 @@ Each line: *what it does* — *verified how*.
   *(detail: `docs/records/2026-08-26-capability-queue-row-shows-the-tier-2-volume-read-fronten.md`)*
 - **THE CALLS TAPE — scoring a public commentator's stated calls, and a parser that had been
   swallowing its own failures** (`vinci/calls/`, `frontend/views/calls/tape.js`, PR *calls-tape*).
+  **RETIRED 2026-11-04 (operator; R1, #905)** with graph Test 0/1's code, the CIQ scale back-fill and
+  the triage pass — code, tests and data removed; each restores from `481e82f7` (`docs/records/2026-11-04-retire-calls-graph-tests-scale-backfill-triage.md`).
   A RESEARCH INPUT ONLY: it touches no screen, ranker, ledger or spread, and gates nothing. The
   build carries four decisions the operator made explicitly after a design review.
   *(detail: `docs/records/2026-08-26-capability-the-calls-tape-scoring-a-public-commentator-s.md`)*
@@ -805,7 +807,7 @@ testable** — no band clears 10 names per arm and 5 worked.
 **The fossils call the graph "the differentiator." That is wrong, and recorded honestly here:**
 
 - **Edge 3 / graph-as-mechanical-signal (shock-propagation): FALSIFIED.** Test 1 (`vinci/graph/test1`,
-  `scripts/run_test1*.py`) returned **two clean nulls on the sector-deconfounded column**: same-sector
+  `scripts/run_test1*.py`; code removed 2026-11-04, R1) returned **two clean nulls on the sector-deconfounded column**: same-sector
   semis (signal vanished after SOXX-adjustment); cross-sector (live pooled −1.0% vs own-sector, while
   the control AMZN posted +1.0% — *that was the n≈8–16 noise floor*; the apparent vs-IWM signal was
   beta). Retired for **three independent reasons**: (1) null on the data, twice; (2) supply-chain
@@ -1246,11 +1248,6 @@ verified — goes in a new file under **`docs/records/`**; STATE.md gets the row
 | 45 | **THE CLAIM TRACE STILL READS NO DURATION IT SKIPS — a spaced one ("7.3 years", any decimal) and every whole-number one, a quantity included ("an 83-day DSO") (2026-11-04).** `synthesis._CAL_AFTER` skips "<n> days/weeks/months/quarters/years" and has since before #890: on cfedcb39 and a439eabe alike, NCNO's "its own 2.3y range" rewritten as "7.3 years" passes the cited fact unread. #890's cross-review narrowed the hyphenated/"y" form to whole numbers only (a decimal is a figure again), so "83-day", "5-year" and "~9y" still pass whatever the number. Not fixed in that PR (hold scope). The fix reads a duration's number as a figure where a fact could state it (a span, a payback, a DSO) and keeps the calendar labels — measure the corpus first, as #890 did. `docs/records/2026-11-04-890-cross-review-rank-and-duration-narrowed.md` | agent | a build of its own |
 
 *Rows 3, 6 (merged into 5 on 2026-11-01), 15-18, 20, 24, 29, 33, 39 and 40 are EMPTY: **40 closed 2026-11-04: the web reads each close's realized return from the monitor day, on the exit's split basis, and says when a close is not on one yet; one display gap with the SAME trigger stays open there — across a split the page prints the sealed entry beside a return that divides by the split-basis entry, and states no basis — for the next close across a split** (`docs/records/2026-11-02-the-web-reads-the-realized-return-the-monitor-day-carries.md`); **39 closed 2026-10-29: each row is scored against its own benchmark — IT against MDY on the operator's ruling "Use MDY" (on its assignment, not the returns), GOOGL against SPY; `run-monthly` ingests both** (`docs/records/2026-10-29-each-row-against-its-own-benchmark.md`); **33 closed 2026-10-28: operator ruled foreign private issuers stay in the primary population; #828 closed; the path is FPI readiness (row 4, #837's build order)** (`docs/records/2026-10-28-fpi-readiness-measured-per-name.md`); 29 closed 2026-09-18 when the artifact pass committed the ultra-short-term book's pages (#631) and the horizon was ruled (#629); 3 shipped (`docs/records/2026-08-21-tiered-gates-shipped-2026-08-21-feat-tiered-gate.md`) and its row was deleted 2026-09-17 when this block reached its 60-line cap, 15 and 16 were closed by earlier PRs (their records say so), 17 and 18 were closed WON'T-DO on 2026-09-02, **20 closed 2026-09-10 when GOOGL's two axis methods were ratified**, and **24 closed the same day when COR and A were settled from EDGAR and the picks-and-shovels leg closed at WST alone** (`docs/records/2026-09-10-cor-gated-agilent-unsized-from-edgar.md`; the ruling itself lives in row 21) (`docs/records/2026-09-10-googl-axis-methods-ratified.md`). Do not renumber to close the gaps — records cite these numbers, and renumbering would make stale pointers resolve to the WRONG rows, which is worse than leaving them visibly absent.*
-
-**MEASURED, NOW AN OPERATOR CALL — not a build:** the LLM cause tier. #515 wired a document onto
-every de-rating event and found the escalation is 20% of them (104 of 525), not all: 171 causes are
-named deterministically by the 8-K item code and 250 have no filing within a day of the gap. Whether
-to spend a model on that 20% is a cost decision, and it is now priced.
 
 **PRE-REGISTERED, WAITING ON DATA — not a build:** the cohort anchoring falsifier (#507) is written and frozen; it cannot read out until 10 verdicts exist in each arm. Re-opening it as a build is the mistake — running it early is what a pre-registration exists to prevent.
 

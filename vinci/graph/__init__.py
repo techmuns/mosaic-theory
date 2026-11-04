@@ -1,8 +1,8 @@
-"""Graph track — the 1-hop dependency graph + Test 0 (validating the parallel-native moat).
+"""Graph track — the 1-hop dependency graph (extraction, the evidence judge, the exposure map).
 
-Offline and separate from the forward loop: the EDGAR who-names-whom graph is scored against the CIQ
-ground truth (Test 0) to decide whether the graph artifact is good enough to be worth pursuing — the
-moat is uncapturable if the graph is noisy, regardless of whether the lag exists.
+Offline and separate from the forward loop. Test 0 (the graph scored against the CIQ ground truth)
+and Test 1 (the shock-propagation event study, falsified) were retired with their code on
+2026-11-04; the exposure map they left behind is what pages read.
 """
 
 from vinci.graph.extract import EXTRACT_TOOL, GraphEdge, extract_graph_edges
