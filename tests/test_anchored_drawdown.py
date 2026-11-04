@@ -121,6 +121,18 @@ def test_smpl_keeps_its_april_gap_downs_and_outlook_at_the_underwrite() -> None:
     assert dc.anchor.since.shape.status is SourceStatus.PRESENT
 
 
+def test_a_dated_parts_moves_cite_the_closes_they_are_read_from() -> None:
+    """(Codex P2 on #906) The dated shape states each drop's move ("-18.1%"), read from the stored
+    closes, beside its 8-K cause; its source_ref must name BOTH — an EDGAR-only ref left the move
+    bound to a filing that cannot state it."""
+    dc, _ = _build(date(2026, 10, 16), date(2026, 11, 3), _UNDERWRITE)
+    assert dc.anchor is not None
+    ref = str(dc.anchor.at_anchor.shape.source_ref)
+    assert "-18.1%" in str(dc.anchor.at_anchor.shape.value)
+    assert "EOD closes on or before 2026-08-05" in ref
+    assert "EDGAR 8-K item codes" in ref and "filed by 2026-08-05" in ref
+
+
 def test_no_later_build_changes_the_at_anchor_part() -> None:
     """Read only from what was knowable on the anchor date, the part is the same at every later
     price date — the committed page's 2026-08-17, the 10-16 screen run, and 2026-11-03."""

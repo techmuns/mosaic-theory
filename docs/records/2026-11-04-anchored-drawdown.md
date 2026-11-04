@@ -23,7 +23,8 @@ superseded-by:
   only from closes on or before it and from EDGAR through a second `AsOfEdgar` cut at it — so an 8-K
   filed after the anchor never enters it and no later build can change it. Each gap-down carries
   its move, its 8-K item labels and the revised-outlook exhibit (`gaps`, `filings`,
-  `revised_guidance`), and the shape states each move beside its cause so a point can cite it.
+  `revised_guidance`), and the shape states each move beside its cause so a point can cite it — its
+  `source_ref` names both the closes the move is read from and the 8-Ks (#906 review round 1).
 - **The since part** (`since`): the same reader from the day after the anchor to the page's price
   date, on the page's own cut; absent when there is no session after the anchor.
 - **A window the stored closes do not cover is not read**: when the store's history begins on or
@@ -96,7 +97,7 @@ operator decides.
   no other page loses one. The at-anchor parts name drops no committed page names: IT 2026-02-03
   (−20.9%), NCNO 2026-02-03 (−10.6%), NKE 2026-04-01 (−15.5%), EPAM 2026-02-19 (−17.0%), PARR
   2026-04-17 (−10.0%).
-- **Pins** (`tests/test_anchored_drawdown.py`, 24, on real fixtures — SMPL's Polygon closes,
+- **Pins** (`tests/test_anchored_drawdown.py`, 25, on real fixtures — SMPL's Polygon closes,
   its EDGAR 8-K rows and the three documents the reader fetches, cut after what each reader reads
   and checked identical): SMPL keeps 04-09/04-10 (−18.1%, −11.5%) and the outlook 8-K at today's
   dates; the at-anchor part is identical at price dates 2026-08-17, 10-16 and 11-03; a name with

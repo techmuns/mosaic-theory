@@ -2125,8 +2125,9 @@ DRAWDOWN_ANCHOR_HEADER = ("=== THE DRAWDOWN WHEN THE THESIS WAS WRITTEN, AND SIN
 #: part reads on the 2026-11-03 store (the 8-K and exhibit are 0001702744-26-000010's).
 _DRAWDOWN_ANCHOR_EXAMPLE = (
     "  at the underwrite (2026-02-06 to 2026-08-05): 2026-04-09 -18.1% earnings (2.02); "
-    "2026-04-10 -11.5% earnings (2.02) → source_ref: EDGAR 8-K item codes at the gap-down dates, "
-    "filed by 2026-08-05 (not blanket-labelled earnings)\n"
+    "2026-04-10 -11.5% earnings (2.02) → source_ref: EOD closes on or before 2026-08-05 (each "
+    "move, close to close) and EDGAR 8-K item codes at the gap-down dates, filed by 2026-08-05 "
+    "(not blanket-labelled earnings)\n"
     "    outlook then: [SUPERSEDED — filed 2026-04-09, replaced by the guide filed 2026-10-27; "
     "this guide is history, not the current outlook] Updating Fiscal Year 2026 (4) Outlook: • Net "
     "sales expected to range between $1.31 and $1.35 billion… → source_ref: EDGAR 8-K "
@@ -2146,7 +2147,7 @@ def _drawdown_anchor_digest(dumped: dict[str, Any]) -> str | None:
 
     One literal example (`_DRAWDOWN_ANCHOR_EXAMPLE`, SMPL's), shape only:
       at the underwrite (2026-02-06 to 2026-08-05): 2026-04-09 -18.1% earnings (2.02); … →
-      source_ref: EDGAR 8-K item codes at the gap-down dates, filed by 2026-08-05 (…)
+      source_ref: EOD closes on or before 2026-08-05 (…) and EDGAR 8-K item codes … (…)
     No direction is given: where the evidence bears is the model's to frame, and no verdict."""
     from datetime import date as _date
 

@@ -696,7 +696,9 @@ def _dated_words(start: date, end: date) -> _GapWords:
         no_dates_note=f"no gap-down from {span}",
         none_shape=f"no discrete gap-down — no single day of -{pct}% or worse from {span}",
         none_ref=f"EOD gap-down detector, {span}: none",
-        shape_ref=(f"EDGAR 8-K item codes at the gap-down dates, filed by {end.isoformat()} "
+        # the shape states each move (the closes) beside its cause (the 8-K): both are cited
+        shape_ref=(f"EOD closes on or before {end.isoformat()} (each move, close to close) and "
+                   f"EDGAR 8-K item codes at the gap-down dates, filed by {end.isoformat()} "
                    "(not blanket-labelled earnings)"),
     )
 
