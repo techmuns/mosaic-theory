@@ -411,7 +411,8 @@ def test_close_rows_are_not_positions_in_the_js_ledger_loader() -> None:
     body = body[:body.index("\n}")]
     assert '.filter((p) => !p.event)' in body, "close rows must be filtered out of entries"
     assert "closes_entry_id" in body and "closeBy" in body, "closes must be paired to their row"
-    assert "realizedReturn" in body, "realized return is derived here, never stored"
+    assert "realizedReturn" in body, (
+        "the realized return is the monitor day's row, never derived here")
 
 
 def test_at_a_glance_v2_cell_count_matches_its_grid_and_ranks_by_fact_class() -> None:
