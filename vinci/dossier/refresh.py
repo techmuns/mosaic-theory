@@ -382,6 +382,7 @@ def consensus_transform(ticker: str) -> Transform:
     """
     from vinci.config import get_config
     from vinci.dossier.ciq import CiqBundle, CiqUnavailableError
+    from vinci.dossier.ciq_sheets import consensus_level_ref
     from vinci.dossier.ciq_sheets import consensus_levels as ciq_consensus_levels
     from vinci.dossier.manual_store import LocalFolderStore
 
@@ -400,7 +401,8 @@ def consensus_transform(ticker: str) -> Transform:
         # THE SAME BUILDER ASSEMBLY USES. Two call sites constructing this structure would be the
         # twin-drift class, and silent: nothing renders it until A2, so a divergence would surface
         # as a name whose numbers depend on which path last wrote it.
-        levels = {m: [{"fy": c.fy, "median": c.median, "high": c.high, "low": c.low,
+        levels = {m: [{"source_ref": consensus_level_ref(m, c.fy), "fy": c.fy,
+                       "median": c.median, "high": c.high, "low": c.low,
                        "std_dev": c.std_dev, "estimates": c.estimates} for c in cells]
                   for m, cells in ciq_consensus_levels(bundle).items()}
         if not levels:
