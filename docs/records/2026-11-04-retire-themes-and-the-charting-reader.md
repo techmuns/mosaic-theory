@@ -164,12 +164,19 @@ body.)
 - **`scripts/verbatim_key_flips.py`** — cache-only over the committed corpus (the primary
   checkout's `data/cache`, read only), with the six held test packs excluded: exit 0, "0 answers
   moved" across its five remaining corpora.
-- **Gate.** At `7f4be8c2`: ruff, all checks passed; `mypy --strict vinci`, no issues in 191
-  source files (219 less the 28 removed modules); `pytest -m "not network"`, **8,768 passed, 0
+- **After merging #906 (`05b2529b`) as `a5f3d806`.** #906 changed dossier code. It shared four
+  files with this PR, and only the §5.0 empty-rows note conflicted: both sides inserted a sentence at
+  the same spot. A word-level three-way merge keeps both, and a check shows every word either side
+  added is present. The prechecks and the monitor day were re-run on `main` `05b2529b` against the
+  merge. The prechecks print the same 87 lines once timestamps and paths are removed (#906 adds
+  output), with the same exits. The monitor day is `main`'s minus its 7 theme rows and 6 theme
+  panels, 118 panels each.
+- **Gate, on the merge `a5f3d806`.** ruff: all checks passed. `mypy --strict vinci`: no issues in
+  191 source files (219 less the 28 removed modules). `pytest -m "not network"`: **8,800 passed, 0
   failed**, 555 skipped (chiefly the tests that need the git-ignored CIQ exports), 8 xfailed, 39
-  deselected, 383.5 s. That is R1's final 9,114 less the 346 removed cases (323 + 23). The head
-  after it changes only comments, this record and STATE, and `bin/commit` ran the full gate green
-  on it before committing.
+  deselected, 379.7 s. At `7f4be8c2`, before #906, the suite gave 8,768 passed, which is R1's
+  final 9,114 less the 346 removed cases (323 + 23); #906 adds 32. The head after the merge changes
+  only this record.
 
 **BOUNDARY.** Line and file counts: `git ls-files` / `wc -l` at `481e82f7`. Test counts: `pytest
 --collect-only` at `481e82f7`. The 91 deletions: `git diff --name-status origin/main...HEAD`, status
