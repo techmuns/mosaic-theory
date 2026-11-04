@@ -701,6 +701,27 @@ def test_a_signed_computed_figure_must_carry_the_sign_its_operation_gives() -> N
     assert gap("−45pt") == []   # the typographic minus is a sign too
 
 
+def test_a_basis_point_figure_is_a_percentage_point_change() -> None:
+    """(Codex P2, round 2) "100bps" was read as a plain 100, so a difference of two percentages
+    written in basis points drew a false UNDERIVED caveat. A basis point is a hundredth of a
+    percentage point; the caveat states its range in the figure's own basis points."""
+    assert syn._recompute("difference", syn._written("44.3%"), syn._written("43.3%"),
+                          syn._written("100bps")) is None
+    mech = _frozen()
+    name, market, rel = _refs()
+    figs = [{"figure": "-29%", "source_ref": name}, {"figure": "+16%", "source_ref": market}]
+
+    def gap(lit: str) -> list[str]:
+        return [f for f in _flags(mech, _point(_GD6_CLAIM.replace("-45pt", lit), rel, [
+            *figs, {"figure": lit, "derived": "difference", "inputs": ["-29%", "+16%"]}]))
+            if f.startswith(("UNTRACEABLE", "UNDERIVED"))]
+
+    assert gap("-4,500bps") == [] and gap("-4,500 basis points") == []
+    wrong = gap("-4,000bps")
+    assert len(wrong) == 1 and wrong[0].startswith("UNDERIVED figure '-4000'")
+    assert "difference gives -4,600 to -4,400 as written" in wrong[0]
+
+
 def test_a_footnote_whose_inputs_are_not_a_list_is_dropped_not_a_crash() -> None:
     notes: list[str] = []
     raw = {"evidence_balance": "mixed — x", "bull_points": [{

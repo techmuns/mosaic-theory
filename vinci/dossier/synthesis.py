@@ -635,7 +635,7 @@ def _claim_figure_ends(text: str) -> list[tuple[float, int]]:
 _WRITTEN = re.compile(
     r"(?P<sign>[-−+])?\s*(?P<cur>\$)?\s*(?P<num>\d[\d,]*(?:\.(?P<dec>\d+))?)\s*"
     r"(?P<scale>thousand|million|billion|trillion|mn|bn|tn|[kmbt](?![a-z]))?\s*"
-    r"(?P<unit>%|pts?\b|pp\b|x\b|st\b|nd\b|rd\b|th\b)?", re.IGNORECASE)
+    r"(?P<unit>%|pts?\b|pp\b|bps?\b|basis\s+points?\b|x\b|st\b|nd\b|rd\b|th\b)?", re.IGNORECASE)
 _SCALE = {"k": 1e3, "thousand": 1e3, "m": 1e6, "mn": 1e6, "million": 1e6, "b": 1e9, "bn": 1e9,
           "billion": 1e9, "t": 1e12, "tn": 1e12, "trillion": 1e12}
 
@@ -643,8 +643,8 @@ _SCALE = {"k": 1e3, "thousand": 1e3, "m": 1e6, "mn": 1e6, "million": 1e6, "b": 1
 @dataclass(frozen=True)
 class _Written:
     """A figure as WRITTEN: its value and half a unit of its last digit (both in base units, the
-    scale word applied) and its unit — pct (incl. points), x, money ($), rank (an ordinal) or plain.
-    """
+    scale word applied) and its unit — pct (incl. points, and basis points at a scale of 0.01), x,
+    money ($), rank (an ordinal) or plain."""
 
     value: float
     half: float
@@ -658,12 +658,15 @@ def _written(lit: str) -> _Written | None:
     if m is None:
         return None
     scale = _SCALE.get((m.group("scale") or "").lower(), 1.0)
+    u = " ".join((m.group("unit") or "").lower().split())
+    bps = u in ("bp", "bps", "basis point", "basis points")
+    if bps:   # a basis point is a hundredth of a percentage point (Codex, round 2)
+        scale *= 0.01
     value = float(m.group("num").replace(",", "")) * scale
     if m.group("sign") in ("-", "−"):
         value = -value
     half = 0.5 * 10.0 ** -len(m.group("dec") or "") * scale
-    u = (m.group("unit") or "").lower()
-    unit = ("pct" if u in ("%", "pt", "pts", "pp") else "x" if u == "x"
+    unit = ("pct" if bps or u in ("%", "pt", "pts", "pp") else "x" if u == "x"
             else "rank" if u in ("st", "nd", "rd", "th") else "money" if m.group("cur")
             else "plain")
     return _Written(value, half, unit, scale, m.group("sign") is not None)
