@@ -130,6 +130,34 @@ or labelling them is the operator's ruling there.
 - **Tracking fixture.** `tests/fixtures/companyfacts/SMPL.json` was regenerated
   (`scripts/build_companyfacts_fixture.py SMPL`) and is byte-identical across both builds' days.
   The frozen vintage is unchanged.
+- **The suite moved 19 tests, every one attributed to the new page.** With the CIQ folder linked
+  (`pytest -m "not network" -rs`, on `5c8a415d`), 22 failed. Re-running the 13 files involved
+  with main's SMPL page and tracking fixture swapped back in left 4: the two known
+  `test_forward_consensus` failures (GOOGL, LLY), `test_store_freshness` (this worktree's store
+  copy) and the panel-emit determinism pin (the new monitor day was emitted from the new page). The
+  operator-approved dispositions, through the coordinating session:
+  - **A (8)**: template tests used SMPL's living page as a page `scenario-propose` accepts. It now
+    refuses it on row 36's share gap, so they read `tests/fixtures/frozen_pages/2026-08-18/SMPL/`.
+  - **B (8)**: value pins moved with the 10-K (the first forward FY 2026 → 2027, the margin median
+    15.4481% → 15.3855%, the band low 6.11x → 5.04x). Their values read the frozen page; their
+    structural halves still read the living one. Each moved pin was shown red under a mutation of
+    the frozen value.
+  - **C (1)**: SMPL leaves `ANCHORS_AWAITING_BACKFILL`, because its committed anchor now equals
+    the recompute.
+  - **D (1)**: the record's band_low 6.11 is named in a new `KNOWN_STALE` allowlist, kept apart from
+    `KNOWN_FOREIGN`, whose earned-check requires a shared assumptions block (a paste) that SMPL
+    does not have. Its own earned-check goes red, asking for the entry's deletion, once the record
+    is re-derived. Both directions were shown.
+  - **E (1)**: `test_quality_ciq::test_every_sheet_the_committed_pages_cite_is_in_the_map` read the
+    14 consensus-level refs #903 gave the page (Revenue and EBITDA, FY2027..FY2033) as undeclared
+    sheets. The ref is fixed in its own PR (`docs/records/2026-11-05-a-consensus-level-ref-names-its-sheet.md`),
+    and SMPL's stored refs are re-stamped through `refresh.consensus_transform` at $0.
+- **A finding carried by B, for the operator.** `test_smpls_page_reads_multiple_dominant` pins "the
+  operator's acceptance condition": the audit found that SMPL's view rests on re-rating. The frozen
+  page reads "**multiple-dominant** at FY2026". The new page reads "**multiple** at FY2027, but
+  FY2028 gives **multiple-dominant** — the shape MOVES between years". On the new anchor year,
+  re-rating is the largest of the three ratios (1.31x against revenue 1.16x and margin 1.01x), but
+  it no longer dominates.
 
 **BOUNDARY.**
 - **Runs:** `4f30d3a2`, 2026-11-04 07:21:32→07:32:12Z, and `29e8038c`, 2026-11-04
