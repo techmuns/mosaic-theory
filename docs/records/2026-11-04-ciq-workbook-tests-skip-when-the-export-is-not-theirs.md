@@ -144,6 +144,18 @@ pages carry; NFLX `406592d103`).
     three AMZN tests, below.
   - **`test_store_freshness`** skips in these checkouts ("no local store in this worktree"). That
     is why main reads 14 here: the brief's 12, less that one, plus the three AMZN tests.
+- **After #886 merged (main `213f463b`), on the merge commit `0d150f7a`:** same command and
+  conditions.
+
+  | Folder | main `213f463b` | merged `0d150f7a` |
+  |---|---|---|
+  | Live | 11 failed, 9169 passed, 81 skipped | 3 failed, 9179 passed, 89 skipped |
+  | None | 0 failed, 8711 passed, 550 skipped | 0 failed, 8721 passed, 550 skipped |
+
+  - The 11 on main are the brief's 8, AORT's bridge, and GOOGL's and LLY's 2% check.
+  - The three AMZN tests PASS on both trees, now that AMZN's page stamps the export on disk.
+  - The merged tree leaves only the operator's 3, with the same +10 ids. The 550 skip reasons
+    without the folder are identical to `213f463b`'s.
 
 **BOUNDARY.** "Eight", "twelve" and "fourteen" are test ids in the offline suite (`-m "not
 network"`) on main `9e996d7f`, with the Drive folder as it stood 2026-11-04 (37 ticker folders).
@@ -176,8 +188,8 @@ committed pages whose ev_gap is computed: AORT, BRBR, EPAM, IT, MVST, NCNO, SMPL
     `test_historical_forecast_error.py::test_the_refresh_lands_the_layer_only_from_the_pages_own_export`.
     AMZN's Drive export is 2026-11-02's (Estimates `1b971fda50`, quarterly Financials
     `796a53f316`), while main's AMZN page stamps `e10ed62223` / `e5abf9d69d`. #886 re-assembles
-    AMZN onto exactly the export on disk (its page stamps `1b971fda50` / `796a53f316`), so they
-    clear when #886 merges. Unlike `test_ev_bridge`'s AMZN refresh test, they assume rather than
+    AMZN onto exactly the export on disk (its page stamps `1b971fda50` / `796a53f316`). Measured
+    after #886 merged: all three pass on main `213f463b` and on this branch's merge `0d150f7a`. Unlike `test_ev_bridge`'s AMZN refresh test, they assume rather than
     check that the export is the page's. `skip_unless_pages_export` would make that explicit; it
     was left out because the brief named eight.
   - `ev_gap_transform`, run on a page with a newer Estimates export on disk, writes that export's
