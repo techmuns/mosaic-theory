@@ -156,8 +156,8 @@ verdict placement.
   the repo is the single most likely real security incident here. Read secrets from env; fail loud if
   absent.
 - **Never commit or log, ever:** the **raw licensed CIQ workbooks** (`data/manual/ciq/`), the working
-  DB (`*.db`), any credential/token, (later) any LP/investor PII. Pasted licensed CIQ tables are never
-  committed. Raw CIQ stays git-ignored REGARDLESS of repo/deploy privacy.
+  DB (`*.db`), any credential/token, (later) any LP/investor PII. The workbook FILES stay git-ignored
+  REGARDLESS of repo/deploy privacy; their VALUES may be published as facts (PUBLISHED DATA, below).
 - **THIS REPO IS PUBLIC** *(operator decision 2026-10-22,
   `docs/records/2026-10-22-repo-made-public.md`)*: every committed file, its whole history, PR
   bodies and CI logs are world-readable. The Cloudflare deploy stays behind Basic Auth, but it no
@@ -179,6 +179,19 @@ verdict placement.
   derived analysis with titles, figures and SHORT verbatim source quotes, published on the authed
   deploy and, since 2026-10-22, readable in this public repo. Never an article's text, never a
   local path.
+- **PUBLISHED DATA: THE LICENCE COVERS CIQ-DERIVED FACTS AND POLYGON AND TIINGO PRICES** *(operator
+  decision 2026-11-04, `docs/records/2026-11-04-licence-covers-publishing-ciq-derived-facts-and-prices.md`)*.
+  These may be published in this repo and in the shared fact store (Parquet on R2, its manifest in
+  git), where every agent reads one copy. Three conditions bind each published value:
+  - it carries its **source_ref**: for CIQ, the workbook's sha256, its sheet and its row/column;
+    for prices, the vendor, the symbol and the bar date;
+  - it carries its **knowable date**. **CIQ is NOT point-in-time**: an export holds history as
+    restated up to its export date, so a CIQ fact is knowable from the export date (or from the
+    column's own stated filing date), never from its period end;
+  - it is **extracted, not copied**: the workbook FILE never enters git or the bucket.
+
+  Still never published: credentials, `*.db`, PII, and an article's or transcript's text beyond
+  short verbatim quotes.
 - **Execution is human-authorized and paper-gated** (when execution is built): nothing places a trade
   without an explicit, deliberate human action; default is paper; no code path reaches a live broker
   autonomously. State this in any execution code from its first line.
