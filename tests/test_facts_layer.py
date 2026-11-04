@@ -35,6 +35,7 @@ from vinci.facts.edgar_ingest import (
     rows_from_companyfacts,
 )
 from vinci.facts.parity import reference_latest
+from vinci.facts.scope import scope_names
 from vinci.facts.store import (
     FactsStoreError,
     build_manifest,
@@ -279,3 +280,22 @@ def test_the_ingest_reads_the_cache_and_never_fetches(tmp_path: Path,
         h._write_cache(url, (FIX / "FUBO-companyfacts-slice.json").read_text())
     got = read_cached(url, tmp_path)
     assert json.loads(got.text)["cik"] == 1484769 and got.fetched_at.year >= 2026
+
+
+# --- the scope reads the follow list through its own reader --------------------------------------
+
+def test_a_tombstoned_follow_leaves_the_scope(tmp_path: Path) -> None:
+    """A name unfollowed by `followed_until` (the follow list's documented removal) is not in scope;
+    a still-followed name with a page is. Review round 0: the raw keys of followed.json counted
+    both."""
+    pages = tmp_path / "dossiers"
+    (pages / "FUBO").mkdir(parents=True)
+    (pages / "FUBO" / "dossier.json").write_text(json.dumps({"cik": "0001484769"}))
+    followed = tmp_path / "followed.json"
+    followed.write_text(json.dumps({
+        "FUBO": {"followed_since": "2026-01-01", "sleeve": "quality", "reason": "r"},
+        "NFLX": {"followed_since": "2026-01-01", "followed_until": "2026-02-01",
+                 "sleeve": "quality", "reason": "r"}}))
+    names, excluded = scope_names(pages, followed, tmp_path / "no-cache")
+    assert [(n.ticker, n.cik, n.followed) for n in names] == [("FUBO", "0001484769", True)]
+    assert excluded == 0

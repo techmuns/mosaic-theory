@@ -113,6 +113,9 @@ def cmd_parity(a: argparse.Namespace) -> int:
                  r.row_diffs, r.order_diffs, f"{r.keys_compared:,}", r.key_diffs,
                  f"{r.keys_restated:,}", r.ambiguous_keys, r.get_sampled, r.get_diffs)
         print("| " + " | ".join(str(c) for c in cells) + " |")
+        if r.examples:
+            print(f"    {r.ticker}: showing {len(r.examples)} of {r.discrepancies:,} "
+                  "discrepancies")
         for e in r.examples:
             print(f"    {r.ticker}: {e}")
     bad = [r.ticker for r in results if not r.zero_diff]

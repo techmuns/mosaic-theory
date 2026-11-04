@@ -37,6 +37,8 @@ from vinci.facts.reader import FactAmbiguousError, FactStore, FactUnknownError, 
 
 #: How many keys per page go through the public `get()` (the rest are compared in bulk).
 GET_SAMPLE = 200
+#: How many discrepancy lines a page keeps; the count of all of them is kept beside them.
+EXAMPLES_SHOWN = 5
 
 RefKey = tuple[str, str, str, str | None, str]       # taxonomy, tag, unit, start, end
 
@@ -102,7 +104,9 @@ class PageParity:
     ambiguous_keys: int
     get_sampled: int
     get_diffs: int
+    #: the first EXAMPLES_SHOWN discrepancies; `discrepancies` is how many there were in all
     examples: list[str]
+    discrepancies: int = 0
 
     @property
     def zero_diff(self) -> bool:
@@ -130,11 +134,11 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
         if ca != cb:
             n = sum(((ca - cb) + (cb - ca)).values())
             row_diffs += n
-            if len(examples) < 5:
+            if len(examples) < EXAMPLES_SHOWN:
                 examples.append(f"rows {k}: {n} differ")
         elif a != b:
             order_diffs += 1
-            if len(examples) < 5:
+            if len(examples) < EXAMPLES_SHOWN:
                 examples.append(f"order {k}")
     rows_compared = sum(len(v) for v in ref_tree.values())
     store_rows = sum(len(v) for v in cand_tree.values())
@@ -160,7 +164,7 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
                   and frozenset({have.accession, *have.concurrent_accessions}) == want[3])
         if not ok:
             key_diffs += 1
-            if len(examples) < 5:
+            if len(examples) < EXAMPLES_SHOWN:
                 examples.append(f"latest {rk}: reference {want!r}, store {have!r}")
     ambiguous_keys = sum(1 for v in ref.values() if v[0] == "ambiguous")
     stated: dict[RefKey, set[float]] = {}
@@ -191,7 +195,7 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
             ok = False
         if not ok:
             get_diffs += 1
-            if len(examples) < 5:
+            if len(examples) < EXAMPLES_SHOWN:
                 examples.append(f"get {sk}")
 
     return PageParity(
@@ -201,7 +205,8 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
         rows_compared=rows_compared, store_rows=store_rows, row_diffs=row_diffs,
         order_diffs=order_diffs, keys_compared=len(set(ref) | set(got_by_key)),
         key_diffs=key_diffs, keys_restated=keys_restated, ambiguous_keys=ambiguous_keys,
-        get_sampled=len(sample), get_diffs=get_diffs, examples=examples)
+        get_sampled=len(sample), get_diffs=get_diffs, examples=examples,
+        discrepancies=row_diffs + order_diffs + key_diffs + get_diffs)
 
 
 def as_json(results: list[PageParity]) -> str:

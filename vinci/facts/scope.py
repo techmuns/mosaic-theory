@@ -8,9 +8,11 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
 from vinci.facts.edgar_ingest import NotInCacheError, cik_for_ticker, pad_cik
+from vinci.followed import follow_records
 
 RULE = "committed pages (data/dossiers/*/dossier.json) plus followed names (data/followed.json)"
 
@@ -32,7 +34,9 @@ def scope_names(dossiers_dir: Path, followed_path: Path, cache_dir: Path, *,
                 exclude: frozenset[str] = frozenset()) -> tuple[list[ScopeName], int]:
     """The names the rule selects, minus ``exclude``; and how many the exclusion removed."""
     pages = {p.parent.name for p in dossiers_dir.glob("*/dossier.json")}
-    followed = set(json.loads(followed_path.read_text())) if followed_path.exists() else set()
+    # the follow list's own strict reader: a tombstoned name (`followed_until` set) is no longer
+    # followed, and a malformed entry raises rather than being skipped
+    followed = {r.ticker for r in follow_records(followed_path) if r.held_on(date.today())}
     named = pages | followed
     excluded = len(named & exclude)
     out: list[ScopeName] = []
