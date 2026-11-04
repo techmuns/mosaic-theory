@@ -283,6 +283,14 @@ const EXTRACTION_VERSIONS = [
     "an amendment, so a credit-agreement amendment reaches the covenant extractor and any " +
     "other is refused for what it amends (an office lease); a CERTIFICATE or ARTICLES OF " +
     "AMENDMENT and a title-cased heading are not read this way"],
+  ["2026-11-04.fiscal-year-change-marker",
+    "a fiscal-year change is no column: CIQ's 'Fiscal Year Change' period-header marker is " +
+    "registered as a known non-period cell (`ciq_sheets.PERIOD_HEADER_MARKERS`, closed), so a " +
+    "latest read skips it while any other undated header still places nothing; the summary " +
+    "tables and the Ratios panel drop it as a column, and no growth, year-on-year, step or " +
+    "order check " +
+    "spans the two fiscal calendars it divides; a page with no EV bridge says why " +
+    "(`ev_bridge_unbuilt`)"],
   ["2026-11-04.footnote-every-figure",
     "every synthesis figure is footnoted (item 29, operator ruling 2026-11-04 '1 + 4'): a point " +
     "carries one entry per figure of its claim, citing the one fact that states it or naming an " +

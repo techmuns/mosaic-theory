@@ -78,21 +78,21 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: The table the pins below were taken against — `--repin` sets both: the digest of every row id
 #: (:func:`table_digest`, what the rule reads) and, for a reader, the last row then.
-PINNED_TABLE = "97f9a166eac2"
+PINNED_TABLE = "b08d91a2cd5a"
 PINNED_AT = "2026-11-04.footnote-every-figure"
 
 #: Every module that can change what a dossier carries, ONE PER LINE so two PRs re-pinning
 #: different modules merge without a conflict. The value is :func:`code_hash` of the module.
 WATCHED: dict[str, str] = {
     "vinci/dossier/anchor.py": "58f1162f05f9",
-    "vinci/dossier/assemble.py": "939782840589",
+    "vinci/dossier/assemble.py": "d909ceab5186",
     "vinci/dossier/band_guards.py": "dceaef85746c",
     "vinci/dossier/capital_allocation.py": "ba165ad2af55",
     "vinci/dossier/ciq.py": "78815874ffce",
     "vinci/dossier/ciq_balance.py": "68c97913bf6e",
     "vinci/dossier/ciq_charting.py": "e25a753aae4f",
     "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
-    "vinci/dossier/ciq_sheets.py": "a6456d7d7571",
+    "vinci/dossier/ciq_sheets.py": "206db59412fc",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
     "vinci/dossier/driver_extract.py": "28d08956a8f2",
@@ -112,13 +112,13 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/mechanical.py": "d66270befc43",
     "vinci/dossier/midcycle.py": "a67120583735",
     "vinci/dossier/recipe_proposal.py": "f890273f1d1b",
-    "vinci/dossier/refresh.py": "4fc68babb3d0",
+    "vinci/dossier/refresh.py": "614e5530df26",
     "vinci/dossier/requirements.py": "0d49ceadcac7",
-    "vinci/dossier/schemas.py": "f33316622fa5",
+    "vinci/dossier/schemas.py": "72b356b69117",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
     "vinci/dossier/synthesis.py": "1c0e209f9512",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
-    "vinci/dossier/valuation_basis.py": "a8870ba9ed91",
+    "vinci/dossier/valuation_basis.py": "a2e4d2409dbd",
     "vinci/dossier/verdict.py": "0b43167d2044",
     "vinci/edgar/asof.py": "b8166e456b80",
     "vinci/edgar/client.py": "49703bf31602",

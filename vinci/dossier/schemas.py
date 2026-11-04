@@ -943,6 +943,18 @@ class EvBridge(BaseModel, frozen=True):
     estimates_sha256: str | None = None  # the Estimates export the consensus check read
 
 
+class EvBridgeUnbuilt(BaseModel, frozen=True):
+    """(EV bridge, 2026-11-04) WHY the bridge was not built, when the builder ran and could not —
+    the way an UNKNOWN field carries its note. Before this a page with no bridge said nothing:
+    `ev_bridge` was absent both on a page built before the layer existed and on SMPL's 2026-11-04
+    assembly, where every latest balance-sheet read was refused. Beside `ev_bridge`, never with it;
+    ABSENT on a page that carries a bridge or predates this field."""
+
+    reason: str                      # what the builder could not read, in words
+    source_file: str | None = None   # the quarterly Financials export it read, when there was one
+    source_sha256: str | None = None
+
+
 # --- (valuation basis, 2026-10-09) the ACTIVE recipe's basis, derived from the page -------------
 # Built by `vinci.dossier.valuation_basis` — ONE function of the page, re-derived by
 # `dossier_json` on every write, so it cannot drift from the layers it names. It COPIES no
@@ -3023,6 +3035,9 @@ class Dossier(BaseModel):
     # (EV bridge) CIQ's TEV claims and the exit default an enterprise recipe subtracts — the same
     # rules: outside `mechanical`, ABSENT until built, declared BEFORE `anchor`.
     ev_bridge: EvBridge | None = None
+    # (EV bridge, 2026-11-04) why the builder ran and built no bridge — ABSENT whenever `ev_bridge`
+    # is present, and on every page built before it, so those round-trip byte-identically
+    ev_bridge_unbuilt: EvBridgeUnbuilt | None = None
     # (valuation basis, date semantics — 2026-10-09) the ACTIVE recipe's basis and the page's dates,
     # NAMED. Pure functions of the page (`vinci.dossier.valuation_basis`), re-derived by
     # `dossier_json` on every write so they cannot go stale; ABSENT on a page not yet re-written.
@@ -3055,6 +3070,15 @@ class Dossier(BaseModel):
             return require_sleeve(v, where=f"{cls.__name__}.sleeve")
         except UnknownSleeveError as exc:
             raise ValueError(str(exc)) from exc
+
+    @model_validator(mode="after")
+    def _bridge_or_its_reason(self) -> Dossier:
+        """A page carries the EV bridge or why it is unbuilt, never both: a refresh that lands a
+        bridge clears the reason (`refresh.ev_bridge_transform`)."""
+        if self.ev_bridge is not None and self.ev_bridge_unbuilt is not None:
+            raise ValueError("a page carries both `ev_bridge` and `ev_bridge_unbuilt` — a built "
+                             "bridge is never beside the reason it was not built")
+        return self
 
     model_config = {"frozen": True}
 
@@ -3164,6 +3188,8 @@ def dossier_json(doc: Dossier) -> str:
         excl["historical_forecast_error"] = True
     if doc.ev_bridge is None:
         excl["ev_bridge"] = True
+    if doc.ev_bridge_unbuilt is None:
+        excl["ev_bridge_unbuilt"] = True
     if doc.layer_refreshes is None:
         excl["layer_refreshes"] = True
     if doc.valuation_basis is None:
