@@ -611,6 +611,12 @@ PR (CLAUDE.md: coin-time translation).
   extracted fact stored once, point-in-time, as immutable Parquet files named by their own hash; a
   snapshot is the committed JSON manifest naming one set of those files, and "as of a date" is
   `filed_date <= date`.*
+- **Drawdown anchor / at-anchor part / since part** (2026-11-04, `DrawdownAnchor`,
+  `drawdown_cause.anchor`) — plain words: *the date a name's drawdown record is pinned to (its
+  underwrite, else the day it was followed); the at-anchor part is the gap-downs, 8-Ks and outlook
+  of the 180 days ending on that date, read only from what was knowable then, and the since part is
+  what has happened from the next day to the page's price date.* NOT the R1 screening `anchor`
+  (`vinci/dossier/anchor.py`), nor the price refresh's anchor session.
 
 ## Local setup (every laptop, every contributor)
 

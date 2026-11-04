@@ -447,6 +447,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "percentile is a figure again — and only a whole-number "
         "duration (5-year, 52-week, ~9y) is a label; a decimal one (2.3y, a 7.4-year payback) is "
         "a figure the cited fact must state",
+    ),    (
+        "2026-11-04.anchored-drawdown",
+        "a name with an underwrite record, else a follow, keeps its drawdown at that date "
+        "(`drawdown_cause.anchor`): the gap-downs of the 180 days ending on it, each with its "
+        "move, its 8-K's item labels and the revised-outlook exhibit, read only from closes on or"
+        " before it and 8-Ks filed by it, so no later build changes it; and the gap-downs since "
+        "it to the price date, read the same way at the price date; a name with neither is "
+        "unchanged",
     ),
 )
 

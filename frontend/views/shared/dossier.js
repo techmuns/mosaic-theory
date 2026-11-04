@@ -297,6 +297,13 @@ const EXTRACTION_VERSIONS = [
     "ordinal alone or a percentile-point move) — '2.0x' or 'fell 2%' cited to a percentile is a " +
     "figure again — and only a whole-number duration (5-year, 52-week, " +
     "~9y) is a label; a decimal one (2.3y, a 7.4-year payback) is a figure the cited fact must state"],
+  ["2026-11-04.anchored-drawdown",
+    "a name with an underwrite record, else a follow, keeps its drawdown at that date " +
+    "(`drawdown_cause.anchor`): the gap-downs of the 180 days ending on it, each with its " +
+    "move, its 8-K's item labels and the revised-outlook exhibit, read only from closes on or" +
+    " before it and 8-Ks filed by it, so no later build changes it; and the gap-downs since " +
+    "it to the price date, read the same way at the price date; a name with neither is " +
+    "unchanged"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
@@ -1521,7 +1528,7 @@ function whatHappened(m, sleeve) {
   // unreadable filing index, and this gate then dropped exactly that state — leaving a degraded
   // drawdown SILENT on the web Brief and page 1 of the PDF while its qa flag is hidden by
   // `flags._QA_MARKERS`. That combination is what the hide-list entry's FALSIFIER forbids.
-  const shape = dc.shape ? fact("Shape", dc.shape, fmtShape) : "";
+  const shape = dc.shape ? fact("Shape", dc.shape, fmtShape) + anchorBrief(dc) : "";
   const tiles = briefTilesGrid(m);
   if (!shape && !tiles) return "";
   // (content relocation 2026-07-24) title matches the contents: the tiles carry survival triage
@@ -2623,8 +2630,19 @@ function readWhatBroke(s, sp, dc, refDate, sleeve) {
   const hdr = (det.threshold != null && det.windowDays != null)
     ? `Gap-downs · 1-day ≤ −${Math.round(Math.abs(det.threshold) * 100)}% · ${det.windowDays}d window`
     : "Gap-downs";
+  // a pre-window drop a DATED part classifies (`anchorAnalysis`, above) is said to be, never
+  // "not classified" beside the block that classifies it
+  const dated = new Set();
+  for (const w of [dc && dc.anchor && dc.anchor.at_anchor, dc && dc.anchor && dc.anchor.since]) {
+    for (const g of ((w && w.gaps) || [])) dated.add(g.on);
+  }
+  const preList = (qs) => qs.map((q) => `${escapeHtml(_monDay(q.date))} ${fmtGapPct(q.pct)}`).join(" · ");
+  const preNot = preDrops.filter((q) => !dated.has(q.date));
+  const preDated = preDrops.filter((q) => dated.has(q.date));
   const pre = preDrops.length
-    ? `<div style="color:var(--ink-3); font-size:10.5px; margin-top:7px; line-height:1.55;">○ before the ${det.windowDays}d detector window:<br>${preDrops.map((q) => `${escapeHtml(_monDay(q.date))} ${fmtGapPct(q.pct)}`).join(" · ")} (not classified)</div>`
+    ? `<div style="color:var(--ink-3); font-size:10.5px; margin-top:7px; line-height:1.55;">○ before the ${det.windowDays}d detector window:<br>${
+      preNot.length ? `${preList(preNot)} (not classified)` : ""}${preNot.length && preDated.length ? "<br>" : ""}${
+      preDated.length ? `${preList(preDated)} (classified in the dated record above)` : ""}</div>`
     : "";
   const key = `<div style="flex:0 1 236px; font-size:11.5px;">
     <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">${hdr}</div>
@@ -2650,11 +2668,12 @@ function drawdownIdio(m, refDate, sleeve) {
   // legacy no-street-card JSON: the guidance fact renders here so it is never dropped
   const legacyGuide = (!m.catalyst_path && m.drawdown_cause)
     ? fact("Revised guidance", m.drawdown_cause.revised_guidance) : "";
-  if (!dd.read && !dd.evidence && !io && !legacyGuide) return "";
+  const dated = anchorAnalysis(m.drawdown_cause);
+  if (!dated && !dd.read && !dd.evidence && !io && !legacyGuide) return "";
   const divider = `<div class="ds-title" style="font-size:12px; margin-top:10px;">Company-specific or market-wide?</div>`;
   return sec(sleeveCopy(sleeve).drawdown,
     sleeveCopy(sleeve).subtitle,
-    dd.read + (io ? divider + io : "") + legacyGuide + dd.evidence);
+    dated + dd.read + (io ? divider + io : "") + legacyGuide + dd.evidence);
 }
 
 // (E2) $M principal → "$25.0M" / "–"
@@ -3739,6 +3758,87 @@ export function cleanItemEvent(ev) {  // exported for the py-twin equivalence te
   body = body.trim();
   if (!body) return null;  // pure cross-reference / heading-only item — nothing informative
   return title ? `${code} ${title}: ${body}` : `${code}: ${body}`;
+}
+
+// (2026-11-04) THE DRAWDOWN AT THE ANCHOR AND SINCE (`DrawdownAnchor`). The current window rolls
+// with the page's date, so the event an underwrite was written on leaves it; these two dated parts
+// keep it. How each part names itself — twin of render._ANCHOR_WORDS.
+// exported for the parity pin that binds it to the python copy (test_anchored_drawdown)
+export const ANCHOR_WORDS = {
+  underwrite: ["Drawdown at underwrite", "Since underwrite", "underwrite"],
+  followed: ["Drawdown when followed", "Since followed", "follow"],
+};
+const _anchorWords = (kind) => ANCHOR_WORDS[kind] || [`Drawdown at ${kind}`, `Since ${kind}`, kind];
+const _move = (v) => `${v >= 0 ? "+" : "-"}${Math.abs(v * 100).toFixed(1)}%`;
+// A dated window's gap-downs in words, from its structured `gaps` — never its shape string. Twin of
+// render._window_words; exported for the py-twin equivalence test.
+export function windowWords(w, threshold) {
+  const gaps = (w && w.gaps) || [];
+  if (gaps.length) {
+    return gaps.map((g) => `${g.on} ${_move(g.move)} ${fmtShape(g.cause) || "cause unread"}`).join("; ");
+  }
+  const pct = threshold != null ? (Math.abs(threshold) * 100).toFixed(0) : "10";
+  return `no single day of -${pct}% or worse`;
+}
+// one dated window as a fact row: its gap-downs + cite, or its loud UNKNOWN (twin of _window_fact)
+function windowFact(label, w, threshold) {
+  const s = (w && w.shape) || {};
+  if (s.status !== "present") return fact(label, s);
+  return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div>
+    <div class="fact-val">${escapeHtml(windowWords(w, threshold))}${citeMark(s.source_ref)}</div></div>`;
+}
+// the Brief's two lines beside the current shape — twin of render._anchor_brief_lines
+function anchorBrief(dc) {
+  const a = dc && dc.anchor;
+  if (!a) return "";
+  const [atLabel, sinceLabel, word] = _anchorWords(a.kind);
+  const since = a.since
+    ? windowFact(`${sinceLabel} (${a.since.start} → ${a.since.end})`, a.since, dc.gap_threshold)
+    : `<div class="fact"><div class="fact-label">${escapeHtml(sinceLabel)}</div><div class="fact-val muted">no session after the ${escapeHtml(word)} yet</div></div>`;
+  return windowFact(`${atLabel} (${a.on})`, a.at_anchor, dc.gap_threshold) + since;
+}
+// The dated parts in full, LEADING the Analysis drawdown section: the original event, then what has
+// happened since, then the rolling window — a thesis log. Each part's verbatim outlook and its 8-Ks
+// are provenance: a collapsed <details> on the web, force-open in print. Twin of
+// render._anchor_analysis_lines.
+function anchorAnalysis(dc) {
+  const a = dc && dc.anchor;
+  if (!a) return "";
+  const [atLabel, sinceLabel, word] = _anchorWords(a.kind);
+  const part = (label, w) => {
+    if (!w) {
+      return `<div class="fact"><div class="fact-label">${escapeHtml(label)}</div><div class="fact-val muted">no session after the ${escapeHtml(word)} yet</div></div>`;
+    }
+    const span = `${w.start} → ${w.end}`;
+    const s = w.shape || {};
+    if (s.status !== "present" || !(w.gaps || []).length) {
+      return windowFact(`${label} · ${span}`, w, dc.gap_threshold) + anchorProvenance(w);
+    }
+    const rows = w.gaps.map((g) => `<div style="display:flex; gap:7px; align-items:baseline; padding:3.5px 0; border-bottom:1px solid var(--line);">
+      <span style="font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap;">${escapeHtml(g.on)}</span>
+      <span style="font-variant-numeric:tabular-nums; color:var(--danger); font-weight:600; white-space:nowrap;">${escapeHtml(_move(g.move))}</span>
+      <span>${escapeHtml(fmtShape(g.cause) || "cause unread")}</span></div>`).join("");
+    return `<div class="fact"><div class="fact-label">${escapeHtml(label)}<div class="muted" style="font-size:11px; font-weight:400;">${escapeHtml(span)} · as knowable on ${escapeHtml(w.end)}</div></div>
+      <div style="min-width:0; font-size:12.5px;">${rows}${citeMark(s.source_ref)}</div></div>` + anchorProvenance(w);
+  };
+  const lead = `<div class="fg-note" style="margin:2px 0 6px;">The record since the ${escapeHtml(word)} (${escapeHtml(a.on)}), kept dated: the part at the ${escapeHtml(word)} is read only from what was knowable then, so no later build changes it.${citeMark(a.source_ref)}</div>`;
+  return `<div style="margin-bottom:12px;">${lead}${part(`${atLabel} (${a.on})`, a.at_anchor)}${part(sinceLabel, a.since)}</div>`;
+}
+// one dated part's provenance: the outlook its 8-K furnished (verbatim) and the 8-Ks themselves
+function anchorProvenance(w) {
+  const rg = w.revised_guidance || {};
+  const seen = new Set();
+  const filings = (w.filings || []).filter((f) => f.explanatory !== false && !seen.has(f.accession) && seen.add(f.accession));
+  if (rg.status !== "present" && !filings.length) return "";
+  const outlook = rg.status === "present"
+    ? `<div style="margin-top:4px;"><b>outlook then:</b> ${escapeHtml(String(rg.value))}${citeMark(rg.source_ref)}</div>` : "";
+  const eights = filings.map((f) => {
+    const items = (f.item_types || f.items || []).filter((t) => !String(t).startsWith("9.01"));
+    return `<div style="margin-top:4px;">8-K filed ${fmtDate(f.filing_date)} · items: ${escapeHtml(items.join(" · ") || "—")}${f.url ? ` · <a href="${encodeURI(f.url)}" target="_blank" rel="noopener">EDGAR ${escapeHtml(f.accession || "")}</a>` : ""}</div>`;
+  }).join("");
+  return `<details style="margin:2px 0 8px; font-size:12px; color:var(--ink-2);">
+    <summary style="cursor:pointer; font-size:11.5px; color:var(--ink-3);">The 8-K${filings.length === 1 ? "" : "s"} and the outlook, ${escapeHtml(w.start)} → ${escapeHtml(w.end)} — verbatim</summary>
+    <div style="padding:2px 2px 4px;">${outlook}${eights}</div></details>`;
 }
 
 function drawdownCause(dc, sp, refDate, sleeve) {
