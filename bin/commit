@@ -39,7 +39,9 @@ echo "── mypy --strict (vinci) ───────────────
 echo "── pytest -m 'not network' ─────────────────────────"
 # NOT piped. A pipe would consume the exit status and re-create the very defect this file closes.
 find . -name __pycache__ -type d -exec rm -rf {} + 2>/dev/null || true
-"$VENV" -m pytest -m "not network" -p no:warnings --tb=short -q
+# -rs: every SKIP prints its reason. Under -q a class of skips passed the gate unread — the
+# page-keyed CIQ tests skip whenever exports drift (cross-review of #889, 2026-11-04).
+"$VENV" -m pytest -m "not network" -p no:warnings --tb=short -q -rs
 
 echo "── gate green; committing ──────────────────────────"
 git commit "$@"
