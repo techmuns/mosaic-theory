@@ -1,8 +1,8 @@
 ---
 id: 2026-11-04-pre-spend-field-check
-status: open
+status: shipped
 date: 2026-11-04
-prs: []
+prs: [893]
 supersedes:
 superseded-by:
 ---
