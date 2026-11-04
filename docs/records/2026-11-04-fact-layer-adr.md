@@ -214,3 +214,9 @@ in object storage with its manifest in git (the DVC / lakeFS pattern).
 - **A same-value tie** (two filings on the latest day stating the same value) returns the greatest
   accession and lists the others in `concurrent_accessions`. That choice is deterministic, not a
   claim that one filing is the source.
+- **Two findings DEFERRED from the pre-PR review (round 0):**
+  - `edgar_ingest.read_cached` builds one `CachedHttp` (and its unused HTTP client) per URL read:
+    negligible at 26 entities, and no request is sent. Revisit when the ingest runs over the whole
+    cache.
+  - `store.verify_manifest` raises `KeyError` on an entry missing a key, rather than naming it.
+    The check still fails loud, so CI goes red either way.
