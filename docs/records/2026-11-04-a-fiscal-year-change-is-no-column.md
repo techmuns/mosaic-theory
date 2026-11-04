@@ -74,6 +74,17 @@ at 2026-11-04), branch head vs `main` `cfedcb39`:
   (the 13, segment EBITDA, both Capital Structure Summary frequencies, the bridge, `ciq_balance.extract`)
   identical; a header with no marker runs exactly main's code path.
 - **No output names the marker**, and no summary/ratios column is labelled `Fiscal Y`.
+- **`vinci dossier precheck --ticker SMPL` (#893), $0**, against main's committed SMPL page
+  (assembled 2026-08-18), on a copy of paid run `4f30d3a2`'s store (sha256 `bad8ac0aad77`) and
+  the 2026-11-04 exports: main `4a820016` lists **13 regressions**, this branch **3**. Back:
+  `ev_bridge`, `quality.interest_coverage`, `leverage_survival.interest_coverage`,
+  `concentration.segments`, `concentration.geographic`, `capital_structure.summary`,
+  `financial_summary.balance_sheet`, `financial_summary.coherence`, `key_ratios`,
+  `stock_info.book_value_ps`. Left: `capital_structure.covenant_term_rows` (the covenant
+  phase refuses both 8-K amendments — a separate fix, another session), and
+  `drawdown_cause.gap_down_dates` / `.revised_guidance` (the data record and 8-K follow-up,
+  not CIQ). Newly present in both: `leverage_survival.credit_health_panels`,
+  `valuation.forward_multiples`.
 - **Fails first**: main's code on the same header shapes — all three SMPL statement headers
   "unplaced", `_fin_periods` emitting `'Fiscal Y'`, the CS Summary refusing on order.
 - Pins (`tests/test_fiscal_year_change_marker.py`, 27): POSITIVE on SMPL's verbatim header cells
