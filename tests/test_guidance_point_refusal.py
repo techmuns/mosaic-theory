@@ -138,8 +138,9 @@ def test_nflx_fq2_2026_reads_at_guide_not_missed() -> None:
     FQ3 2026 reported (2026-10-20); NFLX's page is current, and its 2026-10-28 export reads FQ3, so
     a check keyed on the page would still fail. The pin was written on the August export, which no
     folder on this machine still holds; it holds on 406592d103 — the Estimates export of
-    2026-10-07 that the page was built from at #704, archived by the operator on 2026-10-28
-    (verified 2026-11-04). The refusal itself is pinned on frozen rows with these same figures
+    2026-10-07 that the page was built from at #704, archived by the operator on 2026-10-28; the
+    pin runs on that archived folder whenever the live one holds a later export (verified
+    2026-11-04). The refusal itself is pinned on frozen rows with these same figures
     (`test_a_point_call_inside_the_band_is_refused_and_named`), so a skip here loses no value
     pin."""
     bundle = _bundle("NFLX")
@@ -147,9 +148,12 @@ def test_nflx_fq2_2026_reads_at_guide_not_missed() -> None:
     rev = next(r for r in rows if r.metric == "Revenue")
     # the RECORD counts every in-band point call in the history, so it holds on any NFLX export
     assert "at-guide" in rev.record, "the record must disclose how many calls were refused"
-    skip_unless_export("NFLX", "estimates", "406592d103", bundle=bundle,
-                       why="the most recent resolved Revenue call is FQ2 2026 only on an export "
-                           "pulled before FQ3 2026 reported")
+    # the pin runs on the export it is verified on — the live folder's, or the archived one
+    pinned = skip_unless_export("NFLX", "estimates", "406592d103", bundle=bundle,
+                                why="the most recent resolved Revenue call is FQ2 2026 only on an "
+                                    "export pulled before FQ3 2026 reported")
+    rows = cs.guidance_bridge_rows(pinned, reference_date=date(2026, 8, 12)).value or []
+    rev = next(r for r in rows if r.metric == "Revenue")
     assert "FQ2 2026" in rev.most_recent, rev.most_recent
     assert "MISSED" not in rev.most_recent, (
         f"a −0.11% shortfall against a point forecast still reads as a miss: {rev.most_recent}")
