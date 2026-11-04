@@ -2,7 +2,7 @@
 id: 2026-11-04-guidance-quote-cut
 status: shipped
 date: 2026-11-04
-prs: []
+prs: [907]
 supersedes:
 superseded-by:
 ---
