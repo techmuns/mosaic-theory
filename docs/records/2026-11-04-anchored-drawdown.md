@@ -40,7 +40,15 @@ superseded-by:
   "Shape (last 180 days)" on the Brief; on the Analysis tab the read beside the chart, its "No
   discrete gap-downs · last 180 days" panel and "Gap-down dates (last 180 days)" — so a page whose
   rolling window holds no drop no longer reads as contradicting its "Drawdown at underwrite" rows.
-  The length is read from `gap_window_days`; a page built before that field keeps the bare label.
+  The label names the span the page ACTUALLY read (`render._rolling_span`, JS `rollingSpan`): "last
+  180 days" when the window ends on the price date (`gap_window_end`), "180 days to <reference
+  date>" on a page built before, whose window ended there; the bare label when `gap_window_days`
+  is not stated. Until each committed page is rebuilt, it reads "180 days to 2026-10-16" (or its own
+  reference date).
+- **A store that does not cover the rolling window keeps the record's own**: when the stored closes
+  begin on or after the 180-day start, or there are none, the window is the screen record's events,
+  `gap_window_end` stays absent, and a hidden `drawdown-cause:` flag says why — never "no drop"
+  read from missing closes.
 
 `anchor` is ABSENT when None (`DrawdownCause` serialiser), so the 27 committed pages read, check
 and check exactly as before until each is rebuilt; the relabel re-renders their `dossier.md`
@@ -106,7 +114,7 @@ part. No other page moves, and against each committed page no page loses a field
   no other page loses one. The at-anchor parts name drops no committed page names: IT 2026-02-03
   (−20.9%), NCNO 2026-02-03 (−10.6%), NKE 2026-04-01 (−15.5%), EPAM 2026-02-19 (−17.0%), PARR
   2026-04-17 (−10.0%).
-- **Pins** (`tests/test_anchored_drawdown.py`, 30, on real fixtures — SMPL's Polygon closes,
+- **Pins** (`tests/test_anchored_drawdown.py`, 31, on real fixtures — SMPL's Polygon closes,
   its EDGAR 8-K rows and the three documents the reader fetches, cut after what each reader reads
   and checked identical): SMPL keeps 04-09/04-10 (−18.1%, −11.5%) and the outlook 8-K at today's
   dates; the at-anchor part is identical at price dates 2026-08-17, 10-16 and 11-03; a name with
@@ -122,7 +130,7 @@ part. No other page moves, and against each committed page no page loses a field
   `rollingLabel` twins through node (the label table is
   on `test_duplicate_definitions.BASELINE`, bound by that pin); the committed corpus round-trips
   with no new key.
-- **Mutations the pins catch — 17 of 17**, each applied alone and the file restored: the
+- **Mutations the pins catch — 19 of 19**, each applied alone and the file restored: the
   at-anchor EDGAR left uncut at the anchor (the lookahead pin); its closes left uncut (a gap after
   the anchor leaks into the part); carried by presence instead of value; the dated parts not
   compared by value; the dated outlook not vintage-marked; `anchor` written as null; an anchor
@@ -130,7 +138,9 @@ part. No other page moves, and against each committed page no page loses a field
   ignoring the at-anchor part; the Brief dropping the dated lines; the JS twin printing the move
   unsigned; a window the closes do not cover read anyway; the dated-part outage flag escaping the
   hidden QA tier; the rolling window not cut at the price date; the assembly dropping the
-  price-date window; the Brief's Shape losing its window label; the JS label dropping the length.
+  price-date window; the Brief's Shape losing its window label; the JS label dropping the length;
+  a page built before the price-date window labelled "last 180 days"; an uncovered rolling window
+  read as no drop.
 - **Review** (`/code-review high --fix`, round 0): 10 findings, 8 fixed — the dated-part outage
   flag had escaped `flags._QA_MARKERS` and would have printed as a decision caveat; an uncovered
   window read as "no drop"; the round-trip pin would have gone red at the first anchored rebuild;
@@ -139,6 +149,14 @@ part. No other page moves, and against each committed page no page loses a field
   nothing; a version-table row shared a line with the one before. 2 dismissed: a moved anchor
   stopping the precheck is deliberate (its message names the move, the operator decides), and the
   anchor helper's second read of the same committed record keeps the pinned call shape.
+- **Review of the item-3 delta** (`/code-review high --fix` on `ecdc459c..532313e0`): 6 findings —
+  FIXED: the rolling window read an uncovered store as "no drop" (now the record's own window,
+  flagged); the label claimed "last 180 days" on pages whose window ended on the reference date
+  (now "180 days to <reference date>" there); the web's read label above the chart lacked the label
+  the markdown carries; the tests' helper skipped the production combination (now passes the
+  price-date window). DEFERRED: a no-gap rolling window's "gradual bleed" wording, older than this
+  PR (STATE §5.0 row 47). DISMISSED: one more read of the stored closes per assembly, the existing
+  pattern of every price reader.
 - **Render preview** (PREVIEW RULE): SMPL's real $0 build, collapsed and force-open, approved by
   the operator with the relabel; re-taken after it, with VRRM's (which item 3 moves) beside it,
   `docs/dossier/anchored-drawdown-2026-11-04/screenshots/`.

@@ -536,14 +536,28 @@ def _clean_note(note: str) -> str:
 _ANCHOR_WORDS = DRAWDOWN_ANCHOR_WORDS
 
 
-def _rolling(label: str, dc: DrawdownCause) -> str:
-    """A label for a line that reads the ROLLING window, naming its length (operator, 2026-11-04:
-    "Approve + relabel") — so a page whose rolling window holds no drop no longer reads as
-    contradicting its "Drawdown at underwrite" rows. A page built before `gap_window_days` keeps
-    the bare label: its length is not stated, so it is not claimed. Twin of dossier.js
-    ``rollingLabel``."""
+def _rolling_span(dc: DrawdownCause, ref: date | str | None) -> str | None:
+    """The rolling window's span in words, as the page actually read it: "last 180 days" when it
+    ends on the page's price date (`gap_window_end`), else "180 days to <reference date>" — a
+    page built before the window moved to the price date read the screen's, ending on its
+    reference date, and must not claim the later one (review of #906). None when the length is
+    not stated (a page built before `gap_window_days`): then nothing is claimed. Twin of
+    dossier.js ``rollingSpan``."""
     days = dc.gap_window_days
-    return f"{label} (last {days} days)" if days is not None else label
+    if days is None:
+        return None
+    if dc.gap_window_end is not None:
+        return f"last {days} days"
+    end = ref.isoformat() if isinstance(ref, date) else ref
+    return f"{days} days to {end}" if end else f"{days} days"
+
+
+def _rolling(label: str, dc: DrawdownCause, ref: date | str | None) -> str:
+    """A label for a line that reads the ROLLING window, naming its span (operator, 2026-11-04:
+    "Approve + relabel") — so a page whose rolling window holds no drop no longer reads as
+    contradicting its "Drawdown at underwrite" rows. Twin of dossier.js ``rollingLabel``."""
+    span = _rolling_span(dc, ref)
+    return f"{label} ({span})" if span else label
 
 
 def _window_words(w: DrawdownWindow, threshold: float | None) -> str:
@@ -3837,7 +3851,8 @@ def _brief_lines(d: Dossier, *, show_proposal: bool = False,
     # discriminator — but "What happened" described only the first half.
     out.append(f"## {BY_KEY[d.sleeve].survive_heading}")
     if m.drawdown_cause is not None:
-        out.append(_fact(_rolling("Shape", m.drawdown_cause), m.drawdown_cause.shape, _fmt_shape))
+        out.append(_fact(_rolling("Shape", m.drawdown_cause, d.reference_date),
+                         m.drawdown_cause.shape, _fmt_shape))
         out += _anchor_brief_lines(m.drawdown_cause)
     io = m.idiosyncratic_vs_shared
     if io is not None and io.name_180d_return.status is SourceStatus.PRESENT:
@@ -4016,7 +4031,8 @@ def _midcycle_section(mc: Any) -> list[str]:
     return out
 
 
-def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE) -> list[str]:
+def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE,
+                         ref: date | str | None = None) -> list[str]:
     """(D1·§1) The drawdown READ — per-gap ledger when the
     shape is discrete), the market comparison, the graph cohort, and the 8-K evidence grouped by
     accession. Extracted verbatim from render_markdown (2026-07-27) so the analysis tier
@@ -4039,20 +4055,20 @@ def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE) ->
     _rows = (_gap_list(_fmt_shape(_shape.value))
              if _shape.status is SourceStatus.PRESENT and _shape.value is not None else None)
     if _rows is not None:  # ANY discrete-gap name — a 1-gap ledger still carries the true %
-        out.append(f"- **{_rolling(_row.read_label, m.drawdown_cause)}** · discrete gap-downs:"
+        out.append(f"- **{_rolling(_row.read_label, m.drawdown_cause, ref)}** · discrete gap-downs:"
                    f"{_cite(_shape.source_ref)}")
         for _gd, _cause in _rows:
             _gpct = _gap_pct_from_perf(m.stock_performance, _gd)
             _gpct_s = f" **{_gpct * 100:+.1f}%**" if _gpct is not None else ""
             out.append(f"  - {_gd}{_gpct_s} → {_cause}")
     else:
-        out.append(_fact(_rolling(_row.read_label, m.drawdown_cause), _shape, _fmt_shape))
+        out.append(_fact(_rolling(_row.read_label, m.drawdown_cause, ref), _shape, _fmt_shape))
     # (declutter) the dates row repeats the shape line whenever every date already appears there
     gd = m.drawdown_cause.gap_down_dates
     shape_v = m.drawdown_cause.shape
     if not (gd.status is SourceStatus.PRESENT and shape_v.status is SourceStatus.PRESENT
             and all(str(d) in str(shape_v.value) for d in (gd.value or []))):
-        out.append(_fact(_rolling("Gap-down dates", m.drawdown_cause), gd, _dates))
+        out.append(_fact(_rolling("Gap-down dates", m.drawdown_cause, ref), gd, _dates))
     # (buy-side restructure, twins the web) the alone-or-with-market comparison follows the READ
     # directly; the 8-K evidence closes the section as provenance. Revised guidance is a guidance
     # fact — it renders on the street section (legacy no-catalyst-path JSON keeps it here).
@@ -4642,7 +4658,7 @@ def render_markdown(d: Dossier, *, dev: bool = False, show_proposal: bool = Fals
     # never had it, per-fact source-binding already carries provenance precisely, and the
     # three tiers already separate decide/argue/prove), so the sequence below reads as the
     # questions a decision asks, in order. Twin: dossier.js analysisTier().
-    out += _drawdown_idio_lines(m, sleeve=d.sleeve)
+    out += _drawdown_idio_lines(m, sleeve=d.sleeve, ref=d.reference_date)
     out += _business_quality_lines(m)
     out += _argument_lines(d, dev=dev)
     out += _catalyst_calendar_lines(d, card)

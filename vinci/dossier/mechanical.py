@@ -784,23 +784,42 @@ def _drawdown_cause(
     date, 2026-11-04 item 3): the screen's detector over the ``DECLINE_WINDOW_DAYS`` ending on it,
     on the stored closes the price box and chart read, so a drop after the last screen run is
     classified, not only charted. Otherwise it is the record's own events (the screen's window,
-    ending on its reference date). ``anchor`` adds the dated parts (`_drawdown_anchor`).
+    ending on its reference date) — and so it is when the stored closes do not reach back before
+    the window's start, flagged. ``anchor`` adds the dated parts (`_drawdown_anchor`).
     """
     cik = record.identity.cik
     words = _CURRENT_WORDS
+    coverage_flags: list[str] = []
+    window_end: date | None = None
+    gaps: list[date] | None = None
     if bars is not None and current_end is not None:
         start = current_end - timedelta(days=DECLINE_WINDOW_DAYS)
-        gaps = detect_gap_downs([b for b in bars if b.bar_date <= current_end], since=start)
-        span = f"{start.isoformat()} to {current_end.isoformat()}"
-        words = _GapWords(dates_ref=f"EOD gap-down detector, {span}",
-                          no_dates_note=f"no gap-down from {span}",
-                          none_shape=_CURRENT_WORDS.none_shape,
-                          none_ref=f"EOD gap-down detector, {span}: none")
-    else:
+        held = [b for b in bars if b.bar_date <= current_end]
+        first = min((b.bar_date for b in held), default=None)
+        # A WINDOW THE STORED CLOSES DO NOT COVER IS NOT READ (`_gap_window`'s rule): an empty or
+        # short store would read "no discrete gap-down" — an absence claimed from missing data, and
+        # a PRESENT one, so `_refuse_degraded_drawdown_overwrite` would let it replace a committed
+        # finding. The screen record's own window stands instead, ending on its reference date.
+        if first is None or first >= start:
+            coverage_flags.append(
+                "drawdown-cause: the stored closes "
+                + (f"begin on {first.isoformat()}, not before" if first is not None
+                   else f"hold nothing on or before {current_end.isoformat()}, so not")
+                + f" the rolling window's start {start.isoformat()} — the window is the screen "
+                "record's, ending on its reference date; backfill the name's stored history")
+        else:
+            window_end = current_end
+            gaps = detect_gap_downs(held, since=start)
+            span = f"{start.isoformat()} to {current_end.isoformat()}"
+            words = _GapWords(dates_ref=f"EOD gap-down detector, {span}",
+                              no_dates_note=f"no gap-down from {span}",
+                              none_shape=_CURRENT_WORDS.none_shape,
+                              none_ref=f"EOD gap-down detector, {span}: none")
+    if gaps is None:
         gaps = sorted(e.event_date for e in record.events
                       if e.event_type.value == "earnings_gap_down")
     read = _read_gaps(gaps, cik, edgar, http, words)
-    flags = list(read.flags)
+    flags = coverage_flags + list(read.flags)
     dated: DrawdownAnchor | None = None
     if bars is not None and cut is not None:
         dated, anchor_flags = _drawdown_anchor(anchor, bars, cik, edgar, http, cut)
@@ -814,8 +833,7 @@ def _drawdown_cause(
         # renderers can mark coverage honestly (window boundary + pre-window drops).
         gap_threshold=GAP_DOWN_THRESHOLD,
         gap_window_days=DECLINE_WINDOW_DAYS,
-        gap_window_end=(current_end.isoformat()
-                        if bars is not None and current_end is not None else None),
+        gap_window_end=window_end.isoformat() if window_end is not None else None,
         anchor=dated,
     )
     return cause, flags

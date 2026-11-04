@@ -86,9 +86,12 @@ def _record(ref: date) -> DataRecord:
 
 def _build(ref: date, cut: date, anchor: AnchorDate | None,
            rows: list[Filing] | None = None) -> tuple[DrawdownCause, list[str]]:
+    """The block as `assemble_mechanical` builds it: closes, the page's cut, the anchor, and the
+    rolling window ending on the cut (review of #906 — the production combination)."""
     edgar = cast(EdgarClient, AsOfEdgar(cast(EdgarClient, _Edgar(rows or _ROWS)), cut))
     return _drawdown_cause(_record(ref), edgar, cast(CachedHttp, _Http()),
-                           bars=[b for b in _BARS if b.bar_date <= cut], cut=cut, anchor=anchor)
+                           bars=[b for b in _BARS if b.bar_date <= cut], cut=cut, anchor=anchor,
+                           current_end=cut)
 
 
 def _js(model: Any) -> dict[str, Any]:
@@ -145,11 +148,12 @@ def test_no_later_build_changes_the_at_anchor_part() -> None:
 
 def test_a_name_with_no_anchor_builds_exactly_as_before() -> None:
     """With no anchor (no underwrite, no follow), the dated parts add nothing: the block is
-    byte-identical to the one the record alone gives — no `anchor` key."""
-    ref = date(2026, 8, 14)
-    edgar = cast(EdgarClient, AsOfEdgar(cast(EdgarClient, _Edgar(_ROWS)), date(2026, 8, 17)))
-    before, _ = _drawdown_cause(_record(ref), edgar, cast(CachedHttp, _Http()))
-    after, _ = _build(ref, date(2026, 8, 17), None)
+    byte-identical to the rolling window read alone — no `anchor` key."""
+    ref, cut = date(2026, 8, 14), date(2026, 8, 17)
+    edgar = cast(EdgarClient, AsOfEdgar(cast(EdgarClient, _Edgar(_ROWS)), cut))
+    before, _ = _drawdown_cause(_record(ref), edgar, cast(CachedHttp, _Http()),
+                                bars=[b for b in _BARS if b.bar_date <= cut], current_end=cut)
+    after, _ = _build(ref, cut, None)
     assert after.model_dump_json() == before.model_dump_json()
     assert "anchor" not in _js(after)
     assert _js(after)["gap_down_dates"]["value"] == ["2026-04-09", "2026-04-10"]
@@ -445,6 +449,8 @@ def test_the_page_labels_both_parts_end_to_end() -> None:
     assert f"[`{_ACC}`]" in md
     plain = render_markdown(Dossier.model_validate(json.loads(_FROZEN_PAGE.read_text())))
     assert "Drawdown at underwrite" not in plain and "Since underwrite" not in plain
+    # a page built before the window moved to the price date names the window it read
+    assert "**Shape (180 days to 2026-08-14):**" in plain
 
 
 def test_window_words_twin() -> None:
@@ -548,14 +554,18 @@ def test_the_assembly_ends_the_rolling_window_on_the_page_price_date() -> None:
 
 
 def test_the_rolling_label_twin() -> None:
-    """render._rolling and dossier.js rollingLabel agree, with the window's length and without it
-    (a page built before `gap_window_days` keeps the bare label)."""
+    """render._rolling and dossier.js rollingLabel agree on all three spans: "last 180 days" for a
+    window that ends on the price date; "180 days to <reference date>" for a page built before it,
+    whose window ended there (review of #906 — never the later window claimed); the bare label
+    when the length is not stated."""
     from vinci.dossier.render import _rolling
 
     dc = Dossier.model_validate(_built()).mechanical.drawdown_cause  # type: ignore[union-attr]
-    bare = dc.model_copy(update={"gap_window_days": None})
-    py = [_rolling("Shape", dc), _rolling("Gap-down dates", bare)]
-    assert py == ["Shape (last 180 days)", "Gap-down dates"]
+    old = dc.model_copy(update={"gap_window_end": None})
+    bare = dc.model_copy(update={"gap_window_days": None, "gap_window_end": None})
+    py = [_rolling("Shape", dc, "2026-10-16"), _rolling("Read", old, date(2026, 8, 14)),
+          _rolling("Gap-down dates", bare, "2026-08-14")]
+    assert py == ["Shape (last 180 days)", "Read (180 days to 2026-08-14)", "Gap-down dates"]
     if not shutil.which("node"):
         pytest.skip("node is not installed")
     driver = """
@@ -563,9 +573,28 @@ const handler = { get: () => stub, apply: () => stub, construct: () => ({}) };
 const stub = new Proxy(function(){}, handler);
 for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
 const { rollingLabel } = await import("__URI__");
-console.log(JSON.stringify([rollingLabel("Shape", {gap_window_days: 180}),
-                            rollingLabel("Gap-down dates", {gap_window_days: null})]));
+console.log(JSON.stringify([
+  rollingLabel("Shape", {gap_window_days: 180, gap_window_end: "2026-11-03"}, "2026-10-16"),
+  rollingLabel("Read", {gap_window_days: 180}, "2026-08-14"),
+  rollingLabel("Gap-down dates", {gap_window_days: null}, "2026-08-14")]));
 """.replace("__URI__", Path("frontend/views/shared/dossier.js").resolve().as_uri())
     out = subprocess.run(["node", "--input-type=module", "-e", driver],
                          capture_output=True, text=True, check=True)
     assert json.loads(out.stdout) == py
+
+
+def test_a_store_that_does_not_cover_the_rolling_window_keeps_the_records_window() -> None:
+    """(item 3, NEGATIVE — review of #906) Closes that begin after the window's start, or none at
+    all, cannot see a drop in it: the window is the record's own (its 04-09/04-10 gap-downs kept,
+    no `gap_window_end`), flagged — never "no discrete gap-down" read from missing closes."""
+    edgar = cast(EdgarClient, AsOfEdgar(cast(EdgarClient, _Edgar(_ROWS)), date(2026, 4, 30)))
+    record = _record(date(2026, 4, 30))
+    want = {"2026-04-09", "2026-04-10"}
+    assert want <= set(_drawdown_cause(record, edgar, cast(CachedHttp, _Http()))[0]
+                       .gap_down_dates.value or [])
+    for bars in ([], [b for b in _BARS if date(2026, 3, 1) <= b.bar_date <= date(2026, 4, 30)]):
+        dc, flags = _drawdown_cause(record, edgar, cast(CachedHttp, _Http()), bars=bars,
+                                    cut=date(2026, 4, 30), current_end=date(2026, 4, 30))
+        assert dc.gap_window_end is None and "gap_window_end" not in _js(dc)
+        assert want <= set(dc.gap_down_dates.value or [])
+        assert any("the rolling window's start 2025-11-01" in f for f in flags)

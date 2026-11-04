@@ -1333,7 +1333,7 @@ function briefTier(d, verdict, m, card, mark) {
   // (brief re-order 2026-07-27) WHAT HAPPENED precedes the underwrite detail — the reader met the
   // valuation grid before the problem it values. Setup, then what it is worth. Twin of render.py.
   const parts = openerCard(d, verdict, m, card, mark)
-    + whatHappened(m, d.sleeve)
+    + whatHappened(m, d.sleeve, d.reference_date)
     + underwriteDetail(d, verdict, m, card, mark)
     + briefCase(d.synthesis, m, d.sleeve)
     + financialSnapshot(m) + valuationCard(m);
@@ -1533,7 +1533,7 @@ function companyInner(d, m, card = null) {
 // drawdown % with no WHY — but the fund's whole question (overshoot vs terminal) starts from what
 // broke, so the shape belongs on page 1. The narrative names the EVENTS; the tiles carry the
 // NUMBERS (never both in one surface). Full event log + filings stay in Analysis.
-function whatHappened(m, sleeve) {
+function whatHappened(m, sleeve, refDate) {
   const dc = m.drawdown_cause || {};
   // RENDER AN UNKNOWN SHAPE TOO — `fact()` already prints "UNKNOWN — <note>", and the twin
   // `render.py::_brief_lines` appends this line unconditionally. The old `status === "present"`
@@ -1541,7 +1541,7 @@ function whatHappened(m, sleeve) {
   // unreadable filing index, and this gate then dropped exactly that state — leaving a degraded
   // drawdown SILENT on the web Brief and page 1 of the PDF while its qa flag is hidden by
   // `flags._QA_MARKERS`. That combination is what the hide-list entry's FALSIFIER forbids.
-  const shape = dc.shape ? fact(rollingLabel("Shape", dc), dc.shape, fmtShape) + anchorBrief(dc) : "";
+  const shape = dc.shape ? fact(rollingLabel("Shape", dc, refDate), dc.shape, fmtShape) + anchorBrief(dc) : "";
   const tiles = briefTilesGrid(m);
   if (!shape && !tiles) return "";
   // (content relocation 2026-07-24) title matches the contents: the tiles carry survival triage
@@ -2656,16 +2656,16 @@ function readWhatBroke(s, sp, dc, refDate, sleeve) {
   // breaks. Today UBER is the only committed name with zero gaps, and it is the only quality name.
   if (!rows) {
     const { svg: plain } = drawdownChart(sp, [], det);
-    if (!plain) return factRead(rollingLabel(sleeveCopy(sleeve).read, dc), s, (v) => escapeHtml(fmtShape(v)));
+    if (!plain) return factRead(rollingLabel(sleeveCopy(sleeve).read, dc, refDate), s, (v) => escapeHtml(fmtShape(v)));
     const why = (det.threshold != null && det.windowDays != null)
       ? `No single day crossed the −${Math.round(Math.abs(det.threshold) * 100)}% detector inside the ${det.windowDays}d window, so there is nothing to mark — the path is the whole event.`
       : "No discrete gap-down was detected, so there is nothing to mark — the path is the whole event.";
     const note = `<div style="flex:0 1 236px; font-size:11.5px;">
-      <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">No discrete gap-downs${det.windowDays != null ? ` · last ${det.windowDays} days` : ""}</div>
+      <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">No discrete gap-downs${rollingSpan(dc, refDate) ? ` · ${rollingSpan(dc, refDate)}` : ""}</div>
       <div style="color:var(--ink-2); line-height:1.55;">${escapeHtml(fmtShape(s.value))}</div>
       <div style="color:var(--ink-3); margin-top:7px; line-height:1.55;">${escapeHtml(why)}</div>
       ${citeMark(s.source_ref)}</div>`;
-    return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(sleeveCopy(sleeve).read)}</div>
+    return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(rollingLabel(sleeveCopy(sleeve).read, dc, refDate))}</div>
       <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">${plain}${note}</div></div>`;
   }
   const { svg, preDrops } = drawdownChart(sp, rows, det);
@@ -2692,7 +2692,7 @@ function readWhatBroke(s, sp, dc, refDate, sleeve) {
       <span>${escapeHtml(causeTxt)}</span></div>`;
   }).join("");
   const hdr = (det.threshold != null && det.windowDays != null)
-    ? `Gap-downs · 1-day ≤ −${Math.round(Math.abs(det.threshold) * 100)}% · last ${det.windowDays} days`
+    ? `Gap-downs · 1-day ≤ −${Math.round(Math.abs(det.threshold) * 100)}% · ${rollingSpan(dc, refDate) || `${det.windowDays}d window`}`
     : "Gap-downs";
   // a pre-window drop a DATED part classifies (`anchorAnalysis`, above) is said to be, never
   // "not classified" beside the block that classifies it
@@ -2711,7 +2711,7 @@ function readWhatBroke(s, sp, dc, refDate, sleeve) {
   const key = `<div style="flex:0 1 236px; font-size:11.5px;">
     <div style="font-size:10.5px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-3); margin:2px 0 6px;">${hdr}</div>
     ${items}${pre}${citeMark(s.source_ref)}</div>`;
-  return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(sleeveCopy(sleeve).read)}</div>
+  return `<div class="fg-read"><div class="fg-read-lab">${escapeHtml(rollingLabel(sleeveCopy(sleeve).read, dc, refDate))}</div>
     <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">${svg}${key}</div></div>`;
 }
 
@@ -3834,12 +3834,20 @@ export const ANCHOR_WORDS = {
 };
 const _anchorWords = (kind) => ANCHOR_WORDS[kind] || [`Drawdown at ${kind}`, `Since ${kind}`, kind];
 const _move = (v) => `${v >= 0 ? "+" : "-"}${Math.abs(v * 100).toFixed(1)}%`;
-// A label for a line that reads the ROLLING window, naming its length (operator, 2026-11-04:
-// "Approve + relabel"); a page built before `gap_window_days` keeps the bare label. Twin of
-// render._rolling; exported for the py-twin equivalence test.
-export function rollingLabel(label, dc) {
+// The rolling window's span as the page read it: "last 180 days" when it ends on the price date
+// (`gap_window_end`), else "180 days to <reference date>" — a page built before read the screen's
+// window (review of #906); null when the length is not stated. Twin of render._rolling_span.
+export function rollingSpan(dc, refDate) {
   const days = dc && dc.gap_window_days;
-  return days != null ? `${label} (last ${days} days)` : label;
+  if (days == null) return null;
+  if (dc.gap_window_end) return `last ${days} days`;
+  return refDate ? `${days} days to ${refDate}` : `${days} days`;
+}
+// A label for a line that reads the ROLLING window, naming its span (operator, 2026-11-04:
+// "Approve + relabel"). Twin of render._rolling; exported for the py-twin equivalence test.
+export function rollingLabel(label, dc, refDate) {
+  const span = rollingSpan(dc, refDate);
+  return span ? `${label} (${span})` : label;
 }
 // A dated window's gap-downs in words, from its structured `gaps` — never its shape string. Twin of
 // render._window_words; exported for the py-twin equivalence test.
@@ -3989,13 +3997,13 @@ function drawdownCause(dc, sp, refDate, sleeve) {
   // an absent shape stays a loud UNKNOWN row (fail-honest, never silently dropped)
   const shapeLead = (shapeV.status === "present" && shapeV.value != null)
     ? readWhatBroke(dc.shape, sp, dc, refDate, sleeve)
-    : fact(rollingLabel("Shape", dc), dc.shape, fmtShape);
+    : fact(rollingLabel("Shape", dc, refDate), dc.shape, fmtShape);
   // (restructure) read + evidence returned SEPARATELY: the idio comparison renders between them
   // (the card's question directly after its read; the 8-K callout closes as provenance). Revised
   // guidance is a street/guidance fact — it renders on the street card (catalystPath); the legacy
   // no-catalyst-path JSON keeps it here so the fact is never dropped.
   return {
-    read: shapeLead + (datesDup ? "" : fact(rollingLabel("Gap-down dates", dc), listFact(dc.gap_down_dates))),
+    read: shapeLead + (datesDup ? "" : fact(rollingLabel("Gap-down dates", dc, refDate), listFact(dc.gap_down_dates))),
     evidence: (driverCards || provenance)
       ? `<div style="margin-top:12px;">${driverCards}${provenance}</div>` : "",
   };
