@@ -2,7 +2,7 @@
 id: 2026-11-04-licence-covers-publishing-ciq-derived-facts-and-prices
 status: shipped
 date: 2026-11-04
-prs: []
+prs: [894]
 supersedes:
 superseded-by:
 ---
