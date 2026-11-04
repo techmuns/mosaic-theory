@@ -261,6 +261,12 @@ const EXTRACTION_VERSIONS = [
     "page: `ex_lease_at_price` cuts the companyfacts once at the date of the stored close, so " +
     "its share count and its net debt read the same filings — the valuation-bases refresh, " +
     "which hands it the uncut blob, no longer divides by the average of a later 10-Q"],
+  ["2026-11-04.trace-rank-and-duration",
+    "a synthesis figure traces as its cited fact's percentile rank and a duration label is no " +
+    "figure: a whole number that a 0..1 percentile the cited fact states rounds to at x100 " +
+    "traces (0.026 is the 3rd percentile; both neighbours at an exact half), and a duration " +
+    "written hyphenated or abbreviated to y (5-year, 52-week, ~2y) is skipped like its spaced " +
+    "form; every other figure still traces only to the fact its point cites"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and

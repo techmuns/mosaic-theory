@@ -252,7 +252,9 @@ def _figures(text: str) -> list[_Figure]:
     """The numbers ``text`` states as figures, each with its currency / scale / unit — the same
     figure set the synthesis tracer reads (period labels such as Q1 / FY25 / "8 quarters", dates,
     and a digit fused to a word such as GLP-1, are not figures), so the two checks never disagree
-    about what a number is."""
+    about what a number is. One exception, deliberate: a hyphenated or abbreviated duration
+    ("5-year", "~2y") is a figure here and a label to the tracer (`synthesis._DURATION_AFTER`), so a
+    row's value still needs its quote to state the duration it gives."""
     out: list[_Figure] = []
     labels = [(d.start(), d.end()) for d in _DATE_OR_ID.finditer(text)]
     for m in _NUM.finditer(text):
