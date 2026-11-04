@@ -1,0 +1,14 @@
+{
+  "mechanical.capital_structure.covenant_terms": {
+    "status": "present",
+    "why": "the paid build writes the Tier-2 covenant digest here whatever it extracts"
+  },
+  "mechanical.capital_structure.covenant_term_rows": {
+    "status": "absent",
+    "why": "the covenant phase makes no LLM call on this build's pointers, so it writes no term rows: (E5) not a debt agreement — refused rather than extracted under the pointer's guess (Credit Agreement): 8-K 0001213900-18-003172 · f8k032018ex10-1_simplygood.htm declares itself no agreement at all; (E5) not a debt agreement — refused rather than extracted under the pointer's guess (Credit Agreement): 8-K 0001104659-19-060856 · a19-22146_1ex10d1.htm declares itself no agreement at all"
+  },
+  "mechanical.capital_structure.maturity_event": {
+    "status": "absent",
+    "why": "no maturity 8-K to read"
+  }
+}

@@ -357,7 +357,9 @@ incomplete regardless of code state.
   itself** — chat is not a ledger. Since 2026-08-25 that means a row in **STATE.md §5.0 OPEN NOW**
   (owner + what unlocks it) and, where the item has reasoning worth keeping, a file under
   **`docs/records/`**. Never appended to §5, which is frozen.
-- **ARTIFACT-PASS RULE.** The standing post-merge artifact pass (re-assemble dossiers → build frontend
+- **ARTIFACT-PASS RULE.** The standing post-merge artifact pass (per name, the $0 pre-spend check
+  `vinci dossier precheck --ticker <T>` FIRST — exit 1 means a field the committed page has would be
+  lost, and the pass STOPS for the operator before any spend (RUNBOOKS §i step 4) → re-assemble dossiers → build frontend
   → commit `data/dossiers/*` + `frontend/dossiers/*` + every `data/snapshots/assembly_runs/*` file the
   pass wrote, refused re-rolls included — the cost-and-outcome series, `vinci/dossier/run_metrics.py`
   → push) runs the **FULL offline suite green
