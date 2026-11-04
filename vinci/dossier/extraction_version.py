@@ -409,6 +409,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "written hyphenated or abbreviated to y (5-year, 52-week, ~2y) is skipped like its spaced "
         "form; every other figure still traces only to the fact its point cites",
     ),
+    (
+        "2026-11-04.rank-written-as-rank",
+        "the #890 trace is narrowed (its cross-review): a percentile's rank traces only for a "
+        "figure written as a rank (an ordinal, or before percentile / pctile / %ile) — \"2.0x\" "
+        "or \"fell 2%\" cited to a percentile is a figure again — and only a whole-number "
+        "duration (5-year, 52-week, ~9y) is a label; a decimal one (2.3y, a 7.4-year payback) is "
+        "a figure the cited fact must state",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
