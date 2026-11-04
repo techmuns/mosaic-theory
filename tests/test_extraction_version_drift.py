@@ -54,7 +54,9 @@ stop covering a new extractor (`--repin` then pins it as watched). Three modules
 page fields and are watched too: vinci/verbatim.py (which quoted values a page keeps),
 vinci/finra.py (short interest) and vinci/eod/features.py (the price box's 52-week range, whose
 window C4 moved — review of #884). The rest of vinci/eod is market data, not extraction, and
-vinci/ciq feeds only the git-ignored graph test.
+vinci/ciq builds no page field: its relationship parser is read only by tests/test_ciq.py (graph
+Test 0, its last caller, left in #905), and vinci/graph/extract.py takes just its
+SUPPLY_CHAIN_TYPES taxonomy.
 
     python -m tests.test_extraction_version_drift            # print every watched module's hash
     python -m tests.test_extraction_version_drift --repin    # re-pin this file in place
@@ -91,7 +93,6 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/ciq.py": "78815874ffce",
     "vinci/dossier/ciq_balance.py": "68c97913bf6e",
     "vinci/dossier/ciq_charting.py": "e25a753aae4f",
-    "vinci/dossier/ciq_scale_backfill.py": "c3553ce65b72",
     "vinci/dossier/ciq_sheets.py": "206db59412fc",
     "vinci/dossier/covenant_extract.py": "3e162b1951f9",
     "vinci/dossier/dilution.py": "f25b60e1ea18",
