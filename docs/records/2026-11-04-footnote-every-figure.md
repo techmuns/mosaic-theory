@@ -27,6 +27,8 @@ operator, verbatim: *"for item 29, go ahead with 1 + 4"*, then *"The item-29 des
     unsigned one on its size; a basis point is a hundredth of a percentage point.
   - A footnote is matched to the place the claim writes its figure, never to another figure of
     the same magnitude.
+  - A footnoted figure traces as its fact's percentile rank only when the claim writes it as a
+    rank, the rule #899 set for the point's own ref (`as_rank`).
   - A figure with no entry is traced to the point's own ref, exactly as before.
 - **Flags.**
   - UNTRACEABLE, now naming the ref it was cited to (`[cited to …]`). The caveat reads "footnoted
@@ -101,7 +103,7 @@ citation fixes without loosening the trace.
     1,408 caught.
   - Re-run on the code after the review round and the merge with main (c46310e3): every count above
     reproduces, set for set.
-- **Pins.** `tests/test_footnote_every_figure.py`, 88 cases:
+- **Pins.** `tests/test_footnote_every_figure.py`, 89 cases:
   - schema and serializer;
   - the per-figure check, positive and negative, on frozen SMPL;
   - derived arithmetic and units;
@@ -116,6 +118,7 @@ citation fixes without loosening the trace.
     page lacks, a non-list `inputs`, a mark inside a decimal, a tag's place before the cite);
   - Codex's three, each failing first on the head it reviewed (a footnote matched to its figure's
     place, not its magnitude; a signed computed figure; basis points);
+  - #899's rank rule through a footnote, which fails when the footnoted check leaves it out;
   - the web e2e (a mark per figure, ‡, the collapsed block, the print rule) and Markdown.
 - **Screenshots** in `docs/dossier/footnote-every-figure-2026-11-04/screenshots/`: GOOGL, LLY and
   AMZN, one committed point each with `figures` injected, collapsed and force-open, from this
