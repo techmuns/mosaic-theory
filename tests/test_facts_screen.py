@@ -125,9 +125,11 @@ def test_a_first_screen_snapshot_listing_fewer_exclusions_than_the_pages_is_refu
     _pointer(tmp_path, "edgar", "edgar-aaaa", {"excluded_by_operator_instruction": 1,
                                                 "exclusions_listed": 2})
     with pytest.raises(FactsStoreError, match="told to exclude 1 name") as refused:
-        require_exclusions(0, listed=1, source="edgar", name="screen", base=tmp_path)
+        require_exclusions(0, listed=1, rule="r", selected=1, source="edgar", name="screen",
+                           base=tmp_path)
     assert "excluding 2" in str(refused.value)
-    require_exclusions(0, listed=2, source="edgar", name="screen", base=tmp_path)   # POSITIVE
+    require_exclusions(0, listed=2, rule="r", selected=1, source="edgar", name="screen",
+                           base=tmp_path)   # POSITIVE
 
 
 def test_a_snapshot_written_before_the_list_count_is_held_to_its_in_scope_count(
@@ -135,14 +137,17 @@ def test_a_snapshot_written_before_the_list_count_is_held_to_its_in_scope_count(
     """Slice 1's manifest states only the in-scope count; the list was at least that long."""
     _pointer(tmp_path, "edgar", "edgar-aaaa", {"excluded_by_operator_instruction": 1})
     with pytest.raises(FactsStoreError, match="excluding 1"):
-        require_exclusions(0, listed=0, source="edgar", name="screen", base=tmp_path)
-    require_exclusions(0, listed=1, source="edgar", name="screen", base=tmp_path)
+        require_exclusions(0, listed=0, rule="r", selected=1, source="edgar", name="screen",
+                           base=tmp_path)
+    require_exclusions(0, listed=1, rule="r", selected=1, source="edgar", name="screen",
+                           base=tmp_path)
 
 
 def test_a_current_pointer_to_a_missing_manifest_refuses(tmp_path: Path) -> None:
     (tmp_path / "current.json").write_text(json.dumps({"edgar": "edgar-gone"}))
     with pytest.raises(FactsStoreError, match="is missing"):
-        require_exclusions(0, listed=6, source="edgar", name="screen", base=tmp_path)
+        require_exclusions(0, listed=6, rule="r", selected=1, source="edgar", name="screen",
+                           base=tmp_path)
 
 
 # --- the screen ingest and its replay, end to end on the frozen run -------------------------------
@@ -266,3 +271,61 @@ def test_a_cache_that_moved_since_the_ingest_is_named_not_compared(
     (eeft,) = [n for n in got.names if n.ticker == "EEFT"]
     assert eeft.unread is not None and "not the response" in eeft.unread
     assert [n.ticker for n in print_replay(got)] == ["EEFT"]
+
+
+# --- review round 2 of #904 (coordinator) ---------------------------------------------------------
+
+def _scope(rule: str, selected: int, excluded: int, listed: int) -> dict[str, Any]:
+    return {"rule": rule, "names_selected": selected, "excluded_by_operator_instruction": excluded,
+            "exclusions_listed": listed}
+
+
+def test_the_same_population_excluding_fewer_held_names_is_refused(tmp_path: Path) -> None:
+    """POSITIVE: the same run re-ingested, its held name no longer excluded (the list as long)."""
+    _pointer(tmp_path, "edgar:screen", "edgar-s", _scope("run A", 3, 1, 1))
+    with pytest.raises(FactsStoreError, match="excludes 0 name"):
+        require_exclusions(0, listed=1, rule="run A", selected=3, source="edgar",
+                           name="screen", base=tmp_path)
+
+
+def test_a_later_run_that_no_longer_screens_the_held_name_is_accepted(tmp_path: Path) -> None:
+    """NEGATIVE: the next run's universe dropped the held name; every name is still listed. The
+    in-scope count of ANOTHER population is no bar (it dead-ended every later run: 0 < 1)."""
+    _pointer(tmp_path, "edgar:screen", "edgar-s", _scope("run A", 3, 1, 1))
+    require_exclusions(0, listed=1, rule="run B", selected=2, source="edgar", name="screen",
+                       base=tmp_path)
+
+
+def test_the_pages_after_the_held_page_left_are_accepted(tmp_path: Path) -> None:
+    """The pages' rule is constant, so their population is told apart by its size."""
+    _pointer(tmp_path, "edgar", "edgar-p", _scope("pages", 28, 1, 6))
+    require_exclusions(0, listed=6, rule="pages", selected=27, source="edgar", name="pages",
+                       base=tmp_path)
+    with pytest.raises(FactsStoreError, match="excludes 0 name"):
+        require_exclusions(0, listed=6, rule="pages", selected=28, source="edgar",
+                           name="pages", base=tmp_path)
+
+
+def test_the_replay_refuses_a_ticker_whose_cik_is_not_the_snapshots(
+        screen: tuple[Path, Path]) -> None:
+    """The securities snapshot is read as it is now; a ticker it maps to another CIK than the one
+    the snapshot ingested is named, never replayed against the other company."""
+    from vinci.facts.screen_replay import print_replay, replay_run
+    tmp, cache = screen
+    secs = tmp / "data" / "snapshots" / "securities.jsonl"
+    secs.write_text(secs.read_text().replace('"cik": "0001484769"', '"cik": "0001029199"'))
+    with FactStore(name="screen", facts_base=tmp / "data" / "facts") as store:
+        got = replay_run(RUN, tmp / "data" / "snapshots", store, cache)
+    (fubo,) = [n for n in got.names if n.ticker == "FUBO"]
+    assert fubo.unread is not None and "not the CIK snapshot" in fubo.unread
+    assert "FUBO" in [n.ticker for n in print_replay(got)]
+
+
+def test_the_replay_states_example_lines_and_rows_in_their_own_units(
+        screen: tuple[Path, Path], capsys: pytest.CaptureFixture[str]) -> None:
+    from vinci.facts.screen_replay import print_replay, replay_run
+    tmp, cache = screen
+    with _LateStore(name="screen", facts_base=tmp / "data" / "facts") as store:
+        print_replay(replay_run(RUN, tmp / "data" / "snapshots", store, cache, eve=True))
+    out = capsys.readouterr().out
+    assert "1 example line(s) for 4 differing row(s) and 0 list(s) out of order" in out

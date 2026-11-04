@@ -50,8 +50,8 @@ def _prior_scope(base: Path | None, key: str, snapshot_id: str) -> dict[str, Any
     return scope if isinstance(scope, dict) else {}
 
 
-def require_exclusions(excluded: int, *, listed: int, source: str, name: str,
-                       base: Path | None = None) -> None:
+def require_exclusions(excluded: int, *, listed: int, rule: str, selected: int, source: str,
+                       name: str, base: Path | None = None) -> None:
     """Refuse a run that excludes FEWER names than a current snapshot did.
 
     The exclusion is a command-line flag, so a run that forgets it would select a held name and put
@@ -62,7 +62,12 @@ def require_exclusions(excluded: int, *, listed: int, source: str, name: str,
       source: the operator's list does not depend on the scope, so a scope's FIRST snapshot is
       held to it too (slice 2a; a per-scope count alone has nothing to compare a first run to);
     - ``excluded``, how many of them this scope selected, against the current snapshot of the same
-      name."""
+      name, ONLY when it was written over the same population: the same ``rule`` and as many names
+      ``selected``. A later screen run (another rule) or the pages after a page left (fewer names)
+      is another population, and its in-scope count is no bar: comparing it dead-ended every later
+      run whose universe no longer held the excluded name, every ``--exclude`` passed (review round
+      2 of #904). A population that changes at a constant size still compares, which can refuse a
+      run that should pass and never pass one that should not."""
     pointers = read_pointers(base)
     own = pointer_key(source, name)
     for key, snapshot_id in sorted(pointers.items()):
@@ -85,7 +90,9 @@ def require_exclusions(excluded: int, *, listed: int, source: str, name: str,
                 f"current snapshot {snapshot_id} ({key!r}) was written excluding {prior_listed}. "
                 "Writing it could publish a held name in a permanent manifest: pass every "
                 "--exclude the current snapshots were written with")
-        if key == own and excluded < in_scope:
+        same_population = (scope.get("rule") == rule
+                           and scope.get("names_selected") == selected)
+        if key == own and same_population and excluded < in_scope:
             raise FactsStoreError(
                 f"this run excludes {excluded} name(s) by operator instruction; the current "
                 f"snapshot {snapshot_id} excludes {in_scope}. Writing it would publish a held "

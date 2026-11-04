@@ -103,18 +103,28 @@ def test_a_tampered_manifest_is_named(tmp_path: Path) -> None:
 STOPGAP_CAP_BYTES = 50 * 1024 * 1024
 
 
-def _over_cap(objects: Path, cap: int) -> int | None:
-    total = sum(p.stat().st_size for p in objects.rglob("*.parquet"))
+def _over_cap(facts: Path, cap: int) -> int | None:
+    """The committed fact-layer bytes in the tree: the objects AND the manifests (round 2 of #904:
+    a screen manifest is 10.1 MB and its objects are not in git at all). History is not counted."""
+    total = sum(p.stat().st_size for p in (facts / "objects").rglob("*.parquet")) + sum(
+        p.stat().st_size for p in (facts / "manifests").glob("*.json"))
     return total if total > cap else None
 
 
 def test_the_committed_objects_stay_under_the_stopgap_cap() -> None:
-    """Each refresh adds its changed partitions and order objects to public history: past 50 MB
-    the objects leave git for R2 first."""
-    assert _over_cap(OBJECTS, STOPGAP_CAP_BYTES) is None
+    """Each refresh adds its changed partitions, its order objects and its manifest to public
+    history: past 50 MB in the tree they leave git for R2 first."""
+    assert _over_cap(FACTS, STOPGAP_CAP_BYTES) is None
 
 
 def test_the_cap_check_can_fail() -> None:
-    """NEGATIVE: the same check at a 1 MB cap names the committed 6.6 MB (slice 2a: 5.9 MB of
-    data objects and 0.6 MB of order objects for the 26 page companies)."""
-    assert (_over_cap(OBJECTS, 1024 * 1024) or 0) > 6_000_000
+    """NEGATIVE: the same check at a 1 MB cap names the committed 16.9 MB (slice 2a: 6.6 MB of
+    pages objects, 10.3 MB of manifests)."""
+    assert (_over_cap(FACTS, 1024 * 1024) or 0) > 16_000_000
+
+
+def test_the_cap_counts_the_manifests_too(tmp_path: Path) -> None:
+    """Manifests are committed bytes as well: a screen manifest is 10.1 MB with no object in git."""
+    (tmp_path / "manifests").mkdir()
+    (tmp_path / "manifests" / "edgar-x.json").write_bytes(b" " * (2 * 1024 * 1024))
+    assert (_over_cap(tmp_path, 1024 * 1024) or 0) >= 2 * 1024 * 1024

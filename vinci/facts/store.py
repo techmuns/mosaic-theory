@@ -134,14 +134,23 @@ _ORDER_HEADER = json.dumps({"object": "order",
                             "columns": [[c.name, c.type] for c in ORDER_COLUMNS]})
 
 
-def _jsonable(v: Any) -> Any:
-    return v.isoformat() if isinstance(v, date) else v
+#: The float64 columns: a value given as an int is stored as a float, so it is NAMED as one too.
+_FLOAT_NAMES = frozenset(c.name for c in COLUMNS if c.type == "float64")
+
+
+def _jsonable(name: str, v: Any) -> Any:
+    if isinstance(v, date):
+        return v.isoformat()
+    if name in _FLOAT_NAMES and isinstance(v, int) and not isinstance(v, bool):
+        return float(v)
+    return v
 
 
 def row_text(row: Mapping[str, Any]) -> str:
-    """A data row's canonical text: its stored columns' values, in contract order, as JSON. A key
-    outside the contract (an ingest's ``source_position``) is not part of it."""
-    return json.dumps([_jsonable(row[c]) for c in _DATA_NAMES], ensure_ascii=False,
+    """A data row's canonical text: its stored columns' values AS STORED, in contract order, as
+    JSON (an int in a float64 column reads back as a float: round 2 of #904). A key outside the
+    contract (an ingest's ``source_position``) is not part of it."""
+    return json.dumps([_jsonable(c, row[c]) for c in _DATA_NAMES], ensure_ascii=False,
                       separators=(",", ":"), allow_nan=False)
 
 

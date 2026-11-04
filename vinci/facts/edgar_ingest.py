@@ -84,8 +84,12 @@ def read_cached(url: str, cache_dir: Path) -> CachedResponse:
                     min_interval_sec=0.0, namespace=SEC_NAMESPACE) as http:
         text = http._read_cache(url, None)
         fetched = http.fetched_at(url)
+        present = http._cache_path(url).exists()
     if text is None or fetched is None:
-        raise NotInCacheError(f"not in the SEC cache: {url}")
+        # A COPY THAT IS THERE BUT CANNOT BE READ IS NOT ABSENT (round 2 of #904): CachedHttp
+        # reads a corrupt entry as a miss, which the fact layer would have recorded as "not cached"
+        raise NotInCacheError(f"unreadable SEC cache entry: {url}" if present
+                              else f"not in the SEC cache: {url}")
     return CachedResponse(url=url, text=text, fetched_at=datetime.fromtimestamp(fetched, tz=UTC))
 
 

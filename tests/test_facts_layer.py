@@ -442,4 +442,5 @@ def test_a_current_snapshot_that_states_no_exclusion_count_refuses(tmp_path: Pat
     from vinci.facts.scope import require_exclusions
     _publish(tmp_path, [_load("FUBO-companyfacts-slice.json")])     # scope carries no count
     with pytest.raises(FactsStoreError, match="states no exclusion count"):
-        require_exclusions(5, listed=5, source=SOURCE, name="pages", base=tmp_path)
+        require_exclusions(5, listed=5, rule="test", selected=5, source=SOURCE, name="pages",
+                           base=tmp_path)

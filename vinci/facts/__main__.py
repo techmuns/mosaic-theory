@@ -73,7 +73,8 @@ def cmd_ingest(a: argparse.Namespace) -> int:
     listed = len(set(a.exclude))
     names, excluded, rule = _scope(a)
     # before any response is read or anything written
-    require_exclusions(excluded, listed=listed, source=SOURCE, name=name)
+    require_exclusions(excluded, listed=listed, rule=rule, selected=len(names) + excluded,
+                       source=SOURCE, name=name)
     by_cik: dict[str, list[str]] = {}
     unread: list[dict[str, str | None]] = []
     for n in names:

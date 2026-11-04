@@ -2,7 +2,7 @@
 id: 2026-11-04-fact-layer-slice-2a
 status: open
 date: 2026-11-04
-prs: [901]
+prs: [901, 904]
 supersedes:
 superseded-by:
 ---
@@ -82,13 +82,21 @@ snapshot id and no object rewritten.
 its last filing day; every other row is verbatim and in order. Both copies were written to one
 store:
 
-| name | last filing day removed | rows removed | slice 1 code (48c12137): earlier-year partitions shared | slice 2a code | objects the refresh writes (2a) |
-|---|---|---|---|---|---|
-| NFLX | 2026-10-21 | 395 | 0 of 17 | **17 of 17** | 2: 54,308 of 338,021 bytes |
-| FUBO | 2026-08-05 | 357 | 0 of 14 | **14 of 14** | 2: 39,416 of 253,539 bytes |
-| NKE | 2026-10-02 | 201 | 0 of 17 | **17 of 17** | 2: 43,542 of 302,651 bytes |
+| name | last filing day removed | rows removed | slice 1 code (48c12137): earlier-year partitions shared | slice 2a code, frames left in place | slice 2a code, frames where SEC puts them | objects a realistic refresh writes |
+|---|---|---|---|---|---|---|
+| NFLX | 2026-10-21 | 395 | 0 of 17 | 17 of 17 | **16 of 17** (133 frames moved) | 3: 72,660 of 338,021 bytes |
+| FUBO | 2026-08-05 | 357 | 0 of 14 | 14 of 14 | **14 of 14** (28 moved) | 2: 39,416 of 253,539 bytes |
+| NKE | 2026-10-02 | 201 | 0 of 17 | 17 of 17 | **16 of 17** (99 moved) | 3: 60,613 of 302,651 bytes |
 
-The two objects a refresh writes are the new filing's year and the order object. Across snapshots
+*Corrected in review round 2 of #904.* The first draft of this record claimed 17 of 17, 14 of 14 and
+17 of 17. That modelled the previous copy with each `frame` left where today's response puts it.
+SEC instead puts a period's `frame` on its LATEST-filed row: the reviewer counted 101,313 of the
+101,317 multi-filed framed keys on the committed pages that way. So the copy before a filing
+carried that period's frame on an older row. `frame` is row content, so the new filing also renames
+the partition of the year that row was filed in (2025 for NFLX and NKE). The realistic column is
+measured with the reviewer's previous-copy builder (`sec_previous`), on the same cached responses.
+A refresh therefore writes the new filing's year, the year whose frames moved, and the order
+object. Across snapshots
 of different scope, all 165 data objects and 14 order objects of the 14 page companies also in the
 screen's universe are the same objects (same cached response, same names).
 
@@ -158,6 +166,23 @@ No screen field moves under the late store, because the screen cuts whatever it 
 (`enrich_with_fundamentals` and `compute_fundamental_snapshot` both apply `facts_as_of` at its own
 cut). Only the rows can see a store that reads late, which is why the replay compares both.
 
+**REVIEW ROUND 2 OF #904 (coordinator), fixed behind tests that failed first on `cfa588a3`:**
+- **The held-name guard dead-ended every later screen run.** It compared this run's in-scope
+  exclusion count with the previous snapshot's, so a run whose universe no longer held the excluded
+  name was refused with every `--exclude` passed (0 < 1). It now compares only over the same
+  population: the same rule and as many names selected. A later run is accepted, and a same-run
+  re-ingest that drops the exclusion is still refused (checked on the committed manifests).
+- **The row comparison is now pinned on values.** One `val` changed with count and order
+  unchanged gives 2 differing rows. That pin is the one that fails under the reviewer's `val`-blind
+  mutant; every other pin passed it.
+- An int given for a float64 column is named as the float it is stored as, so its object hashes to
+  its own name.
+- A corrupt cache entry is "unreadable", not "not in the SEC cache".
+- The replay refuses a ticker that `securities.jsonl` maps to another CIK than the one the snapshot
+  ingested.
+- The replay's truncation line states example lines, rows and lists in their own units.
+- Units here: MB is 10^6 bytes, MiB is 2^20.
+
 **BOUNDARY.**
 - Every count is measured 2026-11-04 on main `f419b845` plus this branch.
 - The SEC cache read is the primary checkout's `data/cache/sec`, read only, never fetched. Its
@@ -171,17 +196,44 @@ cut). Only the rows can see a store that reads late, which is why the replay com
   bytes. "Names" in the replay are companies; a name-cut is one company at one cut.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **The screen snapshot's objects exist on one machine.** They are in this worktree's git-ignored
-  `data/facts/local`, and they are reproducible only from the same cache vintage. The committed
-  manifest names objects that CI and every other checkout lack, and those readers fail loud
-  (`FactsStoreNotPresentError`). They are shared when R2 exists (row 32 (30)).
-  Falsifier: a reader that opens this snapshot anywhere without the objects and does not raise.
+- **DEFERRED, OWNED IN STATE.md §5.0 row 44: the screen snapshot's objects exist in ONE SESSION
+  WORKTREE** (corrected in review round 2 of #904; the first draft said "on one machine").
+  - They are in `.claude/worktrees/quirky-khayyam-b2ec8b/data/facts/local`: 22,359 objects, 388.3
+    MB by the manifest and 414 MiB on disk. It is the only `data/facts/local` on this machine; the
+    reviewer scanned every worktree, and the primary has none.
+  - 22,180 of them exist nowhere else. The other 179 are the pages snapshot's committed objects.
+  - Archiving the session deletes its worktree (RUNBOOKS §k), and the committed manifest would then
+    name objects that exist nowhere. They are reproducible only from the same cache vintage.
+  - Readers without them fail loud (`FactsStoreNotPresentError`).
+  - Their home is R2 (row 32 (30)) or, until R2 exists, a lasting directory outside any session's
+    worktree, set as `$VINCI_FACTS_STORE`. Falsifier: a reader that opens this snapshot anywhere
+    without the objects and does not raise.
 - **The replay compares the store with the screen's code over the SAME cached response, not with
   what run 2026-10-16-01 read on its day.** The screen re-reads a cache copy older than a day, so
   on 2026-10-16 it may have read a later copy than the one held now. 2b, which switches the reader,
   needs the run to refresh the store itself.
-- **A screen manifest is 10.1 MB, and each refresh adds one.** Git packs the unchanged entries as
-  deltas, but every superseded manifest left in the tree adds 10 MB. A policy for removing
-  superseded local-snapshot manifests from the tree belongs with 2b.
+- **DEFERRED to the operator: git growth** (measured in review round 2 of #904; the policy is
+  the operator's).
+  - The screen manifest is 10,144,124 bytes pretty-printed and 8,308,803 compact. It has one entry
+    per object, each carrying a `path` that is derivable
+    (`source/entity/filed_year/content_id.parquet`).
+  - `fetched_at` is in the hashed manifest body, so a refetch of unchanged data is a new snapshot id
+    and a new 10 MB manifest.
+  - `extractor_version` is inside every `content_id`, so a version bump with unchanged values
+    renames all 353 of the pages' data objects: about 6.6 MB of public history per bump.
+  - The reviewer's estimate: weekly screen manifests kept in the tree come to about 525 MB a year;
+    removed from the tree at each supersede, about 7 MB a year packed.
+  - *Fixed in round 2:* the 50 MB cap now counts manifests as well as objects. The committed
+    fact-layer bytes are 16.9 MB: 6,584,136 of objects and 10,314,757 of manifests. History is
+    still not counted.
+- **DEFERRED to 2b, before anything reads the screen from the store: there is no staleness signal.**
+  - `get`, `frame`, `latest` and `companyfacts_as_of` never compare `as_of` with the response's
+    `fetched_at`. A read as of a date after the fetch returns the copy as fetched, with no warning.
+  - 1,677 of the screen snapshot's 1,692 copies were fetched before 2026-10-01 (range 2026-08-06 →
+    2026-10-27; measured on `edgar-6e0e4626855b9fce`'s manifest).
+  - A company the snapshot does not hold raises the same `FactUnknownError` as "nothing filed by
+    the date", so a reader cannot tell the two apart.
+- **DEFERRED: opening a local snapshot checks only that its directory exists.** An empty
+  `data/facts/local` opens, and the first read then fails loud on the missing object.
 - **The order objects are rewritten on every refresh** of a company whose response changed: 0.64 MB
   for the 26 page companies, delta-encoded (2.18 MB dictionary-encoded).

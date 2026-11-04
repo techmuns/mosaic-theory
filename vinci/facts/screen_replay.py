@@ -157,6 +157,14 @@ def replay_name(pop: ScreenPopulation, row: Any, store: FactStore, cache_dir: Pa
         return [NameReplay(ticker, None, k, None, reached, unread=why) for k in kinds]
     identity = _identity(secs[0])
     entity = pad_cik(identity.cik)
+    # THE SECURITIES SNAPSHOT IS READ AS IT IS NOW and nothing dates it (round 2 of #904): a ticker
+    # it maps to another CIK than the snapshot ingested would be replayed against another company
+    held = next((e["entity"] for e in store.manifest["entities"] if ticker in e["tickers"]), None)
+    if held is not None and held != entity:
+        return [NameReplay(ticker, entity, k, None, reached,
+                           unread=(f"securities.jsonl maps {ticker} to {entity}, not the CIK "
+                                   f"snapshot {store.snapshot_id} ingested ({held})"))
+                for k in kinds]
     last = row.gate_inputs.get("last")
     if last is None or last.value is None or last.as_of is None:
         return [NameReplay(ticker, entity, k, None, reached,
@@ -254,8 +262,8 @@ def print_replay(result: ReplayResult, *, shown: int = 20) -> list[NameReplay]:
     differ = [n for n in result.names if n.unread is None and not n.zero_diff]
     lines = [f"{n.ticker} {n.cut_kind} {n.cut}: {m['field']}: reference {_short(m['reference'])}"
              f" | store {_short(m['store'])}" for n in differ for m in n.mismatches]
-    lines += [f"{n.ticker} {n.cut_kind} {n.cut}: {e} (row examples: showing {len(n.examples)} "
-              f"of {n.row_diffs:,} row diffs, {n.order_diffs:,} order diffs)"
+    lines += [f"{n.ticker} {n.cut_kind} {n.cut}: {e} ({len(n.examples)} example line(s) for "
+              f"{n.row_diffs:,} differing row(s) and {n.order_diffs:,} list(s) out of order)"
               for n in differ for e in n.examples]
     print(f"\nmismatches: showing {min(shown, len(lines))} of {len(lines)}")
     for line in lines[:shown]:

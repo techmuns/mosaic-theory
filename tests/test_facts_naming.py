@@ -3,9 +3,12 @@ writer's pyarrow is pinned, and a local snapshot fails loud where its objects ar
 
 On FROZEN slices of real cached companyfacts (`tests/fixtures/facts/`, provenance in each `_note`).
 A "previous cache copy" is the response without its last filing day's rows, every other row
-verbatim and in order, which is what the cache held the day before that filing. On NFLX's slice
-that day (2026-10-21) has rows at positions 315, 317, 322, 323 and 395 of 396, so every row after
-315 moves; under schema v1 that renamed every partition holding one of them.
+verbatim and in order. It leaves each `frame` where today's response puts it, so these pins test
+that a POSITION never renames a partition. SEC moves a period's `frame` to its latest-filed row, and
+`frame` is content, so a real refresh also renames the year a moved frame left (16 of 17 shared for
+NFLX and NKE, measured in the slice-2a record): that is a content change, named correctly. On
+NFLX's slice that day (2026-10-21) has rows at positions 315, 317, 322, 323 and 395 of 396, so
+every row after 315 moves; under schema v1 that renamed every partition holding one of them.
 """
 from __future__ import annotations
 
@@ -246,3 +249,39 @@ def test_the_store_variable_moves_only_a_local_snapshot(tmp_path: Path,
     monkeypatch.setenv("VINCI_FACTS_STORE", str(tmp_path / "x"))
     assert store_root(storage="git", base=tmp_path) == tmp_path / "objects"
     assert store_root(storage="local", base=tmp_path) == tmp_path / "x"
+
+
+# --- review round 2 of #904 (coordinator) ---------------------------------------------------------
+
+def test_the_row_comparison_sees_one_value_changed() -> None:
+    """NEGATIVE: one `val` moved, the count and the order unchanged: two rows differ (the one gone
+    and the one come). A comparison blind to `val` passed every other pin."""
+    blob = facts_as_of(_load("NFLX-companyfacts-slice.json"), date(2026, 11, 2))
+    edited = copy.deepcopy(blob)
+    edited["facts"]["us-gaap"]["EarningsPerShareDiluted"]["units"]["USD/shares"][0]["val"] += 1
+    assert compare_rows(blob, edited, []) == (2, 0, 396, 396)
+
+
+def test_an_integer_value_names_its_object_as_the_stored_float_does(tmp_path: Path) -> None:
+    """The name hashes the values as STORED: an int given for a float64 column is 5.0 once
+    written, so it must be named as 5.0, or the object does not hash to its own name."""
+    rows = rows_from_companyfacts(_load("FUBO-companyfacts-slice.json")).rows
+    as_int = [{**r, "value": int(r["value"])} if r["value"].is_integer() else r for r in rows]
+    assert content_id(as_int) == content_id(rows)
+    files, order = write_entity(as_int, tmp_path / "objects")
+    manifest = build_manifest(
+        source=SOURCE, extractor=EXTRACTOR, extractor_version=EXTRACTOR_VERSION,
+        scope={"rule": "test"}, entities=[{"entity": "0001484769", "rows_kept": len(rows)}],
+        files=files, orders={"0001484769": order})
+    assert verify_manifest(manifest, tmp_path / "objects") == []
+
+
+def test_a_corrupt_cache_entry_is_named_unreadable_not_absent(tmp_path: Path) -> None:
+    from vinci.facts.edgar_ingest import NotInCacheError, read_cached
+    from vinci.netcache import CachedHttp
+    url = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{NFLX}.json"
+    with CachedHttp(cache_dir=tmp_path, user_agent="t", min_interval_sec=0, namespace="sec") as h:
+        h._write_cache(url, (FIX / "NFLX-companyfacts-slice.json").read_text())
+        h._cache_path(url).write_text("{not json")
+    with pytest.raises(NotInCacheError, match="unreadable"):
+        read_cached(url, tmp_path)
