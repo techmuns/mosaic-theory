@@ -167,6 +167,16 @@ def replay_name(pop: ScreenPopulation, row: Any, store: FactStore, cache_dir: Pa
     except NotInCacheError as exc:
         return [NameReplay(ticker, entity, k, price_date.isoformat(), reached, unread=str(exc))
                 for k in kinds]
+    # THE REFERENCE MUST BE THE RESPONSE THE SNAPSHOT INGESTED (round 1 of #904): the cache is read
+    # as it is now, and a copy refetched since the ingest would be compared as if it were the same
+    ingested = next((e for e in store.manifest["entities"] if e["entity"] == entity), None)
+    if ingested is not None and ingested["response_sha256"] != resp.sha256:
+        return [NameReplay(ticker, entity, k, price_date.isoformat(), reached,
+                           fetched_at=resp.fetched_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                           unread=(f"the SEC cache now holds not the response snapshot "
+                                   f"{store.snapshot_id} ingested (fetched "
+                                   f"{ingested['fetched_at']}, sha256 "
+                                   f"{ingested['response_sha256'][:12]}…)")) for k in kinds]
     full = json.loads(resp.text)
     out: list[NameReplay] = []
     for kind in kinds:

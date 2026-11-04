@@ -247,3 +247,22 @@ def test_a_name_the_snapshot_holds_that_cannot_be_read_fails_the_replay(
     with FactStore(name="screen", facts_base=tmp / "data" / "facts") as store:
         got = replay_run(RUN, tmp / "data" / "snapshots", store, cache)
     assert [n.ticker for n in print_replay(got)] == ["EEFT"]
+
+
+def test_a_cache_that_moved_since_the_ingest_is_named_not_compared(
+        screen: tuple[Path, Path]) -> None:
+    """The replay's reference is the SEC cache as it is now. A response refetched after the ingest
+    is another response than the snapshot holds: it is reported, and fails the replay, rather than
+    read as a store difference (round 1 of #904)."""
+    from vinci.facts.screen_replay import print_replay, replay_run
+    tmp, cache = screen
+    moved = _load("EEFT-companyfacts-slice.json")
+    _eeft_rows(moved)[0]["val"] += 1                       # a revised pre-cut fact
+    with CachedHttp(cache_dir=cache, user_agent="t", min_interval_sec=0, namespace="sec") as h:
+        h._write_cache(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{EEFT}.json",
+                       json.dumps(moved))
+    with FactStore(name="screen", facts_base=tmp / "data" / "facts") as store:
+        got = replay_run(RUN, tmp / "data" / "snapshots", store, cache)
+    (eeft,) = [n for n in got.names if n.ticker == "EEFT"]
+    assert eeft.unread is not None and "not the response" in eeft.unread
+    assert [n.ticker for n in print_replay(got)] == ["EEFT"]
