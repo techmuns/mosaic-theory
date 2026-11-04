@@ -1,0 +1,56 @@
+{
+ "_note": "A FROZEN SLICE of EEFT's (Euronet Worldwide) cached companyfacts, https://data.sec.gov/api/xbrl/companyfacts/CIK0001029199.json, fetched 2026-08-06, response sha256 a19542e2a3379dff60c3605ae3da76e03b9c22498562a5abb065c67bfe006699: dei:EntityCommonStockSharesOutstanding rows 40-43 verbatim. Row 42, the FY2020 10-K's cover count (accn 0001213900-21-010724, filed 2021-02-22), is stated 52752851000000000: a filer scale error, above 2**53 yet exactly representable in float64 (52752851 x 10**9 has an odd part under 2**53). Slice 1's ingest refused it (slice 2a).",
+ "cik": 1029199,
+ "entityName": "EURONET WORLDWIDE, INC.",
+ "facts": {
+  "dei": {
+   "EntityCommonStockSharesOutstanding": {
+    "label": "Entity Common Stock, Shares Outstanding",
+    "description": "Indicate number of shares or other units outstanding of each of registrant's classes of capital or common stock or other ownership interests, if and as stated on cover of related periodic report. Where multiple classes or units exist define each class/interest by adding class of stock items such as Common Class A [Member], Common Class B [Member] or Partnership Interest [Member] onto the Instrument [Domain] of the Entity Listings, Instrument.",
+    "units": {
+     "shares": [
+      {
+       "end": "2020-08-07",
+       "val": 52289019,
+       "accn": "0001213900-20-020651",
+       "fy": 2020,
+       "fp": "Q2",
+       "form": "10-Q",
+       "filed": "2020-08-06",
+       "frame": "CY2020Q2I"
+      },
+      {
+       "end": "2020-10-30",
+       "val": 52314901,
+       "accn": "0001213900-20-034556",
+       "fy": 2020,
+       "fp": "Q2",
+       "form": "10-Q",
+       "filed": "2020-11-02",
+       "frame": "CY2020Q3I"
+      },
+      {
+       "end": "2021-02-19",
+       "val": 52752851000000000,
+       "accn": "0001213900-21-010724",
+       "fy": 2020,
+       "fp": "FY",
+       "form": "10-K",
+       "filed": "2021-02-22"
+      },
+      {
+       "end": "2021-05-03",
+       "val": 52797354,
+       "accn": "0001213900-21-024551",
+       "fy": 2021,
+       "fp": "Q1",
+       "form": "10-Q",
+       "filed": "2021-05-05",
+       "frame": "CY2021Q1I"
+      }
+     ]
+    }
+   }
+  }
+ }
+}

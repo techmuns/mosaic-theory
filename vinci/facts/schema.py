@@ -10,10 +10,13 @@ committed ``data/facts/schema.json`` is :func:`contract`'s output, and
 ``tests/test_facts_contract.py`` fails when they disagree. A column change is therefore a reviewed
 diff to a file, plus a :data:`SCHEMA_VERSION` bump, never a silent change in what the writer emits.
 
-THE SNAPSHOT ID IS NOT A COLUMN, so that an unchanged partition CAN be the same object in two
-snapshots; the reader stamps each fact with the snapshot it read, from the manifest. Today it is
-not: ``source_position`` shifts with every new filing and the bytes embed pyarrow's version, so a
-refresh rewrites every partition (review round 2 of #896; the fix is STATE.md §5.0 row 44).
+THE SNAPSHOT ID IS NOT A COLUMN, AND NEITHER IS THE ROW'S PLACE IN THE RESPONSE (schema v2,
+slice 2a). An object is named by a hash of its rows' content (:func:`vinci.facts.store.content_id`),
+so a partition no later filing touched is the SAME object in every snapshot. Version 1 stored
+``source_position``, the row's index in the whole response; one new filing shifted every later
+row's index and so rewrote every partition (0 of 17 earlier-year partitions shared on NFLX's
+previous cache copy, review round 2 of #896). The response's order is kept in its own per-entity
+object (:data:`ORDER_COLUMNS`), which a replay needs and a point-in-time query does not.
 """
 from __future__ import annotations
 
@@ -26,7 +29,7 @@ import pyarrow as pa  # type: ignore[import-untyped]
 
 #: Bumped on any change to :data:`COLUMNS`. A manifest records the version its files were written
 #: at, and the reader refuses a manifest whose version it does not know.
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 #: Where the committed contract lives, relative to the repository root.
 CONTRACT_RELPATH = Path("data") / "facts" / "schema.json"
@@ -73,23 +76,41 @@ COLUMNS: tuple[Column, ...] = (
     Column("extractor_version", "string", False, "That module's version when it wrote the row."),
     Column("status", "string", False, "'present' for a stated fact."),
     Column("reason", "string", True, "Why a non-present status was recorded; null when present."),
+)
+
+#: One entity's response order: row ``row`` of data object ``object`` was the response's row
+#: ``source_position``. One order object per entity per response, named by its content's hash.
+ORDER_COLUMNS: tuple[Column, ...] = (
     Column("source_position", "int64", False,
            "The row's position in the source response, so a replay reproduces the filer's order."),
+    Column("object", "string", False, "The content id of the data object holding the row."),
+    Column("row", "int32", False, "The row's index in that object, in its stored order."),
 )
 
 
+def _schema(columns: tuple[Column, ...]) -> pa.Schema:
+    return pa.schema([pa.field(c.name, _TYPES[c.type], nullable=c.nullable) for c in columns])
+
+
 def arrow_schema() -> pa.Schema:
-    """The Arrow schema every partition is written with."""
-    return pa.schema([pa.field(c.name, _TYPES[c.type], nullable=c.nullable) for c in COLUMNS])
+    """The Arrow schema every data partition is written with."""
+    return _schema(COLUMNS)
+
+
+def order_arrow_schema() -> pa.Schema:
+    """The Arrow schema every order object is written with."""
+    return _schema(ORDER_COLUMNS)
+
+
+def _doc(columns: tuple[Column, ...]) -> list[dict[str, Any]]:
+    return [{"name": c.name, "type": c.type, "nullable": c.nullable, "doc": c.doc}
+            for c in columns]
 
 
 def contract() -> dict[str, Any]:
     """The contract as committed: the version; each column's name, type, nullability, meaning."""
-    return {
-        "schema_version": SCHEMA_VERSION,
-        "columns": [{"name": c.name, "type": c.type, "nullable": c.nullable, "doc": c.doc}
-                    for c in COLUMNS],
-    }
+    return {"schema_version": SCHEMA_VERSION, "columns": _doc(COLUMNS),
+            "order_columns": _doc(ORDER_COLUMNS)}
 
 
 def contract_text() -> str:

@@ -45,6 +45,10 @@ data/dossiers/*/llm_call.log
 # immutable content-addressed Parquet objects themselves (7.2 MB for slice 1; committed only while
 # under 50 MB). Derived EDGAR facts, each with its accession; no licensed workbook content.
 !data/facts/
+# ...except a LOCAL snapshot's objects (slice 2a): the screen's universe is ~28M rows, far past the
+# 50 MB line, so its objects stay on the machine that ingested them until R2 exists, and only its
+# manifest (under data/facts/manifests) is committed.
+data/facts/local/
 # Monitor: the dated book history + the benchmark assignments. DERIVED analysis (returns and
 # excess-vs-benchmark computed from the committed ledger and EOD closes), and the AUDIT TRAIL of
 # how the book was marked on each date — a spread nobody can re-read is not evidence. Small,

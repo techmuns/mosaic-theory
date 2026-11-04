@@ -1,29 +1,35 @@
 """Where facts live, how a partition is written, and the manifest that names a snapshot.
 
-IMMUTABLE AND CONTENT-ADDRESSED. A partition (source × entity × filed year) is named by the sha256
-of its own bytes: ``<source>/<entity>/<filed_year>/<sha256>.parquet``. An object is never
-overwritten. Writing bytes that already exist under their name is a no-op, and a name whose bytes
-differ from it raises, because that can only mean the object was corrupted.
+IMMUTABLE, AND NAMED BY CONTENT. A data partition (source × entity × filed year) is named by
+:func:`content_id`, a hash of its rows' canonical text, never of its bytes:
+``<source>/<entity>/<filed_year>/<content_id>.parquet``. A partition no later filing touched
+therefore has the same name in every snapshot and is written once. Schema v1 named an object by
+its bytes, and its rows carried ``source_position`` (the row's index in the WHOLE response), so one
+new filing shifted every later row and renamed every partition: the coordinator measured 0 of 17,
+0 of 14 and 0 of 17 earlier-year partitions shared on NFLX, FUBO and NKE's previous cache copies
+(review round 2 of #896). The response's order now lives in one ORDER object per entity
+(``<source>/<entity>/order/<content_id>.parquet``): for each response row, which data object holds
+it and at which row. A replay reads it; a point-in-time query never needs it.
 
-THE BYTES ARE NOT YET A STABLE NAME ACROSS REFRESHES (review round 2 of #896). Each row carries
-``source_position``, its index in the WHOLE response, so one new filing shifts every later row's
-position and rewrites every partition after it. Measured by the coordinator on NFLX, FUBO and
-NKE's previous cache copies: 0 of 17, 0 of 14 and 0 of 17 earlier-year partitions shared, although
-their rows are identical once ``source_position`` is stripped. The bytes also embed the writing
-pyarrow's version. So today an unchanged partition is NOT shared between snapshots. Naming objects
-by a canonical hash of their rows without ``source_position`` (order kept separately), and pinning
-the writer's pyarrow, comes BEFORE any second snapshot or any upload (STATE.md §5.0 row 44).
+THE BYTES ARE PINNED AS WELL AS THE NAME. A name does not depend on pyarrow (it hashes decoded
+values), but the bytes do: they embed the writer's version and its encoder's choices. The writer
+refuses any pyarrow other than :data:`PINNED_PYARROW`, which ``pyproject.toml`` pins exactly, so the
+same rows always write the same bytes. An object is never overwritten: writing it again with the
+same bytes is a no-op, and different bytes under its name raise.
 
-THE MANIFEST IS THE SNAPSHOT. ``data/facts/manifests/<snapshot_id>.json`` lists every object with
-its sha256, row count and byte size, plus the provenance of every entity's source response. The
-snapshot id is derived from that content, so the same cache ingested twice yields the same id and
-the same manifest. ``data/facts/current.json`` names each source's current snapshot, and only that
-source's writer moves it.
+THE MANIFEST IS THE SNAPSHOT. ``data/facts/manifests/<snapshot_id>.json`` lists every data object
+and every entity's order object with its content id, byte hash, row count and size, plus the
+provenance of every entity's source response. The snapshot id is derived from that content, so the
+same cache ingested twice yields the same id. ``data/facts/current.json`` names the current
+snapshot of each (source, name): ``edgar`` for the committed pages, ``edgar:screen`` for the
+screen's universe.
 
-THE LOCATION IS CONFIGURABLE, AND ONLY LOCAL TODAY. ``VINCI_FACTS_STORE`` names the object root,
-and the default is ``data/facts/objects``. A remote location (``r2://``, ``s3://``) raises
-:class:`RemoteStoreNotConfiguredError`: no bucket or credential exists yet (checked 2026-11-04), and
-the upload path is not built until one does, since a real run could not prove it (STATE.md §5.0).
+WHERE THE OBJECTS ARE IS THE MANIFEST'S ``storage``. ``git``: committed under
+``data/facts/objects`` (the stopgap while it stays under 50 MB). ``local``: on the machine that
+wrote them, at ``$VINCI_FACTS_STORE`` or the git-ignored ``data/facts/local``, and NOT shared with
+any other machine or CI until R2 exists (STATE.md §5.0 row 32 (30)); only the manifest is
+committed. A remote location (``r2://``, ``s3://``) raises :class:`RemoteStoreNotConfiguredError`:
+no bucket or credential exists yet, and the upload path is not built until one does.
 """
 from __future__ import annotations
 
@@ -33,19 +39,34 @@ import json
 import os
 import re
 from collections import defaultdict
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass
+from datetime import date
 from pathlib import Path
 from typing import Any
 
 import pyarrow as pa  # type: ignore[import-untyped]
 import pyarrow.parquet as pq  # type: ignore[import-untyped]
 
-from vinci.facts.schema import SCHEMA_VERSION, arrow_schema, contract_text
+from vinci.facts.schema import (
+    COLUMNS,
+    ORDER_COLUMNS,
+    SCHEMA_VERSION,
+    arrow_schema,
+    contract_text,
+    order_arrow_schema,
+)
 
-MANIFEST_VERSION = 1
+MANIFEST_VERSION = 2
+#: The one pyarrow the writer runs under (``pyproject.toml`` pins it exactly). A reader may run
+#: under any version: it hashes nothing it reads back except in :func:`verify_manifest`.
+PINNED_PYARROW = "26.0.1"
 STORE_ENV = "VINCI_FACTS_STORE"
 #: Repository-relative paths, resolved against the working directory as ``Config.data_dir`` is.
 DEFAULT_FACTS_DIR = Path("data") / "facts"
+#: The snapshot name ``current.json`` keys by the bare source.
+DEFAULT_NAME = "pages"
+STORAGES = ("git", "local")
 _REMOTE = re.compile(r"^[a-z][a-z0-9+.-]*://", re.I)
 _SHA = re.compile(r"^[0-9a-f]{64}$")
 
@@ -70,22 +91,93 @@ def current_path(base: Path | None = None) -> Path:
     return (base or facts_dir()) / "current.json"
 
 
-def store_root(explicit: str | Path | None = None) -> Path:
-    """The object root: ``explicit``, else ``$VINCI_FACTS_STORE``, else ``data/facts/objects``."""
-    raw = str(explicit) if explicit is not None else os.environ.get(STORE_ENV, "")
-    if not raw:
-        return facts_dir() / "objects"
-    if _REMOTE.match(raw):
-        raise RemoteStoreNotConfiguredError(
-            f"{STORE_ENV}={raw!r} names a remote store; only a local directory is supported until "
-            "the R2 bucket and its credentials exist (STATE.md §5.0, the fact layer's R2 row)")
-    return Path(raw)
+def pointer_key(source: str, name: str = DEFAULT_NAME) -> str:
+    """The key ``current.json`` names a snapshot under: ``edgar``, ``edgar:screen``."""
+    return source if name == DEFAULT_NAME else f"{source}:{name}"
 
+
+def read_pointers(base: Path | None = None) -> dict[str, str]:
+    cur = current_path(base)
+    if not cur.exists():
+        return {}
+    raw = json.loads(cur.read_text())
+    if not isinstance(raw, dict) or not all(isinstance(v, str) for v in raw.values()):
+        raise FactsStoreError(f"{cur} is not a mapping of names to snapshot ids")
+    return {str(k): str(v) for k, v in raw.items()}
+
+
+def store_root(explicit: str | Path | None = None, *, storage: str = "git",
+               base: Path | None = None) -> Path:
+    """The object root of a snapshot stored as ``storage``: ``explicit`` when given; else, for
+    ``git``, ``<base>/objects``; for ``local``, ``$VINCI_FACTS_STORE`` or ``<base>/local``."""
+    if storage not in STORAGES:
+        raise FactsStoreError(f"storage {storage!r} is not one of {STORAGES}")
+    raw = str(explicit) if explicit is not None else (
+        os.environ.get(STORE_ENV, "") if storage == "local" else "")
+    if raw and _REMOTE.match(raw):
+        raise RemoteStoreNotConfiguredError(
+            f"{raw!r} names a remote store; only a local directory is supported until the R2 "
+            "bucket and its credentials exist (STATE.md §5.0, row 32 (30))")
+    if raw:
+        return Path(raw)
+    return (base or facts_dir()) / ("objects" if storage == "git" else "local")
+
+
+# --- canonical content ---------------------------------------------------------------------------
+
+_DATA_NAMES = tuple(c.name for c in COLUMNS)
+_ORDER_NAMES = tuple(c.name for c in ORDER_COLUMNS)
+#: The first line every content id hashes: what kind of object, and its columns with their types,
+#: so a column change renames every object and an unchanged schema renames none.
+_DATA_HEADER = json.dumps({"object": "data", "columns": [[c.name, c.type] for c in COLUMNS]})
+_ORDER_HEADER = json.dumps({"object": "order",
+                            "columns": [[c.name, c.type] for c in ORDER_COLUMNS]})
+
+
+def _jsonable(v: Any) -> Any:
+    return v.isoformat() if isinstance(v, date) else v
+
+
+def row_text(row: Mapping[str, Any]) -> str:
+    """A data row's canonical text: its stored columns' values, in contract order, as JSON. A key
+    outside the contract (an ingest's ``source_position``) is not part of it."""
+    return json.dumps([_jsonable(row[c]) for c in _DATA_NAMES], ensure_ascii=False,
+                      separators=(",", ":"), allow_nan=False)
+
+
+def _digest(header: str, lines: Iterable[str]) -> str:
+    h = hashlib.sha256(header.encode("utf-8") + b"\n")
+    for line in lines:
+        h.update(line.encode("utf-8") + b"\n")
+    return h.hexdigest()
+
+
+def canonical_order(rows: Iterable[Mapping[str, Any]]) -> list[tuple[str, Mapping[str, Any]]]:
+    """``rows`` with their canonical text, in the stored order: sorted by that text, so the order
+    is a function of the rows' content and nothing else (the input's order, a position)."""
+    return sorted(((row_text(r), r) for r in rows), key=lambda t: t[0])
+
+
+def content_id(rows: Iterable[Mapping[str, Any]]) -> str:
+    """A data object's name: sha256 over the header and every row's canonical text, sorted."""
+    return _digest(_DATA_HEADER, (t for t, _ in canonical_order(rows)))
+
+
+def _order_text(source_position: int, obj: str, row: int) -> str:
+    return json.dumps([source_position, obj, row], separators=(",", ":"))
+
+
+def order_content_id(order: Iterable[tuple[int, str, int]]) -> str:
+    return _digest(_ORDER_HEADER, (_order_text(*o) for o in sorted(order)))
+
+
+# --- writing -------------------------------------------------------------------------------------
 
 @dataclass(frozen=True)
 class FileEntry:
     path: str          # relative to the object root, POSIX separators
-    sha256: str
+    content_id: str    # the hash the name is: content_id() of its rows
+    sha256: str        # the hash of its bytes, which the reader checks before it reads them
     rows: int
     bytes: int
     source: str
@@ -93,8 +185,21 @@ class FileEntry:
     filed_year: int
 
 
-def object_path(source: str, entity: str, filed_year: int, sha256: str) -> str:
-    return f"{source}/{entity}/{filed_year}/{sha256}.parquet"
+@dataclass(frozen=True)
+class OrderEntry:
+    path: str
+    content_id: str
+    sha256: str
+    rows: int
+    bytes: int
+
+
+def object_path(source: str, entity: str, filed_year: int, cid: str) -> str:
+    return f"{source}/{entity}/{filed_year}/{cid}.parquet"
+
+
+def order_path(source: str, entity: str, cid: str) -> str:
+    return f"{source}/{entity}/order/{cid}.parquet"
 
 
 def _sha256_file(path: Path) -> str:
@@ -105,15 +210,33 @@ def _sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
-def parquet_bytes(rows: list[dict[str, Any]]) -> bytes:
-    """``rows`` as one Parquet file, in ``source_position`` order, with fixed writer options, so
-    the same rows always produce the same bytes under the same pyarrow version."""
-    ordered = sorted(rows, key=lambda r: int(r["source_position"]))
-    table = pa.Table.from_pylist(ordered, schema=arrow_schema())
+def require_pinned_writer() -> None:
+    if pa.__version__ != PINNED_PYARROW:
+        raise FactsStoreError(
+            f"the fact layer's writer is pinned to pyarrow {PINNED_PYARROW}; this is "
+            f"{pa.__version__}. Another version writes different bytes under the same names")
+
+
+#: The order object's integer columns run in near-unit steps, which delta encoding stores in a few
+#: bits a row: 0.63 MB for the committed pages' 467,887 rows, against 2.18 MB dictionary-encoded.
+_ORDER_ENCODING = {"source_position": "DELTA_BINARY_PACKED", "row": "DELTA_BINARY_PACKED"}
+
+
+def _parquet(rows: Sequence[Mapping[str, Any]], schema: pa.Schema, *,
+             order: bool = False) -> bytes:
+    require_pinned_writer()
+    table = pa.Table.from_pylist(list(rows), schema=schema)
     buf = io.BytesIO()
-    pq.write_table(table, buf, compression="zstd", compression_level=9, use_dictionary=True,
-                   write_statistics=True, row_group_size=max(len(ordered), 1))
+    pq.write_table(table, buf, compression="zstd", compression_level=9,
+                   use_dictionary=["object"] if order else True,
+                   column_encoding=_ORDER_ENCODING if order else None,
+                   write_statistics=True, row_group_size=max(len(rows), 1))
     return buf.getvalue()
+
+
+def parquet_bytes(rows: Sequence[Mapping[str, Any]]) -> bytes:
+    """``rows`` as one data object, in their canonical order (:func:`canonical_order`)."""
+    return _parquet([r for _, r in canonical_order(rows)], arrow_schema())
 
 
 def write_object(root: Path, rel: str, data: bytes) -> None:
@@ -121,7 +244,9 @@ def write_object(root: Path, rel: str, data: bytes) -> None:
     target = root / rel
     if target.exists():
         if _sha256_file(target) != hashlib.sha256(data).hexdigest():
-            raise FactsStoreError(f"{target} exists with different bytes: the object is corrupted")
+            raise FactsStoreError(
+                f"{target} exists with different bytes: the object is corrupted, or was written "
+                f"by a pyarrow other than the pinned {PINNED_PYARROW}")
         return
     target.parent.mkdir(parents=True, exist_ok=True)
     tmp = target.with_name(f".{target.name}.{os.getpid()}.tmp")
@@ -129,21 +254,57 @@ def write_object(root: Path, rel: str, data: bytes) -> None:
     os.replace(tmp, target)
 
 
-def write_partitions(rows: list[dict[str, Any]], root: Path) -> list[FileEntry]:
-    """Partition ``rows`` by (source, entity, filed year) and write each as one immutable object."""
-    groups: dict[tuple[str, str, int], list[dict[str, Any]]] = defaultdict(list)
+def write_entity(rows: list[dict[str, Any]], root: Path) -> tuple[list[FileEntry], OrderEntry]:
+    """One entity's rows (each carrying its ingest ``source_position``) as one data object per
+    filed year plus one order object. Returns their manifest entries."""
+    keys = {(r["source"], r["entity"]) for r in rows}
+    if len(keys) != 1:
+        raise FactsStoreError(f"write_entity takes one entity's rows, got {sorted(keys)}")
+    ((source, entity),) = keys
+    by_year: dict[int, list[dict[str, Any]]] = defaultdict(list)
     for r in rows:
-        groups[(r["source"], r["entity"], r["filed_date"].year)].append(r)
-    out: list[FileEntry] = []
-    for (source, entity, year), part in sorted(groups.items()):
-        data = parquet_bytes(part)
-        sha = hashlib.sha256(data).hexdigest()
-        rel = object_path(source, entity, year, sha)
+        by_year[r["filed_date"].year].append(r)
+    files: list[FileEntry] = []
+    order: list[tuple[int, str, int]] = []
+    for year, part in sorted(by_year.items()):
+        ordered = canonical_order(part)
+        cid = _digest(_DATA_HEADER, (t for t, _ in ordered))
+        data = _parquet([r for _, r in ordered], arrow_schema())
+        rel = object_path(source, entity, year, cid)
         write_object(root, rel, data)
-        out.append(FileEntry(path=rel, sha256=sha, rows=len(part), bytes=len(data), source=source,
-                             entity=entity, filed_year=year))
-    return out
+        files.append(FileEntry(path=rel, content_id=cid, sha256=hashlib.sha256(data).hexdigest(),
+                               rows=len(part), bytes=len(data), source=source, entity=entity,
+                               filed_year=year))
+        order.extend((int(r["source_position"]), cid, i) for i, (_, r) in enumerate(ordered))
+    order.sort()
+    positions = [o[0] for o in order]
+    if len(set(positions)) != len(positions):
+        raise FactsStoreError(f"{entity}: two rows claim one source_position")
+    ocid = order_content_id(order)
+    obytes = _parquet([dict(zip(_ORDER_NAMES, o, strict=True)) for o in order],
+                      order_arrow_schema(), order=True)
+    orel = order_path(source, entity, ocid)
+    write_object(root, orel, obytes)
+    return files, OrderEntry(path=orel, content_id=ocid,
+                             sha256=hashlib.sha256(obytes).hexdigest(), rows=len(order),
+                             bytes=len(obytes))
 
+
+def write_partitions(rows: list[dict[str, Any]], root: Path
+                     ) -> tuple[list[FileEntry], dict[str, OrderEntry]]:
+    """:func:`write_entity` for every entity in ``rows``."""
+    by_entity: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for r in rows:
+        by_entity[r["entity"]].append(r)
+    files: list[FileEntry] = []
+    orders: dict[str, OrderEntry] = {}
+    for entity, part in sorted(by_entity.items()):
+        got, orders[entity] = write_entity(part, root)
+        files.extend(got)
+    return files, orders
+
+
+# --- the manifest --------------------------------------------------------------------------------
 
 def _canonical(obj: Any) -> str:
     return json.dumps(obj, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
@@ -158,23 +319,36 @@ def snapshot_id_for(body: dict[str, Any]) -> str:
 
 def build_manifest(*, source: str, extractor: str, extractor_version: str,
                    scope: dict[str, Any], entities: list[dict[str, Any]],
-                   files: list[FileEntry]) -> dict[str, Any]:
+                   files: list[FileEntry], orders: Mapping[str, OrderEntry],
+                   name: str = DEFAULT_NAME, storage: str = "git") -> dict[str, Any]:
+    if storage not in STORAGES:
+        raise FactsStoreError(f"storage {storage!r} is not one of {STORAGES}")
+    named = {str(e["entity"]) for e in entities}
+    if named != set(orders):
+        raise FactsStoreError(f"entities without an order object: {sorted(named - set(orders))}; "
+                              f"order objects without an entity: {sorted(set(orders) - named)}")
     ordered = sorted(files, key=lambda f: f.path)
     body: dict[str, Any] = {
         "manifest_version": MANIFEST_VERSION,
         "schema_version": SCHEMA_VERSION,
         "schema_sha256": hashlib.sha256(contract_text().encode("utf-8")).hexdigest(),
         "source": source,
+        "name": name,
+        "storage": storage,
+        "writer": {"pyarrow": PINNED_PYARROW},
         "extractor": extractor,
         "extractor_version": extractor_version,
         "scope": scope,
-        "entities": sorted(entities, key=lambda e: str(e["entity"])),
+        "entities": sorted(({**e, "order": asdict(orders[str(e["entity"])])} for e in entities),
+                           key=lambda e: str(e["entity"])),
         "files": [asdict(f) for f in ordered],
         "totals": {
-            "entities": len({f.entity for f in ordered}),
+            "entities": len(named),
             "files": len(ordered),
             "rows": sum(f.rows for f in ordered),
             "bytes": sum(f.bytes for f in ordered),
+            "order_files": len(orders),
+            "order_bytes": sum(o.bytes for o in orders.values()),
         },
     }
     body["snapshot_id"] = snapshot_id_for(body)
@@ -189,24 +363,27 @@ def write_manifest(manifest: dict[str, Any], base: Path | None = None) -> Path:
         raise FactsStoreError(f"{target} exists with different content under the same id")
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(text)
-    cur = current_path(base)
-    pointer = json.loads(cur.read_text()) if cur.exists() else {}
-    pointer[manifest["source"]] = manifest["snapshot_id"]
-    cur.write_text(_canonical(pointer))
+    pointer = read_pointers(base)
+    pointer[pointer_key(manifest["source"], manifest["name"])] = manifest["snapshot_id"]
+    current_path(base).write_text(_canonical(pointer))
     return target
 
 
+def manifest_path(snapshot_id: str, base: Path | None = None) -> Path:
+    return manifests_dir(base) / f"{snapshot_id}.json"
+
+
 def load_manifest(snapshot_id: str | None = None, *, source: str = "edgar",
-                  base: Path | None = None) -> dict[str, Any]:
-    """``snapshot_id``'s manifest, else the one ``current.json`` names for ``source``."""
+                  name: str = DEFAULT_NAME, base: Path | None = None) -> dict[str, Any]:
+    """``snapshot_id``'s manifest, else the one ``current.json`` names for (source, name)."""
     if snapshot_id is None:
         cur = current_path(base)
         if not cur.exists():
             raise FactsStoreError(f"no {cur}: no snapshot has been written")
-        snapshot_id = json.loads(cur.read_text()).get(source)
+        snapshot_id = read_pointers(base).get(pointer_key(source, name))
         if not snapshot_id:
-            raise FactsStoreError(f"{cur} names no snapshot for source {source!r}")
-    path = manifests_dir(base) / f"{snapshot_id}.json"
+            raise FactsStoreError(f"{cur} names no snapshot for {pointer_key(source, name)!r}")
+    path = manifest_path(snapshot_id, base)
     if not path.exists():
         raise FactsStoreError(f"no manifest {path}")
     manifest: dict[str, Any] = json.loads(path.read_text())
@@ -220,10 +397,12 @@ def load_manifest(snapshot_id: str | None = None, *, source: str = "edgar",
     return manifest
 
 
-#: Every key a manifest's file entry and entity entry must carry.
-_FILE_KEYS = ("path", "sha256", "rows", "bytes", "source", "entity", "filed_year")
-_ENTITY_KEYS = ("entity", "rows_kept")
-_TOP_KEYS = ("snapshot_id", "source", "schema_version", "files", "entities", "totals")
+#: Every key a manifest's entries must carry.
+_FILE_KEYS = ("path", "content_id", "sha256", "rows", "bytes", "source", "entity", "filed_year")
+_ORDER_KEYS = ("path", "content_id", "sha256", "rows", "bytes")
+_ENTITY_KEYS = ("entity", "rows_kept", "order")
+_TOP_KEYS = ("snapshot_id", "source", "name", "storage", "schema_version", "files", "entities",
+             "totals")
 
 
 def check_manifest_shape(manifest: dict[str, Any]) -> None:
@@ -231,6 +410,8 @@ def check_manifest_shape(manifest: dict[str, Any]) -> None:
     missing = [k for k in _TOP_KEYS if k not in manifest]
     if missing:
         raise FactsStoreError(f"manifest lacks {missing}")
+    if manifest["storage"] not in STORAGES:
+        raise FactsStoreError(f"manifest storage {manifest['storage']!r} is not one of {STORAGES}")
     for i, f in enumerate(manifest["files"]):
         lack = [k for k in _FILE_KEYS if k not in f]
         if lack:
@@ -238,18 +419,46 @@ def check_manifest_shape(manifest: dict[str, Any]) -> None:
                                   f"lacks {lack}")
     for i, e in enumerate(manifest["entities"]):
         lack = [k for k in _ENTITY_KEYS if k not in e]
+        if not lack and isinstance(e["order"], dict):
+            lack = [f"order.{k}" for k in _ORDER_KEYS if k not in e["order"]]
         if lack:
             raise FactsStoreError(f"manifest entity entry {i} ({e.get('entity', '<no entity>')}) "
                                   f"lacks {lack}")
 
 
-def verify_manifest(manifest: dict[str, Any], root: Path, *,
-                    check_objects: bool = True) -> list[str]:
+def _read_rows(path: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = pq.read_table(path).to_pylist()
+    return rows
+
+
+def _check_object(p: Path, entry: dict[str, Any], schema: pa.Schema) -> list[str]:
+    """The byte checks every object gets: present, its size, its hash, its rows, its schema."""
+    rel = entry["path"]
+    if not p.exists():
+        return [f"{rel}: missing"]
+    problems = []
+    if p.stat().st_size != entry["bytes"]:
+        problems.append(f"{rel}: {p.stat().st_size} bytes, manifest says {entry['bytes']}")
+    if _sha256_file(p) != entry["sha256"]:
+        return [*problems, f"{rel}: sha256 does not match its entry"]
+    meta = pq.read_metadata(p)
+    if meta.num_rows != entry["rows"]:
+        problems.append(f"{rel}: {meta.num_rows} rows, manifest says {entry['rows']}")
+    if not meta.schema.to_arrow_schema().equals(schema):
+        problems.append(f"{rel}: schema is not the contract's")
+    return problems
+
+
+def verify_manifest(manifest: dict[str, Any], root: Path, *, check_objects: bool = True,
+                    check_content: bool = True) -> list[str]:
     """Every way ``manifest`` disagrees with itself or with its objects under ``root``; [] if none.
 
-    Checked: the id recomputes from the content; the contract hash is today's; totals add up; each
-    path is the content-addressed name its entry implies; and (``check_objects``) each object
-    exists, hashes to its name, and holds the stated rows under the contract's schema."""
+    Checked: the id recomputes from the content; the contract hash is today's; totals add up;
+    every path is the content-addressed name its entry implies; each entity's order object holds
+    one row per kept row. With ``check_objects``: each object exists, its bytes hash to its entry,
+    and it holds the stated rows under the contract's schema. With ``check_content`` too: each
+    object's rows, decoded, hash to its NAME, and each order object maps every response position
+    to exactly one row of that entity's data objects, and every row to one position."""
     check_manifest_shape(manifest)
     problems: list[str] = []
     if snapshot_id_for(manifest) != manifest.get("snapshot_id"):
@@ -257,39 +466,77 @@ def verify_manifest(manifest: dict[str, Any], root: Path, *,
     want_schema = hashlib.sha256(contract_text().encode("utf-8")).hexdigest()
     if manifest.get("schema_sha256") != want_schema:
         problems.append("schema_sha256 is not the committed contract's")
-    files = manifest.get("files") or []
+    files = manifest["files"]
+    entities = manifest["entities"]
     totals = manifest.get("totals") or {}
-    if totals.get("files") != len(files) or totals.get("rows") != sum(f["rows"] for f in files) \
-            or totals.get("bytes") != sum(f["bytes"] for f in files) \
-            or totals.get("entities") != len({f["entity"] for f in files}):
-        problems.append(f"totals {totals} do not add up over {len(files)} files")
-    file_rows: dict[str, int] = {}
+    want_totals = {"entities": len(entities), "files": len(files),
+                   "rows": sum(f["rows"] for f in files), "bytes": sum(f["bytes"] for f in files),
+                   "order_files": len(entities),
+                   "order_bytes": sum(e["order"]["bytes"] for e in entities)}
+    if totals != want_totals or len({f["entity"] for f in files}) != len(entities):
+        problems.append(f"totals {totals} do not add up over {len(files)} files and "
+                        f"{len(entities)} entities ({want_totals})")
+    by_entity: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for f in files:
-        file_rows[f["entity"]] = file_rows.get(f["entity"], 0) + f["rows"]
-    for e in manifest.get("entities") or []:
-        if e["rows_kept"] != file_rows.get(e["entity"], 0):
+        by_entity[f["entity"]].append(f)
+    for e in entities:
+        held = sum(f["rows"] for f in by_entity.get(e["entity"], []))
+        if e["rows_kept"] != held:
             problems.append(f"entity {e['entity']}: rows_kept {e['rows_kept']}, its files hold "
-                            f"{file_rows.get(e['entity'], 0)}")
-    schema = arrow_schema()
+                            f"{held}")
+        if e["order"]["rows"] != held:
+            problems.append(f"entity {e['entity']}: its order object maps {e['order']['rows']} "
+                            f"rows, its files hold {held}")
+    named_ok: list[dict[str, Any]] = []
     for f in files:
-        if not _SHA.match(str(f.get("sha256"))) or f["path"] != object_path(
-                f["source"], f["entity"], f["filed_year"], f["sha256"]):
+        if not _SHA.match(str(f["content_id"])) or not _SHA.match(str(f["sha256"])) \
+                or f["path"] != object_path(f["source"], f["entity"], f["filed_year"],
+                                            f["content_id"]):
             problems.append(f"{f['path']}: not the content-addressed name of its entry")
+        else:
+            named_ok.append(f)
+    for e in entities:
+        o = e["order"]
+        if not _SHA.match(str(o["content_id"])) or not _SHA.match(str(o["sha256"])) \
+                or o["path"] != order_path(manifest["source"], e["entity"], o["content_id"]):
+            problems.append(f"{o['path']}: not the content-addressed name of its entry")
+    if not check_objects:
+        return problems
+    schema, oschema = arrow_schema(), order_arrow_schema()
+    readable: set[str] = set()
+    for f in named_ok:
+        got = _check_object(root / f["path"], f, schema)
+        problems.extend(got)
+        if not got:
+            readable.add(f["path"])
+            if check_content and content_id(_read_rows(root / f["path"])) != f["content_id"]:
+                problems.append(f"{f['path']}: its rows do not hash to its name")
+    for e in entities:
+        o = e["order"]
+        got = _check_object(root / o["path"], o, oschema)
+        problems.extend(got)
+        if got or not check_content:
             continue
-        if not check_objects:
-            continue
-        p = root / f["path"]
-        if not p.exists():
-            problems.append(f"{f['path']}: missing under {root}")
-            continue
-        if p.stat().st_size != f["bytes"]:
-            problems.append(f"{f['path']}: {p.stat().st_size} bytes, manifest says {f['bytes']}")
-        if _sha256_file(p) != f["sha256"]:
-            problems.append(f"{f['path']}: sha256 does not match its name")
-            continue
-        meta = pq.read_metadata(p)
-        if meta.num_rows != f["rows"]:
-            problems.append(f"{f['path']}: {meta.num_rows} rows, manifest says {f['rows']}")
-        if not meta.schema.to_arrow_schema().equals(schema):
-            problems.append(f"{f['path']}: schema is not the contract's")
+        order = [(r["source_position"], r["object"], r["row"])
+                 for r in _read_rows(root / o["path"])]
+        if order_content_id(order) != o["content_id"]:
+            problems.append(f"{o['path']}: its rows do not hash to its name")
+        problems.extend(_check_order(e["entity"], order, by_entity.get(e["entity"], [])))
+    return problems
+
+
+def _check_order(entity: str, order: list[tuple[int, str, int]],
+                 files: list[dict[str, Any]]) -> list[str]:
+    """The order object is a bijection between response positions and the entity's stored rows."""
+    problems = []
+    positions = [o[0] for o in order]
+    if positions != sorted(set(positions)):
+        problems.append(f"entity {entity}: order positions are not strictly increasing")
+    want = {(f["content_id"], i) for f in files for i in range(f["rows"])}
+    have = [(obj, row) for _, obj, row in order]
+    if len(set(have)) != len(have) or set(have) != want:
+        missing, extra = len(want - set(have)), len(set(have) - want)
+        problems.append(f"entity {entity}: order maps {len(have)} rows ({missing} stored rows "
+                        f"unmapped, {extra} mapped rows not stored, "
+                        f"{len(have) - len(set(have))} mapped twice)")
     return problems

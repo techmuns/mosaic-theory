@@ -36,8 +36,9 @@ from vinci.netcache import CachedHttp
 
 SOURCE = "edgar"
 EXTRACTOR = "vinci.facts.edgar_ingest"
-#: Bumped whenever the rows this module emits for the same response could change.
-EXTRACTOR_VERSION = "1"
+#: Bumped whenever the rows this module emits for the same response could change. "2" (slice 2a):
+#: an integer above 2**53 that float64 holds exactly is stored, where "1" refused its response.
+EXTRACTOR_VERSION = "2"
 
 #: The SEC cache namespace `vinci.sec.build_sec_http` writes companyfacts under.
 SEC_NAMESPACE = "sec"
@@ -46,8 +47,6 @@ COMPANY_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
 _REQUIRED_KEYS = frozenset({"end", "val", "accn", "fy", "fp", "form", "filed"})
 _OPTIONAL_KEYS = frozenset({"start", "frame"})
 _ROW_KEYS = _REQUIRED_KEYS | _OPTIONAL_KEYS
-#: A float64 holds every integer up to 2**53 exactly; past it a stored value would differ.
-_EXACT_INT_LIMIT = 2 ** 53
 
 
 class NotInCacheError(LookupError):
@@ -127,11 +126,18 @@ def _date(raw: Any, *, where: str) -> date:
 def _value(raw: Any, *, where: str) -> float:
     if isinstance(raw, bool) or not isinstance(raw, int | float):
         raise IngestShapeError(f"{where}: value {raw!r} is not a number")
-    if isinstance(raw, int) and abs(raw) > _EXACT_INT_LIMIT:
+    try:
+        stored = float(raw)
+    except OverflowError:
+        raise IngestShapeError(f"{where}: integer {raw} does not survive float64 storage") from None
+    # EXACT ROUND TRIP, NOT A SIZE LIMIT (slice 2a). "Above 2**53" refused EEFT's cover count of
+    # 52752851000000000, which float64 holds exactly, and with it four of the screen's companies;
+    # what cannot be stored is a value that comes back as another number.
+    if isinstance(raw, int) and int(stored) != raw:
         raise IngestShapeError(f"{where}: integer {raw} does not survive float64 storage")
-    if not math.isfinite(raw):
+    if not math.isfinite(stored):
         raise IngestShapeError(f"{where}: value {raw!r} is not finite")
-    return float(raw)
+    return stored
 
 
 def _walk(facts: dict[str, Any]) -> Iterator[tuple[str, str, str, dict[str, Any]]]:
