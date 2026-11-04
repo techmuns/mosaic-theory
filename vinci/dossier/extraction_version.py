@@ -421,6 +421,14 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "within 0.5 $M (operator ruling 2026-11-04, NFLX: option B); a row the filing cannot "
         "decide still refuses the build, saying why (`financial_summary.filed_ltm`)",
     ),
+    (
+        "2026-11-04.amendment-recital",
+        "a covenant exhibit whose capitals heading is an amendment naming no contract (REPRICING "
+        "AMENDMENT, AMENDMENT NO 2.) is named for the first contract its recital names and marked "
+        "an amendment, so a credit-agreement amendment reaches the covenant extractor and any "
+        "other is refused for what it amends (an office lease); a CERTIFICATE or ARTICLES OF "
+        "AMENDMENT and a title-cased heading are not read this way",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.
