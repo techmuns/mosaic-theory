@@ -1,10 +1,11 @@
-"""Item 29 — every figure in a synthesis point is footnoted (operator ruling 2026-11-04, "1 + 4").
+"""Item 29 — every figure in a synthesis point is footnoted (operator ruling 2026-11-04,
+"1 + 4").
 
-(1) A point carries `figures`: one entry per figure of its claim, citing the ONE fact that states it,
-    or naming an operation (difference / sum / ratio / premium / growth) on two inputs of the same
-    claim, each with its own entry. A cited figure is traced to ITS fact by the per-fact rule
-    (`_num_traces`, audit G-D6); a computed one is recomputed from its inputs as written. A figure
-    with no entry is traced to the point's own ref exactly as before.
+(1) A point carries `figures`: one entry per figure of its claim, citing the ONE fact that
+    states it, or naming an operation (difference / sum / ratio / premium / growth) on two inputs
+    of the same claim, each with its own entry. A cited figure is traced to ITS fact by the
+    per-fact rule (`_num_traces`, audit G-D6); a computed one is recomputed from its inputs as
+    written. A figure with no entry is traced to the point's own ref exactly as before.
 (4) The blocks the assembler builds carry a `source_ref`, so a point can cite their figures; a
     block that states numbers with no ref anywhere above it reddens here unless it is on the
     not-a-fact list with its reason.
@@ -77,7 +78,7 @@ _GD6_CLAIM = ("The de-rate is idiosyncratic, not cyclical: SMPL fell -29% over 1
               "April-2026 earnings gap-downs.")
 
 
-# --- the shape -------------------------------------------------------------------------------------
+# --- the shape -----------------------------------------------------------------------------------
 
 def test_a_figure_cites_exactly_one_of_a_fact_or_an_operation() -> None:
     ok = ds.FigureCite(figure="15.1x", source_ref="R")
@@ -118,7 +119,7 @@ def test_a_point_without_footnotes_and_a_block_without_a_ref_write_nothing_new()
         assert ds.dossier_json(ds.Dossier.model_validate_json(text)) == text, f.parent.name
 
 
-# --- (1) the check, on the frozen page -------------------------------------------------------------
+# --- (1) the check, on the frozen page -----------------------------------------------------------
 
 def test_the_gd6_point_footnoted_to_each_fact_traces() -> None:
     """The frozen point G-D6 pins (`test_a_real_point_citing_one_fact_for_another_facts_figures_is_
@@ -154,7 +155,8 @@ def test_a_computed_figure_recomputes_from_its_cited_inputs_as_written() -> None
                                             "inputs": ["-29%", "+16%"]}])
     assert _flagged(mech, good) == []
     wrong = _point(_GD6_CLAIM.replace("-45pt", "-40pt"), rel,
-                   [*figs, {"figure": "-40pt", "derived": "difference", "inputs": ["-29%", "+16%"]}])
+                   [*figs, {"figure": "-40pt", "derived": "difference",
+                            "inputs": ["-29%", "+16%"]}])
     flags = _flags(mech, wrong)
     assert [f.split("'")[1] for f in flags if f.startswith("UNDERIVED")] == ["-40"]
     caveats, _ = dflags.partition(flags)
@@ -249,7 +251,7 @@ def test_a_made_up_computed_figure_from_real_inputs_is_flagged() -> None:
     assert caught == 200
 
 
-# --- every committed page: footnoting with the point's own ref changes nothing -----------------------
+# --- every committed page: footnoting with the point's own ref changes nothing -------------------
 
 def _points(raw: dict[str, Any]) -> list[tuple[str, ds.SourcedPoint]]:
     s = ds.Synthesis.model_validate(raw["synthesis"])
@@ -276,7 +278,7 @@ def test_footnoting_each_figure_to_the_points_own_ref_flags_exactly_what_today_f
     raw = json.loads(path.read_text())
     mech = ds.MechanicalLayer.model_validate(raw["mechanical"])
     for _, p in _points(raw):
-        if syn._TRANSCRIPT_REF.search(p.source_ref) or not p.figures == []:
+        if syn._TRANSCRIPT_REF.search(p.source_ref) or p.figures != []:
             continue
         lits = [x for x in dict.fromkeys(_figure_literals(p.claim)) if x in p.claim]
         noted = p.model_copy(update={"figures": [ds.FigureCite(figure=x, source_ref=p.source_ref)
@@ -313,7 +315,7 @@ def test_the_prompts_literal_example_checks_clean_against_the_facts_it_cites() -
     assert _flagged(mech, unfootnoted) == ["46489", "121.4", "0.9"]
 
 
-# --- (4) refs on the blocks the assembler builds ---------------------------------------------------
+# --- (4) refs on the blocks the assembler builds -------------------------------------------------
 
 #: The fields of the mechanical layer that state something with no ref above them, ON PURPOSE —
 #: each with why it is not a fact a point cites. A new field or block reddens the next test until it
@@ -326,8 +328,8 @@ NOT_A_FACT: dict[str, str] = {
     "DrawdownCause.gap_window_days": "a parameter of the read",
     "IdiosyncraticVsShared.benchmark_basis": "a label (its cap is the market leg's ref)",
     "IdiosyncraticVsShared.benchmark_symbol": "a label",
-    "ImpliedValuation.bridge_cash": "the structured twin of `implied_valuation.bridge`, cited there",
-    "ImpliedValuation.bridge_debt": "the structured twin of `implied_valuation.bridge`, cited there",
+    "ImpliedValuation.bridge_cash": "the structured twin of `implied_valuation.bridge`",
+    "ImpliedValuation.bridge_debt": "the structured twin of `implied_valuation.bridge`",
     "MaturityCheck.bound": "a date label",
     "MaturityCheck.panel_filed": "a date label",
     "MechanicalLayer.ev_gap": ("computed after the synthesis, which never sees it "
@@ -453,7 +455,7 @@ def test_the_ebitda_bases_and_the_ex_lease_multiple_carry_their_computation_ref(
     assert "source_ref" not in (raw["mechanical"]["valuation"].get("ev_ebitda_basis") or {})
 
 
-def test_peer_rows_and_the_intensity_block_carry_their_refs(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_peer_rows_and_the_intensity_block_carry_their_refs() -> None:
     from vinci.dossier.capital_allocation import PEER_INTENSITY_REF, build_peer_capital_intensity
 
     grid = [types.SimpleNamespace(ticker="AAA", market_cap=1000.0, is_name=True),

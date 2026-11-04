@@ -269,7 +269,7 @@ const EXTRACTION_VERSIONS = [
     "form; every other figure still traces only to the fact its point cites"],
 
   ["2026-11-04.footnote-every-figure",
-    "every synthesis figure is footnoted (item 29, operator ruling 2026-11-04 \"1 + 4\"): a point " +
+    "every synthesis figure is footnoted (item 29, operator ruling 2026-11-04 '1 + 4'): a point " +
     "carries one entry per figure of its claim, citing the one fact that states it or naming an " +
     "operation (difference, sum, ratio, premium, growth) on two cited inputs of the claim, " +
     "recomputed at their written precision; a figure with no entry is traced to the point's own " +
