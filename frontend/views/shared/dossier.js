@@ -261,6 +261,13 @@ const EXTRACTION_VERSIONS = [
     "page: `ex_lease_at_price` cuts the companyfacts once at the date of the stored close, so " +
     "its share count and its net debt read the same filings — the valuation-bases refresh, " +
     "which hands it the uncut blob, no longer divides by the average of a later 10-Q"],
+  ["2026-11-04.filed-ltm-tiebreak",
+    "a material annual-summary LTM that CIQ's annual and quarterly exports disagree on is " +
+    "decided by the SEC filing (operator approval 2026-11-04): the filer's XBRL figure for the " +
+    "same four quarters, as filed by the page's price date, on an explicit reviewed mapping, " +
+    "is stated in the row's LTM cell with every accession named and a main-body caveat when " +
+    "it reproduces one of CIQ's readings within 2%; a row the filing cannot decide still " +
+    "refuses the build, saying why (`financial_summary.filed_ltm`)"],
 ];
 const UNSTAMPED = "unstamped";
 // Normalise to ONE unstamped state — the twin of _declared() in extraction_version.py. null, "" and
