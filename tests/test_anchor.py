@@ -683,7 +683,9 @@ def test_committed_pages_round_trip_byte_identically_with_the_new_field() -> Non
 def test_the_flag_reaches_both_rendered_pages_end_to_end() -> None:
     """TEST-LAYER RULE: the rendered artifact, from REAL committed JSON. AMZN's own page, given the
     flag its own numbers produce, prints the heading and the stored sentence in the Python renderer
-    and the JS one; EPAM's page, which does not fire, prints neither."""
+    and the JS one; EPAM's page, which does not fire, prints neither. Both halves look for the
+    page's own sentence (escaped as the JS renderer escapes it), never a literal gap: AMZN's moved
+    from 6.8 to 7.8 points at its 2026-11-03 re-assembly, and a value pin on a living page rots."""
     import shutil
     import subprocess
 
@@ -695,6 +697,12 @@ def test_the_flag_reaches_both_rendered_pages_end_to_end() -> None:
                            ltm_ebit=anc._ltm_ebit_from_fs(m),
                            ltm_revenue=anc._ltm_revenue_from_fs(m))
     assert gap is not None, "AMZN's own numbers no longer fire the flag — re-check the fixture"
+    # the sentence states the gap's own size and side — what the literal it replaced ("sits 6.8
+    # points ABOVE") also proved — derived from the gap, so it follows the page and still refuses a
+    # sentence that drops either
+    said = re.search(r"sits (\d+\.\d) points (ABOVE|BELOW) the ", gap.read)
+    assert said is not None, gap.read
+    assert abs(float(said[1]) - abs(gap.gap_pts)) <= 0.051 and said[2] == gap.ltm_side.upper()
     flagged = amzn.anchor.model_copy(update={"midcycle_gap": gap})
     py = "\n".join(dr._screening_context_lines(flagged))
     assert "Mid-cycle assumption under strain." in py and gap.read in py
@@ -713,11 +721,14 @@ const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, const
 for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
 const dj = pathToFileURL(path.resolve("frontend/views/shared/dossier.js")).href;
 const { renderDossier } = await import(dj);
-const flagged = renderDossier(JSON.parse(readFileSync(process.argv[1], "utf8")), null);
+const { escapeHtml } = await import(pathToFileURL(path.resolve("frontend/lib/format.js")).href);
+const page = JSON.parse(readFileSync(process.argv[1], "utf8"));
+const read = page.anchor.midcycle_gap.read;
+const flagged = renderDossier(page, null);
 const epam = JSON.parse(readFileSync("data/dossiers/EPAM/dossier.json", "utf8"));
 const plain = renderDossier(epam, null);
 console.log(JSON.stringify({ on: flagged.includes("Mid-cycle assumption under strain."),
-  sentence: flagged.includes("sits 6.8 points ABOVE"),
+  sentence: read.length > 0 && flagged.includes(escapeHtml(read)),
   off: plain.includes("Mid-cycle assumption") }));
 """
     import tempfile
