@@ -122,21 +122,23 @@ pages carry; NFLX `406592d103`).
   - DISMISSED: finding 6, the third inline copy of the vintage gate. Consolidating is a refactor,
     and identity-keying a baseline is wrong (AORT, above).
   - DISMISSED: findings 7 and 8, an extra folder read per test. That costs I/O only.
-- **Full suite, both ways, branch `5550b738` against main `9e996d7f`:** `pytest -m "not network"
-  -rs`, each run in its own checkout of that commit, run in parallel on 2026-11-04. None of the
-  checkouts had a local store (`data/vinci.db`).
+- **Full suite, both ways, against main `9e996d7f`:** `pytest -m "not network" -rs`, each run in
+  its own checkout of the named commit, on 2026-11-04. None of the checkouts had a local store
+  (`data/vinci.db`). `5550b738` is the first commit; `ae9495d8` adds review round 0.
 
-  | Folder | main `9e996d7f` | branch `5550b738` |
-  |---|---|---|
-  | Live | 14 failed, 9163 passed, 82 skipped | 6 failed, 9169 passed, 90 skipped |
-  | None | 0 failed, 8709 passed, 550 skipped | 0 failed, 8715 passed, 550 skipped |
+  | Folder | main `9e996d7f` | `5550b738` | `ae9495d8` (head) |
+  |---|---|---|---|
+  | Live | 14 failed, 9163 passed, 82 skipped | 6 failed, 9169 passed, 90 skipped | 6 failed, 9173 passed, 90 skipped |
+  | None | 0 failed, 8709 passed, 550 skipped | 0 failed, 8715 passed, 550 skipped | 0 failed, 8719 passed, 550 skipped |
 
   Each run also deselected 39 network tests and recorded 8 xfailed.
 
-  - **Live:** exactly the 8 moved from failed to skipped. The +6 passed are the helper's own pins,
-    so nothing that passed on main now skips.
-  - **None:** the +6 passed are the same 6 pins, and the 550 skip reasons are identical line for
-    line once line numbers are stripped.
+  - **Live:** exactly the 8 moved from failed to skipped.
+  - **The extra passes are new test ids, collected 9267 → 9277 on the head.** They are the 9
+    helper pins and one `test_record_hygiene` id for this record. Nothing that passed on main now
+    skips.
+  - **None:** the 550 skip reasons are identical to main's line for line, on both commits, once
+    line numbers are stripped.
   - **The 6 left on the branch:** AORT's bridge (`test_ev_bridge.py::test_claims_equal_ciqs_
     current_figure_on_every_committed_name`), GOOGL's and LLY's 2% Consensus-vs-Trends check, and
     three AMZN tests, below.
