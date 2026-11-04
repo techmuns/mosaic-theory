@@ -180,9 +180,13 @@ def test_the_defect_itself_the_extraction_drops_the_line() -> None:
     # annual Financials SMPL's page was built from (its revenue and operating cash flow reproduce
     # the page's annual table). SMPL's 2026-10-28 export closed fiscal 2026 and carries the
     # writedown as -60.9 and -331.0 in two columns — the row still surfaces, checked above.
-    skip_unless_export("SMPL", "financials", "049150fb62", freq="annual", bundle=bundle,
-                       why="the -391.9 figure is one export's LTM column")
-    wd = next(r for r in tbl.rows if "Asset Writedown" in r.label)
+    # it runs on the export it is verified on — the live folder's, or the archived one
+    pinned = skip_unless_export("SMPL", "financials", "049150fb62", freq="annual", bundle=bundle,
+                                why="the -391.9 figure is one export's LTM column")
+    tbl = financial_summary_annual(pinned).value
+    assert tbl is not None, "SMPL annual summary is UNKNOWN on the pinned export"
+    wd = next((r for r in tbl.rows if "Asset Writedown" in r.label), None)
+    assert wd is not None, f"no writedown row on the pinned export: {[r.label for r in tbl.rows]}"
     assert any(v is not None and abs(v) > 390 for v in wd.values), (
         f"the writedown row surfaced but carries no -391.9 magnitude: {wd.values}")
 
