@@ -1861,6 +1861,53 @@ class StatementReconciliation(BaseModel, frozen=True):
     source_ref: str
 
 
+class FiledLtmQuarter(BaseModel, frozen=True):
+    """One quarter of a filed LTM (`vinci.dossier.filed_tiebreak`): the filer's own 3-month fact,
+    or the longer period less the one a quarter shorter (Q4 = the 10-K's year − nine months)."""
+
+    end: str                                  # ISO — the quarter end CIQ's quarterly header states
+    value: float                              # $M, in CIQ's sign
+    derived: bool = False                     # True: a difference of two filed periods
+    source_ref: str                           # the tag, the period(s), each form + accession + day
+    #: the accession(s) the value was READ from, structured — the source_ref also names the first
+    #: filing a restated figure supersedes, which is not one of them
+    accessions: list[str] = Field(default_factory=list)
+    #: (kind "containing_line") the quarterly export's own breakdown of the filed line in this
+    #: quarter, $M — its component rows plus the row — set against ``value``, the filed line
+    ciq_breakdown: float | None = None
+
+
+#: Which CIQ reading a filed LTM reproduces (`FiledLtmFigure.supports`).
+Supports = Literal["annual", "quarterly", "both"]
+#: How the filing decided (`FiledLtmFigure.kind`): ``same_item`` — a filed concept states the row's
+#: own item and the page states the FILED figure; ``containing_line`` — the item is filed only
+#: inside a wider line, CIQ's quarterly breakdown of that line reproduces it in every quarter, and
+#: the page states CIQ's quarterly READING (operator ruling 2026-11-04, "NFLX: B").
+FiledKind = Literal["same_item", "containing_line"]
+
+
+class FiledLtmFigure(BaseModel, frozen=True):
+    """A MATERIAL annual-summary LTM that CIQ's annual and quarterly exports disagree on, decided by
+    the SEC filings (2026-11-04, operator approval). The page's LTM cell for the row reads
+    ``value``; the two CIQ readings stay here, beside it. ``kind`` says whether ``value`` is the
+    filed figure itself or CIQ's quarterly reading that the filed containing line confirms."""
+
+    label: str                                # the annual summary's row label
+    ltm_end: str                              # ISO
+    value: Sourced[float]                     # $M, in CIQ's sign; source_ref names every accession
+    tag: str                                  # the us-gaap concept the reviewed mapping read
+    kind: FiledKind = "same_item"
+    #: (kind "containing_line") the quarterly export's component rows whose sum with the row is
+    #: set against the filed line, in the mapping's order
+    components: list[str] = Field(default_factory=list)
+    ciq_annual: float                         # $M — the annual export's LTM cell
+    ciq_quarterly: float                      # $M — the quarterly export's quarters carrying a
+    #                                           figure, summed (all four, or fewer on a '-')
+    supports: Supports
+    quarters: list[FiledLtmQuarter]
+    as_filed_by: str                          # ISO — the page's price date the facts were cut at
+
+
 class FinancialSummary(BaseModel):
     """The FINANCIAL-SUMMARY appendix (C1–C4): the fusion of CIQ Financials ACTUALS with Estimates
     CONSENSUS, rendered after the twins. ``annual`` = last-4-FY + LTM + FY26E/FY27E (E cols marked
@@ -1884,6 +1931,9 @@ class FinancialSummary(BaseModel):
     #: (2026-10-26) the annual table's Revenue and CFO against the filings
     #: (`vinci.dossier.statement_recon`). Absent until built (`DROP_WHEN_NONE`).
     statement_reconciliation: StatementReconciliation | None = None
+    #: (2026-11-04) the material LTMs CIQ disagreed with itself on, as the filings state them
+    #: (`vinci.dossier.filed_tiebreak`). Absent unless one decided a build (`DROP_WHEN_NONE`).
+    filed_ltm: list[FiledLtmFigure] | None = None
 
     model_config = {"frozen": True}
 
@@ -2939,6 +2989,7 @@ DROP_WHEN_NONE: tuple[tuple[str, str], ...] = (
     ("financial_summary", "ebitda_basis"),
     ("financial_summary", "ebitda_reconciliation"),
     ("financial_summary", "statement_reconciliation"),
+    ("financial_summary", "filed_ltm"),
     ("", "capital_allocation"),
     ("", "peer_capital_intensity"),
     ("", "dilution_pipeline"),
