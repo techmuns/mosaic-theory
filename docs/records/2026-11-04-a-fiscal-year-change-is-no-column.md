@@ -1,8 +1,8 @@
 ---
 id: 2026-11-04-a-fiscal-year-change-is-no-column
-status: open
+status: shipped
 date: 2026-11-04
-prs: []
+prs: [900]
 supersedes:
 superseded-by:
 ---
@@ -87,7 +87,7 @@ at 2026-11-04), branch head vs `main` `cfedcb39`:
   `valuation.forward_multiples`.
 - **Fails first**: main's code on the same header shapes — all three SMPL statement headers
   "unplaced", `_fin_periods` emitting `'Fiscal Y'`, the CS Summary refusing on order.
-- Pins (`tests/test_fiscal_year_change_marker.py`, 27): POSITIVE on SMPL's verbatim header cells
+- Pins (`tests/test_fiscal_year_change_marker.py`, 29): POSITIVE on SMPL's verbatim header cells
   (invented values) and end to end through the frozen ZZFX BIFF exports with SMPL's shape written
   into every statement (each latest read equal to the unedited bundle's); NEGATIVE — five
   unregistered undated labels (a near miss, a case change, the `FYC` a data cell carries) still
