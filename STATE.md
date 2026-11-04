@@ -36,8 +36,8 @@ block is migrated: §2 and §4 keep one summary line per item with a pointer to 
 Each line: *what it does* — *verified how*.
 
 **`vinci.themes` IS RETIRED (operator, 2026-11-04; R2):** the theme scan, cards, exposure, assay and the
-CIQ charting reader are removed, so every §2 line below naming `vinci/themes/` describes code that
-restores from `481e82f7` (`docs/records/2026-11-04-retire-themes-and-the-charting-reader.md`).
+CIQ charting reader are removed, so every §2 line below naming `vinci/themes/` describes removed code;
+restore by reverting #908's squash commit (`docs/records/2026-11-04-retire-themes-and-the-charting-reader.md`).
 
 - **Entity resolver** (`vinci/resolver`) — US SEC CIK↔ticker↔name, fail-loud on unknown/ambiguous —
   *ran `resolve AAPL GOOGL GOOG BRK.B ZZZZZ`: GOOGL/GOOG→one CIK, BRK.B→BRK-B, ZZZZZ fails loud.*

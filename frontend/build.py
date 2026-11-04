@@ -67,8 +67,9 @@ def _ledger_join() -> dict[str, list[dict[str, Any]]]:
     """The committed decision ledger, keyed by ticker — the DECISION row of record, with its
     close attached when the position has been closed.
 
-    The card renders on surfaces that never load the ledger snapshot (the theme watchlist embeds
-    its card into the frozen theme JSON), so the join happens HERE, at build, not in the client.
+    The card renders on surfaces that never load the ledger snapshot (the scenarios mirror; the
+    theme watchlist did too until it retired, 2026-11-04), so the join happens HERE, at build, not
+    in the client.
     Absent file → empty: a deploy without a ledger renders cards with no verdict-of-record line
     rather than failing.
 
@@ -608,12 +609,13 @@ OUT_SCEN = HERE / "scenarios"
 
 
 def emit_scenarios() -> list[str]:
-    """Standalone `frontend/scenarios/` mirror — `index.json` {"tickers":[…]} + one
-    `<TICKER>.json` per committed underwrite record, in the EXACT `_scenario_card()` shape the
-    theme JSON embeds (one contract, one consumer-side renderer). Deterministic + idempotent, so
-    the committed output never churns; COMMITTED like `frontend/dossiers/` so the static serve
-    works without a build step. Sits beside the dossier mirror: dossiers = assembled facts,
-    scenarios = first-cut underwrites — the SHARED per-name surface types the two, never blends."""
+    """Standalone `frontend/scenarios/` mirror — `index.json` {"tickers":[…]} + one `<TICKER>.json`
+    per committed underwrite record, in the EXACT `_scenario_card()` shape (one contract, one
+    consumer-side renderer; the theme JSON embedded it too until 2026-11-04). Deterministic +
+    idempotent, so the committed output never churns; COMMITTED like `frontend/dossiers/` so the
+    static serve works without a build step. Sits beside the dossier mirror: dossiers =
+    assembled facts, scenarios = first-cut underwrites — the SHARED per-name surface types the
+    two, never blends."""
     cards = _scenario_cards()
     if OUT_SCEN.exists():
         shutil.rmtree(OUT_SCEN)

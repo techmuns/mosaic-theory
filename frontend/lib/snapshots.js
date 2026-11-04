@@ -43,7 +43,8 @@ async function _fetch(path) {
 // absence below is written as `catch (e) { if (e.status === 404) return null; }`, which only works
 // where the server returns a real 404 — `python -m http.server` does, and Cloudflare Pages does
 // NOT: for a path matching no asset it serves index.html at status 200. `res.ok` is then true,
-// `.json()` throws a SyntaxError carrying no `.status`, and all 19 of those catches RETHROW.
+// `.json()` throws a SyntaxError carrying no `.status`, and all 19 of those catches (9 since the
+// theme getters left, 2026-11-04) RETHROW.
 //
 // That is not cosmetic. The theme page awaits its optional economics roll-up, so the two drivers
 // frozen on 2026-09-01 — the first with no economics file — hung on "Loading theme…" forever in
