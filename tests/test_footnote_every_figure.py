@@ -665,6 +665,42 @@ def test_a_footnote_covers_its_own_figure_never_another_of_the_same_magnitude() 
     assert _flagged(mech, _point(twice, rel, [{"figure": "+16%", "source_ref": market}])) == []
 
 
+def test_a_footnote_is_matched_to_the_occurrence_it_names_not_the_first_of_its_magnitude() -> (
+        None):
+    """(Codex P2, round 1) Entries were bucketed by magnitude, so a "$16M" footnote was spent on an
+    earlier "-16%" and the "$16M" itself fell back to the point's ref: the caveat named "-16" as
+    footnoted to the volume's fact. Matched by where its literal is written, the footnote checks
+    its own figure and the "-16%" is traced to the point's ref (which states the 16)."""
+    mech = _frozen()
+    name, market, _ = _refs()
+    claim = "SMPL fell -16% while volume ran to $16M"
+    flags = _flags(mech, _point(claim, market, [{"figure": "$16M", "source_ref": name}]))
+    hard = [f for f in flags if f.startswith("UNTRACEABLE")]
+    assert [f.split("'")[1] for f in hard] == ["16"]
+    assert f"[cited to {name}]" in hard[0]
+    # the same footnote on the "-16%" instead: that figure is the one checked against `name`
+    flags = _flags(mech, _point(claim, market, [{"figure": "-16%", "source_ref": name}]))
+    assert [f.split("'")[1] for f in flags if f.startswith("UNTRACEABLE")] == ["-16"]
+
+
+def test_a_signed_computed_figure_must_carry_the_sign_its_operation_gives() -> None:
+    """(Codex P1, round 1) The recompute compared magnitudes, so "+45pt" declared as -29% − +16%
+    (which gives -45) passed. A figure written with a sign is compared signed; an unsigned one
+    ("a 45pt gap", its direction in words) is compared on its size, as the trace compares."""
+    mech = _frozen()
+    name, market, rel = _refs()
+    figs = [{"figure": "-29%", "source_ref": name}, {"figure": "+16%", "source_ref": market}]
+
+    def gap(lit: str) -> list[str]:
+        return _flagged(mech, _point(_GD6_CLAIM.replace("-45pt", lit), rel, [
+            *figs, {"figure": lit, "derived": "difference", "inputs": ["-29%", "+16%"]}]))
+
+    assert gap("-45pt") == []
+    assert gap("45pt") == []
+    assert gap("+45pt") == ["45"]
+    assert gap("−45pt") == []   # the typographic minus is a sign too
+
+
 def test_a_footnote_whose_inputs_are_not_a_list_is_dropped_not_a_crash() -> None:
     notes: list[str] = []
     raw = {"evidence_balance": "mixed — x", "bull_points": [{

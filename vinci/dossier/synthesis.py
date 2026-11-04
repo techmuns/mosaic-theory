@@ -594,7 +594,13 @@ def _claim_figures(text: str) -> list[float]:
     """Numbers a claim CLAIMS as figures, excluding calendar/period LABELS (FY21, Q1, "90 days")
     that _NUM extracts but the trace would wrongly flag. The number-trace runs over these, not
     raw _floats."""
-    out: list[float] = []
+    return [v for v, _ in _claim_figure_ends(text)]
+
+
+def _claim_figure_ends(text: str) -> list[tuple[float, int]]:
+    """`_claim_figures`, each with where its digits end — so a footnote is matched to the place
+    the claim writes its figure (item 29), never to another figure of the same magnitude."""
+    out: list[tuple[float, int]] = []
     labels = [(d.start(), d.end()) for d in _DATE_OR_ID.finditer(text)]
     for m in _NUM.finditer(text):
         if any(lo <= m.start() < hi for lo, hi in labels):
@@ -609,7 +615,7 @@ def _claim_figures(text: str) -> list[float]:
         if _DURATION_AFTER.match(text[m.end():m.end() + 10]):
             continue  # a 5-year window / the 52-week low / over ~2y
         try:
-            out.append(float(m.group().replace(",", "")))
+            out.append((float(m.group().replace(",", "")), m.end()))
         except ValueError:
             continue
     return out
@@ -644,6 +650,7 @@ class _Written:
     half: float
     unit: str
     scale: float = 1.0
+    signed: bool = False   # written with a sign (+, -, −): its direction is part of the figure
 
 
 def _written(lit: str) -> _Written | None:
@@ -659,7 +666,7 @@ def _written(lit: str) -> _Written | None:
     unit = ("pct" if u in ("%", "pt", "pts", "pp") else "x" if u == "x"
             else "rank" if u in ("st", "nd", "rd", "th") else "money" if m.group("cur")
             else "plain")
-    return _Written(value, half, unit, scale)
+    return _Written(value, half, unit, scale, m.group("sign") is not None)
 
 
 def _abs_interval(lo: float, hi: float) -> tuple[float, float]:
@@ -669,8 +676,10 @@ def _abs_interval(lo: float, hi: float) -> tuple[float, float]:
 
 
 def _recompute(op: str, a: _Written, b: _Written, fig: _Written) -> str | None:
-    """None when ``op(a, b)`` as written can be the figure as written; else why not. Compared on
-    magnitudes, as the trace compares them (a fall written "fell 24%" carries its sign in words)."""
+    """None when ``op(a, b)`` as written can be the figure as written; else why not. A figure
+    written with a sign is compared signed, so "+45pt" is not -29% − +16% (Codex, round 1); an
+    unsigned one is compared on magnitudes, as the trace compares them (a fall written "fell 24%"
+    carries its sign in words)."""
     if "rank" in (a.unit, b.unit):
         return "a percentile rank is not an operand"
     if a.unit != b.unit:
@@ -690,8 +699,9 @@ def _recompute(op: str, a: _Written, b: _Written, fig: _Written) -> str | None:
         lo, hi = min(qs), max(qs)
         if op in ("premium", "growth"):
             lo, hi = (lo - 1) * 100, (hi - 1) * 100
-    r0, r1 = _abs_interval(lo, hi)
-    f0, f1 = _abs_interval(fig.value - fig.half, fig.value + fig.half)
+    r0, r1, f0, f1 = lo, hi, fig.value - fig.half, fig.value + fig.half
+    if not fig.signed:
+        (r0, r1), (f0, f1) = _abs_interval(lo, hi), _abs_interval(f0, f1)
     if r0 <= f1 and r1 >= f0:
         return None
 
@@ -891,29 +901,32 @@ def _validate(
     # footnoted point traces each figure and each input on its own
     ref_keys = {comparison_key(u) for u in refs}
 
-    def _figure_entries(p: SourcedPoint, where: str) -> dict[float, list[FigureCite]]:
-        """The point's footnotes by the magnitude of the ONE figure each names, each entry listed
-        once per place the claim writes its literal — so a footnote covers ITS figure, never another
-        figure of the same magnitude ("16%" beside a footnoted "$16M" is still traced to the point's
-        own ref). An entry that names no figure of the claim (a label, a figure not written there,
-        two figures) is a MISMATCH — an extra the checker reads nothing from, never a figure left
-        unchecked."""
-        out: dict[float, list[FigureCite]] = {}
-        claim_vals = {round(abs(v), 6) for v in _claim_figures(p.claim)}
+    def _figure_entries(p: SourcedPoint, where: str) -> dict[int, FigureCite]:
+        """The point's footnotes by WHERE the claim writes each one's figure (the end of its
+        digits), at every place its literal is written — so a footnote checks its own figure, never
+        another of the same magnitude ("-16%" before a footnoted "$16M" is traced to the point's
+        own ref; Codex, round 1). The first entry for a place wins. An entry that names no figure
+        the claim writes (a label, a figure not written there, two figures) is a MISMATCH — an
+        extra the checker reads nothing from, never a figure left unchecked."""
+        ends = _claim_figure_ends(p.claim)
+        out: dict[int, FigureCite] = {}
         for e in p.figures:
             vals = _claim_figures(e.figure)
-            if (len(vals) != 1 or e.figure not in p.claim
-                    or round(abs(vals[0]), 6) not in claim_vals):
+            at = [end for m in re.finditer(
+                      rf"(?<![\d.,]){re.escape(e.figure)}(?![\d]|[.,]\d)", p.claim)
+                  for v, end in ends
+                  if m.start() < end <= m.end() and len(vals) == 1
+                  and round(abs(v), 6) == round(abs(vals[0]), 6)] if e.figure else []
+            if not at:
                 flags.append(f"MISMATCH {where}: figure entry {e.figure!r} names no single figure "
                              f"the claim writes: '{_snip(p.claim, 55)}'")
                 continue
-            written = len(re.findall(rf"(?<![\d.,]){re.escape(e.figure)}(?![\d]|[.,]\d)",
-                                     p.claim))
-            out.setdefault(round(abs(vals[0]), 6), []).extend([e] * max(1, written))
+            for end in at:
+                out.setdefault(end, e)
         return out
 
-    def check_figure(n: float, e: FigureCite, entries: dict[float, list[FigureCite]],
-                     p: SourcedPoint, where: str, *, dedup: bool) -> None:
+    def check_figure(n: float, e: FigureCite, p: SourcedPoint, where: str, *,
+                     dedup: bool) -> None:
         """One footnoted figure: a cited one traces to the fact it names; a computed one has inputs
         that each trace to theirs, and recomputes to the figure as written."""
         def direct(x: FigureCite) -> tuple[bool, bool]:
@@ -1000,13 +1013,10 @@ def _validate(
         ref_key = comparison_key(p.source_ref)
         cited_nums = values_by_ref.get(ref_key, _FactNumbers()) if ref_key else _FactNumbers()
         entries = _figure_entries(p, where)
-        used: Counter[float] = Counter()
-        for n in _claim_figures(p.claim):
-            k = round(abs(n), 6)
-            if used[k] < len(entries.get(k, ())):   # (item 29) this figure carries its footnote
-                e = entries[k][used[k]]
-                used[k] += 1
-                check_figure(n, e, entries, p, where, dedup=dedup)
+        for n, end in _claim_figure_ends(p.claim):
+            e = entries.get(end)
+            if e is not None:   # (item 29) this figure carries its own footnote
+                check_figure(n, e, p, where, dedup=dedup)
                 continue
             if _num_traces(n, cited_nums):
                 continue
