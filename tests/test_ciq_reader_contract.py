@@ -48,7 +48,7 @@ from vinci.dossier.ciq import (
     read_text,
     stated_period_type,
 )
-from vinci.dossier.schemas import CHECK_AGREE, CHECK_DIFFER, SourceStatus
+from vinci.dossier.schemas import CHECK_AGREE, CHECK_DIFFER, EvBridge, SourceStatus
 
 FIX = gen.HERE
 ANNUAL = FIX / gen.ANNUAL_XLS
@@ -685,7 +685,7 @@ def test_a_marker_in_the_ev_bridge_is_never_a_zero_claim(bundle: CiqBundle, mark
     pref[-1] = _row(read_sheets(QUARTERLY)["Income Statement"],
                     gen.MARKER_ROW)[gen.MARKERS.index(marker) + 1]
     bridge = cs.ev_bridge(bundle, fy_periods=["FY27"])
-    assert bridge is not None
+    assert isinstance(bridge, EvBridge)
     assert [ln for ln in bridge.lines
             if ln.label == "Total Pref. Equity" and ln.value == 0.0] == []
 
@@ -702,7 +702,7 @@ def test_the_multiples_readers_take_the_latest_close_by_date(bundle: CiqBundle) 
 
 def test_the_ev_bridge_reads_the_latest_dated_balance_sheet_column(bundle: CiqBundle) -> None:
     bridge = cs.ev_bridge(bundle, fy_periods=["FY27"])
-    assert bridge is not None
+    assert isinstance(bridge, EvBridge)
     assert bridge.balance_sheet_date == gen.Q_DATES[-1].isoformat()
     assert bridge.net_debt == round(gen.Q_DEBT[-1] - gen.Q_CASH[-1], 1)
     assert bridge.source_file == QUARTERLY.name
@@ -737,7 +737,7 @@ def test_the_xlsx_export_reads_exactly_as_its_biff_twin(reader: Any) -> None:
 def test_the_xlsx_ev_bridge_matches_its_biff_twin_and_names_its_own_file() -> None:
     xl = cs.ev_bridge(_bundle(XLSX), fy_periods=["FY27"])
     bi = cs.ev_bridge(_bundle(QUARTERLY), fy_periods=["FY27"])
-    assert xl is not None and bi is not None
+    assert isinstance(xl, EvBridge) and isinstance(bi, EvBridge)
     provenance = {"source_file", "source_sha256"}
     assert xl.model_dump(exclude=provenance) == bi.model_dump(exclude=provenance)
     assert xl.source_file == XLSX.name
