@@ -29,10 +29,7 @@ LEDGER = ROOT / "data" / "snapshots" / "decision_ledger.jsonl"
 MONITOR = ROOT / "frontend" / "monitor"
 
 
-def _closed(overrides: dict[str, str | None]) -> dict[str, Any]:
-    """``{entry_id: closed}`` from `getLedger()`, the committed files served unless overridden
-    (a value of None serves a 404)."""
-    script = """
+_STUB = """
 import { readFile } from 'node:fs/promises';
 const MAP = { './snapshots/': __SNAP__, './monitor/': __MON__ };
 const OVERRIDES = __OVR__;
@@ -53,22 +50,50 @@ globalThis.fetch = async (p) => {
   }
   return miss;
 };
+"""
+
+
+def _node(body: str, overrides: dict[str, str | None]) -> Any:
+    """Run ``body`` after the fetch stub: the committed files are served, unless overridden (a
+    value of None serves a 404). ``body`` prints one JSON value, which is returned."""
+    script = _STUB + body
+    for key, val in (("__SNAP__", str(LEDGER.parent)), ("__MON__", str(MONITOR)),
+                     ("__OVR__", overrides), ("__LIB__", str(LIB)),
+                     ("__LOG__", str(ROOT / "frontend" / "views" / "shared" / "decision-log.js"))):
+        script = script.replace(key, json.dumps(val))
+    # ON STDIN, NOT `-e`: an overridden monitor day is ~226 KB, and Linux caps ONE argument at
+    # 128 KB (MAX_ARG_STRLEN) — CI refused it "Argument list too long" where macOS ran it.
+    try:
+        proc = subprocess.run(["node", "--input-type=module"], input=script,
+                              capture_output=True, text=True)
+    except FileNotFoundError:
+        pytest.skip("node unavailable")
+    if proc.returncode != 0:
+        raise AssertionError(f"the real module failed to execute: {proc.stderr.strip()}")
+    return json.loads(proc.stdout)
+
+
+def _closed(overrides: dict[str, str | None]) -> dict[str, Any]:
+    """``{entry_id: closed}`` from `getLedger()`."""
+    out: dict[str, Any] = _node("""
 const m = await import(__LIB__);
 const led = await m.getLedger();
 console.log(JSON.stringify(Object.fromEntries(
   led.entries.filter((e) => e.closed).map((e) => [e.entryId, e.closed]))));
-"""
-    for key, val in (("__SNAP__", str(LEDGER.parent)), ("__MON__", str(MONITOR)),
-                     ("__OVR__", overrides), ("__LIB__", str(LIB))):
-        script = script.replace(key, json.dumps(val))
-    proc = subprocess.run(["node", "--input-type=module", "-e", script],
-                          capture_output=True, text=True)
-    if proc.returncode != 0:
-        if "not found" in proc.stderr.lower() and "node" in proc.stderr.lower():
-            pytest.skip("node unavailable")
-        raise AssertionError(f"the real module failed to execute: {proc.stderr.strip()}")
-    out: dict[str, Any] = json.loads(proc.stdout)
+""", overrides)
     return out
+
+
+def _decision_log(overrides: dict[str, str | None]) -> str:
+    """The REAL decision log's HTML (`render`, as `test_sleeves` renders it), over these files."""
+    html: str = _node("""
+const v = await import(__LOG__);
+const root = { innerHTML: '' };
+await v.render(root, {}, { item: { title: 'Decision log', blurb: '' },
+                           frame: (i, o) => o.bodyHtml });
+console.log(JSON.stringify(root.innerHTML));
+""", overrides)
+    return html
 
 
 def _latest_realized() -> dict[str, dict[str, Any]]:
@@ -195,3 +220,27 @@ def test_a_real_split_close_shows_what_pair_closes_derives() -> None:
     got = closed["V-MNST-split"]["realizedReturn"]
     assert got == derived["realized_return"], (got, derived["realized_return"])
     assert abs(got - (exit_ / sealed - 1)) > 0.4, "the page still divides across the split"
+
+
+#: what a closed row says when no monitor day carries its return yet
+NOT_YET = "return not yet on a monitor day"
+
+
+def test_a_close_with_no_return_yet_says_so_on_the_page() -> None:
+    """THE RED (review round 2). With the latest monitor day before both closes, the decision log
+    printed "closed 2026-07-21 @ $141.06" and stopped — a missing return read as a row with none
+    to give, through monitor gaps that reach 36 days (2026-08-11 → 09-16). It now says the
+    return is not on a monitor day yet; a close that has one prints it, with no marker."""
+    index = json.loads((MONITOR / "index.json").read_text())
+    early = _decision_log({"./monitor/index.json": json.dumps({**index, "latest": "2026-07-20"})})
+    assert early.count(NOT_YET) == 2, "a close with no return yet does not say so"
+    now = _decision_log({})
+    assert NOT_YET not in now and "−3.57%" in now, "a close with its return printed a marker"
+
+
+def test_both_closed_chips_carry_the_marker() -> None:
+    """The dossier card's chip (`dossier.js`, `loggedVerdict`) is the decision log's twin and is
+    not exported, so this pins its source: both print the marker where the return is null."""
+    for view in ("decision-log.js", "dossier.js"):
+        src = (ROOT / "frontend" / "views" / "shared" / view).read_text()
+        assert NOT_YET in src, f"{view} prints no marker for a close without its return"

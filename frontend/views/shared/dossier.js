@@ -4647,7 +4647,7 @@ function loggedVerdict(v, ticker, refDate, { bare = false, sleeve, rank = null, 
         cl.exitPrice != null ? ` @ ${fmtPrice(cl.exitPrice)}` : ""}${
         cl.realizedReturn != null
           ? ` · ${cl.realizedReturn >= 0 ? "+" : "−"}${Math.abs(cl.realizedReturn * 100).toFixed(2)}%`
-          : ""}</span>`
+          : " · return not yet on a monitor day"}</span>`
     : "";
   const body = `<div class="logged-verdict">
       <div style="display:flex; gap:12px; align-items:baseline; flex-wrap:wrap;">

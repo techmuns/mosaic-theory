@@ -25,7 +25,9 @@ Now the web reads the `realized` row of the LATEST committed monitor day by its 
 - A row whose `close_id` matches but whose `entry_id` names another position is a broken pair,
   and shows none.
 - The close's own facts (date, exit price, reason) are untouched. Both renderers, the decision
-  log and the dossier card, already print the return only when it is not null.
+  log and the dossier card, print the return when it is there, and otherwise "return not yet on
+  a monitor day" (review round 2). The committed monitor history has gaps of up to 36 days
+  (2026-08-11 → 09-16), and a bare "closed … @ $X" read as a row with no return to give.
 
 Row 40 is closed: its §5.0 row is deleted. It was opened on 2026-10-29, after §5 froze, so there
 is no archive entry to strike.
@@ -55,6 +57,10 @@ return is shown as none, never as a guess.
     with the `entry_id` check removed.
   - **The fence, green on both:** on the committed files, IT and SMPL show exactly the
     latest monitor day's rows (2026-11-02 on the merged tree).
+- **The pins run node with the script on STDIN** (review round 2). As one `node -e` argument,
+  an overridden monitor day (~226 KB) passed on macOS, which has no per-argument cap, and was
+  refused on CI's Linux, which caps one argument at 128 KB: `OSError: [Errno 7] Argument list
+  too long`, run 41801963845, 2 failed. #872 met the same limit.
 - **Real run** on the tree merged with main at cfedcb39 (latest monitor day 2026-11-02): every
   closed position through each version of `snapshots.js`, on the committed files and with the
   MNST close above overlaid:
@@ -67,8 +73,20 @@ return is shown as none, never as a guess.
   ```
   No committed close spans a split, so the change moves no position on the deployed page today.
   The only move is the split case, −49.11% → +1.77%.
-- `tests/test_sleeves.py::test_the_decision_log_page_actually_renders` still renders the real
-  decision log over the committed snapshots.
+- **The decision log renders a close's state, end to end** (review round 2).
+  `test_a_close_with_no_return_yet_says_so_on_the_page` renders the REAL decision log through
+  the same fetch stub, from `data/snapshots/` and `frontend/monitor/`, so it runs in CI. The
+  rendered chips:
+  ```
+  committed (latest 2026-11-02):       closed Jul 21, 2026 @ $141.06 · +0.00%
+                                       closed Jul 22, 2026 @ $10.53 · −3.57%
+  latest day before both closes:       closed Jul 21, 2026 @ $141.06 · return not yet on a monitor day
+                                       closed Jul 22, 2026 @ $10.53 · return not yet on a monitor day
+  ```
+  The dossier card's twin chip (`dossier.js`, `loggedVerdict`) is not exported; its marker is
+  pinned at source. `tests/test_sleeves.py::test_the_decision_log_page_actually_renders` also
+  renders the decision log, but only where `frontend/snapshots/` is built. It is git-ignored, so
+  that test SKIPS in a clean checkout and in CI, and it is not counted here.
 - One existing pin's message said the return "is derived here". It now says it is the monitor
   day's row (`tests/test_record_legibility.py`).
 - No extraction module changes, so no extraction-version row: `snapshots.js` is not among the
@@ -92,7 +110,8 @@ return is shown as none, never as a guess.
   that close's return. The python side refuses an unpairable close, so this has not been seen.
 
 - **Across a split, the page shows the sealed entry beside a return on the exit's basis** (review
-  round 1, DEFERRED). For the MNST case the decision log prints the entry 90.36 and the exit 45.98,
+  round 1, DEFERRED; carried by STATE §5.0's EMPTY footnote at row 40, so the next close across a
+  split finds it). For the MNST case the decision log prints the entry 90.36 and the exit 45.98,
   then +1.77%. The return divides by 45.18; the monitor row carries that as `entry_price`, and the
   day's notes carry `pair_closes`' split note. Nothing on the page states that basis. Printing it
   is a rendering change, which goes to a preview first under the PREVIEW RULE. No committed close
