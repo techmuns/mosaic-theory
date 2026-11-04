@@ -2,7 +2,7 @@
 id: 2026-11-04-anchored-drawdown
 status: shipped
 date: 2026-11-04
-prs: []
+prs: [906]
 supersedes:
 superseded-by:
 ---
