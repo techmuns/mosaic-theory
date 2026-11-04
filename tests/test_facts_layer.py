@@ -68,10 +68,10 @@ def _publish(tmp: Path, blobs: list[dict[str, Any]]) -> dict[str, Any]:
         got = rows_from_companyfacts(b)
         rows += got.rows
         entities.append({"entity": got.entity, "rows_kept": len(got.rows)})
-    files = write_partitions(rows, tmp / "objects")
+    files, orders = write_partitions(rows, tmp / "objects")
     manifest = build_manifest(source=SOURCE, extractor=EXTRACTOR,
                               extractor_version=EXTRACTOR_VERSION, scope={"rule": "test"},
-                              entities=entities, files=files)
+                              entities=entities, files=files, orders=orders)
     write_manifest(manifest, tmp)
     return manifest
 
@@ -359,7 +359,7 @@ def test_an_ingest_that_drops_an_exclusion_refuses_and_names_only_the_count(
     current = (facts / "current.json").read_text()
     with pytest.raises(FactsStoreError) as refused:
         main(["ingest", "--cache-dir", str(cache)])
-    assert "excludes 0" in str(refused.value) and "1" in str(refused.value)
+    assert "exclude 0 name(s)" in str(refused.value) and "excluding 1" in str(refused.value)
     assert "NFLX" not in str(refused.value)
     after = sorted(p.relative_to(facts).as_posix() for p in facts.rglob("*") if p.is_file())
     assert after == before
@@ -442,4 +442,5 @@ def test_a_current_snapshot_that_states_no_exclusion_count_refuses(tmp_path: Pat
     from vinci.facts.scope import require_exclusions
     _publish(tmp_path, [_load("FUBO-companyfacts-slice.json")])     # scope carries no count
     with pytest.raises(FactsStoreError, match="states no exclusion count"):
-        require_exclusions(5, source=SOURCE, base=tmp_path)
+        require_exclusions(5, listed=5, rule="test", selected=5, source=SOURCE, name="pages",
+                           base=tmp_path)

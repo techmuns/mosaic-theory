@@ -1,0 +1,37 @@
+{
+ "run_id": "2026-10-16-01",
+ "reference_date": "2026-10-16",
+ "screen": {
+  "thresholds": {
+   "drawdown_max": -0.3,
+   "drawdown_terminal_floor": -0.85,
+   "idio_rel_max": -0.15,
+   "multiple_floor_pctile": 0.25
+  },
+  "benchmark": "IWM",
+  "lookback_days": 1825
+ },
+ "band": {
+  "market_cap_min_usd": 300000000.0,
+  "market_cap_max_usd": 10000000000.0,
+  "exchanges": [
+   "Nasdaq",
+   "NYSE",
+   "NYSE American"
+  ]
+ },
+ "routing_policy": "carry_not_evaluated",
+ "universe_as_of": "2026-10-16",
+ "stages": [
+  "no_price",
+  "no_shares",
+  "ads_count_unresolved",
+  "out_of_band",
+  "below_adv_floor",
+  "unknown_sic",
+  "non_operating",
+  "unknown_type",
+  "non_common_equity",
+  "duplicate_class"
+ ]
+}

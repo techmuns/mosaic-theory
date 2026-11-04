@@ -113,13 +113,27 @@
       "name": "reason",
       "nullable": true,
       "type": "string"
-    },
+    }
+  ],
+  "order_columns": [
     {
       "doc": "The row's position in the source response, so a replay reproduces the filer's order.",
       "name": "source_position",
       "nullable": false,
       "type": "int64"
+    },
+    {
+      "doc": "The content id of the data object holding the row.",
+      "name": "object",
+      "nullable": false,
+      "type": "string"
+    },
+    {
+      "doc": "The row's index in that object, in its stored order.",
+      "name": "row",
+      "nullable": false,
+      "type": "int32"
     }
   ],
-  "schema_version": 1
+  "schema_version": 2
 }
