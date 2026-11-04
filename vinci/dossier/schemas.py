@@ -598,6 +598,15 @@ class DrawdownWindow(BaseModel):
     model_config = {"frozen": True}
 
 
+#: How a drawdown anchor names its two dated parts and itself, per `DrawdownAnchor.kind` — the ONE
+#: Python copy, read by the renderer and the synthesis brief alike; its web twin is dossier.js
+#: `ANCHOR_WORDS`, bound by `test_anchored_drawdown.py::test_anchor_words_twin`.
+DRAWDOWN_ANCHOR_WORDS: dict[str, tuple[str, str, str]] = {
+    "underwrite": ("Drawdown at underwrite", "Since underwrite", "underwrite"),
+    "followed": ("Drawdown when followed", "Since followed", "follow"),
+}
+
+
 class DrawdownAnchor(BaseModel):
     """THE DRAWDOWN AS IT STOOD WHEN THE FUND'S THESIS WAS WRITTEN, AND WHAT HAS HAPPENED SINCE.
 

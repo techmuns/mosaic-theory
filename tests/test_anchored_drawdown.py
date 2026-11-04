@@ -218,36 +218,89 @@ def test_a_degraded_feed_at_the_anchor_is_unknown_and_flagged() -> None:
                                 bars=_BARS, cut=date(2026, 11, 3), anchor=_UNDERWRITE)
     assert dc.anchor is not None
     assert dc.anchor.at_anchor.shape.status is SourceStatus.UNKNOWN
-    assert any(f.startswith("drawdown-cause (at the underwrite 2026-08-05):") for f in flags)
+    mine = [f for f in flags if f.startswith("drawdown-cause: (at the underwrite 2026-08-05)")]
+    assert mine
+    # hidden on the rolling window's ruling: the part's UNKNOWN note renders at the point of use
+    from vinci.dossier.flags import is_qa
+    assert all(is_qa(f) for f in mine)
 
 
 # ─── which date is the anchor ──────────────────────────────────────────────────────────────────
 
 def test_the_anchor_is_the_underwrite_else_the_follow_else_none() -> None:
-    """On the committed records: GOOGL is followed (08-27) and underwritten (09-01) — the
-    underwrite wins; LLY is followed only; CNXC is neither."""
+    """ACROSS THE LIVE FILES, as an invariant (they are re-drawn, so no value is pinned on them):
+    every committed page's anchor is its record's `underwrite_date` if it has a record, else its
+    `followed_since` if it is followed, else none — read here straight from the JSON."""
     from vinci.config import get_config
     from vinci.dossier.assemble import _drawdown_anchor_date
 
     cfg = get_config()
-    googl = _drawdown_anchor_date(cfg, "GOOGL")
-    assert googl is not None and (googl.kind, googl.on) == ("underwrite", date(2026, 9, 1))
-    lly = _drawdown_anchor_date(cfg, "LLY")
-    assert lly is not None and (lly.kind, lly.on) == ("followed", date(2026, 8, 21))
-    assert _drawdown_anchor_date(cfg, "CNXC") is None
+    followed = json.loads((cfg.data_dir / "followed.json").read_text())
+    pages = sorted(p.parent.name for p in Path("data/dossiers").glob("*/dossier.json"))
+    kinds = set()
+    for t in pages:
+        rec = Path("scenarios") / f"{t}.json"
+        got = _drawdown_anchor_date(cfg, t)
+        if rec.exists():
+            uw = json.loads(rec.read_text())["underwrite_date"]
+            want = ("underwrite", date.fromisoformat(uw))
+        elif t in followed:
+            want = ("followed", date.fromisoformat(followed[t]["followed_since"]))
+        else:
+            assert got is None, t
+            kinds.add(None)
+            continue
+        assert got is not None and (got.kind, got.on) == want, t
+        kinds.add(want[0])
+    assert kinds == {"underwrite", "followed", None}  # the corpus exercises all three
+
+
+def test_an_underwrite_wins_over_a_follow_even_an_earlier_one() -> None:
+    """On a FROZEN record of the real type: GOOGL's archived 2026-08-17 underwrite (superseded,
+    so it never changes) against a later follow — the underwrite is the anchor."""
+    from vinci.scenarios import ScenarioRecord
+
+    card = ScenarioRecord.model_validate_json(
+        Path("scenarios/archive/GOOGL-2026-08-17.json").read_text())
+    got = drawdown_anchor_date(card, date(2026, 8, 27), ticker="GOOGL")
+    assert got is not None and (got.kind, got.on) == ("underwrite", date(2026, 8, 17))
+    got = drawdown_anchor_date(None, date(2026, 8, 27), ticker="GOOGL")
+    assert got is not None and (got.kind, got.on) == ("followed", date(2026, 8, 27))
     assert drawdown_anchor_date(None, None, ticker="X") is None
+
+
+def test_a_window_the_stored_closes_do_not_cover_is_unknown_never_none_found() -> None:
+    """A store whose history begins after the window's start cannot see a drop there: the part is
+    UNKNOWN, saying so, and its flag stays on the hidden machine tier — never "no single day of
+    -10% or worse", an absence read from missing data."""
+    from vinci.dossier.flags import is_qa
+
+    late = [b for b in _BARS if b.bar_date >= date(2026, 3, 1)]  # history starts after 02-06
+    edgar = cast(EdgarClient, AsOfEdgar(cast(EdgarClient, _Edgar(_ROWS)), date(2026, 11, 3)))
+    dc, flags = _drawdown_cause(_record(date(2026, 10, 16)), edgar, cast(CachedHttp, _Http()),
+                                bars=late, cut=date(2026, 11, 3), anchor=_UNDERWRITE)
+    assert dc.anchor is not None
+    at = dc.anchor.at_anchor
+    for field in (at.shape, at.gap_down_dates, at.revised_guidance):
+        assert field.status is SourceStatus.UNKNOWN
+        assert "begin on 2026-03-02, not before this window's start 2026-02-06" in str(field.note)
+    assert at.gaps == [] and at.filings == []
+    mine = [f for f in flags if "not before this window's start" in f]
+    assert mine and all(is_qa(f) for f in mine)
+    # the since part, which the store does cover, is still read
+    assert dc.anchor.since is not None and dc.anchor.since.shape.status is SourceStatus.PRESENT
 
 
 # ─── the committed corpus reads, checks and renders as before ─────────────────────────────────
 
 def test_every_committed_page_round_trips_with_no_new_drawdown_key() -> None:
-    """New fields are ABSENT when None: no committed page carries them, and each one's drawdown
-    block re-serialises to exactly what is on disk."""
+    """New fields are ABSENT when None: each committed page's drawdown block re-serialises to
+    exactly what is on disk, so a page with no anchor gains no null key. Not "no page carries an
+    anchor" — the artifact pass re-assembles anchored names, and that would red on the first."""
     pages = sorted(Path("data/dossiers").glob("*/dossier.json"))
     assert len(pages) >= 27
     for p in pages:
         raw = json.loads(p.read_text())["mechanical"]["drawdown_cause"]
-        assert "anchor" not in raw, p
         assert json.loads(DrawdownCause.model_validate(raw).model_dump_json()) == raw, p
 
 
@@ -347,6 +400,7 @@ def test_the_brief_marks_the_dated_outlooks_and_asks_if_the_cause_played_out() -
     assert "at the underwrite (2026-02-06 to 2026-08-05): discrete gap-downs" in digest
     assert "since the underwrite (2026-08-06 to " in digest
     assert "has the cause named at the underwrite played out?" in digest
+    assert "`at_anchor`, the 180 days ending on the anchor date" in digest
     # no anchor, no section: the prompt every earlier build sent
     del dumped["drawdown_cause"]["anchor"]
     assert _drawdown_anchor_digest(dumped) is None
@@ -405,9 +459,10 @@ console.log(JSON.stringify(__P__.map((w) => windowWords(w, -0.10))));
 
 
 def test_anchor_words_twin() -> None:
-    """THE PARITY PIN binding the label table's two copies (`render._ANCHOR_WORDS`, dossier.js
-    `ANCHOR_WORDS`, both on `test_duplicate_definitions.BASELINE`): a one-sided edit reds here."""
-    from vinci.dossier.render import _ANCHOR_WORDS
+    """THE PARITY PIN binding the label table's two copies (`schemas.DRAWDOWN_ANCHOR_WORDS`,
+    dossier.js `ANCHOR_WORDS`, both on `test_duplicate_definitions.BASELINE`): a one-sided edit
+    reds here."""
+    from vinci.dossier.schemas import DRAWDOWN_ANCHOR_WORDS as _ANCHOR_WORDS
 
     if not shutil.which("node"):
         pytest.skip("node is not installed")

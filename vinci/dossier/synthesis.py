@@ -1861,11 +1861,19 @@ def _drawdown_anchor_digest(dumped: dict[str, Any]) -> str | None:
       at the underwrite (2026-02-06 to 2026-08-05): 2026-04-09 -18.1% earnings (2.02); … →
       source_ref: EDGAR 8-K item codes at the gap-down dates, filed by 2026-08-05 (…)
     No direction is given: where the evidence bears is the model's to frame, and no verdict."""
+    from datetime import date as _date
+
+    from vinci.dossier.schemas import DRAWDOWN_ANCHOR_WORDS
+
     anchor = (dumped.get("drawdown_cause") or {}).get("anchor")
     if not isinstance(anchor, dict):
         return None
     kind, on = str(anchor.get("kind")), str(anchor.get("on"))
-    word = "underwrite" if kind == "underwrite" else "follow"
+    word = DRAWDOWN_ANCHOR_WORDS.get(kind, ("", "", kind))[2]
+    at = anchor.get("at_anchor") or {}
+    # the window's length from the part's own dates, never a restated constant
+    days = (_date.fromisoformat(str(at.get("end")))
+            - _date.fromisoformat(str(at.get("start")))).days
 
     def part(label: str, w: Any) -> list[str]:
         if not isinstance(w, dict):
@@ -1887,9 +1895,9 @@ def _drawdown_anchor_digest(dumped: dict[str, Any]) -> str | None:
         f"This name is anchored at its {word} ({on}; {anchor.get('source_ref')}). The current "
         "window in the facts (`drawdown_cause.shape` and its siblings) ROLLS with the page's "
         "date, so the event the thesis was written on can have left it. `drawdown_cause.anchor` "
-        "keeps it, in two dated parts: `at_anchor`, the 180 days ending on the anchor date, read "
-        "only from what was knowable then (closes on or before it, 8-Ks filed by it); and `since`, "
-        "the day after the anchor to the page's price date.",
+        f"keeps it, in two dated parts: `at_anchor`, the {days} days ending on the anchor date, "
+        "read only from what was knowable then (closes on or before it, 8-Ks filed by it); and "
+        "`since`, the day after the anchor to the page's price date.",
         "SHAPE — one line per part: part (start to end): date move cause; … → source_ref, then "
         "the outlook that part's 8-K furnished → source_ref. EXAMPLE (SMPL at its 2026-08-05 "
         "underwrite) — the SHAPE only; cite only this name's lines:",

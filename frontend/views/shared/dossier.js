@@ -3762,7 +3762,7 @@ export function cleanItemEvent(ev) {  // exported for the py-twin equivalence te
 
 // (2026-11-04) THE DRAWDOWN AT THE ANCHOR AND SINCE (`DrawdownAnchor`). The current window rolls
 // with the page's date, so the event an underwrite was written on leaves it; these two dated parts
-// keep it. How each part names itself — twin of render._ANCHOR_WORDS.
+// keep it. How each part names itself — twin of schemas.DRAWDOWN_ANCHOR_WORDS.
 // exported for the parity pin that binds it to the python copy (test_anchored_drawdown)
 export const ANCHOR_WORDS = {
   underwrite: ["Drawdown at underwrite", "Since underwrite", "underwrite"],

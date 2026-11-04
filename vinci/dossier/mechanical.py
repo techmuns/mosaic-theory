@@ -706,8 +706,24 @@ def _gap_window(bars: list[PriceBar], start: date, end: date, cik: str | None,
                 ) -> tuple[DrawdownWindow, list[str]]:
     """One dated window, read from ``bars`` on or before ``end`` and from ``edgar`` as the caller
     has cut it: the screen's own detector (`detect_gap_downs`, its threshold untouched) called at
-    another date."""
+    another date.
+
+    A WINDOW THE STORED CLOSES DO NOT COVER IS NOT READ (review of this build). Its first move
+    needs the close BEFORE ``start``; a store whose history begins on or after it cannot see a drop
+    there, and "no single day of -10% or worse" would be an absence claimed from missing data —
+    which a later backfill would then change, in the part no later build is meant to change. So
+    the part is UNKNOWN, saying why, and flagged on the machine tier."""
     held = [b for b in bars if b.bar_date <= end]
+    first = min((b.bar_date for b in held), default=None)
+    if first is None or first >= start:
+        note = (f"the stored closes begin on {first.isoformat()}, not before this window's start "
+                f"{start.isoformat()}, so a drop in it cannot be seen and it is not read — "
+                "backfill the name's stored history and rebuild" if first is not None else
+                f"no stored close on or before {end.isoformat()}, so this window is not read")
+        unread: Sourced[Any] = Sourced.unknown(note=note)
+        return DrawdownWindow(
+            start=start.isoformat(), end=end.isoformat(), shape=unread, gap_down_dates=unread,
+            filings=[], revised_guidance=unread), [f"{flag_prefix} {note}"]
     gaps = detect_gap_downs(held, since=start)
     moves = _gap_moves(held, gaps)
     read = _read_gaps(gaps, cik, edgar, http, _dated_words(start, end), flag_prefix=flag_prefix,
@@ -737,12 +753,14 @@ def _drawdown_anchor(anchor: AnchorDate | None, bars: list[PriceBar], cik: str |
     start = anchor.on - timedelta(days=DECLINE_WINDOW_DAYS)
     at_view = cast(EdgarClient, AsOfEdgar(edgar, anchor.on))
     at, flags = _gap_window(bars, start, anchor.on, cik, at_view, http,
-                            flag_prefix=f"drawdown-cause (at the {anchor.kind} {anchor.on}):")
+                            # the rolling window's prefix: `flags._QA_MARKERS` hides it on the
+                            # same ruling, as the part's UNKNOWN note renders at the point of use
+                            flag_prefix=f"drawdown-cause: (at the {anchor.kind} {anchor.on})")
     since: DrawdownWindow | None = None
     after = anchor.on + timedelta(days=1)
     if after <= cut:
         since, since_flags = _gap_window(bars, after, cut, cik, edgar, http,
-                                         flag_prefix=f"drawdown-cause (since the {anchor.kind}):")
+                                         flag_prefix=f"drawdown-cause: (since the {anchor.kind})")
         flags += since_flags
     return DrawdownAnchor(kind=anchor.kind, on=anchor.on.isoformat(),
                           source_ref=anchor.source_ref, at_anchor=at, since=since), flags
@@ -6011,8 +6029,10 @@ def assemble_mechanical(
     # the dated parts are read from the stored closes: at the anchor as of the anchor, and since
     # it to the cut (`_drawdown_anchor`)
     drawdown, drawdown_flags = _drawdown_cause(
-        record, edgar, http, bars=store.get_price_history(record.identity.internal_id), cut=cut,
-        anchor=drawdown_anchor)
+        record, edgar, http, cut=cut, anchor=drawdown_anchor,
+        # read only for a name with an anchor: an unanchored one builds the current window alone
+        bars=(store.get_price_history(record.identity.internal_id)
+              if drawdown_anchor is not None else None))
     adj_eps, adj_ev, adj_lev = _adjusted_facts(
         record, edgar, drawdown.revised_guidance, reference_date, http=http, cut=cut)
     pe_recon = _pe_reconciliation(record, edgar, bundle, drawdown.revised_guidance)

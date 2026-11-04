@@ -26,6 +26,9 @@ superseded-by:
   `revised_guidance`), and the shape states each move beside its cause so a point can cite it.
 - **The since part** (`since`): the same reader from the day after the anchor to the page's price
   date, on the page's own cut; absent when there is no session after the anchor.
+- **A window the stored closes do not cover is not read**: when the store's history begins on or
+  after a part's start, the part is UNKNOWN, saying so, never "no single day of -10% or worse"
+  (an absence read from missing data, which a later backfill would change).
 - **The rolling window is unchanged**: `shape`, `gap_down_dates`, `filings`, `revised_guidance`
   are still the screen record's events (the window ending on its reference date), and every
   reader of them (adjusted facts, P/E reconciliation, catalyst path) reads what it read before.
@@ -93,24 +96,35 @@ operator decides.
   no other page loses one. The at-anchor parts name drops no committed page names: IT 2026-02-03
   (−20.9%), NCNO 2026-02-03 (−10.6%), NKE 2026-04-01 (−15.5%), EPAM 2026-02-19 (−17.0%), PARR
   2026-04-17 (−10.0%).
-- **Pins** (`tests/test_anchored_drawdown.py`, 22, on real fixtures — SMPL's Polygon closes,
+- **Pins** (`tests/test_anchored_drawdown.py`, 24, on real fixtures — SMPL's Polygon closes,
   its EDGAR 8-K rows and the three documents the reader fetches, cut after what each reader reads
   and checked identical): SMPL keeps 04-09/04-10 (−18.1%, −11.5%) and the outlook 8-K at today's
   dates; the at-anchor part is identical at price dates 2026-08-17, 10-16 and 11-03; a name with
-  no anchor builds byte-identically; a gap after the anchor is in since only; **the lookahead
+  no anchor builds byte-identically; a window the closes do not cover is UNKNOWN; the anchor rule
+  as an invariant over the live `scenarios/` and `followed.json` and as a precedence pin on a
+  frozen (archived) record; a gap after the anchor is in since only; **the lookahead
   pin** — the real 8-K re-dated after the anchor never enters the at-anchor part while the
   rolling window, read at the price date, does find it; the precheck carries by value and the
   dated parts never lose; the paid write's refusal; the brief's vintage mark and digest; the
   render end to end; the `windowWords` and label-table twins through node (the label table is
   on `test_duplicate_definitions.BASELINE`, bound by that pin); the committed corpus round-trips
   with no new key.
-- **Mutations the pins catch — 11 of 11**, each applied alone and the file restored: the
+- **Mutations the pins catch — 13 of 13**, each applied alone and the file restored: the
   at-anchor EDGAR left uncut at the anchor (the lookahead pin); its closes left uncut (a gap after
   the anchor leaks into the part); carried by presence instead of value; the dated parts not
   compared by value; the dated outlook not vintage-marked; `anchor` written as null; an anchor
   after the price date still anchoring; the follow winning over the underwrite; the paid write
   ignoring the at-anchor part; the Brief dropping the dated lines; the JS twin printing the move
-  unsigned.
+  unsigned; a window the closes do not cover read anyway; the dated-part outage flag escaping the
+  hidden QA tier.
+- **Review** (`/code-review high --fix`, round 0): 10 findings, 8 fixed — the dated-part outage
+  flag had escaped `flags._QA_MARKERS` and would have printed as a decision caveat; an uncovered
+  window read as "no drop"; the round-trip pin would have gone red at the first anchored rebuild;
+  a value pin sat on the live follow list and records; the brief restated the labels and the
+  180 days; an 8-K with no URL rendered an empty link; unanchored names read their closes for
+  nothing; a version-table row shared a line with the one before. 2 dismissed: a moved anchor
+  stopping the precheck is deliberate (its message names the move, the operator decides), and the
+  anchor helper's second read of the same committed record keeps the pinned call shape.
 - **Render preview** (PREVIEW RULE): SMPL's real $0 build, collapsed and force-open,
   `docs/dossier/anchored-drawdown-2026-11-04/screenshots/`.
 

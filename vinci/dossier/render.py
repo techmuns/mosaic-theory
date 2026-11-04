@@ -35,6 +35,7 @@ from vinci.dossier.extraction_version import (
 )
 from vinci.dossier.freshness import RECONCILE_TOLERANCE, reconcile_cap
 from vinci.dossier.schemas import (
+    DRAWDOWN_ANCHOR_WORDS,
     Dossier,
     DrawdownCause,
     DrawdownWindow,
@@ -476,12 +477,9 @@ def _clean_note(note: str) -> str:
                       "credit-health panel scale is ambiguous in the export")
     return out
 
-#: How a drawdown anchor names its two dated parts on the page (`DrawdownAnchor.kind`) — twin of
-#: dossier.js `_ANCHOR_WORDS`.
-_ANCHOR_WORDS: dict[str, tuple[str, str, str]] = {
-    "underwrite": ("Drawdown at underwrite", "Since underwrite", "underwrite"),
-    "followed": ("Drawdown when followed", "Since followed", "follow"),
-}
+#: How a drawdown anchor names its two dated parts on the page — `schemas.DRAWDOWN_ANCHOR_WORDS`,
+#: the one Python copy (its web twin is dossier.js `ANCHOR_WORDS`).
+_ANCHOR_WORDS = DRAWDOWN_ANCHOR_WORDS
 
 
 def _window_words(w: DrawdownWindow, threshold: float | None) -> str:
@@ -549,8 +547,8 @@ def _anchor_analysis_lines(dc: DrawdownCause) -> list[str]:
                 continue
             seen.add(f.accession)
             items = [t for t in f.item_types if not t.startswith("9.01")]
-            out.append(f"  - 8-K filed {f.filing_date} · items: {', '.join(items) or '—'} "
-                       f"[`{f.accession}`]({f.url})")
+            link = f"[`{f.accession}`]({f.url})" if f.url else f"`{f.accession}`"
+            out.append(f"  - 8-K filed {f.filing_date} · items: {', '.join(items) or '—'} {link}")
     out.append("")
     return out
 
