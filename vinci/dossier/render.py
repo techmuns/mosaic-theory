@@ -618,7 +618,7 @@ def _anchor_analysis_lines(dc: DrawdownCause) -> list[str]:
             out += [f"  - {g.on} **{g.move * 100:+.1f}%** → {_fmt_shape(g.cause)}" for g in w.gaps]
         if w.revised_guidance.status is SourceStatus.PRESENT:
             out.append(f"  - outlook then: {w.revised_guidance.value}"
-                       f"{_cite(w.revised_guidance.source_ref)}")
+                       f"{_cut_mark(w.revised_guidance_cut)}{_cite(w.revised_guidance.source_ref)}")
         seen: set[str] = set()
         for f in w.filings:
             if not f.explanatory or f.accession in seen:
@@ -635,6 +635,30 @@ def _fact(label: str, s: Sourced[Any], fmt: Callable[[Any], str] = str) -> str:
     if s.status is SourceStatus.PRESENT:
         return f"- **{label}:** {fmt(s.value)}{_cite(s.source_ref)}"
     return f"- **{label}:** _{s.status.value.upper()}_ — {_clean_note(str(s.note))}"
+
+
+#: (2026-11-04) Where the drawdown outlook quote stops. The extractor quotes a WINDOW of the
+#: release (`mechanical._GUIDANCE_WINDOW`), and all four committed quotes ended mid-word ("…in the
+#: near-ter") printed as verbatim: A TRUNCATED OUTPUT PRINTS ITS OWN TRUNCATION. The second mark is
+#: for a page built before `DrawdownCause.revised_guidance_cut`: its quote came from the same
+#: window, so it MAY be cut and the page cannot say. Web twins: dossier.js `GUIDANCE_CUT_MARK` /
+#: `GUIDANCE_MAYBE_CUT_MARK`, bound by tests/test_guidance_cut_mark.py.
+GUIDANCE_CUT_MARK = "… (quote cut — the release continues in the filing)"
+GUIDANCE_MAYBE_CUT_MARK = "… (quote may be cut — see the filing)"
+
+
+def _cut_mark(cut: bool | None) -> str:
+    """What follows a PRESENT drawdown outlook quote — the current window's or a dated part's
+    (`DrawdownWindow`): the cut mark, nothing when the release ends inside the window, or the
+    possibly-cut mark when the record predates the field. The quote itself is printed as stored —
+    never extended or completed."""
+    return "" if cut is False else GUIDANCE_CUT_MARK if cut else GUIDANCE_MAYBE_CUT_MARK
+
+
+def _guidance_fact(label: str, dc: DrawdownCause) -> str:
+    """The current window's outlook quote as a fact line, marked where it stops (`_cut_mark`)."""
+    mark = _cut_mark(dc.revised_guidance_cut)
+    return _fact(label, dc.revised_guidance, lambda v: f"{v}{mark}")
 
 
 def _sourced_str(s: Sourced[Any]) -> str:
@@ -989,8 +1013,7 @@ def _catalyst_section(m: MechanicalLayer) -> list[str]:
         # construction) versus "what guide governs today". They coincide until guidance is revised
         # after the drawdown — SMPL's bear argued April's from the first while the base used July's
         # from the second, both unlabelled, on one page. Each now names its own filing.
-        out.append(_fact("Guidance at the drawdown (8-K 99.1)",
-                         m.drawdown_cause.revised_guidance))
+        out.append(_guidance_fact("Guidance at the drawdown (8-K 99.1)", m.drawdown_cause))
         ps_cg = getattr(getattr(m, "primary_source", None), "current_guide", None)
         if ps_cg is not None:
             out.append(_fact("Current guide (latest results filing)", ps_cg))
@@ -4144,7 +4167,7 @@ def _drawdown_idio_lines(m: MechanicalLayer, *, sleeve: str = DEFAULT_SLEEVE,
                     out.append(f"    - {cleaned}")
     out += _event_impact_lines(m)  # (RC-1 C) Avis-class event-impact quantifications
     if m.catalyst_path is None:  # legacy: never drop the fact when there is no street section
-        out.append(_fact("Revised guidance", m.drawdown_cause.revised_guidance))
+        out.append(_guidance_fact("Revised guidance", m.drawdown_cause))
     out.append("")
     return out
 

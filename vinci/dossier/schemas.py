@@ -615,8 +615,18 @@ class DrawdownWindow(BaseModel):
     # each gap-down as structure, from the same bars, so a renderer never has to find a move in a
     # price series that may no longer reach back that far
     gaps: list[GapDown] = Field(default_factory=list)
+    # whether `revised_guidance` is cut at its window — `DrawdownCause.revised_guidance_cut`'s
+    # meaning; ABSENT when None (a part built before the field, or no PRESENT quote)
+    revised_guidance_cut: bool | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("revised_guidance_cut") is None:
+            out.pop("revised_guidance_cut", None)
+        return out
 
 
 #: How a drawdown anchor names its two dated parts and itself, per `DrawdownAnchor.kind` — the ONE
@@ -679,6 +689,12 @@ class DrawdownCause(BaseModel):
     # (2026-11-04) the drawdown at the underwrite (or the follow) and since — ABSENT on a page with
     # no anchor and on every page built before it, so those read, check and render as they did
     anchor: DrawdownAnchor | None = None
+    # (2026-11-04) `revised_guidance` is a WINDOW of the release, `mechanical._GUIDANCE_WINDOW`
+    # characters from its outlook heading: True = the release goes on past it, so the quote is cut
+    # and the renderers say so where it stops; False = the release ended inside the window. None —
+    # ABSENT (`_absent_not_null`) — when the guidance is not PRESENT, or on a page built before the
+    # field, whose quote the renderers mark as possibly cut (it came from the same window).
+    revised_guidance_cut: bool | None = None
 
     model_config = {"frozen": True}
 
@@ -688,7 +704,7 @@ class DrawdownCause(BaseModel):
         built with one and found nothing."""
         out = nxt(self)
         if isinstance(out, dict):
-            for key in ("gap_window_end", "anchor"):
+            for key in ("gap_window_end", "anchor", "revised_guidance_cut"):
                 if out.get(key) is None:
                     out.pop(key, None)
         return out
