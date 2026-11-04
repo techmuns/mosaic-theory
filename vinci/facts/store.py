@@ -3,8 +3,16 @@
 IMMUTABLE AND CONTENT-ADDRESSED. A partition (source × entity × filed year) is named by the sha256
 of its own bytes: ``<source>/<entity>/<filed_year>/<sha256>.parquet``. An object is never
 overwritten. Writing bytes that already exist under their name is a no-op, and a name whose bytes
-differ from it raises, because that can only mean the object was corrupted. A changed partition is
-therefore a NEW object, and an unchanged one is shared by every snapshot that contains it.
+differ from it raises, because that can only mean the object was corrupted.
+
+THE BYTES ARE NOT YET A STABLE NAME ACROSS REFRESHES (review round 2 of #896). Each row carries
+``source_position``, its index in the WHOLE response, so one new filing shifts every later row's
+position and rewrites every partition after it. Measured by the coordinator on NFLX, FUBO and
+NKE's previous cache copies: 0 of 17, 0 of 14 and 0 of 17 earlier-year partitions shared, although
+their rows are identical once ``source_position`` is stripped. The bytes also embed the writing
+pyarrow's version. So today an unchanged partition is NOT shared between snapshots. Naming objects
+by a canonical hash of their rows without ``source_position`` (order kept separately), and pinning
+the writer's pyarrow, comes BEFORE any second snapshot or any upload (STATE.md §5.0 row 44).
 
 THE MANIFEST IS THE SNAPSHOT. ``data/facts/manifests/<snapshot_id>.json`` lists every object with
 its sha256, row count and byte size, plus the provenance of every entity's source response. The
@@ -208,7 +216,31 @@ def load_manifest(snapshot_id: str | None = None, *, source: str = "edgar",
     if manifest.get("schema_version") != SCHEMA_VERSION:
         raise FactsStoreError(f"{path}: schema_version {manifest.get('schema_version')!r} "
                               f"is not {SCHEMA_VERSION}")
+    check_manifest_shape(manifest)
     return manifest
+
+
+#: Every key a manifest's file entry and entity entry must carry.
+_FILE_KEYS = ("path", "sha256", "rows", "bytes", "source", "entity", "filed_year")
+_ENTITY_KEYS = ("entity", "rows_kept")
+_TOP_KEYS = ("snapshot_id", "source", "schema_version", "files", "entities", "totals")
+
+
+def check_manifest_shape(manifest: dict[str, Any]) -> None:
+    """Raise :class:`FactsStoreError` naming the first entry that lacks a required key."""
+    missing = [k for k in _TOP_KEYS if k not in manifest]
+    if missing:
+        raise FactsStoreError(f"manifest lacks {missing}")
+    for i, f in enumerate(manifest["files"]):
+        lack = [k for k in _FILE_KEYS if k not in f]
+        if lack:
+            raise FactsStoreError(f"manifest file entry {i} ({f.get('path', '<no path>')}) "
+                                  f"lacks {lack}")
+    for i, e in enumerate(manifest["entities"]):
+        lack = [k for k in _ENTITY_KEYS if k not in e]
+        if lack:
+            raise FactsStoreError(f"manifest entity entry {i} ({e.get('entity', '<no entity>')}) "
+                                  f"lacks {lack}")
 
 
 def verify_manifest(manifest: dict[str, Any], root: Path, *,
@@ -218,6 +250,7 @@ def verify_manifest(manifest: dict[str, Any], root: Path, *,
     Checked: the id recomputes from the content; the contract hash is today's; totals add up; each
     path is the content-addressed name its entry implies; and (``check_objects``) each object
     exists, hashes to its name, and holds the stated rows under the contract's schema."""
+    check_manifest_shape(manifest)
     problems: list[str] = []
     if snapshot_id_for(manifest) != manifest.get("snapshot_id"):
         problems.append(f"snapshot_id {manifest.get('snapshot_id')} does not recompute")
@@ -234,7 +267,7 @@ def verify_manifest(manifest: dict[str, Any], root: Path, *,
     for f in files:
         file_rows[f["entity"]] = file_rows.get(f["entity"], 0) + f["rows"]
     for e in manifest.get("entities") or []:
-        if "rows_kept" in e and e["rows_kept"] != file_rows.get(e["entity"], 0):
+        if e["rows_kept"] != file_rows.get(e["entity"], 0):
             problems.append(f"entity {e['entity']}: rows_kept {e['rows_kept']}, its files hold "
                             f"{file_rows.get(e['entity'], 0)}")
     schema = arrow_schema()

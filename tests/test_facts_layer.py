@@ -320,3 +320,126 @@ def test_verify_names_an_entity_whose_rows_disagree_with_its_files(tmp_path: Pat
     manifest["entities"][0]["rows_kept"] += 1
     assert any("rows_kept" in p for p in verify_manifest(manifest, tmp_path / "objects",
                                                          check_objects=False))
+
+
+# --- review round 2 (coordinator) ---------------------------------------------------------------
+
+NKE = "0000320187"
+NET_INCOME = "us-gaap:NetIncomeLoss"
+NKE_FY2024 = Period.duration(date(2023, 6, 1), date(2024, 5, 31))
+SHARES = "dei:EntityCommonStockSharesOutstanding"
+
+
+def _cache_with(tmp: Path, names: list[str]) -> Path:
+    """A cache directory holding the frozen slices exactly where CachedHttp keeps them."""
+    cache = tmp / "cache"
+    with CachedHttp(cache_dir=cache, user_agent="t", min_interval_sec=0, namespace="sec") as h:
+        for n in names:
+            blob = _load(n)
+            h._write_cache(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{blob['cik']:010d}.json",
+                           (FIX / n).read_text())
+    return cache
+
+
+def test_an_ingest_that_drops_an_exclusion_refuses_and_names_only_the_count(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The held-name exclusion is a CLI flag; a run that forgets it must not write a snapshot that
+    carries the held name. The refusal names the COUNT, never the name, and writes nothing."""
+    from vinci.facts.__main__ import main
+    for ticker, cik in (("FUBO", FUBO), ("NFLX", NFLX)):
+        (tmp_path / "data" / "dossiers" / ticker).mkdir(parents=True)
+        (tmp_path / "data" / "dossiers" / ticker / "dossier.json").write_text(
+            json.dumps({"cik": cik}))
+    cache = _cache_with(tmp_path, ["FUBO-companyfacts-slice.json", "NFLX-companyfacts-slice.json"])
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("VINCI_FACTS_STORE", raising=False)
+    assert main(["ingest", "--cache-dir", str(cache), "--exclude", "NFLX"]) == 0
+    facts = tmp_path / "data" / "facts"
+    before = sorted(p.relative_to(facts).as_posix() for p in facts.rglob("*") if p.is_file())
+    current = (facts / "current.json").read_text()
+    with pytest.raises(FactsStoreError) as refused:
+        main(["ingest", "--cache-dir", str(cache)])
+    assert "excludes 0" in str(refused.value) and "1" in str(refused.value)
+    assert "NFLX" not in str(refused.value)
+    after = sorted(p.relative_to(facts).as_posix() for p in facts.rglob("*") if p.is_file())
+    assert after == before
+    assert (facts / "current.json").read_text() == current
+
+
+def test_a_same_day_tie_names_the_periodic_report_over_a_proxy(tmp_path: Path) -> None:
+    """NKE FY2024 net income: the 10-K (…-000088) and the DEF 14A (…-000089) state the same value
+    on 2026-07-15. The greatest accession is the proxy; the store names the 10-K."""
+    _publish(tmp_path, [_load("NKE-companyfacts-slice.json")])
+    f = FactStore(facts_base=tmp_path, root=tmp_path / "objects").get(
+        NKE, NET_INCOME, NKE_FY2024, date(2026, 7, 15))
+    assert (f.value, f.accession, f.form) == (5700000000, "0000320187-26-000088", "10-K")
+    assert f.concurrent_accessions == ("0000320187-26-000089",)
+
+
+def test_a_same_day_tie_between_periodic_reports_names_the_greatest_accession(
+        store: FactStore) -> None:
+    """FUBO's 2016-11-16 cover count, stated identically by two 10-Qs filed 2016-11-23."""
+    f = store.get(FUBO, SHARES, Period.instant(date(2016, 11, 16)), date(2016, 11, 23))
+    assert (f.accession, f.concurrent_accessions) == ("0001493152-16-015421",
+                                                      ("0001493152-16-015415",))
+
+
+def test_the_parity_reference_names_the_same_primary_filing() -> None:
+    """The parity compared accessions as a SET, so it could not see which one the store names."""
+    from vinci.facts.parity import reference_latest as ref
+    got = ref(facts_as_of(_load("NKE-companyfacts-slice.json"), date(2026, 7, 15)))
+    key = ("us-gaap", "NetIncomeLoss", "USD", "2023-06-01", "2024-05-31")
+    assert got[key].primary == "0000320187-26-000088"
+
+
+def test_the_filing_eve_is_the_day_before_the_last_filing_by_the_cut(store: FactStore) -> None:
+    """A store reading one day late passes every cut that falls between filings; the eve of the
+    last filing day is the cut that sees it."""
+    from vinci.facts.parity import filing_eve
+    blob = _load("NFLX-companyfacts-slice.json")
+    assert filing_eve(blob, date(2026, 11, 2)) == date(2026, 10, 20)
+    with pytest.raises(FactUnknownError):          # the Q3 10-Q's cover count, filed 2026-10-21
+        store.get(NFLX, SHARES, Period.instant(date(2026, 9, 30)), date(2026, 10, 20))
+
+
+def test_a_row_with_no_filed_date_is_still_shape_checked() -> None:
+    blob = _load("NFLX-companyfacts-slice.json")
+    row = blob["facts"]["us-gaap"]["EarningsPerShareDiluted"]["units"]["USD/shares"][0]
+    row.pop("filed")
+    row["segment"] = "x"
+    with pytest.raises(IngestShapeError, match="unknown keys"):
+        rows_from_companyfacts(blob)
+
+
+def test_a_row_with_no_filed_date_is_named_not_only_counted() -> None:
+    blob = _load("NFLX-companyfacts-slice.json")
+    row = blob["facts"]["us-gaap"]["EarningsPerShareDiluted"]["units"]["USD/shares"][0]
+    row.pop("filed")
+    got = rows_from_companyfacts(blob)
+    assert got.rows_without_filed_named == [{
+        "taxonomy": "us-gaap", "concept": "EarningsPerShareDiluted", "unit": "USD/shares",
+        "start": row.get("start"), "end": row["end"], "accn": row["accn"]}]
+
+
+def test_an_entity_with_no_rows_kept_raises(tmp_path: Path) -> None:
+    manifest = _publish(tmp_path, [_load("FUBO-companyfacts-slice.json")])
+    del manifest["entities"][0]["rows_kept"]
+    with pytest.raises(FactsStoreError, match="rows_kept"):
+        verify_manifest(manifest, tmp_path / "objects", check_objects=False)
+
+
+def test_a_malformed_manifest_entry_raises_a_named_error(tmp_path: Path) -> None:
+    manifest = _publish(tmp_path, [_load("FUBO-companyfacts-slice.json")])
+    path = manifest["files"][0]["path"]
+    del manifest["files"][0]["filed_year"]
+    with pytest.raises(FactsStoreError, match="filed_year") as err:
+        verify_manifest(manifest, tmp_path / "objects")
+    assert path in str(err.value)
+
+
+def test_a_current_snapshot_that_states_no_exclusion_count_refuses(tmp_path: Path) -> None:
+    """An absent count is never read as zero (the zero-coercion lint): the run is refused."""
+    from vinci.facts.scope import require_exclusions
+    _publish(tmp_path, [_load("FUBO-companyfacts-slice.json")])     # scope carries no count
+    with pytest.raises(FactsStoreError, match="states no exclusion count"):
+        require_exclusions(5, source=SOURCE, base=tmp_path)

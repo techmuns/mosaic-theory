@@ -14,8 +14,13 @@ layer on the minimal stack (Parquet, R2, DuckDB, Python API)"*. And its first sl
 
 - **Storage.** Facts are immutable Parquet objects, one per **source × entity × filed year**.
   Each object is named by the sha256 of its own bytes
-  (`<source>/<entity>/<filed_year>/<sha256>.parquet`) and is never overwritten. A changed
-  partition is a new object; an unchanged one is shared by every snapshot that names it.
+  (`<source>/<entity>/<filed_year>/<sha256>.parquet`) and is never overwritten. *Corrected in
+  review round 2:* an unchanged partition is NOT yet shared between snapshots. Each row carries
+  `source_position`, its index in the whole response, so one new filing shifts every later row and
+  rewrites every partition after it. On NFLX, FUBO and NKE's previous cache copies the coordinator
+  measured 0 of 17, 0 of 14 and 0 of 17 earlier-year partitions shared, with rows identical once
+  `source_position` is stripped; every refresh would add about 7 MB to public history. The bytes
+  also embed the writing pyarrow's version. See the OPEN ITEM below.
 - **In git.** One JSON manifest per snapshot (`data/facts/manifests/<snapshot_id>.json`): the
   snapshot id, every object's path, sha256, rows and bytes, the schema version and contract hash,
   and each entity's source response (URL, `fetched_at`, response sha256, row counts). The snapshot
@@ -36,7 +41,12 @@ layer on the minimal stack (Parquet, R2, DuckDB, Python API)"*. And its first sl
   reads the SEC cache through `CachedHttp`'s own key scheme with no TTL, and it never builds a
   request. It keeps every filing's version of every fact (originals, comparatives and
   restatements) and drops only exact duplicates, counted. A row of a shape it could not replay
-  raises. A row with no `filed` date is dropped and counted, as `facts_as_of` drops it.
+  raises. A row with no `filed` date is shape-checked like any other, then dropped (as
+  `facts_as_of` drops it), and NAMED in the manifest beside its count (none in snapshot 1).
+- **The held-name exclusion cannot be forgotten.** It is a command-line flag (`--exclude`), so
+  the ingest refuses to write a snapshot that excludes fewer names than the current one
+  (`scope.require_exclusions`, before anything is read or written). The refusal names the counts,
+  never a name, because a manifest's tickers are public and permanent.
 - **Location.** A local directory today: `$VINCI_FACTS_STORE`, defaulting to
   `data/facts/objects`. A remote name (`r2://`, `s3://`) raises `RemoteStoreNotConfiguredError`.
   No R2 bucket or credential exists (checked 2026-11-04: none in `.env`, none in the GitHub
@@ -80,9 +90,15 @@ in object storage with its manifest in git (the DVC / lakeFS pattern).
   shared: each writer publishes Parquet and a manifest, and agents only read.
 - **Content-addressed, immutable objects.** `store.write_object` refuses different bytes under an
   existing name. Partitions are written with fixed options in `source_position` order, so the same
-  rows give the same bytes under the same pyarrow version.
+  rows give the same bytes under the same pyarrow version. That makes a re-ingest of the SAME cache
+  reproducible; it does not make a refresh share partitions (corrected above).
+- **The stopgap cap is a test.** `tests/test_facts_contract.py` fails when the committed objects
+  pass 50 MB (with its negative pin), so the Parquet leaves git for R2 before history grows past
+  it.
 - **The manifest matches its files, in CI.** `tests/test_facts_contract.py` checks:
-  - every committed manifest's id recomputes and its totals add up;
+  - every manifest entry carries its keys, else a `FactsStoreError` names the entry (round 2);
+  - every committed manifest's id recomputes, its totals add up, and each entity's `rows_kept`
+    equals the rows its files hold (round 1);
   - every object it names exists, hashes to its name and holds the stated rows under the contract;
   - no object sits outside every manifest;
   - `current.json` resolves.
@@ -127,13 +143,17 @@ in object storage with its manifest in git (the DVC / lakeFS pattern).
   - 0 exact duplicates, 0 rows without a filed date.
   - 353 objects, 7,241,790 bytes.
   - Snapshot `edgar-47231ad69c9fc59f`. A second run wrote the identical id and objects.
-- **Parity.** `python -m vinci.facts parity --also-at 2020-06-30 --also-at 2023-12-31
-  --also-at 2025-06-30`. For each page, `facts_as_of(companyfacts, page_price_date(...))` against
-  the store at the same as-of, three ways:
+- **Parity.** `python -m vinci.facts parity --cache-dir <the SEC cache> --exclude <each held
+  name> --also-at 2020-06-30 --also-at 2023-12-31 --also-at 2025-06-30 --filing-eve` (the held
+  names are never written here; the ingest refuses a run that drops one). For each page,
+  `facts_as_of(companyfacts, page_price_date(...))` against the store at the same as-of, three ways:
   - every row, every field, in order;
   - the latest filing for every (taxonomy, tag, unit, period), from plain Python against the
-    store's SQL, where a same-day disagreement must be ambiguous on both sides;
-  - a deterministic sample of up to 200 keys per page through the public `get()`.
+    store's SQL: a same-day disagreement must be ambiguous on both sides, and on a same-value tie
+    the filing the store NAMES must be the reference's (round 2; before, accessions were compared
+    as a set, which could not see which one was named);
+  - a deterministic sample of up to 200 keys per page through the public `get()`, compared the
+    same way.
 
   | cut | pages | rows compared | rows filed after the cut | row diffs | keys compared | key diffs | keys restated | ambiguous keys | `get()` sampled | `get()` diffs |
   |---|--:|--:|--:|--:|--:|--:|--:|--:|--:|--:|
@@ -141,20 +161,31 @@ in object storage with its manifest in git (the DVC / lakeFS pattern).
   | 2020-06-30 | 26 | 228,494 | 239,393 | 0 | 125,098 | 0 | 6,275 | 1 | 4,600 | 0 |
   | 2023-12-31 | 26 | 358,286 | 109,601 | 0 | 191,789 | 0 | 8,471 | 1 | 5,200 | 0 |
   | 2025-06-30 | 26 | 417,048 | 50,839 | 0 | 220,874 | 0 | 9,112 | 1 | 5,200 | 0 |
+  | eve of each page's last filing day | 26 | 459,811 | 8,076 | 0 | 242,986 | 0 | 9,658 | 1 | 5,200 | 0 |
 
-  **104 page-cuts, 104 zero-diff.** *At the page price dates the cut excludes rows on only TWO
+  **130 page-cuts, 130 zero-diff, 1,931,021 rows** (the first four cuts' 104, 1,471,210 rows, as
+  first measured; the eve cuts added in round 2).
+  The EVE is the day before the last day anything was filed on or before the page's price date:
+  a store reading one day late passes every cut that falls between filings, and the eve is the cut
+  that sees it. *At the page price dates the cut excludes rows on only TWO
   pages*: NCNO (481 rows filed after 2026-08-17) and MVST (24 after 2026-09-16). Every other page's
   cache copy was fetched within days of its price date, with nothing filed in between. That is why
   the three earlier cuts were run: they exclude 50,839–239,393 rows each. At 2020-06-30, 3 pages'
   companies had filed nothing, so 23 pages were sampled.
-- **The parity can find a diff.** Run on the live pages under three mutants of the reader:
+- **The parity can find a diff.** Run on the live pages under six mutants of the reader:
   - **Cut removed from `get` / `latest`:** NCNO (481 key diffs) and MVST (24).
   - **Cut removed from the row replay:** NCNO (481 row diffs) and MVST (24).
   - **Earliest filing wins:** all 26 pages, 1,862–9,053 key diffs each.
+  - **Reading one day late** (both cut sites, round 2): 0 of 26 price-date cuts, 26 of 26 eves
+    (7,567 key diffs).
+  - **Lowest accession wins a same-value tie** (round 2): 7 of 26 price-date cuts, 6 of 26 eves.
+  - **No form preference on a tie** (round 2): NKE on both cut sets (6 key diffs).
 
-  Restored, sha256 unchanged.
-- **Tests.** `tests/test_facts_layer.py` holds 34 pins on FROZEN slices of two real cached responses
-  (`tests/fixtures/facts/`). Each slice carries its URL, `fetched_at` and response sha256.
+  Restored, sha256 unchanged. The last three also fail tests (6, 1 and 1 of the 46 then in
+  `tests/test_facts_layer.py`).
+- **Tests.** `tests/test_facts_layer.py` holds 47 pins on FROZEN slices of three real cached
+  responses (`tests/fixtures/facts/`: NFLX, FUBO, NKE). Each slice carries its URL, `fetched_at`
+  and response sha256.
   - **Filed after the as-of.** NFLX FY2023 diluted EPS is absent on 2024-01-25 and present on its
     filing day, 2024-01-26.
   - **Restated.** It reads 12.03 (`…-25-000044`, filed 2025-01-27) at 2026-01-22, and 1.2
@@ -165,8 +196,18 @@ in object storage with its manifest in git (the DVC / lakeFS pattern).
     456000 by a 10-Q/A, both filed 2020-08-11, so it is ambiguous that day. It reads 456000 the day
     before and 710000 (`…-20-015517`) two days after.
   - **Row replay.** The store equals `facts_as_of` row for row at six as-ofs on both slices.
+  - **Ties (round 2).** NKE's FY2024 net income, stated identically by its 10-K (`…-26-000088`) and
+    its DEF 14A (`…-26-000089`) on 2026-07-15, names the 10-K. FUBO's 2016-11-16 cover count,
+    stated identically by two 10-Qs on 2016-11-23, names the greater accession (`…-16-015421`).
+  - **The held-name guard (round 2).** An ingest without the exclusion the current snapshot has
+    refuses, names only the counts and writes nothing. On the live corpus it refused against
+    `edgar-47231ad69c9fc59f`; with the exclusion, the snapshot came back byte-identical.
 
-  `tests/test_facts_contract.py` holds 6 more, one of them the negative pin of the manifest check.
+  - **No count is read as zero (round 2).** A current snapshot that states no exclusion count
+    refuses the run rather than reading it as 0 (the zero-coercion lint caught the first draft).
+
+  `tests/test_facts_contract.py` holds 8 more: the negative pin of the manifest check, and the
+  50 MB stopgap cap with its own negative pin.
   - **Mutation.** With the cut neutralized in the latest-filing SQL, 7 tests fail. With it
     neutralized in the row replay, 10 fail (`PYTHONDONTWRITEBYTECODE=1`, `__pycache__` cleared).
 
@@ -205,26 +246,36 @@ in object storage with its manifest in git (the DVC / lakeFS pattern).
 - **The Parquet is committed as a STOPGAP** because it is 7.2 MB, under the 50 MB line. It moves
   to R2 when the bucket exists, and the manifest stays in git. *Falsifier:* the committed objects
   exceeding 50 MB means they leave git first.
-- **The snapshot id is not a row column** (the draft's column list had one). An unchanged
-  partition must be the same object across snapshots, so the reader stamps the id from the
-  manifest.
+- **The snapshot id is not a row column** (the draft's column list had one), so that an
+  unchanged partition CAN be the same object across snapshots; the reader stamps the id from the
+  manifest. Today it is not (the OPEN ITEM below).
 - **Values are float64.** The ingest refuses an integer above 2^53 (none in this population) and a
   non-finite value. The replay writes an integral value back as an integer, which is equal
   (`==`) to every source value measured: 437,406 integers, and 30,481 floats with none integral.
-- **A same-value tie** (two filings on the latest day stating the same value) returns the greatest
-  accession and lists the others in `concurrent_accessions`. That choice is deterministic, not a
-  claim that one filing is the source.
+- **A same-value tie** (two filings on the latest day stating the same value) names a PERIODIC
+  report over any other form (`reader.PERIODIC_FORMS`: 10-K, 20-F, 40-F, 10-Q and, by prefix,
+  their amendments and the 10-KT, the forms the page's readers filter on), then the greatest
+  accession, and lists the others in `concurrent_accessions`. At the 26 page cuts there are 240
+  such ties; the form preference moves 3 of them, all NKE's net income for FY2024–FY2026, from the
+  DEF 14A to the 10-K (round 2). The choice is deterministic, not a claim that one filing is the
+  source; a same-day DISAGREEMENT still raises.
 - **Two findings DEFERRED from the pre-PR review (round 0):**
   - `edgar_ingest.read_cached` builds one `CachedHttp` (and its unused HTTP client) per URL read:
     negligible at 26 entities, and no request is sent. Revisit when the ingest runs over the whole
     cache.
-  - `store.verify_manifest` raises `KeyError` on an entry missing a key, rather than naming it.
-    The check still fails loud, so CI goes red either way.
+  - `store.verify_manifest` raised `KeyError` on an entry missing a key, rather than naming it.
+    FIXED in round 2 (a typed `FactsStoreError` naming the entry).
 - **One finding DEFERRED from review round 1 (in-session `/code-review high`, Codex having
   failed on its usage limit):** an object's name hashes its Parquet BYTES, and those embed the
   writing pyarrow's version (`created_by`). Re-ingesting identical rows under a newer pyarrow
   therefore writes a second copy of every partition under new names, and a new snapshot id, with
   no change in the data. Naming objects by a canonical hash of their ROWS instead would change
   the design's "content-addressed object names" from bytes to rows, so it is the operator's call.
-  Until then, the writer's pyarrow is pinned in practice by the one writer per source. *Falsifier:*
-  a re-ingest that changes `created_by` and nothing else.
+  *Corrected in round 2:* this said the writer's pyarrow was "pinned in practice by the one writer
+  per source". It is not pinned at all: `pyproject.toml` says `pyarrow>=26.0`, there is no lock
+  file, and CI installs the latest. *Falsifier:* a re-ingest that changes `created_by` and nothing
+  else.
+- **OPEN ITEM, BEFORE ANY SECOND SNAPSHOT OR ANYTHING REACHES R2** (STATE.md §5.0 row 44): name
+  each object by a canonical hash of its ROWS without `source_position`, keeping the order
+  separately, and pin the writer's pyarrow. Until then every refresh rewrites every partition, and
+  the 50 MB cap test is the brake on what that costs git.

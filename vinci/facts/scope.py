@@ -12,6 +12,7 @@ from datetime import date
 from pathlib import Path
 
 from vinci.facts.edgar_ingest import NotInCacheError, cik_for_ticker, pad_cik
+from vinci.facts.store import FactsStoreError, current_path, load_manifest
 from vinci.followed import follow_records
 
 RULE = "committed pages (data/dossiers/*/dossier.json) plus followed names (data/followed.json)"
@@ -24,6 +25,31 @@ class ScopeName:
     page: Path | None           # the committed dossier.json, when the name has one
     followed: bool
     unresolved: str | None = None
+
+
+def require_exclusions(excluded: int, *, source: str, base: Path | None = None) -> None:
+    """Refuse a run that excludes FEWER names than the current snapshot did.
+
+    The exclusion is a command-line flag, so a run that forgets it would select a held name and put
+    its ticker and CIK into a manifest that is public and permanent (review round 2 of #896). This
+    is checked before anything is read or written, and it names the COUNTS, never a name."""
+    if not current_path(base).exists():
+        return
+    try:
+        manifest = load_manifest(source=source, base=base)
+    except FactsStoreError:
+        return                      # no snapshot for this source yet: nothing to fall short of
+    prior = (manifest.get("scope") or {}).get("excluded_by_operator_instruction")
+    if not isinstance(prior, int):
+        # never read an absent count as zero: that is exactly the run this guard exists to stop
+        raise FactsStoreError(
+            f"the current snapshot {manifest['snapshot_id']} states no exclusion count "
+            f"(scope.excluded_by_operator_instruction), so this run cannot be checked against it")
+    if excluded < prior:
+        raise FactsStoreError(
+            f"this run excludes {excluded} name(s) by operator instruction; the current snapshot "
+            f"{manifest['snapshot_id']} excludes {prior}. Writing it would publish a held name in "
+            f"a permanent manifest: pass every --exclude the current snapshot was written with")
 
 
 def page_path(dossiers_dir: Path, ticker: str) -> Path:

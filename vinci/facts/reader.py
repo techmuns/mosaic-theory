@@ -25,12 +25,23 @@ from typing import Any
 
 import duckdb
 
+from vinci.edgar.concepts import ANNUAL_REPORT_FORMS
 from vinci.facts.store import (
     FactsStoreError,
     _sha256_file,
     load_manifest,
     store_root,
 )
+
+#: The periodic reports (and, by prefix, their amendments: 10-K/A, 10-Q/A, 10-KT, 20-F/A). On a
+#: same-day, same-value tie one of these is named over a proxy or any other form: NKE's FY2024 net
+#: income is stated identically by its 10-K and its DEF 14A, both filed 2026-07-15, and the page's
+#: readers filter on these same forms (`vinci.edgar.concepts`, `ANNUAL_REPORT_FORMS`, 10-Q/10-K).
+PERIODIC_FORMS: tuple[str, ...] = (*ANNUAL_REPORT_FORMS, "10-Q")
+
+
+def is_periodic(form: str | None) -> bool:
+    return str(form or "").upper().startswith(PERIODIC_FORMS)
 
 
 class FactUnknownError(LookupError):
@@ -83,8 +94,9 @@ class Fact:
     fiscal_year: int | None
     fiscal_period: str | None
     snapshot_id: str
-    #: other filings made the SAME day that state the SAME value for this period (usually none);
-    #: ``accession`` is the greatest of them all, so the choice is deterministic
+    #: other filings made the SAME day that state the SAME value for this period (usually none).
+    #: ``accession`` is a periodic report's (:data:`PERIODIC_FORMS`) when any of them is one, and
+    #: among those the greatest accession, so the choice is deterministic and never a proxy's
     concurrent_accessions: tuple[str, ...] = ()
 
     @property
@@ -169,7 +181,7 @@ def _group_latest(rows: Iterable[tuple[Any, ...]], snapshot_id: str
                 f"{key[0]} {key[1]}:{key[2]} [{key[3]}] {key[4]}..{key[5]}: filings of {rs[0][7]} "
                 f"state different values ({stated})")
             continue
-        top = max(rs, key=lambda r: r[8])
+        top = max(rs, key=lambda r: (is_periodic(r[9]), r[8]))
         out[key] = Fact(
             entity=key[0], taxonomy=key[1], concept=key[2], unit=key[3],
             period=Period(end=key[5], start=key[4]), value=float(top[6]), filed_date=top[7],

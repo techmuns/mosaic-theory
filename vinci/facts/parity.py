@@ -27,13 +27,19 @@ from __future__ import annotations
 import json
 from collections import Counter
 from dataclasses import asdict, dataclass
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
 
 from vinci.edgar.concepts import facts_as_of
 from vinci.facts.edgar_ingest import NotInCacheError, read_cached_companyfacts
-from vinci.facts.reader import FactAmbiguousError, FactStore, FactUnknownError, Period
+from vinci.facts.reader import (
+    FactAmbiguousError,
+    FactStore,
+    FactUnknownError,
+    Period,
+    is_periodic,
+)
 
 #: How many keys per page go through the public `get()` (the rest are compared in bulk).
 GET_SAMPLE = 200
@@ -64,11 +70,27 @@ def _row_key(r: dict[str, Any]) -> str:
     return json.dumps(r, sort_keys=True)
 
 
-RefLatest = tuple[str, Any, str, frozenset[str]]    # kind, value(s), filed, accessions
+class RefLatest(NamedTuple):
+    kind: str                     # 'value' or 'ambiguous'
+    value: Any                    # the value, or the sorted values that disagree
+    filed: str
+    accessions: frozenset[str]    # every filing on the latest day
+    primary: str                  # the one the store must NAME: a periodic report's, then greatest
+
+
+def filing_eve(blob: dict[str, Any], cut: date) -> date | None:
+    """The day before the last day anything in ``blob`` was filed on or before ``cut``. A store that
+    reads one day late passes every cut that falls between filings; this is the cut that sees it
+    (review round 2 of #896: an off-by-one was flagged on 0 of 104 cuts, and on 26 of 26 eves)."""
+    days = [r["filed"] for rows in _tree(blob).values() for r in rows
+            if r.get("filed") and r["filed"] <= cut.isoformat()]
+    return date.fromisoformat(max(days)) - timedelta(days=1) if days else None
 
 
 def reference_latest(cut_blob: dict[str, Any]) -> dict[RefKey, RefLatest]:
-    """Per key: ('value', val, filed, accessions) or ('ambiguous', values, filed, accessions)."""
+    """Per key, the latest filing day's reading, computed here in plain Python: one value or the
+    values that disagree, every accession that day, and the PRIMARY the store must name (a
+    periodic report over a proxy, then the greatest accession)."""
     groups: dict[RefKey, list[dict[str, Any]]] = {}
     for (ns, tag, unit), rows in _tree(cut_blob).items():
         for r in rows:
@@ -79,10 +101,12 @@ def reference_latest(cut_blob: dict[str, Any]) -> dict[RefKey, RefLatest]:
         top = [r for r in rows if r["filed"] == latest]
         values = {float(r["val"]) for r in top}
         accns = frozenset(r["accn"] for r in top)
+        periodic = [r["accn"] for r in top if is_periodic(r.get("form"))]
+        primary = max(periodic) if periodic else max(accns)
         if len(values) > 1:
-            out[key] = ("ambiguous", tuple(sorted(values)), latest, accns)
+            out[key] = RefLatest("ambiguous", tuple(sorted(values)), latest, accns, primary)
         else:
-            out[key] = ("value", values.pop(), latest, accns)
+            out[key] = RefLatest("value", values.pop(), latest, accns, primary)
     return out
 
 
@@ -119,13 +143,19 @@ class PageParity:
 
 
 def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: Path, *,
-                 at: date | None = None) -> PageParity:
-    """``doc``'s page at its own price date, or at ``at`` when given."""
+                 at: date | None = None, eve: bool = False) -> PageParity:
+    """``doc``'s page at its own price date, or at ``at`` when given; with ``eve``, at the eve of
+    the last filing day on or before that date (:func:`filing_eve`)."""
     entity = f"{int(doc['cik']):010d}"
     cut = at if at is not None else page_cut(doc)
     try:
         resp = read_cached_companyfacts(entity, cache_dir)
         blob = json.loads(resp.text)
+        if eve:
+            day = filing_eve(blob, cut)
+            if day is None:
+                raise FactUnknownError(f"nothing filed by {cut}: no filing eve")
+            cut = day
         reference = facts_as_of(blob, cut)
         candidate = store.companyfacts_as_of(entity, cut)
     except (NotInCacheError, FactUnknownError) as exc:
@@ -169,17 +199,18 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
         ok: bool
         if want is None or have is None:
             ok = False
-        elif want[0] == "ambiguous":
+        elif want.kind == "ambiguous":
             ok = isinstance(have, FactAmbiguousError)
         else:
-            ok = (not isinstance(have, FactAmbiguousError) and have.value == want[1]
-                  and have.filed_date.isoformat() == want[2]
-                  and frozenset({have.accession, *have.concurrent_accessions}) == want[3])
+            ok = (not isinstance(have, FactAmbiguousError) and have.value == want.value
+                  and have.filed_date.isoformat() == want.filed
+                  and frozenset({have.accession, *have.concurrent_accessions}) == want.accessions
+                  and have.accession == want.primary)
         if not ok:
             key_diffs += 1
             if len(examples) < EXAMPLES_SHOWN:
                 examples.append(f"latest {rk}: reference {want!r}, store {have!r}")
-    ambiguous_keys = sum(1 for v in ref.values() if v[0] == "ambiguous")
+    ambiguous_keys = sum(1 for v in ref.values() if v.kind == "ambiguous")
     stated: dict[RefKey, set[float]] = {}
     for (ns, tag, unit), rows in ref_tree.items():
         for r in rows:
@@ -198,12 +229,12 @@ def compare_page(ticker: str, doc: dict[str, Any], store: FactStore, cache_dir: 
         want = ref[sk]
         try:
             fact = store.get(entity, f"{ns}:{tag}", period, cut, unit=unit)
-            ok = (want[0] == "value" and fact.value == want[1]
-                  and fact.filed_date.isoformat() == want[2]
+            ok = (want.kind == "value" and fact.value == want.value
+                  and fact.filed_date.isoformat() == want.filed
                   and fact.snapshot_id == store.snapshot_id
-                  and fact.source_ref.accession in want[3])
+                  and fact.source_ref.accession == want.primary)
         except FactAmbiguousError:
-            ok = want[0] == "ambiguous"
+            ok = want.kind == "ambiguous"
         except FactUnknownError:
             ok = False
         if not ok:

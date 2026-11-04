@@ -66,3 +66,23 @@ def test_a_tampered_manifest_is_named(tmp_path: Path) -> None:
     assert any("rows, manifest says" in p for p in problems)
     assert any("missing under" in p for p in verify_manifest(json.loads(
         MANIFESTS[-1].read_text()), tmp_path))
+
+
+#: The stopgap cap (ADR): the Parquet stays in git only while it is under this.
+STOPGAP_CAP_BYTES = 50 * 1024 * 1024
+
+
+def _over_cap(objects: Path, cap: int) -> int | None:
+    total = sum(p.stat().st_size for p in objects.rglob("*.parquet"))
+    return total if total > cap else None
+
+
+def test_the_committed_objects_stay_under_the_stopgap_cap() -> None:
+    """A refresh rewrites partitions rather than sharing them (round 2 of #896), so each one adds
+    to public history: past 50 MB the objects leave git for R2 first."""
+    assert _over_cap(OBJECTS, STOPGAP_CAP_BYTES) is None
+
+
+def test_the_cap_check_can_fail() -> None:
+    """NEGATIVE: the same check at a 1 MB cap names the committed 7.2 MB."""
+    assert (_over_cap(OBJECTS, 1024 * 1024) or 0) > 7_000_000

@@ -10,9 +10,10 @@ committed ``data/facts/schema.json`` is :func:`contract`'s output, and
 ``tests/test_facts_contract.py`` fails when they disagree. A column change is therefore a reviewed
 diff to a file, plus a :data:`SCHEMA_VERSION` bump, never a silent change in what the writer emits.
 
-THE SNAPSHOT ID IS NOT A COLUMN. A partition that did not change between two snapshots is the SAME
-content-addressed object in both; a ``snapshot_id`` column would make every partition change on
-every snapshot. The reader stamps each fact with the snapshot it read, from the manifest.
+THE SNAPSHOT ID IS NOT A COLUMN, so that an unchanged partition CAN be the same object in two
+snapshots; the reader stamps each fact with the snapshot it read, from the manifest. Today it is
+not: ``source_position`` shifts with every new filing and the bytes embed pyarrow's version, so a
+refresh rewrites every partition (review round 2 of #896; the fix is STATE.md §5.0 row 44).
 """
 from __future__ import annotations
 

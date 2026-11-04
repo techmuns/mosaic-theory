@@ -26,7 +26,7 @@ from vinci.facts.edgar_ingest import (
     rows_from_companyfacts,
 )
 from vinci.facts.reader import FactStore, manifest_summary
-from vinci.facts.scope import RULE, ScopeName, scope_names
+from vinci.facts.scope import RULE, ScopeName, require_exclusions, scope_names
 from vinci.facts.store import (
     build_manifest,
     load_manifest,
@@ -46,6 +46,7 @@ def _scope(a: argparse.Namespace) -> tuple[list[ScopeName], int]:
 
 def cmd_ingest(a: argparse.Namespace) -> int:
     names, excluded = _scope(a)
+    require_exclusions(excluded, source=SOURCE)   # before anything is read or written
     by_cik: dict[str, list[str]] = {}
     unread: list[dict[str, str | None]] = []
     for n in names:
@@ -72,6 +73,9 @@ def cmd_ingest(a: argparse.Namespace) -> int:
             "response_sha256": resp.sha256, "rows_in_response": got.rows_in_response,
             "rows_kept": len(got.rows), "exact_duplicates_dropped": got.exact_duplicates_dropped,
             "rows_without_filed": got.rows_without_filed,
+            # named beside the count, and only when there are any (none in snapshot 1)
+            **({"rows_without_filed_named": got.rows_without_filed_named}
+               if got.rows_without_filed_named else {}),
         })
         print(f"read {'/'.join(tickers):6} {cik} fetched {resp.fetched_at:%Y-%m-%d} "
               f"{got.rows_in_response:>7,} rows, {got.exact_duplicates_dropped} exact duplicates, "
@@ -94,15 +98,17 @@ def cmd_parity(a: argparse.Namespace) -> int:
     from vinci.facts.parity import as_json, compare_page
     names, _ = _scope(a)
     results = []
-    cuts: list[date | None] = [None, *(date.fromisoformat(d) for d in a.also_at)]
+    cuts: list[tuple[date | None, bool]] = [(None, False),
+                                             *((date.fromisoformat(d), False) for d in a.also_at),
+                                             *([(None, True)] if a.filing_eve else [])]
     with FactStore(a.snapshot, root=a.store) as store:
         print(f"snapshot {manifest_summary(store.manifest)}")
-        for at in cuts:
+        for at, eve in cuts:
             for n in names:
                 if n.page is None:
                     continue
                 doc = json.loads(n.page.read_text())
-                results.append(compare_page(n.ticker, doc, store, a.cache_dir, at=at))
+                results.append(compare_page(n.ticker, doc, store, a.cache_dir, at=at, eve=eve))
     head = ("page", "cut", "fetched", "rows in resp", "filed after cut", "rows compared",
             "store rows", "row diffs", "order diffs", "keys compared", "key diffs",
             "keys restated", "ambiguous keys", "get() sample", "get() diffs")
@@ -159,6 +165,8 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--json", default=None, help="also write the results here")
             p.add_argument("--also-at", action="append", default=[], metavar="YYYY-MM-DD",
                            help="also replay every page at this as-of (repeatable)")
+            p.add_argument("--filing-eve", action="store_true",
+                           help="also replay every page at the eve of its last filing day")
     a = ap.parse_args(argv)
     return int(a.fn(a))
 

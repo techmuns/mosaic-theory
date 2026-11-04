@@ -16,7 +16,9 @@ A ROW OF AN UNKNOWN SHAPE RAISES. A replay is only faithful if every key a row c
 so a key outside :data:`_ROW_KEYS`, a missing required key, or a value that is not a finite number
 stops the ingest (:class:`IngestShapeError`) rather than storing part of a row. The one exception
 is a row with no ``filed`` date: :func:`vinci.edgar.concepts.facts_as_of` drops such a row because
-its knowable date cannot be shown, so it is dropped here too, and counted.
+its knowable date cannot be shown, so it is dropped here too. It is still shape-checked first, and
+it is NAMED (taxonomy, tag, unit, period, accession) in the result, and so in the manifest, not
+only counted (review round 2 of #896).
 """
 from __future__ import annotations
 
@@ -109,6 +111,8 @@ class IngestResult:
     rows_in_response: int
     exact_duplicates_dropped: int
     rows_without_filed: int
+    #: each row dropped for having no ``filed`` date, named so the manifest can show it
+    rows_without_filed_named: list[dict[str, Any]]
 
 
 def _date(raw: Any, *, where: str) -> date:
@@ -146,25 +150,19 @@ def rows_from_companyfacts(facts: dict[str, Any]) -> IngestResult:
     entity = pad_cik(facts["cik"])
     out: list[dict[str, Any]] = []
     seen: set[tuple[str, str, str, str]] = set()
-    total = dupes = no_filed = 0
+    total = dupes = 0
+    no_filed: list[dict[str, Any]] = []
     for position, (taxonomy, tag, unit, row) in enumerate(_walk(facts)):
         total += 1
         where = f"{entity} {taxonomy}:{tag} [{unit}] row {position}"
         if not isinstance(row, dict):
             raise IngestShapeError(f"{where}: not an object")
-        if not row.get("filed"):
-            no_filed += 1          # facts_as_of drops it too: its knowable date cannot be shown
-            continue
+        has_filed = bool(row.get("filed"))
         unknown = set(row) - _ROW_KEYS
-        missing = _REQUIRED_KEYS - set(row)
+        missing = _REQUIRED_KEYS - set(row) - (set() if has_filed else {"filed"})
         if unknown or missing:
             raise IngestShapeError(
                 f"{where}: unknown keys {sorted(unknown)}, missing {sorted(missing)}")
-        key = (taxonomy, tag, unit, json.dumps(row, sort_keys=True))
-        if key in seen:
-            dupes += 1
-            continue
-        seen.add(key)
         fy = row["fy"]
         if fy is not None and (isinstance(fy, bool) or not isinstance(fy, int)):
             raise IngestShapeError(f"{where}: fy {fy!r} is not an integer")
@@ -176,15 +174,28 @@ def rows_from_companyfacts(facts: dict[str, Any]) -> IngestResult:
         # present only when SEC assigned one: a present-but-null frame could not be replayed
         if "frame" in row and not isinstance(row["frame"], str):
             raise IngestShapeError(f"{where}: frame {row['frame']!r} is not a string")
+        start = _date(row["start"], where=where) if "start" in row else None
+        end = _date(row["end"], where=where)
+        value = _value(row["val"], where=where)
+        if not has_filed:
+            # facts_as_of drops it too: its knowable date cannot be shown. Named, not just counted.
+            no_filed.append({"taxonomy": taxonomy, "concept": tag, "unit": unit,
+                             "start": row.get("start"), "end": row["end"], "accn": row["accn"]})
+            continue
+        key = (taxonomy, tag, unit, json.dumps(row, sort_keys=True))
+        if key in seen:
+            dupes += 1
+            continue
+        seen.add(key)
         out.append({
             "source": SOURCE,
             "entity": entity,
             "taxonomy": taxonomy,
             "concept": tag,
             "unit": unit,
-            "period_start": _date(row["start"], where=where) if "start" in row else None,
-            "period_end": _date(row["end"], where=where),
-            "value": _value(row["val"], where=where),
+            "period_start": start,
+            "period_end": end,
+            "value": value,
             "filed_date": _date(row["filed"], where=where),
             "accession": row["accn"],
             "form": row["form"],
@@ -200,4 +211,4 @@ def rows_from_companyfacts(facts: dict[str, Any]) -> IngestResult:
         })
     return IngestResult(entity=entity, entity_name=str(facts.get("entityName") or ""), rows=out,
                         rows_in_response=total, exact_duplicates_dropped=dupes,
-                        rows_without_filed=no_filed)
+                        rows_without_filed=len(no_filed), rows_without_filed_named=no_filed)
