@@ -711,7 +711,7 @@ def check(lines: list[PanelLine], sources: list[Source], *, panel_filed: date | 
                 ciq_maturity_date=row.ciq_maturity_date, check=CHECK_NOT_RUN,
                 note=unread or (f"the {failed.cite} could not be read ({failed.error}), and no "
                                 "newer filing states this maturity" if failed else ""))
-        rows.append(row)
+        rows.append(row.model_copy(update={"source_ref": maturity_row_ref(row)}))
     return MaturityCheck(
         panel_filed=panel_filed.isoformat() if panel_filed else None, bound=bound.isoformat(),
         sources=[MaturitySource(form=s.form, accession=s.accession, filed=s.filed.isoformat(),
@@ -719,6 +719,14 @@ def check(lines: list[PanelLine], sources: list[Source], *, panel_filed: date | 
                                 statements=len(s.stated) if s.stated is not None else 0,
                                 error=s.error) for s in ordered],
         rows=rows)
+
+
+def maturity_row_ref(row: MaturityCheckRow) -> str:
+    """The ref one checked maturity is cited by (item 29, option 4): the CIQ panel line it reads and
+    the filing it was checked against, when one was read."""
+    against = (f" · checked against the {row.source}" if row.source
+               else " · not checked against a filing")
+    return f"CIQ capital-structure panel — maturity of '{row.description}'{against}"
 
 
 def _row(ln: PanelLine, decisions: list[tuple[Source, dict[int, Decision]]],

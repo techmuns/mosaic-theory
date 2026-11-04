@@ -258,6 +258,14 @@ def filed_quarter(points: list[ConceptPoint], end: date,
     return None
 
 
+def ciq_readings_ref(row: lq.LtmCheck) -> str:
+    """The ref a filed figure's two CIQ readings are cited by (item 29, option 4): the annual
+    export's LTM cell, which the page's table no longer shows, and the quarterly export's quarters
+    summed."""
+    return (f"CIQ Financials — {row.label}, LTM to {row.ltm_end.isoformat()}: the annual export's "
+            "LTM cell and the quarterly export's quarters summed")
+
+
 def _quarter_ref(pts: tuple[ConceptPoint, ...], facts: dict[str, Any]) -> str:
     if len(pts) == 1:
         return filed_at(pts[0], facts)
@@ -421,7 +429,7 @@ def _judge_containing(row: lq.LtmCheck, wider: ContainingLine,
         value=Sourced.present(round(carried, 3), source_ref=ref), tag=wider.tag,
         kind="containing_line", components=list(wider.components), ciq_annual=row.ltm,
         ciq_quarterly=round(carried, 3), supports="quarterly", quarters=quarters,
-        as_filed_by=as_filed_by.isoformat()), note=note)
+        as_filed_by=as_filed_by.isoformat(), source_ref=ciq_readings_ref(row)), note=note)
 
 
 def _judge(row: lq.LtmCheck, line: FiledLine, tag: str,
@@ -449,7 +457,7 @@ def _judge(row: lq.LtmCheck, line: FiledLine, tag: str,
         label=row.label, ltm_end=row.ltm_end.isoformat(),
         value=Sourced.present(filed, source_ref=ref), tag=tag, ciq_annual=row.ltm,
         ciq_quarterly=round(carried, 3), supports=supports, quarters=quarters,
-        as_filed_by=as_filed_by.isoformat()))
+        as_filed_by=as_filed_by.isoformat(), source_ref=ciq_readings_ref(row)))
 
 
 def apply(mech: MechanicalLayer, figures: list[FiledLtmFigure]) -> MechanicalLayer:

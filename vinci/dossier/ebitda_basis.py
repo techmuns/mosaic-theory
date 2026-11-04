@@ -48,6 +48,12 @@ _EBITDA_ROW = "EBITDA ($M)"
 _EBIT_ROW = "EBIT ($M)"
 
 
+#: (item 29, option 4) The ref a point cites this block's figures by — a computation over the
+#: annual table's EBITDA and EBIT rows, never a source of its own.
+EBITDA_BASIS_REF = ("Assembler: implied D&A (CIQ EBITDA − EBIT), median over the actual columns "
+                    "against the estimate columns of the annual table")
+
+
 def _row(table: FinTable, label: str) -> list[float | None]:
     for r in table.rows:
         if r.label.strip() == label:
@@ -85,15 +91,18 @@ def read_basis(table: FinTable | None) -> EbitdaBasis:
     never surfaced at all, and the un-resolved name would have read as "checked, nothing found".
     """
     if table is None:
-        return EbitdaBasis(note="no annual table on this build — basis not checkable")
+        return EbitdaBasis(source_ref=EBITDA_BASIS_REF,
+                           note="no annual table on this build — basis not checkable")
     flags = list(table.is_estimate)
     ebitda, ebit = _row(table, _EBITDA_ROW), _row(table, _EBIT_ROW)
     if not flags:
-        return EbitdaBasis(note="no per-column estimate flags on this table — basis not checkable")
+        return EbitdaBasis(source_ref=EBITDA_BASIS_REF,
+                           note="no per-column estimate flags on this table — basis not checkable")
     if not ebitda or not ebit:
         missing = " and ".join(
             n for n, r in ((_EBITDA_ROW, ebitda), (_EBIT_ROW, ebit)) if not r)
-        return EbitdaBasis(note=f"{missing} absent — implied D&A needs both rows")
+        return EbitdaBasis(source_ref=EBITDA_BASIS_REF,
+                           note=f"{missing} absent — implied D&A needs both rows")
 
     act = _implied(ebitda, ebit, flags, want=False)
     est = _implied(ebitda, ebit, flags, want=True)
@@ -101,7 +110,7 @@ def read_basis(table: FinTable | None) -> EbitdaBasis:
         # REPORT THE SIDE THAT DID COMPUTE. Returning None for both would discard a number already
         # in hand and make "one side missing" indistinguishable from "neither side resolved".
         side = "actual" if not act else "estimate"
-        return EbitdaBasis(
+        return EbitdaBasis(source_ref=EBITDA_BASIS_REF,
             actual_implied_dna=statistics.median(act) if act else None,
             estimate_implied_dna=statistics.median(est) if est else None,
             note=f"no {side} column carries both EBITDA and EBIT — nothing to compare across the "
@@ -109,7 +118,7 @@ def read_basis(table: FinTable | None) -> EbitdaBasis:
 
     ma, me = statistics.median(act), statistics.median(est)
     if ma == 0:
-        return EbitdaBasis(
+        return EbitdaBasis(source_ref=EBITDA_BASIS_REF,
             actual_implied_dna=ma, estimate_implied_dna=me,
             note="actual implied D&A is zero — a ratio would divide by it; both figures reported")
     ratio = me / ma
@@ -148,5 +157,6 @@ def read_basis(table: FinTable | None) -> EbitdaBasis:
             f"({ratio:.2f}x) — below the {FLAG_HIGH:.1f}x flag, so NO DIVERGENCE WAS DETECTED. "
             f"That is not a finding that the rows share a basis: this check tests implied D&A "
             f"against one threshold, and nothing here proves agreement.{band}")
-    return EbitdaBasis(actual_implied_dna=ma, estimate_implied_dna=me, ratio=ratio,
+    return EbitdaBasis(source_ref=EBITDA_BASIS_REF,
+                       actual_implied_dna=ma, estimate_implied_dna=me, ratio=ratio,
                        divergent=divergent, note=note)
