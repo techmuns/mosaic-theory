@@ -2,7 +2,7 @@
 id: 2026-11-04-an-amendment-heading-names-its-contract-in-its-recital
 status: shipped
 date: 2026-11-04
-prs: []
+prs: [898]
 supersedes:
 superseded-by:
 ---
