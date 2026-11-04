@@ -95,9 +95,16 @@ in object storage with its manifest in git (the DVC / lakeFS pattern).
 - **Coarse partitions.** 353 objects for 26 companies (about 14 filed years each). Compaction
   waits for a measured small-file cost.
 - **Licence.** The operator ruled on 2026-11-04 that the licence covers publishing CIQ-derived
-  facts and Polygon and Tiingo prices. PR #894 records that in CLAUDE.md
-  (`docs/records/2026-11-04-licence-covers-publishing-ciq-derived-facts-and-prices.md`). Slice 1
-  publishes EDGAR facts only, which are public.
+  facts and Polygon and Tiingo prices. CLAUDE.md states it as the **PUBLISHED DATA** rule (#894,
+  `docs/records/2026-11-04-licence-covers-publishing-ciq-derived-facts-and-prices.md`), with three
+  conditions on every published value:
+  - it carries its source_ref;
+  - it carries its knowable date (for CIQ, the export date or a column's stated filing date, never
+    the period end);
+  - it is extracted, not copied: the workbook file never enters git or the bucket.
+
+  Slice 1 publishes EDGAR facts only. Those are public filings, and each row carries its accession
+  (the source_ref) and its filed date (the knowable date).
 - **CIQ is not point-in-time.** An export carries restated history as of its export date. When
   CIQ arrives (slice 4), each CIQ fact's knowable date is the export date, or a column's stated
   filing date, never its period end. Otherwise the store re-creates look-ahead.
