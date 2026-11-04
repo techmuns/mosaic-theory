@@ -179,6 +179,11 @@ verdict placement.
   derived analysis with titles, figures and SHORT verbatim source quotes, published on the authed
   deploy and, since 2026-10-22, readable in this public repo. Never an article's text, never a
   local path.
+  **Cut-down CIQ test fixtures** (operator ruling 2026-11-04, #891: "no need to remove fixture or
+  ciq data from main, under our license we can keep it"): `tests/fixtures/ciq_*.json` and
+  `tests/fixtures/filed_tiebreak.json` stay committed. Each holds a sheet's header row and only the
+  cells its pins read, cut through the real decode path. A whole workbook or a pasted table never
+  is.
 - **PUBLISHED DATA: THE LICENCE COVERS CIQ-DERIVED FACTS AND POLYGON AND TIINGO PRICES** *(operator
   decision 2026-11-04, `docs/records/2026-11-04-licence-covers-publishing-ciq-derived-facts-and-prices.md`)*.
   These may be published in this repo and in the shared fact store (Parquet on R2, its manifest in
