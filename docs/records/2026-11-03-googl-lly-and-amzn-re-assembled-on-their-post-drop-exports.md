@@ -168,3 +168,8 @@ AMZN's anchors are rebuilt only once.
   - AMZN's R1 is +1.0%.
   - UNTRACEABLE counts rise on all three. They are this build's draws, read by #859's trace.
   - GOOGL's FCF-sign check stays unexplained, on the economics rather than the export.
+- **Deferred from the review of the test edits** (`/code-review high` on `ebbd9452`, #886 round 2):
+  `tests/test_anchor.py::test_the_flag_reaches_both_rendered_pages_end_to_end` writes its page copy
+  with `NamedTemporaryFile(delete=False)` and never removes it, so each run leaves one AMZN dossier
+  in the system temp directory. The code predates this pass, which changed only the driver's
+  sentence check; the fix is `tmp_path`, in a test-hygiene PR.

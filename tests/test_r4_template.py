@@ -94,8 +94,10 @@ def test_the_pages_tagged_r4_get_the_r4_template_as_committed(ticker: str) -> No
 # --- the bridge ----------------------------------------------------------------------------------
 
 #: A 0.0 preferred/minority line as the rebuild writes it since 2026-10-30 (audit A-D2, PR #877):
-#: no figure, and the reason. The committed pages' 0.0 lines are all absent rows on AMZN's and
+#: no figure, and the reason. The committed pages' 0.0 lines were all absent rows on AMZN's and
 #: UBER's own exports except UBER's preferred, a '-' (measured on each page's export by sha).
+#: AMZN's page has carried the rebuilt shape itself since its 2026-11-03 re-assembly, so its two
+#: shapes now read one page; UBER's committed page still carries the 0.0 lines.
 _UNREAD = {("AMZN", "Total Pref. Equity"): "the balance sheet carries no 'Total Pref. Equity' row",
            ("AMZN", "Total Minority Interest"):
                "the balance sheet carries no 'Total Minority Interest' row",

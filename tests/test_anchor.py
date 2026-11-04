@@ -697,6 +697,12 @@ def test_the_flag_reaches_both_rendered_pages_end_to_end() -> None:
                            ltm_ebit=anc._ltm_ebit_from_fs(m),
                            ltm_revenue=anc._ltm_revenue_from_fs(m))
     assert gap is not None, "AMZN's own numbers no longer fire the flag — re-check the fixture"
+    # the sentence states the gap's own size and side — what the literal it replaced ("sits 6.8
+    # points ABOVE") also proved — derived from the gap, so it follows the page and still refuses a
+    # sentence that drops either
+    said = re.search(r"sits (\d+\.\d) points (ABOVE|BELOW) the ", gap.read)
+    assert said is not None, gap.read
+    assert abs(float(said[1]) - abs(gap.gap_pts)) <= 0.051 and said[2] == gap.ltm_side.upper()
     flagged = amzn.anchor.model_copy(update={"midcycle_gap": gap})
     py = "\n".join(dr._screening_context_lines(flagged))
     assert "Mid-cycle assumption under strain." in py and gap.read in py

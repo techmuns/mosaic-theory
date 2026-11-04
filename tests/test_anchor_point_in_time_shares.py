@@ -214,7 +214,7 @@ def test_a_refused_count_leaves_the_base_on_the_diluted_average_e2e() -> None:
 
 
 def test_lillys_real_page_refuses_its_count_and_keeps_its_equity() -> None:
-    """THE COMPUTE, on LLY's committed mechanical layer and its frozen companyfacts (the artifact
+    """THE COMPUTE, on LLY's committed mechanical layer and its tracking companyfacts (the artifact
     pins above cannot see a code change; this one can): the count is refused, no dilution test is
     struck, and the base divides the diluted weighted average — the SAME equity the page re-struck
     with a corroborated count (its basic average, 891,900,000) divides.

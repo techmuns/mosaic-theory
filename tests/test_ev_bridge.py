@@ -266,7 +266,7 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
     NEGATIVE: another Estimates export, or no stamped bands, leaves the page alone."""
     from vinci.dossier.refresh import ev_bridge_transform, refresh_dossier
 
-    _bundle("AMZN")
+    b = _bundle("AMZN")
     src = ROOT / "data" / "dossiers" / "AMZN"
     folder = tmp_path / "AMZN"
     folder.mkdir()
@@ -283,15 +283,21 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
     assert step(unstamped) == {}
     if not step(before):
         pytest.skip("the on-disk AMZN exports are not the page's")
+    # LANDED, NOT ECHOED: the copy loses its layer first, so the refresh has to build it from the
+    # exports — on a page that already carries one, a refresh echoing it back would pass
+    stripped = json.loads(json.dumps(before))
+    del stripped["ev_bridge"]
+    path.write_text(json.dumps(stripped, indent=2, ensure_ascii=False))
     refresh_dossier(path, top_level=step)
     after = json.loads(path.read_text())
-    # the page's own figures, never a literal (TEST-LAYER RULE: AMZN's claims moved 128,647 →
-    # 190,615 at its 2026-11-03 re-assembly): what lands from the page's exports is what the page
-    # carries, and it is CIQ's TEV less market cap
+    # never a literal (TEST-LAYER RULE: AMZN's claims moved 128,647 → 190,615 at its 2026-11-03
+    # re-assembly): what lands is CIQ's TEV less market cap read straight off the comps export —
+    # not off the landed layer's own field — and it is the figure the page carries
+    ciq = cs._ciq_tev_claims(b)
+    assert ciq is not None, "the comps export carries no TEV less market cap for AMZN"
     landed = EvBridge.model_validate(after["ev_bridge"])
+    assert abs(landed.claims - ciq[0]) <= cs.EV_BRIDGE_CIQ_TOL
     assert landed.claims == pytest.approx(before["ev_bridge"]["claims"])
-    assert landed.ciq_tev_claims is not None
-    assert abs(landed.claims - landed.ciq_tev_claims) <= cs.EV_BRIDGE_CIQ_TOL
     for key in ("mechanical", "synthesis", "anchor", "forward_consensus"):
         assert after[key] == before[key], f"{key} moved"
     assert list(after)[-1] == "anchor"
