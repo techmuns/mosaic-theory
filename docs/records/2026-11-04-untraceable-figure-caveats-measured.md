@@ -16,10 +16,16 @@ synthesis, each UNTRACEABLE flag classified by where its figure lives, then two 
   "the 3rd percentile"; 2.6 against 3 is outside the trace's max(0.05, 2%) tolerance. A 0..1 value
   in a field named for a percentile (`synthesis._PERCENTILE_FIELDS`: `pe_percentile_5y`,
   `ev_ebitda_percentile_5y`, the history bands' `percentile`) now also states its whole-number
-  rank (half up), traced only as that rank, the way a date already states its year.
-- **A duration is a label however it is written.** `_CAL_AFTER` skipped "5 years"; the claim trace
-  now also skips "a 5-year window", "the 52-week low", "over ~2y", "its 2.3y range"
-  (`synthesis._DURATION_AFTER`). Time units only: "$5-billion" and "5-10%" stay figures. The
+  rank — the nearest whole number to it ×100 on its stored decimal, and both neighbours at an
+  exact half (`_percentile_ranks`) — traced only as that rank, the way a date states its year.
+  The half case is two-sided because the page itself has no one rank there: `render._pctile`
+  prints 0.025 as the 2nd (half-even) and the web as the 3rd, and in binary floats 0.145 × 100 is
+  14.4999…, so the page prints the 14th where a writer reading "0.145" says the 15th.
+- **A duration is a label, hyphenated or abbreviated to "y".** `_CAL_AFTER` skipped "5 years"; the
+  claim trace now also skips "a 5-year window", "the 52-week low", "over ~2y", "its 2.3y range"
+  (`synthesis._DURATION_AFTER`). Time units only: "$5-billion" and "5-10%" stay figures. Three
+  other shapes on the committed pages are left as they were: MVST's "8q", WLK's "180d" and LLY's
+  "12m" ("m" is also a million) — each still prints a caveat. The
   transcript-row check (`driver_extract._figures`) is deliberately left as it was, so a row's value
   still needs its quote to state a hyphenated duration.
 

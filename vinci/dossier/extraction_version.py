@@ -405,9 +405,9 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "2026-11-04.trace-rank-and-duration",
         "a synthesis figure traces as its cited fact's percentile rank and a duration label is no "
         "figure: a whole number that a 0..1 percentile the cited fact states rounds to at x100 "
-        "traces (0.026 is the 3rd percentile), and a duration written hyphenated or abbreviated "
-        "(5-year, 52-week, ~2y) is skipped like its spaced form; every other figure still traces "
-        "only to the fact its point cites",
+        "traces (0.026 is the 3rd percentile; both neighbours at an exact half), and a duration "
+        "written hyphenated or abbreviated to y (5-year, 52-week, ~2y) is skipped like its spaced "
+        "form; every other figure still traces only to the fact its point cites",
     ),
 )
 

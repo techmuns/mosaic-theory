@@ -21,9 +21,9 @@ Value-level pins sit on the FROZEN SMPL page; the committed corpus gets phrasing
 from __future__ import annotations
 
 import json
-import math
 import random
 import re
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -38,7 +38,7 @@ from vinci.verbatim import comparison_key
 ROOT = Path(__file__).resolve().parents[1]
 _FROZEN_SMPL = ROOT / "tests/fixtures/frozen_pages/2026-08-18/SMPL/dossier.json"
 _COMMITTED = sorted((ROOT / "data/dossiers").glob("*/dossier.json"))
-#: a duration's label form, as `_CAL_AFTER` reads it after the number
+#: a duration's label form, as `synthesis._DURATION_AFTER` reads it after the number
 _DURATION_AFTER = re.compile(r"^(?:-(?:days?|weeks?|months?|quarters?|qtrs?|years?)\b|y\b)",
                              re.IGNORECASE)
 
@@ -118,6 +118,29 @@ def test_a_band_percentile_traces_as_its_rank() -> None:
         "own_history": oh.model_copy(update={"value": [band]})})})
     assert _flagged(moved, "the multiple is at the 3rd percentile", oh.source_ref) == []
     assert _flagged(moved, "the multiple is at the 2nd percentile", oh.source_ref) == ["2"]
+
+
+def test_a_percentile_at_an_exact_half_admits_both_neighbours_and_no_more() -> None:
+    """At an exact half the page has no one rank: in binary floats 0.145 x 100 is 14.4999…, so
+    `render._pctile` and the web print the 14th while a writer reading "0.145" says the 15th, and
+    0.025 is the 2nd to Python's half-even and the 3rd to `Math.round`. Both neighbours trace; the
+    next ones out do not. (The first cut, floor(x x 100 + 0.5), admitted only the 14th.)"""
+    mech = _frozen()
+    v = mech.valuation
+    assert v is not None and v.pe_percentile_5y.source_ref
+    ref = v.pe_percentile_5y.source_ref
+    for value, both, out in ((0.145, ("14th", "15th"), ("13th", "16th")),
+                             (0.025, ("2nd", "3rd"), ("1st", "4th"))):
+        moved = mech.model_copy(update={"valuation": v.model_copy(update={
+            "pe_percentile_5y": v.pe_percentile_5y.model_copy(update={"value": value})})})
+        for rank in both:
+            assert _flagged(moved, f"it sits at the {rank} percentile", ref) == [], (value, rank)
+        for rank in out:
+            assert _flagged(moved, f"it sits at the {rank} percentile", ref) == [rank[:-2]], (
+                value, rank)
+    assert syn._percentile_ranks(0.026) == {3.0}
+    assert syn._percentile_ranks(0.0183) == {2.0}
+    assert syn._percentile_ranks(0.145) == {14.0, 15.0}
 
 
 def _percentile_fields(schema: Any) -> set[str]:
@@ -200,6 +223,14 @@ def _points(raw: dict[str, Any]) -> list[ds.SourcedPoint]:
             *s.decisive_question.evidence_against]
 
 
+def _ranks(x: float) -> set[float]:
+    """A 0..1 percentile's whole-number rank(s), computed here without the code under test: the
+    nearest whole number to x100 on its stored decimal, both neighbours at an exact half."""
+    d = Decimal(repr(x)) * 100
+    lo = int(d // 1)
+    return {float(lo), float(lo + 1)} if d - lo == Decimal("0.5") else {float(round(d))}
+
+
 def _ranks_by_ref(mech: ds.MechanicalLayer) -> dict[str, set[float]]:
     """The rank of each percentile on the page, keyed by its fact's ref — read from the schema's
     fields directly, not through the code under test."""
@@ -209,11 +240,10 @@ def _ranks_by_ref(mech: ds.MechanicalLayer) -> dict[str, set[float]]:
         return out
     for fact in (v.pe_percentile_5y, v.ev_ebitda_percentile_5y):
         if fact.source_ref and fact.value is not None:
-            out.setdefault(comparison_key(fact.source_ref), set()).add(
-                float(math.floor(fact.value * 100 + 0.5)))
+            out.setdefault(comparison_key(fact.source_ref), set()).update(_ranks(fact.value))
     if v.own_history is not None and v.own_history.source_ref and v.own_history.value:
         out.setdefault(comparison_key(v.own_history.source_ref), set()).update(
-            float(math.floor(b.percentile * 100 + 0.5)) for b in v.own_history.value)
+            r for b in v.own_history.value for r in _ranks(b.percentile))
     return out
 
 
