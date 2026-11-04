@@ -205,7 +205,11 @@ def test_assembly_builds_the_layer_through_the_one_builder() -> None:
     """A SOURCE PIN, AND ITS LIMIT STATED: assembly needs the network and an LLM."""
     from vinci.dossier import assemble as asm
 
-    assert "ev_bridge=ciq_sheets.ev_bridge(" in inspect.getsource(asm.assemble_one)
+    src = inspect.getsource(asm.assemble_one)
+    assert "bridge = ciq_sheets.ev_bridge(" in src
+    # (2026-11-04) the builder's one result lands as the bridge or as why it is unbuilt, never both
+    assert "ev_bridge=bridge if isinstance(bridge, EvBridge) else None" in src
+    assert "ev_bridge_unbuilt=bridge if isinstance(bridge, EvBridgeUnbuilt) else None" in src
 
 
 def _bundle(ticker: str) -> Any:
@@ -223,7 +227,7 @@ def test_the_live_read_matches_the_frozen_case(ticker: str) -> None:
     case = CASES[ticker]
     got = cs.ev_bridge(b, fy_periods=case["fy_periods"], edgar_net_debt=case["edgar_net_debt"],
                        edgar_source=case["edgar_source"])
-    if got is None or (got.source_sha256, got.estimates_sha256) != (
+    if not isinstance(got, EvBridge) or (got.source_sha256, got.estimates_sha256) != (
             case["bridge"]["source_sha256"], case["bridge"]["estimates_sha256"]):
         pytest.skip("the on-disk exports are not the frozen ones")
     assert got == _bridge(ticker)
@@ -244,7 +248,8 @@ def test_claims_equal_ciqs_current_figure_on_every_committed_name() -> None:
             continue
         b = CiqBundle.from_files(page.name, sorted(p for p in folder.iterdir() if p.is_file()))
         got = cs.ev_bridge(b, fy_periods=[])
-        assert got is not None and got.ciq_tev_claims is not None, page.name
+        assert isinstance(got, EvBridge), (page.name, got.reason)
+        assert got.ciq_tev_claims is not None, page.name
         assert got.claims == pytest.approx(got.ciq_tev_claims, abs=0.5), page.name
         compared += 1
     assert compared >= 20, f"only {compared} names compared — near-vacuous"
@@ -256,7 +261,7 @@ def test_a_bridge_off_ciqs_current_figure_says_so(monkeypatch: pytest.MonkeyPatc
     b = _bundle("AMZN")
     monkeypatch.setattr(cs, "_ciq_tev_claims", lambda _b: (120000.0, "test"))
     got = cs.ev_bridge(b, fy_periods=[])
-    assert got is not None and got.note is not None and "DISAGREES" in got.note
+    assert isinstance(got, EvBridge) and got.note is not None and "DISAGREES" in got.note
 
 
 def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(

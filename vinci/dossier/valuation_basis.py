@@ -332,8 +332,10 @@ def _r4(d: dict[str, Any], conflicts: list[str]) -> dict[str, Any]:
     }
     _shares_conflict(d, conflicts)
     if not isinstance(eb, dict):
-        conflicts.append("no CIQ TEV bridge on the page (ev_bridge) — the anchor's EDGAR net debt "
-                         "is NOT substituted for it")
+        unbuilt = _get(d, "ev_bridge_unbuilt", "reason")
+        conflicts.append("no CIQ TEV bridge on the page (ev_bridge"
+                         + (f" unbuilt: {unbuilt}" if unbuilt else "")
+                         + ") — the anchor's EDGAR net debt is NOT substituted for it")
         return out
     bridge = _r4_bridge(eb, _cross_check_label(d))
     out["ev_bridge"], out["exit_claims"] = bridge, _r4_exit_claims(eb)

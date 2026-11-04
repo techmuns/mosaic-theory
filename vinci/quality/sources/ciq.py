@@ -285,7 +285,9 @@ def _fcf_sign_vs_edgar_ocf(page: dict[str, Any]) -> ItemResult:
 def _ev_bridge_vs_ciq_tev(page: dict[str, Any]) -> ItemResult:
     eb = page.get("ev_bridge")
     if not isinstance(eb, dict):
-        return ItemResult(not_run="no ev_bridge block on the page")
+        unbuilt = (page.get("ev_bridge_unbuilt") or {}).get("reason")
+        return ItemResult(not_run="no ev_bridge block on the page"
+                          + (f" — unbuilt: {unbuilt}" if unbuilt else ""))
     claims, ciq = _num(eb.get("claims")), _num(eb.get("ciq_tev_claims"))
     if claims is None or ciq is None:
         return one(UNCHECKED)

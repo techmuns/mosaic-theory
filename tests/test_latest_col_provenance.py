@@ -22,6 +22,8 @@ column is what makes those two visible.
 """
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 from vinci.config import get_config
@@ -104,9 +106,19 @@ def test_the_ascending_convention_holds_on_every_committed_bundle() -> None:
                 if hdr is None:
                     continue
                 checked += 1
-                dates = [d for j in range(1, len(rows[hdr]))
-                         if (d := excel_date(rows[hdr][j])) is not None]
-                if len(dates) > 1 and dates != sorted(dates):
+                # (2026-11-04) ascending WITHIN each fiscal calendar (`cs.calendar_segments`): CIQ
+                # prints the calendar before a fiscal-year change first and out of date order with
+                # the one after it (SMPL's Dec-31-2016 before Aug-29-2015), and no earlier calendar
+                # may state a later date than the last one's latest — the guarantee the whole-row
+                # check gave
+                cal = cs.calendar_segments(rows[hdr])
+                by_cal: dict[int, list[Any]] = {}
+                for j in range(1, len(rows[hdr])):
+                    if (d := excel_date(rows[hdr][j])) is not None:
+                        by_cal.setdefault(cal[j], []).append(d)
+                last = by_cal[max(by_cal)] if by_cal else []
+                if (any(len(ds) > 1 and ds != sorted(ds) for ds in by_cal.values())
+                        or any(max(ds) > max(last) for ds in by_cal.values())):
                     violations.append(f"{tk}/{sheet}/{freq}")
     assert checked, "no sheet was read — the corpus sweep found nothing to check"
     assert not violations, (

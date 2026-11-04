@@ -430,6 +430,16 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "AMENDMENT and a title-cased heading are not read this way",
     ),
     (
+        "2026-11-04.fiscal-year-change-marker",
+        "a fiscal-year change is no column: CIQ's 'Fiscal Year Change' period-header marker is "
+        "registered as a known non-period cell (`ciq_sheets.PERIOD_HEADER_MARKERS`, closed), so a "
+        "latest read skips it while any other undated header still places nothing; the summary "
+        "tables and the Ratios panel drop it as a column, and no growth, year-on-year, step or "
+        "order check "
+        "spans the two fiscal calendars it divides; a page with no EV bridge says why "
+        "(`ev_bridge_unbuilt`)",
+    ),
+    (
         "2026-11-04.rank-written-as-rank",
         "the #890 trace is narrowed (its cross-review): a percentile's rank traces only for a "
         "figure written as a rank (a number, ordinal or not, before percentile / pctile / %ile; "
