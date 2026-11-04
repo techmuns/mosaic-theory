@@ -16,9 +16,11 @@ exactly what it asked:
 1. **The rank, only when written as one.** #890 admitted a percentile's whole-number rank for any
    figure of that value, so "2.0x", "2 turns" and "fell 2%" cited to SMPL's 0.0183 P/E percentile
    all traced, and so did AMZN's "compressed to 3.0x" and TJX's "de-rated to 6.0x".
-   - Now the rank traces only for a figure followed by an ordinal suffix ("3rd") or by
+   - Now the rank traces only for a figure, ordinal or not ("3rd", "3"), followed by
      "percentile" / "pctile" / "%ile" (`synthesis._RANK_AFTER`, read through
-     `_claim_figure_ends`).
+     `_claim_figure_ends`). An ordinal alone ("the 2nd straight quarter", "its 2nd-largest
+     customer") and a percentile-point move ("rose 2 percentile points") are figures: both traced
+     on this branch's first cut and were caught in its own `/code-review` round.
 2. **Durations, only whole numbers.** #890 skipped every hyphenated or "y" duration, decimals
    included. NCNO's "its own 2.3y range" is its band's span (`own_history.value[0].window_span_years`),
    a fact the point must cite, and #890 let a "7.3y" or "7.3-year" rewrite of it pass, as well as a
@@ -45,10 +47,11 @@ they are flagged again.
     "3" of "3-4%"; TJX "6.0x"; "a 7.4-year payback"; NCNO "7.3y" / "7.3-year"; MVST "~4.1y".
   - On cfedcb39 (before #890) every one was flagged.
   - On this branch every one is flagged again.
-- **New pins.** 13 new test cases in `tests/test_untraceable_rank_and_duration.py`: 8 negatives,
-  4 positives and the guard pin. The "2.3y" positive also moves to the negatives ("~9y" replaces it),
-  and the corpus invariant changes twice. The 8 negatives fail on a439eabe, run in a scratch copy of
-  it.
+- **New pins.** 18 new test cases in `tests/test_untraceable_rank_and_duration.py`: 12 negatives
+  (4 of them added in the review round), 5 positives and the guard pin. The "2.3y" positive also
+  moves to the negatives ("~9y" replaces it), and the corpus invariant changes twice. The 8
+  first-cut negatives fail on a439eabe, run in a scratch copy of it. The 4 review-round negatives
+  (an ordinal alone, a percentile-point move) traced on the first cut too.
   - The guard pin passes on a439eabe, where the guard exists. With the guard deleted from this
     branch it fails (mutation run).
   - "2nd percentile", "2 percentile", "2 pctile", "2%ile", "5-year", "52-week", "~2y", "~9y" and

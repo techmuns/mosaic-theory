@@ -63,11 +63,15 @@ _CAL_AFTER = re.compile(rf"^\s*{_TIME_UNIT}\b", re.IGNORECASE)
 # "7.4-year payback". The claim trace only — `driver_extract` keeps its `_CAL_AFTER` check, so a
 # transcript row's value still needs its quote to state a hyphenated duration.
 _DURATION_AFTER = re.compile(rf"^-{_TIME_UNIT}\b|^y\b", re.IGNORECASE)
-# A figure written as a percentile RANK — an ordinal ("3rd") or a number before "percentile" /
-# "pctile" / "%ile". Only such a figure may trace as the rank of a percentile its fact states
-# (cross-review of #890: the rank traced in ANY context, so "2.0x", "2 turns" and "fell 2%" cited
-# to SMPL's 0.0183 P/E percentile all passed).
-_RANK_AFTER = re.compile(r"^(?:st|nd|rd|th)\b|^\s*(?:percentile|pctile|%ile)\b", re.IGNORECASE)
+# A figure written as a percentile RANK — a number, ordinal or not ("3rd", "3"), before
+# "percentile" / "pctile" / "%ile". Only such a figure may trace as the rank of a percentile its
+# fact states (cross-review of #890: the rank traced in ANY context, so "2.0x", "2 turns" and "fell
+# 2%" cited to SMPL's 0.0183 P/E percentile all passed). An ordinal alone is no rank ("the 2nd
+# straight quarter", "its 2nd-largest customer"), nor is a percentile-POINT move ("rose 2
+# percentile points") — a change, which the fact's level does not state.
+_RANK_AFTER = re.compile(
+    r"^(?:st|nd|rd|th)?[\s-]*(?:percentile|pctile|%ile)\b(?![\s-]*(?:pts?|points?)\b)",
+    re.IGNORECASE)
 # Digits that state no figure: an EDGAR accession, a date (ISO; CIQ's "Aug-31-2026"; "May 07,
 # 2026"; "June 1 2026"; "Aug-6"; "Nov-2025") and a period label ("Q1-26", "FY2024-25"). A claim
 # that writes one is citing or dating, not claiming a number; a fact that carries one carries its
@@ -769,7 +773,7 @@ def _validate(
         ref_key = comparison_key(p.source_ref)
         cited_nums = values_by_ref.get(ref_key, _FactNumbers()) if ref_key else _FactNumbers()
         for n, end in _claim_figure_ends(p.claim):
-            if _num_traces(n, cited_nums, as_rank=bool(_RANK_AFTER.match(p.claim[end:end + 12]))):
+            if _num_traces(n, cited_nums, as_rank=bool(_RANK_AFTER.match(p.claim[end:end + 32]))):
                 continue
             # key on SIGNED value + flag-type: don't let abs() collapse +N/-N (distinct facts) and
             # don't let a soft TRANSCRIPT-FIGURE on one point suppress a hard UNTRACEABLE elsewhere.

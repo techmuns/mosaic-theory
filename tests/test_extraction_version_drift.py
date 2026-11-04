@@ -115,7 +115,7 @@ WATCHED: dict[str, str] = {
     "vinci/dossier/requirements.py": "0d49ceadcac7",
     "vinci/dossier/schemas.py": "fb5ba5b3c76d",
     "vinci/dossier/statement_recon.py": "4ecc1ea023b9",
-    "vinci/dossier/synthesis.py": "fbc152c141a5",
+    "vinci/dossier/synthesis.py": "0fbce005ea13",
     "vinci/dossier/terminal_margin.py": "35398ebe5918",
     "vinci/dossier/valuation_basis.py": "a8870ba9ed91",
     "vinci/dossier/verdict.py": "0b43167d2044",

@@ -48,7 +48,9 @@ _COMMITTED = sorted((ROOT / "data/dossiers").glob("*/dossier.json"))
 _DURATION_AFTER = re.compile(r"^(?:-(?:days?|weeks?|months?|quarters?|qtrs?|years?)\b|y\b)",
                              re.IGNORECASE)
 #: a figure written as a percentile rank, as `synthesis._RANK_AFTER` reads it after the number
-_RANK_AFTER = re.compile(r"^(?:st|nd|rd|th)\b|^\s*(?:percentile|pctile|%ile)\b", re.IGNORECASE)
+_RANK_AFTER = re.compile(
+    r"^(?:st|nd|rd|th)?[\s-]*(?:percentile|pctile|%ile)\b(?![\s-]*(?:pts?|points?)\b)",
+    re.IGNORECASE)
 
 
 def _frozen() -> ds.MechanicalLayer:
@@ -112,7 +114,11 @@ def test_only_the_rank_itself_is_admitted_and_only_to_its_own_fact() -> None:
 
 
 @pytest.mark.parametrize("claim", ["it de-rated to 2.0x", "it trades at 2 turns",
-                                   "the stock fell 2%", "2 straight quarters of decline"])
+                                   "the stock fell 2%", "2 straight quarters of decline",
+                                   "the 2nd straight quarter of decline",
+                                   "its 2nd-largest customer",
+                                   "the multiple rose 2 percentile points",
+                                   "a 2 percentile-point drop"])
 def test_the_rank_is_no_figure_written_as_anything_but_a_rank(claim: str) -> None:
     """Cross-review of #890: each TRACED on a439eabe, cited to SMPL's 0.0183 P/E percentile, because
     the rank 2 was admitted whatever the "2" stated. Now only a figure written as a rank traces as
@@ -125,7 +131,7 @@ def test_the_rank_is_no_figure_written_as_anything_but_a_rank(claim: str) -> Non
 
 @pytest.mark.parametrize("claim", ["the P/E sits at the 2nd percentile",
                                    "a 2 percentile reading", "the 2 pctile of its range",
-                                   "near its 2%ile"])
+                                   "near its 2%ile", "a 2nd-percentile multiple"])
 def test_a_figure_written_as_a_rank_traces_as_the_rank(claim: str) -> None:
     mech = _frozen()
     ref = mech.valuation.pe_percentile_5y.source_ref if mech.valuation else None
@@ -228,20 +234,20 @@ def test_a_hyphenated_or_abbreviated_duration_is_no_figure(claim: str) -> None:
     assert dx._figures(claim) != []
 
 
-@pytest.mark.parametrize("claim", [
-    "the multiple sits low in its own 2.3y range",
-    "the multiple sits low in its own 7.3y range",
-    "a 7.3-year span of closes",
-    "a 7.4-year payback",
+@pytest.mark.parametrize(("claim", "figure"), [
+    ("the multiple sits low in its own 2.3y range", "2.3"),
+    ("the multiple sits low in its own 7.3y range", "7.3"),
+    ("a 7.3-year span of closes", "7.3"),
+    ("a 7.4-year payback", "7.4"),
 ])
-def test_a_decimal_duration_is_a_figure(claim: str) -> None:
+def test_a_decimal_duration_is_a_figure(claim: str, figure: str) -> None:
     """Cross-review of #890: each TRACED on a439eabe. "2.3y" is NCNO's band span
     (`own_history.value[0].window_span_years`), a fact the point must cite — and "7.3y" or a
     "7.4-year payback" is a figure as surely, whatever unit follows it."""
     mech = _frozen()
     ref = mech.idiosyncratic_vs_shared.rel_vs_market.source_ref
     assert ref
-    assert _flagged(mech, claim, ref) == [syn._claim_figures(claim)[0].__format__("g")]
+    assert _flagged(mech, claim, ref) == [figure]
 
 
 @pytest.mark.parametrize(("claim", "figures"), [
