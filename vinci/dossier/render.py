@@ -136,6 +136,60 @@ def _cite_inline(source_ref: str | None) -> str:
     return f"[{_ref_n(source_ref)}]"
 
 
+#: (item 29) how a computed figure's operation reads beside it — display only; the check is the
+#: validator's (`synthesis._validate`), and the page computes nothing.
+_FIG_OP = {"difference": "−", "sum": "+", "ratio": "÷", "premium": "÷", "growth": "÷"}
+
+
+def _figure_expr(e: Any) -> str:
+    a, b = (list(e.inputs) + ["?", "?"])[:2]
+    core = f"{a} {_FIG_OP.get(e.derived, '?')} {b}"
+    return f"({core}) − 1" if e.derived in ("premium", "growth") else core
+
+
+def _find_figure(claim: str, lit: str, start: int) -> int:
+    """The literal at a figure boundary, never inside a longer number ("98" is not in "$1,098M",
+    "5" is not in "5.4%")."""
+    m = re.compile(rf"(?<![\d.,]){re.escape(lit)}(?![\d]|[.,]\d)").search(claim, start)
+    return m.start() if m else -1
+
+
+def _footnoted_claim(p: Any, between: str = "") -> str:
+    """(item 29) A point's claim with a marker after each footnoted figure — its fact's ``[n]`` in a
+    render, ‡ for a computed one — then ``between`` (a tag, a warning) and the point's own cite, in
+    the order an un-footnoted point prints them. A point with no ``figures`` renders exactly as
+    before (claim + between + its cite)."""
+    figs = getattr(p, "figures", None) or []
+    if not figs or _ENDNOTES.get() is None:
+        return f"{p.claim}{between}{_cite(p.source_ref)}"
+    marks: list[tuple[int, str]] = []
+    start: dict[str, int] = {}
+    for e in figs:
+        i = _find_figure(p.claim, e.figure, start.get(e.figure, 0))
+        if i < 0:
+            continue
+        start[e.figure] = i + len(e.figure)
+        marks.append((i + len(e.figure), "‡" if e.derived else f"[{_ref_n(e.source_ref)}]"))
+    claim: str = p.claim
+    out, pos = "", 0
+    for end, mark in sorted(marks):
+        out += claim[pos:end] + mark
+        pos = end
+    return out + claim[pos:] + between + _cite(p.source_ref)
+
+
+def _figure_sources_line(p: Any) -> str:
+    """(item 29) The Analysis tier's "how each figure is sourced" line under a footnoted point — a
+    computed figure's operation and inputs, each cited figure's fact. Empty for a point with
+    none."""
+    figs = getattr(p, "figures", None) or []
+    if not figs:
+        return ""
+    parts = [f"{e.figure} ‡ = {_figure_expr(e)}" if e.derived
+             else f"{e.figure} {_cite_inline(e.source_ref)}" for e in figs]
+    return "\n  - How each figure is sourced: " + " · ".join(parts)
+
+
 def _sources_section() -> list[str]:
     """(A2) The single document-end Sources list — every distinct source_ref in first-cited order.
     Empty when nothing was cited. Rendered once by :func:`render_markdown` at the very end."""
@@ -2535,6 +2589,8 @@ def _synthesis_lines(d: Dossier, *, dev: bool) -> list[str]:
 
     def cite(p: Any, tag: str = "") -> str:
         warn = "" if getattr(p, "cited", True) else " ⚠ uncited"
+        if getattr(p, "figures", None):   # (item 29) a marker after each figure, then the line
+            return f"- {_footnoted_claim(p, tag + warn)}{_figure_sources_line(p)}"
         return f"- {p.claim}{tag}{warn}{_cite(p.source_ref)}"
 
     driver_refs = _driver_refs_of(d.mechanical)
@@ -2704,7 +2760,7 @@ def _brief_case_lines(s: Any, mech: Any, *, sleeve: str = DEFAULT_SLEEVE) -> lis
     def top3(pts: list[Any], side: str) -> list[str]:
         ordered = _ordered_points(pts, side=side, crux_refs=_decisive_refs(s, side),
                                   driver_refs=driver_refs)
-        return [f"- {p.claim}{_cite(p.source_ref)}" for p, *_ in ordered[:3]]
+        return [f"- {_footnoted_claim(p)}" for p, *_ in ordered[:3]]
 
     _sl = BY_KEY[require_sleeve(sleeve, where="render._brief_case_lines")]
     out += [f"_{_sl.bull_label}:_", *(top3(s.bull_points, "bull") or ["- —"])]

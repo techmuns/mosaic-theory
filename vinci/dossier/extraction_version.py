@@ -448,6 +448,17 @@ EXTRACTION_VERSIONS: tuple[tuple[str, str], ...] = (
         "duration (5-year, 52-week, ~9y) is a label; a decimal one (2.3y, a 7.4-year payback) is "
         "a figure the cited fact must state",
     ),
+    (
+        "2026-11-04.footnote-every-figure",
+        "every synthesis figure is footnoted (item 29, operator ruling 2026-11-04 '1 + 4'): a "
+        "point carries one entry per figure of its claim, citing the one fact that states it or "
+        "naming an operation (difference, sum, ratio, premium, growth) on two cited inputs of "
+        "the claim, recomputed at their written precision; a figure with no entry is traced to "
+        "the point's own ref as before; and the blocks the assembler builds (consensus levels, "
+        "peer capital intensity, checked maturities, the EV/EBITDA bases, the EBITDA basis, "
+        "implied expectations, a filed LTM's two CIQ readings) carry a source_ref a point can "
+        "cite",
+    ),
 )
 
 #: The version stamped on every dossier assembled by this code.

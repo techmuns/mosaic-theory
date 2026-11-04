@@ -119,7 +119,10 @@ def headline_basis(mech: MechanicalLayer) -> EvEbitdaBasis | None:
         implied_denominator=round(implied, 3), reported_ltm_ebitda=round(ltm, 3),
         rent=rent, rent_fiscal_year=fy, ratio_to_reported=round(r_rep, 6),
         ratio_to_reported_plus_rent=round(r_rent, 6) if r_rent is not None else None,
-        reading=reading, tolerance=PAIRING_TOL, line=line)
+        reading=reading, tolerance=PAIRING_TOL, line=line,
+        source_ref=("Assembler: the EBITDA a CIQ TEV/LTM EBITDA multiple divides — CIQ comps TEV ÷ "
+                    "the multiple, against reported LTM EBITDA and rent"
+                    + (f" (TEV as of {_iso(ie.tev_as_of)})" if _iso(ie.tev_as_of) else "")))
 
 
 def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
@@ -168,4 +171,8 @@ def ex_lease_at_price(mech: MechanicalLayer, facts: dict[str, Any] | None,
         value=round(value, 6), price=float(price), price_as_of=_iso(si.as_of),
         shares=float(shares), shares_basis=shares_basis,
         net_debt=round(nd_m, 3), net_debt_source="EDGAR: " + nd[1], ev=round(ev, 3),
-        ltm_ebitda=round(last.ltm_ebitda, 3), ltm_through=last.balance_sheet_date, line=line)
+        ltm_ebitda=round(last.ltm_ebitda, 3), ltm_through=last.balance_sheet_date, line=line,
+        source_ref=(f"Assembler: ex-lease EV/EBITDA at the page's close "
+                    f"({_iso(si.as_of) or 'date unstated'}) — price × {shares_basis} + EDGAR net "
+                    f"debt excluding operating leases, ÷ CIQ LTM EBITDA to "
+                    f"{last.balance_sheet_date}"))

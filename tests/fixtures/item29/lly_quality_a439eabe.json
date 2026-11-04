@@ -1,0 +1,124 @@
+{
+ "_source": "data/dossiers/LLY/dossier.json at a439eabe (2026-11-04), mechanical.quality — verbatim",
+ "quality": {
+  "fcf_sign": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no OCF/capex"
+  },
+  "free_cash_flow": {
+   "value": 9343.7,
+   "source_ref": "CIQ Financials→Cash Flow 'Levered Free Cash Flow' [LTM 12 months Sep-30-2026]",
+   "status": "present",
+   "note": "basis: CIQ 'Levered Free Cash Flow', NOT CFO − capex: on the same sheet and period [LTM 12 months Sep-30-2026], CFO $30,645.0M − capex $10,984.0M = $19,661.0M — 0.48x apart. Company-defined FCF is usually the second; a per-share or self-funding read should say which it used."
+  },
+  "margin_trend": {
+   "value": "EBITDA margin: Dec-31-2017 (R) 31% → Dec-31-2018 (R) 36% → Dec-31-2019 32% → Dec-31-2020 (R) 35% → Dec-31-2021 (R) 35% → Dec-31-2022 36% → Dec-31-2023 35% → Dec-31-2024 (R) 42% → Dec-31-2025 49% → Sep-30-2026 (LTM) 54%; gross margin: Dec-31-2017 (R) 78% → Dec-31-2018 (R) 78% → Dec-31-2019 79% → Dec-31-2020 (R) 78% → Dec-31-2021 (R) 75% → Dec-31-2022 77% → Dec-31-2023 79% → Dec-31-2024 (R) 81% → Dec-31-2025 83% → Sep-30-2026 (LTM) 84%; absolute EBITDA: Dec-31-2017 (R) 6,264 → Dec-31-2018 (R) 7,635 → Dec-31-2019 7,232 → Dec-31-2020 (R) 8,535 → Dec-31-2021 (R) 9,820 → Dec-31-2022 10,176 → Dec-31-2023 11,852 → Dec-31-2024 (R) 18,807 → Dec-31-2025 31,693 → Sep-30-2026 (LTM) 46,489; absolute revenue: Dec-31-2017 (R) 19,974 → Dec-31-2018 (R) 21,493 → Dec-31-2019 22,320 → Dec-31-2020 (R) 24,540 → Dec-31-2021 (R) 28,318 → Dec-31-2022 28,541 → Dec-31-2023 34,124 → Dec-31-2024 (R) 45,043 → Dec-31-2025 65,179 → Sep-30-2026 (LTM) 86,462  [R reclassified; margin % can fall while absolute EBITDA RISES — read them together]",
+   "source_ref": "CIQ Financials→Income Statement (margin % + absolute EBITDA reconciler)",
+   "status": "present",
+   "note": null
+  },
+  "net_debt_to_ebitda": {
+   "value": 0.9,
+   "source_ref": "CIQ Net Debt $43,858M [Q3 Sep-30-2026] ÷ CIQ EBITDA $46,489M [LTM 12 months Sep-30-2026]",
+   "status": "present",
+   "note": null
+  },
+  "net_debt_to_ocf": {
+   "value": 1.4,
+   "source_ref": "CIQ Net Debt $43,858M [Q3 Sep-30-2026] ÷ CIQ OCF $30,645M [LTM 12 months Sep-30-2026]",
+   "status": "present",
+   "note": null
+  },
+  "net_debt_to_ebitda_adjusted": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no revised guidance at the drawdown to read an adjusted figure from"
+  },
+  "survival_capacity": {
+   "value": "net-debt/EBITDA 0.9x (CIQ) | FCF sign UNKNOWN — runway not assessable (a risk)",
+   "source_ref": "CIQ Net Debt ÷ CIQ LTM EBITDA (EDGAR XBRL breadth fallback) + FCF sign (survival capacity)",
+   "status": "present",
+   "note": null
+  },
+  "interest_coverage": {
+   "value": 121.4,
+   "source_ref": "CIQ Financials→Income Statement EBITDA ÷ Interest Expense [LTM 12 months Sep-30-2026]",
+   "status": "present",
+   "note": null
+  },
+  "share_count_trend": {
+   "value": "flat (trailing ~2.0y): 949,315,694 (2024-10-25) → 940,745,031 (2026-10-26), -0.9%",
+   "source_ref": "EDGAR XBRL shares, trailing 2024-10-25..2026-10-26",
+   "status": "present",
+   "note": null
+  },
+  "nonoperating_earnings": {
+   "value": null,
+   "source_ref": null,
+   "status": "unknown",
+   "note": "no quarterly operating income in EDGAR XBRL — the non-operating share cannot be derived without all three from ONE period"
+  },
+  "liquidity_covenant_flags": {
+   "value": "0.42% Japanese Yen Denominated Notes Due 2029 * (Bonds and Notes) 146 @ 0.420% Due 2029; 0.50% EURO Denominated Notes Due 2033 * (Bonds and Notes) 623 @ 0.500% Due 2033; 0.625% EURO Denominated Notes Due 2031 * (Bonds and Notes) 623 @ 0.625% Due 2031; 0.97% Japanese Yen Denominated Notes Due 2049 * (Bonds and Notes) 48 @ 0.970% Due 2049; 1.125% EURO Denominated Notes Due 2051 * (Bonds and Notes) 519 @ 1.125% Due 2051; 1.375% EURO Denominated Notes Due 2061 * (Bonds and Notes) 727 @ 1.375% Due 2061; 1.625% British Pound Denominated Notes Due 2043 * (Bonds and Notes) 314 @ 1.625% Due 2043; 1.625% Euro Denominated Notes Due 2026 (Bonds and Notes) 779 @ 1.625% Due 2026; 1.70% EURO Denominated Notes Due 2049 * (Bonds and Notes) 1,039 @ 1.700% Due 2049; 2.25% Notes Due 2050 * (Bonds and Notes) 1,250 @ 2.250% Due 2050; 2.50% Notes Due 2060 * (Bonds and Notes) 850 @ 2.500% Due 2060 — showing 11 of 56 instruments",
+   "source_ref": "CIQ Financials→Capital Structure Details (A 2025 filed Feb-12-2026)",
+   "status": "present",
+   "note": null
+  },
+  "multi_year_trajectory": {
+   "value": "Revenue: Dec-31-2017 (R) 19,974 → Dec-31-2018 (R) 21,493 → Dec-31-2019 22,320 → Dec-31-2020 (R) 24,540 → Dec-31-2021 (R) 28,318 → Dec-31-2022 28,541 → Dec-31-2023 34,124 → Dec-31-2024 (R) 45,043 → Dec-31-2025 65,179 → Sep-30-2026 (LTM) 86,462; EBITDA: Dec-31-2017 (R) 6,264 → Dec-31-2018 (R) 7,635 → Dec-31-2019 7,232 → Dec-31-2020 (R) 8,535 → Dec-31-2021 (R) 9,820 → Dec-31-2022 10,176 → Dec-31-2023 11,852 → Dec-31-2024 (R) 18,807 → Dec-31-2025 31,693 → Sep-30-2026 (LTM) 46,489; Revenue YoY (latest same-quarter): +38.6% (Q3 Sep-30-2026 vs Q3 Sep-30-2025); ROIC: Dec-31-2017 11.8% → Dec-31-2018 16.1% → Dec-31-2019 19.1% → Dec-31-2020 22.1% → Dec-31-2021 21.2% → Dec-31-2022 20.3% → Dec-31-2023 20.0% → Dec-31-2024 24.7% → Dec-31-2025 31.1% → Sep-30-2026 (LTM) 35.5%  [R reclassified; per-period values, never YoY'd across a basis]",
+   "source_ref": "CIQ Financials→Income Statement + Segments + Ratios (multi-year columns)",
+   "status": "present",
+   "note": null
+  },
+  "roic_trend": {
+   "value": [
+    {
+     "period": "Dec-31-2017",
+     "value": 0.117952
+    },
+    {
+     "period": "Dec-31-2018",
+     "value": 0.161396
+    },
+    {
+     "period": "Dec-31-2019",
+     "value": 0.19059
+    },
+    {
+     "period": "Dec-31-2020",
+     "value": 0.221057
+    },
+    {
+     "period": "Dec-31-2021",
+     "value": 0.211936
+    },
+    {
+     "period": "Dec-31-2022",
+     "value": 0.203206
+    },
+    {
+     "period": "Dec-31-2023",
+     "value": 0.200169
+    },
+    {
+     "period": "Dec-31-2024",
+     "value": 0.246552
+    },
+    {
+     "period": "Dec-31-2025",
+     "value": 0.310723
+    },
+    {
+     "period": "Sep-30-2026 (LTM)",
+     "value": 0.354628
+    }
+   ],
+   "source_ref": "CIQ Financials→Ratios (Return on Capital %, multi-year columns)",
+   "status": "present",
+   "note": null
+  }
+ }
+}
