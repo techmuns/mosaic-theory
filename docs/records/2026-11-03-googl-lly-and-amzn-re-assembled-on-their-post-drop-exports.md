@@ -114,7 +114,27 @@ AMZN's anchors are rebuilt only once.
 - Each page reads its Q2 and Q3 calls, and none carries a dropped-call flag.
 - Re-derived from each committed page: the before figures above, and LLY's material row
   quoted in its bear point ("In Process R&D Exp. was $8,070.0M in the LTM").
-- The full offline suite: see #886's body for the shown run.
+- **The full offline suite, run for the first time on an artifact pass WITH the live CIQ folder
+  linked** (`pytest -m "not network" -rs`; the shown runs are in #886's body). Without the folder
+  about 550 tests skip; with it 74 do. Three groups of failures came out of it:
+  - **3, fixed by data.** AMZN's tracking companyfacts fixture, regenerated as the fixture README
+    requires in the PR that re-assembles a name (LLY's and GOOGL's came out byte-identical).
+  - **5, fixed by test edits** (operator-approved 2026-11-04, "yes to both"). Each was a value
+    pin on a living page. Each now reads the page itself, or a frozen vintage: AMZN's 2026-06-30
+    companyfacts are frozen beside GOOGL's (`tests/fixtures/companyfacts_frozen/AMZN.json`).
+    None of the new numbers is pinned, and two of the edited guards were mutation-checked.
+  - **12, pre-existing on main** (`9e996d7f`, same folder, same failures):
+    - SMPL ×6 and NCNO ×1: Drive's exports are 2026-10-28's, the pages 2026-08-17's.
+    - NFLX ×1: the test pins FQ2, and the live export carries FQ3.
+    - AORT ×1: comps and estimates are 2026-10-26's, Financials 2026-07-20's; the bridge correctly
+      reads DISAGREES.
+    - GOOGL and LLY ×1 each: CIQ's Consensus and Trends sheets differ by 4.7% and 5.1% after the
+      Q3 revisions, against a 2% check; the right cells are read.
+    - `test_store_freshness` ×1: the primary's store's newest bar is 2026-08-11, IWM's
+      2026-07-02.
+  - They are an operator follow-up in STATE §5.0 row 32 (28): AORT's Financials re-pull, the 2%
+    tolerance, the primary store. The skip-when-not-the-page's-export test change is agent work
+    in its own PR.
 
 **BOUNDARY.**
 - **Code:** main `9e996d7f` merged into #886 as `f1ccc813`. Extraction version
