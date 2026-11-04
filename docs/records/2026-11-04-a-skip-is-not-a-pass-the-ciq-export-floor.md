@@ -2,7 +2,7 @@
 id: 2026-11-04-a-skip-is-not-a-pass-the-ciq-export-floor
 status: shipped
 date: 2026-11-04
-prs: [896]
+prs: [897]
 supersedes:
 superseded-by:
 ---
@@ -109,7 +109,28 @@ Drive folder linked as it stood that day ("live").
     times.
 - **`-rs` under `bin/commit`'s doubled `-q`** prints every SKIPPED line. It still prints no
   totals line.
-- **Full suite, both ways:** FILLED BELOW.
+- **Full suite, both ways:** `pytest -m "not network" -rs`, each run in its own checkout, with
+  no local store.
+
+  | Folder | main `4a820016` | merged `e3c34907` | main `a439eabe` | `6c4904b7` |
+  |---|---|---|---|---|
+  | Live | 4 failed, 9287 passed, 106 skipped | 4 failed, 9299 passed, 104 skipped | 4 failed, 9221 passed, 89 skipped | 4 failed, 9233 passed, 87 skipped |
+  | None | 0 failed, 8847 passed, 550 skipped | 1 failed, 8855 passed, 551 skipped | 0 failed, 8764 passed, 550 skipped | 0 failed, 8773 passed, 551 skipped |
+
+  - **Live:** the 4 failures are the same set on all four trees:
+    - AORT's bridge;
+    - GOOGL's and LLY's 2% Consensus-vs-Trends check;
+    - `test_latest_col_provenance::test_the_ascending_convention_holds_on_every_committed_bundle`
+      on `SMPL/Balance Sheet/annual`. That one is new on main today: SMPL's Drive export was
+      replaced on 2026-11-04 (`ciq-archive/replaced-2026-11-04/SMPL`).
+  - **Live, +12 passed and −2 skipped:** 10 new test ids (9 helper pins, 1 `test_record_hygiene` id),
+    and the NFLX and SMPL frozen pins now run.
+  - **None:** the same 10 ids, of which the floor skips; every other skip reason is identical to
+    main's.
+  - **The one no-folder failure on the merged tree** is `test_sec_pacing.py::test_two_processes_on_
+    one_machine_share_one_budget`, a real-clock two-process timing test ("min gap 0.097s"). Run
+    alone it failed 1 of 3 on the merged tree and 2 of 6 on main `4a820016` ("min gap 0.009s",
+    "0.040s"). It is a pre-existing flake; this branch touches no SEC pacing.
 
 **BOUNDARY.**
 - **"Computed pages"** is the 8 committed pages whose `mechanical.ev_gap.status` is "computed" on
