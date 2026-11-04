@@ -24,7 +24,7 @@ import pytest
 
 from vinci.dossier import anchor as anc
 from vinci.edgar import net_debt as nd
-from vinci.edgar.concepts import extract_points, latest_instant, points_for_tag
+from vinci.edgar.concepts import extract_points, facts_as_of, latest_instant, points_for_tag
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures" / "companyfacts"
@@ -180,20 +180,37 @@ def test_amzns_anchor_carries_the_leg_and_its_base_value_moves_by_exactly_it(
     """Pinned on `compute_anchor`'s output, not the helper: `anchor.net_debt` is what the page
     prints and the scenario template copies, and the R1 base value is equity ÷ shares — so the
     leg must raise the base by exactly its own size per share of the count the base divides
-    (`per_share_shares`: the point-in-time count since 2026-10-21)."""
+    (`per_share_shares`: the point-in-time count since 2026-10-21).
+
+    THE PAGE'S OWN VINTAGE (2026-11-03). The anchor reads the LIVING page, so it reads the
+    tracking fixture that follows the page: `_facts` prefers the frozen vintage that pairs with
+    CIQ's frozen side, and a page read against an older quarter has no complete bridge. The leg is
+    derived at the anchor's own cut; its 2026-06-30 value stays pinned on the frozen vintage."""
+    frozen = nd._short_term_securities(_facts("AMZN"), dt.date(2026, 6, 30))
+    assert frozen is not None and frozen.tag == "MarketableSecuritiesCurrent"
+    assert frozen.value / 1e6 == pytest.approx(44_775.0, abs=0.001)
+
     page = ROOT / "data" / "dossiers" / "AMZN" / "dossier.json"
     mech = json.loads(page.read_text())["mechanical"]
+    facts: dict[str, Any] = json.loads((FIXTURES / "AMZN.json").read_text())
+    cut = anc.price_as_of(mech)
+    assert cut is not None, "the page states no price date — the anchor would read it whole"
+    at_cut = facts_as_of(facts, cut)
+    end = _cash_end(at_cut)
+    leg = nd._short_term_securities(at_cut, end)
+    assert leg is not None and leg.tag == "MarketableSecuritiesCurrent"
     now = dt.datetime(2026, 10, 8, tzinfo=dt.UTC)
-    with_leg = anc.compute_anchor(mech, facts=_facts("AMZN"), computed_at=now, ciq=None)
+    with_leg = anc.compute_anchor(mech, facts=facts, computed_at=now, ciq=None)
     assert with_leg.net_debt is not None and with_leg.net_debt.value is not None
-    assert "short-term investments 44,775 (MarketableSecuritiesCurrent, 2026-06-30)" in (
-        with_leg.net_debt.source)
+    assert (f"short-term investments {leg.value / 1e6:,.0f} (MarketableSecuritiesCurrent, "
+            f"{end.isoformat()})") in with_leg.net_debt.source
 
     monkeypatch.setattr(nd, "_SHORT_TERM_SECURITIES_TAGS", ())
-    without = anc.compute_anchor(mech, facts=_facts("AMZN"), computed_at=now, ciq=None)
+    without = anc.compute_anchor(mech, facts=facts, computed_at=now, ciq=None)
     assert without.net_debt is not None and without.net_debt.value is not None
-    assert without.net_debt.value - with_leg.net_debt.value == pytest.approx(44_775.0, abs=0.001)
+    assert without.net_debt.value - with_leg.net_debt.value == pytest.approx(leg.value / 1e6,
+                                                                             abs=0.001)
     shares = anc.per_share_shares(with_leg.model_dump(mode="json"))
     assert shares and with_leg.anchor_base_value_per_share and without.anchor_base_value_per_share
     assert (with_leg.anchor_base_value_per_share - without.anchor_base_value_per_share
-            == pytest.approx(44_775e6 / shares, abs=1e-3))
+            == pytest.approx(leg.value / shares, abs=1e-3))

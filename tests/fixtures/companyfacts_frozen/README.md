@@ -17,3 +17,6 @@ a test reads the file here first, and the tracking fixture only when none is her
 - `GOOGL.json` — the tracking fixture as committed at main `0e574f6b` (cash instant 2026-06-30, the
   date CIQ's frozen GOOGL figures carry). Frozen 2026-11-02, when GOOGL's page moved to its
   September-quarter 10-Q. Refreeze it together with the CIQ side, never alone.
+- `AMZN.json` — the tracking fixture as committed at main `9e996d7f` (cash instant 2026-06-30, the
+  date CIQ's frozen AMZN figures carry). Frozen 2026-11-03, when AMZN's page moved to its
+  September-quarter 10-Q. Refreeze it together with the CIQ side, never alone.

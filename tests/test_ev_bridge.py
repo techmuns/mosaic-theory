@@ -285,7 +285,13 @@ def test_the_refresh_lands_the_layer_only_from_the_pages_own_exports(
         pytest.skip("the on-disk AMZN exports are not the page's")
     refresh_dossier(path, top_level=step)
     after = json.loads(path.read_text())
-    assert EvBridge.model_validate(after["ev_bridge"]).claims == pytest.approx(128647.0)
+    # the page's own figures, never a literal (TEST-LAYER RULE: AMZN's claims moved 128,647 →
+    # 190,615 at its 2026-11-03 re-assembly): what lands from the page's exports is what the page
+    # carries, and it is CIQ's TEV less market cap
+    landed = EvBridge.model_validate(after["ev_bridge"])
+    assert landed.claims == pytest.approx(before["ev_bridge"]["claims"])
+    assert landed.ciq_tev_claims is not None
+    assert abs(landed.claims - landed.ciq_tev_claims) <= cs.EV_BRIDGE_CIQ_TOL
     for key in ("mechanical", "synthesis", "anchor", "forward_consensus"):
         assert after[key] == before[key], f"{key} moved"
     assert list(after)[-1] == "anchor"

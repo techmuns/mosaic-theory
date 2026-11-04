@@ -103,11 +103,15 @@ _UNREAD = {("AMZN", "Total Pref. Equity"): "the balance sheet carries no 'Total 
 
 
 def _rebuilt(ticker: str) -> dict[str, Any]:
-    """The page with its bridge in the shape its owed rebuild writes (PR #877 round 2): the living
-    page carries 0.0 lines until then, so the pins below run on BOTH shapes."""
+    """The page with its bridge in the shape its owed rebuild writes (PR #877 round 2): a living
+    page carries 0.0 lines until then, so the pins below run on BOTH shapes. A page already rebuilt
+    (AMZN since 2026-11-03) carries the shape itself, and must carry exactly that reason."""
     doc = _page(ticker)
     for ln in doc["ev_bridge"]["lines"]:
         if (why := _UNREAD.get((ticker, ln["label"]))) is not None:
+            if ln["value"] is None:
+                assert ln.get("unread") == why, (ticker, ln["label"], ln.get("unread"))
+                continue
             assert ln["value"] == 0.0
             ln.update(value=None, unread=why)
     return doc

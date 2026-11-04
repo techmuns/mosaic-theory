@@ -683,7 +683,9 @@ def test_committed_pages_round_trip_byte_identically_with_the_new_field() -> Non
 def test_the_flag_reaches_both_rendered_pages_end_to_end() -> None:
     """TEST-LAYER RULE: the rendered artifact, from REAL committed JSON. AMZN's own page, given the
     flag its own numbers produce, prints the heading and the stored sentence in the Python renderer
-    and the JS one; EPAM's page, which does not fire, prints neither."""
+    and the JS one; EPAM's page, which does not fire, prints neither. Both halves look for the
+    page's own sentence (escaped as the JS renderer escapes it), never a literal gap: AMZN's moved
+    from 6.8 to 7.8 points at its 2026-11-03 re-assembly, and a value pin on a living page rots."""
     import shutil
     import subprocess
 
@@ -713,11 +715,14 @@ const stub = new Proxy(function(){}, { get: () => stub, apply: () => stub, const
 for (const g of ["window","document","location"]) { try { globalThis[g] = stub; } catch {} }
 const dj = pathToFileURL(path.resolve("frontend/views/shared/dossier.js")).href;
 const { renderDossier } = await import(dj);
-const flagged = renderDossier(JSON.parse(readFileSync(process.argv[1], "utf8")), null);
+const { escapeHtml } = await import(pathToFileURL(path.resolve("frontend/lib/format.js")).href);
+const page = JSON.parse(readFileSync(process.argv[1], "utf8"));
+const read = page.anchor.midcycle_gap.read;
+const flagged = renderDossier(page, null);
 const epam = JSON.parse(readFileSync("data/dossiers/EPAM/dossier.json", "utf8"));
 const plain = renderDossier(epam, null);
 console.log(JSON.stringify({ on: flagged.includes("Mid-cycle assumption under strain."),
-  sentence: flagged.includes("sits 6.8 points ABOVE"),
+  sentence: read.length > 0 && flagged.includes(escapeHtml(read)),
   off: plain.includes("Mid-cycle assumption") }));
 """
     import tempfile
