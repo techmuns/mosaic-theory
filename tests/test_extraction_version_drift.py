@@ -142,6 +142,8 @@ WATCHED: dict[str, str] = {
 NOT_EXTRACTION: dict[str, str] = {
     "vinci/dossier/__init__.py": "the package's docstring",
     "vinci/dossier/extraction_version.py": "the version table itself — editing it IS the bump",
+    "vinci/dossier/prespend.py": "the $0 pre-spend check: builds into a deleted folder and "
+                                 "compares, never writes a page",
     "vinci/dossier/propose.py": "writes scenario records from a committed page, never a page",
     "vinci/dossier/render.py": "renders a page's markdown from its JSON; re-rendered, never "
                                "re-extracted",

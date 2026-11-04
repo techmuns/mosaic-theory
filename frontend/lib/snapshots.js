@@ -235,7 +235,9 @@ export async function getRankedQueue() {
 // }
 export function getLedger() { return _once("ledger", _loadLedger); }
 async function _loadLedger() {
-  const raw = await _jsonl(`${SNAPSHOTS}/decision_ledger.jsonl`);
+  // the monitor day is fetched beside the ledger, not after it (its use: the realized rows below)
+  const [raw, monitor] = await Promise.all([
+    _jsonl(`${SNAPSHOTS}/decision_ledger.jsonl`), getMonitor()]);
   const today = new Date().toISOString().slice(0, 10);
   // CLOSE ROWS ARE NOT POSITIONS (2026-07-27). Every row was mapped into `entries`, so a closed
   // name appeared TWICE — a close row repeats the ORIGINAL verdict for provenance. That made
@@ -248,6 +250,15 @@ async function _loadLedger() {
   for (const p of payloads) {
     if (p.event === "CLOSE" && p.closes_entry_id) closeBy[p.closes_entry_id] = p;
   }
+  // THE REALIZED RETURN IS THE MONITOR DAY'S, READ BY ITS CLOSE (STATE row 40, 2026-11-02). It was
+  // derived here as `exit_price / entry_price − 1`, the formula `vinci.monitor.pair_closes`
+  // dropped on 2026-10-29: the sealed entry sits on the ENTRY date's split basis, so a split
+  // before the exit read a flat 2-for-1 as −50%. The python side puts the entry on the exit's
+  // basis through Polygon's splits reference, which this page has no source for — the realized
+  // row the latest monitor day carries is the one surface that has read it. A close no monitor
+  // day carries yet shows NO return, never one computed here.
+  const realizedBy = {};
+  for (const r of (monitor && monitor.realized) || []) realizedBy[r.close_id] = r;
   const entries = payloads
     .filter((p) => !p.event)                                   // decision rows only
     .map((p) => {
@@ -282,9 +293,8 @@ async function _loadLedger() {
             exitPriceAsOf: cl.exit_price_as_of,
             reason: cl.reason,
             closeEntryId: cl.entry_id,
-            // derived here, never stored — two frozen prices, one truth
-            realizedReturn: (typeof cl.exit_price === "number" && p.entry_price)
-              ? cl.exit_price / p.entry_price - 1 : null,
+            // the monitor day's row for THIS close of THIS position, or none (see above)
+            realizedReturn: _realizedReturn(realizedBy[cl.entry_id], p.entry_id),
           },
         } : {}),
         thesis: p.thesis,
@@ -326,6 +336,13 @@ async function _loadLedger() {
     otherBooks,
     entries,
   };
+}
+
+// A realized row counts only for the position it names: a close id paired to another entry is a
+// broken pair, and shows no return rather than the other position's.
+function _realizedReturn(row, entryId) {
+  return row && row.entry_id === entryId && typeof row.realized_return === "number"
+    ? row.realized_return : null;
 }
 
 // getMonitor() -> the LATEST committed monitor snapshot {as_of, rows[], spread, freshness[],

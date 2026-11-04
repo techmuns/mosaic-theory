@@ -88,7 +88,7 @@ they are flagged again.
   percentile facts with a ref and a 0..1 value.
 
 **WHAT IT COSTS / WHAT IS ACCEPTED.**
-- **Not fixed here, recorded as STATE §5.0 row 43 (hold scope):**
+- **Not fixed here, recorded as STATE §5.0 row 44 (hold scope):**
   - The spaced form "7.3 years" passes on a439eabe and on cfedcb39 alike. `_CAL_AFTER` has always
     skipped "<n> years/days/…", decimals included.
   - A whole-number duration that is really a quantity ("an 83-day DSO") is still skipped. The
