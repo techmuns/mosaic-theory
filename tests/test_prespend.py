@@ -114,6 +114,42 @@ def test_run_exits_one_on_a_regression_and_writes_no_page(
     out: list[str] = []
     assert prespend.run("smpl", Config(data_dir=tmp_path), emit=out.append) == 1
     assert out[-1].startswith("=== 13 regression(s)")
+
+
+def test_the_build_writes_only_into_a_folder_it_deletes(
+    tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """`assemble_one` always writes (`_write`), so the only thing keeping the committed page safe
+    is the folder `mechanical_build` hands it. The real writer is stood in for by one that writes
+    where it is told, exactly as `_write` does."""
+    from vinci.dossier import assemble
+    from vinci.dossier.manual_store import LocalFolderStore
+    from vinci.resolver import EntityResolver
+
+    cfg = Config(data_dir=tmp_path / "data")
+    page = cfg.data_dir / "dossiers" / "SMPL" / "dossier.json"
+    page.parent.mkdir(parents=True)
+    page.write_bytes(FROZEN_PAGE.read_bytes())
+    built = Dossier.model_validate_json((BUILD / "SMPL-mechanical.json").read_text())
+    roots: list[pathlib.Path] = []
+
+    def writes_where_told(fin: Any, *, out_root: pathlib.Path, **_: Any) -> Dossier:
+        roots.append(out_root)
+        (out_root / "SMPL").mkdir(parents=True, exist_ok=True)
+        (out_root / "SMPL" / "dossier.json").write_text("{}")
+        return built
+
+    class _Resolver:
+        index: dict[str, Any] = {}
+
+    monkeypatch.setattr(assemble, "load_finalists", lambda cfg, ticker: [object()])
+    monkeypatch.setattr(assemble, "_load_graph", lambda cfg: None)
+    monkeypatch.setattr(assemble, "assemble_one", writes_where_told)
+    monkeypatch.setattr(EntityResolver, "from_config", classmethod(lambda cls, cfg: _Resolver()))
+    monkeypatch.setattr(LocalFolderStore, "from_config", classmethod(lambda cls, cfg: None))
+    assert prespend.mechanical_build("SMPL", cfg).ticker == "SMPL"
+    assert len(roots) == 1 and not roots[0].exists()
+    assert not roots[0].is_relative_to(cfg.data_dir)
     assert page.read_bytes() == FROZEN_PAGE.read_bytes()
     assert sorted(p.name for p in page.parent.iterdir()) == ["dossier.json"]
 
@@ -225,6 +261,20 @@ def test_the_forecast_runs_each_phase_to_its_gate_without_calling_a_model() -> N
     assert rows.status == "present" and "fetch failed" in rows.why
     assert fc["mechanical.capital_structure.covenant_terms"].status == "present"
     assert fc["mechanical.capital_structure.maturity_event"].status == ABSENT
+
+
+def test_a_sec_refusal_during_the_forecast_refuses_rather_than_reading_as_no_rows(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Both phases swallow a failed fetch into "no rows", so a refused exhibit read as a lost
+    covenant table — a regression the paid build would never publish, since it refuses the write."""
+    from vinci import netcache
+    from vinci.netcache import SecRateLimitedError
+
+    monkeypatch.setattr(netcache, "_SEC_STOPPED", SecRateLimitedError("SEC refused (test)"))
+    page = Dossier.model_validate_json(FROZEN_PAGE.read_text())
+    with pytest.raises(SecRateLimitedError, match="refused exhibit is not a missing one"):
+        forecast_llm_fields(page, http=_NoNetwork())
 
 
 class _DebtExhibit(_NoNetwork):

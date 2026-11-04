@@ -199,6 +199,7 @@ def forecast_llm_fields(doc: Dossier, *, http: Any) -> dict[str, Forecast]:
     ``covenant_term_rows`` is set only when ``extract_covenant_terms`` returns rows. No capital
     structure → the phase is skipped and nothing here is forecast."""
     from vinci.dossier.covenant_extract import extract_covenant_terms, extract_maturity_event
+    from vinci.netcache import SecRateLimitedError, sec_refusal
 
     cs = doc.mechanical.capital_structure if doc.mechanical is not None else None
     if cs is None:
@@ -207,12 +208,12 @@ def forecast_llm_fields(doc: Dossier, *, http: Any) -> dict[str, Forecast]:
     out = {_CS + "covenant_terms": Forecast(
         _PRESENT, "the paid build writes the Tier-2 covenant digest here whatever it extracts")}
     probe = _RefusingClient()
-    rows, _summary, flags, _log = extract_covenant_terms(cs, llm=probe, http=http, **who)
+    _rows, _summary, flags, _log = extract_covenant_terms(cs, llm=probe, http=http, **who)
+    # Rows exist only after a model call, which this client never completes: with no call, the
+    # paid build leaves the field as the mechanical layer has it.
     if probe.calls:
         out[_CS + "covenant_term_rows"] = Forecast(
-            None, f"the covenant phase sends {len(probe.calls)} exhibit(s) to the model")
-    elif rows is not None:
-        out[_CS + "covenant_term_rows"] = Forecast(rows.status.value, "covenant phase")
+            None, "the covenant phase sends at least one located exhibit to the model")
     else:
         kept = cs.covenant_term_rows
         why = ("the covenant phase makes no LLM call on this build's pointers, so it writes no "
@@ -229,6 +230,14 @@ def forecast_llm_fields(doc: Dossier, *, http: Any) -> dict[str, Forecast]:
         out[_CS + "maturity_event"] = Forecast(ABSENT, "no maturity 8-K to read")
     else:
         out[_CS + "maturity_event"] = Forecast(event.status.value, event.note or "maturity phase")
+    # Both phases swallow a failed fetch into "no rows" — so a fetch SEC REFUSED would read here as
+    # a deterministic loss. The paid build refuses the whole write after a refusal
+    # (`assemble._refuse_after_sec_refusal`); so does this forecast.
+    if (refusal := sec_refusal()) is not None:
+        raise SecRateLimitedError(
+            f"{doc.ticker}: SEC refused this run during the LLM-phase forecast ({refusal}) — a "
+            "refused exhibit is not a missing one; re-run once SEC's window has passed"
+        ) from refusal
     return out
 
 
