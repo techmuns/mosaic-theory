@@ -28,6 +28,7 @@ from tests.ciq_export_support import (
     skip_unless_pages_export,
 )
 from tests.test_ev_gap_transform_idempotent import COMPUTED
+from vinci.config import get_config
 from vinci.dossier import manual_store as ms
 from vinci.dossier.ciq import CiqBundle
 from vinci.dossier.ciq_sheets import file_provenance
@@ -232,8 +233,10 @@ def test_most_computed_pages_hold_the_estimates_export_they_stamp() -> None:
     """THE FLOOR, on the live folder. Between a re-export and the artifact pass every page can
     drift at once; the page-keyed tests then skip as a class and a CIQ-reader mutation fails no
     behavioural test (cross-review of #889). This fails instead. Without the folder (CI) there is
-    nothing to measure, and the skip says so."""
-    root = ROOT / "data" / "manual" / "ciq"
+    nothing to measure, and the skip says so. The folder checked is the one the census reads (the
+    configured store), so a run from another directory skips rather than counting every page
+    drifted against a folder it never looked in."""
+    root = get_config().data_dir / "manual" / "ciq"
     if not root.is_dir() or not any(p.is_dir() for p in root.iterdir()):
         pytest.skip("no CIQ folder holding tickers on this machine — no export to measure")
     assert COMPUTED, "no committed page carries a computed ev_gap — the population is gone"
@@ -249,3 +252,30 @@ def test_the_commit_gate_prints_every_skip_reason() -> None:
              if "-m pytest" in ln and not ln.lstrip().startswith("#")]
     assert lines, "bin/commit no longer runs pytest"
     assert all("-rs" in ln.split() for ln in lines), lines
+
+
+def test_an_ambiguous_archived_folder_does_not_stop_the_search(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """NEGATIVE then POSITIVE: an archived folder holding two Estimates exports is no pin's export
+    (the code under test refuses it), so the search passes it by and runs the pin on the later
+    archived folder that holds it — it neither raises nor skips."""
+    _store_at(monkeypatch, tmp_path / "ciq")
+    _export(tmp_path / "ciq" / "NFLX", b"the later export")
+    twice = tmp_path / "ciq-archive" / "replaced-2026-10-20" / "NFLX"
+    _export(twice, b"one export")
+    (twice / "Netflix,IncNasdaqGSNFLXEstimatesReport (1).xls").write_bytes(b"another export")
+    held, sha = _export(tmp_path / "ciq-archive" / "replaced-2026-10-28" / "NFLX", b"the pin's")
+    got = _must_not_skip(skip_unless_export, "NFLX", "estimates", sha, why="w")
+    assert got.workbook("estimates").path == held
+
+
+def test_the_floor_looks_in_the_folder_the_census_reads(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Run from a directory with no CIQ folder, the floor SKIPS — it never counts every page drifted
+    against a folder it never looked in (it checked the checkout's folder while the census read the
+    configured, cwd-relative one, and failed 0 of 8 run from /tmp)."""
+    if get_config().data_dir.is_absolute():
+        pytest.skip("the configured data_dir is absolute — no cwd to move")
+    monkeypatch.chdir(tmp_path)
+    with pytest.raises(pytest.skip.Exception, match="no CIQ folder"):
+        test_most_computed_pages_hold_the_estimates_export_they_stamp()

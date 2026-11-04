@@ -40,7 +40,7 @@ from typing import Any
 import pytest
 
 from vinci.config import get_config
-from vinci.dossier.ciq import CiqBundle
+from vinci.dossier.ciq import CiqAmbiguousError, CiqBundle
 from vinci.dossier.ciq_sheets import file_provenance
 from vinci.dossier.manual_store import LocalFolderStore
 
@@ -110,8 +110,9 @@ def skip_unless_pages_export(ticker: str, kind: str, *, page: dict[str, Any] | N
 def archive_roots(ticker: str) -> list[Path]:
     """The operator's `ciq-archive/` folders: beside the CIQ folder the store reads, and beside
     the folder it links to (the Drive folder is linked into a checkout as `data/manual/ciq`). Each
-    replaced export is kept there as `ciq-archive/replaced-<date>/<TICKER>/` (2026-11-04: four
-    such dates, holding the exports SMPL's, NCNO's and NFLX's pins are verified on)."""
+    replaced export is kept there as `ciq-archive/replaced-<date>/<TICKER>/` (on the afternoon of
+    2026-11-04 it held five dated folders; the exports SMPL's, NCNO's and NFLX's pins are
+    verified on sit under `replaced-2026-10-28/`)."""
     root = Path(LocalFolderStore.from_config(get_config()).location(ticker)).parent
     out: list[Path] = []
     for cand in (root.parent / "ciq-archive", root.resolve().parent / "ciq-archive"):
@@ -129,8 +130,15 @@ def archived_bundle(ticker: str, kind: str, sha: str, *,
         for folder in sorted(p for p in root.rglob(ticker.upper()) if p.is_dir()):
             files = sorted(p for p in folder.iterdir()
                            if p.is_file() and not p.name.startswith("."))
-            bundle = CiqBundle.from_files(ticker, files)
-            if files and export_sha(ticker, kind, freq=freq, bundle=bundle) == sha:
+            try:
+                bundle = CiqBundle.from_files(ticker, files)
+                held = export_sha(ticker, kind, freq=freq, bundle=bundle) if files else None
+            except CiqAmbiguousError:
+                # a folder of several exports of one kind is no pin's export — `from_files`
+                # refuses it for the code under test too — and must not stop the search of the
+                # other archived folders
+                continue
+            if held == sha:
                 return bundle
     return None
 

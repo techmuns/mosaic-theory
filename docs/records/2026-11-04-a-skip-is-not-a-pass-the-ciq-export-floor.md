@@ -59,7 +59,8 @@ Drive folder linked as it stood that day ("live").
 
   On this branch all 3 pass. For the floor, the failing case is the state itself: on all-drifted,
   main fails nothing and the branch fails the floor pin.
-- **The review's six files**, plus the helper's pins and the drift pin, branch against main:
+- **The review's six files**, plus the helper's pins and the drift pin, branch `dfd7ea24` (before
+  review round 0 added 2 pins) against main:
 
   | Folder, mutation | main `a439eabe` | branch |
   |---|---|---|
@@ -92,6 +93,20 @@ Drive folder linked as it stood that day ("live").
     with no folder is drifted, and the stamp itself is own.
   - The archive is found beside a LINKED folder's target (the real topology), and an archive
     holding only other exports skips, saying it was searched.
+- **Review round 0** (`/code-review high --fix`, 8 findings):
+  - FIXED 1: the floor checked the checkout's absolute folder while the census reads the
+    configured, cwd-relative store, so a run from another directory failed "0 of 8". It now
+    checks the configured folder; a new pin changes directory and expects a skip.
+  - FIXED 2: an archived folder holding two exports of one kind raised `CiqAmbiguousError` and
+    ended the search. It is now passed by; a new pin covers it.
+  - FIXED 8: `archive_roots`' docstring said four dated folders. That afternoon the archive held
+    five (`replaced-2026-11-04/SMPL` was added that day).
+  - DISMISSED 3: a page with no export on disk counts as drifted by design, because none of its
+    page-keyed tests run.
+  - DISMISSED 4 and 5: they concern where the NFLX and materiality tests build their live bundle,
+    a pattern older than this PR. Either way the pin skips; it never runs on the wrong export.
+  - DISMISSED 6 and 7: an extra parse per archived folder, and the store lookup written three
+    times.
 - **`-rs` under `bin/commit`'s doubled `-q`** prints every SKIPPED line. It still prints no
   totals line.
 - **Full suite, both ways:** FILLED BELOW.
