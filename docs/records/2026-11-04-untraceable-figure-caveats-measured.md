@@ -114,9 +114,9 @@ So the coordinator's loose scan (51 of 55 found elsewhere on the page) was right
   which let 1,176 of 1,176 made-up figures through; its draw is not committed (searched `1,176`,
   `1176`, `G-D6` across the repo: the code comment and a test docstring only). The committed
   reproduction is the frozen 199-figure draw; the corpus mutation above is the larger stand-in.
-- Pins (`tests/test_untraceable_rank_and_duration.py`, 41): 18 fail on 9e996d7f (run in a scratch
+- Pins (`tests/test_untraceable_rank_and_duration.py`, 42): 19 fail on 9e996d7f (run in a scratch
   copy of it) — the frozen page's "2nd percentile" for its 0.0183, ranks 0–100 against it, a
-  history band's rank, the five duration forms, a figure after a duration flagged alone, the
+  history band's rank, both ranks at an exact half (0.145, 0.025), the five duration forms, a figure after a duration flagged alone, the
   closed field set against the page schema, and the corpus invariant on EPAM, IT, MVST, NCNO,
   NFLX, NKE, TJX and WLK. The negative assertions hold on both trees: of ranks 0–100 cited to the
   frozen percentile only its own (2) is new ({0, 5, 18} traced before through its other numbers);
