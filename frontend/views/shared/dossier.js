@@ -1810,8 +1810,8 @@ function _figExpr(f) {
   const core = `${a} ${_FIG_OP[f.derived] || "?"} ${b}`;
   return f.derived === "premium" || f.derived === "growth" ? `(${core}) − 1` : core;
 }
-// the literal at a figure boundary — never inside a longer number ("98" is not in "$1,098M",
-// "5" is not in "5.4%")
+// the literal at a figure boundary — never inside a longer number, whole or decimal (the twin of
+// render._find_figure, whose docstring carries the examples)
 function _findFigure(claim, lit, from) {
   const re = new RegExp(`(?<![\\d.,])${lit.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\d]|[.,]\\d)`, "g");
   re.lastIndex = from;
