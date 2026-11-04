@@ -1,0 +1,4116 @@
+{
+  "entities": [
+    {
+      "entity": "0000027419",
+      "entity_name": "Target Corporation",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:04Z",
+      "order": {
+        "bytes": 35735,
+        "content_id": "0fc83e3afccd81127450dd92810990d88f938f5ad45abfb7a0f1aefae51bc806",
+        "path": "edgar/0000027419/order/0fc83e3afccd81127450dd92810990d88f938f5ad45abfb7a0f1aefae51bc806.parquet",
+        "rows": 25319,
+        "sha256": "0cccf1deba384313dc7e25c6b987214fccde0d85051c1766b86b4f499e25276a"
+      },
+      "response_sha256": "eb15a2cd524e99ff27675db78840d039ec4a68b9cc2dcb10accbcb299933a487",
+      "rows_in_response": 25319,
+      "rows_kept": 25319,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000027419.json",
+      "tickers": [
+        "TGT"
+      ]
+    },
+    {
+      "entity": "0000059478",
+      "entity_name": "ELI LILLY AND COMPANY",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:00Z",
+      "order": {
+        "bytes": 35408,
+        "content_id": "b6bcc0ff7e5d819514decad3c5e0381c3904468f5bdead2476279433871a32fc",
+        "path": "edgar/0000059478/order/b6bcc0ff7e5d819514decad3c5e0381c3904468f5bdead2476279433871a32fc.parquet",
+        "rows": 23295,
+        "sha256": "17d0c665082863170ad3b525c58a1088aa305cf3d5fad07081ff655f3ad479ad"
+      },
+      "response_sha256": "3fe29099e6efaef9acac95711c271de1a644602939ea18487e29708310985942",
+      "rows_in_response": 23295,
+      "rows_kept": 23295,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000059478.json",
+      "tickers": [
+        "LLY"
+      ]
+    },
+    {
+      "entity": "0000109198",
+      "entity_name": "The TJX Companies, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:05Z",
+      "order": {
+        "bytes": 33729,
+        "content_id": "e154b58cea966561c8327f72fd995d85a93c4c1f0980bc68643d1894d1899b9e",
+        "path": "edgar/0000109198/order/e154b58cea966561c8327f72fd995d85a93c4c1f0980bc68643d1894d1899b9e.parquet",
+        "rows": 24694,
+        "sha256": "fc0003cca4c09e8cace439c7c6627f1ff531c876a995c23ca53e30784c60ce30"
+      },
+      "response_sha256": "1b8f7be3fed954f682ae56ebe9c56a245f4df3640b92181a2d44d6e086a4905b",
+      "rows_in_response": 24694,
+      "rows_kept": 24694,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000109198.json",
+      "tickers": [
+        "TJX"
+      ]
+    },
+    {
+      "entity": "0000320187",
+      "entity_name": "NIKE, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:02Z",
+      "order": {
+        "bytes": 28018,
+        "content_id": "6dd3f661e0584f147b18bfd4bca3ed935a93ac424936f1bf3e58ca765469cde8",
+        "path": "edgar/0000320187/order/6dd3f661e0584f147b18bfd4bca3ed935a93ac424936f1bf3e58ca765469cde8.parquet",
+        "rows": 20203,
+        "sha256": "a15e625c0074674b4c51b241f0737df275e5095cbd0f19c1a9786bc050a76c81"
+      },
+      "response_sha256": "d7aeceae21e6649e163d195729849349b27d909ab1a6eb4630a7c0c227acd890",
+      "rows_in_response": 20203,
+      "rows_kept": 20203,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320187.json",
+      "tickers": [
+        "NKE"
+      ]
+    },
+    {
+      "entity": "0000745732",
+      "entity_name": "Ross Stores, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:03Z",
+      "order": {
+        "bytes": 27281,
+        "content_id": "3b917c39d332f0d522844db1818c1f94963d94103c9ef7621d3195d1ebfc102b",
+        "path": "edgar/0000745732/order/3b917c39d332f0d522844db1818c1f94963d94103c9ef7621d3195d1ebfc102b.parquet",
+        "rows": 21019,
+        "sha256": "ecd4d27b4cafad2665476d9ddd53d6b65b6ae2700e067d5fd55069517d41daca"
+      },
+      "response_sha256": "6310bb034c7b7b228799f757b5117d1e6a173af3ff6304b656e851f492ccfaf9",
+      "rows_in_response": 21019,
+      "rows_kept": 21019,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000745732.json",
+      "tickers": [
+        "ROST"
+      ]
+    },
+    {
+      "entity": "0000749251",
+      "entity_name": "Gartner, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:31Z",
+      "order": {
+        "bytes": 33545,
+        "content_id": "14e211aa9557439d415abf03cef9d8cd8e98905d73427912b2e0e0d43da7e6c0",
+        "path": "edgar/0000749251/order/14e211aa9557439d415abf03cef9d8cd8e98905d73427912b2e0e0d43da7e6c0.parquet",
+        "rows": 24076,
+        "sha256": "90b30ca52064b0c272d58d4e28f78e892658c4c1d8a0da6646f28d1427848eb7"
+      },
+      "response_sha256": "0e02cc608a472e3a846f99505a6088cd7c6fd0eb39c6d03813d90697a7d35529",
+      "rows_in_response": 24076,
+      "rows_kept": 24076,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000749251.json",
+      "tickers": [
+        "IT"
+      ]
+    },
+    {
+      "entity": "0000784199",
+      "entity_name": "ARTIVION, INC.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:55Z",
+      "order": {
+        "bytes": 27549,
+        "content_id": "4c3ab564b8a666b469a992795e872ffd1e61c84d569729692a491a89f9766c86",
+        "path": "edgar/0000784199/order/4c3ab564b8a666b469a992795e872ffd1e61c84d569729692a491a89f9766c86.parquet",
+        "rows": 21002,
+        "sha256": "5dcba791bbdd0384b85ac1bbd6766c4047c028d132d45ee7cc3e5cd60d39cf01"
+      },
+      "response_sha256": "dc42ea274ebdb6c2e263e7a6f54e814b250d9d0b6b09959f723b7a7b942385e2",
+      "rows_in_response": 21002,
+      "rows_kept": 21002,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000784199.json",
+      "tickers": [
+        "AORT"
+      ]
+    },
+    {
+      "entity": "0000793074",
+      "entity_name": "WERNER ENTERPRISES, INC.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:08Z",
+      "order": {
+        "bytes": 29912,
+        "content_id": "05c47a3f3ee8d2ba490dea65ad7e03840257e3ecd444e4bb5879cc2373b6ce0e",
+        "path": "edgar/0000793074/order/05c47a3f3ee8d2ba490dea65ad7e03840257e3ecd444e4bb5879cc2373b6ce0e.parquet",
+        "rows": 22263,
+        "sha256": "de59727ee42030d079eea319eeadb0a2f7729cd6cce9cebc92df65e76ddca526"
+      },
+      "response_sha256": "c146520a5645e6d2cacbc2f1b6e56a7b64510f65acc63a918d9ca6efc90e8433",
+      "rows_in_response": 22263,
+      "rows_kept": 22263,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000793074.json",
+      "tickers": [
+        "WERN"
+      ]
+    },
+    {
+      "entity": "0000821483",
+      "entity_name": "Par Pacific Holdings, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:02Z",
+      "order": {
+        "bytes": 31450,
+        "content_id": "26a61f1ef907f380c08a2c59fbffa9b16d178dcf517681c2a71445f489f02a3d",
+        "path": "edgar/0000821483/order/26a61f1ef907f380c08a2c59fbffa9b16d178dcf517681c2a71445f489f02a3d.parquet",
+        "rows": 22746,
+        "sha256": "f2e09d550a2c166de716468cbbc989063160cd00ffd24d43eaa83ae98f361070"
+      },
+      "response_sha256": "c61fdaca71062b0003f8c6d30644679b78420533a4231cb01578af8e6a0e2672",
+      "rows_in_response": 22746,
+      "rows_kept": 22746,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000821483.json",
+      "tickers": [
+        "PARR"
+      ]
+    },
+    {
+      "entity": "0000907654",
+      "entity_name": "Oruka Therapeutics, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:28Z",
+      "order": {
+        "bytes": 15824,
+        "content_id": "da12fe153dc78e5c53ac524bddad38457a84978fca0433cbd8923e6d91b967b4",
+        "path": "edgar/0000907654/order/da12fe153dc78e5c53ac524bddad38457a84978fca0433cbd8923e6d91b967b4.parquet",
+        "rows": 12005,
+        "sha256": "23e4b52911ece2510dd7511281de55896a0caf541c00e5ab0ff4d1abbf8ff326"
+      },
+      "response_sha256": "3e23b48bd43d48690cc2da8767bd994ea7ae37e724c61a9cefa6f2950dc21518",
+      "rows_in_response": 12005,
+      "rows_kept": 12005,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000907654.json",
+      "tickers": [
+        "ORKA"
+      ]
+    },
+    {
+      "entity": "0001018724",
+      "entity_name": "AMAZON COM INC",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:55Z",
+      "order": {
+        "bytes": 40056,
+        "content_id": "a91afa3aeeba9f21a5ffc3b6dca58eeb6e69d143dbcbc5f9da9dce2042e0a92b",
+        "path": "edgar/0001018724/order/a91afa3aeeba9f21a5ffc3b6dca58eeb6e69d143dbcbc5f9da9dce2042e0a92b.parquet",
+        "rows": 29761,
+        "sha256": "37c29494ea5cca9057b5b1980148427460d1925d182de5cd3a1c3ab0358bd96b"
+      },
+      "response_sha256": "7549fb68446eee40e1f50a166fa06b2d2ee6349e07c8553a4828757e032d3cd4",
+      "rows_in_response": 29761,
+      "rows_kept": 29761,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+      "tickers": [
+        "AMZN"
+      ]
+    },
+    {
+      "entity": "0001065280",
+      "entity_name": "Netflix, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:01Z",
+      "order": {
+        "bytes": 34784,
+        "content_id": "bb5f5d0a3b5411ee7389081b966cfbfc86017544e9c6cfdd132046157573789d",
+        "path": "edgar/0001065280/order/bb5f5d0a3b5411ee7389081b966cfbfc86017544e9c6cfdd132046157573789d.parquet",
+        "rows": 24306,
+        "sha256": "5433ff8b647cf76536f27064044b5878eb5c7f4436fff1b26420a946db637d23"
+      },
+      "response_sha256": "fd31bc147b36495f6912e063188aea71434077236f4e995268620b47fda99e61",
+      "rows_in_response": 24306,
+      "rows_kept": 24306,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001065280.json",
+      "tickers": [
+        "NFLX"
+      ]
+    },
+    {
+      "entity": "0001262823",
+      "entity_name": "Westlake Corporation",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:09Z",
+      "order": {
+        "bytes": 30927,
+        "content_id": "b95d1635e7b438a762d6ded67038214515ac6cf70cf96ac6e4d7f4e645f0891e",
+        "path": "edgar/0001262823/order/b95d1635e7b438a762d6ded67038214515ac6cf70cf96ac6e4d7f4e645f0891e.parquet",
+        "rows": 23235,
+        "sha256": "41008a472bd7fd396a17fccc54c15e57c16d1c93437ec65f1b9ef985d4f55050"
+      },
+      "response_sha256": "cea7c11dfd3af2f332304a11e723d95447af9482ca953a1a21ea51067df2997b",
+      "rows_in_response": 23235,
+      "rows_kept": 23235,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001262823.json",
+      "tickers": [
+        "WLK"
+      ]
+    },
+    {
+      "entity": "0001352010",
+      "entity_name": "EPAM SYSTEMS, INC.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:58Z",
+      "order": {
+        "bytes": 25196,
+        "content_id": "3ff05fae3e9b7c210c0aeaa0b3d32054c86e0af718f3ac1b67c40cbcd1c09fc9",
+        "path": "edgar/0001352010/order/3ff05fae3e9b7c210c0aeaa0b3d32054c86e0af718f3ac1b67c40cbcd1c09fc9.parquet",
+        "rows": 19327,
+        "sha256": "d91da19ca394b517afbbeda3d12d50b051978d9b46f2aa27857ba6d09e7bdf0c"
+      },
+      "response_sha256": "a44c750a1468b1e7b44893101e967e06b57bea9d39dfa8e7d8f56f19e856a7af",
+      "rows_in_response": 19327,
+      "rows_kept": 19327,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001352010.json",
+      "tickers": [
+        "EPAM"
+      ]
+    },
+    {
+      "entity": "0001403161",
+      "entity_name": "VISA INC.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:07Z",
+      "order": {
+        "bytes": 29313,
+        "content_id": "32c0bfca4f4aa8b17f703c1925fc140ddf8329f5f70814faf2d246ce9dd5eebe",
+        "path": "edgar/0001403161/order/32c0bfca4f4aa8b17f703c1925fc140ddf8329f5f70814faf2d246ce9dd5eebe.parquet",
+        "rows": 23266,
+        "sha256": "feb275b86becb7e523f0bc97915e9eb749cfb3d61aba812314aedcede599ed1c"
+      },
+      "response_sha256": "df3caf7c5667296569fc3074ce2ff13629c9a555184a06c5ea9925b43e63971d",
+      "rows_in_response": 23266,
+      "rows_kept": 23266,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001403161.json",
+      "tickers": [
+        "V"
+      ]
+    },
+    {
+      "entity": "0001484769",
+      "entity_name": "FuboTV Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:59Z",
+      "order": {
+        "bytes": 26277,
+        "content_id": "31a98bc8423e0e31f7f496cc432a5f0c69d43cf724c0bc56afb9195f7aef8d88",
+        "path": "edgar/0001484769/order/31a98bc8423e0e31f7f496cc432a5f0c69d43cf724c0bc56afb9195f7aef8d88.parquet",
+        "rows": 17605,
+        "sha256": "b5887ce517297257946278507e5b2e14e2387455d4018be1f3163dc051af584a"
+      },
+      "response_sha256": "ea10a688894936583797d7b152d6f44f1e825c45722945cc4cad36269ce3fc7a",
+      "rows_in_response": 17605,
+      "rows_kept": 17605,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001484769.json",
+      "tickers": [
+        "FUBO"
+      ]
+    },
+    {
+      "entity": "0001543151",
+      "entity_name": "Uber Technologies, Inc",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:06Z",
+      "order": {
+        "bytes": 19297,
+        "content_id": "4073f1552ff190cbc9235e6a03676d2776e7e352bb72a513a5d06772956a5cea",
+        "path": "edgar/0001543151/order/4073f1552ff190cbc9235e6a03676d2776e7e352bb72a513a5d06772956a5cea.parquet",
+        "rows": 13658,
+        "sha256": "c05731c89bdf90fab49aa164184846db58021d2715cb043c3e5a05c8e85e1c54"
+      },
+      "response_sha256": "98e804db35b92010096d3eccc692cf3bda5082ca8648bbf2f55d0b7be0f3830f",
+      "rows_in_response": 13658,
+      "rows_kept": 13658,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001543151.json",
+      "tickers": [
+        "UBER"
+      ]
+    },
+    {
+      "entity": "0001579733",
+      "entity_name": "Vital Farms, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:08Z",
+      "order": {
+        "bytes": 14633,
+        "content_id": "e4e26b2e7d95e3daa5f6b697707b7c55df27756714ed8c30d1c0f0ae5c110bbd",
+        "path": "edgar/0001579733/order/e4e26b2e7d95e3daa5f6b697707b7c55df27756714ed8c30d1c0f0ae5c110bbd.parquet",
+        "rows": 9794,
+        "sha256": "0dd806adc9afec426c656ab3856d03ad3ab9df4f022389d5536f50030e8150f5"
+      },
+      "response_sha256": "f1ba65fe5621415d75edc58829209df6354b9b0fb3228a5d03609b255fb67e15",
+      "rows_in_response": 9794,
+      "rows_kept": 9794,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001579733.json",
+      "tickers": [
+        "VITL"
+      ]
+    },
+    {
+      "entity": "0001652044",
+      "entity_name": "Alphabet Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:27Z",
+      "order": {
+        "bytes": 28208,
+        "content_id": "b686e51d1d93ef3f760ea3511f6aacb1f44ef47e552838c312ac08dc1ec02bf3",
+        "path": "edgar/0001652044/order/b686e51d1d93ef3f760ea3511f6aacb1f44ef47e552838c312ac08dc1ec02bf3.parquet",
+        "rows": 20907,
+        "sha256": "7ec8aba5840dd32da7de10e879d8009cd18cd7ca4a4a7c53fd48c384cc8e82f9"
+      },
+      "response_sha256": "a017f26ee88cb4a639d1c1ddb06d53b4afe22f0ac89cabec7cd67c88919fe1c5",
+      "rows_in_response": 20907,
+      "rows_kept": 20907,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+      "tickers": [
+        "GOOGL"
+      ]
+    },
+    {
+      "entity": "0001681087",
+      "entity_name": "TECTONIC THERAPEUTIC, INC.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:32Z",
+      "order": {
+        "bytes": 10436,
+        "content_id": "6e5f72e72dc690793b65ff566a7d4e4c5edc6bfe1ae8c0d712f7798f28997547",
+        "path": "edgar/0001681087/order/6e5f72e72dc690793b65ff566a7d4e4c5edc6bfe1ae8c0d712f7798f28997547.parquet",
+        "rows": 7479,
+        "sha256": "b241d493321c1de6679f8de9c40f8b7c32bf6a26496986b204611ec9a716589a"
+      },
+      "response_sha256": "3ed8150bfa1fb842f0d2196a2b4cb23dfdd957d19ef32bda9294130285cb6892",
+      "rows_in_response": 7479,
+      "rows_kept": 7479,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001681087.json",
+      "tickers": [
+        "TECX"
+      ]
+    },
+    {
+      "entity": "0001682745",
+      "entity_name": "VERRA MOBILITY CORPORATION",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:00Z",
+      "order": {
+        "bytes": 17275,
+        "content_id": "5775bec439405d8442386df3b335a89b77f84293632a0725ae2509ed882e8e23",
+        "path": "edgar/0001682745/order/5775bec439405d8442386df3b335a89b77f84293632a0725ae2509ed882e8e23.parquet",
+        "rows": 12130,
+        "sha256": "47eb9c5a52f264e17ae650a3d2312cf6f5da8968b2f9662fbf5ff6ed2a34e5c8"
+      },
+      "response_sha256": "b93f1a8aa1769f6ccef00ad98ad32dd004cb92e2b2904f7dbf5accdc489a8042",
+      "rows_in_response": 12130,
+      "rows_kept": 12130,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001682745.json",
+      "tickers": [
+        "VRRM"
+      ]
+    },
+    {
+      "entity": "0001702744",
+      "entity_name": "The Simply Good Foods Company",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:03Z",
+      "order": {
+        "bytes": 19872,
+        "content_id": "778b880f0c91eff169ee4dc9f04d1a4122c261f0cf5fa5e277fe99e504499666",
+        "path": "edgar/0001702744/order/778b880f0c91eff169ee4dc9f04d1a4122c261f0cf5fa5e277fe99e504499666.parquet",
+        "rows": 14781,
+        "sha256": "b6ebe80ef42517ed8143afef1e344d69444948c06f68f226f6c57ce0f526347a"
+      },
+      "response_sha256": "d14e6edde955242a8df13c861163bfb1860f61fedfa3d4e06214d108fe032392",
+      "rows_in_response": 14781,
+      "rows_kept": 14781,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001702744.json",
+      "tickers": [
+        "SMPL"
+      ]
+    },
+    {
+      "entity": "0001760689",
+      "entity_name": "MICROVAST HOLDINGS, INC.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:00Z",
+      "order": {
+        "bytes": 15759,
+        "content_id": "6ea04d8965305a6dfc92fa0e7c7f090dc71dc1f33448598917a3c7a8a1851904",
+        "path": "edgar/0001760689/order/6ea04d8965305a6dfc92fa0e7c7f090dc71dc1f33448598917a3c7a8a1851904.parquet",
+        "rows": 9882,
+        "sha256": "7b87f39c7501f0d4dd200761825063dd1f9be67e68ae39c311aa5089b0759be6"
+      },
+      "response_sha256": "b6dd0c0a0d37f311f4429563e2ec028e78a8a0db2556315a7f78bb578aab73ca",
+      "rows_in_response": 9882,
+      "rows_kept": 9882,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001760689.json",
+      "tickers": [
+        "MVST"
+      ]
+    },
+    {
+      "entity": "0001772016",
+      "entity_name": "BellRing Brands, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:56Z",
+      "order": {
+        "bytes": 8575,
+        "content_id": "80cff275da7f0a2e70a990a37796b8cd35d7d63d7b9e277e48a51d0f430b2753",
+        "path": "edgar/0001772016/order/80cff275da7f0a2e70a990a37796b8cd35d7d63d7b9e277e48a51d0f430b2753.parquet",
+        "rows": 6893,
+        "sha256": "f611be410bdaebb6dfa161c7b46d76ef546ec2364575cde08028d03432f600bb"
+      },
+      "response_sha256": "7501504e51f581bd20b996fca8111c4382e62f0c85580d2c16ab7fdde539974b",
+      "rows_in_response": 6893,
+      "rows_kept": 6893,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001772016.json",
+      "tickers": [
+        "BRBR"
+      ]
+    },
+    {
+      "entity": "0001803599",
+      "entity_name": "Concentrix Corporation",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:08:57Z",
+      "order": {
+        "bytes": 13545,
+        "content_id": "1325cce18df76eec2bcc440e2b0d01dd72ecf6870a0fe9e359a696b2c9482b15",
+        "path": "edgar/0001803599/order/1325cce18df76eec2bcc440e2b0d01dd72ecf6870a0fe9e359a696b2c9482b15.parquet",
+        "rows": 9874,
+        "sha256": "14e08c3a82425e0ebc9632aa8a2fa5614770441007806527b364e6292efb2e82"
+      },
+      "response_sha256": "3ac0511865f83d8682fdc6994d4570135e2d3407ea67bd92836a30b30febcfc5",
+      "rows_in_response": 9874,
+      "rows_kept": 9874,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001803599.json",
+      "tickers": [
+        "CNXC"
+      ]
+    },
+    {
+      "entity": "0001902733",
+      "entity_name": "nCino, Inc.",
+      "exact_duplicates_dropped": 0,
+      "fetched_at": "2026-10-27T10:09:01Z",
+      "order": {
+        "bytes": 10823,
+        "content_id": "3dc83900d22dcb1c1395b9c7c6f5e8cf6e23102e4d2c9bb4ea1739445212e37b",
+        "path": "edgar/0001902733/order/3dc83900d22dcb1c1395b9c7c6f5e8cf6e23102e4d2c9bb4ea1739445212e37b.parquet",
+        "rows": 8367,
+        "sha256": "8ce02813b68c6a86985ea39189b573e51da4d73c5b2d84324cca82619545afed"
+      },
+      "response_sha256": "d5ac7d7f2fef5087ba694612bb5c543492cfcc9163bb7a16054328adb85200cc",
+      "rows_in_response": 8367,
+      "rows_kept": 8367,
+      "rows_without_filed": 0,
+      "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001902733.json",
+      "tickers": [
+        "NCNO"
+      ]
+    }
+  ],
+  "extractor": "vinci.facts.edgar_ingest",
+  "extractor_version": "2",
+  "files": [
+    {
+      "bytes": 9592,
+      "content_id": "55c483398a7bd2ed2d3a7b563034fa7122a5fd7613ff22d175ee4f2fb6e99cc4",
+      "entity": "0000027419",
+      "filed_year": 2009,
+      "path": "edgar/0000027419/2009/55c483398a7bd2ed2d3a7b563034fa7122a5fd7613ff22d175ee4f2fb6e99cc4.parquet",
+      "rows": 442,
+      "sha256": "d2a295e2410f33b009a07213c210d490b637b61bb20245fde4cd1709d63a6835",
+      "source": "edgar"
+    },
+    {
+      "bytes": 14141,
+      "content_id": "4cd6c6dccb9daf62400b9f4f643fbff613189c62999a7f084b25471280b5bb33",
+      "entity": "0000027419",
+      "filed_year": 2010,
+      "path": "edgar/0000027419/2010/4cd6c6dccb9daf62400b9f4f643fbff613189c62999a7f084b25471280b5bb33.parquet",
+      "rows": 1195,
+      "sha256": "660076efbadc41da6d2a58b766f61237de06a5dba767a817c96597294dd80bf5",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17761,
+      "content_id": "f8067b63ec6370371ceae93d2fc45431851b978b494bcf067afc51c5cd65b003",
+      "entity": "0000027419",
+      "filed_year": 2011,
+      "path": "edgar/0000027419/2011/f8067b63ec6370371ceae93d2fc45431851b978b494bcf067afc51c5cd65b003.parquet",
+      "rows": 1330,
+      "sha256": "c728a8c6b0c6b2183dbb011c338264d7d80bbc69c5355c3d135f1c6386696e8b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18048,
+      "content_id": "bdc3c806b6f82dc733eb27db355bbaea676dc1b3d53f187f92c25178794afebd",
+      "entity": "0000027419",
+      "filed_year": 2012,
+      "path": "edgar/0000027419/2012/bdc3c806b6f82dc733eb27db355bbaea676dc1b3d53f187f92c25178794afebd.parquet",
+      "rows": 1457,
+      "sha256": "2e4270430896585c371c5a2140f574f8551e53ba9e318e83b97cf847622a339e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17598,
+      "content_id": "883d6e13ea162e6b99a01f12b4ed01cc19bc949291e0f11354d6562ae0401752",
+      "entity": "0000027419",
+      "filed_year": 2013,
+      "path": "edgar/0000027419/2013/883d6e13ea162e6b99a01f12b4ed01cc19bc949291e0f11354d6562ae0401752.parquet",
+      "rows": 1434,
+      "sha256": "fe725802a48ef1ea78b47a9b0d7ab64949a31265eae1ee18cf4851f7e348c7b1",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17690,
+      "content_id": "916cb1864c2bbd023eb5f0fe0c24f9fad3f3d057b55b1f3b90cdc11c926334ec",
+      "entity": "0000027419",
+      "filed_year": 2014,
+      "path": "edgar/0000027419/2014/916cb1864c2bbd023eb5f0fe0c24f9fad3f3d057b55b1f3b90cdc11c926334ec.parquet",
+      "rows": 1468,
+      "sha256": "3d5069443bdcb7f0111f42b43f29fc6d8f70bfff1b58a4fa7db4b833cc789306",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18525,
+      "content_id": "49d04e6a51b48df0dbad3897250aba1118ef446cf873e44c3d0875237265d00a",
+      "entity": "0000027419",
+      "filed_year": 2015,
+      "path": "edgar/0000027419/2015/49d04e6a51b48df0dbad3897250aba1118ef446cf873e44c3d0875237265d00a.parquet",
+      "rows": 1592,
+      "sha256": "811be436b55a886202a74cb3675edc2df28fef32f0864286daf6574bb08e0a03",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18255,
+      "content_id": "79810183c132d02751918dfbf3413df111f5894abd1506ec9bc0cffbe3b0e6d2",
+      "entity": "0000027419",
+      "filed_year": 2016,
+      "path": "edgar/0000027419/2016/79810183c132d02751918dfbf3413df111f5894abd1506ec9bc0cffbe3b0e6d2.parquet",
+      "rows": 1587,
+      "sha256": "02971560ae4c29188fea8cadc4c78150289a20714f76e5d94e93461b056c184b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17806,
+      "content_id": "6a924a0793cffba36bcbb205cb48e3a29c91038f64d2d92fbebf0453227dc8f4",
+      "entity": "0000027419",
+      "filed_year": 2017,
+      "path": "edgar/0000027419/2017/6a924a0793cffba36bcbb205cb48e3a29c91038f64d2d92fbebf0453227dc8f4.parquet",
+      "rows": 1541,
+      "sha256": "827ac2ce052a2ce6685f37ba3cf41377e8d5d47731b2ad485eb517a25102c283",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19688,
+      "content_id": "124e8bdf81bd1bb6920c029e3483160a7a033a91205fc5aa04ddc1546c5e3124",
+      "entity": "0000027419",
+      "filed_year": 2018,
+      "path": "edgar/0000027419/2018/124e8bdf81bd1bb6920c029e3483160a7a033a91205fc5aa04ddc1546c5e3124.parquet",
+      "rows": 1678,
+      "sha256": "21d55af1c243a3a37b4606f15c7e216880ea8674def113c6011986445cd22761",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18648,
+      "content_id": "e03d178703073785e050dd92ce7829a369d1e297bead8d46628f57faf95e58c1",
+      "entity": "0000027419",
+      "filed_year": 2019,
+      "path": "edgar/0000027419/2019/e03d178703073785e050dd92ce7829a369d1e297bead8d46628f57faf95e58c1.parquet",
+      "rows": 1623,
+      "sha256": "65032aa051326862e9f496a15366b9aaac9ac98e4e4f201085f50196057f208d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18844,
+      "content_id": "5c312dfbc06fc83e225ea2640ae9b9aaec3e263b814c501bdda706e2ed1ac7fe",
+      "entity": "0000027419",
+      "filed_year": 2020,
+      "path": "edgar/0000027419/2020/5c312dfbc06fc83e225ea2640ae9b9aaec3e263b814c501bdda706e2ed1ac7fe.parquet",
+      "rows": 1665,
+      "sha256": "00c8680c75e230a23ebfccaa10538a2832328be53738eaa4366a2bfda035695b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17891,
+      "content_id": "dc5d890532318690d344b0c0c722b1f61f1b4dededfb5c9734ab55d181273d27",
+      "entity": "0000027419",
+      "filed_year": 2021,
+      "path": "edgar/0000027419/2021/dc5d890532318690d344b0c0c722b1f61f1b4dededfb5c9734ab55d181273d27.parquet",
+      "rows": 1453,
+      "sha256": "d460c04f3a63b24e414a5b578990ee34d0be033de9ca3c4aa52fb954d05b1d86",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17859,
+      "content_id": "a46b3e117bfee857e5eb238ac8e454768e11d7f57b6f9f39e346c0db37e93026",
+      "entity": "0000027419",
+      "filed_year": 2022,
+      "path": "edgar/0000027419/2022/a46b3e117bfee857e5eb238ac8e454768e11d7f57b6f9f39e346c0db37e93026.parquet",
+      "rows": 1447,
+      "sha256": "e76a83a8f8dd6edac01e8766cdf09e4e25909469432eb37d44445ccf26af896e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17634,
+      "content_id": "548b256ac30bd6e391e56b7f9ba50beaa4fe589d5d3ac07ef34f338b494a4ba2",
+      "entity": "0000027419",
+      "filed_year": 2023,
+      "path": "edgar/0000027419/2023/548b256ac30bd6e391e56b7f9ba50beaa4fe589d5d3ac07ef34f338b494a4ba2.parquet",
+      "rows": 1438,
+      "sha256": "49955e00af5cbe8acc0ace9fb106c8912c04653c4941e86161f3fa05c4b68de2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17313,
+      "content_id": "4217a96f4e95077bff8b8d0af9e1f32a75e4c5c81210757e9b4b085f9412f4ad",
+      "entity": "0000027419",
+      "filed_year": 2024,
+      "path": "edgar/0000027419/2024/4217a96f4e95077bff8b8d0af9e1f32a75e4c5c81210757e9b4b085f9412f4ad.parquet",
+      "rows": 1432,
+      "sha256": "0dc56ff034c1f7b0bc7b9ed2e91649672aac9fed6f97517e343e5ae0453f1c80",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16863,
+      "content_id": "ca3eb06a280db01f8c7b4f710f55113eefc97d271c45fb9881d6982c638b711f",
+      "entity": "0000027419",
+      "filed_year": 2025,
+      "path": "edgar/0000027419/2025/ca3eb06a280db01f8c7b4f710f55113eefc97d271c45fb9881d6982c638b711f.parquet",
+      "rows": 1403,
+      "sha256": "f4c52eb3add342fad03bb80c2fc4fff1410ec68ddc2c0a20ce4cf294a55ee319",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16260,
+      "content_id": "939b174cbee5239ead25a371108c5248f5f10e35b70d6ed5f7f87300043cef47",
+      "entity": "0000027419",
+      "filed_year": 2026,
+      "path": "edgar/0000027419/2026/939b174cbee5239ead25a371108c5248f5f10e35b70d6ed5f7f87300043cef47.parquet",
+      "rows": 1134,
+      "sha256": "364002728e4aa3724c57d3938df852e3947087b5d0aaf2999d4e036a85a28c91",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9009,
+      "content_id": "1a86f0940b00d267aacd44036bb47bdd2ac05b08395d0ebcfc3308dc4386f3cb",
+      "entity": "0000059478",
+      "filed_year": 2009,
+      "path": "edgar/0000059478/2009/1a86f0940b00d267aacd44036bb47bdd2ac05b08395d0ebcfc3308dc4386f3cb.parquet",
+      "rows": 355,
+      "sha256": "c139246f20450a34c5eef5f84e123e68b40d13726d15c8ada35debb283b93987",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13928,
+      "content_id": "8d3c0ee0daa9afb0bf3db1b1c5044bcea32d8bfccde609119af84ddd269ace35",
+      "entity": "0000059478",
+      "filed_year": 2010,
+      "path": "edgar/0000059478/2010/8d3c0ee0daa9afb0bf3db1b1c5044bcea32d8bfccde609119af84ddd269ace35.parquet",
+      "rows": 988,
+      "sha256": "7b855c74067993ad77dd30d66979f9fb0c11d01e520e9a65effb009cf573ddba",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17230,
+      "content_id": "56ba9208e324e0eae3d944a92ce31f8c9d5132f84d97989efa15f3bb027e3841",
+      "entity": "0000059478",
+      "filed_year": 2011,
+      "path": "edgar/0000059478/2011/56ba9208e324e0eae3d944a92ce31f8c9d5132f84d97989efa15f3bb027e3841.parquet",
+      "rows": 1187,
+      "sha256": "db0f88c80d6ea0cc7a0ffc03a3e359d4ddf5a4e3975616f50a406768358c182a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17206,
+      "content_id": "28af43e218fa1da4f34ce063cafaad36b862dda24337aa87fc38eefa7d382bee",
+      "entity": "0000059478",
+      "filed_year": 2012,
+      "path": "edgar/0000059478/2012/28af43e218fa1da4f34ce063cafaad36b862dda24337aa87fc38eefa7d382bee.parquet",
+      "rows": 1186,
+      "sha256": "ea5eb795f17aae8126e9252885a0f8a5a5385631ee2eb16a8a426552a63ae294",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18907,
+      "content_id": "10ca9da7280d2974954626efdad1b76333335b75187e4a8eeafc437045b1e199",
+      "entity": "0000059478",
+      "filed_year": 2013,
+      "path": "edgar/0000059478/2013/10ca9da7280d2974954626efdad1b76333335b75187e4a8eeafc437045b1e199.parquet",
+      "rows": 1308,
+      "sha256": "4e46d8b38fa47d4d8d77d03138faf79d87d2f8fa1d8c7bb7e1b8061d39b8cde5",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19916,
+      "content_id": "14bbf6ac2f2a24bcf4b7b4c587e5b009921c336ed7aa647a91e4ec15103e3ca8",
+      "entity": "0000059478",
+      "filed_year": 2014,
+      "path": "edgar/0000059478/2014/14bbf6ac2f2a24bcf4b7b4c587e5b009921c336ed7aa647a91e4ec15103e3ca8.parquet",
+      "rows": 1501,
+      "sha256": "eaf8f2ca2c0b0152888dd58e3e31b2c024173c8a2f1c6d2a8f2f6f7a8fb41c47",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20476,
+      "content_id": "6088f588a7fe4e1041e427a4ab13d299ee629b0526fc124333495e045df28dcd",
+      "entity": "0000059478",
+      "filed_year": 2015,
+      "path": "edgar/0000059478/2015/6088f588a7fe4e1041e427a4ab13d299ee629b0526fc124333495e045df28dcd.parquet",
+      "rows": 1597,
+      "sha256": "8710634dd6c9feb1a78183b229ec397378488597db079044ef2cc196cb22deba",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20134,
+      "content_id": "6ffa714456e92462cc4fd1a2e0322eb09ce23a7a843b1ef776fb24be97fa1103",
+      "entity": "0000059478",
+      "filed_year": 2016,
+      "path": "edgar/0000059478/2016/6ffa714456e92462cc4fd1a2e0322eb09ce23a7a843b1ef776fb24be97fa1103.parquet",
+      "rows": 1590,
+      "sha256": "33d125171c010f31973442ae9a3fbc9c16720c7641b20fce0711111ae89774a3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19995,
+      "content_id": "fed05523478383684a84526911ac596de7a32e6d06249715cd409b8533649ffa",
+      "entity": "0000059478",
+      "filed_year": 2017,
+      "path": "edgar/0000059478/2017/fed05523478383684a84526911ac596de7a32e6d06249715cd409b8533649ffa.parquet",
+      "rows": 1487,
+      "sha256": "907668650fb1c0b2dd231b8e59adae907be2e11f75b11b2efdb5f8b40b1af479",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19379,
+      "content_id": "ca703278bfcdb55e61073f762f5116e1068f286e3581d7992d8fcfbe30b0f5fd",
+      "entity": "0000059478",
+      "filed_year": 2018,
+      "path": "edgar/0000059478/2018/ca703278bfcdb55e61073f762f5116e1068f286e3581d7992d8fcfbe30b0f5fd.parquet",
+      "rows": 1372,
+      "sha256": "48de37abd3601ce669ccb6d2a31c19346bfbdd6658dcbb41fc15fdb3207a5d5a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 24103,
+      "content_id": "3f5fe8e55bf11f8e5ac07cf3f8f37f1ab74dc2127024e5b582f7c3faf459be4b",
+      "entity": "0000059478",
+      "filed_year": 2019,
+      "path": "edgar/0000059478/2019/3f5fe8e55bf11f8e5ac07cf3f8f37f1ab74dc2127024e5b582f7c3faf459be4b.parquet",
+      "rows": 2187,
+      "sha256": "e3a45eefc94f2d3209b931c1c599e19370a4aaa38c8400d0a2ccbf49f736e403",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19687,
+      "content_id": "48c4a42d21421884ab55f313c93686de8a0a1d6cd93e318059840e832e7e2da7",
+      "entity": "0000059478",
+      "filed_year": 2020,
+      "path": "edgar/0000059478/2020/48c4a42d21421884ab55f313c93686de8a0a1d6cd93e318059840e832e7e2da7.parquet",
+      "rows": 1473,
+      "sha256": "0fdb2adc09d6f8c45fe246b64044b280bdcfc79976bac2559d2a0feed8bdf01a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18372,
+      "content_id": "cf2272a2f078f22f890ac75d950c7a9eddc85fd8f632ceeede670cde7f84bc14",
+      "entity": "0000059478",
+      "filed_year": 2021,
+      "path": "edgar/0000059478/2021/cf2272a2f078f22f890ac75d950c7a9eddc85fd8f632ceeede670cde7f84bc14.parquet",
+      "rows": 1293,
+      "sha256": "c3c22bc8936b56221698d03bc0af232223ac02be5a899b6b6e5bc44f0c56456f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17676,
+      "content_id": "9d28774d8039fa550d1ebf77beb44b42affed7a10e211d16fae71d00a835052b",
+      "entity": "0000059478",
+      "filed_year": 2022,
+      "path": "edgar/0000059478/2022/9d28774d8039fa550d1ebf77beb44b42affed7a10e211d16fae71d00a835052b.parquet",
+      "rows": 1270,
+      "sha256": "ae0f5e0c6619dbfd6cb112987c7a818beaca631b69da6f1b7ce6bb87db8cac28",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17238,
+      "content_id": "b15ba22292686efe49837b0d5f286068ee25c9b3b802d0a9945ea0dbaf82617a",
+      "entity": "0000059478",
+      "filed_year": 2023,
+      "path": "edgar/0000059478/2023/b15ba22292686efe49837b0d5f286068ee25c9b3b802d0a9945ea0dbaf82617a.parquet",
+      "rows": 1232,
+      "sha256": "94e182db35f04944f8cbf93e306bae1d8401e98452336a237624f401747587a1",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17726,
+      "content_id": "fe184b004a330487138976a5065063f0eec594eba9807201d129c5f1b432c596",
+      "entity": "0000059478",
+      "filed_year": 2024,
+      "path": "edgar/0000059478/2024/fe184b004a330487138976a5065063f0eec594eba9807201d129c5f1b432c596.parquet",
+      "rows": 1284,
+      "sha256": "93c935525f835287a3c0b214adc2f4ba91e87850dd6f5c0179e8ce1ccb281b97",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17510,
+      "content_id": "a9c4802406e308213ee52679aee49cc443759d88e21cf731411be1096e814afe",
+      "entity": "0000059478",
+      "filed_year": 2025,
+      "path": "edgar/0000059478/2025/a9c4802406e308213ee52679aee49cc443759d88e21cf731411be1096e814afe.parquet",
+      "rows": 1235,
+      "sha256": "61c5e987ce1135b4d7b94e104e610057beb2fc85977c09b558be79abebae274a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13484,
+      "content_id": "b4ccf800ae9ade39fdcbfb30ee85d7675538411496f22bc842a3d425eac910d4",
+      "entity": "0000059478",
+      "filed_year": 2026,
+      "path": "edgar/0000059478/2026/b4ccf800ae9ade39fdcbfb30ee85d7675538411496f22bc842a3d425eac910d4.parquet",
+      "rows": 750,
+      "sha256": "a60919ea0a3d0ebf6dfe36d1765d2249ffbb50cc97d8603f8964fcd29b0d658e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9714,
+      "content_id": "f7f2f04512aa8b36b17a94b6f8e04ca1da723a38a283fea368c2b542fa81f26c",
+      "entity": "0000109198",
+      "filed_year": 2009,
+      "path": "edgar/0000109198/2009/f7f2f04512aa8b36b17a94b6f8e04ca1da723a38a283fea368c2b542fa81f26c.parquet",
+      "rows": 461,
+      "sha256": "833ebd1dce34e3632911bb33e88337348e9cdfc5f7cdfab87f5782fb5d28b838",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13909,
+      "content_id": "87452b78612a56ffab7fb573fa3eaa730bec71261256554740a7f173a72a5729",
+      "entity": "0000109198",
+      "filed_year": 2010,
+      "path": "edgar/0000109198/2010/87452b78612a56ffab7fb573fa3eaa730bec71261256554740a7f173a72a5729.parquet",
+      "rows": 956,
+      "sha256": "f76aa1b701cfb4c723250eb60f53774701acabcf30d0d20e81498fde006a0c20",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17967,
+      "content_id": "b2511db1e27ee9193e098d3ba14383b0b9b62f641930a0eb2a3bff010e7d102f",
+      "entity": "0000109198",
+      "filed_year": 2011,
+      "path": "edgar/0000109198/2011/b2511db1e27ee9193e098d3ba14383b0b9b62f641930a0eb2a3bff010e7d102f.parquet",
+      "rows": 1295,
+      "sha256": "9e501cb4654be244f53ff0d255c159eb729f5a13ddab2d2df716ca1de64dd8a2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18854,
+      "content_id": "a81919b6fcb28fd63fd3a2e3eda721d01b3e3c49b30eb5d8b66ab3d6b931dbe6",
+      "entity": "0000109198",
+      "filed_year": 2012,
+      "path": "edgar/0000109198/2012/a81919b6fcb28fd63fd3a2e3eda721d01b3e3c49b30eb5d8b66ab3d6b931dbe6.parquet",
+      "rows": 1388,
+      "sha256": "22553efac0d4bebe67840bf21cc4c89521267d63ace5e1b4da8c4ad9664ed6bd",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18255,
+      "content_id": "2b0d8dbda2420a7c9ef7c22dd20a255e81db8e90d8cbdcaa933578545d968cfa",
+      "entity": "0000109198",
+      "filed_year": 2013,
+      "path": "edgar/0000109198/2013/2b0d8dbda2420a7c9ef7c22dd20a255e81db8e90d8cbdcaa933578545d968cfa.parquet",
+      "rows": 1336,
+      "sha256": "8e5cfb9751997aab1dc78873e2fbfc1b516189cc0cac2c591d65f800885d90dc",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18717,
+      "content_id": "951a8ef92fe66dcc7cf6ff1b9866f7ec83f651102429116c82b6ad0409b1965c",
+      "entity": "0000109198",
+      "filed_year": 2014,
+      "path": "edgar/0000109198/2014/951a8ef92fe66dcc7cf6ff1b9866f7ec83f651102429116c82b6ad0409b1965c.parquet",
+      "rows": 1372,
+      "sha256": "ddc41ab68cc915b8c2975a28c9dc2e69f1d1fdf06df529f24a1efd432842b945",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18890,
+      "content_id": "246ce44f1b158e2c8e38f2ca1d1cfba6f805c6a672398a3e8b7c1cb7cd9b791f",
+      "entity": "0000109198",
+      "filed_year": 2015,
+      "path": "edgar/0000109198/2015/246ce44f1b158e2c8e38f2ca1d1cfba6f805c6a672398a3e8b7c1cb7cd9b791f.parquet",
+      "rows": 1425,
+      "sha256": "cbc863e86b65082fb35a7f3afdce7e0247b4f41a3a7467a0298fcfd2a4cef1b5",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19033,
+      "content_id": "66640e4b69ff90d5a352c08bf197f14cfdec82bd592248732a9bdc3ef421ca7a",
+      "entity": "0000109198",
+      "filed_year": 2016,
+      "path": "edgar/0000109198/2016/66640e4b69ff90d5a352c08bf197f14cfdec82bd592248732a9bdc3ef421ca7a.parquet",
+      "rows": 1456,
+      "sha256": "0424cbbb276345e1d0f85b9470c200e5f84892c51497dfade8e1ca11e469d750",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18998,
+      "content_id": "4e7b20bd94a31fadbde454689cbd619b641e98498d0150fd6d7a3d797e54d626",
+      "entity": "0000109198",
+      "filed_year": 2017,
+      "path": "edgar/0000109198/2017/4e7b20bd94a31fadbde454689cbd619b641e98498d0150fd6d7a3d797e54d626.parquet",
+      "rows": 1444,
+      "sha256": "4835e2014ce5afcf40b5dea94f4951adbe0295cd7d67a999aa4e33a8eaa75eca",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20011,
+      "content_id": "ea18906f7b41fa5985ee9a20c0d7c20fd158da3190012083ac5b02889ed2a78f",
+      "entity": "0000109198",
+      "filed_year": 2018,
+      "path": "edgar/0000109198/2018/ea18906f7b41fa5985ee9a20c0d7c20fd158da3190012083ac5b02889ed2a78f.parquet",
+      "rows": 1495,
+      "sha256": "a839813369bc904ff97a647fcc8944bdeed129aa277973145651bf54349a17a1",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20937,
+      "content_id": "ed547dd9943736fcde021ca8c53169c40f87a00a480309a8a61950efb135d489",
+      "entity": "0000109198",
+      "filed_year": 2019,
+      "path": "edgar/0000109198/2019/ed547dd9943736fcde021ca8c53169c40f87a00a480309a8a61950efb135d489.parquet",
+      "rows": 1699,
+      "sha256": "e0dd07e7e7f3fa116c0908e8778320fbe9fa30b604f230e80c63702ec3030c41",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19693,
+      "content_id": "6d5eb239019e32e7765934567b70a28c8834a45a9634eacd2b1d9005b87ca59c",
+      "entity": "0000109198",
+      "filed_year": 2020,
+      "path": "edgar/0000109198/2020/6d5eb239019e32e7765934567b70a28c8834a45a9634eacd2b1d9005b87ca59c.parquet",
+      "rows": 1575,
+      "sha256": "d0c15e11236eeb71e396b7fda5585b48ff6dfd8b100710937d1aec3746aa4b3e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19495,
+      "content_id": "6e6c6fc67755aeb85657977386416b75e7a4207104f36c0728e3d239fd25509c",
+      "entity": "0000109198",
+      "filed_year": 2021,
+      "path": "edgar/0000109198/2021/6e6c6fc67755aeb85657977386416b75e7a4207104f36c0728e3d239fd25509c.parquet",
+      "rows": 1594,
+      "sha256": "2cd1c289e32899aedea8ac9fb246a7833a01cc8f6741f5d0f21d81806ad44878",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18636,
+      "content_id": "d9119a534150484c73e8acf55ec541ea268153fbeb85b16a918e8a1f5aea67c8",
+      "entity": "0000109198",
+      "filed_year": 2022,
+      "path": "edgar/0000109198/2022/d9119a534150484c73e8acf55ec541ea268153fbeb85b16a918e8a1f5aea67c8.parquet",
+      "rows": 1529,
+      "sha256": "426c9aad4e6070013458a265e4d129df0e5dcc0106b08afa0fc81de3108b7874",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16892,
+      "content_id": "401c226e2ada92e92aac772d9a4aeb5170fb77476ffa0c5cb10aa49785fb5416",
+      "entity": "0000109198",
+      "filed_year": 2023,
+      "path": "edgar/0000109198/2023/401c226e2ada92e92aac772d9a4aeb5170fb77476ffa0c5cb10aa49785fb5416.parquet",
+      "rows": 1482,
+      "sha256": "fa2815b7cea52e3735f0556efe3ed6c0d79c47501fa1b5416bcbbd2930cd0d27",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17035,
+      "content_id": "05890e274a514375729d6ae04a3a2c1c18e46e966151f0bdc035a61c82dbe2b1",
+      "entity": "0000109198",
+      "filed_year": 2024,
+      "path": "edgar/0000109198/2024/05890e274a514375729d6ae04a3a2c1c18e46e966151f0bdc035a61c82dbe2b1.parquet",
+      "rows": 1488,
+      "sha256": "297dae7de063b0eefc6e8f98b557b0c0858c6a8245479fae7129c583909b3c06",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16891,
+      "content_id": "7b840d03dbf6c4b176eb3c90d70f5dd71ed2b358d8e25ef9b057aaccedd6d872",
+      "entity": "0000109198",
+      "filed_year": 2025,
+      "path": "edgar/0000109198/2025/7b840d03dbf6c4b176eb3c90d70f5dd71ed2b358d8e25ef9b057aaccedd6d872.parquet",
+      "rows": 1492,
+      "sha256": "357dc928dfcc508fdf1de736bb1ef7190302b13de2cbcff13eacb123568ae815",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16215,
+      "content_id": "96b16fa170711dadd8152afd6f83a714f2e2a81eb4351cf24353b8a631f30a5f",
+      "entity": "0000109198",
+      "filed_year": 2026,
+      "path": "edgar/0000109198/2026/96b16fa170711dadd8152afd6f83a714f2e2a81eb4351cf24353b8a631f30a5f.parquet",
+      "rows": 1207,
+      "sha256": "6809531148fb0ff0960706b417f9a0b45d15402e9450b272ef96c6e11eb1a09d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 7090,
+      "content_id": "12f40100d83fac95e97df492526916f393c307fc4665dbd8efdef9da3d0aa101",
+      "entity": "0000320187",
+      "filed_year": 2009,
+      "path": "edgar/0000320187/2009/12f40100d83fac95e97df492526916f393c307fc4665dbd8efdef9da3d0aa101.parquet",
+      "rows": 113,
+      "sha256": "74fed159f8da35c9f5eb5d9765ddf09d97de492f9b276dbbc2152263e08b0f4f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12396,
+      "content_id": "386eda86f34398a34dce4504982fbc89420e4f81ca393329b41ec096bb9b6385",
+      "entity": "0000320187",
+      "filed_year": 2010,
+      "path": "edgar/0000320187/2010/386eda86f34398a34dce4504982fbc89420e4f81ca393329b41ec096bb9b6385.parquet",
+      "rows": 654,
+      "sha256": "5affbce7a9422bdfe3a3db7074e240dad93edeb3bd493eabef137883d4e34fe9",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15924,
+      "content_id": "8ede0b8b08c7b7e290b35e16846dba3fd7d856192bcfea89709b3fdf31fe2a97",
+      "entity": "0000320187",
+      "filed_year": 2011,
+      "path": "edgar/0000320187/2011/8ede0b8b08c7b7e290b35e16846dba3fd7d856192bcfea89709b3fdf31fe2a97.parquet",
+      "rows": 1176,
+      "sha256": "4957c9c5592e02189d6a323b00afe66cb357f249078632fe76872f6c3d8d5fce",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16097,
+      "content_id": "a4bdcb96433e77c41e07383694697562e6b569011da96ade37d98c31b4b5ac1c",
+      "entity": "0000320187",
+      "filed_year": 2012,
+      "path": "edgar/0000320187/2012/a4bdcb96433e77c41e07383694697562e6b569011da96ade37d98c31b4b5ac1c.parquet",
+      "rows": 1288,
+      "sha256": "fc3551e8877a2a47ef370d764ab4a946f606c72e2477b3ceb819caf2c4b41709",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16760,
+      "content_id": "6fbf3df9d47fef740f1c74ed66b225c8df4a471ab96d5a828516ec0346e56aca",
+      "entity": "0000320187",
+      "filed_year": 2013,
+      "path": "edgar/0000320187/2013/6fbf3df9d47fef740f1c74ed66b225c8df4a471ab96d5a828516ec0346e56aca.parquet",
+      "rows": 1453,
+      "sha256": "852e6fa3161bc12cbf779e42155975b4dd206d0f40d930829cd5cd66af24aa4c",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16896,
+      "content_id": "5653b185c462e7c1ecba61063531982cf99e5d8c19b6edef9e7248833deb5df1",
+      "entity": "0000320187",
+      "filed_year": 2014,
+      "path": "edgar/0000320187/2014/5653b185c462e7c1ecba61063531982cf99e5d8c19b6edef9e7248833deb5df1.parquet",
+      "rows": 1327,
+      "sha256": "cae89edea0ad1fad0ea6db99237303d67c76de58634e2cd3e19962c942991473",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16321,
+      "content_id": "b1250885062985f693fb8da05d6189a169a27486f1186322a521717af374f64f",
+      "entity": "0000320187",
+      "filed_year": 2015,
+      "path": "edgar/0000320187/2015/b1250885062985f693fb8da05d6189a169a27486f1186322a521717af374f64f.parquet",
+      "rows": 1239,
+      "sha256": "33a2bf2027936ee601552aad8803169dee1162b4eec5fcc8b63bcc1ffb616e3b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15540,
+      "content_id": "d57e40b6b469b7f82cb2bcd71b515b51425d2ca8b3a99da590bd9bd5942450cb",
+      "entity": "0000320187",
+      "filed_year": 2016,
+      "path": "edgar/0000320187/2016/d57e40b6b469b7f82cb2bcd71b515b51425d2ca8b3a99da590bd9bd5942450cb.parquet",
+      "rows": 1175,
+      "sha256": "f20442072413265b6917ab927c95653022ae927704d76c099f5e08dacef68778",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15313,
+      "content_id": "a2a3c8d7b60a2f887193e19c9d10b0b263caf32589db71aa4112b6fb2a792c7b",
+      "entity": "0000320187",
+      "filed_year": 2017,
+      "path": "edgar/0000320187/2017/a2a3c8d7b60a2f887193e19c9d10b0b263caf32589db71aa4112b6fb2a792c7b.parquet",
+      "rows": 1150,
+      "sha256": "153b2ab4c929079edd9e792ce3c4745aa3a9eeef4cf3d57f456c3cb135caf9df",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15282,
+      "content_id": "25e09e1c32a3343d75d2d25470bb7cea3b7586df1e99171cc4cd3502303aa463",
+      "entity": "0000320187",
+      "filed_year": 2018,
+      "path": "edgar/0000320187/2018/25e09e1c32a3343d75d2d25470bb7cea3b7586df1e99171cc4cd3502303aa463.parquet",
+      "rows": 1128,
+      "sha256": "3976653c708f43c02bf9b9b6e8b70493d6dd96a24234b5dba2338c16041cfe3e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15971,
+      "content_id": "73e6b29b12514caf69044011b30579410ab4d30582f965bf4fc568464f24fce4",
+      "entity": "0000320187",
+      "filed_year": 2019,
+      "path": "edgar/0000320187/2019/73e6b29b12514caf69044011b30579410ab4d30582f965bf4fc568464f24fce4.parquet",
+      "rows": 1212,
+      "sha256": "24881e983725c9a384584ecd55c9398666ab1b747f3e661226e976f61104ecb6",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16108,
+      "content_id": "c210c27d55c5691ffdd5ce812a152f04db5a530c4f94ac8279801fe6b94e4985",
+      "entity": "0000320187",
+      "filed_year": 2020,
+      "path": "edgar/0000320187/2020/c210c27d55c5691ffdd5ce812a152f04db5a530c4f94ac8279801fe6b94e4985.parquet",
+      "rows": 1250,
+      "sha256": "f8f0b8eaa527972f10d7f0957a852021afec7be5d02dddfcbe56f9ac799528a3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15430,
+      "content_id": "697a31bccd5cdc14a87eb2b2cf14e92bd370dd1c06ddb355c9eafa75c59aaacd",
+      "entity": "0000320187",
+      "filed_year": 2021,
+      "path": "edgar/0000320187/2021/697a31bccd5cdc14a87eb2b2cf14e92bd370dd1c06ddb355c9eafa75c59aaacd.parquet",
+      "rows": 1142,
+      "sha256": "106ab414003cff4832814bf9ecd71ef797468a18cc5f8506bbe157cdd277e069",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15758,
+      "content_id": "c2b9f2fdc53e91df21ff8e3a9a810191490ac5d6c8a09b5be944426354eb74fb",
+      "entity": "0000320187",
+      "filed_year": 2022,
+      "path": "edgar/0000320187/2022/c2b9f2fdc53e91df21ff8e3a9a810191490ac5d6c8a09b5be944426354eb74fb.parquet",
+      "rows": 1146,
+      "sha256": "0be4eb4320b095b63df26a0d9ffbf07130dfbf2111fcea0323dd9e82ab211272",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15695,
+      "content_id": "be5833022151e83be23fd06adb90413ceeca1acd9b7fc8bc7891f0e7e15500d8",
+      "entity": "0000320187",
+      "filed_year": 2023,
+      "path": "edgar/0000320187/2023/be5833022151e83be23fd06adb90413ceeca1acd9b7fc8bc7891f0e7e15500d8.parquet",
+      "rows": 1170,
+      "sha256": "cc4824deb05d88ea1d6032438cd4ccf604ddc1a4f93cc9b83bd01ef692313363",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15457,
+      "content_id": "30cb8ac6be8c424957220ae5e8fdbe0b6bb4d346dc2481f5d1b30a61439c7e78",
+      "entity": "0000320187",
+      "filed_year": 2024,
+      "path": "edgar/0000320187/2024/30cb8ac6be8c424957220ae5e8fdbe0b6bb4d346dc2481f5d1b30a61439c7e78.parquet",
+      "rows": 1151,
+      "sha256": "b9398520609a8c53e8ec457512ccab6ab81b383a5cf5b549df09fdd89a56abd0",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17071,
+      "content_id": "712061f8b3453fff26ca2a1ea4b2078d0ded086d38c31fcaac3d4a9203be35ab",
+      "entity": "0000320187",
+      "filed_year": 2025,
+      "path": "edgar/0000320187/2025/712061f8b3453fff26ca2a1ea4b2078d0ded086d38c31fcaac3d4a9203be35ab.parquet",
+      "rows": 1443,
+      "sha256": "3458ed0c67cf0d347e8836ed62fa10d48b32d52230931415b06ad525fd3983b4",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15524,
+      "content_id": "6f7a0161d1a6512034c515504dffe059ed1253cc0ae38050f59757018b527fee",
+      "entity": "0000320187",
+      "filed_year": 2026,
+      "path": "edgar/0000320187/2026/6f7a0161d1a6512034c515504dffe059ed1253cc0ae38050f59757018b527fee.parquet",
+      "rows": 986,
+      "sha256": "c0b52853f0302112f424cf31684e455bf46ffa2b31a8f3904e375a43caff2fa8",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12610,
+      "content_id": "0f59b55c73880acdc8a8859b66304e7f0c1e70b08690ff9b84b3742816ef9ef3",
+      "entity": "0000745732",
+      "filed_year": 2010,
+      "path": "edgar/0000745732/2010/0f59b55c73880acdc8a8859b66304e7f0c1e70b08690ff9b84b3742816ef9ef3.parquet",
+      "rows": 1029,
+      "sha256": "f31ea0ba674217161ce1a142b9ca16f077eac849b39bf9a12fbfd3abdb3e8e39",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16466,
+      "content_id": "57504caf7396d6c4705b423226bddd32cdb2891cc88800fcc8f1e00d3e80bdac",
+      "entity": "0000745732",
+      "filed_year": 2011,
+      "path": "edgar/0000745732/2011/57504caf7396d6c4705b423226bddd32cdb2891cc88800fcc8f1e00d3e80bdac.parquet",
+      "rows": 1204,
+      "sha256": "ef29338b120af950b1904004586a05854b6017c14fa3cd70b5ef8442b5e6be07",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16540,
+      "content_id": "cca7f0504ad1d65e6733eea863b0e2718acef56ebde2f40965f0dba03966ffbf",
+      "entity": "0000745732",
+      "filed_year": 2012,
+      "path": "edgar/0000745732/2012/cca7f0504ad1d65e6733eea863b0e2718acef56ebde2f40965f0dba03966ffbf.parquet",
+      "rows": 1245,
+      "sha256": "d7fea3e7b18e444448c5a6c2a7d499b24c680346ca6d033397086aaa491d209a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15660,
+      "content_id": "a25b4baf97b2d19c5eb85c29646cde61643271d40160687ffd0c6f380528e2f6",
+      "entity": "0000745732",
+      "filed_year": 2013,
+      "path": "edgar/0000745732/2013/a25b4baf97b2d19c5eb85c29646cde61643271d40160687ffd0c6f380528e2f6.parquet",
+      "rows": 1181,
+      "sha256": "89c899d8ef9a86c19d72c0f2407cbb3cc907fce15b701ebad905c915ed20d950",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15525,
+      "content_id": "a32ece5174ab99f533faa427302d4e01809c8fba0c6cd63ea97bf348cdeaa166",
+      "entity": "0000745732",
+      "filed_year": 2014,
+      "path": "edgar/0000745732/2014/a32ece5174ab99f533faa427302d4e01809c8fba0c6cd63ea97bf348cdeaa166.parquet",
+      "rows": 1135,
+      "sha256": "1ed6a5dbfe4f2d315b850a8e94e6ee776110b33b81aadf7a8a2df0eb95b69979",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16184,
+      "content_id": "8bb6a3bbde9249f72c512f9001d5cdb453e288e597037ef24b9b8508569110b1",
+      "entity": "0000745732",
+      "filed_year": 2015,
+      "path": "edgar/0000745732/2015/8bb6a3bbde9249f72c512f9001d5cdb453e288e597037ef24b9b8508569110b1.parquet",
+      "rows": 1215,
+      "sha256": "f395e60eda4138396e548cef4a1c96ac322e9166d187469eecedd170a6351758",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16418,
+      "content_id": "6f65b1c420742363d8336214b5e59dbd1848e0d0f3f18747f80285cd4a8250db",
+      "entity": "0000745732",
+      "filed_year": 2016,
+      "path": "edgar/0000745732/2016/6f65b1c420742363d8336214b5e59dbd1848e0d0f3f18747f80285cd4a8250db.parquet",
+      "rows": 1401,
+      "sha256": "5b1afb30a7dca8fe6dd8f5500066e8a62096f54cf71b9598e85ad7751aa1945c",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15955,
+      "content_id": "494c3e0db82e39cb8c28a383bb36ec46f91c45b99195ef40d2faaea4a847d851",
+      "entity": "0000745732",
+      "filed_year": 2017,
+      "path": "edgar/0000745732/2017/494c3e0db82e39cb8c28a383bb36ec46f91c45b99195ef40d2faaea4a847d851.parquet",
+      "rows": 1200,
+      "sha256": "91e3eed7a1d826e40e3d15f072c723513939d6e32233496d1560f0e37a863321",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16679,
+      "content_id": "7361cdfa9e44b57402cc56661e2eab6002f23fe22b61356df6595423eae98851",
+      "entity": "0000745732",
+      "filed_year": 2018,
+      "path": "edgar/0000745732/2018/7361cdfa9e44b57402cc56661e2eab6002f23fe22b61356df6595423eae98851.parquet",
+      "rows": 1287,
+      "sha256": "9acfcc471a3eaee39e12d8d879629264edfab91984d44c99be66f86f9eae52d3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17498,
+      "content_id": "7ec184d3c1fdcece0b9cb242c9edef72c1dd304d29dbf8ee6b60a2af156d2c46",
+      "entity": "0000745732",
+      "filed_year": 2019,
+      "path": "edgar/0000745732/2019/7ec184d3c1fdcece0b9cb242c9edef72c1dd304d29dbf8ee6b60a2af156d2c46.parquet",
+      "rows": 1424,
+      "sha256": "7783b37e5838027b82fccee165b3504f52605c38e0df6ce85aa8aa18f497a585",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17414,
+      "content_id": "581eb11c156cdaf06330685a487ae21578d6c2102d3b99242709ddf6172b339c",
+      "entity": "0000745732",
+      "filed_year": 2020,
+      "path": "edgar/0000745732/2020/581eb11c156cdaf06330685a487ae21578d6c2102d3b99242709ddf6172b339c.parquet",
+      "rows": 1372,
+      "sha256": "8130e0b5f1aa5006cfdc408a0fb81f62cf27a3c30c391afe4932d29f5ea4e967",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17088,
+      "content_id": "1067388ed1d692ad3714d785c972a03d0fb5d78d55f43937bf2655a85ab2585f",
+      "entity": "0000745732",
+      "filed_year": 2021,
+      "path": "edgar/0000745732/2021/1067388ed1d692ad3714d785c972a03d0fb5d78d55f43937bf2655a85ab2585f.parquet",
+      "rows": 1362,
+      "sha256": "035a8ced69b0ade05341d7995a93228bd4190765bf6c6ad7c9ffc4e6bff837fd",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16165,
+      "content_id": "51379c5bfa5655032518eb6cdaf07f3b7cfe3f7e3493cfc9ea7bc60f64f84615",
+      "entity": "0000745732",
+      "filed_year": 2022,
+      "path": "edgar/0000745732/2022/51379c5bfa5655032518eb6cdaf07f3b7cfe3f7e3493cfc9ea7bc60f64f84615.parquet",
+      "rows": 1260,
+      "sha256": "8e3f8547e5e69ebed2d0be0ec7aafe9be3bc99492ecce3d22f1ce080dfe58169",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16019,
+      "content_id": "cd91b513cef0bcf05ec732845411e8e228a736d924a69cfca01faf87a48b47fd",
+      "entity": "0000745732",
+      "filed_year": 2023,
+      "path": "edgar/0000745732/2023/cd91b513cef0bcf05ec732845411e8e228a736d924a69cfca01faf87a48b47fd.parquet",
+      "rows": 1242,
+      "sha256": "94d03482c1c2358128610c8e8aab69475b2563f0ecb6463e1b11c1e2bb9dbc2d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15956,
+      "content_id": "e6c0d224ec3df6895db34550e3f8a29f062e51c46326a9988b8151c2c4fda944",
+      "entity": "0000745732",
+      "filed_year": 2024,
+      "path": "edgar/0000745732/2024/e6c0d224ec3df6895db34550e3f8a29f062e51c46326a9988b8151c2c4fda944.parquet",
+      "rows": 1231,
+      "sha256": "b22f2880ff605bf3653a5efee3ec59547f7dda0300472e6288cb5a0689053fd7",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16080,
+      "content_id": "9f458a98310b785040877ac753219b8e66dd9b3edf88283b6b1a03bd8afe63a5",
+      "entity": "0000745732",
+      "filed_year": 2025,
+      "path": "edgar/0000745732/2025/9f458a98310b785040877ac753219b8e66dd9b3edf88283b6b1a03bd8afe63a5.parquet",
+      "rows": 1250,
+      "sha256": "0930fb26bc05d8fae2d52d7e0c015368f4e1c10e0db3735d56b79b4f9da294de",
+      "source": "edgar"
+    },
+    {
+      "bytes": 14869,
+      "content_id": "59bb3f48d6b96a25efbaf5c7a62d3fc1fa95911b23b6f5e830926b61498cf8fa",
+      "entity": "0000745732",
+      "filed_year": 2026,
+      "path": "edgar/0000745732/2026/59bb3f48d6b96a25efbaf5c7a62d3fc1fa95911b23b6f5e830926b61498cf8fa.parquet",
+      "rows": 981,
+      "sha256": "7969752162915827acd9a91b1c79453cc3c5bd26b4b869a747892e794346982f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 8918,
+      "content_id": "154f785d12ce5ade20ae2681f72536d5886119f7223f398a790e9c34863db5fd",
+      "entity": "0000749251",
+      "filed_year": 2010,
+      "path": "edgar/0000749251/2010/154f785d12ce5ade20ae2681f72536d5886119f7223f398a790e9c34863db5fd.parquet",
+      "rows": 364,
+      "sha256": "4cde8c0d7aed6b4ca5bd06c122536ef358d8d46f6d73ea63359cb111f0cb984d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 14425,
+      "content_id": "e3300ba2ff460708f6f19404966a68ff3658d0b855b8ef41c8de59533aa7efd6",
+      "entity": "0000749251",
+      "filed_year": 2011,
+      "path": "edgar/0000749251/2011/e3300ba2ff460708f6f19404966a68ff3658d0b855b8ef41c8de59533aa7efd6.parquet",
+      "rows": 986,
+      "sha256": "be2a5dcac9fe3398f856e1f84362c7e459e7e5f9217e359a5708fa4f2414f43e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18537,
+      "content_id": "310077e58b6f09f0599904dc7fc3df88a49f1fdaa58d16a5b6e650be68a7c1d7",
+      "entity": "0000749251",
+      "filed_year": 2012,
+      "path": "edgar/0000749251/2012/310077e58b6f09f0599904dc7fc3df88a49f1fdaa58d16a5b6e650be68a7c1d7.parquet",
+      "rows": 1353,
+      "sha256": "229d1d6d9df8d53f4b75a839f47decabcb165a96e9eb6764a2dbf6b3ac4cb5b7",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19605,
+      "content_id": "763b5dc3cd34c337306f31201d9753486346d8bd53e5720c885dda724a6118a2",
+      "entity": "0000749251",
+      "filed_year": 2013,
+      "path": "edgar/0000749251/2013/763b5dc3cd34c337306f31201d9753486346d8bd53e5720c885dda724a6118a2.parquet",
+      "rows": 1478,
+      "sha256": "6b1f2ddfe20adc2f11653a9ddbbb7f00eee43636f43680bae169a0a0e2ef5d29",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19411,
+      "content_id": "c860aa82f5a2922d75e53bbc93ce50f5b2ff4ea8667eea291de14ffed9bed963",
+      "entity": "0000749251",
+      "filed_year": 2014,
+      "path": "edgar/0000749251/2014/c860aa82f5a2922d75e53bbc93ce50f5b2ff4ea8667eea291de14ffed9bed963.parquet",
+      "rows": 1460,
+      "sha256": "d81611cac426e20cee71b311c7d7f70e10a7d93311d38b2215f248f8ae9fdfd5",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18723,
+      "content_id": "49d40bddd998b9fe281a91e2fe80ab0967bb47750a1c79d144db2649df97f9a1",
+      "entity": "0000749251",
+      "filed_year": 2015,
+      "path": "edgar/0000749251/2015/49d40bddd998b9fe281a91e2fe80ab0967bb47750a1c79d144db2649df97f9a1.parquet",
+      "rows": 1394,
+      "sha256": "56aab15c36bba279010bb60e25b3b93d1cc7690c7e0daf8a65123c8e1c50d925",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18345,
+      "content_id": "73478b053738933f101da9fe527d598873cfaf45b8c42f701c46a229bad08bbb",
+      "entity": "0000749251",
+      "filed_year": 2016,
+      "path": "edgar/0000749251/2016/73478b053738933f101da9fe527d598873cfaf45b8c42f701c46a229bad08bbb.parquet",
+      "rows": 1356,
+      "sha256": "c7fef6daa7ee0b73f026f2fd2472db9d5935459a62bb5f0fbd2d07f85ae13a5c",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18987,
+      "content_id": "261dadb10aa7f5aa022c9900f5baf7c05f1759396ef51a3a5ec534e72c5798b7",
+      "entity": "0000749251",
+      "filed_year": 2017,
+      "path": "edgar/0000749251/2017/261dadb10aa7f5aa022c9900f5baf7c05f1759396ef51a3a5ec534e72c5798b7.parquet",
+      "rows": 1369,
+      "sha256": "94fafd42f76fba1ae43c4387b716dd6698613bc3115bbf82a80889916555ab80",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19568,
+      "content_id": "b17f84c9c1da827248e0385ecc878655a79450c080edc6d8199b081646492850",
+      "entity": "0000749251",
+      "filed_year": 2018,
+      "path": "edgar/0000749251/2018/b17f84c9c1da827248e0385ecc878655a79450c080edc6d8199b081646492850.parquet",
+      "rows": 1462,
+      "sha256": "d05b9e1241b51bfbd0d26a926fc3d2637b6f326f11c0f97a9bc110129140af27",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20544,
+      "content_id": "057d672eacbc20f013022c24e36f45a410c10e69b81fcddfab0c00fa81ca204d",
+      "entity": "0000749251",
+      "filed_year": 2019,
+      "path": "edgar/0000749251/2019/057d672eacbc20f013022c24e36f45a410c10e69b81fcddfab0c00fa81ca204d.parquet",
+      "rows": 1596,
+      "sha256": "d0a4e41d0cde0742a9e7ee4360bd0b8325f41dfebf426eb8cd627bcff5013475",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20827,
+      "content_id": "14ac4fa1e9d9d8156066358cccdbbfc9af335eaa3408d838f11950aa526e8c4d",
+      "entity": "0000749251",
+      "filed_year": 2020,
+      "path": "edgar/0000749251/2020/14ac4fa1e9d9d8156066358cccdbbfc9af335eaa3408d838f11950aa526e8c4d.parquet",
+      "rows": 1621,
+      "sha256": "3c529e27cd8050d70350ab649ab6337e921393dea789eac9f07967b853cb4a15",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20829,
+      "content_id": "7a8018a4798ea6eb583a23cd6b2105180c0f4ce137fbd14dee10a9ae4663ebae",
+      "entity": "0000749251",
+      "filed_year": 2021,
+      "path": "edgar/0000749251/2021/7a8018a4798ea6eb583a23cd6b2105180c0f4ce137fbd14dee10a9ae4663ebae.parquet",
+      "rows": 1652,
+      "sha256": "9ead4aef69b32362f8c40f71483db30600999f649871991af35aa1ee94484559",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20614,
+      "content_id": "bda833163d5ef4611dee8c5c4b3f9e2734614918eb18111fdb994dbaa0b7e12f",
+      "entity": "0000749251",
+      "filed_year": 2022,
+      "path": "edgar/0000749251/2022/bda833163d5ef4611dee8c5c4b3f9e2734614918eb18111fdb994dbaa0b7e12f.parquet",
+      "rows": 1657,
+      "sha256": "89af0df050f800fb902e16d3412c351560e485bba48c3b33370bc0f3443a64ec",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20457,
+      "content_id": "7042d9dfda1ff167e48bec25fb6392a6f6440acb9b34e01e961995448339e0e8",
+      "entity": "0000749251",
+      "filed_year": 2023,
+      "path": "edgar/0000749251/2023/7042d9dfda1ff167e48bec25fb6392a6f6440acb9b34e01e961995448339e0e8.parquet",
+      "rows": 1652,
+      "sha256": "c6d67a0618eacb3f2b5cf33fa725073cb19b35c3a166556f34b409c591687669",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20476,
+      "content_id": "acca83c6c84b63579a5bd6c2e7bd61dcd709ef6e8726b922243fde4b6dd95cea",
+      "entity": "0000749251",
+      "filed_year": 2024,
+      "path": "edgar/0000749251/2024/acca83c6c84b63579a5bd6c2e7bd61dcd709ef6e8726b922243fde4b6dd95cea.parquet",
+      "rows": 1663,
+      "sha256": "74b3471f863421c66353f2093f843b5d3651c7a78a6c66565344a78594488090",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20568,
+      "content_id": "7ad0ae6e921c9a21f9699a4b22c04fc53bb3e05658678df52e40eec8361aa958",
+      "entity": "0000749251",
+      "filed_year": 2025,
+      "path": "edgar/0000749251/2025/7ad0ae6e921c9a21f9699a4b22c04fc53bb3e05658678df52e40eec8361aa958.parquet",
+      "rows": 1662,
+      "sha256": "4e450ebb39b1da569135147e7e226d5e655d58f94b04df1f2512f707d3f8eccb",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19478,
+      "content_id": "b804aac5ce95e07b04f8dd24fdcf62a3ced5379f1a9c9b7f5d9935528ba18414",
+      "entity": "0000749251",
+      "filed_year": 2026,
+      "path": "edgar/0000749251/2026/b804aac5ce95e07b04f8dd24fdcf62a3ced5379f1a9c9b7f5d9935528ba18414.parquet",
+      "rows": 1351,
+      "sha256": "1db54dd659087c52fc0710b5f8be289048f1f83fa099e248fae9e441d9a8a4fe",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9117,
+      "content_id": "7045b8fc64e38c70a0a933dd9aac878982dedb05471d9c7c611596b5e18820d3",
+      "entity": "0000784199",
+      "filed_year": 2011,
+      "path": "edgar/0000784199/2011/7045b8fc64e38c70a0a933dd9aac878982dedb05471d9c7c611596b5e18820d3.parquet",
+      "rows": 393,
+      "sha256": "98e40c0b40142e4b38a0c7089204a08cbb87e5147a300817e5e0aa3598761658",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13704,
+      "content_id": "a785f843c18c7a98ef1c5c0c2b88acd0b55324fdba11c2846f119c6c6db1f303",
+      "entity": "0000784199",
+      "filed_year": 2012,
+      "path": "edgar/0000784199/2012/a785f843c18c7a98ef1c5c0c2b88acd0b55324fdba11c2846f119c6c6db1f303.parquet",
+      "rows": 944,
+      "sha256": "20ae99bc4f48320b30854deb629161a9e679b8b9d31504b5122cfeca9052f3bf",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16842,
+      "content_id": "22180352dc86d029cc089fdfd8d6070204f2f501f68615aada1d648405651f54",
+      "entity": "0000784199",
+      "filed_year": 2013,
+      "path": "edgar/0000784199/2013/22180352dc86d029cc089fdfd8d6070204f2f501f68615aada1d648405651f54.parquet",
+      "rows": 1315,
+      "sha256": "6062a0b073f167390cb4288bb6d99099d29370191a6c90b14be2691cbf90699f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17431,
+      "content_id": "af1719d03afa8c01a140a200141dfbb0d77fa8f637ad93f3ffeef66b3ba68ee4",
+      "entity": "0000784199",
+      "filed_year": 2014,
+      "path": "edgar/0000784199/2014/af1719d03afa8c01a140a200141dfbb0d77fa8f637ad93f3ffeef66b3ba68ee4.parquet",
+      "rows": 1378,
+      "sha256": "b7dfef3aff0b715fb13ee8250192f7c02c22aaadaa61db2db163e1638583e94a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17192,
+      "content_id": "fcd995a24db5bf027c3d63fb2c766ab130b4090b15afaf666f698f9d3835370b",
+      "entity": "0000784199",
+      "filed_year": 2015,
+      "path": "edgar/0000784199/2015/fcd995a24db5bf027c3d63fb2c766ab130b4090b15afaf666f698f9d3835370b.parquet",
+      "rows": 1358,
+      "sha256": "b0e111cac95e5bc8586d56f85426301583c901a55feedc7d666fd0b7da7365b6",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17513,
+      "content_id": "6219eeca0f1be27a031d928562f63e4f3ab796f83d962d517c267c432fbe39b6",
+      "entity": "0000784199",
+      "filed_year": 2016,
+      "path": "edgar/0000784199/2016/6219eeca0f1be27a031d928562f63e4f3ab796f83d962d517c267c432fbe39b6.parquet",
+      "rows": 1332,
+      "sha256": "e2de9c8ccdb46759b7eecc333e325acdf7dc3a53b463bff0f6a5d712277f9310",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16638,
+      "content_id": "33cf8ef68acf61a49a2913e97c659cdb3134b4e1a1b74fe8a47c522bafb15211",
+      "entity": "0000784199",
+      "filed_year": 2017,
+      "path": "edgar/0000784199/2017/33cf8ef68acf61a49a2913e97c659cdb3134b4e1a1b74fe8a47c522bafb15211.parquet",
+      "rows": 1298,
+      "sha256": "11d0faede0f8f639ad220d618de149f5f5150b840f05ec9a7b831baf7965e2b3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17353,
+      "content_id": "1b3c6b2de70cdb77f1ecdfa93ea4f6928e62ef6c8cbbe7172cba7f65027d8b78",
+      "entity": "0000784199",
+      "filed_year": 2018,
+      "path": "edgar/0000784199/2018/1b3c6b2de70cdb77f1ecdfa93ea4f6928e62ef6c8cbbe7172cba7f65027d8b78.parquet",
+      "rows": 1303,
+      "sha256": "3b44707ca88bf3d4fa2910792c7f5f56401cdca00ddf0e538ecbe62b13eddcdb",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18576,
+      "content_id": "ebd37725d039db9e5c28653a0e967617d79683bcd1251dfffa693cb6c1b0268d",
+      "entity": "0000784199",
+      "filed_year": 2019,
+      "path": "edgar/0000784199/2019/ebd37725d039db9e5c28653a0e967617d79683bcd1251dfffa693cb6c1b0268d.parquet",
+      "rows": 1442,
+      "sha256": "843267972427254af28973bd39806d18de30626bea8df30e0985e5b16908eb62",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19131,
+      "content_id": "2ada5951f93eafeb313f0ad82a79b9e74ec869d852b88f0359438de93f289ca8",
+      "entity": "0000784199",
+      "filed_year": 2020,
+      "path": "edgar/0000784199/2020/2ada5951f93eafeb313f0ad82a79b9e74ec869d852b88f0359438de93f289ca8.parquet",
+      "rows": 1548,
+      "sha256": "858654e726b002a107c14f2481995c3a3b9103751d4396b3f7d0162fb5acbfeb",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19101,
+      "content_id": "150660075e37924d605e0d12ae95b045448bc13d91a6973da9b9f73ef9bcae0e",
+      "entity": "0000784199",
+      "filed_year": 2021,
+      "path": "edgar/0000784199/2021/150660075e37924d605e0d12ae95b045448bc13d91a6973da9b9f73ef9bcae0e.parquet",
+      "rows": 1568,
+      "sha256": "dee7b7f284a3b90ea0180632109fa1a36800d2f09f04f4634987c9549250dda3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18634,
+      "content_id": "ce8d25791281f722dc8c4edeecdc0c4d75c81b004d9cd5de34602a5311441604",
+      "entity": "0000784199",
+      "filed_year": 2022,
+      "path": "edgar/0000784199/2022/ce8d25791281f722dc8c4edeecdc0c4d75c81b004d9cd5de34602a5311441604.parquet",
+      "rows": 1548,
+      "sha256": "5c4254baf7d7fff61255194d38b2a6f26ca18d7ad9acd43fd9858550c1ac506b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17866,
+      "content_id": "3f2f5e5299b784756251b761ce7c7db600c7dbf6b1f9e3ff1170f6f69f3845f1",
+      "entity": "0000784199",
+      "filed_year": 2023,
+      "path": "edgar/0000784199/2023/3f2f5e5299b784756251b761ce7c7db600c7dbf6b1f9e3ff1170f6f69f3845f1.parquet",
+      "rows": 1529,
+      "sha256": "f399f9bcb634801ba417032fe43895bf53a675c857fe1c45146b374d7279c209",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18207,
+      "content_id": "ba1ca0940cb8031435c1647dff2b18a49b13e378a57cda1e25aa60d97e1d5d32",
+      "entity": "0000784199",
+      "filed_year": 2024,
+      "path": "edgar/0000784199/2024/ba1ca0940cb8031435c1647dff2b18a49b13e378a57cda1e25aa60d97e1d5d32.parquet",
+      "rows": 1583,
+      "sha256": "11eac7652afc0883d2ba058f5b5da803c42da82b8287291d53fe0ac845a32a7a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16710,
+      "content_id": "c743714708c2b85be1eb0c8dbd723aef6353d5aa5ffc5c7c933215c0f382590f",
+      "entity": "0000784199",
+      "filed_year": 2025,
+      "path": "edgar/0000784199/2025/c743714708c2b85be1eb0c8dbd723aef6353d5aa5ffc5c7c933215c0f382590f.parquet",
+      "rows": 1385,
+      "sha256": "c4ade6b271b51b68aa0c60436d12ac61dc26c8036cee47f2bd6f3e26295eb1c7",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15350,
+      "content_id": "9a222a7ff00207652393b8919c6a73b11ce9be5873f72cf92f85662465f6fa3f",
+      "entity": "0000784199",
+      "filed_year": 2026,
+      "path": "edgar/0000784199/2026/9a222a7ff00207652393b8919c6a73b11ce9be5873f72cf92f85662465f6fa3f.parquet",
+      "rows": 1078,
+      "sha256": "0c8ebcfdf0a3e436caf62eb8d3588a3ade5ff47ee1175273b55b5a3b1c0aa860",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9205,
+      "content_id": "e3f92acb27105ae46e7bd6cb642d6bb6de3cf6394d6f9e725c900b6b215def72",
+      "entity": "0000793074",
+      "filed_year": 2010,
+      "path": "edgar/0000793074/2010/e3f92acb27105ae46e7bd6cb642d6bb6de3cf6394d6f9e725c900b6b215def72.parquet",
+      "rows": 412,
+      "sha256": "6831e2f065962e45162592fa4dbe0aec73eaa905bf681eff82876ae900d6fd6a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13614,
+      "content_id": "c8981413e5d84a63aada6fce1fca8fed95ce63e3afddc2cd4eba321b2abb4fa3",
+      "entity": "0000793074",
+      "filed_year": 2011,
+      "path": "edgar/0000793074/2011/c8981413e5d84a63aada6fce1fca8fed95ce63e3afddc2cd4eba321b2abb4fa3.parquet",
+      "rows": 945,
+      "sha256": "8f9b3faf1b45259b641b4e1d2a1563089ce488616af92f7e4917d9bbff379174",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15589,
+      "content_id": "f017746cc2d5ac37a13a1707404f472110fc4568a2336bf4e36062adc93df700",
+      "entity": "0000793074",
+      "filed_year": 2012,
+      "path": "edgar/0000793074/2012/f017746cc2d5ac37a13a1707404f472110fc4568a2336bf4e36062adc93df700.parquet",
+      "rows": 1208,
+      "sha256": "2721578138969de08a0de56784b450f7c0a116e5ec3c4c587c90208025d6e4b5",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16094,
+      "content_id": "fffe0134c3f5458a030510cf97652e6c826ab2bbf526daa87215096deefeda8f",
+      "entity": "0000793074",
+      "filed_year": 2013,
+      "path": "edgar/0000793074/2013/fffe0134c3f5458a030510cf97652e6c826ab2bbf526daa87215096deefeda8f.parquet",
+      "rows": 1290,
+      "sha256": "f8d885038f14ab38f4fb631792feff4d665388825b5e777dae6c9422bdc724da",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16053,
+      "content_id": "568cd57841710a66fa33416e963c98056d3a40994ccbc751985a297db68d9a6d",
+      "entity": "0000793074",
+      "filed_year": 2014,
+      "path": "edgar/0000793074/2014/568cd57841710a66fa33416e963c98056d3a40994ccbc751985a297db68d9a6d.parquet",
+      "rows": 1263,
+      "sha256": "a7eb606035c3f2052f41ba5e2c8c2009db35da3a4a061fa0d11145f57b84f46b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16092,
+      "content_id": "1f3ca9515dfd9ffe31eb470746c0867a1bf3d8b4199cbb41384ac6262ed1aaa5",
+      "entity": "0000793074",
+      "filed_year": 2015,
+      "path": "edgar/0000793074/2015/1f3ca9515dfd9ffe31eb470746c0867a1bf3d8b4199cbb41384ac6262ed1aaa5.parquet",
+      "rows": 1269,
+      "sha256": "8d71ca89fb0ece7cd9b95724af05622ae308ee43073eccf179817812653b17a2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15888,
+      "content_id": "5c990652d71bba5254c35cc0a114a10cc9c88594302c0db6134b10f2b02ee827",
+      "entity": "0000793074",
+      "filed_year": 2016,
+      "path": "edgar/0000793074/2016/5c990652d71bba5254c35cc0a114a10cc9c88594302c0db6134b10f2b02ee827.parquet",
+      "rows": 1273,
+      "sha256": "ecf494d095326ea080bac6b6deb2bfd9448032c546ad510d60a4f20d24e32a3b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15968,
+      "content_id": "f434415bd09a946089d3511043339af6c40a6c7e652d1bd8b62d1a58cdcfe408",
+      "entity": "0000793074",
+      "filed_year": 2017,
+      "path": "edgar/0000793074/2017/f434415bd09a946089d3511043339af6c40a6c7e652d1bd8b62d1a58cdcfe408.parquet",
+      "rows": 1275,
+      "sha256": "8985a13e783e9773f89e3d56229c736155b99cfbab46b7574dff2d419a8bdc53",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16044,
+      "content_id": "bbaf8b8f7300cc0ad7479c555b1e6a590d1ab4718229e0056b57f0071f5ce715",
+      "entity": "0000793074",
+      "filed_year": 2018,
+      "path": "edgar/0000793074/2018/bbaf8b8f7300cc0ad7479c555b1e6a590d1ab4718229e0056b57f0071f5ce715.parquet",
+      "rows": 1286,
+      "sha256": "9c2231f69151219b50af244653a4c8f43ccb3558a311ac6cd4ef0d06da2274ce",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17068,
+      "content_id": "d0ecc7d96932cac2be90619886410c7afe2b057625716f16a9022f765e3154c7",
+      "entity": "0000793074",
+      "filed_year": 2019,
+      "path": "edgar/0000793074/2019/d0ecc7d96932cac2be90619886410c7afe2b057625716f16a9022f765e3154c7.parquet",
+      "rows": 1445,
+      "sha256": "d829903aacafe180dc4d6f0faf312195ec99a25bc17f5476a6fbec1060b681c6",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16911,
+      "content_id": "b42624874717ae0397184b4d8e00d81c1e1aab308b6c5db9a039849ba5dc430a",
+      "entity": "0000793074",
+      "filed_year": 2020,
+      "path": "edgar/0000793074/2020/b42624874717ae0397184b4d8e00d81c1e1aab308b6c5db9a039849ba5dc430a.parquet",
+      "rows": 1418,
+      "sha256": "fa7e4daaa242bb9841f3b9aff905a8f32f56a8108dd66f7d49dd01b4fe6801bb",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17653,
+      "content_id": "4badee472570b58b2297fd0cb6e5261e25275e218e44222733f2f5b42d023699",
+      "entity": "0000793074",
+      "filed_year": 2021,
+      "path": "edgar/0000793074/2021/4badee472570b58b2297fd0cb6e5261e25275e218e44222733f2f5b42d023699.parquet",
+      "rows": 1451,
+      "sha256": "2f07025d9522211aa6b948d49ea28de0dc8ef4241c543c21c7e2993b61aacf0f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17714,
+      "content_id": "7e2c2d57892f897687ef6293a96878d2d4d9949d6cb43008662a22f78cac28b1",
+      "entity": "0000793074",
+      "filed_year": 2022,
+      "path": "edgar/0000793074/2022/7e2c2d57892f897687ef6293a96878d2d4d9949d6cb43008662a22f78cac28b1.parquet",
+      "rows": 1489,
+      "sha256": "07a6edfd671a6ac45b788044bafaad372902bbbf5afcd661647c2b355b265109",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18627,
+      "content_id": "17e59228650895b6200aa202651168be9525eece4764fe92efb2703f832a1948",
+      "entity": "0000793074",
+      "filed_year": 2023,
+      "path": "edgar/0000793074/2023/17e59228650895b6200aa202651168be9525eece4764fe92efb2703f832a1948.parquet",
+      "rows": 1628,
+      "sha256": "c187a16ab09f20ea4e69165ee87bb19b84a8b741f604f5acd21b1332867e11cc",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18111,
+      "content_id": "bde21285a5e1ad6e45f52e4d01d361fa54252d0d35ca103917523f3a643760b9",
+      "entity": "0000793074",
+      "filed_year": 2024,
+      "path": "edgar/0000793074/2024/bde21285a5e1ad6e45f52e4d01d361fa54252d0d35ca103917523f3a643760b9.parquet",
+      "rows": 1594,
+      "sha256": "627b25bd25e9a257c2e7789bcf0e0cdd0c165e31db591c4f37aea3dff0bfe1a2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18548,
+      "content_id": "656be13e3b68cd5dbae4759d83afd6d2c09893d23f0da34cb9e021eeb508e411",
+      "entity": "0000793074",
+      "filed_year": 2025,
+      "path": "edgar/0000793074/2025/656be13e3b68cd5dbae4759d83afd6d2c09893d23f0da34cb9e021eeb508e411.parquet",
+      "rows": 1653,
+      "sha256": "58e975462c2c6947d94fc2bb41c3ad8e2a3991f903a87748d93234332ebd9d80",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18228,
+      "content_id": "ce368afc5cfe6475d434597e1b0b8c04c2ff3e84bb50d88c0483c4d2ff680aa2",
+      "entity": "0000793074",
+      "filed_year": 2026,
+      "path": "edgar/0000793074/2026/ce368afc5cfe6475d434597e1b0b8c04c2ff3e84bb50d88c0483c4d2ff680aa2.parquet",
+      "rows": 1364,
+      "sha256": "df28bcef112217be8122310a7150b2f3c773a035c1f1be3c3e2bb56cbe1ae83e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 10456,
+      "content_id": "621964223873d71d5eab27d0d3444799b25e5e0fadfd7efed0d53f62e7e3a7df",
+      "entity": "0000821483",
+      "filed_year": 2011,
+      "path": "edgar/0000821483/2011/621964223873d71d5eab27d0d3444799b25e5e0fadfd7efed0d53f62e7e3a7df.parquet",
+      "rows": 565,
+      "sha256": "235ac11da8c2e80e2b1979f47ef84ea52bd6030ad5ee5b63bc800145888a2e65",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13330,
+      "content_id": "a131c452ec2c443765a50e2d8a7c989f468edc415d6d4db0da283e77f227b027",
+      "entity": "0000821483",
+      "filed_year": 2012,
+      "path": "edgar/0000821483/2012/a131c452ec2c443765a50e2d8a7c989f468edc415d6d4db0da283e77f227b027.parquet",
+      "rows": 787,
+      "sha256": "222ed0244e049e5da0ff6ba33729bb130c7f7210282d6a90674fc5565bc66903",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11972,
+      "content_id": "f37f84831fc35c5a7c1a1c7cb067bd77fdf3ed90f04ab7d5468592258aab1770",
+      "entity": "0000821483",
+      "filed_year": 2013,
+      "path": "edgar/0000821483/2013/f37f84831fc35c5a7c1a1c7cb067bd77fdf3ed90f04ab7d5468592258aab1770.parquet",
+      "rows": 551,
+      "sha256": "cc41b88560e70989af5d7c32f445ff1ac0a28f43fce16e64d6007f627028c000",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18965,
+      "content_id": "b04c604581250b6a876baeb1032889e0863564e9b57eca33a31a0c7058ae6bed",
+      "entity": "0000821483",
+      "filed_year": 2014,
+      "path": "edgar/0000821483/2014/b04c604581250b6a876baeb1032889e0863564e9b57eca33a31a0c7058ae6bed.parquet",
+      "rows": 1678,
+      "sha256": "8fd93ab7e8346725e3150c0f554da49d727ea9be326301b83feb1f9ff855532e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18354,
+      "content_id": "c3e76a6769d74a31afa880a7a14f77d8d1bd84a23421787e5cec45624b405300",
+      "entity": "0000821483",
+      "filed_year": 2015,
+      "path": "edgar/0000821483/2015/c3e76a6769d74a31afa880a7a14f77d8d1bd84a23421787e5cec45624b405300.parquet",
+      "rows": 1705,
+      "sha256": "ed0250137aa3a9578f6f405f21b992760f40b3d1b793226535c025176be6c797",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18576,
+      "content_id": "d9fe6c168ad86eba197c05612f3c6958dea7cb572b2ea3dc1029b4cd0c56d0cf",
+      "entity": "0000821483",
+      "filed_year": 2016,
+      "path": "edgar/0000821483/2016/d9fe6c168ad86eba197c05612f3c6958dea7cb572b2ea3dc1029b4cd0c56d0cf.parquet",
+      "rows": 1438,
+      "sha256": "18a7e98c3b2be073476c8ee35e3c3719c1ef4abad6557fbdcf4fc19249e0e4a9",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18811,
+      "content_id": "3cccded43797c62d996b3041b65e464817c6417532708bd9023681fe01f3df1a",
+      "entity": "0000821483",
+      "filed_year": 2017,
+      "path": "edgar/0000821483/2017/3cccded43797c62d996b3041b65e464817c6417532708bd9023681fe01f3df1a.parquet",
+      "rows": 1491,
+      "sha256": "3cbddaab5aee844173f23880e81d37dea18fdf24fdea794ffeeefd0b33bb16a2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18426,
+      "content_id": "1af998b9e164dc1f7f2c3f35f9316576798cb52c8b5779aa9bfb4fd74094282b",
+      "entity": "0000821483",
+      "filed_year": 2018,
+      "path": "edgar/0000821483/2018/1af998b9e164dc1f7f2c3f35f9316576798cb52c8b5779aa9bfb4fd74094282b.parquet",
+      "rows": 1429,
+      "sha256": "494bb665c80566c3f2784a9cae2b962639ba407c0b4ebe7d8168909b90a5138a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20135,
+      "content_id": "65cf7e93dfda1178f3d4dc93ab34817af4adc993ad6f070bbf3ebeeffc8a2c73",
+      "entity": "0000821483",
+      "filed_year": 2019,
+      "path": "edgar/0000821483/2019/65cf7e93dfda1178f3d4dc93ab34817af4adc993ad6f070bbf3ebeeffc8a2c73.parquet",
+      "rows": 1638,
+      "sha256": "55c8fbee46df7f52f4f78626bae1eef1059136d220293c0b79ba182d9f24839b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20829,
+      "content_id": "7db746183ca862712d4ab7ac975a1bb744d47abed66c4d0fa0a6d2711869decf",
+      "entity": "0000821483",
+      "filed_year": 2020,
+      "path": "edgar/0000821483/2020/7db746183ca862712d4ab7ac975a1bb744d47abed66c4d0fa0a6d2711869decf.parquet",
+      "rows": 1714,
+      "sha256": "902b36cae2d9485e2cccc45b6008dde0ccf6a858e3f7fc09e2ce0c34a02d6671",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20213,
+      "content_id": "2e512d236c7e136ea8203c8f5bab33165ac95d2eae9b9d1750dc415bcd60dbee",
+      "entity": "0000821483",
+      "filed_year": 2021,
+      "path": "edgar/0000821483/2021/2e512d236c7e136ea8203c8f5bab33165ac95d2eae9b9d1750dc415bcd60dbee.parquet",
+      "rows": 1748,
+      "sha256": "6e6faef6972ca88d697bf3d7baa166d80fe69f390534ba8a846e41d89b1d1e94",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19851,
+      "content_id": "d4f25d6aa584b54608b7e3402c2844210dd588811da76a4cd4edf9b5ea11d8ac",
+      "entity": "0000821483",
+      "filed_year": 2022,
+      "path": "edgar/0000821483/2022/d4f25d6aa584b54608b7e3402c2844210dd588811da76a4cd4edf9b5ea11d8ac.parquet",
+      "rows": 1685,
+      "sha256": "eadee6da3f98bf5d42149cffa8fb8fa759ff83d61c6a2a52bcd1cb4bcedf6f6e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19588,
+      "content_id": "8461068705f9e6e65fc5f11b14b13e93a7bddca0f0c4204fe0766ccaf78ba29b",
+      "entity": "0000821483",
+      "filed_year": 2023,
+      "path": "edgar/0000821483/2023/8461068705f9e6e65fc5f11b14b13e93a7bddca0f0c4204fe0766ccaf78ba29b.parquet",
+      "rows": 1640,
+      "sha256": "bfba94270103ce88215213f2f7d452df535c8dc34829ddfe86656f28120a9040",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19713,
+      "content_id": "296ce55962ddac1b4e9bcae7fbbda2d4910b6a58ec2aba737f50aa5f9bfd647c",
+      "entity": "0000821483",
+      "filed_year": 2024,
+      "path": "edgar/0000821483/2024/296ce55962ddac1b4e9bcae7fbbda2d4910b6a58ec2aba737f50aa5f9bfd647c.parquet",
+      "rows": 1681,
+      "sha256": "3688123d2b1fc82a40b5c118df5a8d4672aa11f60ae69694ad62299fd2158392",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18922,
+      "content_id": "764d8d90879eb15e63f74ba83b7c56df81f964516f330d5f552b9065c7fc551c",
+      "entity": "0000821483",
+      "filed_year": 2025,
+      "path": "edgar/0000821483/2025/764d8d90879eb15e63f74ba83b7c56df81f964516f330d5f552b9065c7fc551c.parquet",
+      "rows": 1669,
+      "sha256": "e6b6db136c00b8659e29aaf2b3b27e1ad1f0bc0056591631e9cf1a02c1e638c6",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18003,
+      "content_id": "364d404b3e670a2aebec71ae6b3bdb138743306506a6fddd4a92308e13d7d47c",
+      "entity": "0000821483",
+      "filed_year": 2026,
+      "path": "edgar/0000821483/2026/364d404b3e670a2aebec71ae6b3bdb138743306506a6fddd4a92308e13d7d47c.parquet",
+      "rows": 1327,
+      "sha256": "e8f2c3de316b378167fcc2274b894554610c6970dda2faf69c31a6c29a4b561c",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9228,
+      "content_id": "944345c2d2955a772df0926305c07d0794d256f8816619a3b97b81b64ede60fc",
+      "entity": "0000907654",
+      "filed_year": 2011,
+      "path": "edgar/0000907654/2011/944345c2d2955a772df0926305c07d0794d256f8816619a3b97b81b64ede60fc.parquet",
+      "rows": 421,
+      "sha256": "7ab8c7b4df2408e528a5cc87a69da052e60f221134c13dda4c9813f4f9f0d749",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12549,
+      "content_id": "8483b5e304f4dfa945b4659bbe85a4f27a952f0774a99d97d249c936bed1ded1",
+      "entity": "0000907654",
+      "filed_year": 2012,
+      "path": "edgar/0000907654/2012/8483b5e304f4dfa945b4659bbe85a4f27a952f0774a99d97d249c936bed1ded1.parquet",
+      "rows": 946,
+      "sha256": "5d7087efc152dcd9bd21a3028907191e849158176d563e80b87f48ac5c6f1bc5",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13848,
+      "content_id": "157e8222315addc63fc5d3b8c862bd5878edb8c5bed6ba556c3d945dd62fe74e",
+      "entity": "0000907654",
+      "filed_year": 2013,
+      "path": "edgar/0000907654/2013/157e8222315addc63fc5d3b8c862bd5878edb8c5bed6ba556c3d945dd62fe74e.parquet",
+      "rows": 1049,
+      "sha256": "a500aedebab01c86bfe5c06213785d5b300add322796874f9679958451c0916e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13403,
+      "content_id": "b1f9228fa09026e828a58fc281a35e2d98c456a42790b3fc2d4d697178c55850",
+      "entity": "0000907654",
+      "filed_year": 2014,
+      "path": "edgar/0000907654/2014/b1f9228fa09026e828a58fc281a35e2d98c456a42790b3fc2d4d697178c55850.parquet",
+      "rows": 894,
+      "sha256": "eabe51b5e4ae8c440bdf2f47d610c5b776980c4040b2103bdbdc65413e04323d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11735,
+      "content_id": "29a6ad50715fb50cc6d6b68a3bb210f51b4b4db19333d460b8da85e81b34dab6",
+      "entity": "0000907654",
+      "filed_year": 2015,
+      "path": "edgar/0000907654/2015/29a6ad50715fb50cc6d6b68a3bb210f51b4b4db19333d460b8da85e81b34dab6.parquet",
+      "rows": 696,
+      "sha256": "184061c93ddae035cef2e50d4fa60b0b1527f6911e965423f1f7453c5f12e822",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11909,
+      "content_id": "d4102d8b332afcfb0848229e5b0aa90b357e1467b3a58ca0fadf50950572f2a4",
+      "entity": "0000907654",
+      "filed_year": 2016,
+      "path": "edgar/0000907654/2016/d4102d8b332afcfb0848229e5b0aa90b357e1467b3a58ca0fadf50950572f2a4.parquet",
+      "rows": 726,
+      "sha256": "f8e9fb75a960e976c6d0d2ac069e7891cd033c85fbe829f83351747e372cb937",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12047,
+      "content_id": "2755da78c5ceae1510abb415c37416d6001877b81ff2c921a7294ff6380711c1",
+      "entity": "0000907654",
+      "filed_year": 2017,
+      "path": "edgar/0000907654/2017/2755da78c5ceae1510abb415c37416d6001877b81ff2c921a7294ff6380711c1.parquet",
+      "rows": 778,
+      "sha256": "ccfaf17275d442d9a712761cb922aadfae01d202094c463ffecbf198b80abe7b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12299,
+      "content_id": "986f9835d8439a882dc93bd0d99d4d3aad340bc134052f9e89ff340239172203",
+      "entity": "0000907654",
+      "filed_year": 2018,
+      "path": "edgar/0000907654/2018/986f9835d8439a882dc93bd0d99d4d3aad340bc134052f9e89ff340239172203.parquet",
+      "rows": 778,
+      "sha256": "15b175cee2bfd9e96323340e07766dd068d3f0a7267a7a8e02962438d7a375f6",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11853,
+      "content_id": "000301651f8b4fd27ca92fe476bf9e4979c8b79b1d26d08bb761a58d0e8e971a",
+      "entity": "0000907654",
+      "filed_year": 2019,
+      "path": "edgar/0000907654/2019/000301651f8b4fd27ca92fe476bf9e4979c8b79b1d26d08bb761a58d0e8e971a.parquet",
+      "rows": 730,
+      "sha256": "378dabf21bc7c3aee699fdb0b881bc497b8f7f30f0c9fd7915800f8a9836aede",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11692,
+      "content_id": "aab67b4345b3bc2090bd9914530706371fc09818c2c49d33dc796c06e0953f41",
+      "entity": "0000907654",
+      "filed_year": 2020,
+      "path": "edgar/0000907654/2020/aab67b4345b3bc2090bd9914530706371fc09818c2c49d33dc796c06e0953f41.parquet",
+      "rows": 709,
+      "sha256": "beebcf1869be9d0723c226155852a368576b8a31694030adfb94c39b5749d0ec",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11615,
+      "content_id": "7fbe9972f7eebfd988385345f80b5eb0bd0ae3b02fd597b0fd760d124894f986",
+      "entity": "0000907654",
+      "filed_year": 2021,
+      "path": "edgar/0000907654/2021/7fbe9972f7eebfd988385345f80b5eb0bd0ae3b02fd597b0fd760d124894f986.parquet",
+      "rows": 727,
+      "sha256": "43099edcdb83981474a0b9c633f2a632699c14d92b6205e68cad21cb53f5b165",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11531,
+      "content_id": "18b6dee891f4d41689eb1e8db8499932681b440ef941a8cbf1b89d3b0d49b28a",
+      "entity": "0000907654",
+      "filed_year": 2022,
+      "path": "edgar/0000907654/2022/18b6dee891f4d41689eb1e8db8499932681b440ef941a8cbf1b89d3b0d49b28a.parquet",
+      "rows": 713,
+      "sha256": "4dab7aaf43e1b0bb6b70219eed3b737dd3e6253ff6f113efcd0e53eef9e5bb01",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11404,
+      "content_id": "305c68ed295306f776fa12e9ff10012105cd27a1337eeef829cdffa6610e0d79",
+      "entity": "0000907654",
+      "filed_year": 2023,
+      "path": "edgar/0000907654/2023/305c68ed295306f776fa12e9ff10012105cd27a1337eeef829cdffa6610e0d79.parquet",
+      "rows": 713,
+      "sha256": "0980ccbb8984f31cd48771382614aafa4180fc9a166230423d7f090ac8412da4",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12430,
+      "content_id": "f3316964a0bd173d922cc81d6ffbdf0474f418debdb5ff995be747d045636d27",
+      "entity": "0000907654",
+      "filed_year": 2024,
+      "path": "edgar/0000907654/2024/f3316964a0bd173d922cc81d6ffbdf0474f418debdb5ff995be747d045636d27.parquet",
+      "rows": 677,
+      "sha256": "ba16cfe473d68ea41204729c089cf2962a3edcd5162041fd64dd46a8bce62c32",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12362,
+      "content_id": "f8d51c377364219011d72f93a881afa4e8e608c2f22b740dab2759b63990ebd7",
+      "entity": "0000907654",
+      "filed_year": 2025,
+      "path": "edgar/0000907654/2025/f8d51c377364219011d72f93a881afa4e8e608c2f22b740dab2759b63990ebd7.parquet",
+      "rows": 782,
+      "sha256": "e49a7485f29cf77bb9467c6a0e9d29d1d53a1030b40f03971b8263a3053f13a2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12417,
+      "content_id": "a0d64867581aa2510970dea7820ecf62c5a29a77ec29f14157a713ec62eb78e1",
+      "entity": "0000907654",
+      "filed_year": 2026,
+      "path": "edgar/0000907654/2026/a0d64867581aa2510970dea7820ecf62c5a29a77ec29f14157a713ec62eb78e1.parquet",
+      "rows": 666,
+      "sha256": "0cae33fbe3b9fe246ccba0bd20512f0be9c2b6e873e25b17053d624a68b945dc",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9767,
+      "content_id": "23e9fead8ed9057d9bf6da717d041d457d994362dc9c6eccec448e9b60d0decd",
+      "entity": "0001018724",
+      "filed_year": 2009,
+      "path": "edgar/0001018724/2009/23e9fead8ed9057d9bf6da717d041d457d994362dc9c6eccec448e9b60d0decd.parquet",
+      "rows": 607,
+      "sha256": "f43c8d78c78bb79987827b51b0949836da6b9a44620227a38d5d1fe559f1e80d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13120,
+      "content_id": "753705342b0c227116f39c96b466332884eefa9c10cc2631eb0bf3d44faf7e69",
+      "entity": "0001018724",
+      "filed_year": 2010,
+      "path": "edgar/0001018724/2010/753705342b0c227116f39c96b466332884eefa9c10cc2631eb0bf3d44faf7e69.parquet",
+      "rows": 1068,
+      "sha256": "749697baabaf29bca49f9aef303b435c3ebcb8649f00e3e7a20859c2bb67a5a1",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16001,
+      "content_id": "21c0330a531804a74ca88141e227dfa7f689e5fe4325773ba513a5f05646a013",
+      "entity": "0001018724",
+      "filed_year": 2011,
+      "path": "edgar/0001018724/2011/21c0330a531804a74ca88141e227dfa7f689e5fe4325773ba513a5f05646a013.parquet",
+      "rows": 1341,
+      "sha256": "7cced54c70bbe411bb783a9d74e9b9dc7f3a4da333be78c2a0a965255ff8eaaf",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16931,
+      "content_id": "bd3ceb08c86283aed8771e14bbce77a551aa7da7d06fbd22b3e897cb4ef9c085",
+      "entity": "0001018724",
+      "filed_year": 2012,
+      "path": "edgar/0001018724/2012/bd3ceb08c86283aed8771e14bbce77a551aa7da7d06fbd22b3e897cb4ef9c085.parquet",
+      "rows": 1455,
+      "sha256": "75af1af78dfa7dcb653f650a1512033b54b63c0a66dac5031714e00ad8758fd0",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17575,
+      "content_id": "434c917bcff5b1e8391d20cf0a00eca31ea37160501a5f3286d1dc8c738a48cc",
+      "entity": "0001018724",
+      "filed_year": 2013,
+      "path": "edgar/0001018724/2013/434c917bcff5b1e8391d20cf0a00eca31ea37160501a5f3286d1dc8c738a48cc.parquet",
+      "rows": 1526,
+      "sha256": "e9ceab40c1f319b4103e3a36832a6adaf037dc9fb4dc38f04a6418bec6741fd3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18440,
+      "content_id": "2aea0fee4398c3dddb22facb33dba3b94aa5f590860041295219342740188d86",
+      "entity": "0001018724",
+      "filed_year": 2014,
+      "path": "edgar/0001018724/2014/2aea0fee4398c3dddb22facb33dba3b94aa5f590860041295219342740188d86.parquet",
+      "rows": 1661,
+      "sha256": "1f54d1c2041801d224babf121b9e24116740280e767eecee1741934b829b26db",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20139,
+      "content_id": "ff6b74c87e52d4619d1cf9495e49a52283180295c7ad0af0f4dd78e56c901b24",
+      "entity": "0001018724",
+      "filed_year": 2015,
+      "path": "edgar/0001018724/2015/ff6b74c87e52d4619d1cf9495e49a52283180295c7ad0af0f4dd78e56c901b24.parquet",
+      "rows": 1821,
+      "sha256": "573b68bc75677b786f2289c963343795bf58396dbc6606a0b716515528b78f5e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20259,
+      "content_id": "39d9c527d2eb769b8724f8f24a322024847e388a1667d9f97bbe9336cb8c153d",
+      "entity": "0001018724",
+      "filed_year": 2016,
+      "path": "edgar/0001018724/2016/39d9c527d2eb769b8724f8f24a322024847e388a1667d9f97bbe9336cb8c153d.parquet",
+      "rows": 1783,
+      "sha256": "5db8c94df506684ffd50b012891b14017c87a799b49fe298075212bf52880575",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20494,
+      "content_id": "3c0a1bfd1d7339fa12cec6bf3a5016798b053854992bff8b1bface98fb7762bc",
+      "entity": "0001018724",
+      "filed_year": 2017,
+      "path": "edgar/0001018724/2017/3c0a1bfd1d7339fa12cec6bf3a5016798b053854992bff8b1bface98fb7762bc.parquet",
+      "rows": 1713,
+      "sha256": "0a883a53f6b3ba586f8b9d1c039e977c7b837c4c2c3f3d5cabdae46df27e4641",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20678,
+      "content_id": "edbc9748058d4d4d8aae5f82a3659802ef12ed905bda3de00df55695221aab7d",
+      "entity": "0001018724",
+      "filed_year": 2018,
+      "path": "edgar/0001018724/2018/edbc9748058d4d4d8aae5f82a3659802ef12ed905bda3de00df55695221aab7d.parquet",
+      "rows": 1728,
+      "sha256": "0d6354094454ab148be9e85469a4137f9ebc46c882502a55a74871bd00a68ed3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21492,
+      "content_id": "a881779328c3c12f68f986ae95a106d8f6d3bff853368bdcba632fa7546102f6",
+      "entity": "0001018724",
+      "filed_year": 2019,
+      "path": "edgar/0001018724/2019/a881779328c3c12f68f986ae95a106d8f6d3bff853368bdcba632fa7546102f6.parquet",
+      "rows": 1830,
+      "sha256": "e51688aaa3282376f2a5b11c893aa83d9d25c95eb24c46e3a4d12a2e12bd86c0",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21934,
+      "content_id": "610c9f32ac8f25c91750c5106610a37cba164256a84fd46bde58dcaafe984165",
+      "entity": "0001018724",
+      "filed_year": 2020,
+      "path": "edgar/0001018724/2020/610c9f32ac8f25c91750c5106610a37cba164256a84fd46bde58dcaafe984165.parquet",
+      "rows": 1900,
+      "sha256": "be5fe8def715b14cdc93bde990bcfc07d43fde662b5e9af3b9d87bdab32d4d95",
+      "source": "edgar"
+    },
+    {
+      "bytes": 22080,
+      "content_id": "e90d952b25bb99430beb4a1890ecbe4ee75e0b4379891a8a5b100244f94eab09",
+      "entity": "0001018724",
+      "filed_year": 2021,
+      "path": "edgar/0001018724/2021/e90d952b25bb99430beb4a1890ecbe4ee75e0b4379891a8a5b100244f94eab09.parquet",
+      "rows": 1959,
+      "sha256": "bf66d0ff396963cf2e6dc69ccb4be2900d382b3771b1de3d14c5efaca3c0f655",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21823,
+      "content_id": "7413a2e0889a589e14ff0a73e930d62dc86062bd57592b94e4c238211e09cdfb",
+      "entity": "0001018724",
+      "filed_year": 2022,
+      "path": "edgar/0001018724/2022/7413a2e0889a589e14ff0a73e930d62dc86062bd57592b94e4c238211e09cdfb.parquet",
+      "rows": 1924,
+      "sha256": "109f9fbc4afea5c0a0a04b0a4144aaaf2e5321c80441215554d9758e7f51f0e1",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21968,
+      "content_id": "3b79c0bc7c5de3eedaf3f8ef2dc722cac315f0a06e99b645ba67d95fe57f1afb",
+      "entity": "0001018724",
+      "filed_year": 2023,
+      "path": "edgar/0001018724/2023/3b79c0bc7c5de3eedaf3f8ef2dc722cac315f0a06e99b645ba67d95fe57f1afb.parquet",
+      "rows": 1939,
+      "sha256": "8c1b048d2b8d4792e8ef12e40cf954e1bee69a3e4522c11890fb2ea5e5791dac",
+      "source": "edgar"
+    },
+    {
+      "bytes": 22073,
+      "content_id": "3e5f77d623b3ac35a90e1b4d31854c782fc0ff28b13258e2c34c65ebb25f4d69",
+      "entity": "0001018724",
+      "filed_year": 2024,
+      "path": "edgar/0001018724/2024/3e5f77d623b3ac35a90e1b4d31854c782fc0ff28b13258e2c34c65ebb25f4d69.parquet",
+      "rows": 1950,
+      "sha256": "e8ca6d7b2eb560d22e6501c960cb987e2243e92170a9ddf641543f8baaf95118",
+      "source": "edgar"
+    },
+    {
+      "bytes": 22303,
+      "content_id": "d88b3a3d35346e0c31f8d4b08aec96b92402b616e59d5b51562fb6105f84436b",
+      "entity": "0001018724",
+      "filed_year": 2025,
+      "path": "edgar/0001018724/2025/d88b3a3d35346e0c31f8d4b08aec96b92402b616e59d5b51562fb6105f84436b.parquet",
+      "rows": 1967,
+      "sha256": "d66a7850952418f71e41c550c4c976aead5e6f1ff42bd5c058a55ec285b96805",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21490,
+      "content_id": "fa1dd6881efff10da84ac597dd82e2e080ea8e0f836210110114daa7f316aa90",
+      "entity": "0001018724",
+      "filed_year": 2026,
+      "path": "edgar/0001018724/2026/fa1dd6881efff10da84ac597dd82e2e080ea8e0f836210110114daa7f316aa90.parquet",
+      "rows": 1589,
+      "sha256": "2620e6bfebcb4e98bf75df2a0f831c4d91ecf04d162cb3721659a047a32632b1",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9642,
+      "content_id": "b9639ff176fe1aa4fd4f55fb2d87d190b8e83909e703cdeaedbdde42e3ddc10f",
+      "entity": "0001065280",
+      "filed_year": 2009,
+      "path": "edgar/0001065280/2009/b9639ff176fe1aa4fd4f55fb2d87d190b8e83909e703cdeaedbdde42e3ddc10f.parquet",
+      "rows": 505,
+      "sha256": "002bdf8e0023193b755b6028997f177783cb1e1e6d02a1a2ce29800e83c520b0",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12708,
+      "content_id": "b7980fd65ac70d00fe22cb9e7ace04771ea6e565416a9805d5e165b5b490177a",
+      "entity": "0001065280",
+      "filed_year": 2010,
+      "path": "edgar/0001065280/2010/b7980fd65ac70d00fe22cb9e7ace04771ea6e565416a9805d5e165b5b490177a.parquet",
+      "rows": 894,
+      "sha256": "2d7ed3a07ce0f4015aafaeb405a4579d13f2618ad4e2d8111c76758562686740",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16169,
+      "content_id": "d993f99268d6f7350c684ba228c9ae7a8d1dab00bf6eded8126292cda9ab06c3",
+      "entity": "0001065280",
+      "filed_year": 2011,
+      "path": "edgar/0001065280/2011/d993f99268d6f7350c684ba228c9ae7a8d1dab00bf6eded8126292cda9ab06c3.parquet",
+      "rows": 1492,
+      "sha256": "04aacc69b23bad541eb389077e08f98c46d03d5c9865b0f2fb9c9e8683818a96",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18144,
+      "content_id": "c1d2b535ffd0afe444486b3872f939923f085ef275fd6e4379bef8098d6d29ad",
+      "entity": "0001065280",
+      "filed_year": 2012,
+      "path": "edgar/0001065280/2012/c1d2b535ffd0afe444486b3872f939923f085ef275fd6e4379bef8098d6d29ad.parquet",
+      "rows": 1484,
+      "sha256": "27742b2539941116315546bd7c3a9126fc79b5ded7dbaa363175b0aaf614ab19",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17994,
+      "content_id": "bfcff4c47e6a6b8508354fbef1eac8e599f331c196f24082c26a12a8846ede58",
+      "entity": "0001065280",
+      "filed_year": 2013,
+      "path": "edgar/0001065280/2013/bfcff4c47e6a6b8508354fbef1eac8e599f331c196f24082c26a12a8846ede58.parquet",
+      "rows": 1401,
+      "sha256": "00dbb0e1dad932dc356b94e2b877cf0c829f892e2a7e887990a8dec3f7af895f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17266,
+      "content_id": "ed37425865341b362b4fb81ece15e2d41c86ba8b2138bcf85be10af17fd4789f",
+      "entity": "0001065280",
+      "filed_year": 2014,
+      "path": "edgar/0001065280/2014/ed37425865341b362b4fb81ece15e2d41c86ba8b2138bcf85be10af17fd4789f.parquet",
+      "rows": 1398,
+      "sha256": "f889aef63893dce66d88ff0b52ab97e865eef198530eb9ebce6da1980c18cbca",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17362,
+      "content_id": "356607d523877323f1a15993f97eff917ef20a69826c278ec732895a870b0800",
+      "entity": "0001065280",
+      "filed_year": 2015,
+      "path": "edgar/0001065280/2015/356607d523877323f1a15993f97eff917ef20a69826c278ec732895a870b0800.parquet",
+      "rows": 1360,
+      "sha256": "3f3bf8974bb34e7e1ba32ebd2dcb549d0b80eb9bad21406c518bddbeb7f72ce9",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16792,
+      "content_id": "603639ca74dfe16e473efd1ccb8472ae5db7401027821c71d3ef20ebf6756f8b",
+      "entity": "0001065280",
+      "filed_year": 2016,
+      "path": "edgar/0001065280/2016/603639ca74dfe16e473efd1ccb8472ae5db7401027821c71d3ef20ebf6756f8b.parquet",
+      "rows": 1336,
+      "sha256": "e131c4a965e09a2195d349c10fb90dc5d475de7bc4d14c81fa49d857f0edf556",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16396,
+      "content_id": "3850f73013b4c4310b5c6701220c44b843780be1e056a3bdf00e5ab1e1d8fe8c",
+      "entity": "0001065280",
+      "filed_year": 2017,
+      "path": "edgar/0001065280/2017/3850f73013b4c4310b5c6701220c44b843780be1e056a3bdf00e5ab1e1d8fe8c.parquet",
+      "rows": 1279,
+      "sha256": "68f8bd02aafebb3822bf2149eaaf0f1a09803c083ff070603852cf88902be8f4",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17817,
+      "content_id": "b207661712d57705cdef91218834c4a3f156e5b2a60917f528bc14ae8a0be82e",
+      "entity": "0001065280",
+      "filed_year": 2018,
+      "path": "edgar/0001065280/2018/b207661712d57705cdef91218834c4a3f156e5b2a60917f528bc14ae8a0be82e.parquet",
+      "rows": 1743,
+      "sha256": "85d027bde12a46960b79e56a6cf1a9f1b841d2bf665c00188ff3f314129dd67a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17730,
+      "content_id": "e841f685bc2f1702dba42deba9753f4f0032637a2602ca45c620bc6a2b87d58d",
+      "entity": "0001065280",
+      "filed_year": 2019,
+      "path": "edgar/0001065280/2019/e841f685bc2f1702dba42deba9753f4f0032637a2602ca45c620bc6a2b87d58d.parquet",
+      "rows": 1366,
+      "sha256": "8bde5c91d6ef27e4f95584a4e54eb3ea6f932513c78f410e189eb04b823dc38d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17147,
+      "content_id": "d2ad7d742d4cd6d74c25f53611613057422bac8bbbecf37288245097bf699a7f",
+      "entity": "0001065280",
+      "filed_year": 2020,
+      "path": "edgar/0001065280/2020/d2ad7d742d4cd6d74c25f53611613057422bac8bbbecf37288245097bf699a7f.parquet",
+      "rows": 1319,
+      "sha256": "17fe4e88546df9eafc62526947a68c3f29aa74dcc3ed8c4c8243c98678f2a6c7",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17526,
+      "content_id": "e9279402f1ea63cff2600bc32e26e3127b0ac2e2782436a9770254e09cbf361a",
+      "entity": "0001065280",
+      "filed_year": 2021,
+      "path": "edgar/0001065280/2021/e9279402f1ea63cff2600bc32e26e3127b0ac2e2782436a9770254e09cbf361a.parquet",
+      "rows": 1371,
+      "sha256": "4d749ce92933586c954e1e8bb36575866816b664887fe73ac3b921c74d18ed60",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16653,
+      "content_id": "1855151df422549c207e808f9029441663ddeea74cfe376e8f4558d586f87007",
+      "entity": "0001065280",
+      "filed_year": 2022,
+      "path": "edgar/0001065280/2022/1855151df422549c207e808f9029441663ddeea74cfe376e8f4558d586f87007.parquet",
+      "rows": 1299,
+      "sha256": "e372e6bd7d6da290f58f852731dab69caddd7715171d8f286f8606330eb0c5ee",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17390,
+      "content_id": "4161c5f04ced7c26f2009a1e109cccb4f265dec9e103761f49575345a41e7396",
+      "entity": "0001065280",
+      "filed_year": 2023,
+      "path": "edgar/0001065280/2023/4161c5f04ced7c26f2009a1e109cccb4f265dec9e103761f49575345a41e7396.parquet",
+      "rows": 1372,
+      "sha256": "ee3d52b4bbaa5c7c3bb152bfb576ac485588856907e4d1d22dd299df0bb9aa13",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18625,
+      "content_id": "07576ef3f7d62ffcd8a51e36f5d3281470c4b3804751c48bba415cef35a16e25",
+      "entity": "0001065280",
+      "filed_year": 2024,
+      "path": "edgar/0001065280/2024/07576ef3f7d62ffcd8a51e36f5d3281470c4b3804751c48bba415cef35a16e25.parquet",
+      "rows": 1475,
+      "sha256": "9f37efe515c864dd86d87eff7fe6f44e1cc697c661c79e81073c1e99308d4181",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18352,
+      "content_id": "5fd4e4db23854bca158051e2bce707576046a409a1c97dbdc250e4478410507d",
+      "entity": "0001065280",
+      "filed_year": 2025,
+      "path": "edgar/0001065280/2025/5fd4e4db23854bca158051e2bce707576046a409a1c97dbdc250e4478410507d.parquet",
+      "rows": 1573,
+      "sha256": "d9e94d4c7e7731e811bb847ed393bf7591c1503504d6cf7fc312890c55fa80d4",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19524,
+      "content_id": "abefe545d082caaafe119df505ec196701ca42d66587d0966ecf9a5f82078e8c",
+      "entity": "0001065280",
+      "filed_year": 2026,
+      "path": "edgar/0001065280/2026/abefe545d082caaafe119df505ec196701ca42d66587d0966ecf9a5f82078e8c.parquet",
+      "rows": 1639,
+      "sha256": "d353095529eddfa24013cf19845872ab0bf567f633b17136b5e2a51753d61523",
+      "source": "edgar"
+    },
+    {
+      "bytes": 8959,
+      "content_id": "c56e98c364da7e127dae7efccd10797c009005aa816b687be020d2fc9822bd9b",
+      "entity": "0001262823",
+      "filed_year": 2011,
+      "path": "edgar/0001262823/2011/c56e98c364da7e127dae7efccd10797c009005aa816b687be020d2fc9822bd9b.parquet",
+      "rows": 348,
+      "sha256": "f0cef9c7db50142bd6b0fba1f9fc668b3201997a4baacdb6f35d4e1b71824feb",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17817,
+      "content_id": "abf417063e55483b06c5f0e15d201badc0b343d23e34dea49aa75aa200f4e5a0",
+      "entity": "0001262823",
+      "filed_year": 2012,
+      "path": "edgar/0001262823/2012/abf417063e55483b06c5f0e15d201badc0b343d23e34dea49aa75aa200f4e5a0.parquet",
+      "rows": 1328,
+      "sha256": "154b8374439f40767e487e4e8e38be6bc7fcb21d9e63dc9fe863912213d162bc",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17617,
+      "content_id": "3886dbd965a29812ef6462875422222dc32cc5fa9c7db395398febfea6bf7829",
+      "entity": "0001262823",
+      "filed_year": 2013,
+      "path": "edgar/0001262823/2013/3886dbd965a29812ef6462875422222dc32cc5fa9c7db395398febfea6bf7829.parquet",
+      "rows": 1338,
+      "sha256": "4fccf9c4475a15accb9cfee4a0d5cbd7d662a31ff820dffec66e19156a9357fe",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17863,
+      "content_id": "5d428e51858c58954c53bbb550372ccc93c3888c6dc2ed46682c292b6062fa64",
+      "entity": "0001262823",
+      "filed_year": 2014,
+      "path": "edgar/0001262823/2014/5d428e51858c58954c53bbb550372ccc93c3888c6dc2ed46682c292b6062fa64.parquet",
+      "rows": 1380,
+      "sha256": "180ba2f17caf8750eee66785410991a447dc07a2159bc1d2735f131d83efac37",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19999,
+      "content_id": "50085500bf8fc4be85e2b0a34966ad5ba8e3bd158bbee9412b9c0ffc2b869cba",
+      "entity": "0001262823",
+      "filed_year": 2015,
+      "path": "edgar/0001262823/2015/50085500bf8fc4be85e2b0a34966ad5ba8e3bd158bbee9412b9c0ffc2b869cba.parquet",
+      "rows": 1647,
+      "sha256": "79af2db23922c10592a10716c7f109409f8a3fb1b9a5c10497b8983a43879d02",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21595,
+      "content_id": "60576e316b5419f23e13bd0cc828e6b820b3ca2a68da3c2f59ecfbd9a973683d",
+      "entity": "0001262823",
+      "filed_year": 2016,
+      "path": "edgar/0001262823/2016/60576e316b5419f23e13bd0cc828e6b820b3ca2a68da3c2f59ecfbd9a973683d.parquet",
+      "rows": 1814,
+      "sha256": "3ebde7843e082c1095008feacaa9836edaaf303356f8fdaaae0e5f1eac316a34",
+      "source": "edgar"
+    },
+    {
+      "bytes": 22224,
+      "content_id": "8c1a44aa7890ae3cec0cc0380287a7876f11aedb4cd3dfe5cd02a85bbc706c34",
+      "entity": "0001262823",
+      "filed_year": 2017,
+      "path": "edgar/0001262823/2017/8c1a44aa7890ae3cec0cc0380287a7876f11aedb4cd3dfe5cd02a85bbc706c34.parquet",
+      "rows": 1860,
+      "sha256": "0bf8a13c3524a73dec33f8383c651397ec67f9217b47501687a30e86e0f7361f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17729,
+      "content_id": "32882ca701305a3bf791bad7b7fa68cc45ec723a8f4c6a818081459e87e44e36",
+      "entity": "0001262823",
+      "filed_year": 2018,
+      "path": "edgar/0001262823/2018/32882ca701305a3bf791bad7b7fa68cc45ec723a8f4c6a818081459e87e44e36.parquet",
+      "rows": 1520,
+      "sha256": "21f5b1c24c5517ac49433d343c40201041af80098164f1dbc199644f84566d15",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18686,
+      "content_id": "3f9a69e65e8b4181085ce8dc5bb985f26154847fc4d86753063f64b3615f54d0",
+      "entity": "0001262823",
+      "filed_year": 2019,
+      "path": "edgar/0001262823/2019/3f9a69e65e8b4181085ce8dc5bb985f26154847fc4d86753063f64b3615f54d0.parquet",
+      "rows": 1661,
+      "sha256": "993b424f70f82528dcbdf21603fd62392419ab37aa8a963d43da25e03093a6b3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17602,
+      "content_id": "da0688ba535dec8fc71c1f832e5031bc0400ebbf5164d76b64482587e6e44c37",
+      "entity": "0001262823",
+      "filed_year": 2020,
+      "path": "edgar/0001262823/2020/da0688ba535dec8fc71c1f832e5031bc0400ebbf5164d76b64482587e6e44c37.parquet",
+      "rows": 1546,
+      "sha256": "f29534d040a28d68937755c1d69607b73d752ed473813ba4a953f8ff837db955",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16996,
+      "content_id": "b397953d834bb26d6f83087bfcdfc4b904f747b695d83070039fbd921132f2f9",
+      "entity": "0001262823",
+      "filed_year": 2021,
+      "path": "edgar/0001262823/2021/b397953d834bb26d6f83087bfcdfc4b904f747b695d83070039fbd921132f2f9.parquet",
+      "rows": 1506,
+      "sha256": "bc2dfee34c95c2e1de92b2e43effc7fb50bca7b3de60f79b7f29688501c139bc",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16900,
+      "content_id": "e31184d0871d1264505222ef3800eb521f3ad10b88e62b7f25dd74b4e0403c94",
+      "entity": "0001262823",
+      "filed_year": 2022,
+      "path": "edgar/0001262823/2022/e31184d0871d1264505222ef3800eb521f3ad10b88e62b7f25dd74b4e0403c94.parquet",
+      "rows": 1466,
+      "sha256": "920cdc0b910b9d02d248b9d808fcd379e6f77ac782bc395e324a97ade1ad6634",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17197,
+      "content_id": "88b2cdd6a17ee0e2ce96789bc366c9621c9af89a54457405e1e033ea8f0b7d5a",
+      "entity": "0001262823",
+      "filed_year": 2023,
+      "path": "edgar/0001262823/2023/88b2cdd6a17ee0e2ce96789bc366c9621c9af89a54457405e1e033ea8f0b7d5a.parquet",
+      "rows": 1503,
+      "sha256": "1dabc759ed93bd5a1cacac0efd20730b346604f097530eeab78dd311b3bfad88",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17753,
+      "content_id": "9dd3766bba84f109d6803fcc68c80d4bcb514daeaebdd62e5ea52b789330debb",
+      "entity": "0001262823",
+      "filed_year": 2024,
+      "path": "edgar/0001262823/2024/9dd3766bba84f109d6803fcc68c80d4bcb514daeaebdd62e5ea52b789330debb.parquet",
+      "rows": 1520,
+      "sha256": "414da57cf73b76ddb1eec9bce0dbc30bf0e376c0d8bbcedd7f362d68e2138d54",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17848,
+      "content_id": "6857af675deeabdd79a2a3ad8ff9daf28c6b768195d2d46d4786fb2d3b3a1d97",
+      "entity": "0001262823",
+      "filed_year": 2025,
+      "path": "edgar/0001262823/2025/6857af675deeabdd79a2a3ad8ff9daf28c6b768195d2d46d4786fb2d3b3a1d97.parquet",
+      "rows": 1537,
+      "sha256": "0c1f0b12c16fb7a6b0acbe0e52e7f561113fec62d097a2d18da7584d24782dfb",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16927,
+      "content_id": "0e4df39ee3f92440f98384e810f9c9b30a15f8906e6d2fbea63053c10c89f0fa",
+      "entity": "0001262823",
+      "filed_year": 2026,
+      "path": "edgar/0001262823/2026/0e4df39ee3f92440f98384e810f9c9b30a15f8906e6d2fbea63053c10c89f0fa.parquet",
+      "rows": 1261,
+      "sha256": "37b232182e570f470d1fcc71a0c6ebab819325c8f14f02987242ac936f576703",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11065,
+      "content_id": "353920e0ba3c46661b6dcc46fb5474b524c5eb1f594867f2ccfd7efe11d88ffe",
+      "entity": "0001352010",
+      "filed_year": 2012,
+      "path": "edgar/0001352010/2012/353920e0ba3c46661b6dcc46fb5474b524c5eb1f594867f2ccfd7efe11d88ffe.parquet",
+      "rows": 613,
+      "sha256": "14b9fb07c3d2ca8189caf1a0167c4cdb1aa52034503a33dbf8bf98183e09eaef",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18262,
+      "content_id": "a7fb99cdcd95e8930d711fab7d34d956ddb4dc5e6547adffaae21d3e746c5956",
+      "entity": "0001352010",
+      "filed_year": 2013,
+      "path": "edgar/0001352010/2013/a7fb99cdcd95e8930d711fab7d34d956ddb4dc5e6547adffaae21d3e746c5956.parquet",
+      "rows": 1383,
+      "sha256": "6225cda46d19992df65b80d7765431447dc41a9220b9b2b04f57df4310c42ce2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18587,
+      "content_id": "30b3c7e2aac074a9602bf21e0e3aee3dc277a0dc966e5f46424c3f133c453950",
+      "entity": "0001352010",
+      "filed_year": 2014,
+      "path": "edgar/0001352010/2014/30b3c7e2aac074a9602bf21e0e3aee3dc277a0dc966e5f46424c3f133c453950.parquet",
+      "rows": 1426,
+      "sha256": "5df9cf88f10268f746faadca56c0978433ed88560e3c44bc6c643b7cc8e4b476",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17328,
+      "content_id": "1d58a8e84e88413563c530e4fcac1a31de46ae69f786c7067ab99b0fd9ee27e1",
+      "entity": "0001352010",
+      "filed_year": 2015,
+      "path": "edgar/0001352010/2015/1d58a8e84e88413563c530e4fcac1a31de46ae69f786c7067ab99b0fd9ee27e1.parquet",
+      "rows": 1389,
+      "sha256": "3e8fc9125f110bc7ae3ac7ae341a4df5032ed69369037ed31ea513fdf4bf8e4e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16820,
+      "content_id": "4e3292c279a1287872f9dcbaefe42b9c9200dba96deca44e71acead51855668e",
+      "entity": "0001352010",
+      "filed_year": 2016,
+      "path": "edgar/0001352010/2016/4e3292c279a1287872f9dcbaefe42b9c9200dba96deca44e71acead51855668e.parquet",
+      "rows": 1350,
+      "sha256": "3f0084419d37cd53e1769be80e6e5baa49c904620e183d3e04841fb125083ebf",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16195,
+      "content_id": "0d694fd2e5aab07807d0412d49926364afcb1a4c3660cd91a6f91ba3a71a09e6",
+      "entity": "0001352010",
+      "filed_year": 2017,
+      "path": "edgar/0001352010/2017/0d694fd2e5aab07807d0412d49926364afcb1a4c3660cd91a6f91ba3a71a09e6.parquet",
+      "rows": 1248,
+      "sha256": "8b844dc5be84eff55d326f009d194622f82cfe0dc167df4c441098c8ea42b711",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16442,
+      "content_id": "234e6259a27fdef24e944570c5c5f478c9372e9017b6c6c67ed047980610b5cd",
+      "entity": "0001352010",
+      "filed_year": 2018,
+      "path": "edgar/0001352010/2018/234e6259a27fdef24e944570c5c5f478c9372e9017b6c6c67ed047980610b5cd.parquet",
+      "rows": 1252,
+      "sha256": "aefc3ef71aadc5864ded18b3cbdc23d34641a9246ea9ff07b722cee9bdbe0594",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16704,
+      "content_id": "9ea9f494b9ca50773d28101b1d13247151a2d731fd90789d72b83efeef65a3b3",
+      "entity": "0001352010",
+      "filed_year": 2019,
+      "path": "edgar/0001352010/2019/9ea9f494b9ca50773d28101b1d13247151a2d731fd90789d72b83efeef65a3b3.parquet",
+      "rows": 1282,
+      "sha256": "a480ca7bcb3472bf1a13b18fa5f566dde601eab4a01a5c48fd6549e95eda0a1b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16442,
+      "content_id": "ffdc5dd17eb57fc55dc84f8b36e945b728817410d94ffed9da310dd5c047c8c0",
+      "entity": "0001352010",
+      "filed_year": 2020,
+      "path": "edgar/0001352010/2020/ffdc5dd17eb57fc55dc84f8b36e945b728817410d94ffed9da310dd5c047c8c0.parquet",
+      "rows": 1238,
+      "sha256": "045e589deb45fef8aaca55846b9aa2626a28e89f47826645782c49671fdc1f91",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16881,
+      "content_id": "4d8f59c7bb0eec180d1e89219b3fc52521f3c3e4ac031782b9945b9a2edcc5cd",
+      "entity": "0001352010",
+      "filed_year": 2021,
+      "path": "edgar/0001352010/2021/4d8f59c7bb0eec180d1e89219b3fc52521f3c3e4ac031782b9945b9a2edcc5cd.parquet",
+      "rows": 1293,
+      "sha256": "7ba98e9fd69d7f45477ea6b1856d5234b98c71d42de5bc55ef832234eaaea0c1",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16979,
+      "content_id": "3b200eda8ee8b46dda6a47c31c13e2ac54e5093bc9f6f888ad133d5450527b43",
+      "entity": "0001352010",
+      "filed_year": 2022,
+      "path": "edgar/0001352010/2022/3b200eda8ee8b46dda6a47c31c13e2ac54e5093bc9f6f888ad133d5450527b43.parquet",
+      "rows": 1309,
+      "sha256": "dcbd7bf492f853e21abc0ca89689951a9d0d1adc0ea3aa5fa51e88e0d23dac52",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18113,
+      "content_id": "c95c84834a9add25f81a09696e485fac937bded9a4fc60394bb1b840b62c125b",
+      "entity": "0001352010",
+      "filed_year": 2023,
+      "path": "edgar/0001352010/2023/c95c84834a9add25f81a09696e485fac937bded9a4fc60394bb1b840b62c125b.parquet",
+      "rows": 1413,
+      "sha256": "b099bfd77f2747b1f664a7da7d409d2e3b50dce08faeb452c76e0aa326cc3ac3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18411,
+      "content_id": "f00d937e31a287de9b9e7442522b4b202b0db36de038f38e785cdff208ee8218",
+      "entity": "0001352010",
+      "filed_year": 2024,
+      "path": "edgar/0001352010/2024/f00d937e31a287de9b9e7442522b4b202b0db36de038f38e785cdff208ee8218.parquet",
+      "rows": 1474,
+      "sha256": "cfd8693be60bd7bb429ad7250a526bbd9d08c7bd8edab4230d8c366533e1de21",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18586,
+      "content_id": "4ca10f1b45753fd177e164569b4000c65a80f6489049a068a08f678f5e0f9382",
+      "entity": "0001352010",
+      "filed_year": 2025,
+      "path": "edgar/0001352010/2025/4ca10f1b45753fd177e164569b4000c65a80f6489049a068a08f678f5e0f9382.parquet",
+      "rows": 1488,
+      "sha256": "217328f3db7523cede438e6e79e6d18af7778dba2bd37d3170d6f6834e001391",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17782,
+      "content_id": "e4cea35f5b29a6a81c3c38b3acc887ecc68cd5fa6219228c5cf60e361b6646e5",
+      "entity": "0001352010",
+      "filed_year": 2026,
+      "path": "edgar/0001352010/2026/e4cea35f5b29a6a81c3c38b3acc887ecc68cd5fa6219228c5cf60e361b6646e5.parquet",
+      "rows": 1169,
+      "sha256": "ff600dbe1fd914daf9d004ca1e0b631a18a11e679c4ff8f4472b72b19121a72e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 10404,
+      "content_id": "1e847ac8b1489f5500eb1bea2dee06b8a3234b355f12179a0a8204a558e63549",
+      "entity": "0001403161",
+      "filed_year": 2009,
+      "path": "edgar/0001403161/2009/1e847ac8b1489f5500eb1bea2dee06b8a3234b355f12179a0a8204a558e63549.parquet",
+      "rows": 559,
+      "sha256": "274c056b224ab4c5dfba6395a939022c11ae945d2029448f03304831b788d0ce",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17146,
+      "content_id": "225cde04ab03f2f40f5e83bcde514b58546df8b827b93d9ab1d5253dc3285710",
+      "entity": "0001403161",
+      "filed_year": 2010,
+      "path": "edgar/0001403161/2010/225cde04ab03f2f40f5e83bcde514b58546df8b827b93d9ab1d5253dc3285710.parquet",
+      "rows": 1342,
+      "sha256": "3c355143a4ceafa3b290e458f3c9bf3b5712cc3079e82c174e514c79d084c19d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17122,
+      "content_id": "812638bda8aad9275ed2608b4ce627bb1bce9a55e522e2c20b7527b806de5c64",
+      "entity": "0001403161",
+      "filed_year": 2011,
+      "path": "edgar/0001403161/2011/812638bda8aad9275ed2608b4ce627bb1bce9a55e522e2c20b7527b806de5c64.parquet",
+      "rows": 1406,
+      "sha256": "622a75d927d826fbd2f9484c68faa8ebc85fc9e3cdc32484dce75195f9582338",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16911,
+      "content_id": "5b12f24a28820123f2697bebb1c6be7d8a8253c78280b624e8ca7acaee0e40d3",
+      "entity": "0001403161",
+      "filed_year": 2012,
+      "path": "edgar/0001403161/2012/5b12f24a28820123f2697bebb1c6be7d8a8253c78280b624e8ca7acaee0e40d3.parquet",
+      "rows": 1338,
+      "sha256": "54d4dd09b3ceec77d1fb8803c55c6513d16691b428ae41e667b509084c46634e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16613,
+      "content_id": "45b36dc9a33302b0ca5784ac4875df6ab1f0e2fb25c4d20688e1186f40c6bedc",
+      "entity": "0001403161",
+      "filed_year": 2013,
+      "path": "edgar/0001403161/2013/45b36dc9a33302b0ca5784ac4875df6ab1f0e2fb25c4d20688e1186f40c6bedc.parquet",
+      "rows": 1277,
+      "sha256": "c7328a4a9bd4907a1ced041388cc49d35c75f20cb18eaeed5939802d7bb85ce6",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16602,
+      "content_id": "748a058d7d64b7c784e5c8f46bec71e7f418e8c389169b557513b3d9ffdcc729",
+      "entity": "0001403161",
+      "filed_year": 2014,
+      "path": "edgar/0001403161/2014/748a058d7d64b7c784e5c8f46bec71e7f418e8c389169b557513b3d9ffdcc729.parquet",
+      "rows": 1275,
+      "sha256": "357e02a28408893b27e90856c60fd126350808d266e8f2b02666a340a99d69c4",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17130,
+      "content_id": "bdc12232b8613d5edcdf0a7c60b730f02bab6a7636cd899ebe5a112751ebbc39",
+      "entity": "0001403161",
+      "filed_year": 2015,
+      "path": "edgar/0001403161/2015/bdc12232b8613d5edcdf0a7c60b730f02bab6a7636cd899ebe5a112751ebbc39.parquet",
+      "rows": 1371,
+      "sha256": "e7d524a283ca2783a78c689656a91e2405bbb87cce9daa02df68f9aa9fecfa4e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18014,
+      "content_id": "a6feb9b812ee17d648306fcde50301342f257e51e9b3f92acc7c6fce86a75afc",
+      "entity": "0001403161",
+      "filed_year": 2016,
+      "path": "edgar/0001403161/2016/a6feb9b812ee17d648306fcde50301342f257e51e9b3f92acc7c6fce86a75afc.parquet",
+      "rows": 1479,
+      "sha256": "ba9a933b03e6d4ff55e88a5f962c559115f92b8006ce12fd1b7545d6d1f3c28e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17229,
+      "content_id": "de9d8859899a4887d2ddca5c1f29132cda476353b6c23b5659cd912be9e20a88",
+      "entity": "0001403161",
+      "filed_year": 2017,
+      "path": "edgar/0001403161/2017/de9d8859899a4887d2ddca5c1f29132cda476353b6c23b5659cd912be9e20a88.parquet",
+      "rows": 1405,
+      "sha256": "f61849338b8450267c1310876531524d636011f47ae3062215da38393b2f77ad",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16260,
+      "content_id": "3ec57ce49c7743fe9efa26340a5e8f90d032b54c5812fac7f2362633bab8bdf0",
+      "entity": "0001403161",
+      "filed_year": 2018,
+      "path": "edgar/0001403161/2018/3ec57ce49c7743fe9efa26340a5e8f90d032b54c5812fac7f2362633bab8bdf0.parquet",
+      "rows": 1305,
+      "sha256": "e0eb0087b921c26d637b99e012e39c0ed1ae090c21d9a56f3dad2a54a32c7045",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16708,
+      "content_id": "a39d5db287796021efd2f81c23e0aca2c81221912c6a2ea20af7c165d68286c9",
+      "entity": "0001403161",
+      "filed_year": 2019,
+      "path": "edgar/0001403161/2019/a39d5db287796021efd2f81c23e0aca2c81221912c6a2ea20af7c165d68286c9.parquet",
+      "rows": 1361,
+      "sha256": "7c16cdad9e0beda93c475e836e7fe867f99d8df9acf8fa1975e8841ad862e422",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17272,
+      "content_id": "5e1095483d87d0d8c2b9fb3f79b948e9c498a3e035defb9f7119db88a9591c4b",
+      "entity": "0001403161",
+      "filed_year": 2020,
+      "path": "edgar/0001403161/2020/5e1095483d87d0d8c2b9fb3f79b948e9c498a3e035defb9f7119db88a9591c4b.parquet",
+      "rows": 1460,
+      "sha256": "7cfcbb7bd36a68563b332b946942b01ea773a36dd0eda0ebae8b1f829fcd286c",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16448,
+      "content_id": "8acbe03357c4ca931233252614bb83ecf0418d7276b1412b9c393eb218c59ca2",
+      "entity": "0001403161",
+      "filed_year": 2021,
+      "path": "edgar/0001403161/2021/8acbe03357c4ca931233252614bb83ecf0418d7276b1412b9c393eb218c59ca2.parquet",
+      "rows": 1357,
+      "sha256": "f20b1c4c6486a3cf912e35085319c3cf4b60f6172bc5050d022f2c2ce7417392",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16627,
+      "content_id": "90eabd7a8f015b71f8d59dd57a202cc5e5fa898f17833b806c1c7ccf24f92211",
+      "entity": "0001403161",
+      "filed_year": 2022,
+      "path": "edgar/0001403161/2022/90eabd7a8f015b71f8d59dd57a202cc5e5fa898f17833b806c1c7ccf24f92211.parquet",
+      "rows": 1351,
+      "sha256": "bf1d6090b65c7844a9d01ee2f654927a08c535f4ba310a22aed4d2969e93ff9f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16807,
+      "content_id": "b4b49d858bcde71501899d422e7585f4ec0c0f84f29d1700da8c05d858377c29",
+      "entity": "0001403161",
+      "filed_year": 2023,
+      "path": "edgar/0001403161/2023/b4b49d858bcde71501899d422e7585f4ec0c0f84f29d1700da8c05d858377c29.parquet",
+      "rows": 1450,
+      "sha256": "db6f2c200d127f7b579b6afb2960af217392fc526c9406ae48755f7c264e1595",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16763,
+      "content_id": "ea83c8df4599399a1c5b093e51b851e157ede956353328239705f442e541a83c",
+      "entity": "0001403161",
+      "filed_year": 2024,
+      "path": "edgar/0001403161/2024/ea83c8df4599399a1c5b093e51b851e157ede956353328239705f442e541a83c.parquet",
+      "rows": 1478,
+      "sha256": "badd484c89aae017fc60e5ef99b8aec4be6151d6942cff860bc5ec5f1733290e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16829,
+      "content_id": "2ef0ae7be83adda94fddb95b2117b99c8c40622409ebb08816e881f05f7b6ee6",
+      "entity": "0001403161",
+      "filed_year": 2025,
+      "path": "edgar/0001403161/2025/2ef0ae7be83adda94fddb95b2117b99c8c40622409ebb08816e881f05f7b6ee6.parquet",
+      "rows": 1463,
+      "sha256": "c481af312ca6a4c076a94e2ce4d5e03fdc4532c172cd50467a6cb57d220bb7da",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11153,
+      "content_id": "0491b00b16a446abfca014917951bde3ab0dd8aa4d51af84a0fd4367f397b785",
+      "entity": "0001403161",
+      "filed_year": 2026,
+      "path": "edgar/0001403161/2026/0491b00b16a446abfca014917951bde3ab0dd8aa4d51af84a0fd4367f397b785.parquet",
+      "rows": 589,
+      "sha256": "8694ac4a9e0e67f11bcde686ac7b47b8aa5e739d1660226ef2844d3027af29fb",
+      "source": "edgar"
+    },
+    {
+      "bytes": 8431,
+      "content_id": "f86ed848ef0b5b7905a0b456bdbe53c1aed26bd12e1f5bbe4f727b9aeb699322",
+      "entity": "0001484769",
+      "filed_year": 2012,
+      "path": "edgar/0001484769/2012/f86ed848ef0b5b7905a0b456bdbe53c1aed26bd12e1f5bbe4f727b9aeb699322.parquet",
+      "rows": 398,
+      "sha256": "dfcd7f9b8a000be4cb2d2f79fc73d5d0ed9a29cf9533501b197110c00a3a19ba",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11112,
+      "content_id": "12a3a4d38ad2beeff7ebfe10db64c3ed679de9ef4ad2806df8ad443551aaf6ec",
+      "entity": "0001484769",
+      "filed_year": 2013,
+      "path": "edgar/0001484769/2013/12a3a4d38ad2beeff7ebfe10db64c3ed679de9ef4ad2806df8ad443551aaf6ec.parquet",
+      "rows": 879,
+      "sha256": "41ef7b6bd41c3b5a4fa8744f432e4d74dc163e7ac3bc074a796f10379d240b44",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12924,
+      "content_id": "5b062119622c6b6ba049d3c6bb3ec666743e0169fe4fa3bf757271381dc9f635",
+      "entity": "0001484769",
+      "filed_year": 2014,
+      "path": "edgar/0001484769/2014/5b062119622c6b6ba049d3c6bb3ec666743e0169fe4fa3bf757271381dc9f635.parquet",
+      "rows": 815,
+      "sha256": "8c9a3ce9f7e259d04f3d3733a18792782a41f24b7e8359c96a04eb1d73044d23",
+      "source": "edgar"
+    },
+    {
+      "bytes": 14035,
+      "content_id": "fab87e1daff808784d051e2baedf9d49bc170dcb36aafd111c975f985f135bd5",
+      "entity": "0001484769",
+      "filed_year": 2015,
+      "path": "edgar/0001484769/2015/fab87e1daff808784d051e2baedf9d49bc170dcb36aafd111c975f985f135bd5.parquet",
+      "rows": 1102,
+      "sha256": "8a7dc13f7da13fcd1f220cb03cd83b3c57c705938b6d4bf9a21886e2746b336a",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12236,
+      "content_id": "2561ba0a56dcaebcfa5d6d741524cf52a48a17fa67bb11d5f27972e6d9b8f909",
+      "entity": "0001484769",
+      "filed_year": 2016,
+      "path": "edgar/0001484769/2016/2561ba0a56dcaebcfa5d6d741524cf52a48a17fa67bb11d5f27972e6d9b8f909.parquet",
+      "rows": 767,
+      "sha256": "fb708ffac47e6eb8b3479cc6d5ffc3eb11c08b8c8e2b3456187550fb52f71584",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12447,
+      "content_id": "2c6153a269679ced50420e43e0ef187a6ce26134a225be8f16742ef40cb195af",
+      "entity": "0001484769",
+      "filed_year": 2017,
+      "path": "edgar/0001484769/2017/2c6153a269679ced50420e43e0ef187a6ce26134a225be8f16742ef40cb195af.parquet",
+      "rows": 790,
+      "sha256": "ab81315eaaa557eee7d3182424cb20fdbd505861d4f1a9dc745d117cf50c8a17",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12776,
+      "content_id": "275beb6ef0d151b8b37b8117d4fc36b341a3a946000ebb90e7546b6f60c1d023",
+      "entity": "0001484769",
+      "filed_year": 2018,
+      "path": "edgar/0001484769/2018/275beb6ef0d151b8b37b8117d4fc36b341a3a946000ebb90e7546b6f60c1d023.parquet",
+      "rows": 777,
+      "sha256": "555473d35e911c3d3916ce643f7681d72c91754c2c81bfd393679f10045f43a6",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16748,
+      "content_id": "574979d5b7ad6122f4a33476efd84a975e2969b96ac921e4f1fe0586d84f69ed",
+      "entity": "0001484769",
+      "filed_year": 2019,
+      "path": "edgar/0001484769/2019/574979d5b7ad6122f4a33476efd84a975e2969b96ac921e4f1fe0586d84f69ed.parquet",
+      "rows": 1170,
+      "sha256": "7a6abcf5c67cc63a43ead564d7b980bce870bce168738268c288476175346a7e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19936,
+      "content_id": "b605e7a1a2818e985dadac095bd7c5a1282448d47418acbe75dcb7d6e198ce4a",
+      "entity": "0001484769",
+      "filed_year": 2020,
+      "path": "edgar/0001484769/2020/b605e7a1a2818e985dadac095bd7c5a1282448d47418acbe75dcb7d6e198ce4a.parquet",
+      "rows": 2068,
+      "sha256": "1b8743c5d7248cb20c5283d01d55b726d978761b74f3de7b2b00ad4852a6117b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18034,
+      "content_id": "38f1d2599c2880e5dbc72d3230287dcd0d9731040513dd58e198cfb9a8fce7b0",
+      "entity": "0001484769",
+      "filed_year": 2021,
+      "path": "edgar/0001484769/2021/38f1d2599c2880e5dbc72d3230287dcd0d9731040513dd58e198cfb9a8fce7b0.parquet",
+      "rows": 1328,
+      "sha256": "59259f01a1ec6b4eca922731e0edc596b595dd300204563b5a7fab51a3cdedc0",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19541,
+      "content_id": "0927b5ff82ea4e25f1878a5edd047cacc094576728a35e415f6abb3f953ac546",
+      "entity": "0001484769",
+      "filed_year": 2022,
+      "path": "edgar/0001484769/2022/0927b5ff82ea4e25f1878a5edd047cacc094576728a35e415f6abb3f953ac546.parquet",
+      "rows": 1480,
+      "sha256": "2906c8ff127fef780f16d590d40af2ad84c71d0c8a127a3b9a3c500b2ab1df06",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19442,
+      "content_id": "40d83341bd448669439e82f6938989243a6d0801dac2b60c64b4cce73802c29d",
+      "entity": "0001484769",
+      "filed_year": 2023,
+      "path": "edgar/0001484769/2023/40d83341bd448669439e82f6938989243a6d0801dac2b60c64b4cce73802c29d.parquet",
+      "rows": 1697,
+      "sha256": "64aaac88e6076862b833e2a312a0410aa3b30476fdd7c2cc7a881ea2a3a695f2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18077,
+      "content_id": "b6e2a842f65ea6fe9fa4e0488008d4bdd0f8834da2b5fa9c92cf358f5222dece",
+      "entity": "0001484769",
+      "filed_year": 2024,
+      "path": "edgar/0001484769/2024/b6e2a842f65ea6fe9fa4e0488008d4bdd0f8834da2b5fa9c92cf358f5222dece.parquet",
+      "rows": 1629,
+      "sha256": "a6fea47b2e59807250372bd4ae58adc5fed7ea01af252e28af0b7cbe22f268fb",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18384,
+      "content_id": "c88639ce0c11211e1a435971dfb0fa8a781abe0f68d825c6e224afb3649e1e5e",
+      "entity": "0001484769",
+      "filed_year": 2025,
+      "path": "edgar/0001484769/2025/c88639ce0c11211e1a435971dfb0fa8a781abe0f68d825c6e224afb3649e1e5e.parquet",
+      "rows": 1686,
+      "sha256": "39eb40968e1031103f463e06e09c201ee141a7eacae163f35d88b6b86bda48ac",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13139,
+      "content_id": "385923815e66f4d91b8cdd70f83633a4eb99c05c71df72fbde90a9c60eca5467",
+      "entity": "0001484769",
+      "filed_year": 2026,
+      "path": "edgar/0001484769/2026/385923815e66f4d91b8cdd70f83633a4eb99c05c71df72fbde90a9c60eca5467.parquet",
+      "rows": 1019,
+      "sha256": "e9ab7da7da02913f0e70bf879d8407262f9c0564a3a59f9580e5d541e0be93a9",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15323,
+      "content_id": "181a5c1909da137a6257beb434ed0cea30beb46f7ed3f2c798853615f47d08d5",
+      "entity": "0001543151",
+      "filed_year": 2019,
+      "path": "edgar/0001543151/2019/181a5c1909da137a6257beb434ed0cea30beb46f7ed3f2c798853615f47d08d5.parquet",
+      "rows": 1390,
+      "sha256": "0dd90b2994b71d9045c8c6d11f5d609da0ba5458d447d403786af8d21af97ff4",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21121,
+      "content_id": "7e133333fa8babf587cd022c629eb2579a0b26a1a7fde8090f838f4f88522775",
+      "entity": "0001543151",
+      "filed_year": 2020,
+      "path": "edgar/0001543151/2020/7e133333fa8babf587cd022c629eb2579a0b26a1a7fde8090f838f4f88522775.parquet",
+      "rows": 2031,
+      "sha256": "a3649e55dd539a3a404e40fa63e3c4af5e64ea9e8c9ef14f5b507ad1e8c6de99",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21124,
+      "content_id": "92b90c108e2696a4969b612347a8c9859d88bb7ec66635ec4897f2867f8b7c20",
+      "entity": "0001543151",
+      "filed_year": 2021,
+      "path": "edgar/0001543151/2021/92b90c108e2696a4969b612347a8c9859d88bb7ec66635ec4897f2867f8b7c20.parquet",
+      "rows": 1969,
+      "sha256": "a1f3138b6cfc42e645b9d653f50c124413fbe9f14ee8191064f94fb35eada945",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19574,
+      "content_id": "4f051f9900d3d36b4ad8d8255dc0492521d96821cca985a74e02e5a98de2265c",
+      "entity": "0001543151",
+      "filed_year": 2022,
+      "path": "edgar/0001543151/2022/4f051f9900d3d36b4ad8d8255dc0492521d96821cca985a74e02e5a98de2265c.parquet",
+      "rows": 1726,
+      "sha256": "439ae0b3ae58bd8fe0aa605bb7697ce1e3bf25b6b38dd5a8c56ca6b50cc986ca",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18915,
+      "content_id": "e54c9d6f6f57be5376e2faaf059369985e148d43db6ec3f723b0f2c29bdc3abe",
+      "entity": "0001543151",
+      "filed_year": 2023,
+      "path": "edgar/0001543151/2023/e54c9d6f6f57be5376e2faaf059369985e148d43db6ec3f723b0f2c29bdc3abe.parquet",
+      "rows": 1674,
+      "sha256": "70fa28cbb0b5f471808762a5a91fcfebf83059b4ad8d9299e7e2fedb9665b16e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19253,
+      "content_id": "da45107d24f2990ee87d419ed4fcd1a53a761c147b33bdbf3adf1c2b30394bdc",
+      "entity": "0001543151",
+      "filed_year": 2024,
+      "path": "edgar/0001543151/2024/da45107d24f2990ee87d419ed4fcd1a53a761c147b33bdbf3adf1c2b30394bdc.parquet",
+      "rows": 1662,
+      "sha256": "9c81c4cc3875e1d87bd424e93a766f7162e56d6c38663d215d1040dc6ae2dfa8",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19971,
+      "content_id": "9262c2b63a0516bdcfe949c363c99f6b7e1c5c1f1a72ffdcc1771538a03dbf28",
+      "entity": "0001543151",
+      "filed_year": 2025,
+      "path": "edgar/0001543151/2025/9262c2b63a0516bdcfe949c363c99f6b7e1c5c1f1a72ffdcc1771538a03dbf28.parquet",
+      "rows": 1664,
+      "sha256": "598d2f089f43d69a19eab379d1606d383c910fe3cafb80a5746e2c29b02cc891",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20635,
+      "content_id": "e897d30e735635a5de3f0cb79b842d6ddf949c9ae3c78e336ae9b65f5d0ae6bd",
+      "entity": "0001543151",
+      "filed_year": 2026,
+      "path": "edgar/0001543151/2026/e897d30e735635a5de3f0cb79b842d6ddf949c9ae3c78e336ae9b65f5d0ae6bd.parquet",
+      "rows": 1542,
+      "sha256": "ed98fe018332b9a9e47ca1965ee2ae09fd4a8571b2af20ca30c794d2f5869ab9",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12115,
+      "content_id": "4468acd0c60b9e540bc700bffead1ea2866884c1a0eef8ea2549765169fd0e77",
+      "entity": "0001579733",
+      "filed_year": 2020,
+      "path": "edgar/0001579733/2020/4468acd0c60b9e540bc700bffead1ea2866884c1a0eef8ea2549765169fd0e77.parquet",
+      "rows": 730,
+      "sha256": "dd0e1458dd25491366953603812cfacd3620ebc5b93c9b0e576abd6ff2a2ff74",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17456,
+      "content_id": "d7d7be8e64d9820e6930870298e77c3889c7f9fd55b392f22799bce72d471481",
+      "entity": "0001579733",
+      "filed_year": 2021,
+      "path": "edgar/0001579733/2021/d7d7be8e64d9820e6930870298e77c3889c7f9fd55b392f22799bce72d471481.parquet",
+      "rows": 1476,
+      "sha256": "457226fef84ca7fe7784f650e386e3c49a6216a44361405f0da0e0f1520ddad9",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18006,
+      "content_id": "ea81ff483cf2aab71fd5795c3d3ad8a6897aea47754b180fb092e1ef01094011",
+      "entity": "0001579733",
+      "filed_year": 2022,
+      "path": "edgar/0001579733/2022/ea81ff483cf2aab71fd5795c3d3ad8a6897aea47754b180fb092e1ef01094011.parquet",
+      "rows": 1377,
+      "sha256": "b89c39e74af623d0bf4b46e5a31208192863e3df12dc8bc6b33c2adb27cc3042",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17905,
+      "content_id": "526f69c693f7df45af020f8c2e59b376ba0af33b869980d5bc73b5aaca0a9f95",
+      "entity": "0001579733",
+      "filed_year": 2023,
+      "path": "edgar/0001579733/2023/526f69c693f7df45af020f8c2e59b376ba0af33b869980d5bc73b5aaca0a9f95.parquet",
+      "rows": 1552,
+      "sha256": "34cce12a5d0488edc9953330d71197a42071cc9b730c6d2cb41857276e935aa0",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18137,
+      "content_id": "0fb6ac2f135a312f1193bd551b3f33459fb764d587dc97e96af962f6525caa79",
+      "entity": "0001579733",
+      "filed_year": 2024,
+      "path": "edgar/0001579733/2024/0fb6ac2f135a312f1193bd551b3f33459fb764d587dc97e96af962f6525caa79.parquet",
+      "rows": 1641,
+      "sha256": "e967f22d71660958477f42c6d19070510e9ad45b771e6b73a61674dc261e3dc7",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18080,
+      "content_id": "e3269b7e171d12de5cfaec2e339a01c17d36c91c4ef70932772d1036fa7993a2",
+      "entity": "0001579733",
+      "filed_year": 2025,
+      "path": "edgar/0001579733/2025/e3269b7e171d12de5cfaec2e339a01c17d36c91c4ef70932772d1036fa7993a2.parquet",
+      "rows": 1675,
+      "sha256": "1fe7fe89477cbb2e9613f21d3c7d12bf283b4a39f2717f83a95d5fffa1fe8bd6",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17420,
+      "content_id": "afa606ed96b94d63b521103593cc16a47384c20cd9ea726763437dee17fbe440",
+      "entity": "0001579733",
+      "filed_year": 2026,
+      "path": "edgar/0001579733/2026/afa606ed96b94d63b521103593cc16a47384c20cd9ea726763437dee17fbe440.parquet",
+      "rows": 1343,
+      "sha256": "ffaf5bab41fda882aebd7ac886fb5f4cb86780f6f10c7cdd73fe4cfebc92379d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 11000,
+      "content_id": "cc0688d108807b876b79cfdc9b74a9730c4cc5eff6b41c3357d2fba42db74a4f",
+      "entity": "0001652044",
+      "filed_year": 2015,
+      "path": "edgar/0001652044/2015/cc0688d108807b876b79cfdc9b74a9730c4cc5eff6b41c3357d2fba42db74a4f.parquet",
+      "rows": 450,
+      "sha256": "581549ff50455009ec2d75197f2f09dccebc36578e201eb157688aeb0e426e5b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21088,
+      "content_id": "634f843731e1c91f992c39c7d1bffab9e4ab1e399c72a85eda5abebc829550ba",
+      "entity": "0001652044",
+      "filed_year": 2016,
+      "path": "edgar/0001652044/2016/634f843731e1c91f992c39c7d1bffab9e4ab1e399c72a85eda5abebc829550ba.parquet",
+      "rows": 2498,
+      "sha256": "be6bf03e2b2888d2996bb52145e49fe3ab51d4306c9bb250d63f8fc2a2511f25",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19165,
+      "content_id": "95ad0ec5fae510b6ac69c6171c1e0c86b11936974e314bea8929ddd71e7210f8",
+      "entity": "0001652044",
+      "filed_year": 2017,
+      "path": "edgar/0001652044/2017/95ad0ec5fae510b6ac69c6171c1e0c86b11936974e314bea8929ddd71e7210f8.parquet",
+      "rows": 1631,
+      "sha256": "3d85220ba39af9c5e360a9edd05ae7fed52a8fe1d79c29f07712e07e190940c7",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19821,
+      "content_id": "56813b94c2aafe192274e939e4381ac5b88592a5b63c7a8100bff63380ba47bc",
+      "entity": "0001652044",
+      "filed_year": 2018,
+      "path": "edgar/0001652044/2018/56813b94c2aafe192274e939e4381ac5b88592a5b63c7a8100bff63380ba47bc.parquet",
+      "rows": 1666,
+      "sha256": "95e28dce194f5d5e871487b004afb2218cfda2d1a75b8664573d367955915ad9",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20264,
+      "content_id": "f7a0d046d6ebd256dbd6bf64709fb59835cc2427e0ac63dacdd4350acd840b8f",
+      "entity": "0001652044",
+      "filed_year": 2019,
+      "path": "edgar/0001652044/2019/f7a0d046d6ebd256dbd6bf64709fb59835cc2427e0ac63dacdd4350acd840b8f.parquet",
+      "rows": 1818,
+      "sha256": "66a3de5c0d4ee542ee11f27246c26f78b2bdb2564d7959ceec229dc3cef94bf9",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20969,
+      "content_id": "b501a01989faa4478b1a1349cde2b7e1362c13fe4af316d49c7f3883859b2667",
+      "entity": "0001652044",
+      "filed_year": 2020,
+      "path": "edgar/0001652044/2020/b501a01989faa4478b1a1349cde2b7e1362c13fe4af316d49c7f3883859b2667.parquet",
+      "rows": 1894,
+      "sha256": "88945a79d8c85558217309e594df0c00efa5b75b700f7f0a850e989fa051429c",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20221,
+      "content_id": "0c11b7f0b2f2d54f8539322fb7f33dde3f93a925b79dc1e9507d3956b4e00ed2",
+      "entity": "0001652044",
+      "filed_year": 2021,
+      "path": "edgar/0001652044/2021/0c11b7f0b2f2d54f8539322fb7f33dde3f93a925b79dc1e9507d3956b4e00ed2.parquet",
+      "rows": 1811,
+      "sha256": "bee61725d4b55224a12682d1029b2ceb754b815978c7149cceae5b5a1a230030",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20545,
+      "content_id": "5ec1c5198dd38fe88bd38f3c19d58eb4ff9f2395a276385d3491e65a4ca632c6",
+      "entity": "0001652044",
+      "filed_year": 2022,
+      "path": "edgar/0001652044/2022/5ec1c5198dd38fe88bd38f3c19d58eb4ff9f2395a276385d3491e65a4ca632c6.parquet",
+      "rows": 1810,
+      "sha256": "fa108ce5b8edf41588466cc7a22978951fbdf2e08d45a34116c9f6f337e98a43",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19717,
+      "content_id": "82d4009d7d4f3f81f962f3df894ff4007ae8c7d1d02453bc0ac7772ac173cc6c",
+      "entity": "0001652044",
+      "filed_year": 2023,
+      "path": "edgar/0001652044/2023/82d4009d7d4f3f81f962f3df894ff4007ae8c7d1d02453bc0ac7772ac173cc6c.parquet",
+      "rows": 1774,
+      "sha256": "7ff0f6bddc5a0b93a423229b062c28f1eb5cc149d506e3c56c3acf045698afd7",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19880,
+      "content_id": "3834f4be5828519c276ffb374f3487ee560b89ca361b188e3e4f11286997836b",
+      "entity": "0001652044",
+      "filed_year": 2024,
+      "path": "edgar/0001652044/2024/3834f4be5828519c276ffb374f3487ee560b89ca361b188e3e4f11286997836b.parquet",
+      "rows": 1774,
+      "sha256": "986481685830c1abbc9c4bd89e7b10bc580c610369cc5287dbed9bf8810e5a1f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 22003,
+      "content_id": "e90fb082c634588cb61e5d2e5e24c7e686af8231772ff5ef9a691e089ca3610b",
+      "entity": "0001652044",
+      "filed_year": 2025,
+      "path": "edgar/0001652044/2025/e90fb082c634588cb61e5d2e5e24c7e686af8231772ff5ef9a691e089ca3610b.parquet",
+      "rows": 2044,
+      "sha256": "62c8a8c0fed19bf6d7157a188c3b3dd43ec4e609ca5e33245268c2702fc80346",
+      "source": "edgar"
+    },
+    {
+      "bytes": 22454,
+      "content_id": "22a15dbc1fc6d61245b55ea2565f82e0b29fd5679f3e0d1bb5a2f3bf249b4e11",
+      "entity": "0001652044",
+      "filed_year": 2026,
+      "path": "edgar/0001652044/2026/22a15dbc1fc6d61245b55ea2565f82e0b29fd5679f3e0d1bb5a2f3bf249b4e11.parquet",
+      "rows": 1737,
+      "sha256": "ff6ea3006498f0d2716e37d7825b7457fd6647222c9fb35d22c9ab4a43854c35",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9698,
+      "content_id": "38ff74d512654b80cb70318b82410c1ee0d2105d2bfae1f1a9367547b9c5666d",
+      "entity": "0001681087",
+      "filed_year": 2018,
+      "path": "edgar/0001681087/2018/38ff74d512654b80cb70318b82410c1ee0d2105d2bfae1f1a9367547b9c5666d.parquet",
+      "rows": 414,
+      "sha256": "1fbb4587a44ea0ae2c50ab4e8cf72bd45c11445026217ffa4ec4989997e684f1",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13349,
+      "content_id": "98ce826699e9ed6385a42604a3a022dd963d4517fe1fa8b47d9714064d3e32bd",
+      "entity": "0001681087",
+      "filed_year": 2019,
+      "path": "edgar/0001681087/2019/98ce826699e9ed6385a42604a3a022dd963d4517fe1fa8b47d9714064d3e32bd.parquet",
+      "rows": 914,
+      "sha256": "11f67c4db9d11bf4d08d63e577ce30ae567a98709b1f7607a2629546c4beb92c",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12899,
+      "content_id": "82db970a44bf27c0d12b0c00c86a7a55c1ffd698bad16427d564601dcd9ff807",
+      "entity": "0001681087",
+      "filed_year": 2020,
+      "path": "edgar/0001681087/2020/82db970a44bf27c0d12b0c00c86a7a55c1ffd698bad16427d564601dcd9ff807.parquet",
+      "rows": 821,
+      "sha256": "b3fbe46a38325b7eb329eb9251a8395a605d5698e69e5de978937ba0131f460b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12145,
+      "content_id": "5348904563a2b57c73a97cb3970b5cc20829a3abd7e2efa4a571e2e74b495dfc",
+      "entity": "0001681087",
+      "filed_year": 2021,
+      "path": "edgar/0001681087/2021/5348904563a2b57c73a97cb3970b5cc20829a3abd7e2efa4a571e2e74b495dfc.parquet",
+      "rows": 782,
+      "sha256": "8717f990508591ab96b1462bb35d76180d10fe203cf6623dafadf70e97760fe3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12512,
+      "content_id": "adf5212eecf75c784e20d2aaa80360efa6977aa87f0e3019cf51895195a65724",
+      "entity": "0001681087",
+      "filed_year": 2022,
+      "path": "edgar/0001681087/2022/adf5212eecf75c784e20d2aaa80360efa6977aa87f0e3019cf51895195a65724.parquet",
+      "rows": 809,
+      "sha256": "2066f0a5667ef5ffa94b30cca0f026f96f69715c239858ba1e495f317e85af2f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13401,
+      "content_id": "1055520df493eed11a3b73f327a165e26671ec62582db615d4252e7e7bb1121c",
+      "entity": "0001681087",
+      "filed_year": 2023,
+      "path": "edgar/0001681087/2023/1055520df493eed11a3b73f327a165e26671ec62582db615d4252e7e7bb1121c.parquet",
+      "rows": 957,
+      "sha256": "38643375a4a9f82a9189c02d225ec2c0ad9bdf56c82a5a23ae724f43e7a25b6e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 14734,
+      "content_id": "24e1e21719c5c5add904789a17156e713808ca7ef4f83c50908b7672e4934814",
+      "entity": "0001681087",
+      "filed_year": 2024,
+      "path": "edgar/0001681087/2024/24e1e21719c5c5add904789a17156e713808ca7ef4f83c50908b7672e4934814.parquet",
+      "rows": 1013,
+      "sha256": "d81f50a1c6ca5a61a85a60ee408864b8bf63d7f4538861e56e75b7f77c03e58f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13360,
+      "content_id": "e733d767b1c6e1bb455b319d20080eb46dd8dd3b61545bbfffaf00c8caa5e2ef",
+      "entity": "0001681087",
+      "filed_year": 2025,
+      "path": "edgar/0001681087/2025/e733d767b1c6e1bb455b319d20080eb46dd8dd3b61545bbfffaf00c8caa5e2ef.parquet",
+      "rows": 974,
+      "sha256": "bb095b7e106f2e1ffe6b3877a90eb2c4c6975204442d573e7e9c94cec9ddc22f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12955,
+      "content_id": "cfd1c2d345e8f466e55df3636a9b04ccd0b0746299b9c76b8ac5c46d18315825",
+      "entity": "0001681087",
+      "filed_year": 2026,
+      "path": "edgar/0001681087/2026/cfd1c2d345e8f466e55df3636a9b04ccd0b0746299b9c76b8ac5c46d18315825.parquet",
+      "rows": 795,
+      "sha256": "eec80a4cbacc8b8c0812892c9e226bddb919015943a3c0c57969eed0dc37e561",
+      "source": "edgar"
+    },
+    {
+      "bytes": 7752,
+      "content_id": "35e9d3e8ae7fb343b9f6cd546e32097d229bacb27207144347dacb2243b92bf8",
+      "entity": "0001682745",
+      "filed_year": 2017,
+      "path": "edgar/0001682745/2017/35e9d3e8ae7fb343b9f6cd546e32097d229bacb27207144347dacb2243b92bf8.parquet",
+      "rows": 213,
+      "sha256": "882d809c2fb1eaf3871ddbe2320d7187c4639d8b45132e055c5d0e03083942b2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9459,
+      "content_id": "cfeefaad1a74c915fbf69c601eb5598aa495fbd6da9a8598ec7603277c034fc6",
+      "entity": "0001682745",
+      "filed_year": 2018,
+      "path": "edgar/0001682745/2018/cfeefaad1a74c915fbf69c601eb5598aa495fbd6da9a8598ec7603277c034fc6.parquet",
+      "rows": 403,
+      "sha256": "ed32a951c6a56b4f795c053f99cb1d9b613d5be4a6acc13ffc7f289fd291f072",
+      "source": "edgar"
+    },
+    {
+      "bytes": 16144,
+      "content_id": "a002bb54f07e961979f4bd18c77dafca624a7ff9fa9ce51ae991cecec9db6420",
+      "entity": "0001682745",
+      "filed_year": 2019,
+      "path": "edgar/0001682745/2019/a002bb54f07e961979f4bd18c77dafca624a7ff9fa9ce51ae991cecec9db6420.parquet",
+      "rows": 1202,
+      "sha256": "31e3ba01adb91763744d5724f07da20b4c3c1e269b129a58ee2c9c42b8ce8505",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17032,
+      "content_id": "2aaa341eb6e85bb8cac893a9fb29a6e61b10fac68544caf8f6a474f6a75a2183",
+      "entity": "0001682745",
+      "filed_year": 2020,
+      "path": "edgar/0001682745/2020/2aaa341eb6e85bb8cac893a9fb29a6e61b10fac68544caf8f6a474f6a75a2183.parquet",
+      "rows": 1358,
+      "sha256": "f1a90739899e4f9b7e0e36e346627ad62c30313a799c53f438232d4c3eb097f4",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18783,
+      "content_id": "75a48fe45056ca9fa87fa4e75e44cf23805e7886a64e26bf03471ef774db2222",
+      "entity": "0001682745",
+      "filed_year": 2021,
+      "path": "edgar/0001682745/2021/75a48fe45056ca9fa87fa4e75e44cf23805e7886a64e26bf03471ef774db2222.parquet",
+      "rows": 1870,
+      "sha256": "ddc7139eeb850bf4351cc5ef5e5bf6655c6ecb02c11dc05a0a5b46593293fc38",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18017,
+      "content_id": "d58ea2cfb2d8d35885f713dd3891bf734ab96b0d514887f7a50cf01b1abb61a6",
+      "entity": "0001682745",
+      "filed_year": 2022,
+      "path": "edgar/0001682745/2022/d58ea2cfb2d8d35885f713dd3891bf734ab96b0d514887f7a50cf01b1abb61a6.parquet",
+      "rows": 1450,
+      "sha256": "91b0f844883a45d9a3f9ad598ea72d9a98c86b2c78c17f7daba638db50271c29",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18866,
+      "content_id": "d81897bd77b4fe1664fa75b47d7614872a8555ad18b1634a2f852331443be47a",
+      "entity": "0001682745",
+      "filed_year": 2023,
+      "path": "edgar/0001682745/2023/d81897bd77b4fe1664fa75b47d7614872a8555ad18b1634a2f852331443be47a.parquet",
+      "rows": 1516,
+      "sha256": "f69d2464f3c3200894a6c682ab76a287952ac0539f273e696f0be630fa60909b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18503,
+      "content_id": "abdb443d80a3f7f551ef8a38fb273ee20339de128abb78931e26777d939b92fb",
+      "entity": "0001682745",
+      "filed_year": 2024,
+      "path": "edgar/0001682745/2024/abdb443d80a3f7f551ef8a38fb273ee20339de128abb78931e26777d939b92fb.parquet",
+      "rows": 1521,
+      "sha256": "834c846415a876da780109f51936b927ea7db596f7395045bdd601e26f17bafa",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17417,
+      "content_id": "520bc9414f3dcc6e8d6fb4720abddcca60c815b7bb32fda97bf867115956555b",
+      "entity": "0001682745",
+      "filed_year": 2025,
+      "path": "edgar/0001682745/2025/520bc9414f3dcc6e8d6fb4720abddcca60c815b7bb32fda97bf867115956555b.parquet",
+      "rows": 1433,
+      "sha256": "0bc1fa51091f956e9b435472c35315c7bf51bad54b3df9024cf8fa23ce7d2f73",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17048,
+      "content_id": "469a62b3d621bdce8f92be4fb6189ae1147f0643d94213d5e1b37f0606080c9b",
+      "entity": "0001682745",
+      "filed_year": 2026,
+      "path": "edgar/0001682745/2026/469a62b3d621bdce8f92be4fb6189ae1147f0643d94213d5e1b37f0606080c9b.parquet",
+      "rows": 1164,
+      "sha256": "7d1d16fe6be40c9405a714b52e2619474fcbf5e8fb8e0bb6e65d2ea6112777ec",
+      "source": "edgar"
+    },
+    {
+      "bytes": 10983,
+      "content_id": "10affb9205e1cdb2f59537c1b3d1f4932fe1e7ab8998a2820dc2ad08618a0967",
+      "entity": "0001702744",
+      "filed_year": 2017,
+      "path": "edgar/0001702744/2017/10affb9205e1cdb2f59537c1b3d1f4932fe1e7ab8998a2820dc2ad08618a0967.parquet",
+      "rows": 431,
+      "sha256": "599294fd036f29f27a6bfb981fb8fb32ea2ba746420119c96b57a780ac824f53",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13336,
+      "content_id": "9f7d23222ba8fec8ce888bfb1110adc99914a5decccf8d144e22d9066021ecb1",
+      "entity": "0001702744",
+      "filed_year": 2018,
+      "path": "edgar/0001702744/2018/9f7d23222ba8fec8ce888bfb1110adc99914a5decccf8d144e22d9066021ecb1.parquet",
+      "rows": 909,
+      "sha256": "891b1537c5b01e37fea8e3046732c4e007b1758a379137c458634f528b78a84b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 15871,
+      "content_id": "1d560e39318e433ff3b00e374e1046cb1f2aea52d458615d0a8dc4743f2c9519",
+      "entity": "0001702744",
+      "filed_year": 2019,
+      "path": "edgar/0001702744/2019/1d560e39318e433ff3b00e374e1046cb1f2aea52d458615d0a8dc4743f2c9519.parquet",
+      "rows": 1348,
+      "sha256": "520f892c8338f9fb945f492d87d93fb8675a59961cec7593b96a34fb2808a898",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18393,
+      "content_id": "e403e417de278af1f977a46bf0967dc3c8c8f680664749e5f8f0d9167008ab46",
+      "entity": "0001702744",
+      "filed_year": 2020,
+      "path": "edgar/0001702744/2020/e403e417de278af1f977a46bf0967dc3c8c8f680664749e5f8f0d9167008ab46.parquet",
+      "rows": 1615,
+      "sha256": "092ea6ab2550cf3bf0a958e7d24112ded5e5a18570a1919c62859506e3069272",
+      "source": "edgar"
+    },
+    {
+      "bytes": 25518,
+      "content_id": "1f890e2918afe95bd379d86673730ff662006bd61977621762eed4cc0098288b",
+      "entity": "0001702744",
+      "filed_year": 2021,
+      "path": "edgar/0001702744/2021/1f890e2918afe95bd379d86673730ff662006bd61977621762eed4cc0098288b.parquet",
+      "rows": 3148,
+      "sha256": "d71106c70adcc4a91bbaa8373540577a259cdc21c78a658e151af7dd9914e9ab",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19473,
+      "content_id": "d84fe2960c226a8e6403a59a0956a90c11c6f767055eb3f7253157c093c267c3",
+      "entity": "0001702744",
+      "filed_year": 2022,
+      "path": "edgar/0001702744/2022/d84fe2960c226a8e6403a59a0956a90c11c6f767055eb3f7253157c093c267c3.parquet",
+      "rows": 1661,
+      "sha256": "b7e3b28008137df6316866629a6f74c6b485eb6fc72a13ad6d6891958999cb36",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18160,
+      "content_id": "5b8d48c51bd1501f0df257fe674c2475797074af70f9fa1099f569fde7766a2d",
+      "entity": "0001702744",
+      "filed_year": 2023,
+      "path": "edgar/0001702744/2023/5b8d48c51bd1501f0df257fe674c2475797074af70f9fa1099f569fde7766a2d.parquet",
+      "rows": 1578,
+      "sha256": "d32c19a5e63e37451f9085200b61ce45b86c140ba9dad8c0ef806524a7e704a4",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17945,
+      "content_id": "e7ec03cf4018bed3054e1f5c3deb6a56dcbb69105b00b94006d9b7a8b59139bb",
+      "entity": "0001702744",
+      "filed_year": 2024,
+      "path": "edgar/0001702744/2024/e7ec03cf4018bed3054e1f5c3deb6a56dcbb69105b00b94006d9b7a8b59139bb.parquet",
+      "rows": 1543,
+      "sha256": "f6fdda04c4e87c7092a9d46df4c2d053856ee9f6b9dfa2575a4d62ff09047994",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17700,
+      "content_id": "22ba437cf3130b5eb85e24cf62bc205ff3463a128bd7feefcbad14d03b424234",
+      "entity": "0001702744",
+      "filed_year": 2025,
+      "path": "edgar/0001702744/2025/22ba437cf3130b5eb85e24cf62bc205ff3463a128bd7feefcbad14d03b424234.parquet",
+      "rows": 1508,
+      "sha256": "bde52a0d7ebff0e3479dab1ec558f5bfb0ecbb79d10cf2336c6796bf15e0881b",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13360,
+      "content_id": "f8f131d339ee1edb4ca0ec2d99d578e67cffc9a3aae0256e51b717fcb6d83864",
+      "entity": "0001702744",
+      "filed_year": 2026,
+      "path": "edgar/0001702744/2026/f8f131d339ee1edb4ca0ec2d99d578e67cffc9a3aae0256e51b717fcb6d83864.parquet",
+      "rows": 1040,
+      "sha256": "1e986dda0a602f3381dc5132b3c5a84a48ef849dc527c1a1a88e6dc43d06b9b8",
+      "source": "edgar"
+    },
+    {
+      "bytes": 7757,
+      "content_id": "bfa7667a83681c276a1bf383feadd594e9217defa6c4061d7bc999f311a9beab",
+      "entity": "0001760689",
+      "filed_year": 2019,
+      "path": "edgar/0001760689/2019/bfa7667a83681c276a1bf383feadd594e9217defa6c4061d7bc999f311a9beab.parquet",
+      "rows": 227,
+      "sha256": "d3611482def7624b2a17649a4da2d228584d3da97996a0ead8271b4e9038cde8",
+      "source": "edgar"
+    },
+    {
+      "bytes": 9671,
+      "content_id": "9eda72e944f502c2f270bd5f6f4c73a555636651f0475812a5501298e19e066e",
+      "entity": "0001760689",
+      "filed_year": 2020,
+      "path": "edgar/0001760689/2020/9eda72e944f502c2f270bd5f6f4c73a555636651f0475812a5501298e19e066e.parquet",
+      "rows": 464,
+      "sha256": "be5ec2bbd57d2b33f9834cf528e7543bcd2c255dbfe37186681ad0e52344a6f3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 14912,
+      "content_id": "8ac2995e9775455f4a0931694a7cb423217b817083634b82c122a04ba51b3574",
+      "entity": "0001760689",
+      "filed_year": 2021,
+      "path": "edgar/0001760689/2021/8ac2995e9775455f4a0931694a7cb423217b817083634b82c122a04ba51b3574.parquet",
+      "rows": 871,
+      "sha256": "e43395e3ea4e872ded5b267983e3e2ebe6d0ed32b1317a9ca4dc6a9d76359083",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17076,
+      "content_id": "adb30f5f89f6da79742e00c89f8cb804e6269d5630f1713eafa78aaa9c395f3e",
+      "entity": "0001760689",
+      "filed_year": 2022,
+      "path": "edgar/0001760689/2022/adb30f5f89f6da79742e00c89f8cb804e6269d5630f1713eafa78aaa9c395f3e.parquet",
+      "rows": 1313,
+      "sha256": "3ca7f6805fd2e7433f44a32acb21084947d912faee1a248ed12ea2b9ec2bc6a2",
+      "source": "edgar"
+    },
+    {
+      "bytes": 17589,
+      "content_id": "01d9a652e75a3099493d448c488fc5829043e03ddfc03d409ffc9a73a94fbaad",
+      "entity": "0001760689",
+      "filed_year": 2023,
+      "path": "edgar/0001760689/2023/01d9a652e75a3099493d448c488fc5829043e03ddfc03d409ffc9a73a94fbaad.parquet",
+      "rows": 1548,
+      "sha256": "7c5f468d04c5717e15774527de8fb52b3f0c8f723c1cf71de7fcfc48175a5708",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18315,
+      "content_id": "0011d78a89a66c97b10f08e707e6d70b0e5c3dc5688fcf8eabd7f59c3169c3bc",
+      "entity": "0001760689",
+      "filed_year": 2024,
+      "path": "edgar/0001760689/2024/0011d78a89a66c97b10f08e707e6d70b0e5c3dc5688fcf8eabd7f59c3169c3bc.parquet",
+      "rows": 1585,
+      "sha256": "f84ab9184e0da41a65f5216cb8a2ecfe1c1b1192968fbbcef025b39958f38b73",
+      "source": "edgar"
+    },
+    {
+      "bytes": 22538,
+      "content_id": "85c4eba5a1318318b309dd364e7f5e2d70a7a5c251ec7f954e7538709446392d",
+      "entity": "0001760689",
+      "filed_year": 2025,
+      "path": "edgar/0001760689/2025/85c4eba5a1318318b309dd364e7f5e2d70a7a5c251ec7f954e7538709446392d.parquet",
+      "rows": 2528,
+      "sha256": "4fe1ff890c5e5dd07583a1ac472a91f61d1deaf5754da856ff86f316ce31eb07",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18239,
+      "content_id": "9ce6606260da5c5964795c50ecd30e9a3952dc9b6bac8bd885f2d25aa4e52d10",
+      "entity": "0001760689",
+      "filed_year": 2026,
+      "path": "edgar/0001760689/2026/9ce6606260da5c5964795c50ecd30e9a3952dc9b6bac8bd885f2d25aa4e52d10.parquet",
+      "rows": 1346,
+      "sha256": "f536ba451ebf510a25960ef8b038f46bc3d49818ac4ed61c095ac4b2a2cbef90",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13139,
+      "content_id": "f7c69173d5e1b41886040db232158785728adc5e900fd212754e634b08e3a9cc",
+      "entity": "0001772016",
+      "filed_year": 2020,
+      "path": "edgar/0001772016/2020/f7c69173d5e1b41886040db232158785728adc5e900fd212754e634b08e3a9cc.parquet",
+      "rows": 1122,
+      "sha256": "8640cd717bd5929be4cfbd34107a59839837c5bff1d30a2108eb1d02cdf2db4f",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13631,
+      "content_id": "ad8a4616cf2dea417e46492ba0e114d10de19642e65cc2eff2eeecc498af04fc",
+      "entity": "0001772016",
+      "filed_year": 2021,
+      "path": "edgar/0001772016/2021/ad8a4616cf2dea417e46492ba0e114d10de19642e65cc2eff2eeecc498af04fc.parquet",
+      "rows": 1158,
+      "sha256": "5cf1d075d1c63856931c3adc07440d5ff7466f263202e5f5fc819bc6ffa4b1c3",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13336,
+      "content_id": "d4c4d094940b02b0728b5c22cde050ee445696b718e956a804b6a8319cd53473",
+      "entity": "0001772016",
+      "filed_year": 2022,
+      "path": "edgar/0001772016/2022/d4c4d094940b02b0728b5c22cde050ee445696b718e956a804b6a8319cd53473.parquet",
+      "rows": 1108,
+      "sha256": "40e4721e2e14da68743c920fa8ab1d116fac9dad9c0ace402d89594bccb8874d",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12685,
+      "content_id": "90d758a5a44af6d7c323d68ca6f44f3bd0c60201cdc8a6e17a472f5d82c74814",
+      "entity": "0001772016",
+      "filed_year": 2023,
+      "path": "edgar/0001772016/2023/90d758a5a44af6d7c323d68ca6f44f3bd0c60201cdc8a6e17a472f5d82c74814.parquet",
+      "rows": 986,
+      "sha256": "582f741a6975531fd94bca03cc13b89f0af40af393f261d300090be71c7fde78",
+      "source": "edgar"
+    },
+    {
+      "bytes": 12276,
+      "content_id": "4013ea3d9c27ebe6a440cf89476a6a9d57bced07d81ef152673b74818bfc70c5",
+      "entity": "0001772016",
+      "filed_year": 2024,
+      "path": "edgar/0001772016/2024/4013ea3d9c27ebe6a440cf89476a6a9d57bced07d81ef152673b74818bfc70c5.parquet",
+      "rows": 903,
+      "sha256": "87aed756da7863b6c9f2f70a3eab10fd492c213fabef2993acd75ea4c828df85",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13257,
+      "content_id": "b48cc1d33072214f99d229d4ac2bb784bcee2bb5d7a43c175da963cda54ac55c",
+      "entity": "0001772016",
+      "filed_year": 2025,
+      "path": "edgar/0001772016/2025/b48cc1d33072214f99d229d4ac2bb784bcee2bb5d7a43c175da963cda54ac55c.parquet",
+      "rows": 970,
+      "sha256": "9b021345972aeb8b832aad456cdd2014b1b456cd19a25cf9e1b5731b1e2c33b7",
+      "source": "edgar"
+    },
+    {
+      "bytes": 10941,
+      "content_id": "f9575d82abdf58711276fe84bfd895dd30b05375f617bbc91cf6be5bf96d67fe",
+      "entity": "0001772016",
+      "filed_year": 2026,
+      "path": "edgar/0001772016/2026/f9575d82abdf58711276fe84bfd895dd30b05375f617bbc91cf6be5bf96d67fe.parquet",
+      "rows": 646,
+      "sha256": "1e2d6442ea5019b26cf5c1f13a49a6b36eb7687343e199aea0829228faaea782",
+      "source": "edgar"
+    },
+    {
+      "bytes": 13531,
+      "content_id": "2b6599e397634c11625b1f47081b5d7fca660868af8e094942c21862b98033a0",
+      "entity": "0001803599",
+      "filed_year": 2021,
+      "path": "edgar/0001803599/2021/2b6599e397634c11625b1f47081b5d7fca660868af8e094942c21862b98033a0.parquet",
+      "rows": 1024,
+      "sha256": "d0bf1f2523d4756a6c485df2fd384e9299bb0b06121f5b195ffe341fb5f7e80e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20082,
+      "content_id": "2da2d0f5bd426c0c5ef3072119a0fcf47fa8749a08d7593edae8ab91e4931776",
+      "entity": "0001803599",
+      "filed_year": 2022,
+      "path": "edgar/0001803599/2022/2da2d0f5bd426c0c5ef3072119a0fcf47fa8749a08d7593edae8ab91e4931776.parquet",
+      "rows": 1694,
+      "sha256": "63d27e0ac627ab617433a1aed4a974c5d2076b655ab7a9fcffa682e7522819cb",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19792,
+      "content_id": "813bd757ecdf977e96b981b13a0f9f50f00ce15b1728f836c1efbca5df26f190",
+      "entity": "0001803599",
+      "filed_year": 2023,
+      "path": "edgar/0001803599/2023/813bd757ecdf977e96b981b13a0f9f50f00ce15b1728f836c1efbca5df26f190.parquet",
+      "rows": 1780,
+      "sha256": "f360a00dd9723bc1ff24340cae04383e3c41e115f8d5bd6cb0fbd94b57cff5ef",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20655,
+      "content_id": "049f59c92b55b3187d9e7f2b96258ffe7083c408e7d4db32a15103a4917e4151",
+      "entity": "0001803599",
+      "filed_year": 2024,
+      "path": "edgar/0001803599/2024/049f59c92b55b3187d9e7f2b96258ffe7083c408e7d4db32a15103a4917e4151.parquet",
+      "rows": 1795,
+      "sha256": "12645808c7cf94369eaacd87573b1f5c1f23ea926f3613a2e45da4a164d491f5",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20554,
+      "content_id": "430dc59e467bcfb287b713e6ba3eb7f3e5da182646f992d50fb7dfc7f8d4a439",
+      "entity": "0001803599",
+      "filed_year": 2025,
+      "path": "edgar/0001803599/2025/430dc59e467bcfb287b713e6ba3eb7f3e5da182646f992d50fb7dfc7f8d4a439.parquet",
+      "rows": 1761,
+      "sha256": "2ef20c56ef9c13749ebaf579268e4dbce261d0b2b34ebbac143b2a1aa7209f26",
+      "source": "edgar"
+    },
+    {
+      "bytes": 21370,
+      "content_id": "ad3696aeac75d86ece9d24dcf9aee974f4866d654e0831eaac6795a71e339763",
+      "entity": "0001803599",
+      "filed_year": 2026,
+      "path": "edgar/0001803599/2026/ad3696aeac75d86ece9d24dcf9aee974f4866d654e0831eaac6795a71e339763.parquet",
+      "rows": 1820,
+      "sha256": "5404276a45369586990145796162181cbce55fc51505f74068ecc123899f10b7",
+      "source": "edgar"
+    },
+    {
+      "bytes": 18657,
+      "content_id": "871c001666e9e5f2a1815fcf66ec69de934b96bbfb5dde56fda991e07b1ee67a",
+      "entity": "0001902733",
+      "filed_year": 2022,
+      "path": "edgar/0001902733/2022/871c001666e9e5f2a1815fcf66ec69de934b96bbfb5dde56fda991e07b1ee67a.parquet",
+      "rows": 1649,
+      "sha256": "47f78c3b00e60529c0e9bc6ceb86f1fc5565aa55216fad1c9cb2bd473d22106e",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19181,
+      "content_id": "926f0d0a0a3db99ffd06a34e0643d4a8d48689040a2123e074c40368b0fec281",
+      "entity": "0001902733",
+      "filed_year": 2023,
+      "path": "edgar/0001902733/2023/926f0d0a0a3db99ffd06a34e0643d4a8d48689040a2123e074c40368b0fec281.parquet",
+      "rows": 1652,
+      "sha256": "2bd0a1bd2746438c1eddaddce3bac62ad53e26cbf57089c0dee044716ec04a27",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19157,
+      "content_id": "33341584a70302b0c22e94af46dbd0c9d730e1608ac7cd1c02c4f65fc9ed773d",
+      "entity": "0001902733",
+      "filed_year": 2024,
+      "path": "edgar/0001902733/2024/33341584a70302b0c22e94af46dbd0c9d730e1608ac7cd1c02c4f65fc9ed773d.parquet",
+      "rows": 1647,
+      "sha256": "5b06c063791824001983aaba5a07394f988b876be58baf32fc7cdafae12c1696",
+      "source": "edgar"
+    },
+    {
+      "bytes": 20397,
+      "content_id": "251f4703aeb99b961dfafac8d7d0eddc6e154829963eb1da72096bdf4e768169",
+      "entity": "0001902733",
+      "filed_year": 2025,
+      "path": "edgar/0001902733/2025/251f4703aeb99b961dfafac8d7d0eddc6e154829963eb1da72096bdf4e768169.parquet",
+      "rows": 1865,
+      "sha256": "6c7e22781ff5b4761446d928d6903f985ccb76e1dce3381ade0de23d1b4ccb89",
+      "source": "edgar"
+    },
+    {
+      "bytes": 19740,
+      "content_id": "9a7f9ff05ec111e0b6858927fb9fc735337bbfcd11431f847883989d3827ad56",
+      "entity": "0001902733",
+      "filed_year": 2026,
+      "path": "edgar/0001902733/2026/9a7f9ff05ec111e0b6858927fb9fc735337bbfcd11431f847883989d3827ad56.parquet",
+      "rows": 1554,
+      "sha256": "139239048d5061b20924313bc5814f418c23cb3f816e34869a764c11b32af304",
+      "source": "edgar"
+    }
+  ],
+  "manifest_version": 2,
+  "name": "pages",
+  "schema_sha256": "a7574c7f9a843c034a534a8a7e432c5c1acecf99dd4ab14993ce947929e41014",
+  "schema_version": 2,
+  "scope": {
+    "excluded_by_operator_instruction": 1,
+    "exclusions_listed": 6,
+    "names_ingested": 26,
+    "names_selected": 28,
+    "rule": "committed pages (data/dossiers/*/dossier.json) plus followed names (data/followed.json)",
+    "unread": [
+      {
+        "cik": "0000865752",
+        "reason": "not in the SEC cache: https://data.sec.gov/api/xbrl/companyfacts/CIK0000865752.json",
+        "ticker": "MNST"
+      }
+    ]
+  },
+  "snapshot_id": "edgar-4f3207f4da9fb71a",
+  "source": "edgar",
+  "storage": "git",
+  "totals": {
+    "bytes": 5940709,
+    "entities": 26,
+    "files": 353,
+    "order_bytes": 643427,
+    "order_files": 26,
+    "rows": 467887
+  },
+  "writer": {
+    "pyarrow": "26.0.1"
+  }
+}
