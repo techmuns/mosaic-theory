@@ -52,6 +52,15 @@ paid build's checks read (`gate_layer`), and exits 1 on each refusal that needs 
 These run on a first assembly too: a page that does not exist yet costs the same to refuse. The
 synthesis-dependent refusals (``_require_synthesis``, the uncited-material-figure guard) cannot be
 decided here.
+
+THE DRAWDOWN'S DATED PARTS (2026-11-04, `DrawdownAnchor`). The current window rolls with the
+page's date, so a rebuild moves an old gap-down OUT of it; on an anchored name the at-the-anchor
+part now carries that event, dated. A current-window field (``MOVABLE``) that leaves the window is
+therefore no regression when a dated part of this build carries the SAME dates or the SAME exhibit
+— it is listed as moved, with the part that carries it. Anything else stays a regression. The
+dated parts are compared by VALUE as well as presence, because they must never change once built:
+a date or an exhibit the committed page's part carries and this build's does not is a regression,
+and so stops the pass (`dated_part_losses`).
 """
 
 from __future__ import annotations
@@ -63,7 +72,7 @@ from collections import Counter
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypeGuard
 
 from vinci.config import Config
 from vinci.dossier.freshness import MAX_PANEL_AGE_DAYS, PanelAge, panel_age
@@ -90,6 +99,14 @@ POST_SPEND = ("_freshness_check", "_materiality_check")
 #: which the $0 build's scratch ``_write`` never sees — each run here against it
 #: (`post_spend_checks`).
 POST_WRITE = ("_refuse_degraded_drawdown_overwrite",)
+
+#: The current drawdown window's fields a dated part can carry once they leave the window
+#: (`carried_by`); every other field's loss is a regression.
+_DD = "mechanical.drawdown_cause."
+MOVABLE = (_DD + "gap_down_dates", _DD + "revised_guidance")
+
+#: The drawdown's dated parts, compared by value (`dated_part_losses`).
+DATED_PARTS = ("at_anchor", "since")
 
 #: The status of a field this build does not carry at all (key missing, or written as null).
 ABSENT = "absent"
@@ -135,6 +152,9 @@ class Comparison:
     #: Sourced fields inside lists, (committed, this build): NOT compared — a list's population
     #: moves with the calendar, so position is not identity.
     in_lists: tuple[int, int]
+    #: current-window drawdown fields that left the window and a dated part of this build carries
+    #: (`carried_by`): listed, not regressions
+    moved: tuple[Move, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -230,8 +250,116 @@ def compare(committed: Mapping[str, Any], fresh: Mapping[str, Any],
             regressions.append(Move(path, was, now, why.get(path, new.note if new else None)))
         elif was != _PRESENT and now == _PRESENT:
             gained.append(Move(path, was, now, None))
-    return Comparison(tuple(regressions), tuple(gained), tuple(undecided), len(compared),
-                      (n_before, n_after))
+    moved: list[Move] = []
+    kept: list[Move] = []
+    for m in regressions:
+        carrier = carried_by(m.path, committed, fresh) if m.path in MOVABLE else None
+        if carrier is None:
+            kept.append(m)
+        else:
+            moved.append(Move(m.path, m.before, m.after, carrier))
+    kept += dated_part_losses(committed, fresh)
+    return Comparison(tuple(kept), tuple(gained), tuple(undecided), len(compared),
+                      (n_before, n_after), tuple(moved))
+
+
+def _dig(doc: Mapping[str, Any], *keys: str) -> Any:
+    node: Any = doc
+    for key in keys:
+        if not isinstance(node, Mapping):
+            return None
+        node = node.get(key)
+    return node
+
+
+def _present(node: Any) -> TypeGuard[Mapping[str, Any]]:
+    return isinstance(node, Mapping) and node.get("status") == _PRESENT
+
+
+def _dated_parts(doc: Mapping[str, Any]) -> list[tuple[str, Mapping[str, Any]]]:
+    """The drawdown's dated parts on ``doc``, each named with its window."""
+    anchor = _dig(doc, "mechanical", "drawdown_cause", "anchor")
+    if not isinstance(anchor, Mapping):
+        return []
+    return [(f"drawdown_cause.anchor.{part} ({w.get('start')} to {w.get('end')})", w)
+            for part in DATED_PARTS if isinstance(w := anchor.get(part), Mapping)]
+
+
+def carried_by(path: str, committed: Mapping[str, Any], fresh: Mapping[str, Any]) -> str | None:
+    """Which dated part of ``fresh`` carries what the current-window field at ``path`` (one of
+    ``MOVABLE``) held on ``committed`` — or None, and the loss stays a regression.
+
+    BY VALUE, never by presence: every gap-down date the committed field listed must be in a dated
+    part of this build, and a revised outlook must be the same exhibit (its source_ref). A dated
+    part that carries some other event carries nothing of this one."""
+    key = path.removeprefix(_DD)
+    was = _dig(committed, "mechanical", "drawdown_cause", key)
+    if not _present(was):
+        return None
+    parts = _dated_parts(fresh)
+    if key == "gap_down_dates":
+        want = {str(d) for d in was.get("value") or []}
+        have: set[str] = set()
+        names: list[str] = []
+        for name, w in parts:
+            dates = w.get("gap_down_dates")
+            held = {str(d) for d in dates.get("value") or []} if _present(dates) else set()
+            if want & held:
+                names.append(name)
+            have |= held
+        if not want or not want <= have:
+            return None
+        return f"carried by {' and '.join(names)}: {', '.join(sorted(want))}"
+    for name, w in parts:
+        rg = w.get(key)
+        if _present(rg) and rg.get("source_ref") == was.get("source_ref"):
+            return f"carried by {name}: {was.get('source_ref')}"
+    return None
+
+
+def dated_part_losses(committed: Mapping[str, Any], fresh: Mapping[str, Any]) -> list[Move]:
+    """What a dated part of ``committed`` held and the same part of ``fresh`` does not, BY VALUE.
+
+    A part present on both sides is compared on what it holds, because presence alone would let a
+    rebuild drop one of two gap-downs, or swap the exhibit, and still read as no change. The
+    at-the-anchor part is read at its anchor and cannot change, so its dates, its shape (the
+    per-gap causes) and its exhibit must all be the same. The since part grows as the page's date
+    moves, so its shape changes by design; only a date it held, or the exhibit it named, can be
+    lost. A part that vanished entirely is the presence comparison's to report, not this one's."""
+    c_anchor = _dig(committed, "mechanical", "drawdown_cause", "anchor")
+    f_anchor = _dig(fresh, "mechanical", "drawdown_cause", "anchor")
+    if not isinstance(c_anchor, Mapping) or not isinstance(f_anchor, Mapping):
+        return []
+    moved_on = ("" if f_anchor.get("on") == c_anchor.get("on") else
+                f" — the anchor moved from {c_anchor.get('on')} to {f_anchor.get('on')}")
+    out: list[Move] = []
+    for part in DATED_PARTS:
+        cw, fw = c_anchor.get(part), f_anchor.get(part)
+        if not isinstance(cw, Mapping) or not isinstance(fw, Mapping):
+            continue
+        base = f"{_DD}anchor.{part}."
+        c_dates, f_dates = cw.get("gap_down_dates"), fw.get("gap_down_dates")
+        if _present(c_dates) and _present(f_dates):
+            lost = sorted({str(d) for d in c_dates.get("value") or []}
+                          - {str(d) for d in f_dates.get("value") or []})
+            if lost:
+                out.append(Move(base + "gap_down_dates", _PRESENT, "present, without "
+                                + ", ".join(lost), "a dated part keeps every gap-down it "
+                                "was built with" + moved_on))
+        keys = ("shape", "revised_guidance") if part == "at_anchor" else ("revised_guidance",)
+        for key in keys:
+            c, f = cw.get(key), fw.get(key)
+            if not (_present(c) and _present(f)):
+                continue
+            same = (c.get("value") == f.get("value") if key == "shape"
+                    else c.get("source_ref") == f.get("source_ref"))
+            if not same:
+                out.append(Move(base + key, _PRESENT, "present, changed",
+                                f"was {c.get('value') if key == 'shape' else c.get('source_ref')}"
+                                f"; this build: "
+                                f"{f.get('value') if key == 'shape' else f.get('source_ref')}"
+                                + moved_on))
+    return out
 
 
 class _RefusingClient(LlmClient):
@@ -490,6 +618,11 @@ def report(ticker: str, committed: Mapping[str, Any] | None, fresh: Mapping[str,
             what = "block" if m.path in BLOCKS else "field"
             lines.append(f"  {_shown(m.path)}: {m.before} → {m.after}")
             lines.append(f"      note: {m.note or f'(none — this build carries no such {what})'}")
+        lines.append(f"MOVED TO A DATED PART — left the current drawdown window, and a dated "
+                     f"part of this build carries the same event ({len(result.moved)}):")
+        for m in result.moved:
+            lines.append(f"  {_shown(m.path)}: {m.before} → {m.after}")
+            lines.append(f"      {m.note}")
         lines.append(f"NEWLY PRESENT — not present on the committed page, present in this build "
                      f"({len(result.gained)}):")
         lines += [f"  {_shown(m.path)}: {m.before} → {m.after}" for m in result.gained]

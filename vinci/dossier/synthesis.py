@@ -1423,7 +1423,21 @@ def _mark_drawdown_guidance(dumped: dict[str, Any], ps: PrimarySource | None) ->
     release that carries one. No date ⇒ the UNDATED mark, never a guess.
     """
     dc = dumped.get("drawdown_cause")
-    rg = (dc or {}).get("revised_guidance")
+    _mark_guidance_field((dc or {}).get("revised_guidance"), ps)
+    # THE DATED PARTS CARRY THE SAME KIND OF FIELD, and the at-the-anchor one is by construction
+    # the OLDEST guide on the page — SMPL's is the April guide this mark exists for. Unmarked, it
+    # would reopen the incident one key deeper (`DrawdownAnchor`, 2026-11-04).
+    anchor = (dc or {}).get("anchor")
+    if isinstance(anchor, dict):
+        for part in ("at_anchor", "since"):
+            window = anchor.get(part)
+            if isinstance(window, dict):
+                _mark_guidance_field(window.get("revised_guidance"), ps)
+
+
+def _mark_guidance_field(rg: Any, ps: PrimarySource | None) -> None:
+    """One dumped revised-guidance field, marked with its vintage in place
+    (`_mark_drawdown_guidance`)."""
     if not isinstance(rg, dict) or not rg.get("value"):
         return
     filed = None
@@ -1730,6 +1744,10 @@ def synthesize(
     # prompt is then the one every earlier build sent.
     if (material := demanded_material_figures(mech)):
         user += "\n\n" + _material_figures_digest(material)
+    # (2026-11-04) THE DRAWDOWN AT THE ANCHOR, LAST — after the material figures, so a name with no
+    # anchor sends the prompt every earlier build sent
+    if (anchored := _drawdown_anchor_digest(_dumped)) is not None:
+        user += "\n\n" + anchored
     # PER-BOOK FRAMING, one prompt. `sleeve` defaults to overshoot so every existing caller keeps
     # the byte-identical live prompt; the followed route passes the name's own book.
     #
@@ -2099,6 +2117,90 @@ def uncited_material_figures(synth: Synthesis, mech: MechanicalLayer) -> list[st
 
 #: Opens the prompt section that names the figures 19c demands — present only when one is.
 MATERIAL_FIGURES_HEADER = "=== MATERIAL FIGURES — STATE EACH ONE ==="
+
+DRAWDOWN_ANCHOR_HEADER = ("=== THE DRAWDOWN WHEN THE THESIS WAS WRITTEN, AND SINCE — the event "
+                          "kept dated ===")
+
+#: ONE literal example of the digest's shape: SMPL at its 2026-08-05 underwrite, as its at-anchor
+#: part reads on the 2026-11-03 store (the 8-K and exhibit are 0001702744-26-000010's).
+_DRAWDOWN_ANCHOR_EXAMPLE = (
+    "  at the underwrite (2026-02-06 to 2026-08-05): 2026-04-09 -18.1% earnings (2.02); "
+    "2026-04-10 -11.5% earnings (2.02) → source_ref: EOD closes on or before 2026-08-05 (each "
+    "move, close to close) and EDGAR 8-K item codes at the gap-down dates, filed by 2026-08-05 "
+    "(not blanket-labelled earnings)\n"
+    "    outlook then: [SUPERSEDED — filed 2026-04-09, replaced by the guide filed 2026-10-27; "
+    "this guide is history, not the current outlook] Updating Fiscal Year 2026 (4) Outlook: • Net "
+    "sales expected to range between $1.31 and $1.35 billion… → source_ref: EDGAR 8-K "
+    "0001702744-26-000010 Ex-99.1 — https://www.sec.gov/Archives/edgar/data/1702744/"
+    "000170274426000010/a991_pressreleasexq2x2026.htm\n"
+    "  since the underwrite (2026-08-06 to 2026-11-03): no discrete gap-down — no single day of "
+    "-10% or worse from 2026-08-06 to 2026-11-03 → source_ref: EOD gap-down detector, 2026-08-06 "
+    "to 2026-11-03: none")
+
+
+def _drawdown_anchor_digest(dumped: dict[str, Any]) -> str | None:
+    """The prompt section for a name with a drawdown anchor (`DrawdownAnchor`): both dated parts,
+    one line each (window → per-gap date, move and cause → source_ref, then the outlook it
+    furnished → source_ref), and the question the anchor exists to ask — has the original cause
+    played out. Read from ``dumped``, the facts as the prompt carries them, so the outlook here
+    wears the same vintage mark as there. None for a name with no anchor: its prompt is unchanged.
+
+    One literal example (`_DRAWDOWN_ANCHOR_EXAMPLE`, SMPL's), shape only:
+      at the underwrite (2026-02-06 to 2026-08-05): 2026-04-09 -18.1% earnings (2.02); … →
+      source_ref: EOD closes on or before 2026-08-05 (…) and EDGAR 8-K item codes … (…)
+    No direction is given: where the evidence bears is the model's to frame, and no verdict."""
+    from datetime import date as _date
+
+    from vinci.dossier.schemas import DRAWDOWN_ANCHOR_WORDS
+
+    anchor = (dumped.get("drawdown_cause") or {}).get("anchor")
+    if not isinstance(anchor, dict):
+        return None
+    kind, on = str(anchor.get("kind")), str(anchor.get("on"))
+    word = DRAWDOWN_ANCHOR_WORDS.get(kind, ("", "", kind))[2]
+    at = anchor.get("at_anchor") or {}
+    # the window's length from the part's own dates, never a restated constant
+    days = (_date.fromisoformat(str(at.get("end")))
+            - _date.fromisoformat(str(at.get("start")))).days
+
+    def part(label: str, w: Any) -> list[str]:
+        if not isinstance(w, dict):
+            return [f"  {label}: no session after the {word} yet"]
+        shape = w.get("shape") or {}
+        head = f"  {label} ({w.get('start')} to {w.get('end')}): "
+        lines = [head + (f"{shape.get('value')} → source_ref: {shape.get('source_ref')}"
+                         if shape.get("status") == "present"
+                         else f"UNKNOWN — {shape.get('note')}")]
+        rg = w.get("revised_guidance") or {}
+        if rg.get("status") == "present":
+            text = " ".join(str(rg.get("value")).split())
+            text = text if len(text) <= 360 else text[:357].rstrip() + "…"
+            lines.append(f"    outlook then: {text} → source_ref: {rg.get('source_ref')}")
+        return lines
+
+    lines = [
+        DRAWDOWN_ANCHOR_HEADER,
+        f"This name is anchored at its {word} ({on}; {anchor.get('source_ref')}). The current "
+        "window in the facts (`drawdown_cause.shape` and its siblings) ROLLS with the page's "
+        "date, so the event the thesis was written on can have left it. `drawdown_cause.anchor` "
+        f"keeps it, in two dated parts: `at_anchor`, the {days} days ending on the anchor date, "
+        "read only from what was knowable then (closes on or before it, 8-Ks filed by it); and "
+        "`since`, the day after the anchor to the page's price date.",
+        "SHAPE — one line per part: part (start to end): date move cause; … → source_ref, then "
+        "the outlook that part's 8-K furnished → source_ref. EXAMPLE (SMPL at its 2026-08-05 "
+        "underwrite) — the SHAPE only; cite only this name's lines:",
+        _DRAWDOWN_ANCHOR_EXAMPLE,
+        "THIS NAME:",
+        *part(f"at the {word}", anchor.get("at_anchor")),
+        *part(f"since the {word}", anchor.get("since")),
+        f"ASK: has the cause named at the {word} played out? Set the since part and the current "
+        "facts against it — did the outlook that came with the drop hold, get cut again, or "
+        "recover; did a later drop repeat the cause or name a new one. Answer inside your points "
+        "(a bull or bear point, or the decisive question's evidence), citing these source_refs "
+        "verbatim; where the facts cannot tell, say so in key_unknowns. An outlook marked "
+        "SUPERSEDED is history, never the current guide.",
+    ]
+    return "\n".join(lines)
 
 
 def _material_figures_digest(figs: list[MaterialFigure]) -> str:

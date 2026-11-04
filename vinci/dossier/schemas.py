@@ -589,6 +589,75 @@ class Concentration(BaseModel):
     model_config = {"frozen": True}
 
 
+class GapDown(BaseModel):
+    """One gap-down in a dated window, as structure: the renderers read this, never the shape."""
+
+    on: str  # ISO — the session of the drop
+    move: float  # close-to-close from the prior session, the detector's own arithmetic (-0.181)
+    cause: str  # the 8-K's item-code label (`_gap_label`), or "no company filing"
+    accession: str | None = None  # the 8-K the cause is read from, when there is one
+
+    model_config = {"frozen": True}
+
+
+class DrawdownWindow(BaseModel):
+    """One DATED part of a drawdown's record: the gap-downs inside ``start``..``end`` (both
+    inclusive), the 8-Ks at them and the revised outlook they furnished — the same four facts the
+    current window carries on `DrawdownCause`, built by the same reader, over a stated window.
+    Its ``shape`` states each drop's move beside its cause, so a point citing it can state it."""
+
+    start: str  # ISO — the first session a gap-down in this window can fall on
+    end: str  # ISO — the last; also the date its inputs are cut at (bars on/before, filed by)
+    shape: Sourced[str]
+    gap_down_dates: Sourced[list[str]]
+    filings: list[FilingRef]
+    revised_guidance: Sourced[str]
+    # each gap-down as structure, from the same bars, so a renderer never has to find a move in a
+    # price series that may no longer reach back that far
+    gaps: list[GapDown] = Field(default_factory=list)
+
+    model_config = {"frozen": True}
+
+
+#: How a drawdown anchor names its two dated parts and itself, per `DrawdownAnchor.kind` — the ONE
+#: Python copy, read by the renderer and the synthesis brief alike; its web twin is dossier.js
+#: `ANCHOR_WORDS`, bound by `test_anchored_drawdown.py::test_anchor_words_twin`.
+DRAWDOWN_ANCHOR_WORDS: dict[str, tuple[str, str, str]] = {
+    "underwrite": ("Drawdown at underwrite", "Since underwrite", "underwrite"),
+    "followed": ("Drawdown when followed", "Since followed", "follow"),
+}
+
+
+class DrawdownAnchor(BaseModel):
+    """THE DRAWDOWN AS IT STOOD WHEN THE FUND'S THESIS WAS WRITTEN, AND WHAT HAS HAPPENED SINCE.
+
+    The current window (`DrawdownCause`'s own fields) rolls with the page's date, so a page rebuilt
+    more than ``gap_window_days`` after a drop no longer names the event an underwrite was written
+    on: SMPL's rebuild at 2026-11-03 starts its window on 2026-05-07, after its 2026-04-09/10
+    gap-downs and the FY26 outlook 8-K its 2026-08-05 underwrite rests on. An expert keeps a
+    thesis log instead — the original event stays, dated, and what has happened since is added.
+
+    ``at_anchor`` is the window of the same length ending ON the anchor date, read only from what
+    was knowable then (bars on or before it, 8-Ks filed by it), so no later build can change it.
+    ``since`` runs from the day after the anchor to the page's price date; None when the page has
+    no session after the anchor."""
+
+    kind: Literal["underwrite", "followed"]
+    on: str  # ISO — the underwrite record's `underwrite_date`, else the follow's `followed_since`
+    source_ref: str  # where the date was read
+    at_anchor: DrawdownWindow
+    since: DrawdownWindow | None = None
+
+    model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        out = nxt(self)
+        if isinstance(out, dict) and out.get("since") is None:
+            out.pop("since", None)
+        return out
+
+
 class DrawdownCause(BaseModel):
     """Why the name fell: shape (discrete event vs gradual bleed) + the 8-Ks at the gap-downs."""
 
@@ -602,9 +671,27 @@ class DrawdownCause(BaseModel):
     # ≤threshold drop BEFORE the window renders as an unclassified (hollow) marker, never silently
     # unmarked. None on pre-field committed JSON → the renderers skip the boundary/hollow marks.
     gap_threshold: float | None = None  # single-day close-to-close drop that fires the detector
-    gap_window_days: int | None = None  # how far back from the reference date the detector scans
+    gap_window_days: int | None = None  # how far back from ``gap_window_end`` the detector scans
+    # THE DATE THE CURRENT WINDOW ENDS ON — the page's price date (2026-11-04 item 3). ABSENT on a
+    # page built before it, whose window ended on the screen's reference date, which a renderer
+    # reads in its place.
+    gap_window_end: str | None = None
+    # (2026-11-04) the drawdown at the underwrite (or the follow) and since — ABSENT on a page with
+    # no anchor and on every page built before it, so those read, check and render as they did
+    anchor: DrawdownAnchor | None = None
 
     model_config = {"frozen": True}
+
+    @model_serializer(mode="wrap")
+    def _absent_not_null(self, nxt: Any) -> Any:
+        """``anchor`` is ABSENT when None, never null: a key written as null would say the page was
+        built with one and found nothing."""
+        out = nxt(self)
+        if isinstance(out, dict):
+            for key in ("gap_window_end", "anchor"):
+                if out.get(key) is None:
+                    out.pop(key, None)
+        return out
 
 
 class IdiosyncraticVsShared(BaseModel):

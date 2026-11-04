@@ -326,6 +326,7 @@ NOT_A_FACT: dict[str, str] = {
     "DilutionPipeline.window_days": "a parameter of the read",
     "DrawdownCause.gap_threshold": "a parameter of the read",
     "DrawdownCause.gap_window_days": "a parameter of the read",
+    "DrawdownCause.gap_window_end": "a parameter of the read (the window's last day)",
     "IdiosyncraticVsShared.benchmark_basis": "a label (its cap is the market leg's ref)",
     "IdiosyncraticVsShared.benchmark_symbol": "a label",
     "ImpliedValuation.bridge_cash": "the structured twin of `implied_valuation.bridge`",
