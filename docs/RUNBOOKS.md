@@ -607,16 +607,18 @@ is the 3.9 system one).
 
    - It also **exits 1 on each refusal the paid build makes only AFTER its LLM calls** that needs
      no synthesis, printed with its message under `POST-SPEND REFUSALS`: `_freshness_check` (a
-     missing cap input, an export panel past the 45-day ceiling, a share-basis mismatch) and
+     missing cap input, an export panel past the 45-day ceiling, a share-basis mismatch),
      `_materiality_check`'s "cannot look" refusal (no annual Income Statement, period header,
-     revenue row or unusual-items block). A material unusual item the summary does not show is
+     revenue row or unusual-items block) and `_write`'s refusal of a drawdown cause degraded over
+     the committed page's PRESENT one. A material unusual item the summary does not show is
      listed as decided by the paid draw, not a stop: the synthesis must state it. The freshness
      line gives the date from which a build is refused on panel age, since the age is measured on
      the day the check runs. *(Source: MNST, 2026-11-02: run `373c8ffc` paid $3.33 for seven LLM
      calls before `_freshness_check` refused a share basis its 2-for-1 split had moved —
      `docs/records/2026-11-04-pre-spend-check-runs-post-spend-refusals.md`.)*
    - It writes nothing to `data/dossiers/` and no `assembly_runs` line. A first assembly (no
-     committed page) has no field to compare, but its post-spend refusals still run and exit 1.
+     committed page) has no field to compare, but its post-spend refusals still run, and any one
+     that fires exits 1.
    - Its first lines are the count's BOUNDARY — both pages' `assembled_at` and extraction versions,
      the export sha256s on disk against the ones the page stamps, and how many fields it compared.
      Paste them into the pass's record.

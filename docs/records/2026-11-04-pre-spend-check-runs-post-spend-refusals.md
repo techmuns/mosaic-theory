@@ -11,8 +11,9 @@ superseded-by:
 
 **WHAT.** `vinci dossier precheck --ticker <T>` (`vinci/dossier/prespend.py`, #893) now also runs
 the two deterministic checks that `assemble.assemble_one` applies only AFTER its covenant, driver
-and five synthesis calls (`POST_SPEND`), on the $0 build, and exits 1 on each refusal that needs no
-synthesis. Each is printed with its message under `POST-SPEND REFUSALS`.
+and five synthesis calls (`POST_SPEND`), and the one refusal its `_write` makes against the
+committed page after them (`POST_WRITE`), on the $0 build, and exits 1 on each refusal that needs
+no synthesis. Each is printed with its message under `POST-SPEND REFUSALS`.
 
 | check | refusal | needs a synthesis? | in the precheck |
 |---|---|---|---|
@@ -21,11 +22,16 @@ synthesis. Each is printed with its message under `POST-SPEND REFUSALS`.
 | `_freshness_check` | a share-basis mismatch (cap ÷ shares a whole-number multiple of the spot) | no: reads `stock_info` | exit 1 |
 | `_materiality_check` | `MaterialityUnavailableError`: no annual Income Statement, period header, revenue row or unusual-items block | no: reads the exports | exit 1 |
 | `_materiality_check` | `MaterialityError`: a material unusual item in neither the brief's summary nor the synthesis | **yes**: refused only if the synthesis does not state it | listed as "decided by the paid draw, not a stop" |
+| `_write`'s `_refuse_degraded_drawdown_overwrite` (`POST_WRITE`; added in review round 0) | a drawdown cause read UNKNOWN (an unreadable filing index) over the committed page's PRESENT one | no: reads the build and the committed page | exit 1 |
 
-- Both run on the layer the paid build's checks read (`gate_layer`): the $0 build's mechanical
+- The two `POST_SPEND` checks run on the layer the paid build's checks read (`gate_layer`): the $0 build's mechanical
   layer with its rows marked material (`_mark_material`, which the paid build runs before its
   synthesis). Each is measured at the $0 build's own `assembled_at`, the instant the paid build
   uses for its own.
+- The drawdown refusal runs against the committed page's folder: the paid build's `_write` meets
+  it there after every LLM call, while the $0 build's own `_write` writes into a scratch folder and
+  never sees it. Before this, such a build listed the lost field as a regression and said the
+  paid build "would publish" it, when the paid build would in fact be refused after paying.
 - **A first assembly runs them too.** With no committed page, the check used to exit 0 before
   building anything. It now builds, skips only the comparison (and the covenant forecast, which
   feeds nothing else), runs the refusals, and exits 1 on any.
@@ -93,7 +99,7 @@ build can decide it.
    `stock_info.as_of` (27), `stock_info.market_cap_as_of` (27),
    `valuation.ev_ebitda_basis.tev_as_of` (24). None is under a field only an LLM phase writes. So
    the paid gate's export age equals the $0 layer's.
-9. **Pins** (`tests/test_prespend.py`, 11 new tests, 2 of them parametrised over the 27 pages):
+9. **Pins** (`tests/test_prespend.py`, 13 new tests, 2 of them parametrised over the 27 pages):
    - Positive: the frozen MNST build's freshness refusal equals run `373c8ffc`'s recorded error;
      `run` on MNST with no committed page exits 1, prints the refusal, never forecasts and writes
      nothing; a refusal and a regression together both print and stop; a build with no Financials
@@ -107,11 +113,18 @@ build can decide it.
      the $0 SMPL build carries no material mark and `gate_layer` gives it its one (Asset Writedown);
      and, parsed from `assemble_one`'s source, the private helpers its `llm is not None` branch
      calls after `synthesize` are exactly `POST_SPEND` plus `_require_synthesis`.
+   - The drawdown refusal fires on SMPL's frozen $0 build with its drawdown shape read UNKNOWN
+     (the 403 shape `_refuse_degraded_drawdown_overwrite` names) against the frozen committed page,
+     and not on a first assembly or a healthy read; the `_refuse_*` calls in `_write`'s source are
+     exactly `POST_WRITE` plus the SEC refusal (met by the $0 build's own `_write`, which reads
+     process state) and the synthesis-overwrite refusal (never reached by a paid build, which has a
+     synthesis). Both tests failed before the fix (review round 0).
    - The existing comparison tests that call `run` on a temporary folder (which holds no export)
      stand the materiality check in with a pass, which the real exports give (6.).
 10. **Mutations, each caught by a named test:** freshness not run; `MaterialityError` made a $0
     stop; refusals not setting the exit code; `gate_layer` without the material marks; age measured
-    at today's date instead of the build's; a first assembly returning before the build.
+    at today's date instead of the build's; a first assembly returning before the build; the
+    drawdown refusal not run.
 11. **What was deleted rather than kept untested.** The first cut also unset `ev_gap` in
     `gate_layer`, since the paid build writes it only after its checks. No test could catch its
     removal: on every committed page `ev_gap`'s one gating date (`vintages.tev_as_of`) is
@@ -147,7 +160,19 @@ build can decide it.
   committed page (8.). Falsifier: an LLM phase that starts writing a dated export panel.
 - **NOT DECIDABLE HERE:** the uncited-material-figure guard and `_require_synthesis`. Three of
   the four paid refusals on record ($13.13) are the first; no $0 build can decide them.
-- **NOT IN THIS CHANGE:** `_refuse_degraded_drawdown_overwrite`, which `_write` applies against
-  the committed folder, never fires on the $0 build's temporary folder. The field it protects
-  (`drawdown_cause.shape`) is a Sourced field, so the comparison already reports its loss, though
-  without the refusal's message.
+- **ACCEPTED: the source pins see private helpers only.** The `assemble_one` pin classifies the
+  private helpers called after `synthesize` inside its `llm is not None` branch; the `_write` pin,
+  its `_refuse_*` calls. A new public refusal function or an inline `raise` there passes both
+  unclassified (the uncited-material-figure guard is an inline raise, classified by hand here).
+  Falsifier: a new refusal of that shape that the precheck does not run.
+
+**REVIEW (round 0, `/code-review high --fix`).**
+
+| # | finding | disposition |
+|---|---|---|
+| 1 | `_write`'s degraded-drawdown refusal is post-spend and never ran at $0 | FIXED: `POST_WRITE`, `drawdown_refusal`, with a test that failed first |
+| 2 | the `assemble_one` source pin misses `_write`'s refusals, public helpers and inline raises | FIXED for `_write` (a second pin); public helpers and inline raises ACCEPTED above; the docstring's claim narrowed to private helpers |
+| 3 | RUNBOOKS read as "a first assembly always exits 1" | FIXED: "any one that fires exits 1" |
+| 4 | the test reached `panel_age` through `prespend`'s re-import | FIXED: imported from `vinci.dossier.freshness` |
+| 5 | `panel_age` computed twice (once inside `_freshness_check`) | DISMISSED: negligible; removing it means changing `_freshness_check`'s signature |
+| 6 | an error other than `CiqUnavailableError` from the materiality read crashes with a traceback | DISMISSED: the paid build lets the same exception through, and the check still exits non-zero |

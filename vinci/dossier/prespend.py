@@ -45,6 +45,10 @@ paid build's checks read (`gate_layer`), and exits 1 on each refusal that needs 
   other refusal (``MaterialityError``, a material unusual item the brief's summary does not show)
   is decided by whether the synthesis states it, so it is listed, never a stop.
 
+- ``_refuse_degraded_drawdown_overwrite`` (``POST_WRITE``): ``_write``, after every LLM phase,
+  refuses a drawdown cause degraded over a committed PRESENT one. The $0 build writes into a
+  scratch folder and never meets the committed page, so it is run here against the committed one.
+
 These run on a first assembly too: a page that does not exist yet costs the same to refuse. The
 synthesis-dependent refusals (``_require_synthesis``, the uncited-material-figure guard) cannot be
 decided here.
@@ -81,6 +85,11 @@ LLM_WRITTEN = ("covenant_terms", "maturity_event", "covenant_term_rows")
 #: The checks ``assemble.assemble_one`` runs only AFTER its LLM phases, each run here at $0
 #: (`post_spend_checks`). ``test_prespend.py`` pins this SET against ``assemble_one``'s source.
 POST_SPEND = ("_freshness_check", "_materiality_check")
+
+#: The refusals ``assemble._write`` makes (after every LLM phase) that read the COMMITTED page,
+#: which the $0 build's scratch ``_write`` never sees — each run here against it
+#: (`post_spend_checks`).
+POST_WRITE = ("_refuse_degraded_drawdown_overwrite",)
 
 #: The status of a field this build does not carry at all (key missing, or written as null).
 ABSENT = "absent"
@@ -356,13 +365,28 @@ def materiality_refusal(gate: MechanicalLayer, bundle: CiqBundle, *,
     return None
 
 
-def post_spend_checks(built: Dossier, bundle: CiqBundle) -> PostSpend:
+def drawdown_refusal(built: Dossier, committed: Path) -> Refusal | None:
+    """``assemble._refuse_degraded_drawdown_overwrite`` on ``built`` against the committed page's
+    folder ``committed``, as a refusal or None."""
+    from vinci.dossier.assemble import DossierAssemblyError, _refuse_degraded_drawdown_overwrite
+
+    try:
+        _refuse_degraded_drawdown_overwrite(built, committed)
+    except DossierAssemblyError as exc:
+        return Refusal("_refuse_degraded_drawdown_overwrite", type(exc).__name__, str(exc))
+    return None
+
+
+def post_spend_checks(built: Dossier, bundle: CiqBundle, *,
+                      committed: Path | None = None) -> PostSpend:
     """Both ``POST_SPEND`` checks on ``built``, in the paid build's order, each measured at
-    ``built``'s own ``assembled_at``, the instant the paid build's checks use for theirs."""
+    ``built``'s own ``assembled_at``, the instant the paid build's checks use for theirs; then,
+    given the committed page's folder ``committed``, the ``POST_WRITE`` refusal ``_write`` makes."""
     gate = gate_layer(built)
     day = built.assembled_at.date()
     found = [r for r in (materiality_refusal(gate, bundle, ticker=built.ticker),
-                         freshness_refusal(gate, ticker=built.ticker, built_at=day))
+                         freshness_refusal(gate, ticker=built.ticker, built_at=day),
+                         drawdown_refusal(built, committed) if committed is not None else None)
              if r is not None]
     return PostSpend(tuple(r for r in found if r.at_zero),
                      tuple(r for r in found if not r.at_zero),
@@ -501,7 +525,7 @@ def run(ticker: str, cfg: Config, *, emit: Callable[[str], None] = print) -> int
     bundle = CiqBundle.from_files(t, LocalFolderStore.from_config(cfg).files(t))
     exports = [(wb.kind + (f"/{wb.freq}" if wb.freq else ""), file_provenance(wb.path)[0])
                for wb in bundle.workbooks]
-    post = post_spend_checks(built, bundle)
+    post = post_spend_checks(built, bundle, committed=path.parent)
     result = compare(committed, fresh, forecast) if committed is not None else None
     for line in report(t, committed, fresh, result, exports, post):
         emit(line)

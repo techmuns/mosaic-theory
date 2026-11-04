@@ -494,7 +494,7 @@ def test_what_the_paid_gate_does_not_see_moves_no_export_age(path: pathlib.Path)
     """`gate_layer` leaves `ev_gap` in (the paid build writes it only after its checks) and lacks
     what the LLM phases add before them. Both are safe only if neither moves the export age the
     freshness check gates on: measured on every committed page, which carries all of it."""
-    from vinci.dossier.freshness import CONSENSUS_PANELS, panel_dates
+    from vinci.dossier.freshness import CONSENSUS_PANELS, panel_age, panel_dates
 
     raw = _load(path)
     gating = [k for k, _ in panel_dates(raw["mechanical"]) if k not in CONSENSUS_PANELS]
@@ -506,8 +506,8 @@ def test_what_the_paid_gate_does_not_see_moves_no_export_age(path: pathlib.Path)
     seen["operating_drivers"] = None
     for field in LLM_WRITTEN:
         (seen.get("capital_structure") or {}).pop(field, None)
-    assert (prespend.panel_age(layer, page.assembled_at, kind="export")
-            == prespend.panel_age(seen, page.assembled_at, kind="export"))
+    assert (panel_age(layer, page.assembled_at, kind="export")
+            == panel_age(seen, page.assembled_at, kind="export"))
 
 
 def test_the_gate_layer_carries_the_material_marks_a_zero_build_lacks() -> None:
@@ -527,7 +527,8 @@ def test_the_post_spend_set_is_every_helper_assemble_one_calls_after_its_synthes
     """THE MIRROR'S SET, pinned against its source. Inside `assemble_one`'s `llm is not None`
     branch, every private helper called after `synthesize` is either in `POST_SPEND` or one the
     synthesis decides (`_require_synthesis`), and every `POST_SPEND` check is among them. Pins the
-    SET, not each check's rules; a new refusal helper there fails this until it is classified."""
+    SET, not each check's rules. A new PRIVATE helper there fails this until it is classified; a
+    public one, or an inline `raise` (the uncited-material-figure guard is one), does not."""
     tree = ast.parse((ROOT / "vinci" / "dossier" / "assemble.py").read_text())
     fn = next(n for n in ast.walk(tree)
               if isinstance(n, ast.FunctionDef) and n.name == "assemble_one")
@@ -540,3 +541,54 @@ def test_the_post_spend_set_is_every_helper_assemble_one_calls_after_its_synthes
     after = {n.func.id for n in calls if isinstance(n.func, ast.Name)
              and n.func.id.startswith("_") and n.lineno > synth}
     assert after == {*POST_SPEND, "_require_synthesis"}
+
+
+# --- the refusal `_write` makes after every LLM phase --------------------------------------------
+
+def _degraded(built: Dossier) -> Dossier:
+    """``built`` with its drawdown cause read as a degraded feed would leave it (an unreadable
+    filing index → the shape UNKNOWN), every other field as built."""
+    from vinci.dossier.schemas import Sourced
+
+    dc = built.mechanical.drawdown_cause
+    assert dc is not None
+    shape: Sourced[Any] = Sourced.unknown(note="EDGAR filing index unreadable (403)")
+    mech = built.mechanical.model_copy(update={
+        "drawdown_cause": dc.model_copy(update={"shape": shape})})
+    return built.model_copy(update={"mechanical": mech})
+
+
+def test_a_degraded_drawdown_over_a_committed_one_is_refused_at_zero(
+    tmp_path: pathlib.Path,
+) -> None:
+    """`_write` refuses, AFTER every LLM phase, a build whose drawdown cause is degraded over a
+    committed PRESENT one (all 27 committed pages carry one, 2026-11-04). The $0 build writes into
+    a scratch folder and never meets the committed page, so the check runs it here."""
+    from vinci.dossier.ciq import CiqBundle
+
+    folder = tmp_path / "SMPL"
+    folder.mkdir()
+    (folder / "dossier.json").write_bytes(FROZEN_PAGE.read_bytes())
+    built = _degraded(_built("SMPL"))
+    post = post_spend_checks(built, CiqBundle.from_files("SMPL", []), committed=folder)
+    assert ("_refuse_degraded_drawdown_overwrite", "DossierAssemblyError") in [
+        (r.check, r.error) for r in post.refusals]
+    # negative: a first assembly has no finding to protect, and a healthy read refuses nothing
+    first = post_spend_checks(built, CiqBundle.from_files("SMPL", []), committed=tmp_path / "NEW")
+    healthy = post_spend_checks(_built("SMPL"), CiqBundle.from_files("SMPL", []), committed=folder)
+    for p in (first, healthy):
+        assert "_refuse_degraded_drawdown_overwrite" not in [r.check for r in p.refusals]
+
+
+def test_every_refusal_write_makes_is_classified() -> None:
+    """`_write` runs after every LLM phase, so each `_refuse_*` it calls is post-spend: run here
+    (`POST_WRITE`), or one the $0 build already meets in its own scratch `_write` (the SEC
+    refusal reads process state) or one a paid build never reaches (it has a synthesis)."""
+    tree = ast.parse((ROOT / "vinci" / "dossier" / "assemble.py").read_text())
+    fn = next(n for n in ast.walk(tree)
+              if isinstance(n, ast.FunctionDef) and n.name == "_write")
+    called = {n.func.id for n in ast.walk(fn)
+              if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+              and n.func.id.startswith("_refuse")}
+    assert called == {*prespend.POST_WRITE, "_refuse_after_sec_refusal",
+                      "_refuse_synthesis_overwrite"}
